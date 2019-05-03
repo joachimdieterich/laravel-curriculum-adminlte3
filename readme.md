@@ -56,6 +56,8 @@ php artisan serve
 ``` 
 
 ## Progress
-* 20190503 initial Commit
-* 20190503 Adding code of conduct, contributing and license
 
+* 
+* 20190503 Adding code of conduct, contributing and license
+* 20190503 initial Commit
+** Adding country and state table

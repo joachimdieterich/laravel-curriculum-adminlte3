@@ -12,6 +12,7 @@ abstract class TestCase extends BaseTestCase
     protected function signIn($user = null)
     {
         //$this->withoutExceptionHandling();
+        $this->seeder();
         $user = $user ?: factory('App\User')->create();
         $this->actingAs($user);
 
@@ -20,8 +21,8 @@ abstract class TestCase extends BaseTestCase
     
      protected function signInAdmin($user = null)
     {
-        (new DatabaseSeeder())->call(DatabaseSeeder::class);
-        $this->withoutExceptionHandling();
+        $this->seeder();
+        //$this->withoutExceptionHandling();
         $credentials = [
             'email' => 'admin@curriculumonline.de',
             'password' => 'password',
@@ -31,5 +32,9 @@ abstract class TestCase extends BaseTestCase
         
         
         return auth()->user();
+    }
+    
+    public function seeder() {
+        (new DatabaseSeeder())->call(DatabaseSeeder::class);
     }
 }

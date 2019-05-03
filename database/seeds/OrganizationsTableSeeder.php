@@ -14,6 +14,8 @@ class OrganizationsTableSeeder extends Seeder
             'street'         => 'Demostreet 1',
             'postcode'       => '12345',
             'city'           => 'Ilbesheim bei Landau in der Pfalz',
+            'state_id'       => 11,
+            'country_id'     => 56,
             'phone'          => '0123-456789',
             'email'          => 'mail@curriculumonline.de',
             'status'         => 1,

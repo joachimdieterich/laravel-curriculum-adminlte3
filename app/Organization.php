@@ -25,4 +25,15 @@ class Organization extends Model
       return $this->hasMany(OrganizationRoleUser::class)
               ->role('Admin');
     }
+    
+    public function state()
+    {
+        return $this->hasOne('App\State', 'id', 'state_id');
+    }
+    
+    public function country()
+    {
+        return $this->hasOne('App\Country', 'id', 'country_id');
+        
+    }
 }

@@ -112,14 +112,14 @@ class OrganizationsController extends Controller
         return back();
     }
     
-     public function massDestroy(MassDestroyOrganizationRequest $request)
+    public function massDestroy(MassDestroyOrganizationRequest $request)
     {
         Organization::whereIn('id', request('ids'))->delete();
 
         return response(null, 204);
     }
-   
-
+    
+    
     protected function validateRequest()
     {        
         /* todo set status by admin? */
@@ -134,6 +134,8 @@ class OrganizationsController extends Controller
             'street'        => 'sometimes',
             'postcode'      => 'sometimes',
             'city'          => 'sometimes',
+            'state_id'      => 'sometimes',
+            'country_id'    => 'sometimes',
             'phone'         => 'sometimes',
             'email'         => 'sometimes',
             'status'        => 'required',

@@ -1,5 +1,5 @@
 # curriculum 
-[![Build Status](https://travis-ci.org/joachimdieterich/laravel-curriculum.svg?branch=master)](https://travis-ci.org/joachimdieterich/laravel-curriculum) 
+[![Build Status](https://travis-ci.org/joachimdieterich/laravel-curriculum-adminlte3.svg?branch=master)](https://travis-ci.org/joachimdieterich/laravel-curriculum-adminlte3) 
 [![StyleCI](https://github.styleci.io/repos/182396825/shield?branch=master)](https://github.styleci.io/repos/182396825)
 
 ## Important Information
@@ -16,11 +16,9 @@ curriculum is a learning platform where teachers can create topic-based learning
 Begin by cloining this repository to your machine, and installing all Composer dependencies.
 
 ```bash
-git clone git@github.com:joachimdieterich/laravel-curriculum.git
-cd laravel-curriculum && composer install
+git clone git@github.com:joachimdieterich/laravel-curriculum-adminlte3.git
+cd laravel-curriculum-adminlte3 && composer install
 
-composer require laravel-frontend-presets/material-dashboard
-php artisan preset material
 composer dump-autoload
 
 npm install

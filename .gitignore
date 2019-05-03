@@ -1,0 +1,31 @@
+# Laravel 5 & Lumen specific
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+
+.env.*.php
+.env.php
+.env
+.phpunit.result.cache
+
+Homestead.json
+Homestead.yaml
+
+npm-debug.log
+yarn-error.log
+
+/.idea
+/.vscode
+/.vagrant
+
+# Fontawesome
+/public/fonts/vendor/
+
+
+# Mac specific
+.DS_Store
+
+# Netbeans specific
+/nbproject

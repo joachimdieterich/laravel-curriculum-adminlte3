@@ -1,0 +1,63 @@
+<?php
+
+use App\Role;
+use Illuminate\Database\Seeder;
+
+class RolesTableSeeder extends Seeder
+{
+    public function run()
+    {
+        $roles = [[
+            'id'         => 1,
+            'title'      => 'Admin',
+            'created_at' => '2019-04-15 19:13:32',
+            'updated_at' => '2019-04-15 19:13:32',
+            'deleted_at' => null,
+            ],
+            [
+                'id'         => 2,
+                'title'      => 'Creator',
+                'created_at' => '2019-04-15 19:13:32',
+                'updated_at' => '2019-04-15 19:13:32',
+                'deleted_at' => null,
+            ],
+            [
+                'id'         => 3,
+                'title'      => 'Indexer',
+                'created_at' => '2019-04-15 19:13:32',
+                'updated_at' => '2019-04-15 19:13:32',
+                'deleted_at' => null,
+            ],
+            [
+                'id'         => 4,
+                'title'      => 'Schooladmin',
+                'created_at' => '2019-04-15 19:13:32',
+                'updated_at' => '2019-04-15 19:13:32',
+                'deleted_at' => null,
+            ],
+            [
+                'id'         => 5,
+                'title'      => 'Teacher',
+                'created_at' => '2019-04-15 19:13:32',
+                'updated_at' => '2019-04-15 19:13:32',
+                'deleted_at' => null,
+            ],
+            [
+                'id'         => 6,
+                'title'      => 'Student',
+                'created_at' => '2019-04-15 19:13:32',
+                'updated_at' => '2019-04-15 19:13:32',
+                'deleted_at' => null,
+            ],
+            [
+                'id'         => 7,
+                'title'      => 'Guest',
+                'created_at' => '2019-04-15 19:13:32',
+                'updated_at' => '2019-04-15 19:13:32',
+                'deleted_at' => null,
+            ]
+            ];
+
+        Role::insert($roles);
+    }
+}

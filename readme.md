@@ -1,6 +1,6 @@
 # curriculum 
-[![Build Status](https://travis-ci.org/joachimdieterich/laravel-curriculum-adminlte3.svg?branch=master)](https://travis-ci.org/joachimdieterich/laravel-curriculum-adminlte3) 
-[![StyleCI](https://github.styleci.io/repos/182396825/shield?branch=master)](https://github.styleci.io/repos/182396825)
+[![Build Status](https://travis-ci.org/joachimdieterich/laravel-curriculum-adminlte3.svg?branch=master)](https://travis-ci.org/joachimdieterich/laravel-curriculum-adminlte3)
+[![StyleCI](https://github.styleci.io/repos/184726557/shield?branch=master)](https://github.styleci.io/repos/184726557)
 
 ## Important Information
 Work in progress - recoding curriculum in laravel - only use for test purposes 
@@ -54,3 +54,8 @@ Start server
 ```
 php artisan serve
 ``` 
+
+## Progress
+* 20190503 initial Commit
+* 20190503 Adding code of conduct, contributing and license
+

@@ -27,7 +27,7 @@ npm run
 
 ### Step 2. 
 
-Next, create a new database and reference its name and username/password within the project's `.env` file. In the example below, we've named the database, "curriculum."
+Next, rename `.env.example` to `.env` create a new database and reference its name and username/password within the project's `.env` file. In the example below, we've named the database, "curriculum."
 
 ```
 DB_CONNECTION=mysql
@@ -54,6 +54,13 @@ Start server
 ```
 php artisan serve
 ``` 
+
+### Step 5.
+
+Login:
+
+username: admin@curriculumonline.de
+password: password
 
 ## Progress
 

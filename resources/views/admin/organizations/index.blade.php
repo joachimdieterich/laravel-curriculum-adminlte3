@@ -79,7 +79,21 @@
                                 {{ $organization->email ?? '' }}
                             </td>
                             <td>
-                                {{ $organization->status ?? '' }}
+                                @can('organization_edit')
+                                <form action="{{ route('admin.organizations.update', $organization->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
+                                        <input type="hidden" name="_method" value="PATCH">
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                @include ('forms.input.select', 
+                                ["model" => "status", 
+                                "show_label" => false, 
+                                "field" => "status_id",  
+                                "options"=> $statuses, 
+                                "onchange"=> "this.form.submit()",  
+                                "value" => old('status_id', isset($organization->status_id) ? $organization->status_id : '') ])
+                                </form>
+                                    
+                                @endcan
+                                
                             </td>
                             <td>
                                 @can('organization_show')

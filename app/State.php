@@ -8,6 +8,6 @@ class State extends Model
 {
     public function country()
     {
-        return $this->hasOne('App\Country', 'code', 'country_code');
+        return $this->hasOne('App\Country', 'alpha2', 'country');
     }
 }

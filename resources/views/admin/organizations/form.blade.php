@@ -7,7 +7,15 @@
 @include ('forms.input.text', ["model" => "organization", "field" => "city", "placeholder" => "Ilbesheim",  "value" => old('city', isset($organization) ? $organization->city : '')])
 @include ('forms.input.text', ["model" => "organization", "field" => "phone", "placeholder" => "123/4567890",  "value" => old('phone', isset($organization) ? $organization->phone : '')])
 @include ('forms.input.text', ["model" => "organization", "field" => "email", "placeholder" => "mail@curriculumonline.de",  "value" => old('email', isset($organization) ? $organization->email : '')])
-@include ('forms.input.text', ["model" => "organization", "field" => "status", "readonly" => true,  "value" => old('email', isset($organization) ? $organization->status : '')])
+
+                
+          @include ('forms.input.select', 
+                                ["model" => "status",
+                                "show_label" => true,
+                                "field" => "status_id",  
+                                "options"=> $statuses, 
+                                "value" => old('status_id', isset($organization->status_id) ? $organization->status_id : '') ])                                                          
+
 <div>
     <input class="btn btn-info" type="submit" value="{{ $buttonText }}">
 </div>

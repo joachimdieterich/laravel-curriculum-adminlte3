@@ -68,6 +68,13 @@ class UsersController extends Controller
 
         return redirect()->route('admin.users.index');
     }
+    
+    public function massUpdate(MassUpdateUserRequest $request)
+    {
+        User::whereIn('id', request('ids'))->update();
+
+        return response(null, 204);
+    }
 
     public function show(User $user)
     {

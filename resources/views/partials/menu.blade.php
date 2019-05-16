@@ -96,6 +96,30 @@
                         </a>
                     </li>
                 @endcan
+                @can('grade_access')
+                    <li class="nav-item">
+                        <a href="{{ route("admin.grades.index") }}" class="nav-link {{ request()->is('admin/grades') || request()->is('admin/grades/*') ? 'active' : '' }}">
+                            <i class="fas fa-signal">
+
+                            </i>
+                            <p>
+                                <span>{{ trans('global.grade.title') }}</span>
+                            </p>
+                        </a>
+                    </li>
+                @endcan
+                @can('organization_type_access')
+                    <li class="nav-item">
+                        <a href="{{ route("admin.organizationtypes.index") }}" class="nav-link {{ request()->is('admin/organizationtypes') || request()->is('admin/organizationtypes/*') ? 'active' : '' }}">
+                            <i class="fas fa-signal">
+
+                            </i>
+                            <p>
+                                <span>{{ trans('global.organizationtype.title') }}</span>
+                            </p>
+                        </a>
+                    </li>
+                @endcan
                 <li class="nav-item">
                     <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
                         <p>

@@ -8,6 +8,7 @@ use App\Organization;
 use App\Http\Requests\MassDestroyOrganizationRequest;
 use Illuminate\Http\Request;
 use App\Role;
+use App\Status;
 
 class OrganizationsController extends Controller
 {
@@ -19,7 +20,11 @@ class OrganizationsController extends Controller
     public function index()
     {
         $organizations = Organization::all();//auth()->user()->accessibleOrganizations(); //Organization::all();
-        return view('admin.organizations.index', compact('organizations'));
+        $statuses = Status::all();
+        //dd($statuses);
+        return view('admin.organizations.index')
+                ->with(compact('organizations'))
+                ->with(compact('statuses'));
     }
 
     /**
@@ -42,7 +47,7 @@ class OrganizationsController extends Controller
     public function store()
     {
         // validate
-
+        
         //persist
         //dd(auth()->user()->organizations());
 
@@ -77,7 +82,10 @@ class OrganizationsController extends Controller
      */
     public function edit(Organization $organization)
     {
-        return view('admin.organizations.edit', compact('organization'));
+        $statuses = Status::all();
+        return view('admin.organizations.edit')
+                ->with(compact('organization'))
+                ->with(compact('statuses'));
     }
 
     /**
@@ -91,7 +99,13 @@ class OrganizationsController extends Controller
     public function update(Organization $organization)
     {
         //$this->authorize('update', $organization);
-        $organization->update($this->validateRequest());
+        $clean_data = $this->validateRequest();
+        if (isset(request()->status_id[0]))
+        {
+            $clean_data['status_id'] =  request()->status_id[0];  //hack to prevent array to string conversion
+        }
+        
+        $organization->update($clean_data);
         
         return redirect($organization->path());
     }
@@ -121,12 +135,7 @@ class OrganizationsController extends Controller
     
     
     protected function validateRequest()
-    {        
-        /* todo set status by admin? */
-        request()->merge([      
-            'status' => 1, 
-            
-        ]);
+    {               
         
         return request()->validate([
             'title'         => 'sometimes|required',
@@ -136,9 +145,10 @@ class OrganizationsController extends Controller
             'city'          => 'sometimes',
             'state_id'      => 'sometimes',
             'country_id'    => 'sometimes',
+            'organization_type_id' => 'sometimes',
             'phone'         => 'sometimes',
             'email'         => 'sometimes',
-            'status'        => 'required',
+            'status_id'     => 'sometimes',
             ]);
     }
 }

@@ -103,4 +103,30 @@ class ManageUserTest extends TestCase
         $this->followingRedirects()->post("/admin/users/". $user->id ."/organization/". $organization1->id ."/expel")
                 ->assertStatus(200);   
     }
+    
+    /** @test */
+    public function an_admin_can_mass_update_user_passwords()
+    {        
+        $user = $this->signInAdmin();
+        
+        $this->followingRedirects()->post("/admin/users/users/massUpdate" , $attributes = [
+                    'role_id' => $role_creator_id,
+                    'organizations' => [
+                        ($org2 = OrganizationFactory::create())->id
+                    ], 
+                ])
+                ->assertStatus(200);
+        
+        $user->enrol($user_expel->id, $organization1->id, $role_admin->id); //returns OrganizationRoleUser
+        
+        $this->assertDatabaseHas('organization_role_users', [
+            'user_id' => $user_expel->id, 
+            'organization_id' => $organization1->id, 
+            'role_id' => $role_admin->id
+            ]);
+        $this->assertEquals($role_admin->title, $user_expel->roles->first()->title);
+        
+        $this->followingRedirects()->post("/admin/users/". $user->id ."/organization/". $organization1->id ."/expel")
+                ->assertStatus(200);   
+    }
 }

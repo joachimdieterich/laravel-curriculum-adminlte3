@@ -24,8 +24,26 @@ class OrganizationTest extends TestCase
     public function it_has_a_country() {
         $this->seeder();
         $org = Organization::first(); 
-        //dd($org->country()->first());
+        
         $this->assertInstanceOf('App\Country', $org->country()->first());
+        
+    }
+   
+    /** @test */
+    public function it_has_a_organization_type() {
+        $this->seeder();
+        $org = Organization::first(); 
+       
+        $this->assertInstanceOf('App\OrganizationType', $org->type()->first());
+        
+    }
+    
+    /** @test */
+    public function it_has_a_status() {
+        $this->seeder();
+        $org = Organization::first(); 
+       
+        $this->assertInstanceOf('App\Status', $org->status()->first());
         
     }
     

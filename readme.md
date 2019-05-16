@@ -57,7 +57,12 @@ php artisan serve
 
 ## Progress
 
-* 
-* 20190503 Adding code of conduct, contributing and license
+* 20190504 adding grades table
+* 20190504 adding subjects_type table
+* 20190503 adding subjects table
+* 20190503 adding organization_types table
+* 20190503 states now use ISO 3166-2
+* 20190503 countries now use ISO 3166-1
+* 20190503 adding code of conduct, contributing and license
 * 20190503 initial Commit
-** Adding country and state table
+* 20190503 adding country and state table

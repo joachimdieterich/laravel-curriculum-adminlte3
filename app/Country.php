@@ -9,7 +9,7 @@ class Country extends Model
 {
    public function states()
    {
-        return $this->hasMany(State::class, 'country_code', 'code');
+        return $this->hasMany(State::class, 'country', 'alpha2');
    }
     
 }

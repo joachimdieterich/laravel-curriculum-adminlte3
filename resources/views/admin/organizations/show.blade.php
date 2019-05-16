@@ -24,7 +24,7 @@
                 <strong><i class="fa fa-university mr-1"></i> {{ $organization->title }}</strong>
 
                 <p class="text-muted">
-                  
+                  {{ $organization->type->title }}
                 </p>
 
                 <hr>
@@ -34,7 +34,7 @@
                 <p class="text-muted">
                     {{ $organization->street }}<br>
                     {{ $organization->postcode }} {{ $organization->city }}<br>
-                    
+                    {{ $organization->state->lang_de }}, {{ $organization->country->lang_de }}
                 </p>
 
                 <hr>
@@ -55,17 +55,10 @@
               <!-- /.card-body -->
               <div class="card-footer">
                 <div class="float-left">
-                    @switch($organization->status )
-                        @case(0)
-                            <button type="button" class="btn-xs btn-block btn-danger pull-right">deaktiviert</button>
-                            @break
-                        @case(1)
-                            <button type="button" class="btn-xs btn-block btn-success pull-right">aktiv</button>
-                            @break
-
-                        @default
-                            <button type="button" class="btn-xs btn-block btn-info pull-right">unbekannter Status</button>
-                    @endswitch                
+                    <button type="button" 
+                            class="btn-xs btn-block btn-{{ $organization->status()->first()->color_css_class }} pull-right">
+                        {{ $organization->status()->first()->lang_de }}
+                    </button>            
                 </div>
                 <small class="float-right">
                     {{ $organization->updated_at }}

@@ -25,7 +25,7 @@ class ManageOrganizationTest extends TestCase
     }
     
     /** @test */
-    public function an_administrator_update_an_institution()
+    public function an_administrator_update_an_organization()
     {
         $this->signInAdmin();
         /* add new organization */
@@ -40,6 +40,29 @@ class ManageOrganizationTest extends TestCase
                 ->assertStatus(200);
         
         $this->assertDatabaseHas('organizations', $new_attributes);
+    }
+    
+    /** @test */
+    public function an_administrator_update_the_status_of_an_organization()
+    {
+        $this->signInAdmin();
+        /* add new organization */
+        $this->followingRedirects()
+                ->post("admin/organizations" , $attributes = factory('App\Organization')->raw())
+                ->assertStatus(200);
+        
+        $this->assertDatabaseHas('organizations', $attributes);
+        
+        /* edit organization */ 
+        $attributes['status_id'] = 2;
+        
+        $this->followingRedirects()
+                ->patch("admin/organizations/". (Organization::where(
+                        'title', '=', $attributes['title'])->first()->id) , 
+                        ['status_id' => 2] )
+                ->assertStatus(200);
+        
+        $this->assertDatabaseHas('organizations', $attributes);
     }
     
     /** @test */

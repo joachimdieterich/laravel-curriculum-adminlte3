@@ -7,13 +7,26 @@
             checked="checked
         @endif
         />
-        <label class="form-check-label" for="input-{{ $field }}">{{ trans('global.'.$model.'.fields.'.$field) }}</label>
+        <label class="form-check-label" for="input-{{ $field }}">
+            @if(isset($model)) 
+                {{ trans('global.'.$model.'.fields.'.$field) }}
+            @else
+                {{ trans('global.'.$field) }}
+            @endif
+    </label>
     @if($errors->has( $field))
         <p class="help-block">
             {{ $errors->first( $field ) }}
         </p>
     @endif
+    
+    @if(isset($show_helper)) 
     <p class="helper-block">
-        {{ trans('global.'.$model.'.fields.'.$field.'_helper') }}
+        @if(isset($model)) 
+            {{ trans('global.'.$model.'.fields.'.$field.'_helper') }}
+        @else
+            {{ trans('global.'.$field) }}
+        @endif    
     </p>
+    @endif
 </div>

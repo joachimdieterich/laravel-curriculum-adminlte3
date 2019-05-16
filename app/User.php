@@ -67,7 +67,7 @@ class User extends Authenticatable
      * @param int $role_id
      * @return OrganizationRoleUser
      */
-    public function enrol($user_id, $organization_id, $role_id )
+    public function enrol($user_id, $organization_id, $role_id)
     {
         return OrganizationRoleUser::firstOrCreate([
             'user_id'         => $user_id,
@@ -84,6 +84,15 @@ class User extends Authenticatable
         ])->delete();
     }
     
+    public function contents()
+    {
+        return $this->hasMany(Content::class, 'owner_id')->latest('updated_at');
+    }
+    
+    public function groups()
+    {
+        return $this->belongsToMany('App\Group', 'group_user');
+    }
     
     public function roles()
     {

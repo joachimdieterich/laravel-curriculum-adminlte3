@@ -9,12 +9,24 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CountriesTableSeeder::class,
             StatesTableSeeder::class,
+            OrganizationTypeTableSeeder::class,
+            SubjectsTableSeeder::class,
+            SubjectTypesTableSeeder::class,
+            GradesTableSeeder::class,
             PermissionsTableSeeder::class,
             RolesTableSeeder::class,
             PermissionRoleTableSeeder::class,
             OrganizationsTableSeeder::class,
             UsersTableSeeder::class,
             RoleUserTableSeeder::class,
+            PeriodesTableSeeder::class,
+            GroupsTableSeeder::class,
+            GroupUserTableSeeder::class,
+            ContextsTableSeeder::class,
+            SharingLevelsTableSeeder::class,
+            StatusesTableSeeder::class,
+            LicensesTableSeeder::class,
+            ContentsTableSeeder::class,
         ]);
     }
 }

@@ -15,8 +15,8 @@ class CountryTest extends TestCase
      /** @test */
     public function it_has_states() {
         $this->seeder();
-        $country = Country::findOrFail(56); //code == 'DE'
-        $this->assertTrue($country->states()->first()->country_code == 'DE');
+        $country = Country::findOrFail(276); //code == 'DE'
+        $this->assertTrue($country->states()->first()->country == 'DE');
     }
     
 }

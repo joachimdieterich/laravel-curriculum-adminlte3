@@ -8,7 +8,8 @@ use App\OrganizationRoleUser;
 class Organization extends Model
 {
     protected $guarded = [];
-
+    
+    
     public function path()
     {
         return "/admin/organizations/{$this->id}";
@@ -28,12 +29,21 @@ class Organization extends Model
     
     public function state()
     {
-        return $this->hasOne('App\State', 'id', 'state_id');
+        return $this->hasOne('App\State', 'code', 'state_id');
     }
     
     public function country()
     {
-        return $this->hasOne('App\Country', 'id', 'country_id');
-        
+        return $this->hasOne('App\Country', 'alpha2', 'country_id');   
+    }
+    
+    public function type()
+    {
+        return $this->hasOne('App\OrganizationType', 'external_id', 'organization_type_id');
+    }
+    
+    public function status()
+    {
+        return $this->hasOne('App\Status', 'status_id', 'status_id');
     }
 }

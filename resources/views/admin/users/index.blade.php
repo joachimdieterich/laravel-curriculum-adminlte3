@@ -16,7 +16,7 @@
 
     <div class="card-body">
         <div class="table-responsive">
-            <table class=" table table-bordered table-striped table-hover datatable">
+            <table id="users" class=" table table-bordered table-striped table-hover datatable">
                 <thead>
                     <tr>
                         <th width="10">
@@ -131,12 +131,11 @@
         <div class="card">  
             <div class="card-header">
                 <ul class="nav nav-pills">
-                    <!--@can('user_resetPassword')-->
-                    <!--@endcan-->
+                    @can('user_reset_password')
                         <li id="nav_tab_password" class="nav-item">
                             <a href="#tab_password" class="nav-link" data-toggle="tab">Passwort</a>
                         </li>
-
+                    @endcan
                     <!--@canany(['user_enroleToGroup', 'user_expelFromGroup'])-->
                     <!--@endcanany-->
                         <li id="nav_tab_group" class="nav-item">
@@ -163,21 +162,21 @@
                 </ul>
             </div>
             <div class="card-body">
-              <div class="tab-content">
-                    <!--@can('user_resetPassword')-->
-                    <!--@endcan-->
+                <div class="tab-content">
+                    @can('user_reset_password')
                         <div id="tab_password" class="tab-pane active row " >
-                            <form id='userlist_pw'   method='post' action="index.php?action=user">
+                            <form id='userlist_pw' method='post' action="">
                                 <div class="form-horizontal col-xs-12">
-                                @include ('forms.input.text', ["model" => "user", "field" => "pw_info", "placeholder" => "New Password",  "value" => ""])
+                                @include ('forms.input.text', ["model" => "user", "field" => "password", "placeholder" => "New Password",  "value" => ""])
                                 @include ('forms.input.info', ["value" => "Neues Passwort für markierte Benutzer festlegen. Passwort muss mind. 6 Zeichen lang sein."])
-                                @include ('forms.input.checkbox', ["model" => "user", "field" => "showpassword", "value" => ""])
-                                @include ('forms.input.checkbox', ["model" => "user", "field" => "confirmed", "value" => ""])
-                                @include ('forms.input.button', ["field" => "confirmed", "type" => "submit", "class" => "btn btn-default pull-right", "icon" => "fa fa-lock", "label" => "Passwort zurücksetzen"])
+                                @include ('forms.input.checkbox', ["field" => "login_password_show", "value" => ""])
+                                @include ('forms.input.checkbox', ["field" => "login_password_confirmation", "value" => ""])
+                                @include ('forms.input.button', ["field" => "confirmed", "type" => "submit", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-lock", "label" => "Passwort zurücksetzen"])
                                 </div>
                             </form>
+                            
                         </div>
-                    
+                    @endcan
 
                     <!--@canany(['user_enroleToGroup', 'user_expelFromGroup'])-->
                         <div id="tab_group" class="tab-pane row " >
@@ -248,20 +247,23 @@
                             </form>
                         </div>
                     <!--@endcan-->
-
-                </div><!-- ./tab-content -->
-             </div>
+                    <button id="test" onclick="function (this){
+                        this.innerHTML = toString($('#users').DataTable().rows({selected: true}));
+                    }
+">test</button>
+                 </div><!-- ./tab-content -->
+            </div>
         </div>
     </div><!-- ./col-xs-12 -->  
-
 </div>
 
 @endsection
 @section('scripts')
 @parent
 <script>
-    $(function () {
+$(function () {
   let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
+  
   let deleteButton = {
     text: deleteButtonTrans,
     url: "{{ route('admin.users.massDestroy') }}",
@@ -292,7 +294,7 @@
   dtButtons.push(deleteButton)
 @endcan
 
-  $('.datatable:not(.ajaxTable)').DataTable({ buttons: dtButtons })
+  $('#users').DataTable({ buttons: dtButtons })
 })
 
 </script>

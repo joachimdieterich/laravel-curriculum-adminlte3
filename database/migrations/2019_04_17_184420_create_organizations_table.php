@@ -14,7 +14,7 @@ class CreateOrganizationsTable extends Migration
     public function up()
     {
         Schema::create('organizations', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->bigIncrements('id')->unsigned();
 
             $table->string('title'); //newer version of institution
             $table->text('description')->nullable();
@@ -23,18 +23,21 @@ class CreateOrganizationsTable extends Migration
             $table->string('postcode')->nullable();
             $table->string('city')->nullable();
             
-            $table->bigInteger('state_id')->unsigned();
-            $table->bigInteger('country_id')->unsigned();
+            $table->char('state_id');
+            $table->char('country_id');
+            
+            $table->unsignedBigInteger('organization_type_id');
             
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
 
-            $table->unsignedInteger('status'); // newer version of confirmed
+            $table->unsignedbigInteger('status_id')->default(2); // newer version of confirmed // 2 == pending activation
 
             $table->timestamps();
             
-            $table->foreign('state_id')->references('id')->on('states');
-            $table->foreign('country_id')->references('id')->on('countries');
+            $table->foreign('state_id')->references('code')->on('states');
+            $table->foreign('country_id')->references('alpha2')->on('countries');
+            $table->foreign('organization_type_id')->references('id')->on('organization_types');
         });
     }
 

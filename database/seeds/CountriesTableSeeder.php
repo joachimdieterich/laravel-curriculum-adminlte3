@@ -1397,7 +1397,7 @@ class CountriesTableSeeder extends Seeder
                     'langES'=>'s Republic of Korea',
                     'langFR'=>'Corea',
                     'langIT'=>'République Populaire Démocratique de Corée',
-                    'langNL'=>'Corea del Nord\'Noord-Korea',
+                    'langNL'=>'Corea del Nord',
                     ],
                     [
                     'id'=>410,

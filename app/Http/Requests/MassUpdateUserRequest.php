@@ -18,6 +18,7 @@ class MassUpdateUserRequest extends FormRequest
         return [
             'ids'   => 'required|array',
             'ids.*' => 'exists:users,id',
+            'password' => 'sometimes|required|string|min:8',
         ];
     }
 }

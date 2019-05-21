@@ -4,13 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyUserRequest;
+use App\Http\Requests\MassUpdateUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Role;
 use App\User;
 use App\Organization;
 use App\OrganizationRoleUser;
+use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Request;
+use Yajra\DataTables\DataTables;
 
 class UsersController extends Controller
 {
@@ -27,6 +30,50 @@ class UsersController extends Controller
             
         ]);
     }
+    
+    public function userList()
+    {
+        $users = User::select([
+            'id', 
+            'username', 
+            'firstname', 
+            'lastname', 
+            'email',
+            'email_verified_at'
+            ]);
+        
+        return DataTables::of($users)
+            ->addColumn('action', function ($users) {
+                 $actions  = '';
+                    if (\Gate::allows('user_show')){
+                        $actions .= '<a href="'.route('admin.users.show', $users->id).'" '
+                                    . 'class="btn btn-xs btn-success">'
+                                    . '<i class="fa fa-list-alt"></i> Show'
+                                    . '</a>';
+                    }
+                    if (\Gate::allows('user_edit')){
+                        $actions .= '<a href="'.route('admin.users.edit', $users->id).'" '
+                                    . 'class="btn btn-xs btn-primary">'
+                                    . '<i class="fa fa-edit"></i> Edit'
+                                    . '</a>';
+                    }
+                    if (\Gate::allows('user_delete')){
+                        $actions .= '<form action="'.route('admin.users.destroy', $users->id).'" method="POST">'
+                                    . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
+                                    . '<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Delete</button>';
+                    }
+              
+                return $actions;
+            })
+           
+            ->addColumn('check', '')
+            ->setRowId('id')
+            ->setRowAttr([
+                'color' => 'primary',
+            ])
+            ->make(true);
+    }
+    
 
     public function create()
     {
@@ -71,8 +118,12 @@ class UsersController extends Controller
     
     public function massUpdate(MassUpdateUserRequest $request)
     {
-        User::whereIn('id', request('ids'))->update();
-
+        //dd(request());
+        
+        User::whereIn('id', request('ids'))->update([
+            'password' => Hash::make($request->password)
+                ]);  
+        
         return response(null, 204);
     }
 

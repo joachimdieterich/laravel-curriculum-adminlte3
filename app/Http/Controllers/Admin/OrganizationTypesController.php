@@ -9,7 +9,7 @@ use App\Http\Requests\UpdateProductRequest;
 use App\OrganizationType;
 use Illuminate\Http\Request;
 use Redirect,Response,DB,Config;
-use Datatables;
+use Yajra\DataTables\DataTables;
 
 class OrganizationTypesController extends Controller
 {
@@ -29,22 +29,20 @@ class OrganizationTypesController extends Controller
         //dd('Test');
         abort_unless(\Gate::allows('organization_type_access'), 403);
 
-        $model = OrganizationType::query();
-        return DataTables::eloquent($model)
-                ->filter(function ($query) {
-                    if (request()->has('title')) {
-                        $query->where('title', 'like', "%" . request('title') . "%");
-                    }
-
-                    if (request()->has('states')) {
-                        $query->where('states', 'like', "%" . request('states') . "%");
-                    }
-                })
-                ->toJson();
+  
+        $organization_types = OrganizationType::select(['id', 'title', 'external_id', 'state_id', 'country_id']);
         
-        
-        $organization_types = OrganizationType::all();
-        return datatables()->of($organization_types)
+        return DataTables::of($organization_types)
+//            ->addColumn('action', function ($organization_type) {
+//                return '<href="#edit-'.$organization_type->id.'" '
+//                        . 'class="btn btn-xs btn-primary">'
+//                        . '<i class="fa fa-edit"></i> Edit</href>';
+//            })
+            ->addColumn('check', '')
+            ->setRowId('id')
+            ->setRowAttr([
+                'color' => 'primary',
+            ])
             ->make(true);
         
        

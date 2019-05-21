@@ -15,41 +15,25 @@
     </div>
 
     <div class="card-body">
-        <div class="table-responsive">
-            <table id="users" class=" table table-bordered table-striped table-hover datatable">
+<!--        <div class="table-responsive">
+-->            <table id="users-datatable" class=" table table-bordered table-striped table-hover datatable">
                 <thead>
                     <tr>
-                        <th width="10">
-
-                        </th>
-                        <th>
-                            {{ trans('global.user.fields.username') }}
-                        </th>
-                        <th>
-                            {{ trans('global.user.fields.firstname') }}
-                        </th>
-                        <th>
-                            {{ trans('global.user.fields.lastname') }}
-                        </th>
-                        <th>
-                            {{ trans('global.user.fields.email') }}
-                        </th>
-                        <th>
-                            {{ trans('global.user.fields.email_verified_at') }}
-                        </th>
-                        <th>
-                            {{ trans('global.organization.title') }}
-                        </th>
-                        <th>
-                            &nbsp;
-                        </th>
+                        <th width="10"></th>
+                        <th>{{ trans('global.user.fields.username') }}</th>
+                        <th>{{ trans('global.user.fields.firstname') }}</th>
+                        <th>{{ trans('global.user.fields.lastname') }}</th>
+                        <th>{{ trans('global.user.fields.email') }}</th>
+                        <th>{{ trans('global.user.fields.email_verified_at') }}</th>
+<!--                        <th>{{ trans('global.organization.title') }}</th>-->
+                        <th>Action</th>
                     </tr>
-                </thead>
+                </thead><!--
                 <tbody>
                     @foreach($users as $key => $user)
                         <tr data-entry-id="{{ $user->id }}">
                             <td>
-
+                                {{ $user->id ?? '' }}
                             </td>
                             <td>
                                 {{ $user->username ?? '' }}
@@ -121,8 +105,8 @@
                         </tr>
                     @endforeach
                 </tbody>
-            </table>
-        </div>
+-->            </table><!--
+        </div>-->
     </div>
 </div>
 
@@ -171,7 +155,7 @@
                                 @include ('forms.input.info', ["value" => "Neues Passwort für markierte Benutzer festlegen. Passwort muss mind. 6 Zeichen lang sein."])
                                 @include ('forms.input.checkbox', ["field" => "login_password_show", "value" => ""])
                                 @include ('forms.input.checkbox', ["field" => "login_password_confirmation", "value" => ""])
-                                @include ('forms.input.button', ["field" => "confirmed", "type" => "submit", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-lock", "label" => "Passwort zurücksetzen"])
+                                @include ('forms.input.button', ["onclick" => "$('#users').DataTable().rows({selected: true})[0]", "field" => "confirmed", "type" => "submit", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-lock", "label" => "Passwort zurücksetzen"])
                                 </div>
                             </form>
                             
@@ -247,9 +231,10 @@
                             </form>
                         </div>
                     <!--@endcan-->
-                    <button id="test" onclick="function (this){
-                        this.innerHTML = toString($('#users').DataTable().rows({selected: true}));
-                    }
+                    <button id="test" onclick="
+                        function (this) {
+                            this.innerHTML = toString($('#users').DataTable().rows({selected: true}));
+                        }">
 ">test</button>
                  </div><!-- ./tab-content -->
             </div>
@@ -260,6 +245,61 @@
 @endsection
 @section('scripts')
 @parent
+
+<script>
+$(document).ready( function () {
+    let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
+    let deleteButton = {
+      text: deleteButtonTrans,
+      url: "{{ route('admin.users.massDestroy') }}",
+      className: 'btn-danger',
+      action: function (e, dt, node, config) {
+        var ids = dt.rows({ selected: true }).ids().toArray()
+
+        if (ids.length === 0) {
+          alert('{{ trans('global.datatables.zero_selected') }}')
+          return
+        }
+
+        if (confirm('{{ trans('global.areYouSure') }}')) {
+          $.ajax({
+            headers: {'x-csrf-token': _token},
+            method: 'POST',
+            url: config.url,
+            data: { ids: ids, _method: 'DELETE' }})
+            .done(function () { location.reload() })
+        }
+      }
+    }
+    let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
+    @can('user_delete')
+      dtButtons.push(deleteButton)
+    @endcan
+    
+    
+    $('#users-datatable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ url('admin/userList') }}",
+        columns: [
+                 { data: 'check'},
+                 { data: 'username' },
+                 { data: 'firstname' },
+                 { data: 'lastname' },
+                 { data: 'email' },
+                 { data: 'email_verified_at' },
+//                 { data: 'status' },
+                 { data: 'action' }
+                ],
+        buttons: dtButtons
+    });
+    //align header/body
+    $(".dataTables_scrollHeadInner").css({"width":"100%"});
+    $(".table ").css({"width":"100%"});
+ });
+</script>
+
+<!--
 <script>
 $(function () {
   let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
@@ -268,6 +308,7 @@ $(function () {
     text: deleteButtonTrans,
     url: "{{ route('admin.users.massDestroy') }}",
     className: 'btn-danger',
+
     action: function (e, dt, node, config) {
       var ids = $.map(dt.rows({ selected: true }).nodes(), function (entry) {
           return $(entry).data('entry-id')
@@ -288,14 +329,56 @@ $(function () {
           .done(function () { location.reload() })
       }
     }
-  }
+  }     
+  let resetPasswordButtonTrans = '{{ trans('global.datatables.resetPassword') }}'
+  
+  let resetPasswordButton = {
+    text: resetPasswordButtonTrans,
+    url: "{{ route('admin.users.massUpdate') }}",
+    className: 'btn-danger',
+
+    action: function (e, dt, node, config) {
+      var ids = $.map(dt.rows({ selected: true }).nodes(), function (entry) {
+          return $(entry).data('entry-id')
+      });
+
+      if (ids.length === 0) {
+        alert('{{ trans('global.datatables.zero_selected') }}')
+
+        return
+      }
+
+      if (confirm('{{ trans('global.areYouSure') }}')) {
+        $.ajax({
+          headers: {'x-csrf-token': _token},
+          method: 'POST',
+          url: config.url,
+          data: { 
+              ids: ids, 
+              _method: 'PATCH',
+              password: $('#password').val()
+          }
+        })
+          .done(function () { location.reload() })
+      }
+    }
+  }     
   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
 @can('user_delete')
   dtButtons.push(deleteButton)
 @endcan
+@can('user_delete')
+  dtButtons.push(resetPasswordButton)
+@endcan
 
-  $('#users').DataTable({ buttons: dtButtons })
+   
+
+  $('#users').DataTable({ 
+      buttons: dtButtons,  
+  })
+  
+    
 })
 
-</script>
+</script>-->
 @endsection

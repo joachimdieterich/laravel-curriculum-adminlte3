@@ -9,6 +9,8 @@ use App\Http\Requests\MassDestroyOrganizationRequest;
 use Illuminate\Http\Request;
 use App\Role;
 use App\Status;
+use Yajra\DataTables\DataTables;
+
 
 class OrganizationsController extends Controller
 {
@@ -20,13 +22,62 @@ class OrganizationsController extends Controller
     public function index()
     {
         $organizations = Organization::all();//auth()->user()->accessibleOrganizations(); //Organization::all();
-        $statuses = Status::all();
+        //$statuses = Status::all();
         //dd($statuses);
         return view('admin.organizations.index')
-                ->with(compact('organizations'))
-                ->with(compact('statuses'));
+                ->with(compact('organizations'));
+        
+        
     }
 
+    public function organizationList()
+    {
+        $organizations = Organization::select([
+            'id', 
+            'title', 
+            'description', 
+            'street', 
+            'postcode',
+            'city',
+            'phone',
+            'email', 
+            'status_id'
+            ]);
+        
+        return DataTables::of($organizations)
+            ->addColumn('status', function ($organizations) {
+                return $organizations->status()->first()->lang_de;                
+            })
+            ->addColumn('action', function ($organizations) {
+                 $actions  = '';
+                    if (\Gate::allows('organization_show')){
+                        $actions .= '<a href="'.route('admin.organizations.show', $organizations->id).'" '
+                                    . 'class="btn btn-xs btn-success">'
+                                    . '<i class="fa fa-list-alt"></i> Show'
+                                    . '</a>';
+                    }
+                    if (\Gate::allows('organization_edit')){
+                        $actions .= '<a href="'.route('admin.organizations.edit', $organizations->id).'" '
+                                    . 'class="btn btn-xs btn-primary">'
+                                    . '<i class="fa fa-edit"></i> Edit'
+                                    . '</a>';
+                    }
+                    if (\Gate::allows('organization_delete')){
+                        $actions .= '<form action="'.route('admin.organizations.destroy', $organizations->id).'" method="POST">'
+                                    . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
+                                    . '<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Delete</button>';
+                    }
+              
+                return $actions;
+            })
+           
+            ->addColumn('check', '')
+            ->setRowId('id')
+            ->setRowAttr([
+                'color' => 'primary',
+            ])
+            ->make(true);
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -70,7 +121,11 @@ class OrganizationsController extends Controller
      */
     public function show(Organization $organization)
     {
-        return view('admin.organizations.show', compact('organization'));
+        $statuses = Status::all();
+        
+        return view('admin.organizations.show')
+                ->with(compact('organization'))
+                ->with(compact('statuses'));
     }
 
     /**

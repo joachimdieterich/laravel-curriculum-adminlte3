@@ -16,16 +16,16 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'name'    => [
-                'required',
+                'sometimes|required',
             ],
             'email'   => [
-                'required',
+                'sometimes|required',
             ],
             'roles.*' => [
-                'integer',
+                'sometimes|integer',
             ],
             'roles'   => [
-                'required',
+                'sometimes|required',
                 'array',
             ],
         ];

@@ -22,11 +22,13 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('roles', 'RolesController');
 
     Route::delete('users/destroy', 'UsersController@massDestroy')->name('users.massDestroy');
-    Route::delete('users/massUpdate', 'UsersController@massUpdate')->name('users.massUpdate');
+    Route::patch('users/massUpdate', 'UsersController@massUpdate')->name('users.massUpdate');
+    
     
     Route::post('users/{user}/organization/enrol', 'UsersController@enrolToOrganization');
     Route::post('users/{user}/organization/{organization}/expel', 'UsersController@expelFromOrganization');
     
+    Route::get('userList', 'UsersController@userList');
     Route::resource('users', 'UsersController');
 
     Route::delete('products/destroy', 'ProductsController@massDestroy')->name('products.massDestroy');
@@ -34,7 +36,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('products', 'ProductsController');
     
     Route::delete('organizations/destroy', 'OrganizationsController@massDestroy')->name('organizations.massDestroy');
-    
+    Route::get('organizationList', 'OrganizationsController@organizationList');
     Route::resource('organizations', 'OrganizationsController');
     
     Route::delete('grades/destroy', 'GradesController@massDestroy')->name('grades.massDestroy');

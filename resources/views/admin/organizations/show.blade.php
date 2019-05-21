@@ -54,11 +54,27 @@
               </div>
               <!-- /.card-body -->
               <div class="card-footer">
-                <div class="float-left">
+<!--                <div class="float-left">
                     <button type="button" 
                             class="btn-xs btn-block btn-{{ $organization->status()->first()->color_css_class }} pull-right">
                         {{ $organization->status()->first()->lang_de }}
                     </button>            
+                    
+                </div>-->
+                <div class="float-left">
+                  @can('organization_edit')
+                    <form action="{{ route('admin.organizations.update', $organization->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
+                            <input type="hidden" name="_method" value="PATCH">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    @include ('forms.input.select', 
+                    ["model" => "status", 
+                    "show_label" => true,
+                    "field" => "status_id",  
+                    "options"=> $statuses, 
+                    "onchange"=> "this.form.submit()",  
+                    "value" => old('status_id', isset($organization->status_id) ? $organization->status_id : '') ])
+                    </form>  
+                    @endcan
                 </div>
                 <small class="float-right">
                     {{ $organization->updated_at }}

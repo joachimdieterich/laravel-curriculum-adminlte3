@@ -1051,6 +1051,10 @@ class CountriesTableSeeder extends Seeder
                     'langIT'=>'Kiribati',
                     'langNL'=>'Kiribati'
                     ],
+            ];
+
+        Country::insert($countries);
+        $countries = [
                     [
                     'id'=>300,
                     'alpha2'=>'GR',
@@ -1397,7 +1401,7 @@ class CountriesTableSeeder extends Seeder
                     'langES'=>'s Republic of Korea',
                     'langFR'=>'Corea',
                     'langIT'=>'République Populaire Démocratique de Corée',
-                    'langNL'=>'Corea del Nord',
+                    'langNL'=>'Corea del Nord\'Noord-Korea',
                     ],
                     [
                     'id'=>410,
@@ -2035,6 +2039,11 @@ class CountriesTableSeeder extends Seeder
                     'langIT'=>'Papua Nuova Guinea',
                     'langNL'=>'Papoea-Nieuw-Guinea'
                     ],
+                    
+            ];
+
+        Country::insert($countries);
+        $countries = [
                     [
                     'id'=>600,
                     'alpha2'=>'PY',
@@ -2912,7 +2921,6 @@ class CountriesTableSeeder extends Seeder
                     'langNL'=>'Zambia'
                     ],
             ];
-
         Country::insert($countries);
     }
 }

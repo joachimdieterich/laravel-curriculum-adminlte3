@@ -4,8 +4,8 @@
     name="{{ $field }}" 
     class="{{ $class }}" 
     @if(isset($onclick)) 
-        onclick="{{ $onclick }}">
+        onclick="{{ $onclick }}"
     @endif 
     >
-    <span class="{{ $icon }}"></span> "{{ $label }}"
+    <i class="{{ $icon }} mr-2"></i>{{ $label }}
 </button>

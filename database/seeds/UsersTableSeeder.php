@@ -21,6 +21,6 @@ class UsersTableSeeder extends Seeder
         ]];
 
         User::insert($users);
-        User::findOrFail(1)->enrol(1,1,1);
+        User::findOrFail(1)->enrol('organization', 1,1,1);
     }
 }

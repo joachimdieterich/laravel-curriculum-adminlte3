@@ -14,25 +14,26 @@ class CreateCurriculaTable extends Migration
     public function up()
     {
         Schema::create('curricula', function (Blueprint $table) {
+           
             $table->bigIncrements('id');
             $table->string('title');
-            $table->text('description');
+            $table->text('description')->nullable();
             
-            $table->string('author');
-            $table->string('publisher');
-            $table->string('city');
-            $table->timestamp('date');
+            $table->string('author')->nullable();
+            $table->string('publisher')->nullable();
+            $table->string('city')->nullable();
+            $table->timestamp('date')->nullable();
             
-            $table->char('color')->default('#3c8dbc99');
+            $table->char('color')->default('#3c8dbc99')->nullable();
             
             
             $table->unsignedbigInteger('grade_id');
             $table->unsignedbigInteger('subject_id');
             $table->unsignedbigInteger('organization_type_id');
-            $table->unsignedbigInteger('state_id');
-            $table->unsignedbigInteger('country_id');
+            $table->char('state_id');
+            $table->char('country_id');
             
-            $table->unsignedbigInteger('file_id');
+            $table->unsignedbigInteger('file_id')->nullable();
             
             $table->unsignedbigInteger('owner_id');
             
@@ -40,9 +41,9 @@ class CreateCurriculaTable extends Migration
             
             $table->foreign('grade_id')->references('id')->on('grades');
             $table->foreign('subject_id')->references('id')->on('subjects');
+            $table->foreign('state_id')->references('code')->on('states');
+            $table->foreign('country_id')->references('alpha2')->on('countries');
             $table->foreign('organization_type_id')->references('id')->on('organization_types');
-            $table->foreign('state_id')->references('id')->on('states');
-            $table->foreign('country_id')->references('id')->on('countries');
             $table->foreign('file_id')->references('id')->on('files');
             $table->foreign('owner_id')->references('id')->on('users');
         });

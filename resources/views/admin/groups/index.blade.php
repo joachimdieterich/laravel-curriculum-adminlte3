@@ -80,7 +80,34 @@
 
 <script>
 $(document).ready( function () {
+    let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
+    let deleteButton = {
+      text: deleteButtonTrans,
+      url: "{{ route('admin.groups.massDestroy') }}",
+      className: 'btn-danger',
+      action: function (e, dt, node, config) {
+        var ids = dt.rows({ selected: true }).ids().toArray()
+
+        if (ids.length === 0) {
+          alert('{{ trans('global.datatables.zero_selected') }}')
+          return
+        }
+
+        if (confirm('{{ trans('global.areYouSure') }}')) {
+          $.ajax({
+            headers: {'x-csrf-token': _token},
+            method: 'POST',
+            url: config.url,
+            data: { ids: ids, _method: 'DELETE' }})
+            .done(function () { location.reload() })
+        }
+      }
+    }
     let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
+    @can('group_delete')
+      dtButtons.push(deleteButton)
+    @endcan
+    
     var table = $('#groups-datatable').DataTable({
         processing: true,
         serverSide: true,
@@ -101,52 +128,6 @@ $(document).ready( function () {
     $(".table ").css({"width":"100%"});
  });
  
- 
-function enroleToOrganization()
-    {
-        var ids = $('#users-datatable').DataTable().rows({ selected: true }).ids().toArray()
-        if (ids.length === 0) {
-            alert('{{ trans('global.datatables.zero_selected') }}')
-            return
-        }
-
-        if (confirm('{{ trans('global.areYouSure') }}')) {
-            $.ajax({
-              headers: {'x-csrf-token': _token},
-              method: 'POST',
-              url: "/admin/users/organization/massEnrol",
-              data: { 
-                  ids: ids, 
-                  organization_id: $('#role_organization_id').val(),
-                  role_id: $('#role_id').val(),
-                  _method: 'PATCH',
-              }
-            })
-              .done(function () { location.reload() })
-        }  
-    }
-    function expelFromOrganization()
-    {
-        var ids = $('#users-datatable').DataTable().rows({ selected: true }).ids().toArray()
-        if (ids.length === 0) {
-            alert('{{ trans('global.datatables.zero_selected') }}')
-            return
-        }
-
-        if (confirm('{{ trans('global.areYouSure') }}')) {
-            $.ajax({
-              headers: {'x-csrf-token': _token},
-              method: 'POST',
-              url: "/admin/users/organization/massExpel",
-              data: { 
-                  ids: ids, 
-                  organization_id: $('#role_organization_id').val(),
-                  _method: 'PATCH',
-              }
-            })
-              .done(function () { location.reload() })
-        }  
-    }
 </script>
 
 

@@ -14,7 +14,7 @@
             >
             @include ('admin.groups.form', [
                 'group' => new App\Group,
-                'buttonText' => 'Create Group'
+                'buttonText' => trans('global.create').' '. trans('global.group.title_singular')
             ])
         </form>
         </form>

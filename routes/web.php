@@ -41,8 +41,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('users/list', 'UsersController@list');
     Route::resource('users', 'UsersController');
    
-    
-    Route::get('list', 'GroupsController@list');
+    Route::delete('groups/massDestroy', 'GroupsController@massDestroy')->name('groups.massDestroy');
+    Route::get('groups/list', 'GroupsController@list');
     Route::resource('groups', 'GroupsController');
     
     

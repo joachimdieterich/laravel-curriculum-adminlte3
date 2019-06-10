@@ -8,8 +8,8 @@ use App\Grade;
 use App\Period;
 use App\Curriculum;
 use App\Organization;
-use Illuminate\Http\Request;
-use Redirect,Response,DB,Config;
+use App\Http\Requests\MassDestroyGroupRequest;
+use App\Http\Requests\UpdateGroupRequest;
 use Yajra\DataTables\DataTables;
 
 class GroupsController extends Controller
@@ -34,7 +34,7 @@ class GroupsController extends Controller
             'organization_id',
             'owner_id',
             ]);       
-        dd($groups);
+        
         return DataTables::of($groups)
             ->addColumn('grade', function ($groups) {
                 return $groups->grade()->first()->title;                
@@ -53,17 +53,19 @@ class GroupsController extends Controller
                     if (\Gate::allows('group_show')){
                         $actions .= '<a href="'.route('admin.groups.show', $groups->id).'" '
                                     . 'class="btn btn-xs btn-success">'
-                                    . '<i class="fa fa-list-alt"></i> Show'
+                                    . '<i class="fa fa-list-alt"></i> '.trans('global.show').''
                                     . '</a>';
                     }
                     if (\Gate::allows('group_edit')){
                         $actions .= '<a href="'.route('admin.groups.edit', $groups->id).'" '
                                     . 'class="btn btn-xs btn-primary">'
-                                    . '<i class="fa fa-edit"></i> Edit'
+                                    . '<i class="fa fa-edit"></i> '.trans('global.edit').''
                                     . '</a>';
                     }
                     if (\Gate::allows('group_delete')){
-                        $actions .= '<button type="button" class="btn btn-xs btn-danger" onclick="destroyUser('.$groups->id.')"><i class="fa fa-trash"></i> Delete</button>';
+                        $actions .= '<form action="'.route('admin.groups.destroy', $groups->id).'" method="POST">'
+                                    . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
+                                    . '<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> '.trans('global.delete').'</button>';
                     }
               
                 return $actions;
@@ -105,13 +107,13 @@ class GroupsController extends Controller
     public function store()
     {
         
-        //dd($this->validateRequest());
         $new_group = $this->validateRequest();
+        
         $group = Group::firstOrCreate([
             'title' => $new_group['title'],
-            'grade_id' => $new_group['grade_id'][0],
-            'period_id' => $new_group['period_id'][0],
-            'organization_id' => $new_group['organization_id'][0],
+            'grade_id' => format_select_input($new_group['grade_id']),
+            'period_id' => format_select_input($new_group['period_id']),
+            'organization_id' => format_select_input($new_group['organization_id']),
             'owner_id' => auth()->user()->id  
         ]);
         
@@ -124,7 +126,7 @@ class GroupsController extends Controller
     }
     
     /**
-     * Display the specified resource.
+     * Display the specified group.
      *
      * @param int $id
      *
@@ -134,6 +136,59 @@ class GroupsController extends Controller
     {   
         return view('admin.groups.show')
                 ->with(compact('group'));
+    }
+    
+    public function edit(Group $group)
+    {
+        
+        abort_unless(\Gate::allows('group_edit'), 403);
+        $grades = Grade::all();
+        $periods = Period::all();
+        $organizations = Organization::all();
+        
+        return view('admin.groups.edit')
+                ->with(compact('group'))
+                ->with(compact('grades'))
+                ->with(compact('periods'))
+                ->with(compact('organizations'));
+    }
+    
+    
+    public function update(UpdateGroupRequest $request, Group $group)
+    {
+        abort_unless(\Gate::allows('group_edit'), 403);
+        
+        $group->update([
+            'title' => $request['title'],
+            'grade_id' => format_select_input($request['grade_id']),
+            'period_id' => format_select_input($request['period_id']),
+            'organization_id' => format_select_input($request['organization_id']),
+            'owner_id' => auth()->user()->id  
+        ]);
+
+        return redirect()->route('admin.groups.index');
+    }
+     /**
+     * Remove the specified group from storage.
+     *
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Group $group)
+    {
+        abort_unless(\Gate::allows('group_delete'), 403);
+
+        $group->delete();
+
+        return back();
+    }
+    
+    public function massDestroy(MassDestroyGroupRequest $request)
+    {
+        abort_unless(\Gate::allows('group_delete'), 403);
+        Group::whereIn('id', request('ids'))->delete();
+
+        return response(null, 204);
     }
     
     protected function validateRequest()

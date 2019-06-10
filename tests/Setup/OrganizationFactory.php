@@ -15,7 +15,6 @@
 namespace Tests\Setup;
 
 use App\Organization;
-use App\User;
 
 class OrganizationFactory
 {
@@ -30,8 +29,7 @@ class OrganizationFactory
 
     public function create()
     {
-        $organization = factory(Organization::class)->create();
-
-        return $organization;
+        
+        return  factory(Organization::class)->create();;
     }
 }

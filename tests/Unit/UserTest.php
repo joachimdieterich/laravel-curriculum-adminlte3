@@ -14,7 +14,7 @@ class UserTest extends TestCase
     
     /** @test */
     public function has_a_group() {
-        $this->seeder();
+        
         $user = User::findOrFail(1); 
         
         $this->assertInstanceOf('App\Group', $user->groups()->first());

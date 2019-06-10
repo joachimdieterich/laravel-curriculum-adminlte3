@@ -10,7 +10,8 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Role;
 use App\User;
 use App\Organization;
-use App\OrganizationRoleUser;
+use App\Group;
+use App\Status;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Request;
 use Yajra\DataTables\DataTables;
@@ -23,15 +24,20 @@ class UsersController extends Controller
 
         $users = User::all();
         $organizations = Organization::all();
-
-        return view('admin.users.index', [
-            'users' => $users,
-            'organizations' => $organizations,
-            
-        ]);
+        $statuses = Status::all();
+        $roles = Role::all();
+        $groups = Group::orderBy('organization_id', 'desc')->get();
+        
+        //dd($groups);
+        return view('admin.users.index')
+          ->with(compact('users'))
+          ->with(compact('organizations'))
+          ->with(compact('statuses'))
+          ->with(compact('groups'))
+          ->with(compact('roles'));
     }
     
-    public function userList()
+    public function list()
     {
         $users = User::select([
             'id', 
@@ -39,10 +45,14 @@ class UsersController extends Controller
             'firstname', 
             'lastname', 
             'email',
-            'email_verified_at'
+            'email_verified_at',
+            'status_id'
             ]);
         
         return DataTables::of($users)
+            ->addColumn('status', function ($users) {
+                return $users->status()->first()->lang_de;                
+            })
             ->addColumn('action', function ($users) {
                  $actions  = '';
                     if (\Gate::allows('user_show')){
@@ -58,9 +68,7 @@ class UsersController extends Controller
                                     . '</a>';
                     }
                     if (\Gate::allows('user_delete')){
-                        $actions .= '<form action="'.route('admin.users.destroy', $users->id).'" method="POST">'
-                                    . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
-                                    . '<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Delete</button>';
+                        $actions .= '<button type="button" class="btn btn-xs btn-danger" onclick="destroyUser('.$users->id.')"><i class="fa fa-trash"></i> Delete</button>';
                     }
               
                 return $actions;
@@ -119,10 +127,19 @@ class UsersController extends Controller
     public function massUpdate(MassUpdateUserRequest $request)
     {
         //dd(request());
-        
-        User::whereIn('id', request('ids'))->update([
+        if (isset(request()->password[0]))
+        {
+            User::whereIn('id', request('ids'))->update([
             'password' => Hash::make($request->password)
+                ]); 
+        }
+        
+        if (isset(request()->status_id[0]))
+        {
+        User::whereIn('id', request('ids'))->update([
+            'status_id' => $request->status_id
                 ]);  
+        }
         
         return response(null, 204);
     }
@@ -130,10 +147,13 @@ class UsersController extends Controller
     public function show(User $user)
     {
         abort_unless(\Gate::allows('user_show'), 403);
-
+        $statuses = Status::all();
         $user->load('roles');
+        $user->load('organizations');
 
-        return view('admin.users.show', compact('user'));
+        return view('admin.users.show')
+                ->with(compact('user'))
+                ->with(compact('statuses'));
     }
 
     public function destroy(User $user)
@@ -148,7 +168,8 @@ class UsersController extends Controller
     public function massDestroy(MassDestroyUserRequest $request)
     {
         User::whereIn('id', request('ids'))->delete();
-
+        
+        
         return response(null, 204);
     }
     
@@ -160,7 +181,18 @@ class UsersController extends Controller
         
         foreach ( $request->organizations AS $organization_id)
         {
-           auth()->user()->enrol($user->id, $organization_id, $request->role_id);
+           auth()->user()->enrol('organization', $user->id, $organization_id, $request->role_id);
+        }
+        return redirect()->route('admin.users.index');
+    }
+    public function massEnrolToOrganization(Request $request)
+    { 
+        
+        abort_unless(\Gate::allows('user_enrol'), 403);
+        
+        foreach ( $request->ids AS $id)
+        {
+           auth()->user()->enrol('organization', $id, $request->organization_id, $request->role_id);
         }
         return redirect()->route('admin.users.index');
     }
@@ -169,8 +201,44 @@ class UsersController extends Controller
     {
         abort_unless(\Gate::allows('user_expel'), 403);
         
-        auth()->user()->expel($user->id, $organization->id);
+        auth()->user()->expel('organization', $user->id, $organization->id);
 
+        return redirect()->route('admin.users.index');
+    }
+    
+    public function massExpelFromOrganization(Request $request)
+    { 
+        
+        abort_unless(\Gate::allows('user_expel'), 403);
+        
+        foreach ( $request->ids AS $id)
+        {
+           auth()->user()->expel('organization', $id, $request->organization_id);
+        }
+        return redirect()->route('admin.users.index');
+    }
+    
+    public function massEnrolToGroup(Request $request)
+    { 
+        
+        abort_unless(\Gate::allows('user_enrol'), 403);
+        
+        foreach ( $request->ids AS $id)
+        {
+           auth()->user()->enrol('group', $id, $request->group_id);
+        }
+        return redirect()->route('admin.users.index');
+    }
+    
+    public function massExpelFromGroup(Request $request)
+    { 
+        
+        abort_unless(\Gate::allows('user_expel'), 403);
+        
+        foreach ( $request->ids AS $id)
+        {
+           auth()->user()->expel('group', $id, $request->group_id);
+        }
         return redirect()->route('admin.users.index');
     }
     

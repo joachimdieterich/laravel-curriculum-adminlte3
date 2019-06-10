@@ -26,15 +26,15 @@
         <div class="card card-primary">
             <div class="card-header">
                 <div class="row">
-                    <div class="col-10">
-                        <h3>
+                    <div class="col-11">
+                        <h5 class="m-0">
                             {{ trans('global.about') }}
-                        </h3>
+                        </h5>
                     </div>
-                    <div class="col-2">
+                    <div>
                         @can('user_edit')
                              <a href="{{ route('admin.users.edit', $user->id) }}" >
-                                <i class="far fa-edit p-2"></i>
+                                <i class="far fa-edit"></i>
                              </a> 
                         @endcan 
                     </div>
@@ -42,6 +42,23 @@
             </div>
               <!-- /.card-header -->
               <div class="card-body">
+                <strong><i class="fa fa-users mr-1"></i>{{ trans('global.organization.title_singular') }}</strong>
+                <p class="text-muted">
+                    @foreach($user->organizations as $id => $organizations)
+                        <button type="button" class="btn-xs btn-block btn-success pull-right">{{$organizations->title}} @ {{ $user->roles()->where('organization_id', $organizations->id)->first()->title }}</button>
+                    @endforeach
+                </p>
+
+                <hr> 
+                  
+                <strong><i class="fa fa-users mr-1"></i>{{ trans('global.group.title_singular') }}</strong>
+                <p class="text-muted">
+                    @foreach($user->groups as $id => $groups)
+                        <button type="button" class="btn-xs btn-block btn-success pull-right">{{$groups->title}} @ {{ $groups->organization->title }}</button>
+                    @endforeach
+                </p>
+
+                <hr>
                 <strong><i class="fa fa-key mr-1"></i>{{ trans('global.roles') }}</strong>
                 <p class="text-muted">
                     @foreach($user->roles as $id => $roles)
@@ -66,7 +83,7 @@
               <!-- /.card-body -->
               <div class="card-footer">
                 <div class="float-left">
-                    <button type="button" class="btn-xs btn-block btn-success pull-right">aktiv</button>                  
+                    <button type="button" class="btn-xs btn-block btn-{{$statuses[$user->status_id]->color_css_class}} pull-right">{{$statuses[$user->status_id]->lang_de}}</button>                  
                 </div>
                 <small class="float-right">
                     {{ $user->updated_at }}

@@ -9,10 +9,11 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use SoftDeletes, Notifiable;
+    use SoftDeletes, Notifiable, HasApiTokens;
 
     protected $hidden = [
         'password',
@@ -37,8 +38,15 @@ class User extends Authenticatable
         'deleted_at',
         'remember_token',
         'email_verified_at',
+        'status_id',
+        'organization_id'
     ];
 
+    public function fullName()
+    {
+        return "{$this->firstname} {$this->lastname}";
+    }
+    
     public function getEmailVerifiedAtAttribute($value)
     {
         return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('panel.date_format') . ' ' . config('panel.time_format')) : null;
@@ -67,21 +75,48 @@ class User extends Authenticatable
      * @param int $role_id
      * @return OrganizationRoleUser
      */
-    public function enrol($user_id, $organization_id, $role_id)
+    public function enrol($dependency, $user_id, $reference_id, $role_id = null)
     {
-        return OrganizationRoleUser::firstOrCreate([
-            'user_id'         => $user_id,
-            'organization_id' => $organization_id,
-            'role_id'         => $role_id,
-        ]);        
+        switch ($dependency) {
+            case 'organization':    return OrganizationRoleUser::firstOrCreate([
+                                        'user_id'         => $user_id,
+                                        'organization_id' => $reference_id,
+                                        'role_id'         => $role_id,
+                                    ]);  
+                break;
+            case 'group':           $user = User::find($user_id);
+                                    User::findOrFail($user_id)->enrol('organization', $user_id, $reference_id, 6); //if not enroled enrol as student
+                                    return $user->groups()->syncWithoutDetaching([
+                                        'group_id' => $reference_id
+                                    ]);
+                                   
+                break;
+
+            default:
+                break;
+        }
+              
     }
     
-    public function expel($user_id, $organization_id)
+    public function expel($dependency, $user_id, $reference_id)
     {
-        return OrganizationRoleUser::where([
-            'user_id' => $user_id,
-            'organization_id' => $organization_id,
-        ])->delete();
+        switch ($dependency) {
+            case 'organization':    return OrganizationRoleUser::where([
+                                        'user_id' => $user_id,
+                                        'organization_id' => $reference_id,
+                                    ])->delete();  
+                break;
+            case 'group':           $user = User::find($user_id);
+                                    return $user->groups()->detach([
+                                        'group_id' => $reference_id
+                                    ]);
+                                   
+                break;
+
+            default:
+                break;
+        }
+        
     }
     
     public function contents()
@@ -113,5 +148,10 @@ class User extends Authenticatable
     public function organizationRolesUsers()
     {
       return $this->hasMany(OrganizationRoleUser::class);
+    }
+    
+    public function status()
+    {
+        return $this->hasOne('App\Status', 'status_id', 'status_id');
     }
 }

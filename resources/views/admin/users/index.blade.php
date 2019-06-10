@@ -15,98 +15,20 @@
     </div>
 
     <div class="card-body">
-<!--        <div class="table-responsive">
--->            <table id="users-datatable" class=" table table-bordered table-striped table-hover datatable">
-                <thead>
-                    <tr>
-                        <th width="10"></th>
-                        <th>{{ trans('global.user.fields.username') }}</th>
-                        <th>{{ trans('global.user.fields.firstname') }}</th>
-                        <th>{{ trans('global.user.fields.lastname') }}</th>
-                        <th>{{ trans('global.user.fields.email') }}</th>
-                        <th>{{ trans('global.user.fields.email_verified_at') }}</th>
-<!--                        <th>{{ trans('global.organization.title') }}</th>-->
-                        <th>Action</th>
-                    </tr>
-                </thead><!--
-                <tbody>
-                    @foreach($users as $key => $user)
-                        <tr data-entry-id="{{ $user->id }}">
-                            <td>
-                                {{ $user->id ?? '' }}
-                            </td>
-                            <td>
-                                {{ $user->username ?? '' }}
-                            </td>
-                            <td>
-                                {{ $user->firstname ?? '' }}
-                            </td>
-                            <td>
-                                {{ $user->lastname ?? '' }}
-                            </td>
-                            <td>
-                                {{ $user->email ?? '' }}
-                            </td>
-                            <td>
-                                {{ $user->email_verified_at ?? '' }}
-                            </td>
-                            <td>
-                                @foreach($user->organizations as $key => $org)
-                                <span class="badge badge-info">{{ $org->title }} @ {{ $org->roles->first()->title }} 
-                                    
-                                    @can('user_expel')
-                                        <form action="/admin/users/{{ $user->id }}/organization/{{ $org->id }}/expel" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
-                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                            <input type="submit" class="btn btn-xs btn-danger" value="x">
-                                        </form>
-                                    @endcan
-                                    
-                                </span>
-                                @endforeach
-                                @can('user_enrol')
-                                    <form action="/admin/users/{{ $user->id }}/organization/enrol" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
-                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                        <label for="organizations">{{ trans('global.organization.title') }}*
-                                            <span class="btn btn-info btn-xs select-all">Select all</span>
-                                            <span class="btn btn-info btn-xs deselect-all">Deselect all</span>
-                                        </label>
-                                        <select name="organizations[]" id="organizations" class="form-control select2" multiple="multiple">
-                                            @foreach($organizations as $organization)
-                                                <option value="{{ $organization->id }}">
-                                                    {{ $organization->title }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        <input id="role_id" name="role_id" type="integer" value="2">
-                                        <input type="submit" class="btn btn-xs btn-info" value="+">
-                                    </form>
-                                @endcan
-                            </td>
-                            <td>
-                                @can('user_show')
-                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.users.show', $user->id) }}">
-                                        {{ trans('global.view') }}
-                                    </a>
-                                @endcan
-                                @can('user_edit')
-                                    <a class="btn btn-xs btn-info" href="{{ route('admin.users.edit', $user->id) }}">
-                                        {{ trans('global.edit') }}
-                                    </a>
-                                @endcan
-                                @can('user_delete')
-                                    <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
-                                        <input type="hidden" name="_method" value="DELETE">
-                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                        <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
-                                    </form>
-                                @endcan
-                            </td>
-
-                        </tr>
-                    @endforeach
-                </tbody>
--->            </table><!--
-        </div>-->
+        <table id="users-datatable" class=" table table-bordered table-striped table-hover datatable">
+            <thead>
+                <tr>
+                    <th width="10"></th>
+                    <th>{{ trans('global.user.fields.username') }}</th>
+                    <th>{{ trans('global.user.fields.firstname') }}</th>
+                    <th>{{ trans('global.user.fields.lastname') }}</th>
+                    <th>{{ trans('global.user.fields.email') }}</th>
+                    <th>{{ trans('global.user.fields.email_verified_at') }}</th>
+                    <th>{{ trans('global.status.title_singular') }}</th>
+                    <th>Action</th>
+                </tr>
+            </thead>     
+        </table>
     </div>
 </div>
 
@@ -128,8 +50,8 @@
 
                     <!--@can('user_updateRole')-->
                     <!--@endcan-->
-                        <li id="nav_tab_institution" class="nav-item">
-                            <a href="#tab_institution" class="nav-link" data-toggle="tab">Institution / Rolle</a>
+                        <li id="nav_tab_organization" class="nav-item">
+                            <a href="#tab_organization" class="nav-link" data-toggle="tab">Institution / Rolle</a>
                         </li>
 
                     <!--@can('user_userListComplete')-->
@@ -141,7 +63,7 @@
                     <!--@can('user_delete')-->
                     <!--@endcan-->
                         <li id="nav_tab_delete" class="nav-item">
-                            <a href="#tab_delete" class="nav-link" data-toggle="tab"><span class="text-danger">löschen</span></a>
+                            <a href="#tab_delete" class="nav-link" data-toggle="tab"><span class="text">löschen</span></a>
                         </li>
                 </ul>
             </div>
@@ -149,93 +71,91 @@
                 <div class="tab-content">
                     @can('user_reset_password')
                         <div id="tab_password" class="tab-pane active row " >
-                            <form id='userlist_pw' method='post' action="">
-                                <div class="form-horizontal col-xs-12">
-                                @include ('forms.input.text', ["model" => "user", "field" => "password", "placeholder" => "New Password",  "value" => ""])
-                                @include ('forms.input.info', ["value" => "Neues Passwort für markierte Benutzer festlegen. Passwort muss mind. 6 Zeichen lang sein."])
-                                @include ('forms.input.checkbox', ["field" => "login_password_show", "value" => ""])
-                                @include ('forms.input.checkbox', ["field" => "login_password_confirmation", "value" => ""])
-                                @include ('forms.input.button', ["onclick" => "$('#users').DataTable().rows({selected: true})[0]", "field" => "confirmed", "type" => "submit", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-lock", "label" => "Passwort zurücksetzen"])
+                            <div class="form-horizontal col-xs-12">
+                            @include ('forms.input.info', ["value" => "Neues Passwort für markierte Benutzer festlegen. Passwort muss mind. 6 Zeichen lang sein."])
+                            @include ('forms.input.password', ["model" => "user", "field" => "password", "placeholder" => "New Password", "type" => "password", "value" => ""])
+                            @include ('forms.input.checkbox', ["field" => "login_password_confirmation", "value" => ""])
+                            @include ('forms.input.button', ["onclick" => "resetPassword()", "field" => "confirmed", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-lock", "label" => "Passwort zurücksetzen"])
+                            </div>
+                        </div>
+                    @endcan
+                    
+                    @can('user_edit')
+                        <div id="tab_group" class="tab-pane row " >
+                            <div class="form-horizontal col-xs-12">
+                                @include ('forms.input.info', ["value" => "Markierte Benutzer in Lerngruppe ein bzw. ausschreiben.\nBenutzer muss an der entsprechenden Institution eingeschrieben sein, damit  die Lerngruppe angezeigt wird."])
+                                    
+                                @include ('forms.input.select', 
+                                    ["model" => "group", 
+                                    "show_label" => true,
+                                    "field" => "user_organization_group_id",  
+                                    "options"=> $groups, 
+                                    "option_label" => "title",    
+                                    "optgroup" => $organizations,    
+                                    "optgroup_field" => "organization_id",    
+                                    "value" =>  old('group_id', isset($user->current_group_id) ? $user->current_group_id : '')])     
+                                    
+                                <div class="btn-group pull-right" role="group" aria-label="...">    
+                                    @include ('forms.input.button', ["onclick" => "enroleToGroup()", "field" => "enroleToGroup", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-plus", "label" => "In Gruppe einschreiben"])
+                                    @include ('forms.input.button', ["onclick" => "expelFromGroup()", "field" => "expelFromGroup", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-minus", "label" => "Aus Gruppe ausschreiben"])
                                 </div>
-                            </form>
-                            
+                            </div>
                         </div>
                     @endcan
 
-                    <!--@canany(['user_enroleToGroup', 'user_expelFromGroup'])-->
-                        <div id="tab_group" class="tab-pane row " >
-                            <form id='userlist_groups'   method='post' action="index.php?action=user">
-                                <div class="form-horizontal col-xs-12">
-                                    {Form::info(['id' => 'group_info', 'content' => 'Markierte Benutzer in Lerngruppe ein bzw. ausschreiben.<br> <strong>Benutzer muss an der entsprechenden Institution eingeschrieben sein, damit  die Lerngruppe angezeigt wird.</strong>'])}
-                                    {if isset($myInstitutions)}
-                                        {Form::input_select('institution_group', 'Institution', $myInstitutions, 'institution', 'id', $my_institution_id, null, "getValues('group', this.value, 'groups');")}
-                                    {/if} 
-                                {if isset($groups_array)}
-                                    {Form::input_select_multiple(['id' => 'groups', 'label' => 'Lerngruppe', 'select_data' => $groups_array, 'select_label' => 'group, semester', 'select_value' => 'id', 'input' => null, 'error' => null, 'limiter' => ', ' ])}
-                                    <div class="btn-group pull-right" role="group" aria-label="...">
-                                    @can('user_enroleToGroup')
-                                        {Form::input_button(['id' => 'enroleGroups', 'label' => 'einschreiben', 'icon' => 'fa fa-plus-circle', 'class' => 'btn btn-default pull-left'])}
-                                    @endcan
-                                    @can('user_expelFromGroup')
-                                        {Form::input_button(['id' => 'expelGroups', 'label' => 'ausschreiben', 'icon' => 'fa fa-minus-circle', 'class' => 'btn btn-default pull-left'])}
-                                    @endcan
-                                    </div>
-                                {/if}
+                    @can('user_edit')
+                        <div id="tab_organization" class="tab-pane row " >
+                            <div class="form-horizontal col-xs-12">
+                                @include ('forms.input.info', ["value" => "Beim Zuweisen einer Rolle werden die markierten Nutzer automatisch in die aktuelle/ausgewählte Institution eingeschrieben bzw. die Daten aktualisiert."])
+                                @include ('forms.input.select', 
+                                    ["model" => "organization", 
+                                    "show_label" => true,
+                                    "field" => "role_organization_id",  
+                                    "options"=> $organizations, 
+                                    "option_label" => "title",  
+                                    "onchange"=> "this.form.submit()",  
+                                    "value" =>  old('organization_id', isset($user->current_organization_id) ? $user->current_organization_id : '')]) 
+                                 @include ('forms.input.select', 
+                                    ["model" => "role", 
+                                    "show_label" => true,
+                                    "field" => "role_id",  
+                                    "options"=> $roles, 
+                                    "option_label" => "title",  
+                                    "onchange"=> "this.form.submit()",  
+                                    "value" =>  old('role_id', isset($user->current_role_id) ? $user->current_role_id : '')])     
+                                <div class="btn-group pull-right" role="group" aria-label="...">    
+                                    @include ('forms.input.button', ["onclick" => "enroleToOrganization()", "field" => "enroleToOrganization", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-plus", "label" => "Rolle zuweisen / einschreiben"])
+                                    @include ('forms.input.button', ["onclick" => "expelFromOrganization()", "field" => "expelFromOrganization", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-minus", "label" => "Rolle entziehen /ausschreiben"])
                                 </div>
-                            </form>
+                            </div>
                         </div>
-                    <!--@endcanany-->
+                    @endcan
 
-                    <!--@can('user_updateRole')-->
-                        <div id="tab_institution" class="tab-pane row " >
-                            <form id='userlist_institutions'   method='post' action="index.php?action=user">
-                                <div class="form-horizontal col-xs-12">
-                                        {Form::info(['id' => 'role_info', 'content' => 'Beim Zuweisen einer Rolle werden die markierten Nutzer automatisch in die aktuelle/ausgewählte Institution eingeschrieben bzw. die Daten aktualisiert.'])}
-                                    {if isset($myInstitutions)}
-                                        {Form::input_select('institution', 'Institution', $myInstitutions, 'institution', 'id', $my_institution_id, null)}
-                                    {/if}    
-                                    {Form::input_select('roles', 'Benutzer-Rolle', $roles, 'role', 'id', $institution_std_role, null)}
-
-                                    <div class="btn-group pull-right" role="group" aria-label="...">
-                                    {if checkCapabilities('user:enroleToInstitution', $my_role_id, false)}
-                                        {Form::input_button(['id' => 'enroleInstitution', 'label' => 'Rolle zuweisen / einschreiben', 'icon' => 'fa fa-plus-circle', 'class' => 'btn btn-default'])}
-                                    {/if}
-                                    {if checkCapabilities('user:expelFromInstitution', $my_role_id, false)}
-                                        {Form::input_button(['id' => 'expelInstitution', 'label' => 'ausschreiben', 'icon' => 'fa fa-minus-circle', 'class' => 'btn btn-default'])}
-                                    {/if} 
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    <!--@endcan-->
-
-                    <!--@can('user_userListComplete')-->
+                    @can('user_edit')
                         <div id="tab_register" class="tab-pane row " >
-                            <form id='userlist_register'   method='post' action="index.php?action=user">
-                                <div class="form-horizontal col-xs-12">
-                                    {Form::info(['id' => 'user_info', 'content' => 'Registerung für die markierten Benutzer bestätigen.'])}
-                                    {Form::input_button(['id' => 'acceptUser', 'label' => 'Benutzer bestätigen', 'icon' => 'fa fa-user-plus', 'class' => 'btn btn-default'])}
-                                </div>
-                            </form>
+                            <div class="form-horizontal col-xs-12">
+                                 @include ('forms.input.select', 
+                                ["model" => "status", 
+                                "show_label" => true,
+                                "field" => "status_id",  
+                                "options"=> $statuses, 
+                                "option_id" => "status_id",  
+                                "option_label" => "lang_de",
+                                "onchange"=> "this.form.submit()",  
+                                "value" => old('status_id', isset($user->status_id) ? $user->status_id : '') ])
+                                @include ('forms.input.button', ["onclick" => "setStatus()", "field" => "acceptUser", "type" => "submit", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-lock", "label" => "Benutzer bestätigen"])
+                            </div>
                         </div>
-                    <!--@endcan-->
-
-                    <!--@can('user_delete')-->
+                    @endcan
+                    @can('user_delete')
                         <div id="tab_delete" class="tab-pane row" >
-                            <form id='userlist_delete'   method='post' action="index.php?action=user">
-                                <div class="form-horizontal col-xs-12">
-                                    {Form::info(['id' => 'user_info', 'content' => 'Markierte Benutzer löschen.'])}
-                                    {Form::input_button(['id' => 'submitdeleteUser', 'label' => 'löschen', 'icon' => 'fa fa-minus-circle', 'type' => 'button', 'onclick' => 'userdelete()', 'class' => 'btn btn-default pull-right'])}
-                                    {Form::input_button(['id' => 'deleteUser', 'label' => 'löschen', 'icon' => 'fa fa-minus-circle', 'class' => 'hidden'])}
-                                </div>
-                            </form>
+                            <div class="form-horizontal col-xs-12">
+                                @include ('forms.input.button', ["onclick" => "massDestroyUser()", "field" => "deleteUser", "type" => "button", "class" => "btn btn-danger pull-right mt-3", "icon" => "fa fa-trash", "label" => "Markierte Benutzer löschen"])
+                            </div>
                         </div>
-                    <!--@endcan-->
-                    <button id="test" onclick="
-                        function (this) {
-                            this.innerHTML = toString($('#users').DataTable().rows({selected: true}));
-                        }">
-">test</button>
+                    @endcan
+
+                    
                  </div><!-- ./tab-content -->
             </div>
         </div>
@@ -247,15 +167,161 @@
 @parent
 
 <script>
-$(document).ready( function () {
-    let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
-    let deleteButton = {
-      text: deleteButtonTrans,
-      url: "{{ route('admin.users.massDestroy') }}",
-      className: 'btn-danger',
-      action: function (e, dt, node, config) {
-        var ids = dt.rows({ selected: true }).ids().toArray()
+    
+    function enroleToGroup()
+    {
+        var ids = $('#users-datatable').DataTable().rows({ selected: true }).ids().toArray()
+        if (ids.length === 0) {
+            alert('{{ trans('global.datatables.zero_selected') }}')
+            return
+        }
 
+        if (confirm('{{ trans('global.areYouSure') }}')) {
+            $.ajax({
+              headers: {'x-csrf-token': _token},
+              method: 'POST',
+              url: "/admin/users/group/massEnrol",
+              data: { 
+                  ids: ids, 
+                  group_id: $('#user_organization_group_id').val(),
+                  _method: 'PATCH',
+              }
+            })
+              .done(function () { location.reload() })
+        }  
+    }
+    
+    function expelFromGroup()
+    {
+        var ids = $('#users-datatable').DataTable().rows({ selected: true }).ids().toArray()
+        if (ids.length === 0) {
+            alert('{{ trans('global.datatables.zero_selected') }}')
+            return
+        }
+
+        if (confirm('{{ trans('global.areYouSure') }}')) {
+            $.ajax({
+              headers: {'x-csrf-token': _token},
+              method: 'POST',
+              url: "/admin/users/group/massExpel",
+              data: { 
+                  ids: ids, 
+                  group_id: $('#user_organization_group_id').val(),
+                  _method: 'PATCH', 
+              }
+            })
+              .done(function () { location.reload() })
+        }  
+    }
+    
+    function enroleToOrganization()
+    {
+        var ids = $('#users-datatable').DataTable().rows({ selected: true }).ids().toArray()
+        if (ids.length === 0) {
+            alert('{{ trans('global.datatables.zero_selected') }}')
+            return
+        }
+
+        if (confirm('{{ trans('global.areYouSure') }}')) {
+            $.ajax({
+              headers: {'x-csrf-token': _token},
+              method: 'POST',
+              url: "/admin/users/organization/massEnrol",
+              data: { 
+                  ids: ids, 
+                  organization_id: $('#role_organization_id').val(),
+                  role_id: $('#role_id').val(),
+                  _method: 'PATCH',
+              }
+            })
+              .done(function () { location.reload() })
+        }  
+    }
+    function expelFromOrganization()
+    {
+        var ids = $('#users-datatable').DataTable().rows({ selected: true }).ids().toArray()
+        if (ids.length === 0) {
+            alert('{{ trans('global.datatables.zero_selected') }}')
+            return
+        }
+
+        if (confirm('{{ trans('global.areYouSure') }}')) {
+            $.ajax({
+              headers: {'x-csrf-token': _token},
+              method: 'POST',
+              url: "/admin/users/organization/massExpel",
+              data: { 
+                  ids: ids, 
+                  organization_id: $('#role_organization_id').val(),
+                  _method: 'PATCH',
+              }
+            })
+              .done(function () { location.reload() })
+        }  
+    }
+    function setStatus()
+    {
+        var ids = $('#users-datatable').DataTable().rows({ selected: true }).ids().toArray()
+        if (ids.length === 0) {
+            alert('{{ trans('global.datatables.zero_selected') }}')
+            return
+        }
+
+        if (confirm('{{ trans('global.areYouSure') }}')) {
+            $.ajax({
+              headers: {'x-csrf-token': _token},
+              method: 'POST',
+              url: "{{ route('admin.users.massUpdate') }}",
+              data: { 
+                  ids: ids, 
+                  _method: 'PATCH',
+                  status_id: $('#status_id').val()
+              }
+            })
+              .done(function () { location.reload() })
+        }  
+    }
+    
+    function resetPassword()
+    {
+        var ids = $('#users-datatable').DataTable().rows({ selected: true }).ids().toArray()
+        if (ids.length === 0) {
+            alert('{{ trans('global.datatables.zero_selected') }}')
+            return
+        }
+
+        if (confirm('{{ trans('global.areYouSure') }}')) {
+            $.ajax({
+              headers: {'x-csrf-token': _token},
+              method: 'POST',
+              url: "{{ route('admin.users.massUpdate') }}",
+              data: { 
+                  ids: ids, 
+                  _method: 'PATCH',
+                  password: $('#password').val()
+              }
+            })
+              .done(function () { location.reload() })
+        }  
+    }
+    
+    function destroyUser(id)
+    {
+        if (confirm('{{ trans('global.areYouSure') }}')) {
+            $.ajax({
+                headers: {'x-csrf-token': _token},
+                method: 'POST',
+                url: 'users/'+id,
+                data: { _method: 'DELETE' }})
+                .done(function () { 
+                     $("#"+id).closest('tr').remove();
+                })
+        }
+    }
+    
+    function  massDestroyUser()
+    {
+        var ids = $('#users-datatable').DataTable().rows({ selected: true }).ids().toArray()
         if (ids.length === 0) {
           alert('{{ trans('global.datatables.zero_selected') }}')
           return
@@ -265,22 +331,24 @@ $(document).ready( function () {
           $.ajax({
             headers: {'x-csrf-token': _token},
             method: 'POST',
-            url: config.url,
-            data: { ids: ids, _method: 'DELETE' }})
+            url: '{{ route('admin.users.massDestroy') }}',
+            data: { ids, _method: 'DELETE' }})
             .done(function () { location.reload() })
         }
-      }
-    }
+        
+    }   
+    
+$(document).ready( function () {
+    $('#login_password_show').on('change', function(){
+        $('#password').attr('type',$('#checkbox').prop('checked')==true?"text":"password"); 
+    });
+
+
     let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-    @can('user_delete')
-      dtButtons.push(deleteButton)
-    @endcan
-    
-    
-    $('#users-datatable').DataTable({
+    var table = $('#users-datatable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ url('admin/userList') }}",
+        ajax: "{{ url('admin/users/list') }}",
         columns: [
                  { data: 'check'},
                  { data: 'username' },
@@ -288,7 +356,7 @@ $(document).ready( function () {
                  { data: 'lastname' },
                  { data: 'email' },
                  { data: 'email_verified_at' },
-//                 { data: 'status' },
+                 { data: 'status' },
                  { data: 'action' }
                 ],
         buttons: dtButtons

@@ -41,6 +41,9 @@
         }
     },
     "autoload": {
+        "files": [
+            "app/Helpers/Helper.php"
+        ],
         "psr-4": {
             "App\\": "app/"
         },
@@ -50,6 +53,9 @@
         ]
     },
     "autoload-dev": {
+        "files": [
+            "app/Helpers/Helper.php"
+        ],
         "psr-4": {
             "Tests\\": "tests/"
         }

@@ -8,6 +8,7 @@ use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
 use App\Permission;
 use App\Role;
+use Yajra\DataTables\DataTables;
 
 class RolesController extends Controller
 {
@@ -15,11 +16,52 @@ class RolesController extends Controller
     {
         abort_unless(\Gate::allows('role_access'), 403);
 
-        $roles = Role::all();
+        //$roles = Role::all();
 
-        return view('admin.roles.index', compact('roles'));
+        return view('admin.roles.index');
     }
 
+    public function list()
+    {
+        abort_unless(\Gate::allows('role_access'), 403);
+        $roles = Role::select([
+            'id', 
+            'title'
+            ]);
+        
+        return DataTables::of($roles)
+            
+            ->addColumn('action', function ($roles) {
+                 $actions  = '';
+                    if (\Gate::allows('role_show')){
+                        $actions .= '<a href="'.route('admin.roles.show', $roles->id).'" '
+                                    . 'class="btn btn-xs btn-success">'
+                                    . '<i class="fa fa-list-alt"></i> Show'
+                                    . '</a>';
+                    }
+                    if (\Gate::allows('role_edit')){
+                        $actions .= '<a href="'.route('admin.roles.edit', $roles->id).'" '
+                                    . 'class="btn btn-xs btn-primary">'
+                                    . '<i class="fa fa-edit"></i> Edit'
+                                    . '</a>';
+                    }
+                    if (\Gate::allows('role_delete')){
+                        $actions .= '<form action="'.route('admin.roles.destroy', $roles->id).'" method="POST">'
+                                    . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
+                                    . '<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Delete</button>';
+                    }
+              
+                return $actions;
+            })
+           
+            ->addColumn('check', '')
+            ->setRowId('id')
+            ->setRowAttr([
+                'color' => 'primary',
+            ])
+            ->make(true);
+    }
+    
     public function create()
     {
         abort_unless(\Gate::allows('role_create'), 403);
@@ -28,7 +70,7 @@ class RolesController extends Controller
 
         return view('admin.roles.create', compact('permissions'));
     }
-
+   
     public function store(StoreRoleRequest $request)
     {
         abort_unless(\Gate::allows('role_create'), 403);

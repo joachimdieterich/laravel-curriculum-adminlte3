@@ -15,7 +15,6 @@
 namespace Tests\Setup;
 
 use App\Role;
-use App\User;
 
 class RoleFactory
 {

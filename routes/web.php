@@ -12,32 +12,52 @@ Auth::routes(['register' => false]);
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'middleware' => ['auth']], function () {
     Route::get('/', 'HomeController@index')->name('home');
-
+    
+    /* Organization routes */
+    Route::delete('organizations/massDestroy', 'OrganizationsController@massDestroy')->name('organizations.massDestroy');
+    Route::get('organizations/list', 'OrganizationsController@list')->name('organizations.list');
+    Route::resource('organizations', 'OrganizationsController');
+    
+   
+    /* Role routes */
+    Route::delete('roles/massDestroy', 'RolesController@massDestroy')->name('roles.massDestroy');
+    Route::get('roles/list', 'RolesController@list')->name('roles.list');
+    Route::resource('roles', 'RolesController');
+    
+    
+    /* User routes */
+    Route::delete('users/massDestroy', 'UsersController@massDestroy')->name('users.massDestroy');
+    Route::patch('users/massUpdate', 'UsersController@massUpdate')->name('users.massUpdate');
+    
+    
+    Route::post('users/{user}/organization/enrol', 'UsersController@enrolToOrganization')->name('users.enrolToOrganization');
+    Route::post('users/{user}/organization/{organization}/expel', 'UsersController@expelFromOrganization')->name('users.expelFromOrganization');
+    Route::patch('users/organization/massEnrol', 'UsersController@massEnrolToOrganization')->name('users.massEnrolToOrganization');
+    Route::patch('users/organization/massExpel', 'UsersController@massExpelFromOrganization')->name('users.massExpelFromOrganization');
+    
+    Route::patch('users/group/massEnrol', 'UsersController@massEnrolToGroup')->name('users.massEnrolToGroup');
+    Route::patch('users/group/massExpel', 'UsersController@massExpelFromGroup')->name('users.massExpelFromGroup');
+    
+    Route::get('users/list', 'UsersController@list');
+    Route::resource('users', 'UsersController');
+   
+    
+    Route::get('list', 'GroupsController@list');
+    Route::resource('groups', 'GroupsController');
+    
+    
+    
+    Route::resource('curricula', 'CurriculumController');
+    Route::get('curriculaList', 'CurriculumController@curriculaList');
+    
     Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');
 
     Route::resource('permissions', 'PermissionsController');
 
-    Route::delete('roles/destroy', 'RolesController@massDestroy')->name('roles.massDestroy');
-
-    Route::resource('roles', 'RolesController');
-
-    Route::delete('users/destroy', 'UsersController@massDestroy')->name('users.massDestroy');
-    Route::patch('users/massUpdate', 'UsersController@massUpdate')->name('users.massUpdate');
+    Route::get('groupList', 'GroupsController@groupList');
+    Route::resource('groups', 'GroupsController');
     
     
-    Route::post('users/{user}/organization/enrol', 'UsersController@enrolToOrganization');
-    Route::post('users/{user}/organization/{organization}/expel', 'UsersController@expelFromOrganization');
-    
-    Route::get('userList', 'UsersController@userList');
-    Route::resource('users', 'UsersController');
-
-    Route::delete('products/destroy', 'ProductsController@massDestroy')->name('products.massDestroy');
-
-    Route::resource('products', 'ProductsController');
-    
-    Route::delete('organizations/destroy', 'OrganizationsController@massDestroy')->name('organizations.massDestroy');
-    Route::get('organizationList', 'OrganizationsController@organizationList');
-    Route::resource('organizations', 'OrganizationsController');
     
     Route::delete('grades/destroy', 'GradesController@massDestroy')->name('grades.massDestroy');
     
@@ -47,6 +67,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('organizationtypes', 'OrganizationTypesController');
     
     Route::delete('organizationtypes/destroy', 'OrganizationTypesController@massDestroy')->name('organizationtypes.massDestroy');
+    
+    
+    
+
     
 });
 

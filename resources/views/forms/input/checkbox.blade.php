@@ -1,6 +1,6 @@
 <div class="form-check{{ $errors->has( $field ) ? ' has-danger' : '' }}">
     <input 
-        id="input-{{ $field }}"
+        id="{{ $field }}"
         type="checkbox" 
         class="form-check-input{{ $errors->has($field) ? ' is-invalid' : '' }}" 
         @if($value == 1)

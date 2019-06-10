@@ -14,7 +14,7 @@ class OrganizationTypeTest extends TestCase
     
     /** @test */
     public function it_has_a_title() {
-        $this->seeder();
+    
         $organization_type = OrganizationType::findOrFail(1); 
         
         $this->assertTrue(is_string($organization_type->title));

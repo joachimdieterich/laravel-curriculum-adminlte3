@@ -4,40 +4,19 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\User;
-use App\Organization;
-use App\Permission;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Facades\Tests\Setup\OrganizationFactory;
 use Facades\Tests\Setup\RoleFactory;
-use Facades\Tests\Setup\UserFactory;
 use Illuminate\Database\QueryException;
-
+use Illuminate\Support\Facades\Hash;
 
 class ManageUserTest extends TestCase
 {
     use RefreshDatabase;
     
     /** @test */
-    public function an_administrator_create_a_user()
-    {
-        $this->signInAdmin();
-        
-        $this->followingRedirects()->post("admin/users" , $attributes = factory('App\User')->raw())
-                ->assertStatus(200);
-        
-        $this->assertDatabaseHas('users', [
-            'username' => $attributes['username'],
-            'firstname' => $attributes['firstname'],
-            'lastname' => $attributes['lastname'],
-            'email' => $attributes['email']
-        ]);
-    }
-    
-    
-    
-    /** @test */
-    public function an_administrator_can_enrol_an_user_to_an_institution_with_a_role()
+    public function an_administrator_can_enrol_an_user_to_an_organization_with_a_role()
     {
         //$this->withoutExceptionHandling();
         $user = $this->signInAdmin();
@@ -84,72 +63,83 @@ class ManageUserTest extends TestCase
     /** @test */
     public function every_user_has_a_role()
     {        
-        $user = $this->signIn();
-
-        $role_admin = RoleFactory::create();
         
-        $organization1 = OrganizationFactory::create();
+        $user = $this->signInAdmin();        
+        $this->post("admin/roles" , $role = factory('App\Role')->raw());
+        $role_id = Role::where('title', $role['title'])->first()->id;
         
-        $user->enrol($user->id, $organization1->id, $role_admin->id); //returns OrganizationRoleUser
+        $organization = OrganizationFactory::create();
+        
+        $user_to_enrol = factory('App\User')->create();
+        $user->enrol('organization', $user_to_enrol->id, $organization->id, $role_id); //returns OrganizationRoleUser
         $this->assertDatabaseHas('organization_role_users', [
-            'user_id' => $user->id, 
-            'organization_id' => $organization1->id, 
-            'role_id' => $role_admin->id
+            'user_id' => $user_to_enrol->id, 
+            'organization_id' => $organization->id, 
+            'role_id' => $role_id
             ]);
-        $this->assertEquals($role_admin->title, $user->roles->first()->title);
+        $this->assertEquals($role['title'], $user_to_enrol->roles->first()->title);
     }
     
     /** @test */
-    public function a_user_can_be_expelled_from_an_institution_by_the_admin()
+    public function a_user_can_be_expelled_from_an_organization_by_the_admin()
     {        
         $user = $this->signInAdmin();
         
-        $role_admin = RoleFactory::create();
+        $this->post("admin/roles" , $role = factory('App\Role')->raw());
+        $role_id = Role::where('title', $role['title'])->first()->id;
         
-        $organization1 = OrganizationFactory::create();
+        $organization = OrganizationFactory::create();
         
         $user_expel = factory(User::class)->create();
         
-        $user->enrol($user_expel->id, $organization1->id, $role_admin->id); //returns OrganizationRoleUser
+        $user->enrol('organization', $user_expel->id, $organization->id, $role_id); //returns OrganizationRoleUser
         
         $this->assertDatabaseHas('organization_role_users', [
             'user_id' => $user_expel->id, 
-            'organization_id' => $organization1->id, 
-            'role_id' => $role_admin->id
+            'organization_id' => $organization->id, 
+            'role_id' => $role_id
             ]);
-        $this->assertEquals($role_admin->title, $user_expel->roles->first()->title);
+        $this->assertEquals($role['title'], $user_expel->roles->first()->title);
         
-        $this->followingRedirects()->post("/admin/users/". $user->id ."/organization/". $organization1->id ."/expel")
+        $this->followingRedirects()->post("/admin/users/". $user->id ."/organization/". $organization->id ."/expel")
                 ->assertStatus(200);   
     }
     
     /** @test */
-//    public function an_admin_can_mass_update_user_passwords()
-//    {        
-//        $user = $this->signInAdmin();
-//        
-//        $this->factory(App\User::class, 50)->create();
-//        
-//        $this->followingRedirects()->post("/admin/users/massUpdate" , $attributes = [
-//                    'ids' => [
-//                        
-//                    ],
-//                    'organizations' => [
-//                        ($org2 = OrganizationFactory::create())->id
-//                    ], 
-//                ])
-//                ->assertStatus(200);
-//        
-//        $user->enrol($user_expel->id, $organization1->id, $role_admin->id); //returns OrganizationRoleUser
-//        
-//        $this->assertDatabaseHas('organization_role_users', [
-//            'user_id' => $user_expel->id, 
-//            'organization_id' => $organization1->id, 
-//            'role_id' => $role_admin->id
-//            ]);
-//        $this->assertEquals($role_admin->title, $user_expel->roles->first()->title);
-//        
-//        $this->followingRedirects()->post("/admin/users/". $user->id ."/organization/". $organization1->id ."/expel")
-//                ->assertStatus(200);   
-//    }
+    public function an_admin_can_mass_update_user_passwords()
+    {        
+        $user = $this->signInAdmin();
+        //$this->withoutExceptionHandling();
+        $users = factory(User::class, 50)->create();
+        $ids = $users->pluck('id')->toArray();
+        
+        $new_password = Hash::make('new_password');
+        $this->patch("/admin/users/massUpdate" , $attributes = [
+                    'ids' =>  $ids,
+                    'password' => $new_password
+                ]) ->assertStatus(204);   
+        
+        foreach($ids AS $id){
+            $this->assertTrue(\Hash::check($new_password, User::find($id)->password));     
+        }
+    }
+    
+    /** @test */
+    public function an_admin_can_mass_update_user_status()
+    {        
+        $user = $this->signInAdmin();
+        //$this->withoutExceptionHandling();
+        $users = factory(User::class, 50)->create();
+        $ids = $users->pluck('id')->toArray();
+        
+        $this->patch("/admin/users/massUpdate" , $attributes = [
+                    'ids' =>  $ids,
+                    'status_id' => 2
+                ])->assertStatus(204);   
+        
+        foreach($ids AS $id){
+            $this->assertEquals(2, User::find($id)->status_id);     
+        }
+    }
+    
 }

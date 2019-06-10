@@ -51,5 +51,8 @@
                  ]
         });
      });
+      //align header/body
+    $(".dataTables_scrollHeadInner").css({"width":"100%"});
+    $(".table ").css({"width":"100%"});
   </script>
 @endsection

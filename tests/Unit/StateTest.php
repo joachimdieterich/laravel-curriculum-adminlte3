@@ -13,7 +13,6 @@ class StateTest extends TestCase
     
      /** @test */
     public function it_has_a_country() {
-        $this->seeder();
         $state = State::findOrFail(11); //country_code == 'DE'
         
         $this->assertInstanceOf('App\Country', $state->country()->first());

@@ -12,11 +12,9 @@ class GradesController extends Controller
 {
     public function index()
     {
-      
         abort_unless(\Gate::allows('grade_access'), 403);
 
         $grades = Grade::all();
-        
 
         return view('admin.grades.index', compact('grades'));
     }

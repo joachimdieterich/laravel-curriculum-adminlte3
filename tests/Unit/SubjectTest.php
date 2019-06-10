@@ -14,7 +14,7 @@ class SubjectTest extends TestCase
     
     /** @test */
     public function it_has_a_title() {
-        $this->seeder();
+        
         $subject = Subject::findOrFail(1); 
         
         $this->assertTrue(is_string($subject->title));

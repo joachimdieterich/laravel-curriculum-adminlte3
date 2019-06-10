@@ -14,7 +14,7 @@ class GradeTest extends TestCase
     
     /** @test */
     public function it_has_a_title() {
-        $this->seeder();
+        
         $grade = Grade::findOrFail(1); 
         
         $this->assertTrue(is_string($grade->title));

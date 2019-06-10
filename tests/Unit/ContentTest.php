@@ -25,7 +25,7 @@ class ContentTest extends TestCase
      /** @test */
     public function a_content_can_have_a_subscriptions() {
         ///$this->withoutExceptionHandling();
-        $this->seeder();
+        
         $content = ContentFactory::create();
         
         $subscription = ContentSubscription::create($attributes = [

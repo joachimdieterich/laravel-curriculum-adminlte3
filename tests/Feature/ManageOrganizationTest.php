@@ -13,70 +13,33 @@ class ManageOrganizationTest extends TestCase
 {
      use RefreshDatabase;
      
-    /** @test */
-    public function an_administrator_create_an_institution()
+     public function setUp(): void
     {
+        parent::setUp();
         $this->signInAdmin();
-        
-        $this->followingRedirects()->post("admin/organizations" , $attributes = factory('App\Organization')->raw())
-                ->assertStatus(200);
-        
-        $this->assertDatabaseHas('organizations', $attributes);
     }
     
-    /** @test */
-    public function an_administrator_update_an_organization()
-    {
-        $this->signInAdmin();
-        /* add new organization */
-        $this->followingRedirects()
-                ->post("admin/organizations" , $attributes = factory('App\Organization')->raw())
-                ->assertStatus(200);
-        
-        $this->assertDatabaseHas('organizations', $attributes);
-        /* edit organization*/
-        $this->followingRedirects()
-                ->patch("admin/organizations/". Organization::where('title', '=', $attributes['title'])->first()->id , $new_attributes = factory('App\Organization')->raw())
-                ->assertStatus(200);
-        
-        $this->assertDatabaseHas('organizations', $new_attributes);
-    }
     
     /** @test */
     public function an_administrator_update_the_status_of_an_organization()
     {
-        $this->signInAdmin();
+        
         /* add new organization */
-        $this->followingRedirects()
-                ->post("admin/organizations" , $attributes = factory('App\Organization')->raw())
-                ->assertStatus(200);
+        $this->post("admin/organizations" , $attributes = factory('App\Organization')->raw());
         
         $this->assertDatabaseHas('organizations', $attributes);
         
         /* edit organization */ 
         $attributes['status_id'] = 2;
         
-        $this->followingRedirects()
-                ->patch("admin/organizations/". (Organization::where(
+        $this->patch("admin/organizations/". (Organization::where(
                         'title', '=', $attributes['title'])->first()->id) , 
-                        ['status_id' => 2] )
-                ->assertStatus(200);
+                        ['status_id' => 2] );
         
         $this->assertDatabaseHas('organizations', $attributes);
     }
     
-    /** @test */
-    public function an_administrator_delete_an_institution()
-    {
-        $this->signInAdmin();
-        
-        /* add new organization */
-        $org = OrganizationFactory::create();
-        
-        $this->followingRedirects()
-                ->delete("admin/organizations/". $org->id )
-                ->assertStatus(200);
-    }
+    
     
     
 }

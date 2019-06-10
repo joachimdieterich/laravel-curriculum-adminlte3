@@ -6,7 +6,7 @@
         @endif 
     </label>
     <input 
-        type="text"   
+        type="password"   
         id="{{ $field }}" 
         name="{{ $field }}" 
         class="form-control" 
@@ -30,3 +30,15 @@
         {{ trans('global.'.$model.'.fields.'.$field.'_helper') }}
     </p>
 </div>
+@include ('forms.input.checkbox', ["model" => null, "field" => $field."_show", "value" => ""])
+
+@section('scripts')
+@parent
+<script>
+    $(document).ready( function () {
+        $('#{{ $field }}_show').on('change', function(){
+            $('#{{ $field }}').attr('type',$('#{{ $field }}_show').prop('checked')==true?"text":"password"); 
+        });
+    });
+</script>
+@endsection

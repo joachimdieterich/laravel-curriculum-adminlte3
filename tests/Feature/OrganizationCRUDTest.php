@@ -18,7 +18,7 @@ class OrganizationCRUDTest extends TestCase
     }
     
     /** @test 
-     * Use Rout: GET|HEAD, admin/organizations, admin.organizations.index
+     * Use Route: GET|HEAD, admin/organizations, admin.organizations.index
      */
     public function an_administrator_see_organizations() 
     { 
@@ -28,13 +28,13 @@ class OrganizationCRUDTest extends TestCase
         
         /* Use Datatables */
         $organization = Organization::first();
-        $this->get("admin/organizationList")
+        $this->get("admin/organizations/list")
              ->assertStatus(200)
              ->assertViewHasAll(compact($organization));
     }
     
     /** @test 
-     * Use Rout: POST, admin/organizations, admin.organizations.index
+     * Use Route: POST, admin/organizations, admin.organizations.index
      */     
     public function an_administrator_create_an_organization()
     { 
@@ -45,7 +45,7 @@ class OrganizationCRUDTest extends TestCase
     }
     
     /** @test 
-     * Use Rout: POST, admin/organizations, admin.organizations.index
+     * Use Route: POST, admin/organizations, admin.organizations.index
      */     
     public function an_administrator_get_create_view_for_organization()
     { 
@@ -55,7 +55,7 @@ class OrganizationCRUDTest extends TestCase
     }
     
     /** @test 
-     * Use Rout: DELETE, admin/organizations/destroy admin.organizations.massDestroy
+     * Use Route: DELETE, admin/organizations/massDestroy admin.organizations.massDestroy
      */  
     public function an_administrator_can_mass_delete_organizations()
     {        
@@ -75,7 +75,7 @@ class OrganizationCRUDTest extends TestCase
     }
     
     /** @test 
-     * Use Rout: DELETE, admin/organizations/{organization}, admin.organizations.destroy
+     * Use Route: DELETE, admin/organizations/{organization}, admin.organizations.destroy
      */  
     public function an_administrator_delete_an_organization()
     {
@@ -89,7 +89,7 @@ class OrganizationCRUDTest extends TestCase
     }
     
     /** @test 
-     * Use Rout: GET|HEAD, admin/organizations/{organization}, admin.organizations.show
+     * Use Route: GET|HEAD, admin/organizations/{organization}, admin.organizations.show
      */
     public function an_administrator_see_details_of_an_organizations() 
     { 
@@ -102,7 +102,7 @@ class OrganizationCRUDTest extends TestCase
     }
     
     /** @test 
-     * Use Rout: PUT|PATCH, admin/organizations/{organization}, admin.organizations.update
+     * Use Route: PUT|PATCH, admin/organizations/{organization}, admin.organizations.update
      */
     public function an_administrator_update_an_organization()
     {
@@ -117,7 +117,7 @@ class OrganizationCRUDTest extends TestCase
     }
     
     /** @test 
-     * Use Rout: GET|HEAD, admin/organizations/{organization}/edit, admin.organizations.edit
+     * Use Route: GET|HEAD, admin/organizations/{organization}/edit, admin.organizations.edit
      */     
     public function an_administrator_get_edit_view_for_organization()
     { 

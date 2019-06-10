@@ -21,17 +21,17 @@ class OrganizationsController extends Controller
      */
     public function index()
     {
-        $organizations = Organization::all();//auth()->user()->accessibleOrganizations(); //Organization::all();
-        //$statuses = Status::all();
-        //dd($statuses);
+        abort_unless(\Gate::allows('organization_access'), 403);
+        $organizations = Organization::all();//auth()->user()->accessibleOrganizations(); 
+        
         return view('admin.organizations.index')
                 ->with(compact('organizations'));
-        
-        
+      
     }
 
-    public function organizationList()
+    public function list()
     {
+        abort_unless(\Gate::allows('organization_access'), 403);
         $organizations = Organization::select([
             'id', 
             'title', 
@@ -85,7 +85,11 @@ class OrganizationsController extends Controller
      */
     public function create()
     {
-        return view('admin.organizations.create');
+        abort_unless(\Gate::allows('organization_create'), 403);
+        $statuses = Status::all();
+        
+        return view('admin.organizations.create')
+                ->with(compact('statuses'));
     }
 
     /**
@@ -97,18 +101,14 @@ class OrganizationsController extends Controller
      */
     public function store()
     {
-        // validate
-        
-        //persist
-        //dd(auth()->user()->organizations());
-
+        abort_unless(\Gate::allows('organization_create'), 403);
         $organization = Organization::firstOrCreate($this->validateRequest());
         
         // axios call? 
         if (request()->wantsJson()){    
             return ['message' => $organization->path()];
         }
-        
+        //dd($organization->path());
         return redirect($organization->path());
     }
 
@@ -121,6 +121,7 @@ class OrganizationsController extends Controller
      */
     public function show(Organization $organization)
     {
+        abort_unless(\Gate::allows('organization_show'), 403);
         $statuses = Status::all();
         
         return view('admin.organizations.show')
@@ -137,6 +138,7 @@ class OrganizationsController extends Controller
      */
     public function edit(Organization $organization)
     {
+        abort_unless(\Gate::allows('organization_edit'), 403);
         $statuses = Status::all();
         return view('admin.organizations.edit')
                 ->with(compact('organization'))
@@ -153,7 +155,7 @@ class OrganizationsController extends Controller
      */
     public function update(Organization $organization)
     {
-        //$this->authorize('update', $organization);
+        abort_unless(\Gate::allows('organization_edit'), 403);
         $clean_data = $this->validateRequest();
         if (isset(request()->status_id[0]))
         {
@@ -183,6 +185,7 @@ class OrganizationsController extends Controller
     
     public function massDestroy(MassDestroyOrganizationRequest $request)
     {
+        abort_unless(\Gate::allows('organization_delete'), 403);
         Organization::whereIn('id', request('ids'))->delete();
 
         return response(null, 204);

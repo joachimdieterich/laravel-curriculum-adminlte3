@@ -10,7 +10,7 @@
         <form action="{{ route("admin.organizations.store") }}" method="POST" enctype="multipart/form-data">
             <form
             method="POST"
-            action="/projects"
+            action="/organizations"
         >
             @include ('admin.organizations.form', [
                 'organization' => new App\Organization,

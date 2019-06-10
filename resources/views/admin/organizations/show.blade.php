@@ -5,15 +5,15 @@
         <div class="card card-primary">
             <div class="card-header">
                 <div class="row">
-                    <div class="col-10">
-                        <h3>
-                            About
-                        </h3>
+                    <div class="col-11">
+                        <h5 class="m-0">
+                            <i class="fa fa-university mr-1"></i> {{ $organization->title }}
+                        </h5>
                     </div>
-                    <div class="col-2">
+                    <div>
                         @can('organization_edit')
                              <a href="{{ route('admin.organizations.edit', $organization->id) }}" >
-                                <i class="far fa-edit p-2"></i>
+                                <i class="far fa-edit"></i>
                              </a> 
                         @endcan 
                     </div>
@@ -21,7 +21,7 @@
             </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <strong><i class="fa fa-university mr-1"></i> {{ $organization->title }}</strong>
+                <strong><i class="fas fa-signal mr-1"></i> {{ trans('global.organizationtype.title_singular') }}</strong>
 
                 <p class="text-muted">
                   {{ $organization->type->title }}

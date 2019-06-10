@@ -14,6 +14,7 @@ class Organization extends Model
     {
         return "/admin/organizations/{$this->id}";
     }
+    
     public function roles()
     {
          return $this->belongsToMany(Role::class, 'organization_role_users')

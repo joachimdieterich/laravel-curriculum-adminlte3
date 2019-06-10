@@ -14,6 +14,7 @@
             @method('PATCH')
             @include('admin.organizations.form', [
                 'organization' => $organization,
+                'statusses' => $statuses,
                 'buttonText' => 'Update Project'
             ])
         </form>

@@ -73,7 +73,7 @@ $(document).ready( function () {
     $('#organizations-datatable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ url('admin/organizationList') }}",
+        ajax: "{{ url('admin/organizations/list') }}",
         columns: [
                  { data: 'check'},
                  { data: 'title' },

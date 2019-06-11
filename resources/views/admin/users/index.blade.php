@@ -223,15 +223,21 @@
         }
 
         if (confirm('{{ trans('global.areYouSure') }}')) {
+            var enrolments = [];
+            for (i = 0; i < ids.length; i++) { 
+                enrolments.push({
+                    user_id: ids[i],
+                    organization_id: $('#role_organization_id').val(),
+                    role_id: $('#role_id').val()
+                });
+            }
             $.ajax({
               headers: {'x-csrf-token': _token},
               method: 'POST',
-              url: "/admin/users/organization/massEnrol",
+              url: "/admin/organizations/enrol",
               data: { 
-                  ids: ids, 
-                  organization_id: $('#role_organization_id').val(),
-                  role_id: $('#role_id').val(),
-                  _method: 'PATCH',
+                  enrollment_list: enrolments, 
+                  _method: 'POST',
               }
             })
               .done(function () { location.reload() })
@@ -246,14 +252,20 @@
         }
 
         if (confirm('{{ trans('global.areYouSure') }}')) {
+            var expellments = [];
+            for (i = 0; i < ids.length; i++) { 
+                expellments.push({
+                    user_id: ids[i],
+                    organization_id: $('#role_organization_id').val()
+                });
+            }
             $.ajax({
               headers: {'x-csrf-token': _token},
               method: 'POST',
-              url: "/admin/users/organization/massExpel",
+              url: "/admin/organizations/expel",
               data: { 
-                  ids: ids, 
-                  organization_id: $('#role_organization_id').val(),
-                  _method: 'PATCH',
+                  expel_list: expellments, 
+                  _method: 'POST'
               }
             })
               .done(function () { location.reload() })

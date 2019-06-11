@@ -14,6 +14,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('/', 'HomeController@index')->name('home');
     
     /* Organization routes */
+    Route::post('organizations/enrol', 'OrganizationsController@enrol')->name('organizations.enrol');
+    Route::post('organizations/expel', 'OrganizationsController@expel')->name('organizations.expel');
+    
     Route::delete('organizations/massDestroy', 'OrganizationsController@massDestroy')->name('organizations.massDestroy');
     Route::get('organizations/list', 'OrganizationsController@list')->name('organizations.list');
     Route::resource('organizations', 'OrganizationsController');
@@ -28,13 +31,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     /* User routes */
     Route::delete('users/massDestroy', 'UsersController@massDestroy')->name('users.massDestroy');
     Route::patch('users/massUpdate', 'UsersController@massUpdate')->name('users.massUpdate');
-    
-    
-    Route::post('users/{user}/organization/enrol', 'UsersController@enrolToOrganization')->name('users.enrolToOrganization');
-    Route::post('users/{user}/organization/{organization}/expel', 'UsersController@expelFromOrganization')->name('users.expelFromOrganization');
-    Route::patch('users/organization/massEnrol', 'UsersController@massEnrolToOrganization')->name('users.massEnrolToOrganization');
-    Route::patch('users/organization/massExpel', 'UsersController@massExpelFromOrganization')->name('users.massExpelFromOrganization');
-    
+   
     Route::patch('users/group/massEnrol', 'UsersController@massEnrolToGroup')->name('users.massEnrolToGroup');
     Route::patch('users/group/massExpel', 'UsersController@massExpelFromGroup')->name('users.massExpelFromGroup');
     

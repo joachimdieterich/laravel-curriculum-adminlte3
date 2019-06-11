@@ -6,9 +6,8 @@ use App\Http\Controllers\Controller;
 
 use App\Organization;
 use App\Http\Requests\MassDestroyOrganizationRequest;
-use Illuminate\Http\Request;
-use App\Role;
 use App\Status;
+use App\OrganizationRoleUser;
 use Yajra\DataTables\DataTables;
 
 
@@ -154,7 +153,7 @@ class OrganizationsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Organization $organization)
-    {
+    { 
         abort_unless(\Gate::allows('organization_edit'), 403);
         $clean_data = $this->validateRequest();
         if (isset(request()->status_id[0]))
@@ -190,6 +189,40 @@ class OrganizationsController extends Controller
 
         return response(null, 204);
     }
+    
+    public function enrol()
+    {
+        abort_unless(\Gate::allows('user_enrol'), 403);
+        
+        foreach ((request()->enrollment_list) AS $enrolment)
+        {  
+            
+            $return[] = OrganizationRoleUser::firstOrCreate([
+                                        'user_id'         => $enrolment['user_id'],
+                                        'organization_id' => $enrolment['organization_id'],
+                                        'role_id'         => $enrolment['role_id'],
+                                    ]);
+        }
+        
+        return $return;  
+    }
+    
+    public function expel()
+    {
+        abort_unless(\Gate::allows('user_enrol'), 403);
+        
+        foreach ((request()->expel_list) AS $expel)
+        {  
+            $return[] = OrganizationRoleUser::where([
+                                        'user_id'         => $expel['user_id'],
+                                        'organization_id' => $expel['organization_id'],
+                                    ])->delete();
+        }
+        
+        return $return;  
+    }
+    
+    
     
     
     protected function validateRequest()

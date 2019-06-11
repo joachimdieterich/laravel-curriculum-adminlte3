@@ -1,6 +1,7 @@
 <?php
 
 use App\User;
+use App\OrganizationRoleUser;
 use Illuminate\Database\Seeder;
 
 class UsersTableSeeder extends Seeder
@@ -21,6 +22,11 @@ class UsersTableSeeder extends Seeder
         ]];
 
         User::insert($users);
-        User::findOrFail(1)->enrol('organization', 1,1,1);
+        OrganizationRoleUser::firstOrCreate([
+                                    'organization_id' => 1,
+                                    'user_id'         => 1,
+                                    'role_id'         => 1
+                                ]);
+        
     }
 }

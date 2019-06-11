@@ -174,50 +174,50 @@ class UsersController extends Controller
     }
     
     
-    public function enrolToOrganization(User $user, Request $request)
-    { 
-        
-        abort_unless(\Gate::allows('user_enrol'), 403);
-        
-        foreach ( $request->organizations AS $organization_id)
-        {
-           auth()->user()->enrol('organization', $user->id, $organization_id, $request->role_id);
-        }
-        return redirect()->route('admin.users.index');
-    }
-    public function massEnrolToOrganization(Request $request)
-    { 
-        
-        abort_unless(\Gate::allows('user_enrol'), 403);
-        
-        foreach ( $request->ids AS $id)
-        {
-           auth()->user()->enrol('organization', $id, $request->organization_id, $request->role_id);
-        }
-        return redirect()->route('admin.users.index');
-    }
-    
-    public function expelFromOrganization(User $user, Organization $organization)
-    {
-        abort_unless(\Gate::allows('user_expel'), 403);
-        
-        auth()->user()->expel('organization', $user->id, $organization->id);
-
-        return redirect()->route('admin.users.index');
-    }
-    
-    public function massExpelFromOrganization(Request $request)
-    { 
-        
-        abort_unless(\Gate::allows('user_expel'), 403);
-        
-        foreach ( $request->ids AS $id)
-        {
-           auth()->user()->expel('organization', $id, $request->organization_id);
-        }
-        return redirect()->route('admin.users.index');
-    }
-    
+//    public function enrolToOrganization(User $user, Request $request)
+//    { 
+//        
+//        abort_unless(\Gate::allows('user_enrol'), 403);
+//        
+//        foreach ( $request->organizations AS $organization_id)
+//        {
+//           auth()->user()->enrol('organization', $user->id, $organization_id, $request->role_id);
+//        }
+//        return redirect()->route('admin.users.index');
+//    }
+//    public function massEnrolToOrganization(Request $request)
+//    { 
+//        
+//        abort_unless(\Gate::allows('user_enrol'), 403);
+//        
+//        foreach ( $request->ids AS $id)
+//        {
+//           auth()->user()->enrol('organization', $id, $request->organization_id, $request->role_id);
+//        }
+//        return redirect()->route('admin.users.index');
+//    }
+//    
+//    public function expelFromOrganization(User $user, Organization $organization)
+//    {
+//        abort_unless(\Gate::allows('user_expel'), 403);
+//        
+//        auth()->user()->expel('organization', $user->id, $organization->id);
+//
+//        return redirect()->route('admin.users.index');
+//    }
+//    
+//    public function massExpelFromOrganization(Request $request)
+//    { 
+//        
+//        abort_unless(\Gate::allows('user_expel'), 403);
+//        
+//        foreach ( $request->ids AS $id)
+//        {
+//           auth()->user()->expel('organization', $id, $request->organization_id);
+//        }
+//        return redirect()->route('admin.users.index');
+//    }
+//    
     public function massEnrolToGroup(Request $request)
     { 
         

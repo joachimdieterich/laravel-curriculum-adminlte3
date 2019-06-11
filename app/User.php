@@ -78,12 +78,12 @@ class User extends Authenticatable
     public function enrol($dependency, $user_id, $reference_id, $role_id = null)
     {
         switch ($dependency) {
-            case 'organization':    return OrganizationRoleUser::firstOrCreate([
-                                        'user_id'         => $user_id,
-                                        'organization_id' => $reference_id,
-                                        'role_id'         => $role_id,
-                                    ]);  
-                break;
+//            case 'organization':    return OrganizationRoleUser::firstOrCreate([
+//                                        'user_id'         => $user_id,
+//                                        'organization_id' => $reference_id,
+//                                        'role_id'         => $role_id,
+//                                    ]);  
+//                break;
             case 'group':           $user = User::find($user_id);
                                     User::findOrFail($user_id)->enrol('organization', $user_id, $reference_id, 6); //if not enroled enrol as student
                                     return $user->groups()->syncWithoutDetaching([
@@ -101,11 +101,11 @@ class User extends Authenticatable
     public function expel($dependency, $user_id, $reference_id)
     {
         switch ($dependency) {
-            case 'organization':    return OrganizationRoleUser::where([
-                                        'user_id' => $user_id,
-                                        'organization_id' => $reference_id,
-                                    ])->delete();  
-                break;
+//            case 'organization':    return OrganizationRoleUser::where([
+//                                        'user_id' => $user_id,
+//                                        'organization_id' => $reference_id,
+//                                    ])->delete();  
+//                break;
             case 'group':           $user = User::find($user_id);
                                     return $user->groups()->detach([
                                         'group_id' => $reference_id

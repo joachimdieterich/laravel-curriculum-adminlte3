@@ -8,12 +8,11 @@ use App\Group;
 use Facades\Tests\Setup\GroupFactory;
 
 
-
 class GroupCRUDTest extends TestCase
 {
-     use RefreshDatabase;
+    use RefreshDatabase;
      
-     public function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
         $this->signInAdmin();

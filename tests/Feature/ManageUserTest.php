@@ -118,7 +118,7 @@ class ManageUserTest extends TestCase
             ]);
         $this->assertEquals($role['title'], $user_expel->roles->first()->title);
         
-        $this->followingRedirects()->post("/admin/organizations/expel", $attributes =$attributes = [
+        $this->followingRedirects()->delete("/admin/organizations/expel", $attributes =$attributes = [
                     'expel_list' => [
                                         ['user_id' => auth()->user()->id,
                                          'organization_id' => $organization->id,

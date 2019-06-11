@@ -119,7 +119,7 @@ class OrganizationEnrollmentTest extends TestCase
                           ];
         
         /* expel */
-        $this->post("admin/organizations/expel" , $attributes = [
+        $this->delete("admin/organizations/expel" , $attributes = [
                     'expel_list' => $expel_list,
                 ]);
         

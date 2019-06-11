@@ -265,7 +265,7 @@
               url: "/admin/organizations/expel",
               data: { 
                   expel_list: expellments, 
-                  _method: 'POST'
+                  _method: 'DELETE'
               }
             })
               .done(function () { location.reload() })

@@ -15,7 +15,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     
     /* Organization routes */
     Route::post('organizations/enrol', 'OrganizationsController@enrol')->name('organizations.enrol');
-    Route::post('organizations/expel', 'OrganizationsController@expel')->name('organizations.expel');
+    Route::delete('organizations/expel', 'OrganizationsController@expel')->name('organizations.expel');
     
     Route::delete('organizations/massDestroy', 'OrganizationsController@massDestroy')->name('organizations.massDestroy');
     Route::get('organizations/list', 'OrganizationsController@list')->name('organizations.list');

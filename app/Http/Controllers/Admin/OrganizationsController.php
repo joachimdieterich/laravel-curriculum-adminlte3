@@ -222,9 +222,6 @@ class OrganizationsController extends Controller
         return $return;  
     }
     
-    
-    
-    
     protected function validateRequest()
     {               
         

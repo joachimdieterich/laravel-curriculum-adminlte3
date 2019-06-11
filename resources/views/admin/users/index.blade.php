@@ -177,14 +177,20 @@
         }
 
         if (confirm('{{ trans('global.areYouSure') }}')) {
+            var enrolments = [];
+            for (i = 0; i < ids.length; i++) { 
+                enrolments.push({
+                    user_id: ids[i],
+                    group_id: $('#user_organization_group_id').val(),
+                });
+            }
             $.ajax({
               headers: {'x-csrf-token': _token},
               method: 'POST',
-              url: "/admin/users/group/massEnrol",
+              url: "/admin/groups/enrol",
               data: { 
-                  ids: ids, 
-                  group_id: $('#user_organization_group_id').val(),
-                  _method: 'PATCH',
+                   enrollment_list: enrolments, 
+                  _method: 'POST',
               }
             })
               .done(function () { location.reload() })
@@ -200,14 +206,20 @@
         }
 
         if (confirm('{{ trans('global.areYouSure') }}')) {
+            var expellments = [];
+            for (i = 0; i < ids.length; i++) { 
+                expellments.push({
+                    user_id: ids[i],
+                    group_id: $('#user_organization_group_id').val()
+                });
+            }
             $.ajax({
               headers: {'x-csrf-token': _token},
               method: 'POST',
-              url: "/admin/users/group/massExpel",
+              url: "/admin/groups/expel",
               data: { 
-                  ids: ids, 
-                  group_id: $('#user_organization_group_id').val(),
-                  _method: 'PATCH', 
+                  expel_list: expellments, 
+                  _method: 'DELETE', 
               }
             })
               .done(function () { location.reload() })

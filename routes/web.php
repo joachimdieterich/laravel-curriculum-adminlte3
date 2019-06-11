@@ -32,12 +32,16 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('users/massDestroy', 'UsersController@massDestroy')->name('users.massDestroy');
     Route::patch('users/massUpdate', 'UsersController@massUpdate')->name('users.massUpdate');
    
-    Route::patch('users/group/massEnrol', 'UsersController@massEnrolToGroup')->name('users.massEnrolToGroup');
-    Route::patch('users/group/massExpel', 'UsersController@massExpelFromGroup')->name('users.massExpelFromGroup');
+//    Route::patch('users/group/massEnrol', 'UsersController@massEnrolToGroup')->name('users.massEnrolToGroup');
+//    Route::patch('users/group/massExpel', 'UsersController@massExpelFromGroup')->name('users.massExpelFromGroup');
     
     Route::get('users/list', 'UsersController@list');
     Route::resource('users', 'UsersController');
    
+    /* Group routes */
+    Route::post('groups/enrol', 'GroupsController@enrol')->name('groups.enrol');
+    Route::delete('groups/expel', 'GroupsController@expel')->name('groups.expel');
+    
     Route::delete('groups/massDestroy', 'GroupsController@massDestroy')->name('groups.massDestroy');
     Route::get('groups/list', 'GroupsController@list');
     Route::resource('groups', 'GroupsController');

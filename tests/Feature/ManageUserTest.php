@@ -174,10 +174,10 @@ class ManageUserTest extends TestCase
                                                         ],
                                                   );
        
-//        $this->assertDatabaseHas('users', [
-//            'user_id' => auth()->user()->id, 
-//            'current_organization_id' => $org1->id, 
-//            ]);
+        $this->assertDatabaseHas('users', [
+            'id' => auth()->user()->id, 
+            'current_organization_id' => $org1->id, 
+        ]);
         
     }
     

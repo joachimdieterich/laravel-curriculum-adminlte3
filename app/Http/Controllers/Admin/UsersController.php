@@ -172,6 +172,13 @@ class UsersController extends Controller
         
         return response(null, 204);
     }
-   
+    public function setCurrentOrganization()
+    {
+        User::where('id', auth()->user()->id)->update([
+            'current_organization_id' => request('current_organization_id')
+                ]); 
+        
+        return back();
+    }
  
 }

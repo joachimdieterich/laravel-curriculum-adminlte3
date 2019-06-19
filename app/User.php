@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -77,6 +78,16 @@ class User extends Authenticatable
     public function groups()
     {
         return $this->belongsToMany('App\Group', 'group_user');
+    } 
+    
+    public function curricula()
+    {
+
+        return DB::table('curricula')
+            ->join('curriculum_group', 'curricula.id', '=', 'curriculum_group.curriculum_id')
+            ->join('group_user', 'group_user.group_id', '=', 'curriculum_group.group_id')
+            ->where('group_user.user_id', auth()->user()->id)
+            ->get();
     }
     
     public function roles()
@@ -103,5 +114,15 @@ class User extends Authenticatable
     public function status()
     {
         return $this->hasOne('App\Status', 'status_id', 'status_id');
+    }
+    
+    public function currentOrganization()
+    {
+        return $this->hasOne('App\Organization', 'id', 'current_organization_id');
+    }
+    
+    public function currentPeriod()
+    {
+        return $this->hasOne('App\Period', 'id', 'current_period_id');
     }
 }

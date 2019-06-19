@@ -113,7 +113,6 @@
                                     "field" => "role_organization_id",  
                                     "options"=> $organizations, 
                                     "option_label" => "title",  
-                                    "onchange"=> "this.form.submit()",  
                                     "value" =>  old('organization_id', isset($user->current_organization_id) ? $user->current_organization_id : '')]) 
                                  @include ('forms.input.select', 
                                     ["model" => "role", 
@@ -121,7 +120,6 @@
                                     "field" => "role_id",  
                                     "options"=> $roles, 
                                     "option_label" => "title",  
-                                    "onchange"=> "this.form.submit()",  
                                     "value" =>  old('role_id', isset($user->current_role_id) ? $user->current_role_id : '')])     
                                 <div class="btn-group pull-right" role="group" aria-label="...">    
                                     @include ('forms.input.button', ["onclick" => "enroleToOrganization()", "field" => "enroleToOrganization", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-plus", "label" => "Rolle zuweisen / einschreiben"])
@@ -140,8 +138,7 @@
                                 "field" => "status_id",  
                                 "options"=> $statuses, 
                                 "option_id" => "status_id",  
-                                "option_label" => "lang_de",
-                                "onchange"=> "this.form.submit()",  
+                                "option_label" => "lang_de", 
                                 "value" => old('status_id', isset($user->status_id) ? $user->status_id : '') ])
                                 @include ('forms.input.button', ["onclick" => "setStatus()", "field" => "acceptUser", "type" => "submit", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-lock", "label" => "Benutzer bestätigen"])
                             </div>
@@ -391,86 +388,4 @@ $(document).ready( function () {
  });
 </script>
 
-<!--
-<script>
-$(function () {
-  let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
-  
-  let deleteButton = {
-    text: deleteButtonTrans,
-    url: "{{ route('admin.users.massDestroy') }}",
-    className: 'btn-danger',
-
-    action: function (e, dt, node, config) {
-      var ids = $.map(dt.rows({ selected: true }).nodes(), function (entry) {
-          return $(entry).data('entry-id')
-      });
-
-      if (ids.length === 0) {
-        alert('{{ trans('global.datatables.zero_selected') }}')
-
-        return
-      }
-
-      if (confirm('{{ trans('global.areYouSure') }}')) {
-        $.ajax({
-          headers: {'x-csrf-token': _token},
-          method: 'POST',
-          url: config.url,
-          data: { ids: ids, _method: 'DELETE' }})
-          .done(function () { location.reload() })
-      }
-    }
-  }     
-  let resetPasswordButtonTrans = '{{ trans('global.datatables.resetPassword') }}'
-  
-  let resetPasswordButton = {
-    text: resetPasswordButtonTrans,
-    url: "{{ route('admin.users.massUpdate') }}",
-    className: 'btn-danger',
-
-    action: function (e, dt, node, config) {
-      var ids = $.map(dt.rows({ selected: true }).nodes(), function (entry) {
-          return $(entry).data('entry-id')
-      });
-
-      if (ids.length === 0) {
-        alert('{{ trans('global.datatables.zero_selected') }}')
-
-        return
-      }
-
-      if (confirm('{{ trans('global.areYouSure') }}')) {
-        $.ajax({
-          headers: {'x-csrf-token': _token},
-          method: 'POST',
-          url: config.url,
-          data: { 
-              ids: ids, 
-              _method: 'PATCH',
-              password: $('#password').val()
-          }
-        })
-          .done(function () { location.reload() })
-      }
-    }
-  }     
-  let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-@can('user_delete')
-  dtButtons.push(deleteButton)
-@endcan
-@can('user_delete')
-  dtButtons.push(resetPasswordButton)
-@endcan
-
-   
-
-  $('#users').DataTable({ 
-      buttons: dtButtons,  
-  })
-  
-    
-})
-
-</script>-->
 @endsection

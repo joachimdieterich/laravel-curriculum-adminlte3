@@ -161,4 +161,24 @@ class ManageUserTest extends TestCase
         }
     }
     
+    
+    /** @test */
+    public function a_user_can_update_its_current_organization_id()
+    {        
+        
+        $org1 = OrganizationFactory::create();
+      
+        $this->patch("admin/users/setCurrentOrganization" , 
+                                                        [
+                                                        'current_organization_id' => $org1->id,
+                                                        ],
+                                                  );
+       
+//        $this->assertDatabaseHas('users', [
+//            'user_id' => auth()->user()->id, 
+//            'current_organization_id' => $org1->id, 
+//            ]);
+        
+    }
+    
 }

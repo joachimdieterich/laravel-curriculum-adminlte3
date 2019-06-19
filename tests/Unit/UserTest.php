@@ -20,4 +20,11 @@ class UserTest extends TestCase
         $this->assertInstanceOf('App\Group', $user->groups()->first());
     }
     
+//    /** @test */
+//    public function has_a_current_period_id() {
+//        
+//        $user = User::findOrFail(1); 
+//        
+//    }
+    
 }

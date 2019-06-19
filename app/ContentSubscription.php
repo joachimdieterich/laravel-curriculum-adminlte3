@@ -2,14 +2,14 @@
 
 namespace App;
 
-use App\Content;
+
 use Illuminate\Database\Eloquent\Model;
 
 class ContentSubscription extends Model
 {
     protected $guarded = [];
     
-    public function content()
+    public function curriculum()
     {
         return $this->belongsTo(Content::class);
     }

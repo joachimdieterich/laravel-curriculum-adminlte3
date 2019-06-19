@@ -12,7 +12,7 @@
         style="z-index: 25000">
         <div class="card" style="margin-bottom: 0px !important">
             <div class="card-header">
-                <h3 class="card-title">{{ trans('global.create') }} {{ trans('global.organization.fields.title') }}</h3>
+                <h3 class="card-title">{{ trans('global.create') }} {{ trans('global.organization.title_singular') }}</h3>
                 <div class="card-tools">
                    <button type="button" class="btn btn-tool" data-widget="remove" @click="$emit('close')">
                      <i class="fa fa-times"></i>

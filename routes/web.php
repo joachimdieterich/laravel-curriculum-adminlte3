@@ -31,9 +31,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     /* User routes */
     Route::delete('users/massDestroy', 'UsersController@massDestroy')->name('users.massDestroy');
     Route::patch('users/massUpdate', 'UsersController@massUpdate')->name('users.massUpdate');
-   
-//    Route::patch('users/group/massEnrol', 'UsersController@massEnrolToGroup')->name('users.massEnrolToGroup');
-//    Route::patch('users/group/massExpel', 'UsersController@massExpelFromGroup')->name('users.massExpelFromGroup');
+    Route::patch('users/setCurrentOrganization', 'UsersController@setCurrentOrganization')->name('users.setCurrentOrganization');
     
     Route::get('users/list', 'UsersController@list');
     Route::resource('users', 'UsersController');
@@ -46,10 +44,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('groups/list', 'GroupsController@list');
     Route::resource('groups', 'GroupsController');
     
-    
-    
-    Route::resource('curricula', 'CurriculumController');
-    Route::get('curriculaList', 'CurriculumController@curriculaList');
     
     Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');
 
@@ -77,4 +71,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
 
 Route::group(['middleware' => 'auth'], function () {
     Route::resource('contents', 'ContentController');
+    
+    /* curricula routes */
+    Route::resource('curricula', 'CurriculumController');
+    Route::get('curriculaList', 'CurriculumController@curriculaList');
+  
+    
 });

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 
@@ -25,7 +25,7 @@ class CurriculumController extends Controller
         $curricula = Curriculum::all();
        
         //dd($curricula);
-        return view('admin.curricula.index')
+        return view('curricula.index')
           ->with(compact('curricula'));
     }
     
@@ -61,13 +61,13 @@ class CurriculumController extends Controller
             ->addColumn('action', function ($curricula) {
                  $actions  = '';
                     if (\Gate::allows('curriculum_show')){
-                        $actions .= '<a href="'.route('admin.curricula.show', $curricula->id).'" '
+                        $actions .= '<a href="'.route('curricula.show', $curricula->id).'" '
                                     . 'class="btn btn-xs btn-success">'
                                     . '<i class="fa fa-list-alt"></i> Show'
                                     . '</a>';
                     }
                     if (\Gate::allows('curriculum_edit')){
-                        $actions .= '<a href="'.route('admin.curricula.edit', $curricula->id).'" '
+                        $actions .= '<a href="'.route('curricula.edit', $curricula->id).'" '
                                     . 'class="btn btn-xs btn-primary">'
                                     . '<i class="fa fa-edit"></i> Edit'
                                     . '</a>';
@@ -98,7 +98,7 @@ class CurriculumController extends Controller
         $subjects   = Subject::all();
         $organization_types = OrganizationType::all();
         
-        return view('admin.curricula.create')
+        return view('curricula.create')
                 ->with(compact('grades'))
                 ->with(compact('subjects'))
                 ->with(compact('organization_types'));
@@ -149,7 +149,7 @@ class CurriculumController extends Controller
     public function show(Curriculum $curriculum)
     {
         
-        return view('admin.curricula.show')
+        return view('curricula.show')
                 ->with(compact('curriculum'));
     }
 

@@ -3,14 +3,35 @@
     <a href="#" class="brand-link">
         <span class="brand-text font-weight-light">Project</span>
     </a>
-
+    
     <!-- Sidebar -->
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
         <!-- Sidebar user (optional) -->
 
         <!-- Sidebar Menu -->
-        <nav class="mt-2">
+        <nav class="mt-2"> 
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <li class="nav-header">{{ strtoupper(trans('global.curriculum.title')) }}</li>
+                <li class="nav-item">
+                    @include ('forms.input.select', 
+                        ["model" => "organization", 
+                        "field" => "current_curriculum_group_id",  
+                        "options"=> auth()->user()->curricula(), 
+                        "option_label" => "title",  
+                        "onchange"=> "loadCurriculum()",  
+                        "value" =>  ''])
+                </li>
+                <li class="nav-header">{{ strtoupper(trans('global.organization.title_singular')) }}</li>
+                <li class="nav-item">
+                     @include ('forms.input.select', 
+                        ["model" => "organization", 
+                        "field" => "current_organization_id",  
+                        "options"=> auth()->user()->organizations, 
+                        "option_label" => "title",  
+                        "onchange"=> "setCurrentOrganization()",  
+                        "value" =>  old('current_organization_id', isset(auth()->user()->current_organization_id) ? auth()->user()->current_organization_id : '')])
+                </li>
+                
                 <li class="nav-item">
                     <a href="{{ route("admin.home") }}" class="nav-link">
                         <p>
@@ -21,7 +42,7 @@
                 </li>
                 @can('curriculum_access')
                     <li class="nav-item">
-                        <a href="{{ route("admin.curricula.index") }}" class="nav-link {{ request()->is('admin/curricula') || request()->is('admin/curricula/*') ? 'active' : '' }}">
+                        <a href="{{ route("curricula.index") }}" class="nav-link {{ request()->is('curricula') || request()->is('urricula/*') ? 'active' : '' }}">
                             <i class="fas fa-th"></i>
                             <p>
                                 <span>{{ trans('global.curriculum.title') }}</span>
@@ -126,3 +147,20 @@
     </div>
     <!-- /.sidebar -->
 </aside>
+
+@section('scripts')
+@parent
+<!--hack to get select2 working-->
+<script>
+    $(document).ready(function() {
+  $("#current_organization_id").select2({
+    dropdownParent: $("#sidebar")
+  });
+  $("#current_curriculum_group_id").select2({
+    dropdownParent: $("#sidebar")
+  });
+});
+
+ 
+</script>
+@endsection

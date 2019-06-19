@@ -7,6 +7,7 @@
 
 require('./bootstrap');
 
+//vue
 window.Vue = require('vue');
 
 Vue.prototype.trans = (key) => {
@@ -27,6 +28,7 @@ Vue.use(VModal);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
 Vue.component('organization-modal', require('./components/OrganizationModal.vue').default);
+Vue.component('group-modal', require('./components/GroupModal.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -37,3 +39,4 @@ Vue.component('organization-modal', require('./components/OrganizationModal.vue'
 const app = new Vue({
     el: '#app'
 });
+

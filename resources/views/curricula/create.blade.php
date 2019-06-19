@@ -7,12 +7,12 @@
     </div>
 
     <div class="card-body">
-        <form action="{{ route("admin.curricula.store") }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route("curricula.store") }}" method="POST" enctype="multipart/form-data">
             <form
             method="POST"
             action="/curricula"
         >
-            @include ('admin.curricula.form', [
+            @include ('curricula.form', [
                 'organization' => new App\Curriculum,
                 'buttonText' =>  trans('global.create'). ' ' .trans('global.curriculum.title_singular')
             ])

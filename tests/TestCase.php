@@ -25,7 +25,6 @@ abstract class TestCase extends BaseTestCase
     
      protected function signInAdmin($user = null)
     {
-
         $credentials = [
             'email' => 'admin@curriculumonline.de',
             'password' => 'password',

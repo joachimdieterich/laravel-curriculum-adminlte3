@@ -23,7 +23,7 @@ class Group extends Model
     }
     
     public function curricula(){
-        return $this->belongsToMany(Curriculum::class, 'curriculumm_group')->withTimestamps();
+        return $this->belongsToMany(Curriculum::class, 'curriculum_group');
     }
     
     public function grade()

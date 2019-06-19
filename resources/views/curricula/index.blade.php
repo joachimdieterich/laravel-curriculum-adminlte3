@@ -3,7 +3,7 @@
 @can('user_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <a class="btn btn-success" href="{{ route("admin.curricula.create") }}" >
+            <a class="btn btn-success" href="{{ route("curricula.create") }}" >
                 {{ trans('global.add') }} {{ trans('global.curriculum.title_singular') }}
             </a>
         </div>
@@ -43,7 +43,7 @@ $(document).ready( function () {
     var table = $('#curricula-datatable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ url('admin/curriculaList') }}",
+        ajax: "{{ url('curriculaList') }}",
         columns: [
                  { data: 'check'},
                  { data: 'title' },

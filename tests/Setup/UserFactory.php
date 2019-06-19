@@ -14,7 +14,6 @@
 
 namespace Tests\Setup;
 
-use App\Organization;
 use App\User;
 
 class UserFactory

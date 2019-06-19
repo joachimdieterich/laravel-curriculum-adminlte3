@@ -16,7 +16,6 @@ namespace Tests\Setup;
 
 use App\Group;
 
-
 class GroupFactory
 {
     protected $user;

@@ -15,7 +15,6 @@
 namespace Tests\Setup;
 
 use App\Content;
-use App\User;
 
 class ContentFactory
 {

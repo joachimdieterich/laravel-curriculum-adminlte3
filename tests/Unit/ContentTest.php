@@ -4,11 +4,9 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use Facades\Tests\Setup\ContentFactory;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\ContentSubscription;
 use App\Content;
-use App\Context;
 
 class ContentTest extends TestCase
 {

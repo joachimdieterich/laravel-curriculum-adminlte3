@@ -12,7 +12,7 @@ class ApiCountryTest extends TestCase {
     /** @test */
     public function an_unauthificated_client_can_not_get_countries() 
     {
-
+        $this->withoutExceptionHandling();
         $response = $this->get('/api/v1/countries')->assertStatus(302);
         $this->contains('login');
     }

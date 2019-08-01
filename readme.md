@@ -70,7 +70,8 @@ php artisan passport:install
 ##
 OpenApi Documentation Endpoint
 
-/api/documentation
+localhost:[port]/api/documentation
+
 
 ## Progress
 

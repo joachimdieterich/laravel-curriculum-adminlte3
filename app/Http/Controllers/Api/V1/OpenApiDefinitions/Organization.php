@@ -23,7 +23,7 @@
 /**
 * @OA\POST(
 *      path="/v1/organizations",
-*      operationId="organizations",
+*      operationId="createOrganization",
 *      tags={"Organization v1"},
 *      summary="Create new organization",
 *      description="Returns a the new organization object",
@@ -108,17 +108,14 @@
 *          @OA\JsonContent(ref="#/components/schemas/Organization")   
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*       security={
-*           {"api_key_security_example": {}}
-*       }
 *      
 * )
 */
 
 /**
 * @OA\PUT(
-*      path="/v1/organizations/{id}",
-*      operationId="organizations",
+*      path="/v1/organizations/{organization}",
+*      operationId="updateOrganization",
 *      tags={"Organization v1"},
 *      summary="Edit organization",
 *      description="Edit organization",
@@ -126,7 +123,7 @@
 *           {"passport": {"*"}},
 *      },
 *      @OA\Parameter(
-*          name="id",
+*          name="organization",
 *          description="Organization id",
 *          required=true,
 *          in="path",
@@ -211,9 +208,6 @@
 *          @OA\JsonContent(ref="#/components/schemas/Organization")   
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*       security={
-*           {"api_key_security_example": {}}
-*       }
 *      
 * )
 * 
@@ -221,8 +215,8 @@
 
 /**
 * @OA\GET(
-*      path="/v1/organizations/{id}",
-*      operationId="organizations",
+*      path="/v1/organizations/{organization}",
+*      operationId="getOrganization",
 *      tags={"Organization v1"},
 *      summary="Get organization by Id",
 *      description="Returns a organization object",
@@ -230,7 +224,7 @@
 *           {"passport": {"*"}},
 *      },
 *      @OA\Parameter(
-*          name="id",
+*          name="organization",
 *          description="Organization id",
 *          required=true,
 *          in="path",
@@ -246,9 +240,6 @@
 *         ),
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*       security={
-*           {"api_key_security_example": {}}
-*       }
 *      
 * )
 * 
@@ -256,8 +247,8 @@
 
 /**
 * @OA\DELETE(
-*      path="/v1/organizations/{id}",
-*      operationId="organizations",
+*      path="/v1/organizations/{organization}",
+*      operationId="deleteOrganization",
 *      tags={"Organization v1"},
 *      summary="Delete organization by Id",
 *      description="Delete a organization object",
@@ -265,7 +256,7 @@
 *           {"passport": {"*"}},
 *      },
 *      @OA\Parameter(
-*          name="id",
+*          name="organization",
 *          description="Organization id",
 *          required=true,
 *          in="path",
@@ -287,7 +278,7 @@
 /**
 * @OA\PUT(
 *      path="/v1/organizations/enrol",
-*      operationId="organizations",
+*      operationId="enrolToOrganization",
 *      tags={"Organization v1"},
 *      summary="Create organization enrolment",
 *      description="Create organization enrolment",
@@ -325,9 +316,6 @@
 *          @OA\JsonContent(ref="#/components/schemas/OrganizationRoleUser")   
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*       security={
-*           {"api_key_security_example": {}}
-*       }
 *      
 * )
 * 
@@ -336,7 +324,7 @@
 /**
 * @OA\DELETE(
 *      path="/v1/organizations/expel",
-*      operationId="organizations",
+*      operationId="expelFromOrganization",
 *      tags={"Organization v1"},
 *      summary="Delete organization enrolment",
 *      description="Delete organization enrolment",
@@ -368,9 +356,6 @@
 *          description="successful operation",
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*       security={
-*           {"api_key_security_example": {}}
-*       }
 *      
 * )
 * 

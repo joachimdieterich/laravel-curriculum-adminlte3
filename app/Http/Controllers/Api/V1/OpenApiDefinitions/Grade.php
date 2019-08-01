@@ -3,7 +3,7 @@
 /**
 * @OA\Get(
 *      path="/v1/grades",
-*      operationId="grades",
+*      operationId="getAllGrades",
 *      tags={"Grade v1"},
 *      summary="Get all grades",
 *      description="Returns a collection of grade objects",
@@ -22,8 +22,8 @@
 
 /**
 * @OA\Get(
-*      path="/v1/grades/{id}",
-*      operationId="grades",
+*      path="/v1/grades/{grade}",
+*      operationId="getGrade",
 *      tags={"Grade v1"},
 *      summary="Get all grades",
 *      description="Returns a grade objects",
@@ -31,7 +31,7 @@
 *           {"passport": {"*"}},
 *      },
 *      @OA\Parameter(
-*          name="id",
+*          name="grade",
 *          description="Grade Id",
 *          required=true,
 *          in="path",

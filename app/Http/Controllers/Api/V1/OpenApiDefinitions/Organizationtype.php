@@ -3,7 +3,7 @@
 /**
 * @OA\Get(
 *      path="/v1/organizationtypes",
-*      operationId="organizationtypes",
+*      operationId="getAllOrganizationtypes",
 *      tags={"OrganizationType v1"},
 *      summary="Get all organizationtypes",
 *      description="Returns a collection of organizationtype objects",
@@ -22,8 +22,8 @@
 
 /**
 * @OA\Get(
-*      path="/v1/organizationtypes/{id}",
-*      operationId="organizationtypes",
+*      path="/v1/organizationtypes/{organizationtype}",
+*      operationId="getOrganizationtype",
 *      tags={"OrganizationType v1"},
 *      summary="Get all organizationtypes",
 *      description="Returns a state objects",
@@ -31,7 +31,7 @@
 *           {"passport": {"*"}},
 *      },
 *      @OA\Parameter(
-*          name="id",
+*          name="organizationtype",
 *          description="OrganizationType Id",
 *          required=true,
 *          in="path",

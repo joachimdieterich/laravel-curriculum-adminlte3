@@ -3,7 +3,7 @@
 /**
 * @OA\Get(
 *      path="/v1/periods",
-*      operationId="periods",
+*      operationId="getAllPeriods",
 *      tags={"Period v1"},
 *      summary="Get all periods",
 *      description="Returns a collection of period objects",
@@ -22,8 +22,8 @@
 
 /**
 * @OA\Get(
-*      path="/v1/periods/{id}",
-*      operationId="periods",
+*      path="/v1/periods/{period}",
+*      operationId="getPeriod",
 *      tags={"Period v1"},
 *      summary="Get all periods",
 *      description="Returns a period objects",
@@ -31,7 +31,7 @@
 *           {"passport": {"*"}},
 *      },
 *      @OA\Parameter(
-*          name="id",
+*          name="period",
 *          description="Period Id",
 *          required=true,
 *          in="path",

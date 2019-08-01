@@ -3,7 +3,7 @@
 /**
 * @OA\Get(
 *      path="/v1/users",
-*      operationId="users",
+*      operationId="getAllUsers",
 *      tags={"User v1"},
 *      summary="Get all users",
 *      description="Returns a collection of user objects",
@@ -23,7 +23,7 @@
 /**
 * @OA\POST(
 *      path="/v1/users",
-*      operationId="users",
+*      operationId="createUser",
 *      tags={"User v1"},
 *      summary="Create new user",
 *      description="Returns a the new user object",
@@ -97,9 +97,6 @@
 *          @OA\JsonContent(ref="#/components/schemas/User"),
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*       security={
-*           {"api_key_security_example": {}}
-*       }
 *      
 * )
 */
@@ -107,8 +104,8 @@
 
 /**
 * @OA\PUT(
-*      path="/v1/users/{id}",
-*      operationId="users",
+*      path="/v1/users/{user}",
+*      operationId="updateUser",
 *      tags={"User v1"},
 *      summary="Edit user",
 *      description="Edit user",
@@ -116,7 +113,7 @@
 *           {"passport": {"*"}},
 *      },
 *      @OA\Parameter(
-*          name="id",
+*          name="user",
 *          description="User id",
 *          required=true,
 *          in="path",
@@ -190,9 +187,6 @@
 *          @OA\JsonContent(ref="#/components/schemas/User")   
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*       security={
-*           {"api_key_security_example": {}}
-*       }
 *      
 * )
 * 
@@ -201,8 +195,8 @@
 
 /**
 * @OA\Get(
-*      path="/v1/users/{id}",
-*      operationId="users",
+*      path="/v1/users/{user}",
+*      operationId="getUser",
 *      tags={"User v1"},
 *      summary="Get all users",
 *      description="Returns a collection of user objects",
@@ -210,7 +204,7 @@
 *           {"passport": {"*"}},
 *      },
 *      @OA\Parameter(
-*          name="id",
+*          name="user",
 *          description="User id",
 *          required=true,
 *          in="path",
@@ -230,8 +224,8 @@
 
 /**
 * @OA\DELETE(
-*      path="/v1/users/{id}",
-*      operationId="users",
+*      path="/v1/users/{user}",
+*      operationId="deleteUser",
 *      tags={"User v1"},
 *      summary="Delete user by Id",
 *      description="Delete a user object",
@@ -239,7 +233,7 @@
 *           {"passport": {"*"}},
 *      },
 *      @OA\Parameter(
-*          name="id",
+*          name="user",
 *          description="User id",
 *          required=true,
 *          in="path",

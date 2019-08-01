@@ -3,7 +3,7 @@
 /**
 * @OA\Get(
 *      path="/v1/groups",
-*      operationId="groups",
+*      operationId="getAllGroups",
 *      tags={"Group v1"},
 *      summary="Get all groups",
 *      description="Returns a collection of group objects",
@@ -23,7 +23,7 @@
 /**
 * @OA\POST(
 *      path="/v1/groups",
-*      operationId="groups",
+*      operationId="createGroup",
 *      tags={"Group v1"},
 *      summary="Create new group",
 *      description="Returns a the new group object",
@@ -72,9 +72,6 @@
 *          @OA\JsonContent(ref="#/components/schemas/Group"),
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*       security={
-*           {"api_key_security_example": {}}
-*       }
 *      
 * )
 */
@@ -82,8 +79,8 @@
 
 /**
 * @OA\PUT(
-*      path="/v1/groups/{id}",
-*      operationId="groups",
+*      path="/v1/groups/{group}",
+*      operationId="updateGroupById",
 *      tags={"Group v1"},
 *      summary="Edit group",
 *      description="Edit group",
@@ -91,7 +88,7 @@
 *           {"passport": {"*"}},
 *      },
 *      @OA\Parameter(
-*          name="id",
+*          name="group",
 *          description="Group id",
 *          required=true,
 *          in="path",
@@ -140,9 +137,6 @@
 *          @OA\JsonContent(ref="#/components/schemas/Group")   
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*       security={
-*           {"api_key_security_example": {}}
-*       }
 *      
 * )
 * 
@@ -150,16 +144,16 @@
 
 /**
 * @OA\Get(
-*      path="/v1/groups/{id}",
-*      operationId="groups",
+*      path="/v1/groups/{group}",
+*      operationId="getGroup",
 *      tags={"Group v1"},
-*      summary="Get all groups",
-*      description="Returns a collection of group objects",
+*      summary="Get group by Id",
+*      description="Returns a group object",
 *      security={
 *           {"passport": {"*"}},
 *      },
 *      @OA\Parameter(
-*          name="id",
+*          name="group",
 *          description="Group id",
 *          required=true,
 *          in="path",
@@ -179,8 +173,8 @@
 
 /**
 * @OA\DELETE(
-*      path="/v1/groups/{id}",
-*      operationId="groups",
+*      path="/v1/groups/{group}",
+*      operationId="deleteGroup",
 *      tags={"Group v1"},
 *      summary="Delete group by Id",
 *      description="Delete a group object",
@@ -188,7 +182,7 @@
 *           {"passport": {"*"}},
 *      },
 *      @OA\Parameter(
-*          name="id",
+*          name="group",
 *          description="Group id",
 *          required=true,
 *          in="path",
@@ -210,7 +204,7 @@
 /**
 * @OA\PUT(
 *      path="/v1/groups/enrol",
-*      operationId="groups",
+*      operationId="enrolToGroup",
 *      tags={"Group v1"},
 *      summary="Create group enrolment",
 *      description="Create group enrolment",
@@ -243,9 +237,6 @@
 *          @OA\JsonContent(ref="#/components/schemas/Group")   
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*       security={
-*           {"api_key_security_example": {}}
-*       }
 *      
 * )
 * 

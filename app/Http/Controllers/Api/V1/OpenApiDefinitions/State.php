@@ -3,7 +3,7 @@
 /**
 * @OA\Get(
 *      path="/v1/states",
-*      operationId="states",
+*      operationId="getAllStates",
 *      tags={"State v1"},
 *      summary="Get all states",
 *      description="Returns a collection of state objects",
@@ -22,8 +22,8 @@
 
 /**
 * @OA\Get(
-*      path="/v1/states/{id}",
-*      operationId="states",
+*      path="/v1/states/{state}",
+*      operationId="getState",
 *      tags={"State v1"},
 *      summary="Get all states",
 *      description="Returns a state objects",
@@ -31,7 +31,7 @@
 *           {"passport": {"*"}},
 *      },
 *      @OA\Parameter(
-*          name="id",
+*          name="state",
 *          description="State Id",
 *          required=true,
 *          in="path",

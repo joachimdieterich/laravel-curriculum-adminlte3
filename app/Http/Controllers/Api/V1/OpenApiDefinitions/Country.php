@@ -3,7 +3,7 @@
 /**
 * @OA\Get(
 *      path="/v1/countries",
-*      operationId="countries",
+*      operationId="getAllCountries",
 *      tags={"Country v1"},
 *      summary="Get all countries",
 *      description="Returns a collection of country objects",
@@ -22,8 +22,8 @@
 
 /**
 * @OA\Get(
-*      path="/v1/countries/{id}",
-*      operationId="countries",
+*      path="/v1/countries/{country}",
+*      operationId="getCountry",
 *      tags={"Country v1"},
 *      summary="Get all countries",
 *      description="Returns a countrie objects",
@@ -31,7 +31,7 @@
 *           {"passport": {"*"}},
 *      },
 *      @OA\Parameter(
-*          name="id",
+*          name="country",
 *          description="Country Id",
 *          required=true,
 *          in="path",

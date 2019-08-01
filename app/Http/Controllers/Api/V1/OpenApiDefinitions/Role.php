@@ -3,7 +3,7 @@
 /**
 * @OA\Get(
 *      path="/v1/roles",
-*      operationId="roles",
+*      operationId="getAllRoles",
 *      tags={"Role v1"},
 *      summary="Get all roles",
 *      description="Returns a collection of role objects",
@@ -22,8 +22,8 @@
 
 /**
 * @OA\Get(
-*      path="/v1/roles/{id}",
-*      operationId="roles",
+*      path="/v1/roles/{role}",
+*      operationId="getRole",
 *      tags={"Role v1"},
 *      summary="Get all roles",
 *      description="Returns a role objects",
@@ -31,7 +31,7 @@
 *           {"passport": {"*"}},
 *      },
 *      @OA\Parameter(
-*          name="id",
+*          name="role",
 *          description="Role id",
 *          required=true,
 *          in="path",

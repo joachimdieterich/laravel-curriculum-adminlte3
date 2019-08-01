@@ -3,7 +3,7 @@
 /**
 * @OA\Get(
 *      path="/v1/subjects",
-*      operationId="subject",
+*      operationId="getAllSubject",
 *      tags={"Subject v1"},
 *      summary="Get all subject",
 *      description="Returns a collection of subject objects",
@@ -22,8 +22,8 @@
 
 /**
 * @OA\Get(
-*      path="/v1/subjects/{id}",
-*      operationId="subject",
+*      path="/v1/subjects/{subject}",
+*      operationId="getSubject",
 *      tags={"Subject v1"},
 *      summary="Get all subject",
 *      description="Returns a subject objects",
@@ -31,7 +31,7 @@
 *           {"passport": {"*"}},
 *      },
 *      @OA\Parameter(
-*          name="id",
+*          name="subject",
 *          description="Subject Id",
 *          required=true,
 *          in="path",

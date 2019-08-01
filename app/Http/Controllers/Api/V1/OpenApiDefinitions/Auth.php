@@ -39,9 +39,6 @@
 *          description="successful operation"
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*       security={
-*           {"api_key_security_example": {}}
-*       }
 *     )
 *
 * Returns message
@@ -86,9 +83,6 @@
 *          description="successful operation"
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*       security={
-*           {"api_key_security_example": {}}
-*       }
 *     )
 *
 * Returns strings: access_token, token_type, expires at
@@ -107,9 +101,6 @@
 *          description="successful operation"
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*       security={
-*           {"api_key_security_example": {}}
-*       }
 *     )
 *
 * Returns message
@@ -128,9 +119,6 @@
 *          description="successful operation"
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*       security={
-*           {"api_key_security_example": {}}
-*       }
 *     )
 *
 * Returns user object

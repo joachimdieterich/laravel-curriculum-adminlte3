@@ -13,6 +13,7 @@ before_script:
     
 script:
     - php artisan key:generate
+    - php artisan passport:install
     - vendor/bin/phpunit
  
 services:

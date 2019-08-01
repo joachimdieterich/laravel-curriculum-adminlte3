@@ -12,7 +12,7 @@ before_script:
     - composer install --no-interaction
     - php artisan key:generate
     - php artisan migrate
-    - php artisan passport:install
+    - php artisan passport:keys
     
 script:
     - vendor/bin/phpunit

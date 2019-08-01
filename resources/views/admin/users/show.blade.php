@@ -11,7 +11,7 @@
 
                 <h3 class="profile-username text-center">{{ $user->firstname }} {{ $user->lastname }}</h3>
 
-                <p class="text-muted text-center">{{ $user->username }}</p>
+                <p class="text-muted text-center">{{ $user->username }} ({{ (null !== $user->currentRole()->first()) ? $user->currentRole()->first()->title : '' }})</p>
 
                 <ul class="list-group list-group-unbordered mb-3">
                   <li class="list-group-item">

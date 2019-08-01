@@ -4,7 +4,19 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+/**
+ *   @OA\Schema(  
+ *      required={"id", "title"},
+ *      @OA\Xml(name="Role"),
+ *      
+ *      @OA\Property( property="id", type="integer"),
+ *      @OA\Property( property="title", type="string"),
+ *      @OA\Property( property="created_at", type="string"),
+ *      @OA\Property( property="updated_at", type="string"),
+ *      @OA\Property( property="deleted_at", type="string"),
+ *   ),
+ * 
+ */
 class Role extends Model
 {
     use SoftDeletes;

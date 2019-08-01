@@ -13,6 +13,7 @@ class UserCRUDTest extends TestCase
     
      public function setUp(): void
     {
+        
         parent::setUp();
         $this->signInAdmin();
     }
@@ -34,11 +35,11 @@ class UserCRUDTest extends TestCase
     }
     
     /** @test 
-     * Use Route: POST, admin/users, admin.users.index
+     * Use Route: POST, admin/users, admin.users.store
      */  
     public function an_administrator_create_an_user()
     {
-        
+        $this->withoutExceptionHandling();
         $this->followingRedirects()->post("admin/users" , $attributes = factory('App\User')->raw())
                 ->assertStatus(200);
         
@@ -111,7 +112,6 @@ class UserCRUDTest extends TestCase
      */
     public function an_administrator_update_an_user()
     {
-        
         $this->post("admin/users" , $attributes = factory('App\User')->raw());
         $user = User::where('username', $attributes['username'])->first()->toArray();
       
@@ -119,7 +119,7 @@ class UserCRUDTest extends TestCase
         
         $this->patch("admin/users/". $user['id'] , $new_attributes = factory('App\User')->raw());
         
-        $user_edit = User::where('username', $attributes['username'])->first()->toArray();
+        $user_edit = User::where('username', $new_attributes['username'])->first()->toArray();
         $this->assertDatabaseHas('users', $user_edit);
     }
     

@@ -7,11 +7,19 @@ use Illuminate\Database\Seeder;
 class PermissionRoleTableSeeder extends Seeder
 {
     public function run()
-    {
+    {   //set admin permissions
         $admin_permissions = Permission::all();
         Role::findOrFail(1)->permissions()->sync($admin_permissions->pluck('id'));
+        
+        //set user permissions
         $user_permissions = $admin_permissions->filter(function ($permission) {
-            return substr($permission->title, 0, 5) != 'user_' && substr($permission->title, 0, 6) != 'grade_' && substr($permission->title, 0, 5) != 'role_' && substr($permission->title, 0, 11) != 'permission_';
+            
+            $user_permission_list = [
+                'curriculum_show', 
+               
+            ];
+            
+            return in_array($permission->title, $user_permission_list);
         });
         Role::findOrFail(6)->permissions()->sync($user_permissions);
     }

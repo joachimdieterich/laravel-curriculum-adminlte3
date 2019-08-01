@@ -15,8 +15,7 @@
             @include ('curricula.form', [
                 'organization' => new App\Curriculum,
                 'buttonText' =>  trans('global.create'). ' ' .trans('global.curriculum.title_singular')
-            ])
-        </form>
+            ]) 
         </form>
     </div>
 </div>

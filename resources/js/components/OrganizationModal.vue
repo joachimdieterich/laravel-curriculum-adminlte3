@@ -153,7 +153,9 @@
                 } catch(error) {
                     this.errors = error.response.data.errors;
                 }
-            }
+            },
+            beforeOpen() { console.log('open') },
+            beforeClose() { console.log('close') }
         },
         mounted() {
             console.log('Component mounted.')

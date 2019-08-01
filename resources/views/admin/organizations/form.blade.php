@@ -2,7 +2,7 @@
 @include ('forms.input.text', 
             ["model" => "organization", 
             "field" => "title", 
-            "placeholder" => "curriculum Headquartier",  
+            "placeholder" => "curriculum Headquarter",  
             "required" => true, 
             "value" => old('title', isset($organization) ? $organization->title : '')])
 

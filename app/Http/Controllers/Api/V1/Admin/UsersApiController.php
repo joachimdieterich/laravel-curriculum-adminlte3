@@ -16,14 +16,16 @@ class UsersApiController extends Controller
         return $users;
     }
 
-    public function store(StoreUserRequest $request)
+    public function store()
     {
-        return User::create($request->all());
+        return User::create($this->filteredRequest());
     }
 
-    public function update(UpdateUserRequest $request, User $user)
-    {
-        return $user->update($request->all());
+    public function update(User $user) {
+        if ($user->update($this->filteredRequest())) 
+        { 
+            return $user->fresh();
+        }
     }
 
     public function show(User $user)
@@ -33,6 +35,13 @@ class UsersApiController extends Controller
 
     public function destroy(User $user)
     {
-        return $user->delete();
+        if ($user->delete()) 
+        {
+            return ['message' => 'Successful deleted'];
+        }
+    }
+    
+    protected function filteredRequest() {
+        return array_filter(request()->all()); //filter to ignore fields with null values
     }
 }

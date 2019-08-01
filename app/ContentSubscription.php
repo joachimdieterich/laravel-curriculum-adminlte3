@@ -9,9 +9,17 @@ class ContentSubscription extends Model
 {
     protected $guarded = [];
     
-    public function curriculum()
+//    public function curriculum()
+//    {
+//        return $this->belongsTo(Content::class);
+//    }
+    
+    /**
+     * Get the subscriber model.
+     */
+    public function subscribable()
     {
-        return $this->belongsTo(Content::class);
+        return $this->morphTo();
     }
     
     public function status()

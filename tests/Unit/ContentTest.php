@@ -26,12 +26,16 @@ class ContentTest extends TestCase
         
         $content = ContentFactory::create();
         
+        $curriculum = new \App\Curriculum;
+        
         $subscription = ContentSubscription::create($attributes = [
             'content_id' => $content->id,
-            'context_id' => 1,
+            
+            'subscribable_type' => get_class($curriculum),
+            'subscribable_id' => 1,
             'sharing_level_id' => 1,
-            'reference_id' => 1,
-            'status_id' => 1,
+
+            'visibility' => true,
             'owner_id' => 1,
         ]);
         

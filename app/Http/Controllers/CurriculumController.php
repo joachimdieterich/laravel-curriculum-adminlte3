@@ -8,8 +8,13 @@ use App\Curriculum;
 use App\Grade;
 use App\Subject;
 use App\OrganizationType;
+use App\TerminalObjective;
+use App\EnablingObjective;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use DOMDocument;
+use App\Content;
+use App\Glossar;
 
 class CurriculumController extends Controller
 {
@@ -24,13 +29,13 @@ class CurriculumController extends Controller
 
         $curricula = Curriculum::all();
        
-        //dd($curricula);
         return view('curricula.index')
           ->with(compact('curricula'));
     }
     
-     public function curriculaList()
+     public function list()
     {
+        abort_unless(\Gate::allows('curriculum_access'), 403);
         $curricula = Curriculum::select([
             'id', 
             'title', 
@@ -41,7 +46,7 @@ class CurriculumController extends Controller
             'owner_id',
             
             ]);
-        //dd($curricula);
+        
         return DataTables::of($curricula)
             ->addColumn('state', function ($curricula) {
                 return $curricula->state()->first()->lang_de;                
@@ -62,13 +67,13 @@ class CurriculumController extends Controller
                  $actions  = '';
                     if (\Gate::allows('curriculum_show')){
                         $actions .= '<a href="'.route('curricula.show', $curricula->id).'" '
-                                    . 'class="btn btn-xs btn-success">'
+                                    . 'class="btn btn-xs btn-success mr-1">'
                                     . '<i class="fa fa-list-alt"></i> Show'
                                     . '</a>';
                     }
                     if (\Gate::allows('curriculum_edit')){
                         $actions .= '<a href="'.route('curricula.edit', $curricula->id).'" '
-                                    . 'class="btn btn-xs btn-primary">'
+                                    . 'class="btn btn-xs btn-primary mr-1">'
                                     . '<i class="fa fa-edit"></i> Edit'
                                     . '</a>';
                     }
@@ -94,6 +99,8 @@ class CurriculumController extends Controller
      */
     public function create()
     {
+        abort_unless(\Gate::allows('curriculum_create'), 403);
+        
         $grades = Grade::all();
         $subjects   = Subject::all();
         $organization_types = OrganizationType::all();
@@ -112,6 +119,7 @@ class CurriculumController extends Controller
      */
     public function store(Request $request)
     {
+        abort_unless(\Gate::allows('curriculum_create'), 403);
         $input = $this->validateRequest();
         //dd($input);
         $curriculum = Curriculum::firstOrCreate([
@@ -122,12 +130,12 @@ class CurriculumController extends Controller
             'city'                  => $input['city'],
             'date'                  => $input['date'],
             'color'                 => $input['color'],
-            'grade_id'              => $input['grade_id'][0],
-            'subject_id'            => $input['subject_id'][0],
-            'organization_type_id'  => $input['organization_type_id'][0],
+            'grade_id'              => format_select_input($input['grade_id']),
+            'subject_id'            => format_select_input($input['subject_id']),
+            'organization_type_id'  => format_select_input($input['organization_type_id']),
             'state_id'              => 'DE-RP',
             'country_id'            => 'DE',
-            'file_id'               => null,
+            'medium_id'               => null,
             'owner_id'              => auth()->user()->id,
             
         ]);
@@ -149,8 +157,40 @@ class CurriculumController extends Controller
     public function show(Curriculum $curriculum)
     {
         
+        abort_unless(\Gate::allows('curriculum_show'), 403);
+        //check if user is enrolled -> else 403
+        
+        abort_unless((auth()->user()->curricula()->contains('curriculum_id', $curriculum->id) // user enrolled
+                  OR (auth()->user()->currentRole()->first()->id == 1)), 403);                // or admin
+
+        $terminalObjectives = TerminalObjective::where('curriculum_id', $curriculum->id)
+                                                ->orderBy('objective_type_id')
+                                                ->orderBy('order_id')
+                                                ->with(['media'])
+                                                ->get();
+       
+         $enablingObjectives = EnablingObjective::where('curriculum_id', $curriculum->id)
+                                                ->orderBy('terminal_objective_id')
+                                                ->orderBy('order_id')
+                                                ->with(['media',
+                                                    'mediaSubscriptions', 
+                                                    'referenceSubscriptions'
+//                                                    'referenceSubscriptions.siblings.reference',
+//                                                    'referenceSubscriptions.siblings.referenceable.curriculum.organizationType'
+                                                    ])
+                                                ->get();
+        $objectiveTypes = \App\ObjectiveType::all();
+        
+        
+        
+        $curriculum = Curriculum::with(['terminalObjectives', 'terminalObjectives.enablingObjectives', 'contents', 'glossar.contents', 'media'])->find($curriculum->id);
+        
+       //dd($enablingObjectives);
         return view('curricula.show')
-                ->with(compact('curriculum'));
+                ->with(compact('curriculum'))
+                ->with(compact('terminalObjectives')) //todo. curriculum already has terminal and enablingobjectives, use in DB
+                ->with(compact('enablingObjectives'))
+                ->with(compact('objectiveTypes'));
     }
 
     /**
@@ -173,7 +213,11 @@ class CurriculumController extends Controller
      */
     public function update(Request $request, Curriculum $curriculum)
     {
-        //
+        abort_unless(\Gate::allows('curriculum_edit'), 403);
+        
+        $curriculum->update($this->validateRequest());
+        
+        return redirect($curriculum->path());
     }
 
     /**
@@ -184,7 +228,7 @@ class CurriculumController extends Controller
      */
     public function destroy(Curriculum $curriculum)
     {
-        //
+        abort_unless(\Gate::allows('curriculum_delete'), 403);
     }
     
     protected function validateRequest()

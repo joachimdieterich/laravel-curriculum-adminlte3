@@ -14,7 +14,9 @@ class SharingLevelController extends Controller
      */
     public function index()
     {
-        //
+        $sharingLevel = SharingLevel::all();
+        
+        return compact('sharingLevel');
     }
 
     /**

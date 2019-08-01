@@ -54,13 +54,13 @@ class GroupsController extends Controller
                  $actions  = '';
                     if (\Gate::allows('group_show')){
                         $actions .= '<a href="'.route('admin.groups.show', $groups->id).'" '
-                                    . 'class="btn btn-xs btn-success">'
+                                    . 'class="btn btn-xs btn-success mr-1">'
                                     . '<i class="fa fa-list-alt"></i> '.trans('global.show').''
                                     . '</a>';
                     }
                     if (\Gate::allows('group_edit')){
                         $actions .= '<a href="'.route('admin.groups.edit', $groups->id).'" '
-                                    . 'class="btn btn-xs btn-primary">'
+                                    . 'class="btn btn-xs btn-primary mr-1">'
                                     . '<i class="fa fa-edit"></i> '.trans('global.edit').''
                                     . '</a>';
                     }

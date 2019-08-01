@@ -9,8 +9,6 @@
     <div class="card-body">
         <form action="{{ route("admin.organizations.update", [$organization->id]) }}" method="POST" enctype="multipart/form-data">
             @csrf
-           <form method="POST" 
-              action="{{ $organization->path() }}" >
             @method('PATCH')
             @include('admin.organizations.form', [
                 'organization' => $organization,

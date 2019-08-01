@@ -33,7 +33,7 @@ class CreateCurriculaTable extends Migration
             $table->char('state_id');
             $table->char('country_id');
             
-            $table->unsignedbigInteger('file_id')->nullable();
+            $table->unsignedbigInteger('medium_id')->nullable();
             
             $table->unsignedbigInteger('owner_id');
             
@@ -44,7 +44,7 @@ class CreateCurriculaTable extends Migration
             $table->foreign('state_id')->references('code')->on('states');
             $table->foreign('country_id')->references('alpha2')->on('countries');
             $table->foreign('organization_type_id')->references('id')->on('organization_types');
-            $table->foreign('file_id')->references('id')->on('files');
+            $table->foreign('medium_id')->references('id')->on('media');
             $table->foreign('owner_id')->references('id')->on('users');
         });
     }

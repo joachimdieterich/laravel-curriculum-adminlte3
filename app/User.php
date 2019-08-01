@@ -11,10 +11,30 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Support\Facades\DB;
-
+/**
+ *   @OA\Schema(  
+ *      required={"id", "username", "firstname", "lastname", "email", "password"},
+ *      @OA\Xml(name="User"),
+ *      
+ *      @OA\Property( property="id", type="integer"),
+ *      @OA\Property( property="common_name", type="string"),
+ *      @OA\Property( property="username", type="string"),
+ *      @OA\Property( property="firstname", type="string"),
+ *      @OA\Property( property="lastname", type="string"),
+ *      @OA\Property( property="email", type="string"),
+ *      @OA\Property( property="email_verified_at", type="string"),
+ *      @OA\Property( property="password", type="string"),
+ *      @OA\Property( property="remember_token", type="integer"),
+ *      @OA\Property( property="created_at", type="string"),
+ *      @OA\Property( property="updated_at", type="string"),
+ *      @OA\Property( property="current_organization_id", type="integer"),
+ *      @OA\Property( property="current_period_id", type="integer")
+ *   ),
+ * 
+ */
 class User extends Authenticatable
 {
-    use SoftDeletes, Notifiable, HasApiTokens;
+    use HasApiTokens, SoftDeletes, Notifiable;
 
     protected $hidden = [
         'password',
@@ -40,8 +60,15 @@ class User extends Authenticatable
         'remember_token',
         'email_verified_at',
         'status_id',
-        'organization_id'
+        'organization_id',
+        'current_organization_id',
+        'current_period_id',
     ];
+    
+    public function path()
+    {
+        return "/admin/users/{$this->id}";
+    }
 
     public function fullName()
     {
@@ -77,7 +104,7 @@ class User extends Authenticatable
     
     public function groups()
     {
-        return $this->belongsToMany('App\Group', 'group_user');
+        return $this->belongsToMany('App\Group', 'group_user')->withTimestamps();
     } 
     
     public function curricula()
@@ -116,13 +143,13 @@ class User extends Authenticatable
         return $this->hasOne('App\Status', 'status_id', 'status_id');
     }
     
-    public function currentOrganization()
-    {
-        return $this->hasOne('App\Organization', 'id', 'current_organization_id');
-    }
     
-    public function currentPeriod()
-    {
-        return $this->hasOne('App\Period', 'id', 'current_period_id');
+    public function currentRole()
+    { 
+        return $this->roles()
+                ->where('user_id', '=', $this->id)
+                ->where('organization_id', $this->current_organization_id)
+                ->get();
+       
     }
 }

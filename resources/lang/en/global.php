@@ -50,6 +50,9 @@ return [
     'calendar'                             => 'Calendar',
     'dashboard'                            => 'Dashboard',
     'about'                                => 'About',
+    'information'                          => 'Information',
+    'curricula_content_subscriptions'      => 'Digitalized contents',
+    'curricula_media_subscriptions'        => 'Media',
     'datatables'                           => [
         'copy'          => 'Copy',
         'csv'           => 'CSV',
@@ -312,6 +315,7 @@ return [
     'parse_csv'                            => 'Parse CSV',
     'import_data'                          => 'Import data',
     'imported_rows_to_table'               => 'Imported :rows rows to :table table',
+    'import'                               => 'Import',
     'subscription-billing'                 => 'Subscriptions',
     'subscription-payments'                => 'Payments',
     'basic_crm'                            => 'Basic CRM',
@@ -321,7 +325,7 @@ return [
     'deselect_all'                         => 'Deselect all',
     'team-management'                      => 'Teams',
     'team-management-singular'             => 'Team',
-    'site_title'                           => 'Laravel + AdminLTE3',
+    'site_title'                           => 'curriculum',
     'userManagement'                       => [
         'title'          => 'User Management',
         'title_singular' => 'User Management',
@@ -521,6 +525,46 @@ return [
             'color'      => 'Color',
             'color_helper'  => '',
         ],
-    ], 
+    ],
+    'terminalObjective' =>[
+        'title'          => 'Terminal Objectives',
+        'title_singular' => 'Terminal Objective',
+        'fields'         => [
+            'id'         => 'ID',
+            'id_helper'  => '',
+            'title'      => 'Title',
+            'title_short'=> 'Title (short)',
+            'description'=> 'Description',
+        ],
+    ],
+    'objectiveType' =>[
+        'title'          => 'Typ',
+        'title_singular' => 'Typ',
+        'fields'         => [
+            'id'         => 'ID',
+            'id_helper'  => '',
+            'title'      => 'Title',
+            'title_short'=> 'Title (short)',
+        ],
+    ],
+    'enablingObjective' =>[
+        'title'          => 'Enabling Objectives',
+        'title_singular' => 'Enabling Objective',
+        'fields'         => [
+            'id'         => 'ID',
+            'id_helper'  => '',
+            'title'      => 'Title',
+            'title_short'=> 'Title (short)',
+            'description'=> 'Description',
+        ],
+    ],
+    'glossar' =>[
+        'title'          => 'Glossary',
+        'title_singular' => 'Glossaries',
+    ],
+    'media' =>[
+        'title'          => 'Media',
+        'title_singular' => 'Media',
+    ],
     
 ];

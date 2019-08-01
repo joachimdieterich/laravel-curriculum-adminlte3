@@ -27,6 +27,9 @@ class DatabaseSeeder extends Seeder
             StatusesTableSeeder::class,
             LicensesTableSeeder::class,
             ContentsTableSeeder::class,
+            ObjectiveTypeTableSeeder::class,
+            CurriculumTableSeeder::class,
+            CurriculumGroupTableSeeder::class,
         ]);
     }
 }

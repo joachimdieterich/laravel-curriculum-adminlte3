@@ -6,6 +6,9 @@
             <a class="btn btn-success" href="{{ route("curricula.create") }}" >
                 {{ trans('global.add') }} {{ trans('global.curriculum.title_singular') }}
             </a>
+            <a class="btn btn-success" href="{{ route("curricula.import") }}" >
+                {{ trans('global.import') }} {{ trans('global.curriculum.title_singular') }}
+            </a>
         </div>
     </div>
 @endcan
@@ -43,7 +46,7 @@ $(document).ready( function () {
     var table = $('#curricula-datatable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ url('curriculaList') }}",
+        ajax: "{{ url('curricula/list') }}",
         columns: [
                  { data: 'check'},
                  { data: 'title' },

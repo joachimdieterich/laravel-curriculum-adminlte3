@@ -2,12 +2,15 @@
 
  use Illuminate\Http\Request;
 
- 
 Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () { 
     Route::get('about', 'AboutApiController@index');
     //Route::apiResource('about', 'AboutApiController');
 });
-Route::group(['prefix' => 'v1', 'as' => 'admin.', 'namespace' => 'Api\V1\Admin'], function () {
+Route::group([
+    'prefix' => 'auth', 
+    'as' => 'admin.', 
+    'namespace' => 'Api\V1\Admin'
+    ], function () {
     
     Route::post('login', 'AuthController@login');
     Route::post('signup', 'AuthController@signup');
@@ -19,12 +22,36 @@ Route::group(['prefix' => 'v1', 'as' => 'admin.', 'namespace' => 'Api\V1\Admin']
         Route::get('user', 'AuthController@user');
     });
     
-    
+});
+
+Route::group([
+    'prefix' => 'v1', 
+    'as' => 'admin.', 
+    'namespace' => 'Api\V1\Admin',
+    'middleware' => 'auth:api'
+    ], function () {
     Route::apiResource('permissions', 'PermissionsApiController');
 
     Route::apiResource('roles', 'RolesApiController');
 
     Route::apiResource('users', 'UsersApiController');
 
+    Route::put('organizations/enrol', 'OrganizationsApiController@enrol');
+    Route::delete('organizations/expel', 'OrganizationsApiController@expel');
     Route::apiResource('organizations', 'OrganizationsApiController');
+    
+    Route::apiResource('organizationtypes', 'OrganizationTypesApiController');
+    
+    Route::apiResource('grades', 'GradesApiController');
+    
+    Route::apiResource('periods', 'PeriodsApiController');
+    
+    Route::apiResource('subjects', 'SubjectsApiController');
+    
+    Route::put('groups/enrol', 'GroupsApiController@enrol');
+    Route::delete('groups/expel', 'GroupsApiController@expel');
+    Route::apiResource('groups', 'GroupsApiController');
+    
+    Route::apiResource('countries', 'CountriesApiController');
+    Route::apiResource('states', 'StatesApiController');
 });

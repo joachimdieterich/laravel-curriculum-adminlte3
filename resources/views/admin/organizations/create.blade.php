@@ -8,10 +8,6 @@
 
     <div class="card-body">
         <form action="{{ route("admin.organizations.store") }}" method="POST" enctype="multipart/form-data">
-            <form
-            method="POST"
-            action="/organizations"
-        >
             @include ('admin.organizations.form', [
                 'organization' => new App\Organization,
                 'buttonText' => 'Create Institution'

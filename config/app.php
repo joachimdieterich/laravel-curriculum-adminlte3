@@ -181,6 +181,10 @@ return [
          * Datatables
          */
         Yajra\Datatables\DatatablesServiceProvider::class,
+        /*
+         * Zipper
+         */
+        Chumper\Zipper\ZipperServiceProvider::class,
 
     ],
 
@@ -203,6 +207,7 @@ return [
         'Auth'         => Illuminate\Support\Facades\Auth::class,
         'Blade'        => Illuminate\Support\Facades\Blade::class,
         'Broadcast'    => Illuminate\Support\Facades\Broadcast::class,
+        'Bugsnag'      => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
         'Bus'          => Illuminate\Support\Facades\Bus::class,
         'Cache'        => Illuminate\Support\Facades\Cache::class,
         'Config'       => Illuminate\Support\Facades\Config::class,
@@ -233,7 +238,7 @@ return [
         'URL'          => Illuminate\Support\Facades\URL::class,
         'Validator'    => Illuminate\Support\Facades\Validator::class,
         'View'         => Illuminate\Support\Facades\View::class,
-        'Bugsnag'      => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
+        'Zipper'       => Chumper\Zipper\Zipper::class,
 
     ],
 

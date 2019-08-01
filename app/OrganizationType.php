@@ -3,7 +3,18 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
+/**
+ *   @OA\Schema(  
+ *      required={"id", "title", "external_id", "state_id", "country_id"},
+ *      @OA\Xml(name="OrganizationType"),
+ *      
+ *      @OA\Property( property="id", type="integer"),
+ *      @OA\Property( property="title", type="string"),
+ *      @OA\Property( property="external_id", type="integer"),
+ *      @OA\Property( property="state_id", type="string"),
+ *      @OA\Property( property="country_id", type="string"),
+ *   ),
+ */
 class OrganizationType extends Model
 {
     public function state()

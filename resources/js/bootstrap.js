@@ -8,7 +8,7 @@ window._ = require('lodash');
  */
 
 try {
-    window.Popper = require('popper.js').default;
+    window.Popper = require('popper.js').default; //for tooltips
     window.$ = window.jQuery = require('jquery');
 
     require('bootstrap');

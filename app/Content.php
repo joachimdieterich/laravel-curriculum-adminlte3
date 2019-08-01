@@ -3,6 +3,7 @@
 namespace App;
 
 use App\ContentSubscription;
+use App\Quote;
 use Illuminate\Database\Eloquent\Model;
 
 class Content extends Model
@@ -22,4 +23,27 @@ class Content extends Model
     {
         return $this->hasMany(ContentSubscription::class);
     }
+    
+    public function subscribe($model, $sharing_level_id = 1, $visibility = true)
+    {
+        $subscribe = new ContentSubscription([
+			"content_id" =>  $this->id,
+			"subscribable_type"=> get_class($model),
+			"subscribable_id"=> $model->id,
+			"sharing_level_id"=> $sharing_level_id,
+			"visibility"=> $visibility,
+			"owner_id"=> auth()->user()->id,	
+	]);
+        $subscribe->save();
+    }
+    
+    public function quotes()
+    {
+        return $this->hasMany('App\Quote', 'referenceable_id', 'id');
+    }
+    
+    
+    
+
+  
 }

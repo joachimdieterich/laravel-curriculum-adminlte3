@@ -1,12 +1,17 @@
 <?php
 
+if ((env('APP_ENV') == 'local')){
+    Route::get('/phpinfo', function (){phpinfo();}); //available in local env
+}
+
+
 Route::redirect('/', '/login');
 
 Route::redirect('/home', '/admin');
 
-
 Route::get('/impressum', 'OpenController@impressum')->name('Impressum');
 Route::get('/terms', 'OpenController@terms')->name('Terms');
+
 
 Auth::routes(['register' => false]);
 
@@ -63,18 +68,41 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     
     Route::delete('organizationtypes/destroy', 'OrganizationTypesController@massDestroy')->name('organizationtypes.massDestroy');
     
-    
-    
-
-    
+   
 });
-
 Route::group(['middleware' => 'auth'], function () {
+    Route::get('/', 'HomeController@index')->name('home');
+    
     Route::resource('contents', 'ContentController');
     
     /* curricula routes */
+    Route::get('curricula/list', 'CurriculumController@list');
+    Route::get('curricula/import', 'CurriculumImportController@import')->name('curricula.import');
+    Route::post('curricula/import/store', 'CurriculumImportController@store')->name('curricula.import.store');
     Route::resource('curricula', 'CurriculumController');
-    Route::get('curriculaList', 'CurriculumController@curriculaList');
-  
     
+    
+    /* terminalObjectives routes */
+    Route::resource('terminalObjectives', 'TerminalObjectiveController');
+    
+    /* objectiveTypes routes */
+    Route::resource('objectiveTypes', 'ObjectiveTypeController');
+      
+     /* enablingObjectives routes */
+    Route::get('enablingObjectives/{enablingObjective}/referenceSubscriptionSiblings', 'EnablingObjectiveController@referenceSubscriptionSiblings');
+    Route::get('enablingObjectives/{enablingObjective}/quoteSubscriptions', 'EnablingObjectiveController@quoteSubscriptions');
+    Route::resource('enablingObjectives', 'EnablingObjectiveController');
+    
+    /* media routes */
+    Route::resource('media', 'MediumController');
+    /* reference(Subscription) routes */
+    
+    Route::resource('references', 'ReferenceController');
+    
+    Route::resource('referenceSubscriptions', 'ReferenceSubscriptionController');
+    
+    
+    
+    /* sharingLevels routes */
+    Route::resource('sharingLevels', 'SharingLevelController');
 });

@@ -10,9 +10,13 @@ require('./bootstrap');
 //vue
 window.Vue = require('vue');
 
+// use trans function like in blade
+import _ from 'lodash'; //needed to get 
+
 Vue.prototype.trans = (key) => {
     return _.get(window.trans, key, key);
 };
+
 import VModal from 'vue-js-modal';
 Vue.use(VModal);
 
@@ -22,13 +26,23 @@ Vue.use(VModal);
  * components and automatically register them with their "basename".
  *
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
+ */ 
 
 // const files = require.context('./', true, /\.vue$/i);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
-
 Vue.component('organization-modal', require('./components/OrganizationModal.vue').default);
 Vue.component('group-modal', require('./components/GroupModal.vue').default);
+
+
+Vue.component('curriculum-view', require('./components/curriculum/CurriculumView.vue').default);
+Vue.component('terminal-objective-modal', require('./components/objectives/TerminalObjectiveModal.vue').default);
+Vue.component('enabling-objective-modal', require('./components/objectives/EnablingObjectiveModal.vue').default);
+Vue.component('objective-box', require('./components/objectives/ObjectiveBox.vue').default);
+Vue.component('objective-description-modal', require('./components/objectives/ObjectiveDescriptionModal.vue').default);
+Vue.component('dropdown-button', require('./components/uiElements/DropdownButton.vue').default);
+Vue.component('content-modal', require('./components/content/ContentModal.vue').default);
+Vue.component('medium-modal', require('./components/media/MediumModal.vue').default);
+Vue.component('objective-medium-modal', require('./components/objectives/ObjectiveMediumModal.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -37,6 +51,7 @@ Vue.component('group-modal', require('./components/GroupModal.vue').default);
  */
 
 const app = new Vue({
-    el: '#app'
+    el: '#app', 
+    
 });
 

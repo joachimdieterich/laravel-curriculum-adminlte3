@@ -12,7 +12,9 @@ abstract class TestCase extends BaseTestCase
     public function setUp(): void
     {
         parent::setUp();
+        //$this->withoutExceptionHandling();
         (new DatabaseSeeder())->call(DatabaseSeeder::class);
+        
     }
     
     protected function signIn($user = null)
@@ -23,8 +25,9 @@ abstract class TestCase extends BaseTestCase
         return $user;
     }
     
-     protected function signInAdmin($user = null)
+    protected function signInAdmin($user = null)
     {
+        //$this->withoutExceptionHandling();
         $credentials = [
             'email' => 'admin@curriculumonline.de',
             'password' => 'password',
@@ -32,6 +35,32 @@ abstract class TestCase extends BaseTestCase
         $this->followingRedirects()->post('login', $credentials)->assertStatus(200);
         $this->actingAs(auth()->user());
        
+        
+        return auth()->user();
+    }
+    
+    protected function signInStudent($user = null)
+    {
+        $credentials = [
+            'email' => 'student@curriculumonline.de',
+            'password' => 'password',
+        ];
+        $this->followingRedirects()->post('login', $credentials)->assertStatus(200);
+        $this->actingAs(auth()->user());
+       
+        
+        return auth()->user();
+    }
+    
+    protected function signInApiAdmin($user = null)
+    {
+        //$this->withoutExceptionHandling();
+        $credentials = [
+            'email' => 'admin@curriculumonline.de',
+            'password' => 'password',
+        ];
+        $this->followingRedirects()->post('login', $credentials)->assertStatus(200);
+        $this->actingAs(auth()->user(), 'api');
         
         return auth()->user();
     }

@@ -9,7 +9,7 @@ use Facades\Tests\Setup\UserFactory;
 
 class OrganizationEnrollmentTest extends TestCase
 {
-     use RefreshDatabase;
+    use RefreshDatabase;
      
     public function setUp(): void
     {

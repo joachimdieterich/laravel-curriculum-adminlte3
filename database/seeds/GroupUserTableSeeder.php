@@ -7,6 +7,6 @@ class GroupUserTableSeeder extends Seeder
 {
     public function run()
     {
-        Group::findOrFail(1)->users()->sync(1);
+        Group::findOrFail(1)->users()->sync([1,2]); //Admin, Student
     }
 }

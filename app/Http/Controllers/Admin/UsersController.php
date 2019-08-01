@@ -57,13 +57,13 @@ class UsersController extends Controller
                  $actions  = '';
                     if (\Gate::allows('user_show')){
                         $actions .= '<a href="'.route('admin.users.show', $users->id).'" '
-                                    . 'class="btn btn-xs btn-success">'
+                                    . 'class="btn btn-xs btn-success mr-1">'
                                     . '<i class="fa fa-list-alt"></i> Show'
                                     . '</a>';
                     }
                     if (\Gate::allows('user_edit')){
                         $actions .= '<a href="'.route('admin.users.edit', $users->id).'" '
-                                    . 'class="btn btn-xs btn-primary">'
+                                    . 'class="btn btn-xs btn-primary  mr-1">'
                                     . '<i class="fa fa-edit"></i> Edit'
                                     . '</a>';
                     }
@@ -87,9 +87,11 @@ class UsersController extends Controller
     {
         abort_unless(\Gate::allows('user_create'), 403);
 
-        $roles = Role::all()->pluck('title', 'id');
+//        $organizations = Organization::all()->pluck('title', 'id');
+//        $roles = Role::all()->pluck('title', 'id');
+//        $groups = Group::all()->pluck('title', 'id');
 
-        return view('admin.users.create', compact('roles'));
+        return view('admin.users.create');
     }
 
     public function store(StoreUserRequest $request)
@@ -99,8 +101,7 @@ class UsersController extends Controller
         $user = User::create($request->all());
         
         //$user->roles()->sync($request->input('roles', []));
-
-        return redirect()->route('admin.users.index');
+         return redirect($user->path());
     }
 
     public function edit(User $user)
@@ -119,7 +120,7 @@ class UsersController extends Controller
         abort_unless(\Gate::allows('user_edit'), 403);
 
         $user->update($request->all());
-        $user->roles()->sync($request->input('roles', []));
+        //$user->roles()->sync($request->input('roles', []));
 
         return redirect()->route('admin.users.index');
     }

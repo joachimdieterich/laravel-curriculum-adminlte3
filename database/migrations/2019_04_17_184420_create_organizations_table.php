@@ -15,7 +15,7 @@ class CreateOrganizationsTable extends Migration
     {
         Schema::create('organizations', function (Blueprint $table) {
             $table->bigIncrements('id')->unsigned();
-
+            $table->string('common_name')->nullable(); // external key
             $table->string('title'); //newer version of institution
             $table->text('description')->nullable();
 
@@ -23,10 +23,10 @@ class CreateOrganizationsTable extends Migration
             $table->string('postcode')->nullable();
             $table->string('city')->nullable();
             
-            $table->char('state_id');
-            $table->char('country_id');
+            $table->char('state_id')->default('DE-RP');
+            $table->char('country_id')->default('DE');
             
-            $table->unsignedBigInteger('organization_type_id');
+            $table->unsignedBigInteger('organization_type_id')->default(1);
             
             $table->string('phone')->nullable();
             $table->string('email')->nullable();

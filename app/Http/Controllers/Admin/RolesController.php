@@ -35,13 +35,13 @@ class RolesController extends Controller
                  $actions  = '';
                     if (\Gate::allows('role_show')){
                         $actions .= '<a href="'.route('admin.roles.show', $roles->id).'" '
-                                    . 'class="btn btn-xs btn-success">'
+                                    . 'class="btn btn-xs btn-success mr-1">'
                                     . '<i class="fa fa-list-alt"></i> Show'
                                     . '</a>';
                     }
                     if (\Gate::allows('role_edit')){
                         $actions .= '<a href="'.route('admin.roles.edit', $roles->id).'" '
-                                    . 'class="btn btn-xs btn-primary">'
+                                    . 'class="btn btn-xs btn-primary mr-1">'
                                     . '<i class="fa fa-edit"></i> Edit'
                                     . '</a>';
                     }

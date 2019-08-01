@@ -3,56 +3,59 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreOrganizationRequest;
-use App\Http\Requests\UpdateOrganizationRequest;
 use App\Organization;
+use App\OrganizationRoleUser;
 
-class OrganizationsApiController extends Controller
-{
-    /**
-    * @OA\Get(
-    *      path="/v1/organizations",
-    *      operationId="organizations",
-    *      tags={"Organizations"},
-    *      summary="Get all organizations",
-    *      description="Returns a collection of organization objects",
-    *     
-    *      @OA\Response(
-    *          response=200,
-    *          description="successful operation"
-    *       ),
-    *       @OA\Response(response=400, description="Bad request"),
-    *       security={
-    *           {"api_key_security_example": {}}
-    *       }
-    *     )
-    *
-    * Returns list of Organizations
-    */
-    public function index()
+class OrganizationsApiController extends Controller {
+
+    public function index() 
     {
         $organizations = Organization::all();
 
         return $organizations;
     }
 
-    public function store(StoreOrganizationRequest $request)
+    public function store() 
     {
-        return Organization::create($request->all());
+        return Organization::create($this->filteredRequest());
     }
 
-    public function update(UpdateOrganizationRequest $request, Organization $product)
+    public function update(Organization $organization) 
     {
-        return $product->update($request->all());
+        //tap($organization)->update($this->filteredRequest());
+        if ($organization->update($this->filteredRequest())) 
+        {
+            return $organization->fresh();
+        }
     }
 
-    public function show(Organization $product)
+    public function show(Organization $organization) 
     {
-        return $product;
+        return $organization;
     }
 
-    public function destroy(Organization $product)
+    public function destroy(Organization $organization) 
     {
-        return $product->delete();
+        if ($organization->delete()) {
+            return ['message' => 'Successful deleted'];
+        }
     }
+
+    public function enrol() 
+    {
+        return OrganizationRoleUser::firstOrCreate(request()->all());
+    }
+
+    public function expel() 
+    {
+        if (OrganizationRoleUser::where(request()->all())->delete())
+        {
+            return ['message' => 'Successful expelled'];
+        }
+    }
+
+    protected function filteredRequest() {
+        return array_filter(request()->all()); //filter to ignore fields with null values
+    }
+
 }

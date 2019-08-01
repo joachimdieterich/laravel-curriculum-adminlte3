@@ -37,6 +37,10 @@ class Curriculum extends Model
     {
         return $this->hasOne('App\Grade', 'id', 'grade_id');   
     }
+    public function organizationType()
+    {
+        return $this->hasOne('App\organizationType', 'id', 'organization_type_id');   
+    }
     
     public function subject()
     {
@@ -50,6 +54,34 @@ class Curriculum extends Model
     
     public function groups()
     {
-        return $this->belongsToMany('App\Group', 'group_user');
+        return $this->belongsToMany('App\Group', 'curriculum_group');
+    }
+    
+    public function terminalObjectives()
+    {
+        return $this->hasMany('App\TerminalObjective', 'curriculum_id', 'id');
+    }
+    
+    public function contents()
+    {
+        return $this->morphMany('App\ContentSubscription', 'subscribable');
+    }
+   
+    
+    public function media()
+    {
+        return $this->hasManyThrough(
+            'App\Medium',
+            'App\MediumSubscription',
+            'subscribable_id', // Foreign key on medium_subscription table...
+            'id', // Foreign key on medieum table...
+            'id', // Local key on curriculum table...
+            'medium_id' // Local key on medium_subscription table...
+        )->where('subscribable_type', get_class($this)); 
+    }
+    
+    public function glossar()
+    {
+        return $this->hasOne('App\Glossar', 'subscribable_id', 'id')->where('subscribable_type', get_class($this)); 
     }
 }

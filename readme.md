@@ -62,6 +62,16 @@ Login:
 username: admin@curriculumonline.de
 password: password
 
+### Step 6.
+Generate oAuth2 clients
+```
+php artisan passport:install
+```
+##
+OpenApi Documentation Endpoint
+
+/api/documentation
+
 ## Progress
 
 * 20190504 adding grades table

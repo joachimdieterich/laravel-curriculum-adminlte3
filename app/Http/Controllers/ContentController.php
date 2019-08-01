@@ -52,7 +52,7 @@ class ContentController extends Controller
      */
     public function show(Content $content)
     {
-        //
+       // dd($content);//
     }
 
     /**

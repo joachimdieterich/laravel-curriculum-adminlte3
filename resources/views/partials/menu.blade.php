@@ -1,7 +1,7 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4" style="min-height: 917px;">
     <!-- Brand Logo -->
-    <a href="#" class="brand-link">
-        <span class="brand-text font-weight-light">Project</span>
+     <a href="{{ route("home") }}" class="brand-link">
+        <span class="brand-text font-weight-light">curriculum</span>
     </a>
     
     <!-- Sidebar -->
@@ -32,17 +32,10 @@
                         "value" =>  old('current_organization_id', isset(auth()->user()->current_organization_id) ? auth()->user()->current_organization_id : '')])
                 </li>
                 
-                <li class="nav-item">
-                    <a href="{{ route("admin.home") }}" class="nav-link">
-                        <p>
-                            <i class="fas fa-tachometer-alt"></i>
-                            <span>{{ trans('global.dashboard') }}</span>
-                        </p>
-                    </a>
-                </li>
-                @can('curriculum_access')
+               
+                @can('curriculum_manage')
                     <li class="nav-item">
-                        <a href="{{ route("curricula.index") }}" class="nav-link {{ request()->is('curricula') || request()->is('urricula/*') ? 'active' : '' }}">
+                        <a href="{{ route("curricula.index") }}" class="nav-link {{ request()->is('curricula') || request()->is('curricula/*') ? 'active' : '' }}">
                             <i class="fas fa-th"></i>
                             <p>
                                 <span>{{ trans('global.curriculum.title') }}</span>
@@ -60,7 +53,7 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            @can('permission_access')
+                            @can('permission_manage')
                                 <li class="nav-item">
                                     <a href="{{ route("admin.permissions.index") }}" class="nav-link {{ request()->is('admin/permissions') || request()->is('admin/permissions/*') ? 'active' : '' }}">
                                         <i class="fas fa-unlock-alt"></i>
@@ -70,7 +63,7 @@
                                     </a>
                                 </li>
                             @endcan
-                            @can('role_access')
+                            @can('role_manage')
                                 <li class="nav-item">
                                     <a href="{{ route("admin.roles.index") }}" class="nav-link {{ request()->is('admin/roles') || request()->is('admin/roles/*') ? 'active' : '' }}">
                                         <i class="fas fa-briefcase"></i>
@@ -80,7 +73,7 @@
                                     </a>
                                 </li>
                             @endcan
-                            @can('user_access')
+                            @can('user_manage')
                                 <li class="nav-item">
                                     <a href="{{ route("admin.users.index") }}" class="nav-link {{ request()->is('admin/users') || request()->is('admin/users/*') ? 'active' : '' }}">
                                         <i class="fas fa-user"></i>
@@ -93,7 +86,7 @@
                         </ul>
                     </li>
                 @endcan
-                @can('organization_access')
+                @can('organization_manage')
                     <li class="nav-item">
                         <a href="{{ route("admin.organizations.index") }}" class="nav-link {{ request()->is('admin/organizations') || request()->is('admin/organizations/*') ? 'active' : '' }}">
                             <i class="fas fa-university"></i>
@@ -103,7 +96,7 @@
                         </a>
                     </li>
                 @endcan
-                @can('group_access')
+                @can('group_manage')
                     <li class="nav-item">
                         <a href="{{ route("admin.groups.index") }}" class="nav-link {{ request()->is('admin/groups') || request()->is('admin/groups/*') ? 'active' : '' }}">
                             <i class="fa fa-users"></i>
@@ -113,7 +106,7 @@
                         </a>
                     </li>
                 @endcan
-                @can('grade_access')
+                @can('grade_manage')
                     <li class="nav-item">
                         <a href="{{ route("admin.grades.index") }}" class="nav-link {{ request()->is('admin/grades') || request()->is('admin/grades/*') ? 'active' : '' }}">
                             <i class="fas fa-signal"></i>
@@ -123,7 +116,7 @@
                         </a>
                     </li>
                 @endcan
-                @can('organization_type_access')
+                @can('organization_type_manage')
                     <li class="nav-item">
                         <a href="{{ route("admin.organizationtypes.index") }}" class="nav-link {{ request()->is('admin/organizationtypes') || request()->is('admin/organizationtypes/*') ? 'active' : '' }}">
                             <i class="fas fa-signal"></i>

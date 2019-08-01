@@ -9,47 +9,11 @@
     <div class="card-body">
         <form action="{{ route("admin.users.update", [$user->id]) }}" method="POST" enctype="multipart/form-data">
             @csrf
-            @method('PUT')
-            <div class="form-group {{ $errors->has('name') ? 'has-error' : '' }}">
-                <label for="name">{{ trans('global.user.fields.name') }}*</label>
-                <input type="text" id="name" name="name" class="form-control" value="{{ old('name', isset($user) ? $user->name : '') }}">
-                @if($errors->has('name'))
-                    <p class="help-block">
-                        {{ $errors->first('name') }}
-                    </p>
-                @endif
-                <p class="helper-block">
-                    {{ trans('global.user.fields.name_helper') }}
-                </p>
-            </div>
-            <div class="form-group {{ $errors->has('email') ? 'has-error' : '' }}">
-                <label for="email">{{ trans('global.user.fields.email') }}*</label>
-                <input type="email" id="email" name="email" class="form-control" value="{{ old('email', isset($user) ? $user->email : '') }}">
-                @if($errors->has('email'))
-                    <p class="help-block">
-                        {{ $errors->first('email') }}
-                    </p>
-                @endif
-                <p class="helper-block">
-                    {{ trans('global.user.fields.email_helper') }}
-                </p>
-            </div>
-            <div class="form-group {{ $errors->has('password') ? 'has-error' : '' }}">
-                <label for="password">{{ trans('global.user.fields.password') }}</label>
-                <input type="password" id="password" name="password" class="form-control">
-                @if($errors->has('password'))
-                    <p class="help-block">
-                        {{ $errors->first('password') }}
-                    </p>
-                @endif
-                <p class="helper-block">
-                    {{ trans('global.user.fields.password_helper') }}
-                </p>
-            </div>
-         
-            <div>
-                <input class="btn btn-danger" type="submit" value="{{ trans('global.save') }}">
-            </div>
+            @method('PATCH')
+            @include('admin.users.form', [
+                'user' => $user,
+                'buttonText' => 'Update User'
+            ])
         </form>
     </div>
 </div>

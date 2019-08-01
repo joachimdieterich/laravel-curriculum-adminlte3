@@ -26,18 +26,11 @@ class OrganizationTypesController extends Controller
     
     public function organizationTypeList()
     {
-        //dd('Test');
         abort_unless(\Gate::allows('organization_type_access'), 403);
-
   
         $organization_types = OrganizationType::select(['id', 'title', 'external_id', 'state_id', 'country_id']);
         
         return DataTables::of($organization_types)
-//            ->addColumn('action', function ($organization_type) {
-//                return '<href="#edit-'.$organization_type->id.'" '
-//                        . 'class="btn btn-xs btn-primary">'
-//                        . '<i class="fa fa-edit"></i> Edit</href>';
-//            })
             ->addColumn('check', '')
             ->setRowId('id')
             ->setRowAttr([
@@ -45,7 +38,6 @@ class OrganizationTypesController extends Controller
             ])
             ->make(true);
         
-       
     }
 
     public function create()

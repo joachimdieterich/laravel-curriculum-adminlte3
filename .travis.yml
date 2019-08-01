@@ -10,11 +10,10 @@ before_script:
     - cp .env.travis .env
     - composer self-update
     - composer install --no-interaction
+    - php artisan key:generate
+    - php artisan passport:install
     
 script:
-    - php artisan key:generate
-    - php artisan migrate
-    - php artisan passport:keys
     - vendor/bin/phpunit
  
 services:

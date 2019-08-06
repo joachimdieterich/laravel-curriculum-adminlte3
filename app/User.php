@@ -50,6 +50,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'username',
+        'common_name',
         'firstname',
         'lastname',
         'email',
@@ -109,7 +110,6 @@ class User extends Authenticatable
     
     public function curricula()
     {
-
         return DB::table('curricula')
             ->join('curriculum_group', 'curricula.id', '=', 'curriculum_group.curriculum_id')
             ->join('group_user', 'group_user.group_id', '=', 'curriculum_group.group_id')

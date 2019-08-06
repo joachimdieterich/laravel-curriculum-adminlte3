@@ -251,3 +251,116 @@
 * )
 * 
 */
+
+
+/**
+* @OA\Get(
+*      path="/v1/users/{user}/dashboard",
+*      operationId="getUsersDashboard",
+*      tags={"User v1"},
+*      summary="Get dashboard of user",
+*      description="Returns groups in which user is enrolled with related curricula, notifications and events",
+*      security={
+*           {"passport": {"*"}},
+*      },
+*      @OA\Parameter(
+*          name="user",
+*          description="User id",
+*          required=true,
+*          in="path",
+*          @OA\Schema(
+*              type="integer"
+*          )
+*      ),
+*      @OA\Response(
+*          response=200,
+*          description="successful operation",
+*       ),
+*       @OA\Response(response=400, description="Bad request"),
+* )
+*
+*/
+
+/**
+* @OA\Get(
+*      path="/v1/users/{user}/groups",
+*      operationId="getUsersWithGroups",
+*      tags={"User v1"},
+*      summary="Get user with groups",
+*      description="Returns user with groups",
+*      security={
+*           {"passport": {"*"}},
+*      },
+*      @OA\Parameter(
+*          name="user",
+*          description="User id",
+*          required=true,
+*          in="path",
+*          @OA\Schema(
+*              type="integer"
+*          )
+*      ),
+*      @OA\Response(
+*          response=200,
+*          description="successful operation",
+*       ),
+*       @OA\Response(response=400, description="Bad request"),
+* )
+*
+*/
+
+/**
+* @OA\Get(
+*      path="/v1/users/{user}/organizations",
+*      operationId="getUsersWithOrganizations",
+*      tags={"User v1"},
+*      summary="Get user with organizations",
+*      description="Returns user with organizations",
+*      security={
+*           {"passport": {"*"}},
+*      },
+*      @OA\Parameter(
+*          name="user",
+*          description="User id",
+*          required=true,
+*          in="path",
+*          @OA\Schema(
+*              type="integer"
+*          )
+*      ),
+*      @OA\Response(
+*          response=200,
+*          description="successful operation",
+*       ),
+*       @OA\Response(response=400, description="Bad request"),
+* )
+*
+*/
+
+/**
+* @OA\Get(
+*      path="/v1/users/{user}/roles",
+*      operationId="getUsersWithRoles",
+*      tags={"User v1"},
+*      summary="Get user with roles",
+*      description="Returns user with roles",
+*      security={
+*           {"passport": {"*"}},
+*      },
+*      @OA\Parameter(
+*          name="user",
+*          description="User id",
+*          required=true,
+*          in="path",
+*          @OA\Schema(
+*              type="integer"
+*          )
+*      ),
+*      @OA\Response(
+*          response=200,
+*          description="successful operation",
+*       ),
+*       @OA\Response(response=400, description="Bad request"),
+* )
+*
+*/

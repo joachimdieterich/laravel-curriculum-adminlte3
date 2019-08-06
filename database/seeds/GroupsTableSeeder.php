@@ -13,7 +13,6 @@ class GroupsTableSeeder extends Seeder
                     'grade_id'=>5,
                     'period_id'=>1,
                     'organization_id'=>1,
-                    'owner_id'=>1,
                     ],
                   
             ];

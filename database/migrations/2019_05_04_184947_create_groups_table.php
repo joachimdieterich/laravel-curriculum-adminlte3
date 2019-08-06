@@ -19,14 +19,12 @@ class CreateGroupsTable extends Migration
             $table->bigInteger('grade_id')->unsigned();
             $table->bigInteger('period_id')->unsigned();
             $table->bigInteger('organization_id')->unsigned();
-            $table->bigInteger('owner_id')->unsigned();
             
             $table->timestamps();
             
             $table->foreign('grade_id')->references('id')->on('grades');
             $table->foreign('period_id')->references('id')->on('periods');
             $table->foreign('organization_id')->references('id')->on('organizations');
-            $table->foreign('owner_id')->references('id')->on('users');
         });
     }
 

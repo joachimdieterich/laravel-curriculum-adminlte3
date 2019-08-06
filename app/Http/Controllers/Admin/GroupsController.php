@@ -34,7 +34,6 @@ class GroupsController extends Controller
             'grade_id', 
             'period_id', 
             'organization_id',
-            'owner_id',
             ]);       
         
         return DataTables::of($groups)
@@ -46,9 +45,6 @@ class GroupsController extends Controller
             })
             ->addColumn('organization', function ($groups) {
                 return $groups->organization()->first()->title;                
-            })
-            ->addColumn('owner', function ($groups) {
-                return $groups->owner()->first()->fullName();                
             })
             ->addColumn('action', function ($groups) {
                  $actions  = '';
@@ -115,8 +111,7 @@ class GroupsController extends Controller
             'title' => $new_group['title'],
             'grade_id' => format_select_input($new_group['grade_id']),
             'period_id' => format_select_input($new_group['period_id']),
-            'organization_id' => format_select_input($new_group['organization_id']),
-            'owner_id' => auth()->user()->id  
+            'organization_id' => format_select_input($new_group['organization_id'])
         ]);
         
         // axios call? 
@@ -165,7 +160,6 @@ class GroupsController extends Controller
             'grade_id' => format_select_input($request['grade_id']),
             'period_id' => format_select_input($request['period_id']),
             'organization_id' => format_select_input($request['organization_id']),
-            'owner_id' => auth()->user()->id  
         ]);
 
         return redirect()->route('admin.groups.index');
@@ -242,7 +236,6 @@ class GroupsController extends Controller
             'grade_id'          => 'sometimes',
             'period_id'         => 'sometimes',
             'organization_id'   => 'sometimes',
-            'owner_id'   => 'sometimes',
         ]);
     }
 }

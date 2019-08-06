@@ -3,6 +3,7 @@
 use App\User;
 use App\OrganizationRoleUser;
 use Illuminate\Database\Seeder;
+use App\Notifications\Welcome;
 
 class UsersTableSeeder extends Seeder
 {
@@ -11,6 +12,7 @@ class UsersTableSeeder extends Seeder
         $users = [
             [
             'id'             => 1,
+            'common_name'    => 'cn_Admin',
             'username'       => 'Admin',
             'firstname'      => 'Global',
             'lastname'       => 'Admin',
@@ -24,6 +26,7 @@ class UsersTableSeeder extends Seeder
             ],
             [
             'id'             => 2,
+            'common_name'    => 'cn_Student',
             'username'       => 'Student',
             'firstname'      => 'Student',
             'lastname'       => 'Role',
@@ -39,6 +42,7 @@ class UsersTableSeeder extends Seeder
         ];
 
         User::insert($users);
+        
         OrganizationRoleUser::firstOrCreate([
                                     'organization_id' => 1,
                                     'user_id'         => 1,
@@ -49,7 +53,11 @@ class UsersTableSeeder extends Seeder
                                     'user_id'         => 2,
                                     'role_id'         => 6
                                 ]);
-       
+        $test_admin = USER::find(1);
+        $test_admin->notify(new Welcome());
+
+        $test_student = USER::find(2);
+        $test_student->notify(new Welcome());
         
     }
 }

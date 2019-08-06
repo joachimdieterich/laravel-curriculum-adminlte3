@@ -22,7 +22,6 @@ class OrganizationsApiController extends Controller {
 
     public function update(Organization $organization) 
     {
-        //tap($organization)->update($this->filteredRequest());
         if ($organization->update($this->filteredRequest())) 
         {
             return $organization->fresh();

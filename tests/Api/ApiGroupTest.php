@@ -34,7 +34,6 @@ class ApiGroupTest extends TestCase
             'grade_id'        => 5,
             'period_id'       => 1,
             'organization_id' => 1,
-            'owner_id'        => 1,
         ]];
         
         $this->get('/api/v1/groups')

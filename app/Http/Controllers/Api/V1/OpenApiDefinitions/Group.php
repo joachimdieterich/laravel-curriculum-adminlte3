@@ -36,7 +36,7 @@
 *           mediaType="application/x-www-form-urlencoded",
 *           @OA\Schema(
 *               type="object",
-*               required={"title", "grade_id", "period_id", "organization_id", "owner_id"},
+*               required={"title", "grade_id", "period_id", "organization_id"},
 *               @OA\Property(
 *                   property="title",
 *                   description="Group title",
@@ -56,11 +56,6 @@
 *                   property="organization_id",
 *                   description="Organization Id",
 *                   type="integer"
-*               ),
-*               @OA\Property(
-*                   property="owner_id",
-*                   description="Owner (User) Id",
-*                   type="integer",
 *               ),
 *           )
 *       )
@@ -121,11 +116,6 @@
 *                   property="organization_id",
 *                   description="Organization Id",
 *                   type="integer"
-*               ),
-*               @OA\Property(
-*                   property="owner_id",
-*                   description="Owner (User) Id",
-*                   type="integer",
 *               ),
 *           )
 *       )

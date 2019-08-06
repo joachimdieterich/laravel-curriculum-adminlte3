@@ -43,13 +43,6 @@
                  {{ $group->period->title }}
                 </p>
 
-                <hr>
-
-                <strong><i class="fa fa-user mr-1"></i> {{ trans('global.owner') }}</strong>
-
-                 <p class="text-muted">
-                 {{ $group->owner->fullName() }}
-                </p>
               </div>
               <!-- /.card-body -->
               <div class="card-footer">

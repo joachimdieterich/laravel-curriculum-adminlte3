@@ -21,6 +21,7 @@
         "laravel/telescope": "^2.0",
         "laravel/tinker": "^1.0",
         "laravolt/avatar": "^2.2",
+        "maddhatter/laravel-fullcalendar": "^1.3",
         "yajra/laravel-datatables-oracle": "~9.0"
     },
     "require-dev": {

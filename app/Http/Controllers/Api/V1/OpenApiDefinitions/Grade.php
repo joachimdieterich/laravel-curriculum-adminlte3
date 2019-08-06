@@ -25,7 +25,7 @@
 *      path="/v1/grades/{grade}",
 *      operationId="getGrade",
 *      tags={"Grade v1"},
-*      summary="Get all grades",
+*      summary="Get grade by Id",
 *      description="Returns a grade objects",
 *      security={
 *           {"passport": {"*"}},

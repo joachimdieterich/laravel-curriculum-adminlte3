@@ -25,7 +25,7 @@
 *      path="/v1/countries/{country}",
 *      operationId="getCountry",
 *      tags={"Country v1"},
-*      summary="Get all countries",
+*      summary="Get country by Id",
 *      description="Returns a countrie objects",
 *      security={
 *           {"passport": {"*"}},

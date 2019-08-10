@@ -72,6 +72,17 @@ OpenApi Documentation Endpoint
 
 localhost:[port]/api/documentation
 
+## Testing
+
+### Feature and Unit Tests
+```
+./vendor/bin/phpunit
+```
+
+### Browser Tests
+```
+php artisan dusk
+```
 
 ## Progress
 

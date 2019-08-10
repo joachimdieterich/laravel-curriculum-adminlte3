@@ -83,6 +83,8 @@ Route::group(['middleware' => 'auth'], function () {
     
     
     /* terminalObjectives routes */
+    Route::get('terminalObjectives/{terminalObjective}/referenceSubscriptionSiblings', 'TerminalObjectiveController@referenceSubscriptionSiblings');
+    Route::get('terminalObjectives/{terminalObjective}/quoteSubscriptions', 'TerminalObjectiveController@quoteSubscriptions');
     Route::resource('terminalObjectives', 'TerminalObjectiveController');
     
     /* objectiveTypes routes */

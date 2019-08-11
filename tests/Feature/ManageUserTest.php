@@ -76,7 +76,7 @@ class ManageUserTest extends TestCase
     public function every_user_has_a_role()
     {        
         
-        $this->post("admin/roles" , $role = factory('App\Role')->raw());
+        $this->post("/roles" , $role = factory('App\Role')->raw());
         $role_id = Role::where('title', $role['title'])->first()->id;
         
         $organization = OrganizationFactory::create();
@@ -99,7 +99,7 @@ class ManageUserTest extends TestCase
     /** @test */
     public function a_user_can_be_expelled_from_an_organization_by_the_admin()
     {        
-        $this->post("admin/roles" , $role = factory('App\Role')->raw());
+        $this->post("/roles" , $role = factory('App\Role')->raw());
         $role_id = Role::where('title', $role['title'])->first()->id;
         
         $organization = OrganizationFactory::create();

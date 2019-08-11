@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyRoleRequest;
@@ -18,7 +18,7 @@ class RolesController extends Controller
 
         //$roles = Role::all();
 
-        return view('admin.roles.index');
+        return view('roles.index');
     }
 
     public function list()
@@ -34,19 +34,19 @@ class RolesController extends Controller
             ->addColumn('action', function ($roles) {
                  $actions  = '';
                     if (\Gate::allows('role_show')){
-                        $actions .= '<a href="'.route('admin.roles.show', $roles->id).'" '
+                        $actions .= '<a href="'.route('roles.show', $roles->id).'" '
                                     . 'class="btn btn-xs btn-success mr-1">'
                                     . '<i class="fa fa-list-alt"></i> Show'
                                     . '</a>';
                     }
                     if (\Gate::allows('role_edit')){
-                        $actions .= '<a href="'.route('admin.roles.edit', $roles->id).'" '
+                        $actions .= '<a href="'.route('roles.edit', $roles->id).'" '
                                     . 'class="btn btn-xs btn-primary mr-1">'
                                     . '<i class="fa fa-edit"></i> Edit'
                                     . '</a>';
                     }
                     if (\Gate::allows('role_delete')){
-                        $actions .= '<form action="'.route('admin.roles.destroy', $roles->id).'" method="POST">'
+                        $actions .= '<form action="'.route('roles.destroy', $roles->id).'" method="POST">'
                                     . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
                                     . '<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Delete</button>';
                     }
@@ -68,7 +68,7 @@ class RolesController extends Controller
 
         $permissions = Permission::all()->pluck('title', 'id');
 
-        return view('admin.roles.create', compact('permissions'));
+        return view('roles.create', compact('permissions'));
     }
    
     public function store(StoreRoleRequest $request)
@@ -78,7 +78,7 @@ class RolesController extends Controller
         $role = Role::create($request->all());
         $role->permissions()->sync($request->input('permissions', []));
 
-        return redirect()->route('admin.roles.index');
+        return redirect()->route('roles.index');
     }
 
     public function edit(Role $role)
@@ -89,7 +89,7 @@ class RolesController extends Controller
 
         $role->load('permissions');
 
-        return view('admin.roles.edit', compact('permissions', 'role'));
+        return view('roles.edit', compact('permissions', 'role'));
     }
 
     public function update(UpdateRoleRequest $request, Role $role)
@@ -99,7 +99,7 @@ class RolesController extends Controller
         $role->update($request->all());
         $role->permissions()->sync($request->input('permissions', []));
 
-        return redirect()->route('admin.roles.index');
+        return redirect()->route('roles.index');
     }
 
     public function show(Role $role)
@@ -108,7 +108,7 @@ class RolesController extends Controller
 
         $role->load('permissions');
 
-        return view('admin.roles.show', compact('role'));
+        return view('roles.show', compact('role'));
     }
 
     public function destroy(Role $role)

@@ -18,11 +18,6 @@ Auth::routes(['register' => false]);
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'middleware' => ['auth']], function () {
     Route::get('/', 'HomeController@index')->name('home');
       
-    /* Role routes */
-    Route::delete('roles/massDestroy', 'RolesController@massDestroy')->name('roles.massDestroy');
-    Route::get('roles/list', 'RolesController@list')->name('roles.list');
-    Route::resource('roles', 'RolesController');
-    
     
     /* User routes */
     Route::delete('users/massDestroy', 'UsersController@massDestroy')->name('users.massDestroy');
@@ -46,6 +41,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('curricula/import/store', 'CurriculumImportController@store')->name('curricula.import.store');
     Route::resource('curricula', 'CurriculumController');
     
+    /* enablingObjectives routes */
+    Route::get('enablingObjectives/{enablingObjective}/referenceSubscriptionSiblings', 'EnablingObjectiveController@referenceSubscriptionSiblings');
+    Route::get('enablingObjectives/{enablingObjective}/quoteSubscriptions', 'EnablingObjectiveController@quoteSubscriptions');
+    Route::resource('enablingObjectives', 'EnablingObjectiveController');
+    
     /* grades routes */
     Route::delete('grades/destroy', 'GradesController@massDestroy')->name('grades.massDestroy');
     Route::resource('grades', 'GradesController');
@@ -61,10 +61,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('groupList', 'GroupsController@groupList');
     Route::resource('groups', 'GroupsController');
     
-    /* terminalObjectives routes */
-    Route::get('terminalObjectives/{terminalObjective}/referenceSubscriptionSiblings', 'TerminalObjectiveController@referenceSubscriptionSiblings');
-    Route::get('terminalObjectives/{terminalObjective}/quoteSubscriptions', 'TerminalObjectiveController@quoteSubscriptions');
-    Route::resource('terminalObjectives', 'TerminalObjectiveController');
+    /* media routes */
+    Route::resource('media', 'MediumController');
     
     /* objectiveTypes routes */
     Route::resource('objectiveTypes', 'ObjectiveTypeController');
@@ -86,20 +84,20 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');
     Route::resource('permissions', 'PermissionsController');
     
-    /* enablingObjectives routes */
-    Route::get('enablingObjectives/{enablingObjective}/referenceSubscriptionSiblings', 'EnablingObjectiveController@referenceSubscriptionSiblings');
-    Route::get('enablingObjectives/{enablingObjective}/quoteSubscriptions', 'EnablingObjectiveController@quoteSubscriptions');
-    Route::resource('enablingObjectives', 'EnablingObjectiveController');
+    /* Role routes */
+    Route::delete('roles/massDestroy', 'RolesController@massDestroy')->name('roles.massDestroy');
+    Route::get('roles/list', 'RolesController@list')->name('roles.list');
+    Route::resource('roles', 'RolesController');
     
-    /* media routes */
-    Route::resource('media', 'MediumController');
+    /* sharingLevels routes */
+    Route::resource('sharingLevels', 'SharingLevelController');
+    
+    /* terminalObjectives routes */
+    Route::get('terminalObjectives/{terminalObjective}/referenceSubscriptionSiblings', 'TerminalObjectiveController@referenceSubscriptionSiblings');
+    Route::get('terminalObjectives/{terminalObjective}/quoteSubscriptions', 'TerminalObjectiveController@quoteSubscriptions');
+    Route::resource('terminalObjectives', 'TerminalObjectiveController');
     
     /* reference(Subscription) routes */
     Route::resource('references', 'ReferenceController');
     Route::resource('referenceSubscriptions', 'ReferenceSubscriptionController');
-    
-    
-    
-    /* sharingLevels routes */
-    Route::resource('sharingLevels', 'SharingLevelController');
 });

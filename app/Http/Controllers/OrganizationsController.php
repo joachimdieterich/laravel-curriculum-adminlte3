@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 
@@ -23,7 +23,7 @@ class OrganizationsController extends Controller
         abort_unless(\Gate::allows('organization_access'), 403);
         $organizations = Organization::all();//auth()->user()->accessibleOrganizations(); 
         
-        return view('admin.organizations.index')
+        return view('organizations.index')
                 ->with(compact('organizations'));
       
     }
@@ -50,19 +50,19 @@ class OrganizationsController extends Controller
             ->addColumn('action', function ($organizations) {
                  $actions  = '';
                     if (\Gate::allows('organization_show')){
-                        $actions .= '<a href="'.route('admin.organizations.show', $organizations->id).'" '
+                        $actions .= '<a href="'.route('organizations.show', $organizations->id).'" '
                                     . 'class="btn btn-xs btn-success">'
                                     . '<i class="fa fa-list-alt"></i> Show'
                                     . '</a>';
                     }
                     if (\Gate::allows('organization_edit')){
-                        $actions .= '<a href="'.route('admin.organizations.edit', $organizations->id).'" '
+                        $actions .= '<a href="'.route('organizations.edit', $organizations->id).'" '
                                     . 'class="btn btn-xs btn-primary">'
                                     . '<i class="fa fa-edit"></i> Edit'
                                     . '</a>';
                     }
                     if (\Gate::allows('organization_delete')){
-                        $actions .= '<form action="'.route('admin.organizations.destroy', $organizations->id).'" method="POST">'
+                        $actions .= '<form action="'.route('organizations.destroy', $organizations->id).'" method="POST">'
                                     . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
                                     . '<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Delete</button>';
                     }
@@ -87,7 +87,7 @@ class OrganizationsController extends Controller
         abort_unless(\Gate::allows('organization_create'), 403);
         $statuses = Status::all();
         
-        return view('admin.organizations.create')
+        return view('organizations.create')
                 ->with(compact('statuses'));
     }
 
@@ -123,7 +123,7 @@ class OrganizationsController extends Controller
         abort_unless(\Gate::allows('organization_show'), 403);
         $statuses = Status::all();
         
-        return view('admin.organizations.show')
+        return view('organizations.show')
                 ->with(compact('organization'))
                 ->with(compact('statuses'));
     }
@@ -139,7 +139,7 @@ class OrganizationsController extends Controller
     {
         abort_unless(\Gate::allows('organization_edit'), 403);
         $statuses = Status::all();
-        return view('admin.organizations.edit')
+        return view('organizations.edit')
                 ->with(compact('organization'))
                 ->with(compact('statuses'));
     }

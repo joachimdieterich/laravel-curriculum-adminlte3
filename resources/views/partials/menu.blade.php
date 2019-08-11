@@ -88,7 +88,7 @@
                 @endcan
                 @can('organization_manage')
                     <li class="nav-item">
-                        <a href="{{ route("admin.organizations.index") }}" class="nav-link {{ request()->is('admin/organizations') || request()->is('admin/organizations/*') ? 'active' : '' }}">
+                        <a href="{{ route("organizations.index") }}" class="nav-link {{ request()->is('organizations') || request()->is('organizations/*') ? 'active' : '' }}">
                             <i class="fas fa-university"></i>
                             <p>
                                 <span>{{ trans('global.organization.title') }}</span>

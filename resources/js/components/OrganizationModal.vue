@@ -149,7 +149,7 @@
         methods: {
             async submit() {
                 try {
-                    this.location = (await axios.post('/admin/organizations', this.form)).data.message;
+                    this.location = (await axios.post('/organizations', this.form)).data.message;
                 } catch(error) {
                     this.errors = error.response.data.errors;
                 }

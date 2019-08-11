@@ -29,7 +29,7 @@ class ManageUserTest extends TestCase
         $org1 = OrganizationFactory::create();
         $org2 = OrganizationFactory::create();
       
-        $this->post("admin/organizations/enrol" , ['enrollment_list' => [
+        $this->post("/organizations/enrol" , ['enrollment_list' => [
                                                                             ['user_id' => auth()->user()->id,
                                                                             'organization_id' => $org1->id,
                                                                             'role_id' => $role_admin_id
@@ -44,7 +44,7 @@ class ManageUserTest extends TestCase
             ]);
         
        
-        $this->post("admin/organizations/enrol" , ['enrollment_list' => [
+        $this->post("/organizations/enrol" , ['enrollment_list' => [
                                                                             ['user_id' => auth()->user()->id,
                                                                             'organization_id' => $org2->id,
                                                                             'role_id' => $role_creator_id
@@ -59,7 +59,7 @@ class ManageUserTest extends TestCase
         
         // Check for Integrity constraint violation
         try { 
-            $this->post("admin/organizations/enrol" , ['enrollment_list' => [
+            $this->post("/organizations/enrol" , ['enrollment_list' => [
                                                                             ['user_id' => auth()->user()->id,
                                                                             'organization_id' => $org2->id,
                                                                             'role_id' => $role_creator_id
@@ -118,7 +118,7 @@ class ManageUserTest extends TestCase
             ]);
         $this->assertEquals($role['title'], $user_expel->roles->first()->title);
         
-        $this->followingRedirects()->delete("/admin/organizations/expel", $attributes =$attributes = [
+        $this->followingRedirects()->delete("/organizations/expel", $attributes =$attributes = [
                     'expel_list' => [
                                         ['user_id' => auth()->user()->id,
                                          'organization_id' => $organization->id,

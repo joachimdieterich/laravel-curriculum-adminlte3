@@ -20,7 +20,7 @@ class OrganizationEnrollmentTest extends TestCase
     
     /** @test 
      * 
-     * Use Route: POST, admin/organizations/enrol, admin.organizations.enrol
+     * Use Route: POST, organizations/enrol, organizations.enrol
      */
     public function an_administrator_can_enrol_multiple_users_to_existing_organizations_with_an_existing_role()
     {
@@ -49,7 +49,7 @@ class OrganizationEnrollmentTest extends TestCase
                           ];
                 
         
-        $this->post("admin/organizations/enrol" , $attributes = [
+        $this->post("organizations/enrol" , $attributes = [
                     'enrollment_list' => $enrollment_list,
                 ]);
         
@@ -91,7 +91,7 @@ class OrganizationEnrollmentTest extends TestCase
                           ];
                 
         
-        $this->post("admin/organizations/enrol" , $attributes = [
+        $this->post("organizations/enrol" , $attributes = [
                     'enrollment_list' => $enrollment_list,
                 ]);
         
@@ -119,7 +119,7 @@ class OrganizationEnrollmentTest extends TestCase
                           ];
         
         /* expel */
-        $this->delete("admin/organizations/expel" , $attributes = [
+        $this->delete("organizations/expel" , $attributes = [
                     'expel_list' => $expel_list,
                 ]);
         

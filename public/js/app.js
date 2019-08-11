@@ -2897,7 +2897,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 0:
                 _context.prev = 0;
                 _context.next = 3;
-                return axios.post('/admin/organizations', this.form);
+                return axios.post('/organizations', this.form);
 
               case 3:
                 this.location = _context.sent.data.message;

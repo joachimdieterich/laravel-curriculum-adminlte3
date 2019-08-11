@@ -12,7 +12,7 @@
                     </div>
                     <div>
                         @can('organization_edit')
-                             <a href="{{ route('admin.organizations.edit', $organization->id) }}" >
+                             <a href="{{ route('organizations.edit', $organization->id) }}" >
                                 <i class="far fa-edit"></i>
                              </a> 
                         @endcan 
@@ -63,7 +63,7 @@
                 </div>-->
                 <div class="float-left">
                   @can('organization_edit')
-                    <form action="{{ route('admin.organizations.update', $organization->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
+                    <form action="{{ route('organizations.update', $organization->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                             <input type="hidden" name="_method" value="PATCH">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     @include ('forms.input.select', 

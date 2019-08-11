@@ -22,14 +22,14 @@ class ManageOrganizationTest extends TestCase
     {
         
         /* add new organization */
-        $this->post("admin/organizations" , $attributes = factory('App\Organization')->raw());
+        $this->post("/organizations" , $attributes = factory('App\Organization')->raw());
         
         $this->assertDatabaseHas('organizations', $attributes);
         
         /* edit organization */ 
         $attributes['status_id'] = 2;
         
-        $this->patch("admin/organizations/". (Organization::where(
+        $this->patch("/organizations/". (Organization::where(
                         'title', '=', $attributes['title'])->first()->id) , 
                         ['status_id' => 2] );
         

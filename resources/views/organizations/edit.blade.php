@@ -7,10 +7,10 @@
     </div>
 
     <div class="card-body">
-        <form action="{{ route("admin.organizations.update", [$organization->id]) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route("organizations.update", [$organization->id]) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PATCH')
-            @include('admin.organizations.form', [
+            @include('organizations.form', [
                 'organization' => $organization,
                 'statusses' => $statuses,
                 'buttonText' => 'Update Project'

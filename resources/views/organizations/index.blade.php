@@ -3,7 +3,7 @@
 @can('organization_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <button class="btn btn-success" href="{{ route("admin.organizations.create") }}" @click.prevent="$modal.show('organization-modal')">
+            <button class="btn btn-success" href="{{ route("organizations.create") }}" @click.prevent="$modal.show('organization-modal')">
                 {{ trans('global.add') }} {{ trans('global.organization.title_singular') }}
             </button>
         </div>
@@ -44,7 +44,7 @@ $(document).ready( function () {
     let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
     let deleteButton = {
       text: deleteButtonTrans,
-      url: "{{ route('admin.organizations.massDestroy') }}",
+      url: "{{ route('organizations.massDestroy') }}",
       className: 'btn-danger',
       action: function (e, dt, node, config) {
         var ids = dt.rows({ selected: true }).ids().toArray()
@@ -73,7 +73,7 @@ $(document).ready( function () {
     $('#organizations-datatable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ url('admin/organizations/list') }}",
+        ajax: "{{ url('organizations/list') }}",
         columns: [
                  { data: 'check'},
                  { data: 'title' },

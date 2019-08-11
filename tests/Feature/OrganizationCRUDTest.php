@@ -18,51 +18,51 @@ class OrganizationCRUDTest extends TestCase
     }
     
     /** @test 
-     * Use Route: GET|HEAD, admin/organizations, admin.organizations.index
+     * Use Route: GET|HEAD, organizations, organizations.index
      */
     public function an_administrator_see_organizations() 
     { 
         
-        $this->get("admin/organizations")       
+        $this->get("organizations")       
              ->assertStatus(200);
         
         /* Use Datatables */
         $organization = Organization::first();
-        $this->get("admin/organizations/list")
+        $this->get("organizations/list")
              ->assertStatus(200)
              ->assertViewHasAll(compact($organization));
     }
     
     /** @test 
-     * Use Route: POST, admin/organizations, admin.organizations.index
+     * Use Route: POST, organizations, organizations.index
      */     
     public function an_administrator_create_an_organization()
     { 
         
-        $this->post("admin/organizations" , $attributes = factory('App\Organization')->raw());
+        $this->post("organizations" , $attributes = factory('App\Organization')->raw());
         
         $this->assertDatabaseHas('organizations', $attributes);
     }
     
     /** @test 
-     * Use Route: POST, admin/organizations, admin.organizations.index
+     * Use Route: POST, organizations, organizations.index
      */     
     public function an_administrator_get_create_view_for_organization()
     { 
         
-        $this->get("admin/organizations/create")
+        $this->get("organizations/create")
              ->assertStatus(200);
     }
     
     /** @test 
-     * Use Route: DELETE, admin/organizations/massDestroy admin.organizations.massDestroy
+     * Use Route: DELETE, organizations/massDestroy organizations.massDestroy
      */  
     public function an_administrator_can_mass_delete_organizations()
     {        
         $orgs = factory(Organization::class, 50)->create();
         $ids = $orgs->pluck('id')->toArray();
         
-        $this->delete("/admin/organizations/massDestroy" , $attributes = [
+        $this->delete("/organizations/massDestroy" , $attributes = [
                     'ids' =>  $ids,
                 ])->assertStatus(204);   
         
@@ -75,7 +75,7 @@ class OrganizationCRUDTest extends TestCase
     }
     
     /** @test 
-     * Use Route: DELETE, admin/organizations/{organization}, admin.organizations.destroy
+     * Use Route: DELETE, organizations/{organization}, organizations.destroy
      */  
     public function an_administrator_delete_an_organization()
     {
@@ -84,46 +84,46 @@ class OrganizationCRUDTest extends TestCase
         $org = OrganizationFactory::create();
         
         $this->followingRedirects()
-                ->delete("admin/organizations/". $org->id )
+                ->delete("organizations/". $org->id )
                 ->assertStatus(200);
     }
     
     /** @test 
-     * Use Route: GET|HEAD, admin/organizations/{organization}, admin.organizations.show
+     * Use Route: GET|HEAD, organizations/{organization}, organizations.show
      */
     public function an_administrator_see_details_of_an_organizations() 
     { 
         
         $org = OrganizationFactory::create();
         
-        $this->get("admin/organizations/{$org->id}")       
+        $this->get("organizations/{$org->id}")       
              ->assertStatus(200)
              ->assertViewHasAll(compact($org));
     }
     
     /** @test 
-     * Use Route: PUT|PATCH, admin/organizations/{organization}, admin.organizations.update
+     * Use Route: PUT|PATCH, organizations/{organization}, organizations.update
      */
     public function an_administrator_update_an_organization()
     {
         
-        $this->post("admin/organizations" , $attributes = factory('App\Organization')->raw());
+        $this->post("organizations" , $attributes = factory('App\Organization')->raw());
         
         $this->assertDatabaseHas('organizations', $attributes);
         /* edit organization*/
-        $this->patch("admin/organizations/". Organization::where('title', '=', $attributes['title'])->first()->id , $new_attributes = factory('App\Organization')->raw());
+        $this->patch("organizations/". Organization::where('title', '=', $attributes['title'])->first()->id , $new_attributes = factory('App\Organization')->raw());
         
         $this->assertDatabaseHas('organizations', $new_attributes);
     }
     
     /** @test 
-     * Use Route: GET|HEAD, admin/organizations/{organization}/edit, admin.organizations.edit
+     * Use Route: GET|HEAD, organizations/{organization}/edit, organizations.edit
      */     
     public function an_administrator_get_edit_view_for_organization()
     { 
         $org = OrganizationFactory::create();
         
-        $this->get("admin/organizations/{$org->id}/edit")
+        $this->get("organizations/{$org->id}/edit")
              ->assertStatus(200)
              ->assertSessionHasAll(compact($org));
     }

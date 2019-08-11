@@ -17,16 +17,7 @@ Auth::routes(['register' => false]);
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'middleware' => ['auth']], function () {
     Route::get('/', 'HomeController@index')->name('home');
-    
-    /* Organization routes */
-    Route::post('organizations/enrol', 'OrganizationsController@enrol')->name('organizations.enrol');
-    Route::delete('organizations/expel', 'OrganizationsController@expel')->name('organizations.expel');
-    
-    Route::delete('organizations/massDestroy', 'OrganizationsController@massDestroy')->name('organizations.massDestroy');
-    Route::get('organizations/list', 'OrganizationsController@list')->name('organizations.list');
-    Route::resource('organizations', 'OrganizationsController');
-    
-   
+      
     /* Role routes */
     Route::delete('roles/massDestroy', 'RolesController@massDestroy')->name('roles.massDestroy');
     Route::get('roles/list', 'RolesController@list')->name('roles.list');
@@ -81,6 +72,14 @@ Route::group(['middleware' => 'auth'], function () {
     
     /* objectiveTypes routes */
     Route::resource('objectiveTypes', 'ObjectiveTypeController');
+    
+    /* Organization routes */
+    Route::post('organizations/enrol', 'OrganizationsController@enrol')->name('organizations.enrol');
+    Route::delete('organizations/expel', 'OrganizationsController@expel')->name('organizations.expel');
+    
+    Route::delete('organizations/massDestroy', 'OrganizationsController@massDestroy')->name('organizations.massDestroy');
+    Route::get('organizations/list', 'OrganizationsController@list')->name('organizations.list');
+    Route::resource('organizations', 'OrganizationsController');
     
     /* permission routes */
     Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');

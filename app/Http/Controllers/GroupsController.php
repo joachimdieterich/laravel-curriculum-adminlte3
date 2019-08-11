@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Group;
@@ -22,7 +22,7 @@ class GroupsController extends Controller
 
         $curricula = Curriculum::all();
 
-        return view('admin.groups.index')
+        return view('groups.index')
           ->with(compact('curricula'));
     }
     
@@ -49,19 +49,19 @@ class GroupsController extends Controller
             ->addColumn('action', function ($groups) {
                  $actions  = '';
                     if (\Gate::allows('group_show')){
-                        $actions .= '<a href="'.route('admin.groups.show', $groups->id).'" '
+                        $actions .= '<a href="'.route('groups.show', $groups->id).'" '
                                     . 'class="btn btn-xs btn-success mr-1">'
                                     . '<i class="fa fa-list-alt"></i> '.trans('global.show').''
                                     . '</a>';
                     }
                     if (\Gate::allows('group_edit')){
-                        $actions .= '<a href="'.route('admin.groups.edit', $groups->id).'" '
+                        $actions .= '<a href="'.route('groups.edit', $groups->id).'" '
                                     . 'class="btn btn-xs btn-primary mr-1">'
                                     . '<i class="fa fa-edit"></i> '.trans('global.edit').''
                                     . '</a>';
                     }
                     if (\Gate::allows('group_delete')){
-                        $actions .= '<form action="'.route('admin.groups.destroy', $groups->id).'" method="POST">'
+                        $actions .= '<form action="'.route('groups.destroy', $groups->id).'" method="POST">'
                                     . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
                                     . '<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> '.trans('global.delete').'</button>';
                     }
@@ -96,7 +96,7 @@ class GroupsController extends Controller
         $grades = Grade::all();
         $periods = Period::all();
         $organizations = Organization::all();
-        return view('admin.groups.create')
+        return view('groups.create')
                 ->with(compact('grades'))
                 ->with(compact('periods'))
                 ->with(compact('organizations'));
@@ -131,7 +131,7 @@ class GroupsController extends Controller
      */
     public function show(Group $group)
     {   
-        return view('admin.groups.show')
+        return view('groups.show')
                 ->with(compact('group'));
     }
     
@@ -143,7 +143,7 @@ class GroupsController extends Controller
         $periods = Period::all();
         $organizations = Organization::all();
         
-        return view('admin.groups.edit')
+        return view('groups.edit')
                 ->with(compact('group'))
                 ->with(compact('grades'))
                 ->with(compact('periods'))
@@ -162,7 +162,7 @@ class GroupsController extends Controller
             'organization_id' => format_select_input($request['organization_id']),
         ]);
 
-        return redirect()->route('admin.groups.index');
+        return redirect()->route('groups.index');
     }
      /**
      * Remove the specified group from storage.

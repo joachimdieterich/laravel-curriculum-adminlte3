@@ -25,7 +25,7 @@ class Group extends Model
     
     public function path()
     {
-        return "/admin/groups/{$this->id}";
+        return "/groups/{$this->id}";
     }
     
     public function enrol(User $user)

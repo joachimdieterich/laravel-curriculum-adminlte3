@@ -40,22 +40,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     
     Route::get('users/list', 'UsersController@list');
     Route::resource('users', 'UsersController');
-   
-    /* Group routes */
-    Route::post('groups/enrol', 'GroupsController@enrol')->name('groups.enrol');
-    Route::delete('groups/expel', 'GroupsController@expel')->name('groups.expel');
-    
-    Route::delete('groups/massDestroy', 'GroupsController@massDestroy')->name('groups.massDestroy');
-    Route::get('groups/list', 'GroupsController@list');
-    Route::resource('groups', 'GroupsController');
-    
-    
-    
-
-    Route::get('groupList', 'GroupsController@groupList');
-    Route::resource('groups', 'GroupsController');
-    
-    
+  
     Route::get('organizationTypeList', 'OrganizationTypesController@organizationTypeList');
     Route::resource('organizationtypes', 'OrganizationTypesController');
     
@@ -78,6 +63,17 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('grades/destroy', 'GradesController@massDestroy')->name('grades.massDestroy');
     Route::resource('grades', 'GradesController');
     
+    /* Group routes */
+    Route::post('groups/enrol', 'GroupsController@enrol')->name('groups.enrol');
+    Route::delete('groups/expel', 'GroupsController@expel')->name('groups.expel');
+    
+    Route::delete('groups/massDestroy', 'GroupsController@massDestroy')->name('groups.massDestroy');
+    Route::get('groups/list', 'GroupsController@list');
+    Route::resource('groups', 'GroupsController');
+    
+    Route::get('groupList', 'GroupsController@groupList');
+    Route::resource('groups', 'GroupsController');
+    
     /* terminalObjectives routes */
     Route::get('terminalObjectives/{terminalObjective}/referenceSubscriptionSiblings', 'TerminalObjectiveController@referenceSubscriptionSiblings');
     Route::get('terminalObjectives/{terminalObjective}/quoteSubscriptions', 'TerminalObjectiveController@quoteSubscriptions');
@@ -97,10 +93,9 @@ Route::group(['middleware' => 'auth'], function () {
     
     /* media routes */
     Route::resource('media', 'MediumController');
+    
     /* reference(Subscription) routes */
-    
     Route::resource('references', 'ReferenceController');
-    
     Route::resource('referenceSubscriptions', 'ReferenceSubscriptionController');
     
     

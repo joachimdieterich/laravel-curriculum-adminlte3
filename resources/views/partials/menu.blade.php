@@ -98,7 +98,7 @@
                 @endcan
                 @can('group_manage')
                     <li class="nav-item">
-                        <a href="{{ route("admin.groups.index") }}" class="nav-link {{ request()->is('admin/groups') || request()->is('admin/groups/*') ? 'active' : '' }}">
+                        <a href="{{ route("groups.index") }}" class="nav-link {{ request()->is('groups') || request()->is('groups/*') ? 'active' : '' }}">
                             <i class="fa fa-users"></i>
                             <p>
                                 <span>{{ trans('global.group.title') }}</span>

@@ -7,12 +7,12 @@
     </div>
 
     <div class="card-body">
-        <form action="{{ route("admin.groups.update", [$group->id]) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route("groups.update", [$group->id]) }}" method="POST" enctype="multipart/form-data">
             @csrf
            <form method="POST" 
               action="{{ $group->path() }}" >
             @method('PATCH')
-            @include('admin.groups.form', [
+            @include('groups.form', [
                 'group' => $group,
                 'grades' => $grades,
                 'periods' => $periods,

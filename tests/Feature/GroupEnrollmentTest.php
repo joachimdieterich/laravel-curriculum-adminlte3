@@ -20,7 +20,7 @@ class GroupEnrollmentTest extends TestCase
     
     /** @test 
      * 
-     * Use Route: POST, admin/groups/enrol, admin.groups.enrol
+     * Use Route: POST, groups/enrol, groups.enrol
      */
     public function an_administrator_can_enrol_multiple_users_to_existing_groups()
     {
@@ -45,7 +45,7 @@ class GroupEnrollmentTest extends TestCase
                           ];
                 
         
-        $this->post("admin/groups/enrol" , $attributes = [
+        $this->post("groups/enrol" , $attributes = [
                     'enrollment_list' => $enrollment_list,
                 ]);
         
@@ -82,7 +82,7 @@ class GroupEnrollmentTest extends TestCase
                           ];
                 
         
-        $this->post("admin/groups/enrol" , $attributes = [
+        $this->post("groups/enrol" , $attributes = [
                     'enrollment_list' => $enrollment_list,
                 ]);
         
@@ -94,7 +94,7 @@ class GroupEnrollmentTest extends TestCase
         }
 
         /* expel */
-        $this->delete("admin/groups/expel" , ['expel_list' => $enrollment_list]);
+        $this->delete("groups/expel" , ['expel_list' => $enrollment_list]);
         
         foreach($enrollment_list AS $entry){
             $this->assertDatabaseMissing('group_user', [

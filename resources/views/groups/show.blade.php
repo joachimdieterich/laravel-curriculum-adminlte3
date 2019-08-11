@@ -12,7 +12,7 @@
                     </div>
                     <div>
                         @can('group_edit')
-                             <a href="{{ route('admin.groups.edit', $group->id) }}" >
+                             <a href="{{ route('groups.edit', $group->id) }}" >
                                 <i class="far fa-edit"></i>
                              </a> 
                         @endcan 

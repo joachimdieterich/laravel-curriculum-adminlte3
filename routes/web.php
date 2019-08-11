@@ -31,12 +31,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     
     Route::get('users/list', 'UsersController@list');
     Route::resource('users', 'UsersController');
-  
-    Route::get('organizationTypeList', 'OrganizationTypesController@organizationTypeList');
-    Route::resource('organizationtypes', 'OrganizationTypesController');
-    
-    Route::delete('organizationtypes/destroy', 'OrganizationTypesController@massDestroy')->name('organizationtypes.massDestroy');
-    
+
+   
    
 });
 Route::group(['middleware' => 'auth'], function () {
@@ -80,6 +76,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('organizations/massDestroy', 'OrganizationsController@massDestroy')->name('organizations.massDestroy');
     Route::get('organizations/list', 'OrganizationsController@list')->name('organizations.list');
     Route::resource('organizations', 'OrganizationsController');
+    
+    /* organizationtype routes */
+    Route::get('organizationTypeList', 'OrganizationTypesController@organizationTypeList');
+    Route::delete('organizationtypes/destroy', 'OrganizationTypesController@massDestroy')->name('organizationtypes.massDestroy');  
+    Route::resource('organizationtypes', 'OrganizationTypesController');
     
     /* permission routes */
     Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyProductRequest;
@@ -21,7 +21,7 @@ class OrganizationTypesController extends Controller
         $organization_types = OrganizationType::all();
         
 
-        return view('admin.organizationtypes.index', compact('organization_types'));
+        return view('organizationtypes.index', compact('organization_types'));
     }
     
     public function organizationTypeList()
@@ -44,7 +44,7 @@ class OrganizationTypesController extends Controller
     {
         abort_unless(\Gate::allows('organization_type_create'), 403);
 
-        return view('admin.organizationtype.create');
+        return view('organizationtype.create');
     }
 
     public function store(StoreOrganizationTypeRequest $request)
@@ -53,14 +53,14 @@ class OrganizationTypesController extends Controller
 
         $organization_types = OrganizationType::create($request->all());
 
-        return redirect()->route('admin.organizationtype.index');
+        return redirect()->route('organizationtype.index');
     }
 
     public function edit(OrganizationType $organization_type)
     {
         abort_unless(\Gate::allows('organization_type_edit'), 403);
 
-        return view('admin.organizationtype.edit', compact('organization_type'));
+        return view('organizationtype.edit', compact('organization_type'));
     }
 
     public function update(UpdateOrganizationTypeRequest $request, OrganizationType $organization_type)
@@ -69,14 +69,14 @@ class OrganizationTypesController extends Controller
 
         $organization_type->update($request->all());
 
-        return redirect()->route('admin.organizationtype.index');
+        return redirect()->route('organizationtype.index');
     }
 
     public function show(OrganizationType $organization_type)
     {
         abort_unless(\Gate::allows('organization_type_show'), 403);
 
-        return view('admin.organizationtype.show', compact('organization_type'));
+        return view('organizationtype.show', compact('organization_type'));
     }
 
     public function destroy(OrganizationType $organization_type)

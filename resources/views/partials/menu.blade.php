@@ -118,7 +118,7 @@
                 @endcan
                 @can('organization_type_manage')
                     <li class="nav-item">
-                        <a href="{{ route("admin.organizationtypes.index") }}" class="nav-link {{ request()->is('admin/organizationtypes') || request()->is('admin/organizationtypes/*') ? 'active' : '' }}">
+                        <a href="{{ route("organizationtypes.index") }}" class="nav-link {{ request()->is('organizationtypes') || request()->is('organizationtypes/*') ? 'active' : '' }}">
                             <i class="fas fa-signal"></i>
                             <p>
                                 <span>{{ trans('global.organizationtype.title') }}</span>

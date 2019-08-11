@@ -3,7 +3,7 @@
 @can('organization_type_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <button class="btn btn-success" href="{{ route("admin.organizationtypes.create") }}" @click.prevent="$modal.show('organizationtype-modal')">
+            <button class="btn btn-success" href="{{ route("organizationtypes.create") }}" @click.prevent="$modal.show('organizationtype-modal')">
                 {{ trans('global.add') }} {{ trans('global.organizationtype.title_singular') }}
             </button>
         </div>
@@ -40,7 +40,7 @@
     $('#organization_type_datatable').DataTable({
            processing: true,
            serverSide: true,
-           ajax: "{{ url('admin/organizationTypeList') }}",
+           ajax: "{{ url('organizationTypeList') }}",
            columns: [
                     { data: 'check'},
                     { data: 'title' },

@@ -120,7 +120,7 @@ class ApiUserTest extends TestCase
     public function an_authificated_client_can_update_an_user()
     { 
         $this->signInApiAdmin();
-        //$this->withoutExceptionHandling();
+        $this->withoutExceptionHandling();
         $this->post("/api/v1/users" ,  $attributes = [
             'username' => 'username',
             'common_name' => "cn_username",

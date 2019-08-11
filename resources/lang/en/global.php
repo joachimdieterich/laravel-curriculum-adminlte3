@@ -417,8 +417,8 @@ return [
             'title_helper'       => '',
             'external_begin'       => 'Begin',
             'external_begin_helper'=> '',
-            'external_end'         => 'Begin',
-            'external_begin_helper'=> '',
+            'external_end'         => 'End',
+            'external_end_helper'  => '',
         ],
     ],  
     'organizationtype' =>[

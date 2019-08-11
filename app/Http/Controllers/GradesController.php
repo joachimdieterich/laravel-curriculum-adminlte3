@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyProductRequest;
@@ -16,14 +16,14 @@ class GradesController extends Controller
 
         $grades = Grade::all();
 
-        return view('admin.grades.index', compact('grades'));
+        return view('grades.index', compact('grades'));
     }
 
     public function create()
     {
         abort_unless(\Gate::allows('grade_create'), 403);
 
-        return view('admin.grades.create');
+        return view('grades.create');
     }
 
     public function store(StoreGradeRequest $request)
@@ -32,14 +32,14 @@ class GradesController extends Controller
 
         $grades = Grade::create($request->all());
 
-        return redirect()->route('admin.grades.index');
+        return redirect()->route('grades.index');
     }
 
     public function edit(Grade $grade)
     {
         abort_unless(\Gate::allows('grade_edit'), 403);
 
-        return view('admin.grades.edit', compact('grade'));
+        return view('grades.edit', compact('grade'));
     }
 
     public function update(UpdateGradeRequest $request, Grade $grade)
@@ -48,14 +48,14 @@ class GradesController extends Controller
 
         $grade->update($request->all());
 
-        return redirect()->route('admin.products.index');
+        return redirect()->route('products.index');
     }
 
     public function show(Grade $grade)
     {
         abort_unless(\Gate::allows('grade_show'), 403);
 
-        return view('admin.grades.show', compact('grade'));
+        return view('grades.show', compact('grade'));
     }
 
     public function destroy(Grade $grade)

@@ -56,11 +56,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('groups', 'GroupsController');
     
     
-    
-    Route::delete('grades/destroy', 'GradesController@massDestroy')->name('grades.massDestroy');
-    
-    Route::resource('grades', 'GradesController');
-    
     Route::get('organizationTypeList', 'OrganizationTypesController@organizationTypeList');
     Route::resource('organizationtypes', 'OrganizationTypesController');
     
@@ -79,6 +74,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('curricula/import/store', 'CurriculumImportController@store')->name('curricula.import.store');
     Route::resource('curricula', 'CurriculumController');
     
+    /* grades routes */
+    Route::delete('grades/destroy', 'GradesController@massDestroy')->name('grades.massDestroy');
+    Route::resource('grades', 'GradesController');
     
     /* terminalObjectives routes */
     Route::get('terminalObjectives/{terminalObjective}/referenceSubscriptionSiblings', 'TerminalObjectiveController@referenceSubscriptionSiblings');

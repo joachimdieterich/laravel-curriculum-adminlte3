@@ -3,7 +3,7 @@
 @can('grade_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <button class="btn btn-success" href="{{ route("admin.grades.create") }}" @click.prevent="$modal.show('grade-modal')">
+            <button class="btn btn-success" href="{{ route("grades.create") }}" @click.prevent="$modal.show('grade-modal')">
                 {{ trans('global.add') }} {{ trans('global.grade.title_singular') }}
             </button>
         </div>
@@ -29,7 +29,7 @@
                             {{ trans('global.grade.fields.external_begin') }}
                         </th>
                         <th>
-                            {{ trans('global.grade.fields.external_begin') }}
+                            {{ trans('global.grade.fields.external_end') }}
                         </th>
                         <th>
                             &nbsp;
@@ -53,17 +53,17 @@
                             </td>
                             <td>
                                 @can('grade_show')
-                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.grades.show', $grade->id) }}">
+                                    <a class="btn btn-xs btn-primary" href="{{ route('grades.show', $grade->id) }}">
                                         {{ trans('global.view') }}
                                     </a>
                                 @endcan
                                 @can('grade_edit')
-                                    <a class="btn btn-xs btn-info" href="{{ route('admin.grades.edit', $grade->id) }}" >
+                                    <a class="btn btn-xs btn-info" href="{{ route('grades.edit', $grade->id) }}" >
                                         {{ trans('global.edit') }}
                                     </a>
                                 @endcan
                                 @can('grade_delete')
-                                    <form action="{{ route('admin.grades.destroy', $grade->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
+                                    <form action="{{ route('grades.destroy', $grade->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                         <input type="hidden" name="_method" value="DELETE">
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                         <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
@@ -89,7 +89,7 @@
   let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
   let deleteButton = {
     text: deleteButtonTrans,
-    url: "{{ route('admin.grades.massDestroy') }}",
+    url: "{{ route('grades.massDestroy') }}",
     className: 'btn-danger',
     action: function (e, dt, node, config) {
       var ids = $.map(dt.rows({ selected: true }).nodes(), function (entry) {

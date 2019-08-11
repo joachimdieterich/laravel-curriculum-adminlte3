@@ -14,7 +14,7 @@ class ManageGradeTest extends TestCase
     {
         $this->signInAdmin();
         
-        $this->followingRedirects()->get("admin/grades")
+        $this->followingRedirects()->get("grades")
             ->assertStatus(200);
     }
     

@@ -108,7 +108,7 @@
                 @endcan
                 @can('grade_manage')
                     <li class="nav-item">
-                        <a href="{{ route("admin.grades.index") }}" class="nav-link {{ request()->is('admin/grades') || request()->is('admin/grades/*') ? 'active' : '' }}">
+                        <a href="{{ route("grades.index") }}" class="nav-link {{ request()->is('grades') || request()->is('grades/*') ? 'active' : '' }}">
                             <i class="fas fa-signal"></i>
                             <p>
                                 <span>{{ trans('global.grade.title') }}</span>

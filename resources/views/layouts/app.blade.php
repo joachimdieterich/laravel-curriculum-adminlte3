@@ -13,7 +13,8 @@
     <link href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet" />
     
-    <script>
+    <script>    
+        
         window.trans = <?php
         // copy all translations from /resources/lang/CURRENT_LOCALE/* to global JS variable
         $lang_files = File::files(resource_path() . '/lang/' . App::getLocale());

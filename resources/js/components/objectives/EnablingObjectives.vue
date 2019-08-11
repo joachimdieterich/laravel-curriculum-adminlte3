@@ -2,12 +2,17 @@
     <div>
        
         <div v-for="objective in objectives" :id="'enablingObjective_' + objective.id" style="float:left ">
-                <ObjectiveBox type="enabling" :objective="objective" :setting="setting"></ObjectiveBox>
+            <ObjectiveBox type="enabling" 
+                  :objective="objective" 
+                  :settings="settings">        
+            </ObjectiveBox>
         </div>
 
-        <div id="createEnablingRow" > 
+        <div id="createEnablingRow" 
+             v-if="settings.edit === true"> 
             <ObjectiveBox type="createenabling" 
-                :objective="{'curriculum_id': curriculum.id, 'terminal_objective_id': terminalobjective.id}">
+                :objective="{'curriculum_id': curriculum.id, 'terminal_objective_id': terminalobjective.id}"
+                :settings="settings">
             </ObjectiveBox>
         </div>
      
@@ -22,19 +27,18 @@
                 'curriculum': Object,
                 'terminalobjective': Object
         }, 
-         data() {
+        data() {
             return {
-                setting: {
+                settings: {
                     'last': null,
                 },
             }
         },
         mounted() {
-
             if (this.objectives.length != 0){
-                this.setting.last = this.objectives[this.objectives.length-1].id;
-            }
-            
+                this.settings = this.$attrs.settings;
+                this.settings.last = this.objectives[this.objectives.length-1].id;
+            } 
         },
         components: {
             ObjectiveBox

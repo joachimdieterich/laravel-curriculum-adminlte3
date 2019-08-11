@@ -41,7 +41,8 @@
         :curriculum="{{ $curriculum }}" 
         :terminalobjectives="{{ $terminalObjectives }}"
         :enablingobjectives="{{ $enablingObjectives }}"
-        :objectivetypes="{{ $objectiveTypes }}">
+        :objectivetypes="{{ $objectiveTypes }}"
+        :settings="{{ $settings }}">
     </curriculum-view>
 </div>
 <terminal-objective-modal></terminal-objective-modal>

@@ -45,6 +45,26 @@ Vue.component('medium-modal', require('./components/media/MediumModal.vue').defa
 Vue.component('objective-medium-modal', require('./components/objectives/ObjectiveMediumModal.vue').default);
 
 /**
+ * Custom Vue directive "can" to check against permissions.
+ * If permission is not given element gets style display:none
+ * 
+ * ! Always check permissions in the backand. 
+ * This directive enables shorter syntax on vue.
+ * 
+ * Example:
+ * <element v-can="'curriculum_edit'" ><element>
+ * 
+ * @type Vue
+ */
+            
+Vue.directive('can', function (el, binding) {    
+    if(window.Laravel.permissions.indexOf(binding.value) == -1){
+        el.style.display = 'none';
+    }
+    //return window.Laravel.permissions.indexOf(binding.value) !== -1;
+});
+
+/**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
@@ -54,4 +74,3 @@ const app = new Vue({
     el: '#app', 
     
 });
-

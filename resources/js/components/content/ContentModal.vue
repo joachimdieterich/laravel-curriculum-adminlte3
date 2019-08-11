@@ -10,7 +10,7 @@
         :resizable=true
         @before-open="beforeOpen"
         @before-close="beforeClose"
-        style="z-index: 25000">
+        style="z-index: 25100">
         <div class="card" style="margin-bottom: 0px !important">
             <div class="card-header">
                  <h3 class="card-title">
@@ -46,14 +46,18 @@
         data() {
             return {
                 content: [],
+                quote: null,
                 errors: {}
             }
         },
         methods: {
             beforeOpen(event) {
                 if (event.params.content) {
-                    //console.log(event.params.content);
                     this.content = event.params.content;
+                    console.log(event.params.quote);
+                    if (event.params.quote) {
+                        this.quote = event.params.quote;
+                    }
                 }
             },
             beforeClose() {

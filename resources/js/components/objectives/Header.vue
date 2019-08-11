@@ -1,20 +1,21 @@
 <template>
         <div class="boxheader row" 
              v-bind:style="{ 'color': textcolor }" >
-            <span class="mr-auto "
-                  >
-                <span  v-if="(type == 'terminal' && objective.order_id != 0) " 
+            <span class="mr-auto " 
+                  v-can="'curriculum_edit'"
+                  v-if="settings.edit === true"
+                 >
+                <span v-if="(type == 'terminal' && objective.order_id != 0)" 
                        class="fa fa-arrow-up mr-1"                        
                        @click="$emit('eventSort','-1')"></span>
-                <span  v-if="(type == 'enabling'  && objective.order_id != 0)" 
+                <span v-if="(type == 'enabling'  && objective.order_id != 0)" 
                     class="fa fa-arrow-left mr-1 " 
                     @click="$emit('eventSort','-1')">
                 </span>
-                
-                <span  v-if="(type == 'terminal' && setting.last != objective.id)" 
+                <span  v-if="(type == 'terminal' && settings.last != objective.id)" 
                        class="fa fa-arrow-down  " 
                        @click="$emit('eventSort','1')"></span>
-                <span  v-if="(type == 'enabling' && setting.last != objective.id)" 
+                <span  v-if="(type == 'enabling' && settings.last != objective.id)" 
                        class="fa fa-arrow-right  " 
                     @click="$emit('eventSort','1')">
                 </span>
@@ -40,12 +41,16 @@
 <script>
     import DropdownButton from './DropdownButton'
     export default {
-        props: ['objective', 'type', 'menuEntries', 'setting', 'textcolor'],
+        props: ['objective', 'type', 'menuEntries', 'settings', 'textcolor'],
        
         methods: {
             emitDeleteEvent() {
                 //this.$emit('eventtriggered')
             },   
+        },
+        
+        mounted() {
+            console.log(this.settings);
         },
       
         components: {

@@ -22,7 +22,7 @@
 
                             <ObjectiveBox type="terminal" 
                                           :objective="objective"
-                                          :setting="setting">
+                                          :settings="settings">
                             </ObjectiveBox>
 
                             <div class="ml-auto">
@@ -30,6 +30,7 @@
                                     :curriculum="curriculum"
                                     :terminalobjective="objective"
                                     :objectives="filterEnablingObjectives(objective.id)"
+                                    :settings="settings"
                                     >
                                 </EnablingObjectives>
                             </div>
@@ -39,10 +40,8 @@
             </div><!-- /.tab-pane -->
         </div> <!-- /.tab-content -->
        
-        
-           
-        
-        <div class="row" >
+        <div class="row" 
+             v-if="settings.edit === true">
             <div id="createTerminalRow" class="col-12"> 
             <ObjectiveBox type="createterminal" :objective="{'curriculum_id': curriculum.id}"></ObjectiveBox>
             </div>
@@ -63,11 +62,9 @@
             'objectivetypes': Array,   
         }, 
         data() {
-            return {
-                
-                setting: {
+            return { 
+                settings: {
                     'last': null,
-                    
                 },
                 typetabs: {},
                 activetab: null,
@@ -105,10 +102,10 @@
             
         },
         mounted() {
-            
             if (this.terminalobjectives.length != 0){
-                this.setting.last = this.terminalobjectives[this.terminalobjectives.length-1].id;
-                
+                this.settings = this.$attrs.settings;
+                this.settings.last = this.terminalobjectives[this.terminalobjectives.length-1].id;
+               
                 this.typetabs = [ ... new Set(this.terminalobjectives.map(t => t.objective_type_id))];
                 
                 this.activetab = this.typetabs[0];

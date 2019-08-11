@@ -1,42 +1,41 @@
 <template>
     <div>
         <div v-for="curriculum in curricula_list">
-            <span class="col-xs-12" 
-                  data-toggle="collapse" 
-                  :data-target="tagName(curriculum.id)" >
-                <h4 class="text-black" >
-                   {{curriculum.title}}
+            <span class="col-xs-12" >
+                <h4 class="text-black bg-light p-2" 
+                    data-toggle="collapse" 
+                    :data-target="'#'+tagName(curriculum.id)" 
+                    aria-expanded="true">
+                    {{curriculum.title}}
                     <small>
-                    {{curriculum.organization_type.title}}
+                        {{curriculum.organization_type.title}}
                     </small>
-                    <button class="btn btn-box-tool pull-right" 
+                    <button class="btn btn-box-tool float-right" 
                             style="padding-top:0;" 
                             type="button" 
-                            data-toggle="collapse" 
-                            :data-target="tagName(curriculum.id)" 
-                            aria-expanded="true" 
                             title="Fach einklappen bzw. ausklappen">
-                        <i class="fa fa-expand"></i>
+                        <i class="fa fa-expand float-right"></i>
                     </button>
                 </h4>
             </span>
-            <div v-for="filtered_reference in filterReferences(curriculum.id)">
-                <span id ="curriculum" class=""> 
-                    <div id="" class="row">
+            <div class="collapse" 
+                 :id="tagName(curriculum.id)">
+                <div v-for="filtered_reference in filterReferences(curriculum.id)" >
+                    <div class="row">
                         <div class="col-xs-12 col-sm-3 pull-left" >
                             <dt>Thema/Kompetenzbereich</dt>
-                            
+
                             <ObjectiveBox type="terminal" 
                                           :objective="(filtered_reference.referenceable_type == 'App\\TerminalObjective') ? filtered_reference.referenceable : filtered_reference.referenceable.terminal_objective"
                                           :setting="setting">                   
-                            </ObjectiveBox>
+                        </ObjectiveBox>
                         </div>
 
                         <div class="col-xs-12 col-sm-3" v-if="filtered_reference.referenceable_type === 'App\\EnablingObjective'">
                             <dt>Kompetenz</dt>
                             <ObjectiveBox type="enabling" 
                                           :objective="filtered_reference.referenceable"
-                                :setting="setting">
+                                          :setting="setting">
                             </ObjectiveBox>
                         </div>
 
@@ -46,12 +45,10 @@
                         </div>
                     </div>
                     <hr style="clear:both;">
-                </span>
-            </div>
+                </div>
+            </div>    
         </div>
-        
     </div>
-     
 </template>
 
 
@@ -86,7 +83,7 @@
                 return curricula;
             },
             tagName: function(i){
-                return '#curriculum_'+i;
+                return 'curriculum_'+i;
             }
       
         }, 

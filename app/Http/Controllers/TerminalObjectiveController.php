@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreTerminalObjectiveRequest;
 use App\Http\Requests\UpdateTerminalObjectiveRequest;
 use DB;
+use App\ReferenceSubscription;
+use App\QuoteSubscription;
+use Illuminate\Support\Collection;
 
 class TerminalObjectiveController extends Controller
 {
@@ -57,7 +60,10 @@ class TerminalObjectiveController extends Controller
      */
     public function show(TerminalObjective $terminalObjective)
     {
-        //
+        $terminalObjective = TerminalObjective::where('id', $terminalObjective->id)
+                                                ->with(['media','mediaSubscriptions', 'referenceSubscriptions.siblings']) 
+                                                ->get();
+        dd($terminalObjective);
     }
 
     /**
@@ -135,6 +141,67 @@ class TerminalObjectiveController extends Controller
             return ['message' => $return];
         }
         return $return; 
+    }
+    
+     public function referenceSubscriptionSiblings(TerminalObjective $terminalObjective)
+    {
+        $siblings = new Collection([]);
+        
+        
+        foreach ($terminalObjective->referenceSubscriptions as $referenceSubscription) 
+        {
+             $collection = ReferenceSubscription::where('reference_id', '=', $referenceSubscription->reference_id)
+                                ->where(function($query) use ($referenceSubscription, $terminalObjective)
+                                    {
+                                        $query->where('reference_id', '=', $referenceSubscription->reference_id)
+                                              ->where('referenceable_type', '=', 'App\TerminalObjective')
+                                              ->where('referenceable_id', '!=', $terminalObjective->id);        
+                                    })
+                                ->with(['referenceable.curriculum.organizationType'])
+                                ->with(['reference'])
+                     ->get();
+            $siblings= $siblings->merge($collection);            
+        }
+        
+        if (count($siblings) == 0) //end early
+        {
+            return ['message'=> 'no subscriptions'];
+        }
+        
+        foreach ($siblings as $sibling) 
+        {
+            $curricula_list[$sibling->referenceable->curriculum->id] = $sibling->referenceable->curriculum;  
+        }
+        return ['siblings' => $siblings, 'curricula_list' => $curricula_list];
+    }
+    
+    public function quoteSubscriptions(TerminalObjective $terminalObjective)
+    {
+        $collection = QuoteSubscription::where('quotable_id', '=', $terminalObjective->id)
+                                        ->where('quotable_type', '=', 'App\TerminalObjective')
+                                        ->with(['quote.content.subscriptions.subscribable'])
+                                        ->get();         
+        
+        if (count($collection) == 0) //end early
+        {
+            return ['message'=> 'no subscriptions'];
+        }
+       
+        foreach ($collection as $quote_subscriptions) 
+        {
+            $arr[$quote_subscriptions->quote_id] = !is_null($quote_subscriptions->quote);
+           
+            if (!is_null($quote_subscriptions->quote))
+            {   
+                
+                $curricula_list[$quote_subscriptions->quote->content->subscriptions[0]->subscribable->id] = $quote_subscriptions->quote->content->subscriptions[0]->subscribable;  
+                $quotes_subscriptions[] = $quote_subscriptions;
+            }
+            
+        }
+        
+        return ['quotes_subscriptions' => $quotes_subscriptions, 'curricula_list' => $curricula_list];
+        
     }
     
     

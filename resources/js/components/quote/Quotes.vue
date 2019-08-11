@@ -1,42 +1,39 @@
 <template>
     <div>
         <div v-for="curriculum in quote_curricula_list">
-              <span class="col-xs-12" 
-                  data-toggle="collapse" 
-                  :data-target="tagName(curriculum.id)" >
-                <h4 class="text-black" >
+            <span class="col-xs-12" >
+                <h4 class="text-black bg-light p-2"  
+                    data-toggle="collapse" 
+                    :data-target="'#'+tagName(curriculum.id)">
                    {{curriculum.title}}
                     <small>
-                    
+                       
                     </small>
-                    <button class="btn btn-box-tool pull-right" 
+                    <button class="btn btn-box-tool float-right" 
                             style="padding-top:0;" 
                             type="button" 
-                            data-toggle="collapse" 
-                            :data-target="tagName(curriculum.id)" 
                             aria-expanded="true" 
                             title="Fach einklappen bzw. ausklappen">
                         <i class="fa fa-expand"></i>
                     </button>
                 </h4>
             </span>
-            <div v-for="filtered_quote in filterQuotes(curriculum.id)">
-                <span id ="curriculum" class=""> 
-                    <div id="" class="row">
-                        <div class="col-xs-12" >
-                            <dt>{{filtered_quote.quote.content.title}}</dt>
-                            <div v-html="filtered_quote.quote.content.content"></div>>
+            <div class="collapse" 
+                 :id="tagName(curriculum.id)">
+                <div v-for="filtered_quote in filterQuotes(curriculum.id)">
+                    <div class="row">
+                        <div class="col-xs-12 p2" >
+                            <div class="p-2"> 
+                                <div v-html="filtered_quote.quote.quote"></div>
+                                <cite  v-html="filtered_quote.quote.content.title" @click="show(filtered_quote.quote.content, filtered_quote.quote.quote)"></cite>
+                            </div>
                         </div>
                     </div>
                     <hr style="clear:both;">
-                </span>
+                </div>
             </div>
         </div>
-        </div>
-          
-        
-    </div>
-     
+    </div>  
 </template>
 
 
@@ -63,9 +60,11 @@
                 return filterQuotes;
             },     
            tagName: function(i){
-                return '#quote_curriculum_'+i;
+                return 'quote_curriculum_'+i;
             },
-           
+             show(content, quote) { 
+                this.$modal.show('content-modal', {'content': content, 'quote': quote});
+            },
             
            
            

@@ -156,52 +156,59 @@ class CurriculumController extends Controller
      */
     public function show(Curriculum $curriculum)
     {
-        
         abort_unless(\Gate::allows('curriculum_show'), 403);
-        //check if user is enrolled -> else 403
-        
+        //check if user is enrolled or admin -> else 403 
         abort_unless((auth()->user()->curricula()->contains('curriculum_id', $curriculum->id) // user enrolled
                   OR (auth()->user()->currentRole()->first()->id == 1)), 403);                // or admin
 
         $terminalObjectives = TerminalObjective::where('curriculum_id', $curriculum->id)
                                                 ->orderBy('objective_type_id')
                                                 ->orderBy('order_id')
-                                                ->with(['media'])
+                                                ->with(['media',
+                                                        'mediaSubscriptions', 
+                                                        'referenceSubscriptions'])
                                                 ->get();
        
          $enablingObjectives = EnablingObjective::where('curriculum_id', $curriculum->id)
                                                 ->orderBy('terminal_objective_id')
                                                 ->orderBy('order_id')
                                                 ->with(['media',
-                                                    'mediaSubscriptions', 
-                                                    'referenceSubscriptions'
-//                                                    'referenceSubscriptions.siblings.reference',
-//                                                    'referenceSubscriptions.siblings.referenceable.curriculum.organizationType'
-                                                    ])
+                                                        'mediaSubscriptions', 
+                                                        'referenceSubscriptions'])
                                                 ->get();
         $objectiveTypes = \App\ObjectiveType::all();
         
+        $curriculum = Curriculum::with(['terminalObjectives', 
+                        'terminalObjectives.enablingObjectives', 
+                        'contentSubscriptions.content', 
+                        'glossar.contents', 
+                        'media'])
+                        ->find($curriculum->id);
+        $settings= json_encode([
+            'edit' => false
+        ]);
         
-        
-        $curriculum = Curriculum::with(['terminalObjectives', 'terminalObjectives.enablingObjectives', 'contents', 'glossar.contents', 'media'])->find($curriculum->id);
-        
-       //dd($enablingObjectives);
         return view('curricula.show')
                 ->with(compact('curriculum'))
                 ->with(compact('terminalObjectives')) //todo. curriculum already has terminal and enablingobjectives, use in DB
                 ->with(compact('enablingObjectives'))
-                ->with(compact('objectiveTypes'));
+                ->with(compact('objectiveTypes'))
+                ->with(compact('settings'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show curriculum in edit mode
      *
      * @param  \App\Curriculum  $curriculum
      * @return \Illuminate\Http\Response
      */
     public function edit(Curriculum $curriculum)
     {
-        //
+        $settings= json_encode([
+            'edit' => true
+        ]);
+       return $this->show($curriculum)
+                   ->with(compact('settings'));
     }
 
     /**

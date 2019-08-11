@@ -4,7 +4,8 @@
            :curriculum="curriculum"
            :terminalobjectives="terminalobjectives" 
            :enablingobjectives="enablingobjectives"
-           :objectivetypes="objectivetypes" >                     
+           :objectivetypes="objectivetypes"
+           :settings="settings">                     
        </TerminalObjectives>   
     </div>
 </template>
@@ -17,7 +18,8 @@
             'curriculum': Object,
             'terminalobjectives': Array, 
             'enablingobjectives': Array,       
-            'objectivetypes': Array,       
+            'objectivetypes': Array,   
+            'settings': Object,
         }, 
         methods: {
             

@@ -4,10 +4,7 @@
         name="objective-medium-modal" 
         height="auto" 
         width="70%"
-        :adaptive=true
-        :scrollable=true
-        :draggable=true
-        :resizable=true
+
         @before-open="beforeOpen"
         style="z-index: 25000">
         <div class="card" style="margin-bottom: 0px !important">
@@ -67,8 +64,6 @@
 
             </div> <!-- /.tab-content -->
 
-
-
         </div>
         <div class="card-footer">
             <div class="form-group m-2">
@@ -95,7 +90,7 @@
         data() {
             return {
                 objective: [],
-                media: [],
+                type: null,
                 media_subscriptions: [],
                 reference_subscriptions: [],
                 curricula_list: [],
@@ -123,7 +118,7 @@
                 return filteredMedia;
             },
             match(medium_id) {
-                let medium = this.media.media; //to array
+                let medium = this.objective.media; //to array
                 medium = medium.filter(
                         t => t.id === medium_id
                 );
@@ -148,10 +143,10 @@
                     this.typetabs = []; //reset
                     //console.log(event.params.content);
                     this.objective = event.params.content;
-                    this.media = event.params.content;
+                    this.type = event.params.type;
                     this.media_subscriptions = event.params.content.media_subscriptions;
 
-                    if (this.media.media_subscriptions.length != 0) {
+                    if (this.objective.media_subscriptions.length != 0) {
                         this.typetabs = [... new Set([{'id': 1, 'title': 'Media'}])];
                         axios.get('/sharingLevels').then(response => {
                             this.sharingLevels = response.data.sharingLevel;
@@ -162,7 +157,7 @@
                         this.activetab = this.typetabs[0];
                     }
 
-                    axios.get('/enablingObjectives/' + this.objective.id + '/referenceSubscriptionSiblings').then(response => {
+                    axios.get('/'+this.type+'Objectives/' + this.objective.id + '/referenceSubscriptionSiblings').then(response => {
                         if (response.data.siblings.length !== 0) {
                             this.reference_subscriptions = response.data.siblings;
                             this.curricula_list = response.data.curricula_list;
@@ -174,7 +169,7 @@
                         this.errors = error.response.data.errors;
                     });
                     
-                    axios.get('/enablingObjectives/' + this.objective.id + '/quoteSubscriptions').then(response => {
+                    axios.get('/'+this.type+'Objectives/' + this.objective.id + '/quoteSubscriptions').then(response => {
                         if (response.data.quotes_subscriptions.length !== 0) {
                             this.quote_subscriptions = response.data.quotes_subscriptions;
                             this.quote_curricula_list = response.data.curricula_list;
@@ -196,7 +191,7 @@
         },
         computed: {
             scr: function () {
-                return '/media/' + this.media.media_subscriptions.medium_id;
+                return '/media/' + this.objective.media_subscriptions.medium_id;
             }
         },
         components: {

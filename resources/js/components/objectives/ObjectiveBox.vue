@@ -35,7 +35,7 @@
         <Header :objective="objective" 
                 :type="type" 
                 :menuEntries="menuEntries" 
-                :setting="setting"
+                :settings="settings"
                 :textcolor="textcolor"
                 @eventDelete="deleteEvent"
                 @eventSort="sortEvent"
@@ -53,7 +53,8 @@
         </div>
 
         <Footer :objective="objective"
-                :textcolor="textcolor"></Footer>
+                :textcolor="textcolor"
+                :type="type"></Footer>
 
     </div>
 </template>
@@ -67,7 +68,7 @@
         props: {
                 objective: {},
                 type: {},
-                setting: {},
+                settings: {},
               },
          data() {
             return {

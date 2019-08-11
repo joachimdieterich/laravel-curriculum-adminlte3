@@ -62,9 +62,21 @@ class Curriculum extends Model
         return $this->hasMany('App\TerminalObjective', 'curriculum_id', 'id');
     }
     
-    public function contents()
+    public function contentSubscriptions()
     {
         return $this->morphMany('App\ContentSubscription', 'subscribable');
+    }
+    
+    public function contents()
+    {
+        return $this->hasManyThrough(
+            'App\Content',
+            'App\ContentSubscription',
+            'subscribable_id', // Foreign key on content_subscription table...
+            'id', // Foreign key on content table...
+            'id', // Local key on curriculum table...
+            'content_id' // Local key on content_subscription table...
+        )->where('subscribable_type', get_class($this)); 
     }
    
     

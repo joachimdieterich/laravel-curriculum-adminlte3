@@ -33,6 +33,11 @@
         }
         echo json_encode($trans);
         ?>;
+        window.Laravel = <?php echo json_encode([
+            'csrfToken' => csrf_token(),
+            'userId' => Auth::user()->id,
+            'permissions' => Auth::user()->permissions()->pluck('title')->toArray()
+        ]); ?>;
     </script>    
 </head>
 
@@ -65,7 +70,7 @@
             
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" data-widget="pushmenu" href="#">Rolle</a>
+                    <a class="nav-link" data-widget="pushmenu" href="#">{{ optional(Auth::user()->role())->title}}</a>
                 </li>
             </ul>
 
@@ -116,6 +121,7 @@
 <!--    <script src="{{ asset('js/lang.js') }}"></script> get language support from /lang to js (vue) -->
     
     <script>
+        
         $(function() {
   let copyButtonTrans = '{{ trans('global.datatables.copy') }}'
   let csvButtonTrans = '{{ trans('global.datatables.csv') }}'

@@ -122,6 +122,27 @@ class User extends Authenticatable
          return $this->belongsToMany(Role::class, 'organization_role_users')
                 ->withPivot(['user_id', 'role_id', 'organization_id']);
     }
+    /**
+     * current role, based on current_organization_id organization_role_users
+     */
+    public function role()
+    {
+        return $this->belongsToMany(Role::class, 'organization_role_users')
+                ->withPivot(['user_id', 'role_id', 'organization_id'])
+                ->where('organization_role_users.organization_id', auth()->user()->current_organization_id)->first();
+    }
+    /**
+     * permissions of the current role
+     */
+    public function permissions()
+    {
+        return DB::table('permissions')
+            ->join('permission_role', 'permission_role.permission_id', '=', 'permissions.id')
+            ->join('organization_role_users', 'organization_role_users.role_id', '=', 'permission_role.role_id')
+            ->where('organization_role_users.organization_id', auth()->user()->current_organization_id)
+            ->where('organization_role_users.user_id', auth()->user()->id)
+            ->get();
+    }
     
     public function organizations()
     {

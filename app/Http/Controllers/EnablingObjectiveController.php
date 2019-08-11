@@ -62,8 +62,7 @@ class EnablingObjectiveController extends Controller
     {
 
         $enablingObjectives = EnablingObjective::where('id', $enablingObjective->id)
-                                                ->with(['media','mediaSubscriptions', 'referenceSubscriptions.siblings'])
-                                                
+                                                ->with(['media','mediaSubscriptions', 'referenceSubscriptions.siblings']) 
                                                 ->get();
         dd($enablingObjectives);
     }

@@ -7,7 +7,7 @@
     </div>
 
     <div class="card-body">
-        <form action="{{ route("admin.permissions.store") }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route("permissions.store") }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="form-group {{ $errors->has('title') ? 'has-error' : '' }}">
                 <label for="title">{{ trans('global.permission.fields.title') }}*</label>

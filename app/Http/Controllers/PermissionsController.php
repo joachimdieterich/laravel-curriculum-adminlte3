@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyPermissionRequest;
@@ -16,14 +16,14 @@ class PermissionsController extends Controller
 
         $permissions = Permission::all();
 
-        return view('admin.permissions.index', compact('permissions'));
+        return view('permissions.index', compact('permissions'));
     }
 
     public function create()
     {
         abort_unless(\Gate::allows('permission_create'), 403);
 
-        return view('admin.permissions.create');
+        return view('permissions.create');
     }
 
     public function store(StorePermissionRequest $request)
@@ -32,14 +32,14 @@ class PermissionsController extends Controller
 
         $permission = Permission::create($request->all());
 
-        return redirect()->route('admin.permissions.index');
+        return redirect()->route('permissions.index');
     }
 
     public function edit(Permission $permission)
     {
         abort_unless(\Gate::allows('permission_edit'), 403);
 
-        return view('admin.permissions.edit', compact('permission'));
+        return view('permissions.edit', compact('permission'));
     }
 
     public function update(UpdatePermissionRequest $request, Permission $permission)
@@ -48,14 +48,14 @@ class PermissionsController extends Controller
 
         $permission->update($request->all());
 
-        return redirect()->route('admin.permissions.index');
+        return redirect()->route('permissions.index');
     }
 
     public function show(Permission $permission)
     {
         abort_unless(\Gate::allows('permission_show'), 403);
 
-        return view('admin.permissions.show', compact('permission'));
+        return view('permissions.show', compact('permission'));
     }
 
     public function destroy(Permission $permission)

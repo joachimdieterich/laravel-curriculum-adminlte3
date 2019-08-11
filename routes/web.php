@@ -50,9 +50,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('groups', 'GroupsController');
     
     
-    Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');
-
-    Route::resource('permissions', 'PermissionsController');
+    
 
     Route::get('groupList', 'GroupsController@groupList');
     Route::resource('groups', 'GroupsController');
@@ -89,8 +87,12 @@ Route::group(['middleware' => 'auth'], function () {
     
     /* objectiveTypes routes */
     Route::resource('objectiveTypes', 'ObjectiveTypeController');
-      
-     /* enablingObjectives routes */
+    
+    /* permission routes */
+    Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');
+    Route::resource('permissions', 'PermissionsController');
+    
+    /* enablingObjectives routes */
     Route::get('enablingObjectives/{enablingObjective}/referenceSubscriptionSiblings', 'EnablingObjectiveController@referenceSubscriptionSiblings');
     Route::get('enablingObjectives/{enablingObjective}/quoteSubscriptions', 'EnablingObjectiveController@quoteSubscriptions');
     Route::resource('enablingObjectives', 'EnablingObjectiveController');

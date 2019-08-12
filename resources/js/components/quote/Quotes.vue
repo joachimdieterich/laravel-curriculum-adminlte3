@@ -25,7 +25,9 @@
                         <div class="col-xs-12 p2" >
                             <div class="p-2"> 
                                 <div v-html="filtered_quote.quote.quote"></div>
-                                <cite  v-html="filtered_quote.quote.content.title" @click="show(filtered_quote.quote.content, filtered_quote.quote.quote)"></cite>
+                                <a style="cursor: pointer;" @click="show(filtered_quote.quote.content, filtered_quote.quote.id)">
+                                    <cite class="text-primary" v-html="filtered_quote.quote.content.title"></cite>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -45,7 +47,6 @@
         data: function() {
             return {
              
-               
             }
         },
 
@@ -65,8 +66,6 @@
              show(content, quote) { 
                 this.$modal.show('content-modal', {'content': content, 'quote': quote});
             },
-            
-           
            
         }, 
        

@@ -2987,6 +2987,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2998,13 +3000,20 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     beforeOpen: function beforeOpen(event) {
       if (event.params.content) {
-        this.content = event.params.content;
-        console.log(event.params.quote);
+        this.content = event.params.content; //console.log(event.params.quote);
 
         if (event.params.quote) {
           this.quote = event.params.quote;
         }
       }
+    },
+    opened: function opened(event) {
+      this.$nextTick(function () {
+        document.getElementById('quote_' + this.quote).scrollIntoView({
+          block: 'start',
+          behavior: 'smooth'
+        });
+      });
     },
     beforeClose: function beforeClose() {},
     close: function close() {
@@ -4492,6 +4501,8 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
 //
 //
 //
@@ -40416,11 +40427,14 @@ var render = function() {
         height: "auto",
         width: "70%",
         adaptive: true,
-        scrollable: true,
         draggable: true,
         resizable: true
       },
-      on: { "before-open": _vm.beforeOpen, "before-close": _vm.beforeClose }
+      on: {
+        "before-open": _vm.beforeOpen,
+        opened: _vm.opened,
+        "before-close": _vm.beforeClose
+      }
     },
     [
       _c(
@@ -40460,6 +40474,7 @@ var render = function() {
             "div",
             {
               staticClass: "card-body",
+              staticStyle: { overflow: "auto !important", height: "600px" },
               domProps: { innerHTML: _vm._s(_vm.content.content) }
             },
             [
@@ -40482,20 +40497,7 @@ var render = function() {
                     }
                   }
                 },
-                [_vm._v(_vm._s(_vm.trans("global.cancel")))]
-              ),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-info",
-                  on: {
-                    click: function($event) {
-                      return _vm.submit()
-                    }
-                  }
-                },
-                [_vm._v(_vm._s(_vm.trans("global.save")))]
+                [_vm._v(_vm._s(_vm.trans("global.close")))]
               )
             ])
           ])
@@ -42319,19 +42321,30 @@ var render = function() {
                       }
                     }),
                     _vm._v(" "),
-                    _c("cite", {
-                      domProps: {
-                        innerHTML: _vm._s(filtered_quote.quote.content.title)
-                      },
-                      on: {
-                        click: function($event) {
-                          return _vm.show(
-                            filtered_quote.quote.content,
-                            filtered_quote.quote.quote
-                          )
+                    _c(
+                      "a",
+                      {
+                        staticStyle: { cursor: "pointer" },
+                        on: {
+                          click: function($event) {
+                            return _vm.show(
+                              filtered_quote.quote.content,
+                              filtered_quote.quote.id
+                            )
+                          }
                         }
-                      }
-                    })
+                      },
+                      [
+                        _c("cite", {
+                          staticClass: "text-primary",
+                          domProps: {
+                            innerHTML: _vm._s(
+                              filtered_quote.quote.content.title
+                            )
+                          }
+                        })
+                      ]
+                    )
                   ])
                 ])
               ]),

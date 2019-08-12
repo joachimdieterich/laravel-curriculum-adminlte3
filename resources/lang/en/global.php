@@ -12,6 +12,7 @@ return [
     'delete'                               => 'Delete',
     'save'                                 => 'Save',
     'cancel'                               => 'Cancel',
+    'close'                                => 'Close',
     'pleaseSelect'                         => 'Please select',
     'areYouSure'                           => 'Are you sure?',
     'allRightsReserved'                    => 'All rights reserved.',

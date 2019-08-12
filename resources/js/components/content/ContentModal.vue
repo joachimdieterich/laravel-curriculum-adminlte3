@@ -5,13 +5,14 @@
         height="auto" 
         width="70%"
         :adaptive=true
-        :scrollable=true
         :draggable=true
         :resizable=true
         @before-open="beforeOpen"
+        @opened="opened"
         @before-close="beforeClose"
         style="z-index: 25100">
-        <div class="card" style="margin-bottom: 0px !important">
+        <div class="card" 
+             style="margin-bottom: 0px !important">
             <div class="card-header">
                  <h3 class="card-title">
                     {{ content.title }}
@@ -25,15 +26,16 @@
               
             </div>
             
-            <div class="card-body"  v-html="content.content">
+            <div class="card-body" 
+                 style="overflow: auto !important; height: 600px;"
+                 v-html="content.content">
                 {{ content.content }}
             </div>
-                <div class="card-footer">
-                     <div class="form-group m-2">
-                         <button type="button" class="btn btn-info" data-widget="remove" @click="close()">{{ trans('global.cancel') }}</button>
-                         <button class="btn btn-info" @click="submit()" >{{ trans('global.save') }}</button>
-                    </div>
+            <div class="card-footer">
+                 <div class="form-group m-2">
+                     <button type="button" class="btn btn-info" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
                 </div>
+            </div>
             
         </div>
     </modal>
@@ -54,11 +56,17 @@
             beforeOpen(event) {
                 if (event.params.content) {
                     this.content = event.params.content;
-                    console.log(event.params.quote);
+                    //console.log(event.params.quote);
                     if (event.params.quote) {
-                        this.quote = event.params.quote;
+                        this.quote = event.params.quote;   
                     }
                 }
+            },
+            opened(event){
+                this.$nextTick(function () {
+                    document.getElementById('quote_'+this.quote).scrollIntoView({ block: 'start', behavior: 'smooth' })
+                });
+               
             },
             beforeClose() {
             },
@@ -66,6 +74,8 @@
                 this.$modal.hide('content-modal');
             }
         },
+        
+        
         
     }
 </script>

@@ -230,7 +230,7 @@
         $.ajax({
           headers: {'x-csrf-token': _token},
           method: 'POST',
-          url: "{{ route('admin.users.setCurrentOrganization') }}",
+          url: "{{ route('users.setCurrentOrganization') }}",
           data: { 
               current_organization_id: $('#current_organization_id').val(), 
               _method: 'PATCH',

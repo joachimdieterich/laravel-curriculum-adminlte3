@@ -22,7 +22,7 @@ class StudentsPermissionCheckTest extends TestCase
     /** @test */
     public function can_access_dashboard()
     {
-        $response = $this->get('/admin');
+        $response = $this->get('/');
 
         $response->assertStatus(200);
         

@@ -7,10 +7,10 @@
     </div>
 
     <div class="card-body">
-        <form action="{{ route("admin.users.update", [$user->id]) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route("users.update", [$user->id]) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PATCH')
-            @include('admin.users.form', [
+            @include('users.form', [
                 'user' => $user,
                 'buttonText' => 'Update User'
             ])

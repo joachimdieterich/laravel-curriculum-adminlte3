@@ -44,7 +44,7 @@
                     </li>
                 @endcan
                 @can('user_management_access')
-                    <li class="nav-item has-treeview {{ request()->is('permissions*') ? 'menu-open' : '' }} {{ request()->is('roles*') ? 'menu-open' : '' }} {{ request()->is('admin/users*') ? 'menu-open' : '' }}">
+                    <li class="nav-item has-treeview {{ request()->is('permissions*') ? 'menu-open' : '' }} {{ request()->is('roles*') ? 'menu-open' : '' }} {{ request()->is('users*') ? 'menu-open' : '' }}">
                         <a class="nav-link nav-dropdown-toggle">
                             <i class="fas fa-users"></i>
                             <p>
@@ -75,7 +75,7 @@
                             @endcan
                             @can('user_manage')
                                 <li class="nav-item">
-                                    <a href="{{ route("admin.users.index") }}" class="nav-link {{ request()->is('admin/users') || request()->is('admin/users/*') ? 'active' : '' }}">
+                                    <a href="{{ route("users.index") }}" class="nav-link {{ request()->is('users') || request()->is('users/*') ? 'active' : '' }}">
                                         <i class="fas fa-user"></i>
                                         <p>
                                             <span>{{ trans('global.user.title') }}</span>

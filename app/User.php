@@ -68,7 +68,7 @@ class User extends Authenticatable
     
     public function path()
     {
-        return "/admin/users/{$this->id}";
+        return "/users/{$this->id}";
     }
 
     public function fullName()

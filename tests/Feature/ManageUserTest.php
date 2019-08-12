@@ -135,7 +135,7 @@ class ManageUserTest extends TestCase
         $ids = $users->pluck('id')->toArray();
         
         $new_password = Hash::make('new_password');
-        $this->patch("/admin/users/massUpdate" , $attributes = [
+        $this->patch("/users/massUpdate" , $attributes = [
                     'ids' =>  $ids,
                     'password' => $new_password
                 ]) ->assertStatus(204);   
@@ -151,7 +151,7 @@ class ManageUserTest extends TestCase
         $users = factory(User::class, 50)->create();
         $ids = $users->pluck('id')->toArray();
         
-        $this->patch("/admin/users/massUpdate" , $attributes = [
+        $this->patch("/users/massUpdate" , $attributes = [
                     'ids' =>  $ids,
                     'status_id' => 2
                 ])->assertStatus(204);   
@@ -168,7 +168,7 @@ class ManageUserTest extends TestCase
         
         $org1 = OrganizationFactory::create();
       
-        $this->patch("admin/users/setCurrentOrganization" , 
+        $this->patch("users/setCurrentOrganization" , 
                                                         [
                                                         'current_organization_id' => $org1->id,
                                                         ],

@@ -10,7 +10,7 @@ class Curriculum extends Model
      
     public function path()
     {
-        return "/admin/curricula/{$this->id}";
+        return "/curricula/{$this->id}";
     }
     
     public function enrol(Group $group)

@@ -3,7 +3,7 @@
 @can('user_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <a class="btn btn-success" href="{{ route("admin.users.create") }}">
+            <a class="btn btn-success" href="{{ route("users.create") }}">
                 {{ trans('global.add') }} {{ trans('global.user.title_singular') }}
             </a>
         </div>
@@ -184,7 +184,7 @@
             $.ajax({
               headers: {'x-csrf-token': _token},
               method: 'POST',
-              url: "/admin/groups/enrol",
+              url: "/groups/enrol",
               data: { 
                    enrollment_list: enrolments, 
                   _method: 'POST',
@@ -213,7 +213,7 @@
             $.ajax({
               headers: {'x-csrf-token': _token},
               method: 'POST',
-              url: "/admin/groups/expel",
+              url: "/groups/expel",
               data: { 
                   expel_list: expellments, 
                   _method: 'DELETE', 
@@ -243,7 +243,7 @@
             $.ajax({
               headers: {'x-csrf-token': _token},
               method: 'POST',
-              url: "/admin/organizations/enrol",
+              url: "/organizations/enrol",
               data: { 
                   enrollment_list: enrolments, 
                   _method: 'POST',
@@ -271,7 +271,7 @@
             $.ajax({
               headers: {'x-csrf-token': _token},
               method: 'POST',
-              url: "/admin/organizations/expel",
+              url: "/organizations/expel",
               data: { 
                   expel_list: expellments, 
                   _method: 'DELETE'
@@ -292,7 +292,7 @@
             $.ajax({
               headers: {'x-csrf-token': _token},
               method: 'POST',
-              url: "{{ route('admin.users.massUpdate') }}",
+              url: "{{ route('users.massUpdate') }}",
               data: { 
                   ids: ids, 
                   _method: 'PATCH',
@@ -315,7 +315,7 @@
             $.ajax({
               headers: {'x-csrf-token': _token},
               method: 'POST',
-              url: "{{ route('admin.users.massUpdate') }}",
+              url: "{{ route('users.massUpdate') }}",
               data: { 
                   ids: ids, 
                   _method: 'PATCH',
@@ -352,7 +352,7 @@
           $.ajax({
             headers: {'x-csrf-token': _token},
             method: 'POST',
-            url: '{{ route('admin.users.massDestroy') }}',
+            url: '{{ route('users.massDestroy') }}',
             data: { ids, _method: 'DELETE' }})
             .done(function () { location.reload() })
         }
@@ -369,7 +369,7 @@ $(document).ready( function () {
     var table = $('#users-datatable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ url('admin/users/list') }}",
+        ajax: "{{ url('users/list') }}",
         columns: [
                  { data: 'check'},
                  { data: 'username' },

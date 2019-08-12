@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyUserRequest;
@@ -29,7 +29,7 @@ class UsersController extends Controller
         $groups = Group::orderBy('organization_id', 'desc')->get();
         
         //dd($groups);
-        return view('admin.users.index')
+        return view('users.index')
           ->with(compact('users'))
           ->with(compact('organizations'))
           ->with(compact('statuses'))
@@ -56,13 +56,13 @@ class UsersController extends Controller
             ->addColumn('action', function ($users) {
                  $actions  = '';
                     if (\Gate::allows('user_show')){
-                        $actions .= '<a href="'.route('admin.users.show', $users->id).'" '
+                        $actions .= '<a href="'.route('users.show', $users->id).'" '
                                     . 'class="btn btn-xs btn-success mr-1">'
                                     . '<i class="fa fa-list-alt"></i> Show'
                                     . '</a>';
                     }
                     if (\Gate::allows('user_edit')){
-                        $actions .= '<a href="'.route('admin.users.edit', $users->id).'" '
+                        $actions .= '<a href="'.route('users.edit', $users->id).'" '
                                     . 'class="btn btn-xs btn-primary  mr-1">'
                                     . '<i class="fa fa-edit"></i> Edit'
                                     . '</a>';
@@ -91,7 +91,7 @@ class UsersController extends Controller
 //        $roles = Role::all()->pluck('title', 'id');
 //        $groups = Group::all()->pluck('title', 'id');
 
-        return view('admin.users.create');
+        return view('users.create');
     }
 
     public function store(StoreUserRequest $request)
@@ -112,7 +112,7 @@ class UsersController extends Controller
 
         $user->load('roles');
 
-        return view('admin.users.edit', compact('roles', 'user'));
+        return view('users.edit', compact('roles', 'user'));
     }
 
     public function update(UpdateUserRequest $request, User $user)
@@ -122,7 +122,7 @@ class UsersController extends Controller
         $user->update($request->all());
         //$user->roles()->sync($request->input('roles', []));
 
-        return redirect()->route('admin.users.index');
+        return redirect()->route('users.index');
     }
     
     public function massUpdate(MassUpdateUserRequest $request)
@@ -152,7 +152,7 @@ class UsersController extends Controller
         $user->load('roles');
         $user->load('organizations');
 
-        return view('admin.users.show')
+        return view('users.show')
                 ->with(compact('user'))
                 ->with(compact('statuses'));
     }

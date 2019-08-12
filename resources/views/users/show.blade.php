@@ -22,7 +22,6 @@
               <!-- /.card-body -->
             </div>
         
-        
         <div class="card card-primary">
             <div class="card-header">
                 <div class="row">
@@ -33,7 +32,7 @@
                     </div>
                     <div>
                         @can('user_edit')
-                             <a href="{{ route('admin.users.edit', $user->id) }}" >
+                             <a href="{{ route('users.edit', $user->id) }}" >
                                 <i class="far fa-edit"></i>
                              </a> 
                         @endcan 
@@ -104,30 +103,19 @@
               <div class="card-body">
                 <div class="tab-content">
                   <div class="tab-pane active show" id="activity">
-                    
                     Activity Tab
-
-                  </div>
-                  <!-- /.tab-pane -->
+                  </div><!-- /.tab-pane -->
                   <div class="tab-pane" id="timeline">
                     <!-- The timeline -->
                     timeline
-                  </div>
-                  <!-- /.tab-pane -->
+                  </div><!-- /.tab-pane -->
 
                   <div class="tab-pane" id="settings">
                     Organisational Settings
-                  </div>
-                  <!-- /.tab-pane -->
-                </div>
-                <!-- /.tab-content -->
+                  </div><!-- /.tab-pane -->
+                </div><!-- /.tab-content -->
               </div><!-- /.card-body -->
-            </div>
-            <!-- /.nav-tabs-custom -->
+            </div><!-- /.nav-tabs-custom -->
           </div>
-    
-    
 </div>
-
-
 @endsection

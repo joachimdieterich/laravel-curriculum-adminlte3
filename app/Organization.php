@@ -42,7 +42,7 @@ class Organization extends Model
     
     public function path()
     {
-        return "/admin/organizations/{$this->id}";
+        return "/organizations/{$this->id}";
     }
     
     public function roles()

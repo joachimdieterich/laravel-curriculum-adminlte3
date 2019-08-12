@@ -19,28 +19,28 @@ class UserCRUDTest extends TestCase
     }
     
     /** @test 
-     * Use Route: GET|HEAD, admin/users, admin.users.index
+     * Use Route: GET|HEAD, users, users.index
      */
     public function an_administrator_see_users() 
     { 
         
-        $this->get("admin/users")       
+        $this->get("users")       
              ->assertStatus(200);
              
         /* Use Datatables */
         $users = User::all();
-        $this->get("admin/users/list")
+        $this->get("users/list")
              ->assertStatus(200)
              ->assertViewHasAll(compact($users));
     }
     
     /** @test 
-     * Use Route: POST, admin/users, admin.users.store
+     * Use Route: POST, users, users.store
      */  
     public function an_administrator_create_an_user()
     {
         $this->withoutExceptionHandling();
-        $this->followingRedirects()->post("admin/users" , $attributes = factory('App\User')->raw())
+        $this->followingRedirects()->post("users" , $attributes = factory('App\User')->raw())
                 ->assertStatus(200);
         
         $this->assertDatabaseHas('users', [
@@ -52,17 +52,17 @@ class UserCRUDTest extends TestCase
     }
    
     /** @test 
-     * Use Route: POST, admin/roles, admin.roles.index
+     * Use Route: POST, roles, roles.index
      */     
     public function an_administrator_get_create_view_for_users()
     { 
         
-        $this->get("admin/users/create")
+        $this->get("users/create")
              ->assertStatus(200);
     }
      
     /** @test 
-     * Use Route: DELETE, admin/users/massDestroy admin.users.massDestroy
+     * Use Route: DELETE, users/massDestroy users.massDestroy
      */  
     public function an_admin_can_mass_delete_users()
     {        
@@ -70,7 +70,7 @@ class UserCRUDTest extends TestCase
         $users = factory(User::class, 50)->create();
         $ids = $users->pluck('id')->toArray();
  
-        $this->delete("/admin/users/massDestroy" , $attributes = [
+        $this->delete("/users/massDestroy" , $attributes = [
                     'ids' =>  $ids,
                 ])->assertStatus(204);   
         
@@ -82,7 +82,7 @@ class UserCRUDTest extends TestCase
     }
     
     /** @test 
-     * Use Route: DELETE, admin/users/{user}, admin.users.destroy
+     * Use Route: DELETE, users/{user}, users.destroy
      */  
     public function an_administrator_delete_a_role()
     {
@@ -90,48 +90,48 @@ class UserCRUDTest extends TestCase
         $user = UserFactory::create();     
         
         $this->followingRedirects()
-                ->delete("admin/users/". $user->id )
+                ->delete("users/". $user->id )
                 ->assertStatus(200);
     }
     
     /** @test 
-     * Use Route: GET|HEAD, admin/users/{user}, admin.users.show
+     * Use Route: GET|HEAD, users/{user}, users.show
      */
     public function an_administrator_see_details_of_an_user() 
     { 
         
         $user = UserFactory::create();
         
-        $this->get("admin/users/{$user->id}")       
+        $this->get("users/{$user->id}")       
              ->assertStatus(200)
              ->assertViewHasAll(compact($user));
     }
 
     /** @test 
-     * Use Route: PUT|PATCH, admin/users/{user}, admin.users.update
+     * Use Route: PUT|PATCH, users/{user}, users.update
      */
     public function an_administrator_update_an_user()
     {
-        $this->post("admin/users" , $attributes = factory('App\User')->raw());
+        $this->post("users" , $attributes = factory('App\User')->raw());
         $user = User::where('username', $attributes['username'])->first()->toArray();
       
         $this->assertDatabaseHas('users', $user);
         
-        $this->patch("admin/users/". $user['id'] , $new_attributes = factory('App\User')->raw());
+        $this->patch("users/". $user['id'] , $new_attributes = factory('App\User')->raw());
         
         $user_edit = User::where('username', $new_attributes['username'])->first()->toArray();
         $this->assertDatabaseHas('users', $user_edit);
     }
     
     /** @test 
-     * Use Route: GET|HEAD, admin/users/{user}/edit, admin.users.edit
+     * Use Route: GET|HEAD, users/{user}/edit, users.edit
      */     
     public function an_administrator_get_edit_view_for_users()
     { 
-        $this->post("admin/users" , $attributes = factory('App\User')->raw());
+        $this->post("users" , $attributes = factory('App\User')->raw());
         $user = User::where('username', $attributes['username'])->first();
         
-        $this->get("admin/users/{$user->id}/edit")
+        $this->get("users/{$user->id}/edit")
              ->assertStatus(200)
              ->assertSessionHasAll(compact($user));
     }

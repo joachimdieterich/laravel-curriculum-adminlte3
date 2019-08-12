@@ -20,7 +20,7 @@ class MediaCRUDTest extends TestCase
     }
     
     /** @test 
-     * Use Route: GET|HEAD, admin/media, admin.media.index
+     * Use Route: GET|HEAD, media, media.index
      */
     public function an_administrator_can_get_media() 
     { 
@@ -32,7 +32,7 @@ class MediaCRUDTest extends TestCase
     }
     
     /** @test 
-     * Use Route: POST, admin/media, admin.media.store
+     * Use Route: POST, media, media.store
      */  
     public function an_administrator_upload_an_media()
     {
@@ -44,17 +44,17 @@ class MediaCRUDTest extends TestCase
     }
    
     /** @test 
-     * Use Route: POST, admin/roles, admin.roles.index
+     * Use Route: POST, roles, roles.index
      */     
 //    public function an_administrator_get_create_view_for_media()
 //    { 
 //        
-//        $this->get("admin/media/create")
+//        $this->get("media/create")
 //             ->assertStatus(200);
 //    }
      
     /** @test 
-     * Use Route: DELETE, admin/media/massDestroy admin.media.massDestroy
+     * Use Route: DELETE, media/massDestroy media.massDestroy
      */  
 //    public function an_admin_can_mass_delete_media()
 //    {        
@@ -62,7 +62,7 @@ class MediaCRUDTest extends TestCase
 //        $media = factory(User::class, 50)->create();
 //        $ids = $media->pluck('id')->toArray();
 // 
-//        $this->delete("/admin/media/massDestroy" , $attributes = [
+//        $this->delete("/media/massDestroy" , $attributes = [
 //                    'ids' =>  $ids,
 //                ])->assertStatus(204);   
 //        
@@ -74,7 +74,7 @@ class MediaCRUDTest extends TestCase
 //    }
     
     /** @test 
-     * Use Route: DELETE, admin/media/{user}, admin.media.destroy
+     * Use Route: DELETE, media/{user}, media.destroy
      */  
 //    public function an_administrator_delete_a_role()
 //    {
@@ -82,48 +82,48 @@ class MediaCRUDTest extends TestCase
 //        $user = UserFactory::create();     
 //        
 //        $this->followingRedirects()
-//                ->delete("admin/media/". $user->id )
+//                ->delete("media/". $user->id )
 //                ->assertStatus(200);
 //    }
     
     /** @test 
-     * Use Route: GET|HEAD, admin/media/{user}, admin.media.show
+     * Use Route: GET|HEAD, media/{user}, media.show
      */
 //    public function an_administrator_see_details_of_an_user() 
 //    { 
 //        
 //        $user = UserFactory::create();
 //        
-//        $this->get("admin/media/{$user->id}")       
+//        $this->get("media/{$user->id}")       
 //             ->assertStatus(200)
 //             ->assertViewHasAll(compact($user));
 //    }
 
     /** @test 
-     * Use Route: PUT|PATCH, admin/media/{user}, admin.media.update
+     * Use Route: PUT|PATCH, media/{user}, media.update
      */
 //    public function an_administrator_update_an_user()
 //    {
-//        $this->post("admin/media" , $attributes = factory('App\User')->raw());
+//        $this->post("media" , $attributes = factory('App\User')->raw());
 //        $user = User::where('username', $attributes['username'])->first()->toArray();
 //      
 //        $this->assertDatabaseHas('media', $user);
 //        
-//        $this->patch("admin/media/". $user['id'] , $new_attributes = factory('App\User')->raw());
+//        $this->patch("media/". $user['id'] , $new_attributes = factory('App\User')->raw());
 //        
 //        $user_edit = User::where('username', $new_attributes['username'])->first()->toArray();
 //        $this->assertDatabaseHas('media', $user_edit);
 //    }
     
     /** @test 
-     * Use Route: GET|HEAD, admin/media/{user}/edit, admin.media.edit
+     * Use Route: GET|HEAD, media/{user}/edit, media.edit
      */     
 //    public function an_administrator_get_edit_view_for_media()
 //    { 
-//        $this->post("admin/media" , $attributes = factory('App\User')->raw());
+//        $this->post("media" , $attributes = factory('App\User')->raw());
 //        $user = User::where('username', $attributes['username'])->first();
 //        
-//        $this->get("admin/media/{$user->id}/edit")
+//        $this->get("media/{$user->id}/edit")
 //             ->assertStatus(200)
 //             ->assertSessionHasAll(compact($user));
 //    }

@@ -7,10 +7,10 @@
     </div>
 
     <div class="card-body">
-        <form action="{{ route("admin.users.store") }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route("users.store") }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('POST')
-            @include('admin.users.form', [
+            @include('users.form', [
                 'buttonText' => 'Create User'
             ])
         </form>

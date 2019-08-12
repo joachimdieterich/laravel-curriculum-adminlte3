@@ -1,35 +1,14 @@
 <?php
-
-if ((env('APP_ENV') == 'local')){
-    Route::get('/phpinfo', function (){phpinfo();}); //available in local env
-}
-
-
-Route::redirect('/', '/login');
-
-Route::redirect('/home', '/admin');
+//Route::redirect('/', '/login');
+Route::redirect('/home', '/');
 
 Route::get('/impressum', 'OpenController@impressum')->name('Impressum');
-Route::get('/terms', 'OpenController@terms')->name('Terms');
 
+Route::get('/terms', 'OpenController@terms')->name('Terms');
 
 Auth::routes(['register' => false]);
 
-Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'middleware' => ['auth']], function () {
-    Route::get('/', 'HomeController@index')->name('home');
-      
-    
-    /* User routes */
-    Route::delete('users/massDestroy', 'UsersController@massDestroy')->name('users.massDestroy');
-    Route::patch('users/massUpdate', 'UsersController@massUpdate')->name('users.massUpdate');
-    Route::patch('users/setCurrentOrganization', 'UsersController@setCurrentOrganization')->name('users.setCurrentOrganization');
-    
-    Route::get('users/list', 'UsersController@list');
-    Route::resource('users', 'UsersController');
 
-   
-   
-});
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', 'HomeController@index')->name('home');
     
@@ -76,7 +55,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('organizations', 'OrganizationsController');
     
     /* organizationtype routes */
-    Route::get('organizationTypeList', 'OrganizationTypesController@organizationTypeList');
+    Route::get('organizationTypeList', 'OrganizationTypesController@organizationTypeList')->name('organizationtypes.list');
     Route::delete('organizationtypes/destroy', 'OrganizationTypesController@massDestroy')->name('organizationtypes.massDestroy');  
     Route::resource('organizationtypes', 'OrganizationTypesController');
     
@@ -100,4 +79,16 @@ Route::group(['middleware' => 'auth'], function () {
     /* reference(Subscription) routes */
     Route::resource('references', 'ReferenceController');
     Route::resource('referenceSubscriptions', 'ReferenceSubscriptionController');
+    
+    /* User routes */
+    Route::delete('users/massDestroy', 'UsersController@massDestroy')->name('users.massDestroy');
+    Route::patch('users/massUpdate', 'UsersController@massUpdate')->name('users.massUpdate');
+    Route::patch('users/setCurrentOrganization', 'UsersController@setCurrentOrganization')->name('users.setCurrentOrganization');
+    
+    Route::get('users/list', 'UsersController@list');
+    Route::resource('users', 'UsersController');
 });
+
+if ((env('APP_ENV') == 'local')){
+    Route::get('/phpinfo', function (){phpinfo();}); //available in local env
+}

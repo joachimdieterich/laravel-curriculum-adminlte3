@@ -54,7 +54,7 @@ class Curriculum extends Model
     
     public function groups()
     {
-        return $this->belongsToMany('App\Group', 'curriculum_group');
+        return $this->belongsToMany('App\Group', 'curriculum_group')->withTimestamps();
     }
     
     public function terminalObjectives()

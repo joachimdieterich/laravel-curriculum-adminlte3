@@ -35,7 +35,7 @@
                 <div class="card-header">
                     <ul class="nav nav-pills">
                         <li id="nav_tab_group" class="nav-item">
-                            <a href="#tab_group" class="nav-link" data-toggle="tab">Lehrpläne / Kompetenzraster</a>
+                            <a href="#tab_group" class="nav-link active" data-toggle="tab">Lehrpläne / Kompetenzraster</a>
                         </li>
                     </ul>
                 </div>
@@ -43,21 +43,21 @@
                     <div class="tab-content">
 
                         <!--@can('user_edit')-->
-                            <div id="tab_group" class="tab-pane row " >
+                            <div id="tab_group" class="tab-pane active row" >
                                 <div class="form-horizontal col-xs-12">
                                     @include ('forms.input.info', ["value" => "Markierte Gruppen in Lehrpläne / Kompetenzraster ein bzw. ausschreiben."])
-<!--
+
                                     @include ('forms.input.select', 
                                         ["model" => "group", 
                                         "show_label" => true,
-                                        "field" => "user_organization_group_id",  
+                                        "field" => "group_curricula",  
                                         "options"=> $curricula, 
                                         "option_label" => "title",    
-                                        "value" =>  old('group_id', isset($user->current_group_id) ? $user->current_group_id : '')])     -->
+                                        "value" =>  old('group_id', isset($user->current_group_id) ? $user->current_group_id : '')])     
 
                                     <div class="btn-group pull-right" role="group" aria-label="...">    
-                                        @include ('forms.input.button', ["onclick" => "enroleToCurriculum()", "field" => "enroleToCurriculum", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-plus", "label" => "In Lehrplan einschreiben"])
-                                        @include ('forms.input.button', ["onclick" => "expelFromCurriculum()", "field" => "expelFromCurriculum", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-minus", "label" => "Aus Lehrplan ausschreiben"])
+                                        @include ('forms.input.button', ["onclick" => "enroleToCurricula()", "field" => "enroleToCurricula", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-plus", "label" => "In Lehrplan einschreiben"])
+                                        @include ('forms.input.button', ["onclick" => "expelFromCurricula()", "field" => "expelFromCurricula", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-minus", "label" => "Aus Lehrplan ausschreiben"])
                                     </div>
                                 </div>
                             </div>
@@ -125,6 +125,64 @@ $(document).ready( function () {
     $(".dataTables_scrollHeadInner").css({"width":"100%"});
     $(".table ").css({"width":"100%"});
  });
+ 
+ function enroleToCurricula()
+{
+    var ids = $('#groups-datatable').DataTable().rows({ selected: true }).ids().toArray();
+    if (ids.length === 0) {
+        alert('{{ trans('global.datatables.zero_selected') }}')
+        return
+    }
+
+    if (confirm('{{ trans('global.areYouSure') }}')) {
+        var enrolments = [];
+        for (i = 0; i < ids.length; i++) { 
+            enrolments.push({
+                group_id: ids[i],
+                curriculum_id: $('#group_curricula').val(),
+            });
+        }
+        $.ajax({
+          headers: {'x-csrf-token': _token},
+          method: 'POST',
+          url: "/curricula/enrol",
+          data: { 
+               enrollment_list: enrolments, 
+              _method: 'POST',
+          }
+        })
+          .done(function () { location.reload() })
+    }  
+}
+    
+function expelFromCurricula()
+{
+    var ids = $('#groups-datatable').DataTable().rows({ selected: true }).ids().toArray()
+    if (ids.length === 0) {
+        alert('{{ trans('global.datatables.zero_selected') }}')
+        return
+    }
+
+    if (confirm('{{ trans('global.areYouSure') }}')) {
+        var expellments = [];
+        for (i = 0; i < ids.length; i++) { 
+            expellments.push({
+                group_id: ids[i],
+                curriculum_id: $('#group_curricula').val(),
+            });
+        }
+        $.ajax({
+          headers: {'x-csrf-token': _token},
+          method: 'POST',
+          url: "/curricula/expel",
+          data: { 
+              expel_list: expellments, 
+              _method: 'DELETE', 
+          }
+        })
+          .done(function () { location.reload() })
+    }  
+}
  
 </script>
 

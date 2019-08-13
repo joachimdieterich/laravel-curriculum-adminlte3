@@ -39,7 +39,7 @@
                 <ul class="nav nav-pills">
                     @can('user_reset_password')
                         <li id="nav_tab_password" class="nav-item">
-                            <a href="#tab_password" class="nav-link" data-toggle="tab">Passwort</a>
+                            <a href="#tab_password" class="nav-link active" data-toggle="tab">Passwort</a>
                         </li>
                     @endcan
                     <!--@canany(['user_enroleToGroup', 'user_expelFromGroup'])-->

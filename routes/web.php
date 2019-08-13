@@ -15,6 +15,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('contents', 'ContentController');
     
     /* curricula routes */
+    Route::post('curricula/enrol', 'CurriculumController@enrol')->name('curricula.enrol');
+    Route::delete('curricula/expel', 'CurriculumController@expel')->name('curricula.expel');
     Route::get('curricula/list', 'CurriculumController@list');
     Route::get('curricula/import', 'CurriculumImportController@import')->name('curricula.import');
     Route::post('curricula/import/store', 'CurriculumImportController@store')->name('curricula.import.store');

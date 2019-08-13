@@ -15,6 +15,7 @@ use Yajra\DataTables\DataTables;
 use DOMDocument;
 use App\Content;
 use App\Glossar;
+use App\Group;
 
 class CurriculumController extends Controller
 {
@@ -225,6 +226,35 @@ class CurriculumController extends Controller
         $curriculum->update($this->validateRequest());
         
         return redirect($curriculum->path());
+    }
+    
+    public function enrol()
+    {
+        abort_unless(\Gate::allows('curriculum_enrol'), 403);
+        
+        foreach ((request()->enrollment_list) AS $enrolment)
+        {  
+            
+            $return[] = Group::findOrFail($enrolment['group_id'])->curricula()->syncWithoutDetaching([$enrolment['curriculum_id']]); //Admin, Student
+
+        }
+        
+        return $return;  
+    }
+    
+     public function expel()
+    {
+        abort_unless(\Gate::allows('curriculum_expel'), 403);
+        
+        foreach ((request()->expel_list) AS $expel)
+        {  
+            $group = Group::find($expel['group_id']);
+            $return[] = $group->curricula()->detach([
+                            'curriculum_id' => $expel['curriculum_id']
+                        ]);
+        }
+        
+        return $return;  
     }
 
     /**

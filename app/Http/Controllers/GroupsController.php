@@ -215,7 +215,7 @@ class GroupsController extends Controller
     
     public function expel()
     {
-        abort_unless(\Gate::allows('user_enrol'), 403);
+        abort_unless(\Gate::allows('user_expel'), 403);
         
         foreach ((request()->expel_list) AS $expel)
         {  

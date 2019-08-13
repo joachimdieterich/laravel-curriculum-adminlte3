@@ -73,7 +73,6 @@ class CurriculumCRUDTest extends TestCase
      */
     public function an_administrator_see_details_of_a_curriculum() 
     { 
-        //$this->withExceptionHandling();
         $curriculum = CurriculumFactory::create();
         //dd($curriculum->id);
         $this->get("curricula/{$curriculum->id}")       

@@ -126,14 +126,12 @@ $(document).ready( function () {
     $(".table ").css({"width":"100%"});
  });
  
- function enroleToCurricula()
+function enroleToCurricula()
 {
-    var ids = $('#groups-datatable').DataTable().rows({ selected: true }).ids().toArray();
+    var ids = getDatatablesIds('#groups-datatable');
     if (ids.length === 0) {
         alert('{{ trans('global.datatables.zero_selected') }}')
-        return
     }
-
     if (confirm('{{ trans('global.areYouSure') }}')) {
         var enrolments = [];
         for (i = 0; i < ids.length; i++) { 
@@ -142,22 +140,27 @@ $(document).ready( function () {
                 curriculum_id: $('#group_curricula').val(),
             });
         }
-        $.ajax({
-          headers: {'x-csrf-token': _token},
-          method: 'POST',
-          url: "/curricula/enrol",
-          data: { 
-               enrollment_list: enrolments, 
-              _method: 'POST',
-          }
-        })
-          .done(function () { location.reload() })
+        sendRequest('POST', '/curricula/enrol', { enrollment_list: enrolments, _method: 'POST'});
     }  
 }
-    
+
+function getDatatablesIds(selector){
+    return $(selector).DataTable().rows({ selected: true }).ids().toArray();
+}
+  
+function sendRequest(method, url, data){
+    $.ajax({
+        headers: {'x-csrf-token': _token},
+        method: method,
+        url: url,
+        data: data
+    })
+    .done(function () { location.reload() })
+}  
+
 function expelFromCurricula()
 {
-    var ids = $('#groups-datatable').DataTable().rows({ selected: true }).ids().toArray()
+    var ids = getDatatablesIds('#groups-datatable');
     if (ids.length === 0) {
         alert('{{ trans('global.datatables.zero_selected') }}')
         return
@@ -171,16 +174,7 @@ function expelFromCurricula()
                 curriculum_id: $('#group_curricula').val(),
             });
         }
-        $.ajax({
-          headers: {'x-csrf-token': _token},
-          method: 'POST',
-          url: "/curricula/expel",
-          data: { 
-              expel_list: expellments, 
-              _method: 'DELETE', 
-          }
-        })
-          .done(function () { location.reload() })
+        sendRequest('POST', '/curricula/expel', { expel_list: expellments, _method: 'DELETE'});
     }  
 }
  

@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Group;
-
+use App\Curriculum;
 class GroupCRUDTest extends TestCase
 {
     use RefreshDatabase;
@@ -100,7 +100,13 @@ class GroupCRUDTest extends TestCase
     { 
         
         $this->post("groups" , $group = factory('App\Group')->raw());
+        
+        $curriculum = factory(Curriculum::class)->create();
+        
         $group = Group::where('title', $group['title'])->first();
+        Group::findOrFail($group->id)->curricula()->syncWithoutDetaching([$curriculum->id]); 
+        
+        $group = Group::where('title', $group['title'])->with('curricula')->first();
         
         $this->get("groups/{$group->id}")       
              ->assertStatus(200)

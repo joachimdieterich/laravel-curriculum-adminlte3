@@ -234,9 +234,7 @@ class CurriculumController extends Controller
         
         foreach ((request()->enrollment_list) AS $enrolment)
         {  
-            
-            $return[] = Group::findOrFail($enrolment['group_id'])->curricula()->syncWithoutDetaching([$enrolment['curriculum_id']]); //Admin, Student
-
+            $return[] = Group::findOrFail($enrolment['group_id'])->curricula()->syncWithoutDetaching([$enrolment['curriculum_id']]); 
         }
         
         return $return;  

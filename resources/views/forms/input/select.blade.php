@@ -23,40 +23,36 @@
             <?php $optgroup_id = 0 ?>
 
             @foreach($options as $v)
-
-            <?php $o_id = 'id'; ?>
-            @if(isset($option_id)) 
-                <?php $o_id = $option_id ?>
-            @endif
-
-            @if (isset($optgroup) && ($optgroup_id != $v->$optgroup_field ))
-
-                @if(isset($optgroup_label))
-                    <?php $opt_label = $optgroup->where('id', $v->$optgroup_field)->first()->$optgroup_label ?>
-                @else
-                    <?php $opt_label = $optgroup->where('id', $v->$optgroup_field)->first()->title ?>
+                <?php $o_id = 'id'; ?>
+                @if(isset($option_id)) 
+                    <?php $o_id = $option_id ?>
                 @endif
-                <optgroup label="{{ $opt_label }}">
-            @endif
-                    <option value="{{ $v->$o_id }}" {{ ( $v->$o_id == $value ) ? 'selected' : '' }} >
 
-                        @if(isset($option_label))
-                            {{ $v->$option_label }}
-                        @else
-                            {{ $v->title }}
-                        @endif
+                @if (isset($optgroup) && ($optgroup_id != $v->$optgroup_field ))
 
-                    </option>
-
-            @if (isset($optgroup))
-                @if ($optgroup_id != $v->$optgroup_id )
-                    </optgroup>
+                    @if(isset($optgroup_label))
+                        <?php $opt_label = $optgroup->where('id', $v->$optgroup_field)->first()->$optgroup_label ?>
+                    @else
+                        <?php $opt_label = $optgroup->where('id', $v->$optgroup_field)->first()->title ?>
+                    @endif
+                    <optgroup label="{{ $opt_label }}">
                 @endif
-                <?php $optgroup_id = $v->$optgroup_field ?>
-            @endif
+                        <option value="{{ $v->$o_id }}" {{ ( $v->$o_id == $value ) ? 'selected' : '' }} >
 
+                            @if(isset($option_label))
+                                {{ $v->$option_label }}
+                            @else
+                                {{ $v->title }}
+                            @endif
 
+                        </option>
 
+                @if (isset($optgroup))
+                    @if ($optgroup_id != $v->$optgroup_id )
+                        </optgroup>
+                    @endif
+                    <?php $optgroup_id = $v->$optgroup_field ?>
+                @endif
             @endforeach
         </select>
         @if ($errors->has( $field ))

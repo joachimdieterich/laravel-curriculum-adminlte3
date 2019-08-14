@@ -68,9 +68,10 @@
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     @include ('forms.input.select', 
                     ["model" => "status", 
-                    "show_label" => true,
                     "field" => "status_id",  
                     "options"=> $statuses, 
+                    "option_id" => "status_id",
+                    "option_label" => "lang_de",
                     "onchange"=> "this.form.submit()",  
                     "value" => old('status_id', isset($organization->status_id) ? $organization->status_id : '') ])
                     </form>  

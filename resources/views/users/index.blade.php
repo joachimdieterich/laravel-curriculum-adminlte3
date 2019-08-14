@@ -74,7 +74,7 @@
                             <div class="form-horizontal col-xs-12">
                             @include ('forms.input.info', ["value" => "Neues Passwort für markierte Benutzer festlegen. Passwort muss mind. 6 Zeichen lang sein."])
                             @include ('forms.input.password', ["model" => "user", "field" => "password", "placeholder" => "New Password", "type" => "password", "value" => ""])
-                            @include ('forms.input.checkbox', ["field" => "login_password_confirmation", "value" => ""])
+<!--                            @include ('forms.input.checkbox', ["field" => "login_password_confirmation", "value" => ""])-->
                             @include ('forms.input.button', ["onclick" => "resetPassword()", "field" => "confirmed", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-lock", "label" => "Passwort zurücksetzen"])
                             </div>
                         </div>
@@ -140,7 +140,7 @@
                                 "option_id" => "status_id",  
                                 "option_label" => "lang_de", 
                                 "value" => old('status_id', isset($user->status_id) ? $user->status_id : '') ])
-                                @include ('forms.input.button', ["onclick" => "setStatus()", "field" => "acceptUser", "type" => "submit", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-lock", "label" => "Benutzer bestätigen"])
+                                @include ('forms.input.button', ["onclick" => "setStatus()", "field" => "acceptUser", "type" => "submit", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-lock", "label" => "Benutzerstatus ändern"])
                             </div>
                         </div>
                     @endcan
@@ -164,200 +164,96 @@
 @parent
 
 <script>
-    
-    function enroleToGroup()
-    {
-        var ids = $('#users-datatable').DataTable().rows({ selected: true }).ids().toArray()
-        if (ids.length === 0) {
-            alert('{{ trans('global.datatables.zero_selected') }}')
-            return
-        }
+function getDatatablesIds(selector){
+    return $(selector).DataTable().rows({ selected: true }).ids().toArray();
+}
 
-        if (confirm('{{ trans('global.areYouSure') }}')) {
-            var enrolments = [];
-            for (i = 0; i < ids.length; i++) { 
-                enrolments.push({
-                    user_id: ids[i],
-                    group_id: $('#user_organization_group_id').val(),
-                });
-            }
-            $.ajax({
-              headers: {'x-csrf-token': _token},
-              method: 'POST',
-              url: "/groups/enrol",
-              data: { 
-                   enrollment_list: enrolments, 
-                  _method: 'POST',
-              }
-            })
-              .done(function () { location.reload() })
-        }  
+function sendRequest(method, url, ids, data){
+    if (ids.length === 0) {
+        alert('{{ trans('global.datatables.zero_selected') }}')
+        return
     }
-    
-    function expelFromGroup()
-    {
-        var ids = $('#users-datatable').DataTable().rows({ selected: true }).ids().toArray()
-        if (ids.length === 0) {
-            alert('{{ trans('global.datatables.zero_selected') }}')
-            return
-        }
-
-        if (confirm('{{ trans('global.areYouSure') }}')) {
-            var expellments = [];
-            for (i = 0; i < ids.length; i++) { 
-                expellments.push({
-                    user_id: ids[i],
-                    group_id: $('#user_organization_group_id').val()
-                });
-            }
-            $.ajax({
-              headers: {'x-csrf-token': _token},
-              method: 'POST',
-              url: "/groups/expel",
-              data: { 
-                  expel_list: expellments, 
-                  _method: 'DELETE', 
-              }
-            })
-              .done(function () { location.reload() })
-        }  
-    }
-    
-    function enroleToOrganization()
-    {
-        var ids = $('#users-datatable').DataTable().rows({ selected: true }).ids().toArray()
-        if (ids.length === 0) {
-            alert('{{ trans('global.datatables.zero_selected') }}')
-            return
-        }
-
-        if (confirm('{{ trans('global.areYouSure') }}')) {
-            var enrolments = [];
-            for (i = 0; i < ids.length; i++) { 
-                enrolments.push({
-                    user_id: ids[i],
-                    organization_id: $('#role_organization_id').val(),
-                    role_id: $('#role_id').val()
-                });
-            }
-            $.ajax({
-              headers: {'x-csrf-token': _token},
-              method: 'POST',
-              url: "/organizations/enrol",
-              data: { 
-                  enrollment_list: enrolments, 
-                  _method: 'POST',
-              }
-            })
-              .done(function () { location.reload() })
-        }  
-    }
-    function expelFromOrganization()
-    {
-        var ids = $('#users-datatable').DataTable().rows({ selected: true }).ids().toArray()
-        if (ids.length === 0) {
-            alert('{{ trans('global.datatables.zero_selected') }}')
-            return
-        }
-
-        if (confirm('{{ trans('global.areYouSure') }}')) {
-            var expellments = [];
-            for (i = 0; i < ids.length; i++) { 
-                expellments.push({
-                    user_id: ids[i],
-                    organization_id: $('#role_organization_id').val()
-                });
-            }
-            $.ajax({
-              headers: {'x-csrf-token': _token},
-              method: 'POST',
-              url: "/organizations/expel",
-              data: { 
-                  expel_list: expellments, 
-                  _method: 'DELETE'
-              }
-            })
-              .done(function () { location.reload() })
-        }  
-    }
-    function setStatus()
-    {
-        var ids = $('#users-datatable').DataTable().rows({ selected: true }).ids().toArray()
-        if (ids.length === 0) {
-            alert('{{ trans('global.datatables.zero_selected') }}')
-            return
-        }
-
-        if (confirm('{{ trans('global.areYouSure') }}')) {
-            $.ajax({
-              headers: {'x-csrf-token': _token},
-              method: 'POST',
-              url: "{{ route('users.massUpdate') }}",
-              data: { 
-                  ids: ids, 
-                  _method: 'PATCH',
-                  status_id: $('#status_id').val()
-              }
-            })
-              .done(function () { location.reload() })
-        }  
-    }
-    
-    function resetPassword()
-    {
-        var ids = $('#users-datatable').DataTable().rows({ selected: true }).ids().toArray()
-        if (ids.length === 0) {
-            alert('{{ trans('global.datatables.zero_selected') }}')
-            return
-        }
-
-        if (confirm('{{ trans('global.areYouSure') }}')) {
-            $.ajax({
-              headers: {'x-csrf-token': _token},
-              method: 'POST',
-              url: "{{ route('users.massUpdate') }}",
-              data: { 
-                  ids: ids, 
-                  _method: 'PATCH',
-                  password: $('#password').val()
-              }
-            })
-              .done(function () { location.reload() })
-        }  
-    }
-    
-    function destroyUser(id)
-    {
-        if (confirm('{{ trans('global.areYouSure') }}')) {
-            $.ajax({
+    if (confirm('{{ trans('global.areYouSure') }}')) {
+        $.ajax({
                 headers: {'x-csrf-token': _token},
-                method: 'POST',
-                url: 'users/'+id,
-                data: { _method: 'DELETE' }})
-                .done(function () { 
-                     $("#"+id).closest('tr').remove();
-                })
-        }
+                method: method,
+                url: url,
+                data: data
+            })
+            .done(function () { location.reload() })
     }
-    
-    function  massDestroyUser()
-    {
-        var ids = $('#users-datatable').DataTable().rows({ selected: true }).ids().toArray()
-        if (ids.length === 0) {
-          alert('{{ trans('global.datatables.zero_selected') }}')
-          return
-        }
+}  
 
-        if (confirm('{{ trans('global.areYouSure') }}')) {
-          $.ajax({
+function generateGroupProcessList(ids){
+    var processList = [];
+    for (i = 0; i < ids.length; i++) { 
+        processList.push({
+            user_id: ids[i],
+            group_id: $('#user_organization_group_id').val(),
+        });
+    }
+    return processList;
+}
+
+function enroleToGroup() {
+    var ids = getDatatablesIds('#users-datatable');
+    sendRequest('POST', '/groups/enrol', ids, { enrollment_list: generateGroupProcessList(ids), _method: 'POST'});  
+}
+
+function expelFromGroup() {
+    var ids = getDatatablesIds('#users-datatable');        
+    sendRequest('POST', '/groups/expel', ids, { expel_list: generateGroupProcessList(ids), _method: 'DELETE'});  
+}
+
+function generateOrganizationProcessList(ids){
+    var processList = [];
+    for (i = 0; i < ids.length; i++) { 
+        processList.push({
+            user_id: ids[i],
+            organization_id: $('#role_organization_id').val(),
+            role_id: $('#role_id').val()
+        });
+    }
+    return processList;
+}
+
+function enroleToOrganization() {
+    var ids = getDatatablesIds('#users-datatable');
+    sendRequest('POST', '/organizations/enrol', ids, { enrollment_list: generateOrganizationProcessList(ids), _method: 'POST'});  
+}
+
+function expelFromOrganization() {
+    var ids = getDatatablesIds('#users-datatable');
+    sendRequest('POST', '/organizations/expel', ids, { expel_list: generateOrganizationProcessList(ids), _method: 'DELETE'});  
+}
+
+function setStatus() {
+    var ids = getDatatablesIds('#users-datatable');
+    sendRequest('POST', "{{ route('users.massUpdate') }}", ids, { ids: ids, _method: 'PATCH', status_id: $('#status_id').val() });   
+}
+
+function resetPassword() {
+    var ids = getDatatablesIds('#users-datatable');
+    sendRequest('POST', "{{ route('users.massUpdate') }}", ids, { ids: ids, _method: 'PATCH', password: $('#password').val() });   
+}
+
+function destroyUser(id){
+    if (confirm('{{ trans('global.areYouSure') }}')) {
+        $.ajax({
             headers: {'x-csrf-token': _token},
             method: 'POST',
-            url: '{{ route('users.massDestroy') }}',
-            data: { ids, _method: 'DELETE' }})
-            .done(function () { location.reload() })
-        }
-        
-    }   
+            url: 'users/'+id,
+            data: { _method: 'DELETE' }})
+            .done(function () { 
+                 $("#"+id).closest('tr').remove();
+            })
+    }
+}
+
+function  massDestroyUser() {
+    var ids = getDatatablesIds('#users-datatable');
+    sendRequest('POST', "{{ route('users.massDestroy') }}", ids, { ids: ids, _method: 'DELETE' });   
+}   
     
 $(document).ready( function () {
     $('#login_password_show').on('change', function(){

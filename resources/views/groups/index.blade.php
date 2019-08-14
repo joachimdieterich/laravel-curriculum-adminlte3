@@ -86,20 +86,7 @@ $(document).ready( function () {
       className: 'btn-danger',
       action: function (e, dt, node, config) {
         var ids = dt.rows({ selected: true }).ids().toArray()
-
-        if (ids.length === 0) {
-          alert('{{ trans('global.datatables.zero_selected') }}')
-          return
-        }
-
-        if (confirm('{{ trans('global.areYouSure') }}')) {
-          $.ajax({
-            headers: {'x-csrf-token': _token},
-            method: 'POST',
-            url: config.url,
-            data: { ids: ids, _method: 'DELETE' }})
-            .done(function () { location.reload() })
-        }
+        sendRequest('POST', config.url, ids, { ids: ids, _method: 'DELETE' });
       }
     }
     let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
@@ -126,58 +113,47 @@ $(document).ready( function () {
     $(".table ").css({"width":"100%"});
  });
  
-function enroleToCurricula()
-{
+function enroleToCurricula(){
     var ids = getDatatablesIds('#groups-datatable');
-    if (ids.length === 0) {
-        alert('{{ trans('global.datatables.zero_selected') }}')
-    }
-    if (confirm('{{ trans('global.areYouSure') }}')) {
-        var enrolments = [];
-        for (i = 0; i < ids.length; i++) { 
-            enrolments.push({
-                group_id: ids[i],
-                curriculum_id: $('#group_curricula').val(),
-            });
-        }
-        sendRequest('POST', '/curricula/enrol', { enrollment_list: enrolments, _method: 'POST'});
-    }  
+    sendRequest('POST', '/curricula/enrol', ids, { enrollment_list: generateProcessList(ids), _method: 'POST'});
+    
+}
+
+function expelFromCurricula(){
+    var ids = getDatatablesIds('#groups-datatable');
+    sendRequest('POST', '/curricula/expel', ids, { expel_list: generateProcessList(ids), _method: 'DELETE'});
 }
 
 function getDatatablesIds(selector){
     return $(selector).DataTable().rows({ selected: true }).ids().toArray();
 }
-  
-function sendRequest(method, url, data){
-    $.ajax({
-        headers: {'x-csrf-token': _token},
-        method: method,
-        url: url,
-        data: data
-    })
-    .done(function () { location.reload() })
-}  
 
-function expelFromCurricula()
-{
-    var ids = getDatatablesIds('#groups-datatable');
+function generateProcessList(ids){
+    var processList = [];
+    for (i = 0; i < ids.length; i++) { 
+        processList.push({
+            group_id: ids[i],
+            curriculum_id: $('#group_curricula').val(),
+        });
+    }
+    return processList;
+}
+  
+function sendRequest(method, url, ids, data){
     if (ids.length === 0) {
         alert('{{ trans('global.datatables.zero_selected') }}')
         return
     }
-
     if (confirm('{{ trans('global.areYouSure') }}')) {
-        var expellments = [];
-        for (i = 0; i < ids.length; i++) { 
-            expellments.push({
-                group_id: ids[i],
-                curriculum_id: $('#group_curricula').val(),
-            });
-        }
-        sendRequest('POST', '/curricula/expel', { expel_list: expellments, _method: 'DELETE'});
-    }  
-}
- 
+        $.ajax({
+            headers: {'x-csrf-token': _token},
+            method: method,
+            url: url,
+            data: data
+        })
+        .done(function () { location.reload() })
+    }
+}  
 </script>
 
 

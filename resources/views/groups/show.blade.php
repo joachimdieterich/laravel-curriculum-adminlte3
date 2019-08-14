@@ -42,6 +42,18 @@
                 <p class="text-muted">
                  {{ $group->period->title }}
                 </p>
+                
+                <hr>
+
+                <strong><i class="fa fa-th mr-1"></i> {{ trans('global.curriculum.title') }}</strong>
+
+                <p class="text-muted">
+                <ul>
+                    @foreach($group->curricula as $id => $currculum)
+                        <a class="btn-block text-muted" href="/curricula/{{ $currculum->id }}"><li>{{ $currculum->title }}</li></a>
+                    @endforeach
+                 </ul>
+                </p>
 
               </div>
               <!-- /.card-body -->

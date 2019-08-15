@@ -28,6 +28,7 @@ class GroupsController extends Controller
     
     public function list()
     {
+        abort_unless(\Gate::allows('group_access'), 403);
         $groups = Group::select([
             'id', 
             'title', 
@@ -93,6 +94,7 @@ class GroupsController extends Controller
      */
     public function create()
     {
+        abort_unless(\Gate::allows('group_create'), 403);
         $grades = Grade::all();
         $periods = Period::all();
         $organizations = Organization::all();
@@ -104,7 +106,7 @@ class GroupsController extends Controller
     
     public function store()
     {
-        
+        abort_unless(\Gate::allows('group_create'), 403);
         $new_group = $this->validateRequest();
         
         $group = Group::firstOrCreate([
@@ -131,6 +133,7 @@ class GroupsController extends Controller
      */
     public function show(Group $group)
     {   
+        abort_unless(\Gate::allows('group_access'), 403);
         return view('groups.show')
                 ->with(compact('group'));
     }

@@ -22,34 +22,27 @@
             <!-- /.card-header -->
             <div class="card-body">
                 <strong><i class="fas fa-signal mr-1"></i> {{ trans('global.organizationtype.title_singular') }}</strong>
-
                 <p class="text-muted">
                     {{ $organization->type->title }}
                 </p>
-
                 <hr>
 
                 <strong><i class="fa fa-map-marker mr-1"></i> Location</strong>
-
                 <p class="text-muted">
                     {{ $organization->street }}<br>
                     {{ $organization->postcode }} {{ $organization->city }}<br>
                     {{ $organization->state->lang_de }}, {{ $organization->country->lang_de }}
                 </p>
-
                 <hr>
 
                 <strong><i class="fa fa-phone mr-1"></i> Contact</strong>
-
                 <p class="text-muted">
                     {{ trans('global.organization.fields.phone') }}: {{ $organization->phone }}<br>
                     {{ trans('global.organization.fields.email') }}: {{ $organization->email }}
                 </p>
-
                 <hr>
 
                 <strong><i class="fa fa-file-alt mr-1"></i> {{ trans('global.organization.fields.description') }}</strong>
-
                 <p class="text-muted">{{ strip_tags( $organization->description) }}</p>
             </div>
             <!-- /.card-body -->

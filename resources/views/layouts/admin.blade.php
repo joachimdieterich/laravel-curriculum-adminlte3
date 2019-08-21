@@ -38,12 +38,12 @@
             'userId' => Auth::user()->id,
             'permissions' => Auth::user()->permissions()->pluck('title')->toArray()
         ]); ?>;
-    </script>    
+    </script>
 </head>
 
 <body class="sidebar-mini sidebar-open" style="height: auto;">
     <div id="app" class="wrapper">
-        
+
         <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom">
             <!-- Left navbar links -->
             <ul class="navbar-nav">
@@ -67,7 +67,7 @@
                     </li>
                 </ul>
             @endif
-            
+
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#">{{ optional(Auth::user()->role())->title}}</a>
@@ -112,16 +112,16 @@
     <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
     <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/11.0.1/classic/ckeditor.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.js"></script>
+
     <script src="{{ asset('js/main.js') }}"></script>
 <!--    <script src="{{ asset('js/lang.js') }}"></script> get language support from /lang to js (vue) -->
-    
+
     <script>
-        
+
         $(function() {
   let copyButtonTrans = '{{ trans('global.datatables.copy') }}'
   let csvButtonTrans = '{{ trans('global.datatables.csv') }}'
@@ -223,16 +223,16 @@
 //    # sourceMappingURL=adminlte.min.js.map
 
     </script>
-    <script> 
+    <script>
     function setCurrentOrganization()
     {
-        
+
         $.ajax({
           headers: {'x-csrf-token': _token},
           method: 'POST',
           url: "{{ route('users.setCurrentOrganization') }}",
-          data: { 
-              current_organization_id: $('#current_organization_id').val(), 
+          data: {
+              current_organization_id: $('#current_organization_id').val(),
               _method: 'PATCH',
           }
         })

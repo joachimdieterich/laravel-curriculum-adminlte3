@@ -655,10 +655,15 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@ckeditor/ckeditor5-build-classic@^12.1.0":
+"@ckeditor/ckeditor5-build-classic@^12.3.1":
   version "12.3.1"
   resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-build-classic/-/ckeditor5-build-classic-12.3.1.tgz#b37011d5ee2f2590cf8d29a43dc5c62f14cf0b5a"
   integrity sha512-nlE8wRasM3AF2XkXHJuj91cq46ZvmTBfXePCtjogT8s/niYlFma+Lqu7cAUONxRXh11m1IpgC6i+QOGFZH0p8A==
+
+"@ckeditor/ckeditor5-vue@^1.0.0-beta.2":
+  version "1.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-vue/-/ckeditor5-vue-1.0.0-beta.2.tgz#9491cf3e4b030847cd329ae3680c52996195d8bf"
+  integrity sha512-9qF795EKQZi2VV5zgYjUfAY2L3rr50NaZOAMq2O2sADrWMxUGOb3cUAD6FuV3kboVaKoSmXGcApm7Iy5YTGr3g==
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"

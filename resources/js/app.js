@@ -20,6 +20,8 @@ Vue.prototype.trans = (key) => {
 import VModal from 'vue-js-modal';
 Vue.use(VModal);
 
+//import CKEditor from '@ckeditor/ckeditor5-vue';
+//Vue.use( CKEditor );
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -27,11 +29,8 @@ Vue.use(VModal);
  *
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */ 
-
-// const files = require.context('./', true, /\.vue$/i);
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
-Vue.component('organization-modal', require('./components/OrganizationModal.vue').default);
-Vue.component('group-modal', require('./components/GroupModal.vue').default);
+Vue.component('organization-modal', require('./components/organization/OrganizationModal.vue').default);
+Vue.component('group-modal', require('./components/group/GroupModal.vue').default);
 
 
 Vue.component('curriculum-view', require('./components/curriculum/CurriculumView.vue').default);

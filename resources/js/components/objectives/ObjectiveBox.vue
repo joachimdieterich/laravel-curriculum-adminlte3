@@ -125,13 +125,11 @@
             }, 
             
             async sortEvent(amount) {
-                console.log(this.type +' id: '+ this.objective.id +' sort' + amount);
-                
                 let objective = {
                     'id': this.objective.id,
                     'order_id': this.objective.order_id + parseInt(amount)
                 }
-                console.log(JSON.stringify(objective));
+                //console.log(JSON.stringify(objective));
                 try {
                     this.location = (await axios.patch('/'+this.type+'Objectives/'+this.objective.id, objective)).data.message;
                 } catch(error) {

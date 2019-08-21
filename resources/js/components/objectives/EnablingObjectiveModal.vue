@@ -56,9 +56,9 @@
                        id="description" 
                        name="description" 
                        class="form-control" 
-                       v-model="form.description"
+                       v-html="form.description"
                        placeholder="Description" 
-                       />
+                    ></textarea>
                     <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
                 </div>
                

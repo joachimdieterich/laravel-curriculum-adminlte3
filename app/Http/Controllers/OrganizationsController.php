@@ -56,10 +56,10 @@ class OrganizationsController extends Controller
                                     . '</a>';
                     }
                     if (\Gate::allows('organization_edit')){
-                        $actions .= '<a href="'.route('organizations.edit', $organizations->id).'" '
-                                    . 'class="btn btn-xs btn-primary">'
-                                    . '<i class="fa fa-edit"></i> Edit'
-                                    . '</a>';
+                        $actions .= '<button onclick="app.__vue__.$modal.show(\'organization-modal\', {\'id\':\''.$organizations->id.'\', \'method\': \'patch\'})"'
+                                    . 'class="btn btn-xs btn-primary text-white">'
+                                    . '<i class="fa fa-edit"></i> Edit' 
+                                    . '</button>';
                     }
                     if (\Gate::allows('organization_delete')){
                         $actions .= '<form action="'.route('organizations.destroy', $organizations->id).'" method="POST">'
@@ -122,7 +122,12 @@ class OrganizationsController extends Controller
     {
         abort_unless(\Gate::allows('organization_show'), 403);
         $statuses = Status::all();
-        
+        // axios call? 
+        if (request()->wantsJson()){    
+            return [
+                'message' => $organization
+            ];
+        }
         return view('organizations.show')
                 ->with(compact('organization'))
                 ->with(compact('statuses'));

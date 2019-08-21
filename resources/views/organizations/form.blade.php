@@ -48,6 +48,7 @@
             "show_label" => true,
             "field" => "status_id",  
             "options"=> $statuses, 
+            "option_id" => "status_id",
             "option_label"=> "lang_de", 
             "value" => old('status_id', isset($organization->status_id) ? $organization->status_id : '') ])                                                          
 

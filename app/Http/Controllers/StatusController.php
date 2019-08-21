@@ -10,11 +10,18 @@ class StatusController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return array
      */
     public function index()
     {
-        //
+        $statuses = Status::all();
+        // axios call?
+        if (request()->wantsJson()){
+            return [
+                'message' => $statuses
+            ];
+        }
+        return $statuses;
     }
 
     /**

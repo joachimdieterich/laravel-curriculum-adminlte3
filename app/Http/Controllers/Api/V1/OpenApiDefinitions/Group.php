@@ -21,7 +21,7 @@
 */
 
 /**
-* @OA\POST(
+* @OA\Post(
 *      path="/v1/groups",
 *      operationId="createGroup",
 *      tags={"Group v1"},
@@ -73,7 +73,7 @@
 
 
 /**
-* @OA\PUT(
+* @OA\Put(
 *      path="/v1/groups/{group}",
 *      operationId="updateGroupById",
 *      tags={"Group v1"},
@@ -162,7 +162,7 @@
 */
 
 /**
-* @OA\DELETE(
+* @OA\Delete(
 *      path="/v1/groups/{group}",
 *      operationId="deleteGroup",
 *      tags={"Group v1"},
@@ -192,7 +192,7 @@
 */
 
 /**
-* @OA\PUT(
+* @OA\Put(
 *      path="/v1/groups/enrol",
 *      operationId="enrolToGroup",
 *      tags={"Group v1"},

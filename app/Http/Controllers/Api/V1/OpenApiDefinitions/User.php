@@ -21,7 +21,7 @@
 */
 
 /**
-* @OA\POST(
+* @OA\Post(
 *      path="/v1/users",
 *      operationId="createUser",
 *      tags={"User v1"},
@@ -103,7 +103,7 @@
 
 
 /**
-* @OA\PUT(
+* @OA\Put(
 *      path="/v1/users/{user}",
 *      operationId="updateUser",
 *      tags={"User v1"},
@@ -223,7 +223,7 @@
 */
 
 /**
-* @OA\DELETE(
+* @OA\Delete(
 *      path="/v1/users/{user}",
 *      operationId="deleteUser",
 *      tags={"User v1"},

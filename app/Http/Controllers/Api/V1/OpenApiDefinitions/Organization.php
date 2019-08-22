@@ -21,7 +21,7 @@
 */
 
 /**
-* @OA\POST(
+* @OA\Post(
 *      path="/v1/organizations",
 *      operationId="createOrganization",
 *      tags={"Organization v1"},
@@ -113,7 +113,7 @@
 */
 
 /**
-* @OA\PUT(
+* @OA\Put(
 *      path="/v1/organizations/{organization}",
 *      operationId="updateOrganization",
 *      tags={"Organization v1"},
@@ -214,7 +214,7 @@
 */
 
 /**
-* @OA\GET(
+* @OA\Get(
 *      path="/v1/organizations/{organization}",
 *      operationId="getOrganization",
 *      tags={"Organization v1"},
@@ -246,7 +246,7 @@
 */
 
 /**
-* @OA\DELETE(
+* @OA\Delete(
 *      path="/v1/organizations/{organization}",
 *      operationId="deleteOrganization",
 *      tags={"Organization v1"},
@@ -276,7 +276,7 @@
 */
 
 /**
-* @OA\PUT(
+* @OA\Put(
 *      path="/v1/organizations/enrol",
 *      operationId="enrolToOrganization",
 *      tags={"Organization v1"},
@@ -322,7 +322,7 @@
 */
 
 /**
-* @OA\DELETE(
+* @OA\Delete(
 *      path="/v1/organizations/expel",
 *      operationId="expelFromOrganization",
 *      tags={"Organization v1"},

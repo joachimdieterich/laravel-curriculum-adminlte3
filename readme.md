@@ -16,7 +16,7 @@ curriculum is a learning platform where teachers can create topic-based learning
 Begin by cloining this repository to your machine, and installing all Composer dependencies.
 
 ```bash
-git clone https://github.comjoachimdieterich/laravel-curriculum-adminlte3.git
+git clone https://github.com/joachimdieterich/laravel-curriculum-adminlte3.git
 cd laravel-curriculum-adminlte3 && composer install
 
 composer dump-autoload
@@ -69,6 +69,11 @@ php artisan passport:install
 ```
 ##
 OpenApi Documentation Endpoint
+
+Generate openApi Documentation
+```
+php artisan l5-swagger:generate
+```
 
 localhost:[port]/api/documentation
 

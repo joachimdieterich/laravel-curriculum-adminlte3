@@ -20,15 +20,32 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 
         $this->hideSensitiveRequestDetails();
 
-        Telescope::filter(function (IncomingEntry $entry) {
-            if ($this->app->isLocal()) {
+//        Telescope::filter(function (IncomingEntry $entry) {
+//            if ($this->app->isLocal()) {
+//                return true;
+//            }
+//
+//            return $entry->isReportableException() ||
+//                   $entry->isFailedJob() ||
+//                   $entry->isScheduledTask() ||
+//                   $entry->hasMonitoredTag();
+//        });
+
+        
+        // Fix ReflectionException: Class env does not exist #347 
+        // see:
+        // https://github.com/laravel/telescope/issues/347#issuecomment-523550515
+        // Disable the filter while in local or testing environment.
+        $disableFilter = $this->app->environment(['local', 'testing']);
+        Telescope::filter(function (IncomingEntry $entry) use ($disableFilter) {
+            if ($disableFilter) {
                 return true;
             }
 
             return $entry->isReportableException() ||
-                   $entry->isFailedJob() ||
-                   $entry->isScheduledTask() ||
-                   $entry->hasMonitoredTag();
+                $entry->isFailedJob() ||
+                $entry->isScheduledTask() ||
+                $entry->hasMonitoredTag();
         });
     }
 

@@ -6,9 +6,9 @@
     </div>
     
     <div class="col-12 mx-2">
-        <button type="button" class="btn btn-default" data-toggle="tooltip"  onclick="">
+<!--        <button type="button" class="btn btn-default" data-toggle="tooltip"  onclick="">
             <i class="fa fa-compress"></i>
-        </button>
+        </button>-->
        
         @if ($curriculum->contents != null)
             <dropdown-button 

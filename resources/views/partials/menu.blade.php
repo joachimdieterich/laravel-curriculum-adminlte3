@@ -12,15 +12,25 @@
         <nav class="mt-2"> 
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <li class="nav-header">{{ strtoupper(trans('global.curriculum.title')) }}</li>
-                <li class="nav-item">
-                    @include ('forms.input.select', 
-                        ["model" => "organization", 
-                        "field" => "current_curriculum_group_id",  
-                        "options"=> auth()->user()->curricula(), 
-                        "option_label" => "title",  
-                        "onchange"=> "loadCurriculum()",  
-                        "value" =>  ''])
-                </li>
+                <div class="form-group">
+                        <select 
+                            name="current_curriculum_group_id[]" 
+                            id="current_curriculum_group_id" 
+                            class="form-control select2 col-sm-9"
+                            onchange="location = this.value;"
+                        >    
+                            @foreach (auth()->user()->curricula() as $entry)
+                                 <option  
+                                    value="/curricula/{{ $entry->curriculum_id }}" 
+                                    {{ (Request::path() == "curricula/".$entry->curriculum_id) ? 'selected' : '' }} 
+                                 >
+                                    {{ $entry->title }}
+                                 </option>
+                            @endforeach
+                        </select>
+                    
+                </div>
+                
                 <li class="nav-header">{{ strtoupper(trans('global.organization.title_singular')) }}</li>
                 <li class="nav-item">
                      @include ('forms.input.select', 
@@ -145,13 +155,15 @@
 @parent
 <!--hack to get select2 working-->
 <script>
-    $(document).ready(function() {
-  $("#current_organization_id").select2({
-    dropdownParent: $("#sidebar")
-  });
-  $("#current_curriculum_group_id").select2({
-    dropdownParent: $("#sidebar")
-  });
+$(document).ready(function() {
+    $("#current_organization_id").select2({
+      dropdownParent: $("#sidebar")
+    });
+    $("#current_curriculum_group_id").select2({
+      dropdownParent: $("#sidebar")
+    });
+  
+    
 });
 
  

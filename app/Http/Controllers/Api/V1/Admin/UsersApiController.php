@@ -71,12 +71,12 @@ class UsersApiController extends Controller
                 false, //full day event?
                 '2019-08-02 10:00:00 UTC+2', //start time, must be a DateTime object or valid DateTime format (http://bit.ly/1z7QWbg)
                 '2019-08-02 12:00:00 UTC+2', //end time, must be a DateTime object or valid DateTime format (http://bit.ly/1z7QWbg),
-                1, //optional event ID
+                1 //optional event ID
         );
       
         return ['enrollments' => $user->groups()->with(['curricula'])->get(), 
                 'notifications' => $user->notifications,
-                'events' => [$event], 
+                'events' => [$event] 
                ];
     }
     

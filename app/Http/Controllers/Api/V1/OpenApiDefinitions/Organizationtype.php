@@ -25,8 +25,8 @@
 *      path="/v1/organizationtypes/{organizationtype}",
 *      operationId="getOrganizationtype",
 *      tags={"OrganizationType v1"},
-*      summary="Get all organizationtypes",
-*      description="Returns a state objects",
+*      summary="Get a organizationtype by Id",
+*      description="Returns a organizationtype by Id",
 *      security={
 *           {"passport": {"*"}},
 *      },

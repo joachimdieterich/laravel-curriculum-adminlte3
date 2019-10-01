@@ -27,7 +27,7 @@ class ApiPeriodTest extends TestCase {
 
         $this->get('/api/v1/periods')
                 ->assertStatus(200);
-    }
+    }    
 
     /** @test 
      * Use Route: GET, /api/v1/periods/{id}
@@ -48,6 +48,49 @@ class ApiPeriodTest extends TestCase {
                     "created_at"=> null,
                     "updated_at"=> null
         ]);
+    }
+    
+    /** @test 
+     * Use Route: POST, /api/v1/periods
+     */     
+    public function an_authificated_client_can_create_a_period()
+    { 
+        $this->signInApiAdmin();
+        $this->post("/api/v1/periods" , $attributes = factory('App\Period')->raw());
+        
+        $this->assertDatabaseHas('periods', $attributes);
+    } 
+    
+    /** @test 
+     * Use Route: PUT, /api/v1/periods/{id}
+     */     
+    public function an_authificated_client_can_update_a_period()
+    { 
+        $this->signInApiAdmin();
+        //$this->withoutExceptionHandling();
+        $this->post("/api/v1/periods" , $attributes = factory('App\Period')->raw()); //create new group with ID 2, ID 1 exists seeded
+        
+        $this->put("/api/v1/periods/2" , $changed_attribute = ['title' => 'New Title']); 
+        
+        $changed_attribute = array_filter($changed_attribute);
+        
+        $this->get('/api/v1/periods/2') 
+             ->assertStatus(200)
+             ->assertJson($changed_attribute); 
+    }
+    
+    /** @test 
+     * Use Route: DELETE, /api/v1/periods/{id}
+     */     
+    public function an_authificated_client_can_delete_a_period()
+    { 
+        $this->signInApiAdmin();
+        
+        $this->post("/api/v1/periods" , $attributes = factory('App\Period')->raw()); //create new group with ID 2, ID 1 exists seeded
+        
+        $this->delete("/api/v1/periods/2"); 
+        
+        $this->assertDatabaseMissing('periods', $attributes);
     }
 
 }

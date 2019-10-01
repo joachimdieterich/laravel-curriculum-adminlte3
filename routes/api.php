@@ -24,7 +24,7 @@ Route::group([
     Route::post('signup', 'AuthController@signup');
   
     Route::group([
-      'middleware' => 'auth:api'
+      'middleware' => 'client_credentials'
     ], function() {
         Route::get('logout', 'AuthController@logout');
         Route::get('user', 'AuthController@user');
@@ -36,7 +36,7 @@ Route::group([
     'prefix' => 'v1', 
     'as' => 'admin.', 
     'namespace' => 'Api\V1\Admin',
-    'middleware' => 'auth:api'
+    'middleware' => 'client_credentials'
     ], function () {
     Route::apiResource('permissions', 'PermissionsApiController');
 

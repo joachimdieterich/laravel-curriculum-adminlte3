@@ -25,8 +25,8 @@
 *      path="/v1/subjects/{subject}",
 *      operationId="getSubject",
 *      tags={"Subject v1"},
-*      summary="Get all subject",
-*      description="Returns a subject objects",
+*      summary="Get  a subject by Id",
+*      description="Returns a subject by Id",
 *      security={
 *           {"passport": {"*"}},
 *      },

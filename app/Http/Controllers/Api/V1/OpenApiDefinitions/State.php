@@ -25,8 +25,8 @@
 *      path="/v1/states/{state}",
 *      operationId="getState",
 *      tags={"State v1"},
-*      summary="Get all states",
-*      description="Returns a state objects",
+*      summary="Get a state by Id",
+*      description="Returns a state by Id",
 *      security={
 *           {"passport": {"*"}},
 *      },

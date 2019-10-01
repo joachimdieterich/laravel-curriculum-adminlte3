@@ -173,7 +173,7 @@
 *      },
 *      @OA\Parameter(
 *          name="group",
-*          description="Group id",
+*          description="Group Id",
 *          required=true,
 *          in="path",
 *          @OA\Schema(
@@ -225,6 +225,46 @@
 *          response=200,
 *          description="successful operation",
 *          @OA\JsonContent(ref="#/components/schemas/Group")   
+*       ),
+*       @OA\Response(response=400, description="Bad request"),
+*      
+* )
+* 
+*/
+
+/**
+* @OA\Delete(
+*      path="/v1/groups/expel",
+*      operationId="expelFromGroup",
+*      tags={"Group v1"},
+*      summary="Delete group enrolment",
+*      description="Delete group enrolment",
+*      security={
+*           {"passport": {"*"}},
+*      },
+*      @OA\RequestBody(
+*       required=true,
+*       @OA\MediaType(
+*           mediaType="application/x-www-form-urlencoded",
+*           @OA\Schema(
+*               type="object",
+*               @OA\Property(
+*                   property="user_id",
+*                   description="User Id",
+*                   type="integer"
+*               ),
+*               @OA\Property(
+*                   property="group_id",
+*                   description="Group Id",
+*                   type="integer"
+*               ),
+*           )
+*       )
+*   ),
+*      
+*       @OA\Response(
+*          response=200,
+*          description="successful operation",
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
 *      

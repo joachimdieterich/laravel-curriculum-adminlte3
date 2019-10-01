@@ -25,8 +25,8 @@
 *      path="/v1/roles/{role}",
 *      operationId="getRole",
 *      tags={"Role v1"},
-*      summary="Get all roles",
-*      description="Returns a role objects",
+*      summary="Get a role by Id",
+*      description="Returns a role by Id",
 *      security={
 *           {"passport": {"*"}},
 *      },

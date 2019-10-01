@@ -20,6 +20,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Period extends Model
 {
+    protected $guarded = [];
+    
     public function organization()
     {
         return $this->hasOne('App\Organization', 'id', 'organization_id');

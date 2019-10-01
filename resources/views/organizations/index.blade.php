@@ -3,7 +3,10 @@
 @can('organization_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <button class="btn btn-success" href="{{ route("organizations.create") }}" @click.prevent="$modal.show('organization-modal')">
+            <button id="add-organization"
+                    class="btn btn-success" 
+                    href="{{ route("organizations.create") }}" 
+                    @click.prevent="$modal.show('organization-modal')">
                 {{ trans('global.add') }} {{ trans('global.organization.title_singular') }}
             </button>
         </div>

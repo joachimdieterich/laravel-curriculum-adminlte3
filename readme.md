@@ -84,7 +84,16 @@ localhost:[port]/api/documentation
 ./vendor/bin/phpunit
 ```
 
-### Browser Tests
+### Browser Tests (Dusk)
+Start server in dusk environment.
+
+```
+php artisan config:clear
+php artisan serve --env=dusk
+```
+
+Run browser tests
+
 ```
 php artisan dusk
 ```

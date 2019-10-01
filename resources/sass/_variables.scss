@@ -7,7 +7,7 @@ $font-family-sans-serif: "Nunito", sans-serif;
 $font-size-base: 0.9rem;
 $line-height-base: 1.6;
 
-// Colors
+/*// Colors
 $blue: #3490dc;
 $indigo: #6574cd;
 $purple: #9561e2;
@@ -18,3 +18,174 @@ $yellow: #ffed4a;
 $green: #38c172;
 $teal: #4dc0b5;
 $cyan: #6cb2eb;
+$white: #000;
+$black: #111;*/
+
+
+
+//COLORS
+//--------------------------------------------------------
+//Primary
+$light-blue: #3c8dbc;
+//Danger
+$red: #dd4b39;
+$danger: #dd4b39;
+//Success
+$green: #00a65a;
+$success: #00a65a;
+//Info
+$aqua: #00c0ef;
+$info: #00c0ef;
+//Warning
+$yellow: #f39c12;
+$warning: #f39c12;
+$blue: #0073b7;
+$navy: #001F3F;
+$teal: #39CCCC;
+$olive: #3D9970;
+$lime: #01FF70;
+$orange: #FF851B;
+$fuchsia: #F012BE;
+$purple: #605ca8;
+$maroon: #D81B60;
+$black: #111;
+$white: #fff;
+$gray-lte: #d2d6de;
+
+$gray-base: #000;
+$gray-darker: lighten($gray-base, 13.5%);
+// #222
+$gray-dark: lighten($gray-base, 20%);
+// #333
+$gray: lighten($gray-base, 33.5%);
+// #555
+$gray-light: lighten($gray-base, 46.7%);
+// #777
+$gray-lighter: lighten($gray-base, 93.5%);
+
+//LAYOUT
+//--------------------------------------------------------
+// So media queries don't overlap when required, provide a maximum
+//== Media queries breakpoints
+//
+//## Define the breakpoints at which your layout will change, adapting to different screen sizes.
+
+// Extra small screen / phone
+//** Deprecated `$screen-xs` as of v3.0.1
+$screen-xs: 480px;
+//** Deprecated `$screen-xs-min` as of v3.2.0
+$screen-xs-min: $screen-xs;
+//** Deprecated `$screen-phone` as of v3.0.1
+$screen-phone: $screen-xs-min;
+
+// Small screen / tablet
+//** Deprecated `$screen-sm` as of v3.0.1
+$screen-sm: 768px;
+$screen-sm-min: $screen-sm;
+//** Deprecated `$screen-tablet` as of v3.0.1
+$screen-tablet: $screen-sm-min;
+
+// Medium screen / desktop
+//** Deprecated `$screen-md` as of v3.0.1
+$screen-md: 992px;
+$screen-md-min: $screen-md;
+//** Deprecated `$screen-desktop` as of v3.0.1
+$screen-desktop: $screen-md-min;
+
+// Large screen / wide desktop
+//** Deprecated `$screen-lg` as of v3.0.1
+$screen-lg: 1200px;
+$screen-lg-min: $screen-lg;
+//** Deprecated `$screen-lg-desktop` as of v3.0.1
+$screen-lg-desktop: $screen-lg-min;
+$screen-xs-max: ($screen-sm-min - 1);
+$screen-sm-max: ($screen-md-min - 1);
+$screen-md-max: ($screen-lg-min - 1);
+
+//Side bar and logo width
+$sidebar-width: 230px;
+//Boxed layout maximum width
+$boxed-layout-max-width: 1024px;
+//When the logo should go to the top of the screen
+$screen-header-collapse: $screen-xs-max;
+
+//Link colors (Aka: <a> tags)
+$link-color: $light-blue;
+$link-hover-color: lighten($link-color, 15%);
+
+//Body background (Affects main content background only)
+$body-bg: #ecf0f5;
+
+//SIDEBAR SKINS
+//--------------------------------------------------------
+
+//Dark sidebar
+$sidebar-dark-bg: #222d32;
+$sidebar-dark-hover-bg: darken($sidebar-dark-bg, 2%);
+$sidebar-dark-color: lighten($sidebar-dark-bg, 60%);
+$sidebar-dark-hover-color: #fff;
+$sidebar-dark-submenu-bg: lighten($sidebar-dark-bg, 5%);
+$sidebar-dark-submenu-color: lighten($sidebar-dark-submenu-bg, 40%);
+$sidebar-dark-submenu-hover-color: #fff;
+
+//Light sidebar
+$sidebar-light-bg: #f9fafc;
+$sidebar-light-hover-bg: lighten(#f0f0f1, 1.5%);
+$sidebar-light-color: #444;
+$sidebar-light-hover-color: #000;
+$sidebar-light-submenu-bg: $sidebar-light-hover-bg;
+$sidebar-light-submenu-color: #777;
+$sidebar-light-submenu-hover-color: #000;
+
+//CONTROL SIDEBAR
+//--------------------------------------------------------
+$control-sidebar-width: $sidebar-width;
+
+//BOXES
+//--------------------------------------------------------
+$box-border-color: #f4f4f4;
+$box-border-radius: 3px;
+$box-footer-bg: #fff;
+$box-boxshadow: 0 1px 1px rgba(0, 0, 0, .1);
+$box-padding: 10px;
+
+//Box variants
+$box-default-border-top-color: #d2d6de;
+
+//BUTTONS
+//--------------------------------------------------------
+$btn-boxshadow: none;
+
+//PROGRESS BARS
+//--------------------------------------------------------
+$progress-bar-border-radius: 1px;
+$progress-bar-sm-border-radius: 1px;
+$progress-bar-xs-border-radius: 1px;
+
+//FORMS
+//--------------------------------------------------------
+$input-radius: 0;
+
+//BUTTONS
+//--------------------------------------------------------
+
+//Border radius for non flat buttons
+$btn-border-radius: 3px;
+
+//DIRECT CHAT
+//--------------------------------------------------------
+$direct-chat-height: 250px;
+$direct-chat-default-msg-bg: $gray-lte;
+$direct-chat-default-font-color: #444;
+$direct-chat-default-msg-border-color: $gray-lte;
+
+//CHAT WIDGET
+//--------------------------------------------------------
+$attachment-border-radius: 3px;
+
+//TRANSITIONS SETTINGS
+//--------------------------------------------------------
+
+//Transition global options
+$transition-speed: .3s;
+$transition-fn: ease-in-out;

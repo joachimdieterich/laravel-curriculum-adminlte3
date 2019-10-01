@@ -121,13 +121,13 @@ class OrganizationsController extends Controller
     public function show(Organization $organization)
     {
         abort_unless(\Gate::allows('organization_show'), 403);
-        $statuses = Status::all();
         // axios call? 
-        if (request()->wantsJson()){    
+        if (request()->wantsJson()){   
             return [
                 'message' => $organization
             ];
         }
+        $statuses = Status::all();
         return view('organizations.show')
                 ->with(compact('organization'))
                 ->with(compact('statuses'));
@@ -160,7 +160,7 @@ class OrganizationsController extends Controller
     public function update(Organization $organization)
     { 
         abort_unless(\Gate::allows('organization_edit'), 403);
-        $clean_data = $this->validateRequest();
+        $clean_data = $this->validateRequest();        
         if (isset(request()->status_id[0]))
         {
             $clean_data['status_id'] =  request()->status_id[0];  //hack to prevent array to string conversion

@@ -12,7 +12,9 @@
         </div>
     </div>
     <select v-else
-            class="form-control" :disabled="isDisabled" :multiple="isMultiple">
+            class="form-control" 
+            :disabled="isDisabled" 
+            :multiple="isMultiple">
         <option v-for="(item,index) in list" :data="item" :key="index">
             {{ getItem(item) }}
         </option>

@@ -42,8 +42,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('groupList', 'GroupsController@groupList');
     Route::resource('groups', 'GroupsController');
 
+    /*  */
+    Route::resource('navigators', 'NavigatorController');
+    Route::get('navigators/{navigator}/{navigator_view}', 'NavigatorViewController@show');
     /* media routes */
     Route::resource('media', 'MediumController');
+    
 
     /* objectiveTypes routes */
     Route::resource('objectiveTypes', 'ObjectiveTypeController');

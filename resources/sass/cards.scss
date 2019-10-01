@@ -1,0 +1,16 @@
+/*
+ * Component: Box
+ * --------------
+ */
+.box-group {
+    .box {
+        margin-bottom: 0px;
+    }
+}
+
+.boxcontent {
+    > ul {
+        padding-left: 20px !important;
+        padding-right: 5px !important;
+    }
+}

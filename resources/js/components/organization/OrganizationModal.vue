@@ -106,7 +106,7 @@
                     <label for="email">{{ trans('global.organization.fields.email') }}</label>
                     <input
                         type="text" id="email"
-                        name="phone"
+                        name="email"
                         class="form-control"
                         v-model="form.email"
                         placeholder="Email"
@@ -114,23 +114,28 @@
                     <p class="help-block" v-if="form.errors.email" v-text="form.errors.email[0]"></p>
                 </div>
                 <div class="form-group ">
-                    <label for="status">{{ trans('global.organization.fields.status') }}</label>
-                    <input
-                        type="text" id="status" 
-                        name="phone"
-                        class="form-control"
-                        v-model="form.status"
-                        placeholder="Status"
-                        readonly
-                        />
-                    <p class="help-block" v-if="form.errors.status" v-text="form.errors.status[0]"></p>
+                    <label>{{ trans('global.organization.fields.status') }}</label>
+                    <select class="form-control" 
+                            v-model="form.status_id"
+                            id="status"
+                            name="status"
+                            >
+                        <option v-for="(item,index) in statuses" v-bind:value="item.status_id">
+                            {{ item.lang_de }}
+                        </option>
+                    </select>
+                    <p class="help-block" v-if="form.errors.status_id" v-text="form.errors.status_id[0]"></p>
                 </div>
 
             </div>
                 <div class="card-footer">
                      <div class="form-group m-2">
-                         <button type="button" class="btn btn-info" data-widget="remove" @click="$emit('close')">{{ trans('global.cancel') }}</button>
-                         <button class="btn btn-info" @click="submit()" >{{ trans('global.save') }}</button>
+                         <button id="organization-cancel"
+                                 type="button" 
+                                 class="btn btn-info" 
+                                 data-widget="remove" @click="$emit('close')">{{ trans('global.cancel') }}</button>
+                         <button id="organization-save"
+                                 class="btn btn-info" @click="submit(method)" >{{ trans('global.save') }}</button>
                     </div>
                 </div>
             </form>
@@ -147,6 +152,7 @@
                 method: 'post',
                 requestUrl: '/enablingObjectives',
                 form: new Form({
+                    'id':'',
                     'title': '',
                     'description': '',
                     'street': '',
@@ -154,15 +160,20 @@
                     'city': '',
                     'phone': '',
                     'email': '',
-                    'status': '',
+                    'status_id': '',
                 }),
                 statuses: null,
             }
         },
         methods: {
-            async submit() {
+            async submit(method) {
                 try {
-                    this.location = (await axios.post('/organizations', this.form)).data.message;
+                    if (method === 'patch'){
+                        this.location = (await axios.patch('/organizations/'+this.form.id, this.form)).data.message;
+                    } else {
+                        this.location = (await axios.post('/organizations', this.form)).data.message;
+                    }
+                    
                 } catch(error) {
                     this.form.errors = error.response.data.form.errors;
                 }

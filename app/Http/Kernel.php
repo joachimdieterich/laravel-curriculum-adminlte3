@@ -29,6 +29,13 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\AuthGates::class,
             \App\Http\Middleware\SetLocale::class,
         ],
+        // NEW LINE
+        'client_credentials' => [
+            \Laravel\Passport\Http\Middleware\CheckClientCredentials::class,
+            'throttle:60,1',
+            'bindings',
+        ]
+        
     ];
 
     protected $routeMiddleware = [
@@ -40,6 +47,5 @@ class Kernel extends HttpKernel
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'bindings'      => \Illuminate\Routing\Middleware\SubstituteBindings::class,
         'auth.basic'    => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'client'        => \Laravel\Passport\Http\Middleware\CheckClientCredentials::class,
     ];
 }

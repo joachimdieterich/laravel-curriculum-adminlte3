@@ -6,11 +6,21 @@ use Laravel\Dusk\TestCase as BaseTestCase;
 use Facebook\WebDriver\Chrome\ChromeOptions;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
+use DatabaseSeeder;
+use Illuminate\Support\Facades\Artisan;
+
 
 abstract class DuskTestCase extends BaseTestCase
 {
     use CreatesApplication;
 
+    
+    public function setUp() : void
+    {
+        parent::setUp();
+        Artisan::call('migrate:fresh --seed');
+    }
+    
     /**
      * Prepare for Dusk test execution.
      *

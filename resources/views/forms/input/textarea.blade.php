@@ -8,7 +8,7 @@
     <textarea 
         id="{{ $field }}" 
         name="{{ $field }}" 
-        class="form-control ckeditor"
+        class="form-control"
         rows="{{ $rows }}"
         placeholder="{{ __( $placeholder ) }}" 
         @if(isset($required)) 

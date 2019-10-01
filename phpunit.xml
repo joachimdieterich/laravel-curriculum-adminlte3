@@ -19,6 +19,7 @@
 
         <testsuite name="Feature">
             <directory suffix="Test.php">./tests/Feature</directory>
+            <exclude>./tests/Browser/</exclude>
         </testsuite>
     </testsuites>
     <filter>

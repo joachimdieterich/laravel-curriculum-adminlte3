@@ -4,11 +4,30 @@
 
 // Variables
 @import 'variables';
+// Boxes
+@import 'boxes.scss';
+// Cards
+@import 'cards.scss';
 
 // Bootstrap
 //@import '~bootstrap/scss/bootstrap';
 
 .navbar-laravel {
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.col-centered {    
+    float: none;    
+    margin: 0 auto;
+}
+
+.text-cut{
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pointer {
+    cursor: pointer;
 }

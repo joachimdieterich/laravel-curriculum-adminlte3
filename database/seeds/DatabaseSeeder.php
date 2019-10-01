@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             ObjectiveTypeTableSeeder::class,
             CurriculumTableSeeder::class,
             CurriculumGroupTableSeeder::class,
+            MediaTableSeeder::class,
         ]);
     }
 }

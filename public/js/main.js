@@ -1,8 +1,6 @@
 $(document).ready(function () {
   window._token = $('meta[name="csrf-token"]').attr('content')
 
-  ClassicEditor.create(document.querySelector('.ckeditor'))
-
   moment.updateLocale('en', {
     week: {dow: 1} // Monday is the first day of the week
   })

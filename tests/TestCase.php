@@ -4,6 +4,7 @@ namespace Tests;
 
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use DatabaseSeeder;
+use Laravel\Passport\Passport;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -60,9 +61,7 @@ abstract class TestCase extends BaseTestCase
             'password' => 'password',
         ];
         $this->followingRedirects()->post('login', $credentials)->assertStatus(200);
-        $this->actingAs(auth()->user(), 'api');
+        return Passport::actingAsClient(auth()->user());
         
-        return auth()->user();
-    }
-    
+    }   
 }

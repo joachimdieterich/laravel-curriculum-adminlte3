@@ -151,11 +151,11 @@ return [
         'passport' => [ // Unique name of security
             'type' => 'oauth2', // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
             'description' => 'Laravel passport oauth2 security.',
-//            'in' => 'header',
-//            'scheme' => 'https',
+            'in' => 'header',
+//          'scheme' => 'https',
             'flows' => [
-                "password" => [
-//                    "authorizationUrl" => config('app.url') . '/oauth/authorize',
+                "clientCredentials" => [
+//                  "authorizationUrl" => config('app.url') . '/oauth/authorize',
                     "tokenUrl" => config('app.url') . '/oauth/token',
                     "refreshUrl" => config('app.url') . '/token/refresh',
                     "scopes" => []

@@ -29,12 +29,16 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\AuthGates::class,
             \App\Http\Middleware\SetLocale::class,
         ],
-        // NEW LINE
         'client_credentials' => [
             \Laravel\Passport\Http\Middleware\CheckClientCredentials::class,
             'throttle:60,1',
             'bindings',
-        ]
+        ],
+        'saml' => [
+            \App\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+        ],
         
     ];
 

@@ -18,6 +18,12 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        'Aacotroneo\Saml2\Events\Saml2LoginEvent' => [
+			'App\Listeners\SAMLLoginListener'
+	],
+        'Aacotroneo\Saml2\Events\Saml2LogoutEvent' => [
+			'App\Listeners\SAMLLogoutListener'
+	],
     ];
 
     /**

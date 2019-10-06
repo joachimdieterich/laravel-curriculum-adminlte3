@@ -112,7 +112,7 @@
                             @can('navigator_manage')
                                 <li class="nav-item">
                                     <a href="{{ route("navigators.index") }}" class="nav-link {{ request()->is('navigators') || request()->is('navigators/*') ? 'active' : '' }}">
-                                        <i class="fa fa-grip-horizontal"></i>
+                                        <i class="fa fa-map-signs"></i>
                                         <p>
                                             <span>{{ trans('global.navigator.title') }}</span>
                                         </p>

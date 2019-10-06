@@ -6,7 +6,7 @@
     <div class="row p-3">
         <div class="col-12">
             <h5 class="pull-left">
-                <i class="fa fa-university mr-1"></i> 
+                <i class="fa fa-map-signs mr-1"></i> 
                 {{ $navigators->title }} <small>| {{ isset($views->title) ? $views->title : ''}}
                     <br>
                     {{ isset($views->description) ? $views->description : ''}}

@@ -14,21 +14,14 @@
 
 namespace Tests\Setup;
 
-use App\Group;
+use App\Navigator;
 
-class GroupFactory
+class NavigatorFactory
 {
-    protected $user;
-
-    public function ownedBy($user)
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
+    
     public function create()
     {
-        return factory(Group::class)->create();
+        return factory(Navigator::class)->create();
     }
+    
 }

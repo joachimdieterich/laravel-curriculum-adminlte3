@@ -264,6 +264,9 @@ class CurriculumController extends Controller
     public function destroy(Curriculum $curriculum)
     {
         abort_unless(\Gate::allows('curriculum_delete'), 403);
+        $curriculum->delete();
+
+        return back();
     }
     
     protected function validateRequest()

@@ -182,7 +182,7 @@ class CurriculumImportController extends Controller
         
     }
     
-    private function importMedia($media_node, $model, $folder ,$path){
+    private function importMedia($media_node, $model, $folder, $path){
         $new_folder = class_basename($model);
         $temp_filepath = storage_path("app/{$folder}/{$path}").$media_node->getAttribute('filename');
         if (!file_exists($temp_filepath)) {
@@ -207,11 +207,13 @@ class CurriculumImportController extends Controller
         ]);
         $media->save();
         
-        Storage::disk('local')
-                ->move("{$folder}/{$path}".$media_node->getAttribute('filename'),
-                       "/{$new_folder}/{$model->id}/{$media_node->getAttribute('filename')}"
-                );
-
+        if (!Storage::disk('local')->exists("/{$new_folder}/{$model->id}/{$media_node->getAttribute('filename')}")) //only copy if not exists 
+        {
+            Storage::disk('local')
+                    ->move("{$folder}/{$path}".$media_node->getAttribute('filename'),
+                           "/{$new_folder}/{$model->id}/{$media_node->getAttribute('filename')}");
+        } 
+        
         $media->fresh();
        
         $media->subscribe($model);

@@ -58,7 +58,7 @@
                         <a class="nav-link nav-dropdown-toggle">
                             <i class="fas fa-users"></i>
                             <p>
-                                <span>{{ trans('global.userManagement.title') }}</span>
+                                <span>{{ trans('global.user_management') }}</span>
                                 <i class="right fa fa-angle-left"></i>
                             </p>
                         </a>
@@ -96,46 +96,78 @@
                         </ul>
                     </li>
                 @endcan
+                
+                
                 @can('organization_manage')
-                    <li class="nav-item">
-                        <a href="{{ route("organizations.index") }}" class="nav-link {{ request()->is('organizations') || request()->is('organizations/*') ? 'active' : '' }}">
-                            <i class="fas fa-university"></i>
+                    <li class="nav-item has-treeview {{ request()->is('permissions*') ? 'menu-open' : '' }} {{ request()->is('roles*') ? 'menu-open' : '' }} {{ request()->is('users*') ? 'menu-open' : '' }}">
+                        <a class="nav-link nav-dropdown-toggle">
+                            <i class="fas fa-users"></i>
                             <p>
-                                <span>{{ trans('global.organization.title') }}</span>
+                                <span>{{ trans('global.organization_management') }}</span>
+                                <i class="right fa fa-angle-left"></i>
                             </p>
                         </a>
+                        <ul class="nav nav-treeview">
+                            
+                            @can('navigator_manage')
+                                <li class="nav-item">
+                                    <a href="{{ route("navigators.index") }}" class="nav-link {{ request()->is('navigators') || request()->is('navigators/*') ? 'active' : '' }}">
+                                        <i class="fa fa-grip-horizontal"></i>
+                                        <p>
+                                            <span>{{ trans('global.navigator.title') }}</span>
+                                        </p>
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('group_manage')
+                                <li class="nav-item">
+                                    <a href="{{ route("groups.index") }}" class="nav-link {{ request()->is('groups') || request()->is('groups/*') ? 'active' : '' }}">
+                                        <i class="fa fa-users"></i>
+                                        <p>
+                                            <span>{{ trans('global.group.title') }}</span>
+                                        </p>
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('grade_manage')
+                                <li class="nav-item">
+                                    <a href="{{ route("grades.index") }}" class="nav-link {{ request()->is('grades') || request()->is('grades/*') ? 'active' : '' }}">
+                                        <i class="fas fa-signal"></i>
+                                        <p>
+                                            <span>{{ trans('global.grade.title') }}</span>
+                                        </p>
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('organization_type_manage')
+                                <li class="nav-item">
+                                    <a href="{{ route("organizationtypes.index") }}" class="nav-link {{ request()->is('organizationtypes') || request()->is('organizationtypes/*') ? 'active' : '' }}">
+                                        <i class="fas fa-signal"></i>
+                                        <p>
+                                            <span>{{ trans('global.organizationtype.title') }}</span>
+                                        </p>
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('organization_manage')
+                                <li class="nav nav-treeview">
+                                    <a href="{{ route("organizations.index") }}" class="nav-link {{ request()->is('organizations') || request()->is('organizations/*') ? 'active' : '' }}">
+                                        <i class="fas fa-university"></i>
+                                        <p>
+                                            <span>{{ trans('global.organization.title') }}</span>
+                                        </p>
+                                    </a>
+                                </li>
+                            @endcan
+                        </ul>
                     </li>
                 @endcan
-                @can('group_manage')
-                    <li class="nav-item">
-                        <a href="{{ route("groups.index") }}" class="nav-link {{ request()->is('groups') || request()->is('groups/*') ? 'active' : '' }}">
-                            <i class="fa fa-users"></i>
-                            <p>
-                                <span>{{ trans('global.group.title') }}</span>
-                            </p>
-                        </a>
-                    </li>
-                @endcan
-                @can('grade_manage')
-                    <li class="nav-item">
-                        <a href="{{ route("grades.index") }}" class="nav-link {{ request()->is('grades') || request()->is('grades/*') ? 'active' : '' }}">
-                            <i class="fas fa-signal"></i>
-                            <p>
-                                <span>{{ trans('global.grade.title') }}</span>
-                            </p>
-                        </a>
-                    </li>
-                @endcan
-                @can('organization_type_manage')
-                    <li class="nav-item">
-                        <a href="{{ route("organizationtypes.index") }}" class="nav-link {{ request()->is('organizationtypes') || request()->is('organizationtypes/*') ? 'active' : '' }}">
-                            <i class="fas fa-signal"></i>
-                            <p>
-                                <span>{{ trans('global.organizationtype.title') }}</span>
-                            </p>
-                        </a>
-                    </li>
-                @endcan
+                
+                
+                
+                
+                
+                
                 <li class="nav-item">
                     <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
                         <p>

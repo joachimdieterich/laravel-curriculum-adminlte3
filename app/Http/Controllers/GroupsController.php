@@ -140,7 +140,6 @@ class GroupsController extends Controller
     
     public function edit(Group $group)
     {
-        
         abort_unless(\Gate::allows('group_edit'), 403);
         $grades = Grade::all();
         $periods = Period::all();

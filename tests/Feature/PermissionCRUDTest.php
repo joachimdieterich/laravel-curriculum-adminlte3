@@ -57,11 +57,12 @@ class PermissionCRUDTest extends TestCase
     {
          
         $this->post("permissions" , $permission1 = factory('App\Permission')->raw());
-        $id = Permission::where('title', $permission1['title'])->first()->id;
+        $permission = Permission::where('title', $permission1['title'])->first();
         
         $this->followingRedirects()
-                ->delete("permissions/". $id )
+                ->delete("permissions/". $permission->id )
                 ->assertStatus(200);
+        $this->assertDatabaseMissing('permissions', compact('permission'));
     }
     
     /** @test 

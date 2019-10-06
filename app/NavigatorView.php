@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class NavigatorView extends Model
 {
+    protected $guarded = [];
+    
     public function path()
     {
         return "/navigators/{$this->navigator_id}/{$this->id}";
@@ -19,5 +21,10 @@ class NavigatorView extends Model
     public function navigator()
     {
         return $this->belongsTo('App\Navigator', 'id', 'navigator_id');
+    }
+    
+     public function navigator_item()
+    {
+        return $this->morphOne('App\NavigatorItem', 'referenceable');
     }
 }

@@ -42,8 +42,9 @@ class Content extends Model
         return $this->hasMany('App\Quote', 'referenceable_id', 'id');
     }
     
-    
-    
-
+    public function navigator_item()
+    {
+        return $this->morphOne('App\NavigatorItem', 'referenceable');
+    }
   
 }

@@ -19,7 +19,7 @@ class MediaTableSeeder extends Seeder
             {
 
                 $media = new Medium([
-                'path'          => "/subject/".$file->getFilename(),
+                'path'          => "/subjects/",
                 'title'         => $file->getFilename(),
                 'medium_name'   => $file->getFilename(),
                 'description'   => '',

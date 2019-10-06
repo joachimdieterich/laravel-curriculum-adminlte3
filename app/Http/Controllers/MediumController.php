@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Medium;
+use File;
 use Illuminate\Http\Request;
 
 class MediumController extends Controller
@@ -48,7 +49,23 @@ class MediumController extends Controller
      */
     public function show(Medium $medium)
     {
+        /* id link */
+        if ($medium->mime_type == 'url'){
+            return redirect($medium->path);
+        }
+        
         $path = storage_path('app'.$medium->path.$medium->medium_name);
+        
+        if (!file_exists($path)) {
+            abort(404);
+        }
+        
+        /* if subscribed */
+            /* check visibility */
+
+            /* check sharing level */
+        /* end if subscribed */
+        
         return response()->file($path);
     }
 

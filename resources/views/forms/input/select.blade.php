@@ -1,6 +1,11 @@
-<div class="form-group {{ $errors->has( $field ) ? ' has-danger' : '' }}">
+<div id="{{ $field }}_form_group" class="form-group {{ $errors->has( $field ) ? ' has-danger' : '' }}">
     @if(isset($show_label))      
-        <label for="{{ $field }}" class="{{ isset($class_left) ? $class_left : 'col-sm-3' }}">{{ trans("global.{$model}.title_singular") }}
+        <label for="{{ $field }}" class="{{ isset($class_left) ? $class_left : 'col-sm-3' }}">
+            @if(isset($label))
+                {{ $label }}
+            @else
+                {{ trans("global.{$model}.title_singular") }}
+            @endif
             @if(isset($multiple)) 
             <span class="btn btn-info btn-xs select-all">Select all</span>
             <span class="btn btn-info btn-xs deselect-all">Deselect all</span>

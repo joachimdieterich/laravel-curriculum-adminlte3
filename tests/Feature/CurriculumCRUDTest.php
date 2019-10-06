@@ -59,13 +59,14 @@ class CurriculumCRUDTest extends TestCase
      */  
     public function an_administrator_delete_a_curriculum()
     {
-         
-        /* add new organization */
-        $org = CurriculumFactory::create();
+        $this->post("curricula" , $curriculum = factory('App\Curriculum')->raw());
+        $id = Curriculum::where('title', $curriculum['title'])->first()->id;
         
         $this->followingRedirects()
-                ->delete("curricula/". $org->id )
+                ->delete("curricula/". $id )
                 ->assertStatus(200);
+        
+        $this->assertDatabaseMissing('curricula', $curriculum);
     }
     
     /** @test 

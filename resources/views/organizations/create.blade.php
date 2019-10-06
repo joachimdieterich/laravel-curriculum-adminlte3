@@ -13,7 +13,6 @@
                 'buttonText' => 'Create Institution'
             ])
         </form>
-        </form>
     </div>
 </div>
 @endsection

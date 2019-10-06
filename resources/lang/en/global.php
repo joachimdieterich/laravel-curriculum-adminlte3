@@ -273,6 +273,7 @@ return [
     'edit_calendar_source'                 => 'Edit Calendar Source',
     'client_management'                    => 'Client management',
     'client_management_settings'           => 'Client management settings',
+    'content'                              => 'Content',
     'country'                              => 'Country',
     'client_status'                        => 'Client status',
     'clients'                              => 'Clients',
@@ -281,6 +282,8 @@ return [
     'main_currency'                        => 'Main currency',
     'documents'                            => 'Documents',
     'file'                                 => 'File',
+    'footer'                               => 'Footer',
+    'header'                               => 'Header',
     'income_source'                        => 'Income source',
     'income_sources'                       => 'Income sources',
     'fee_percent'                          => 'Fee percent',
@@ -328,11 +331,6 @@ return [
     'team-management'                      => 'Teams',
     'team-management-singular'             => 'Team',
     'site_title'                           => 'curriculum',
-    'userManagement'                       => [
-        'title'          => 'User Management',
-        'title_singular' => 'User Management',
-        'fields'         => [],
-    ],
     'permission'                           => [
         'title'          => 'Permissions',
         'title_singular' => 'Permission',
@@ -369,6 +367,7 @@ return [
             'deleted_at_helper'  => '',
         ],
     ],
+    'organization_management'   => 'Organization management',
     'organization'              =>[
         'title'          => 'Organizations',
         'title_singular' => 'Organization',
@@ -568,5 +567,55 @@ return [
         'title'          => 'Media',
         'title_singular' => 'Media',
     ],
+    'navigator' =>[
+        'title'             => 'Navigators',
+        'title_singular'    => 'Navigator',
+        'fields'            => [
+            'id'            => 'ID',
+            'id_helper'     => '',
+            'title'         => 'Title',
+            'title_helper'  => '',
+        ],
+    ],
+    'navigator_view' =>[
+        'title'          => 'Navigator Views',
+        'title_singular' => 'Navigator View',
+        'fields'         => [
+            'id'         => 'ID',
+            'id_helper'  => '',
+            'title'      => 'Title',
+            'title_helper'  => '',
+            'description'    => 'Description',
+            'description_helper'  => '',
+        ]   
+    ],
+    'navigator_item' =>[
+        'title'          => 'Navigator Items',
+        'title_singular' => 'Navigator Item',
+        'fields'         => [
+            'id'         => 'ID',
+            'id_helper'  => '',
+            'title'      => 'Title',
+            'title_helper'  => '',
+            'description'    => 'Description',
+            'description_helper'  => '',
+            'referenceable_type' => 'Type',
+            'referenceable_type_helper'  => '',
+            'referenceable_id' => 'Target Id',
+            'referenceable_id_helper' => '',
+            'position' => 'Position',
+            'position_helper' => '',
+            'css_class' => 'css_class',
+            'css_class_helper' => '',
+            'visibility_show' => 'show',
+            'visibility_hide' => 'hide'
+        ]   
+    ],
+    'referenceable_types' =>[
+        'navigator_view' => 'Link a navigator view',
+        'curriculum' => 'Link a curriculum',
+        'content' => 'Link a text',
+        'medium' => 'Link a medium (file, url)',
+    ]
     
 ];

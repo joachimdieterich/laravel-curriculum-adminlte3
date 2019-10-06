@@ -1,4 +1,4 @@
-<div class="form-group {{ $errors->has('$field') ? 'has-error' : '' }}">
+<div id="{{ $field }}_form_group" class="form-group {{ $errors->has('$field') ? 'has-error' : '' }}">
     <label for="{{ $field }}">
         {{ trans('global.'.$model.'.fields.'.$field) }}
         @if(isset($required)) 

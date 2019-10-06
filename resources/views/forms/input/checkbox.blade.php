@@ -1,4 +1,4 @@
-<div class="form-check{{ $errors->has( $field ) ? ' has-danger' : '' }}">
+<div id="{{ $field }}_form_group" class="form-check{{ $errors->has( $field ) ? ' has-danger' : '' }}">
     <input 
         id="{{ $field }}"
         type="checkbox" 

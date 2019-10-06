@@ -77,5 +77,10 @@ class Organization extends Model
     {
         return $this->hasOne('App\Status', 'status_id', 'status_id');
     }
+    
+    public function navigators()
+    {
+        return $this->hasMany('App\Navigator');
+    }
 
 }

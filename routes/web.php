@@ -42,9 +42,18 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('groupList', 'GroupsController@groupList');
     Route::resource('groups', 'GroupsController');
 
-    /*  */
+    /* Navigators */
+    
+    Route::get('navigators/list', 'NavigatorController@list');
     Route::resource('navigators', 'NavigatorController');
-    Route::get('navigators/{navigator}/{navigator_view}', 'NavigatorViewController@show');
+    
+    Route::get('navigators/{navigator}/{navigator_view}', 'NavigatorViewController@show')->name('navigator.view');
+    Route::get('navigators/{navigator}/{navigator_view}/create', 'NavigatorItemController@create')->name('navigatorItems.create');
+    Route::post('navigators/{navigator}/{navigator_view}/store', 'NavigatorItemController@store');
+    
+    /* Navigator Views */
+    Route::resource('navigatorViews', 'NavigatorViewController');
+    
     /* media routes */
     Route::resource('media', 'MediumController');
     

@@ -86,7 +86,7 @@ class Curriculum extends Model
             'App\Medium',
             'App\MediumSubscription',
             'subscribable_id', // Foreign key on medium_subscription table...
-            'id', // Foreign key on medieum table...
+            'id', // Foreign key on medium table...
             'id', // Local key on curriculum table...
             'medium_id' // Local key on medium_subscription table...
         )->where('subscribable_type', get_class($this)); 
@@ -95,5 +95,10 @@ class Curriculum extends Model
     public function glossar()
     {
         return $this->hasOne('App\Glossar', 'subscribable_id', 'id')->where('subscribable_type', get_class($this)); 
+    }
+    
+    public function navigator_item()
+    {
+        return $this->morphOne('App\NavigatorItem', 'referenceable');
     }
 }

@@ -1,4 +1,4 @@
-<div class="form-group">
+<div id="{{ $field }}_form_group" class="form-group">
     <label>
         {{ $value }}
     </label>

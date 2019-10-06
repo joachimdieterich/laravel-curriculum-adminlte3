@@ -32,8 +32,6 @@ class NavigatorViewController extends Controller
     {
         abort_unless(\Gate::allows('navigator_create'), 403);
         $new_navigator_item = $this->validateRequest();
-       
-        $uri_segments = explode("/", request()->getRequestUri());
                                         
         $navigator_view= NavigatorView::Create([
             'title'         => $new_navigator_item['title'],

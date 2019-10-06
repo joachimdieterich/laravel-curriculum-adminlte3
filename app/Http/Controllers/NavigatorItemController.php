@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Medium;
 
+
 class NavigatorItemController extends Controller
 {
     /**
@@ -29,8 +30,6 @@ class NavigatorItemController extends Controller
      */
     public function create()
     {
-        $uri_segments = explode("/", request()->getRequestUri());
-
         $referenceable_types = [
             (object) ['class' => 'App\NavigatorView', 'label' => trans('global.referenceable_types.navigator_view')], 
             (object) ['class' => 'App\Curriculum', 'label' => trans('global.referenceable_types.curriculum')], 
@@ -54,9 +53,12 @@ class NavigatorItemController extends Controller
         
         $curricula = Curriculum::all();
         $media = Medium::where('path', '/subjects/')->get(); //todo: only show usable media (e.g. images)
-                
+        $navigator_id = request()->navigator_id;
+        $view_id = request()->view_id;
+        
         return view('navigators.views.items.create')
-                    ->with(compact('uri_segments'))
+                    ->with(compact('navigator_id'))
+                    ->with(compact('view_id'))
                     ->with(compact('referenceable_types'))
                     ->with(compact('position'))
                     ->with(compact('css_classes'))
@@ -76,8 +78,9 @@ class NavigatorItemController extends Controller
         abort_unless(\Gate::allows('navigator_create'), 403);
         $new_navigator_item = $this->validateRequest();
        
-        $uri_segments = explode("/", request()->getRequestUri());
-        //dd($uri_segments);
+        $navigator_id = request()->navigator_id;
+        $view_id = request()->view_id;
+        
         switch (format_select_input($new_navigator_item['referenceable_type'])) {
             case 'App\Content':         $content = new Content([
                                                                 'title' => $new_navigator_item['title'],
@@ -99,7 +102,7 @@ class NavigatorItemController extends Controller
             case 'App\NavigatorView':   $navigator_view = new NavigatorView([
                                                                 'title' => $new_navigator_item['title'],
                                                                 'description' => $new_navigator_item['description'],
-                                                                'navigator_id' => $uri_segments[2]
+                                                                'navigator_id' => $navigator_id
                                                              ]);
                                         $navigator_view->save();
                                         
@@ -120,7 +123,7 @@ class NavigatorItemController extends Controller
         $navigator_item = NavigatorItem::firstOrCreate([
             'title'              => $title,
             'description'        => $description,
-            'navigator_view_id'  => $uri_segments[3],
+            'navigator_view_id'  => $view_id,
             'referenceable_type' => format_select_input($new_navigator_item['referenceable_type']),
             'referenceable_id'   => $referenceable_id,
             'position'           => format_select_input($new_navigator_item['position']),
@@ -141,27 +144,18 @@ class NavigatorItemController extends Controller
             return ['message' => $navigator_item->path()];
         }
         
-        return redirect()->route("navigator.view", ['navigator' => $uri_segments[2], 'navigator_view' => $uri_segments[3]]);
+        return redirect()->route("navigator.view", ['navigator' => $navigator_id, 'navigator_view' => $view_id]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\NavigatorItems  $navigatorItems
-     * @return Response
-     */
-    public function show(NavigatorItems $navigatorItems)
-    {
-        //
-    }
+    
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\NavigatorItems  $navigatorItems
+     * @param  \App\NavigatorItem  $navigatorItem
      * @return Response
      */
-    public function edit(NavigatorItems $navigatorItems)
+    public function edit(NavigatorItem $navigatorItem)
     {
         //
     }
@@ -170,10 +164,10 @@ class NavigatorItemController extends Controller
      * Update the specified resource in storage.
      *
      * @param  Request  $request
-     * @param  \App\NavigatorItems  $navigatorItems
+     * @param  \App\NavigatorItem  $navigatorItem
      * @return Response
      */
-    public function update(Request $request, NavigatorItems $navigatorItems)
+    public function update(Request $request, NavigatorItem $navigatorItem)
     {
         //
     }
@@ -181,12 +175,15 @@ class NavigatorItemController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\NavigatorItems  $navigatorItems
+     * @param  \App\NavigatorItem  $navigatorItem
      * @return Response
      */
-    public function destroy(NavigatorItems $navigatorItems)
+    public function destroy(NavigatorItem $navigatorItem)
     {
-        //
+        abort_unless(\Gate::allows('navigator_delete'), 403);
+        $navigatorItem->delete();
+
+        return back();
     }
     
     protected function validateRequest()

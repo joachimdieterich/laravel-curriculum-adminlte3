@@ -16,7 +16,7 @@
                 <span class="pull-right">
                     <a
                     @if(isset($views))
-                        href="{{route('navigatorItems.create', ['navigator' => $navigators->id, 'navigator_view' => $views->id])}}"
+                        href="{{route('navigatorItems.create', ['navigator_id' => $navigators->id, 'view_id' => $views->id])}}"
                     @else   
                         href="{{route('navigatorViews.create', ['navigator' => $navigators->id])}}"            
                     @endif
@@ -39,11 +39,12 @@
                         <form action="{{route('navigatorViews.destroy', ['navigator_view' => $views->id])}}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('DELETE')    
-                        <button  type="submit"
+                        <button type="submit"
                             class=" btn btn-danger btn-xs mr-1">
                             <i class="fa fa-trash"></i> 
                             {{ trans('global.delete') }}
                         </button> 
+                        </form>
                     </span>
                 @endcan
             @endif

@@ -48,11 +48,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('navigators', 'NavigatorController');
     
     Route::get('navigators/{navigator}/{navigator_view}', 'NavigatorViewController@show')->name('navigator.view');
-    Route::get('navigators/{navigator}/{navigator_view}/create', 'NavigatorItemController@create')->name('navigatorItems.create');
-    Route::post('navigators/{navigator}/{navigator_view}/store', 'NavigatorItemController@store');
-    
+   
     /* Navigator Views */
     Route::resource('navigatorViews', 'NavigatorViewController');
+    
+    /* Navigator Views */
+    Route::resource('navigatorItems', 'NavigatorItemController');
     
     /* media routes */
     Route::resource('media', 'MediumController');

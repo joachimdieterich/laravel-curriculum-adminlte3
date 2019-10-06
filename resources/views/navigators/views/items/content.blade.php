@@ -3,7 +3,7 @@
         <div class="box-header with-border">
             <h3 class="box-title" data-toggle="collapse" data-target="#card_{{ $item->id }}"> {{ $item->title }}</h3>
             <div class="box-tools pull-right">
-                <button class="btn btn-box-tool" onclick="processor('print','content', '1464')">
+                <button class="btn btn-box-tool" >
                     <i class="fa fa-print"></i>
                 </button>
                 <button class="btn btn-box-tool" data-toggle="collapse" data-target="#card_{{ $item->id }}">

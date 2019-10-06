@@ -5,11 +5,11 @@
                     @if ($item->position == $position)
                         @switch($item->referenceable_type)
                             @case('App\NavigatorView')
-                                @include ('navigators.views.items.navigator_view', [ 'item' => $item, 'onclick' => "location.href='/navigators/{$navigators->id}/{$item->referenceable_id}';" ])
+                                @include ('navigators.views.items.item', [ 'item' => $item, 'onclick' => "location.href='/navigators/{$navigators->id}/{$item->referenceable_id}';" ])
                                 @break
 
                             @case('App\Curriculum')
-                                @include ('navigators.views.items.curriculum', [ 'item' => $item, 'onclick' => "location.href='/curricula/{$item->referenceable_id}';" ])
+                                @include ('navigators.views.items.item', [ 'item' => $item, 'onclick' => "location.href='/curricula/{$item->referenceable_id}';" ])
                                 @break  
 
                             @case('App\Content')
@@ -17,7 +17,7 @@
                                 @break  
                                 
                              @case('App\Medium')
-                                @include ('navigators.views.items.medium', [ 'item' => $item, 'onclick' => "location.href='/media/{$item->referenceable_id}';" ])
+                                @include ('navigators.views.items.item', [ 'item' => $item, 'onclick' => "location.href='/media/{$item->referenceable_id}';" ])
                                 @break
                         @endswitch
                     @endif

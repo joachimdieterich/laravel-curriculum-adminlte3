@@ -99,7 +99,7 @@ class ReferenceSubscriptionController extends Controller
      */
     public function siblings(ReferenceSubscription $referenceSubscription)
     {
-       dd($referenceSubscription);
+       //dd($referenceSubscription);
         return ReferenceSubscription::where('reference_id', $referenceSubscription->reference_id)
                         ->with(['siblings' => function($query) use ($referenceSubscription) {
                                 $query->where('reference_id', $referenceSubscription->reference_id)

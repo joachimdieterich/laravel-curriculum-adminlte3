@@ -18,12 +18,17 @@ abstract class TestCase extends BaseTestCase
         
     }
     
-    protected function signIn($user = null)
+    protected function signIn($user = null) //student
     {
-        $user = $user ?: factory('App\User')->create();
-        $this->actingAs($user);
+        
+        $credentials = [
+            'email' => 'student@curriculumonline.de',
+            'password' => 'password',
+        ];
+        $this->followingRedirects()->post('login', $credentials)->assertStatus(200);
+        $this->actingAs(auth()->user());
 
-        return $user;
+        return auth()->user();
     }
     
     protected function signInAdmin($user = null)

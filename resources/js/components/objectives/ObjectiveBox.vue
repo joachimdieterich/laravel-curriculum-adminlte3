@@ -43,7 +43,7 @@
 
         <div style="padding: 5px;" class="panel-body boxwrap" >
             <div class="boxscroll" 
-                 v-bind:style="{ 'background-color': backgroundcolor, 'border-color': objective.color }"
+                 v-bind:style="{'background': background, 'background-color': backgroundcolor, 'border-color': objective.color }"
                  >
                 <div class="boxcontent" 
                      v-bind:style="{ 'color': textcolor }"
@@ -54,7 +54,8 @@
 
         <Footer :objective="objective"
                 :textcolor="textcolor"
-                :type="type"></Footer>
+                :type="type"
+                :settings="settings"></Footer>
 
     </div>
 </template>
@@ -114,7 +115,7 @@
                 this.$modal.show(modal, { 'objective': this.objective, 'method': 'post' });
             },
             async deleteEvent(object){
-                console.log('delete'+object);
+                //console.log('delete'+object);
                 try {   
                     this.location = (await axios.delete('/'+this.type+'Objectives/'+this.objective.id)).data.message
                 }
@@ -140,6 +141,9 @@
             
         },
         computed: {
+            background: function () {
+                return (this.type === 'terminal' ? 'none' : "");
+            },
             backgroundcolor: function () {
                 return (this.type === 'terminal' ? this.objective.color : "#fff");
             },
@@ -174,7 +178,6 @@
             this.$root.$off('eventSort')
         },
           
-        
         components: {
             Header, 
             Footer,

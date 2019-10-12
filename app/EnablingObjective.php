@@ -67,6 +67,11 @@ class EnablingObjective extends Model
         return $this->morphMany('App\ReferenceSubscription', 'referenceable');
     }
     
+    public function achievements()
+    {
+        return $this->morphMany('App\Achievement', 'referenceable');
+    }
+    
 
     
     

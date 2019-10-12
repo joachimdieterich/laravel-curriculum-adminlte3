@@ -12,7 +12,7 @@ class ManageContentTest extends TestCase
     /** @test */
     public function an_authentificated_can_create_a_content()
     {
-        //$this->withoutExceptionHandling();
+        $this->withoutExceptionHandling();
         $user = $this->signIn();
         
         $this->get('contents/create')->assertStatus(200);

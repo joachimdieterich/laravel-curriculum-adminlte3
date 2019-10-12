@@ -2,8 +2,38 @@
 @section('content')
 <div class="row">
     <div class="col-12 mx-2">
-        <h1>{{ $curriculum->title }}</h1>
+        <h1 class="pull-left">{{ $curriculum->title }}</h1>
+        @if(!isset(json_decode($settings)->achievements))
+            @can('user_create')
+                <a class="pull-right mr-3 mt-2 btn btn-success" href="{{ route("curricula.showAchievements", $curriculum->id) }}" >
+                    {{ trans('global.edit') }} {{ trans('global.achievement.title') }}
+                </a>
+            @endcan
+        @endif
     </div>
+    
+    
+    @if(isset(json_decode($settings)->achievements))
+    <div class="col-12 mx-2">
+        <div class="card-body">
+            <table id="users-datatable" class=" table table-bordered table-striped table-hover datatable">
+                <thead>
+                    <tr>
+                        <th width="10"></th>
+                        <th>{{ trans('global.user.fields.username') }}</th>
+                        <th>{{ trans('global.user.fields.firstname') }}</th>
+                        <th>{{ trans('global.user.fields.lastname') }}</th>
+                        <th>{{ trans('global.user.fields.email') }}</th>
+                        <th>{{ trans('global.user.fields.email_verified_at') }}</th>
+                        <th>{{ trans('global.status.title_singular') }}</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>     
+            </table>
+        </div>
+    </div>
+    @endif
+    
     
     <div class="col-12 mx-2">
 <!--        <button type="button" class="btn btn-default" data-toggle="tooltip"  onclick="">
@@ -38,6 +68,7 @@
     
     
     <curriculum-view
+        ref="curriculumView"
         :curriculum="{{ $curriculum }}" 
         :terminalobjectives="{{ $terminalObjectives }}"
         :enablingobjectives="{{ $enablingObjectives }}"
@@ -52,4 +83,55 @@
 <medium-modal></medium-modal>
 <objective-medium-modal></objective-medium-modal>
 <medium-modal></medium-modal>
+@endsection
+@section('scripts')
+@parent
+
+@if(isset(json_decode($settings)->achievements))
+    <script>
+        
+function getDatatablesIds(selector){
+    return $(selector).DataTable().rows({ selected: true }).ids().toArray();
+}
+
+function triggerExternalEvent(type){
+    if ( type === 'row' ) {
+        app.__vue__.$refs.curriculumView.externalEvent(getDatatablesIds('#users-datatable')); //pass Ids to vue component
+    }
+}
+$(document).ready( function () {
+   
+    let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
+    table = $('#users-datatable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ url('users/list') }}",
+        columns: [
+                 { data: 'check'},
+                 { data: 'username' },
+                 { data: 'firstname' },
+                 { data: 'lastname' },
+                 { data: 'email' },
+                 { data: 'email_verified_at' },
+                 { data: 'status' },
+                 { data: 'action' }
+                ],
+        buttons: dtButtons
+    });
+    
+    //align header/body
+    $(".dataTables_scrollHeadInner").css({"width":"100%"});
+    $(".table ").css({"width":"100%"});
+    
+    table.on( 'select', function ( e, dt, type, indexes ) { //on select event
+        triggerExternalEvent(type)
+    });
+    table.on( 'deselect', function ( e, dt, type, indexes ) { //on deselect event
+        triggerExternalEvent(type)
+    });
+ });
+ 
+    </script>
+@endif
+
 @endsection

@@ -143,7 +143,7 @@
 
             beforeOpen(event) {
                 if (event.params.objective) {
-                    console.log(event.params.objective);
+                    //console.log(event.params.objective);
                     this.form.populate(event.params.objective);
                 }
 
@@ -157,7 +157,7 @@
             },
 
             beforeClose() {
-                console.log('close')
+                //console.log('close')
             },
 
             loadData: function () {
@@ -190,7 +190,7 @@
             this.loadData();
         },
         mounted() {
-            console.log('Component mounted.')
+            //console.log('Component mounted.')
         }
     }
 </script>

@@ -8,6 +8,8 @@
 @import 'boxes.scss';
 // Cards
 @import 'cards.scss';
+// Text
+@import 'text.scss';
 
 // Bootstrap
 //@import '~bootstrap/scss/bootstrap';
@@ -38,4 +40,22 @@
 
 .pull-left{
     float: left !important;
+}
+
+// FontAwesome Badges without layers
+.fabadge[data-count]{
+    position:relative;
+}
+.fabadge[data-count]:after{
+    position: absolute;
+    right: -0.75em;
+    top: -.75em;
+    content: attr(data-count);
+    border-radius: 10em;
+    line-height: .9em;
+    color: white;
+    background: rgba(0, 0, 0, 0.40);
+    text-align: center;
+    min-width: 2em;
+    font: bold .4em sans-serif;
 }

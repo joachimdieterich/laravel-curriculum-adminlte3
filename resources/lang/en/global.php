@@ -616,6 +616,25 @@ return [
         'curriculum' => 'Link a curriculum',
         'content' => 'Link a text',
         'medium' => 'Link a medium (file, url)',
-    ]
+    ],
+    'achievement' =>[
+        'title'          => 'Achievements',
+        'title_singular' => 'Achievement',
+        'fields'         => [
+            'id'         => 'ID',
+            'id_helper'  => '',
+            'referenceable_type' => 'Type',
+            'referenceable_type_helper'  => '',
+            'referenceable_id' => 'Target Id',
+            'referenceable_id_helper' => '',
+            'status' => 'Status',
+            'status_helper' => '',
+            'user_id' => 'User Id',
+            'user_id_helper' => '',
+            'owner_id' => 'Owner Id',
+            'owner_id_helper' => '',
+          
+        ]   
+    ],
     
 ];

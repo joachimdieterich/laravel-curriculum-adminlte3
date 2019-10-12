@@ -11,11 +11,12 @@ class PermissionRoleTableSeeder extends Seeder
         $admin_permissions = Permission::all();
         Role::findOrFail(1)->permissions()->sync($admin_permissions->pluck('id'));
         
-        //set user permissions
+        //set students permissions
         $user_permissions = $admin_permissions->filter(function ($permission) {
             
             $user_permission_list = [
                 'curriculum_show', 
+                'achievement_self_assessment'
                
             ];
             

@@ -108,6 +108,16 @@ class User extends Authenticatable
         return $this->belongsToMany('App\Group', 'group_user')->withTimestamps();
     } 
     
+    public function groupsWithCurriculum($curriculum_id)
+    {
+        return DB::table('groups')
+            ->join('group_user', 'groups.id', '=', 'group_user.group_id')
+            ->join('curriculum_group', 'curriculum_group.group_id', '=', 'group_user.group_id')
+            ->where('group_user.user_id', auth()->user()->id)
+            ->where('curriculum_group.curriculum_id', $curriculum_id)
+            ->get();
+    }
+    
     public function curricula()
     {
         return DB::table('curricula')

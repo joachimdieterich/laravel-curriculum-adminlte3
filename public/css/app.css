@@ -674,6 +674,80 @@ $black: #111;*/
   padding-right: 5px !important;
 }
 
+/*
+ * Text (color, size)
+ * --------------
+ */
+
+.text-red {
+  color: #dd4b39 !important;
+}
+
+.text-yellow {
+  color: #f39c12 !important;
+}
+
+.text-aqua {
+  color: #00c0ef !important;
+}
+
+.text-blue {
+  color: #0073b7 !important;
+}
+
+.text-black {
+  color: #111 !important;
+}
+
+.text-light-blue,
+.text-primary {
+  color: #3c8dbc !important;
+}
+
+.text-green {
+  color: #00a65a !important;
+}
+
+.text-gray {
+  color: #d2d6de !important;
+}
+
+.text-navy {
+  color: #001F3F !important;
+}
+
+.text-teal {
+  color: #39CCCC !important;
+}
+
+.text-olive {
+  color: #3d9970 !important;
+}
+
+.text-lime {
+  color: #01ff70 !important;
+}
+
+.text-orange {
+  color: #FF851B !important;
+}
+
+.text-fuchsia {
+  color: #F012BE !important;
+}
+
+.text-purple {
+  color: #605ca8 !important;
+}
+
+.text-maroon {
+  color: #D81B60 !important;
+}
+
+.t-18 {
+  font-size: 1.125rem;
+}
+
 .navbar-laravel {
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
@@ -700,5 +774,23 @@ $black: #111;*/
 
 .pull-left {
   float: left !important;
+}
+
+.fabadge[data-count] {
+  position: relative;
+}
+
+.fabadge[data-count]:after {
+  position: absolute;
+  right: -0.75em;
+  top: -0.75em;
+  content: attr(data-count);
+  border-radius: 10em;
+  line-height: 0.9em;
+  color: white;
+  background: rgba(0, 0, 0, 0.4);
+  text-align: center;
+  min-width: 2em;
+  font: bold 0.4em sans-serif;
 }
 

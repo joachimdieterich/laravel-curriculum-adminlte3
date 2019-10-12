@@ -22,6 +22,7 @@ use App\Reference;
 use Illuminate\Support\Facades\File;
 use App\Quote;
 use App\QuoteSubscription;
+use ZipArchive;
 
 class CurriculumImportController extends Controller
 {
@@ -29,7 +30,6 @@ class CurriculumImportController extends Controller
     public function import()
     {
         return view('curricula.import');
-        
     }
     
     /*
@@ -48,7 +48,14 @@ class CurriculumImportController extends Controller
                 ->storeAs("/{$folder}", $original_file_name
                 );
         
-        \Zipper::make(storage_path("app/{$folder}/").request()->file("import")->getClientOriginalName())->extractTo(storage_path("app/{$folder}/"));
+        $zip = new ZipArchive;
+        if ($zip->open(storage_path("app/{$folder}/").request()->file("import")->getClientOriginalName()) === TRUE) {
+            $zip->extractTo(storage_path("app/{$folder}/"));
+            $zip->close();
+            //ok
+        } else {
+            //error handlinng
+        }
         
         $filename = pathinfo(request()->file("import")->getClientOriginalName(), PATHINFO_FILENAME);
         
@@ -72,7 +79,6 @@ class CurriculumImportController extends Controller
         //persist curriculum
         $curriculum = Curriculum::create($curriculum_import_data);
 
-
         //persist terminal_objectives
         foreach ($xml->getElementsByTagName('terminal_objective') as $ter) {
             $old_ter_id = $ter->getAttribute('id');
@@ -85,7 +91,6 @@ class CurriculumImportController extends Controller
                 'objective_type_id' => $ter->getAttribute('type_id'),
                     //perist references, ter_files
             ];
-            //dd($terminal_import_data);
             $terminal_objective = TerminalObjective::create($terminal_import_data);
             
             /* ter files */
@@ -109,7 +114,6 @@ class CurriculumImportController extends Controller
                     'order_id' => $ter->getAttribute('order_id'),
                         //perist references, ena_files
                 ];
-                //dd($terminal_import_data);
                 $enabling_objective = EnablingObjective::create($enabling_import_data);
                 
                 /* ena files */
@@ -291,5 +295,4 @@ class CurriculumImportController extends Controller
 	]);
     }
     
-  
 }

@@ -57,7 +57,7 @@
                 }
             },
             beforeClose() {
-                console.log('close')
+                //console.log('close')
             },
             close(){
                 this.$modal.hide('objective-description-modal');

@@ -181,11 +181,6 @@ return [
          * Datatables
          */
         Yajra\Datatables\DatatablesServiceProvider::class,
-        /*
-         * Zipper
-         */
-        Chumper\Zipper\ZipperServiceProvider::class,
-
     ],
 
     /*

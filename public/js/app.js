@@ -1959,7 +1959,15 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _objectives_TerminalObjectives_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../objectives/TerminalObjectives.vue */ "./resources/js/components/objectives/TerminalObjectives.vue");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _objectives_TerminalObjectives_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../objectives/TerminalObjectives.vue */ "./resources/js/components/objectives/TerminalObjectives.vue");
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 //
 //
 //
@@ -1981,14 +1989,64 @@ __webpack_require__.r(__webpack_exports__);
     'objectivetypes': Array,
     'settings': Object
   },
-  methods: {},
+  data: function data() {
+    return {
+      ena: false
+    };
+  },
+  methods: {
+    externalEvent: function externalEvent(ids) {
+      this.reloadEnablingObjectives(ids);
+    },
+    reloadEnablingObjectives: function () {
+      var _reloadEnablingObjectives = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(ids) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.prev = 0;
+                _context.next = 3;
+                return axios.post('/curricula/2/achievements', {
+                  'user_ids': ids
+                });
+
+              case 3:
+                this.ena = _context.sent.data.enablingobjectives;
+                _context.next = 9;
+                break;
+
+              case 6:
+                _context.prev = 6;
+                _context.t0 = _context["catch"](0);
+                this.errors = _context.t0.response.data.errors;
+
+              case 9:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this, [[0, 6]]);
+      }));
+
+      function reloadEnablingObjectives(_x) {
+        return _reloadEnablingObjectives.apply(this, arguments);
+      }
+
+      return reloadEnablingObjectives;
+    }()
+  },
+  created: function created() {
+    this.ena = this.enablingobjectives;
+  },
   mounted: function mounted() {
     this.$on('addTerminalObjective', function (newTerminalObjective) {
       console.log(newTerminalObjective);
     });
   },
   components: {
-    TerminalObjectives: _objectives_TerminalObjectives_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+    TerminalObjectives: _objectives_TerminalObjectives_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   }
 });
 
@@ -2264,6 +2322,205 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/objectives/AchievementIndicator.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/objectives/AchievementIndicator.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    objective: {},
+    type: {},
+    settings: {}
+  },
+  data: function data() {
+    return {
+      status: '00',
+      green: 'far fa-circle',
+      orange: 'far fa-circle',
+      red: 'far fa-circle',
+      white: 'far fa-circle',
+      green_student_count: 0,
+      green_teacher_count: 0,
+      orange_student_count: 0,
+      orange_teacher_count: 0,
+      red_student_count: 0,
+      red_teacher_count: 0,
+      white_student_count: 0,
+      white_teacher_count: 0
+    };
+  },
+  methods: {
+    achieve: function () {
+      var _achieve = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(status) {
+        var archievement;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                archievement = {
+                  'referenceable_type': this.type === 'terminal' ? 'App\\TerminalObjective' : 'App\\EnablingObjective',
+                  'referenceable_id': this.objective.id,
+                  'user_id': $('#users-datatable').DataTable().rows({
+                    selected: true
+                  }).ids().toArray(),
+                  'status': status
+                };
+                _context.prev = 1;
+                _context.next = 4;
+                return axios.post('/achievements/', archievement);
+
+              case 4:
+                this.status = _context.sent.data.message;
+                _context.next = 10;
+                break;
+
+              case 7:
+                _context.prev = 7;
+                _context.t0 = _context["catch"](1);
+                alert(_context.t0.response.data.errors);
+
+              case 10:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this, [[1, 7]]);
+      }));
+
+      function achieve(_x) {
+        return _achieve.apply(this, arguments);
+      }
+
+      return achieve;
+    }(),
+    calculate_css: function calculate_css(number) {
+      var status = "far fa-circle";
+
+      if (this.status.charAt(0) === number && this.status.charAt(1) === number) {
+        status = "fa fa-check-circle";
+      } else if (this.status.charAt(0) === number) {
+        status = "fa fa-circle";
+      } else if (this.status.charAt(1) === number) {
+        status = "far fa-check-circle";
+      }
+
+      return status;
+    },
+    calculate_count: function calculate_count(number) {
+      var student = 0,
+          teacher = 0;
+
+      if (_typeof(this.objective.achievements[0]) === 'object' && this.settings.achievements === true) {
+        for (var i = 0; i < this.objective.achievements.length; i++) {
+          //console.log('ena:'+ this.objective.id +' lenght:'+ this.objective.achievements.length+' i:'+i+' student: '+this.objective.achievements[i].status.charAt(0)+' teacher: '+ this.objective.achievements[i].status.charAt(1));
+          if (this.objective.achievements[i].status.charAt(0) === number && this.objective.achievements[i].status.charAt(1) === number) {
+            student++;
+            teacher++;
+          } else if (this.objective.achievements[i].status.charAt(0) === number) {
+            student++;
+          } else if (this.objective.achievements[i].status.charAt(1) === number) {
+            teacher++;
+          }
+        }
+
+        return (
+          /*student+'/'+*/
+          teacher
+        ); //todo option to show students status 
+      }
+    }
+  },
+  computed: {
+    green_css: function green_css() {
+      return this.calculate_css('1');
+    },
+    orange_css: function orange_css() {
+      return this.calculate_css('2');
+    },
+    red_css: function red_css() {
+      return this.calculate_css('3');
+    },
+    white_css: function white_css() {
+      return this.calculate_css('0');
+    },
+    //counts
+    green_count: function green_count() {
+      return this.calculate_count('1');
+    },
+    orange_count: function orange_count() {
+      return this.calculate_count('2');
+    },
+    red_count: function red_count() {
+      return this.calculate_count('3');
+    },
+    white_count: function white_count() {
+      return this.calculate_count('0');
+    }
+  },
+  watch: {
+    objective: function objective(val, oldVal) {
+      if (_typeof(this.objective.achievements[0]) === 'object') {
+        this.status = val.achievements[0].status;
+      }
+    }
+  },
+  created: function created() {
+    if (_typeof(this.objective.achievements[0]) === 'object') {
+      this.status = this.objective.achievements[0].status;
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/objectives/DropdownButton.vue?vue&type=script&lang=js&":
 /*!************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/objectives/DropdownButton.vue?vue&type=script&lang=js& ***!
@@ -2457,8 +2714,7 @@ __webpack_require__.r(__webpack_exports__);
 
       this.method = event.params.method;
     },
-    beforeClose: function beforeClose() {
-      console.log('close');
+    beforeClose: function beforeClose() {//console.log('close') 
     },
     submit: function submit() {
       var method = this.method.toLowerCase();
@@ -2475,8 +2731,7 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   created: function created() {},
-  mounted: function mounted() {
-    console.log('Component mounted.');
+  mounted: function mounted() {//console.log('Component mounted.')
   }
 });
 
@@ -2549,6 +2804,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _AchievementIndicator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AchievementIndicator */ "./resources/js/components/objectives/AchievementIndicator.vue");
 //
 //
 //
@@ -2567,13 +2823,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     objective: {},
     textcolor: {
       "default": '#000'
     },
-    type: {}
+    type: {},
+    settings: {}
   },
   methods: {
     showModal: function showModal(modal) {
@@ -2582,6 +2847,9 @@ __webpack_require__.r(__webpack_exports__);
         'type': this.type
       });
     }
+  },
+  components: {
+    AchievementIndicator: _AchievementIndicator__WEBPACK_IMPORTED_MODULE_0__["default"]
   }
 });
 
@@ -2644,8 +2912,7 @@ __webpack_require__.r(__webpack_exports__);
     emitDeleteEvent: function emitDeleteEvent() {//this.$emit('eventtriggered')
     }
   },
-  mounted: function mounted() {
-    console.log(this.settings);
+  mounted: function mounted() {//console.log(this.settings);
   },
   components: {
     DropdownButton: _DropdownButton__WEBPACK_IMPORTED_MODULE_0__["default"]
@@ -2673,6 +2940,7 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+//
 //
 //
 //
@@ -2789,30 +3057,29 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                console.log('delete' + object);
-                _context.prev = 1;
-                _context.next = 4;
+                _context.prev = 0;
+                _context.next = 3;
                 return axios["delete"]('/' + this.type + 'Objectives/' + this.objective.id);
 
-              case 4:
+              case 3:
                 this.location = _context.sent.data.message;
-                _context.next = 10;
+                _context.next = 9;
                 break;
 
-              case 7:
-                _context.prev = 7;
-                _context.t0 = _context["catch"](1);
+              case 6:
+                _context.prev = 6;
+                _context.t0 = _context["catch"](0);
                 this.formerrors = _context.t0.response.data.errors;
 
-              case 10:
+              case 9:
                 window.location = this.location;
 
-              case 11:
+              case 10:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this, [[1, 7]]);
+        }, _callee, this, [[0, 6]]);
       }));
 
       function deleteEvent(_x) {
@@ -2868,6 +3135,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     }()
   },
   computed: {
+    background: function background() {
+      return this.type === 'terminal' ? 'none' : "";
+    },
     backgroundcolor: function backgroundcolor() {
       return this.type === 'terminal' ? this.objective.color : "#fff";
     },
@@ -2977,8 +3247,7 @@ __webpack_require__.r(__webpack_exports__);
         this.content = event.params.content;
       }
     },
-    beforeClose: function beforeClose() {
-      console.log('close');
+    beforeClose: function beforeClose() {//console.log('close')
     },
     close: function close() {
       this.$modal.hide('objective-description-modal');
@@ -3363,7 +3632,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     beforeOpen: function beforeOpen(event) {
       if (event.params.objective) {
-        console.log(event.params.objective);
+        //console.log(event.params.objective);
         this.form.populate(event.params.objective);
       }
 
@@ -3374,8 +3643,7 @@ __webpack_require__.r(__webpack_exports__);
         'title': this.findObjectByKey(this.objectiveTypes, 'id', this.form.objective_type_id).title
       };
     },
-    beforeClose: function beforeClose() {
-      console.log('close');
+    beforeClose: function beforeClose() {//console.log('close')
     },
     loadData: function loadData() {
       var _this = this;
@@ -3401,8 +3669,7 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     this.loadData();
   },
-  mounted: function mounted() {
-    console.log('Component mounted.');
+  mounted: function mounted() {//console.log('Component mounted.')
   }
 });
 
@@ -6842,7 +7109,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n/*styles (xs, sm) */\n@media (max-width: 990px) {\n.box.box-objective {\n    float: left;\n    width: 100%;\n    height: 100%;\n    position: relative;\n    margin: 0px;\n    padding-left: 5px;\n    padding-bottom: 0px;\n    border-bottom: 1px solid #eee;\n    border: 1px solid #d2d6de;\n}\n.box .boxheader {\n    margin: 0px;\n    position: absolute;\n    left: 0px;\n    padding: 5px 2px 0 2px;\n    height: 100px;\n    width: 5px;\n    text-align: center;\n}\n.box .boxscroll {\n    /*width: 170px; */\n  \n    /*20px more than box to hide scrollbar*/\n  \n    padding-top: 5px;\n    padding-right: 25px;\n    /*for Firefox only*/\n  \n    overflow-x: hidden;\n    overflow-y: auto;\n    height: 100px!important;\n}\n.box .boxwrap {\n    width: 100%;\n    overflow: hidden;\n    margin: 0px !important;\n    padding: 0 0 0 20px;\n}\n.box .boxcontent {\n    /*Hack: boxwrap, boxscroll and boxcontent used to hide scroll crossbrowser compatible*/\n  \n    margin: 0px;\n    padding-left: 10px;\n    padding-right: 60px;\n    font-size: 14px;\n    line-height: 18px;\n}\n.box .boxfooter {\n    margin: -100px 0 0 15px;\n    padding: 4px 0px 0 10px;\n    position: absolute;\n    right: 0px;\n    width: 59px;\n    height: 100px;\n    overflow: auto;\n    z-index: 1;\n}\n.box .box-sm-icon {\n    display: inline;\n    text-align: center;\n    padding: 3px 1px 5px 1px;\n    float: none !important;\n}\n}\n/* /.sm view */\n/*styles (md, lg) */\n@media (min-width: 991px) {\n.box.box-objective {\n    float: left;\n    height: 200px;\n    width: 200px;\n    position: relative;\n    margin: 0px;\n    margin-bottom: 10px;\n    margin-right: 10px;\n    border: 1px solid #d2d6de;\n}\n.box .boxheader {\n    width: 100%;\n    margin: 0px;\n    margin-bottom: 20px;\n    padding: 4px 10px 0 10px;\n    height: 5px;\n    font-size: 90%;\n    position: relative;\n    /* add top right radius*/\n    -moz-border-top-right-radius: 0 !important;\n    border-top-right-radius: 0 !important;\n}\n.box .boxheader > span,\n  .box .boxheader > a > span,\n  .box .padding-top-5 {\n    padding-top: 5px;\n}\n.box .boxscroll {\n    width: 200px;\n    padding-top: 5px;\n    padding-right: 25px;\n    /*for Firefox only*/\n  \n    overflow-x: hidden;\n    overflow-y: auto;\n    height: 150px!important;\n    background-repeat: no-repeat;\n    background-color: white;\n    background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;\n    /* Opera doesn't support this in the shorthand */\n  \n    background-attachment: local, local, scroll, scroll;\n    height: 140px !important;\n}\n.box .boxwrap {\n    width: 100%;\n    overflow: hidden;\n    margin: 0px !important;\n    padding: 0px;\n}\n.box .boxcontent {\n    /*Hack: boxwrap, boxscroll and boxcontent used to hide scroll crossbrowser compatible*/\n  \n    margin: 0px;\n    width: 200px;\n    padding-left: 10px;\n    padding-right: 10px;\n    font-size: 14px;\n    line-height: 18px;\n}\n.box .boxfooter {\n    position: absolute;\n    margin: 0px;\n    padding: 4px 10px 0 10px;\n    top: 173px;\n    bottom: 0px;\n    left: 0px;\n    right: 0px;\n    height: 25px;\n    width: 100%;\n    font-size: 90%;\n    text-align: left !important;\n    /* get rid of top right radius*/\n    -moz-border-top-right-radius: 0 !important;\n    border-top-right-radius: 0 !important;\n}\n}\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n/*styles (xs, sm) */\n@media (max-width: 990px) {\n.box.box-objective {\n    float: left;\n    width: 100%;\n    height: 100%;\n    position: relative;\n    margin: 0px;\n    padding-left: 5px;\n    padding-bottom: 0px;\n    border-bottom: 1px solid #eee;\n    border: 1px solid #d2d6de;\n}\n.box .boxheader {\n    margin: 0px;\n    position: absolute;\n    left: 0px;\n    padding: 5px 2px 0 2px;\n    height: 100px;\n    width: 5px;\n    text-align: center;\n}\n.box .boxscroll {\n    /*width: 170px; */\n  \n    /*20px more than box to hide scrollbar*/\n  \n    padding-top: 5px;\n    padding-right: 25px;\n    /*for Firefox only*/\n  \n    overflow-x: hidden;\n    overflow-y: auto;\n    height: 100px!important;\n}\n.box .boxwrap {\n    width: 100%;\n    overflow: hidden;\n    margin: 0px !important;\n    padding: 0 0 0 20px;\n}\n.box .boxcontent {\n    /*Hack: boxwrap, boxscroll and boxcontent used to hide scroll crossbrowser compatible*/\n  \n    margin: 0px;\n    padding-left: 10px;\n    padding-right: 60px;\n    font-size: 14px;\n    line-height: 18px;\n}\n.box .boxfooter {\n    margin: -100px 0 0 15px;\n    padding: 4px 0px 0 10px;\n    position: absolute;\n    right: 0px;\n    width: 59px;\n    height: 100px;\n    overflow: auto;\n    z-index: 1;\n}\n.box .box-sm-icon {\n    display: inline;\n    text-align: center;\n    padding: 3px 1px 5px 1px;\n    float: none !important;\n}\n}\n/* /.sm view */\n/*styles (md, lg) */\n@media (min-width: 991px) {\n.box.box-objective {\n    float: left;\n    height: 200px;\n    width: 200px;\n    position: relative;\n    margin: 0px;\n    margin-bottom: 10px;\n    margin-right: 10px;\n    border: 1px solid #d2d6de;\n}\n.box .boxheader {\n    width: 100%;\n    margin: 0px;\n    margin-bottom: 20px;\n    padding: 4px 10px 0 10px;\n    height: 5px;\n    font-size: 90%;\n    position: relative;\n    /* add top right radius*/\n    -moz-border-top-right-radius: 0 !important;\n    border-top-right-radius: 0 !important;\n}\n.box .boxheader > span,\n  .box .boxheader > a > span,\n  .box .padding-top-5 {\n    padding-top: 5px;\n}\n.box .boxscroll {\n    width: 200px;\n    padding-top: 5px;\n    padding-right: 25px;\n    /*for Firefox only*/\n  \n    overflow-x: hidden;\n    overflow-y: auto;\n    height: 150px!important;\n    background-repeat: no-repeat;\n    background-color: white;\n    background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;\n    /* Opera doesn't support this in the shorthand */\n  \n    background-attachment: local, local, scroll, scroll;\n    height: 140px !important;\n}\n.box .boxwrap {\n    width: 100%;\n    overflow: hidden;\n    margin: 0px !important;\n    padding: 0px;\n}\n.box .boxcontent {\n    /*Hack: boxwrap, boxscroll and boxcontent used to hide scroll crossbrowser compatible*/\n  \n    margin: 0px;\n    width: 200px;\n    padding-left: 10px;\n    padding-right: 10px;\n    font-size: 14px;\n    line-height: 18px;\n}\n.box .boxfooter {\n    position: absolute;\n    margin: 0px;\n    padding: 4px 10px 0 10px;\n    top: 173px;\n    bottom: 0px;\n    left: 0px;\n    right: 0px;\n    height: 25px;\n    width: 100%;\n    font-size: 90%;\n    text-align: left !important;\n    /* get rid of top right radius*/\n    -moz-border-top-right-radius: 0 !important;\n    border-top-right-radius: 0 !important;\n}\n}\n\n\n", ""]);
 
 // exports
 
@@ -40046,7 +40313,7 @@ var render = function() {
         attrs: {
           curriculum: _vm.curriculum,
           terminalobjectives: _vm.terminalobjectives,
-          enablingobjectives: _vm.enablingobjectives,
+          enablingobjectives: _vm.ena,
           objectivetypes: _vm.objectivetypes,
           settings: _vm.settings
         }
@@ -40387,6 +40654,80 @@ var render = function() {
       )
     ]
   )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/objectives/AchievementIndicator.vue?vue&type=template&id=0b74c05a&":
+/*!**********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/objectives/AchievementIndicator.vue?vue&type=template&id=0b74c05a& ***!
+  \**********************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm.type === "enabling"
+    ? _c("span", { staticClass: "pull-left" }, [
+        _c("i", {
+          staticClass: "t-18 fabadge margin-r-5 text-green pointer_hand",
+          class: [_vm.green_css],
+          attrs: { "data-count": [_vm.green_count] },
+          on: {
+            click: function($event) {
+              $event.preventDefault()
+              return _vm.achieve("1")
+            }
+          }
+        }),
+        _vm._v(" "),
+        _c("i", {
+          staticClass: "t-18 fabadge margin-r-5 text-orange pointer_hand",
+          class: [_vm.orange_css],
+          attrs: { "data-count": [_vm.orange_count] },
+          on: {
+            click: function($event) {
+              $event.preventDefault()
+              return _vm.achieve("2")
+            }
+          }
+        }),
+        _vm._v(" "),
+        _c("i", {
+          staticClass: "t-18 fabadge margin-r-5 text-red pointer_hand",
+          class: [_vm.red_css],
+          attrs: { "data-count": [_vm.red_count] },
+          on: {
+            click: function($event) {
+              $event.preventDefault()
+              return _vm.achieve("3")
+            }
+          }
+        }),
+        _vm._v(" "),
+        _c("i", {
+          staticClass: "t-18 fabadge margin-r-5 text-gray pointer_hand",
+          class: [_vm.white_css],
+          attrs: { "data-count": [_vm.white_count] },
+          on: {
+            click: function($event) {
+              $event.preventDefault()
+              return _vm.achieve("0")
+            }
+          }
+        })
+      ])
+    : _vm._e()
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -40831,6 +41172,14 @@ var render = function() {
           ])
         : _vm._e(),
       _vm._v(" "),
+      _c("AchievementIndicator", {
+        attrs: {
+          objective: _vm.objective,
+          type: _vm.type,
+          settings: _vm.settings
+        }
+      }),
+      _vm._v(" "),
       _c("span", { staticClass: "ml-auto " }, [
         _c("span", {
           staticClass: "fa fa-info ml-1 ",
@@ -40842,7 +41191,8 @@ var render = function() {
           }
         })
       ])
-    ]
+    ],
+    1
   )
 }
 var staticRenderFns = []
@@ -41120,6 +41470,7 @@ var render = function() {
                 {
                   staticClass: "boxscroll",
                   style: {
+                    background: _vm.background,
                     "background-color": _vm.backgroundcolor,
                     "border-color": _vm.objective.color
                   }
@@ -41139,7 +41490,8 @@ var render = function() {
             attrs: {
               objective: _vm.objective,
               textcolor: _vm.textcolor,
-              type: _vm.type
+              type: _vm.type,
+              settings: _vm.settings
             }
           })
         ],
@@ -55433,6 +55785,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_MediumModal_vue_vue_type_template_id_b379cd9c___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_MediumModal_vue_vue_type_template_id_b379cd9c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/objectives/AchievementIndicator.vue":
+/*!*********************************************************************!*\
+  !*** ./resources/js/components/objectives/AchievementIndicator.vue ***!
+  \*********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _AchievementIndicator_vue_vue_type_template_id_0b74c05a___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AchievementIndicator.vue?vue&type=template&id=0b74c05a& */ "./resources/js/components/objectives/AchievementIndicator.vue?vue&type=template&id=0b74c05a&");
+/* harmony import */ var _AchievementIndicator_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AchievementIndicator.vue?vue&type=script&lang=js& */ "./resources/js/components/objectives/AchievementIndicator.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _AchievementIndicator_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _AchievementIndicator_vue_vue_type_template_id_0b74c05a___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _AchievementIndicator_vue_vue_type_template_id_0b74c05a___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/objectives/AchievementIndicator.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/objectives/AchievementIndicator.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************************!*\
+  !*** ./resources/js/components/objectives/AchievementIndicator.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AchievementIndicator_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./AchievementIndicator.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/objectives/AchievementIndicator.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AchievementIndicator_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/objectives/AchievementIndicator.vue?vue&type=template&id=0b74c05a&":
+/*!****************************************************************************************************!*\
+  !*** ./resources/js/components/objectives/AchievementIndicator.vue?vue&type=template&id=0b74c05a& ***!
+  \****************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AchievementIndicator_vue_vue_type_template_id_0b74c05a___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./AchievementIndicator.vue?vue&type=template&id=0b74c05a& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/objectives/AchievementIndicator.vue?vue&type=template&id=0b74c05a&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AchievementIndicator_vue_vue_type_template_id_0b74c05a___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AchievementIndicator_vue_vue_type_template_id_0b74c05a___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

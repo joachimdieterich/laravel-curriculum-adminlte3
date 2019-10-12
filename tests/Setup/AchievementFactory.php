@@ -14,9 +14,9 @@
 
 namespace Tests\Setup;
 
-use App\Curriculum;
+use App\Archievement;
 
-class CurriculumFactory
+class AchievementFactory
 {
     protected $user;
 
@@ -30,6 +30,9 @@ class CurriculumFactory
     public function create()
     {
         
-        return  factory(Curriculum::class)->create();
+        return  factory(Achievement::class)->create([
+            'user_id' => auth()->user()->id,
+            'owner_id' => auth()->user()->id,
+            ]);
     }
 }

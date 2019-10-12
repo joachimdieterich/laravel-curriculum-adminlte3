@@ -106,7 +106,7 @@
             },
             
             beforeClose() { 
-                console.log('close') 
+                //console.log('close') 
             },
             
             submit() {
@@ -126,7 +126,7 @@
 
         },
         mounted() {
-            console.log('Component mounted.')
+            //console.log('Component mounted.')
         }
     }
 </script>

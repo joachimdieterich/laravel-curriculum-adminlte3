@@ -403,6 +403,48 @@ class PermissionsTableSeeder extends Seeder
                 'created_at' => '2019-04-15 19:14:42',
                 'updated_at' => '2019-04-15 19:14:42',
             ],
+            [
+                'id'         => '72',
+                'title'      => 'achievement_access',
+                'created_at' => '2019-04-15 19:14:42',
+                'updated_at' => '2019-04-15 19:14:42',
+            ],
+            [
+                'id'         => '73',
+                'title'      => 'achievement_show',
+                'created_at' => '2019-04-15 19:14:42',
+                'updated_at' => '2019-04-15 19:14:42',
+            ],
+            [
+                'id'         => '74',
+                'title'      => 'achievement_create',
+                'created_at' => '2019-04-15 19:14:42',
+                'updated_at' => '2019-04-15 19:14:42',
+            ],
+            [
+                'id'         => '75',
+                'title'      => 'achievement_edit',
+                'created_at' => '2019-04-15 19:14:42',
+                'updated_at' => '2019-04-15 19:14:42',
+            ],
+            [
+                'id'         => '76',
+                'title'      => 'achievement_delete',
+                'created_at' => '2019-04-15 19:14:42',
+                'updated_at' => '2019-04-15 19:14:42',
+            ],
+            [
+                'id'         => '77',
+                'title'      => 'achievement_manage',
+                'created_at' => '2019-04-15 19:14:42',
+                'updated_at' => '2019-04-15 19:14:42',
+            ],
+            [
+                'id'         => '78',
+                'title'      => 'achievement_self_assessment',
+                'created_at' => '2019-04-15 19:14:42',
+                'updated_at' => '2019-04-15 19:14:42',
+            ],
             ];
 
         Permission::insert($permissions);

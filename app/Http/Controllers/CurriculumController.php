@@ -16,6 +16,7 @@ use DOMDocument;
 use App\Content;
 use App\Glossar;
 use App\Group;
+use Illuminate\Support\Facades\DB;
 
 class CurriculumController extends Controller
 {
@@ -167,7 +168,10 @@ class CurriculumController extends Controller
                                                 ->orderBy('order_id')
                                                 ->with(['media',
                                                         'mediaSubscriptions', 
-                                                        'referenceSubscriptions'])
+                                                        'referenceSubscriptions', 
+                                                        'achievements' => function($query) {
+                                                            $query->where('user_id', auth()->user()->id);
+                                                        }])
                                                 ->get();
        
          $enablingObjectives = EnablingObjective::where('curriculum_id', $curriculum->id)
@@ -175,7 +179,10 @@ class CurriculumController extends Controller
                                                 ->orderBy('order_id')
                                                 ->with(['media',
                                                         'mediaSubscriptions', 
-                                                        'referenceSubscriptions'])
+                                                        'referenceSubscriptions', 
+                                                        'achievements' => function($query) {
+                                                            $query->where('user_id', auth()->user()->id);
+                                                        }])
                                                 ->get();
         $objectiveTypes = \App\ObjectiveType::all();
         
@@ -195,6 +202,102 @@ class CurriculumController extends Controller
                 ->with(compact('enablingObjectives'))
                 ->with(compact('objectiveTypes'))
                 ->with(compact('settings'));
+    }
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Curriculum  $curriculum
+     * @return \Illuminate\Http\Response
+     */
+    public function showAchievements(Curriculum $curriculum)
+    {
+        abort_unless(\Gate::allows('curriculum_show'), 403);
+        //check if user is enrolled or admin -> else 403 
+        abort_unless((auth()->user()->curricula()->contains('curriculum_id', $curriculum->id) // user enrolled
+                  OR (auth()->user()->currentRole()->first()->id == 1)), 403);                // or admin
+        //$user_ids = isset(request()->user_ids) ? request()->user_ids : auth()->user()->id;
+        
+        // DB::enableQueryLog(); // Enable query log
+
+        $groupsWithCurriculum = auth()->user()->groupsWithCurriculum($curriculum->id);
+
+        dd(auth()->user()->courses()->curriculum);
+        //dd(DB::getQueryLog()); // Show results of log
+       
+        $terminalObjectives = TerminalObjective::where('curriculum_id', $curriculum->id)
+                                                ->orderBy('objective_type_id')
+                                                ->orderBy('order_id')
+                                                ->with(['media',
+                                                        'mediaSubscriptions', 
+                                                        'referenceSubscriptions', 
+                                                        'achievements' => function($query)  {
+                                                            $query->where('user_id', null);
+                                                        }])
+                                                ->get();
+       
+         $enablingObjectives = EnablingObjective::where('curriculum_id', $curriculum->id)
+                                                ->orderBy('terminal_objective_id')
+                                                ->orderBy('order_id')
+                                                ->with(['media',
+                                                        'mediaSubscriptions', 
+                                                        'referenceSubscriptions', 
+                                                        'achievements' => function($query) {
+                                                            $query->where('user_id', null);
+                                                        }])
+                                                ->get();
+        $objectiveTypes = \App\ObjectiveType::all();
+        
+        $curriculum = Curriculum::with(['terminalObjectives', 
+                        'terminalObjectives.enablingObjectives', 
+                        'contentSubscriptions.content', 
+                        'glossar.contents', 
+                        'media'])
+                        ->find($curriculum->id);
+        $settings= json_encode([
+            'edit' => false,
+            'achievements' => true
+        ]);
+        
+//        if (isset(request()->user_ids)){   
+//            return ['enablingobjectives' => compact($enablingObjectives)];
+//        }
+        
+        return view('curricula.show')
+                ->with(compact('curriculum'))
+                ->with(compact('terminalObjectives')) //todo. curriculum already has terminal and enablingobjectives, use in DB
+                ->with(compact('enablingObjectives'))
+                ->with(compact('objectiveTypes'))
+                ->with(compact('settings'));
+    }
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Curriculum  $curriculum
+     * @return \Illuminate\Http\Response
+     */
+    public function getAchievements(Curriculum $curriculum)
+    {
+        abort_unless(\Gate::allows('curriculum_show'), 403);
+        //check if user is enrolled or admin -> else 403 
+        abort_unless((auth()->user()->curricula()->contains('curriculum_id', $curriculum->id) // user enrolled
+                  OR (auth()->user()->currentRole()->first()->id == 1)), 403);                // or admin
+        $user_ids = request()->user_ids;
+        
+         $enablingObjectives = EnablingObjective::where('curriculum_id', $curriculum->id)
+                                                ->orderBy('terminal_objective_id')
+                                                ->orderBy('order_id')
+                                                ->with(['media',
+                                                        'mediaSubscriptions', 
+                                                        'referenceSubscriptions', 
+                                                        'achievements' => function($query) use ($user_ids) {
+                                                            $query->whereIn('user_id', $user_ids);
+                                                        }])
+                                                ->get();
+        
+        if (request()->wantsJson()){     
+            return ['enablingobjectives' => $enablingObjectives];
+        }
+       
     }
 
     /**

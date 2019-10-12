@@ -1,0 +1,57 @@
+/*
+ * Text (color, size)
+ * --------------
+ */
+.text-red {
+  color: $red !important;
+}
+.text-yellow {
+  color: $yellow !important;
+}
+.text-aqua {
+  color: $aqua !important;
+}
+.text-blue {
+  color: $blue !important;
+}
+.text-black {
+  color: $black !important;
+}
+.text-light-blue, .text-primary {
+  color: $light-blue !important;
+}
+.text-green {
+  color: $green !important;
+}
+.text-gray {
+  color: $gray-lte !important;
+}
+.text-navy {
+  color: $navy !important;
+}
+.text-teal {
+  color: $teal !important;
+}
+.text-olive {
+  color: #3d9970 !important;
+}
+.text-lime {
+  color: #01ff70 !important;
+}
+.text-orange {
+  color: $orange !important;
+}
+.text-fuchsia {
+  color: $fuchsia !important;
+}
+.text-purple {
+  color: $purple !important;
+}
+.text-maroon {
+  color: $maroon !important;
+}
+
+// Text size
+.t-18 {
+    font-size:1.125rem;
+}

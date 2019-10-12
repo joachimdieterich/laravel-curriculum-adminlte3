@@ -40,7 +40,7 @@ class AchievementCRUDTest extends TestCase
      */     
     public function an_admin_can_set_the_achievement_status_for_an_enabling_objective()
     { 
-        Auth::logout();
+        Auth::logout(); //logout student
         $this->signInAdmin();
         $attributes = factory('App\Achievement')->raw();
         $attributes['owner_id'] = auth()->user()->id;

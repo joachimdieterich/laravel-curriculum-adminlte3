@@ -51,7 +51,7 @@ class AchievementController extends Controller
                 $achievement = Achievement::firstOrCreate([
                             "referenceable_type" => $input['referenceable_type'],
                             "referenceable_id"   => $input['referenceable_id'],
-                             "user_id"           => $user_id,
+                            "user_id"            => $user_id,
                             "status"             => $this->calculateStatus($input),
                             "owner_id"           => auth()->user()->id,	
                 ]); 
@@ -59,7 +59,7 @@ class AchievementController extends Controller
                 $achievement->update([
                             "referenceable_type" => $input['referenceable_type'],
                             "referenceable_id"   => $input['referenceable_id'],
-                             "user_id"           => $user_id,
+                            "user_id"            => $user_id,
                             "status"             => $this->calculateStatus($input, $achievement->status),
                             "owner_id"           => auth()->user()->id,	
                 ]); 
@@ -88,7 +88,6 @@ class AchievementController extends Controller
         {
             $status[0] = $input['status'];
         }
-        //dd($status);
         return $status;
     }
     

@@ -11,25 +11,22 @@
         <!-- Sidebar Menu -->
         <nav class="mt-2"> 
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                <li class="nav-header">{{ strtoupper(trans('global.curriculum.title')) }}</li>
-                <div class="form-group">
-                        <select 
-                            name="current_curriculum_group_id[]" 
-                            id="current_curriculum_group_id" 
-                            class="form-control select2 col-sm-9"
-                            onchange="location = this.value;"
-                        >    
-                            @foreach (auth()->user()->curricula() as $entry)
-                                 <option  
-                                    value="/curricula/{{ $entry->curriculum_id }}" 
-                                    {{ (Request::path() == "curricula/".$entry->curriculum_id) ? 'selected' : '' }} 
-                                 >
-                                    {{ $entry->title }}
-                                 </option>
-                            @endforeach
-                        </select>
-                    
-                </div>
+                <li class="nav-header">{{ strtoupper(trans('global.course.title')) }}</li>
+                <li class="nav-item">
+                   
+                    @include ('forms.input.select', 
+                        ["model" => "group", 
+                        "field" => "current_curriculum_group_id",  
+                        "options"=> auth()->user()->curricula(), 
+                        "option_id" => "course_id",
+                        "onchange"=> "location = '/courses/'+this.value", 
+                        "optgroup" => auth()->user()->currentGroupEnrolments()->get(),    
+                        "optgroup_id" => "id",
+                        "optgroup_reference_field" => "group_id",
+                        "placeholder" => trans('global.pleaseSelect') . ' ' . trans('global.course.title_singular'),
+                        "value" =>  old('course_id', isset($course->id) ? $course->id : '')])
+                        
+                </li>
                 
                 <li class="nav-header">{{ strtoupper(trans('global.organization.title_singular')) }}</li>
                 <li class="nav-item">
@@ -182,22 +179,3 @@
     </div>
     <!-- /.sidebar -->
 </aside>
-
-@section('scripts')
-@parent
-<!--hack to get select2 working-->
-<script>
-$(document).ready(function() {
-    $("#current_organization_id").select2({
-      dropdownParent: $("#sidebar")
-    });
-    $("#current_curriculum_group_id").select2({
-      dropdownParent: $("#sidebar")
-    });
-  
-    
-});
-
- 
-</script>
-@endsection

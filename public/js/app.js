@@ -2503,6 +2503,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     white_count: function white_count() {
       return this.calculate_count('0');
+    },
+    fabadge: function fabadge() {
+      if (window.Laravel.permissions.indexOf('achievement_manage') !== -1) {
+        return "fabadge";
+      }
     }
   },
   watch: {
@@ -40680,8 +40685,8 @@ var render = function() {
   return _vm.type === "enabling"
     ? _c("span", { staticClass: "pull-left" }, [
         _c("i", {
-          staticClass: "t-18 fabadge margin-r-5 text-green pointer_hand",
-          class: [_vm.green_css],
+          staticClass: "t-18 margin-r-5 text-green pointer_hand",
+          class: [_vm.green_css, _vm.fabadge],
           attrs: { "data-count": [_vm.green_count] },
           on: {
             click: function($event) {
@@ -40692,8 +40697,8 @@ var render = function() {
         }),
         _vm._v(" "),
         _c("i", {
-          staticClass: "t-18 fabadge margin-r-5 text-orange pointer_hand",
-          class: [_vm.orange_css],
+          staticClass: "t-18 margin-r-5 text-orange pointer_hand",
+          class: [_vm.orange_css, _vm.fabadge],
           attrs: { "data-count": [_vm.orange_count] },
           on: {
             click: function($event) {
@@ -40704,8 +40709,8 @@ var render = function() {
         }),
         _vm._v(" "),
         _c("i", {
-          staticClass: "t-18 fabadge margin-r-5 text-red pointer_hand",
-          class: [_vm.red_css],
+          staticClass: "t-18 margin-r-5 text-red pointer_hand",
+          class: [_vm.red_css, _vm.fabadge],
           attrs: { "data-count": [_vm.red_count] },
           on: {
             click: function($event) {
@@ -40716,8 +40721,8 @@ var render = function() {
         }),
         _vm._v(" "),
         _c("i", {
-          staticClass: "t-18 fabadge margin-r-5 text-gray pointer_hand",
-          class: [_vm.white_css],
+          staticClass: "t-18 margin-r-5 text-gray pointer_hand",
+          class: [_vm.white_css, _vm.fabadge],
           attrs: { "data-count": [_vm.white_count] },
           on: {
             click: function($event) {
@@ -55353,8 +55358,9 @@ Vue.component('objective-medium-modal', __webpack_require__(/*! ./components/obj
 Vue.directive('can', function (el, binding) {
   if (window.Laravel.permissions.indexOf(binding.value) == -1) {
     el.style.display = 'none';
-  } //return window.Laravel.permissions.indexOf(binding.value) !== -1;
+  }
 
+  return window.Laravel.permissions.indexOf(binding.value) !== -1;
 });
 /**
  * Next, we will create a fresh Vue application instance and attach it to

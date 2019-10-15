@@ -2,23 +2,23 @@
    
     <span class="pull-left" v-if="type === 'enabling'">
 
-        <i class="t-18 fabadge margin-r-5 text-green pointer_hand" 
-           v-bind:class="[green_css]"
+        <i class="t-18 margin-r-5 text-green pointer_hand" 
+           v-bind:class="[green_css, fabadge]"
            v-bind:data-count="[green_count]"
            @click.prevent="achieve('1')">
         </i>
-        <i class="t-18 fabadge margin-r-5 text-orange pointer_hand"
-           v-bind:class="[orange_css]"
+        <i class="t-18 margin-r-5 text-orange pointer_hand"
+           v-bind:class="[orange_css, fabadge]"
            v-bind:data-count="[orange_count]"
            @click.prevent="achieve('2')">
         </i>
-        <i class="t-18 fabadge margin-r-5 text-red pointer_hand" 
-           v-bind:class="[red_css]"
+        <i class="t-18 margin-r-5 text-red pointer_hand" 
+           v-bind:class="[red_css, fabadge]"
            v-bind:data-count="[red_count]"
            @click.prevent="achieve('3')">
         </i>    
-        <i class="t-18 fabadge margin-r-5 text-gray pointer_hand"
-           v-bind:class="[white_css]"
+        <i class="t-18 margin-r-5 text-gray pointer_hand"
+           v-bind:class="[white_css, fabadge]"
            v-bind:data-count="[white_count]"
            @click.prevent="achieve('0')">
         </i>
@@ -130,6 +130,12 @@
             white_count: function () {
                 return this.calculate_count('0');
             },
+            fabadge: function (){
+                if (window.Laravel.permissions.indexOf('achievement_manage') !== -1){
+                    return "fabadge";
+                }
+                
+            }
         },
         watch: {
             objective: function (val, oldVal) {

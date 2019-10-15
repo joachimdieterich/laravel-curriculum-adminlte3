@@ -92,7 +92,7 @@
                                     "options"=> $groups, 
                                     "option_label" => "title",    
                                     "optgroup" => $organizations,    
-                                    "optgroup_field" => "organization_id",    
+                                    "optgroup_reference_field" => "organization_id",    
                                     "value" =>  old('group_id', isset($user->current_group_id) ? $user->current_group_id : '')])     
                                     
                                 <div class="btn-group pull-right" role="group" aria-label="...">    

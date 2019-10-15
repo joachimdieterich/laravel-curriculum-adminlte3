@@ -1,11 +1,9 @@
 <div id="{{ $field }}_form_group" class="form-group {{ $errors->has( $field ) ? ' has-danger' : '' }}">
     @if(isset($show_label))      
         <label for="{{ $field }}" class="{{ isset($class_left) ? $class_left : 'col-sm-3' }}">
-            @if(isset($label))
-                {{ $label }}
-            @else
-                {{ trans("global.{$model}.title_singular") }}
-            @endif
+            
+            {{ isset($label) ? $label :trans("global.{$model}.title_singular") }}
+          
             @if(isset($multiple)) 
             <span class="btn btn-info btn-xs select-all">Select all</span>
             <span class="btn btn-info btn-xs deselect-all">Deselect all</span>
@@ -25,39 +23,29 @@
                 @endif
                >
 
-            <?php $optgroup_id = 0 ?>
-
+            <?php $current_optgroup_id = 0; ?>
+            <option></option>
             @foreach($options as $v)
-                <?php $o_id = 'id'; ?>
-                @if(isset($option_id)) 
-                    <?php $o_id = $option_id ?>
-                @endif
-
-                @if (isset($optgroup) && ($optgroup_id != $v->$optgroup_field ))
-
-                    @if(isset($optgroup_label))
-                        <?php $opt_label = $optgroup->where('id', $v->$optgroup_field)->first()->$optgroup_label ?>
-                    @else
-                        <?php $opt_label = $optgroup->where('id', $v->$optgroup_field)->first()->title ?>
+                <?php $o_id = isset($option_id) ? $option_id : 'id'; ?>
+            
+                
+                    @if (isset($optgroup[0]) && ($current_optgroup_id != $v->$optgroup_reference_field ))
+                         <?php $optgroup_label = ((isset($optgroup_label)) ? $optgroup_label : 'title');
+                               $opt_label = $optgroup->where((isset($optgroup_id)) ? $optgroup_id : 'id', $v->$optgroup_reference_field)->first()->$optgroup_label ?>
+                        <optgroup label="{{ $opt_label }}">
                     @endif
-                    <optgroup label="{{ $opt_label }}">
-                @endif
-                        <option value="{{ $v->$o_id }}" {{ ( $v->$o_id == $value ) ? 'selected' : '' }} >
-
-                            @if(isset($option_label))
-                                {{ $v->$option_label }}
-                            @else
-                                {{ $v->title }}
-                            @endif
-
-                        </option>
-
-                @if (isset($optgroup))
-                    @if ($optgroup_id != $v->$optgroup_id )
-                        </optgroup>
+                
+                            <option value="{{ $v->$o_id }}" {{ ( $v->$o_id == $value ) ? 'selected' : '' }}>
+                               {{ (isset($option_label)) ? $v->$option_label :$v->title }}
+                            </option>
+                
+                    @if (isset($optgroup[0]))
+                        @if ($current_optgroup_id != $v->$optgroup_reference_field )
+                         </optgroup>
+                        @endif
+                        <?php $current_optgroup_id = $v->$optgroup_reference_field ?>
                     @endif
-                    <?php $optgroup_id = $v->$optgroup_field ?>
-                @endif
+                
             @endforeach
         </select>
         @if ($errors->has( $field ))
@@ -65,3 +53,23 @@
         @endif
     
 </div>
+@if (isset($placeholder))
+    @section('scripts')
+    @parent
+    <!--hack to get select2 working-->
+    <script>
+    $(document).ready(function() {
+        <!--hack to get select2 working z-index-->
+        $("#{{ $field }}").select2({
+            placeholder: "{{ $placeholder }}",
+            dropdownParent: $("#{{ $field }}").parent()
+        });
+
+
+
+    });
+
+
+    </script>
+    @endsection
+ @endif

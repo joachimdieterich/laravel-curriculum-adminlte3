@@ -617,6 +617,10 @@ return [
         'content' => 'Link a text',
         'medium' => 'Link a medium (file, url)',
     ],
+    'course' =>[
+       'title'          => 'Courses',
+       'title_singular' => 'Course',
+    ],
     'achievement' =>[
         'title'          => 'Achievements',
         'title_singular' => 'Achievement',

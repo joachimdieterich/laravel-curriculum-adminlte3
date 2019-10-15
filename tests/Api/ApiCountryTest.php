@@ -21,7 +21,6 @@ class ApiCountryTest extends TestCase {
      */
     public function an_authificated_client_can_get_all_countries() 
     {
-
         $this->signInApiAdmin();
 
         $this->get('/api/v1/countries')

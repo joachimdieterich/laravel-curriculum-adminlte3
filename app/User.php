@@ -103,6 +103,14 @@ class User extends Authenticatable
         return $this->hasMany(Content::class, 'owner_id')->latest('updated_at');
     }
     
+    public function currentGroups()
+    {
+        return $this->belongsToMany('App\Group', 'group_user')
+                    ->where('period_id', $this->current_period_id)
+                    ->where('organization_id', $this->current_organization_id)
+                    ->withTimestamps();
+    } 
+    
     public function groups()
     {
         return $this->belongsToMany('App\Group', 'group_user')->withTimestamps();
@@ -113,7 +121,7 @@ class User extends Authenticatable
         return DB::table('groups')
             ->join('group_user', 'groups.id', '=', 'group_user.group_id')
             ->join('curriculum_group', 'curriculum_group.group_id', '=', 'group_user.group_id')
-            ->where('group_user.user_id', auth()->user()->id)
+            ->where('group_user.user_id', $this->id)
             ->where('curriculum_group.curriculum_id', $curriculum_id)
             ->get();
     }
@@ -121,15 +129,25 @@ class User extends Authenticatable
     public function curricula()
     {
         return DB::table('curricula')
+            ->select('curricula.*', 'curriculum_group.id AS course_id', 'curriculum_group.group_id AS group_id',)
             ->join('curriculum_group', 'curricula.id', '=', 'curriculum_group.curriculum_id')
             ->join('group_user', 'group_user.group_id', '=', 'curriculum_group.group_id')
-            ->where('group_user.user_id', auth()->user()->id)
+            ->where('group_user.user_id', $this->id)
             ->get();
     }
+    public function currentGroupEnrolments()
+    {
+        return $this->belongsToMany('App\Group', 'group_user')
+            ->select('groups.*', 'curriculum_group.id AS course_id')
+            ->join('curriculum_group', 'curriculum_group.group_id', '=', 'groups.id')
+            ->where('period_id', $this->current_period_id)
+            ->where('organization_id', $this->current_organization_id)
+            ->withTimestamps();
+    } 
     
     public function roles()
     {
-         return $this->belongsToMany(Role::class, 'organization_role_users')
+        return $this->belongsToMany(Role::class, 'organization_role_users')
                 ->withPivot(['user_id', 'role_id', 'organization_id']);
     }
     /**
@@ -139,7 +157,7 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Role::class, 'organization_role_users')
                 ->withPivot(['user_id', 'role_id', 'organization_id'])
-                ->where('organization_role_users.organization_id', auth()->user()->current_organization_id)->first();
+                ->where('organization_role_users.organization_id', $this->current_organization_id)->first();
     }
     /**
      * permissions of the current role
@@ -149,8 +167,8 @@ class User extends Authenticatable
         return DB::table('permissions')
             ->join('permission_role', 'permission_role.permission_id', '=', 'permissions.id')
             ->join('organization_role_users', 'organization_role_users.role_id', '=', 'permission_role.role_id')
-            ->where('organization_role_users.organization_id', auth()->user()->current_organization_id)
-            ->where('organization_role_users.user_id', auth()->user()->id)
+            ->where('organization_role_users.organization_id',  $this->current_organization_id)
+            ->where('organization_role_users.user_id',  $this->id)
             ->get();
     }
     

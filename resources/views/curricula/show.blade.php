@@ -1,21 +1,11 @@
 @extends('layouts.admin')
 @section('content')
 <div class="row">
-    <div class="col-12 mx-2">
-        <h1 class="pull-left">{{ $curriculum->title }}</h1>
-        @if(!isset(json_decode($settings)->achievements))
-            @can('user_create')
-                <a class="pull-right mr-3 mt-2 btn btn-success" href="{{ route("curricula.showAchievements", $curriculum->id) }}" >
-                    {{ trans('global.edit') }} {{ trans('global.achievement.title') }}
-                </a>
-            @endcan
-        @endif
-    </div>
     
-    
-    @if(isset(json_decode($settings)->achievements))
     <div class="col-12 mx-2">
-        <div class="card-body">
+        <h1>{{ $curriculum->title }}</h1>
+        @can('achievement_manage')
+            @if(isset(json_decode($settings)->achievements))
             <table id="users-datatable" class=" table table-bordered table-striped table-hover datatable">
                 <thead>
                     <tr>
@@ -30,13 +20,10 @@
                     </tr>
                 </thead>     
             </table>
-        </div>
-    </div>
-    @endif
+            @endif
+        @endcan
     
-    
-    <div class="col-12 mx-2">
-<!--        <button type="button" class="btn btn-default" data-toggle="tooltip"  onclick="">
+<!--    <button type="button" class="btn btn-default" data-toggle="tooltip"  onclick="">
             <i class="fa fa-compress"></i>
         </button>-->
        
@@ -94,18 +81,19 @@ function getDatatablesIds(selector){
     return $(selector).DataTable().rows({ selected: true }).ids().toArray();
 }
 
-function triggerExternalEvent(type){
+function triggerVueEvent(type){
     if ( type === 'row' ) {
         app.__vue__.$refs.curriculumView.externalEvent(getDatatablesIds('#users-datatable')); //pass Ids to vue component
     }
 }
+
 $(document).ready( function () {
-   
     let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
     table = $('#users-datatable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ url('users/list') }}",
+        ajax: "/courses/list?group_id={{ $course->group_id }}",
+        
         columns: [
                  { data: 'check'},
                  { data: 'username' },
@@ -124,10 +112,10 @@ $(document).ready( function () {
     $(".table ").css({"width":"100%"});
     
     table.on( 'select', function ( e, dt, type, indexes ) { //on select event
-        triggerExternalEvent(type)
+        triggerVueEvent(type);
     });
     table.on( 'deselect', function ( e, dt, type, indexes ) { //on deselect event
-        triggerExternalEvent(type)
+        triggerVueEvent(type);
     });
  });
  

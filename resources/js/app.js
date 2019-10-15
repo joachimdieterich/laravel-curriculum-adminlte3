@@ -58,7 +58,7 @@ Vue.directive('can', function (el, binding) {
     if(window.Laravel.permissions.indexOf(binding.value) == -1){
         el.style.display = 'none';
     }
-    //return window.Laravel.permissions.indexOf(binding.value) !== -1;
+    return window.Laravel.permissions.indexOf(binding.value) !== -1;
 });
 
 /**

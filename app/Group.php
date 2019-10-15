@@ -56,9 +56,9 @@ class Group extends Model
         return $this->hasOne('App\Organization', 'id', 'organization_id');
     }
     
-    public function courses()
-    {
-         return $this->hasMany('App\GroupUser', 'group_id', 'id');
+    public function courses(){
+        return $this->hasMany('App\Course', 'group_id', 'id');
     }
+    
     
 }

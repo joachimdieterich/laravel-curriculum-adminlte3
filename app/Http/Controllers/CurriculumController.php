@@ -218,10 +218,9 @@ class CurriculumController extends Controller
         //$user_ids = isset(request()->user_ids) ? request()->user_ids : auth()->user()->id;
         
         // DB::enableQueryLog(); // Enable query log
+        //$currentGroups = ;//->curricula()->contains('curriculum_id', $curriculum->id));
+        //dd(auth()->user()->curricula());
 
-        $groupsWithCurriculum = auth()->user()->groupsWithCurriculum($curriculum->id);
-
-        dd(auth()->user()->courses()->curriculum);
         //dd(DB::getQueryLog()); // Show results of log
        
         $terminalObjectives = TerminalObjective::where('curriculum_id', $curriculum->id)
@@ -275,7 +274,7 @@ class CurriculumController extends Controller
      * @param  \App\Curriculum  $curriculum
      * @return \Illuminate\Http\Response
      */
-    public function getAchievements(Curriculum $curriculum)
+    public function setAchievements(Curriculum $curriculum)
     {
         abort_unless(\Gate::allows('curriculum_show'), 403);
         //check if user is enrolled or admin -> else 403 
@@ -283,7 +282,7 @@ class CurriculumController extends Controller
                   OR (auth()->user()->currentRole()->first()->id == 1)), 403);                // or admin
         $user_ids = request()->user_ids;
         
-         $enablingObjectives = EnablingObjective::where('curriculum_id', $curriculum->id)
+        $enablingObjectives = EnablingObjective::where('curriculum_id', $curriculum->id)
                                                 ->orderBy('terminal_objective_id')
                                                 ->orderBy('order_id')
                                                 ->with(['media',

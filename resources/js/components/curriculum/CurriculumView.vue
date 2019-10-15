@@ -29,7 +29,6 @@
         
         methods: {
            externalEvent: function(ids) {
-               
                this.reloadEnablingObjectives(ids);
             },
             async reloadEnablingObjectives(ids) {
@@ -44,7 +43,6 @@
             this.ena = this.enablingobjectives;
         },
         mounted() {
-            
             this.$on('addTerminalObjective', function(newTerminalObjective) {
                 console.log(newTerminalObjective);
              });     

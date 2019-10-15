@@ -39,9 +39,8 @@ class StudentsPermissionCheckTest extends TestCase
     /** @test */
     public function can_access_a_curriculum_where_its_group_is_enroled()
     {
-        $response = $this->get('/curricula/1'); //curriculum was created by seeder
         
-        $response->assertStatus(200); 
+        $this->followingRedirects()->get('/courses/1')->assertStatus(200); //curriculum was created by seeder
     }
     
     /** @test */

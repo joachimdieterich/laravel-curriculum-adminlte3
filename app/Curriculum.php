@@ -79,6 +79,9 @@ class Curriculum extends Model
         )->where('subscribable_type', get_class($this)); 
     }
    
+    public function courses(){
+        return $this->hasMany('App\Course', 'curriculum_id', 'id');
+    }
     
     public function media()
     {

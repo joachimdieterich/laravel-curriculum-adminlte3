@@ -66,6 +66,19 @@ class MediumController extends Controller
             /* check sharing level */
         /* end if subscribed */
         
+        // file not found
+
+//        $pdfContent = Storage::get($path);
+//
+//        // for pdf, it will be 'application/pdf'
+//        $type       = Storage::mimeType($path);
+//        $fileName   = Storage::name($path);
+//
+//        return Response::make($pdfContent, 200, [
+//          'Content-Type'        => $type,
+//          'Content-Disposition' => 'inline; filename="'.$fileName.'"'
+//        ]);
+        
         return response()->file($path);
     }
 

@@ -14,12 +14,12 @@
         >
         @csrf   
         <div class="form-group row">
-            <label for="import" class="col-md-4 col-form-label text-md-right">
+            <label for="imports" class="col-md-4 col-form-label text-md-right">
                 {{ __('Import (optional)') }}
             </label>
 
             <div class="col-md-6">
-                <input id="import" type="file" class="form-control" name="import">
+                <input id="imports" type="file" name="imports[]" class="form-control" multiple>
             </div>
             
         </div>

@@ -60,7 +60,7 @@ class CurriculumController extends Controller
                 return $curricula->grade()->first()->title;                
             })
             ->addColumn('subject', function ($curricula) {
-                return $curricula->subject()->first()->title;                
+                return $curricula->subject()->first()->title;
             })
             ->addColumn('owner', function ($curricula) {
                 return $curricula->owner()->first()->firstname.' '.$curricula->owner()->first()->lastname;                

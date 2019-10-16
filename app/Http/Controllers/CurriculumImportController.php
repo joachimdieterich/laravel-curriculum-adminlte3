@@ -35,21 +35,31 @@ class CurriculumImportController extends Controller
     /*
      * example http://127.0.0.1:8000/curricula/import?path=/curricula/2019-07-24_15-43-14_curriculum_nr_347.curriculum
      */
-    public function store() {
-        $folder = 'imports';
-        
-        if (!request()->hasFile('import'))
+    public function store() 
+    {
+        ini_set('max_file_uploads', 200);
+        if (!request()->hasFile('imports'))
         {
             return redirect('/home');
         }
-        $original_file_name = request()->file("import")->getClientOriginalName();
-        $zip_path = request()
-                ->file('import')
+        
+        foreach(request()->file('imports') as $current_file)
+        {
+            $curricula_id[] = $this->importFile($current_file);
+        }
+        return redirect('/curricula');
+    }
+    
+    private function importFile($backup)
+    {
+        $folder = 'imports';
+        $original_file_name = $backup->getClientOriginalName();
+        $zip_path = $backup
                 ->storeAs("/{$folder}", $original_file_name
                 );
         
         $zip = new ZipArchive;
-        if ($zip->open(storage_path("app/{$folder}/").request()->file("import")->getClientOriginalName()) === TRUE) {
+        if ($zip->open(storage_path("app/{$folder}/").$original_file_name) === TRUE) {
             $zip->extractTo(storage_path("app/{$folder}/"));
             $zip->close();
             //ok
@@ -57,7 +67,7 @@ class CurriculumImportController extends Controller
             //error handlinng
         }
         
-        $filename = pathinfo(request()->file("import")->getClientOriginalName(), PATHINFO_FILENAME);
+        $filename = pathinfo($original_file_name, PATHINFO_FILENAME);
         
         $xml = new DOMDocument("1.0", "UTF-8");
         //dd(public_path("{$folder}/{$filename}.xml"));
@@ -69,7 +79,8 @@ class CurriculumImportController extends Controller
             'description' => html_entity_decode($xml_data->getAttribute('description')),
             'grade_id' => optional(Grade::where("title", $xml_data->getAttribute('grade'))->first())->id ?: 1,
             'subject_id' => optional(Subject::where("title", $xml_data->getAttribute('subject'))->first())->id ?: 1,
-            'organization_type_id' => optional(OrganizationType::where("external_id", $xml_data->getAttribute('schooltype'))->first())->external_id ?: 1,
+            'organization_type_id' => optional(OrganizationType::where("id", $xml_data->getAttribute('schooltype'))->first())->id ?: 1,
+            //'organization_type_id' => optional(OrganizationType::where("external_id", $xml_data->getAttribute('schooltype'))->first())->external_id ?: 1,
             'state_id' => "DE-RP",
             'country_id' => "DE",
             'medium_id' => null,
@@ -100,8 +111,8 @@ class CurriculumImportController extends Controller
             }
             
             /*ter references*/
-            $this->process($ter, $terminal_objective, 'reference', 'importReference');
-            $this->process($ter, $terminal_objective, 'quote_subscription', 'importQuoteSubscription');
+            $this->process($ter, $terminal_objective, 'reference', 'importReference', $folder, $old_curriculum_id);
+            $this->process($ter, $terminal_objective, 'quote_subscription', 'importQuoteSubscription', $folder, $old_curriculum_id);
             
             //persist enabing_objectives  
             foreach ($ter->getElementsByTagName('enabling_objective') as $ena) {
@@ -122,17 +133,16 @@ class CurriculumImportController extends Controller
                     $this->importMedia($enabling_medium, $enabling_objective, $folder, $old_curriculum_id.'/'.$old_ter_id.'/'.$old_ena_id.'/'); //call import function
                 }
                 
-                $this->process($ena, $enabling_objective, 'reference', 'importReference');
-                $this->process($ena, $enabling_objective, 'quote_subscription', 'importQuoteSubscription');
+                $this->process($ena, $enabling_objective, 'reference', 'importReference', $folder, $old_curriculum_id);
+                $this->process($ena, $enabling_objective, 'quote_subscription', 'importQuoteSubscription', $folder, $old_curriculum_id);
                 
             }
         }
         
         /* import content */
-        $this->process($xml_data, $curriculum, 'content', 'importContent');
-
+        $this->process($xml_data, $curriculum, 'content', 'importContent', $folder, $old_curriculum_id );
         /* end import content */
-        
+       
         /* import glossar */
         $glossar_content_nodes = getImmediateChildrenByTagName($xml_data, 'glossar');
         if (count($glossar_content_nodes) > 0)
@@ -144,7 +154,7 @@ class CurriculumImportController extends Controller
             $glossar->save();
             $glossar->fresh();
             foreach ($glossar_content_nodes as $gl) {
-                $this->importContent($gl, $glossar);
+                $this->importContent($gl, $glossar, $folder, $old_curriculum_id);
             }
         }
         /* end import glossar */
@@ -162,56 +172,35 @@ class CurriculumImportController extends Controller
          */
         Storage::deleteDirectory($folder);
         
-        
-        
-        return redirect('/curricula/'.$curriculum->id);
-    }
-    
-    private function importContent($content_node, $model){
-        $content = new Content([
-            "title" =>  htmlspecialchars_decode(getImmediateChildrenByTagName($content_node, 'title')[0]->nodeValue, ENT_QUOTES),
-            "content" =>  htmlspecialchars_decode(getImmediateChildrenByTagName($content_node, 'text')[0]->nodeValue, ENT_QUOTES), 
-            "owner_id"=> auth()->user()->id,
-        ]);
-        $content->save();
-        $content->fresh();
-        
-        //import possible quotes
-        foreach(getImmediateChildrenByTagName($content_node, 'quote') as $quote_node) {
-            $this->importQuote($quote_node, $content);
-        }
-        
-       
-        $content->subscribe($model);
-        
+        return $curriculum->id;
     }
     
     private function importMedia($media_node, $model, $folder, $path){
         $new_folder = class_basename($model);
         $temp_filepath = storage_path("app/{$folder}/{$path}").$media_node->getAttribute('filename');
-        if (!file_exists($temp_filepath)) {
+        if (!file_exists($temp_filepath) AND  ($media_node->getAttribute('type') !== '.url')) {
             dump('missing'.$temp_filepath);
             return;
         }
         $media = new Medium([
-            'path'          => "/{$new_folder}/{$model->id}/",
-            'title'         => $media_node->getAttribute('title'),
-            'medium_name'   => $media_node->getAttribute('filename'),
+            'path'          => ($media_node->getAttribute('type') == '.url') ? $media_node->getAttribute('path') : "/{$new_folder}/{$model->id}/",
+            'title'         => substr ( $media_node->getAttribute('title') , 0 , 190 ),
+            'medium_name'   => substr ( $media_node->getAttribute('filename'), 0 , 190 ),
             'description'   => $media_node->getAttribute('description'),
             'author'        => $media_node->getAttribute('author'),
             'publisher'     => $media_node->getAttribute('publisher'),
             'city'          => $media_node->getAttribute('city'),
             'date'          => $media_node->getAttribute('date'),
-            'size'          => File::size($temp_filepath),
-            'mime_type'     => File::mimeType($temp_filepath),
-            'license_id'    => $media_node->getAttribute('license'),
+            'size'          => ($media_node->getAttribute('type') == '.url') ? 0 : File::size($temp_filepath),
+            'mime_type'     => ($media_node->getAttribute('type') == '.url') ? 'url' : File::mimeType($temp_filepath),
+            'license_id'    => 2,//$media_node->getAttribute('license'), //hack fix false entries in import files
            
             'owner_id'      => auth()->user()->id,
             
-        ]);
+        ]); 
         $media->save();
         
-        if (!Storage::disk('local')->exists("/{$new_folder}/{$model->id}/{$media_node->getAttribute('filename')}")) //only copy if not exists 
+        if (!Storage::disk('local')->exists("/{$new_folder}/{$model->id}/{$media_node->getAttribute('filename')}") AND ($media_node->getAttribute('type') != '.url')) //only copy if not exists 
         {
             Storage::disk('local')
                     ->move("{$folder}/{$path}".$media_node->getAttribute('filename'),
@@ -219,28 +208,82 @@ class CurriculumImportController extends Controller
         } 
         
         $media->fresh();
-       
+
         $media->subscribe($model);
-        
+        return array(['old_id' => $media_node->getAttribute('id'), 'new_media' => $media]);
     }
     
-    public function process($base_node, $model, $tag, $function)
+    public function process($base_node, $model, $tag, $function, $folder, $old_curriculum_id)
     {
         $nodes = getImmediateChildrenByTagName($base_node, $tag);
         foreach($nodes as $ref) {
-            $this->$function($ref, $model); //call import function
+           
+            $this->$function($ref, $model, $folder, $old_curriculum_id); //call import function e.g. importReference, importQuoteSubscription, importContent
         }
     }
     
-    private function importReference($ref_node, $model)
-    {
+    private function importContent($content_node, $model, $folder, $old_curriculum_id){ 
         
+        $content = new Content([
+            "title"   =>  htmlspecialchars_decode(getImmediateChildrenByTagName($content_node, 'title')[0]->nodeValue, ENT_QUOTES),
+            "content" =>  htmlspecialchars_decode(
+                            $this->importEmbeddedFiles(
+                                getImmediateChildrenByTagName($content_node, 'text')[0]->nodeValue, 
+                                $content_node, 
+                                $model, 
+                                $folder, 
+                                $old_curriculum_id
+                            ), 
+                            ENT_QUOTES), 
+            "owner_id"=> auth()->user()->id,
+        ]);
+        $content->save();
+        $content->fresh();
+        
+        //import possible quotes
+        foreach(getImmediateChildrenByTagName($content_node, 'quote') as $quote_node) {
+            $this->importQuote($quote_node, $content, $folder, $old_curriculum_id);
+        }
+       
+        $content->subscribe($model);
+    }
+    
+    private function importEmbeddedFiles($data, $ref, $model, $folder, $old_curriculum_id)
+    {  
+        /* import files */
+        foreach ($ref->getElementsByTagName('file') as $cur_fil) 
+        {
+            $media = $this->importMedia($cur_fil, $model, $folder, $old_curriculum_id.'/'); 
+            if ($media[0]['old_id'] !== '')
+            {
+                $data   =  preg_replace_callback('#\<img[^\>]+alt="accessfile\.php\?id='.$media[0]['old_id'].'"[^\>]+>#is',      
+                                function() use ($media){ 
+                                    return '<img src="/media/'.$media[0]['new_media']->id.'"/>';
+                                 }, $data);             
+            }       
+        }
+        /* end import files */
+        
+        return $data;
+        
+    }
+    private function importReference($ref_node, $model, $folder, $old_curriculum_id)
+    {   
        $reference = Reference::where('id', $ref_node->getAttribute('unique_id'))->first(); //check first --> do not use firstOrCreate, it will fail on some older *.curriculum exports
        
         if ($reference === null) {
             $reference = Reference::Create(["id"            => $ref_node->getAttribute('unique_id'),
                                             "owner_id"      => auth()->user()->id,
-                                            "description"   => htmlspecialchars_decode( $this->getDescription($ref_node), ENT_QUOTES),
+                                            "description"   => htmlspecialchars_decode( 
+                                                                    $this->importEmbeddedFiles(
+                                                                        $this->getDescription($ref_node),
+                                                                        $ref_node, 
+                                                                        $model, 
+                                                                        $folder, 
+                                                                        $old_curriculum_id
+                                                                    ), 
+                                                                    ENT_QUOTES
+                                                               ),
                                             'grade_id'      => optional(Grade::where("title", $ref_node->getAttribute('grade'))->first())->id ?: 1,
                                          ]);
         }
@@ -263,7 +306,7 @@ class CurriculumImportController extends Controller
         return getImmediateChildrenByTagName($node, 'text')[0]->nodeValue;
     }
     
-    private function importQuote($ref_node, $model)
+    private function importQuote($ref_node, $model, $folder, $old_curriculum_id)
     {
         if (Quote::where('id', $ref_node->getAttribute('unique_id'))->first() === null)
         {
@@ -278,13 +321,11 @@ class CurriculumImportController extends Controller
                               "quote" =>  $matches ? $matches[1] : null,//$matches[0] == with quote tag //$matches[1] == quote only
                               "owner_id" => auth()->user()->id,
                              ]);
-            
         }
     }
     
-    private function importQuoteSubscription($ref_node, $model)
+    private function importQuoteSubscription($ref_node, $model, $folder, $old_curriculum_id)
     {
-   
         QuoteSubscription::firstOrCreate([
 			"quote_id" =>  $ref_node->getAttribute('unique_id'),
 			"quotable_type"=> get_class($model),

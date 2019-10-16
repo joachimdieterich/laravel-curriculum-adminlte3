@@ -44,7 +44,8 @@ class Curriculum extends Model
     
     public function subject()
     {
-        return $this->hasOne('App\Subject', 'external_id', 'subject_id');   
+        //return $this->hasOne('App\Subject', 'external_id', 'subject_id');   
+        return $this->hasOne('App\Subject', 'id', 'subject_id');   
     }
     
     public function owner()

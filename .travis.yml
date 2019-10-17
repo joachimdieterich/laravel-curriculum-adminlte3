@@ -7,9 +7,11 @@ php:
     - 7.3
     
 before_script:
+    - mkdir storage/framework/views
+    - chmod 777 -R storage
     - cp .env.travis .env
     - composer self-update
-    - sudo composer install --no-interaction
+    - composer install --no-interaction
     - php artisan key:generate
     - php artisan migrate
     - php artisan passport:keys

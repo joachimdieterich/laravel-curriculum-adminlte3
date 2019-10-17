@@ -8,9 +8,8 @@ php:
     
 before_script:
     - cp .env.travis .env
-    - sudo chmod -R 777 storage
     - composer self-update
-    - composer install --no-interaction
+    - sudo composer install --no-interaction
     - php artisan key:generate
     - php artisan migrate
     - php artisan passport:keys

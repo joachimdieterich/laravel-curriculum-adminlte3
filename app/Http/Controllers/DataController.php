@@ -13,7 +13,12 @@ class DataController extends Controller
      */
     public function index()
     {
-        //
+        abort_unless(\Gate::allows('certificate_access'), 403);
+
+        $certificate = Certificate::all();
+       
+        return view('certificate.index')
+          ->with(compact('certificate'));
     }
 
     /**

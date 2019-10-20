@@ -1,7 +1,15 @@
 @extends('layouts.admin')
 @section('content')
 <div class="row">
-    
+    @can('user_create')
+       
+        <div class="col-12">
+            <a class="pull-right btn btn-success" href="{{ route("certificates.create") }}" >
+                {{ trans('global.add') }} {{ trans('global.certificate.title_singular') }}
+            </a>
+        </div>
+       
+    @endcan
     <div class="col-12 mx-2">
         <h1>{{ $curriculum->title }}</h1>
         @can('achievement_manage')

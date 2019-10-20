@@ -102,14 +102,16 @@
             
         },
         mounted() {
+            this.settings = this.$attrs.settings;
+            
             if (this.terminalobjectives.length != 0){
-                this.settings = this.$attrs.settings;
                 this.settings.last = this.terminalobjectives[this.terminalobjectives.length-1].id;
                
                 this.typetabs = [ ... new Set(this.terminalobjectives.map(t => t.objective_type_id))];
                 
                 this.activetab = this.typetabs[0];
             }
+            
         },
         
         components: {

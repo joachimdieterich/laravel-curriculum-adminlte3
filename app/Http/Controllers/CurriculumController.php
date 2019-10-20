@@ -35,7 +35,7 @@ class CurriculumController extends Controller
           ->with(compact('curricula'));
     }
     
-     public function list()
+    public function list()
     {
         abort_unless(\Gate::allows('curriculum_access'), 403);
         $curricula = Curriculum::select([
@@ -193,7 +193,7 @@ class CurriculumController extends Controller
                         'media'])
                         ->find($curriculum->id);
         $settings= json_encode([
-            'edit' => false
+            'edit' => true
         ]);
         
         return view('curricula.show')

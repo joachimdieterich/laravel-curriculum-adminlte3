@@ -23,9 +23,6 @@ class ReferenceSubscription extends Model
         return $this->hasOne('App\Reference', 'id', 'reference_id');
     }
     
-    /**
-     * Get the owning commentable model.
-     */
     public function referenceable()
     {
         return $this->morphTo();

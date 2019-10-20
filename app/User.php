@@ -201,4 +201,9 @@ class User extends Authenticatable
                 ->get();
        
     }
+    
+    public function progresses()
+    {
+        return $this->morphMany('App\Progress', 'connectable');
+    }
 }

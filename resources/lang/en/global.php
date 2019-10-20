@@ -640,5 +640,44 @@ return [
           
         ]   
     ],
+    'progress' =>[
+        'title'          => 'Progresses',
+        'title_singular' => 'Progress',
+        'fields'         => [
+            'id'         => 'ID',
+            'id_helper'  => '',
+            'referenceable_type' => 'Model',
+            'referenceable_type_helper'  => '',
+            'referenceable_id' => 'Model Id',
+            'referenceable_id_helper' => '',
+            'associable_type' => 'Associable Model',
+            'associable_type_helper'  => '',
+            'associable_id' => 'Associable Model Id',
+            'associable_id_helper' => '',
+            'value' => 'Value',
+            'value_helper' => '',
+        ]   
+    ],
+    'certificate' =>[
+        'title'          => 'Certificates',
+        'title_singular' => 'Certificate',
+        'fields'         => [
+            'id'         => 'ID',
+            'id_helper'  => '',
+            'title'      => 'Title',
+            'title_helper'  => '',
+            'description'    => 'Description',
+            'description_helper'  => '',
+            'body'    => 'Body',
+            'body_helper'  => '',
+            'curriculum_id'    => 'Curriculum Id',
+            'curriculum_id_helper'  => '',
+            'organization_id'    => 'Organization Id',
+            'organization_id_helper'  => '',
+            'owner_id' => 'Owner Id',
+            'owner_id_helper' => '',
+        ]   
+    ],
+    
     
 ];

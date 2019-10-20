@@ -2041,8 +2041,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     this.ena = this.enablingobjectives;
   },
   mounted: function mounted() {
-    this.$on('addTerminalObjective', function (newTerminalObjective) {
-      console.log(newTerminalObjective);
+    this.$on('addTerminalObjective', function (newTerminalObjective) {//console.log(newTerminalObjective);
     });
   },
   components: {
@@ -2419,20 +2418,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 4:
                 this.status = _context.sent.data.message;
-                _context.next = 10;
+                calculateProgress();
+                _context.next = 11;
                 break;
 
-              case 7:
-                _context.prev = 7;
+              case 8:
+                _context.prev = 8;
                 _context.t0 = _context["catch"](1);
                 alert(_context.t0.response.data.errors);
 
-              case 10:
+              case 11:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this, [[1, 7]]);
+        }, _callee, this, [[1, 8]]);
       }));
 
       function achieve(_x) {
@@ -3795,8 +3795,9 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     }
   },
   mounted: function mounted() {
+    this.settings = this.$attrs.settings;
+
     if (this.terminalobjectives.length != 0) {
-      this.settings = this.$attrs.settings;
       this.settings.last = this.terminalobjectives[this.terminalobjectives.length - 1].id;
       this.typetabs = _toConsumableArray(new Set(this.terminalobjectives.map(function (t) {
         return t.objective_type_id;

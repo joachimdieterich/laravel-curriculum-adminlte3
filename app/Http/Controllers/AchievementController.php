@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Achievement;
+use App\EnablingObjective;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\ProgressController;
 
 class AchievementController extends Controller
 {
@@ -66,7 +69,9 @@ class AchievementController extends Controller
             }
             
             $achievement->save(); 
-        
+           
+            $obj = EnablingObjective::find($input['referenceable_id'])->get();
+            (new ProgressController)->calculateProgress('App\TerminalObjective', $obj->first()->terminal_objective_id, $user_id);
         }
         // axios call? 
         if (request()->wantsJson()){    
@@ -90,8 +95,7 @@ class AchievementController extends Controller
         }
         return $status;
     }
-    
-    
+   
     protected function validateRequest()
     {               
         

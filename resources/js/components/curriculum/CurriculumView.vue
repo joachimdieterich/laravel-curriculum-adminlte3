@@ -44,7 +44,7 @@
         },
         mounted() {
             this.$on('addTerminalObjective', function(newTerminalObjective) {
-                console.log(newTerminalObjective);
+                //console.log(newTerminalObjective);
              });     
         },
         components: {

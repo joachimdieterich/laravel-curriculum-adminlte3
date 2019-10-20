@@ -15,9 +15,12 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('achievements', 'AchievementController');
     
+    Route::get('certificates/list', 'CertificateController@list');
+    Route::post('certificates/generate', 'CertificateController@generate');
+    Route::resource('certificates', 'CertificateController');
+
     Route::resource('contents', 'ContentController');
 
-    
     /* courses routes */
     Route::get('courses/list', 'CourseController@list');
     Route::resource('courses', 'CourseController');
@@ -89,6 +92,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');
     Route::resource('permissions', 'PermissionsController');
 
+    Route::resource('progresses', 'ProgressController');
     /* Roles routes */
     Route::delete('roles/massDestroy', 'RolesController@massDestroy')->name('roles.massDestroy');
     Route::get('roles/list', 'RolesController@list')->name('roles.list');

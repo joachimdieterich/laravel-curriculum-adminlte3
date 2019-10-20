@@ -64,7 +64,7 @@
                 }
                 try {   
                     this.status = (await axios.post('/achievements/', archievement)).data.message;
-                    
+                    calculateProgress();
                 } catch(error) {
                     alert(error.response.data.errors);
                 }

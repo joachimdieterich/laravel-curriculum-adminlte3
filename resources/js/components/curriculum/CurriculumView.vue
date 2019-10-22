@@ -33,7 +33,7 @@
             },
             async reloadEnablingObjectives(ids) {
                 try {                    
-                    this.ena = (await axios.post('/curricula/2/achievements', {'user_ids' : ids})).data.enablingobjectives;
+                    this.ena = (await axios.post('/curricula/'+this.curriculum.id+'/achievements', {'user_ids' : ids})).data.enablingobjectives;
                 } catch(error) {
                     this.errors = error.response.data.errors;
                 } 

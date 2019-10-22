@@ -16,6 +16,7 @@ use DOMDocument;
 use App\Content;
 use App\Glossar;
 use App\Group;
+use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Support\Facades\DB;
 
 class CurriculumController extends Controller

@@ -2,14 +2,26 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use App\MediumSubscription;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+
 class Medium extends Model
 {
     
     protected $guarded = [];
     
-
+    public function absolutePath(){
+        if ($this->mime_type !== 'url')
+        {
+            return Storage::disk('local')->path(ltrim($this->path . $this->medium_name, '/'));
+        } 
+        else 
+        {
+            return $this->path;
+        }
+    }
+    
     public function license()
     {
         return $this->hasOne('App\License', 'id', 'license_id');

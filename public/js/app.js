@@ -2008,7 +2008,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 0:
                 _context.prev = 0;
                 _context.next = 3;
-                return axios.post('/curricula/2/achievements', {
+                return axios.post('/curricula/' + this.curriculum.id + '/achievements', {
                   'user_ids': ids
                 });
 

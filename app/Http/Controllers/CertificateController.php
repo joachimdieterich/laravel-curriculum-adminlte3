@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Certificate;
 use App\Curriculum;
+use App\Medium;
 use App\Organization;
+use App\User;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use \Barryvdh\Snappy\Facades\SnappyPdf;
 
 class CertificateController extends Controller
 {
@@ -200,8 +204,71 @@ class CertificateController extends Controller
     {
         abort_unless(\Gate::allows('certificate_create'), 403);
         
+        $certificate = Certificate::find(2)->get();
+        $user = User::find(1)->get()->first();
         
-        return back();
+        $date = '22.10.2019';
+        
+        $html_to_print = $certificate->first()->body;
+        //replace placeholder
+        $html_to_print = str_replace('{{$firstname}}', $user->firstname, $html_to_print);
+        $html_to_print = str_replace('{{$lastname}}', $user->lastname, $html_to_print);
+        $html_to_print = str_replace('{{$date}}', $date, $html_to_print);
+        
+        // evaluate progress
+        // Example
+        // Full match	<progress reference_type="App\TerminalObjective" reference_id="1" min_value="60"/><img src="/media/2"/></progress>
+        // Group 1.	App\TerminalObjective
+        // Group 2.	1
+        // Group 3.	60
+        // Group 4.	<img src="/media/2"/>
+        
+        $html_to_print = preg_replace_callback( 
+            '/<progress\s+[^>]*reference_type="(.*?)"\s+[^>]*reference_id="(.*?)"\s+[^>]*min_value="(.*?)"[^>]*>(.*?)<\/progress>/mis', 
+            function($match) 
+            { 
+             //dump($match);
+                $associable_type = 'App\User';
+                $associable_id = 1;
+
+                // recalc progress -> only for dev 
+//             foreach(explode(",", $match[2]) as $terid)
+//             {
+//                (new ProgressController)->calculateProgress('App\TerminalObjective', $terid, $associable_id);
+//             }
+            
+            
+                $progress = \App\Progress::where('referenceable_type', $match[1])
+                            ->whereIn('referenceable_id', explode(",", $match[2]))//->where('value', '>', (integer) $match[3]) //now checkt in return condition
+                            ->where('associable_type', $associable_type)
+                            ->where('associable_id', $associable_id)
+                            ->get();
+             //dump(($progress->avg('value') != null AND $progress->avg('value') >= (integer) $match[3]) ? $match[4] : '');
+                return ($progress->avg('value') != null AND $progress->avg('value') >= (integer) $match[3]) ? $match[4] : '';   
+            }, 
+                    
+            $html_to_print 
+        );     
+        //end progress
+        
+        /* replace relative media links with absolute paths to get snappy working */ 
+        $html_to_print = preg_replace_callback( 
+            '/<img\s+[^>]*src="\/media\/(.*?)"(\s+[^>]*)[^>]*>/mi', 
+            function($match) 
+            { 
+            //dd($match);
+                $media = Medium::find($match[1]);
+                return (( "<img src=\"{$media->absolutePath()}\"{$match[2]}>"));      
+            }, 
+            $html_to_print 
+        ); 
+
+        return SnappyPdf::loadHTML($html_to_print)
+                ->setPaper('a4')
+               // ->setOrientation('landscape')
+                ->setOption('margin-bottom', 0)
+                ->inline('cur.pdf');
+        //return back();
     }
     
     protected function validateRequest()

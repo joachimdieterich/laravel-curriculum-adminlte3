@@ -17,7 +17,6 @@ class CourseController extends Controller
 {
     public function show(Course $course)
     {
-        
         $curriculum = Curriculum::with(['terminalObjectives', 
                         'terminalObjectives.enablingObjectives', 
                         'contentSubscriptions.content', 

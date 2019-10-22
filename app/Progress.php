@@ -12,7 +12,7 @@ class Progress extends Model
         return $this->morphTo();
     }
     
-    public function connectable()
+    public function associable()
     {
         return $this->morphTo();
     }

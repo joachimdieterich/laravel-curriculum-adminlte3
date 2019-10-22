@@ -111,6 +111,25 @@ http://laravelurl/saml2/rlp/sls
 ```
 More information at [aacotroneo/laravel-saml2](https://github.com/aacotroneo/laravel-saml2)
 
+
+
+## Generating PDFs (Certificates,...)
+Curriculum uses [barryvdh/laravel-snappy] (https://github.com/barryvdh/laravel-snappy)
+
+Check that wkhtmltopdf binaries are present. (Further information on [barryvdh/laravel-snappy] (https://github.com/barryvdh/laravel-snappy))
+Binaries for linux are included in the package, those for macs can be found under [profburial/wkhtmltopdf-binaries-osx] (https://github.com/profburial/wkhtmltopdf-binaries-osx)
+
+Set up the `.env` to get it working. Example:
+```
+SNAPPY_PDF_BINARY="/absolute_path_to/vendor/bin/wkhtmltopdf-amd64-osx"
+SNAPPY_IMAGE_BINARY="/absolute_path_to/vendor/bin/wkhtmltoimage-amd64-osx"
+```
+
+Now you can generate PDFs. Example: 
+```
+return SnappyPdf::loadFile('http://curriculumonline.de')->inline('cur.pdf');
+```
+
 ## Testing
 
 ### Feature and Unit Tests

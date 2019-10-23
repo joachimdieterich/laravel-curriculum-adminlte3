@@ -231,6 +231,13 @@ class GradesTableSeeder extends Seeder
                     'external_end'=>80,
                     'organization_type_id'=>1,
                     ],
+                    [
+                    'id'=>999,
+                    'title'=>'Default',
+                    'external_begin'=>999,
+                    'external_end'=>999,
+                    'organization_type_id'=>1,
+                    ],
             ];
 
         Grade::insert($grades);

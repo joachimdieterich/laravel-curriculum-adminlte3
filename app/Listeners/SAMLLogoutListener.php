@@ -3,9 +3,10 @@
 namespace App\Listeners;
 
 use Illuminate\Support\Facades\Auth;
-use App\Events\Aacotroneo\Saml2\Events\Saml2LogoutEvent;
+use Aacotroneo\Saml2\Events\Saml2LogoutEvent;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Session;
 
 class SAMLLogoutListener
 {

@@ -26,13 +26,13 @@ class ApiUserDashboardTest extends TestCase {
 
         $this->signInApiAdmin();
         // Dummy event used till fullcalendar is implemented
-        $event = \Calendar::event(
-                "Event from curriculum", //event title
+        $event = [
+             "Event from curriculum", //event title
                 false, //full day event?
                 '2019-08-02 10:00:00 UTC+2', //start time, must be a DateTime object or valid DateTime format (http://bit.ly/1z7QWbg)
                 '2019-08-02 12:00:00 UTC+2', //end time, must be a DateTime object or valid DateTime format (http://bit.ly/1z7QWbg),
                 1, //optional event ID
-        );
+        ];
         
         $this->get('/api/v1/users/1/dashboard')
                 ->assertStatus(200)

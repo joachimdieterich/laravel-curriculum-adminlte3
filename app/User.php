@@ -204,6 +204,6 @@ class User extends Authenticatable
     
     public function progresses()
     {
-        return $this->morphMany('App\Progress', 'connectable');
+        return $this->morphMany('App\Progress', 'associable');
     }
 }

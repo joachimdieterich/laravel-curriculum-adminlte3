@@ -16,8 +16,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('achievements', 'AchievementController');
     
     Route::get('certificates/list', 'CertificateController@list');
-    Route::get('certificates/generate', 'CertificateController@generate');
-    //Route::post('certificates/generate', 'CertificateController@generate');
+    //Route::get('certificates/generate', 'CertificateController@generate'); //for testing only
+    Route::post('certificates/generate', 'CertificateController@generate');
     Route::resource('certificates', 'CertificateController');
 
     Route::resource('contents', 'ContentController');

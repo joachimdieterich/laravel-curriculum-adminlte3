@@ -58,6 +58,7 @@ class CourseController extends Controller
                                                         }])
                                                 ->get();
         $objectiveTypes = ObjectiveType::all();
+        $certificates   = \App\Certificate::all();
      
         $settings= json_encode([
             'edit' => false,
@@ -70,12 +71,14 @@ class CourseController extends Controller
                 ->with(compact('enablingObjectives'))
                 ->with(compact('objectiveTypes'))
                 ->with(compact('course'))
+                ->with(compact('certificates'))
                 ->with(compact('settings'));
     }
     
     
     public function list()
     {
+        $course = Course::where('id', request()->course_id)->get()->first();
         
         $users = User::select([
             'users.id', 
@@ -88,33 +91,22 @@ class CourseController extends Controller
             ])
                 ->join('group_user', 'users.id', '=', 'group_user.user_id')
                 ->join('curriculum_group', 'curriculum_group.group_id', '=', 'group_user.group_id')
-                ->where('curriculum_group.id', request()->group_id);
+                ->where('curriculum_group.id', $course->id);
         
         return DataTables::of($users)
-            ->addColumn('status', function ($users) {
-                return $users->status()->first()->lang_de;                
+            ->addColumn('role', function ($users) {
+                return $users->roles()->where('organization_id', auth()->user()->current_organization_id)->first()->title;                
             })
-            ->addColumn('action', function ($users) {
-                 $actions  = '';
-                    if (\Gate::allows('user_show')){
-                        $actions .= '<a href="'.route('users.show', $users->id).'" '
-                                    . 'class="btn btn-xs btn-success mr-1">'
-                                    . '<i class="fa fa-list-alt"></i> Show'
-                                    . '</a>';
-                    }
-                    if (\Gate::allows('user_edit')){
-                        $actions .= '<a href="'.route('users.edit', $users->id).'" '
-                                    . 'class="btn btn-xs btn-primary  mr-1">'
-                                    . '<i class="fa fa-edit"></i> Edit'
-                                    . '</a>';
-                    }
-                    if (\Gate::allows('user_delete')){
-                        $actions .= '<button type="button" class="btn btn-xs btn-danger" onclick="destroyUser('.$users->id.')"><i class="fa fa-trash"></i> Delete</button>';
-                    }
-              
-                return $actions;
+            ->addColumn('progress', function ($users) use ($course){
+                return isset($users->progresses()
+                                    ->where('referenceable_type', 'App\Curriculum')
+                                    ->where('referenceable_id', $course->curriculum_id)
+                                    ->first()->value) ? 
+                             $users->progresses()
+                                    ->where('referenceable_type', 'App\Curriculum')
+                                    ->where('referenceable_id', $course->curriculum_id)
+                                    ->first()->value : 0;                
             })
-           
             ->addColumn('check', '')
             ->setRowId('id')
             ->setRowAttr([

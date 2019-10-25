@@ -13,6 +13,7 @@ return [
     'save'                                 => 'Save',
     'cancel'                               => 'Cancel',
     'close'                                => 'Close',
+    'generate'                             => 'Generate',
     'pleaseSelect'                         => 'Please select',
     'areYouSure'                           => 'Are you sure?',
     'allRightsReserved'                    => 'All rights reserved.',
@@ -55,6 +56,7 @@ return [
     'information'                          => 'Information',
     'curricula_content_subscriptions'      => 'Digitalized contents',
     'curricula_media_subscriptions'        => 'Media',
+    'date'                                 => 'Date',
     'datatables'                           => [
         'copy'          => 'Copy',
         'csv'           => 'CSV',

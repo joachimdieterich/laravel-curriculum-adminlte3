@@ -2,13 +2,16 @@
 @section('content')
 <div class="row">
     @can('user_create')
-       
         <div class="col-12">
             <a class="pull-right btn btn-success" href="{{ route("certificates.create") }}" >
                 {{ trans('global.add') }} {{ trans('global.certificate.title_singular') }}
             </a>
-        </div>
-       
+            @if(isset($certificates))
+            <a class="pull-right btn text-white btn-success mr-1" onclick="app.__vue__.$modal.show('certificate-generate-modal',  {'curriculum_id': {{$curriculum->id}}});" >
+                {{ trans('global.generate') }} {{ trans('global.certificate.title_singular') }}
+            </a>
+            @endif
+        </div>    
     @endcan
     <div class="col-12 mx-2">
         <h1>{{ $curriculum->title }}</h1>
@@ -17,14 +20,12 @@
             <table id="users-datatable" class=" table table-bordered table-striped table-hover datatable">
                 <thead>
                     <tr>
-                        <th width="10"></th>
+                         <th width="10"></th>
                         <th>{{ trans('global.user.fields.username') }}</th>
                         <th>{{ trans('global.user.fields.firstname') }}</th>
                         <th>{{ trans('global.user.fields.lastname') }}</th>
-                        <th>{{ trans('global.user.fields.email') }}</th>
-                        <th>{{ trans('global.user.fields.email_verified_at') }}</th>
-                        <th>{{ trans('global.status.title_singular') }}</th>
-                        <th>Action</th>
+                        <th>{{ trans('global.role.fields.title') }}</th>
+                        <th>{{ trans('global.progress.title_singular') }}</th>
                     </tr>
                 </thead>     
             </table>
@@ -78,6 +79,9 @@
 <medium-modal></medium-modal>
 <objective-medium-modal></objective-medium-modal>
 <medium-modal></medium-modal>
+@if(isset($certificates))
+    <certificate-generate-modal  :certificates="{{ $certificates }}" ></certificate-generate-modal>
+@endif
 @endsection
 @section('scripts')
 @parent
@@ -96,23 +100,22 @@ function triggerVueEvent(type){
 }
 
 $(document).ready( function () {
-    let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
+    //let dtButtons = false;//$.extend(true, [], $.fn.dataTable.defaults.buttons)
     table = $('#users-datatable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "/courses/list?group_id={{ $course->group_id }}",
+        select: true,
+        ajax: "/courses/list?course_id={{ $course->id }}",
         
         columns: [
                  { data: 'check'},
                  { data: 'username' },
                  { data: 'firstname' },
                  { data: 'lastname' },
-                 { data: 'email' },
-                 { data: 'email_verified_at' },
-                 { data: 'status' },
-                 { data: 'action' }
+                 { data: 'role' },
+                 { data: 'progress' },
                 ],
-        buttons: dtButtons
+        buttons: [],
     });
     
     //align header/body

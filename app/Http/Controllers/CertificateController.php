@@ -267,7 +267,6 @@ class CertificateController extends Controller
                     ->setOption('margin-bottom', 0)
                     ->save(storage_path("app/users/".auth()->user()->id."/".$timestamp.$user->lastname."_".$user->firstname.".pdf"));
             
-            
             $media = new Medium([
                 'path'          => "/users/".auth()->user()->id."/".date("Y-m-d_H-i-s").$user->lastname."_".$user->firstname.".pdf",
                 'title'         => $user->lastname."_".$user->firstname.".pdf",

@@ -40,6 +40,7 @@ Vue.component('dropdown-button', require('./components/uiElements/DropdownButton
 Vue.component('content-modal', require('./components/content/ContentModal.vue').default);
 Vue.component('medium-modal', require('./components/media/MediumModal.vue').default);
 Vue.component('objective-medium-modal', require('./components/objectives/ObjectiveMediumModal.vue').default);
+Vue.component('certificate-generate-modal', require('./components/certificate/GenerateCertificateModal.vue').default);
 
 /**
  * Custom Vue directive "can" to check against permissions.

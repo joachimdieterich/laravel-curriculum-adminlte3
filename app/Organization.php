@@ -58,6 +58,12 @@ class Organization extends Model
               ->role('Admin');
     }
     
+    public function users()
+    {
+        return $this->belongsToMany('App\User', 'organization_role_users')
+            ->withPivot(['user_id', 'role_id', 'organization_id']);
+    }
+    
     public function state()
     {
         return $this->hasOne('App\State', 'code', 'state_id');

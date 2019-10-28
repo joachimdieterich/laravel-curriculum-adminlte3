@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\DB;
  *   ),
  * 
  */
+
 class User extends Authenticatable
 {
     use HasApiTokens, SoftDeletes, Notifiable;

@@ -52,6 +52,10 @@ class OrganizationsApiController extends Controller {
             return ['message' => 'Successful expelled'];
         }
     }
+    
+    public function members(Organization $organization) {
+        return $organization->users;
+    }
 
     protected function filteredRequest() {
         return array_filter(request()->all()); //filter to ignore fields with null values

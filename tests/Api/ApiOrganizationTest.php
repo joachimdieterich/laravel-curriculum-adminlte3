@@ -136,6 +136,52 @@ class ApiOrganizationTest extends TestCase
     } 
     
     /** @test 
+     * Use Route: GET, /api/v1/organizations/{organizatino}/members
+     */     
+    public function an_authificated_client_can_get_organization_members()
+    { 
+        $this->signInApiAdmin();
+        
+        $organization1 = OrganizationFactory::create();
+        
+        $user1 = UserFactory::create();
+        $user2 = UserFactory::create();
+        $user3 = UserFactory::create();
+        $user4 = UserFactory::create();
+        
+       
+        $this->put("/api/v1/organizations/enrol", 
+                [
+                    'user_id' => $user1->id, 
+                    'organization_id' => $organization1->id, 
+                    'role_id' => 1                             // 1 == Admin
+                ]);
+        
+        $this->put("/api/v1/organizations/enrol", 
+                [
+                    'user_id' => $user2->id,
+                    'organization_id' => $organization1->id,
+                    'role_id' => 2                             // 2 == Creator
+                 ]);
+        $this->put("/api/v1/organizations/enrol", 
+                [
+                    'user_id' => $user3->id,
+                    'organization_id' => $organization1->id,
+                    'role_id' => 3                             // 3 == Indexer
+                ]);
+        $this->put("/api/v1/organizations/enrol", 
+                [
+                    'user_id' => $user4->id,
+                    'organization_id' => $organization1->id,
+                    'role_id' => 4                             // 4 == Schooladmin
+                ]);
+        $members = $organization1->users->toArray();
+        $this->get('/api/v1/organizations/'.$organization1->id.'/members')
+                ->assertJson($members)
+                ->assertStatus(200);
+    } 
+    
+    /** @test 
      * Use Route: DELETE, /api/v1/organizations/expel
      */     
     public function an_authificated_client_can_expel_users_from_organizations()

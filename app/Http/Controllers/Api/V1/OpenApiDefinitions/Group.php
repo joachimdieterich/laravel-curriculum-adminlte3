@@ -162,6 +162,35 @@
 */
 
 /**
+* @OA\Get(
+*      path="/v1/groups/{group}/members",
+*      operationId="getGroupMembers",
+*      tags={"Group v1"},
+*      summary="Get group members by groupId",
+*      description="Returns an array of users",
+*      security={
+*           {"passport": {"*"}},
+*      },
+*      @OA\Parameter(
+*          name="group",
+*          description="Group id",
+*          required=true,
+*          in="path",
+*          @OA\Schema(
+*              type="integer"
+*          )
+*      ),
+*      @OA\Response(
+*          response=200,
+*          description="successful operation",
+*          @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/User")),
+*       ),
+*       @OA\Response(response=400, description="Bad request"),
+* )
+*
+*/
+
+/**
 * @OA\Delete(
 *      path="/v1/groups/{group}",
 *      operationId="deleteGroup",

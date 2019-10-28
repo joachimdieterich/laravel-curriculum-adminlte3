@@ -30,6 +30,10 @@ class GroupsApiController extends Controller {
     public function show(Group $group) {
         return $group;
     }
+    
+    public function members(Group $group) {
+        return $group->users;
+    }
 
     public function destroy(Group $group) {
         if ($group->delete()) 

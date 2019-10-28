@@ -100,7 +100,7 @@ class ApiGroupTest extends TestCase
     }
     
     /** @test 
-     * Use Route: POST, /api/v1/organizations/enrol
+     * Use Route: POST, /api/v1/groups/enrol
      */     
     public function an_authificated_client_can_enrol_groups_to_organizations()
     { 
@@ -120,10 +120,34 @@ class ApiGroupTest extends TestCase
                              'group_id' => $group2->id]);
         $this->assertDatabaseHas('group_user', $enrolment_2);
         
-    } 
+    }
     
     /** @test 
-     * Use Route: DELETE, /api/v1/organizations/expel
+     * Use Route: GET, /api/v1/groups/{groups}/members
+     */     
+    public function an_authificated_client_can_get_group_members()
+    { 
+        $this->signInApiAdmin();
+        
+        $group1 = GroupFactory::create();
+        $user1 = UserFactory::create();
+        $user2 = UserFactory::create();
+        $user3 = UserFactory::create();
+        $user4 = UserFactory::create();
+       
+        $this->put("/api/v1/groups/enrol", $enrolment_1 = ['user_id' => $user1->id, 'group_id' => $group1->id]);
+        $this->put("/api/v1/groups/enrol", $enrolment_2 = ['user_id' => $user2->id, 'group_id' => $group1->id]);
+        $this->put("/api/v1/groups/enrol", $enrolment_3 = ['user_id' => $user3->id, 'group_id' => $group1->id]);
+        $this->put("/api/v1/groups/enrol", $enrolment_4 = ['user_id' => $user4->id, 'group_id' => $group1->id]);
+        
+        $members = $group1->users->toArray();
+        $this->get('/api/v1/groups/2/members')
+                ->assertJson($members)
+                ->assertStatus(200);
+    }
+    
+    /** @test 
+     * Use Route: DELETE, /api/v1/groups/expel
      */     
     public function an_authificated_client_can_expel_users_from_organizations()
     { 

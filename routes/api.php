@@ -50,6 +50,7 @@ Route::group([
 
     Route::put('organizations/enrol', 'OrganizationsApiController@enrol');
     Route::delete('organizations/expel', 'OrganizationsApiController@expel');
+    Route::get('organizations/{organization}/members', 'OrganizationsApiController@members');
     Route::apiResource('organizations', 'OrganizationsApiController');
     
     Route::apiResource('organizationtypes', 'OrganizationTypesApiController');
@@ -62,6 +63,7 @@ Route::group([
     
     Route::put('groups/enrol', 'GroupsApiController@enrol');
     Route::delete('groups/expel', 'GroupsApiController@expel');
+    Route::get('groups/{group}/members', 'GroupsApiController@members');
     Route::apiResource('groups', 'GroupsApiController');
     
     Route::apiResource('countries', 'CountriesApiController');

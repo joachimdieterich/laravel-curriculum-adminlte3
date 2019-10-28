@@ -9,9 +9,18 @@ window._ = require('lodash');
 
 try {
     window.Popper = require('popper.js').default; //for tooltips
-    window.$ = window.jQuery = require('jquery');
+
+    window.$ = window.jQuery = require( 'jquery' );    
+//    require( 'datatables.net' )( window, $ );
+//    require( 'datatables.net-bs4' )( window, $ );
+//    require( 'datatables.net-buttons' )( window, $ );
+//    require( 'datatables.net-buttons-bs4' )( window, $ );
+//    require( 'datatables.net-select' )( window, $ );
+//    require( 'datatables.net-select-bs4' )( window, $ );
 
     require('bootstrap');
+    require('admin-lte');
+ 
 } catch (e) {}
 
 /**

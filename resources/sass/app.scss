@@ -1,18 +1,27 @@
-
-// Fonts
-@import url('https://fonts.googleapis.com/css?family=Nunito');
-
 // Variables
-@import 'variables';
+@import 'variables.scss'; //has to be over AdminLTE-raw
 // Boxes
 @import 'boxes.scss';
 // Cards
 @import 'cards.scss';
 // Text
 @import 'text.scss';
+// Font Awesome
+@import '~@fortawesome/fontawesome-free/scss/fontawesome';
+@import '~@fortawesome/fontawesome-free/scss/regular';
+@import '~@fortawesome/fontawesome-free/scss/solid';
+@import '~@fortawesome/fontawesome-free/scss/brands';
+// DataTables
+@import '~datatables.net-bs4/css/dataTables.bootstrap4.css';
+@import '~datatables.net-buttons-bs4/css/buttons.bootstrap4.css';
+@import '~datatables.net-select-bs4/css/select.bootstrap4.css';
 
 // Bootstrap
-//@import '~bootstrap/scss/bootstrap';
+@import '~bootstrap/scss/bootstrap';
+
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700');
+@import "~admin-lte/build/scss/AdminLTE-raw";
 
 .navbar-laravel {
     background-color: #fff;

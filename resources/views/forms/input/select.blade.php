@@ -1,4 +1,6 @@
-<div id="{{ $field }}_form_group" class="form-group {{ $errors->has( $field ) ? ' has-danger' : '' }}">
+<div id="{{ $field }}_form_group" 
+     class="form-group {{ $errors->has( $field ) ? ' has-danger' : '' }}" 
+>
     @if(isset($show_label))      
         <label for="{{ $field }}" class="{{ isset($class_left) ? $class_left : 'col-sm-3' }}">
             

@@ -1,12 +1,8 @@
 @extends('layouts.app')
 @section('content')
 <div class="login-box">
-    <div class="login-logo">
-        <div class="login-logo">
-            <a href="#">
-                {{ trans('global.site_title') }}
-            </a>
-        </div>
+    <div class="login-logo m-1">
+         {{ trans('global.site_title') }}
     </div>
     <div class="card">
         <div class="card-body login-card-body">
@@ -18,19 +14,26 @@
             @endif
             <form action="{{ route('login') }}" method="POST">
                 {{ csrf_field() }}
-                <div class="form-group has-feedback">
-                    <div class="input-group">
-                        <input type="email" class="form-control" placeholder="{{ trans('global.login_email') }}" name="email">
+                <div class="input-group mb-3">
+                    <input type="email" class="form-control" placeholder="{{ trans('global.login_email') }}" name="email">
+                           <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-envelope"></span>
+                        </div>
                     </div>
                 </div>
-                <div class="form-group has-feedback">
-                    <div class="input-group">
-                        <input type="password" class="form-control" placeholder="{{ trans('global.login_password') }}" name="password">
+                <div class="input-group mb-3">
+                    <input type="password" class="form-control" placeholder="{{ trans('global.login_password') }}" name="password">
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-lock"></span>
+                        </div>
                     </div>
                 </div>
+                
                 <div class="row">
                     <div class="col-8">
-                        <input type="checkbox" name="remember"> {{ trans('global.remember_me') }}
+<!--                        <input type="checkbox" name="remember"> {{ trans('global.remember_me') }}-->
                     </div>
                     <!-- /.col -->
                     <div class="col-4">

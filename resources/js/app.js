@@ -6,7 +6,7 @@
  */
 
 require('./bootstrap');
-
+   
 //vue
 window.Vue = require('vue');
 
@@ -70,4 +70,4 @@ Vue.directive('can', function (el, binding) {
 var app = new Vue({
     el: '#app', 
 
-});
+});    

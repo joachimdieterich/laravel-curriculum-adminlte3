@@ -1,4 +1,12 @@
-@extends('layouts.admin')
+@extends('layouts.master')
+@section('title')
+    {{ $curriculum->title }}
+@endsection
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="#">Home</a></li>
+    <li class="breadcrumb-item active">{{ trans('global.curriculum.title_singular') }}</li>
+    <li class="breadcrumb-item "> <i class="fas fa-question-circle"></i></li>
+@endsection
 @section('content')
 <div class="row">
     @can('user_create')
@@ -14,7 +22,6 @@
         </div>    
     @endcan
     <div class="col-12 mx-2">
-        <h1>{{ $curriculum->title }}</h1>
         @can('achievement_manage')
             @if(isset(json_decode($settings)->achievements))
             <table id="users-datatable" class=" table table-bordered table-striped table-hover datatable">

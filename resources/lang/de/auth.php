@@ -1,27 +1,27 @@
 <?php
 
 return [
-    'failed'         => 'These credentials do not match our records.',
-    'throttle'       => 'Too many login attempts. Please try again in :seconds seconds.',
+    'failed'         => 'Die Logindaten sind fehlerhaft.',
+    'throttle'       => 'Zu viele Login-Versuche. Bitte versuchen Sie es in :seconds Sekunden.',
     'site_title'     => 'curriculum',
     'userManagement' => [
-        'title'          => 'User Management',
-        'title_singular' => 'User Management',
+        'title'          => 'Benutzerverwaltung',
+        'title_singular' => 'Benutzerverwaltung',
         'fields'         => [],
     ],
     'permission'     => [
-        'title'          => 'Permissions',
-        'title_singular' => 'Permission',
+        'title'          => 'Berechtigungen',
+        'title_singular' => 'Berechtigung',
         'fields'         => [
             'id'                => 'ID',
             'id_helper'         => '',
-            'title'             => 'Title',
+            'title'             => 'Titel',
             'title_helper'      => '',
-            'created_at'        => 'Created at',
+            'created_at'        => 'Erstellt am',
             'created_at_helper' => '',
-            'updated_at'        => 'Updated at',
+            'updated_at'        => 'Bearbeitet am',
             'updated_at_helper' => '',
-            'deleted_at'        => 'Deleted at',
+            'deleted_at'        => 'Gelöscht am',
             'deleted_at_helper' => '',
         ],
     ],

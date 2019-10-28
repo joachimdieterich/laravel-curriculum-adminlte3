@@ -1,4 +1,12 @@
-@extends('layouts.admin')
+@extends('layouts.master')
+@section('title')
+     {{ trans('global.curriculum.title_singular') }} {{ trans('global.list') }}
+@endsection
+@section('breadcrumb')
+    <li class="breadcrumb-item "><a href="/">Home</a></li>
+    <li class="breadcrumb-item active">{{ trans('global.curriculum.title_singular') }} {{ trans('global.list') }}</li>
+    <li class="breadcrumb-item "> <i class="fas fa-question-circle"></i></li>
+@endsection
 @section('content')
 @can('user_create')
     <div style="margin-bottom: 10px;" class="row">
@@ -13,10 +21,6 @@
     </div>
 @endcan
 <div class="card">
-    <div class="card-header">
-        {{ trans('global.curriculum.title_singular') }} {{ trans('global.list') }}
-    </div>
-
     <div class="card-body">
         <table id="curricula-datatable" class=" table table-bordered table-striped table-hover datatable">
             <thead>

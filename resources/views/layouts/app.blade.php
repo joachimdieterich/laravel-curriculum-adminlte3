@@ -1,18 +1,14 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
+    
     <title>{{ trans('global.site_title') }}</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="css/adminltev3.css" rel="stylesheet" />
     <link href="{{ asset('css/app.css') }}" rel="stylesheet" />
-    <link href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet" />
     
     <script>    
         
@@ -30,8 +26,10 @@
     
 </head>
 
-<body class="header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden login-page">
+<body class="hold-transition login-page">
     @yield('content')
 </body>
 
+<script src="{{ asset('js/app.js') }}"></script>
+<script src="{{ asset('js/main.js') }}"></script>
 </html>

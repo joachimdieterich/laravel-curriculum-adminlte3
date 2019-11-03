@@ -488,14 +488,17 @@ return [
         ],
     ], 
     'period' =>[
-        'title'          => 'Periods',
-        'title_singular' => 'Period',
-        'fields'         => [
-            'id'         => 'ID',
-            'id_helper'  => '',
-            'title'      => 'Title',
-            'begin'      => 'Begin',
-            'end'        => 'End',
+        'title'           => 'Periods',
+        'title_singular'  => 'Period',
+        'fields'          => [
+            'id'          => 'ID',
+            'id_helper'   => '',
+            'title'       => 'Title',
+            'title_helper'=> '',
+            'begin'       => 'Begin',
+            'begin_helper'=> '',
+            'end'         => 'End',
+            'end_helper'  => '',
         ],
     ], 
     'subject' =>[

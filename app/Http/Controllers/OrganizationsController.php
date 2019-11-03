@@ -51,12 +51,14 @@ class OrganizationsController extends Controller
                  $actions  = '';
                     if (\Gate::allows('organization_show')){
                         $actions .= '<a href="'.route('organizations.show', $organizations->id).'" '
+                                    . 'id="show-organization-'.$organizations->id.'" '
                                     . 'class="btn btn-xs btn-success">'
                                     . '<i class="fa fa-list-alt"></i> Show'
                                     . '</a>';
                     }
                     if (\Gate::allows('organization_edit')){
                         $actions .= '<button onclick="app.__vue__.$modal.show(\'organization-modal\', {\'id\':\''.$organizations->id.'\', \'method\': \'patch\'})"'
+                                    . 'id="edit-organization-'.$organizations->id.'" '
                                     . 'class="btn btn-xs btn-primary text-white">'
                                     . '<i class="fa fa-edit"></i> Edit' 
                                     . '</button>';
@@ -64,7 +66,9 @@ class OrganizationsController extends Controller
                     if (\Gate::allows('organization_delete')){
                         $actions .= '<form action="'.route('organizations.destroy', $organizations->id).'" method="POST">'
                                     . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
-                                    . '<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Delete</button>';
+                                    . '<button type="submit" '
+                                    . 'id="delete-organization-'.$organizations->id.'" '
+                                    . 'class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Delete</button>';
                     }
               
                 return $actions;

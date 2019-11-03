@@ -61,7 +61,33 @@
                     ></textarea>
                     <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
                 </div>
+                
+                <div class="form-group" 
+                         :class="form.errors.title ? 'has-error' : ''">
+                        <label for="level_id" >{{ trans("global.objectiveType.title_singular") }}</label>
+
+                        <multiselect v-model="value" 
+                                     :options="levels" 
+                                     :multiple="false" 
+                                     :close-on-select="true" 
+                                     :clear-on-select="false" 
+                                     :preserve-search="true" 
+                                     placeholder="Pick some" 
+                                     label="title" 
+                                     track-by="id" 
+                                     :preselect-first="true"
+                                     @input="onChange">
+                            <template slot="selection" slot-scope="{ values, search, isOpen }">
+                                <span class="multiselect__single" v-if="values.length &amp;&amp; !isOpen">
+                                    {{ value.length }} options selected
+                                </span>
+                            </template>
+                        </multiselect>
+                        <p class="help-block" v-if="form.errors.objective_type_id" v-text="form.errors.objective_type_id[0]"></p>   
+
+                    </div>
                
+
             </div>
                 <div class="card-footer">
                      <div class="form-group m-2">
@@ -76,10 +102,13 @@
 
 <script>
     import Form from 'form-backend-validation';
+    import Multiselect from 'vue-multiselect';
     
     export default {
         data() {
             return {
+                value: null,
+                levels: [],
                 method: 'post',
                 requestUrl: '/enablingObjectives',
                 form: new Form({
@@ -89,24 +118,48 @@
                     'time_approach': '',
                     'curriculum_id': '',
                     'terminal_objective_id': '',
+                    'level_id': null,
                 }),
             }
         },
       
         
         methods: {
-           
+            onChange(value) {
+                this.form.level_id = value.id
+            },
+            findObjectByKey(array, key, value) {
+                for (var i = 0;
+                i < array.length; i++) {
+                    if (array[i][key] === value) {
+                        return array[i];
+                    }
+                }
+                return null;
+            },
             beforeOpen(event) { 
                 if (event.params.objective){
                     this.form.populate( event.params.objective );
                 }
                              
                 this.method = event.params.method;
+                //set selected
+                this.value = {
+                    'id': this.form.level_id,
+                    'title': this.findObjectByKey(this.levels, 'id', this.form.level_id).title
+                };
                
             },
             
             beforeClose() { 
                 //console.log('close') 
+            },
+            loadData: function () {
+                axios.get('/levels').then(response => {
+                    this.levels = response.data;
+                }).catch(e => {
+                    this.form.errors = error.response.data.errors;
+                });
             },
             
             submit() {
@@ -117,16 +170,19 @@
                 } 
                 
                 this.form.submit(method, this.requestUrl)
-                    .then(response => alert('Your objective was created'+response.message.title))
+                    .then(/*response => alert('Your objective was created'+response.message.title)*/)
                     .catch(response => alert('Your objective was not created'));
                 //todo .then .catch
             }
         },
         created() {
-
+            this.loadData();
         },
         mounted() {
             //console.log('Component mounted.')
+        },
+        components: {
+            Multiselect
         }
     }
 </script>

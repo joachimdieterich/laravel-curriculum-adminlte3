@@ -166,9 +166,8 @@ class GroupsController extends Controller
 
         return redirect()->route('groups.index');
     }
-     /**
+    /**
      * Remove the specified group from storage.
-     *
      *
      * @return \Illuminate\Http\Response
      */

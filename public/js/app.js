@@ -2807,6 +2807,34 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var form_backend_validation__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! form-backend-validation */ "./node_modules/form-backend-validation/dist/index.js");
 /* harmony import */ var form_backend_validation__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(form_backend_validation__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-multiselect */ "./node_modules/vue-multiselect/dist/vue-multiselect.min.js");
+/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_multiselect__WEBPACK_IMPORTED_MODULE_1__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2884,9 +2912,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      value: null,
+      levels: [],
       method: 'post',
       requestUrl: '/enablingObjectives',
       form: new form_backend_validation__WEBPACK_IMPORTED_MODULE_0___default.a({
@@ -2895,19 +2926,46 @@ __webpack_require__.r(__webpack_exports__);
         'description': '',
         'time_approach': '',
         'curriculum_id': '',
-        'terminal_objective_id': ''
+        'terminal_objective_id': '',
+        'level_id': null
       })
     };
   },
   methods: {
+    onChange: function onChange(value) {
+      this.form.level_id = value.id;
+    },
+    findObjectByKey: function findObjectByKey(array, key, value) {
+      for (var i = 0; i < array.length; i++) {
+        if (array[i][key] === value) {
+          return array[i];
+        }
+      }
+
+      return null;
+    },
     beforeOpen: function beforeOpen(event) {
       if (event.params.objective) {
         this.form.populate(event.params.objective);
       }
 
-      this.method = event.params.method;
+      this.method = event.params.method; //set selected
+
+      this.value = {
+        'id': this.form.level_id,
+        'title': this.findObjectByKey(this.levels, 'id', this.form.level_id).title
+      };
     },
     beforeClose: function beforeClose() {//console.log('close') 
+    },
+    loadData: function loadData() {
+      var _this = this;
+
+      axios.get('/levels').then(function (response) {
+        _this.levels = response.data;
+      })["catch"](function (e) {
+        _this.form.errors = error.response.data.errors;
+      });
     },
     submit: function submit() {
       var method = this.method.toLowerCase();
@@ -2916,15 +2974,18 @@ __webpack_require__.r(__webpack_exports__);
         this.requestUrl += '/' + this.form.id;
       }
 
-      this.form.submit(method, this.requestUrl).then(function (response) {
-        return alert('Your objective was created' + response.message.title);
-      })["catch"](function (response) {
+      this.form.submit(method, this.requestUrl).then()["catch"](function (response) {
         return alert('Your objective was not created');
       }); //todo .then .catch
     }
   },
-  created: function created() {},
+  created: function created() {
+    this.loadData();
+  },
   mounted: function mounted() {//console.log('Component mounted.')
+  },
+  components: {
+    Multiselect: vue_multiselect__WEBPACK_IMPORTED_MODULE_1___default.a
   }
 });
 
@@ -3058,6 +3119,13 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _DropdownButton__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DropdownButton */ "./resources/js/components/objectives/DropdownButton.vue");
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -3685,7 +3753,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var form_backend_validation__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(form_backend_validation__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-multiselect */ "./node_modules/vue-multiselect/dist/vue-multiselect.min.js");
 /* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_multiselect__WEBPACK_IMPORTED_MODULE_1__);
-//
 //
 //
 //
@@ -43164,6 +43231,80 @@ var render = function() {
                       })
                     : _vm._e()
                 ]
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                {
+                  staticClass: "form-group",
+                  class: _vm.form.errors.title ? "has-error" : ""
+                },
+                [
+                  _c("label", { attrs: { for: "level_id" } }, [
+                    _vm._v(
+                      _vm._s(_vm.trans("global.objectiveType.title_singular"))
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("multiselect", {
+                    attrs: {
+                      options: _vm.levels,
+                      multiple: false,
+                      "close-on-select": true,
+                      "clear-on-select": false,
+                      "preserve-search": true,
+                      placeholder: "Pick some",
+                      label: "title",
+                      "track-by": "id",
+                      "preselect-first": true
+                    },
+                    on: { input: _vm.onChange },
+                    scopedSlots: _vm._u([
+                      {
+                        key: "selection",
+                        fn: function(ref) {
+                          var values = ref.values
+                          var search = ref.search
+                          var isOpen = ref.isOpen
+                          return [
+                            values.length && !isOpen
+                              ? _c(
+                                  "span",
+                                  { staticClass: "multiselect__single" },
+                                  [
+                                    _vm._v(
+                                      "\n                                " +
+                                        _vm._s(_vm.value.length) +
+                                        " options selected\n                            "
+                                    )
+                                  ]
+                                )
+                              : _vm._e()
+                          ]
+                        }
+                      }
+                    ]),
+                    model: {
+                      value: _vm.value,
+                      callback: function($$v) {
+                        _vm.value = $$v
+                      },
+                      expression: "value"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _vm.form.errors.objective_type_id
+                    ? _c("p", {
+                        staticClass: "help-block",
+                        domProps: {
+                          textContent: _vm._s(
+                            _vm.form.errors.objective_type_id[0]
+                          )
+                        }
+                      })
+                    : _vm._e()
+                ],
+                1
               )
             ]),
             _vm._v(" "),
@@ -43420,6 +43561,17 @@ var render = function() {
                 : _vm._e()
             ]
           )
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.type == "enabling" && _vm.objective.level != null
+        ? _c("span", [
+            _c("button", {
+              staticClass: "btn btn-block  btn-xs",
+              class: _vm.objective.level.css_color,
+              attrs: { type: "button" },
+              domProps: { innerHTML: _vm._s(_vm.objective.level.title) }
+            })
+          ])
         : _vm._e(),
       _vm._v(" "),
       _c(

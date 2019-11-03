@@ -22,6 +22,11 @@ class Period extends Model
 {
     protected $guarded = [];
     
+    public function path()
+    {
+        return route('periods.show', $this->id);
+    }
+    
     public function organization()
     {
         return $this->hasOne('App\Organization', 'id', 'organization_id');

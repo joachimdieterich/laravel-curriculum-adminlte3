@@ -11,7 +11,7 @@ if (!function_exists('format_select_input')) {
      */
     function format_select_input($input) {
         if (is_array($input)) {
-            return array_first($input);
+            return Arr::first($input);
         } else {
             return $input;
         }

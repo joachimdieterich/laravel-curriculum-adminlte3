@@ -15,10 +15,8 @@
     </div>
 
     <div class="card-body">
-        <form action="{{ route("groups.update", [$group->id]) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ $group->path() }}" method="POST" enctype="multipart/form-data">
             @csrf
-           <form method="POST" 
-              action="{{ $group->path() }}" >
             @method('PATCH')
             @include('groups.form', [
                 'group' => $group,

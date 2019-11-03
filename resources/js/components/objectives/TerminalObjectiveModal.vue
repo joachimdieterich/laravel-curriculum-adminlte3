@@ -87,7 +87,6 @@
 
                     </div>
 
-
                 </div>
                 <div class="card-footer">
                     <div class="form-group m-2">
@@ -102,7 +101,7 @@
 
 <script>
     import Form from 'form-backend-validation';
-    import Multiselect from 'vue-multiselect'
+    import Multiselect from 'vue-multiselect';
 
     export default {
         data() {

@@ -12,8 +12,9 @@ class EnablingObjective extends Model
                             'time_approach',
                             'curriculum_id',
                             'terminal_objective_id',
+                            'level_id',
                           ];
-    protected $with = ['terminalObjective'];
+    protected $with = ['terminalObjective', 'level'];
     
     public function path(){
         return "/curricula/{$this->curriculum_id}";
@@ -72,6 +73,10 @@ class EnablingObjective extends Model
         return $this->morphMany('App\Achievement', 'referenceable');
     }
     
+    public function level() 
+    {
+        return $this->hasOne('App\Level', 'id', 'level_id');
+    }
 
     
     

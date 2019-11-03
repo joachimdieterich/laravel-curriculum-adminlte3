@@ -63,7 +63,7 @@ class TerminalObjectiveController extends Controller
         $terminalObjective = TerminalObjective::where('id', $terminalObjective->id)
                                                 ->with(['media','mediaSubscriptions', 'referenceSubscriptions.siblings']) 
                                                 ->get();
-        dd($terminalObjective);
+        //dd($terminalObjective);
     }
 
     /**

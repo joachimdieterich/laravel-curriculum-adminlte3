@@ -176,6 +176,16 @@
                                     </a>
                                 </li>
                             @endcan
+                            @can('periods_manage')
+                                <li class="nav-item">
+                                    <a href="{{ route("periods.index") }}" class="nav-link {{ request()->is('periods') || request()->is('periods/*') ? 'active' : '' }}">
+                                        <i class="fa fa-history"></i>
+                                        <p>
+                                            <span>{{ trans('global.period.title') }}</span>
+                                        </p>
+                                    </a>
+                                </li>
+                            @endcan
                             @can('organization_type_manage')
                                 <li class="nav-item">
                                     <a href="{{ route("organizationtypes.index") }}" class="nav-link {{ request()->is('organizationtypes') || request()->is('organizationtypes/*') ? 'active' : '' }}">

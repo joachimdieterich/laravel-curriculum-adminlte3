@@ -186,6 +186,7 @@ class CurriculumController extends Controller
                                                         }])
                                                 ->get();
         $objectiveTypes = \App\ObjectiveType::all();
+        $levels = \App\Level::all();
         
         $curriculum = Curriculum::with(['terminalObjectives', 
                         'terminalObjectives.enablingObjectives', 
@@ -202,6 +203,7 @@ class CurriculumController extends Controller
                 ->with(compact('terminalObjectives')) //todo. curriculum already has terminal and enablingobjectives, use in DB
                 ->with(compact('enablingObjectives'))
                 ->with(compact('objectiveTypes'))
+                ->with(compact('levels'))
                 ->with(compact('settings'));
     }
     /**
@@ -308,11 +310,19 @@ class CurriculumController extends Controller
      */
     public function edit(Curriculum $curriculum)
     {
-        $settings= json_encode([
-            'edit' => true
-        ]);
-       return $this->show($curriculum)
-                   ->with(compact('settings'));
+//        $settings= json_encode([
+//            'edit' => true
+//        ]);
+//       return $this->show($curriculum)
+//                   ->with(compact('settings'));
+        $grades = Grade::all();
+        $subjects   = Subject::all();
+        $organization_types = OrganizationType::all();
+        return view('curricula.edit')
+                ->with(compact('grades'))
+                ->with(compact('subjects'))
+                ->with(compact('organization_types'))
+                ->with(compact('curriculum'));
     }
 
     /**
@@ -326,7 +336,23 @@ class CurriculumController extends Controller
     {
         abort_unless(\Gate::allows('curriculum_edit'), 403);
         
-        $curriculum->update($this->validateRequest());
+        $input = $this->validateRequest();
+        $curriculum->update([
+            'title'                 => $input['title'],
+            'description'           => $input['description'],
+            'author'                => $input['author'],
+            'publisher'             => $input['publisher'],
+            'city'                  => $input['city'],
+            'date'                  => $input['date'],
+            'color'                 => $input['color'],
+            'grade_id'              => format_select_input($input['grade_id']),
+            'subject_id'            => format_select_input($input['subject_id']),
+            'organization_type_id'  => format_select_input($input['organization_type_id']),
+            'state_id'              => 'DE-RP',
+            'country_id'            => 'DE',
+            'medium_id'               => null,
+            'owner_id'              => auth()->user()->id,
+        ]);
         
         return redirect($curriculum->path());
     }

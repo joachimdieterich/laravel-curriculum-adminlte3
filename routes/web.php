@@ -1,4 +1,5 @@
 <?php
+
 //Route::redirect('/', '/login');
 
 Route::redirect('/home', '/');
@@ -55,6 +56,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('groupList', 'GroupsController@groupList');
     Route::resource('groups', 'GroupsController');
+    
+     Route::resource('levels', 'LevelController');
 
     /* Navigators */
     
@@ -88,7 +91,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('organizationTypeList', 'OrganizationTypesController@organizationTypeList')->name('organizationtypes.list');
     Route::delete('organizationtypes/destroy', 'OrganizationTypesController@massDestroy')->name('organizationtypes.massDestroy');
     Route::resource('organizationtypes', 'OrganizationTypesController');
-
+   
+    /* period routes*/
+    Route::get('periods/list', 'PeriodController@list')->name('periods.list');
+    Route::resource('periods', 'PeriodController');
+    
     /* permission routes */
     Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');
     Route::resource('permissions', 'PermissionsController');

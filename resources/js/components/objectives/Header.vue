@@ -20,6 +20,13 @@
                     @click="$emit('eventSort','1')">
                 </span>
             </span>
+            <span  v-if="(type == 'enabling'  && objective.level != null)" >
+                <button type="button" 
+                        class="btn btn-block  btn-xs"
+                        v-bind:class="objective.level.css_color"
+                        v-html="objective.level.title">
+                </button>
+            </span>
             <span class="ml-auto" >  
                 <DropdownButton v-if="type == 'terminal'" 
                                 @eventDelete="emitDeleteEvent" 

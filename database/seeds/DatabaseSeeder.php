@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             CurriculumTableSeeder::class,
             CurriculumGroupTableSeeder::class,
             MediaTableSeeder::class,
+            LevelsTableSeeder::class,
         ]);
     }
 }

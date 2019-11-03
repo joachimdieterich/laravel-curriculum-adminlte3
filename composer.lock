@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "afd53948f6a81e727bfa70f790a5bd20",
+    "content-hash": "95479be8f69917682d922346db383d97",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -6904,6 +6904,46 @@
                 "xunit"
             ],
             "time": "2019-07-02T20:42:44+00:00"
+        },
+        {
+            "name": "roquie/laravel-dusk-select2",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/roquie/laravel-dusk-select2.git",
+                "reference": "c3c8a3c17e05a94bd73db5f9ba635c2fd8df954c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/roquie/laravel-dusk-select2/zipball/c3c8a3c17e05a94bd73db5f9ba635c2fd8df954c",
+                "reference": "c3c8a3c17e05a94bd73db5f9ba635c2fd8df954c",
+                "shasum": ""
+            },
+            "require-dev": {
+                "konsulting/dusk-standalone": "^5.0",
+                "laravel/dusk": "^5.2",
+                "php": ">=7.1",
+                "phpunit/phpunit": "^8",
+                "symfony/var-dumper": "~4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/macro.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "roquie",
+                    "email": "roquie0@gmail.com"
+                }
+            ],
+            "description": "Select2.js support for the Laravel Dusk testing.",
+            "time": "2019-07-02T10:55:53+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",

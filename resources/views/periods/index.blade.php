@@ -11,7 +11,9 @@
 @can('user_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <a class="btn btn-success" href="{{ route("periods.create") }}" >
+            <a id="add-period"
+               class="btn btn-success" 
+               href="{{ route("periods.create") }}" >
                 {{ trans('global.add') }} {{ trans('global.period.title_singular') }}
             </a>
         </div>

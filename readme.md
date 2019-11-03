@@ -138,7 +138,7 @@ return SnappyPdf::loadFile('http://curriculumonline.de')->inline('cur.pdf');
 ```
 
 ### Browser Tests (Dusk)
-Start server in dusk environment.
+Important! Start server in dusk environment.
 
 ```
 php artisan config:clear

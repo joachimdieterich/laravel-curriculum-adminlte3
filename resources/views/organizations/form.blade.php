@@ -53,5 +53,10 @@
             "value" => old('status_id', isset($organization->status_id) ? $organization->status_id : '') ])                                                          
 
 <div>
-    <input class="btn btn-info" type="submit" value="{{ $buttonText }}">
+    <input 
+        id="organization-save"
+        class="btn btn-info" 
+        type="submit" 
+        value="{{ $buttonText }}"
+    >
 </div>

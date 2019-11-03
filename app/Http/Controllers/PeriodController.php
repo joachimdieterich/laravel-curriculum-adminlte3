@@ -30,21 +30,23 @@ class PeriodController extends Controller
         
         return DataTables::of($periods)
             ->addColumn('organization', function ($periods) {
-                return $periods->organization()->first()->title;                
+                return isset($periods->organization()->first()->title) ? $periods->organization()->first()->title : 'global';                
             })
             ->addColumn('owner', function ($periods) {
-                return $periods->owner()->first()->username;                
+                return isset($periods->owner()->first()->username) ? $periods->owner()->first()->username : 'global';                
             })
             ->addColumn('action', function ($periods) {
                  $actions  = '';
                     if (\Gate::allows('period_show')){
                         $actions .= '<a href="'.route('periods.show', $periods->id).'" '
+                                    . 'id="show-period-'.$periods->id.'" '
                                     . 'class="btn btn-xs btn-success mr-1">'
                                     . '<i class="fa fa-list-alt"></i> '.trans('global.show').''
                                     . '</a>';
                     }
                     if (\Gate::allows('period_edit')){
                         $actions .= '<a href="'.route('periods.edit', $periods->id).'" '
+                                    . 'id="edit-period-'.$periods->id.'" '
                                     . 'class="btn btn-xs btn-primary mr-1">'
                                     . '<i class="fa fa-edit"></i> '.trans('global.edit').''
                                     . '</a>';
@@ -52,7 +54,10 @@ class PeriodController extends Controller
                     if (\Gate::allows('period_delete')){
                         $actions .= '<form action="'.route('periods.destroy', $periods->id).'" method="POST">'
                                     . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
-                                    . '<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> '.trans('global.delete').'</button>';
+                                    . '<button '
+                                    . 'type="submit" '
+                                    . 'id="delete-period-'.$periods->id.'" '
+                                    . 'class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> '.trans('global.delete').'</button>';
                     }
               
                 return $actions;

@@ -19,14 +19,18 @@
             "value" => old('date', isset($period) ? $period->end : '')])
                       
 @include ('forms.input.select', 
-                      ["model" => "organization",
-                      "show_label" => true,
-                      "field" => "organization_id",  
-                      "options"=> $organizations, 
-                      "value" => old('organization_id', isset($period->organization_id) ? $period->organization_id : '') ])    
+            ["model" => "organization",
+            "show_label" => true,
+            "field" => "organization_id",  
+            "options"=> $organizations, 
+            "value" => old('organization_id', isset($period->organization_id) ? $period->organization_id : '') ])    
 
                                          
 
 <div>
-    <input class="btn btn-info" type="submit" value="{{ $buttonText }}">
+    <input 
+        id="period-save"
+        class="btn btn-info" 
+        type="submit" 
+        value="{{ $buttonText }}">
 </div>

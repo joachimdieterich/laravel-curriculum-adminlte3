@@ -78,8 +78,6 @@
         </nav>
         <nav class="mt-2"> 
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                
-               
                 @can('curriculum_manage')
                     <li class="nav-item">
                         <a href="{{ route("curricula.index") }}" class="nav-link {{ request()->is('curricula') || request()->is('curricula/*') ? 'active' : '' }}">
@@ -113,7 +111,7 @@
                             @can('role_manage')
                                 <li class="nav-item">
                                     <a href="{{ route("roles.index") }}" class="nav-link {{ request()->is('roles') || request()->is('roles/*') ? 'active' : '' }}">
-                                        <i class="fas fa-briefcase"></i>
+                                        <i class="fas fa-user-tag"></i>
                                         <p>
                                             <span>{{ trans('global.role.title') }}</span>
                                         </p>
@@ -169,7 +167,7 @@
                             @can('grade_manage')
                                 <li class="nav-item">
                                     <a href="{{ route("grades.index") }}" class="nav-link {{ request()->is('grades') || request()->is('grades/*') ? 'active' : '' }}">
-                                        <i class="fas fa-signal"></i>
+                                        <i class="fas fa-layer-group"></i>
                                         <p>
                                             <span>{{ trans('global.grade.title') }}</span>
                                         </p>
@@ -189,7 +187,7 @@
                             @can('organization_type_manage')
                                 <li class="nav-item">
                                     <a href="{{ route("organizationtypes.index") }}" class="nav-link {{ request()->is('organizationtypes') || request()->is('organizationtypes/*') ? 'active' : '' }}">
-                                        <i class="fas fa-signal"></i>
+                                        <i class="fas fa-city"></i>
                                         <p>
                                             <span>{{ trans('global.organizationtype.title') }}</span>
                                         </p>

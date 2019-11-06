@@ -35,8 +35,8 @@
             }
         },
         mounted() {
+            this.settings = this.$attrs.settings;
             if (this.objectives.length != 0){
-                this.settings = this.$attrs.settings;
                 this.settings.last = this.objectives[this.objectives.length-1].id;
             } 
         },

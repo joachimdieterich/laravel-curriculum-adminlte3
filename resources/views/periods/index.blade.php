@@ -21,7 +21,7 @@
 @endcan
 <div class="card">
     <div class="card-body">
-        <table id="periods-datatable" class=" table table-bordered table-striped table-hover datatable">
+        <table id="periods-datatable" class="table table-bordered table-striped table-hover datatable">
             <thead>
                 <tr>
                     <th width="10"></th>

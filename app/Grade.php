@@ -19,5 +19,15 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Grade extends Model
 {
-    //
+    protected $guarded = [];
+    
+    public function path()
+    {
+        return route('grades.show', $this->id);
+    }
+    
+    public function organizationType() 
+    {
+        return $this->hasOne('App\OrganizationType', 'id', 'organization_type_id');
+    }
 }

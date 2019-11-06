@@ -16,7 +16,7 @@ class PeriodController extends Controller
         return view('periods.index');
     }
     
-     public function list()
+    public function list()
     {
         abort_unless(\Gate::allows('period_access'), 403);
         $periods = Period::select([
@@ -162,8 +162,7 @@ class PeriodController extends Controller
         abort_unless(\Gate::allows('period_access'), 403);
         return view('periods.show')
                 ->with(compact('period'));
-    }
-    
+    }    
     
     
     protected function validateRequest()

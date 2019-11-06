@@ -43,6 +43,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('enablingObjectives', 'EnablingObjectiveController');
 
     /* grades routes */
+    Route::get('grades/list', 'GradesController@list')->name('grades.list');
     Route::delete('grades/destroy', 'GradesController@massDestroy')->name('grades.massDestroy');
     Route::resource('grades', 'GradesController');
 

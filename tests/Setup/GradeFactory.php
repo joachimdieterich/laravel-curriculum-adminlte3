@@ -14,21 +14,12 @@
 
 namespace Tests\Setup;
 
-use App\Period;
+use App\Grade;
 
-class PeriodFactory
+class GradeFactory
 {
-    protected $user;
-
-    public function ownedBy($user)
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
     public function create()
     {
-        return factory(Period::class)->create();
+        return factory(Grade::class)->create();
     }
 }

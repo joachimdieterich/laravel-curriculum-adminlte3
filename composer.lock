@@ -1376,8 +1376,8 @@
             "authors": [
                 {
                     "name": "Filipe Dobreira",
-                    "role": "Developer",
-                    "homepage": "https://github.com/filp"
+                    "homepage": "https://github.com/filp",
+                    "role": "Developer"
                 }
             ],
             "description": "php error handling for cool kids",
@@ -2653,9 +2653,9 @@
             "authors": [
                 {
                     "name": "Milos Tomic",
-                    "role": "Developer",
                     "email": "tmilos@gmail.com",
-                    "homepage": "https://github.com/tmilos/"
+                    "homepage": "https://github.com/tmilos/",
+                    "role": "Developer"
                 }
             ],
             "description": "Light SAML 2.0 PHP library",
@@ -3698,16 +3698,16 @@
         },
         {
             "name": "robrichards/xmlseclibs",
-            "version": "3.0.3",
+            "version": "3.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/robrichards/xmlseclibs.git",
-                "reference": "406c68ac9124db033d079284b719958b829cb830"
+                "reference": "0a53d3c3aa87564910cae4ed01416441d3ae0db5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/robrichards/xmlseclibs/zipball/406c68ac9124db033d079284b719958b829cb830",
-                "reference": "406c68ac9124db033d079284b719958b829cb830",
+                "url": "https://api.github.com/repos/robrichards/xmlseclibs/zipball/0a53d3c3aa87564910cae4ed01416441d3ae0db5",
+                "reference": "0a53d3c3aa87564910cae4ed01416441d3ae0db5",
                 "shasum": ""
             },
             "require": {
@@ -3732,7 +3732,7 @@
                 "xml",
                 "xmldsig"
             ],
-            "time": "2018-11-15T11:59:02+00:00"
+            "time": "2019-11-05T11:44:22+00:00"
         },
         {
             "name": "scrivo/highlight.php",
@@ -5711,9 +5711,9 @@
             "authors": [
                 {
                     "name": "Marcel Pociot",
-                    "role": "Developer",
                     "email": "marcel@beyondco.de",
-                    "homepage": "https://beyondco.de"
+                    "homepage": "https://beyondco.de",
+                    "role": "Developer"
                 }
             ],
             "description": "Symfony Var-Dump Server for Laravel",

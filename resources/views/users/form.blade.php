@@ -26,16 +26,19 @@
             "placeholder" => "joe.diet@curriculumonline.de",  
             "required" => true, 
             "value" => old('email', isset($user) ? $user->email : '')])
-
-@include ('forms.input.password', 
-            ["model" => "user", 
-            "field" => "password", 
-            "placeholder" => "Top_Secret!",  
-            "required" => true, 
-            "value" => ''])
-
+@if (!isset($user))
+    @include ('forms.input.password', 
+                ["model" => "user", 
+                "field" => "password", 
+                "placeholder" => "Top_Secret!",  
+                "required" => true, 
+                "value" => ''])
+@endif
                                          
 
 <div>
-    <input class="btn btn-info" type="submit" value="{{ $buttonText }}">
+    <input id="user-save"
+           class="btn btn-info" 
+           type="submit" 
+           value="{{ $buttonText }}">
 </div>

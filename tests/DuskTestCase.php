@@ -8,6 +8,7 @@ use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use DatabaseSeeder;
 use Illuminate\Support\Facades\Artisan;
+use Laravel\Dusk\Browser;
 
 
 abstract class DuskTestCase extends BaseTestCase
@@ -30,6 +31,12 @@ abstract class DuskTestCase extends BaseTestCase
     public static function prepare()
     {
         static::startChromeDriver();
+        Browser::macro('scrollTo', function($selector) {
+            $this->driver->executeScript("$(\"html, body\").animate({scrollTop: $(\"$selector\").offset().top}, 0);");
+            return $this;
+        });
+        
+        
     }
 
     /**

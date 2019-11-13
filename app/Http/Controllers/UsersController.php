@@ -57,18 +57,25 @@ class UsersController extends Controller
                  $actions  = '';
                     if (\Gate::allows('user_show')){
                         $actions .= '<a href="'.route('users.show', $users->id).'" '
+                                    . 'id="show-user-'.$users->id.'" '
                                     . 'class="btn btn-xs btn-success mr-1">'
                                     . '<i class="fa fa-list-alt"></i> Show'
                                     . '</a>';
                     }
                     if (\Gate::allows('user_edit')){
                         $actions .= '<a href="'.route('users.edit', $users->id).'" '
+                                    . 'id="edit-user-'.$users->id.'" '
                                     . 'class="btn btn-xs btn-primary  mr-1">'
                                     . '<i class="fa fa-edit"></i> Edit'
                                     . '</a>';
                     }
                     if (\Gate::allows('user_delete')){
-                        $actions .= '<button type="button" class="btn btn-xs btn-danger" onclick="destroyUser('.$users->id.')"><i class="fa fa-trash"></i> Delete</button>';
+                        $actions .= '<form action="'.route('users.destroy', $users->id).'" method="POST">'
+                                    . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
+                                    . '<button '
+                                    . 'type="submit" ' 
+                                    . 'id="delete-user-'.$users->id.'" '
+                                    . 'class="btn btn-xs btn-danger" <i class="fa fa-trash"></i> Delete</button></form>';
                     }
               
                 return $actions;

@@ -12,32 +12,38 @@
         <div class="col-lg-8">
             <div class="col-lg-12 p-0">
                 <div class="card card-primary card-outline">
-                  <div class="card-header">
-                    <h5 class="m-0">Aktuelles</h5>
-                  </div>
-                  <div class="card-body">
-                    <h6 class="card-title">Special title treatment</h6>
+                    <div class="card-header">
+                        <h5 class="m-0">Aktuelles</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-title">Info</h6>
 
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                  </div>
+                        <p class="card-text">...</p>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
                 </div>
             </div>
-            
+
             <div class="col-lg-12 p-0">
                 <div class="card ">
-                  <div class="card-header">
-                    <h5 class="m-0">Statistik</h5>
-                  </div>
-                  <div class="card-body">
-                    <h6 class="card-title">Special title treatment</h6>
-
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                   
-                  </div>
+                    <div class="card-header">
+                        <h5 class="m-0">Statistik</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="nav nav-pills flex-column">
+                            <li class="nav-item"><a href="#"><strong>Erreichte Ziele</strong></a></li>
+                            <li class="nav-item"><a href="#">Gesamt <span class="pull-right text-green">123</span></a></li>
+                            <li class="nav-item"><a href="#">davon Heute <span class="pull-right text-green">123</span></a></li>
+                        </ul>
+                        <ul class="pt-4 nav nav-pills flex-column">
+                            <li class="nav-item"><a href="#"><strong>online</strong></a></li>
+                            <li class="nav-item"><a href="#">jetzt online <span class="pull-right">123</span></a></li>
+                            <li class="nav-item"><a href="#">heute <span class="pull-right"> 123</span></a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            
+
         </div>
         <div class="col-lg-4">
             <div class="col-lg-12 p-0">

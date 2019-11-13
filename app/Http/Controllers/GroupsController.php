@@ -51,12 +51,14 @@ class GroupsController extends Controller
                  $actions  = '';
                     if (\Gate::allows('group_show')){
                         $actions .= '<a href="'.route('groups.show', $groups->id).'" '
+                                    . 'id="show-group-'.$groups->id.'" '
                                     . 'class="btn btn-xs btn-success mr-1">'
                                     . '<i class="fa fa-list-alt"></i> '.trans('global.show').''
                                     . '</a>';
                     }
                     if (\Gate::allows('group_edit')){
                         $actions .= '<a href="'.route('groups.edit', $groups->id).'" '
+                                    . 'id="edit-group-'.$groups->id.'" '
                                     . 'class="btn btn-xs btn-primary mr-1">'
                                     . '<i class="fa fa-edit"></i> '.trans('global.edit').''
                                     . '</a>';
@@ -64,7 +66,10 @@ class GroupsController extends Controller
                     if (\Gate::allows('group_delete')){
                         $actions .= '<form action="'.route('groups.destroy', $groups->id).'" method="POST">'
                                     . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
-                                    . '<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> '.trans('global.delete').'</button>';
+                                    . '<button '
+                                    . 'type="submit" '
+                                    . 'id="delete-group-'.$groups->id.'" '
+                                    . 'class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> '.trans('global.delete').'</button>';
                     }
               
                 return $actions;

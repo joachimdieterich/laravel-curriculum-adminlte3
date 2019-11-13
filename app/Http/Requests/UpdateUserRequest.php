@@ -28,7 +28,7 @@ class UpdateUserRequest extends FormRequest
                 'required',
             ],
             'password'   => [
-                'required',
+                'sometimes',
             ],
              
         ];

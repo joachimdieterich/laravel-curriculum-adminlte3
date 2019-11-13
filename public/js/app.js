@@ -3037,8 +3037,9 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   mounted: function mounted() {
+    this.settings = this.$attrs.settings;
+
     if (this.objectives.length != 0) {
-      this.settings = this.$attrs.settings;
       this.settings.last = this.objectives[this.objectives.length - 1].id;
     }
   },
@@ -3954,7 +3955,6 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
-//
 //
 //
 //
@@ -44532,7 +44532,7 @@ var render = function() {
       }),
       _vm._v(" "),
       _vm.settings.edit === true
-        ? _c("div", { staticClass: "row" }, [
+        ? _c("div", { staticClass: "row p-2" }, [
             _c(
               "div",
               { staticClass: "col-12", attrs: { id: "createTerminalRow" } },

@@ -19,9 +19,13 @@
                       ["model" => "organization",
                       "show_label" => true,
                       "field" => "organization_id",  
-                      "options"=> $organizations, 
+                      "options"=> $organizations,  
                       "value" => old('organization_id', isset($group->organization_id) ? $group->organization_id : '') ])                                                          
 
 <div>
-    <input class="btn btn-info" type="submit" value="{{ $buttonText }}">
+    <input 
+        id="group-save"
+        class="btn btn-info" 
+        type="submit" 
+        value="{{ $buttonText }}">
 </div>

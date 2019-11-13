@@ -10,7 +10,6 @@
                     {{ getTypeTitle(typetab)[0]['title'] }}
                 </a>
             </li>
-           
         </ul>   
         
         <div v-for="typetab in typetabs" class="tab-content">
@@ -40,7 +39,7 @@
             </div><!-- /.tab-pane -->
         </div> <!-- /.tab-content -->
        
-        <div class="row" 
+        <div class="row p-2" 
              v-if="settings.edit === true">
             <div id="createTerminalRow" class="col-12"> 
             <ObjectiveBox type="createterminal" :objective="{'curriculum_id': curriculum.id}"></ObjectiveBox>

@@ -53,11 +53,11 @@ class PeriodTest extends DuskTestCase
                 ->visit(new Pages\PeriodPage)
                 ->waitForText($period->title)
                 ->click('#show-period-'.$period->id)
-                ->screenshot('see-periodal-details')
+                //->screenshot('see-periodal-details')
                 ->waitForText($period->title)
                 ->assertSee($period->begin)
                 ->assertSee($period->end)
-                ->screenshot('see-periodal-details')
+                //->screenshot('see-periodal-details')
                 ;
         });     
     }

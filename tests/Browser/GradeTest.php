@@ -7,6 +7,7 @@ use Laravel\Dusk\Browser;
 use Laravel\Dusk\Chrome;
 use App\Grade;
 use App\User;
+use Facebook\WebDriver\WebDriverBy;
 
 class GradeTest extends DuskTestCase
 {
@@ -51,11 +52,11 @@ class GradeTest extends DuskTestCase
                 ->visit(new Pages\GradePage)
                 ->waitForText($grade->title)
                 ->click('#show-grade-'.$grade->id)
-                ->screenshot('see-gradeal-details')
+                //->screenshot('see-gradeal-details')
                 ->waitForText($grade->title)
                 ->assertSee($grade->external_begin)
                 ->assertSee($grade->external_end)
-                ->screenshot('see-grade-details')
+                //->screenshot('see-grade-details')
                 ;
         });     
     }
@@ -67,7 +68,6 @@ class GradeTest extends DuskTestCase
     public function testEditGrade()
     {   
         $this->browse(function (Browser $admin) {
-            $new_grade = factory('App\Grade')->raw();
             $grade = Grade::find(1)->get()->first();
             $admin->loginAs(User::find(1))
                     ->visit(new Pages\GradePage)
@@ -83,7 +83,7 @@ class GradeTest extends DuskTestCase
     }
     
     /**
-     * Delete grade
+     * Delete grade //dusk test doesn't work cause new grade is outside of visible area
      *
      * @return void
      */
@@ -92,7 +92,7 @@ class GradeTest extends DuskTestCase
 //        $this->browse(function (Browser $admin) {
 //            $new_grade = factory('App\Grade')->raw();
 //            $grade = Grade::create($new_grade);
-//            
+//            //$grade = Grade::find(3)->get()->first();
 //            $admin->loginAs(User::find(1))
 //                    ->visit(new Pages\GradePage)
 //                    ->waitForText($grade->title)

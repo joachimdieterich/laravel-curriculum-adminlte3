@@ -1,5 +1,5 @@
-<div class="row px-3">
-        <div class="col-12" >  
+<div class="row mx-3">
+        <!--<div class="col-12" >-->  
             @if(isset($views->items))
                 @foreach($views->items as $item)
                     @if ($item->position == $position)
@@ -23,5 +23,5 @@
                     @endif
                 @endforeach
              @endif
-        </div>
+        <!--</div>-->
     </div>

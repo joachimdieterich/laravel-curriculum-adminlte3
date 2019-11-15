@@ -20,7 +20,7 @@ class NavigatorView extends Model
     
     public function navigator()
     {
-        return $this->belongsTo('App\Navigator', 'id', 'navigator_id');
+        return $this->belongsTo('App\Navigator');
     }
     
      public function navigator_item()

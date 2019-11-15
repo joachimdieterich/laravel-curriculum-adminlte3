@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class NavigatorItem extends Model
 {
     protected $guarded = [];
-    public function navigator()
+
+    public function navigatorView()
     {
-        return $this->belongsTo('App\NavigatorView', 'id', 'navigator_view_id');
+        return $this->belongsTo('App\NavigatorView');
     }
     
     public function referenceable()

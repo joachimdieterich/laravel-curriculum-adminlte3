@@ -52,7 +52,8 @@
         </div>
     </div>
 </div>
-   
+
+
 @if(isset($views))
     <!-- navigatorView -->
     @include ('navigators.views.show', [
@@ -60,6 +61,6 @@
     ])
     <!-- /navigatorView -->
 @endif
- 
+
 @endsection
 

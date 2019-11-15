@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Content;
 use App\Curriculum;
+use App\Medium;
 use App\NavigatorItem;
 use App\NavigatorView;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Medium;
+use Illuminate\Support\Str;
 
 
 class NavigatorItemController extends Controller
@@ -30,26 +31,10 @@ class NavigatorItemController extends Controller
      */
     public function create()
     {
-        $referenceable_types = [
-            (object) ['class' => 'App\NavigatorView', 'label' => trans('global.referenceable_types.navigator_view')], 
-            (object) ['class' => 'App\Curriculum', 'label' => trans('global.referenceable_types.curriculum')], 
-            (object) ['class' => 'App\Content', 'label' => trans('global.referenceable_types.content')], 
-            (object) ['class' => 'App\Medium', 'label' => trans('global.referenceable_types.medium')], 
-        ];
-        $position = [
-            (object) ['id' => 'content', 'label' => trans('global.content')], 
-            (object) ['id' => 'footer', 'label' => trans('global.footer')], 
-            (object) ['id' => 'header', 'label' => trans('global.header')], 
-        ];
-        $css_classes = [
-            (object) ['class' => 'col-xs-12', 'label' => 'col-xs-12'], 
-            (object) ['class' => 'col-12', 'label' => 'col-12'], 
-        ];
-        $visibility = [
-            (object) ['id' => '1', 'label' => trans('global.navigator_item.fields.visibility_show')], 
-            (object) ['id' => '0', 'label' => trans('global.navigator_item.fields.visibility_hide')], 
-            
-        ];
+        $referenceable_types = $this->getReferenceableTypes();
+        $position            = $this->getPositions();
+        $css_classes         = $this->getCssClasses();
+        $visibility          = $this->getVisibility();
         
         $curricula = Curriculum::all();
         $media = Medium::where('path', '/subjects/')->get(); //todo: only show usable media (e.g. images)
@@ -89,7 +74,7 @@ class NavigatorItemController extends Controller
                                                              ]);
                                         $content->save();
                                         $title            = $new_navigator_item['title'];
-                                        $description      = str_limit($new_navigator_item['description'], 200);
+                                        $description      = Str::limit($new_navigator_item['description'], 200);
                                         $referenceable_id = $content->id;
                 break;
             
@@ -97,7 +82,8 @@ class NavigatorItemController extends Controller
                                         
                                         $curriculum = Curriculum::find($referenceable_id);
                                         $title            = $curriculum->title;
-                                        $description      = $curriculum->description;                  
+                                        $description      = $curriculum->description; 
+                                        $new_navigator_item['medium_id'] = $curriculum->medium_id;  //todo how to update medium_id if curriculum->medium_id is changed
                 break;
             case 'App\NavigatorView':   $navigator_view = new NavigatorView([
                                                                 'title' => $new_navigator_item['title'],
@@ -132,7 +118,7 @@ class NavigatorItemController extends Controller
         ]);
         
         /* subscribe image */
-        if (isset($new_navigator_item['medium_id']))
+        if (format_select_input($new_navigator_item['medium_id']) != null)
         {
             $medium = Medium::find(format_select_input($new_navigator_item['medium_id'])); 
             $medium->subscribe($navigator_item);
@@ -152,30 +138,63 @@ class NavigatorItemController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\NavigatorItem  $navigatorItem
+     * @param  NavigatorItem  $navigatorItem
      * @return Response
      */
     public function edit(NavigatorItem $navigatorItem)
     {
-        //
+        
+        abort_unless(\Gate::allows('navigator_edit'), 403);
+        $referenceable_types = $this->getReferenceableTypes();
+        $position            = $this->getPositions();
+        $css_classes         = $this->getCssClasses();
+        $visibility          = $this->getVisibility();
+        
+        $curricula = Curriculum::all();
+        $media = Medium::where('path', '/subjects/')->get(); //todo: only show usable media (e.g. images)
+        $navigator = $navigatorItem->navigatorView->navigator;
+        $navigatorView = $navigatorItem->navigatorView;
+        
+        //dd($navigatorItem);
+        return view('navigators.views.items.edit')
+                    ->with(compact('navigator'))
+                    ->with(compact('navigatorView'))
+                    ->with(compact('navigatorItem'))
+                    ->with(compact('referenceable_types'))
+                    ->with(compact('position'))
+                    ->with(compact('css_classes'))
+                    ->with(compact('visibility'))
+                    ->with(compact('curricula'))
+                    ->with(compact('media'));
+                ;
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  Request  $request
-     * @param  \App\NavigatorItem  $navigatorItem
+     * @param  NavigatorItem  $navigatorItem
      * @return Response
      */
     public function update(Request $request, NavigatorItem $navigatorItem)
     {
-        //
+        abort_unless(\Gate::allows('navigator_edit'), 403);
+        
+        $navigatorItem->update([
+            'title'       => $request['title'],
+            'description' => Str::limit($request['title'], 200),
+            'position'    => format_select_input($request['position']),
+            'css_class'   => format_select_input($request['css_class']),
+            'visibility'  => format_select_input($request['visibility'])
+        ]);
+
+        return redirect()->route("navigator.view", ['navigator' => request()->navigator_id, 'navigator_view' => request()->view_id]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\NavigatorItem  $navigatorItem
+     * @param  NavigatorItem  $navigatorItem
      * @return Response
      */
     public function destroy(NavigatorItem $navigatorItem)
@@ -200,4 +219,40 @@ class NavigatorItemController extends Controller
             'visibility'        => 'sometimes',
         ]);
     }
+    
+    protected function getReferenceableTypes()
+    {
+        return [
+            (object) ['class' => 'App\NavigatorView', 'label' => trans('global.referenceable_types.navigator_view')], 
+            (object) ['class' => 'App\Curriculum', 'label' => trans('global.referenceable_types.curriculum')], 
+            (object) ['class' => 'App\Content', 'label' => trans('global.referenceable_types.content')], 
+            (object) ['class' => 'App\Medium', 'label' => trans('global.referenceable_types.medium')], 
+        ];
+    }
+    
+    protected function getPositions()
+    {
+        return [
+            (object) ['id' => 'content', 'label' => trans('global.content')], 
+            (object) ['id' => 'footer', 'label' => trans('global.footer')], 
+            (object) ['id' => 'header', 'label' => trans('global.header')], 
+        ];
+    }
+    
+    protected function getCssClasses()
+    {
+        return [
+            (object) ['class' => 'col-xs-12', 'label' => 'col-xs-12'], 
+            (object) ['class' => 'col-12', 'label' => 'col-12'], 
+        ];
+    }
+    
+    protected function getVisibility()
+    {
+        return  [
+            (object) ['id' => '1', 'label' => trans('global.navigator_item.fields.visibility_show')], 
+            (object) ['id' => '0', 'label' => trans('global.navigator_item.fields.visibility_hide')], 
+        ];
+    }
+    
 }

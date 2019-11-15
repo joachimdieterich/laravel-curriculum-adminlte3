@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Medium;
 use File;
 use Illuminate\Http\Request;
+use Laravolt\Avatar\Avatar;
 
 class MediumController extends Controller
 {

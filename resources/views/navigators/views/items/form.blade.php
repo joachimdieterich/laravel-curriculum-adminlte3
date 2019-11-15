@@ -1,5 +1,11 @@
 @csrf
-@include ('forms.input.select', 
+@if (isset($navigatorItem))
+    @include ('forms.input.text', 
+            ["model" => "navigator_item",
+            "field" => "referenceable_type",  
+            "value" => old('title', isset($navigatorItem) ? $navigatorItem->referenceable_type : '')])
+@else
+    @include ('forms.input.select', 
             ["model" => "navigator_item",
             "label" => "Item Type",
             "show_label" => true,
@@ -7,18 +13,20 @@
             "options"=> $referenceable_types, 
             "option_id" => "class",
             "option_label"=> "label", 
-            "value" => old('status_id', isset($navigatoritem) ? $navigatoritem->referenceable_type : '') ])  
+            "value" => old('referenceable_type', isset($navigatorItem) ? $navigatorItem->referenceable_type : '') ])  
+@endif
+
 @include ('forms.input.text', 
             ["model" => "navigator_item", 
             "field" => "title", 
             "placeholder" => "Item Title",  
-            "value" => old('title', isset($navigatoritem) ? $navigatoritem->title : '')])
+            "value" => old('title', isset($navigatorItem) ? $navigatorItem->title : '')])
 @include ('forms.input.textarea', 
             ["model" => "navigator_item", 
             "field" => "description", 
             "placeholder" => "Description",  
             "rows" => 3, 
-            "value" => old('title', isset($navigatoritem) ? $navigatoritem->description : '')]) 
+            "value" => old('description', isset($navigatorItem) ? $navigatorItem->description : '')]) 
 
 @include ('forms.input.select', 
             ["model" => "navigator_item",
@@ -28,7 +36,7 @@
             "options"=> $curricula, 
             "option_id" => "id",
             "option_label"=> "title", 
-            "value" => old('status_id', isset($navigatoritem) ? $navigatoritem->referenceable_id : '') ]) 
+            "value" => old('referenceable_id', isset($navigatorItem) ? $navigatorItem->referenceable_id : '') ]) 
 @include ('forms.input.select', 
             ["model" => "media",
             "show_label" => true,
@@ -36,7 +44,7 @@
             "options"=> $media, 
             "option_id" => "id",
             "option_label"=> "title", 
-            "value" => old('status_id', isset($navigatoritem->medium) ? $navigatoritem->medium->id : '') ]) 
+            "value" => old('medium_id', isset($navigatorItem->medium) ? $navigatorItem->medium->id : '') ]) 
 @include ('forms.input.select', 
             ["model" => "navigator_item",
              "label" => "Position",
@@ -45,7 +53,7 @@
             "options"=> $position, 
             "option_id" => "id",
             "option_label"=> "label", 
-            "value" => old('status_id', isset($navigatoritem) ? $navigatoritem->position : '') ]) 
+            "value" => old('position', isset($navigatorItem) ? $navigatorItem->position : '') ]) 
 
 @include ('forms.input.select', 
             ["model" => "navigator_item",
@@ -55,7 +63,7 @@
             "options"=> $css_classes, 
             "option_id" => "class",
             "option_label"=> "label", 
-            "value" => old('status_id', isset($navigatoritem) ? $navigatoritem->css_class : '') ]) 
+            "value" => old('css_class', isset($navigatorItem) ? $navigatorItem->css_class : '') ]) 
 @include ('forms.input.select', 
             ["model" => "navigator_item",
              "label" => "visibility",
@@ -64,7 +72,7 @@
             "options"=> $visibility, 
             "option_id" => "id",
             "option_label"=> "label", 
-            "value" => old('status_id', isset($navigatoritem) ? $navigatoritem->visibility : '') ]) 
+            "value" => old('visibility', isset($navigatorItem) ? $navigatorItem->visibility : '') ]) 
 <div>
     <input class="btn btn-info" type="submit" value="{{ $buttonText }}">
 </div>

@@ -10,6 +10,7 @@ use App\Subject;
 use App\OrganizationType;
 use App\TerminalObjective;
 use App\EnablingObjective;
+use App\Medium;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use DOMDocument;
@@ -107,11 +108,14 @@ class CurriculumController extends Controller
         $grades = Grade::all();
         $subjects   = Subject::all();
         $organization_types = OrganizationType::all();
+        $media = Medium::where('path', '/subjects/')->get(); //todo: only show usable media (e.g. images)
         
         return view('curricula.create')
                 ->with(compact('grades'))
                 ->with(compact('subjects'))
-                ->with(compact('organization_types'));
+                ->with(compact('organization_types'))
+                ->with(compact('media'))
+                ;
     }
 
     /**
@@ -138,7 +142,7 @@ class CurriculumController extends Controller
             'organization_type_id'  => format_select_input($input['organization_type_id']),
             'state_id'              => 'DE-RP',
             'country_id'            => 'DE',
-            'medium_id'               => null,
+            'medium_id'             => format_select_input($input['medium_id']),
             'owner_id'              => auth()->user()->id,
             
         ]);
@@ -318,10 +322,12 @@ class CurriculumController extends Controller
         $grades = Grade::all();
         $subjects   = Subject::all();
         $organization_types = OrganizationType::all();
+        $media = Medium::where('path', '/subjects/')->get(); //todo: only show usable media (e.g. images)
         return view('curricula.edit')
                 ->with(compact('grades'))
                 ->with(compact('subjects'))
                 ->with(compact('organization_types'))
+                ->with(compact('media'))
                 ->with(compact('curriculum'));
     }
 
@@ -350,7 +356,7 @@ class CurriculumController extends Controller
             'organization_type_id'  => format_select_input($input['organization_type_id']),
             'state_id'              => 'DE-RP',
             'country_id'            => 'DE',
-            'medium_id'               => null,
+            'medium_id'             => format_select_input($input['medium_id']),
             'owner_id'              => auth()->user()->id,
         ]);
         
@@ -414,7 +420,7 @@ class CurriculumController extends Controller
             'organization_type_id'  => 'sometimes',
             'state_id'              => 'sometimes',
             'country_id'            => 'sometimes',
-            'file_id'               => 'sometimes',
+            'medium_id'               => 'sometimes',
             'owner_id'              => 'sometimes',
             ]);
     }

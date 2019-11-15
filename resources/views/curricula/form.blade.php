@@ -10,6 +10,14 @@
 
 @include ('forms.input.text', ["model" => "curriculum", "field" => "color", "placeholder" => "#231423",  "value" => old('color', isset($curriculum) ? $curriculum->color : '')])
 
+@include ('forms.input.select', 
+            ["model" => "media",
+            "show_label" => true,
+            "field" => "medium_id",  
+            "options"=> $media, 
+            "option_id" => "id",
+            "option_label"=> "title", 
+            "value" => old('medium_id', isset($curriculum->medium_id) ? $curriculum->medium_id : '') ]) 
                 
 @include ('forms.input.select', 
                       ["model" => "grade",

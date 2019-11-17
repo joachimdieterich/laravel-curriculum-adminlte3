@@ -7,20 +7,26 @@
                         class="btn btn-box-tool">
                     <i class="fa fa-edit"></i>
                 </a>-->
+                @can('navigator_create')
                 <form class="float-right" action="{{route('navigatorItems.destroy', ['navigatorItem' => $item->id])}}" 
                       method="POST" 
                       enctype="multipart/form-data"
                       onclick="event.stopPropagation();">
                     @csrf
                     @method('DELETE')   
-                    <button type="submit" class="btn btn-box-tool">
+                    <button 
+                        id="delete-navigator-content-{{ $item->id }}"
+                        type="submit" class="btn btn-box-tool">
                         <i class="fa fa-trash"></i>
                     </button>
                 </form>
+                @endcan
                 <button class="btn btn-box-tool" >
                     <i class="fa fa-print"></i>
                 </button>
-                <button class="btn btn-box-tool" data-toggle="collapse" data-target="#card_{{ $item->id }}">
+                <button 
+                    id="navigator-item-content-{{ $item->id }}"
+                    class="btn btn-box-tool" data-toggle="collapse" data-target="#card_{{ $item->id }}">
                     <i class="fa fa-expand"></i>
                 </button>
                 

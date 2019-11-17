@@ -15,5 +15,9 @@
                       "value" => old('organization_id', isset($navigator->organization_id) ? $navigator->organization_id : '') ])                                                          
 
 <div>
-    <input class="btn btn-info" type="submit" value="{{ $buttonText }}">
+    <input 
+        id="navigator-save"
+        class="btn btn-info" 
+        type="submit" 
+        value="{{ $buttonText }}">
 </div>

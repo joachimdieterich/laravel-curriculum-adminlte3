@@ -74,7 +74,11 @@
             "option_label"=> "label", 
             "value" => old('visibility', isset($navigatorItem) ? $navigatorItem->visibility : '') ]) 
 <div>
-    <input class="btn btn-info" type="submit" value="{{ $buttonText }}">
+    <input 
+        id="navigator-item-save"
+        class="btn btn-info" 
+        type="submit" 
+        value="{{ $buttonText }}">
 </div>
             
 @section('scripts')

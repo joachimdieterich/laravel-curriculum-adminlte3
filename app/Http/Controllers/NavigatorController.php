@@ -44,12 +44,14 @@ class NavigatorController extends Controller
                  $actions  = '';
                     if (\Gate::allows('navigator_show')){
                         $actions .= '<a href="'.route('navigators.show', $navigators->id).'" '
+                                    . 'id="show-navigator-'.$navigators->id.'" '
                                     . 'class="btn btn-xs btn-success">'
                                     . '<i class="fa fa-list-alt"></i> Show'
                                     . '</a>';
                     }
                     if (\Gate::allows('navigator_edit')){
                         $actions .= '<a href="'.route('navigators.edit', $navigators->id).'" '
+                                    . 'id="edit-navigator-'.$navigators->id.'" '
                                     . 'class="btn btn-xs btn-primary mr-1">'
                                     . '<i class="fa fa-edit"></i> '.trans('global.edit').''
                                     . '</a>';
@@ -57,7 +59,10 @@ class NavigatorController extends Controller
                     if (\Gate::allows('navigator_delete')){
                         $actions .= '<form action="'.route('navigators.destroy', $navigators->id).'" method="POST">'
                                     . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
-                                    . '<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Delete</button>';
+                                    . '<button '
+                                    . 'type="submit" '
+                                    . 'id="delete-navigator-'.$navigators->id.'" '
+                                    . 'class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Delete</button>';
                     }
               
                 return $actions;

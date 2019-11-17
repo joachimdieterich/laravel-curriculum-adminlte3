@@ -1,7 +1,9 @@
-<div class="box box-objective pointer {{ $item->css_class }} my-1" 
+<div
+    id="navigator-item-{{ $item->id }}"
+    class="box box-objective pointer {{ $item->css_class }} my-1" 
     style="height: 300px !important; min-width: 200px !important; padding: 0;background: url('{{isset($item->medium->id) ? route('media.show', ($item->medium->id)) : Avatar::create('test')->toGravatar(['d' => 'identicon', 'r' => 'pg', 's' => 100])}}') center center;  background-size: cover;"
     onclick="{{ $onclick }}">
-    
+        @can('navigator_create')
         <span class="p-1 pointer_hand" 
            accesskey="" style="position:absolute; top:0px; height: 30px; width:100%;">
            <form action="{{route('navigatorItems.destroy', ['navigatorItem' => $item->id])}}" 
@@ -10,7 +12,9 @@
                  onclick="event.stopPropagation();">
                @csrf
                @method('DELETE')   
-               <button type="submit" class="btn btn-danger btn-sm pull-right">
+               <button 
+                   id="delete-navigator-item-{{ $item->id }}"
+                   type="submit" class="btn btn-danger btn-sm pull-right">
                    <small><i class="fa fa-trash"></i></small>
                </button>
            </form>
@@ -18,7 +22,8 @@
                    class="btn btn-primary btn-sm pull-right mr-1">
                <small><i class="fa fa-edit"></i></small>
            </a>-->
-       </span>     
+       </span>   
+        @endcan
     
 
     <span class="bg-white text-center p-1 overflow-auto " 

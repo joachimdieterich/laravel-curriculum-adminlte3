@@ -1,7 +1,5 @@
 @extends('layouts.contentonly')
 @section('content')
-
-
 <div class="header">
     <div class="row p-3">
         <div class="col-12">
@@ -12,34 +10,49 @@
                     {{ isset($views->description) ? $views->description : ''}}
                 </small>    
             </h5>
+<!--            <span class="pull-right">
+                <form id="logoutform" action="{{ route('logout') }}" method="POST">
+                {{ csrf_field() }}
+                <button
+                    type="submit"
+                    class=" btn btn-primary btn-xs mr-1">
+                    <i class="fa fa-sign-in-alt"></i> 
+                    {{ trans('global.login') }}
+                </button> 
+                </form>
+            </span>-->
             @can('navigator_create')
                 <span class="pull-right">
                     <a
                     @if(isset($views))
+                        id="add-navigator-items"
                         href="{{route('navigatorItems.create', ['navigator_id' => $navigators->id, 'view_id' => $views->id])}}"
                     @else   
+                        id="add-navigator-view"
                         href="{{route('navigatorViews.create', ['navigator' => $navigators->id])}}"            
                     @endif
                     class=" btn btn-primary btn-xs mr-1">
                         <i class="fa fa-plus"></i> 
                         {{ trans('global.add') }}
-                    </a> 
+                    </a>
                 </span>
             @endcan
             @if(isset($views))
                 @can('navigator_create')
                     <span class="pull-right">
-                        <a href="{{route('navigatorViews.edit', ['navigator_view' => $views->id])}}"  
+                        <a href="{{route('navigatorViews.edit', $views->id)}}"
+                            id="edit-navigator-view"
                             class=" btn btn-primary btn-xs mr-1">
                             <i class="fa fa-edit"></i> 
                             {{ trans('global.edit') }}
                         </a> 
                     </span>
                     <span class="pull-right">
-                        <form action="{{route('navigatorViews.destroy', ['navigator_view' => $views->id])}}" method="POST" enctype="multipart/form-data">
+                        <form action="{{route('navigatorViews.destroy', $views->id)}}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('DELETE')    
                         <button type="submit"
+                            id="delete-navigator-view"
                             class=" btn btn-danger btn-xs mr-1">
                             <i class="fa fa-trash"></i> 
                             {{ trans('global.delete') }}

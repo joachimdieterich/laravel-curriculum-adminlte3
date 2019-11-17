@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Navigator;
 use App\NavigatorView;
+use App\NavigatorItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -103,8 +104,15 @@ class NavigatorViewController extends Controller
     public function destroy(NavigatorView $navigatorView)
     {
         abort_unless(\Gate::allows('navigator_delete'), 403);
+        $navigatorItem = NavigatorItem::where('referenceable_type', 'App\NavigatorView')
+                                      ->where('referenceable_id', $navigatorView->id)->first();
+        if ($navigatorItem != null)
+        {
+            $navigatorItem->delete();
+        }    
         $navigator_id = $navigatorView->navigator_id;
         $navigatorView->delete();
+        
 
         return redirect()->route('navigators.show', $navigator_id);
     }

@@ -14,5 +14,9 @@
 
 <div>
     <input id="navigator_id" name="navigator_id" type="hidden" value="{{ (null !== Request::get('navigator')) ? Request::get('navigator') : $view->navigator_id }}">
-    <input class="btn btn-info" type="submit" value="{{ $buttonText }}">
+    <input 
+        id="navigator-view-save"
+        class="btn btn-info" 
+        type="submit" 
+        value="{{ $buttonText }}">
 </div>

@@ -29,8 +29,8 @@
             </div>
                 <div class="card-footer">
                      <div class="form-group m-2">
-                         <button type="button" class="btn btn-info" data-widget="remove" @click="close()">{{ trans('global.cancel') }}</button>
-                         <button class="btn btn-info" @click="submit()" >{{ trans('global.save') }}</button>
+                         <button type="button" class="btn btn-info" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
+<!--                         <button class="btn btn-info" @click="submit()" >{{ trans('global.save') }}</button>-->
                     </div>
                 </div>
             

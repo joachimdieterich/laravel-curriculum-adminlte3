@@ -513,7 +513,7 @@ class PermissionsTableSeeder extends Seeder
             ],
             [
                 'id'         => '90',
-                'title'      => 'periods_manage',
+                'title'      => 'period_manage',
                 'created_at' => '2019-04-15 19:14:42',
                 'updated_at' => '2019-04-15 19:14:42',
             ],

@@ -174,7 +174,7 @@
                                     </a>
                                 </li>
                             @endcan
-                            @can('periods_manage')
+                            @can('period_manage')
                                 <li class="nav-item">
                                     <a href="{{ route("periods.index") }}" class="nav-link {{ request()->is('periods') || request()->is('periods/*') ? 'active' : '' }}">
                                         <i class="fa fa-history"></i>

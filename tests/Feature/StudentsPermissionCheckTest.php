@@ -24,30 +24,26 @@ class StudentsPermissionCheckTest extends TestCase
     {
         $response = $this->get('/');
 
-        $response->assertStatus(200);
-        
+        $response->assertStatus(200);  
     }
     
     /** @test */
     public function can_not_access_curriculum_management()
     {
         $response = $this->get('/curricula');
-
         $response->assertStatus(403); 
     }
     
     /** @test */
     public function can_access_a_curriculum_where_its_group_is_enroled()
     {
-        
         $this->followingRedirects()->get('/courses/1')->assertStatus(200); //curriculum was created by seeder
     }
     
     /** @test */
     public function can_not_access_a_curriculum_where_its_group_is_not_enroled()
     {   
-       
-        DB::table('group_user')->where('user_id', '=', 2)->delete(); //delete seeded enrolment
+        DB::table('group_user')->where('user_id', '=', 1)->delete(); //delete seeded enrolment
              
         $response = $this->get('/curricula/1'); //curriculum was created by seeder
 
@@ -56,9 +52,8 @@ class StudentsPermissionCheckTest extends TestCase
     
     /** @test */
     public function can_not_access_a_non_existing_curriculum()
-    {
-        
-        $response = $this->get('/curricula/2'); //non-existing curriculum
+    {        
+        $response = $this->get('/curricula/100'); //non-existing curriculum
 
         $response->assertStatus(404); 
     }

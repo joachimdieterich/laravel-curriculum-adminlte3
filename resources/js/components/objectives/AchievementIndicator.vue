@@ -131,7 +131,7 @@
                 return this.calculate_count('0');
             },
             fabadge: function (){
-                if (window.Laravel.permissions.indexOf('achievement_manage') !== -1){
+                if (window.Laravel.permissions.indexOf('achievement_access') !== -1){
                     return "fabadge";
                 }
                 

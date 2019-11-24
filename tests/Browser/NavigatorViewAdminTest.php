@@ -9,7 +9,7 @@ use App\User;
 use App\Navigator;
 use App\NavigatorView;
 
-class NavigatorViewTest extends DuskTestCase
+class NavigatorViewAdminTest extends DuskTestCase
 {
     
     /**

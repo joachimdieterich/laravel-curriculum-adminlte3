@@ -10,25 +10,6 @@ use App\Http\Controllers\ProgressController;
 
 class AchievementController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -38,7 +19,7 @@ class AchievementController extends Controller
      */
     public function store(Request $request)
     {
-        abort_unless((\Gate::allows('achievement_create') OR \Gate::allows('achievement_self_assessment')), 403);
+        abort_unless(\Gate::allows('achievement_create'), 403);
         
         $input = $this->validateRequest();
        
@@ -55,7 +36,7 @@ class AchievementController extends Controller
                             "referenceable_type" => $input['referenceable_type'],
                             "referenceable_id"   => $input['referenceable_id'],
                             "user_id"            => $user_id,
-                            "status"             => $this->calculateStatus($input),
+                            "status"             => $this->calculateStatus($user_id, $input),
                             "owner_id"           => auth()->user()->id,	
                 ]); 
             } else { //update
@@ -63,7 +44,7 @@ class AchievementController extends Controller
                             "referenceable_type" => $input['referenceable_type'],
                             "referenceable_id"   => $input['referenceable_id'],
                             "user_id"            => $user_id,
-                            "status"             => $this->calculateStatus($input, $achievement->status),
+                            "status"             => $this->calculateStatus($user_id, $input, $achievement->status),
                             "owner_id"           => auth()->user()->id,	
                 ]); 
             }
@@ -83,13 +64,13 @@ class AchievementController extends Controller
     
 
     /* calculate proper status id */
-    protected function calculateStatus($input, $status = '00')
+    protected function calculateStatus($user_id, $input, $status = '00')
     {
-        if(\Gate::allows('achievement_create'))
+        if(\Gate::allows('achievement_access') AND $user_id != auth()->user()->id)
         {
             $status[1] = $input['status'];
         }
-        elseif (\Gate::allows('achievement_self_assessment'))
+        else // self assesment
         {
             $status[0] = $input['status'];
         }

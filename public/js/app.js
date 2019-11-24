@@ -3430,7 +3430,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return this.calculate_count('0');
     },
     fabadge: function fabadge() {
-      if (window.Laravel.permissions.indexOf('achievement_manage') !== -1) {
+      if (window.Laravel.permissions.indexOf('achievement_access') !== -1) {
         return "fabadge";
       }
     }

@@ -365,7 +365,7 @@ class CurriculumController extends Controller
     
     public function enrol()
     {
-        abort_unless(\Gate::allows('curriculum_enrol'), 403);
+        abort_unless(\Gate::allows('course_create'), 403);
         
         foreach ((request()->enrollment_list) AS $enrolment)
         {  
@@ -377,7 +377,7 @@ class CurriculumController extends Controller
     
      public function expel()
     {
-        abort_unless(\Gate::allows('curriculum_expel'), 403);
+        abort_unless(\Gate::allows('curriculum_delete'), 403);
         
         foreach ((request()->expel_list) AS $expel)
         {  

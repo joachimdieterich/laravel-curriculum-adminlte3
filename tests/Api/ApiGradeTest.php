@@ -3,6 +3,7 @@
 namespace Tests\Api;
 
 use Tests\TestCase;
+use App\Grade;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ApiGradeTest extends TestCase {
@@ -38,15 +39,7 @@ class ApiGradeTest extends TestCase {
 
         $this->get('/api/v1/grades/1')
                 ->assertStatus(200)
-                ->assertJson([
-                    "id"=> 1,
-                    "title"=> "1. Klasse",
-                    "external_begin"=> 1,
-                    "external_end"=> 1,
-                    "organization_type_id"=> 5,
-                    "created_at"=> null,
-                    "updated_at"=> null
-        ]);
+                ->assertJson(Grade::find(1)->toArray());
     }
 
 }

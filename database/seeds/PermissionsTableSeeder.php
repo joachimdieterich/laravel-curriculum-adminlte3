@@ -7,12 +7,7 @@ class PermissionsTableSeeder extends Seeder
 {
     public function run()
     {
-        $permissions = [[
-            'id'         => '1',
-            'title'      => 'user_management_access',
-            'created_at' => '2019-04-15 19:14:42',
-            'updated_at' => '2019-04-15 19:14:42',
-            ],
+        $permissions = [
             [
                 'id'         => '2',
                 'title'      => 'permission_create',
@@ -100,18 +95,6 @@ class PermissionsTableSeeder extends Seeder
             [
                 'id'         => '16',
                 'title'      => 'user_access',
-                'created_at' => '2019-04-15 19:14:42',
-                'updated_at' => '2019-04-15 19:14:42',
-            ],
-            [
-                'id'         => '22',
-                'title'      => 'user_enrol',
-                'created_at' => '2019-04-15 19:14:42',
-                'updated_at' => '2019-04-15 19:14:42',
-            ],
-            [
-                'id'         => '23',
-                'title'      => 'user_expel',
                 'created_at' => '2019-04-15 19:14:42',
                 'updated_at' => '2019-04-15 19:14:42',
             ],
@@ -308,66 +291,6 @@ class PermissionsTableSeeder extends Seeder
                 'updated_at' => '2019-04-15 19:14:42',
             ],
             [
-                'id'         => '56',
-                'title'      => 'curriculum_manage',
-                'created_at' => '2019-04-15 19:14:42',
-                'updated_at' => '2019-04-15 19:14:42',
-            ],
-            [
-                'id'         => '57',
-                'title'      => 'permission_manage',
-                'created_at' => '2019-04-15 19:14:42',
-                'updated_at' => '2019-04-15 19:14:42',
-            ],
-            [
-                'id'         => '58',
-                'title'      => 'user_manage',
-                'created_at' => '2019-04-15 19:14:42',
-                'updated_at' => '2019-04-15 19:14:42',
-            ],
-            [
-                'id'         => '59',
-                'title'      => 'role_manage',
-                'created_at' => '2019-04-15 19:14:42',
-                'updated_at' => '2019-04-15 19:14:42',
-            ],
-            [
-                'id'         => '60',
-                'title'      => 'organization_manage',
-                'created_at' => '2019-04-15 19:14:42',
-                'updated_at' => '2019-04-15 19:14:42',
-            ],
-            [
-                'id'         => '61',
-                'title'      => 'group_manage',
-                'created_at' => '2019-04-15 19:14:42',
-                'updated_at' => '2019-04-15 19:14:42',
-            ],
-            [
-                'id'         => '62',
-                'title'      => 'grade_manage',
-                'created_at' => '2019-04-15 19:14:42',
-                'updated_at' => '2019-04-15 19:14:42',
-            ],
-            [
-                'id'         => '63',
-                'title'      => 'organization_type_manage',
-                'created_at' => '2019-04-15 19:14:42',
-                'updated_at' => '2019-04-15 19:14:42',
-            ],
-            [
-                'id'         => '64',
-                'title'      => 'curriculum_enrol',
-                'created_at' => '2019-04-15 19:14:42',
-                'updated_at' => '2019-04-15 19:14:42',
-            ],
-            [
-                'id'         => '65',
-                'title'      => 'curriculum_expel',
-                'created_at' => '2019-04-15 19:14:42',
-                'updated_at' => '2019-04-15 19:14:42',
-            ],
-            [
                 'id'         => '66',
                 'title'      => 'navigator_access',
                 'created_at' => '2019-04-15 19:14:42',
@@ -394,12 +317,6 @@ class PermissionsTableSeeder extends Seeder
             [
                 'id'         => '70',
                 'title'      => 'navigator_delete',
-                'created_at' => '2019-04-15 19:14:42',
-                'updated_at' => '2019-04-15 19:14:42',
-            ],
-            [
-                'id'         => '71',
-                'title'      => 'navigator_manage',
                 'created_at' => '2019-04-15 19:14:42',
                 'updated_at' => '2019-04-15 19:14:42',
             ],
@@ -434,18 +351,6 @@ class PermissionsTableSeeder extends Seeder
                 'updated_at' => '2019-04-15 19:14:42',
             ],
             [
-                'id'         => '77',
-                'title'      => 'achievement_manage',
-                'created_at' => '2019-04-15 19:14:42',
-                'updated_at' => '2019-04-15 19:14:42',
-            ],
-            [
-                'id'         => '78',
-                'title'      => 'achievement_self_assessment',
-                'created_at' => '2019-04-15 19:14:42',
-                'updated_at' => '2019-04-15 19:14:42',
-            ],
-            [
                 'id'         => '79',
                 'title'      => 'certificate_access',
                 'created_at' => '2019-04-15 19:14:42',
@@ -472,12 +377,6 @@ class PermissionsTableSeeder extends Seeder
             [
                 'id'         => '83',
                 'title'      => 'certificate_delete',
-                'created_at' => '2019-04-15 19:14:42',
-                'updated_at' => '2019-04-15 19:14:42',
-            ],
-            [
-                'id'         => '84',
-                'title'      => 'certificate_generate',
                 'created_at' => '2019-04-15 19:14:42',
                 'updated_at' => '2019-04-15 19:14:42',
             ],
@@ -510,10 +409,46 @@ class PermissionsTableSeeder extends Seeder
                 'title'      => 'period_delete',
                 'created_at' => '2019-04-15 19:14:42',
                 'updated_at' => '2019-04-15 19:14:42',
+            ],           
+             [
+                'id'         => '91',
+                'title'      => 'course_access',
+                'created_at' => '2019-04-15 19:14:42',
+                'updated_at' => '2019-04-15 19:14:42',
             ],
             [
-                'id'         => '90',
-                'title'      => 'period_manage',
+                'id'         => '92',
+                'title'      => 'course_create',
+                'created_at' => '2019-04-15 19:14:42',
+                'updated_at' => '2019-04-15 19:14:42',
+            ],
+            [
+                'id'         => '93',
+                'title'      => 'course_show',
+                'created_at' => '2019-04-15 19:14:42',
+                'updated_at' => '2019-04-15 19:14:42',
+            ],
+            [
+                'id'         => '94',
+                'title'      => 'course_edit',
+                'created_at' => '2019-04-15 19:14:42',
+                'updated_at' => '2019-04-15 19:14:42',
+            ],
+            [
+                'id'         => '95',
+                'title'      => 'course_delete',
+                'created_at' => '2019-04-15 19:14:42',
+                'updated_at' => '2019-04-15 19:14:42',
+            ],
+            [
+                'id'         => '96',
+                'title'      => 'group_enrolment',
+                'created_at' => '2019-04-15 19:14:42',
+                'updated_at' => '2019-04-15 19:14:42',
+            ],
+            [
+                'id'         => '97',
+                'title'      => 'organization_enrolment',
                 'created_at' => '2019-04-15 19:14:42',
                 'updated_at' => '2019-04-15 19:14:42',
             ],

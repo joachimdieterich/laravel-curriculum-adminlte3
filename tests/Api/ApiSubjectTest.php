@@ -3,6 +3,7 @@
 namespace Tests\Api;
 
 use Tests\TestCase;
+use App\Subject;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ApiSubjectTest extends TestCase {
@@ -12,7 +13,6 @@ class ApiSubjectTest extends TestCase {
     /** @test */
     public function an_unauthificated_client_can_not_get_subjects() 
     {
-        
         $this->get('/api/v1/subjects')->assertStatus(302);
         $this->contains('login');
     }
@@ -26,7 +26,8 @@ class ApiSubjectTest extends TestCase {
         $this->signInApiAdmin();
 
         $this->get('/api/v1/subjects')
-                ->assertStatus(200);
+                ->assertStatus(200)
+                ->assertJson(Subject::all()->toArray());
     }
 
     /** @test 
@@ -38,16 +39,7 @@ class ApiSubjectTest extends TestCase {
 
         $this->get('/api/v1/subjects/59')
                 ->assertStatus(200)
-                ->assertJson([
-                    "id"=> 59,
-                    "title"=> "Musik (auch: Rhythmische Erziehung)",
-                    "title_short"=> null,
-                    "external_id"=> 59,
-                    "organization_type_id"=> 1,
-                    "organization_id"=> null,
-                    "created_at"=> null,
-                    "updated_at"=> null
-        ]);
+                ->assertJson(Subject::find(59)->toArray());
     }
 
 }

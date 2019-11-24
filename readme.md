@@ -151,3 +151,15 @@ Run browser tests
 php artisan dusk
 ```
 
+### Roles and Permissions
+The initial installation has 8 Roles: 
+- Administrator
+- Creator
+- Indexer
+- Schooladmin
+- Teacher
+- Student
+- Parent
+- Guest
+
+The [Permission-Map](permissionmap.md) gives a quick view over the permissions of those roles.

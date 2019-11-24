@@ -3,6 +3,7 @@
 namespace Tests\Api;
 
 use Tests\TestCase;
+use App\Country;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ApiCountryTest extends TestCase {
@@ -36,18 +37,7 @@ class ApiCountryTest extends TestCase {
 
         $this->get('/api/v1/countries/276')
                 ->assertStatus(200)
-                ->assertJson([
-                    "id"=> 276,
-                    "alpha2"=> "DE",
-                    "alpha3"=> "DEU",
-                    "langCS"=> "Německo",
-                    "lang_de"=> "Deutschland",
-                    "lang_en"=> "Germany",
-                    "langES"=> "Alemania",
-                    "langFR"=> "Allemagne",
-                    "langIT"=> "Germania",
-                    "langNL"=> "Duitsland"
-        ]);
+                ->assertJson(Country::find(276)->toArray());
     }
 
 }

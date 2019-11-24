@@ -78,7 +78,7 @@
         </nav>
         <nav class="mt-2"> 
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                @can('curriculum_manage')
+                @can('curriculum_access')
                     <li class="nav-item">
                         <a href="{{ route("curricula.index") }}" class="nav-link {{ request()->is('curricula') || request()->is('curricula/*') ? 'active' : '' }}">
                             <i class="fas fa-th"></i>
@@ -88,7 +88,7 @@
                         </a>
                     </li>
                 @endcan
-                @can('user_management_access')
+                @can('user_access')
                     <li class="nav-item has-treeview {{ request()->is('permissions*') ? 'menu-open' : '' }} {{ request()->is('roles*') ? 'menu-open' : '' }} {{ request()->is('users*') ? 'menu-open' : '' }}">
                         <a class="nav-link nav-dropdown-toggle">
                             <i class="fas fa-users"></i>
@@ -98,7 +98,7 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            @can('permission_manage')
+                            @can('permission_access')
                                 <li class="nav-item">
                                     <a href="{{ route("permissions.index") }}" class="nav-link {{ request()->is('permissions') || request()->is('permissions/*') ? 'active' : '' }}">
                                         <i class="fas fa-unlock-alt"></i>
@@ -108,7 +108,7 @@
                                     </a>
                                 </li>
                             @endcan
-                            @can('role_manage')
+                            @can('role_access')
                                 <li class="nav-item">
                                     <a href="{{ route("roles.index") }}" class="nav-link {{ request()->is('roles') || request()->is('roles/*') ? 'active' : '' }}">
                                         <i class="fas fa-user-tag"></i>
@@ -118,7 +118,7 @@
                                     </a>
                                 </li>
                             @endcan
-                            @can('user_manage')
+                            @can('user_access')
                                 <li class="nav-item">
                                     <a href="{{ route("users.index") }}" class="nav-link {{ request()->is('users') || request()->is('users/*') ? 'active' : '' }}">
                                         <i class="fas fa-user"></i>
@@ -133,7 +133,7 @@
                 @endcan
                 
                 
-                @can('organization_manage')
+                @can('organization_access')
                     <li class="nav-item has-treeview {{ request()->is('permissions*') ? 'menu-open' : '' }} {{ request()->is('roles*') ? 'menu-open' : '' }} {{ request()->is('users*') ? 'menu-open' : '' }}">
                         <a class="nav-link nav-dropdown-toggle">
                             <i class="fas fa-university"></i>
@@ -144,7 +144,7 @@
                         </a>
                         <ul class="nav nav-treeview">
                             
-                            @can('navigator_manage')
+                            @can('navigator_access')
                                 <li class="nav-item">
                                     <a href="{{ route("navigators.index") }}" class="nav-link {{ request()->is('navigators') || request()->is('navigators/*') ? 'active' : '' }}">
                                         <i class="fa fa-map-signs"></i>
@@ -154,7 +154,7 @@
                                     </a>
                                 </li>
                             @endcan
-                            @can('group_manage')
+                            @can('group_access')
                                 <li class="nav-item">
                                     <a href="{{ route("groups.index") }}" class="nav-link {{ request()->is('groups') || request()->is('groups/*') ? 'active' : '' }}">
                                         <i class="fa fa-users"></i>
@@ -164,7 +164,7 @@
                                     </a>
                                 </li>
                             @endcan
-                            @can('grade_manage')
+                            @can('grade_access')
                                 <li class="nav-item">
                                     <a href="{{ route("grades.index") }}" class="nav-link {{ request()->is('grades') || request()->is('grades/*') ? 'active' : '' }}">
                                         <i class="fas fa-layer-group"></i>
@@ -174,7 +174,7 @@
                                     </a>
                                 </li>
                             @endcan
-                            @can('period_manage')
+                            @can('period_access')
                                 <li class="nav-item">
                                     <a href="{{ route("periods.index") }}" class="nav-link {{ request()->is('periods') || request()->is('periods/*') ? 'active' : '' }}">
                                         <i class="fa fa-history"></i>
@@ -184,7 +184,7 @@
                                     </a>
                                 </li>
                             @endcan
-                            @can('organization_type_manage')
+                            @can('organization_type_access')
                                 <li class="nav-item">
                                     <a href="{{ route("organizationtypes.index") }}" class="nav-link {{ request()->is('organizationtypes') || request()->is('organizationtypes/*') ? 'active' : '' }}">
                                         <i class="fas fa-city"></i>

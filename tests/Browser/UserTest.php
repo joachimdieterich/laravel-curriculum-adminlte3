@@ -55,7 +55,7 @@ class UserTest extends DuskTestCase
                 ->assertSee($user->firstname)
                 ->assertSee($user->lastname)
                 ->assertSee($user->email)
-                ->screenshot('see-user-details')
+                //->screenshot('see-user-details')
                 ;
         });     
     }

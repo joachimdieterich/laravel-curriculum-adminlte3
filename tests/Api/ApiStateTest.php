@@ -3,6 +3,7 @@
 namespace Tests\Api;
 
 use Tests\TestCase;
+use App\State;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ApiStateTest extends TestCase {
@@ -12,8 +13,8 @@ class ApiStateTest extends TestCase {
     /** @test */
     public function an_unauthificated_client_can_not_get_states() 
     {
-        
-        $this->get('/api/v1/states')->assertStatus(302);
+        $this->get('/api/v1/states')
+             ->assertStatus(302);
         $this->contains('login');
     }
 
@@ -26,7 +27,8 @@ class ApiStateTest extends TestCase {
         $this->signInApiAdmin();
 
         $this->get('/api/v1/states')
-                ->assertStatus(200);
+                ->assertStatus(200)
+                ->assertJson(State::all()->toArray()); 
     }
 
     /** @test 
@@ -38,12 +40,6 @@ class ApiStateTest extends TestCase {
 
         $this->get('/api/v1/states/11')
                 ->assertStatus(200)
-                ->assertJson([
-                   "id"=> 11,
-                    "lang_de"=> "Rheinland-Pfalz",
-                    "country"=> "DE",
-                    "code"=> "DE-RP"
-        ]);
+                ->assertJson(State::find(11)->toArray());
     }
-
 }

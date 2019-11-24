@@ -1,7 +1,7 @@
 <div class="{{ $item->css_class }} px-0 my-1">
     <div class="box bottom-buffer-20">
         <div class="box-header with-border">
-            <h3 class="box-title" data-toggle="collapse" data-target="#card_{{ $item->id }}"> {{ $item->title }}</h3>
+            <h3 class="box-title" data-target="#card_{{ $item->id }}" data-toggle="collapse"> {{ $item->title }}</h3>
             <div class="box-tools pull-right">
 <!--                <a href="{{route('navigatorItems.edit', ['navigatorItem' => $item->id, 'navigator_id'])}}"
                         class="btn btn-box-tool">
@@ -26,7 +26,7 @@
                 </button>
                 <button 
                     id="navigator-item-content-{{ $item->id }}"
-                    class="btn btn-box-tool" data-toggle="collapse" data-target="#card_{{ $item->id }}">
+                    class="btn btn-box-tool" data-target="#card_{{ $item->id }}" data-toggle="collapse">
                     <i class="fa fa-expand"></i>
                 </button>
                 
@@ -35,7 +35,6 @@
         </div><!-- /.box-header -->
         <div id="card_{{ $item->id }}" class="box-body collapse">
             {!!html_entity_decode($item->referenceable->content)!!}
-            
         </div>
             
     </div>

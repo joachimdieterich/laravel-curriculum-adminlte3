@@ -47,29 +47,24 @@
                             <a href="#tab_password" class="nav-link active" data-toggle="tab">Passwort</a>
                         </li>
                     @endcan
-                    <!--@canany(['user_enroleToGroup', 'user_expelFromGroup'])-->
-                    <!--@endcanany-->
+                    @can('group_enrolment') 
                         <li id="nav_tab_group" class="nav-item">
                             <a href="#tab_group" class="nav-link" data-toggle="tab">Lerngruppe</a>
                         </li>
-
-                    <!--@can('user_updateRole')-->
-                    <!--@endcan-->
+                    @endcan
+                    @can('institution_enrolment') 
                         <li id="nav_tab_organization" class="nav-item">
                             <a href="#tab_organization" class="nav-link" data-toggle="tab">Institution / Rolle</a>
                         </li>
-
-                    <!--@can('user_userListComplete')-->
-                    <!--@endcan-->
                         <li id="nav_tab_register" class="nav-item">
                             <a href="#tab_register" class="nav-link" data-toggle="tab">Registerung bestätigen</a>
                         </li>
-
-                    <!--@can('user_delete')-->
-                    <!--@endcan-->
+                    @endcan
+                    @can('user_delete') 
                         <li id="nav_tab_delete" class="nav-item">
                             <a href="#tab_delete" class="nav-link" data-toggle="tab"><span class="text">löschen</span></a>
                         </li>
+                    @endcan
                 </ul>
             </div>
             <div class="card-body">
@@ -85,7 +80,7 @@
                         </div>
                     @endcan
                     
-                    @can('user_edit')
+                    @can('group_enrolment')
                         <div id="tab_group" class="tab-pane row " >
                             <div class="form-horizontal col-xs-12">
                                 @include ('forms.input.info', ["value" => "Markierte Benutzer in Lerngruppe ein bzw. ausschreiben.\nBenutzer muss an der entsprechenden Institution eingeschrieben sein, damit  die Lerngruppe angezeigt wird."])
@@ -107,8 +102,7 @@
                             </div>
                         </div>
                     @endcan
-
-                    @can('user_edit')
+                    @can('institution_enrolment')
                         <div id="tab_organization" class="tab-pane row " >
                             <div class="form-horizontal col-xs-12">
                                 @include ('forms.input.info', ["value" => "Beim Zuweisen einer Rolle werden die markierten Nutzer automatisch in die aktuelle/ausgewählte Institution eingeschrieben bzw. die Daten aktualisiert."])
@@ -132,9 +126,7 @@
                                 </div>
                             </div>
                         </div>
-                    @endcan
-
-                    @can('user_edit')
+                    
                         <div id="tab_register" class="tab-pane row " >
                             <div class="form-horizontal col-xs-12">
                                  @include ('forms.input.select', 

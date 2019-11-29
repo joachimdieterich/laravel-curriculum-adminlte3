@@ -24,6 +24,7 @@ return [
     'user_name'                            => 'Name',
     'reset_password'                       => 'Reset Password',
     'login'                                => 'Login',
+    'login_guest'                          => 'Login as guest',
     'remember_me'                          => 'Remember me',
     'forgot_password'                      => 'Forgot your password?',
     'register'                             => 'Register',

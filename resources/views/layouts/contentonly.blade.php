@@ -8,31 +8,58 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ trans('global.site_title') }}</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="/css/app.css" rel="stylesheet" />
+<!--    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet" />-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css" rel="stylesheet" />
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet" />
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet" />
-    <link href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" rel="stylesheet" />
+    @yield('styles')
+<!--    <link href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" rel="stylesheet" />-->
     
-    <script>    
+<script>    
         
-        window.trans = <?php
-        // copy all translations from /resources/lang/CURRENT_LOCALE/* to global JS variable
-        $lang_files = File::files(resource_path() . '/lang/' . App::getLocale());
-        $trans = [];
-        foreach ($lang_files as $f) {
-            $filename = pathinfo($f)['filename'];
-            $trans[$filename] = trans($filename);
-        }
-        echo json_encode($trans);
-        ?>;
-    </script>
+    window.trans = <?php
+// copy all translations from /resources/lang/CURRENT_LOCALE/* to global JS variable
+$lang_files = File::files(resource_path() . '/lang/' . App::getLocale());
+$trans = [];
+foreach ($lang_files as $f) {
+    $filename = pathinfo($f)['filename'];
+    $trans[$filename] = trans($filename);
+}
+echo json_encode($trans);
+?>;
+         window.Laravel = <?php
+echo json_encode([
+    'csrfToken' => csrf_token(),
+    'userId' => Auth::user()->id,
+    'permissions' => Auth::user()->permissions()->pluck('title')->toArray()
+]);
+?>;
+</script>
     
 </head>
 
-<body class="">
-    @yield('content')
+<body class="" >
+    <div id="app">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6 pl-0">
+                        <h1> @yield('title')</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            @yield('breadcrumb')
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+        @yield('content')
+    </div>
+    
     <script>
-        /*!
+    /*!
      * AdminLTE v3.0.0-alpha.2 (https://adminlte.io)
      * Copyright 2014-2018 Abdullah Almsaeed <abdullah@almsaeedstudio.com>
      * Licensed under MIT (https://github.com/almasaeed2010/AdminLTE/blob/master/LICENSE)
@@ -46,6 +73,8 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.full.min.js"></script>
     <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/main.js') }}"></script>
+    @yield('scripts')
 </body>
 
 </html>

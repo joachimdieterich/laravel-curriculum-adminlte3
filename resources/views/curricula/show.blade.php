@@ -1,9 +1,16 @@
-@extends('layouts.master')
+@extends((Auth::user()->role()->title == 'Guest') ? 'layouts.contentonly' : 'layouts.master')
+
 @section('title')
     {{ $curriculum->title }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="#">Home</a></li>
+    <li class="breadcrumb-item">
+        @if ((Auth::user()->role()->title == 'Guest')) 
+            <a href="/navigators/{{Auth::user()->organizations()->where('organization_id', '=',  Auth::user()->current_organization_id)->first()->navigators()->first()->id}}">Home</a>
+        @else
+            <a href="/">Home</a>
+        @endif
+    </li>
     <li class="breadcrumb-item active">{{ trans('global.curriculum.title_singular') }}</li>
     <li class="breadcrumb-item "> <i class="fas fa-question-circle"></i></li>
 @endsection
@@ -42,8 +49,7 @@
 <!--    <button type="button" class="btn btn-default" data-toggle="tooltip"  onclick="">
             <i class="fa fa-compress"></i>
         </button>-->
-       
-        @if ($curriculum->contents != null)
+        @if (isset($curriculum->contents[0]))
             <dropdown-button 
                 label="{{ trans('global.curricula_content_subscriptions') }}" 
                 model="{{ @class_basename($curriculum->contents[0]) }}"

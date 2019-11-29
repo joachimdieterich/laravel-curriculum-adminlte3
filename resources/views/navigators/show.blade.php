@@ -1,6 +1,6 @@
 @extends('layouts.contentonly')
 @section('content')
-<div class="header">
+<div class="header" style="margin-top:-25px;">
     <div class="row p-3">
         <div class="col-12">
             <h5 class="pull-left">
@@ -10,17 +10,7 @@
                     {{ isset($views->description) ? $views->description : ''}}
                 </small>    
             </h5>
-<!--            <span class="pull-right">
-                <form id="logoutform" action="{{ route('logout') }}" method="POST">
-                {{ csrf_field() }}
-                <button
-                    type="submit"
-                    class=" btn btn-primary btn-xs mr-1">
-                    <i class="fa fa-sign-in-alt"></i> 
-                    {{ trans('global.login') }}
-                </button> 
-                </form>
-            </span>-->
+
             @can('navigator_create')
                 <span class="pull-right">
                     <a

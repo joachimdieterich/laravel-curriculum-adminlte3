@@ -1,6 +1,6 @@
 <template >
    
-    <span class="pull-left" v-if="type === 'enabling'">
+    <span v-if="type === 'enabling'">
 
         <i class="t-18 margin-r-5 text-green pointer_hand" 
            v-bind:class="[green_css, fabadge]"

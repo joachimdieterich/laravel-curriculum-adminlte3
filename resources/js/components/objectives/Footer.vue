@@ -1,24 +1,24 @@
 <template >
     <div class="boxfooter row" v-bind:style="{ 'color': textcolor }">
-        <span v-if="objective.media != 0 || objective.references != 0" class="mr-auto">
-            <span class="fa fa-briefcase mr-1"
-                @click.prevent="showModal('objective-medium-modal')">
+        <div class="p-0 col-12 boxflex">
+            <span v-if="objective.media != 0 || objective.references != 0" >
+                <span class="fa fa-briefcase mr-1"
+                    @click.prevent="showModal('objective-medium-modal')">
+                </span>
             </span>
-        </span>
-        
-         <AchievementIndicator  
-            :objective="objective"
-            :type="type"
-            :settings="settings">
-         </AchievementIndicator>
-        
-        
-        
-        <span class="ml-auto ">  
-            <span class="fa fa-info ml-1 " 
-                @click.prevent="showModal('objective-description-modal')">
+
+             <AchievementIndicator  
+                :objective="objective"
+                :type="type"
+                :settings="settings">
+             </AchievementIndicator>
+
+            <span >  
+                <span class="fa fa-info ml-1 " 
+                    @click.prevent="showModal('objective-description-modal')">
+                </span>
             </span>
-        </span>
+        </div>
     </div>
 </template>
 

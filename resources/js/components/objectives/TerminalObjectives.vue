@@ -17,7 +17,7 @@
                  :class="(activetab == typetab) ? 'active show' : ''">
                  <div class="px-2" v-for="objective in filterTerminalObjectives(typetab)" :id="'terminalObjective_' + objective.id" >
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-12 terminal-row">
 
                             <ObjectiveBox type="terminal" 
                                           :objective="objective"
@@ -40,6 +40,7 @@
         </div> <!-- /.tab-content -->
        
         <div class="row p-2" 
+             v-can="'curriculum_edit'"
              v-if="settings.edit === true">
             <div id="createTerminalRow" class="col-12"> 
             <ObjectiveBox type="createterminal" :objective="{'curriculum_id': curriculum.id}"></ObjectiveBox>

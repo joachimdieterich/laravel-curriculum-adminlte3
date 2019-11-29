@@ -112,6 +112,15 @@ http://laravelurl/saml2/rlp/sls
 More information at [aacotroneo/laravel-saml2](https://github.com/aacotroneo/laravel-saml2)
 
 
+## Enabling guest login
+By default the guest user is seeded with ID 8.
+To enable login (over login page or route ```"/guest"```) add ```GUEST_USER=8``` to ```.env```
+
+
+If the organization of the guest user has a navigator, he will be redirected to the first view of this navigator. 
+If there is no navigator, he is redirected to the dashboard.
+
+
 
 ## Generating PDFs (Certificates,...)
 Curriculum uses [barryvdh/laravel-snappy] (https://github.com/barryvdh/laravel-snappy)

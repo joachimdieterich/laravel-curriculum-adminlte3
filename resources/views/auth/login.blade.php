@@ -32,11 +32,13 @@
                 </div>
                 
                 <div class="row">
-                    <div class="col-8">
-<!--                        <input type="checkbox" name="remember"> {{ trans('global.remember_me') }}-->
+                    <div class="col-6">
+                        @if (env('GUEST_USER') !== null)
+                        <a href="/guest" name="login" class="btn btn-primary btn-block btn-flat">{{ trans('global.login_guest') }}</a>
+                        @endif
                     </div>
                     <!-- /.col -->
-                    <div class="col-4">
+                    <div class="col-6">
                         <button type="submit" name="login" class="btn btn-primary btn-block btn-flat">{{ trans('global.login') }}</button>
                     </div>
                     <!-- /.col -->

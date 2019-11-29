@@ -134,3 +134,20 @@ Route::group(['middleware' => 'auth'], function () {
 if ((env('APP_ENV') == 'local')){
     Route::get('/phpinfo', function (){phpinfo();}); //available in local env
 }
+
+if (env('GUEST_USER') !== null)
+{
+    Route::get('/guest', function ()
+    {
+        Auth::loginUsingId((env('GUEST_USER')), true);
+        if (auth()->user()->organizations()->first()->navigators()->first() != null)
+        {
+            return redirect('/navigators/'.auth()->user()->organizations()->first()->navigators()->first()->id);
+        }
+        else 
+        {
+            return redirect('/');
+        }
+
+    }); 
+}

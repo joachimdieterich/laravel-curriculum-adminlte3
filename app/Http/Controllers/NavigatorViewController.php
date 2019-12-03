@@ -40,7 +40,6 @@ class NavigatorViewController extends Controller
             'navigator_id'  => $new_navigator_item['navigator_id']
         ]);
                                         
-        
         return redirect()->route("navigator.view", ['navigator' => $new_navigator_item['navigator_id'], 'navigator_view' => $navigator_view->id]);
     }
 
@@ -58,9 +57,11 @@ class NavigatorViewController extends Controller
                                     ->where('navigator_id', $navigator->id)
                                     ->with(['items'])
                                     ->get()->first();
+        $breadcrumbs = $this->breadcrumbs($views);
         return view('navigators.show')
                 ->with(compact('navigators'))
-                ->with(compact('views'));
+                ->with(compact('views'))
+                ->with(compact('breadcrumbs'));
     }
 
     /**
@@ -113,13 +114,36 @@ class NavigatorViewController extends Controller
         $navigator_id = $navigatorView->navigator_id;
         $navigatorView->delete();
         
-
         return redirect()->route('navigators.show', $navigator_id);
     }
     
-    protected function validateRequest()
-    {   
+    /**
+     * Generate breadcrumb 
+     * @param NavigatorView $view
+     * @return array
+     */
+    protected function breadcrumbs($view)
+    {
+        $entries = array();
         
+        $first_view = NavigatorView::where('navigator_id', $view->navigator->id)->get()->first();
+        $entries[] = ['href' => '/navigators/'.$view->navigator->id.'/'.$view->id, 'title' => $view->title];
+        $current_view = $view;
+        while ($current_view->id != $first_view->id)
+        {
+            $current_item = NavigatorItem::where('referenceable_type', 'App\NavigatorView')
+                                         ->where('referenceable_id', $current_view->id)->get()->first();
+            $current_view = NavigatorView::where('id', $current_item->navigator_view_id)
+                                    ->where('navigator_id', $view->navigator->id)
+                                    ->get()->first();
+            $entries[] = ['href' => '/navigators/'.$view->navigator->id.'/'.$current_view->id, 'title' => $current_view->title];
+        }
+        
+        return array_reverse($entries);
+    }
+    
+    protected function validateRequest()
+    {     
         return request()->validate([
             'title'             => 'sometimes',
             'description'       => 'sometimes',

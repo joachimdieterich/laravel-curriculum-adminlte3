@@ -42,7 +42,7 @@ class UseCasesGuestNavigatorTest extends DuskTestCase
         
 // generate item view
         $this->browse(function (Browser $admin) {
-            $admin->loginAs(User::find(1))
+            $admin->loginAs(User::find(1)) //login as admin to generate navigator
                 ->visit('navigators/'.$this->navigator->id) //shows first view of navigator. 
                 ->waitForText($this->navigator->title)
                 ->assertSee($this->navigatorView->title)

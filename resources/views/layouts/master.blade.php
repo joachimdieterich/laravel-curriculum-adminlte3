@@ -7,11 +7,9 @@
         <!-- Tell the browser to be responsive to screen width -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{{ trans('global.site_title') }}</title>
-
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css" rel="stylesheet" />
         <link href="{{ asset('css/app.css') }}" rel="stylesheet" />
         <link href="{{ asset('css/custom.css') }}" rel="stylesheet" />
-
+        
         @yield('styles')
         <script>
             window.trans = <?php
@@ -114,7 +112,6 @@ echo json_encode([
         </div>
         <!-- ./wrapper -->
 
-
         <script src="{{ asset('js/app.js') }}"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
@@ -124,7 +121,6 @@ echo json_encode([
         <script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.html5.min.js"></script>
         <script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.print.min.js"></script>
         <script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.colVis.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.full.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
         <script src="{{ asset('js/main.js') }}"></script>

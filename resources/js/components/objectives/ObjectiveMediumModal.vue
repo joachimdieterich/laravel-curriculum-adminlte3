@@ -3,8 +3,8 @@
         id="objective-medium-modal" 
         name="objective-medium-modal" 
         height="auto" 
-        width="70%"
-
+        :adaptive=true
+        :scrollable=true
         @before-open="beforeOpen"
         style="z-index: 25000">
         <div class="card" style="margin-bottom: 0px !important">

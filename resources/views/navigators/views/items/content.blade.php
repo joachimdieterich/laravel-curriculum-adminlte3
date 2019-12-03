@@ -1,8 +1,8 @@
 <div class="{{ $item->css_class }} px-0 my-1">
-    <div class="box bottom-buffer-20">
-        <div class="box-header with-border">
-            <h3 class="box-title" data-target="#card_{{ $item->id }}" data-toggle="collapse"> {{ $item->title }}</h3>
-            <div class="box-tools pull-right">
+    <div class="card collapsed-card">
+        <div class="card-header">
+            <h3 class="card-title" data-target="#card_{{ $item->id }}" data-toggle="collapse">{{ $item->title }}</h3>
+            <div class="card-tools pull-right">
 <!--                <a href="{{route('navigatorItems.edit', ['navigatorItem' => $item->id, 'navigator_id'])}}"
                         class="btn btn-box-tool">
                     <i class="fa fa-edit"></i>
@@ -16,24 +16,25 @@
                     @method('DELETE')   
                     <button 
                         id="delete-navigator-content-{{ $item->id }}"
-                        type="submit" class="btn btn-box-tool">
+                        type="submit" class="btn btn-tool">
                         <i class="fa fa-trash"></i>
                     </button>
                 </form>
                 @endcan
-                <button class="btn btn-box-tool" >
+                <a class="btn btn-tool" href="/contents/{{ $item->referenceable_id }}/print" target="_blank">
                     <i class="fa fa-print"></i>
-                </button>
+                </a>
                 <button 
                     id="navigator-item-content-{{ $item->id }}"
-                    class="btn btn-box-tool" data-target="#card_{{ $item->id }}" data-toggle="collapse">
-                    <i class="fa fa-expand"></i>
+                    class="btn btn-tool" 
+                    data-target="#card_{{ $item->id }}" data-card-widget="collapse">
+                    <i class="fas fa-plus"></i>
                 </button>
                 
                 
             </div>
         </div><!-- /.box-header -->
-        <div id="card_{{ $item->id }}" class="box-body collapse">
+        <div id="card_{{ $item->id }}" class="card-body collapse">
             {!!html_entity_decode($item->referenceable->content)!!}
         </div>
             

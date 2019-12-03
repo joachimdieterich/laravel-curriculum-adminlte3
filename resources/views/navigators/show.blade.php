@@ -3,7 +3,8 @@
 <div class="header" style="margin-top:-25px;">
     <div class="row p-3">
         <div class="col-12">
-            <h5 class="pull-left">
+            
+            <h5 class="ml-2 pull-left">
                 <i class="fa fa-map-signs mr-1"></i> 
                 {{ $navigators->title }} <small>| {{ isset($views->title) ? $views->title : ''}}
                     <br>
@@ -52,6 +53,14 @@
                 @endcan
             @endif
            
+        </div>
+       <div class="col-12">
+           <ol class="breadcrumb m-0">
+                @foreach($breadcrumbs as $breadcrumb)
+                    <li class="breadcrumb-item "><a href="{{ $breadcrumb['href'] }}">{{ $breadcrumb['title'] }}</a></li>
+                @endforeach
+<!--                <li class="breadcrumb-item "> <i class="fas fa-question-circle"></i></li>-->
+           </ol>
         </div>
     </div>
 </div>

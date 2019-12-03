@@ -126,7 +126,7 @@ class User extends Authenticatable
             ->where('curriculum_group.curriculum_id', $curriculum_id)
             ->get();
     }
-    
+   
     public function curricula()
     {
         return DB::table('curricula')

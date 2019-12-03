@@ -1,24 +1,21 @@
 <template>
     <div>
-        <div v-for="curriculum in quote_curricula_list">
-            <span class="col-xs-12" >
-                <h4 class="text-black bg-light p-2"  
-                    data-toggle="collapse" 
+        <div class="card collapsed-card" v-for="curriculum in quote_curricula_list">
+            <div class="card-header">
+                <h3 class="card-title"  
+                     data-card-widget="collapse"
                     :data-target="'#'+tagName(curriculum.id)">
                    {{curriculum.title}}
-                    <small>
-                       
-                    </small>
-                    <button class="btn btn-box-tool float-right" 
-                            style="padding-top:0;" 
-                            type="button" 
-                            aria-expanded="true" 
-                            title="Fach einklappen bzw. ausklappen">
-                        <i class="fa fa-expand"></i>
+                </h3>
+                <div class="card-tools pull-right">
+                    <button class="btn btn-tool" 
+                         data-card-widget="collapse"
+                         :data-target="'#'+tagName(curriculum.id)">
+                     <i class="fas fa-plus"></i>
                     </button>
-                </h4>
-            </span>
-            <div class="collapse" 
+                </div>
+            </div>
+            <div class=" card-body collapse" 
                  :id="tagName(curriculum.id)">
                 <div v-for="filtered_quote in filterQuotes(curriculum.id)">
                     <div class="row">
@@ -31,6 +28,7 @@
                             </div>
                         </div>
                     </div>
+                    
                     <hr style="clear:both;">
                 </div>
             </div>

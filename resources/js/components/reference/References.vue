@@ -1,45 +1,41 @@
 <template>
     <div>
-        <div v-for="curriculum in curricula_list">
-            <span class="col-xs-12" >
-                <h4 class="text-black bg-light p-2" 
-                    data-toggle="collapse" 
+        <div class="card collapsed-card" v-for="curriculum in curricula_list">
+            <div class="card-header">
+                <h3 class="card-title"  
+                    data-card-widget="collapse" 
                     :data-target="'#'+tagName(curriculum.id)" 
                     aria-expanded="true">
                     {{curriculum.title}}
                     <small>
                         {{curriculum.organization_type.title}}
                     </small>
-                    <button class="btn btn-box-tool float-right" 
-                            style="padding-top:0;" 
-                            type="button" 
-                            title="Fach einklappen bzw. ausklappen">
-                        <i class="fa fa-expand float-right"></i>
+                </h3>
+                <div class="card-tools pull-right">
+                    <button class="btn btn-tool" 
+                            data-card-widget="collapse" 
+                            :data-target="'#'+tagName(curriculum.id)">
+                        <i class="fas fa-plus"></i>
                     </button>
-                </h4>
-            </span>
-            <div class="collapse" 
+                </div>
+            </div>
+            <div class="card-body collapse" 
                  :id="tagName(curriculum.id)">
                 <div v-for="filtered_reference in filterReferences(curriculum.id)" >
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-3 pull-left" >
-                            <dt>Thema/Kompetenzbereich</dt>
-
-                            <ObjectiveBox type="terminal" 
-                                          :objective="(filtered_reference.referenceable_type == 'App\\TerminalObjective') ? filtered_reference.referenceable : filtered_reference.referenceable.terminal_objective"
-                                          :setting="setting">                   
+                    <div class="row">   
+                        <ObjectiveBox type="terminal" 
+                                      :objective="(filtered_reference.referenceable_type == 'App\\TerminalObjective') ? filtered_reference.referenceable : filtered_reference.referenceable.terminal_objective"
+                                      :setting="setting">                   
                         </ObjectiveBox>
-                        </div>
-
-                        <div class="col-xs-12 col-sm-3" v-if="filtered_reference.referenceable_type === 'App\\EnablingObjective'">
-                            <dt>Kompetenz</dt>
+                        
+                        <span class="col-xs-12 pull-left" v-if="filtered_reference.referenceable_type === 'App\\EnablingObjective'">
                             <ObjectiveBox type="enabling" 
                                           :objective="filtered_reference.referenceable"
                                           :setting="setting">
                             </ObjectiveBox>
-                        </div>
+                        </span>
 
-                        <div class="col-xs-12 col-sm-6 pull-right">
+                        <div class="col-xs-12 pull-right">
                             <dt>Anregungen zur Unterrichtsgestaltung </dt>
                             <dd v-html="filtered_reference.reference.description"></dd>
                         </div>

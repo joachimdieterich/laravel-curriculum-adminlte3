@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "52affc47a6d398d6cd97fab927246fde",
+    "content-hash": "0eee63f77e17668639ee37536ce8ddb5",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1376,8 +1376,8 @@
             "authors": [
                 {
                     "name": "Filipe Dobreira",
-                    "homepage": "https://github.com/filp",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "homepage": "https://github.com/filp"
                 }
             ],
             "description": "php error handling for cool kids",
@@ -2653,9 +2653,9 @@
             "authors": [
                 {
                     "name": "Milos Tomic",
+                    "role": "Developer",
                     "email": "tmilos@gmail.com",
-                    "homepage": "https://github.com/tmilos/",
-                    "role": "Developer"
+                    "homepage": "https://github.com/tmilos/"
                 }
             ],
             "description": "Light SAML 2.0 PHP library",
@@ -3800,6 +3800,44 @@
                 "syntax"
             ],
             "time": "2019-08-27T04:27:48+00:00"
+        },
+        {
+            "name": "select2/select2",
+            "version": "4.0.12",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/select2/select2.git",
+                "reference": "5765090318c4d382ae56463cfa25ba8ca7bdd495"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/select2/select2/zipball/5765090318c4d382ae56463cfa25ba8ca7bdd495",
+                "reference": "5765090318c4d382ae56463cfa25ba8ca7bdd495",
+                "shasum": ""
+            },
+            "type": "component",
+            "extra": {
+                "component": {
+                    "scripts": [
+                        "dist/js/select2.js"
+                    ],
+                    "styles": [
+                        "dist/css/select2.css"
+                    ],
+                    "files": [
+                        "dist/js/select2.js",
+                        "dist/js/i18n/*.js",
+                        "dist/css/select2.css"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Select2 is a jQuery based replacement for select boxes.",
+            "homepage": "https://select2.org/",
+            "time": "2019-11-06T01:34:17+00:00"
         },
         {
             "name": "swagger-api/swagger-ui",
@@ -5711,9 +5749,9 @@
             "authors": [
                 {
                     "name": "Marcel Pociot",
+                    "role": "Developer",
                     "email": "marcel@beyondco.de",
-                    "homepage": "https://beyondco.de",
-                    "role": "Developer"
+                    "homepage": "https://beyondco.de"
                 }
             ],
             "description": "Symfony Var-Dump Server for Laravel",

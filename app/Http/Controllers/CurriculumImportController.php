@@ -95,8 +95,28 @@ class CurriculumImportController extends Controller
             $old_ter_id = $ter->getAttribute('id');
             $terminal_import_data = [
                 'curriculum_id' => $curriculum->id,
-                'title' => html_entity_decode($ter->getAttribute('terminal_objective')),
-                'description' => html_entity_decode($ter->getAttribute('description')),
+                'title' => html_entity_decode(
+                        //$ter->getAttribute('terminal_objective')
+                         $this->importEmbeddedFiles(
+                                html_entity_decode($ter->getAttribute('terminal_objective')), 
+                                $ter, 
+                                $curriculum, 
+                                $folder, 
+                                $old_curriculum_id,
+                                'embedded-file'
+                            ), 
+                         ENT_QUOTES), 
+                'description' => html_entity_decode(
+                        //$ter->getAttribute('description')
+                        $this->importEmbeddedFiles(
+                                html_entity_decode($ter->getAttribute('description')), 
+                                $ter, 
+                                $curriculum, 
+                                $folder, 
+                                $old_curriculum_id,
+                                'embedded-file'
+                            ), 
+                            ENT_QUOTES), 
                 'order_id' => $ter->getAttribute('order_id'),
                 'color' => $ter->getAttribute('color'),
                 'objective_type_id' => $ter->getAttribute('type_id'),
@@ -107,7 +127,8 @@ class CurriculumImportController extends Controller
             /* ter files */
             $terminal_media_nodes = getImmediateChildrenByTagName($ter, 'file');
             foreach($terminal_media_nodes as $terminal_medium) {
-                $this->importMedia($terminal_medium, $terminal_objective, $folder, $old_curriculum_id.'/'.$old_ter_id.'/'); //call import function
+                //$this->importMedia($terminal_medium, $terminal_objective, $folder, $old_curriculum_id.'/'.$old_ter_id.'/'); //call import function
+                $media = $this->importMedia($terminal_medium, $terminal_objective, $folder, $ter->getAttribute('path').'/'); //call import function
             }
             
             /*ter references*/
@@ -120,8 +141,28 @@ class CurriculumImportController extends Controller
                 $enabling_import_data = [
                     'curriculum_id' => $curriculum->id,
                     'terminal_objective_id' => $terminal_objective->id,
-                    'title' => htmlspecialchars_decode($ena->getAttribute('enabling_objective'), ENT_QUOTES),
-                    'description' => htmlspecialchars_decode($ena->getAttribute('description'), ENT_QUOTES),
+                    'title' => htmlspecialchars_decode(
+                            //$ena->getAttribute('enabling_objective')
+                            $this->importEmbeddedFiles(
+                                html_entity_decode($ena->getAttribute('enabling_objective')), 
+                                $ena, 
+                                $curriculum, 
+                                $folder, 
+                                $old_curriculum_id,
+                                'embedded-file'
+                            ), 
+                            ENT_QUOTES),
+                    'description' => htmlspecialchars_decode(
+                            //$ena->getAttribute('description')
+                            $this->importEmbeddedFiles(
+                                html_entity_decode($ena->getAttribute('enabling_objective')), 
+                                $ena, 
+                                $curriculum, 
+                                $folder, 
+                                $old_curriculum_id,
+                                'embedded-file'
+                            ),
+                             ENT_QUOTES),
                     'order_id' => $ter->getAttribute('order_id'),
                         //perist references, ena_files
                 ];
@@ -130,7 +171,8 @@ class CurriculumImportController extends Controller
                 /* ena files */
                 $enabling_medium_nodes = getImmediateChildrenByTagName($ena, 'file');
                 foreach($enabling_medium_nodes as $enabling_medium) {
-                    $this->importMedia($enabling_medium, $enabling_objective, $folder, $old_curriculum_id.'/'.$old_ter_id.'/'.$old_ena_id.'/'); //call import function
+                    $this->importMedia($enabling_medium, $enabling_objective, $folder, $ena->getAttribute('description').'/'); //call import function
+                    //$this->importMedia($enabling_medium, $enabling_objective, $folder, $old_curriculum_id.'/'.$old_ter_id.'/'.$old_ena_id.'/'); //call import function
                 }
                 
                 $this->process($ena, $enabling_objective, 'reference', 'importReference', $folder, $old_curriculum_id);
@@ -175,12 +217,21 @@ class CurriculumImportController extends Controller
         return $curriculum->id;
     }
     
-    private function importMedia($media_node, $model, $folder, $path){
+    private function importMedia($media_node, $model, $folder, $path, $tag = 'file'){
+        if ($media_node->getAttribute('full_path') == ''){
+            return;
+        }
         $new_folder = class_basename($model);
         $temp_filepath = storage_path("app/{$folder}/{$path}").$media_node->getAttribute('filename');
-        if (!file_exists($temp_filepath) AND  ($media_node->getAttribute('type') !== '.url')) {
-            dump('missing'.$temp_filepath);
-            return;
+        if (!file_exists($temp_filepath) AND ($media_node->getAttribute('type') !== '.url')) {
+            $path = $media_node->getAttribute('path');//fallback if files are in folder 102 (old admin folder)
+            $temp_filepath = storage_path("app/{$folder}/{$path}").$media_node->getAttribute('filename'); 
+            if (!file_exists($temp_filepath) AND ($media_node->getAttribute('type') !== '.url'))
+            {
+                dump('missing'.$temp_filepath);
+                return;
+            }
+            
         }
         $media = new Medium([
             'path'          => ($media_node->getAttribute('type') == '.url') ? $media_node->getAttribute('path') : "/{$new_folder}/{$model->id}/",
@@ -209,7 +260,11 @@ class CurriculumImportController extends Controller
         
         $media->fresh();
 
-        $media->subscribe($model);
+        if ($tag == 'file') //for now, only files gets subscribed, embedded files not!
+        {
+            $media->subscribe($model);
+        }
+
         return array(['old_id' => $media_node->getAttribute('id'), 'new_media' => $media]);
     }
     
@@ -232,7 +287,8 @@ class CurriculumImportController extends Controller
                                 $content_node, 
                                 $model, 
                                 $folder, 
-                                $old_curriculum_id
+                                $old_curriculum_id,
+                                'embedded-file'    
                             ), 
                             ENT_QUOTES), 
             "owner_id"=> auth()->user()->id,
@@ -248,19 +304,17 @@ class CurriculumImportController extends Controller
         $content->subscribe($model);
     }
     
-    private function importEmbeddedFiles($data, $ref, $model, $folder, $old_curriculum_id)
+    private function importEmbeddedFiles($data, $ref, $model, $folder, $old_curriculum_id, $tag = 'file')
     {  
+        
         /* import files */
-        foreach ($ref->getElementsByTagName('file') as $cur_fil) 
+        foreach ($ref->getElementsByTagName($tag) as $media_node) 
         {
-            $media = $this->importMedia($cur_fil, $model, $folder, $old_curriculum_id.'/'); 
-            if ($media[0]['old_id'] !== '')
-            {
-                $data   =  preg_replace_callback('#\<img[^\>]+alt="accessfile\.php\?id='.$media[0]['old_id'].'"[^\>]+>#is',      
-                                function() use ($media){ 
-                                    return '<img src="/media/'.$media[0]['new_media']->id.'"/>';
-                                 }, $data);             
-            }       
+            $data   =  preg_replace_callback('/\<img[^\>]*src="[^>]*accessfile\.php\?id='.$media_node->getAttribute('id').'"[^\>]*>/s',      
+            function() use ($media_node, $model, $folder, $old_curriculum_id, $tag){ 
+                $media = $this->importMedia($media_node, $model, $folder, $old_curriculum_id.'/', $tag);  //import media if file is embedded
+                return '<img src="/media/'.$media[0]['new_media']->id.'"/>';
+             }, $data);             
         }
         /* end import files */
         
@@ -280,7 +334,8 @@ class CurriculumImportController extends Controller
                                                                         $ref_node, 
                                                                         $model, 
                                                                         $folder, 
-                                                                        $old_curriculum_id
+                                                                        $old_curriculum_id, 
+                                                                        'embedded-file'
                                                                     ), 
                                                                     ENT_QUOTES
                                                                ),

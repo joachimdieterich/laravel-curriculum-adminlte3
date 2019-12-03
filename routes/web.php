@@ -20,7 +20,8 @@ Route::group(['middleware' => 'auth'], function () {
     //Route::get('certificates/generate', 'CertificateController@generate'); //for testing only
     Route::post('certificates/generate', 'CertificateController@generate');
     Route::resource('certificates', 'CertificateController');
-
+    
+    Route::get('contents/{content}/print', 'ContentController@print')->name('contents.print');
     Route::resource('contents', 'ContentController');
 
     /* courses routes */

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Content;
 use Illuminate\Http\Request;
+use \Barryvdh\Snappy\Facades\SnappyPdf;
 
 class ContentController extends Controller
 {
@@ -95,4 +96,15 @@ class ContentController extends Controller
             'content' => 'sometimes|required',
             ]);
     }
+    
+    public function print(Content $content)
+    {
+        $meta = '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">';
+        $pdf = SnappyPdf::loadHTML("{$meta}<h1>{$content->title}</h1>{$content->content}")
+            ->setPaper('a4')
+            ->setOption('margin-bottom', 0);
+        return $pdf->download("{$content->title}.pdf");
+            
+    }  
+    
 }

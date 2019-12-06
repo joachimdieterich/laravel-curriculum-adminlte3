@@ -53,7 +53,9 @@ echo json_encode([
                 </div>
             </div><!-- /.container-fluid -->
         </section>
-        @yield('content')
+        <div class="p-2">
+            @yield('content')
+        </div>
     </div>
     
     <script>

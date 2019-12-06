@@ -75,7 +75,7 @@ echo json_encode([
                             <div class="col-sm-6 pl-0">
                                 <h1> @yield('title')</h1>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-6 pr-0">
                                 <ol class="breadcrumb float-sm-right">
                                     @yield('breadcrumb')
                                 </ol>

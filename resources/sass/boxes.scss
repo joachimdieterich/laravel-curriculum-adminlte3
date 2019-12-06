@@ -546,11 +546,9 @@
             padding: 0 0 0 20px;
         } 
 
-
         .boxcontent {    /*Hack: boxwrap, boxscroll and boxcontent used to hide scroll crossbrowser compatible*/
             width: 100%;
             margin: 0px;
-            font-size: 90%;
             padding-left: 10px;
             padding-right: 20px;
             font-size: 90%;
@@ -651,7 +649,6 @@
         .boxcontent {    /*Hack: boxwrap, boxscroll and boxcontent used to hide scroll crossbrowser compatible*/
             margin: 0px;
             width:200px; 
-            font-size: 90%;
             padding-left: 10px;
             padding-right: 10px;
             font-size: 90%;

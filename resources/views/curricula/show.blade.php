@@ -28,7 +28,7 @@
             @endif
         </div>    
     @endcan
-    <div class="col-12 mx-2">
+    <div class="col-12">
         @can('achievement_access')
             @if(isset(json_decode($settings)->achievements))
             <table id="users-datatable" class=" table table-bordered table-striped table-hover datatable">

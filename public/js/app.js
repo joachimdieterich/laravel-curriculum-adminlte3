@@ -44393,7 +44393,7 @@ var render = function() {
         "ul",
         { staticClass: "nav nav-pills" },
         _vm._l(_vm.typetabs, function(typetab) {
-          return _c("li", { staticClass: "nav-item p-2" }, [
+          return _c("li", { staticClass: "nav-item pl-0 pr-2 pb-2 pt-2" }, [
             _c(
               "a",
               {
@@ -44431,10 +44431,7 @@ var render = function() {
             _vm._l(_vm.filterTerminalObjectives(typetab), function(objective) {
               return _c(
                 "div",
-                {
-                  staticClass: "px-2",
-                  attrs: { id: "terminalObjective_" + objective.id }
-                },
+                { attrs: { id: "terminalObjective_" + objective.id } },
                 [
                   _c("div", { staticClass: "row" }, [
                     _c(

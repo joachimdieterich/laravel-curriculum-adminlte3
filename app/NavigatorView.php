@@ -15,7 +15,7 @@ class NavigatorView extends Model
     
     public function items()
     {
-        return $this->hasMany('App\NavigatorItem', 'navigator_view_id', 'id');
+        return $this->hasMany('App\NavigatorItem', 'navigator_view_id', 'id')->orderBy('id');
     }
     
     public function navigator()

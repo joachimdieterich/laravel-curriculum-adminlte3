@@ -29,10 +29,10 @@
     <span class="bg-white text-center p-1 overflow-auto " 
          style="position:absolute; bottom:0px; height: 150px; width:100%;">
 
-       <h6 class="events-heading pt-1 ">
+       <h6 class="events-heading pt-1 hyphens">
            {{ $item->title }}
        </h6>
-       <p class=" text-muted small ">
+       <p class=" text-muted small">
            {{ strip_tags($item->description) }}   
 
        </p>

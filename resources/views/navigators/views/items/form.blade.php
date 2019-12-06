@@ -53,7 +53,7 @@
             "options"=> $position, 
             "option_id" => "id",
             "option_label"=> "label", 
-            "value" => old('position', isset($navigatorItem) ? $navigatorItem->position : '') ]) 
+            "value" => old('position', isset($navigatorItem) ? $navigatorItem->position : 'content') ]) 
 
 @include ('forms.input.select', 
             ["model" => "navigator_item",
@@ -63,7 +63,7 @@
             "options"=> $css_classes, 
             "option_id" => "class",
             "option_label"=> "label", 
-            "value" => old('css_class', isset($navigatorItem) ? $navigatorItem->css_class : '') ]) 
+            "value" => old('css_class', isset($navigatorItem) ? $navigatorItem->css_class : 'col-xs-12') ]) 
 @include ('forms.input.select', 
             ["model" => "navigator_item",
              "label" => "visibility",
@@ -72,7 +72,7 @@
             "options"=> $visibility, 
             "option_id" => "id",
             "option_label"=> "label", 
-            "value" => old('visibility', isset($navigatorItem) ? $navigatorItem->visibility : '') ]) 
+            "value" => old('visibility', isset($navigatorItem) ? $navigatorItem->visibility : '1') ]) 
 <div>
     <input 
         id="navigator-item-save"

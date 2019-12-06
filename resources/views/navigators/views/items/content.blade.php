@@ -1,7 +1,7 @@
 <div class="{{ $item->css_class }} px-0 my-1">
     <div class="card collapsed-card">
         <div class="card-header">
-            <h3 class="card-title" data-target="#card_{{ $item->id }}" data-toggle="collapse">{{ $item->title }}</h3>
+            <h3 class="card-title" data-target="#card_{{ $item->id }}" data-card-widget="collapse">{{ $item->title }}</h3>
             <div class="card-tools pull-right">
 <!--                <a href="{{route('navigatorItems.edit', ['navigatorItem' => $item->id, 'navigator_id'])}}"
                         class="btn btn-box-tool">

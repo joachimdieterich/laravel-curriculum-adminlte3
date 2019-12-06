@@ -192,18 +192,20 @@ class NavigatorController extends Controller
     protected function breadcrumbs($view)
     {
         $entries = array();
-        
-        $first_view = NavigatorView::where('navigator_id', $view->navigator->id)->get()->first();
-        $entries[] = ['href' => '/navigators/'.$view->navigator->id.'/'.$view->id, 'title' => $view->title];
-        $current_view = $view;
-        while ($current_view->id != $first_view->id)
+        if (isset($view->navigator))
         {
-            $current_item = NavigatorItem::where('referenceable_type', 'App\NavigatorView')
-                                         ->where('referenceable_id', $current_view->id)->get()->first();
-            $current_view = NavigatorView::where('id', $current_item->navigator_view_id)
-                                    ->where('navigator_id', $view->navigator->id)
-                                    ->get()->first();
-            $entries[] = ['href' => '/navigators/'.$view->navigator->id.'/'.$current_view->id, 'title' => $current_view->title];
+            $first_view = NavigatorView::where('navigator_id', $view->navigator->id)->get()->first();
+            $entries[] = ['href' => '/navigators/'.$view->navigator->id.'/'.$view->id, 'title' => $view->title];
+            $current_view = $view;
+            while ($current_view->id != $first_view->id)
+            {
+                $current_item = NavigatorItem::where('referenceable_type', 'App\NavigatorView')
+                                             ->where('referenceable_id', $current_view->id)->get()->first();
+                $current_view = NavigatorView::where('id', $current_item->navigator_view_id)
+                                        ->where('navigator_id', $view->navigator->id)
+                                        ->get()->first();
+                $entries[] = ['href' => '/navigators/'.$view->navigator->id.'/'.$current_view->id, 'title' => $current_view->title];
+            }
         }
         
         return array_reverse($entries);

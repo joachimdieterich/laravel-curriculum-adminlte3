@@ -221,8 +221,8 @@ class CurriculumController extends Controller
     {
         abort_unless(\Gate::allows('curriculum_show'), 403);
         //check if user is enrolled or admin -> else 403 
-        abort_unless((auth()->user()->curricula()->contains('curriculum_id', $curriculum->id) // user enrolled
-                  OR (auth()->user()->currentRole()->first()->id == 1)), 403);                // or admin
+        abort_unless((auth()->user()->curricula()->contains('id', $curriculum->id) // user enrolled
+                  OR (auth()->user()->currentRole()->first()->id == 1)), 403);     // or admin
         //$user_ids = isset(request()->user_ids) ? request()->user_ids : auth()->user()->id;
         
         // DB::enableQueryLog(); // Enable query log
@@ -286,8 +286,8 @@ class CurriculumController extends Controller
     {
         abort_unless(\Gate::allows('curriculum_show'), 403);
         //check if user is enrolled or admin -> else 403 
-        abort_unless((auth()->user()->curricula()->contains('curriculum_id', $curriculum->id) // user enrolled
-                  OR (auth()->user()->currentRole()->first()->id == 1)), 403);                // or admin
+        abort_unless((auth()->user()->curricula()->contains('id', $curriculum->id) // user enrolled
+                  OR (auth()->user()->currentRole()->first()->id == 1)), 403);     // or admin
         $user_ids = request()->user_ids;
         
         $enablingObjectives = EnablingObjective::where('curriculum_id', $curriculum->id)

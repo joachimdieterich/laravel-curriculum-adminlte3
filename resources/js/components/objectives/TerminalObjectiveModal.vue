@@ -144,15 +144,16 @@
                 if (event.params.objective) {
                     //console.log(event.params.objective);
                     this.form.populate(event.params.objective);
+                    //set selected
+                    this.value = {
+                        'id': this.form.objective_type_id,
+                        'title': this.findObjectByKey(this.objectiveTypes, 'id', this.form.objective_type_id).title
+                    };
                 }
 
                 this.method = event.params.method;
 
-                //set selected
-                this.value = {
-                    'id': this.form.objective_type_id,
-                    'title': this.findObjectByKey(this.objectiveTypes, 'id', this.form.objective_type_id).title
-                };
+                
             },
 
             beforeClose() {

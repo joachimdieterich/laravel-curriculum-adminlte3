@@ -63,7 +63,7 @@
                     'status': status
                 }
                 try {   
-                    this.status = (await axios.post('/achievements/', archievement)).data.message;
+                    this.status = (await axios.post('/achievements', archievement)).data.message;
 //                    calculateProgress(); //todo?
                 } catch(error) {
                     alert(error);

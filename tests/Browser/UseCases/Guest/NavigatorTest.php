@@ -41,7 +41,8 @@ class UseCasesGuestNavigatorTest extends DuskTestCase
         $this->navigator_item['medium'] = ['title' => 'Medium medium', 'description' => 'Medium medium description'];
         
 // generate item view
-        $this->browse(function (Browser $admin) {
+        $this->browse(function (Browser $admin) 
+        {
             $admin->loginAs(User::find(1)) //login as admin to generate navigator
                 ->visit('navigators/'.$this->navigator->id) //shows first view of navigator. 
                 ->waitForText($this->navigator->title)
@@ -110,7 +111,8 @@ class UseCasesGuestNavigatorTest extends DuskTestCase
      */
     public function testShowNavigator()
     {   
-        $this->browse(function (Browser $guest) {
+        $this->browse(function (Browser $guest) 
+        {
             $guest->loginAs(User::find(8))
                 ->visit("navigators/{$this->navigator->id}")
                 ->waitForText($this->navigator->title)

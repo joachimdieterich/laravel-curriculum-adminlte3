@@ -14,7 +14,6 @@ class ApiAboutTest extends TestCase
     {
         $this->get('/api/v1/about')->assertStatus(200);
         $this->contains('Curriculum API V1');
-       
     }
     
 }

@@ -11,7 +11,8 @@ class PeriodtTest extends TestCase
     use RefreshDatabase;
      
     /** @test */
-    public function it_has_an_owner() {
+    public function it_has_an_owner() 
+    {
         $this->signInAdmin();
         $period = Period::findOrFail(1); 
         
@@ -19,7 +20,8 @@ class PeriodtTest extends TestCase
     }
     
     /** @test */
-    public function it_has_a_period() {
+    public function it_has_a_period() 
+    {
         $this->signInAdmin();
         $period = Period::findOrFail(1); 
         

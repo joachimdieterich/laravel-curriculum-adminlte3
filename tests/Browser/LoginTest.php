@@ -18,7 +18,8 @@ class ExampleTest extends DuskTestCase
      */
     public function testOrganization()
     {   
-        $this->browse(function (Browser $browser) {
+        $this->browse(function (Browser $browser) 
+        {
             $browser->visit('/')
                     ->type('email', 'admin@curriculumonline.de')
                     ->type('password', 'password') // Enter plain password

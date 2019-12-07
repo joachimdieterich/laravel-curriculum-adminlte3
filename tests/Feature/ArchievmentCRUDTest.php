@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Auth;
 
 class AchievementCRUDTest extends TestCase
 {
-     use RefreshDatabase;
+    use RefreshDatabase;
      
-     public function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
         $this->signIn();

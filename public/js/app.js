@@ -2602,25 +2602,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 };
                 _context.prev = 1;
                 _context.next = 4;
-                return axios.post('/achievements/', archievement);
+                return axios.post('/achievements', archievement);
 
               case 4:
                 this.status = _context.sent.data.message;
-                calculateProgress();
-                _context.next = 11;
+                _context.next = 10;
                 break;
 
-              case 8:
-                _context.prev = 8;
+              case 7:
+                _context.prev = 7;
                 _context.t0 = _context["catch"](1);
-                alert(_context.t0.response.data.errors);
+                alert(_context.t0);
 
-              case 11:
+              case 10:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this, [[1, 8]]);
+        }, _callee, this, [[1, 7]]);
       }));
 
       function achieve(_x) {
@@ -2946,15 +2945,15 @@ __webpack_require__.r(__webpack_exports__);
     },
     beforeOpen: function beforeOpen(event) {
       if (event.params.objective) {
-        this.form.populate(event.params.objective);
+        this.form.populate(event.params.objective); //set selected
+
+        this.value = {
+          'id': this.form.level_id,
+          'title': this.findObjectByKey(this.levels, 'id', this.form.level_id).title
+        };
       }
 
-      this.method = event.params.method; //set selected
-
-      this.value = {
-        'id': this.form.level_id,
-        'title': this.findObjectByKey(this.levels, 'id', this.form.level_id).title
-      };
+      this.method = event.params.method;
     },
     beforeClose: function beforeClose() {//console.log('close') 
     },
@@ -2975,7 +2974,11 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       this.form.submit(method, this.requestUrl).then()["catch"](function (response) {
-        return alert('Your objective was not created');
+        return function () {
+          if (response.errors) {
+            alert(response.errors);
+          }
+        };
       }); //todo .then .catch
     }
   },
@@ -3898,15 +3901,15 @@ __webpack_require__.r(__webpack_exports__);
     beforeOpen: function beforeOpen(event) {
       if (event.params.objective) {
         //console.log(event.params.objective);
-        this.form.populate(event.params.objective);
+        this.form.populate(event.params.objective); //set selected
+
+        this.value = {
+          'id': this.form.objective_type_id,
+          'title': this.findObjectByKey(this.objectiveTypes, 'id', this.form.objective_type_id).title
+        };
       }
 
-      this.method = event.params.method; //set selected
-
-      this.value = {
-        'id': this.form.objective_type_id,
-        'title': this.findObjectByKey(this.objectiveTypes, 'id', this.form.objective_type_id).title
-      };
+      this.method = event.params.method;
     },
     beforeClose: function beforeClose() {//console.log('close')
     },

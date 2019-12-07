@@ -140,15 +140,14 @@
             beforeOpen(event) { 
                 if (event.params.objective){
                     this.form.populate( event.params.objective );
+                    //set selected
+                    this.value = {
+                        'id': this.form.level_id,
+                        'title': this.findObjectByKey(this.levels, 'id', this.form.level_id).title
+                    };
                 }
                              
                 this.method = event.params.method;
-                //set selected
-                this.value = {
-                    'id': this.form.level_id,
-                    'title': this.findObjectByKey(this.levels, 'id', this.form.level_id).title
-                };
-               
             },
             
             beforeClose() { 
@@ -171,7 +170,13 @@
                 
                 this.form.submit(method, this.requestUrl)
                     .then(/*response => alert('Your objective was created'+response.message.title)*/)
-                    .catch(response => alert('Your objective was not created'));
+                    .catch(response => function ()
+                        {
+                            if (response.errors) 
+                            {
+                               alert(response.errors); 
+                            }
+                        });
                 //todo .then .catch
             }
         },

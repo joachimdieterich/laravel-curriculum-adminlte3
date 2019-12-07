@@ -99,6 +99,7 @@ class ContentController extends Controller
     
     public function print(Content $content)
     {
+        $content->content = relativeToAbsoutePaths($content->content);
         $meta = '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">';
         $pdf = SnappyPdf::loadHTML("{$meta}<h1>{$content->title}</h1>{$content->content}")
             ->setPaper('a4')

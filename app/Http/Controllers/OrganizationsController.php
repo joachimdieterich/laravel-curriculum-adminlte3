@@ -206,11 +206,15 @@ class OrganizationsController extends Controller
         foreach ((request()->enrollment_list) AS $enrolment)
         {  
             
-            $return[] = OrganizationRoleUser::firstOrCreate([
-                                        'user_id'         => $enrolment['user_id'],
-                                        'organization_id' => $enrolment['organization_id'],
-                                        'role_id'         => $enrolment['role_id'],
-                                    ]);
+            $return[] = OrganizationRoleUser::updateOrCreate(
+                    [
+                        'user_id'         => $enrolment['user_id'],
+                        'organization_id' => $enrolment['organization_id']
+                    ],
+                    [
+                        'role_id'         => $enrolment['role_id']
+                    ]
+                );
         }
         
         return $return;  

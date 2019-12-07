@@ -36,5 +36,18 @@ if (!function_exists('getImmediateChildrenByTagName')) {
        }
        return $result;
    }
+}
 
+if (!function_exists('relativeToAbsoutePaths')) {
+    function relativeToAbsoutePaths($input) {
+        return preg_replace_callback( 
+                '/<img\s+[^>]*src="\/media\/(.*?)"(\s+[^>]*)[^>]*>/mi', 
+                function($match) 
+                { 
+                    $media = App\Medium::find($match[1]);
+                    return (( "<img src=\"{$media->absolutePath()}\"{$match[2]}>"));      
+                }, 
+                $input 
+            ); 
+    }
 }

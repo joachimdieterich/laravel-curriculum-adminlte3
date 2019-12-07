@@ -39,7 +39,7 @@
             </div><!-- /.tab-pane -->
         </div> <!-- /.tab-content -->
        
-        <div class="row p-2" 
+        <div class="row" 
              v-can="'curriculum_edit'"
              v-if="settings.edit === true">
             <div id="createTerminalRow" class="col-12"> 

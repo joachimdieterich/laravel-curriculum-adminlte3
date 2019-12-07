@@ -26,7 +26,9 @@
                >
 
             <?php $current_optgroup_id = 0; ?>
-<!--            <option></option>-->
+            @if(!isset($multiple)) 
+            <option></option>
+            @endif
             @foreach($options as $v)
                 <?php $o_id = isset($option_id) ? $option_id : 'id'; ?>
             

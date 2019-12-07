@@ -207,8 +207,7 @@ class CertificateController extends Controller
         $certificate = Certificate::find(request()->certificate_id)->get(); 
         
         foreach ((array) request()->user_ids as $id) 
-        {
-            
+        {   
             $user = User::where('id', $id)->get()->first();
             $date = request()->date;
             $timestamp = date("Y-m-d_H-i-s");
@@ -250,18 +249,11 @@ class CertificateController extends Controller
             //end progress
 
             /* replace relative media links with absolute paths to get snappy working */ 
-            $html_to_print = preg_replace_callback( 
-                '/<img\s+[^>]*src="\/media\/(.*?)"(\s+[^>]*)[^>]*>/mi', 
-                function($match) 
-                { 
-                    $media = Medium::find($match[1]);
-                    return (( "<img src=\"{$media->absolutePath()}\"{$match[2]}>"));      
-                }, 
-                $html_to_print 
-            ); 
+            $html_to_print = relativeToAbsoutePaths($html_to_print);
             
             //return SnappyPdf::loadHTML($html_to_print)
-            SnappyPdf::loadHTML($html_to_print)
+            $meta = '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">';
+            SnappyPdf::loadHTML($meta.$html_to_print)
                     ->setPaper('a4')
                    // ->setOrientation('landscape')
                     ->setOption('margin-bottom', 0)
@@ -281,7 +273,6 @@ class CertificateController extends Controller
                 'license_id'    => 2,//$media_node->getAttribute('license'), //hack fix false entries in import files
 
                 'owner_id'      => auth()->user()->id,
-
             ]); 
             $media->save();
             

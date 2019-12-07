@@ -202,7 +202,7 @@ class GroupsController extends Controller
             $group = Group::findOrFail($enrolment['group_id']);
             $user = User::findOrFail($enrolment['user_id']);
             //if user isn't enrolled to organization, enrol with student role
-            OrganizationRoleUser::firstOrCreate(['user_id' => $user->id,
+            OrganizationRoleUser::updateOrCreate(['user_id' => $user->id,
                                          'organization_id' => $group->first()->organization_id],
                                          ['role_id'        => 6]
                                     );

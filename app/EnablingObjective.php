@@ -48,7 +48,7 @@ class EnablingObjective extends Model
     }
     public function terminalObjective()
     {
-        return $this->belongsTo('\App\terminalObjective', 'terminal_objective_id', 'id');
+        return $this->belongsTo('\App\TerminalObjective', 'terminal_objective_id', 'id');
     }
     
     public function references()

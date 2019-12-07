@@ -14,7 +14,7 @@ Auth::routes(['register' => false]);
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', 'HomeController@index')->name('home');
 
-    Route::resource('achievements', 'AchievementController');
+    Route::post('achievements', 'AchievementController@store');
     
     Route::get('certificates/list', 'CertificateController@list');
     //Route::get('certificates/generate', 'CertificateController@generate'); //for testing only

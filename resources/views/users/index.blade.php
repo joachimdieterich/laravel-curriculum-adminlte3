@@ -52,7 +52,7 @@
                             <a href="#tab_group" class="nav-link" data-toggle="tab">Lerngruppe</a>
                         </li>
                     @endcan
-                    @can('institution_enrolment') 
+                    @can('organization_enrolment') 
                         <li id="nav_tab_organization" class="nav-item">
                             <a href="#tab_organization" class="nav-link" data-toggle="tab">Institution / Rolle</a>
                         </li>
@@ -103,7 +103,7 @@
                             </div>
                         </div>
                     @endcan
-                    @can('institution_enrolment')
+                    @can('organization_enrolment')
                         <div id="tab_organization" class="tab-pane row " >
                             <div class="form-horizontal col-xs-12">
                                 @include ('forms.input.info', ["value" => "Beim Zuweisen einer Rolle werden die markierten Nutzer automatisch in die aktuelle/ausgewählte Institution eingeschrieben bzw. die Daten aktualisiert."])

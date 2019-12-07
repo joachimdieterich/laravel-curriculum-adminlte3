@@ -24,6 +24,7 @@ class GroupEnrollmentTest extends TestCase
      */
     public function an_administrator_can_enrol_multiple_users_to_existing_groups()
     {
+        $this->withoutExceptionHandling();
         $group1 = GroupFactory::create();
         $group2 = GroupFactory::create();
         $user1 = UserFactory::create();

@@ -44593,7 +44593,7 @@ var render = function() {
                   expression: "'curriculum_edit'"
                 }
               ],
-              staticClass: "row p-2"
+              staticClass: "row"
             },
             [
               _c(

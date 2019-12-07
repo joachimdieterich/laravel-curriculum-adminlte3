@@ -195,24 +195,19 @@ class GroupsController extends Controller
     
     public function enrol()
     {
-        abort_unless(\Gate::allows('group_enrolment'), 403);
-        
-        
+        abort_unless(\Gate::allows('group_create'), 403);
+
         foreach ((request()->enrollment_list) AS $enrolment)
         {  
-            $group = Group::findOrFail((request()->enrollment_list[0]['group_id']));
+            $group = Group::findOrFail($enrolment['group_id']);
             $user = User::findOrFail($enrolment['user_id']);
             //if user isn't enrolled to organization, enrol with student role
-            OrganizationRoleUser::firstOrCreate([
-                                        'user_id'         => $user->id,
-                                        'organization_id' => $group->organization->id,
-                                        'role_id'         => 6, //enrol as student
-                                    ]);
-            
-            
-            $return[] = $user->groups()->syncWithoutDetaching([
-                'group_id' => $enrolment['group_id']
-            ]);
+            OrganizationRoleUser::firstOrCreate(['user_id' => $user->id,
+                                         'organization_id' => $group->first()->organization_id],
+                                         ['role_id'        => 6]
+                                    );
+           
+            $return[] = $user->groups()->syncWithoutDetaching($enrolment['group_id']);
            
         }
         
@@ -221,14 +216,12 @@ class GroupsController extends Controller
     
     public function expel()
     {
-        abort_unless(\Gate::allows('group_enrolment'), 403);
+        abort_unless(\Gate::allows('group_create'), 403);
         
         foreach ((request()->expel_list) AS $expel)
         {  
             $user = User::find($expel['user_id']);
-            $return[] = $user->groups()->detach([
-                            'group_id' => $expel['group_id']
-                        ]);
+            $return[] = $user->groups()->detach($expel['group_id']);
         }
         
         return $return;  

@@ -88,6 +88,7 @@
                                 @include ('forms.input.select', 
                                     ["model" => "group", 
                                     "show_label" => true,
+                                    "multiple" => true,
                                     "field" => "user_organization_group_id",  
                                     "options"=> $groups, 
                                     "option_label" => "title",    

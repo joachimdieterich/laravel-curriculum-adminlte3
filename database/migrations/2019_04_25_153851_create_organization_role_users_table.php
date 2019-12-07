@@ -15,13 +15,15 @@ class CreateOrganizationRoleUsersTable extends Migration
     {
         Schema::create('organization_role_users', function (Blueprint $table) {
             $table->bigIncrements('id')->unsigned();
-            $table->bigInteger('organization_id')->index();
-            $table->bigInteger('user_id')->index();
-            $table->unsignedbigInteger('role_id');
+            $table->unsignedbigInteger('organization_id')->index();
+            $table->unsignedbigInteger('user_id')->index();
+            $table->unsignedbigInteger('role_id')->index();
             $table->unique(['organization_id', 'user_id']);
             $table->timestamps();
           
-            $table->foreign('role_id')->references('id')->on('roles');
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('organization_id')->references('id')->on('organizations');
+            $table->foreign('role_id')->references('id')->on('roles');  
         });
     }
 

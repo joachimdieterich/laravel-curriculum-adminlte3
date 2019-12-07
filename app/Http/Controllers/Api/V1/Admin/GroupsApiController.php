@@ -47,22 +47,14 @@ class GroupsApiController extends Controller {
         $group = Group::findOrFail(request()->input('group_id'));
         $user = User::findOrFail(request()->input('user_id'));
 
-        //if user isn't enrolled to organization, enrol with student role
-        $check_organization_enrollment = OrganizationRoleUser::where('user_id', '=', $user->id)
-                        ->where('organization_id', '=', $group->organization->id)->first();
-        
-        if ($check_organization_enrollment === null) {
-            OrganizationRoleUser::firstOrCreate([
-                'user_id' => $user->id,
-                'organization_id' => $group->organization->id,
-                'role_id' => 6, //enrol as student
-            ]);
-        }
+        OrganizationRoleUser::firstOrCreate([
+            'user_id' => $user->id,
+            'organization_id' => $group->organization->id],
+            ['role_id' => 6], //enrol as student
+        );
 
-        
-        $return[] = $user->groups()->syncWithoutDetaching([
-            'group_id' => request()->input('group_id'),
-        ]);
+        $return[] = $user->groups()->syncWithoutDetaching(request()->input('group_id'),
+        );
         return $return;
     }
 

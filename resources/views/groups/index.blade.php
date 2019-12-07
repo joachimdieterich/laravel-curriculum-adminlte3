@@ -56,6 +56,7 @@
                                     @include ('forms.input.select', 
                                         ["model" => "group", 
                                         "show_label" => true,
+                                        "multiple" => true,
                                         "field" => "group_curricula",  
                                         "options"=> $curricula, 
                                         "option_label" => "title",    

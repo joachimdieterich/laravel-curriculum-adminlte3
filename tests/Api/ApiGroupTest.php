@@ -108,7 +108,7 @@ class ApiGroupTest extends TestCase
                                                           ]);
         $this->assertDatabaseHas('group_user', $enrolment_1);
         
-        $this->put("/api/v1/groups/enrol", $enrolment_2 =['user_id' => $user2->id,
+        $this->put("/api/v1/groups/enrol", $enrolment_2 = ['user_id' => $user2->id,
                              'group_id' => $group2->id]);
         $this->assertDatabaseHas('group_user', $enrolment_2);
         
@@ -160,9 +160,7 @@ class ApiGroupTest extends TestCase
         $this->assertDatabaseMissing('group_user', $enrolment_1);
         
         $this->delete("/api/v1/groups/expel", $enrolment_2);
-        $this->assertDatabaseMissing('group_user', $enrolment_2);
-        
-       
+        $this->assertDatabaseMissing('group_user', $enrolment_2); 
     } 
     
 }

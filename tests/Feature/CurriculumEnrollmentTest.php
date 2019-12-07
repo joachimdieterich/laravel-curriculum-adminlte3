@@ -61,7 +61,6 @@ class CurriculumEnrollmentTest extends TestCase
     /** @test */
     public function an_administrator_can_expel_multiple_groups_to_existing_curricula()
     {
-        $this->withoutExceptionHandling();
         $group1 = GroupFactory::create();
         $group2 = GroupFactory::create();
         $curriculum1 = CurriculumFactory::create();

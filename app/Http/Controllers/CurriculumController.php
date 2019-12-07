@@ -370,7 +370,7 @@ class CurriculumController extends Controller
         
         foreach ((request()->enrollment_list) AS $enrolment)
         {  
-            $return[] = Group::findOrFail($enrolment['group_id'])->curricula()->syncWithoutDetaching([$enrolment['curriculum_id']]); 
+            $return[] = Group::findOrFail($enrolment['group_id'])->curricula()->syncWithoutDetaching($enrolment['curriculum_id']); 
         }
         
         return $return;  
@@ -378,14 +378,12 @@ class CurriculumController extends Controller
     
      public function expel()
     {
-        abort_unless(\Gate::allows('curriculum_delete'), 403);
+        abort_unless(\Gate::allows('course_create'), 403);
         
         foreach ((request()->expel_list) AS $expel)
         {  
             $group = Group::find($expel['group_id']);
-            $return[] = $group->curricula()->detach([
-                            'curriculum_id' => $expel['curriculum_id']
-                        ]);
+            $return[] = $group->curricula()->detach($expel['curriculum_id']);
         }
         
         return $return;  

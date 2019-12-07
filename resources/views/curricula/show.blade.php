@@ -74,8 +74,7 @@
         @endif
         
     </div>
-    
-    
+ 
     <curriculum-view
         ref="curriculumView"
         :curriculum="{{ $curriculum }}" 

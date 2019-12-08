@@ -27,7 +27,7 @@ class EnablingObjective extends Model
     
     public function mediaSubscriptions()
     {
-        return $this->hasMany('App\MediumSubscription', 'subscribable_id', 'id');
+        return $this->morphMany('App\MediumSubscription', 'subscribable');
     }
     
     public function media()

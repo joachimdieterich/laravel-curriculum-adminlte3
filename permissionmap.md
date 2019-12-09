@@ -29,3 +29,32 @@ permission | admin | admin | admin | admin | admin
 role | admin  | admin | admin | admin | admin
 user | admin, schooladmin, teacher | admin, schooladmin | admin, schooladmin, teacher | admin, schooladmin, teacher | admin, schooladmin
 user_reset_password | - | - | - | - | - | admin, schooladmin
+
+## Usage
+### PHP
+Permissions can be checked on blade using the Gate::allows method.
+Example:
+```
+$boolean = Gate::allows('curriculum_edit');  //returns true if auth()->user has permission
+
+abort_unless(\Gate::allows('curriculum_edit'), 403); //returns status code 403 if auth()->user hasn't permission
+```
+
+
+### Blade
+Permissions can be checked on blade using the @can directive.
+
+Example:
+```
+@can('curriculum_edit')
+    Only users with permission 'curriculum_edit' can see this. 
+@endcan
+```
+
+### Vue
+Permissions can be checked on vue components using the v-can directive.
+
+Example:
+```
+<div v-can="'curriculum_edit'"> Only users with permission 'curriculum_edit' can see this. </div>
+```

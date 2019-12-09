@@ -35,7 +35,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('curricula/import', 'CurriculumImportController@import')->name('curricula.import');
     Route::post('curricula/import/store', 'CurriculumImportController@store')->name('curricula.import.store');
     Route::get('curricula/{curriculum}/achievements', 'CurriculumController@showAchievements')->name('curricula.showAchievements');
-    Route::post('curricula/{curriculum}/achievements', 'CurriculumController@setAchievements')->name('curricula.getAchievements');
+    Route::post('curricula/{curriculum}/achievements', 'CurriculumController@getAchievements')->name('curricula.getAchievements');
     Route::resource('curricula', 'CurriculumController');
 
     /* enablingObjectives routes */

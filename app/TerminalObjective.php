@@ -67,7 +67,10 @@ class TerminalObjective extends Model
     {
         return $this->morphMany('App\ReferenceSubscription', 'referenceable');
     }
-    
+    public function quoteSubscriptions()
+    {
+        return $this->morphMany('App\QuoteSubscription', 'quotable');
+    }
     public function achievements()
     {
         return $this->morphMany('App\Achievement', 'referenceable');

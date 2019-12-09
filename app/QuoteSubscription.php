@@ -15,4 +15,15 @@ class QuoteSubscription extends Model
         return $this->hasOne('App\Quote', 'id', 'quote_id');
     }
     
+    public function quotable()
+    {
+        return $this->morphTo();
+    }
+    
+    public function siblings()
+    {  
+        return $this->hasMany('App\QuoteSubscription', 'quote_id', 'quote_id')->with(['quote', 'quotable.curriculum.organizationType']);
+       
+    }
+    
 }

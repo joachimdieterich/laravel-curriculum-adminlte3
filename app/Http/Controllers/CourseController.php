@@ -17,58 +17,42 @@ class CourseController extends Controller
 {
     public function show(Course $course)
     {
+        abort_unless(\Gate::allows('curriculum_show'), 403);        //check if user is enrolled or admin -> else 403 
+
+        abort_unless((auth()->user()->curricula()->contains('id', $course->curriculum_id) // user enrolled
+                  OR (auth()->user()->currentRole()->first()->id == 1)), 403);                // or admin
+
         $curriculum = Curriculum::with(['terminalObjectives', 
+                        'terminalObjectives.media', 
+                        'terminalObjectives.mediaSubscriptions', 
+                        'terminalObjectives.referenceSubscriptions', 
+                        'terminalObjectives.quoteSubscriptions', 
+                        'terminalObjectives.achievements' => function($query) {
+                            $query->where('user_id', auth()->user()->id);
+                        },
                         'terminalObjectives.enablingObjectives', 
+                        'terminalObjectives.enablingObjectives.media',
+                        'terminalObjectives.enablingObjectives.mediaSubscriptions', 
+                        'terminalObjectives.enablingObjectives.referenceSubscriptions', 
+                        'terminalObjectives.enablingObjectives.quoteSubscriptions', 
+                        'terminalObjectives.enablingObjectives.achievements' => function($query) {
+                            $query->where('user_id', auth()->user()->id);
+                        },        
                         'contentSubscriptions.content', 
                         'glossar.contents', 
                         'media'])
-                        ->find($course->curriculum_id);
-        abort_unless(\Gate::allows('curriculum_show'), 403);
-        //check if user is enrolled or admin -> else 403 
-       // dd(auth()->user()->curricula());
-        abort_unless((auth()->user()->curricula()->contains('id', $course->curriculum_id) // user enrolled
-                  OR (auth()->user()->currentRole()->first()->id == 1)), 403);                // or admin
-        //$user_ids = isset(request()->user_ids) ? request()->user_ids : auth()->user()->id;
-        
-        // DB::enableQueryLog(); // Enable query log
-        //$currentGroups = ;//->curricula()->contains('curriculum_id', $curriculum->id));
-        //dd(auth()->user()->curricula());
-
-        //dd(DB::getQueryLog()); // Show results of log
-       
-        $terminalObjectives = TerminalObjective::where('curriculum_id', $course->curriculum_id)
-                                                ->orderBy('objective_type_id')
-                                                ->orderBy('order_id')
-                                                ->with(['media',
-                                                        'mediaSubscriptions', 
-                                                        'referenceSubscriptions', 
-                                                        'achievements' => function($query)  {
-                                                            $query->where('user_id', auth()->user()->id);
-                                                        }])
-                                                ->get();
-       
-         $enablingObjectives = EnablingObjective::where('curriculum_id', $course->curriculum_id)
-                                                ->orderBy('terminal_objective_id')
-                                                ->orderBy('order_id')
-                                                ->with(['media',
-                                                        'mediaSubscriptions', 
-                                                        'referenceSubscriptions', 
-                                                        'achievements' => function($query) {
-                                                            $query->where('user_id', auth()->user()->id);
-                                                        }])
-                                                ->get();
+                        ->find($course->curriculum_id);                                                
         $objectiveTypes = ObjectiveType::all();
         $certificates   = \App\Certificate::all();
      
         $settings= json_encode([
             'edit' => false,
-            'achievements' => true
+            'achievements' => true,
+            'cross_reference_curriculum_id' => false
         ]);
         
         return view('curricula.show')
                 ->with(compact('curriculum'))
-                ->with(compact('terminalObjectives')) //todo. curriculum already has terminal and enablingobjectives, use in DB
-                ->with(compact('enablingObjectives'))
                 ->with(compact('objectiveTypes'))
                 ->with(compact('course'))
                 ->with(compact('certificates'))

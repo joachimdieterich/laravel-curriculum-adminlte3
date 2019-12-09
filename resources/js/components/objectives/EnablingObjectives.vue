@@ -1,6 +1,5 @@
 <template>
     <div>
-       
         <div v-for="objective in objectives" :id="'enablingObjective_' + objective.id" class="box-objective" >
             <ObjectiveBox type="enabling" 
                   :objective="objective" 
@@ -16,7 +15,6 @@
                 :settings="settings">
             </ObjectiveBox>
         </div>
-     
     </div>
 </template>
 
@@ -24,9 +22,10 @@
     import ObjectiveBox from './ObjectiveBox'
     
     export default {
-        props: {'objectives': Array, 
-                'curriculum': Object,
-                'terminalobjective': Object
+        props: {
+            'objectives': Array,  
+            'curriculum': Object,
+            'terminalobjective': Object
         }, 
         data() {
             return {

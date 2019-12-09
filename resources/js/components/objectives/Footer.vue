@@ -1,9 +1,13 @@
 <template >
     <div class="boxfooter row" v-bind:style="{ 'color': textcolor }">
         <div class="p-0 col-12 boxflex">
-            <span v-if="objective.media != 0 || objective.references != 0" >
+            <span v-if="typeof objective.media_subscriptions !== 'undefined' || typeof objective.reference_subscriptions !== 'undefined'" >
                 <span class="fa fa-briefcase mr-1"
                     @click.prevent="showModal('objective-medium-modal')">
+                </span>
+            </span>
+            <span v-else >
+                <span class="fa fa-briefcase mr-1 text-gray" style="cursor: not-allowed">
                 </span>
             </span>
 

@@ -1,11 +1,11 @@
-@extends((Auth::user()->role()->title == 'Guest') ? 'layouts.contentonly' : 'layouts.master')
+@extends((Auth::user()->id == env('GUEST_USER')) ? 'layouts.contentonly' : 'layouts.master')
 
 @section('title')
     {{ $curriculum->title }}
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item">
-        @if ((Auth::user()->role()->title == 'Guest')) 
+        @if (Auth::user()->id == env('GUEST_USER')) 
             <a href="/navigators/{{Auth::user()->organizations()->where('organization_id', '=',  Auth::user()->current_organization_id)->first()->navigators()->first()->id}}">Home</a>
         @else
             <a href="/">Home</a>
@@ -73,13 +73,22 @@
                 ></dropdown-button> 
         @endif
         
+        @include ('forms.input.select', 
+                   ["model" => "curriculum", 
+                   "field" => "id",  
+                   "css" => "pull-right",
+                   "style" => "float:left; width:200px",
+                   "options"=> auth()->user()->curricula(), 
+                   "placeholder" => "Select cross references",
+                   "option_label" => "title",  
+                   "onchange"=> "triggerSetCrossReferenceCurriculumId(this.value)",  
+                   "value" =>  old('current_curriculum_cross_reference_id', isset(auth()->user()->current_curriculum_cross_reference_id) ? auth()->user()->current_curriculum_cross_reference_id : '')])
+        
     </div>
  
     <curriculum-view
         ref="curriculumView"
         :curriculum="{{ $curriculum }}" 
-        :terminalobjectives="{{ $terminalObjectives }}"
-        :enablingobjectives="{{ $enablingObjectives }}"
         :objectivetypes="{{ $objectiveTypes }}"
         :settings="{{ $settings }}">
     </curriculum-view>
@@ -97,7 +106,11 @@
 @endsection
 @section('scripts')
 @parent
-
+<script>
+function triggerSetCrossReferenceCurriculumId(curriculum_id){
+    app.__vue__.$refs.curriculumView.setCrossReferenceCurriculumId(curriculum_id);
+}
+</script>
 @if(isset(json_decode($settings)->achievements))
     <script>
         
@@ -140,6 +153,7 @@ $(document).ready( function () {
     table.on( 'deselect', function ( e, dt, type, indexes ) { //on deselect event
         triggerVueEvent(type);
     });
+    
  });
  
     </script>

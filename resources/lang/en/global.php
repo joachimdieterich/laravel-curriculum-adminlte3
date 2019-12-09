@@ -57,6 +57,7 @@ return [
     'information'                          => 'Information',
     'curricula_content_subscriptions'      => 'Digitalized contents',
     'curricula_media_subscriptions'        => 'Media',
+    'curricula_cross_references'           => 'Cross references',
     'myProfile'                            => 'My Profile',
     'date'                                 => 'Date',
     'datatables'                           => [

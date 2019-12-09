@@ -28,7 +28,7 @@
                                 <EnablingObjectives 
                                     :curriculum="curriculum"
                                     :terminalobjective="objective"
-                                    :objectives="filterEnablingObjectives(objective.id)"
+                                    :objectives="objective.enabling_objectives" 
                                     :settings="settings"
                                     >
                                 </EnablingObjectives>
@@ -43,7 +43,10 @@
              v-can="'curriculum_edit'"
              v-if="settings.edit === true">
             <div id="createTerminalRow" class="col-12"> 
-            <ObjectiveBox type="createterminal" :objective="{'curriculum_id': curriculum.id}"></ObjectiveBox>
+            <ObjectiveBox type="createterminal" 
+                          :objective="{'curriculum_id': curriculum.id}"
+                          :settings="settings"
+                          ></ObjectiveBox>
             </div>
         </div>
         
@@ -57,8 +60,6 @@
     export default {
         props: {
             'curriculum': Object,
-            'terminalobjectives': Array, 
-            'enablingobjectives': Array, 
             'objectivetypes': Array,   
         }, 
         data() {
@@ -72,16 +73,8 @@
             }
         },
         methods: {
-            filterEnablingObjectives(terminalObjectiveId) {
-                let filteredEnablingObjectives = this.enablingobjectives;
-                filteredEnablingObjectives = filteredEnablingObjectives.filter(
-                    m => m.terminal_objective_id === terminalObjectiveId
-                  );
-                
-                return filteredEnablingObjectives;
-            },
             filterTerminalObjectives(typetab) {
-                let filteredTerminalObjectives = this.terminalobjectives;
+                let filteredTerminalObjectives = this.curriculum.terminal_objectives;
                 filteredTerminalObjectives = filteredTerminalObjectives.filter(
                     t => t.objective_type_id === typetab
                   );
@@ -104,10 +97,10 @@
         mounted() {
             this.settings = this.$attrs.settings;
             
-            if (this.terminalobjectives.length != 0){
-                this.settings.last = this.terminalobjectives[this.terminalobjectives.length-1].id;
+            if (this.curriculum.terminal_objectives.length != 0){
+                this.settings.last = this.curriculum.terminal_objectives[this.curriculum.terminal_objectives.length-1].id;
                
-                this.typetabs = [ ... new Set(this.terminalobjectives.map(t => t.objective_type_id))];
+                this.typetabs = [ ... new Set(this.curriculum.terminal_objectives.map(t => t.objective_type_id))];
                 
                 this.activetab = this.typetabs[0];
             }

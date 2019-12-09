@@ -34,7 +34,6 @@
        </h6>
        <p class=" text-muted small">
            {{ strip_tags($item->description) }}   
-
        </p>
 
    </span>

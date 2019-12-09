@@ -1,9 +1,7 @@
 <template> 
     <div class="col-12">
        <TerminalObjectives 
-           :curriculum="curriculum"
-           :terminalobjectives="terminalobjectives" 
-           :enablingobjectives="ena"
+           :curriculum="cur"
            :objectivetypes="objectivetypes"
            :settings="settings">                     
        </TerminalObjectives>   
@@ -16,31 +14,31 @@
     export default {
         props: {
             'curriculum': Object,
-            'terminalobjectives': Array, 
-            'enablingobjectives': Array,       
+//            'terminalobjectives': Array, 
+//           'enablingobjectives': Array,       
             'objectivetypes': Array,   
             'settings': Object,
         }, 
         data () {
             return {
-                ena: false,
+                cur: this.curriculum
             };
         }, 
         
         methods: {
-           externalEvent: function(ids) {
+            externalEvent: function(ids) {
                this.reloadEnablingObjectives(ids);
             },
             async reloadEnablingObjectives(ids) {
                 try {                    
-                    this.ena = (await axios.post('/curricula/'+this.curriculum.id+'/achievements', {'user_ids' : ids})).data.enablingobjectives;
+                    this.cur = (await axios.post('/curricula/'+this.curriculum.id+'/achievements', {'user_ids' : ids})).data.curriculum;
                 } catch(error) {
                     this.errors = error.response.data.errors;
                 } 
             }, 
-        },
-        created() {
-            this.ena = this.enablingobjectives;
+            setCrossReferenceCurriculumId: function(curriculum_id) { //can be called external
+                this.settings.cross_reference_curriculum_id = curriculum_id;
+            }
         },
         mounted() {
             this.$on('addTerminalObjective', function(newTerminalObjective) {

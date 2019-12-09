@@ -1,5 +1,5 @@
 <div id="{{ $field }}_form_group" 
-     class="form-group {{ $errors->has( $field ) ? ' has-danger' : '' }}" 
+     class="form-group {{ $errors->has( $field ) ? ' has-danger' : '' }} {{ isset($css) ? $css : '' }}" 
 >
     @if(isset($show_label))      
         <label for="{{ $field }}" class="{{ isset($class_left) ? $class_left : 'col-sm-3' }}">
@@ -15,7 +15,7 @@
         <select name="{{ $field }}[]" 
                 id="{{ $field }}" 
                 class="form-control select2 {{ $errors->has($field) ? ' is-invalid' : '' }} {{ isset($class_right) ? $class_right : 'col-sm-9' }}"
-                style="width:100%"
+                style="{{ isset($style) ? $style : 'width:100%;' }}"
                 @if(isset($onchange)) 
                     onchange="{{ $onchange }}"
                 @endif

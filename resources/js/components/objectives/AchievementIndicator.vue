@@ -100,8 +100,10 @@
                              teacher++;   
                          }
                     }
-                     return /*student+'/'+*/teacher; //todo option to show students status 
-                } 
+                     return teacher; //todo option to show students self achievment status 
+                } else {
+                    this.status = '00';
+                }
             }
         },
         computed: {

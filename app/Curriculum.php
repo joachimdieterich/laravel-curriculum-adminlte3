@@ -58,6 +58,11 @@ class Curriculum extends Model
         return $this->belongsToMany('App\Group', 'curriculum_group')->withTimestamps();
     }
     
+    public function enablingObjectives()
+    {
+        return $this->hasMany('App\EnablingObjective', 'curriculum_id', 'id');
+    }
+    
     public function terminalObjectives()
     {
         return $this->hasMany('App\TerminalObjective', 'curriculum_id', 'id');

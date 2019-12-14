@@ -177,6 +177,13 @@
         },
         watch: {
             cross_reference: function() {
+                
+                if (this.settings.cross_reference_curriculum_id !== false){ // reset view with x button
+                     if (this.settings.cross_reference_curriculum_id === ""){
+                         this.visibility = 100;
+                         return;
+                     }
+                }
                 if (this.settings.cross_reference_curriculum_id !== false && (typeof this.objective.quote_subscriptions !== "undefined"))
                 {
                     let check = this.objective.quote_subscriptions.find(c => c.siblings.find(s => s.quotable.curriculum_id == this.settings.cross_reference_curriculum_id))

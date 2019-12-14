@@ -55,7 +55,6 @@
         @if ($errors->has( $field ))
             <span id="{{ $field }}-error" class="error text-danger" for="input-{{ $field }}">{{ $errors->first( $field ) }}</span>
         @endif
-    
 </div>
 @if (isset($placeholder))
     @section('scripts')
@@ -66,7 +65,8 @@
         <!--hack to get select2 working z-index-->
         $("#{{ $field }}").select2({
             placeholder: "{{ $placeholder }}",
-            dropdownParent: $("#{{ $field }}").parent()
+            dropdownParent: $("#{{ $field }}").parent(),
+            allowClear: true
         });
 
 

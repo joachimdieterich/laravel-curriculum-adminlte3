@@ -8,7 +8,6 @@ window._ = require('lodash');
  */
 
 try {
-    
     window.Popper = require('popper.js').default; //for tooltips
 
     window.$ = window.jQuery = require( 'jquery' );    
@@ -20,9 +19,7 @@ try {
 //    require( 'datatables.net-select-bs4' )( window, $ );
     require('bootstrap');
     require('admin-lte');
-   
-    
- 
+      
 } catch (e) {}
 
 /**

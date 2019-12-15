@@ -9,7 +9,6 @@
         <title>{{ trans('global.site_title') }}</title>
         <link href="{{ asset('css/app.css') }}" rel="stylesheet" />
         <link href="{{ asset('css/custom.css') }}" rel="stylesheet" />
-        
         @yield('styles')
         <script>
             window.trans = <?php
@@ -123,6 +122,13 @@ echo json_encode([
         <script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.colVis.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+        <script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script>
+        <script>
+            tinymce.init({
+                selector:'textarea',
+                branding: false
+            });
+        </script>
         <script src="{{ asset('js/main.js') }}"></script>
         <script>
                $(function() {

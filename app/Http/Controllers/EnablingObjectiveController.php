@@ -95,7 +95,6 @@ class EnablingObjectiveController extends Controller
                 return ['message' => $this->toggleOrderId($old_objective, request('order_id')) ];
             }
         }
-
         if (request()->wantsJson()){    
             return ['message' => $enablingObjective->update($request->all())];
         }

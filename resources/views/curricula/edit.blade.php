@@ -16,8 +16,8 @@
               enctype="multipart/form-data">
             @method('PATCH')
             @include ('curricula.form', [
-                'organization' => $curriculum,
-                'buttonText' =>  trans('global.edit'). ' ' .trans('global.curriculum.title_singular')
+                'curriculum' => $curriculum,
+                'buttonText' =>  trans('global.save')
             ]) 
         </form>
     </div>

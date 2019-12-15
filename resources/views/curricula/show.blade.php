@@ -97,7 +97,6 @@
 <enabling-objective-modal></enabling-objective-modal>
 <objective-description-modal></objective-description-modal>
 <content-modal></content-modal>
-<medium-modal></medium-modal>
 <objective-medium-modal></objective-medium-modal>
 <medium-modal></medium-modal>
 @if(isset($certificates))

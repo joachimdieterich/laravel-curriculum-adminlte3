@@ -5,10 +5,10 @@
             * 
         @endif
     </label>
-    <textarea 
+    <textarea
         id="{{ $field }}" 
         name="{{ $field }}" 
-        class="form-control"
+        class="form-control description"
         rows="{{ $rows }}"
         placeholder="{{ __( $placeholder ) }}" 
         @if(isset($required)) 
@@ -17,6 +17,7 @@
         >
         {{ $value }}
     </textarea>
+    
     @if($errors->has($field))
         <p class="help-block">
             {{ $errors->first($field) }}

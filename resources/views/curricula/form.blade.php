@@ -1,6 +1,5 @@
 @csrf
 @include ('forms.input.text', ["model" => "curriculum", "field" => "title", "placeholder" => "Lehrplantitel",  "required" => true, "value" => old('title', isset($curriculum) ? $curriculum->title : '')])
-
 @include ('forms.input.textarea', ["model" => "curriculum", "field" => "description", "placeholder" => "Description",  "rows" => 3, "value" => old('title', isset($curriculum) ? $curriculum->description : '')]) 
 @include ('forms.input.text', ["model" => "curriculum", "field" => "author", "placeholder" => "Author",  "value" => old('author', isset($curriculum) ? $curriculum->author : '')])
 @include ('forms.input.text', ["model" => "curriculum", "field" => "publisher", "placeholder" => "Publisher",  "value" => old('publisher', isset($curriculum) ? $curriculum->publisher : '')])

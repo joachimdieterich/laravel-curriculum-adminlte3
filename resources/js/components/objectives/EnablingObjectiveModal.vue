@@ -46,19 +46,7 @@
                     name="title"
                     initialValue="Title"
                     v-model="form.title"
-                    :init="{
-                      menubar: false,
-                      branding: false,
-                      plugins: [
-                        'advlist autolink lists link image charmap print preview anchor',
-                        'searchreplace visualblocks code fullscreen',
-                        'insertdatetime media table paste code help wordcount'
-                      ],
-                      toolbar:
-                        'undo redo | formatselect | bold italic backcolor | \
-                        alignleft aligncenter alignright alignjustify | \
-                        bullist numlist outdent indent | removeformat | code | help'
-                    }"
+                    :init="editorConfig"
                     ></Editor>
                      <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
                 </div>
@@ -72,19 +60,7 @@
                     name="description"
                     initialValue="Description"
                     v-model="form.description"
-                    :init="{
-                      menubar: false,
-                      branding: false,
-                      plugins: [
-                        'advlist autolink lists link image charmap print preview anchor',
-                        'searchreplace visualblocks code fullscreen',
-                        'insertdatetime media table paste code help wordcount'
-                      ],
-                      toolbar:
-                        'undo redo | formatselect | bold italic backcolor | \
-                        alignleft aligncenter alignright alignjustify | \
-                        bullist numlist outdent indent | removeformat | code | help'
-                    }"
+                    :init="editorConfig"
                     ></Editor>
                     <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
                 </div>
@@ -118,8 +94,6 @@
                          <button type="button" class="btn btn-info" data-widget="remove" @click="close()">{{ trans('global.cancel') }}</button>
                          <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
                     </span>
-                        
-                    
                 </div>
             </form>
         </div>
@@ -147,6 +121,19 @@
                     'terminal_objective_id': '',
                     'level_id': null,
                 }),
+                editorConfig: {
+                    menubar: false,
+                    branding: false,
+                    plugins: [
+                      'advlist autolink lists link image charmap print preview anchor',
+                      'searchreplace visualblocks code fullscreen',
+                      'insertdatetime media table paste code help wordcount'
+                    ],
+                    toolbar:
+                      'undo redo | formatselect | bold italic backcolor | \
+                      alignleft aligncenter alignright alignjustify | \
+                      bullist numlist outdent indent | removeformat | code | help'
+                }
             }
         },
         

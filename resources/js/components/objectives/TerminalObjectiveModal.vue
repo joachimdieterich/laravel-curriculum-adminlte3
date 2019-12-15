@@ -5,11 +5,11 @@
         height="auto" 
         :adaptive=true
         :scrollable=true
-        :draggable=true
+        draggable=".draggable"
         :resizable=true
         @before-open="beforeOpen"
         @before-close="beforeClose"
-        style="z-index: 25000">
+        style="z-index: 1100">
         <div class="card" style="margin-bottom: 0px !important">
             <div class="card-header">
                 <h3 class="card-title">
@@ -26,7 +26,10 @@
                 </h3>
 
                 <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-widget="remove" @click="$emit('close')">
+                    <button type="button" class="btn btn-tool draggable" >
+                        <i class="fa fa-arrows-alt"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
@@ -38,27 +41,28 @@
                          :class="form.errors.title ? 'has-error' : ''"
                          >
                         <label for="title">{{ trans('global.terminalObjective.fields.title') }} *</label>
-                        <input 
-                            type="text" id="title" 
-                            name="title" 
-                            class="form-control" 
+                        <Editor
+                            api-key="no-api-key"
+                            id="title"
+                            name="title"
+                            initialValue="Title"
                             v-model="form.title"
-                            placeholder="Title" 
-                            required
-                            />
+                            :init="editorConfig"
+                        ></Editor>
                         <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
                     </div>
                     <div class="form-group "
                          :class="form.errors.description ? 'has-error' : ''"
                          >
                         <label for="description">{{ trans('global.terminalObjective.fields.description') }}</label>
-                        <textarea 
-                            id="description" 
-                            name="description" 
-                            class="form-control" 
+                        <Editor
+                            api-key="no-api-key"
+                            id="description"
+                            name="description"
+                            initialValue="Description"
                             v-model="form.description"
-                            placeholder="Description" 
-                            />
+                            :init="editorConfig"
+                         ></Editor>
                         <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
                     </div>
 
@@ -89,10 +93,10 @@
 
                 </div>
                 <div class="card-footer">
-                    <div class="form-group m-2">
-                        <button type="button" class="btn btn-info" data-widget="remove" @click="$emit('close')">{{ trans('global.cancel') }}</button>
-                        <button class="btn btn-info" @click="submit()" >{{ trans('global.save') }}</button>
-                    </div>
+                    <span class="pull-right">
+                         <button type="button" class="btn btn-info" data-widget="remove" @click="close()">{{ trans('global.cancel') }}</button>
+                         <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
+                    </span>
                 </div>
             </form>
         </div>
@@ -102,6 +106,7 @@
 <script>
     import Form from 'form-backend-validation';
     import Multiselect from 'vue-multiselect';
+    import Editor from '@tinymce/tinymce-vue'
 
     export default {
         data() {
@@ -119,11 +124,20 @@
                     'curriculum_id': '',
                     'objective_type_id': '',
                 }),
+                editorConfig: {
+                    menubar: false,
+                    branding: false,
+                    plugins: [
+                      'advlist autolink lists link image charmap print preview anchor',
+                      'searchreplace visualblocks code fullscreen',
+                      'insertdatetime media table paste code help wordcount'
+                    ],
+                    toolbar:
+                      'undo redo | formatselect | bold italic backcolor | \
+                      alignleft aligncenter alignright alignjustify | \
+                      bullist numlist outdent indent | removeformat | code | help'
+                }
             }
-        },
-
-        components: {
-            Multiselect
         },
 
         methods: {
@@ -142,18 +156,14 @@
 
             beforeOpen(event) {
                 if (event.params.objective) {
-                    //console.log(event.params.objective);
+                    this.method = event.params.method;
                     this.form.populate(event.params.objective);
                     //set selected
                     this.value = {
                         'id': this.form.objective_type_id,
                         'title': this.findObjectByKey(this.objectiveTypes, 'id', this.form.objective_type_id).title
                     };
-                }
-
-                this.method = event.params.method;
-
-                
+                }                
             },
 
             beforeClose() {
@@ -181,8 +191,9 @@
 
                 this.$modal.hide('terminal-objective-modal');
                 //todo .then .catch
-
-
+            },
+             close(){
+                this.$modal.hide('terminal-objective-modal');
             }
         },
         created() {
@@ -191,7 +202,11 @@
         },
         mounted() {
             //console.log('Component mounted.')
-        }
+        },
+        components: {
+            Multiselect,
+            Editor
+        },
     }
 </script>
 

@@ -3,12 +3,13 @@
         id="organization-modal"
         name="organization-modal"
         height="auto"
-        width="70%"
         :adaptive=true
+        :scrollable=true
+        draggable=".draggable"
         :resizable=true
         @before-open="beforeOpen"
         @before-close="beforeClose"
-        style="z-index: 25000">
+        style="z-index: 1100">
         <div class="card" style="margin-bottom: 0px !important">
             <div class="card-header">
                 <h3 class="card-title">
@@ -24,14 +25,17 @@
                 </h3>
 
                 <div class="card-tools">
-                   <button type="button" class="btn btn-tool" data-widget="remove" @click="$emit('close')">
-                     <i class="fa fa-times"></i>
-                   </button>
+                    <button type="button" class="btn btn-tool draggable" >
+                        <i class="fa fa-arrows-alt"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
+                        <i class="fa fa-times"></i>
+                    </button>
                  </div>
 
             </div>
             <form >
-            <div class="card-body">
+            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                 <div class="form-group "
                     :class="form.errors.title ? 'has-error' : ''"
                       >
@@ -48,14 +52,14 @@
                 </div>
                 <div class="form-group ">
                     <label for="description">{{ trans('global.organization.fields.description') }}</label>
-                    <textarea
-                        id="description"
-                        name="description"
-                        rows="2"
-                        class="form-control"
-                        v-model="form.description"
-                        placeholder="Description"
-                    ></textarea>
+                    <Editor
+                    api-key="no-api-key"
+                    id="description"
+                    name="description"
+                    initialValue="Description"
+                    v-model="form.description"
+                    :init="editorConfig"
+                    ></Editor>
                     <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
                 </div>
                 <div class="form-group ">
@@ -129,14 +133,14 @@
 
             </div>
                 <div class="card-footer">
-                     <div class="form-group m-2">
+                     <span class="pull-right">
                          <button id="organization-cancel"
                                  type="button" 
                                  class="btn btn-info" 
                                  data-widget="remove" @click="$emit('close')">{{ trans('global.cancel') }}</button>
                          <button id="organization-save"
-                                 class="btn btn-info" @click="submit(method)" >{{ trans('global.save') }}</button>
-                    </div>
+                                 class="btn btn-primary" @click="submit(method)" >{{ trans('global.save') }}</button>
+                    </span>
                 </div>
             </form>
         </div>
@@ -145,6 +149,7 @@
 
 <script>
     import Form from 'form-backend-validation';
+    import Editor from '@tinymce/tinymce-vue';
 
     export default {
         data() {
@@ -163,6 +168,19 @@
                     'status_id': '',
                 }),
                 statuses: null,
+                editorConfig: {
+                    menubar: false,
+                    branding: false,
+                    plugins: [
+                      'advlist autolink lists link image charmap print preview anchor',
+                      'searchreplace visualblocks code fullscreen',
+                      'insertdatetime media table paste code help wordcount'
+                    ],
+                    toolbar:
+                      'undo redo | formatselect | bold italic backcolor | \
+                      alignleft aligncenter alignright alignjustify | \
+                      bullist numlist outdent indent | removeformat | code | help'
+                }
             }
         },
         methods: {
@@ -208,10 +226,16 @@
                     console.log('loading failed')
                 }
             },
+            close(){
+                this.$modal.hide('organization-modal');
+            }
 
         },
         mounted() {
             console.log('Component mounted.')
         },
+         components: {
+            Editor
+        }
     }
 </script>

@@ -32,7 +32,6 @@
                      <i class="fa fa-times"></i>
                    </button>
                  </div>
-              
             </div>
             <form>
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
@@ -103,7 +102,7 @@
 <script>
     import Form from 'form-backend-validation';
     import Multiselect from 'vue-multiselect';
-    import Editor from '@tinymce/tinymce-vue'
+    import Editor from '@tinymce/tinymce-vue';
     
     export default {
         data() {

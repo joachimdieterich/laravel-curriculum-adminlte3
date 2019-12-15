@@ -27,7 +27,6 @@
                 <tr>
                     <th></th>
                     <th>{{ trans('global.organization.fields.title') }}</th>
-                    <th>{{ trans('global.organization.fields.description') }}</th>
                     <th>{{ trans('global.organization.fields.street') }}</th>
                     <th>{{ trans('global.organization.fields.postcode') }}</th>
                     <th>{{ trans('global.organization.fields.city') }}</th>
@@ -84,7 +83,6 @@ $(document).ready( function () {
         columns: [
                  { data: 'check'},
                  { data: 'title' },
-                 { data: 'description' },
                  { data: 'street' },
                  { data: 'postcode' },
                  { data: 'city' },

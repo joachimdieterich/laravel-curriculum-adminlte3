@@ -3,7 +3,6 @@
         id="medium-modal" 
         name="medium-modal" 
         height="auto" 
-        width="70%"
         :adaptive=true
         :scrollable=true
         draggable=".draggable"

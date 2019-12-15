@@ -35,7 +35,7 @@
               
             </div>
             <form>
-            <div class="card-body">
+            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                 <div class="form-group "
                     :class="form.errors.title ? 'has-error' : ''"
                       >

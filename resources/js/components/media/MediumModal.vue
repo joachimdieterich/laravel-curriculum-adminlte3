@@ -6,11 +6,11 @@
         width="70%"
         :adaptive=true
         :scrollable=true
-        :draggable=true
+        draggable=".draggable"
         :resizable=true
         @before-open="beforeOpen"
         @before-close="beforeClose"
-        style="z-index: 25000">
+        style="z-index: 1100">
         <div class="card" style="margin-bottom: 0px !important">
             <div class="card-header">
                  <h3 class="card-title">
@@ -18,6 +18,9 @@
                  </h3>
                 
                  <div class="card-tools">
+                     <button type="button" class="btn btn-tool draggable" >
+                        <i class="fa fa-arrows-alt"></i>
+                     </button>
                      <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
                         <i class="fa fa-times"></i>
                      </button>
@@ -25,14 +28,14 @@
               
             </div>
             
-            <div class="card-body" >
+            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                 <embed :src="scr" width="100%" height="600px" class="full-height">
             </div>
                 <div class="card-footer">
-                     <div class="form-group m-2">
+                     <span class="pull-right">
                          <button type="button" class="btn btn-info" data-widget="remove" @click="close()">{{ trans('global.cancel') }}</button>
-                         <button class="btn btn-info" @click="download()" >{{ trans('global.downloadFile') }}</button>
-                    </div>
+                         <button class="btn btn-primary" @click="download()" >{{ trans('global.downloadFile') }}</button>
+                    </span>
                 </div>
             
         </div>

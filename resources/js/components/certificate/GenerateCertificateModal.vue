@@ -5,11 +5,11 @@
         height="auto" 
         :adaptive=true
         :scrollable=true
-        :draggable=true
+        draggable=".draggable"
         :resizable=true
         @before-open="beforeOpen"
         @before-close="beforeClose"
-        style="z-index: 25000">
+        style="z-index: 1100">
         <div class="card" style="margin-bottom: 0px !important">
             <div class="card-header">
                 <h3 class="card-title">
@@ -17,14 +17,17 @@
                 </h3>
                 
                 <div class="card-tools">
-                   <button type="button" class="btn btn-tool"  @click="$modal.hide('certificate-generate-modal')">
-                     <i class="fa fa-times"></i>
-                   </button>
+                    <button type="button" class="btn btn-tool draggable" >
+                        <i class="fa fa-arrows-alt"></i>
+                     </button>
+                    <button type="button" class="btn btn-tool"  @click="$modal.hide('certificate-generate-modal')">
+                      <i class="fa fa-times"></i>
+                    </button>
                  </div>
               
             </div>
             <form >
-            <div class="card-body">
+            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                 <div class="form-group" >
                    <label for="certificate_id" >{{ trans("global.certificate.title_singular") }}</label>
 
@@ -60,10 +63,10 @@
                  </div>
             </div>
                 <div class="card-footer">
-                     <div class="form-group m-2">
-                         <button type="button" class="btn btn-default" @click="$modal.hide('certificate-generate-modal')">{{ trans('global.cancel') }}</button>
+                     <span class="pull-right">
+                         <button type="button" class="btn btn-info" @click="$modal.hide('certificate-generate-modal')">{{ trans('global.cancel') }}</button>
                          <button class="btn btn-primary" @click="generateCertificate()" >{{ trans('global.save') }}</button>
-                    </div>
+                    </span>
                 </div>
             </form>
         </div>

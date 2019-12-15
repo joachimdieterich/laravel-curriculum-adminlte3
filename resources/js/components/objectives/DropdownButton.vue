@@ -51,7 +51,6 @@
             }
         },
         methods: {
-            
             editObjective(entry) {     
                 this.$modal.show(entry.value, {'objective': this.objective, 'method': 'PATCH' });
             },

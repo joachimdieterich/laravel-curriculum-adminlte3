@@ -3,14 +3,13 @@
         id="content-modal" 
         name="content-modal" 
         height="auto" 
-        width="70%"
         :adaptive=true
-        :draggable=true
+        draggable=".draggable"
         :resizable=true
         @before-open="beforeOpen"
         @opened="opened"
         @before-close="beforeClose"
-        style="z-index: 25100">
+        style="z-index: 1200">
         <div class="card" 
              style="margin-bottom: 0px !important">
             <div class="card-header">
@@ -19,6 +18,9 @@
                  </h3>
                 
                  <div class="card-tools">
+                     <button type="button" class="btn btn-tool draggable" >
+                        <i class="fa fa-arrows-alt"></i>
+                     </button>
                      <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
                         <i class="fa fa-times"></i>
                      </button>
@@ -26,15 +28,14 @@
               
             </div>
             
-            <div class="card-body" 
-                 style="overflow: auto !important; height: 600px;"
+            <div class="card-body" style="max-height: 80vh; overflow-y: auto;"
                  v-html="content.content">
                 {{ content.content }}
             </div>
             <div class="card-footer">
-                 <div class="form-group m-2">
-                     <button type="button" class="btn btn-info" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
-                </div>
+                <span class="pull-right">
+                     <button type="button" class="btn btn-primary" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
+                </span>
             </div>
             
         </div>

@@ -26,7 +26,8 @@
                  </div>
             </div>
             
-            <div class="card-body"  v-html="content.description">
+            <div class="card-body" style="max-height: 80vh; overflow-y: auto;"
+                 v-html="content.description">
                 {{ content.description }}
             </div>
             

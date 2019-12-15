@@ -5,7 +5,7 @@
         height="auto" 
         :adaptive=true
         :scrollable=true
-        :draggable=true
+        draggable=".draggable"
         :resizable=true
         @before-open="beforeOpen"
         @before-close="beforeClose"
@@ -17,22 +17,24 @@
                  </h3>
                 
                  <div class="card-tools">
-                     <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
+                    <button type="button" class="btn btn-tool draggable" >
+                        <i class="fa fa-arrows-alt"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
                         <i class="fa fa-times"></i>
-                     </button>
+                    </button>
                  </div>
-              
             </div>
             
             <div class="card-body"  v-html="content.description">
                 {{ content.description }}
             </div>
-                <div class="card-footer">
-                     <div class="form-group m-2">
-                         <button type="button" class="btn btn-info" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
-<!--                         <button class="btn btn-info" @click="submit()" >{{ trans('global.save') }}</button>-->
-                    </div>
-                </div>
+            
+            <div class="card-footer">
+                <span class="pull-right">
+                    <button type="button" class="btn btn-primary" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
+                </span>
+            </div>
             
         </div>
     </modal>

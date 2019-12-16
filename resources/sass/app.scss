@@ -81,3 +81,12 @@ body {
     min-width: 2em;
     font: bold .4em sans-serif;
 }
+
+.dataTables_filter, .dataTables_paginate {
+    float: right;
+}
+
+.dataTables_info, .dataTables_length, .dt-buttons {
+    float: left;
+}
+   

@@ -94,8 +94,8 @@ return [
     */
 
     'search'            => [
-        'enabled'       => false,
-        'default'       => 'algolia',
+        'enabled'       => true,
+        'default'       => 'internal',
         'engines'       => [
             'internal'  => [
                 'index' => ['h2', 'h3']
@@ -145,7 +145,7 @@ return [
     */
 
     'seo'                 => [
-        'author'          => '',
+        'author'          => 'Joachim Dieterich',
         'description'     => '',
         'keywords'        => '',
         'og'              => [

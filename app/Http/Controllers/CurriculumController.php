@@ -72,17 +72,17 @@ class CurriculumController extends Controller
                     if (\Gate::allows('curriculum_show')){
                         $actions .= '<a href="'.route('curricula.show', $curricula->id).'" '
                                     . 'class="btn btn-xs btn-success mr-1">'
-                                    . '<i class="fa fa-list-alt"></i> Show'
+                                    . '<i class="fa fa-list-alt"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('curriculum_edit')){
                         $actions .= '<a href="'.route('curricula.edit', $curricula->id).'" '
                                     . 'class="btn btn-xs btn-primary mr-1">'
-                                    . '<i class="fa fa-edit"></i> Edit'
+                                    . '<i class="fa fa-edit"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('curriculum_delete')){
-                        $actions .= '<button type="button" class="btn btn-xs btn-danger" onclick="destroyCurriculum('.$curricula->id.')"><i class="fa fa-trash"></i> Delete</button>';
+                        $actions .= '<button type="button" class="btn btn-xs btn-danger" onclick="destroyCurriculum('.$curricula->id.')"><i class="fa fa-trash"></i></button>';
                     }
               
                 return $actions;

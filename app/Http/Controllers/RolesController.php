@@ -36,19 +36,19 @@ class RolesController extends Controller
                     if (\Gate::allows('role_show')){
                         $actions .= '<a href="'.route('roles.show', $roles->id).'" '
                                     . 'class="btn btn-xs btn-success mr-1">'
-                                    . '<i class="fa fa-list-alt"></i> Show'
+                                    . '<i class="fa fa-list-alt"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('role_edit')){
                         $actions .= '<a href="'.route('roles.edit', $roles->id).'" '
                                     . 'class="btn btn-xs btn-primary mr-1">'
-                                    . '<i class="fa fa-edit"></i> Edit'
+                                    . '<i class="fa fa-edit"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('role_delete')){
-                        $actions .= '<form action="'.route('roles.destroy', $roles->id).'" method="POST">'
+                        $actions .= '<form action="'.route('roles.destroy', $roles->id).'" method="POST" class="float-right">'
                                     . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
-                                    . '<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Delete</button>';
+                                    . '<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>';
                     }
               
                 return $actions;

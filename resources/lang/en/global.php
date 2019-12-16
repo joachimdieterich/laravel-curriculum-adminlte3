@@ -59,6 +59,7 @@ return [
     'curricula_media_subscriptions'        => 'Media',
     'curricula_cross_references'           => 'Cross references',
     'myProfile'                            => 'My Profile',
+    'settings'                             => 'Settings',
     'date'                                 => 'Date',
     'datatables'                           => [
         'copy'          => 'Copy',
@@ -516,6 +517,7 @@ return [
     'curriculum' =>[
         'title'          => 'Curricula',
         'title_singular' => 'Curriculum',
+        'edit'           => 'Edit curriculum',
         'fields'         => [
             'id'         => 'ID',
             'id_helper'  => '',

@@ -1040,7 +1040,7 @@ table.dataTable tbody td.selected a {
     width: 100%;
     margin: 0px;
     padding-left: 10px;
-    padding-right: 20px;
+    padding-right: 40px;
     font-size: 90%;
   }
 
@@ -37910,5 +37910,16 @@ body {
   text-align: center;
   min-width: 2em;
   font: bold 0.4em sans-serif;
+}
+
+.dataTables_filter,
+.dataTables_paginate {
+  float: right;
+}
+
+.dataTables_info,
+.dataTables_length,
+.dt-buttons {
+  float: left;
 }
 

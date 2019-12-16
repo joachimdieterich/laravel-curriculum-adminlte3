@@ -41,23 +41,23 @@ class PeriodController extends Controller
                         $actions .= '<a href="'.route('periods.show', $periods->id).'" '
                                     . 'id="show-period-'.$periods->id.'" '
                                     . 'class="btn btn-xs btn-success mr-1">'
-                                    . '<i class="fa fa-list-alt"></i> '.trans('global.show').''
+                                    . '<i class="fa fa-list-alt"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('period_edit')){
                         $actions .= '<a href="'.route('periods.edit', $periods->id).'" '
                                     . 'id="edit-period-'.$periods->id.'" '
                                     . 'class="btn btn-xs btn-primary mr-1">'
-                                    . '<i class="fa fa-edit"></i> '.trans('global.edit').''
+                                    . '<i class="fa fa-edit"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('period_delete')){
-                        $actions .= '<form action="'.route('periods.destroy', $periods->id).'" method="POST">'
+                        $actions .= '<form action="'.route('periods.destroy', $periods->id).'" method="POST" class="float-right">'
                                     . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
                                     . '<button '
                                     . 'type="submit" '
                                     . 'id="delete-period-'.$periods->id.'" '
-                                    . 'class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> '.trans('global.delete').'</button>';
+                                    . 'class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>';
                     }
               
                 return $actions;

@@ -16,25 +16,13 @@
 @endsection
 @section('content')
 <div class="row">
-    @can('certificate_show')
-        <div class="col-12">
-            <a class="pull-right btn btn-success" href="{{ route("certificates.create") }}" >
-                {{ trans('global.add') }} {{ trans('global.certificate.title_singular') }}
-            </a>
-            @if(isset($certificates))
-            <a class="pull-right btn text-white btn-success mr-1" onclick="app.__vue__.$modal.show('certificate-generate-modal',  {'curriculum_id': {{$curriculum->id}}});" >
-                {{ trans('global.generate') }} {{ trans('global.certificate.title_singular') }}
-            </a>
-            @endif
-        </div>    
-    @endcan
     <div class="col-12">
         @can('achievement_access')
             @if(isset(json_decode($settings)->achievements))
             <table id="users-datatable" class=" table table-bordered table-striped table-hover datatable">
                 <thead>
                     <tr>
-                         <th width="10"></th>
+                        <th width="10"></th>
                         <th>{{ trans('global.user.fields.username') }}</th>
                         <th>{{ trans('global.user.fields.firstname') }}</th>
                         <th>{{ trans('global.user.fields.lastname') }}</th>
@@ -49,20 +37,21 @@
 <!--    <button type="button" class="btn btn-default" data-toggle="tooltip"  onclick="">
             <i class="fa fa-compress"></i>
         </button>-->
+<div class="btn-group">
         @if (isset($curriculum->contents[0]))
             <dropdown-button 
                 label="{{ trans('global.curricula_content_subscriptions') }}" 
                 model="{{ @class_basename($curriculum->contents[0]) }}"
                 :entries="{{ $curriculum->contents }}"
-                ></dropdown-button> 
-        
+            ></dropdown-button> 
         @endif   
+        
         @if ($curriculum->glossar != null)
             <dropdown-button 
                 label="{{ trans('global.glossar.title') }}" 
                 model="{{ class_basename($curriculum->glossar->contents[0]) }}"
                 :entries="{{ $curriculum->glossar->contents }}"
-                ></dropdown-button> 
+            ></dropdown-button> 
         @endif
        
         @if (count($curriculum->media) > 0)
@@ -70,13 +59,46 @@
                 label="{{ trans('global.curricula_media_subscriptions') }}" 
                 model="{{ class_basename($curriculum->media[0]) }}"
                 :entries="{{ $curriculum->media }}"
-                ></dropdown-button> 
+                styles="border-left:0px"
+            ></dropdown-button> 
         @endif
+        
+        @can(['curriculum_edit', 'certificate_show'])
+        <div class="btn-group">        
+            <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
+                {{ trans('global.settings') }}
+                <span class="sr-only">Toggle Settings Dropdown</span>
+                <div class="dropdown-menu" >
+                    @can('certificate_show')
+                        <a class="dropdown-item" 
+                           onclick="location.href='{{ route("certificates.create") }}'">
+                            <i class="fa fa-certificate pr-1"></i>
+                            {{ trans('global.add') }} {{ trans('global.certificate.title_singular') }}
+                        </a>
+                     @endcan
+                     <hr>
+                    <a class="dropdown-item" 
+                       onclick="location.href='/curricula/{{ $curriculum->id }}/edit'">
+                        <i class="fa fa-edit pr-1"></i>
+                        {{ trans('global.curriculum.edit') }} {{ Str::lower(trans('global.settings')) }}
+                    </a>
+                </div>
+            </button>
+        </div>
+        @endcan
+        @if(isset($certificates))
+            <a class="btn btn-default btn-flat" 
+               onclick="app.__vue__.$modal.show('certificate-generate-modal',  {'curriculum_id': {{ $curriculum->id }} });">
+                <i class="fa fa-certificate pr-1"></i>
+                {{ trans('global.generate') }} {{ trans('global.certificate.title_singular') }}
+            </a>
+        @endif
+</div>
         
         @include ('forms.input.select', 
                    ["model" => "curriculum", 
                    "field" => "id",  
-                   "css" => "pull-right",
+                   "css" => "pull-right m-0",
                    "style" => "float:left; width:200px",
                    "options"=> auth()->user()->curricula(), 
                    "placeholder" => "Select cross references",

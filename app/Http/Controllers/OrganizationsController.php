@@ -52,23 +52,23 @@ class OrganizationsController extends Controller
                     if (\Gate::allows('organization_show')){
                         $actions .= '<a href="'.route('organizations.show', $organizations->id).'" '
                                     . 'id="show-organization-'.$organizations->id.'" '
-                                    . 'class="btn btn-xs btn-success">'
-                                    . '<i class="fa fa-list-alt"></i> Show'
+                                    . 'class="btn btn-xs btn-success mr-1">'
+                                    . '<i class="fa fa-list-alt"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('organization_edit')){
                         $actions .= '<button onclick="app.__vue__.$modal.show(\'organization-modal\', {\'id\':\''.$organizations->id.'\', \'method\': \'patch\'})"'
                                     . 'id="edit-organization-'.$organizations->id.'" '
-                                    . 'class="btn btn-xs btn-primary text-white">'
-                                    . '<i class="fa fa-edit"></i> Edit' 
+                                    . 'class="btn btn-xs btn-primary text-white  mr-1">'
+                                    . '<i class="fa fa-edit"></i>' 
                                     . '</button>';
                     }
                     if (\Gate::allows('organization_delete')){
-                        $actions .= '<form action="'.route('organizations.destroy', $organizations->id).'" method="POST">'
+                        $actions .= '<form action="'.route('organizations.destroy', $organizations->id).'" method="POST" class="pull-right">'
                                     . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
                                     . '<button type="submit" '
                                     . 'id="delete-organization-'.$organizations->id.'" '
-                                    . 'class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Delete</button>';
+                                    . 'class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>';
                     }
               
                 return $actions;

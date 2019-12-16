@@ -2,7 +2,7 @@
     <modal 
         id="medium-modal" 
         name="medium-modal" 
-        height="auto" 
+        height="auto"
         :adaptive=true
         :scrollable=true
         draggable=".draggable"

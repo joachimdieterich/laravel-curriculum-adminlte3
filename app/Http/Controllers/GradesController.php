@@ -40,23 +40,23 @@ class GradesController extends Controller
                         $actions .= '<a href="'.route('grades.show', $grades->id).'" '
                                     . 'id="show-grade-'.$grades->id.'" '
                                     . 'class="btn btn-xs btn-success mr-1">'
-                                    . '<i class="fa fa-list-alt"></i> '.trans('global.show').''
+                                    . '<i class="fa fa-list-alt"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('grade_edit')){
                         $actions .= '<a href="'.route('grades.edit', $grades->id).'" '
                                     . 'id="edit-grade-'.$grades->id.'" '
                                     . 'class="btn btn-xs btn-primary mr-1">'
-                                    . '<i class="fa fa-edit"></i> '.trans('global.edit').''
+                                    . '<i class="fa fa-edit"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('grade_delete')){
-                        $actions .= '<form action="'.route('grades.destroy', $grades->id).'" method="POST">'
+                        $actions .= '<form action="'.route('grades.destroy', $grades->id).'" method="POST" class="pull-right">'
                                     . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
                                     . '<button '
                                     . 'type="submit" '
                                     . 'id="delete-grade-'.$grades->id.'" '
-                                    . 'class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> '.trans('global.delete').'</button>';
+                                    . 'class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>';
                     }
               
                 return $actions;

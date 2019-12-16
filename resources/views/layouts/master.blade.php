@@ -71,10 +71,10 @@ echo json_encode([
                 <section class="content-header">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-sm-6 pl-0">
+                            <div class="col-sm-8 pl-0">
                                 <h1> @yield('title')</h1>
                             </div>
-                            <div class="col-sm-6 pr-0">
+                            <div class="col-sm-4 pr-0">
                                 <ol class="breadcrumb float-sm-right">
                                     @yield('breadcrumb')
                                 </ol>

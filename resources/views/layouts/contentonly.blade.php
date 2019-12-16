@@ -39,13 +39,13 @@ echo json_encode([
 <body class="" >
     <div id="app">
         <!-- Content Header (Page header) -->
-        <section class="content-header">
+        <section class="content-header p-2">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-sm-6 pl-0">
+                    <div class="col-sm-8 pl-0">
                         <h1> @yield('title')</h1>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4 pr-0">
                         <ol class="breadcrumb float-sm-right">
                             @yield('breadcrumb')
                         </ol>
@@ -53,7 +53,7 @@ echo json_encode([
                 </div>
             </div><!-- /.container-fluid -->
         </section>
-        <div class="p-2">
+        <div class="pl-2 pr-2">
             @yield('content')
         </div>
     </div>

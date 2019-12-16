@@ -258,7 +258,6 @@ $(document).ready( function () {
         $('#password').attr('type',$('#checkbox').prop('checked')==true?"text":"password"); 
     });
 
-
     let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
     var table = $('#users-datatable').DataTable({
         processing: true,

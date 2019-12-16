@@ -45,24 +45,24 @@ class NavigatorController extends Controller
                     if (\Gate::allows('navigator_show')){
                         $actions .= '<a href="'.route('navigators.show', $navigators->id).'" '
                                     . 'id="show-navigator-'.$navigators->id.'" '
-                                    . 'class="btn btn-xs btn-success">'
-                                    . '<i class="fa fa-list-alt"></i> Show'
+                                    . 'class="btn btn-xs btn-success mr-1">'
+                                    . '<i class="fa fa-list-alt"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('navigator_edit')){
                         $actions .= '<a href="'.route('navigators.edit', $navigators->id).'" '
                                     . 'id="edit-navigator-'.$navigators->id.'" '
                                     . 'class="btn btn-xs btn-primary mr-1">'
-                                    . '<i class="fa fa-edit"></i> '.trans('global.edit').''
+                                    . '<i class="fa fa-edit"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('navigator_delete')){
-                        $actions .= '<form action="'.route('navigators.destroy', $navigators->id).'" method="POST">'
+                        $actions .= '<form action="'.route('navigators.destroy', $navigators->id).'" method="POST" class="float-right">'
                                     . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
                                     . '<button '
                                     . 'type="submit" '
                                     . 'id="delete-navigator-'.$navigators->id.'" '
-                                    . 'class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Delete</button>';
+                                    . 'class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>';
                     }
               
                 return $actions;

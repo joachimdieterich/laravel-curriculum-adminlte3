@@ -13,7 +13,7 @@ curriculum is a learning platform where teachers can create topic-based learning
 
 > To run this project, you must have PHP 7 installed as a prerequisite.
 
-Begin by cloining this repository to your machine, and installing all Composer dependencies.
+Begin by cloning this repository to your machine, and installing all Composer dependencies.
 
 ```bash
 git clone https://github.com/joachimdieterich/laravel-curriculum-adminlte3.git
@@ -70,7 +70,7 @@ php artisan passport:install
 ##
 OpenApi Documentation Endpoint
 
-Generate openApi Documentation
+Generate OpenApi Documentation
 ```
 php artisan l5-swagger:generate
 ```

@@ -137,7 +137,7 @@
                          <button id="organization-cancel"
                                  type="button" 
                                  class="btn btn-info" 
-                                 data-widget="remove" @click="$emit('close')">{{ trans('global.cancel') }}</button>
+                                 data-widget="remove" @click="close()">{{ trans('global.cancel') }}</button>
                          <button id="organization-save"
                                  class="btn btn-primary" @click="submit(method)" >{{ trans('global.save') }}</button>
                     </span>

@@ -51,7 +51,7 @@
                 <hr>
 
                 <strong><i class="fa fa-file-alt mr-1"></i> {{ trans('global.organization.fields.description') }}</strong>
-                <p class="text-muted">{!! $organization->description !!}</p>
+                <p class="text-muted">{!! $organization->description !! }</p>
             </div>
             <!-- /.card-body -->
             <div class="card-footer">

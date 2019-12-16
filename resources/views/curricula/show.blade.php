@@ -33,11 +33,14 @@
             </table>
             @endif
         @endcan
-    
+    </div>
+</div>
+<div class="row">  
+     <div class="col-12">
 <!--    <button type="button" class="btn btn-default" data-toggle="tooltip"  onclick="">
             <i class="fa fa-compress"></i>
         </button>-->
-<div class="btn-group">
+    <div class="btn-group">
         @if (isset($curriculum->contents[0]))
             <dropdown-button 
                 label="{{ trans('global.curricula_content_subscriptions') }}" 
@@ -93,7 +96,7 @@
                 {{ trans('global.generate') }} {{ trans('global.certificate.title_singular') }}
             </a>
         @endif
-</div>
+    </div>
         
         @include ('forms.input.select', 
                    ["model" => "curriculum", 
@@ -107,7 +110,7 @@
                    "value" =>  old('current_curriculum_cross_reference_id', isset(auth()->user()->current_curriculum_cross_reference_id) ? auth()->user()->current_curriculum_cross_reference_id : '')])
         
     </div>
- 
+
     <curriculum-view
         ref="curriculumView"
         :curriculum="{{ $curriculum }}" 
@@ -174,9 +177,9 @@ $(document).ready( function () {
     table.on( 'deselect', function ( e, dt, type, indexes ) { //on deselect event
         triggerVueEvent(type);
     });
-    
+        
  });
- 
+
     </script>
 @endif
 

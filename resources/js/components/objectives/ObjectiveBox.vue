@@ -43,8 +43,7 @@
 
         <div class="panel-body boxwrap" >
             <div class="boxscroll" 
-                 v-bind:style="{'background': background, 'background-color': backgroundcolor, 'border-color': objective.color }"
-            >
+                 v-bind:style="{'background': background, 'background-color': backgroundcolor, 'border-color': objective.color }">
                 <div class="boxcontent" 
                      v-bind:style="{ 'color': textcolor }"
                      v-html="objective.title">
@@ -56,7 +55,6 @@
                 :textcolor="textcolor"
                 :type="type"
                 :settings="settings"></Footer>
-
     </div>
 </template>
 

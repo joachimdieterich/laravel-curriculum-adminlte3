@@ -77,7 +77,7 @@
                                 placeholder="Pick some" 
                                 label="title" 
                                 track-by="id" 
-                                :preselect-first="true"
+                                :preselect-first="false"
                                 @input="onChange">
                         <template slot="selection" slot-scope="{ values, search, isOpen }">
                                <span class="multiselect__single" v-if="values.length &amp;&amp; !isOpen">

@@ -149,6 +149,5 @@ if (env('GUEST_USER') !== null)
         {
             return redirect('/');
         }
-
     }); 
 }

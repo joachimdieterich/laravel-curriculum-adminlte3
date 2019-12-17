@@ -34,19 +34,19 @@
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <!-- Sidebar user (optional) -->
-      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="image" href="{{route('users.show', auth()->user()->id)}}">
-            <img class="img-circle elevation-2" 
-                 src="{{ Avatar::create(auth()->user()->fullName())->toBase64() }}" 
-                 alt="User profile picture">
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+          <div class="image" href="{{route('users.show', auth()->user()->id)}}">
+              <img class="img-circle elevation-2" 
+                   src="{{ Avatar::create(auth()->user()->fullName())->toBase64() }}" 
+                   alt="User profile picture">
+          </div>
+          <div class="info p-0 m-1 ml-2" style="line-height: 1">
+              <a href="{{route('users.show', auth()->user()->id)}}">{{auth()->user()->fullName()}}
+                  <br><small >{{ optional(Auth::user()->role())->title}}</small>
+              </a>
+          </div>
         </div>
-        <div class="info p-0 m-1 ml-2" style="line-height: 1">
-            <a href="{{route('users.show', auth()->user()->id)}}">{{auth()->user()->fullName()}}
-                <br><small >{{ optional(Auth::user()->role())->title}}</small>
-            </a>
-        </div>
-      </div>
-
+        <div id="menu_top_placeholder" ></div>
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar " data-widget="treeview" role="menu" data-accordion="false">

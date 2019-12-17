@@ -17,6 +17,7 @@
 @section('content')
 <div class="row">
     <div class="col-12">
+        <div id="content_top_placeholder" style="height:0px;"></div>
         @can('achievement_access')
             @if(isset(json_decode($settings)->achievements))
             <table id="users-datatable" class=" table table-bordered table-striped table-hover datatable">
@@ -148,6 +149,22 @@ function triggerVueEvent(type){
     }
 }
 
+function isElementInViewport (el) {
+    //special bonus for those using jQuery
+    if (typeof jQuery === "function" && el instanceof jQuery) {
+        el = el[0];
+    }
+
+    var rect = el.getBoundingClientRect();
+
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+    );
+}
+
 $(document).ready( function () {
     //let dtButtons = false;//$.extend(true, [], $.fn.dataTable.defaults.buttons)
     table = $('#users-datatable').DataTable({
@@ -176,6 +193,18 @@ $(document).ready( function () {
     });
     table.on( 'deselect', function ( e, dt, type, indexes ) { //on deselect event
         triggerVueEvent(type);
+    });
+    
+    $(window).on("scroll", function(table) {
+        if (!isElementInViewport($("#content_top_placeholder"))){
+            $("#users-datatable_wrapper").appendTo("#menu_top_placeholder");
+            $("#menu_top_placeholder").css({'background-color': '#ecf0f5', 'padding':'5px', 'webkit-transform':'translate3d(0,0,0)'});
+        } else {
+            if (isElementInViewport($("#content_top_placeholder"))){
+                $("#users-datatable_wrapper").appendTo("#content_top_placeholder");
+                $("#menu_top_placeholder").css({'background-color': 'transparent', 'padding':'0px', 'webkit-transform':'translate3d(0,0,0)'});
+            }
+        } 
     });
         
  });

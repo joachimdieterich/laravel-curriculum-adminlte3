@@ -25,7 +25,7 @@
                 @endif
                >
 
-            <?php $current_optgroup_id = 0; ?>
+            <?php $current_optgroup_id = 'false'; ?>
             @if(!isset($multiple)) 
             <option></option>
             @endif

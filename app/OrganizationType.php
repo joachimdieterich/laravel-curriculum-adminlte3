@@ -17,6 +17,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class OrganizationType extends Model
 {
+    protected $fillable = ['title', 'external_id', 'state_id', 'country_id', 'created_at', 'updated_at'];
+    
     public function state()
     {
         return $this->hasOne('App\State', 'code', 'state_id');

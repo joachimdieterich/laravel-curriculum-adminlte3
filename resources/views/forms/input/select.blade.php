@@ -30,8 +30,7 @@
             <option></option>
             @endif
             @foreach($options as $v)
-                <?php $o_id = isset($option_id) ? $option_id : 'id'; ?>
-            
+                <?php $o_id = isset($option_id) ? $option_id : 'id'; ?>  
                 
                     @if (isset($optgroup[0]) && ($current_optgroup_id != $v->$optgroup_reference_field ))
                          <?php $optgroup_label = ((isset($optgroup_label)) ? $optgroup_label : 'title');

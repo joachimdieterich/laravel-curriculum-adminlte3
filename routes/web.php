@@ -90,7 +90,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('organizations', 'OrganizationsController');
 
     /* organizationtype routes */
-    Route::get('organizationTypeList', 'OrganizationTypesController@organizationTypeList')->name('organizationtypes.list');
+    Route::get('organizationtypes/list', 'OrganizationTypesController@list')->name('organizationtypes.list');
     Route::delete('organizationtypes/destroy', 'OrganizationTypesController@massDestroy')->name('organizationtypes.massDestroy');
     Route::resource('organizationtypes', 'OrganizationTypesController');
    

@@ -17,6 +17,8 @@
         - [Dropdown Button](/{{route}}/{{version}}/vue-dropdown-button)
     - [Blade](/{{route}}/{{version}}/blade)
         - [TinyCME](/{{route}}/{{version}}/blade-editor)
+        - [Forms](/{{route}}/{{version}}/blade-form)
+            - [Select](/{{route}}/{{version}}/blade-form-select)
     - [Generate PDFs](/{{route}}/{{version}}/pdf)
 - ## API
     - [OpenApi](/{{route}}/{{version}}/openapi)

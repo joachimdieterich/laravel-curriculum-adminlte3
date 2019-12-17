@@ -128,7 +128,7 @@ class CurriculumController extends Controller
     {
         abort_unless(\Gate::allows('curriculum_create'), 403);
         $input = $this->validateRequest();
-        //dd($input);
+        
         $curriculum = Curriculum::firstOrCreate([
             'title'                 => $input['title'],
             'description'           => $input['description'],
@@ -356,7 +356,7 @@ class CurriculumController extends Controller
             'organization_type_id'  => 'sometimes',
             'state_id'              => 'sometimes',
             'country_id'            => 'sometimes',
-            'medium_id'               => 'sometimes',
+            'medium_id'             => 'sometimes',
             'owner_id'              => 'sometimes',
             ]);
     }

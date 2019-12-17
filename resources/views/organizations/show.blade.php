@@ -35,7 +35,7 @@
                 </p>
                 <hr>
 
-                <strong><i class="fa fa-map-marker mr-1"></i> Location</strong>
+                <strong><i class="fa fa-map-marker mr-1"></i> {{ trans('global.place') }}</strong>
                 <p class="text-muted">
                     {{ $organization->street }}<br>
                     {{ $organization->postcode }} {{ $organization->city }}<br>

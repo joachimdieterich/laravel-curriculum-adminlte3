@@ -11,9 +11,9 @@
 @can('organization_type_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <button class="btn btn-success" href="{{ route("organizationtypes.create") }}" @click.prevent="$modal.show('organizationtype-modal')">
+            <a class="btn btn-success" href="{{ route("organizationtypes.create") }}" >
                 {{ trans('global.add') }} {{ trans('global.organizationtype.title_singular') }}
-            </button>
+            </a>
         </div>
     </div>
 @endcan
@@ -27,7 +27,7 @@
                     <th>{{ trans('global.organizationtype.fields.external_id') }}</th>
                     <th>{{ trans('global.country.title') }}</th>
                     <th>{{ trans('global.state.title') }}</th>
-                    <!--<th>Action</th>-->
+                    <th>Action</th>
                 </tr>
             </thead>
         </table>
@@ -44,14 +44,14 @@
     $('#organization_type_datatable').DataTable({
            processing: true,
            serverSide: true,
-           ajax: "{{ url('organizationTypeList') }}",
+           ajax: "{{ url('organizationtypes/list') }}",
            columns: [
                     { data: 'check'},
                     { data: 'title' },
                     { data: 'external_id' },
                     { data: 'state_id' },
                     { data: 'country_id' },
-                    //{ data: 'action' }
+                    { data: 'action' }
                  ]
         });
      });

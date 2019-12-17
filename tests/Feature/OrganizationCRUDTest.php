@@ -34,7 +34,7 @@ class OrganizationCRUDTest extends TestCase
     }
     
     /** @test 
-     * Use Route: POST, organizations, organizations.index
+     * Use Route: POST, organizations, organizations.store
      */     
     public function an_administrator_create_an_organization()
     { 
@@ -45,7 +45,7 @@ class OrganizationCRUDTest extends TestCase
     }
     
     /** @test 
-     * Use Route: POST, organizations, organizations.index
+     * Use Route: POST, organizations, organizations.create
      */     
     public function an_administrator_get_create_view_for_organization()
     { 

@@ -61,6 +61,8 @@ return [
     'myProfile'                            => 'My Profile',
     'settings'                             => 'Settings',
     'date'                                 => 'Date',
+    'region'                               => 'Region',
+    'place'                                => 'Place',
     'datatables'                           => [
         'copy'          => 'Copy',
         'csv'           => 'CSV',
@@ -437,7 +439,7 @@ return [
             'title'              => 'Title',
             'title_helper'       => '',
             'external_id'        => 'External ID',
-            'external_id_begin_helper'=> '',
+            'external_id_helper' => '',
         ],
     ],  
     'state' =>[

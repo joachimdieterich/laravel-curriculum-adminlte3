@@ -11,8 +11,6 @@ $factory->define(OrganizationType::class, function (Faker $faker) {
         'external_id' => $faker->numberBetween(1, 100),
         'state_id'    => 'DE-RP',
         'country_id'  => 'DE',
-        'created_at'  => null,
-        'updated_at'  => null,
     ];
 });
 

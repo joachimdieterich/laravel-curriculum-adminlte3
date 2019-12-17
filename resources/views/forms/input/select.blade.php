@@ -67,12 +67,7 @@
             dropdownParent: $("#{{ $field }}").parent(),
             allowClear: true
         });
-
-
-
     });
-
-
     </script>
     @endsection
  @endif

@@ -71,14 +71,14 @@ class OrganizationTypesController extends Controller
                 'color' => 'primary',
             ])
             ->make(true);
-        
     }
 
     public function create()
     {
         abort_unless(\Gate::allows('organization_type_create'), 403);
         $countries = Country::all();
-        $states = State::all();
+       
+        $states = State::all()->sortBy('country');
         return view('organizationtypes.create')
                     ->with(compact('countries'))
                     ->with(compact('states'));

@@ -168,6 +168,7 @@ function isElementInViewport (el) {
 $(document).ready( function () {
     //let dtButtons = false;//$.extend(true, [], $.fn.dataTable.defaults.buttons)
     table = $('#users-datatable').DataTable({
+        
         processing: true,
         serverSide: true,
         select: true,

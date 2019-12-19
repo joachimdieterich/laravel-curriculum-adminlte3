@@ -39,7 +39,7 @@ class Curriculum extends Model
     }
     public function organizationType()
     {
-        return $this->hasOne('App\organizationType', 'id', 'organization_type_id');   
+        return $this->hasOne('App\OrganizationType', 'id', 'organization_type_id');   
     }
     
     public function subject()

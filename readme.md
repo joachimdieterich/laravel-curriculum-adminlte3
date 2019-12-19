@@ -162,7 +162,7 @@ php artisan dusk
 
 ### Documentation
 Curriculum uses [saleem-hadad/larecipe](https://github.com/saleem-hadad/larecipe) to provide integrated project documentation. 
-The documentation can be found at the following URL `localhost:[port]/docs`
+The documentation can be found at the following URL `localhost:[port]/documentation`
 
 ### Roles and Permissions
 The initial installation has 8 Roles: 

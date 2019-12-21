@@ -155,7 +155,7 @@ class CurriculumImportController extends Controller
                     'description' => htmlspecialchars_decode(
                             //$ena->getAttribute('description')
                             $this->importEmbeddedFiles(
-                                html_entity_decode($ena->getAttribute('enabling_objective')), 
+                                html_entity_decode($ena->getAttribute('description')), 
                                 $ena, 
                                 $curriculum, 
                                 $folder, 
@@ -218,6 +218,8 @@ class CurriculumImportController extends Controller
     }
     
     private function importMedia($media_node, $model, $folder, $path, $tag = 'file'){
+        $base_path = config('lfm.files_folder_name')."/".auth()->user()->id; //define path to current users folder
+        
         if ($media_node->getAttribute('full_path') == ''){
             return;
         }
@@ -234,7 +236,7 @@ class CurriculumImportController extends Controller
             
         }
         $media = new Medium([
-            'path'          => ($media_node->getAttribute('type') == '.url') ? $media_node->getAttribute('path') : "/{$new_folder}/{$model->id}/",
+            'path'          => ($media_node->getAttribute('type') == '.url') ? $media_node->getAttribute('path') : "/{$base_path}/{$new_folder}/{$model->id}/",
             'title'         => substr ( $media_node->getAttribute('title') , 0 , 190 ),
             'medium_name'   => substr ( $media_node->getAttribute('filename'), 0 , 190 ),
             'description'   => $media_node->getAttribute('description'),
@@ -251,11 +253,11 @@ class CurriculumImportController extends Controller
         ]); 
         $media->save();
         
-        if (!Storage::disk('local')->exists("/{$new_folder}/{$model->id}/{$media_node->getAttribute('filename')}") AND ($media_node->getAttribute('type') != '.url')) //only copy if not exists 
+        if (!Storage::disk('local')->exists("{$base_path}/{$new_folder}/{$model->id}/{$media_node->getAttribute('filename')}") AND ($media_node->getAttribute('type') != '.url')) //only copy if not exists 
         {
             Storage::disk('local')
                     ->move("{$folder}/{$path}".$media_node->getAttribute('filename'),
-                           "/{$new_folder}/{$model->id}/{$media_node->getAttribute('filename')}");
+                           "{$base_path}/{$new_folder}/{$model->id}/{$media_node->getAttribute('filename')}");
         } 
         
         $media->fresh();
@@ -264,7 +266,7 @@ class CurriculumImportController extends Controller
         {
             $media->subscribe($model);
         }
-
+        
         return array(['old_id' => $media_node->getAttribute('id'), 'new_media' => $media]);
     }
     

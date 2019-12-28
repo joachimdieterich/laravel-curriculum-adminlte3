@@ -11,7 +11,7 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js(['resources/js/app.js', 'vendor/select2/select2/dist/js/select2.min.js'], 'public/js')
+mix.js(['resources/js/app.js', 'vendor/select2/select2/dist/js/select2.min.js', 'vendor/unisharp/laravel-filemanager/public/js/lfm.js'], 'public/js')
    .js('node_modules/popper.js/dist/popper.js', 'public/js').sourceMaps()
    .sass('resources/sass/app.scss', 'public/css');
 mix.copyDirectory('node_modules/tinymce/plugins', 'public/node_modules/tinymce/plugins');
@@ -21,3 +21,4 @@ mix.copy('node_modules/tinymce/jquery.tinymce.js', 'public/node_modules/tinymce/
 mix.copy('node_modules/tinymce/jquery.tinymce.min.js', 'public/node_modules/tinymce/jquery.tinymce.min.js');
 mix.copy('node_modules/tinymce/tinymce.js', 'public/node_modules/tinymce/tinymce.js');
 mix.copy('node_modules/tinymce/tinymce.min.js', 'public/node_modules/tinymce/tinymce.min.js');
+mix.copyDirectory('node_modules/@fortawesome/fontawesome-free/webfonts', 'public/fonts/vendor/@fortawesome/fontawesome-free');

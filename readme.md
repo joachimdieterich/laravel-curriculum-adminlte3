@@ -9,9 +9,11 @@ curriculum is a learning platform where teachers can create topic-based learning
 
 ## Installation
 
-### Step 1.
+### Prerequisites
+> PHP 7.3 with ghostscript and Imagemagick
+> Node.jsghostscript 
 
-> To run this project, you must have PHP 7 installed as a prerequisite.
+### Step 1.
 
 Begin by cloning this repository to your machine, and installing all Composer dependencies.
 
@@ -27,8 +29,13 @@ npm run
 
 ### Step 2. 
 
-Next, rename `.env.example` to `.env` create a new database and reference its name and username/password within the project's `.env` file. In the example below, we've named the database, "curriculum."
+Next, rename `.env.example` to `.env` 
 
+```bash
+cp .env.example .env
+```
+
+Create a new database and reference its name and username/password within the project's `.env` file. In the example below, we've named the database, "curriculum."
 ```
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -37,6 +44,8 @@ DB_DATABASE=curriculum
 DB_USERNAME=root
 DB_PASSWORD=root
 ```
+
+Information about configurating `.env` in documentation `localhost:[port]/documentation`
 
 ### Step 3.
 

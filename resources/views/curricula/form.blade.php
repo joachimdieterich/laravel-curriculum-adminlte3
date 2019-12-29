@@ -7,39 +7,56 @@
 
 @include ('forms.input.datetime', ["model" => "curriculum", "field" => "date", "placeholder" => "2019-06-03 21:15:00",  "value" => old('date', isset($curriculum) ? $curriculum->date : '')])
 
-@include ('forms.input.text', ["model" => "curriculum", "field" => "color", "placeholder" => "#231423",  "value" => old('color', isset($curriculum) ? $curriculum->color : '')])
+@include ('forms.input.colorpicker', 
+            ["model" => "curriculum", 
+            "field" => "color", 
+            "placeholder" => "#231423",  
+            "value" => old('color', isset($curriculum) ? $curriculum->color : '')])
+
+@include ('forms.input.file', 
+            ["model" => "media", 
+            "field" => "path", 
+            "label" => false,
+            "value" => old('path', isset($media->path) ? '/laravel-filemanager'.$media->relativePath() : '')])
 
 @include ('forms.input.select', 
-            ["model" => "media",
+            ["model" => "grade",
             "show_label" => true,
-            "field" => "medium_id",  
-            "options"=> $media, 
-            "option_id" => "id",
-            "option_label"=> "title", 
-            "value" => old('medium_id', isset($curriculum->medium_id) ? $curriculum->medium_id : '') ]) 
+            "field" => "grade_id",  
+            "options"=> $grades, 
+            "value" => old('grade_id', isset($curriculum->grade_id) ? $curriculum->grade_id : '') ])                                                          
                 
 @include ('forms.input.select', 
-                      ["model" => "grade",
-                      "show_label" => true,
-                      "field" => "grade_id",  
-                      "options"=> $grades, 
-                      "value" => old('grade_id', isset($curriculum->grade_id) ? $curriculum->grade_id : '') ])                                                          
+            ["model" => "subject",
+            "show_label" => true,
+            "field" => "subject_id",  
+            "options"=> $subjects, 
+            "option_id" => "external_id",
+            "value" => old('subject_id', isset($curriculum->subject_id) ? $curriculum->subject_id : '') ])                                                          
                 
 @include ('forms.input.select', 
-                      ["model" => "subject",
-                      "show_label" => true,
-                      "field" => "subject_id",  
-                      "options"=> $subjects, 
-                      "option_id" => "external_id",
-                      "value" => old('subject_id', isset($curriculum->subject_id) ? $curriculum->subject_id : '') ])                                                          
-                
-@include ('forms.input.select', 
-                      ["model" => "organizationtype",
-                      "show_label" => true,
-                      "field" => "organization_type_id",  
-                      "options"=> $organization_types, 
-                      "value" => old('organization_type_id', isset($curriculum->organization_type_id) ? $curriculum->organization_type_id : '') ])                                                          
-      
+            ["model" => "organizationtype",
+            "show_label" => true,
+            "field" => "organization_type_id",  
+            "options"=> $organization_types, 
+            "value" => old('organization_type_id', isset($curriculum->organization_type_id) ? $curriculum->organization_type_id : '') ])                                                          
+
+@include ('forms.input.country', [
+            "countries" => $countries,
+            "country_id" => $curriculum->country_id,
+            "states" => $states,
+            "state_id" => $curriculum->state_id
+         ])
 <div>
     <input class="btn btn-info" type="submit" value="{{ $buttonText }}">
 </div>
+                      
+@section('scripts')
+@parent
+<script>
+$(document).ready( function () {                     
+    $('#lfm').filemanager('files');
+});
+</script>
+ 
+@endsection

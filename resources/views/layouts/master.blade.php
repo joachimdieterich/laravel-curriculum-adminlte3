@@ -9,6 +9,7 @@
         <title>{{ trans('global.site_title') }}</title>
         <link href="{{ asset('css/app.css') }}" rel="stylesheet" />
         <link href="{{ asset('css/custom.css') }}" rel="stylesheet" />
+        <script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script>
         @yield('styles')
         <script>
             window.trans = <?php
@@ -40,13 +41,13 @@ echo json_encode([
                     <li class="nav-item">
                         <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
                     </li>
-                    <li class="nav-item d-none d-sm-inline-block">
+<!--                    <li class="nav-item d-none d-sm-inline-block">
                         <a href="#" class="nav-link">Contact</a>
-                    </li>
+                    </li>-->
                 </ul>
 
                 <!-- SEARCH FORM -->
-                <form class="form-inline ml-3">
+<!--                <form class="form-inline ml-3">
                     <div class="input-group input-group-sm">
                         <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
                         <div class="input-group-append">
@@ -55,7 +56,7 @@ echo json_encode([
                             </button>
                         </div>
                     </div>
-                </form>
+                </form>-->
 
                 <!-- Right navbar links -->
                 @include('partials.navbar')
@@ -112,23 +113,15 @@ echo json_encode([
         <!-- ./wrapper -->
 
         <script src="{{ asset('js/app.js') }}"></script>
-        <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-        <script src="https://cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js"></script>
-        <script src="https://cdn.datatables.net/select/1.3.0/js/dataTables.select.min.js"></script>
-        <script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.flash.min.js"></script>
-        <script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.html5.min.js"></script>
-        <script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.print.min.js"></script>
-        <script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.colVis.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
-        <script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script>
-        <script>
-            tinymce.init({
-                selector:'textarea',
-                branding: false
-            });
-        </script>
+        <script src="{{ asset('node_modules/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+        <script src="{{ asset('node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+        <script src="{{ asset('node_modules/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+        <script src="{{ asset('node_modules/datatables.net-buttons/js/buttons.flash.min.js') }}"></script>
+        <script src="{{ asset('node_modules/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
+        <script src="{{ asset('node_modules/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
+        <script src="{{ asset('node_modules/datatables.net-buttons/js/buttons.colVis.min.js') }}"></script>
+        <script src="{{ asset('node_modules/datatables.net-select/js/dataTables.select.min.js') }}"></script>
+        <script src="{{ asset('node_modules/moment/js/moment.min.js') }}"></script>
         <script src="{{ asset('js/main.js') }}"></script>
         <script>
                $(function() {
@@ -139,7 +132,9 @@ echo json_encode([
                        let printButtonTrans = '{{ trans('global.datatables.print') }}'
                        let colvisButtonTrans = '{{ trans('global.datatables.colvis') }}'
                        let languages = {
-                       'en': 'https://cdn.datatables.net/plug-ins/1.10.19/i18n/English.json'
+                       'de': '{{ asset("datatables/i18n/German.json") }}',
+                       'en': '{{ asset("datatables/i18n/English.json") }}',
+                       'fr': '{{ asset("datatables/i18n/French.json") }}', 
                        };
                $.extend(true, $.fn.dataTable.Buttons.defaults.dom.button, { className: 'btn' })
                        $.extend(true, $.fn.dataTable.defaults, {

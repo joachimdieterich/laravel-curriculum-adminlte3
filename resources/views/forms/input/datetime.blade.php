@@ -30,12 +30,7 @@
         @endif
     </div>
 </div>
-    
 
-@section('styles')
-@parent
-    
-@endsection
 @section('scripts')
 @parent
     <script src="{{ asset('node_modules/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}"></script>

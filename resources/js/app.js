@@ -17,8 +17,45 @@ Vue.prototype.trans = (key) => {
     return _.get(window.trans, key, key);
 };
 
+Vue.prototype.$initTinyMCE = function (options) {
+    tinyMCE.remove();
+    tinymce.init({
+        path_absolute : "/",
+        selector: "textarea.my-editor",
+        branding:false,
+        plugins: [
+          "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+          "searchreplace wordcount visualblocks visualchars code fullscreen",
+          "insertdatetime media nonbreaking save table contextmenu directionality",
+          "emoticons template paste textcolor colorpicker textpattern"
+        ],
+        toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
+        relative_urls: false,
+
+        file_browser_callback : function(field_name, url, type, win) {
+            var x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
+            var y = window.innerHeight|| document.documentElement.clientHeight|| document.getElementsByTagName('body')[0].clientHeight;
+
+            var cmsURL =  "/" + 'laravel-filemanager?field_name=' + field_name;
+                cmsURL = cmsURL + "&type=Files";
+
+            tinyMCE.activeEditor.windowManager.open({
+                  file : cmsURL,
+                  title : 'Filemanager',
+                  width : x * 0.8,
+                  height : y * 0.8,
+                  resizable : "yes",
+                  close_previous : "no"
+            });
+        },
+    });
+}
+
 import VModal from 'vue-js-modal';
 Vue.use(VModal);
+
+import Sticky from 'vue-sticky-directive'
+Vue.use(Sticky)
 
 /**
  * The following block of code may be used to automatically register your
@@ -34,10 +71,12 @@ Vue.component('group-modal', require('./components/group/GroupModal.vue').defaul
 Vue.component('curriculum-view', require('./components/curriculum/CurriculumView.vue').default);
 Vue.component('terminal-objective-modal', require('./components/objectives/TerminalObjectiveModal.vue').default);
 Vue.component('enabling-objective-modal', require('./components/objectives/EnablingObjectiveModal.vue').default);
+Vue.component('objective-view', require('./components/objectives/ObjectiveView.vue').default);
 Vue.component('objective-box', require('./components/objectives/ObjectiveBox.vue').default);
 Vue.component('objective-description-modal', require('./components/objectives/ObjectiveDescriptionModal.vue').default);
 Vue.component('dropdown-button', require('./components/uiElements/DropdownButton.vue').default);
 Vue.component('content-modal', require('./components/content/ContentModal.vue').default);
+Vue.component('content-create-modal', require('./components/content/ContentCreateModal.vue').default);
 Vue.component('medium-modal', require('./components/media/MediumModal.vue').default);
 Vue.component('objective-medium-modal', require('./components/objectives/ObjectiveMediumModal.vue').default);
 Vue.component('certificate-generate-modal', require('./components/certificate/GenerateCertificateModal.vue').default);
@@ -69,5 +108,5 @@ Vue.directive('can', function (el, binding) {
  */
 var app = new Vue({
     el: '#app', 
-
+      
 });    

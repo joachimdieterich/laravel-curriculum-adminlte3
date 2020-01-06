@@ -3,6 +3,28 @@
     class="box box-objective pointer {{ $item->css_class }} my-1" 
     style="height: 300px !important; min-width: 200px !important; padding: 0;background: url('{{isset($item->medium->id) ? route('media.show', ($item->medium->id)) : Avatar::create('test')->toGravatar(['d' => 'identicon', 'r' => 'pg', 's' => 100])}}') center center;  background-size: cover;"
     onclick="{{ $onclick }}">
+    
+    <div class="symbol" style="position: absolute;
+        padding: 6px;
+        z-index: 1;
+        width: 30px;
+        height: 40px;
+        background-color: #0583C9;
+        top: 0px;
+        font-size: 1.2em;
+        left: 10px;">
+        @switch($item->referenceable_type)
+            @case('App\NavigatorView')
+                <i class="fa fa-map-signs text-white pt-2"></i>
+                @break
+            @case('App\Curriculum')
+                <i class="fa fa-th text-white  pt-2"></i>
+                @break   
+             @case('App\Medium')
+                <i class="fa fa-photo-video text-white pt-2"></i>
+                @break
+        @endswitch
+    </div>
         @can('navigator_create')
         <span class="p-1 pointer_hand" 
            accesskey="" style="position:absolute; top:0px; height: 30px; width:100%;">

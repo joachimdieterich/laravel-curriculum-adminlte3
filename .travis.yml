@@ -24,3 +24,5 @@ services:
 cache:
     directories:
         - vendor
+env:
+    LANGUAGE=de

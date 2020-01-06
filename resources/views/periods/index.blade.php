@@ -1,11 +1,11 @@
 @extends('layouts.master')
 @section('title')
-     {{ trans('global.period.title_singular') }} {{ trans('global.list') }}
+    {{ trans('global.period.title') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/">Home</a></li>
-    <li class="breadcrumb-item active">{{ trans('global.period.title_singular') }} {{ trans('global.list') }}</li>
-    <li class="breadcrumb-item "> <i class="fas fa-question-circle"></i></li>
+    <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
+    <li class="breadcrumb-item active">{{ trans('global.period.title') }}</li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
 @can('user_create')
@@ -14,7 +14,7 @@
             <a id="add-period"
                class="btn btn-success" 
                href="{{ route("periods.create") }}" >
-                {{ trans('global.add') }} {{ trans('global.period.title_singular') }}
+               {{ trans('global.period.create') }}
             </a>
         </div>
     </div>
@@ -29,14 +29,12 @@
                     <th>{{ trans('global.period.fields.begin') }}</th>
                     <th>{{ trans('global.period.fields.end') }}</th>
                     <th>{{ trans('global.organization.title_singular') }}</th>
-                    <th>{{ trans('global.user.fields.username') }}</th>
-                    <th>Action</th>
+                    <th>{{ trans('global.datatables.action') }}</th>
                 </tr>
             </thead>
         </table>
     </div>
 </div>
-
 
 @endsection
 @section('scripts')
@@ -58,7 +56,6 @@ $(document).ready( function () {
                  { data: 'begin' },
                  { data: 'end' },
                  { data: 'organization' },
-                 { data: 'owner' },
                  { data: 'action' }
                 ],
         buttons: dtButtons
@@ -99,6 +96,4 @@ function sendRequest(method, url, ids, data){
     }
 }  
 </script>
-
-
 @endsection

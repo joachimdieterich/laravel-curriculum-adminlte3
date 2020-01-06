@@ -1,11 +1,11 @@
 @extends('layouts.master')
 @section('title')
-     {{ trans('global.group.title_singular') }} {{ trans('global.list') }}
+    {{ trans('global.group.title') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/">Home</a></li>
-    <li class="breadcrumb-item active">{{ trans('global.group.title_singular') }} {{ trans('global.list') }}</li>
-    <li class="breadcrumb-item "> <i class="fas fa-question-circle"></i></li>
+    <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
+    <li class="breadcrumb-item active">{{ trans('global.group.title') }}</li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
 @can('user_create')
@@ -14,7 +14,7 @@
             <a id="add-group"
                class="btn btn-success" 
                href="{{ route("groups.create") }}" >
-                {{ trans('global.add') }} {{ trans('global.group.title_singular') }}
+               {{ trans('global.group.create') }}
             </a>
         </div>
     </div>
@@ -29,7 +29,7 @@
                     <th>{{ trans('global.grade.title_singular') }}</th>
                     <th>{{ trans('global.period.title_singular') }}</th>
                     <th>{{ trans('global.organization.title_singular') }}</th>
-                    <th>Action</th>
+                    <th>{{ trans('global.datatables.action') }}</th>
                 </tr>
             </thead>
         </table>
@@ -69,8 +69,6 @@
                                 </div>
                             </div>
                         <!--@endcan-->
-
-
 
                      </div><!-- ./tab-content -->
                 </div>

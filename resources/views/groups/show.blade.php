@@ -3,9 +3,9 @@
      {{ $group->title }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/">Home</a></li>
-    <li class="breadcrumb-item active"> {{ $group->title }}</li>
-    <li class="breadcrumb-item "> <i class="fas fa-question-circle"></i></li>
+    <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
+    <li class="breadcrumb-item active">{{ $group->title }}</li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
 <div class="row">
@@ -109,7 +109,6 @@
             </div>
             <!-- /.nav-tabs-custom -->
           </div>
-    
     
 </div>
 @endsection

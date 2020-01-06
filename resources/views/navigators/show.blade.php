@@ -59,7 +59,7 @@
                 @foreach($breadcrumbs as $breadcrumb)
                     <li class="breadcrumb-item "><a href="{{ $breadcrumb['href'] }}">{{ $breadcrumb['title'] }}</a></li>
                 @endforeach
-<!--                <li class="breadcrumb-item "> <i class="fas fa-question-circle"></i></li>-->
+<!--                <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>-->
            </ol>
         </div>
     </div>

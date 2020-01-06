@@ -1,11 +1,11 @@
 @extends('layouts.master')
 @section('title')
-    {{ trans('global.organization.title_singular') }} {{ trans('global.list') }}
+    {{ trans('global.organization.title_singular') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/">Home</a></li>
-    <li class="breadcrumb-item active">{{ trans('global.organization.title_singular') }} {{ trans('global.list') }}</li>
-    <li class="breadcrumb-item "> <i class="fas fa-question-circle"></i></li>
+    <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
+    <li class="breadcrumb-item active">{{ trans('global.organization.title_singular') }}</li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
 <div class="row">
@@ -51,7 +51,7 @@
                 <hr>
 
                 <strong><i class="fa fa-file-alt mr-1"></i> {{ trans('global.organization.fields.description') }}</strong>
-                <p class="text-muted">{!! $organization->description !! }</p>
+                <p class="text-muted">{!! $organization->description !!}</p>
             </div>
             <!-- /.card-body -->
             <div class="card-footer">

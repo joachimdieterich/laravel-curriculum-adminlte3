@@ -1,11 +1,11 @@
 @extends('layouts.master')
 @section('title')
-    {{ trans('global.organization.title_singular') }} {{ trans('global.list') }}
+    {{ trans('global.organization.title') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/">Home</a></li>
-    <li class="breadcrumb-item active">{{ trans('global.organization.title_singular') }} {{ trans('global.list') }}</li>
-    <li class="breadcrumb-item "> <i class="fas fa-question-circle"></i></li>
+    <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
+    <li class="breadcrumb-item active">{{ trans('global.organization.title') }}</li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
 @can('organization_create')
@@ -14,8 +14,8 @@
             <button id="add-organization"
                     class="btn btn-success" 
                     href="{{ route("organizations.create") }}" 
-                    @click.prevent="$modal.show('organization-modal')">
-                {{ trans('global.add') }} {{ trans('global.organization.title_singular') }}
+                    @click.prevent="$modal.show('organization-modal', {'method': 'post'})">
+                {{ trans('global.organization.create') }}
             </button>
         </div>
     </div>
@@ -30,10 +30,8 @@
                     <th>{{ trans('global.organization.fields.street') }}</th>
                     <th>{{ trans('global.organization.fields.postcode') }}</th>
                     <th>{{ trans('global.organization.fields.city') }}</th>
-                    <th>{{ trans('global.organization.fields.phone') }}</th>
-                    <th>{{ trans('global.organization.fields.email') }}</th>
                     <th>{{ trans('global.organization.fields.status') }}</th>
-                    <th>Action</th>
+                    <th>{{ trans('global.datatables.action') }}</th>
                 </tr>
             </thead>
         </table>
@@ -86,8 +84,6 @@ $(document).ready( function () {
                  { data: 'street' },
                  { data: 'postcode' },
                  { data: 'city' },
-                 { data: 'phone' },
-                 { data: 'email' },
                  { data: 'status' },
                  { data: 'action' }
                 ],

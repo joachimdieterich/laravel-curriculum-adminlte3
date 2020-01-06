@@ -16,18 +16,24 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('achievements', 'AchievementController@store');
     
+    Route::resource('categories', 'CategorieController');
+   
     Route::get('certificates/list', 'CertificateController@list');
     //Route::get('certificates/generate', 'CertificateController@generate'); //for testing only
     Route::post('certificates/generate', 'CertificateController@generate');
     Route::resource('certificates', 'CertificateController');
     
     Route::get('contents/{content}/print', 'ContentController@print')->name('contents.print');
+    Route::post('contents/{content}/destroy', 'ContentController@destroy')->name('contents.destroy'); //has to be post (has parameters)
     Route::resource('contents', 'ContentController');
 
     /* courses routes */
     Route::get('courses/list', 'CourseController@list');
     Route::resource('courses', 'CourseController');
     
+    /* country routes */
+    Route::get('countries/{country}/states', 'CountryController@getStates')->name('countries.states');
+
     /* curricula routes */
     Route::post('curricula/enrol', 'CurriculumController@enrol')->name('curricula.enrol');
     Route::delete('curricula/expel', 'CurriculumController@expel')->name('curricula.expel');
@@ -76,7 +82,7 @@ Route::group(['middleware' => 'auth'], function () {
     
     /* media routes */
     Route::resource('media', 'MediumController');
-    
+
 
     /* objectiveTypes routes */
     Route::resource('objectiveTypes', 'ObjectiveTypeController');
@@ -127,6 +133,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('users/massDestroy', 'UsersController@massDestroy')->name('users.massDestroy');
     Route::patch('users/massUpdate', 'UsersController@massUpdate')->name('users.massUpdate');
     Route::patch('users/setCurrentOrganization', 'UsersController@setCurrentOrganization')->name('users.setCurrentOrganization');
+    Route::patch('users/setAvatar', 'UsersController@setAvatar')->name('users.setAvatar');
 
     Route::get('users/list', 'UsersController@list');
     Route::resource('users', 'UsersController');

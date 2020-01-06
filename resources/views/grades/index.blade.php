@@ -1,19 +1,19 @@
 @extends('layouts.master')
 @section('title')
-      {{ trans('global.grade.title_singular') }} {{ trans('global.list') }}
+    {{ trans('global.grade.title') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/">Home</a></li>
-    <li class="breadcrumb-item active"> {{ trans('global.grade.title_singular') }} {{ trans('global.list') }}</li>
-    <li class="breadcrumb-item "> <i class="fas fa-question-circle"></i></li>
+    <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
+    <li class="breadcrumb-item active">{{ trans('global.grade.title') }}</li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
 @can('grade_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
             <a id="add-grade" 
-                    class="btn btn-success" href="{{ route("grades.create") }}">
-                {{ trans('global.add') }} {{ trans('global.grade.title_singular') }}
+                class="btn btn-success" href="{{ route("grades.create") }}">
+                {{ trans('global.grade.create') }}
             </a>
         </div>
     </div>
@@ -28,7 +28,7 @@
                     <th>{{ trans('global.grade.fields.external_begin') }}</th>
                     <th>{{ trans('global.grade.fields.external_end') }}</th>
                     <th>{{ trans('global.organization.title_singular') }}</th>
-                    <th>Action</th>
+                    <th>{{ trans('global.datatables.action') }}</th>
                 </tr>
             </thead>
         </table>

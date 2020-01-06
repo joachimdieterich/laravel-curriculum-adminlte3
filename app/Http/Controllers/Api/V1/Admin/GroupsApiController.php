@@ -47,7 +47,7 @@ class GroupsApiController extends Controller {
         $group = Group::findOrFail(request()->input('group_id'));
         $user = User::findOrFail(request()->input('user_id'));
 
-        OrganizationRoleUser::updateOrCreate([
+        OrganizationRoleUser::firstOrCreate([
             'user_id' => $user->id,
             'organization_id' => $group->organization->id],
             ['role_id' => 6], //enrol as student

@@ -10,8 +10,8 @@ curriculum is a learning platform where teachers can create topic-based learning
 ## Installation
 
 ### Prerequisites
-> PHP 7.3 with ghostscript and Imagemagick
-> Node.jsghostscript 
+- PHP 7.3 with ghostscript and Imagemagick
+- Node.js ghostscript 
 
 ### Step 1.
 

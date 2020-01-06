@@ -14,7 +14,7 @@
         <div class="card" style="margin-bottom: 0px !important">
             <div class="card-header">
                 <h3 class="card-title">
-                    {{ trans('global.generate') }} {{ trans('global.certificate.title_singular') }}
+                    {{ trans('global.certificate.generate') }}
                 </h3>
                 
                 <div class="card-tools">
@@ -66,7 +66,7 @@
                 <div class="card-footer">
                      <span class="pull-right">
                          <button type="button" class="btn btn-info" @click="$modal.hide('certificate-generate-modal')">{{ trans('global.cancel') }}</button>
-                         <button class="btn btn-primary" @click="generateCertificate()" >{{ trans('global.save') }}</button>
+                         <button class="btn btn-primary" @click="generateCertificate()" >{{ trans('global.generate') }}</button>
                     </span>
                 </div>
             </form>

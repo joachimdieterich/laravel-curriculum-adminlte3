@@ -1,24 +1,21 @@
 @extends('layouts.master')
 @section('title')
-    {{ trans('global.create') }} {{ trans('global.certificate.title_singular') }}
+    {{ trans('global.certificate.create') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="#">Home</a></li>
-    <li class="breadcrumb-item active">{{ trans('global.create') }} {{ trans('global.certificate.title_singular') }}</li>
-    <li class="breadcrumb-item "> <i class="fas fa-question-circle"></i></li>
+    <li class="breadcrumb-item"><a href="/">{{ trans('global.home') }}</a></li>
+    <li class="breadcrumb-item active">{{ trans('global.certificate.create') }}</li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
 
 <div class="card">
     <div class="card-body">
-        <form action="{{ route("certificates.store") }}" method="POST" enctype="multipart/form-data">
-            <form
-            method="POST"
-            action="/certificates"
-        >
+        <form method="POST"
+              action="{{ route("certificates.store") }}">
             @include ('certificates.form', [
-                'certificate' => new App\Curriculum,
-                'buttonText' =>  trans('global.create'). ' ' .trans('global.certificate.title_singular')
+                'certificate' => new App\Certificate,
+                'buttonText' =>  trans('global.certificate.create')
             ]) 
         </form>
     </div>

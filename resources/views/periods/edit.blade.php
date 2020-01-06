@@ -1,27 +1,24 @@
 @extends('layouts.master')
 @section('title')
-     {{ trans('global.edit') }} {{ trans('global.period.title_singular') }}
+    {{ trans('global.period.edit') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/">Home</a></li>
-    <li class="breadcrumb-item active">{{ trans('global.edit') }} {{ trans('global.period.title_singular') }}</li>
-    <li class="breadcrumb-item "> <i class="fas fa-question-circle"></i></li>
+    <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
+    <li class="breadcrumb-item active">{{ trans('global.period.edit') }}</li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
 
 <div class="card">
-    <div class="card-header">
-        {{ trans('global.edit') }} {{ trans('global.period.title_singular') }}
-    </div>
-
     <div class="card-body">
-        <form action="{{ $period->path() }}" method="POST" enctype="multipart/form-data">
-            @csrf
+        <form action="{{ $period->path() }}" 
+              method="POST" 
+              enctype="multipart/form-data">
             @method('PATCH')
             @include('periods.form', [
-                'period' => $period,
+                'period'        => $period,
                 'organizations' => $organizations,
-                'buttonText' => trans('global.edit').' '.trans('global.period.title_singular')
+                'buttonText'    => trans('global.period.edit')
             ])
         </form>
     </div>

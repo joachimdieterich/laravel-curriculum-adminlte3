@@ -1,21 +1,22 @@
 @extends('layouts.master')
 @section('title')
-    {{ trans('global.add') }} {{ trans('global.user.title_singular') }}
+    {{ trans('global.user.create') }}
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="#">Home</a></li>
-    <li class="breadcrumb-item active">{{ trans('global.add') }} {{ trans('global.user.title_singular') }}</li>
-    <li class="breadcrumb-item "> <i class="fas fa-question-circle"></i></li>
+    <li class="breadcrumb-item active">{{ trans('global.user.create') }}</li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
 
 <div class="card">
     <div class="card-body">
-        <form action="{{ route("users.store") }}" method="POST" enctype="multipart/form-data">
-            @csrf
+        <form action="{{ route("users.store") }}" 
+              method="POST" 
+              enctype="multipart/form-data">
             @method('POST')
             @include('users.form', [
-                'buttonText' => 'Create User'
+                'buttonText' => trans('global.user.create')
             ])
         </form>
     </div>

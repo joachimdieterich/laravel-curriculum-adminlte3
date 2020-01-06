@@ -1,11 +1,11 @@
 @extends('layouts.master')
 @section('title')
-    {{ trans('global.edit') }} {{ trans('global.permission.title_singular') }}
+    {{ trans('global.permission.edit') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/">Home</a></li>
-    <li class="breadcrumb-item active">{{ trans('global.edit') }} {{ trans('global.permission.title_singular') }}</li>
-    <li class="breadcrumb-item "> <i class="fas fa-question-circle"></i></li>
+    <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
+    <li class="breadcrumb-item active">{{ trans('global.permission.edit') }}</li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
 

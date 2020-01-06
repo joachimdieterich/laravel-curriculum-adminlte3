@@ -46,5 +46,10 @@ class Content extends Model
     {
         return $this->morphOne('App\NavigatorItem', 'referenceable');
     }
+    
+    public function categories()
+    {
+        return $this->belongsToMany('App\Categorie')->withTimestamps();
+    }
   
 }

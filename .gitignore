@@ -5,6 +5,7 @@
 /storage/*.key
 /storage/api-docs
 /storage/*
+!/storage/framework/
 /vendor
 
 .env.*.php

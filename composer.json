@@ -29,6 +29,7 @@
         "lightsaml/lightsaml": "^1.4",
         "profburial/wkhtmltopdf-binaries-osx": "0.12.1",
         "select2/select2": "^4.0",
+        "unisharp/laravel-filemanager": "~1.9",
         "yajra/laravel-datatables-oracle": "~9.0"
     },
     "require-dev": {

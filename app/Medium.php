@@ -11,7 +11,8 @@ class Medium extends Model
     
     protected $guarded = [];
     
-    public function absolutePath(){
+    public function absolutePath()
+    {
         if ($this->mime_type !== 'url')
         {
             return Storage::disk('local')->path(ltrim($this->path . $this->medium_name, '/'));
@@ -22,9 +23,19 @@ class Medium extends Model
         }
     }
     
+    public function relativePath()
+    {
+        return $this->path.$this->medium_name;
+    }
+    
     public function license()
     {
         return $this->hasOne('App\License', 'id', 'license_id');
+    }
+    
+    public function subscriptions()
+    {
+        return $this->hasMany('App\MediumSubscription');
     }
     
     public function subscribe($model, $sharing_level_id = 1, $visibility = true)
@@ -38,5 +49,33 @@ class Medium extends Model
 			"owner_id"=> auth()->user()->id,	
 	]);
         $subscribe->save();
+    }
+    
+    public function getByFilemanagerPath($path)
+    {
+        return $this->where('path', str_replace(config('lfm.url_prefix', 'laravel-filemanager').'/', '', dirname($path)).'/')
+                    ->where('medium_name', basename($path))
+                    ->get()
+                    ->first();
+    }
+    
+    /**
+     * 
+     * @param type $eventPath
+     * @param type $cutBasename if true basename is cut off
+     * @param type $basePath
+     * @return type
+     */
+    public function convertFilemanagerEventPathToMediumPath($eventPath, $cutBasename = true, $basePath = "app")
+    {
+        $filePath = str_replace(public_path(), "", $eventPath);
+        if ($cutBasename)
+        {
+            return str_replace(basename($filePath), "", str_replace(storage_path()."/{$basePath}", "", $eventPath));
+        }
+        else 
+        {
+            return str_replace(storage_path()."/{$basePath}", "", $eventPath);
+        }
     }
 }

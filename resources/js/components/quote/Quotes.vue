@@ -61,7 +61,7 @@
            tagName: function(i){
                 return 'quote_curriculum_'+i;
             },
-             show(content, quote) { 
+            show(content, quote) { 
                 this.$modal.show('content-modal', {'content': content, 'quote': quote});
             },
            

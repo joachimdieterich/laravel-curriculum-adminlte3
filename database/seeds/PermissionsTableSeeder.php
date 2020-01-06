@@ -410,7 +410,7 @@ class PermissionsTableSeeder extends Seeder
                 'created_at' => '2019-04-15 19:14:42',
                 'updated_at' => '2019-04-15 19:14:42',
             ],           
-             [
+            [
                 'id'         => '91',
                 'title'      => 'course_access',
                 'created_at' => '2019-04-15 19:14:42',
@@ -449,6 +449,36 @@ class PermissionsTableSeeder extends Seeder
             [
                 'id'         => '97',
                 'title'      => 'organization_enrolment',
+                'created_at' => '2019-04-15 19:14:42',
+                'updated_at' => '2019-04-15 19:14:42',
+            ],
+            [
+                'id'         => '98',
+                'title'      => 'categorie_access',
+                'created_at' => '2019-04-15 19:14:42',
+                'updated_at' => '2019-04-15 19:14:42',
+            ],
+            [
+                'id'         => '99',
+                'title'      => 'categorie_create',
+                'created_at' => '2019-04-15 19:14:42',
+                'updated_at' => '2019-04-15 19:14:42',
+            ],
+            [
+                'id'         => '100',
+                'title'      => 'categorie_show',
+                'created_at' => '2019-04-15 19:14:42',
+                'updated_at' => '2019-04-15 19:14:42',
+            ],
+            [
+                'id'         => '101',
+                'title'      => 'categorie_edit',
+                'created_at' => '2019-04-15 19:14:42',
+                'updated_at' => '2019-04-15 19:14:42',
+            ],
+            [
+                'id'         => '102',
+                'title'      => 'categorie_delete',
                 'created_at' => '2019-04-15 19:14:42',
                 'updated_at' => '2019-04-15 19:14:42',
             ],

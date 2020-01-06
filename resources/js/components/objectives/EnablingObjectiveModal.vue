@@ -8,6 +8,7 @@
         draggable=".draggable"
         :resizable=true
         @before-open="beforeOpen"
+        @opened="opened"
         @before-close="beforeClose"
         style="z-index: 1100">
         <div class="card" style="margin-bottom: 0px !important">
@@ -39,28 +40,24 @@
                     :class="form.errors.title ? 'has-error' : ''"
                       >
                     <label for="title">{{ trans('global.enablingObjective.fields.title') }} *</label>
-                    <Editor
-                    api-key="no-api-key"
+                    <textarea
                     id="title"
                     name="title"
-                    initialValue="Title"
+                    class="form-control description my-editor "
                     v-model="form.title"
-                    :init="editorConfig"
-                    ></Editor>
+                    ></textarea>
                      <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
                 </div>
                 <div class="form-group "
                     :class="form.errors.description ? 'has-error' : ''"
                     >
                     <label for="description">{{ trans('global.enablingObjective.fields.description') }}</label>
-                    <Editor
-                    api-key="no-api-key"
+                    <textarea
                     id="description"
                     name="description"
-                    initialValue="Description"
+                    class="form-control description my-editor "   
                     v-model="form.description"
-                    :init="editorConfig"
-                    ></Editor>
+                    ></textarea>
                     <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
                 </div>
                 
@@ -102,7 +99,6 @@
 <script>
     import Form from 'form-backend-validation';
     import Multiselect from 'vue-multiselect';
-    import Editor from '@tinymce/tinymce-vue';
     
     export default {
         data() {
@@ -120,19 +116,6 @@
                     'terminal_objective_id': '',
                     'level_id': null,
                 }),
-                editorConfig: {
-                    menubar: false,
-                    branding: false,
-                    plugins: [
-                      'advlist autolink lists link image charmap print preview anchor',
-                      'searchreplace visualblocks code fullscreen',
-                      'insertdatetime media table paste code help wordcount'
-                    ],
-                    toolbar:
-                      'undo redo | formatselect | bold italic backcolor | \
-                      alignleft aligncenter alignright alignjustify | \
-                      bullist numlist outdent indent | removeformat | code | help'
-                }
             }
         },
         
@@ -160,7 +143,9 @@
                     };
                 }
             },
-            
+            opened(){
+                this.$initTinyMCE();
+            },
             beforeClose() { 
                 //console.log('close') 
             },
@@ -173,7 +158,8 @@
             },
             submit() {
                 var method = this.method.toLowerCase();
-                
+                this.form.title = tinyMCE.get('title').getContent();
+                this.form.description = tinyMCE.get('description').getContent();
                 if (method === 'patch'){
                     this.requestUrl += '/'+this.form.id;
                 } 
@@ -190,7 +176,9 @@
                 //todo .then .catch
             },
             close(){
+                tinymce.remove()
                 this.$modal.hide('enabling-objective-modal');
+        
             }
         },
         created() {
@@ -202,7 +190,6 @@
         },
         components: {
             Multiselect,
-            Editor
         }
     }
 </script>

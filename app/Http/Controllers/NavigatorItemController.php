@@ -37,7 +37,6 @@ class NavigatorItemController extends Controller
         $visibility          = $this->getVisibility();
         
         $curricula = Curriculum::all();
-        $media = Medium::where('path', '/subjects/')->get(); //todo: only show usable media (e.g. images)
         $navigator_id = request()->navigator_id;
         $view_id = request()->view_id;
         
@@ -48,8 +47,7 @@ class NavigatorItemController extends Controller
                     ->with(compact('position'))
                     ->with(compact('css_classes'))
                     ->with(compact('visibility'))
-                    ->with(compact('curricula'))
-                    ->with(compact('media'));
+                    ->with(compact('curricula'));
     }
 
     /**
@@ -66,6 +64,7 @@ class NavigatorItemController extends Controller
         $navigator_id = request()->navigator_id;
         $view_id = request()->view_id;
         
+        $medium = new Medium();
         switch (format_select_input($new_navigator_item['referenceable_type'])) {
             case 'App\Content':         $content = new Content([
                                                                 'title' => $new_navigator_item['title'],
@@ -98,14 +97,14 @@ class NavigatorItemController extends Controller
                 break;
             case 'App\Medium':          $title            = $new_navigator_item['title'];
                                         $description      = $new_navigator_item['description'];
-                                        $referenceable_id = format_select_input($new_navigator_item['medium_id']);
+                                        $referenceable_id = $medium->getByFilemanagerPath($new_navigator_item['filepath'])->id;
                 break;
             
 
             default:
                 break;
         }
-        
+
         $navigator_item = NavigatorItem::firstOrCreate([
             'title'              => $title,
             'description'        => $description,
@@ -118,9 +117,17 @@ class NavigatorItemController extends Controller
         ]);
         
         /* subscribe image */
-        if (format_select_input($new_navigator_item['medium_id']) != null)
-        {
-            $medium = Medium::find(format_select_input($new_navigator_item['medium_id'])); 
+        if ($new_navigator_item['filepath'] != null OR $new_navigator_item['medium_id'] != null)
+        {    
+            if ($new_navigator_item['filepath'] != null)
+            {
+                $medium = $medium->getByFilemanagerPath($new_navigator_item['filepath']);
+            }
+            else 
+            {
+                $medium = Medium::find(format_select_input($new_navigator_item['medium_id'])); 
+            }
+            
             $medium->subscribe($navigator_item);
         }
         
@@ -143,7 +150,6 @@ class NavigatorItemController extends Controller
      */
     public function edit(NavigatorItem $navigatorItem)
     {
-        
         abort_unless(\Gate::allows('navigator_edit'), 403);
         $referenceable_types = $this->getReferenceableTypes();
         $position            = $this->getPositions();
@@ -151,7 +157,6 @@ class NavigatorItemController extends Controller
         $visibility          = $this->getVisibility();
         
         $curricula = Curriculum::all();
-        $media = Medium::where('path', '/subjects/')->get(); //todo: only show usable media (e.g. images)
         $navigator = $navigatorItem->navigatorView->navigator;
         $navigatorView = $navigatorItem->navigatorView;
         
@@ -164,9 +169,7 @@ class NavigatorItemController extends Controller
                     ->with(compact('position'))
                     ->with(compact('css_classes'))
                     ->with(compact('visibility'))
-                    ->with(compact('curricula'))
-                    ->with(compact('media'));
-                ;
+                    ->with(compact('curricula'));
     }
 
     /**
@@ -213,7 +216,7 @@ class NavigatorItemController extends Controller
             'description'       => 'sometimes',
             'referenceable_type'=> 'sometimes',
             'referenceable_id'  => 'sometimes',
-            'medium_id'         => 'sometimes',
+            'filepath'          => 'sometimes',
             'position'          => 'sometimes',
             'css_class'         => 'sometimes',
             'visibility'        => 'sometimes',
@@ -233,7 +236,7 @@ class NavigatorItemController extends Controller
     protected function getPositions()
     {
         return [
-            (object) ['id' => 'content', 'label' => trans('global.content')], 
+            (object) ['id' => 'content', 'label' => trans('global.content.title_singular')], 
             (object) ['id' => 'footer', 'label' => trans('global.footer')], 
             (object) ['id' => 'header', 'label' => trans('global.header')], 
         ];

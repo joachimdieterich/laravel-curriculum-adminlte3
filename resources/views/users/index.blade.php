@@ -1,11 +1,11 @@
 @extends('layouts.master')
 @section('title')
-    {{ trans('global.user.title_singular') }} {{ trans('global.list') }}
+    {{ trans('global.user.title') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/">Home</a></li>
-    <li class="breadcrumb-item active">{{ trans('global.user.title_singular') }} {{ trans('global.list') }}</li>
-    <li class="breadcrumb-item "> <i class="fas fa-question-circle"></i></li>
+    <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
+    <li class="breadcrumb-item active">{{ trans('global.user.title') }}</li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
 @can('user_create')
@@ -13,14 +13,15 @@
         <div class="col-lg-12">
             <a id="add-user"
                class="btn btn-success" href="{{ route("users.create") }}">
-                {{ trans('global.add') }} {{ trans('global.user.title_singular') }}
+               {{ trans('global.user.create') }}
             </a>
         </div>
     </div>
 @endcan
 <div class="card">
     <div class="card-body">
-        <table id="users-datatable" class=" table table-bordered table-striped table-hover datatable">
+        <table id="users-datatable" 
+               class="table table-bordered table-striped table-hover datatable">
             <thead>
                 <tr>
                     <th width="10"></th>
@@ -28,9 +29,8 @@
                     <th>{{ trans('global.user.fields.firstname') }}</th>
                     <th>{{ trans('global.user.fields.lastname') }}</th>
                     <th>{{ trans('global.user.fields.email') }}</th>
-                    <th>{{ trans('global.user.fields.email_verified_at') }}</th>
                     <th>{{ trans('global.status.title_singular') }}</th>
-                    <th>Action</th>
+                    <th>{{ trans('global.datatables.action') }}</th>
                 </tr>
             </thead>     
         </table>
@@ -253,7 +253,7 @@ function  massDestroyUser() {
     sendRequest('POST', "{{ route('users.massDestroy') }}", ids, { ids: ids, _method: 'DELETE' });   
 }   
     
-$(document).ready( function () {
+$( function () {
     $('#login_password_show').on('change', function(){
         $('#password').attr('type',$('#checkbox').prop('checked')==true?"text":"password"); 
     });
@@ -270,7 +270,6 @@ $(document).ready( function () {
                  { data: 'firstname' },
                  { data: 'lastname' },
                  { data: 'email' },
-                 { data: 'email_verified_at' },
                  { data: 'status' },
                  { data: 'action' }
                 ],

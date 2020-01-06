@@ -3,8 +3,8 @@
     {{ trans('global.home') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item active"><a href="/">Home</a></li>
-    <li class="breadcrumb-item "> <i class="fas fa-question-circle"></i></li>
+    <li class="breadcrumb-item active"><a href="/">{{ trans('global.home') }}</a></li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
 <div class="content">
@@ -19,7 +19,6 @@
                         <h6 class="card-title">Info</h6>
 
                         <p class="card-text">...</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
                     </div>
                 </div>
             </div>
@@ -62,7 +61,7 @@
                                             {{$organization->title}}
                                         </a>
                                         <span class="product-description">
-                                            {{ $organization->description }}
+                                            {!! $organization->description !!}
                                         </span>
                                     </div>
                                 </li>

@@ -12,6 +12,7 @@ use App\User;
 use App\Organization;
 use App\Group;
 use App\Status;
+use App\Medium;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Request;
 use Yajra\DataTables\DataTables;
@@ -45,7 +46,6 @@ class UsersController extends Controller
             'firstname', 
             'lastname', 
             'email',
-            'email_verified_at',
             'status_id'
             ]);
         
@@ -184,6 +184,21 @@ class UsersController extends Controller
     {
         User::where('id', auth()->user()->id)->update([
             'current_organization_id' => request('current_organization_id')
+                ]); 
+        
+        return back();
+    }
+   
+    /**
+     * Set users Profile Image
+     * @return type
+     */
+    public function setAvatar()
+    {
+        $medium = new Medium();
+        dump(request());
+        User::where('id', auth()->user()->id)->update([
+            'medium_id' => (null !== $medium->getByFilemanagerPath(request('filepath'))) ? $medium->getByFilemanagerPath(request('filepath'))->id : null,
                 ]); 
         
         return back();

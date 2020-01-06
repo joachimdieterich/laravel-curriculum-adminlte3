@@ -14,16 +14,24 @@
                  style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, -2px, 0px);">
                 <span v-for="entry in Entries">
                     <hr v-if="entry.hr === true ">
-                    <button v-else-if="entry.action === 'update' " class="dropdown-item" @click="editObjective(entry)">
+                    <button v-else-if="entry.action === 'update' " 
+                            class="dropdown-item" 
+                            @click="editObjective(entry)">
+                        <i class="mr-4" 
+                           v-bind:class="entry.icon"></i>
+                        {{ entry.title }}
+                    </button>
+                    <button v-else-if="entry.action === 'delete' " 
+                            class="dropdown-item" 
+                            @click="emitDeleteEvent()">
                         <i class="mr-4" v-bind:class="entry.icon"></i>
                         {{ entry.title }}
                     </button>
-                    <button v-else-if="entry.action === 'delete' " class="dropdown-item" @click="emitDeleteEvent()">
-                        <i class="mr-4" v-bind:class="entry.icon"></i>
-                        {{ entry.title }}
-                    </button>
-                    <button v-else class="dropdown-item" @click="">
-                        <i class="mr-4" v-bind:class="entry.icon"></i>
+                    <button v-else 
+                            class="dropdown-item" 
+                            @click="action(entry);">
+                        <i class="mr-4" 
+                           v-bind:class="entry.icon"></i>
                         {{ entry.title }}
                     </button>
                 </span>
@@ -56,6 +64,9 @@
             },
             emitDeleteEvent() { 
                 this.$parent.$emit('eventDelete', this.objective) 
+            },
+            action(entry) {
+                this.$modal.show(entry.value);
             }
         },
         mounted(){

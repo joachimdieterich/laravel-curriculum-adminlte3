@@ -251,18 +251,17 @@ class CertificateController extends Controller
             /* replace relative media links with absolute paths to get snappy working */ 
             $html_to_print = relativeToAbsoutePaths($html_to_print);
             
-            //return SnappyPdf::loadHTML($html_to_print)
             $meta = '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">';
             SnappyPdf::loadHTML($meta.$html_to_print)
                     ->setPaper('a4')
                    // ->setOrientation('landscape')
                     ->setOption('margin-bottom', 0)
-                    ->save(storage_path("app/users/".auth()->user()->id."/".$timestamp.$user->lastname."_".$user->firstname.".pdf"));
+                    ->save(storage_path("app/".config('lfm.files_folder_name')."/".auth()->user()->id."/".$timestamp.$user->lastname."_".$user->firstname.".pdf"));
             
             $media = new Medium([
-                'path'          => "/users/".auth()->user()->id."/".date("Y-m-d_H-i-s").$user->lastname."_".$user->firstname.".pdf",
-                'title'         => $user->lastname."_".$user->firstname.".pdf",
-                'medium_name'   => $user->lastname."_".$user->firstname.".pdf",
+                'path'          => "/".config('lfm.files_folder_name')."/".auth()->user()->id."/",
+                'title'         => date("Y-m-d_H-i-s").$user->lastname."_".$user->firstname.".pdf",
+                'medium_name'   => date("Y-m-d_H-i-s").$user->lastname."_".$user->firstname.".pdf",
                 'description'   => $user->lastname."_".$user->firstname.".pdf",
                 'author'        => auth()->user()->fullName(),
                 'publisher'     => '',

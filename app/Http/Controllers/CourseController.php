@@ -23,7 +23,7 @@ class CourseController extends Controller
                   OR (auth()->user()->currentRole()->first()->id == 1)), 403);                // or admin
 
         $curriculum = Curriculum::with(['terminalObjectives', 
-                        'terminalObjectives.media', 
+                        //'terminalObjectives.media', 
                         'terminalObjectives.mediaSubscriptions', 
                         'terminalObjectives.referenceSubscriptions', 
                         'terminalObjectives.quoteSubscriptions', 
@@ -31,7 +31,7 @@ class CourseController extends Controller
                             $query->where('user_id', auth()->user()->id);
                         },
                         'terminalObjectives.enablingObjectives', 
-                        'terminalObjectives.enablingObjectives.media',
+                        //'terminalObjectives.enablingObjectives.media',
                         'terminalObjectives.enablingObjectives.mediaSubscriptions', 
                         'terminalObjectives.enablingObjectives.referenceSubscriptions', 
                         'terminalObjectives.enablingObjectives.quoteSubscriptions', 

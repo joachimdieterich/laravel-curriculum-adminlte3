@@ -38,8 +38,6 @@ class OrganizationsController extends Controller
             'street', 
             'postcode',
             'city',
-            'phone',
-            'email', 
             'status_id'
             ]);
         

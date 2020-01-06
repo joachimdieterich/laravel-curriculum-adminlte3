@@ -60,10 +60,13 @@ class TerminalObjectiveController extends Controller
      */
     public function show(TerminalObjective $terminalObjective)
     {
-        $terminalObjective = TerminalObjective::where('id', $terminalObjective->id)
-                                                ->with(['media','mediaSubscriptions', 'referenceSubscriptions.siblings']) 
-                                                ->get();
-        //dd($terminalObjective);
+        $objective = TerminalObjective::where('id', $terminalObjective->id)
+            ->with(['media', 'mediaSubscriptions', 
+                    'referenceSubscriptions.siblings.referenceable', 'quoteSubscriptions.siblings.quotable',
+                    'contentSubscriptions.content.categories']) 
+            ->get()->first();
+        return view('objectives.show')
+            ->with(compact('objective'));
     }
 
     /**

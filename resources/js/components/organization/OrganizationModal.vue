@@ -8,20 +8,19 @@
         draggable=".draggable"
         :resizable=true
         @before-open="beforeOpen"
+        @opened="opened"
         @before-close="beforeClose"
         style="z-index: 1100">
         <div class="card" style="margin-bottom: 0px !important">
             <div class="card-header">
                 <h3 class="card-title">
                     <span v-if="method === 'post'">
-                        {{ trans('global.create')  }}
+                        {{ trans('global.organization.create') }}
                     </span>
 
                     <span v-if="method === 'patch'">
-                        {{ trans('global.update')  }}
+                        {{ trans('global.organization.edit') }}
                     </span>
-
-                    {{ trans('global.organization.title_singular') }}
                 </h3>
 
                 <div class="card-tools">
@@ -52,14 +51,12 @@
                 </div>
                 <div class="form-group ">
                     <label for="description">{{ trans('global.organization.fields.description') }}</label>
-                    <Editor
-                    api-key="no-api-key"
-                    id="description"
-                    name="description"
-                    initialValue="Description"
-                    v-model="form.description"
-                    :init="editorConfig"
-                    ></Editor>
+                    <textarea
+                        id="description"
+                        name="description"
+                        class="form-control description my-editor "
+                        v-model="form.description"
+                    ></textarea>
                     <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
                 </div>
                 <div class="form-group ">
@@ -149,7 +146,6 @@
 
 <script>
     import Form from 'form-backend-validation';
-    import Editor from '@tinymce/tinymce-vue';
 
     export default {
         data() {
@@ -168,19 +164,6 @@
                     'status_id': '',
                 }),
                 statuses: null,
-                editorConfig: {
-                    menubar: false,
-                    branding: false,
-                    plugins: [
-                      'advlist autolink lists link image charmap print preview anchor',
-                      'searchreplace visualblocks code fullscreen',
-                      'insertdatetime media table paste code help wordcount'
-                    ],
-                    toolbar:
-                      'undo redo | formatselect | bold italic backcolor | \
-                      alignleft aligncenter alignright alignjustify | \
-                      bullist numlist outdent indent | removeformat | code | help'
-                }
             }
         },
         methods: {
@@ -199,22 +182,17 @@
             beforeOpen(event) {
                 this.getStatuses();
                 if (event.params.id){
-                    //console.log(event.params.id)
                     this.load(event.params.id)
-
-                    //this.form.populate( event.params.organization );
                 }
 
                 this.method = event.params.method;
             },
-            beforeClose() {
-                console.log('close')
+            beforeClose(event) {
+            
             },
             async getStatuses() {
                 try {
-                    console.log('statuses');
                     this.statuses = (await axios.get('/statuses/')).data.message;
-                    console.log(this.statuses);
                 } catch(error) {
                     console.log('loading failed')
                 }
@@ -226,6 +204,9 @@
                     console.log('loading failed')
                 }
             },
+            opened(){
+                this.$initTinyMCE();
+            },
             close(){
                 this.$modal.hide('organization-modal');
             }
@@ -234,8 +215,5 @@
         mounted() {
             console.log('Component mounted.')
         },
-         components: {
-            Editor
-        }
     }
 </script>

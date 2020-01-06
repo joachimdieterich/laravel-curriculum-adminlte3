@@ -3,7 +3,7 @@
              v-bind:style="{ 'color': textcolor }" >
             <span class="mr-auto " 
                   v-can="'curriculum_edit'"
-                  v-if="settings.edit === true"
+                  v-if="edit_settings === true"
                  >
                 <span v-if="(type == 'terminal' && objective.order_id != 0)" 
                        class="fa fa-arrow-up mr-1"                        
@@ -55,7 +55,15 @@
                 //this.$emit('eventtriggered')
             },   
         },
-        
+        computed: {
+            edit_settings: function() {
+                if (typeof this.settings !== "undefined"){
+                    return this.settings.edit;
+                } else {
+                    return false;
+                }
+            } 
+        },
         mounted() {
             //console.log(this.settings);
         },

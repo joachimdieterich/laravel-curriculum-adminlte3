@@ -14,6 +14,11 @@ class PermissionRoleTableSeeder extends Seeder
         //set creator permissions
         $creator_permissions = $admin_permissions->filter(function ($permission) {
             $creator_permission_list = [
+                'categorie_access', 
+                'categorie_create', 
+                'categorie_show', 
+                'categorie_edit', 
+                'categorie_delete', 
                 'certificate_access', 
                 'certificate_create', 
                 'certificate_show', 
@@ -73,6 +78,8 @@ class PermissionRoleTableSeeder extends Seeder
             $schooladmin_permission_list = [
                 'achievement_access', 
                 'achievement_create', 
+                'categorie_access',  
+                'categorie_show', 
                 'certificate_access', 
                 'certificate_show', 
                 'course_create', 
@@ -106,6 +113,8 @@ class PermissionRoleTableSeeder extends Seeder
             $teacher_permission_list = [
                 'achievement_access', 
                 'achievement_create', 
+                'categorie_access', 
+                'categorie_show', 
                 'certificate_access', 
                 'certificate_show', 
                 'course_create', 

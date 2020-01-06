@@ -23,7 +23,7 @@ class CreateOrganizationsTable extends Migration
             $table->string('postcode')->nullable();
             $table->string('city')->nullable();
             
-            $table->char('state_id')->default('DE-RP');
+            $table->char('state_id')->default('DE-RP')->nullable();
             $table->char('country_id')->default('DE');
             
             $table->unsignedBigInteger('organization_type_id')->default(1);
@@ -35,7 +35,7 @@ class CreateOrganizationsTable extends Migration
 
             $table->timestamps();
             
-            $table->foreign('state_id')->references('code')->on('states');
+            //$table->foreign('state_id')->references('code')->on('states');
             $table->foreign('country_id')->references('alpha2')->on('countries');
             $table->foreign('organization_type_id')->references('id')->on('organization_types');
         });

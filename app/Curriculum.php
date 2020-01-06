@@ -4,9 +4,15 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+
 class Curriculum extends Model
 {
     protected $guarded = [];
+    
+    protected $attributes = [
+        'state_id' => 'DE-RP',
+        'country_id' => 'DE',
+     ];
      
     public function path()
     {
@@ -25,7 +31,10 @@ class Curriculum extends Model
     
     public function state()
     {
-        return $this->hasOne('App\State', 'code', 'state_id');
+        return $this->hasOne('App\State', 'code', 'state_id')
+                    ->withDefault(function () {
+                        return new State();
+                    });
     }
     
     public function country()

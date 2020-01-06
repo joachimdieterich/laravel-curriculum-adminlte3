@@ -32,7 +32,7 @@
             </div>
                 <div class="card-footer">
                      <span class="pull-right">
-                         <button type="button" class="btn btn-info" data-widget="remove" @click="close()">{{ trans('global.cancel') }}</button>
+                         <button type="button" class="btn btn-info" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
                          <button class="btn btn-primary" @click="download()" >{{ trans('global.downloadFile') }}</button>
                     </span>
                 </div>

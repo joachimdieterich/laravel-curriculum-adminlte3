@@ -35,9 +35,9 @@ class ApiCountryTest extends TestCase {
     {
         $this->signInApiAdmin();
 
-        $this->get('/api/v1/countries/276')
+        $this->get('/api/v1/countries/DE')
                 ->assertStatus(200)
-                ->assertJson(Country::find(276)->toArray());
+                ->assertJson(Country::find('DE')->toArray());
     }
 
 }

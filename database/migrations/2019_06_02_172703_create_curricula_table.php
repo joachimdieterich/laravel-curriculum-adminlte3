@@ -30,7 +30,7 @@ class CreateCurriculaTable extends Migration
             $table->unsignedbigInteger('grade_id');
             $table->unsignedbigInteger('subject_id');
             $table->unsignedbigInteger('organization_type_id');
-            $table->char('state_id');
+            $table->char('state_id')->nullable();
             $table->char('country_id');
             
             $table->unsignedbigInteger('medium_id')->nullable();
@@ -41,7 +41,7 @@ class CreateCurriculaTable extends Migration
             
             $table->foreign('grade_id')->references('id')->on('grades');
             $table->foreign('subject_id')->references('id')->on('subjects');
-            $table->foreign('state_id')->references('code')->on('states');
+            //$table->foreign('state_id')->references('code')->on('states');
             $table->foreign('country_id')->references('alpha2')->on('countries');
             $table->foreign('organization_type_id')->references('id')->on('organization_types');
             $table->foreign('medium_id')->references('id')->on('media');

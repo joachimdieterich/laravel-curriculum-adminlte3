@@ -37,14 +37,11 @@
             "option_id" => "id",
             "option_label"=> "title", 
             "value" => old('referenceable_id', isset($navigatorItem) ? $navigatorItem->referenceable_id : '') ]) 
-@include ('forms.input.select', 
-            ["model" => "media",
-            "show_label" => true,
-            "field" => "medium_id",  
-            "options"=> $media, 
-            "option_id" => "id",
-            "option_label"=> "title", 
-            "value" => old('medium_id', isset($navigatorItem->medium) ? $navigatorItem->medium->id : '') ]) 
+@include ('forms.input.file', 
+            ["model" => "media", 
+            "field" => "medium_id", 
+            "label" => false,
+            "value" => old('medium_id', isset($navigatorItem->medium_id) ? $navigatorItem->medium->medium_id : '')])
 @include ('forms.input.select', 
             ["model" => "navigator_item",
              "label" => "Position",
@@ -111,13 +108,10 @@ $(document).ready( function () {
             default: 
                 break;
         } 
-      
-    });
-   
-   
-   
+    });  
 
- });
+});
+$('#lfm').filemanager('files');
 </script>
-
+ 
 @endsection

@@ -75,7 +75,7 @@
                         class="btn btn-info" 
                         data-widget="remove" 
                         @click="close()">
-                    {{ trans('global.cancel') }}
+                    {{ trans('global.close') }}
                 </button>
             </span>
         </div>

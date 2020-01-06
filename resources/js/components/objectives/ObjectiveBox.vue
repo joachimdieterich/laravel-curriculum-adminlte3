@@ -76,7 +76,8 @@
                       title: 'Add Content',
                       icon: 'fa fa-file',
                       action: 'create',
-                      model: 'content'
+                      model: 'content',
+                      value: 'content-create-modal',
                     },
                     {
                       title: 'Add Material',
@@ -154,7 +155,7 @@
                     var r = parseInt(color.substring(0, 2), 16); // hexToR
                     var g = parseInt(color.substring(2, 4), 16); // hexToG
                     var b = parseInt(color.substring(4, 6), 16); // hexToB
-                    return (((r * 0.299) + (g * 0.587) + (b * 0.114)) > 186) ?
+                    return (((r * 0.299) + (g * 0.587) + (b * 0.114)) > 140) ?
                       "#000" : "#fff";
                 } else {
                     return "#000";
@@ -170,8 +171,12 @@
                 return "alpha(opacity="+this.visibility+")";
             },
             cross_reference: function() {
-                return this.settings.cross_reference_curriculum_id;
-            } 
+                if (typeof this.settings !== "undefined"){
+                    return this.settings.cross_reference_curriculum_id;
+                } else {
+                    return false;
+                }
+            }, 
         },
         watch: {
             cross_reference: function() {

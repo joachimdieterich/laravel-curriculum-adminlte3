@@ -24,9 +24,16 @@ use App\State;
  */
 class Country extends Model
 {
+   protected $primaryKey = 'alpha2';
+   public $incrementing = false;
+
    public function states()
    {
         return $this->hasMany(State::class, 'country', 'alpha2');
+//                    ->withDefault(function () 
+//                    {
+//                        return new State();
+//                    });
    }
     
 }

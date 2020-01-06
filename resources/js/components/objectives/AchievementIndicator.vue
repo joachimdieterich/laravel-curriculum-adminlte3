@@ -85,24 +85,28 @@
             },
             calculate_count(number) {    
                 var student = 0, teacher = 0; 
-                if (typeof this.objective.achievements[0] === 'object' && this.settings.achievements === true) { 
-                    for (let i = 0; i < (this.objective.achievements).length; i++){
-                        //console.log('ena:'+ this.objective.id +' lenght:'+ this.objective.achievements.length+' i:'+i+' student: '+this.objective.achievements[i].status.charAt(0)+' teacher: '+ this.objective.achievements[i].status.charAt(1));
-                        if (this.objective.achievements[i].status.charAt(0) === number &&
-                            this.objective.achievements[i].status.charAt(1) === number){
-                             student++;
-                             teacher++;  
-                         } 
-                         else if (this.objective.achievements[i].status.charAt(0) === number){
-                             student++; 
-                         } 
-                         else if (this.objective.achievements[i].status.charAt(1) === number){
-                             teacher++;   
-                         }
+                if (typeof this.objective.achievements !== 'undefined'){
+                    if (typeof this.objective.achievements[0] === 'object' && this.settings.achievements === true) { 
+                        for (let i = 0; i < (this.objective.achievements).length; i++){
+                            //console.log('ena:'+ this.objective.id +' lenght:'+ this.objective.achievements.length+' i:'+i+' student: '+this.objective.achievements[i].status.charAt(0)+' teacher: '+ this.objective.achievements[i].status.charAt(1));
+                            if (this.objective.achievements[i].status.charAt(0) === number &&
+                                this.objective.achievements[i].status.charAt(1) === number){
+                                 student++;
+                                 teacher++;  
+                             } 
+                             else if (this.objective.achievements[i].status.charAt(0) === number){
+                                 student++; 
+                             } 
+                             else if (this.objective.achievements[i].status.charAt(1) === number){
+                                 teacher++;   
+                             }
+                        }
+                         return teacher; //todo option to show students self achievment status 
+                    } else {
+                        this.status = '00';
                     }
-                     return teacher; //todo option to show students self achievment status 
                 } else {
-                    this.status = '00';
+                     return;  
                 }
             }
         },
@@ -147,9 +151,11 @@
             },
         },
         created() {
-            if (typeof this.objective.achievements[0] === 'object') {
-                this.status = this.objective.achievements[0].status;
-            }
+            if (typeof this.objective.achievements !== 'undefined'){
+                if (typeof this.objective.achievements[0] === 'object') {
+                    this.status = this.objective.achievements[0].status;
+                }
+            } 
         },
     
     }

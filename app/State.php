@@ -17,6 +17,13 @@ use Illuminate\Database\Eloquent\Model;
  */
 class State extends Model
 {
+    protected $primaryKey = 'code';
+    public $incrementing = false;
+    
+    protected $attributes = [
+        'lang_:de' => '-',
+     ];
+    
     public function country()
     {
         return $this->hasOne('App\Country', 'alpha2', 'country');

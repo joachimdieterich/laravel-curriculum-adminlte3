@@ -8,6 +8,7 @@
         draggable=".draggable"
         :resizable=true
         @before-open="beforeOpen"
+        @opened="opened"
         @before-close="beforeClose"
         style="z-index: 1100">
         <div class="card" style="margin-bottom: 0px !important">
@@ -116,8 +117,7 @@
             },
             
             submit() {
-                var method = this.method.toLowerCase();
-                
+                var method = this.method.toLowerCase();  
             }
         },
         created() {

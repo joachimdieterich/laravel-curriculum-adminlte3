@@ -5,29 +5,38 @@
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="#">Home</a></li>
     <li class="breadcrumb-item active">{{ trans('global.myProfile') }}</li>
-    <li class="breadcrumb-item "> <i class="fas fa-question-circle"></i></li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
 <div class="row">
     <div class="col-4">
         <div class="card card-primary card-outline">
-              <div class="card-body box-profile">
-                <div class="text-center">
-                  <img class="profile-user-img img-fluid img-circle" src="{{ Avatar::create($user->firstname.' '.$user->lastname)->toBase64() }}" alt="User profile picture">
+            <div class="card-body box-profile">
+                <div id="lfm" data-input="thumbnail" data-preview="holder" class="text-center">
+                    <img id="holder" 
+                        class="profile-user-img img-fluid img-circle" 
+                        style="height:100px;" 
+                        src="{{ (auth()->user()->medium_id !== null) ? '/media/'.auth()->user()->medium_id  : Avatar::create(auth()->user()->fullName())->toBase64() }}" 
+                        alt="User profile picture">
                 </div>
-
+                <input id="thumbnail" 
+                        name="filepath"
+                        class="invisible" 
+                        type="text" 
+                        onchange="setAvatar();"
+                >  
                 <h3 class="profile-username text-center">{{ $user->firstname }} {{ $user->lastname }}</h3>
 
                 <p class="text-muted text-center">{{ $user->username }} ({{ (null !== $user->currentRole()->first()) ? $user->currentRole()->first()->title : '' }})</p>
 
                 <ul class="list-group list-group-unbordered mb-3">
-                  <li class="list-group-item">
-                    <b>Accomplished</b> <a class="float-right">1,322</a>
-                  </li>
+                    <li class="list-group-item">
+                        <b>Accomplished</b> <a class="float-right">1,322</a>
+                    </li>
                 </ul>
-              </div>
-              <!-- /.card-body -->
             </div>
+            <!-- /.card-body -->
+        </div>
         
         <div class="card card-primary">
             <div class="card-header">
@@ -125,4 +134,28 @@
             </div><!-- /.nav-tabs-custom -->
           </div>
 </div>
+@endsection
+
+@section('scripts')
+@parent
+<script>
+$(document).ready( function () {                     
+    $('#lfm').filemanager('files');
+});
+
+function setAvatar()
+{
+    $.ajax({
+        headers: {'x-csrf-token': _token},
+            method: 'POST',
+            url: "{{ route('users.setAvatar') }}",
+            data: {
+                filepath: $('#thumbnail').val(),
+                _method: 'PATCH',
+            }
+    })
+    .done(function () { location.reload() })
+}
+</script>
+ 
 @endsection

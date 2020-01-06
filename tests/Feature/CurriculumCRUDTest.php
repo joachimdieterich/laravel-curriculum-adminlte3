@@ -22,7 +22,6 @@ class CurriculumCRUDTest extends TestCase
      */
     public function an_administrator_see_curricula() 
     { 
-        
         $this->get("curricula")       
              ->assertStatus(200);
         
@@ -38,7 +37,6 @@ class CurriculumCRUDTest extends TestCase
      */     
     public function an_administrator_create_an_curriculum()
     { 
-        
         $this->post("curricula" , $attributes = factory('App\Curriculum')->raw());
         
         $this->assertDatabaseHas('curricula', $attributes);
@@ -49,7 +47,6 @@ class CurriculumCRUDTest extends TestCase
      */     
     public function an_administrator_get_create_view_for_curricula()
     { 
-        
         $this->get("curricula/create")
              ->assertStatus(200);
     }
@@ -59,14 +56,13 @@ class CurriculumCRUDTest extends TestCase
      */  
     public function an_administrator_delete_a_curriculum()
     {
-        $this->post("curricula" , $curriculum = factory('App\Curriculum')->raw());
-        $id = Curriculum::where('title', $curriculum['title'])->first()->id;
+        $curriculum = CurriculumFactory::create();
         
         $this->followingRedirects()
-                ->delete("curricula/". $id )
+                ->delete("curricula/". $curriculum->id )
                 ->assertStatus(200);
         
-        $this->assertDatabaseMissing('curricula', $curriculum);
+        $this->assertDatabaseMissing('curricula', $curriculum->toArray());
     }
     
     /** @test 
@@ -75,6 +71,7 @@ class CurriculumCRUDTest extends TestCase
     public function an_administrator_see_details_of_a_curriculum() 
     { 
         $curriculum = CurriculumFactory::create();
+        
         //dd($curriculum->id);
         $this->get("curricula/{$curriculum->id}")       
              ->assertStatus(200)
@@ -87,6 +84,7 @@ class CurriculumCRUDTest extends TestCase
     public function an_administrator_update_a_curriculum()
     {
         $this->withoutExceptionHandling();
+                
         $this->post("curricula" , $attributes = factory('App\Curriculum')->raw());
         
         $this->assertDatabaseHas('curricula', $attributes);

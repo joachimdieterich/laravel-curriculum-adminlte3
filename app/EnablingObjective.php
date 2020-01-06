@@ -73,6 +73,11 @@ class EnablingObjective extends Model
         return $this->morphMany('App\QuoteSubscription', 'quotable');
     }
     
+    public function contentSubscriptions()
+    {
+        return $this->morphMany('App\ContentSubscription', 'subscribable');
+    }
+    
     public function achievements()
     {
         return $this->morphMany('App\Achievement', 'referenceable');

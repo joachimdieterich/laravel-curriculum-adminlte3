@@ -24,6 +24,7 @@ return [
     'user_name'                            => 'Name',
     'reset_password'                       => 'Reset Password',
     'login'                                => 'Login',
+    'login_text'                           => 'Sign in to start your session',
     'login_guest'                          => 'Login as guest',
     'remember_me'                          => 'Remember me',
     'forgot_password'                      => 'Forgot your password?',
@@ -63,6 +64,8 @@ return [
     'date'                                 => 'Date',
     'region'                               => 'Region',
     'place'                                => 'Place',
+    'details'                              => 'Details',
+    'choose'                               => 'Please select',
     'datatables'                           => [
         'copy'          => 'Copy',
         'csv'           => 'CSV',
@@ -73,6 +76,7 @@ return [
         'delete'        => 'Delete selected',
         'zero_selected' => 'No rows selected',
         'resetPassword' => 'Reset Password',
+        'action'        => 'Action',
     ],
     'restore'                              => 'Restore',
     'permadel'                             => 'Delete Permanently',
@@ -98,6 +102,8 @@ return [
     'role'                                 => [
         'title'          => 'Roles',
         'title_singular' => 'Role',
+        'create'         => 'Create role',
+        'edit'           => 'Edit role',
         'fields'         => [
             'id'                 => 'ID',
             'id_helper'          => '',
@@ -118,6 +124,8 @@ return [
     'user'                                 => [
         'title'          => 'Users',
         'title_singular' => 'User',
+        'create'         => 'Create user',
+        'edit'           => 'Edit user',
         'fields'         => [
             'id'                       => 'ID',
             'id_helper'                => '',
@@ -281,7 +289,6 @@ return [
     'edit_calendar_source'                 => 'Edit Calendar Source',
     'client_management'                    => 'Client management',
     'client_management_settings'           => 'Client management settings',
-    'content'                              => 'Content',
     'country'                              => 'Country',
     'client_status'                        => 'Client status',
     'clients'                              => 'Clients',
@@ -342,6 +349,8 @@ return [
     'permission'                           => [
         'title'          => 'Permissions',
         'title_singular' => 'Permission',
+        'create'         => 'Create Permission',
+        'edit'           => 'Edit Permission',
         'fields'         => [
             'id'                => 'ID',
             'id_helper'         => '',
@@ -355,30 +364,12 @@ return [
             'deleted_at_helper' => '',
         ],
     ],
-    'product'                              => [
-        'title'          => 'Products',
-        'title_singular' => 'Product',
-        'fields'         => [
-            'id'                 => 'ID',
-            'id_helper'          => '',
-            'name'               => 'Name',
-            'name_helper'        => '',
-            'description'        => 'Description',
-            'description_helper' => '',
-            'price'              => 'Price',
-            'price_helper'       => '',
-            'created_at'         => 'Created At',
-            'created_at_helper'  => '',
-            'updated_at'         => 'Updated At',
-            'updated_at_helper'  => '',
-            'deleted_at'         => 'Deleted at',
-            'deleted_at_helper'  => '',
-        ],
-    ],
     'organization_management'   => 'Organizations',
     'organization'              =>[
         'title'          => 'Organizations',
         'title_singular' => 'Organization',
+        'create'         => 'Create Organisation',
+        'edit'           => 'Update Organisation',
         'fields'         => [
             'id'                 => 'ID',
             'id_helper'          => '',
@@ -409,6 +400,8 @@ return [
     'group'              =>[
         'title'          => 'Groups',
         'title_singular' => 'Group',
+        'create'         => 'Create Group',
+        'edit'           => 'Edit Group',
         'fields'         => [
             'id'                 => 'ID',
             'id_helper'          => '',
@@ -419,6 +412,8 @@ return [
     'grade'              =>[
         'title'          => 'Grades',
         'title_singular' => 'Grade',
+        'create'         => 'Create Grade',
+        'edit'           => 'Edit Grade',
         'fields'         => [
             'id'                 => 'ID',
             'id_helper'          => '',
@@ -433,6 +428,8 @@ return [
     'organizationtype' =>[
         'title'          => 'Organization Types',
         'title_singular' => 'Organization Type',
+        'create'         => 'Create Organisation-Typ',
+        'edit'           => 'Edit Organisation-Typ',
         'fields'         => [
             'id'                 => 'ID',
             'id_helper'          => '',
@@ -495,6 +492,8 @@ return [
     'period' =>[
         'title'           => 'Periods',
         'title_singular'  => 'Period',
+        'create'          => 'Create Period',
+        'edit'            => 'Edit Period',
         'fields'          => [
             'id'          => 'ID',
             'id_helper'   => '',
@@ -509,17 +508,47 @@ return [
     'subject' =>[
         'title'          => 'Subjects',
         'title_singular' => 'Subject',
+        'create'         => 'Create Subject',
+        'edit'           => 'Edit Subject',
         'fields'         => [
             'id'         => 'ID',
             'id_helper'  => '',
             'title'      => 'Title',
             'title_short'=> 'Title (short)',
         ],
-    ], 
+    ],
+    'content' =>[
+        'title'          => 'Contents',
+        'title_singular' => 'Content',
+        'create'         => 'Create Content',
+        'edit'           => 'Edit Content',
+        'fields'         => [
+            'id'         => 'ID',
+            'id_helper'  => '',
+            'title'      => 'Title',
+            'title_helper'  => '',
+            'content'    => 'Content',
+            'content_helper'  => '',
+        ]   
+    ],
+    'categorie' =>[
+        'title'          => 'Categories',
+        'title_singular' => 'Categorie',
+        'create'         => 'Create Categorie',
+        'edit'           => 'Create Categorie',
+        'fields'         => [
+            'id'         => 'ID',
+            'id_helper'  => '',
+            'title'      => 'Title',
+            'title_helper'  => '',
+        ]   
+    ],
     'curriculum' =>[
         'title'          => 'Curricula',
         'title_singular' => 'Curriculum',
-        'edit'           => 'Edit curriculum',
+        'create'         => 'Create Curriculum',
+        'edit'           => 'Edit Curriculum',
+        'import'         => 'Import Curriculum',
         'fields'         => [
             'id'         => 'ID',
             'id_helper'  => '',
@@ -546,7 +575,7 @@ return [
             'id'         => 'ID',
             'id_helper'  => '',
             'title'      => 'Title',
-            'title_short'=> 'Title (short)',
+            'time_approach'      => 'Time approach',
             'description'=> 'Description',
         ],
     ],
@@ -567,7 +596,7 @@ return [
             'id'         => 'ID',
             'id_helper'  => '',
             'title'      => 'Title',
-            'title_short'=> 'Title (short)',
+            'time_approach'      => 'Time approach',
             'description'=> 'Description',
         ],
     ],
@@ -578,10 +607,40 @@ return [
     'media' =>[
         'title'          => 'Media',
         'title_singular' => 'Media',
+        'fields'            => [
+            'id'                => 'ID',
+            'id_helper'         => '',
+            'path'              => 'Path',
+            'path_helper'       => '',
+            'medium_name'       => 'Medium name',
+            'medium_name_helper'=> '',
+            'title'             => 'Title',
+            'title_helper'      => '',
+            'description'       => 'Description',
+            'description_helper'=> '',
+            'author'            => 'Author',
+            'author_helper'     => '',
+            'publisher'         => 'Publisher',
+            'publisher_helper'  => '',
+            'city'              => 'City',
+            'city_helper'       => '',
+            'date'              => 'Date',
+            'date_helper'       => '',
+            'size'              => 'Size',
+            'size_helper'       => '',
+            'mime_type'         => 'Mime_type',
+            'mime_type_helper'  => '',
+            'license_id'        => 'License_id',
+            'license_id_helper' => '',
+            'owner_id'          => 'Owner_id',
+            'owner_id_helper'   => '',
+        ],
     ],
     'navigator' =>[
         'title'             => 'Navigators',
         'title_singular'    => 'Navigator',
+        'create'            => 'Create Navigator',
+        'edit'              => 'Edit Navigator',
         'fields'            => [
             'id'            => 'ID',
             'id_helper'     => '',
@@ -592,6 +651,8 @@ return [
     'navigator_view' =>[
         'title'          => 'Navigator Views',
         'title_singular' => 'Navigator View',
+        'create'         => 'Create Navigator-View',
+        'edit'           => 'Edit Navigator-View',
         'fields'         => [
             'id'         => 'ID',
             'id_helper'  => '',
@@ -604,6 +665,8 @@ return [
     'navigator_item' =>[
         'title'          => 'Navigator Items',
         'title_singular' => 'Navigator Item',
+        'create'         => 'Create Navigator-Block',
+        'edit'           => 'Edit Navigator-Block',
         'fields'         => [
             'id'         => 'ID',
             'id_helper'  => '',
@@ -649,7 +712,6 @@ return [
             'user_id_helper' => '',
             'owner_id' => 'Owner Id',
             'owner_id_helper' => '',
-          
         ]   
     ],
     'progress' =>[
@@ -673,6 +735,9 @@ return [
     'certificate' =>[
         'title'          => 'Certificates',
         'title_singular' => 'Certificate',
+        'create'         => 'Create Certificate-Template',
+        'edit'           => 'Edit Certificate-Template',
+        'generate'       => 'Generate Certificate(s)',
         'fields'         => [
             'id'         => 'ID',
             'id_helper'  => '',
@@ -690,6 +755,4 @@ return [
             'owner_id_helper' => '',
         ]   
     ],
-    
-    
 ];

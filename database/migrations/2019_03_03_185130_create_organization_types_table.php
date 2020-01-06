@@ -18,12 +18,12 @@ class CreateOrganizationTypesTable extends Migration
             $table->string('title');
             $table->integer('external_id')->unsigned();
             
-            $table->char('state_id');
+            $table->char('state_id')->nullable();
             $table->char('country_id');
             
             $table->timestamp('created_at')->nullable();
             
-            $table->foreign('state_id')->references('code')->on('states');
+            //$table->foreign('state_id')->references('code')->on('states');
             $table->foreign('country_id')->references('alpha2')->on('countries');     
              
         });

@@ -50,13 +50,13 @@ class MediumController extends Controller
      */
     public function show(Medium $medium)
     {
+        $base_path = config('lfm.files_folder_name')."/".auth()->user()->id; //define path to current users folder
         /* id link */
         if ($medium->mime_type == 'url'){
             return redirect($medium->path);
         }
         
         $path = storage_path('app'.$medium->path.$medium->medium_name);
-        
         if (!file_exists($path)) {
             abort(404);
         }
@@ -115,5 +115,13 @@ class MediumController extends Controller
     public function destroy(Medium $medium)
     {
         //
+    }
+    
+    public function getMediumByEventPath($path)
+    {
+        $m = new Medium();
+        return Medium::where('path', $m->convertFilemanagerEventPathToMediumPath($path))
+                        ->where('medium_name', basename($path))
+                        ->get()->first();
     }
 }

@@ -25,7 +25,6 @@ $factory->define(Curriculum::class, function (Faker $faker) {
         'organization_type_id'  => 1,
         
         'medium_id'             => null, //define std. image
-        'filepath'              => null, //define std. image
         
         'owner_id'              => 1,
        

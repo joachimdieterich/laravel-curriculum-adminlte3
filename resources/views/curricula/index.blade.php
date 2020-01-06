@@ -1,21 +1,21 @@
 @extends('layouts.master')
 @section('title')
-     {{ trans('global.curriculum.title_singular') }} {{ trans('global.list') }}
+     {{ trans('global.curriculum.title') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/">Home</a></li>
-    <li class="breadcrumb-item active">{{ trans('global.curriculum.title_singular') }} {{ trans('global.list') }}</li>
-    <li class="breadcrumb-item "> <i class="fas fa-question-circle"></i></li>
+    <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
+    <li class="breadcrumb-item active">{{ trans('global.curriculum.title') }}</li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
 @can('user_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
             <a class="btn btn-success" href="{{ route("curricula.create") }}" >
-                {{ trans('global.add') }} {{ trans('global.curriculum.title_singular') }}
+                {{ trans('global.curriculum.create') }}
             </a>
             <a class="btn btn-success" href="{{ route("curricula.import") }}" >
-                {{ trans('global.import') }} {{ trans('global.curriculum.title_singular') }}
+                {{ trans('global.curriculum.import') }}
             </a>
         </div>
     </div>
@@ -32,7 +32,7 @@
                     <th>{{ trans('global.grade.title_singular') }}</th>
                     <th>{{ trans('global.subject.title_singular') }}</th>
                     <th>{{ trans('global.user.title_singular') }}</th>
-                    <th>Action</th>
+                    <th>{{ trans('global.datatables.action') }}</th>
                 </tr>
             </thead>
         </table>
@@ -66,7 +66,29 @@ $(document).ready( function () {
     //align header/body
     $(".dataTables_scrollHeadInner").css({"width":"100%"});
     $(".table ").css({"width":"100%"});
+    
+    
  });
+ 
+ function sendRequest(method, url, ids, data){
+    if (ids.length === 0) {
+        alert('{{ trans('global.datatables.zero_selected') }}')
+        return
+    }
+    if (confirm('{{ trans('global.areYouSure') }}')) {
+        $.ajax({
+                headers: {'x-csrf-token': _token},
+                method: method,
+                url: url,
+                data: data
+            })
+            .done(function () { location.reload() })
+    }
+}
+
+function  destroyCurriculum(id) {
+    sendRequest('POST', "curricula/"+id, id, { _method: 'DELETE' });   
+} 
 </script>
 
 @endsection

@@ -27,6 +27,7 @@
         props: {
             'label': '', 
             'entries': {},
+            'parent': {},
             'model': '',
             'styles': ''
         },
@@ -34,7 +35,7 @@
         
         methods: {
             show(model, entry) {   
-                this.$modal.show(model.toLowerCase()+'-modal', { 'content': entry});
+                this.$modal.show(model.toLowerCase()+'-modal', { 'content': entry, 'subscribable': JSON.parse(this.parent)});
             },
            
         },

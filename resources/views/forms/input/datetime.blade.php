@@ -6,34 +6,40 @@
         @endif 
     </label>
 
-    <div class="input-append">
-        <input  type="text" 
-                class="form-control float-right {{ $errors->has($field) ? ' is-invalid' : '' }}" 
-                name="{{ $field }}" 
-                id="{{ $field }}"
-                
-                value="{{ $value }}" 
-                @if(isset($placeholder)) 
-                    placeholder="{{ __($placeholder) }}" 
-                @endif 
-                @if(isset($readonly)) 
-                     readonly
-                @endif 
-                @if(isset($required)) 
-                    'required' 
-                @endif
-        />
-         <span class="add-on"><i class="icon-remove"></i></span>
-    <span class="add-on"><i class="icon-th"></i></span>
-        @if ($errors->has( $field ))
-            <span id="{{ $field }}-error" class="error text-danger" for="input-{{ $field }}">{{ $errors->first( $field ) }}</span>
-        @endif
-    </div>
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <span class="input-group-text">
+                <i class="far fa-calendar-alt"></i>
+            </span>
+        </div>
+        <input 
+            name="{{ $field }}" 
+            id="{{ $field }}"
+            type="text" 
+            class="form-control {{ $errors->has($field) ? ' is-invalid' : '' }}" 
+            value="{{ $value }}" 
+            @if(isset($placeholder)) 
+                placeholder="{{ __($placeholder) }}" 
+            @endif 
+            @if(isset($readonly)) 
+                readonly
+            @endif 
+            @if(isset($required)) 
+                'required' 
+            @endif
+            />
+            @if ($errors->has( $field ))
+                <span 
+                    id="{{ $field }}-error" 
+                    class="error text-danger" 
+                    for="input-{{ $field }}">{{ $errors->first( $field ) }}
+                </span>
+            @endif
+    </div> 
 </div>
 
 @section('scripts')
 @parent
-    <script src="{{ asset('node_modules/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}"></script>
     <script src="{{ asset('node_modules/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.'. app() -> getLocale().'.js') }}"></script>
     <script>
         $('#{{ $field }}').datetimepicker({

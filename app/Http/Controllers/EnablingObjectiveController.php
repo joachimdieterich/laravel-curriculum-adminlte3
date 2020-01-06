@@ -61,10 +61,14 @@ class EnablingObjectiveController extends Controller
     public function show(EnablingObjective $enablingObjective)
     {
 
-        $enablingObjectives = EnablingObjective::where('id', $enablingObjective->id)
-                                                ->with(['media','mediaSubscriptions', 'referenceSubscriptions.siblings']) 
-                                                ->get();
-        dd($enablingObjectives);
+        $objective = EnablingObjective::where('id', $enablingObjective->id)
+            ->with(['media', 'mediaSubscriptions', 
+                    'referenceSubscriptions.siblings.referenceable', 'quoteSubscriptions.siblings.quotable',
+                    'contentSubscriptions.content.categories']) 
+            ->get()->first();
+        //dd($enablingObjectives);
+        return view('objectives.show')
+            ->with(compact('objective'));
     }
 
     /**

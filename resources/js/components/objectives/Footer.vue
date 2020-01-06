@@ -18,8 +18,8 @@
              </AchievementIndicator>
 
             <span >  
-                <span class="fa fa-info ml-1 " 
-                    @click.prevent="showModal('objective-description-modal')">
+                <span class="fa fa-info ml-1 " v-if="objective.description !== ''"
+                    @click.prevent="showDetails()">
                 </span>
             </span>
         </div>
@@ -37,8 +37,11 @@
                 settings:{}
             },
         methods: {
-            showModal(modal) { 
+             showModal(modal) { 
                 this.$modal.show(modal, {'content': this.objective, 'type': this.type});
+            },
+            showDetails(modal) { 
+                location.href= '/'+this.type+'Objectives/'+this.objective.id;
             },
         },
         computed: {

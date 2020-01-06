@@ -37,8 +37,9 @@
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
           <div class="image" href="{{route('users.show', auth()->user()->id)}}">
               <img class="img-circle elevation-2" 
-                   src="{{ Avatar::create(auth()->user()->fullName())->toBase64() }}" 
-                   alt="User profile picture">
+                   src="{{ (auth()->user()->medium_id !== null) ? '/media/'.auth()->user()->medium_id  : Avatar::create(auth()->user()->fullName())->toBase64() }}" 
+                   alt="User profile picture"
+                   style="height: 2.1rem">
           </div>
           <div class="info p-0 m-1 ml-2" style="line-height: 1">
               <a href="{{route('users.show', auth()->user()->id)}}">{{auth()->user()->fullName()}}
@@ -48,9 +49,10 @@
         </div>
         <div id="menu_top_placeholder" ></div>
         <!-- Sidebar Menu -->
+        <span class="clearfix"></span>
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar " data-widget="treeview" role="menu" data-accordion="false">
-                <li class="nav-header">{{ strtoupper(trans('global.course.title')) }}</li>
+                <li class="nav-header pt-0" >{{ strtoupper(trans('global.course.title')) }}</li>
                 <li class="nav-item" style="width:100%">
                     @include ('forms.input.select', 
                         ["model" => "group", 
@@ -64,7 +66,7 @@
                         "placeholder" => trans('global.pleaseSelect') . ' ' . trans('global.course.title_singular'),
                         "value" =>  old('course_id', isset($course->id) ? $course->id : '')])
                 </li>
-                <li class="nav-header">{{ strtoupper(trans('global.organization.title_singular')) }}</li>
+                <li class="nav-header pt-0">{{ strtoupper(trans('global.organization.title_singular')) }}</li>
                 <li class="nav-item" style="width:100%">
                      @include ('forms.input.select', 
                         ["model" => "organization", 
@@ -89,7 +91,7 @@
                     </li>
                 @endcan
                 @can('user_access')
-                    <li class="nav-item has-treeview {{ request()->is('permissions*') ? 'menu-open' : '' }} {{ request()->is('roles*') ? 'menu-open' : '' }} {{ request()->is('users*') ? 'menu-open' : '' }}">
+                    <li class="nav-item has-treeview menu-open {{ request()->is('permissions*') ? 'menu-open' : '' }} {{ request()->is('roles*') ? 'menu-open' : '' }} {{ request()->is('users*') ? 'menu-open' : '' }}">
                         <a class="nav-link nav-dropdown-toggle">
                             <i class="fas fa-users"></i>
                             <p>
@@ -132,9 +134,8 @@
                     </li>
                 @endcan
                 
-                
                 @can('organization_access')
-                    <li class="nav-item has-treeview {{ request()->is('permissions*') ? 'menu-open' : '' }} {{ request()->is('roles*') ? 'menu-open' : '' }} {{ request()->is('users*') ? 'menu-open' : '' }}">
+                    <li class="nav-item has-treeview menu-open {{ request()->is('permissions*') ? 'menu-open' : '' }} {{ request()->is('roles*') ? 'menu-open' : '' }} {{ request()->is('users*') ? 'menu-open' : '' }}">
                         <a class="nav-link nav-dropdown-toggle">
                             <i class="fas fa-university"></i>
                             <p>

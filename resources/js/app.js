@@ -69,11 +69,11 @@ Vue.component('group-modal', require('./components/group/GroupModal.vue').defaul
 
 
 Vue.component('curriculum-view', require('./components/curriculum/CurriculumView.vue').default);
+Vue.component('curriculum-description-modal', require('./components/curriculum/CurriculumDescriptionModal.vue').default);
 Vue.component('terminal-objective-modal', require('./components/objectives/TerminalObjectiveModal.vue').default);
 Vue.component('enabling-objective-modal', require('./components/objectives/EnablingObjectiveModal.vue').default);
 Vue.component('objective-view', require('./components/objectives/ObjectiveView.vue').default);
 Vue.component('objective-box', require('./components/objectives/ObjectiveBox.vue').default);
-Vue.component('objective-description-modal', require('./components/objectives/ObjectiveDescriptionModal.vue').default);
 Vue.component('dropdown-button', require('./components/uiElements/DropdownButton.vue').default);
 Vue.component('content-modal', require('./components/content/ContentModal.vue').default);
 Vue.component('content-create-modal', require('./components/content/ContentCreateModal.vue').default);

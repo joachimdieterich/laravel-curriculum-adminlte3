@@ -38,8 +38,8 @@ class ApiStateTest extends TestCase {
     {
         $this->signInApiAdmin();
 
-        $this->get('/api/v1/states/11')
+        $this->get('/api/v1/states/DE-RP')
                 ->assertStatus(200)
-                ->assertJson(State::find(11)->toArray());
+                ->assertJson(State::find('DE-RP')->toArray());
     }
 }

@@ -8,11 +8,11 @@
         @if (Auth::user()->id == env('GUEST_USER')) 
             <a href="/navigators/{{Auth::user()->organizations()->where('organization_id', '=',  Auth::user()->current_organization_id)->first()->navigators()->first()->id}}">Home</a>
         @else
-            <a href="/">Home</a>
+            <a href="/">{{ trans('global.home') }}</a>
         @endif
     </li>
     <li class="breadcrumb-item active">{{ trans('global.curriculum.title_singular') }}</li>
-    <li class="breadcrumb-item "> <i class="fas fa-question-circle"></i></li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
 <div class="row">
@@ -47,6 +47,7 @@
                 label="{{ trans('global.curricula_content_subscriptions') }}" 
                 model="{{ @class_basename($curriculum->contents[0]) }}"
                 :entries="{{ $curriculum->contents }}"
+                parent="{{ json_encode($curriculum) }}"
             ></dropdown-button> 
         @endif   
         
@@ -55,6 +56,7 @@
                 label="{{ trans('global.glossar.title') }}" 
                 model="{{ class_basename($curriculum->glossar->contents[0]) }}"
                 :entries="{{ $curriculum->glossar->contents }}"
+                
             ></dropdown-button> 
         @endif
        
@@ -63,38 +65,52 @@
                 label="{{ trans('global.curricula_media_subscriptions') }}" 
                 model="{{ class_basename($curriculum->media[0]) }}"
                 :entries="{{ $curriculum->media }}"
+               
                 styles="border-left:0px"
             ></dropdown-button> 
         @endif
         
-        @can(['curriculum_edit', 'certificate_show'])
         <div class="btn-group">        
             <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
-                {{ trans('global.settings') }}
+                {{ trans('global.details') }}
                 <span class="sr-only">Toggle Settings Dropdown</span>
                 <div class="dropdown-menu" >
                     @can('certificate_show')
                         <a class="dropdown-item" 
                            onclick="location.href='{{ route("certificates.create") }}'">
-                            <i class="fa fa-certificate pr-1"></i>
-                            {{ trans('global.add') }} {{ trans('global.certificate.title_singular') }}
+                            <i class="fa fa-certificate text-center" style="width:20px"></i>
+                            {{ trans('global.certificate.create') }}
                         </a>
-                     @endcan
-                     <hr>
+                    @endcan
+                    <a class="dropdown-item" 
+                       onclick="app.__vue__.$modal.show('curriculum-description-modal',  {'description': {{ json_encode($curriculum->description) }} });">
+                        <span class="">
+                            <i class="fa fa-info text-center" style="width:20px"> </i>
+                        {{ trans('global.description') }}
+                        </span>
+                    </a>
+                    @can('curriculum_edit') 
+                    <hr>
+                    <a class="dropdown-item" 
+                       onclick="app.__vue__.$modal.show('content-create-modal',  {'referenceable_type': 'App\\Curriculum', 'referenceable_id': {{ $curriculum->id }}});">
+                        <i class="fa fa-file-alt text-center" style="width:20px"></i>
+                        {{ trans('global.content.create') }}
+                    </a>
                     <a class="dropdown-item" 
                        onclick="location.href='/curricula/{{ $curriculum->id }}/edit'">
-                        <i class="fa fa-edit pr-1"></i>
-                        {{ trans('global.curriculum.edit') }} {{ Str::lower(trans('global.settings')) }}
+                        <i class="fa fa-edit text-center" style="width:20px"></i>
+                        {{ trans('global.curriculum.edit') }}
                     </a>
+                    @endcan 
                 </div>
             </button>
         </div>
-        @endcan
+        
         @if(isset($certificates))
             <a class="btn btn-default btn-flat" 
                onclick="app.__vue__.$modal.show('certificate-generate-modal',  {'curriculum_id': {{ $curriculum->id }} });">
                 <i class="fa fa-certificate pr-1"></i>
-                {{ trans('global.generate') }} {{ trans('global.certificate.title_singular') }}
+                {{ trans('global.certificate.generate') }}
             </a>
         @endif
     </div>
@@ -105,7 +121,7 @@
                    "css" => "pull-right m-0",
                    "style" => "float:left; width:200px",
                    "options"=> auth()->user()->curricula(), 
-                   "placeholder" => "Select cross references",
+                   "placeholder" => trans('global.curricula_cross_references'),
                    "option_label" => "title",  
                    "onchange"=> "triggerSetCrossReferenceCurriculumId(this.value)",  
                    "value" =>  old('current_curriculum_cross_reference_id', isset(auth()->user()->current_curriculum_cross_reference_id) ? auth()->user()->current_curriculum_cross_reference_id : '')])
@@ -121,8 +137,9 @@
 </div>
 <terminal-objective-modal></terminal-objective-modal>
 <enabling-objective-modal></enabling-objective-modal>
-<objective-description-modal></objective-description-modal>
+<curriculum-description-modal></curriculum-description-modal>
 <content-modal></content-modal>
+<content-create-modal></content-create-modal>
 <objective-medium-modal></objective-medium-modal>
 <medium-modal></medium-modal>
 @if(isset($certificates))

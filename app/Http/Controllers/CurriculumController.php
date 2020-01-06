@@ -17,6 +17,8 @@ use DOMDocument;
 use App\Content;
 use App\Glossar;
 use App\Group;
+use App\Country;
+use App\State;
 use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Support\Facades\DB;
 
@@ -53,7 +55,7 @@ class CurriculumController extends Controller
         
         return DataTables::of($curricula)
             ->addColumn('state', function ($curricula) {
-                return $curricula->state()->first()->lang_de;                
+                return isset($curricula->state()->first()->lang_de) ? $curricula->state()->first()->lang_de : '-';                
             })
             ->addColumn('country', function ($curricula) {
                 return $curricula->country()->first()->lang_de;                
@@ -108,13 +110,16 @@ class CurriculumController extends Controller
         $grades = Grade::all();
         $subjects   = Subject::all();
         $organization_types = OrganizationType::all();
-        $media = Medium::where('path', '/subjects/')->get(); //todo: only show usable media (e.g. images)
+        
+        $countries = Country::all();
+        $states = State::where('country', 'DE')->get();
         
         return view('curricula.create')
                 ->with(compact('grades'))
                 ->with(compact('subjects'))
+                ->with(compact('countries'))
+                ->with(compact('states'))
                 ->with(compact('organization_types'))
-                ->with(compact('media'))
                 ;
     }
 
@@ -128,7 +133,7 @@ class CurriculumController extends Controller
     {
         abort_unless(\Gate::allows('curriculum_create'), 403);
         $input = $this->validateRequest();
-        
+         
         $curriculum = Curriculum::firstOrCreate([
             'title'                 => $input['title'],
             'description'           => $input['description'],
@@ -140,9 +145,9 @@ class CurriculumController extends Controller
             'grade_id'              => format_select_input($input['grade_id']),
             'subject_id'            => format_select_input($input['subject_id']),
             'organization_type_id'  => format_select_input($input['organization_type_id']),
-            'state_id'              => 'DE-RP',
-            'country_id'            => 'DE',
-            'medium_id'             => format_select_input($input['medium_id']),
+            'state_id'              => format_select_input($input['state_id']),
+            'country_id'            => format_select_input($input['country_id']),
+            'medium_id'             => $this->getMediumIdByInputFilepath($input),
             'owner_id'              => auth()->user()->id,
             
         ]);
@@ -174,7 +179,7 @@ class CurriculumController extends Controller
         $levels = \App\Level::all();
         
         $curriculum = Curriculum::with(['terminalObjectives', 
-                        'terminalObjectives.media', 
+                        //'terminalObjectives.media', 
                         'terminalObjectives.mediaSubscriptions', 
                         'terminalObjectives.referenceSubscriptions.siblings.referenceable', 
                         'terminalObjectives.quoteSubscriptions.siblings.quotable', 
@@ -182,7 +187,7 @@ class CurriculumController extends Controller
                             $query->where('user_id', auth()->user()->id);
                         },
                         'terminalObjectives.enablingObjectives', 
-                        'terminalObjectives.enablingObjectives.media',
+                        //'terminalObjectives.enablingObjectives.media',
                         'terminalObjectives.enablingObjectives.mediaSubscriptions', 
                         'terminalObjectives.enablingObjectives.referenceSubscriptions.siblings.referenceable', 
                         'terminalObjectives.enablingObjectives.quoteSubscriptions.siblings.quotable', 
@@ -252,20 +257,19 @@ class CurriculumController extends Controller
      */
     public function edit(Curriculum $curriculum)
     {
-//        $settings= json_encode([
-//            'edit' => true
-//        ]);
-//       return $this->show($curriculum)
-//                   ->with(compact('settings'));
-        $grades = Grade::all();
-        $subjects   = Subject::all();
+        $grades             = Grade::all();
+        $subjects           = Subject::all();
         $organization_types = OrganizationType::all();
-        $media = Medium::where('path', '/subjects/')->get(); //todo: only show usable media (e.g. images)
+        
+        $countries = Country::all();
+        $states = State::all();
+        
         return view('curricula.edit')
                 ->with(compact('grades'))
                 ->with(compact('subjects'))
                 ->with(compact('organization_types'))
-                ->with(compact('media'))
+                ->with(compact('countries'))
+                ->with(compact('states'))
                 ->with(compact('curriculum'));
     }
 
@@ -281,6 +285,7 @@ class CurriculumController extends Controller
         abort_unless(\Gate::allows('curriculum_edit'), 403);
         
         $input = $this->validateRequest();
+        
         $curriculum->update([
             'title'                 => $input['title'],
             'description'           => $input['description'],
@@ -292,13 +297,30 @@ class CurriculumController extends Controller
             'grade_id'              => format_select_input($input['grade_id']),
             'subject_id'            => format_select_input($input['subject_id']),
             'organization_type_id'  => format_select_input($input['organization_type_id']),
-            'state_id'              => 'DE-RP',
-            'country_id'            => 'DE',
-            'medium_id'             => format_select_input($input['medium_id']),
+            'state_id'              => isset($input['state_id']) ? format_select_input($input['state_id']) : null, 
+            'country_id'            => format_select_input($input['country_id']),
+            'medium_id'             => $this->getMediumIdByInputFilepath($input),
             'owner_id'              => auth()->user()->id,
         ]);
         
         return redirect($curriculum->path());
+    }
+    
+    /**
+     * If $input['filepath'] is set and medium exists, id is return, else return is null
+     * @param array $input
+     * @return mixed
+     */
+    public function getMediumIdByInputFilepath($input){
+        if (isset($input['filepath']))
+        {
+            $medium = new Medium();
+            return (null !== $medium->getByFilemanagerPath($input['filepath'])) ? $medium->getByFilemanagerPath($input['filepath'])->id : null;
+        } 
+        else
+        {
+            return null;
+        }
     }
     
     public function enrol()
@@ -356,7 +378,7 @@ class CurriculumController extends Controller
             'organization_type_id'  => 'sometimes',
             'state_id'              => 'sometimes',
             'country_id'            => 'sometimes',
-            'medium_id'             => 'sometimes',
+            'filepath'              => 'sometimes',
             'owner_id'              => 'sometimes',
             ]);
     }

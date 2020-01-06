@@ -25,15 +25,11 @@ class PeriodController extends Controller
             'begin', 
             'end', 
             'organization_id',
-            'owner_id',
             ]);       
         
         return DataTables::of($periods)
             ->addColumn('organization', function ($periods) {
                 return isset($periods->organization()->first()->title) ? $periods->organization()->first()->title : 'global';                
-            })
-            ->addColumn('owner', function ($periods) {
-                return isset($periods->owner()->first()->username) ? $periods->owner()->first()->username : 'global';                
             })
             ->addColumn('action', function ($periods) {
                  $actions  = '';

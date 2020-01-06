@@ -18,6 +18,16 @@
                  </h3>
                 
                  <div class="card-tools">
+                     <button type="button" 
+                             class="btn btn-tool"
+                             @click="del()">
+                        <i class="fa fa-trash text-danger"></i>
+                     </button>
+                     <button type="button" 
+                             class="btn btn-tool"
+                             @click="edit('content-create-modal')">
+                        <i class="fa fa-edit"></i>
+                     </button>
                      <button type="button" class="btn btn-tool draggable" >
                         <i class="fa fa-arrows-alt"></i>
                      </button>
@@ -45,11 +55,11 @@
 <script>
     
     export default {
-        
         data() {
             return {
                 content: [],
                 quote: null,
+                subscribable: null,
                 errors: {}
             }
         },
@@ -61,16 +71,31 @@
                     if (event.params.quote) {
                         this.quote = event.params.quote;   
                     }
+                    if (event.params.subscribable) {
+                        this.subscribable = event.params.subscribable;   
+                    }
                 }
             },
             opened(event){
                 this.$nextTick(function () {
-                    document.getElementById('quote_'+this.quote).scrollIntoView({ block: 'start', behavior: 'smooth' })
+                    document.getElementById('quote_'+this.quote).scrollIntoView({ block: 'start', behavior: 'smooth' })     
                 });
                
             },
             beforeClose() {
             },
+            edit(modal){
+                 this.$modal.show(modal, { 'id': this.content.id });
+            },
+            async del(){
+                try {   
+                    await axios.post('/contents/'+this.content.id+'/destroy',  { 'subscribable': this.subscribable } );
+                }
+                catch(error) {
+                    this.errors = error.response.data.errors;
+                }
+               location.reload();
+            },             
             close(){
                 this.$modal.hide('content-modal');
             }

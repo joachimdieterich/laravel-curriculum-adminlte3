@@ -29,6 +29,11 @@ class TerminalObjective extends Model
         return $this->hasMany('App\EnablingObjective', 'terminal_objective_id', 'id');
     }
     
+    public function contentSubscriptions()
+    {
+        return $this->morphMany('App\ContentSubscription', 'subscribable');
+    }
+    
     public function curriculum()
     {
         return $this->belongsTo('\App\Curriculum', 'curriculum_id', 'id');

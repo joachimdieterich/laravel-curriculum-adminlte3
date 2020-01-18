@@ -21,7 +21,7 @@
                     </button>
                 </form>
                 @endcan
-                <a class="btn btn-tool" href="/contents/{{ $item->referenceable_id }}/print" target="_blank">
+                <a class="btn btn-tool" href="{{ route("print.content",  $item->referenceable_id) }}" target="_blank">
                     <i class="fa fa-print"></i>
                 </a>
                 <button 

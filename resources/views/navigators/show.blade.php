@@ -27,6 +27,19 @@
                         {{ trans('global.add') }}
                     </a>
                 </span>
+            @else
+                <span class="pull-right">
+                    <a
+                    @if(isset($views))
+                        id="login"
+                        href="#"
+                        onclick="event.preventDefault(); document.getElementById('logoutform').submit();"
+                    @endif
+                    class=" btn btn-primary btn-xs">
+                        <i class="fa fa-sign-in-alt"></i> 
+                        {{ trans('global.login') }}
+                    </a>
+                </span>
             @endcan
             @if(isset($views))
                 @can('navigator_create')

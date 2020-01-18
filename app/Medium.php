@@ -11,6 +11,11 @@ class Medium extends Model
     
     protected $guarded = [];
     
+    public function path()
+    {
+        return "/media/{$this->id}";
+    }
+    
     public function absolutePath()
     {
         if ($this->mime_type !== 'url')

@@ -267,8 +267,8 @@ class CertificateController extends Controller
                 'publisher'     => '',
                 'city'          => '',
                 'date'          => date("Y-m-d_H-i-s"),
-                'size'          => File::size(Storage::disk('local')->path("users/".auth()->user()->id."/".$timestamp.$user->lastname."_".$user->firstname.".pdf")),
-                'mime_type'     => File::mimeType(Storage::disk('local')->path("users/".auth()->user()->id."/".$timestamp.$user->lastname."_".$user->firstname.".pdf")),
+                'size'          => File::size(Storage::disk('local')->path(config('lfm.files_folder_name')."/".auth()->user()->id."/".$timestamp.$user->lastname."_".$user->firstname.".pdf")),
+                'mime_type'     => File::mimeType(Storage::disk('local')->path(config('lfm.files_folder_name')."/".auth()->user()->id."/".$timestamp.$user->lastname."_".$user->firstname.".pdf")),
                 'license_id'    => 2,//$media_node->getAttribute('license'), //hack fix false entries in import files
 
                 'owner_id'      => auth()->user()->id,
@@ -276,8 +276,10 @@ class CertificateController extends Controller
             $media->save();
             
         }
-                //->inline('cur.pdf');
-        //return back();
+        
+        if (request()->wantsJson()){    
+            return ['message' => $media->path()];
+        }
     }
     
     protected function validateRequest()

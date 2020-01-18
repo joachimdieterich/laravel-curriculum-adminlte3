@@ -23,7 +23,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('certificates/generate', 'CertificateController@generate');
     Route::resource('certificates', 'CertificateController');
     
-    Route::get('contents/{content}/print', 'ContentController@print')->name('contents.print');
     Route::post('contents/{content}/destroy', 'ContentController@destroy')->name('contents.destroy'); //has to be post (has parameters)
     Route::resource('contents', 'ContentController');
 
@@ -108,6 +107,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');
     Route::resource('permissions', 'PermissionsController');
 
+    Route::get('print/glossar/{glossar}', 'PrintController@glossar')->name('print.glossar');
+    Route::get('print/content/{content}', 'PrintController@content')->name('print.content');
+    Route::get('print/curriculum/{curriculum}', 'PrintController@curriculum')->name('print.curriculum');
+    Route::get('print/curriculum/{curriculum}/references', 'PrintController@references')->name('print.references');
+    
     Route::resource('progresses', 'ProgressController');
     /* Roles routes */
     Route::delete('roles/massDestroy', 'RolesController@massDestroy')->name('roles.massDestroy');

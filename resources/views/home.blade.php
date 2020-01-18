@@ -13,7 +13,7 @@
             <div class="col-lg-12 p-0">
                 <div class="card card-primary card-outline">
                     <div class="card-header">
-                        <h5 class="m-0">Aktuelles</h5>
+                        <h5 class="m-0">{{ trans('global.dashboard.actual') }}</h5>
                     </div>
                     <div class="card-body">
                         <h6 class="card-title">Info</h6>
@@ -26,18 +26,51 @@
             <div class="col-lg-12 p-0">
                 <div class="card ">
                     <div class="card-header">
-                        <h5 class="m-0">Statistik</h5>
+                        <h5 class="m-0">{{ trans('global.dashboard.statistic') }}</h5>
                     </div>
                     <div class="card-body">
                         <ul class="nav nav-pills flex-column">
-                            <li class="nav-item"><a href="#"><strong>Erreichte Ziele</strong></a></li>
-                            <li class="nav-item"><a href="#">Gesamt <span class="pull-right text-green">123</span></a></li>
-                            <li class="nav-item"><a href="#">davon Heute <span class="pull-right text-green">123</span></a></li>
+                            <li class="nav-item">
+                                <a href="#">
+                                    <strong>{{ trans('global.dashboard.statistic_archievements') }}</strong>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#">
+                                    {{ trans('global.dashboard.today') }} 
+                                    <span class="pull-right text-green">
+                                        {{ count(auth()->user()->achievements_today()->where('status', '>=', 10)->where('status', '<', 30)) }}
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#">
+                                    {{ trans('global.dashboard.statistic_archievements_total') }} 
+                                    <span class="pull-right text-green">
+                                        {{ count(auth()->user()->achievements->where('status', '>=', 10)->where('status', '<', 30)) }}
+                                    </span>
+                                </a>
+                            </li>
                         </ul>
                         <ul class="pt-4 nav nav-pills flex-column">
-                            <li class="nav-item"><a href="#"><strong>online</strong></a></li>
-                            <li class="nav-item"><a href="#">jetzt online <span class="pull-right">123</span></a></li>
-                            <li class="nav-item"><a href="#">heute <span class="pull-right"> 123</span></a></li>
+                            <li class="nav-item">
+                                <a href="#">
+                                    <strong>{{ trans('global.dashboard.online') }}</strong>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#">
+                                    {{ trans('global.dashboard.now_online') }}
+                                    <span class="pull-right">{{ now_online() }}
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#">
+                                    {{ trans('global.dashboard.today') }}
+                                    <span class="pull-right">{{ today_online() }}</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -48,7 +81,7 @@
             <div class="col-lg-12 p-0">
                     <div class="card ">
                       <div class="card-header">
-                        <h5 class="m-0">Meine Institutionen</h5>
+                        <h5 class="m-0">{{ trans('global.organization.title') }}</h5>
                       </div>
                         <div class="card-body">
                             
@@ -74,7 +107,7 @@
                 
                 <div class="card ">
                       <div class="card-header">
-                        <h5 class="m-0">Meine Lerngruppen</h5>
+                        <h5 class="m-0">{{ trans('global.group.title') }}</h5>
                       </div>
                       <div class="card-body">
                         <ul class="products-list product-list-in-card pl-2 pr-2">

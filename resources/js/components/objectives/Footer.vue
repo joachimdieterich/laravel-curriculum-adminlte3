@@ -18,7 +18,7 @@
              </AchievementIndicator>
 
             <span >  
-                <span class="fa fa-info ml-1 " v-if="objective.description !== ''"
+                <span class="fa fa-info ml-1 "
                     @click.prevent="showDetails()">
                 </span>
             </span>

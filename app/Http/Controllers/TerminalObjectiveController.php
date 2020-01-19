@@ -146,23 +146,22 @@ class TerminalObjectiveController extends Controller
         return $return; 
     }
     
-     public function referenceSubscriptionSiblings(TerminalObjective $terminalObjective)
+    public function referenceSubscriptionSiblings(TerminalObjective $terminalObjective)
     {
         $siblings = new Collection([]);
         
-        
         foreach ($terminalObjective->referenceSubscriptions as $referenceSubscription) 
         {
+             
              $collection = ReferenceSubscription::where('reference_id', '=', $referenceSubscription->reference_id)
                                 ->where(function($query) use ($referenceSubscription, $terminalObjective)
                                     {
-                                        $query->where('reference_id', '=', $referenceSubscription->reference_id)
-                                              ->where('referenceable_type', '=', 'App\TerminalObjective')
-                                              ->where('referenceable_id', '!=', $terminalObjective->id);        
+                                        return $query->where('reference_id', '=', $referenceSubscription->reference_id)
+                                                     ->where('referenceable_id', '!=', $terminalObjective->id);
                                     })
                                 ->with(['referenceable.curriculum.organizationType'])
                                 ->with(['reference'])
-                     ->get();
+                     ->get();                                 
             $siblings= $siblings->merge($collection);            
         }
         

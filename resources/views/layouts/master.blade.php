@@ -94,10 +94,9 @@ echo json_encode([
 
             <footer class="main-footer">
                 <div class="float-right d-none d-sm-block">
-                    <b>Version</b> 3.0.0-rc.5
+                    <b>Version</b> 1.0.0
                 </div>
-                <strong>Copyright &copy; 2014-2019 <a href="http://adminlte.io">AdminLTE.io</a>.</strong> All rights
-                reserved.
+                <strong>Copyright &copy; 2012-2019 <a href="http://github.com/joachimdieterich">Joachim Dieterich</a>.</strong> 
             </footer>
             <!-- Logout Form -->
             <form id="logoutform" action="{{ route('logout') }}" method="POST" style="display: none;">

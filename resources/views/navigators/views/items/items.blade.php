@@ -16,8 +16,12 @@
                             @include ('navigators.views.items.content', [ 'item' => $item, 'onclick' => "" ])
                             @break  
 
-                         @case('App\Medium')
-                            @include ('navigators.views.items.item', [ 'item' => $item, 'onclick' => "location.href='/media/{$item->referenceable_id}';" ])
+                         @case('App\Medium') 
+                            @if ($item->referenceable->mime_type == 'url')
+                                @include ('navigators.views.items.item', [ 'item' => $item, 'onclick' => "location.href='{$item->referenceable->relativePath()}';" ])
+                            @else
+                                @include ('navigators.views.items.item', [ 'item' => $item, 'onclick' => "location.href='/media/{$item->referenceable_id}';" ])
+                            @endif 
                             @break
                     @endswitch
                 @endif

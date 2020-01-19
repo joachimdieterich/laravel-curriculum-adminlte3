@@ -8,7 +8,6 @@
         draggable=".draggable"
         :resizable=true
         @before-open="beforeOpen"
-        @opened="opened"
         @before-close="beforeClose"
         style="z-index: 1100">
         <div class="card" style="margin-bottom: 0px !important">
@@ -88,20 +87,23 @@
                 date: new Date().toLocaleDateString(),
                 curriculum_id: null,
                 requestUrl: '/certificates/generate',
+                location: null
             }
         },
         methods: {
             async generateCertificate() {
+                
                 try {                    
-                   await axios.post('/certificates/generate', {
+                   this.location = (await axios.post('/certificates/generate', {
                        'certificate_id': this.certificate_id, 
                        'user_ids' : getDatatablesIds('#users-datatable'), 
                        'date': this.date, 
                        'curriculum_id': this.curriculum_id
-                   });
+                   })).data.message;
                 } catch(error) {
                     this.errors = error.response.data.errors;
                 } 
+                
             },
             onChange(value){
                 this.certificate_id = value.id;

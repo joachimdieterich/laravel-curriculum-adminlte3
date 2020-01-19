@@ -45,7 +45,13 @@ if (!function_exists('relativeToAbsoutePaths')) {
                 function($match) 
                 { 
                     $media = App\Medium::find($match[1]);
-                    return (( "<img src=\"{$media->absolutePath()}\"{$match[2]}>"));      
+                    if ($media !== null)
+                    {
+                        return (( "<img src=\"{$media->absolutePath()}\"{$match[2]}>"));      
+                    } else {
+                        return "[Image not available]";
+                    }
+                    
                 }, 
                 $input 
             ); 
@@ -136,4 +142,33 @@ if (!function_exists('find_all_files')) {
         } 
         return $result; 
     } 
+}
+
+if (!function_exists('now_online')) {
+    function now_online(){
+
+         // Get time session life time from config.
+         $time =  time() - (config('session.lifetime')*60); 
+
+         // Total login users (user can be log on 2 devices will show once.)
+         $totalActiveUsers = DB::table('sessions')
+                 ->where('last_activity','>=', $time)->
+         count(DB::raw('DISTINCT user_id'));
+
+         return $totalActiveUsers;
+    }
+}
+
+if (!function_exists('today_online')) {
+    function today_online(){
+
+         $time =  time() - (24 * 60 * 60); // 24 Hours
+
+         // Total login users (user can be log on 2 devices will show once.)
+         $totalActiveUsers = DB::table('sessions')
+                 ->where('last_activity','>=', $time)->
+         count(DB::raw('DISTINCT user_id'));
+
+         return $totalActiveUsers;
+    }
 }

@@ -24,6 +24,21 @@ class EnablingObjective extends Model
     {
         return $this->belongsTo('App\TerminalObjective', 'id', 'terminal_objective_id');
     }
+     
+    public function terminalObjective()
+    {
+        return $this->belongsTo('\App\TerminalObjective', 'terminal_objective_id', 'id');
+    }
+    
+    public function contentSubscriptions()
+    {
+        return $this->morphMany('App\ContentSubscription', 'subscribable');
+    }
+    
+    public function curriculum()
+    {
+        return $this->belongsTo('\App\Curriculum', 'curriculum_id', 'id');
+    }
     
     public function mediaSubscriptions()
     {
@@ -42,15 +57,6 @@ class EnablingObjective extends Model
         )->where('subscribable_type', get_class($this)); 
     }
     
-    public function curriculum()
-    {
-        return $this->belongsTo('\App\Curriculum', 'curriculum_id', 'id');
-    }
-    public function terminalObjective()
-    {
-        return $this->belongsTo('\App\TerminalObjective', 'terminal_objective_id', 'id');
-    }
-    
     public function references()
     {
         return $this->hasManyThrough(
@@ -62,7 +68,7 @@ class EnablingObjective extends Model
             'reference_id' // Local key on reference_subscription table...
         )->where('referenceable_type', get_class($this)); 
     }
-    
+   
     public function referenceSubscriptions()
     {
         return $this->morphMany('App\ReferenceSubscription', 'referenceable');
@@ -72,12 +78,7 @@ class EnablingObjective extends Model
     {
         return $this->morphMany('App\QuoteSubscription', 'quotable');
     }
-    
-    public function contentSubscriptions()
-    {
-        return $this->morphMany('App\ContentSubscription', 'subscribable');
-    }
-    
+
     public function achievements()
     {
         return $this->morphMany('App\Achievement', 'referenceable');

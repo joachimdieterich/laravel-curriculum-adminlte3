@@ -56,7 +56,7 @@
                 label="{{ trans('global.glossar.title') }}" 
                 model="{{ class_basename($curriculum->glossar->contents[0]) }}"
                 :entries="{{ $curriculum->glossar->contents }}"
-                
+                parent="{{ json_encode($curriculum) }}"
             ></dropdown-button> 
         @endif
        
@@ -65,7 +65,7 @@
                 label="{{ trans('global.curricula_media_subscriptions') }}" 
                 model="{{ class_basename($curriculum->media[0]) }}"
                 :entries="{{ $curriculum->media }}"
-               
+                parent="{{ json_encode($curriculum) }}"
                 styles="border-left:0px"
             ></dropdown-button> 
         @endif
@@ -105,6 +105,30 @@
                 </div>
             </button>
         </div>
+        <div class="btn-group">        
+            <button type="button" class="btn btn-default" data-toggle="dropdown">
+                <i class="fa fa-print"></i>
+                <div class="dropdown-menu" >
+                    <a class="dropdown-item" 
+                       onclick="location.href='{{ route("print.curriculum", $curriculum->id) }}'">
+                        <i class="fa fa-th text-center" style="width:20px"></i>
+                        {{ trans('global.curriculum.print') }}
+                    </a>
+                    @if(isset($curriculum->glossar))
+                    <a class="dropdown-item" 
+                       onclick="location.href='{{ route("print.glossar", $curriculum->glossar->id) }}'">
+                        <i class="fa fa-equals text-center" style="width:20px"></i>
+                        {{ trans('global.glossar.print') }}
+                    </a>
+                    @endif
+                    <a class="dropdown-item" 
+                       onclick="location.href='{{ route("print.references", $curriculum->id) }}'">
+                        <i class="fa fa-link text-center" style="width:20px"></i>
+                        {{ trans('global.curriculum.print_references') }}
+                    </a>
+                </div>
+            </button>
+        </div>
         
         @if(isset($certificates))
             <a class="btn btn-default btn-flat" 
@@ -127,7 +151,7 @@
                    "value" =>  old('current_curriculum_cross_reference_id', isset(auth()->user()->current_curriculum_cross_reference_id) ? auth()->user()->current_curriculum_cross_reference_id : '')])
         
     </div>
-
+    
     <curriculum-view
         ref="curriculumView"
         :curriculum="{{ $curriculum }}" 

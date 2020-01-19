@@ -3,6 +3,8 @@
         id="content-modal" 
         name="content-modal" 
         height="auto" 
+        width="100%"
+        maxWidth="900"
         :adaptive=true
         draggable=".draggable"
         :resizable=true
@@ -18,12 +20,14 @@
                  </h3>
                 
                  <div class="card-tools">
-                     <button type="button" 
+                     <button v-can="'curriculum_edit'"
+                             type="button" 
                              class="btn btn-tool"
                              @click="del()">
                         <i class="fa fa-trash text-danger"></i>
                      </button>
-                     <button type="button" 
+                     <button v-can="'curriculum_edit'"
+                             type="button" 
                              class="btn btn-tool"
                              @click="edit('content-create-modal')">
                         <i class="fa fa-edit"></i>

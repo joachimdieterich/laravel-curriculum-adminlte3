@@ -11,7 +11,7 @@
                 </a>
             </li>
         </ul>   
-        
+        <hr class="mt-0">
         <div v-for="typetab in typetabs" class="tab-content">
             <div class="tab-pane" :id="'tab_' + typetab"  
                  :class="(activetab == typetab) ? 'active show' : ''">

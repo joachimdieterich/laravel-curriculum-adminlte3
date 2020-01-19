@@ -524,6 +524,7 @@ table.dataTable tbody td.selected a {
 }
 
 .box {
+  font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   border-radius: 0px;
   position: relative;
   border: 0;
@@ -1039,7 +1040,6 @@ table.dataTable tbody td.selected a {
   .box .boxwrap {
     width: 100%;
     overflow: hidden;
-    margin: 0px !important;
     padding: 0 0 0 20px;
   }
 
@@ -1126,9 +1126,7 @@ table.dataTable tbody td.selected a {
   }
 
   .box .boxwrap {
-    width: 198px;
     overflow: hidden;
-    margin: 0px !important;
     padding: 0px;
   }
 
@@ -37861,7 +37859,7 @@ a.text-muted:hover {
 }
 
 body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Source Sans Pro", sans-serif !important;
   font-size: 14px;
   line-height: 1.42857143;
   color: #333;

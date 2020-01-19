@@ -136,17 +136,17 @@ class EnablingObjectiveController extends Controller
     
     public function referenceSubscriptionSiblings(EnablingObjective $enablingObjective)
     {
-        $siblings = new Collection([]);
-        
+        $siblings = new Collection([]);   
         
         foreach ($enablingObjective->referenceSubscriptions as $referenceSubscription) 
         {
+            
              $collection = ReferenceSubscription::where('reference_id', '=', $referenceSubscription->reference_id)
                                 ->where(function($query) use ($referenceSubscription, $enablingObjective)
                                     {
-                                        $query->where('reference_id', '=', $referenceSubscription->reference_id)
-                                              ->where('referenceable_type', '=', 'App\EnablingObjective')
-                                              ->where('referenceable_id', '!=', $enablingObjective->id);        
+                                        return $query->where('reference_id', '=', $referenceSubscription->reference_id)
+//                                                      ->where('referenceable_type', '!=','App\EnablingObjective')
+                                                      ->where('referenceable_id', '!=', $enablingObjective->id);          
                                     })
                                 ->with(['referenceable.curriculum.organizationType'])
                                 ->with(['reference'])

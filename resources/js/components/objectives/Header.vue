@@ -27,7 +27,8 @@
                         v-html="objective.level.title">
                 </button>
             </span>
-            <span class="ml-auto" >  
+            <span  class="ml-auto" 
+                   v-can="'curriculum_edit'">  
                 <DropdownButton v-if="type == 'terminal'" 
                                 @eventDelete="emitDeleteEvent" 
                                 :menuEntries="menuEntries" 

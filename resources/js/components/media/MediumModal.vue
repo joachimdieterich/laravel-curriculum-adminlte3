@@ -24,7 +24,6 @@
                         <i class="fa fa-times"></i>
                      </button>
                  </div>
-              
             </div>
             
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
@@ -33,7 +32,9 @@
                 <div class="card-footer">
                      <span class="pull-right">
                          <button type="button" class="btn btn-info" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
-                         <button class="btn btn-primary" @click="download()" >{{ trans('global.downloadFile') }}</button>
+                         <button class="btn btn-primary" data-widget="remove" @click="close()">
+                             <a :href="scr" class="text-white text-decoration-none" target="_blank">{{ trans('global.downloadFile') }}</a>
+                         </button>
                     </span>
                 </div>
             
@@ -60,9 +61,6 @@
             },
             beforeClose() {
                  
-            },
-            download() {
-                return '/media/'+ this.medium.id +'?download';
             },
             close(){
                 this.$modal.hide('medium-modal');

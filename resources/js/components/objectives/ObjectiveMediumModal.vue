@@ -3,6 +3,8 @@
         id="objective-medium-modal" 
         name="objective-medium-modal" 
         height="auto" 
+        width="100%"
+        maxWidth="900"
         :adaptive=true
         :scrollable=true
         draggable=".draggable"
@@ -25,9 +27,9 @@
 
             </div>
 
-            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                <ul class="nav nav-pills">
-                    <li v-for="typetab in typetabs" class="nav-item p-2">
+            <div class="card-body pt-2" style="max-height: 80vh; overflow-y: auto;">
+                <ul class="nav nav-pills pb-2">
+                    <li v-for="typetab in typetabs" class="nav-item pl-0">
                         <a class="nav-link " :href="'#tab_' + typetab.id" 
                             :class="(activetab == typetab.id) ? 'active' : ''"
                             @click="setActiveTab(typetab)"
@@ -52,12 +54,12 @@
                 <!--                  2  References -->
                 <div class="tab-pane" id="'tab_2'"  
                      :class="(activetab == 2) ? 'active show' : ''">
-                     <references 
+                     <references
                         :reference_subscriptions="reference_subscriptions" 
                         :curricula_list="curricula_list" 
                         ></references>
                 </div><!-- /.tab-pane -->
-                <!--                  3  References -->
+                <!--                  3  Quotes -->
                 <div class="tab-pane" id="'tab_3'"  
                      :class="(activetab == 3) ? 'active show' : ''">
                      <quotes 
@@ -170,7 +172,7 @@
                         }
                         
                     }).catch(e => {
-                        this.errors = error.response.data.errors;
+                        //this.errors = error.response.data.errors;
                     });
                     
                     axios.get('/'+this.type+'Objectives/' + this.objective.id + '/quoteSubscriptions').then(response => {
@@ -182,10 +184,12 @@
                          }
                         
                     }).catch(e => {
-                        this.errors = error.response.data.errors;
+                        //this.errors = error.response.data.errors;
                     });
+                    if (typeof this.typetabs[0] != 'undefined'){
+                      this.activetab = this.typetabs[0].id;  
+                    }
                     
-                    this.activetab = this.typetabs[0].id;
                 }
             },
             close() {

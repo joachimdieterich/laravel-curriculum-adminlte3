@@ -16,6 +16,7 @@
 }
 
 .box {
+  font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   border-radius: 0px;
   position: relative;
   border: 0;
@@ -542,7 +543,6 @@
         .boxwrap {
             width: 100%;
             overflow:hidden;
-            margin: 0px !important;
             padding: 0 0 0 20px;
         } 
 
@@ -639,9 +639,7 @@
 
         }   
         .boxwrap {
-            width: 198px;
             overflow:hidden;
-            margin: 0px !important;
             padding: 0px;
         } 
 

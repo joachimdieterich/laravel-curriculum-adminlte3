@@ -207,4 +207,14 @@ class User extends Authenticatable
     {
         return $this->morphMany('App\Progress', 'associable');
     }
+    
+    public function achievements()
+    {
+        return $this->hasMany('App\Achievement');
+    }
+    
+    public function achievements_today()
+    {
+        return $this->hasMany('App\Achievement')->whereDate('updated_at', Carbon::today())->get();
+    }
 }

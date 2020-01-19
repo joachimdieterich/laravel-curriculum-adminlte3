@@ -81,5 +81,4 @@ class TerminalObjective extends Model
         return $this->morphMany('App\Achievement', 'referenceable');
     }
     
-    
 }

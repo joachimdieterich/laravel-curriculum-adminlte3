@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <div class="card collapsed-card" v-for="curriculum in curricula_list">
+    <div >
+        <div class="card collapsed-card mb-2" v-for="curriculum in curricula_list">
             <div class="card-header">
                 <h3 class="card-title"  
                     data-card-widget="collapse" 
@@ -22,7 +22,7 @@
             <div class="card-body collapse" 
                  :id="tagName(curriculum.id)">
                 <div v-for="filtered_reference in filterReferences(curriculum.id)" >
-                    <div class="row">   
+                    <div class="row pl-3">   
                         <ObjectiveBox type="terminal" 
                                       :objective="(filtered_reference.referenceable_type == 'App\\TerminalObjective') ? filtered_reference.referenceable : filtered_reference.referenceable.terminal_objective"
                                       :setting="setting">                   
@@ -36,7 +36,7 @@
                         </span>
 
                         <div class="col-xs-12 pull-right">
-                            <dt>Anregungen zur Unterrichtsgestaltung </dt>
+                            <dt>{{ trans("global.curricula_cross_references_description") }} </dt>
                             <dd v-html="filtered_reference.reference.description"></dd>
                         </div>
                     </div>

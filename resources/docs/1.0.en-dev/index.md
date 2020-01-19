@@ -30,6 +30,8 @@
     - [Generate PDFs](/{{route}}/{{version}}/pdf)
 - ## API
     - [OpenApi](/{{route}}/{{version}}/openapi)
+- ## Helpers
+    - [Helpers](/{{route}}/{{version}}/helpers)
 - ## Testing
     - [PHP-Tests](/{{route}}/{{version}}/php-test)
     - [Browser-Tests](/{{route}}/{{version}}/browser-test)

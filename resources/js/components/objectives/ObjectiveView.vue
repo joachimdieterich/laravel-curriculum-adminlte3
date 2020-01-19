@@ -205,7 +205,7 @@
         mounted() {    
             this.typetabs = []; //reset
             //console.log(event.params.content);
-            if (typeof this.objective.terminal_objective !== null){
+            if (typeof this.objective.terminal_objective === 'object'){
                 this.type = 'enabling';
             } else {
                 this.type = 'terminal';

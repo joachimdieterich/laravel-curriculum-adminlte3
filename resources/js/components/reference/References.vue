@@ -28,14 +28,14 @@
                                       :setting="setting">                   
                         </ObjectiveBox>
                         
-                        <span class="col-xs-12 pull-left" v-if="filtered_reference.referenceable_type === 'App\\EnablingObjective'">
-                            <ObjectiveBox type="enabling" 
-                                          :objective="filtered_reference.referenceable"
-                                          :setting="setting">
-                            </ObjectiveBox>
-                        </span>
+                        <ObjectiveBox 
+                            v-if="filtered_reference.referenceable_type === 'App\\EnablingObjective'"
+                            type="enabling" 
+                            :objective="filtered_reference.referenceable"
+                            :setting="setting">
+                        </ObjectiveBox>
 
-                        <div class="col-xs-12 pull-right">
+                        <div>
                             <dt>{{ trans("global.curricula_cross_references_description") }} </dt>
                             <dd v-html="filtered_reference.reference.description"></dd>
                         </div>

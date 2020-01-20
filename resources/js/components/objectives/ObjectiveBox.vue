@@ -73,13 +73,6 @@
             return {
                 menuEntries:  [
                     {
-                      title: 'Add Content',
-                      icon: 'fa fa-file',
-                      action: 'create',
-                      model: 'content',
-                      value: 'content-create-modal',
-                    },
-                    {
                       title: 'Add Material',
                       icon: 'fa fa-plus',
                       action: 'create',

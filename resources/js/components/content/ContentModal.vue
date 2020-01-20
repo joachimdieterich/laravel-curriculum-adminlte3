@@ -4,7 +4,7 @@
         name="content-modal" 
         height="auto" 
         width="100%"
-        maxWidth="900"
+        :maxWidth=900
         :adaptive=true
         draggable=".draggable"
         :resizable=true
@@ -96,7 +96,7 @@
                     await axios.post('/contents/'+this.content.id+'/destroy',  { 'subscribable': this.subscribable } );
                 }
                 catch(error) {
-                    this.errors = error.response.data.errors;
+                    this.errors = response.data.errors;
                 }
                location.reload();
             },             

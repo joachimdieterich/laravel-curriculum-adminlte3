@@ -217,7 +217,7 @@
                 axios.get('/sharingLevels').then(response => {
                     this.sharingLevels = response.data.sharingLevel;
                 }).catch(e => {
-                    this.errors = error.response.data.errors;
+                    this.errors = response.data.errors;
                 });
 
                 this.activetab = this.typetabs[0];
@@ -230,9 +230,8 @@
                     this.typetabs = this.typetabs.concat([{'id': 2, 'title': 'Reference'}]);
                     this.activetab = this.typetabs[0].id;
                 }
-
             }).catch(e => {
-                this.errors = error.response.data.errors;
+                this.errors = response.data.errors;
             });
 
             axios.get('/'+this.type+'Objectives/' + this.objective.id + '/quoteSubscriptions').then(response => {
@@ -242,9 +241,8 @@
                      this.typetabs = this.typetabs.concat([{'id': 3, 'title': 'Quotes'}]);
                      this.activetab = this.typetabs[0].id;
                  }
-
             }).catch(e => {
-                this.errors = error.response.data.errors;
+                this.errors = response.data.errors;
             });
             
             this.filterContent();

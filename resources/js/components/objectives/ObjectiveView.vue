@@ -10,7 +10,7 @@
                             </h5>
                         
                             <div class="pull-right" v-can="'objective_edit'">
-                                <a href="">
+                                <a  @click="editObjective()">
                                     <i class="far fa-edit"></i>
                                 </a> 
                             </div>
@@ -68,6 +68,7 @@
                              id="description"  
                              v-html="objective.description"></div>
                         <!-- /.tab-pane -->
+                        <!--                    1 Contents -->
                         <div class="tab-pane" 
                              v-for="(item,index) in contentCategories" 
                              v-bind:id="'category_'+item.id"
@@ -150,13 +151,15 @@
             }
         },
         methods: {
+            editObjective() {     
+                this.$modal.show(this.type+'-objective-modal', {'objective': this.objective, 'method': 'PATCH' });
+            },
             filterMedia(typetab) {
                 let filteredMedia = this.objective.media_subscriptions; //to array
 
                 filteredMedia = filteredMedia.filter(
                         t => t.sharing_level_id === typetab
                 );
-                //console.log(filteredMedia);
                 return filteredMedia;
             },
             filterContent(category){
@@ -170,11 +173,9 @@
                 return medium[0];
             },
             getTypeTitle(id) {
-
                 let typeObject = this.sharingLevels.filter(
                         t => t.id === id
                 );
-
                 return typeObject;
             },
             setActiveTab(typetab) {
@@ -188,15 +189,12 @@
                 this.$modal.show(modal, {'referenceable_type': reference_class, 'referenceable_id': this.objective.id});
             },
             getUnique(arr, comp) {
-
                 const unique = arr
-                     .map(e => e[comp])
-
+                   .map(e => e[comp])
                    // store the keys of the unique objects
-                  .map((e, i, final) => final.indexOf(e) === i && i)
-
-                  // eliminate the dead keys & store unique objects
-                  .filter(e => arr[e]).map(e => arr[e]);
+                   .map((e, i, final) => final.indexOf(e) === i && i)
+                   // eliminate the dead keys & store unique objects
+                   .filter(e => arr[e]).map(e => arr[e]);
 
                  return unique;
              }

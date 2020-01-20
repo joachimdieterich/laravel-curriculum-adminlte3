@@ -24,8 +24,8 @@
                 <div v-for="filtered_reference in filterReferences(curriculum.id)" >
                     <div class="row pl-3">   
                         <ObjectiveBox type="terminal" 
-                                      :objective="(filtered_reference.referenceable_type == 'App\\TerminalObjective') ? filtered_reference.referenceable : filtered_reference.referenceable.terminal_objective"
-                                      :setting="setting">                   
+                            :objective="(filtered_reference.referenceable_type == 'App\\TerminalObjective') ? filtered_reference.referenceable : filtered_reference.referenceable.terminal_objective"
+                            :setting="setting">                   
                         </ObjectiveBox>
                         
                         <ObjectiveBox 

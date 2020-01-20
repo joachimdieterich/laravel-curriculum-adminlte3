@@ -11,7 +11,9 @@
                 </span>
             </span>
 
-             <AchievementIndicator v-can="'achievement_create'"
+             <AchievementIndicator 
+                 v-can="'achievement_create'" 
+                 v-if="(typeof this.objective.achievements !== 'undefined')"
                 :objective="objective"
                 :type="type"
                 :settings="settings">

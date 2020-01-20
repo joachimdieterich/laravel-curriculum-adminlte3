@@ -4,7 +4,7 @@
         name="objective-medium-modal" 
         height="auto" 
         width="100%"
-        maxWidth="900"
+        :maxWidth=900
         :adaptive=true
         :scrollable=true
         draggable=".draggable"
@@ -15,7 +15,6 @@
                 <h3 class="card-title">
                     {{ trans('global.media.title') }}
                 </h3>
-
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool draggable" >
                         <i class="fa fa-arrows-alt"></i>
@@ -157,7 +156,7 @@
                         axios.get('/sharingLevels').then(response => {
                             this.sharingLevels = response.data.sharingLevel;
                         }).catch(e => {
-                            this.errors = error.response.data.errors;
+                            this.errors = response.data.errors;
                         });
 
                         this.activetab = this.typetabs[0];
@@ -170,9 +169,8 @@
                             this.typetabs = this.typetabs.concat([{'id': 2, 'title': 'Reference'}]);
                             this.activetab = this.typetabs[0].id;
                         }
-                        
                     }).catch(e => {
-                        //this.errors = error.response.data.errors;
+                        this.errors = response.data.errors;
                     });
                     
                     axios.get('/'+this.type+'Objectives/' + this.objective.id + '/quoteSubscriptions').then(response => {
@@ -184,7 +182,7 @@
                          }
                         
                     }).catch(e => {
-                        //this.errors = error.response.data.errors;
+                        this.errors = response.data.errors;
                     });
                     if (typeof this.typetabs[0] != 'undefined'){
                       this.activetab = this.typetabs[0].id;  

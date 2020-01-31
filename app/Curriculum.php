@@ -4,7 +4,29 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-
+/**
+ *   @OA\Schema(  
+ *      required={"id", "title", "description", "author", "publisher", "city", "date", "color", "grade_id", "subject_id", "organisation_type_id", "state_id", "country_id", "medium_id", "owner_id", "created_at", "updated_at"},
+ *      @OA\Xml(name="Curriculum"),
+ *      
+ *      @OA\Property( property="id", type="integer"),
+ *      @OA\Property( property="description", type="string"),
+ *      @OA\Property( property="author", type="string"),
+ *      @OA\Property( property="publisher", type="string"),
+ *      @OA\Property( property="city", type="string"),
+ *      @OA\Property( property="date", type="string"),
+ *      @OA\Property( property="color", type="string"),
+ *      @OA\Property( property="grade_id", type="integer"),
+ *      @OA\Property( property="subject_id", type="string"),
+ *      @OA\Property( property="organisation_type_id", type="string"),
+ *      @OA\Property( property="state_id", type="string"),
+ *      @OA\Property( property="country_id", type="string"),
+ *      @OA\Property( property="medium_id", type="string"),
+ *      @OA\Property( property="owner_id", type="string"),
+ *      @OA\Property( property="created_at", type="string"),
+ *      @OA\Property( property="updated_at", type="string")
+ *   ),
+ */
 class Curriculum extends Model
 {
     protected $guarded = [];
@@ -74,7 +96,7 @@ class Curriculum extends Model
     
     public function terminalObjectives()
     {
-        return $this->hasMany('App\TerminalObjective', 'curriculum_id', 'id');
+        return $this->hasMany('App\TerminalObjective', 'curriculum_id', 'id')->orderBy('objective_type_id');
     }
     
     public function contentSubscriptions()

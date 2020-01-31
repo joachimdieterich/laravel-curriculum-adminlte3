@@ -38,6 +38,10 @@ Route::group([
     'namespace' => 'Api\V1\Admin',
     'middleware' => 'client_credentials'
     ], function () {
+    
+    Route::get('curricula/metadatasets', 'CurriculaApiController@getAllMetadatasets');
+    Route::get('curricula/{curriculum}/metadataset', 'CurriculaApiController@getSingleMetadataset');
+    Route::apiResource('curricula', 'CurriculaApiController');
     Route::apiResource('permissions', 'PermissionsApiController');
 
     Route::apiResource('roles', 'RolesApiController');

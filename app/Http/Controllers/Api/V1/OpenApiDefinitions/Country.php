@@ -26,7 +26,7 @@
 *      operationId="getCountry",
 *      tags={"Country v1"},
 *      summary="Get country by Id",
-*      description="Returns a countrie objects",
+*      description="Returns a country object",
 *      security={
 *           {"passport": {"*"}},
 *      },

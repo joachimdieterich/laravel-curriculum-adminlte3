@@ -25,7 +25,7 @@ return [
     'reset_password'                       => 'Passwort zurücksetzen',
     'login'                                => 'Anmelden',
     'login_text'                           => 'Melden Sie sich an',
-    'login_guest'                          => 'Als Gast anmelden',
+    'login_guest'                          => 'Gastzugang',
     'remember_me'                          => 'Anmeldung speichern',
     'forgot_password'                      => 'Haben Sie Ihr Passwort vergessen?',
     'register'                             => 'Registrieren',
@@ -581,7 +581,7 @@ return [
         ],
     ],
     'terminalObjective' =>[
-        'title'          => 'Bereich',
+        'title'          => 'Bereiche',
         'title_singular' => 'Bereich',
         'fields'         => [
             'id'                => 'ID',
@@ -700,6 +700,7 @@ return [
         ]   
     ],
     'referenceable_types' =>[
+        'objective'         => 'Bereich/Baustein verknüpfen',
         'navigator_view'    => 'Navigator-Ansicht verknüpfen',
         'curriculum'        => 'Curriculum verknüpfen',
         'content'           => 'Text verknüpfen',
@@ -767,5 +768,62 @@ return [
             'owner_id'              => 'Eigentümer Id',
             'owner_id_helper'       => '',
         ]   
+    ],
+    'logbook' =>[
+        'title'             => 'Logbücher',
+        'title_singular'    => 'Logbuch',
+        'create'            => 'Logbuch erstellen',
+        'edit'              => 'Logbuch bearbeiten',
+        'fields'            => [
+            'id'            => 'ID',
+            'id_helper'     => '',
+            'title'         => 'Titel',
+            'title_helper'  => '',
+            'description'         => 'Beschreibung',
+            'description_helper'  => '',
+        ],
+    ],
+    'logbookEntry' =>[
+        'title'             => 'Logs',
+        'title_singular'    => 'Log',
+        'create'            => 'Logbucheintrag erstellen',
+        'edit'              => 'Logbucheintrag bearbeiten',
+        'addition'          => 'Logbucheintrag ergänzen',
+        'fields'            => [
+            'id'            => 'ID',
+            'id_helper'     => '',
+            'title'         => 'Titel',
+            'title_helper'  => '',
+            'description'         => 'Beschreibung',
+            'description_helper'  => '',
+            'begin'         => 'Beginn',
+            'begin_helper'  => '',
+            'end'         => 'Ende',
+            'end_helper'  => '',
+        ],
+    ],
+    'task' =>[
+        'title'             => 'Aufgaben',
+        'title_singular'    => 'Aufgabe',
+        'create'            => 'Aufgabe erstellen',
+        'edit'              => 'Aufgabe bearbeiten',
+        'fields'            => [
+            'id'            => 'ID',
+            'id_helper'     => '',
+            'title'         => 'Titel',
+            'title_helper'  => '',
+            'description'         => 'Beschreibung',
+            'description_helper'  => '',
+       ],
+    ],
+    'userStatus' =>[
+        'title'             => 'Benutzerstatus',
+        'title_singular'    => 'Benutzerstatus',
+        'create'            => 'Benutzerstatus erstellen',
+        'edit'              => 'Benutzerstatus bearbeiten',
+        'fields'            => [
+            'id'            => 'ID',
+            'id_helper'     => '',
+       ],
     ],
 ];

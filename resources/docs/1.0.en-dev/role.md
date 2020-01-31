@@ -40,6 +40,8 @@ curriculum | admin, creator| admin, creator | admin, creator, indexer, schooladm
 grade | admin, creator  | admin, creator | admin, creator | admin, creator | admin, creator
 group | admin, schooladmin, teacher | admin, schooladmin | admin, schooladmin, teacher | admin, schooladmin | admin, schooladmin
 group_enrolment | - | - | - | - | - | admin, schooladmin
+logbook | admin, creator, indexer, schooladmin, teacher, student, parents, guest | admin, creator, schooladmin, teacher | admin, creator, indexer, schooladmin, teacher, student, parents, guest | admin, creator, schooladmin, teacher | admin, creator, schooladmin, teacher
+logbook_entry | admin, creator, indexer, schooladmin, teacher, student, parents, guest | admin, creator, schooladmin, teacher | admin, creator, indexer, schooladmin, teacher, student, parents, guest | admin, creator, schooladmin, teacher | admin, creator, schooladmin, teacher
 navigator | admin, creator | admin, creator | admin, creator, indexer, schooladmin, teacher, student, guest | admin, creator | admin, creator
 objective | - | admin, creator | - | admin, creator | admin, creator
 organization | admin | admin | admin, schooladmin, teacher | admin | admin

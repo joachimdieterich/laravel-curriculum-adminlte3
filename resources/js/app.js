@@ -80,6 +80,9 @@ Vue.component('content-create-modal', require('./components/content/ContentCreat
 Vue.component('medium-modal', require('./components/media/MediumModal.vue').default);
 Vue.component('objective-medium-modal', require('./components/objectives/ObjectiveMediumModal.vue').default);
 Vue.component('certificate-generate-modal', require('./components/certificate/GenerateCertificateModal.vue').default);
+Vue.component('logbook', require('./components/logbooks/Logbook.vue').default);
+Vue.component('logbook-entry-modal', require('./components/logbooks/LogbookEntryModal.vue').default);
+Vue.component('logbook-subscribe-objective-modal', require('./components/logbooks/LogbookSubscribeObjectiveModal.vue').default);
 
 /**
  * Custom Vue directive "can" to check against permissions.

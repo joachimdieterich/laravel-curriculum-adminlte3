@@ -14,7 +14,6 @@ class CreateContentSubscriptionsTable extends Migration
     public function up()
     {
         Schema::create('content_subscriptions', function (Blueprint $table) {
-            
             $table->unsignedbigInteger('content_id');
             $table->string('subscribable_type');
             $table->unsignedbigInteger('subscribable_id');
@@ -25,13 +24,11 @@ class CreateContentSubscriptionsTable extends Migration
             $table->boolean('visibility');
             $table->unsignedbigInteger('owner_id');
             
-            
             $table->timestamps();
             
             $table->foreign('content_id')->references('id')->on('contents');
             $table->foreign('sharing_level_id')->references('id')->on('sharing_levels');
             $table->foreign('owner_id')->references('id')->on('users');
-            
         });
     }
 

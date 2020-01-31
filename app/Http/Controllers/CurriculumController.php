@@ -35,6 +35,9 @@ class CurriculumController extends Controller
 
         $curricula = Curriculum::all();
        
+        if (request()->wantsJson()){    
+            return ['curricula' => $curricula];
+        }
         return view('curricula.index')
           ->with(compact('curricula'));
     }
@@ -218,6 +221,14 @@ class CurriculumController extends Controller
     public function showAchievements(Curriculum $curriculum)
     {
         $this->show($curriculum, true);
+    }
+    
+    public function getObjectives(Curriculum $curriculum)
+    {
+        $curriculum = Curriculum::where('id', $curriculum->id)->with('terminalObjectives.enablingObjectives')->get()->first();
+        if (request()->wantsJson()){    
+            return ['curriculum' => $curriculum];
+        }
     }
     /**
      * Get achievements

@@ -83,7 +83,7 @@ class NavigatorController extends Controller
      */
     public function create()
     {
-         abort_unless(\Gate::allows('navigator_create'), 403);
+        abort_unless(\Gate::allows('navigator_create'), 403);
         
         $organizations = Organization::all();
         return view('navigators.create')

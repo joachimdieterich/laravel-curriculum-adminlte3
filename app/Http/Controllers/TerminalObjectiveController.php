@@ -22,7 +22,7 @@ class TerminalObjectiveController extends Controller
      */
     public function index()
     {
-        //
+       
     }
 
     /**

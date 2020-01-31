@@ -700,6 +700,7 @@ return [
         ]   
     ],
     'referenceable_types' =>[
+        'objective'       => 'Link terminal/enabling objective',
         'navigator_view' => 'Link a navigator view',
         'curriculum' => 'Link a curriculum',
         'content' => 'Link a text',
@@ -767,5 +768,62 @@ return [
             'owner_id' => 'Owner Id',
             'owner_id_helper' => '',
         ]   
+    ],
+     'logbook' =>[
+        'title'             => 'Logbooks',
+        'title_singular'    => 'Logbook',
+        'create'            => 'Create Logbook',
+        'edit'              => 'Edit Logbook',
+        'fields'            => [
+            'id'            => 'ID',
+            'id_helper'     => '',
+            'title'         => 'Title',
+            'title_helper'  => '',
+            'description'         => 'Description',
+            'description_helper'  => '',
+        ],
+    ],
+    'logbookEntry' =>[
+        'title'             => 'Logs',
+        'title_singular'    => 'Log',
+        'create'            => 'Create Logbookentry',
+        'edit'              => 'Edit Logbookentry',
+        'addition'          => 'Make addition to Logbookentry',
+        'fields'            => [
+            'id'            => 'ID',
+            'id_helper'     => '',
+            'title'         => 'Title',
+            'title_helper'  => '',
+            'description'         => 'Description',
+            'description_helper'  => '',
+            'begin'         => 'Begin',
+            'begin_helper'  => '',
+            'end'         => 'End',
+            'end_helper'  => '',
+        ],
+    ],
+    'task' =>[
+        'title'             => 'Tasks',
+        'title_singular'    => 'Task',
+        'create'            => 'Create task',
+        'edit'              => 'Edit task',
+        'fields'            => [
+            'id'            => 'ID',
+            'id_helper'     => '',
+            'title'         => 'Title',
+            'title_helper'  => '',
+            'description'         => 'Description',
+            'description_helper'  => '',
+       ],
+    ],
+    'userStatus' =>[
+        'title'             => 'Users statuses',
+        'title_singular'    => 'Users status',
+        'create'            => 'Create users statuses',
+        'edit'              => 'Edit users statuses',
+        'fields'            => [
+            'id'            => 'ID',
+            'id_helper'     => '',
+       ],
     ],
 ];

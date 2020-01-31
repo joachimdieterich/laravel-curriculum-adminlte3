@@ -38,6 +38,16 @@ class PermissionRoleTableSeeder extends Seeder
                 'grade_show',
                 'grade_edit',
                 'grade_delete',
+                'logbook_access',
+                'logbook_create',
+                'logbook_show',
+                'logbook_edit',
+                'logbook_delete',
+                'logbook_entry_access',
+                'logbook_entry_create',
+                'logbook_entry_show',
+                'logbook_entry_edit',
+                'logbook_entry_delete',
                 'navigator_access', 
                 'navigator_create', 
                 'navigator_show', 
@@ -67,6 +77,10 @@ class PermissionRoleTableSeeder extends Seeder
             $indexer_permission_list = [
                 'curriculum_show',
                 'navigator_show', 
+                'logbook_access',
+                'logbook_show',
+                'logbook_entry_access',
+                'logbook_entry_show',
             ];
             
             return in_array($permission->title, $indexer_permission_list);
@@ -93,6 +107,16 @@ class PermissionRoleTableSeeder extends Seeder
                 'group_edit',
                 'group_delete',
                 'group_enrolment',
+                'logbook_access',
+                'logbook_create',
+                'logbook_show',
+                'logbook_edit',
+                'logbook_delete',
+                'logbook_entry_access',
+                'logbook_entry_create',
+                'logbook_entry_show',
+                'logbook_entry_edit',
+                'logbook_entry_delete',
                 'navigator_show',
                 'organization_show',
                 'organization_enrolment',
@@ -124,6 +148,16 @@ class PermissionRoleTableSeeder extends Seeder
                 'curriculum_show', 
                 'group_access',
                 'group_show',
+                'logbook_access',
+                'logbook_create',
+                'logbook_show',
+                'logbook_edit',
+                'logbook_delete',
+                'logbook_entry_access',
+                'logbook_entry_create',
+                'logbook_entry_show',
+                'logbook_entry_edit',
+                'logbook_entry_delete',
                 'navigator_show',
                 'organization_show',
                 'user_access',
@@ -140,6 +174,10 @@ class PermissionRoleTableSeeder extends Seeder
             $user_permission_list = [
                 'achievement_create', 
                 'curriculum_show',
+                'logbook_access',
+                'logbook_show',
+                'logbook_entry_access',
+                'logbook_entry_show',
                 'navigator_access', 
                 'navigator_show', 
             ];
@@ -152,6 +190,10 @@ class PermissionRoleTableSeeder extends Seeder
         $parent_permissions = $admin_permissions->filter(function ($permission) {
             $parent_permission_list = [
                 'curriculum_show',
+                'logbook_access',
+                'logbook_show',
+                'logbook_entry_access',
+                'logbook_entry_show',
                 'navigator_show', 
             ];
             
@@ -163,6 +205,10 @@ class PermissionRoleTableSeeder extends Seeder
         $guest_permissions = $admin_permissions->filter(function ($permission) {
             $guest_permission_list = [
                 'curriculum_show', 
+                'logbook_access',
+                'logbook_show',
+                'logbook_entry_access',
+                'logbook_entry_show',
                 'navigator_show', 
             ];
             

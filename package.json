@@ -44,6 +44,7 @@
         "vue-material": "^1.0.0-beta-11",
         "vue-multiselect": "^2.1.6",
         "vue-sticky-directive": "0.0.10",
+        "vue2-datepicker": "^3.3.0",
         "webpack": "^4.41.2"
     }
 }

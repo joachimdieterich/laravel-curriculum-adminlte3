@@ -4,9 +4,11 @@
 
 Route::redirect('/home', '/');
 
-Route::get('/impressum', 'OpenController@impressum')->name('Impressum');
+Route::get('/features', 'OpenController@features')->name('features');
 
-Route::get('/terms', 'OpenController@terms')->name('Terms');
+Route::get('/impressum', 'OpenController@impressum')->name('impressum');
+
+Route::get('/terms', 'OpenController@terms')->name('terms');
 
 Auth::routes(['register' => false]);
 
@@ -25,11 +27,11 @@ Route::group(['middleware' => 'auth'], function () {
     
     Route::post('contents/{content}/destroy', 'ContentController@destroy')->name('contents.destroy'); //has to be post (has parameters)
     Route::resource('contents', 'ContentController');
-
+    
     /* courses routes */
     Route::get('courses/list', 'CourseController@list');
     Route::resource('courses', 'CourseController');
-    
+  
     /* country routes */
     Route::get('countries/{country}/states', 'CountryController@getStates')->name('countries.states');
 
@@ -41,12 +43,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('curricula/import/store', 'CurriculumImportController@store')->name('curricula.import.store');
     Route::get('curricula/{curriculum}/achievements', 'CurriculumController@showAchievements')->name('curricula.showAchievements');
     Route::post('curricula/{curriculum}/achievements', 'CurriculumController@getAchievements')->name('curricula.getAchievements');
+    Route::get('curricula/{curriculum}/objectives', 'CurriculumController@getObjectives')->name('curricula.getObjectives');
     Route::resource('curricula', 'CurriculumController');
 
     /* enablingObjectives routes */
     Route::get('enablingObjectives/{enablingObjective}/referenceSubscriptionSiblings', 'EnablingObjectiveController@referenceSubscriptionSiblings');
     Route::get('enablingObjectives/{enablingObjective}/quoteSubscriptions', 'EnablingObjectiveController@quoteSubscriptions');
     Route::resource('enablingObjectives', 'EnablingObjectiveController');
+    /* enablingObjectiveSubscriptions */
+    Route::resource('enablingObjectiveSubscriptions', 'enablingObjectiveSubscriptionsController');
 
     /* grades routes */
     Route::get('grades/list', 'GradesController@list')->name('grades.list');
@@ -64,10 +69,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('groupList', 'GroupsController@groupList');
     Route::resource('groups', 'GroupsController');
     
-     Route::resource('levels', 'LevelController');
-
-    /* Navigators */
+    Route::resource('levels', 'LevelController');
     
+    /* logbooks */
+    Route::get('logbooks/list', 'LogbookController@list');
+    Route::resource('logbooks', 'LogbookController');
+    
+    /* logbook entries */
+    Route::resource('logbookEntries', 'LogbookEntryController');
+    
+    /* Navigators */ 
     Route::get('navigators/list', 'NavigatorController@list');
     Route::resource('navigators', 'NavigatorController');
     
@@ -128,6 +139,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('terminalObjectives/{terminalObjective}/referenceSubscriptionSiblings', 'TerminalObjectiveController@referenceSubscriptionSiblings');
     Route::get('terminalObjectives/{terminalObjective}/quoteSubscriptions', 'TerminalObjectiveController@quoteSubscriptions');
     Route::resource('terminalObjectives', 'TerminalObjectiveController');
+    /* terminalObjectiveSubscriptions */
+    Route::resource('terminalObjectiveSubscriptions', 'terminalObjectiveSubscriptionsController');
 
     /* reference(Subscription) routes */
     Route::resource('references', 'ReferenceController');

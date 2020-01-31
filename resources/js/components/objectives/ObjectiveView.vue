@@ -163,7 +163,12 @@
                 return filteredMedia;
             },
             filterContent(category){
-                return [].concat(...this.objective.content_subscriptions.filter(c => c.content.categories.find(cat => cat.id === category)));
+                if (category === 1){
+                    return [].concat(...this.objective.content_subscriptions.filter(c => c.content.categories.find(cat => cat.id === category)))
+                             .concat(...this.objective.content_subscriptions.filter(c => c.content.categories.length === 0));
+                } else {
+                    return [].concat(...this.objective.content_subscriptions.filter(c => c.content.categories.find(cat => cat.id === category)));
+                }    
             },
             match(medium_id) {
                 let medium = this.objective.media; //to array
@@ -251,7 +256,8 @@
             },
             contentCategories: function() {
                 let categories = [].concat(...this.objective.content_subscriptions
-                                   .map(c => c.content.categories.map(cat =>({'id' : cat.id, 'title' : cat.title}))));
+                                   .map(c => c.content.categories.map(cat =>({'id' : cat.id, 'title' : cat.title}))))
+                                   .concat({'id' : 1, 'title' : 'Ohne Kategorie'}); //hack: default has to be set
                 
               return this.getUnique(categories, 'id');
             },

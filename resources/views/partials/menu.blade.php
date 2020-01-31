@@ -90,6 +90,16 @@
                         </a>
                     </li>
                 @endcan
+                @can('logbook_access')
+                    <li class="nav-item">
+                        <a href="{{ route("logbooks.index") }}" class="nav-link {{ request()->is('logbooks') || request()->is('logbooks/*') ? 'active' : '' }}">
+                            <i class="fas fa-book"></i>
+                            <p>
+                                <span>{{ trans('global.logbook.title') }}</span>
+                            </p>
+                        </a>
+                    </li>
+                @endcan
                 @can('user_access')
                     <li class="nav-item has-treeview menu-open {{ request()->is('permissions*') ? 'menu-open' : '' }} {{ request()->is('roles*') ? 'menu-open' : '' }} {{ request()->is('users*') ? 'menu-open' : '' }}">
                         <a class="nav-link nav-dropdown-toggle">

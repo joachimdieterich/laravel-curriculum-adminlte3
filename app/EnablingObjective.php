@@ -74,6 +74,11 @@ class EnablingObjective extends Model
         return $this->morphMany('App\ReferenceSubscription', 'referenceable');
     }
     
+    public function subscriptions()
+    {
+        return $this->hasMany(EnablingObjectiveSubscription::class);
+    }
+    
     public function quoteSubscriptions()
     {
         return $this->morphMany('App\QuoteSubscription', 'quotable');

@@ -4,6 +4,7 @@ namespace App;
 
 use App\ContentSubscription;
 use App\Quote;
+use App\Categorie;
 use Illuminate\Database\Eloquent\Model;
 
 class Content extends Model
@@ -49,7 +50,8 @@ class Content extends Model
     
     public function categories()
     {
-        return $this->belongsToMany('App\Categorie')->withTimestamps();
+        return $this->belongsToMany('App\Categorie')
+                    ->withTimestamps();
     }
   
 }

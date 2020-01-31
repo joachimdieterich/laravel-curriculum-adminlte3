@@ -9,6 +9,7 @@
     
     <title>{{ trans('global.site_title') }}</title>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet" />
+     @yield('styles')
     
     <script>    
         
@@ -26,9 +27,7 @@
     
 </head>
 
-<body class="hold-transition login-page">
-    @yield('content')
-</body>
+@yield('content')
 
 <script src="{{ asset('js/app.js') }}"></script>
 <script src="{{ asset('js/main.js') }}"></script>

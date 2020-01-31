@@ -17,6 +17,11 @@ class OpenController extends Controller
         
     }
 
+    public function features()
+    {   
+        return view('features');
+    }
+    
     public function impressum()
     {   
         $impressum = Content::where('title', '=', 'Impressum')->first();

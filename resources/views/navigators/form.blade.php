@@ -5,8 +5,7 @@
                     "placeholder" => "Title",  
                     "required" => true, 
                     "value" => old('title', isset($navigator) ? $navigator->title : '')])
-
-                                                                   
+                                                               
 @include ('forms.input.select', 
                       ["model" => "organization",
                       "show_label" => true,

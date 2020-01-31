@@ -15,6 +15,7 @@
     - [Vue Components](/{{route}}/{{version}}/vue-components)
         - [Modal](/{{route}}/{{version}}/vue-modal)
         - [Dropdown Button](/{{route}}/{{version}}/vue-dropdown-button)
+        - [Date-Picker](/{{route}}/{{version}}/vue-date-picker)
     - [Blade](/{{route}}/{{version}}/blade)
         - [TinyCME](/{{route}}/{{version}}/blade-editor)
         - [Forms](/{{route}}/{{version}}/blade-form)

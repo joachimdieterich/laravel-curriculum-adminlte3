@@ -80,7 +80,7 @@ class CurriculaApiController extends Controller
                         .str_pad($ter_type, 3, '0', STR_PAD_LEFT)."."
                         .str_pad($ter, 3, '0', STR_PAD_LEFT)."."
                         ."000.000", 
-                    'title' => str_replace(array("\n", "\r", "\t"), '', strip_tags(ObjectiveType::where('id', $terminalObjective->objective_type_id)->get()->first()->title))
+                    'title' => str_replace(array("\n", "\r", "\t"), ' ', strip_tags(ObjectiveType::where('id', $terminalObjective->objective_type_id)->get()->first()->title))
                 ];
                 $ter = 1; //set/reset terminal_id
             } 
@@ -103,7 +103,7 @@ class CurriculaApiController extends Controller
                     .str_pad($ter, 3, '0', STR_PAD_LEFT)."."
                     .str_pad($ena, 3, '0', STR_PAD_LEFT)."."
                     ."000", 
-                'title' => str_replace(array("\n", "\r", "\t"), '', (strip_tags($enablingObjective->title)))
+                'title' => str_replace(array("\n", "\r", "\t"), ' ', (strip_tags($enablingObjective->title)))
             ];
                 $ena++;
             }

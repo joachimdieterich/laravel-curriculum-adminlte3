@@ -1,8 +1,6 @@
 <?php
 
-//Route::redirect('/', '/login');
-
-Route::redirect('/home', '/');
+Route::redirect('/', '/features');
 
 Route::get('/features', 'OpenController@features')->name('features');
 
@@ -14,7 +12,7 @@ Auth::routes(['register' => false]);
 
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('/', 'HomeController@index')->name('home');
+    Route::get('/home', 'HomeController@index')->name('home');
 
     Route::post('achievements', 'AchievementController@store');
     

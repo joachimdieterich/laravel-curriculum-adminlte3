@@ -27,6 +27,7 @@
 <content-create-modal></content-create-modal>
 <objective-medium-modal></objective-medium-modal>
 <medium-modal></medium-modal>
+<reference-objective-modal></reference-objective-modal>
 @endsection
 @section('scripts')
 @parent

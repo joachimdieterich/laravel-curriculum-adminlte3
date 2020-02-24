@@ -37,11 +37,11 @@
                             <i class="fa fa-file-alt"></i>
                             <span class="ml-2">{{ trans('global.content.create') }}</span>
                         </button>
-                        <button class="dropdown-item" @click="action('add-content');">
+                        <button class="dropdown-item" @click="open('add-content');">
                             <i class="fa fa-tasks"></i>
                             <span class="ml-2">{{ trans('global.task.create') }}</span>
                         </button>
-                        <button class="dropdown-item" @click="action('add-content');">
+                        <button class="dropdown-item" @click="open('add-content');">
                             <i class="fa fa-user-times"></i>
                             <span class="ml-2">{{ trans('global.userStatus.create') }}</span>
                         </button>
@@ -122,8 +122,7 @@
                                    :category="item">
                                </content-group>
                            </div>
-                        </div>
-                        
+                        </div> 
                         
                     </div>
                     <!-- /.tab-pane -->
@@ -187,11 +186,14 @@
         },
         computed: {
             contentCategories: function() {
-                let categories = [].concat(...this.entry.content_subscriptions
+                if (this.entry.content_subscriptions.length !== 0){
+                    let categories = [].concat(...this.entry.content_subscriptions
                                    .map(c => c.content.categories.map(cat =>({'id' : cat.id, 'title' : cat.title}))))
                                    .concat({'id' : 1, 'title' : 'Ohne Kategorie'}); //hack: default has to be set
                 
                 return this.getUnique(categories, 'id');
+                }
+                
             },
         },
         

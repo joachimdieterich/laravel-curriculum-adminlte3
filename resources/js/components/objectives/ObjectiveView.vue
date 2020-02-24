@@ -1,5 +1,6 @@
 <template> 
     <div class="row" >
+        <modals-container/>
         <div class="col-12">
             <div class="card card-primary">
                 <div class="card-header">
@@ -56,11 +57,31 @@
                     </li>
                         
                     </ul>
-                     <div class="pull-right p-2" v-can="'objective_edit'">
-                        <a href="">
-                            <i class="fas fa-plus" @click.prevent="open('content-create-modal');"></i>
-                        </a> 
+<!--dropdown start-->
+                    <div 
+                        v-can="'objective_edit'" 
+                        class="pull-right btn btn-default btn-flat dropdown-toggle" 
+                        style="background-color: transparent;border:0!important;" 
+                        data-toggle="dropdown" 
+                        aria-expanded="false"> 
+                        <span class="caret"></span>
+                        <div class="dropdown-menu">
+                            <button 
+                                 class="dropdown-item" 
+                                 @click.prevent="open('content-create-modal')">
+                                   <i class="fa fa-file mr-4"></i>
+                                 {{ trans('global.content.create') }}  
+                            </button>
+                            <button 
+                                 class="dropdown-item" 
+                                 @click.prevent="open('reference-objective-modal')">
+                                   <i class="fa fa-link mr-4"></i>
+                                 {{ trans('global.referenceable_types.objective') }}  
+                            </button>
+                            <hr >
+                        </div>
                     </div>
+<!--dropdown end-->
                 </div><!-- /.card-header -->
                 <div class="card-body">
                     <div class="tab-content">
@@ -117,6 +138,7 @@
                 </div><!-- /.card-body -->
             </div>
         </div>
+        
     </div>
 </template>
 
@@ -125,7 +147,6 @@
     import References from '../reference/References';
     import Quotes from '../quote/Quotes';
     import ContentGroup from '../content/ContentGroup';
-
 
     export default {
         props: {
@@ -145,7 +166,6 @@
                 activetab: null,
                 setting: {
                     'last': null
-
                 },
                 errors: {}
             }
@@ -220,7 +240,7 @@
                 axios.get('/sharingLevels').then(response => {
                     this.sharingLevels = response.data.sharingLevel;
                 }).catch(e => {
-                    this.errors = response.data.errors;
+                    //this.errors = response.data.errors;
                 });
 
                 this.activetab = this.typetabs[0];
@@ -234,7 +254,7 @@
                     this.activetab = this.typetabs[0].id;
                 }
             }).catch(e => {
-                this.errors = response.data.errors;
+                //this.errors = response.data.errors;
             });
 
             axios.get('/'+this.type+'Objectives/' + this.objective.id + '/quoteSubscriptions').then(response => {
@@ -245,7 +265,7 @@
                      this.activetab = this.typetabs[0].id;
                  }
             }).catch(e => {
-                this.errors = response.data.errors;
+                //this.errors = response.data.errors;
             });
             
             this.filterContent();
@@ -255,18 +275,20 @@
                 return '/media/' + this.objective.media_subscriptions.medium_id;
             },
             contentCategories: function() {
-                let categories = [].concat(...this.objective.content_subscriptions
-                                   .map(c => c.content.categories.map(cat =>({'id' : cat.id, 'title' : cat.title}))))
-                                   .concat({'id' : 1, 'title' : 'Ohne Kategorie'}); //hack: default has to be set
-                
-              return this.getUnique(categories, 'id');
+                if (this.objective.content_subscriptions.length !== 0){
+                    let categories = [].concat(...this.objective.content_subscriptions
+                                       .map(c => c.content.categories.map(cat =>({'id' : cat.id, 'title' : cat.title}))))
+                                       .concat({'id' : 1, 'title' : 'Ohne Kategorie'}); //hack: default has to be set
+
+                  return this.getUnique(categories, 'id');
+                }
             },
         },
         components: {
             Medium,
             References,
             Quotes,
-            ContentGroup
+            ContentGroup,
         }
 
     }

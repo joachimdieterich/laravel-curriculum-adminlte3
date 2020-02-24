@@ -71,10 +71,10 @@
                             <li >externen Medien verknüpfen</li>
                         </ul>
                            
-                       <p class="text-primary small p-2 mb-0"
+<!--                       <p class="text-primary small p-2 mb-0"
                            style="position:absolute; bottom:0px; right:0px">
                          mehr...
-                       </p>
+                       </p>-->
                    </span>
                 </div>
                 
@@ -96,10 +96,10 @@
                             <li >geschützte Kommunikation</li>
                         </ul>
                            
-                       <p class="text-primary small p-2 mb-0"
+<!--                       <p class="text-primary small p-2 mb-0"
                            style="position:absolute; bottom:0px; right:0px">
                          mehr...
-                       </p>
+                       </p>-->
                    </span>
                 </div>
                 
@@ -120,10 +120,10 @@
                             <li >(Haus-)Aufgaben</li>
                             <li >Anwesenheit</li>
                         </ul>
-                        <p class="text-primary small p-2 mb-0"
+<!--                        <p class="text-primary small p-2 mb-0"
                            style="position:absolute; bottom:0px; right:0px">
                          mehr...
-                       </p>
+                       </p>-->
                     </span>       
                        
                    
@@ -147,10 +147,10 @@
                             <li >Zertifikate drucken</li>
                         </ul>
                            
-                       <p class="text-primary small p-2 mb-0"
+<!--                       <p class="text-primary small p-2 mb-0"
                            style="position:absolute; bottom:0px; right:0px">
                          mehr...
-                       </p>
+                       </p>-->
                    </span>
                 </div>
                 

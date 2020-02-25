@@ -7,7 +7,7 @@ use App\State;
 
 /**
  *   @OA\Schema(  
- *      required={"id", "title", "state_id", "country_id", "organization_type_id", "status_id"},
+ *      required={"id", "alpha2", "lang_de"},
  *      @OA\Xml(name="Country"),
  *      
  *      @OA\Property( property="id", type="integer"),

@@ -24,7 +24,7 @@ cd laravel-curriculum-adminlte3 && composer install
 composer dump-autoload
 
 npm install
-npm run
+npm run production
 ```
 
 ### Step 2. 

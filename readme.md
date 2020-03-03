@@ -78,7 +78,7 @@ php artisan passport:install
 ```
 ##
 OpenApi Documentation Endpoint
-
+ 
 Generate OpenApi Documentation
 ```
 php artisan l5-swagger:generate
@@ -86,6 +86,7 @@ php artisan l5-swagger:generate
 
 localhost:[port]/api/documentation
 
+Info: If you want to use another url edit `@OA\Server` in `/app/Http/Controllers/Api/V1/OpenApiDefinitions/Setup.php` 
 
 ## SSO with SAML2
 Curriculum uses [aacotroneo/laravel-saml2](https://github.com/aacotroneo/laravel-saml2) to integrate a SP (service provider).

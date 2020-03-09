@@ -100,14 +100,14 @@
                        </template>
                    </multiselect>
                 </div>
-                
+            </div>
+            
             <div class="card-footer">
                 <span class="pull-right">
                      <button type="button" class="btn btn-primary" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
                      <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
                 </span>
-            </div>
-            </div>
+            </div>  
         </div>
     </modal>
 </template>

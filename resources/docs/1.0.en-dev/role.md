@@ -50,6 +50,7 @@ organization_type  | admin, creator | admin, creator | admin, creator | admin, c
 period | admin, creator  | admin, creator | admin, creator | admin, creator | admin, creator | admin, creator
 permission | admin | admin | admin | admin | admin
 role | admin  | admin | admin | admin | admin
+task | admin, creator, indexer, schooladmin, teacher, student, parents, guest | admin, creator, schooladmin, teacher | admin, creator, indexer, schooladmin, teacher, student, parents, guest | admin, creator, schooladmin, teacher | admin, creator, schooladmin, teacher
 user | admin, schooladmin, teacher | admin, schooladmin | admin, schooladmin, teacher | admin, schooladmin, teacher | admin, schooladmin
 user_reset_password | - | - | - | - | - | admin, schooladmin
 

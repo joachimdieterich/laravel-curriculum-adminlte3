@@ -100,6 +100,16 @@
                         </a>
                     </li>
                 @endcan
+                @can('task_access')
+                    <li class="nav-item">
+                        <a href="{{ route("tasks.index") }}" class="nav-link {{ request()->is('tasks') || request()->is('tasks/*') ? 'active' : '' }}">
+                            <i class="fas fa-tasks"></i>
+                            <p>
+                                <span>{{ trans('global.task.title') }}</span>
+                            </p>
+                        </a>
+                    </li>
+                @endcan
                 @can('user_access')
                     <li class="nav-item has-treeview menu-open {{ request()->is('permissions*') ? 'menu-open' : '' }} {{ request()->is('roles*') ? 'menu-open' : '' }} {{ request()->is('users*') ? 'menu-open' : '' }}">
                         <a class="nav-link nav-dropdown-toggle">

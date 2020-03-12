@@ -95,7 +95,7 @@ class OrganizationCRUDTest extends TestCase
     { 
         
         $org = OrganizationFactory::create();
-        
+        $this->withoutExceptionHandling();
         $this->get("organizations/{$org->id}")       
              ->assertStatus(200)
              ->assertViewHasAll(compact($org));

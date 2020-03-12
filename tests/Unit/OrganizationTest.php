@@ -41,7 +41,7 @@ class OrganizationTest extends TestCase
     /** @test */
     public function it_has_a_status() {
      
-        $this->assertInstanceOf('App\Status', $this->organization->status()->first());
+        $this->assertInstanceOf('App\StatusDefinition', $this->organization->status()->first());
         
     }
     

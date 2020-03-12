@@ -17,7 +17,7 @@
             @method('PATCH')
             @include('organizations.form', [
                 'organization' => $organization,
-                'statusses' => $statuses,
+                'status_definitions' => $status_definitions,
                 'buttonText' => trans('global.organization.edit')
             ])
         </form>

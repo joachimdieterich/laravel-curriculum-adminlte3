@@ -26,14 +26,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('contents/{content}/destroy', 'ContentController@destroy')->name('contents.destroy'); //has to be post (has parameters)
     Route::resource('contents', 'ContentController');
     
-    /* courses routes */
+    /* courses */
     Route::get('courses/list', 'CourseController@list');
     Route::resource('courses', 'CourseController');
   
-    /* country routes */
+    /* country */
     Route::get('countries/{country}/states', 'CountryController@getStates')->name('countries.states');
 
-    /* curricula routes */
+    /* curricula */
     Route::post('curricula/enrol', 'CurriculumController@enrol')->name('curricula.enrol');
     Route::delete('curricula/expel', 'CurriculumController@expel')->name('curricula.expel');
     Route::get('curricula/list', 'CurriculumController@list');
@@ -44,19 +44,19 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('curricula/{curriculum}/objectives', 'CurriculumController@getObjectives')->name('curricula.getObjectives');
     Route::resource('curricula', 'CurriculumController');
 
-    /* enablingObjectives routes */
+    /* enablingObjectives */
     Route::get('enablingObjectives/{enablingObjective}/referenceSubscriptionSiblings', 'EnablingObjectiveController@referenceSubscriptionSiblings');
     Route::get('enablingObjectives/{enablingObjective}/quoteSubscriptions', 'EnablingObjectiveController@quoteSubscriptions');
     Route::resource('enablingObjectives', 'EnablingObjectiveController');
     /* enablingObjectiveSubscriptions */
     Route::resource('enablingObjectiveSubscriptions', 'enablingObjectiveSubscriptionsController');
 
-    /* grades routes */
+    /* grades */
     Route::get('grades/list', 'GradesController@list')->name('grades.list');
     Route::delete('grades/destroy', 'GradesController@massDestroy')->name('grades.massDestroy');
     Route::resource('grades', 'GradesController');
 
-    /* Group routes */
+    /* Group */
     Route::post('groups/enrol', 'GroupsController@enrol')->name('groups.enrol');
     Route::delete('groups/expel', 'GroupsController@expel')->name('groups.expel');
 
@@ -88,14 +88,14 @@ Route::group(['middleware' => 'auth'], function () {
     /* Navigator Views */
     Route::resource('navigatorItems', 'NavigatorItemController');
     
-    /* media routes */
+    /* media */
     Route::resource('media', 'MediumController');
 
 
-    /* objectiveTypes routes */
+    /* objectiveTypes */
     Route::resource('objectiveTypes', 'ObjectiveTypeController');
 
-    /* Organization routes */
+    /* Organization */
     Route::post('organizations/enrol', 'OrganizationsController@enrol')->name('organizations.enrol');
     Route::delete('organizations/expel', 'OrganizationsController@expel')->name('organizations.expel');
 
@@ -103,16 +103,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('organizations/list', 'OrganizationsController@list')->name('organizations.list');
     Route::resource('organizations', 'OrganizationsController');
 
-    /* organizationtype routes */
+    /* organizationtype */
     Route::get('organizationtypes/list', 'OrganizationTypesController@list')->name('organizationtypes.list');
     Route::delete('organizationtypes/destroy', 'OrganizationTypesController@massDestroy')->name('organizationtypes.massDestroy');
     Route::resource('organizationtypes', 'OrganizationTypesController');
    
-    /* period routes*/
+    /* period */
     Route::get('periods/list', 'PeriodController@list')->name('periods.list');
     Route::resource('periods', 'PeriodController');
     
-    /* permission routes */
+    /* permission */
     Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');
     Route::resource('permissions', 'PermissionsController');
 
@@ -122,29 +122,33 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('print/curriculum/{curriculum}/references', 'PrintController@references')->name('print.references');
     
     Route::resource('progresses', 'ProgressController');
-    /* Roles routes */
+    /* Roles */
     Route::delete('roles/massDestroy', 'RolesController@massDestroy')->name('roles.massDestroy');
     Route::get('roles/list', 'RolesController@list')->name('roles.list');
     Route::resource('roles', 'RolesController');
 
-    /* sharingLevels routes */
+    /* sharingLevels */
     Route::resource('sharingLevels', 'SharingLevelController');
 
-    /* statuses routes */
-    Route::resource('statuses', 'StatusController');
+    /* statusdefinitions  */
+    Route::resource('statusdefinitions', 'StatusDefinitionController');
 
-    /* terminalObjectives routes */
+    /* tasks */
+    Route::patch('tasks/{task}/complete', 'TaskController@complete')->name('tasks.complete');
+    Route::get('tasks/{task}/activity', 'TaskController@activity')->name('tasks.activity');
+    Route::resource('tasks', 'TaskController');
+    /* terminalObjectives */
     Route::get('terminalObjectives/{terminalObjective}/referenceSubscriptionSiblings', 'TerminalObjectiveController@referenceSubscriptionSiblings');
     Route::get('terminalObjectives/{terminalObjective}/quoteSubscriptions', 'TerminalObjectiveController@quoteSubscriptions');
     Route::resource('terminalObjectives', 'TerminalObjectiveController');
     /* terminalObjectiveSubscriptions */
     Route::resource('terminalObjectiveSubscriptions', 'terminalObjectiveSubscriptionsController');
 
-    /* reference(Subscription) routes */
+    /* reference(Subscription)  */
     Route::resource('references', 'ReferenceController');
     Route::resource('referenceSubscriptions', 'ReferenceSubscriptionController');
 
-    /* User routes */
+    /* User */
     Route::delete('users/massDestroy', 'UsersController@massDestroy')->name('users.massDestroy');
     Route::patch('users/massUpdate', 'UsersController@massUpdate')->name('users.massUpdate');
     Route::patch('users/setCurrentOrganization', 'UsersController@setCurrentOrganization')->name('users.setCurrentOrganization');

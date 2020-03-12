@@ -56,7 +56,7 @@
             <!-- /.card-body -->
             <div class="card-footer">
                 <div class="float-left">
-                    <button type="button" class="btn-xs btn-block btn-{{$statuses[$organization->status_id]->color_css_class}} pull-right">{{$statuses[$organization->status_id]->lang_de}}</button>                  
+                    <button type="button" class="btn-xs btn-block btn-{{$status_definitions[$organization->status_id]->color_css_class}} pull-right">{{$status_definitions[$organization->status_id]->lang_de}}</button>                  
                 </div>
                 <small class="float-right">
                     {{ $organization->updated_at }}

@@ -11,7 +11,7 @@ use App\Role;
 use App\User;
 use App\Organization;
 use App\Group;
-use App\Status;
+use App\StatusDefinition;
 use App\Medium;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +25,7 @@ class UsersController extends Controller
 
         $users = User::all();
         $organizations = Organization::all();
-        $statuses = Status::all();
+        $status_definitions = StatusDefinition::all();
         $roles = Role::all();
         $groups = Group::orderBy('organization_id', 'desc')->get();
         
@@ -33,7 +33,7 @@ class UsersController extends Controller
         return view('users.index')
           ->with(compact('users'))
           ->with(compact('organizations'))
-          ->with(compact('statuses'))
+          ->with(compact('status_definitions'))
           ->with(compact('groups'))
           ->with(compact('roles'));
     }
@@ -155,13 +155,13 @@ class UsersController extends Controller
     public function show(User $user)
     {
         abort_unless(\Gate::allows('user_show'), 403);
-        $statuses = Status::all();
+        $status_definitions = StatusDefinition::all();
         $user->load('roles');
         $user->load('organizations');
 
         return view('users.show')
                 ->with(compact('user'))
-                ->with(compact('statuses'));
+                ->with(compact('status_definitions'));
     }
 
     public function destroy(User $user)

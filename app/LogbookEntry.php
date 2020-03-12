@@ -31,4 +31,9 @@ class LogbookEntry extends Model
     {
         return $this->morphMany('App\terminalObjectiveSubscriptions', 'subscribable');
     }
+    
+    public function taskSubscription()
+    {
+        return $this->morphMany('App\TaskSubscription', 'subscribable');
+    }
 }

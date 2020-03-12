@@ -84,7 +84,8 @@ Vue.component('certificate-generate-modal', require('./components/certificate/Ge
 Vue.component('logbook', require('./components/logbooks/Logbook.vue').default);
 Vue.component('logbook-entry-modal', require('./components/logbooks/LogbookEntryModal.vue').default);
 Vue.component('logbook-subscribe-objective-modal', require('./components/logbooks/LogbookSubscribeObjectiveModal.vue').default);
-
+Vue.component('task-modal', require('./components/tasks/TaskModal.vue').default);
+Vue.component('task-timeline', require('./components/tasks/Timeline.vue').default);
 /**
  * Custom Vue directive "can" to check against permissions.
  * If permission is not given element gets style display:none

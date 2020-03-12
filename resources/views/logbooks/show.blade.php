@@ -37,6 +37,6 @@
     <logbook-entry-modal></logbook-entry-modal>
     <logbook-subscribe-objective-modal></logbook-subscribe-objective-modal>
     <content-create-modal></content-create-modal>
-   
+    <task-modal></task-modal>
 @endsection
 

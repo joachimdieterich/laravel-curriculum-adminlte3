@@ -44,13 +44,13 @@
             "value" => old('email', isset($organization) ? $organization->email : '')])
                 
 @include ('forms.input.select', 
-            ["model" => "status",
+            ["model" => "statusdefinition",
             "show_label" => true,
-            "field" => "status_id",  
-            "options"=> $statuses, 
-            "option_id" => "status_id",
+            "field" => "status_definition_id",  
+            "options"=> $status_definitions, 
+            "option_id" => "status_definition_id",
             "option_label"=> "lang_de", 
-            "value" => old('status_id', isset($organization->status_id) ? $organization->status_id : '') ])                                                          
+            "value" => old('status_definition_id', isset($organization->status_definition_id) ? $organization->status_definition_id : '') ])                                                          
 
 <div>
     <input 

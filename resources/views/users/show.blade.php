@@ -98,7 +98,7 @@
               <!-- /.card-body -->
               <div class="card-footer">
                 <div class="float-left">
-                    <button type="button" class="btn-xs btn-block btn-{{$statuses[$user->status_id]->color_css_class}} pull-right">{{$statuses[$user->status_id]->lang_de}}</button>                  
+                    <button type="button" class="btn-xs btn-block btn-{{$status_definitions[$user->status_id]->color_css_class}} pull-right">{{$status_definitions[$user->status_id]->lang_de}}</button>                  
                 </div>
                 <small class="float-right">
                     {{ $user->updated_at }}

@@ -29,7 +29,7 @@
                     <th>{{ trans('global.user.fields.firstname') }}</th>
                     <th>{{ trans('global.user.fields.lastname') }}</th>
                     <th>{{ trans('global.user.fields.email') }}</th>
-                    <th>{{ trans('global.status.title_singular') }}</th>
+                    <th>{{ trans('global.status_definition.title_singular') }}</th>
                     <th>{{ trans('global.datatables.action') }}</th>
                 </tr>
             </thead>     
@@ -131,13 +131,13 @@
                         <div id="tab_register" class="tab-pane row " >
                             <div class="form-horizontal col-xs-12">
                                  @include ('forms.input.select', 
-                                ["model" => "status", 
+                                ["model" => "statusdefinition", 
                                 "show_label" => true,
-                                "field" => "status_id",  
-                                "options"=> $statuses, 
-                                "option_id" => "status_id",  
+                                "field" => "status_definition_id",  
+                                "options"=> $status_definitions, 
+                                "option_id" => "status_definition_id",  
                                 "option_label" => "lang_de", 
-                                "value" => old('status_id', isset($user->status_id) ? $user->status_id : '') ])
+                                "value" => old('status_definition_id', isset($user->status_definition_id) ? $user->status_definition_id : '') ])
                                 @include ('forms.input.button', ["onclick" => "setStatus()", "field" => "acceptUser", "type" => "submit", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-lock", "label" => "Benutzerstatus ändern"])
                             </div>
                         </div>
@@ -227,7 +227,7 @@ function expelFromOrganization() {
 
 function setStatus() {
     var ids = getDatatablesIds('#users-datatable');
-    sendRequest('POST', "{{ route('users.massUpdate') }}", ids, { ids: ids, _method: 'PATCH', status_id: $('#status_id').val() });   
+    sendRequest('POST', "{{ route('users.massUpdate') }}", ids, { ids: ids, _method: 'PATCH', status_definition_id: $('#status_definition_id').val() });   
 }
 
 function resetPassword() {

@@ -66,6 +66,11 @@ class PermissionRoleTableSeeder extends Seeder
                 'period_show',
                 'period_edit',
                 'period_delete',
+                'task_access',
+                'task_create',
+                'task_show',
+                'task_edit',
+                'task_delete',
             ];
             
             return in_array($permission->title, $creator_permission_list);
@@ -81,6 +86,8 @@ class PermissionRoleTableSeeder extends Seeder
                 'logbook_show',
                 'logbook_entry_access',
                 'logbook_entry_show',
+                'task_access',
+                'task_show',
             ];
             
             return in_array($permission->title, $indexer_permission_list);
@@ -126,6 +133,11 @@ class PermissionRoleTableSeeder extends Seeder
                 'user_edit',
                 'user_delete',
                 'user_reset_password',
+                'task_access',
+                'task_create',
+                'task_show',
+                'task_edit',
+                'task_delete',
             ];
             
             return in_array($permission->title, $schooladmin_permission_list);
@@ -163,6 +175,11 @@ class PermissionRoleTableSeeder extends Seeder
                 'user_access',
                 'user_show',
                 'user_edit',
+                'task_access',
+                'task_create',
+                'task_show',
+                'task_edit',
+                'task_delete',
             ];
             
             return in_array($permission->title, $teacher_permission_list);
@@ -180,6 +197,8 @@ class PermissionRoleTableSeeder extends Seeder
                 'logbook_entry_show',
                 'navigator_access', 
                 'navigator_show', 
+                'task_access',
+                'task_show',
             ];
             
             return in_array($permission->title, $user_permission_list);
@@ -195,6 +214,8 @@ class PermissionRoleTableSeeder extends Seeder
                 'logbook_entry_access',
                 'logbook_entry_show',
                 'navigator_show', 
+                'task_access',
+                'task_show',
             ];
             
             return in_array($permission->title, $parent_permission_list);
@@ -210,6 +231,8 @@ class PermissionRoleTableSeeder extends Seeder
                 'logbook_entry_access',
                 'logbook_entry_show',
                 'navigator_show', 
+                'task_access',
+                'task_show',
             ];
             
             return in_array($permission->title, $guest_permission_list);

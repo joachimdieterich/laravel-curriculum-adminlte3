@@ -117,15 +117,15 @@
                 <div class="form-group ">
                     <label>{{ trans('global.organization.fields.status') }}</label>
                     <select class="form-control" 
-                            v-model="form.status_id"
+                            v-model="form.status_definition_id"
                             id="status"
                             name="status"
                             >
-                        <option v-for="(item,index) in statuses" v-bind:value="item.status_id">
+                        <option v-for="(item,index) in status_definitions" v-bind:value="item.status_definition_id">
                             {{ item.lang_de }}
                         </option>
                     </select>
-                    <p class="help-block" v-if="form.errors.status_id" v-text="form.errors.status_id[0]"></p>
+                    <p class="help-block" v-if="form.errors.status_definition_id" v-text="form.errors.status_definition_id[0]"></p>
                 </div>
 
             </div>
@@ -133,7 +133,7 @@
                      <span class="pull-right">
                          <button id="organization-cancel"
                                  type="button" 
-                                 class="btn btn-info" 
+                                 class="btn btn-default" 
                                  data-widget="remove" @click="close()">{{ trans('global.cancel') }}</button>
                          <button id="organization-save"
                                  class="btn btn-primary" @click="submit(method)" >{{ trans('global.save') }}</button>
@@ -161,14 +161,15 @@
                     'city': '',
                     'phone': '',
                     'email': '',
-                    'status_id': '',
+                    'status_definition_id': '',
                 }),
-                statuses: null,
+                status_definitions: null,
             }
         },
         methods: {
             async submit(method) {
                 try {
+                    this.form.description = tinyMCE.get('description').getContent();
                     if (method === 'patch'){
                         this.location = (await axios.patch('/organizations/'+this.form.id, this.form)).data.message;
                     } else {
@@ -180,7 +181,7 @@
                 }
             },
             beforeOpen(event) {
-                this.getStatuses();
+                this.getStatusDefinitions();
                 if (event.params.id){
                     this.load(event.params.id)
                 }
@@ -190,9 +191,9 @@
             beforeClose(event) {
             
             },
-            async getStatuses() {
+            async getStatusDefinitions() {
                 try {
-                    this.statuses = (await axios.get('/statuses/')).data.message;
+                    this.status_definitions = (await axios.get('/statusdefinitions/')).data.message;
                 } catch(error) {
                     console.log('loading failed')
                 }

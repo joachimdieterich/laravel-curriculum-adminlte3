@@ -29,19 +29,19 @@
                          x-placement="top-start" 
                          style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, -2px, 0px);">
                         
-                        <button class="dropdown-item" @click.prevent="open('logbook-subscribe-objective-modal');">
+                        <button class="dropdown-item" @click.prevent="open('logbook-subscribe-objective-modal', 'referenceable');">
                             <i class="fa fa-bullseye"></i>
                             <span class="ml-2">{{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}</span>
                         </button>
-                        <button class="dropdown-item" @click.prevent="open('content-create-modal');">
+                        <button class="dropdown-item" @click.prevent="open('content-create-modal', 'referenceable');">
                             <i class="fa fa-file-alt"></i>
                             <span class="ml-2">{{ trans('global.content.create') }}</span>
                         </button>
-                        <button class="dropdown-item" @click="open('add-content');">
+                        <button class="dropdown-item" @click.prevent="open('task-modal', 'subscribable');">
                             <i class="fa fa-tasks"></i>
                             <span class="ml-2">{{ trans('global.task.create') }}</span>
                         </button>
-                        <button class="dropdown-item" @click="open('add-content');">
+                        <button class="dropdown-item" @click="open('add-content', 'referenceable');">
                             <i class="fa fa-user-times"></i>
                             <span class="ml-2">{{ trans('global.userStatus.create') }}</span>
                         </button>
@@ -129,7 +129,12 @@
                     <!-- tab-pane -->
                     <div class="tab-pane  show" 
                          v-bind:id="'logbook_tasks_'+entry.id"  
-                         >logbook_tasks</div>
+                         >
+                         <task-list  class="p-2"
+                            :tasks="entry.task_subscription">
+                         </task-list>   
+                        
+                    </div>
                     <!-- /.tab-pane -->
                     <!-- tab-pane -->
                     <div class="tab-pane  show" 
@@ -148,6 +153,7 @@
 <script>
     import ContentGroup from '../content/ContentGroup';
     import ObjectiveBox from '../objectives/ObjectiveBox';
+    import TaskList from '../uiElements/TaskList';
     
     export default {
         
@@ -160,9 +166,28 @@
             }
         },
         methods: {
-            open(modal) {
-                this.$modal.show(modal, {'referenceable_type': 'App\\LogbookEntry', 'referenceable_id': this.entry.id});
+            open(modal, relationKey) {
+                if (relationKey == 'referenceable'){
+                     this.$modal.show(modal, { 'referenceable_type': 'App\\LogbookEntry', 'referenceable_id' : this.entry.id});
+                } else {
+                     this.$modal.show(modal, { 'subscribable_type': 'App\\LogbookEntry', 'subscribable_id' : this.entry.id});
+                     
+                }
+                //open tab
+                switch (modal) {
+                    case "logbook-subscribe-objective-modal": 
+                        $('.nav-item a[href="#logbook_objectives_1"]').tab('show')
+                    break;
+                    case "content-create-modal": 
+                        $('.nav-item a[href="#logbook_contents_1"]').tab('show')
+                    break;
+                    case "task-modal": 
+                        $('.nav-item a[href="#logbook_tasks_1"]').tab('show')
+                    break;
+                }
+               
             },
+           
             filterContent(category){
                 if (category === 1){
                     return [].concat(...this.entry.content_subscriptions.filter(c => c.content.categories.find(cat => cat.id === category)))
@@ -183,6 +208,10 @@
 
                  return unique;
              },
+             
+             deleteTask(task){
+                 alert('deleteTask');
+             }
         },
         computed: {
             contentCategories: function() {
@@ -192,9 +221,9 @@
                                    .concat({'id' : 1, 'title' : 'Ohne Kategorie'}); //hack: default has to be set
                 
                 return this.getUnique(categories, 'id');
-                }
-                
+                }   
             },
+           
         },
         
         mounted() {
@@ -203,6 +232,7 @@
         components: {
             ContentGroup,
             ObjectiveBox,
+            TaskList,
         }
         
     }

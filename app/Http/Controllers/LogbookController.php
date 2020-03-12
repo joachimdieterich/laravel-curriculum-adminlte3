@@ -115,7 +115,12 @@ class LogbookController extends Controller
     {           
         $logbook = $logbook->with(['entries.contentSubscriptions.content.categories', 
                                    'entries.terminalObjectiveSubscriptions.terminalObjective',
-                                   'entries.enablingObjectiveSubscriptions.enablingObjective.terminalObjective',])->get()->first();
+                                   'entries.enablingObjectiveSubscriptions.enablingObjective.terminalObjective',
+                                   'entries.taskSubscription.task.subscriptions' => function($query) {
+                                        $query->where('subscribable_id', auth()->user()->id)
+                                              ->where('subscribable_type', 'App\User');
+                                    },
+            ])->get()->first();
         
         return view('logbooks.show')
                 ->with(compact('logbook'));

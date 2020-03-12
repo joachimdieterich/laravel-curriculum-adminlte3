@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 
 use App\Organization;
 use App\Http\Requests\MassDestroyOrganizationRequest;
-use App\Status;
+use App\StatusDefinition;
 use App\OrganizationRoleUser;
 use Yajra\DataTables\DataTables;
 
@@ -87,10 +87,10 @@ class OrganizationsController extends Controller
     public function create()
     {
         abort_unless(\Gate::allows('organization_create'), 403);
-        $statuses = Status::all();
+        $status_definitions = StatusDefinition::all();
         
         return view('organizations.create')
-                ->with(compact('statuses'));
+                ->with(compact('status_definitions'));
     }
 
     /**
@@ -129,10 +129,11 @@ class OrganizationsController extends Controller
                 'message' => $organization
             ];
         }
-        $statuses = Status::all();
+        $status_definitions = StatusDefinition::all();
+        
         return view('organizations.show')
                 ->with(compact('organization'))
-                ->with(compact('statuses'));
+                ->with(compact('status_definitions'));
     }
 
     /**
@@ -145,10 +146,10 @@ class OrganizationsController extends Controller
     public function edit(Organization $organization)
     {
         abort_unless(\Gate::allows('organization_edit'), 403);
-        $statuses = Status::all();
+        $status_definitions = StatusDefinition::all();
         return view('organizations.edit')
                 ->with(compact('organization'))
-                ->with(compact('statuses'));
+                ->with(compact('status_definitions'));
     }
 
     /**

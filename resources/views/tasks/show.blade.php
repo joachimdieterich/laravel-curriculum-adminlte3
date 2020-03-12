@@ -57,9 +57,9 @@
         <div class="card">
             <div class="card-header p-2">
                 <ul class="nav nav-pills">
-                    <li class="nav-item"><a class="nav-link active show" href="#activity" data-toggle="tab">Subscription</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">Timeline</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Settings</a></li>
+                    <li class="nav-item"><a class="nav-link active show" href="#activity" data-toggle="tab">{{ trans('global.subscription-billing') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">{{ trans('global.history') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">{{ trans('global.settings') }}</a></li>
                 </ul>
             </div><!-- /.card-header -->
             <div class="card-body">

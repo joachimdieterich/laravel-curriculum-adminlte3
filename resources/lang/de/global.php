@@ -356,6 +356,7 @@ return [
     'team-management'                      => 'Teams',
     'team-management-singular'             => 'Team',
     'site_title'                           => 'curriculum',
+    'history'                              => 'Verlauf',
     'permission'                           => [
         'title'          => 'Berechtigungen',
         'title_singular' => 'Berechtigung',

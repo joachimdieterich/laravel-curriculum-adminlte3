@@ -49,7 +49,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('enablingObjectives/{enablingObjective}/quoteSubscriptions', 'EnablingObjectiveController@quoteSubscriptions');
     Route::resource('enablingObjectives', 'EnablingObjectiveController');
     /* enablingObjectiveSubscriptions */
-    Route::resource('enablingObjectiveSubscriptions', 'enablingObjectiveSubscriptionsController');
+    Route::resource('enablingObjectiveSubscriptions', 'EnablingObjectiveSubscriptionsController');
 
     /* grades */
     Route::get('grades/list', 'GradesController@list')->name('grades.list');
@@ -89,6 +89,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('navigatorItems', 'NavigatorItemController');
     
     /* media */
+    Route::resource('mediumSubscriptions', 'MediumSubscriptionController');
     Route::resource('media', 'MediumController');
 
 
@@ -142,7 +143,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('terminalObjectives/{terminalObjective}/quoteSubscriptions', 'TerminalObjectiveController@quoteSubscriptions');
     Route::resource('terminalObjectives', 'TerminalObjectiveController');
     /* terminalObjectiveSubscriptions */
-    Route::resource('terminalObjectiveSubscriptions', 'terminalObjectiveSubscriptionsController');
+    Route::resource('terminalObjectiveSubscriptions', 'TerminalObjectiveSubscriptionsController');
 
     /* reference(Subscription)  */
     Route::resource('references', 'ReferenceController');

@@ -9,7 +9,7 @@
         @before-open="beforeOpen"
         @opened="opened"
         @before-close="beforeClose"
-        style="z-index: 1000">
+        style="z-index: 1100">
         <div class="card" 
              style="margin-bottom: 0px !important">
             <div class="card-header">
@@ -128,7 +128,7 @@
                 enablingObjectives: {},
                 enablingObjective: {},
                 enabling_objective_id: null,
-                requestUrl: null,
+                referenceRequestUrl: null,
             }
         },
         methods: {
@@ -156,13 +156,14 @@
                 this.enablingObjectives = terminal[0].enabling_objectives;
                 this.removeHtmlTags(this.enablingObjectives);
                 this.terminal_objective_id = value.id;
-                this.requestUrl = '/terminalObjectiveSubscriptions';
+                this.requestUrl = this.referenceRequestUrl ? this.referenceRequestUrl : '/terminalObjectiveSubscriptions';
             },
             setEnabling(value){
                 this.enabling_objective_id = value.id;
-                this.requestUrl = '/enablingObjectiveSubscriptions';
+                this.requestUrl = this.referenceRequestUrl ? this.referenceRequestUrl : '/enablingObjectiveSubscriptions';
             },
             async submit() {
+                
                 try {
                     this.location = (await axios.post(this.requestUrl, {
                         'curriculum_id':            this.curriculum_id, 
@@ -183,6 +184,9 @@
                 if (event.params.referenceable_type){
                     this.referenceable_type = event.params.referenceable_type;
                     this.referenceable_id = event.params.referenceable_id;
+                }
+                if (event.params.requestUrl){
+                    this.referenceRequestUrl = event.params.requestUrl;
                 }
              },
             beforeClose() {

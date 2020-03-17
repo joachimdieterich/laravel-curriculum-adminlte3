@@ -11,6 +11,8 @@ class Reference extends Model
     
     protected $casts = ['id' => 'string']; //important to get id as unique string
     
+    public $incrementing = false;
+    
     public function subscribe($model, $sharing_level_id = 1, $visibility = true)
     {
         $subscribe = ReferenceSubscription::firstOrCreate([

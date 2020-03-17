@@ -74,6 +74,12 @@
                             </button>
                             <button 
                                  class="dropdown-item" 
+                                 @click.prevent="open('medium-create-modal')">
+                                   <i class="fa fa-photo-video mr-4"></i>
+                                 {{ trans('global.media.add') }}  
+                            </button>
+                            <button 
+                                 class="dropdown-item" 
                                  @click.prevent="open('reference-objective-modal')">
                                    <i class="fa fa-link mr-4"></i>
                                  {{ trans('global.referenceable_types.objective') }}  
@@ -104,14 +110,54 @@
                         <div class="tab-pane" 
                              id="tab_1"  
                              name="tab_1">
-                             <div class="px-2" 
-                                  v-for="subscription in objective.media_subscriptions" >
-                                <div class="row">
-                                    <div class="col-12">
-                                        <medium :subscription="subscription" :medium="match(subscription.medium_id)" ></medium>
-                                    </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <ul class="nav nav-pills pull-left">
+                                        <li class="nav-item">
+                                            <a class="nav-link active show" 
+                                               href="#sub_medium" 
+                                               data-toggle="tab">
+                                                {{ trans('global.media.title') }}
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link " 
+                                               href="#sub_external" 
+                                               data-toggle="tab"
+                                               @click="loadExternal()">
+                                                {{ trans('global.externalRepositorySubscription.title') }}
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>   
+                                <div class="col-12 tab-content">
+                                     <div 
+                                        class="tab-pane active show" 
+                                        id="sub_medium"  
+                                        name="sub_medium">
+                                         <div class="col-12">
+                                             <div class="row">
+                                                <div
+                                                    v-for="subscription in objective.media_subscriptions" >
+                                                    <medium :subscription="subscription" :medium="match(subscription.medium_id)" ></medium>  
+                                               </div> 
+                                             </div>
+                                         </div>
+                                         
+                                    </div>  
+                                    <div 
+                                        class="tab-pane" 
+                                        id="sub_external"  
+                                        name="sub_external">
+                                        <div class="col-12">
+                                            <div class="row">
+                                                <repository ref="repositoryPlugin"
+                                                    :model="objective"></repository>
+                                            </div>
+                                        </div>
+                                     </div>    
                                 </div>
-                            </div>     
+                            </div>
                         </div><!-- /.tab-pane -->
                         <!--                  2  References -->
                         <div class="tab-pane" 
@@ -147,6 +193,7 @@
     import References from '../reference/References';
     import Quotes from '../quote/Quotes';
     import ContentGroup from '../content/ContentGroup';
+    import Repository from '../../../../app/Plugins/Repositories/resources/js/components/Media';
 
     export default {
         props: {
@@ -211,7 +258,23 @@
                 if (this.type === 'terminal'){
                     reference_class = 'App\\TerminalObjective';
                 }
-                this.$modal.show(modal, {'referenceable_type': reference_class, 'referenceable_id': this.objective.id});
+                if (modal == 'reference-objective-modal'){
+                    this.$modal.show(modal, {'referenceable_type': reference_class, 'referenceable_id': this.objective.id, 'requestUrl': '/referenceSubscriptions'});
+                } else {
+                    this.$modal.show(modal, {'referenceable_type': reference_class, 'referenceable_id': this.objective.id});
+                }
+                
+                
+                //open tab
+                switch (modal) {
+                    case "medium-create-modal": 
+                        $('.nav-item a[href="#tab_1"]').tab('show')
+                    break;
+                    case "reference-objective-modal": 
+                        $('.nav-item a[href="#tab_1"]').tab('show')
+                    break;
+                 
+                }
             },
             getUnique(arr, comp) {
                 const unique = arr
@@ -222,6 +285,9 @@
                    .filter(e => arr[e]).map(e => arr[e]);
 
                  return unique;
+             },
+             loadExternal: function() {
+                    this.$refs.repositoryPlugin.loader();
              }
             
         },
@@ -236,7 +302,7 @@
             //this.media_subscriptions = event.params.content.media_subscriptions;
 
             if (this.objective.media_subscriptions.length != 0) {
-                this.typetabs = [... new Set([{'id': 1, 'title': 'Media'}])];
+                this.typetabs = [... new Set([{'id': 1, 'title': 'Medien'}])];
                 axios.get('/sharingLevels').then(response => {
                     this.sharingLevels = response.data.sharingLevel;
                 }).catch(e => {
@@ -250,7 +316,7 @@
                 if (response.data.siblings.length !== 0) {
                     this.reference_subscriptions = response.data.siblings;
                     this.curricula_list = response.data.curricula_list;
-                    this.typetabs = this.typetabs.concat([{'id': 2, 'title': 'Reference'}]);
+                    this.typetabs = this.typetabs.concat([{'id': 2, 'title': 'Bereich/Baustein (Überfachliche Bezüge)'}]);
                     this.activetab = this.typetabs[0].id;
                 }
             }).catch(e => {
@@ -261,7 +327,7 @@
                 if (response.data.quotes_subscriptions.length !== 0) {
                     this.quote_subscriptions = response.data.quotes_subscriptions;
                     this.quote_curricula_list = response.data.curricula_list;
-                     this.typetabs = this.typetabs.concat([{'id': 3, 'title': 'Quotes'}]);
+                     this.typetabs = this.typetabs.concat([{'id': 3, 'title': 'Fundstellen in Texten'}]);
                      this.activetab = this.typetabs[0].id;
                  }
             }).catch(e => {
@@ -289,6 +355,7 @@
             References,
             Quotes,
             ContentGroup,
+            Repository,
         }
 
     }

@@ -10,20 +10,37 @@ curriculum is a learning platform where teachers can create topic-based learning
 ## Installation
 
 ### Prerequisites
-- PHP 7.3 with ghostscript and Imagemagick
-- Node.js ghostscript 
+- PHP 7.3 
+Extensions 
+- ghostscript 
+- Imagemagick
+- xml, dom, zip, curl, mbstring, bcmath
+- git, composer 
+- Node.js ghostscript
+
 
 ### Step 1.
 
 Begin by cloning this repository to your machine, and installing all Composer dependencies.
+Make sure that your system is up-to-date.
+```bash
+sudo apt-get update
+```
 
 ```bash
 git clone https://github.com/joachimdieterich/laravel-curriculum-adminlte3.git
-cd laravel-curriculum-adminlte3 && composer install
-
+cd laravel-curriculum-adminlte3 
+```
+For development
+```bash
+composer install --no-dev
+```
+For production
+```bash
 composer dump-autoload
 
 npm install
+npm update
 npm run production
 ```
 
@@ -43,6 +60,12 @@ DB_PORT=3306
 DB_DATABASE=curriculum
 DB_USERNAME=root
 DB_PASSWORD=root
+```
+
+For production change
+```
+APP_ENV=production
+APP_DEBUG=false
 ```
 
 Information about configurating `.env` in documentation `localhost:[port]/documentation`

@@ -73,15 +73,6 @@
             return {
                 menuEntries:  [
                     {
-                      title: 'Add Material',
-                      icon: 'fa fa-plus',
-                      action: 'create',
-                      model: 'media',
-                    },
-                    {
-                      hr: true,
-                    },
-                    {
                       title: 'Edit',
                       icon: 'fa fa-edit',
                       action: 'update',

@@ -29,14 +29,25 @@
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                 <embed :src="scr" width="100%" height="600px" class="full-height">
             </div>
-                <div class="card-footer">
-                     <span class="pull-right">
-                         <button type="button" class="btn btn-info" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
-                         <button class="btn btn-primary" data-widget="remove" @click="close()">
-                             <a :href="scr" class="text-white text-decoration-none" target="_blank">{{ trans('global.downloadFile') }}</a>
-                         </button>
-                    </span>
-                </div>
+            <div class="card-footer">
+                 <span class="pull-right">
+                     <button type="button" class="btn btn-info" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
+                     <button 
+                         v-if="medium.mime_type == 'url'" 
+                         class="btn btn-primary" 
+                         data-widget="remove" 
+                         @click="close();window.open(medium.path, '_blank');">
+                         <a :href="scr" class="text-white text-decoration-none" target="_blank">{{ trans('global.open') }}</a>
+                     </button>
+                     <button 
+                         v-else
+                         class="btn btn-primary" 
+                         data-widget="remove" 
+                         @click="close();window.open(medium.path, '_blank');">
+                         <a :href="scr" class="text-white text-decoration-none" target="_blank">{{ trans('global.downloadFile') }}</a>
+                     </button>
+                </span>
+            </div>
             
         </div>
     </modal>
@@ -55,7 +66,6 @@
         methods: {
             beforeOpen(event) {
                 if (event.params.content) {
-                    console.log(event.params.content);
                     this.medium = event.params.content;
                 }
             },

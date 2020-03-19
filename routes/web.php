@@ -89,6 +89,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('navigatorItems', 'NavigatorItemController');
     
     /* media */
+    
+    Route::post('mediumSubscriptions/destroy', 'MediumSubscriptionController@destroySubscription');
     Route::resource('mediumSubscriptions', 'MediumSubscriptionController');
     Route::resource('media', 'MediumController');
 
@@ -123,6 +125,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('print/curriculum/{curriculum}/references', 'PrintController@references')->name('print.references');
     
     Route::resource('progresses', 'ProgressController');
+   
+    Route::post('repositorySubscriptions/destroySubscription', 'RepositorySubscriptionController@destroySubscription')->name('repositorySubscriptions.destroySubscription');
+    Route::post('repositorySubscriptions/searchRepository', 'RepositorySubscriptionController@searchRepository')->name('repositorySubscriptions.searchRepository');
+    Route::post('repositorySubscriptions/getMedia', 'RepositorySubscriptionController@getMedia')->name('repositorySubscriptions.getMedia');
+    Route::resource('repositorySubscriptions', 'RepositorySubscriptionController');
     /* Roles */
     Route::delete('roles/massDestroy', 'RolesController@massDestroy')->name('roles.massDestroy');
     Route::get('roles/list', 'RolesController@list')->name('roles.list');

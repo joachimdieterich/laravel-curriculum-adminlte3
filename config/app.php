@@ -179,6 +179,11 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\TelescopeServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+           
+        /*
+         * Plugin Provider
+         */
+        App\Providers\PluginServiceProvider::class,
         
         /*
          * Datatables
@@ -189,6 +194,8 @@ return [
          * PDF Generator
          */
         Barryvdh\Snappy\ServiceProvider::class,
+     
+        
     ],
 
     /*

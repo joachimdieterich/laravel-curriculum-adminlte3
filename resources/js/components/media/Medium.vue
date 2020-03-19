@@ -1,6 +1,5 @@
 <template >
-    
-    
+
     <div
         v-bind:id="'medium_'+medium.id" 
         class="box box-objective pointer my-1" 
@@ -20,12 +19,32 @@
                 left: 10px;">
             
             <i v-if="medium.mime_type === 'application/pdf'" class="fa fa-file-pdf text-white pt-2"></i>
-            
+            <i v-if="medium.mime_type === 'url'" class="fa fa-link text-white pt-2"></i>
             <i v-else class="fa fa-photo-video text-white pt-2"></i>
         </div>
+        
         <i v-if="medium.mime_type === 'application/pdf'" class="far fa-file-pdf text-primary text-center pt-2" 
            style="position:absolute; top: 0px; height: 150px !important; width: 100%; font-size:800%;"></i>
-          
+        <i v-if="medium.mime_type === 'url'" class="fa fa-link text-primary text-center pt-2" 
+           style="position:absolute; top: 0px; height: 150px !important; width: 100%; font-size:800%;"></i>
+        <span 
+            v-can="'medium_delete'"
+            class="p-1 pointer_hand" 
+            accesskey="" 
+            style="position:absolute; top:0px; height: 30px; width:100%;"
+            >
+                <button 
+                    :id="'delete-medium'+medium.id"
+                    type="submit" 
+                    class="btn btn-danger btn-sm pull-right"
+                    v-on:click.stop="unlinkMedium();"
+                    >
+                    <small>
+                        <i class="fa fa-unlink"  
+                           ></i>
+                    </small>
+                </button>
+        </span>  
         <span class="bg-white text-center p-1 overflow-auto " 
             style="position:absolute; bottom:0px; height: 150px; width:100%;">
             <h6 class="events-heading pt-1 hyphens" v-html="medium.title"></h6>
@@ -52,12 +71,16 @@
            show(model, entry) {   
                 this.$modal.show(model.toLowerCase()+'-modal', { 'content': entry});
             },
-            
+            async unlinkMedium() { //id of external reference and value in db
+                try {
+                    await axios.post('/mediumSubscriptions/destroy', this.subscription).data;
+                } catch(error) {
+                    //this.errors = error.response.data.errors;
+                }
+                $("#medium_"+this.medium.id).hide();
+            },   
         },
         computed: {
-            href: function () {
-                return '/media/'+ this.subscription.medium_id;
-            },
             href: function () {
                 return '/media/'+ this.subscription.medium_id;
             },
@@ -72,15 +95,3 @@
    
     }
 </script>
-
-<style>
-/*styles (xs, sm) */
-@media (max-width: 990px) {
-  
-}
-/* /.sm view */
-/*styles (md, lg) */
-@media (min-width: 991px) {
-  
-}
-</style>

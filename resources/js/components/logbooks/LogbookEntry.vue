@@ -15,7 +15,7 @@
             
             <hr class="mb-1">
             <div class="card-header p-2">
-                <div class="pull-left" v-can="'objective_edit'">
+                <div class="pull-left" v-can="'logbook_entry_edit'">
                     <div class="btn-group" >
                     <button type="button " 
                             class="btn btn-default btn-sm dropdown-toggle " 
@@ -28,7 +28,10 @@
                     <div class="dropdown-menu" 
                          x-placement="top-start" 
                          style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, -2px, 0px);">
-                        
+                        <button class="dropdown-item" @click.prevent="open('medium-create-modal', 'referenceable');">
+                            <i class="fa fa-file"></i>
+                            <span class="ml-2">{{ trans('global.media.title') }}</span>
+                        </button>
                         <button class="dropdown-item" @click.prevent="open('logbook-subscribe-objective-modal', 'referenceable');">
                             <i class="fa fa-bullseye"></i>
                             <span class="ml-2">{{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}</span>
@@ -41,7 +44,7 @@
                             <i class="fa fa-tasks"></i>
                             <span class="ml-2">{{ trans('global.task.create') }}</span>
                         </button>
-                        <button class="dropdown-item" @click="open('add-content', 'referenceable');">
+                        <button class="dropdown-item" @click="">
                             <i class="fa fa-user-times"></i>
                             <span class="ml-2">{{ trans('global.userStatus.create') }}</span>
                         </button>
@@ -53,6 +56,13 @@
                 <ul class="nav nav-pills pull-right">
                     <li class="nav-item small">
                         <a class="nav-link active show" 
+                           v-bind:href="'#logbook_media_'+entry.id" 
+                           data-toggle="tab">
+                            {{ trans('global.media.title') }}
+                        </a>
+                    </li>
+                    <li class="nav-item small">
+                        <a class="nav-link" 
                            v-bind:href="'#logbook_objectives_'+entry.id" 
                            data-toggle="tab">
                             {{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}
@@ -80,6 +90,16 @@
                 <div class="tab-content">
                     <!-- tab-pane -->
                     <div class="tab-pane active show" 
+                         v-bind:id="'logbook_media_'+entry.id">
+                        
+                        <span v-for="subscription in entry.media_subscriptions">
+                           <medium :subscription="subscription" :medium="subscription.medium" ></medium>  
+                        </span>
+                        
+                        
+                    </div>
+                    <!-- /.tab-pane -->
+                    <div class="tab-pane" 
                          v-bind:id="'logbook_objectives_'+entry.id">
                         <objective-box 
                             v-for="terminal_subscription in entry.terminal_objective_subscriptions" 
@@ -154,6 +174,7 @@
     import ContentGroup from '../content/ContentGroup';
     import ObjectiveBox from '../objectives/ObjectiveBox';
     import TaskList from '../uiElements/TaskList';
+    import Medium from '../media/Medium';
     
     export default {
         
@@ -162,6 +183,7 @@
         },
         data() {
             return {
+                media: {},
               
             }
         },
@@ -230,6 +252,7 @@
             
         },   
         components: {
+            Medium,
             ContentGroup,
             ObjectiveBox,
             TaskList,

@@ -6,11 +6,12 @@ return [
     'list'                                 => 'Liste',
     'show'                                 => 'anzeigen',
     'entries'                              => 'Einträge',
-    'search'                               => 'suchen',
+    'search'                               => 'Suche',
     'view'                                 => 'Ansicht',
     'edit'                                 => 'editieren',
     'delete'                               => 'löschen',
     'save'                                 => 'speichern',
+    'open'                                 => 'öffnen',
     'cancel'                               => 'Abbrechen',
     'close'                                => 'schließen',
     'generate'                             => 'erzeugen',
@@ -621,6 +622,10 @@ return [
     'media' =>[
         'title'          => 'Medien',
         'title_singular' => 'Medium',
+        'add'            => 'Medien hinzufügen',
+        'create'         => 'Medium erstellen',
+        'edit'           => 'Medium bearbeiten',
+        'link'           => 'Link',
         'fields'            => [
             'id'                => 'ID',
             'id_helper'         => '',
@@ -701,7 +706,8 @@ return [
         ]   
     ],
     'referenceable_types' =>[
-        'objective'         => 'Bereich/Baustein verknüpfen',
+        'objective'         => 'Bereich/Baustein verknüpfen (Überfachliche Bezüge)',
+        'objective_title'   => 'Bereich/Baustein (Überfachliche Bezüge)',
         'navigator_view'    => 'Navigator-Ansicht verknüpfen',
         'curriculum'        => 'Curriculum verknüpfen',
         'content'           => 'Text verknüpfen',
@@ -833,6 +839,18 @@ return [
         'fields'            => [
             'id'            => 'ID',
             'id_helper'     => '',
+       ],
+    ],
+    'externalRepositorySubscription' =>[
+        'title'             => 'Externe Ressourcen',
+        'title_singular'    => 'Externe Ressource',
+        'create'            => 'Externe Ressource erstellen',
+        'search'            => 'Externe Ressource suchen',
+        'edit'              => 'Externe Ressource bearbeiten',
+        'fields'            => [
+            'id'            => 'ID',
+            'id_helper'     => '',
+            
        ],
     ],
 ];

@@ -120,6 +120,7 @@ class LogbookController extends Controller
                                         $query->where('subscribable_id', auth()->user()->id)
                                               ->where('subscribable_type', 'App\User');
                                     },
+                                    'entries.mediaSubscriptions.medium'
             ])->get()->first();
         
         return view('logbooks.show')

@@ -11,6 +11,7 @@ return [
     'edit'                                 => 'Edit',
     'delete'                               => 'Delete',
     'save'                                 => 'Save',
+    'open'                                 => 'open',
     'cancel'                               => 'Cancel',
     'close'                                => 'Close',
     'generate'                             => 'Generate',
@@ -621,6 +622,10 @@ return [
     'media' =>[
         'title'          => 'Media',
         'title_singular' => 'Media',
+        'add'            => 'Add Media',
+        'create'         => 'Create Media',
+        'edit'           => 'Edit Media',
+        'link'           => 'Link',
         'fields'            => [
             'id'                => 'ID',
             'id_helper'         => '',
@@ -833,6 +838,18 @@ return [
         'fields'            => [
             'id'            => 'ID',
             'id_helper'     => '',
+       ],
+    ],
+     'externalRepositorySubscription' =>[
+        'title'             => 'External resources',
+        'title_singular'    => 'External resource',
+        'create'            => 'Add external resource',
+        'search'            => 'Search external resource',
+        'edit'              => 'Edit external resource',
+        'fields'            => [
+            'id'            => 'ID',
+            'id_helper'     => '',
+            
        ],
     ],
 ];

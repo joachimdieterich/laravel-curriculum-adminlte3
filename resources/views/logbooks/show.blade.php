@@ -1,7 +1,7 @@
 @extends((Auth::user()->id == env('GUEST_USER')) ? 'layouts.contentonly' : 'layouts.master')
 
 @section('title')
-    {{ trans('global.logbook.title_singular') }}
+{{ trans('global.logbook.title_singular') }} | <small>{{ $logbook->title }}</small>
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item">
@@ -16,7 +16,8 @@
 @endsection
 
 @section('content')
-    @can('user_create')
+ {!! $logbook->description !!}
+    @can('logbook_entry_create')
         <div style="margin-bottom: 10px;" class="row">
             <div class="col-lg-12">
                 <button id="add-logbook-entry" 
@@ -27,13 +28,12 @@
             </div>
         </div>
     @endcan
-    {{ $logbook->title }}
-    <hr>
-   {!! $logbook->description !!}
+  
     <!-- Timelime example  -->
         <logbook  :logbook="{{ $logbook }}"></logbook>
     <!-- /.timeline -->
-    
+    <medium-modal></medium-modal>
+    <medium-create-modal><medium-create-modal>
     <logbook-entry-modal></logbook-entry-modal>
     <logbook-subscribe-objective-modal></logbook-subscribe-objective-modal>
     <content-create-modal></content-create-modal>

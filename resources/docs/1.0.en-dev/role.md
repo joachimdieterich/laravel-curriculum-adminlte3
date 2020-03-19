@@ -37,11 +37,14 @@ categorie  | admin, creator, schooladmin, teacher | admin, creator | admin, crea
 certificate  | admin, creator, schooladmin, teacher | admin, creator | admin, creator, schooladmin, teacher | admin, creator | admin, creator
 course | - | admin, schooladmin, teacher | admin, schooladmin, teacher | admin, schooladmin, teacher | admin, schooladmin, teacher
 curriculum | admin, creator| admin, creator | admin, creator, indexer, schooladmin, teacher, student, guest | admin, creator | admin, creator
+external_medium | admin, creator, schooladmin, teacher | admin, creator | admin, creator, schooladmin, teacher, student | admin, creator | admin, creator
 grade | admin, creator  | admin, creator | admin, creator | admin, creator | admin, creator
 group | admin, schooladmin, teacher | admin, schooladmin | admin, schooladmin, teacher | admin, schooladmin | admin, schooladmin
 group_enrolment | - | - | - | - | - | admin, schooladmin
+link | admin, creator, schooladmin, teacher, student | admin, creator, schooladmin, teacher, student | admin, creator, schooladmin, teacher, student | admin, creator, schooladmin, teacher, student | admin, creator, schooladmin, teacher, student
 logbook | admin, creator, indexer, schooladmin, teacher, student, parents, guest | admin, creator, schooladmin, teacher | admin, creator, indexer, schooladmin, teacher, student, parents, guest | admin, creator, schooladmin, teacher | admin, creator, schooladmin, teacher
 logbook_entry | admin, creator, indexer, schooladmin, teacher, student, parents, guest | admin, creator, schooladmin, teacher | admin, creator, indexer, schooladmin, teacher, student, parents, guest | admin, creator, schooladmin, teacher | admin, creator, schooladmin, teacher
+medium | admin, creator, schooladmin, teacher, student | admin, creator, schooladmin, teacher, student | admin, creator, schooladmin, teacher, student | admin, creator, schooladmin, teacher, student | admin, creator, schooladmin, teacher, student
 navigator | admin, creator | admin, creator | admin, creator, indexer, schooladmin, teacher, student, guest | admin, creator | admin, creator
 objective | - | admin, creator | - | admin, creator | admin, creator
 organization | admin | admin | admin, schooladmin, teacher | admin | admin

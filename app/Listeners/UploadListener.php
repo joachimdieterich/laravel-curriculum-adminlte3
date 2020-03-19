@@ -86,12 +86,12 @@ class UploadListener
         Medium::create([
             'path'          => $medium->convertFilemanagerEventPathToMediumPath($event->path()),
             'medium_name'   => basename($filePath),
-            'title'         => 'title1',
-            'description'   => 'desc',
-            'author'        => 'jd',
-            'publisher'     => 'jd',
-            'city'          => 'ib',
-            'date'          => '2019',
+            'title'         => basename($filePath),
+            'description'   => '',
+            'author'        => auth()->user()->username,
+            'publisher'     => '',
+            'city'          => '',
+            'date'          => date("Y-m-d_H-i-s"),
             'size'          => File::size($filePath),
             'mime_type'     => File::mimeType($filePath),
             'license_id'    => 2,//$media_node->getAttribute('license'), //hack fix false entries in import files

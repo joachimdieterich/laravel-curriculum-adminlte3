@@ -1,5 +1,6 @@
 # Laravel 5 & Lumen specific
 /node_modules
+/public/
 /public/hot
 /public/storage
 /storage/*.key

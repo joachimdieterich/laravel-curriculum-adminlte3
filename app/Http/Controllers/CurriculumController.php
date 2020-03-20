@@ -56,7 +56,7 @@ class CurriculumController extends Controller
             'subject_id',
             'owner_id',
             
-            ]);
+            ])->where('owner_id', auth()->user()->id);
         
         return DataTables::of($curricula)
             ->addColumn('state', function ($curricula) {

@@ -40,14 +40,16 @@ class UsersController extends Controller
     
     public function list()
     {
-        $users = User::select([
-            'id', 
-            'username', 
-            'firstname', 
-            'lastname', 
-            'email',
-            'status_id'
-            ]);
+        $users = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->get();
+        
+//        $users = User::select([
+//            'id', 
+//            'username', 
+//            'firstname', 
+//            'lastname', 
+//            'email',
+//            'status_id'
+//            ]);
         
         return DataTables::of($users)
             ->addColumn('status', function ($users) {

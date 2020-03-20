@@ -21,7 +21,8 @@ class OrganizationsController extends Controller
     public function index()
     {
         abort_unless(\Gate::allows('organization_access'), 403);
-        $organizations = Organization::all();//auth()->user()->accessibleOrganizations(); 
+        $organizations = auth()->user()->organizations(); // Todo: Admins should see all Organizations
+        
         
         return view('organizations.index')
                 ->with(compact('organizations'));
@@ -31,15 +32,7 @@ class OrganizationsController extends Controller
     public function list()
     {
         abort_unless(\Gate::allows('organization_access'), 403);
-        $organizations = Organization::select([
-            'id', 
-            'title', 
-            'description', 
-            'street', 
-            'postcode',
-            'city',
-            'status_id'
-            ]);
+        $organizations = auth()->user()->organizations(); 
         
         return DataTables::of($organizations)
             ->addColumn('status', function ($organizations) {

@@ -45,6 +45,8 @@ class CurriculumController extends Controller
     public function list()
     {
         abort_unless(\Gate::allows('curriculum_access'), 403);
+        
+        
         $curricula = Curriculum::select([
             'id', 
             'title', 
@@ -80,13 +82,13 @@ class CurriculumController extends Controller
                                     . '<i class="fa fa-list-alt"></i>'
                                     . '</a>';
                     }
-                    if (\Gate::allows('curriculum_edit')){
+                    if (\Gate::allows('curriculum_edit') AND ($curricula->owner_id == auth()->user()->id)){
                         $actions .= '<a href="'.route('curricula.edit', $curricula->id).'" '
                                     . 'class="btn btn-xs btn-primary mr-1">'
                                     . '<i class="fa fa-edit"></i>'
                                     . '</a>';
                     }
-                    if (\Gate::allows('curriculum_delete')){
+                    if (\Gate::allows('curriculum_delete') AND ($curricula->owner_id == auth()->user()->id)){
                         $actions .= '<button type="button" class="btn btn-xs btn-danger" onclick="destroyCurriculum('.$curricula->id.')"><i class="fa fa-trash"></i></button>';
                     }
               

@@ -20,7 +20,7 @@ class GroupsController extends Controller
     {
         abort_unless(\Gate::allows('group_access'), 403);
 
-        $curricula = Curriculum::all();
+        $curricula =  auth()->user()->curricula();//Curriculum::all();
 
         return view('groups.index')
           ->with(compact('curricula'));
@@ -29,13 +29,14 @@ class GroupsController extends Controller
     public function list()
     {
         abort_unless(\Gate::allows('group_access'), 403);
-        $groups = Group::select([
-            'id', 
-            'title', 
-            'grade_id', 
-            'period_id', 
-            'organization_id',
-            ]);       
+        $groups = auth()->user()->groups();
+//                Group::select([
+//            'id', 
+//            'title', 
+//            'grade_id', 
+//            'period_id', 
+//            'organization_id',
+//            ]);       
         
         return DataTables::of($groups)
             ->addColumn('grade', function ($groups) {

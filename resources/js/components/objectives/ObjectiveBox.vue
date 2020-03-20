@@ -105,7 +105,7 @@
                 catch(error) {
                     this.formerrors = error.response.data.errors;
                 }
-                 window.location = this.location;
+                 location.reload(true);
             }, 
             
             async sortEvent(amount) {

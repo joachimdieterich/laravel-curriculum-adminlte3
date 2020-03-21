@@ -91,11 +91,17 @@ class LogbookController extends Controller
         abort_unless(\Gate::allows('logbook_create'), 403);
         $new_logbook = $this->validateRequest();
         
-        $logbook = Logbook::firstOrCreate([
+        $logbook = Logbook::Create([
             'title'         => $new_logbook['title'],
             'description'   => $new_logbook['description'],
             'owner_id'      => auth()->user()->id,
         ]);
+        
+        //subscribe to model
+        if (isset($new_logbook['subscribable_type']) AND isset($new_logbook['subscribable_id'])){
+            $model = $new_logbook['subscribable_type']::find($new_logbook['subscribable_id']);
+            $logbook->subscribe($model);
+        }
         
         // axios call? 
         if (request()->wantsJson()){    
@@ -121,7 +127,7 @@ class LogbookController extends Controller
                                               ->where('subscribable_type', 'App\User');
                                     },
                                     'entries.mediaSubscriptions.medium'
-            ])->get()->first();
+            ])->where('id', $logbook->id)->get()->first();
         
         return view('logbooks.show')
                 ->with(compact('logbook'));
@@ -181,6 +187,8 @@ class LogbookController extends Controller
         return request()->validate([
             'title'         => 'sometimes|required',
             'description'   => 'sometimes',
+            'subscribable_type' => 'sometimes',
+            'subscribable_id'   => 'sometimes',
         ]);
     }
 }

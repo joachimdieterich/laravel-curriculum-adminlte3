@@ -18,6 +18,10 @@
                 'logbook' => new App\Logbook,
                 'buttonText' => trans('global.logbook.create')
             ])
+            @if (isset($_GET['subscribable_id']))
+                <input style="display:none" name="subscribable_id" value="{{ $_GET['subscribable_id']}}">
+                <input style="display:none" name="subscribable_type" value="{{ $_GET['subscribable_type']}}">
+            @endif
         </form>
     </div>
 </div>

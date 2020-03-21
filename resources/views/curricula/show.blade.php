@@ -130,9 +130,9 @@
                 </div>
             </button>
         </div>
-        @if(isset($logbook))
+        @if(isset($course))
         <a class="btn btn-default btn-flat" 
-           href="/logbooks/{{$logbook->id}}">
+           href="/logbooks/{{isset($logbook) ? $logbook->id : 'create?subscribable_type=App\\Course&subscribable_id='. $course->id }}">
             <i class="fas fa-book pr-1"></i>
             {{ trans('global.logbook.title_singular') }}
         </a>

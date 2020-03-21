@@ -44,7 +44,7 @@
                             <i class="fa fa-tasks"></i>
                             <span class="ml-2">{{ trans('global.task.create') }}</span>
                         </button>
-                        <button class="dropdown-item" @click="">
+                        <button class="dropdown-item" @click="say('Nicht verfügbar.')">
                             <i class="fa fa-user-times"></i>
                             <span class="ml-2">{{ trans('global.userStatus.create') }}</span>
                         </button>
@@ -198,13 +198,13 @@
                 //open tab
                 switch (modal) {
                     case "logbook-subscribe-objective-modal": 
-                        $('.nav-item a[href="#logbook_objectives_1"]').tab('show')
+                        $('.nav-item a[href="#logbook_objectives_'+this.entry.id+'"]').tab('show')
                     break;
                     case "content-create-modal": 
-                        $('.nav-item a[href="#logbook_contents_1"]').tab('show')
+                        $('.nav-item a[href="#logbook_contents_1'+this.entry.id+'"]').tab('show')
                     break;
                     case "task-modal": 
-                        $('.nav-item a[href="#logbook_tasks_1"]').tab('show')
+                        $('.nav-item a[href="#logbook_tasks_1'+this.entry.id+'"]').tab('show')
                     break;
                 }
                
@@ -233,7 +233,11 @@
              
              deleteTask(task){
                  alert('deleteTask');
-             }
+             },
+             say: function (msg) {
+                alert(msg);
+              }
+
         },
         computed: {
             contentCategories: function() {

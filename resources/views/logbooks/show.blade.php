@@ -33,7 +33,7 @@
         <logbook  :logbook="{{ $logbook }}"></logbook>
     <!-- /.timeline -->
     <medium-modal></medium-modal>
-    <medium-create-modal><medium-create-modal>
+    <medium-create-modal></medium-create-modal>
     <logbook-entry-modal></logbook-entry-modal>
     <logbook-subscribe-objective-modal></logbook-subscribe-objective-modal>
     <content-create-modal></content-create-modal>

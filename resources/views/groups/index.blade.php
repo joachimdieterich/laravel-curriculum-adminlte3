@@ -54,7 +54,7 @@
                                     @include ('forms.input.info', ["value" => "Markierte Gruppen in Lehrpläne / Kompetenzraster ein bzw. ausschreiben."])
 
                                     @include ('forms.input.select', 
-                                        ["model" => "group", 
+                                        ["model" => "curriculum", 
                                         "show_label" => true,
                                         "multiple" => true,
                                         "field" => "group_curricula",  

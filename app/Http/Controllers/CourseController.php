@@ -44,7 +44,8 @@ class CourseController extends Controller
                         ->find($course->curriculum_id);                                                
         $objectiveTypes = ObjectiveType::all();
         $certificates   = \App\Certificate::all();
-     
+        $logbook        = (null !==  $course->logbookSubscription()->get()->first()) ? $course->logbookSubscription()->get()->first()->logbook()->get()->first() : null;
+        
         $settings= json_encode([
             'edit' => false,
             'achievements' => true,
@@ -56,6 +57,7 @@ class CourseController extends Controller
                 ->with(compact('objectiveTypes'))
                 ->with(compact('course'))
                 ->with(compact('certificates'))
+                ->with(compact('logbook'))
                 ->with(compact('settings'));
     }
     

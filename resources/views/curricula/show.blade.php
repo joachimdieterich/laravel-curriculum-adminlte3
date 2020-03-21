@@ -76,7 +76,7 @@
                 {{ trans('global.details') }}
                 <span class="sr-only">Toggle Settings Dropdown</span>
                 <div class="dropdown-menu" >
-                    @can('certificate_show')
+                    @can('certificate_create')
                         <a class="dropdown-item" 
                            onclick="location.href='{{ route("certificates.create") }}'">
                             <i class="fa fa-certificate text-center" style="width:20px"></i>
@@ -130,14 +130,21 @@
                 </div>
             </button>
         </div>
-        
+        @if(isset($logbook))
+        <a class="btn btn-default btn-flat" 
+           href="/logbooks/{{$logbook->id}}">
+            <i class="fas fa-book pr-1"></i>
+            {{ trans('global.logbook.title_singular') }}
+        </a>
+        @endif
         @if(isset($certificates))
             <a class="btn btn-default btn-flat" 
                onclick="app.__vue__.$modal.show('certificate-generate-modal',  {'curriculum_id': {{ $curriculum->id }} });">
-                <i class="fa fa-certificate pr-1"></i>
+                <i class="fas fa-certificate pr-1"></i>
                 {{ trans('global.certificate.generate') }}
             </a>
         @endif
+        
     </div>
         
         @include ('forms.input.select', 

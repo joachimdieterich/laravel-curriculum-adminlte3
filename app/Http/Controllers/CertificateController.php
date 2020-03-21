@@ -24,10 +24,10 @@ class CertificateController extends Controller
     {
         abort_unless(\Gate::allows('certificate_access'), 403);
 
-        $certificates = Certificate::all();
+        //$certificates = Certificate::where('owner_id', auth()->user()->id)->get();
        
-        return view('certificates.index')
-          ->with(compact('certificates'));
+        return view('certificates.index');
+          //->with(compact('certificates'));
     }
     
     public function list()
@@ -41,7 +41,7 @@ class CertificateController extends Controller
             'curriculum_id',
             'organization_id',
             'owner_id',
-            ]);
+            ])->where('owner_id', auth()->user()->id)->get();
         
         return DataTables::of($certificates)
             ->addColumn('organization', function ($certificates) {
@@ -91,7 +91,7 @@ class CertificateController extends Controller
     {
         abort_unless(\Gate::allows('certificate_create'), 403);
         
-        $curricula = Curriculum::all();
+        $curricula = Curriculum::where('owner_id', auth()->user()->id)->get();
         $organisations = auth()->user()->organizations()->get();
         
         return view('certificates.create')
@@ -149,7 +149,7 @@ class CertificateController extends Controller
     public function edit(Certificate $certificate)
     {
         abort_unless(\Gate::allows('certificate_edit'), 403);
-        $curricula = Curriculum::all();
+        $curricula = Curriculum::where('owner_id', auth()->user()->id)->get();
         $organisations = auth()->user()->organizations()->get();
         
         return view('certificates.edit')

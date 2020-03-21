@@ -33,7 +33,7 @@ class CurriculumController extends Controller
     {
         abort_unless(\Gate::allows('curriculum_access'), 403);
 
-        $curricula = Curriculum::all();
+        $curricula = Curriculum::where('owner_id', auth()->user()->id)->get();
        
         if (request()->wantsJson()){    
             return ['curricula' => $curricula];

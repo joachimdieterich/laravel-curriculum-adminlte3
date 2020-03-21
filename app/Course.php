@@ -17,4 +17,9 @@ class Course extends Model
     {
         return $this->belongsTo('App\Curriculum', 'curriculum_id', 'id');
     }
+    
+    public function logbookSubscription()
+    {
+        return $this->morphMany('App\LogbookSubscription', 'subscribable');
+    }
 }

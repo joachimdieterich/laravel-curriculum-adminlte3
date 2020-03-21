@@ -3,6 +3,7 @@
 /public/
 /public/hot
 /public/storage
+/public/js/app.js
 /storage/*.key
 /storage/api-docs
 /storage/*

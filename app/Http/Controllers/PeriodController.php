@@ -76,7 +76,7 @@ class PeriodController extends Controller
     {
         abort_unless(\Gate::allows('period_create'), 403);
 
-        $organizations = Organization::all();
+        $organizations = auth()->user()->organizations()->get();
         return view('periods.create')
                     ->with(compact('organizations'));
     }
@@ -111,7 +111,7 @@ class PeriodController extends Controller
     {
         abort_unless(\Gate::allows('period_edit'), 403);
 
-        $organizations = Organization::all();
+        $organizations = auth()->user()->organizations()->get();
         return view('periods.edit')
                     ->with(compact('period'))
                     ->with(compact('organizations'));

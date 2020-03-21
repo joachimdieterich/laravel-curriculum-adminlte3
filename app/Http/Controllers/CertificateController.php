@@ -92,7 +92,7 @@ class CertificateController extends Controller
         abort_unless(\Gate::allows('certificate_create'), 403);
         
         $curricula = Curriculum::all();
-        $organisations = Organization::all();
+        $organisations = auth()->user()->organizations()->get();
         
         return view('certificates.create')
                 ->with(compact('curricula'))
@@ -150,7 +150,7 @@ class CertificateController extends Controller
     {
         abort_unless(\Gate::allows('certificate_edit'), 403);
         $curricula = Curriculum::all();
-        $organisations = Organization::all();
+        $organisations = auth()->user()->organizations()->get();
         
         return view('certificates.edit')
             ->with(compact('certificate'))

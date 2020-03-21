@@ -16,8 +16,6 @@ class RolesController extends Controller
     {
         abort_unless(\Gate::allows('role_access'), 403);
 
-        //$roles = Role::all();
-
         return view('roles.index');
     }
 

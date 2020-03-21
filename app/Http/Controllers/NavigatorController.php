@@ -85,7 +85,7 @@ class NavigatorController extends Controller
     {
         abort_unless(\Gate::allows('navigator_create'), 403);
         
-        $organizations = Organization::all();
+        $organizations = auth()->user()->organizations()->get();
         return view('navigators.create')
                 ->with(compact('organizations'));
     }
@@ -143,7 +143,7 @@ class NavigatorController extends Controller
     public function edit(Navigator $navigator)
     {
         abort_unless(\Gate::allows('navigator_edit'), 403);
-        $organizations = Organization::all();
+        $organizations = auth()->user()->organizations()->get();
         
         return view('navigators.edit')
                 ->with(compact('navigator'))

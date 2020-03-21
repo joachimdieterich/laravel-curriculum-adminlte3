@@ -103,7 +103,7 @@ class GroupsController extends Controller
         abort_unless(\Gate::allows('group_create'), 403);
         $grades = Grade::all();
         $periods = Period::all();
-        $organizations = Organization::all();
+        $organizations = auth()->user()->organizations()->get();
         return view('groups.create')
                 ->with(compact('grades'))
                 ->with(compact('periods'))
@@ -149,7 +149,7 @@ class GroupsController extends Controller
         abort_unless(\Gate::allows('group_edit'), 403);
         $grades = Grade::all();
         $periods = Period::all();
-        $organizations = Organization::all();
+        $organizations = auth()->user()->organizations()->get();
         
         return view('groups.edit')
                 ->with(compact('group'))

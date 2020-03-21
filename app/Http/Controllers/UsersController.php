@@ -22,16 +22,14 @@ class UsersController extends Controller
     public function index()
     {
         abort_unless(\Gate::allows('user_access'), 403);
-
-        $users = User::all();
-        $organizations = Organization::all();
+ 
+        $organizations =  auth()->user()->organizations()->get();
         $status_definitions = StatusDefinition::all();
-        $roles = Role::all();
-        $groups = Group::orderBy('organization_id', 'desc')->get();
+        $roles = Role::where('id', '>',  auth()->user()->role()->id)->get();
+        $groups = auth()->user()->groups()->orderBy('organization_id', 'desc')->get();
         
-        //dd($groups);
         return view('users.index')
-          ->with(compact('users'))
+          //>with(compact('users'))
           ->with(compact('organizations'))
           ->with(compact('status_definitions'))
           ->with(compact('groups'))
@@ -95,10 +93,6 @@ class UsersController extends Controller
     public function create()
     {
         abort_unless(\Gate::allows('user_create'), 403);
-
-//        $organizations = Organization::all()->pluck('title', 'id');
-//        $roles = Role::all()->pluck('title', 'id');
-//        $groups = Group::all()->pluck('title', 'id');
 
         return view('users.create');
     }

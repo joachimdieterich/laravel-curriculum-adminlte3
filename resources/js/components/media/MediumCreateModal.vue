@@ -36,14 +36,14 @@
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
 
                 <ul class="nav nav-pills">
-                  <li class="nav-item"><a class="nav-link active show" href="#media" data-toggle="tab" @click="setTab('media')">{{ trans('global.media.title_singular') }}</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#link" data-toggle="tab" @click="setTab('link')">{{ trans('global.media.link') }}</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#external" data-toggle="tab" @click="setTab('external')">{{ trans('global.externalRepositorySubscription.title_singular') }}</a></li>
+                  <li class="nav-item" v-can="'medium_create'"><a class="nav-link active show" href="#media" data-toggle="tab" @click="setTab('media')">{{ trans('global.media.title_singular') }}</a></li>
+                  <li class="nav-item" v-can="'link_create'"><a class="nav-link" href="#link" data-toggle="tab" @click="setTab('link')">{{ trans('global.media.link') }}</a></li>
+                  <li class="nav-item" v-can="'external_medium_create'"><a class="nav-link" href="#external" data-toggle="tab" @click="setTab('external')">{{ trans('global.externalRepositorySubscription.title_singular') }}</a></li>
                 </ul>
               
              
                 <div class="tab-content pt-2">
-                    <div class="tab-pane active show" id="media">
+                    <div class="tab-pane active show" id="media" v-can="'medium_create'">
                         <div id="lfm" 
                              class="pull-left"
                            data-input="thumbnail" 
@@ -66,7 +66,7 @@
                           >
                           <button class="btn btn-primary pull-right" @click="submit()" >{{ trans('global.save') }}</button>
                     </div><!-- /.tab-pane -->
-                    <div class="tab-pane" id="link">
+                    <div class="tab-pane" id="link" v-can="'link_create'">
                         <div class="form-group " >
                             <label for="title">{{ trans('global.media.link') }}</label>
                             <input
@@ -82,7 +82,7 @@
                         </button>
                     </div><!-- /.tab-pane -->
 
-                    <div class="tab-pane" id="external">
+                    <div class="tab-pane" id="external" v-can="'external_medium_create'">
                         <repository-plugin-create :model="form"></repository-plugin-create>
                     </div><!-- /.tab-pane -->
                 </div><!-- /.tab-content -->

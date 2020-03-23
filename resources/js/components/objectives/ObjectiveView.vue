@@ -120,7 +120,7 @@
                                                 {{ trans('global.media.title') }}
                                             </a>
                                         </li>
-                                        <li class="nav-item">
+                                        <li class="nav-item" v-can="'external_medium_access'">
                                             <a class="nav-link " 
                                                href="#sub_external" 
                                                data-toggle="tab"

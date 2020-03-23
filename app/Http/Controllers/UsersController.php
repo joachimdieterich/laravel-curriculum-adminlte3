@@ -13,6 +13,7 @@ use App\Organization;
 use App\Group;
 use App\StatusDefinition;
 use App\Medium;
+use App\OrganizationRoleUser;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Request;
 use Yajra\DataTables\DataTables;
@@ -102,6 +103,19 @@ class UsersController extends Controller
         abort_unless(\Gate::allows('user_create'), 403);
 
         $user = User::create($request->all());
+        
+        /*
+         * Todo User have to be enroled to (creators) institution 
+         */
+        OrganizationRoleUser::firstOrCreate(
+            [
+                'user_id'         => $user->id,
+                'organization_id' => auth()->user()->current_organization_id,
+            ],
+            [
+                'role_id'         => 6 //student
+            ]
+        );
         
         //$user->roles()->sync($request->input('roles', []));
          return redirect($user->path());

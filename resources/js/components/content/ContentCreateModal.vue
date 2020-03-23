@@ -75,7 +75,8 @@
                     </select>     
                 </div>
                 
-                <div class="form-group ">
+                <div class="form-group "
+                     v-can="'categorie_create'">
                     <label for="add_categorie" 
                            class="pull-right" >
                         <a @click="toggle_categorie_input()">
@@ -83,7 +84,7 @@
                         </a>
                     </label>
                     <div class="input-group"
-                         v-can="'categorie_create'">
+                         >
                         <input id="add_categorie" 
                                type="text" 
                                class="form-control " 

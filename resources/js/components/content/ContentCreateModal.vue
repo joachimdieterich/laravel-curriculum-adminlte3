@@ -82,7 +82,8 @@
                             <i class="fa fa-plus"></i> {{ trans('global.categorie.title_singular') }}
                         </a>
                     </label>
-                    <div class="input-group">
+                    <div class="input-group"
+                         v-can="'categorie_create'">
                         <input id="add_categorie" 
                                type="text" 
                                class="form-control " 

@@ -42,6 +42,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('curricula/{curriculum}/achievements', 'CurriculumController@showAchievements')->name('curricula.showAchievements');
     Route::post('curricula/{curriculum}/achievements', 'CurriculumController@getAchievements')->name('curricula.getAchievements');
     Route::get('curricula/{curriculum}/objectives', 'CurriculumController@getObjectives')->name('curricula.getObjectives');
+    Route::get('curricula/{curriculum}/editOwner', 'CurriculumController@editOwner')->name('curricula.editOwner');
+    Route::patch('curricula/{curriculum}/editOwner', 'CurriculumController@storeOwner')->name('curricula.storeOwner');
     Route::resource('curricula', 'CurriculumController');
 
     /* enablingObjectives */
@@ -75,7 +77,14 @@ Route::group(['middleware' => 'auth'], function () {
     
     /* logbook entries */
     Route::resource('logbookEntries', 'LogbookEntryController');
-    
+   
+    /* Messages */
+    Route::get('messages', 'MessagesController@index')->name('messages');
+    Route::get('messages/create', 'MessagesController@create')->name('messages.create');
+    Route::post('messages', 'MessagesController@store')->name('messages.store');
+    Route::get('messages/{id}', 'MessagesController@show')->name('messages.show');
+    Route::put('messages/{id}', 'MessagesController@update')->name('messages.update');
+   
     /* Navigators */ 
     Route::get('navigators/list', 'NavigatorController@list');
     Route::resource('navigators', 'NavigatorController');

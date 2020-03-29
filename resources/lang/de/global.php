@@ -560,6 +560,7 @@ return [
         'title_singular' => 'Curriculum',
         'create'         => 'Curriculum erstellen',
         'edit'           => 'Curriculum bearbeiten',
+        'edit_owner'     => 'Besitzer von curriculum ändern',
         'import'         => 'Curriculum importieren',
         'print'          => 'Curriculum drucken',
         'print_references' => 'Querverweise drucken',
@@ -853,4 +854,30 @@ return [
             
        ],
     ],
+    'message' =>[
+        'title'             => 'Nachrichten',
+        'title_singular'    => 'Nachricht',
+        'create'            => 'Nachricht erstellen',
+        'compose'           => 'Neue Nachricht schreiben',
+        'search'            => 'Nachricht suchen',
+        'edit'              => 'Nachricht bearbeiten',
+        'send'              => 'Senden',
+        'to'                => 'Empfänger',
+        'from'              => 'Absender',
+        'folder'            => 'Postfächer',
+        'inbox'             => 'Posteingang',
+        'sendbox'           => 'Gesendet',
+        'junk'              => 'Spam',
+        'drafts'            => 'Entwürfe',
+        'trash'            => 'Papierkorb',
+        'fields'            => [
+            'id'            => 'ID',
+            'id_helper'     => '',
+            'subject'       => 'Betreff',
+            'subject_helper'     => '',
+            'message'       => 'Nachricht',
+            'message_helper'     => '',
+       ],
+    ],
+    
 ];

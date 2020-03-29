@@ -31,7 +31,7 @@
                     <th>{{ trans('global.country.title_singular') }}</th>
                     <th>{{ trans('global.grade.title_singular') }}</th>
                     <th>{{ trans('global.subject.title_singular') }}</th>
-                    <th>{{ trans('global.user.title_singular') }}</th>
+                    <th>{{ trans('global.owner') }}</th>
                     <th>{{ trans('global.datatables.action') }}</th>
                 </tr>
             </thead>

@@ -34,6 +34,10 @@ class Curriculum extends Model
     protected $attributes = [
         'state_id' => 'DE-RP',
         'country_id' => 'DE',
+        'color' => '#27AE60',
+        'grade_id' => 1, 
+        'subject_id' => 51, //Math
+        'organization_type_id' => 1,
      ];
      
     public function path()

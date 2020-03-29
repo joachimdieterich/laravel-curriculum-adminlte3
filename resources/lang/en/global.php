@@ -560,6 +560,7 @@ return [
         'title_singular'   => 'Curriculum',
         'create'           => 'Create curriculum',
         'edit'             => 'Edit curriculum',
+        'edit_owner'       => 'Edit owner of curriculum',
         'import'           => 'Import curriculum',
         'print'            => 'Print curriculum',
         'print_references' => 'Print curriculum references',
@@ -852,4 +853,30 @@ return [
             
        ],
     ],
+    'message' =>[
+        'title'             => 'Messages',
+        'title_singular'    => 'Message',
+        'create'            => 'Create Message',
+        'compose'           => 'Compose new Message',
+        'search'            => 'Search Message',
+        'edit'              => 'Edit Message',
+        'send'              => 'Send',
+        'to'                => 'To',
+        'from'              => 'From',
+        'folder'            => 'Folder',
+        'inbox'             => 'Inbox',
+        'sendbox'           => 'Sent',
+        'junk'              => 'Junk',
+        'drafts'            => 'Drafts',
+        'trash'             => 'Trash',
+        'fields'            => [
+            'id'            => 'ID',
+            'id_helper'     => '',
+            'subject'       => 'Subject',
+            'subject_helper'     => '',
+            'message'       => 'Message',
+            'message_helper'     => '',
+       ],
+    ],
+    
 ];

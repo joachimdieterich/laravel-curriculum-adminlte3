@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Curriculum;
 use App\Grade;
 use App\Subject;
+use App\Organization;
 use App\OrganizationType;
 use App\TerminalObjective;
 use App\EnablingObjective;
@@ -46,8 +47,9 @@ class CurriculumController extends Controller
     {
         abort_unless(\Gate::allows('curriculum_access'), 403);
         
-        
-        $curricula = Curriculum::select([
+        if (auth()->user()->role()->id == 1)
+        {
+            $curricula = Curriculum::select([
             'id', 
             'title', 
             'state_id',
@@ -55,8 +57,19 @@ class CurriculumController extends Controller
             'grade_id',
             'subject_id',
             'owner_id',
-            
+            ]);
+        } else {
+             $curricula = Curriculum::select([
+            'id', 
+            'title', 
+            'state_id',
+            'country_id',
+            'grade_id',
+            'subject_id',
+            'owner_id',
             ])->where('owner_id', auth()->user()->id);
+        }
+       
         
         return DataTables::of($curricula)
             ->addColumn('state', function ($curricula) {
@@ -86,6 +99,12 @@ class CurriculumController extends Controller
                         $actions .= '<a href="'.route('curricula.edit', $curricula->id).'" '
                                     . 'class="btn btn-xs btn-primary mr-1">'
                                     . '<i class="fa fa-edit"></i>'
+                                    . '</a>';
+                    }
+                    if (\Gate::allows('curriculum_edit') AND ($curricula->owner_id == auth()->user()->id)){
+                        $actions .= '<a href="'.route('curricula.editOwner', $curricula->id).'" '
+                                    . 'class="btn btn-xs btn-primary mr-1">'
+                                    . '<i class="fa fa-user"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('curriculum_delete') AND ($curricula->owner_id == auth()->user()->id)){
@@ -286,6 +305,38 @@ class CurriculumController extends Controller
                 ->with(compact('states'))
                 ->with(compact('curriculum'));
     }
+    
+    /**
+     * Show edit_owner
+     *
+     * @param  \App\Curriculum  $curriculum
+     * @return \Illuminate\Http\Response
+     */
+    public function editOwner(Curriculum $curriculum)
+    {
+        $users = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->get();
+        
+        return view('curricula.owner')
+                ->with(compact('curriculum'))
+                ->with(compact('users'));
+    }
+    /**
+     * Store edit_owner
+     *
+     * @param  \App\Curriculum  $curriculum
+     * @return \Illuminate\Http\Response
+     */
+    public function storeOwner(Request $request, Curriculum $curriculum)
+    {
+        abort_unless(\Gate::allows('curriculum_edit'), 403);
+        $input = $this->validateRequest();
+
+        $curriculum->update([
+                'owner_id' => format_select_input($input['owner_id'])
+            ]);
+        
+        return redirect('/curricula');
+    }
 
     /**
      * Update the specified resource in storage.
@@ -380,7 +431,7 @@ class CurriculumController extends Controller
     {               
         
         return request()->validate([
-            'title'                 => 'sometimes|required',
+            'title'                 => 'sometimes',
             'description'           => 'sometimes',
             'author'                => 'sometimes',
             'publisher'             => 'sometimes',

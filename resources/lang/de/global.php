@@ -228,7 +228,6 @@ return [
     'statuses'                             => 'Status',
     'task_management'                      => 'Aufgabenverwaltung',
     'tasks'                                => 'Aufgabe',
-    'status'                               => 'Status',
     'attachment'                           => 'Anhang',
     'due_date'                             => 'Fälligkeitsdatum',
     'assigned_to'                          => 'Zugewiesen an',

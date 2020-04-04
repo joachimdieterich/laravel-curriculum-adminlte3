@@ -228,7 +228,6 @@ return [
     'statuses'                             => 'Statuses',
     'task_management'                      => 'Task management',
     'tasks'                                => 'Tasks',
-    'status'                               => 'Status',
     'attachment'                           => 'Attachment',
     'due_date'                             => 'Due date',
     'assigned_to'                          => 'Assigned to',

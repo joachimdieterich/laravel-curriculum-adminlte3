@@ -24,10 +24,19 @@ class UsersController extends Controller
     {
         abort_unless(\Gate::allows('user_access'), 403);
  
-        $organizations =  auth()->user()->organizations()->get();
+        if (auth()->user()->role()->id == 1)
+        {
+            $organizations = Organization::all(); 
+            $roles = Role::all();
+            $groups = Group::all();
+        } 
+        else 
+        {
+            $organizations = auth()->user()->organizations()->get(); 
+            $roles = Role::where('id', '>',  auth()->user()->role()->id)->get();
+            $groups = auth()->user()->groups()->orderBy('organization_id', 'desc')->get();
+        }
         $status_definitions = StatusDefinition::all();
-        $roles = Role::where('id', '>',  auth()->user()->role()->id)->get();
-        $groups = auth()->user()->groups()->orderBy('organization_id', 'desc')->get();
         
         return view('users.index')
           //>with(compact('users'))

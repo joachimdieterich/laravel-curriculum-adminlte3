@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Support\Facades\DB;
+use Cmgmyr\Messenger\Traits\Messagable;
 /**
  *   @OA\Schema(  
  *      required={"id", "username", "firstname", "lastname", "email", "password"},
@@ -35,7 +36,7 @@ use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, SoftDeletes, Notifiable;
+    use HasApiTokens, SoftDeletes, Notifiable, Messagable;
 
     protected $hidden = [
         'password',
@@ -131,9 +132,10 @@ class User extends Authenticatable
     {
         return DB::table('curricula')
             ->select('curricula.*', 'curriculum_group.id AS course_id', 'curriculum_group.group_id AS group_id',)
-            ->join('curriculum_group', 'curricula.id', '=', 'curriculum_group.curriculum_id')
-            ->join('group_user', 'group_user.group_id', '=', 'curriculum_group.group_id')
+            ->leftjoin('curriculum_group', 'curricula.id', '=', 'curriculum_group.curriculum_id')
+            ->leftjoin('group_user', 'group_user.group_id', '=', 'curriculum_group.group_id')    
             ->where('group_user.user_id', $this->id)
+            ->orWhere('curricula.owner_id', $this->id) //user should also see curricula which he/she owns
             ->get();
     }
     public function currentGroupEnrolments()

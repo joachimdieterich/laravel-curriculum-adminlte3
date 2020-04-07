@@ -91,24 +91,24 @@ class CurriculumController extends Controller
                  $actions  = '';
                     if (\Gate::allows('curriculum_show')){
                         $actions .= '<a href="'.route('curricula.show', $curricula->id).'" '
-                                    . 'class="btn btn-xs btn-success mr-1">'
+                                    . 'class="btn text-primary p-1">'
                                     . '<i class="fa fa-list-alt"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('curriculum_edit') AND ($curricula->owner_id == auth()->user()->id)){
                         $actions .= '<a href="'.route('curricula.edit', $curricula->id).'" '
-                                    . 'class="btn btn-xs btn-primary mr-1">'
+                                    . 'class="btn text-secondary p-1">'
                                     . '<i class="fa fa-edit"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('curriculum_edit') AND ($curricula->owner_id == auth()->user()->id)){
                         $actions .= '<a href="'.route('curricula.editOwner', $curricula->id).'" '
-                                    . 'class="btn btn-xs btn-primary mr-1">'
+                                    . 'class="btn text-secondary p-1">'
                                     . '<i class="fa fa-user"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('curriculum_delete') AND ($curricula->owner_id == auth()->user()->id)){
-                        $actions .= '<button type="button" class="btn btn-xs btn-danger" onclick="destroyCurriculum('.$curricula->id.')"><i class="fa fa-trash"></i></button>';
+                        $actions .= '<button type="button" class="pull-right btn text-danger p-1" onclick="destroyCurriculum('.$curricula->id.')"><i class="fa fa-trash"></i></button>';
                     }
               
                 return $actions;

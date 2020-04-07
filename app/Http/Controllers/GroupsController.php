@@ -13,6 +13,7 @@ use App\Organization;
 use App\Http\Requests\MassDestroyGroupRequest;
 use App\Http\Requests\UpdateGroupRequest;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\DB;
 
 class GroupsController extends Controller
 {
@@ -20,8 +21,8 @@ class GroupsController extends Controller
     {
         abort_unless(\Gate::allows('group_access'), 403);
 
-        $curricula =  auth()->user()->curricula()->merge(Curriculum::where('owner_id', auth()->user()->id)->get());//Curriculum::all();
-        
+        $curricula =  auth()->user()->curricula();//Curriculum::all();
+        //dump($curricula);
         return view('groups.index')
           ->with(compact('curricula'));
     }
@@ -46,14 +47,14 @@ class GroupsController extends Controller
                     if (\Gate::allows('group_show')){
                         $actions .= '<a href="'.route('groups.show', $groups->id).'" '
                                     . 'id="show-group-'.$groups->id.'" '
-                                    . 'class="btn btn-xs btn-success mr-1">'
+                                    . 'class="btn text-primary p-1">'
                                     . '<i class="fa fa-list-alt"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('group_edit')){
                         $actions .= '<a href="'.route('groups.edit', $groups->id).'" '
                                     . 'id="edit-group-'.$groups->id.'" '
-                                    . 'class="btn btn-xs btn-primary mr-1">'
+                                    . 'class="btn text-secondary p-1">'
                                     . '<i class="fa fa-edit"></i> '
                                     . '</a>';
                     }
@@ -63,7 +64,7 @@ class GroupsController extends Controller
                                     . '<button '
                                     . 'type="submit" '
                                     . 'id="delete-group-'.$groups->id.'" '
-                                    . 'class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> ';
+                                    . 'class="btn text-danger p-1"><i class="fa fa-trash"></i> ';
                     }
               
                 return $actions;
@@ -77,14 +78,6 @@ class GroupsController extends Controller
             ->make(true);
     }
     
-//    public function getGroupSelect($id, $dependency = 'id', $orderBy = 'title', $order = 'desc')
-//    {
-//        $group = Group::where($dependency, $id)
-//               ->orderBy($orderBy, $order)
-//               ->get();
-//        
-//        return compact($group);
-//    }
     
     /**
      * Show the form for creating a new resource.

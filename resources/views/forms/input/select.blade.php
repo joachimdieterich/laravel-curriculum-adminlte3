@@ -7,10 +7,12 @@
             {{ isset($label) ? $label :trans("global.{$model}.title_singular") }}
           
             @if(isset($multiple)) 
-            <span class="btn btn-info btn-xs select-all">Select all</span>
-            <span class="btn btn-info btn-xs deselect-all">Deselect all</span>
+            <span class="btn btn-info btn-xs deselect-all pull-right">{{trans("global.deselect_all")}}</span>
+            <span class="btn btn-info btn-xs select-all pull-right mr-1">{{trans("global.select_all")}}</span>
+            
             @endif
         </label>
+    
     @endif
         <select name="{{ $field }}[]" 
                 id="{{ $field }}" 

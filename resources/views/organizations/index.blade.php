@@ -11,12 +11,12 @@
 @can('organization_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <button id="add-organization"
-                    class="btn btn-success" 
-                    href="{{ route("organizations.create") }}" 
-                    @click.prevent="$modal.show('organization-modal', {'method': 'post'})">
-                {{ trans('global.organization.create') }}
-            </button>
+            <a 
+                id="add-organization"
+                class="btn btn-success" 
+                href="{{ route("organizations.create") }}">
+                {{ trans('global.organization.create') }}    
+            </a>
         </div>
     </div>
 @endcan
@@ -45,38 +45,41 @@
 @parent
 <script>
 $(document).ready( function () {
-    let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
-    let deleteButton = {
-      text: deleteButtonTrans,
-      url: "{{ route('organizations.massDestroy') }}",
-      className: 'btn-danger',
-      action: function (e, dt, node, config) {
-        var ids = dt.rows({ selected: true }).ids().toArray()
-
-        if (ids.length === 0) {
-          alert('{{ trans('global.datatables.zero_selected') }}')
-          return
-        }
-
-        if (confirm('{{ trans('global.areYouSure') }}')) {
-          $.ajax({
-            headers: {'x-csrf-token': _token},
-            method: 'POST',
-            url: config.url,
-            data: { ids: ids, _method: 'DELETE' }})
-            .done(function () { location.reload() })
-        }
-      }
-    }
-    let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
+    
+    let dtButtons = '';
     @can('organization_delete')
-      dtButtons.push(deleteButton)
+        let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
+        let deleteButton = {
+          text: deleteButtonTrans,
+          url: "{{ route('organizations.massDestroy') }}",
+          className: 'btn-danger',
+          action: function (e, dt, node, config) {
+            var ids = dt.rows({ selected: true }).ids().toArray()
+
+            if (ids.length === 0) {
+              alert('{{ trans('global.datatables.zero_selected') }}')
+              return
+            }
+
+            if (confirm('{{ trans('global.areYouSure') }}')) {
+              $.ajax({
+                headers: {'x-csrf-token': _token},
+                method: 'POST',
+                url: config.url,
+                data: { ids: ids, _method: 'DELETE' }})
+                .done(function () { location.reload() })
+            }
+          }
+        }
+        dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
+        dtButtons.push(deleteButton)
     @endcan
     
     
     $('#organizations-datatable').DataTable({
         processing: true,
         serverSide: true,
+        select: true,
         ajax: "{{ url('organizations/list') }}",
         columns: [
                  { data: 'check'},

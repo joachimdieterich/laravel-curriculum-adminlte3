@@ -67,15 +67,21 @@
                         "value" =>  old('course_id', isset($course->id) ? $course->id : '')])
                 </li>
                 <li class="nav-header pt-0">{{ strtoupper(trans('global.organization.title_singular')) }}</li>
-                <li class="nav-item" style="width:100%">
-                     @include ('forms.input.select', 
-                        ["model" => "organization", 
-                        "field" => "current_organization_id",  
-                        "options"=> auth()->user()->organizations, 
-                        "option_label" => "title",  
-                        "onchange"=> "setCurrentOrganization()",  
-                        "value" =>  old('current_organization_id', isset(auth()->user()->current_organization_id) ? auth()->user()->current_organization_id : '')])
+                @if (auth()->user()->organizations->count() > 1)
+                    <li class="nav-item" style="width:100%">
+                         @include ('forms.input.select', 
+                            ["model" => "organization", 
+                            "field" => "current_organization_id",  
+                            "options"=> auth()->user()->organizations, 
+                            "option_label" => "title",  
+                            "onchange"=> "setCurrentOrganization()",  
+                            "value" =>  old('current_organization_id', isset(auth()->user()->current_organization_id) ? auth()->user()->current_organization_id : '')])
+                    </li>
+                @else
+                <li class="nav-item text-white px-3 py-2 text-bold" style="width:100%">
+                   {{ auth()->user()->organizations->first()->title }}
                 </li>
+                @endif 
             </ul>
         </nav>
         <nav class="mt-2"> 

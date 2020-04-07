@@ -37,40 +37,35 @@
     
     <div class="row ">
         <div class="col-sm-12">
-            <div class="card">  
-                <div class="card-header">
-                    <ul class="nav nav-pills">
-                        <li id="nav_tab_group" class="nav-item">
-                            <a href="#tab_group" class="nav-link active" data-toggle="tab">Lehrpläne / Kompetenzraster</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="card-body">
-                    <div class="tab-content">
+            <div class="card-body">  
+                <div class="form-horizontal col-xs-12">
+                    @include ('forms.input.info', ["value" => trans('global.enrol_info')])
 
-                        <!--@can('user_edit')-->
-                            <div id="tab_group" class="tab-pane active row" >
-                                <div class="form-horizontal col-xs-12">
-                                    @include ('forms.input.info', ["value" => "Markierte Gruppen in Lehrpläne / Kompetenzraster ein bzw. ausschreiben."])
+                    @include ('forms.input.select', 
+                        ["model" => "curriculum", 
+                        "show_label" => true,
+                        "multiple" => true,
+                        "field" => "group_curricula",  
+                        "options"=> $curricula, 
+                        "option_label" => "title",    
+                        "value" =>  old('group_id', isset($user->current_group_id) ? $user->current_group_id : '')])     
 
-                                    @include ('forms.input.select', 
-                                        ["model" => "curriculum", 
-                                        "show_label" => true,
-                                        "multiple" => true,
-                                        "field" => "group_curricula",  
-                                        "options"=> $curricula, 
-                                        "option_label" => "title",    
-                                        "value" =>  old('group_id', isset($user->current_group_id) ? $user->current_group_id : '')])     
-
-                                    <div class="btn-group pull-right" role="group" aria-label="...">    
-                                        @include ('forms.input.button', ["onclick" => "enroleToCurricula()", "field" => "enroleToCurricula", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-plus", "label" => "In Lehrplan einschreiben"])
-                                        @include ('forms.input.button', ["onclick" => "expelFromCurricula()", "field" => "expelFromCurricula", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-minus", "label" => "Aus Lehrplan ausschreiben"])
-                                    </div>
-                                </div>
-                            </div>
-                        <!--@endcan-->
-
-                     </div><!-- ./tab-content -->
+                    <div class="btn-group pull-right" role="group" aria-label="...">    
+                        @include ('forms.input.button', 
+                            ["onclick" => "enroleToCurricula()", 
+                            "field" => "enroleToCurricula", 
+                            "type" => "button", "class" => 
+                            "btn btn-default pull-right mt-3", 
+                            "icon" => "fa fa-plus", 
+                            "label" => "In Lehrplan einschreiben"])
+                        @include ('forms.input.button', 
+                            ["onclick" => "expelFromCurricula()", 
+                            "field" => "expelFromCurricula", 
+                            "type" => "button", 
+                            "class" => "btn btn-default pull-right mt-3", 
+                            "icon" => "fa fa-minus", 
+                            "label" => "Aus Lehrplan ausschreiben"])
+                    </div>
                 </div>
             </div>
         </div><!-- ./col-xs-12 -->  
@@ -86,17 +81,17 @@
 $(document).ready( function () {
     let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
     let deleteButton = {
-      text: deleteButtonTrans,
-      url: "{{ route('groups.massDestroy') }}",
-      className: 'btn-danger',
-      action: function (e, dt, node, config) {
-        var ids = dt.rows({ selected: true }).ids().toArray()
-        sendRequest('POST', config.url, ids, { ids: ids, _method: 'DELETE' });
-      }
+        text: deleteButtonTrans,
+        url: "{{ route('groups.massDestroy') }}",
+        className: 'btn-danger',
+        action: function (e, dt, node, config) {
+            var ids = dt.rows({ selected: true }).ids().toArray()
+            sendRequest('POST', config.url, ids, { ids: ids, _method: 'DELETE' });
+        }
     }
     let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
     @can('group_delete')
-      dtButtons.push(deleteButton)
+        dtButtons.push(deleteButton)
     @endcan
     
     var table = $('#groups-datatable').DataTable({

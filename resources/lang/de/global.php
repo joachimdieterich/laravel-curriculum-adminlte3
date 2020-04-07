@@ -109,6 +109,7 @@ return [
     'administrator_can_create_other_users' => 'Administrator (kann andere Benutzer anlegen)',
     'simple_user'                          => 'Einfacher Nutzer',
     'title'                                => 'Titel',
+    'enrol_info'                           => 'Markierte Gruppen in Lehrpläne / Kompetenzraster ein bzw. ausschreiben.',
     'roles'                                => 'Rollen',
     'role'                                 => [
         'title'          => 'Rollen',

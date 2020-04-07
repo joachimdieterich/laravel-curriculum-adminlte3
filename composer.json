@@ -14,6 +14,7 @@
         "barryvdh/laravel-snappy": "^0.4.6",
         "binarytorch/larecipe": "^2.2",
         "bugsnag/bugsnag-laravel": "^2.15",
+        "cmgmyr/messenger": "^2.20",
         "darkaonline/l5-swagger": "^6.0",
         "doctrine/dbal": "^2.9",
         "facade/ignition": "^1.11",

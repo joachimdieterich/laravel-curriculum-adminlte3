@@ -109,6 +109,7 @@ return [
     'administrator_can_create_other_users' => 'Administrator (can create other users)',
     'simple_user'                          => 'Simple user',
     'title'                                => 'Title',
+    'enrol_info'                           => 'Enrol/expel group to curricula',
     'roles'                                => 'Roles',
     'role'                                 => [
         'title'          => 'Roles',

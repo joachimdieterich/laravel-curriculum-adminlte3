@@ -32,7 +32,7 @@
                     <th>{{ trans('global.grade.title_singular') }}</th>
                     <th>{{ trans('global.subject.title_singular') }}</th>
                     <th>{{ trans('global.owner') }}</th>
-                    <th>{{ trans('global.datatables.action') }}</th>
+                    <th width="120">{{ trans('global.datatables.action') }}</th>
                 </tr>
             </thead>
         </table>

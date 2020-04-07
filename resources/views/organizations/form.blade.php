@@ -46,11 +46,12 @@
 @include ('forms.input.select', 
             ["model" => "statusdefinition",
             "show_label" => true,
+            "label" => trans('global.status.title_singular'),
             "field" => "status_definition_id",  
             "options"=> $status_definitions, 
             "option_id" => "status_definition_id",
             "option_label"=> "lang_de", 
-            "value" => old('status_definition_id', isset($organization->status_definition_id) ? $organization->status_definition_id : '') ])                                                          
+            "value" => old('status_definition_id', isset($organization->status_id) ? $organization->status_id : '') ])                                                          
 
 <div>
     <input 

@@ -194,7 +194,10 @@ return [
          * PDF Generator
          */
         Barryvdh\Snappy\ServiceProvider::class,
-     
+        /*
+         * Messaging
+         */
+        Cmgmyr\Messenger\MessengerServiceProvider::class,
         
     ],
 

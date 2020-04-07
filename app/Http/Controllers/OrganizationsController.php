@@ -23,17 +23,22 @@ class OrganizationsController extends Controller
         abort_unless(\Gate::allows('organization_access'), 403);
         $organizations = auth()->user()->organizations(); // Todo: Admins should see all Organizations
         
-        
         return view('organizations.index')
-                ->with(compact('organizations'));
-      
+                ->with(compact('organizations')); 
     }
 
     public function list()
     {
         abort_unless(\Gate::allows('organization_access'), 403);
-        $organizations = auth()->user()->organizations(); 
-        
+        if (auth()->user()->role()->id == 1)
+        {
+            $organizations = Organization::all(); 
+        } 
+        else 
+        {
+            $organizations = auth()->user()->organizations()->get(); 
+        }
+              
         return DataTables::of($organizations)
             ->addColumn('status', function ($organizations) {
                 return $organizations->status()->first()->lang_de;                
@@ -43,23 +48,23 @@ class OrganizationsController extends Controller
                     if (\Gate::allows('organization_show')){
                         $actions .= '<a href="'.route('organizations.show', $organizations->id).'" '
                                     . 'id="show-organization-'.$organizations->id.'" '
-                                    . 'class="btn btn-xs btn-success mr-1">'
+                                    . 'class="btn text-primary p-1">'
                                     . '<i class="fa fa-list-alt"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('organization_edit')){
-                        $actions .= '<button onclick="app.__vue__.$modal.show(\'organization-modal\', {\'id\':\''.$organizations->id.'\', \'method\': \'patch\'})"'
+                        $actions .= '<a href="'.route('organizations.edit', $organizations->id).'"'
                                     . 'id="edit-organization-'.$organizations->id.'" '
-                                    . 'class="btn btn-xs btn-primary text-white  mr-1">'
+                                    . 'class="btn text-secondary p-1">'
                                     . '<i class="fa fa-edit"></i>' 
-                                    . '</button>';
+                                    . '</a>';
                     }
                     if (\Gate::allows('organization_delete')){
                         $actions .= '<form action="'.route('organizations.destroy', $organizations->id).'" method="POST" class="pull-right">'
                                     . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
                                     . '<button type="submit" '
                                     . 'id="delete-organization-'.$organizations->id.'" '
-                                    . 'class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>';
+                                    . 'class="pull-right btn text-danger p-1"><i class="fa fa-trash"></i></button>';
                     }
               
                 return $actions;

@@ -51,113 +51,67 @@
     </div>
    
     <div class="content d-flex justify-content-center" style="padding-top:50px">
-        <div class="row">
-            <div class="col-lg-12" >
-                <div id="feature-curriculum"
-                    class="box box-objective pointer card" 
-                    style="height: 300px !important; min-width: 200px !important; padding: 0; background-color: #605ca8; background-size: cover;">
-                    <span  style="position:absolute" class="w-100 h-100 center-icon p-3">
-                        <i class="text-white fa fa-th fa-2x "></i>
-                        <h6 class="events-heading pt-3 hyphens">
-                           Digitale Lehrpläne
-                        </h6>
-                    </span>
-                    <span class="bg-white p-1 overflow-auto card-body" 
-                         style="position:absolute; bottom:0px; height: 150px; width:100%;">
-                        <ul class="pt-2">
-                            <li >Kompetenzraster</li>
-                            <li >Lehr- und Rahmenpläne</li>
-                            <li >überfachliche Bezüge</li>
-                            <li >externen Medien verknüpfen</li>
-                        </ul>
-                           
-<!--                       <p class="text-primary small p-2 mb-0"
-                           style="position:absolute; bottom:0px; right:0px">
-                         mehr...
-                       </p>-->
-                   </span>
-                </div>
-                
-                <div id="feature-groups"
-                    class="box box-objective pointer card" 
-                    style="height: 300px !important; min-width: 200px !important; padding: 0; background-color: #3d9970; background-size: cover;">
-                    <span  style="position:absolute;" class="w-100 h-100 center-icon p-3">
-                        <i class="text-white fas fa-users fa-2x"></i>
-                         <h6 class="events-heading pt-3 hyphens">
-                           Lerngruppen
-                        </h6>
-                    </span>
-                    <span class="bg-white p-1 overflow-auto " 
-                         style="position:absolute; bottom:0px; height: 150px; width:100%;">
-
-                       <ul class="pt-2">
-                            <li >Lerngruppen/Kurse organisieren</li>
-                            <li >Klassen/AGs</li>
-                            <li >geschützte Kommunikation</li>
-                        </ul>
-                           
-<!--                       <p class="text-primary small p-2 mb-0"
-                           style="position:absolute; bottom:0px; right:0px">
-                         mehr...
-                       </p>-->
-                   </span>
-                </div>
-                
-                <div id="feature-logbook"
-                    class="box box-objective pointer card" 
-                    style="height: 300px !important; min-width: 200px !important; padding: 0; background-color: #d81b60; background-size: cover;">
-                    <span  style="position:absolute; " class="w-100 h-100 center-icon p-3">
-                        <i class="text-white fas fa-book fa-2x"></i>
-                        <h6 class="events-heading pt-3 hyphens">
-                           Kursbücher
-                       </h6>
-                    </span>
-                    <span class="bg-white p-1 overflow-auto " 
-                         style="position:absolute; bottom:0px; height: 150px; width:100%;">
-                        <ul class="pt-2">
-                            <li >digitales Klassenbuch</li>
-                            <li >Unterricht dokumentieren</li>
-                            <li >(Haus-)Aufgaben</li>
-                            <li >Anwesenheit</li>
-                        </ul>
-<!--                        <p class="text-primary small p-2 mb-0"
-                           style="position:absolute; bottom:0px; right:0px">
-                         mehr...
-                       </p>-->
-                    </span>       
-                       
-                   
-                </div>
-                
- 
-                <div id="feature-logbook"
-                    class="box box-objective pointer card" 
-                    style="height: 300px !important; min-width: 200px !important; padding: 0; background-color: #ffc107; background-size: cover;">
-                    <span  style="position:absolute; " class="w-100 h-100 center-icon p-3">
-                        <i class="text-white fas fa-certificate fa-2x"></i>
-                        <h6 class="events-heading pt-3 hyphens">
-                           Zertifikate
-                       </h6>
-                    </span>
-                    <span class="bg-white p-1 overflow-auto " 
-                         style="position:absolute; bottom:0px; height: 150px; width:100%;">
-                        <ul class="pt-2">
-                            <li >Selbsteinschätzungen</li>
-                            <li >Kompetenzen dokumentatieren</li>
-                            <li >Zertifikate drucken</li>
-                        </ul>
-                           
-<!--                       <p class="text-primary small p-2 mb-0"
-                           style="position:absolute; bottom:0px; right:0px">
-                         mehr...
-                       </p>-->
-                   </span>
-                </div>
-                
+        <div class="row p-4 ">
+            <div class="col-lg-3 col-sm-6 col-md-4 pb-3" >
+                @include('partials.features.box', [
+                    'id' => 'feature-curriculum',
+                    'color' => '#605ca8',
+                    'icon' => 'text-white fa fa-th fa-2x',
+                    'title' => 'Digitale Lehrpläne',
+                    'content' => '<ul class="pt-2">
+                                    <li >Kompetenzraster</li>
+                                    <li >Lehr- und Rahmenpläne</li>
+                                    <li >überfachliche Bezüge</li>
+                                    <li >externen Medien verknüpfen</li>
+                                </ul>',
+                ])
             </div>
+
+            <div class="col-lg-3 col-sm-6 col-md-4 pb-3" >
+            @include('partials.features.box', [
+                'id' => 'feature-groups',
+                'color' => '#3d9970',
+                'icon' => 'text-white fas fa-users fa-2x',
+                'title' => 'Lerngruppen',
+                'content' => '<ul class="pt-2">
+                                <li >Lerngruppen/Kurse organisieren</li>
+                                <li >Klassen/AGs</li>
+                                <li >geschützte Kommunikation</li>
+                            </ul>',
+            ])
+            </div>
+
+            <div class="col-lg-3 col-sm-6 col-md-4 pb-3" >
+            @include('partials.features.box', [
+                'id' => 'feature-logbook',
+                'color' => '#ffc107',
+                'icon' => 'text-white fas fa-book fa-2x',
+                'title' => 'Kursbücher',
+                'content' => '<ul class="pt-2">
+                                <li >digitales Klassenbuch</li>
+                                <li >Unterricht dokumentieren</li>
+                                <li >(Haus-)Aufgaben</li>
+                                <li >Anwesenheit</li>
+                            </ul>',
+            ])
+            </div>
+
+            <div class="col-lg-3 col-sm-6 col-md-4 pb-3" >
+            @include('partials.features.box', [
+                'id' => 'feature-certificate',
+                'color' => '#d81b60',
+                'icon' => 'text-white fas fa-certificate fa-2x',
+                'title' => 'Zertifikate',
+                'content' => '<ul class="pt-2">
+                                <li >Selbsteinschätzungen</li>
+                                <li >Kompetenzen dokumentatieren</li>
+                                <li >Zertifikate drucken</li>
+                            </ul>',
+            ])
+            </div>    
+            
         </div>
     </div>
-    
 </body>
 
 @endsection

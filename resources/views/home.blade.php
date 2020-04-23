@@ -9,127 +9,115 @@
 @section('content')
 <div class="content">
     <div class="row">
-        <div class="col-lg-8">
-            <div class="col-lg-12 p-0">
-                <div class="card card-primary card-outline">
-                    <div class="card-header">
-                        <h5 class="m-0">{{ trans('global.dashboard.actual') }}</h5>
-                    </div>
-                    <div class="card-body">
-                        <h6 class="card-title">Info</h6>
-
-                        <p class="card-text">...</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-12 p-0">
-                <div class="card ">
-                    <div class="card-header">
-                        <h5 class="m-0">{{ trans('global.dashboard.statistic') }}</h5>
-                    </div>
-                    <div class="card-body">
-                        <ul class="nav nav-pills flex-column">
-                            <li class="nav-item">
-                                <a href="#">
-                                    <strong>{{ trans('global.dashboard.statistic_archievements') }}</strong>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#">
-                                    {{ trans('global.dashboard.today') }} 
-                                    <span class="pull-right text-green">
-                                        {{ count(auth()->user()->achievements_today()->where('status', '>=', 10)->where('status', '<', 30)) }}
-                                    </span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#">
-                                    {{ trans('global.dashboard.statistic_archievements_total') }} 
-                                    <span class="pull-right text-green">
-                                        {{ count(auth()->user()->achievements->where('status', '>=', 10)->where('status', '<', 30)) }}
-                                    </span>
-                                </a>
-                            </li>
-                        </ul>
-                        <ul class="pt-4 nav nav-pills flex-column">
-                            <li class="nav-item">
-                                <a href="#">
-                                    <strong>{{ trans('global.dashboard.online') }}</strong>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#">
-                                    {{ trans('global.dashboard.now_online') }}
-                                    <span class="pull-right">{{ now_online() }}
-                                    </span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#">
-                                    {{ trans('global.dashboard.today') }}
-                                    <span class="pull-right">{{ today_online() }}</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-        <div class="col-lg-4">
-            <div class="col-lg-12 p-0">
-                    <div class="card ">
-                      <div class="card-header">
-                        <h5 class="m-0">{{ trans('global.organization.title') }}</h5>
-                      </div>
-                        <div class="card-body">
-                            
-                            <ul class="products-list product-list-in-card pl-2 pr-2">
-                                @foreach(auth()->user()->organizations as $organization)
-                                <li class="item">
-                                    <div >
-                                        <a href="/organizations/{{$organization->id}}" 
-                                           class="product-title">
-                                            {{$organization->title}}
-                                        </a>
-                                        <span class="product-description">
-                                            {!! $organization->description !!}
-                                        </span>
-                                    </div>
-                                </li>
-                                <!-- /.item -->
-                                @endforeach
-                            </ul>
-
-                        </div>
-                    </div>
-                
-                <div class="card ">
-                      <div class="card-header">
-                        <h5 class="m-0">{{ trans('global.group.title') }}</h5>
-                      </div>
-                      <div class="card-body">
-                        <ul class="products-list product-list-in-card pl-2 pr-2">
-                                @foreach(auth()->user()->groups as $groups)
-                                <li class="item">
-                                    <div >
-                                        <a href="/groups/{{$groups->id}}" class="product-title">{{$groups->title}}
-                                        <span class="product-description">
-                                            {{$groups->grade->title}}
-                                        </span>
-                                        </a>
-                                    </div>
-                                </li>
-                                <!-- /.item -->
-                                @endforeach
-                            </ul>
-                      </div>
-                    </div>
-                </div>
-        </div>
+        @can('curriculum_access')
+            @include('partials.infobox', [
+                "infoBoxId" =>  'curriculaBox',
+                "infoBoxRoute" =>  route("curricula.index"),
+                "infoBoxClass" =>  'info-box-icon bg-info elevation-1',
+                "infoBoxIcon" =>  'fas fa-th',
+                "infoText" =>  "Curricula",
+                "infoBoxNumber" =>  count(auth()->user()->curricula()).'/'.App\Curriculum::all()->count(),
+            ])
+        @endcan
+       
+        @can('logbook_access')
+            @include('partials.infobox', [
+                "infoBoxId" =>  'logbooksBox',
+                "infoBoxRoute" =>  route("logbooks.index"),
+                "infoBoxClass" =>  'info-box-icon bg-danger elevation-1',
+                "infoBoxIcon" =>  'fas fa-book',
+                "infoText" =>  trans('global.logbook.title'),
+                "infoBoxNumber" =>  App\Logbook::all()->count(),
+            ])
+        @endcan
+        @can('task_access')
+          <!-- fix for small devices only -->
+          <div class="clearfix hidden-md-up"></div>
+            @include('partials.infobox', [
+                "infoBoxId" =>  'tasksBox',
+                "infoBoxRoute" =>  route("tasks.index"),
+                "infoBoxClass" =>  'info-box-icon bg-success elevation-1',
+                "infoBoxIcon" =>  'fa fa-tasks',
+                "infoText" =>  trans('global.task.title'),
+                "infoBoxNumber" =>  App\Task::all()->count(),
+            ])
+          @endcan
+          @can('organization_access')
+            @include('partials.infobox', [
+                "infoBoxId" =>  'organizationsBox',
+                "infoBoxRoute" =>  route("organizations.index"),
+                "infoBoxClass" =>  'info-box-icon bg-warning elevation-1',
+                "infoBoxIcon" =>  'fas fa-university',
+                "infoText" =>  trans('global.organization.title'),
+                "infoBoxNumber" =>  count(auth()->user()->organizations).'/'.App\Organization::all()->count(),
+                "include" =>  'home.organizationsInfo',
+            ])
+          @endcan
+          @can('group_access')
+            @include('partials.infobox', [
+                "infoBoxId" =>  'groupsBox',
+                "infoBoxRoute" =>  route("groups.index"),
+                "infoBoxClass" =>  'info-box-icon bg-purple elevation-1',
+                "infoBoxIcon" =>  'fas fa-users',
+                "infoText" =>  trans('global.group.title'),
+                "infoBoxNumber" =>  count(auth()->user()->groups).'/'.App\Group::all()->count(),
+                "include" =>  'home.groupsInfo',
+            ])
+          @endcan
+          @can('user_access')
+            @include('partials.infobox', [
+                "infoBoxId" =>  'usersBox', 
+                "infoBoxRoute" =>  route("users.index"),
+                "infoBoxClass" =>  'info-box-icon bg-primary elevation-1',
+                "infoBoxIcon" =>  'fas fa-user',
+                "infoText" =>  trans('global.user.title'),
+                "infoBoxNumber" =>  App\User::all()->count(),
+            ])
+          @endcan
+          @can('navigator_access')
+            @include('partials.infobox', [
+                "infoBoxId" =>  'navigatorsBox',
+                "infoBoxRoute" =>  route("navigators.index"),
+                "infoBoxClass" =>  'info-box-icon bg-olive elevation-1',
+                "infoBoxIcon" =>  'fa fa-map-signs',
+                "infoText" =>  trans('global.navigator.title'),
+                "infoBoxNumber" =>  App\Navigator::all()->count(),
+            ])
+          @endcan
+          @can('period_access')
+            @include('partials.infobox', [
+                "infoBoxId" =>  'periodsBox',
+                "infoBoxRoute" =>  route("periods.index"),
+                "infoBoxClass" =>  'info-box-icon bg-pink elevation-1',
+                "infoBoxIcon" =>  'fa fa-history',
+                "infoText" =>  trans('global.period.title'),
+                "infoBoxNumber" =>  App\Period::all()->count(),
+            ])
+          @endcan
+         
+          
+        @include('partials.infobox', [
+            "infoBoxId" =>  'archivementsBox',
+            "infoBoxRoute" =>  '',
+            "infoBoxClass" =>  'info-box-icon bg-pink elevation-1',
+            "infoBoxIcon" =>  'fas fa-chart-bar',
+            "infoText" =>   trans('global.dashboard.statistic_archievements') ,
+            "infoBoxNumber" =>  trans('global.dashboard.today').': '.count(auth()->user()->achievements_today()->where('status', '>=', 10)->where('status', '<', 30))
+            .'<br>'.trans('global.dashboard.statistic_archievements_total').': '.count(auth()->user()->achievements->where('status', '>=', 10)->where('status', '<', 30)),
+        ])
         
-    </div>
+        @include('partials.infobox', [
+            "infoBoxId" =>  'onlineBox',
+            "infoBoxRoute" =>  '',
+            "infoBoxClass" =>  'info-box-icon bg-pink elevation-1',
+            "infoBoxIcon" =>  'fas fa-plug',
+            "infoText" =>   trans('global.dashboard.online') ,
+            "infoBoxNumber" =>  trans('global.dashboard.now_online').': '. now_online() 
+            .'<br>'.trans('global.dashboard.today').': '.today_online(),
+        ])
+            
+         
+    </div>     
 </div>
 
 @endsection

@@ -29,7 +29,7 @@
                     <th>{{ trans('global.user.fields.firstname') }}</th>
                     <th>{{ trans('global.user.fields.lastname') }}</th>
                     <th>{{ trans('global.user.fields.email') }}</th>
-                    <th>{{ trans('global.status_definition.title_singular') }}</th>
+                    <th>{{ trans('global.statuses') }}</th>
                     <th>{{ trans('global.datatables.action') }}</th>
                 </tr>
             </thead>     

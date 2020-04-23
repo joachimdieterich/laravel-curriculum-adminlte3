@@ -51,7 +51,6 @@ class ProgressController extends Controller
         switch ($request->referencable_type) {
             case 'App\TerminalObjective':  
                 $input = $this->validateRequest();
-                
                
                 $enabling_objectives = \App\EnablingObjective::where('terminal_objective_id', $input['parent_id'])->get();
 
@@ -60,29 +59,16 @@ class ProgressController extends Controller
                                         ->whereIn('referenceable_id', $enabling_objectives->pluck('id'))
                                         ->where(DB::raw('RIGHT(status,1) = 1 OR RIGHT(status,1) = 2'))
                                         ->get();
-                
-                $progress = Achievement::where('referenceable_type', '=', $input['referenceable_type'])
-                                      ->where('referenceable_id', '=', $input['parent_id'])
-                                      ->where('associable_type', '=', 'App\\User')
-                                      ->where('associable_id', '=', $user_id)->first();
-                dump($progress);
-                if ($progress === null) { //create new
-                    $progress = Progress::firstOrCreate([
-                        'referenceable_type' => $input['referenceable_type'],
-                        'referenceable_id' => $input['parent_id'],
-                        'associable_type' => 'App\\User',
-                        'associable_id' => $user_id,
+                $progress = Progress::createOrUpdate(
+                    [                           
+                    'referenceable_type' => $input['referenceable_type'],
+                    'referenceable_id' => $input['parent_id'],
+                    'associable_type' => 'App\\User',
+                    'associable_id' => $user_id],
+                    [
                         'value' => ($total_achieved->count() / $enabling_objectives->count() *100)
-                    ]);
-                 } else {
-                    $progress->update([
-                        'value' => ($total_achieved->count() / $enabling_objectives->count() *100)
-                    ]);
-                 }
-                
-
-                //dd($progress);  
-
+                    ]    
+                );
                 break;
 
             default:
@@ -178,23 +164,17 @@ class ProgressController extends Controller
                                 ->whereIn('referenceable_id', $enabling_objectives->pluck('id'))
                                 ->whereRaw('(RIGHT(status,1) = "1" OR RIGHT(status,1) = "2")')
                                 ->get();
-
-        $progress = Progress::where('referenceable_type', '=', $parent_model)
-                                      ->where('referenceable_id', '=', $parent_id)
-                                      ->where('associable_type', '=', 'App\\User')
-                                      ->where('associable_id', '=', $user_id)->first();
-        if ($progress === null) { //create new
-            return Progress::updateOrCreate([
+        return Progress::updateOrCreate(
+            [
                 'referenceable_type' => $parent_model,
                 'referenceable_id' => $parent_id,
                 'associable_type' => 'App\\User',
                 'associable_id' => $user_id,
-                'value' => ($total_achieved->count() / $enabling_objectives->count() *100)
-            ]);
-        } else {
-            return $progress->update([
-                'value' => ($total_achieved->count() / $enabling_objectives->count() *100)
-            ]);
-        }
+            ],
+            [
+                'value' => ($total_achieved->count() / $enabling_objectives->count() *100)    
+            ]
+
+        );
     }
 }

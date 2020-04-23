@@ -59,12 +59,13 @@ class ProgressController extends Controller
                                         ->whereIn('referenceable_id', $enabling_objectives->pluck('id'))
                                         ->where(DB::raw('RIGHT(status,1) = 1 OR RIGHT(status,1) = 2'))
                                         ->get();
-                $progress = Progress::createOrUpdate(
+                $progress = Progress::updateOrCreate(
                     [                           
-                    'referenceable_type' => $input['referenceable_type'],
-                    'referenceable_id' => $input['parent_id'],
-                    'associable_type' => 'App\\User',
-                    'associable_id' => $user_id],
+                        'referenceable_type' => $input['referenceable_type'],
+                        'referenceable_id' => $input['parent_id'],
+                        'associable_type' => 'App\\User',
+                        'associable_id' => $user_id
+                    ],
                     [
                         'value' => ($total_achieved->count() / $enabling_objectives->count() *100)
                     ]    

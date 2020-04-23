@@ -208,6 +208,7 @@ return [
     'website'                              => 'Website',
     'contact_management'                   => 'Kontaktverwaltung',
     'contacts'                             => 'Kontakte',
+    'contact'                              => 'Kontakt',
     'company'                              => 'Firma',
     'first_name'                           => 'Vorname',
     'last_name'                            => 'Nachname',

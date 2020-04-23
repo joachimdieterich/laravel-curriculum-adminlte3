@@ -11,7 +11,7 @@ Important! Start server in dusk environment. Never start browser tests on produc
 
 ```bash
 php artisan config:clear
-php artisan serve --env=dusk
+php artisan serve --env=dusk.testing
 ```
 
 Run browser tests
@@ -19,3 +19,16 @@ Run browser tests
 ```bash
 php artisan dusk
 ```
+
+## Troubleshooting
+
+Update chrome-driver
+```bash
+Facebook\WebDriver\Exception\SessionNotCreatedException: session not created: Chrome version must be between [70] and [73]
+php artisan dusk:chrome-driver
+```
+Excepton:
+```bash
+Facebook\WebDriver\Exception\SessionNotCreatedException: session not created: This version of ChromeDriver only supports Chrome version 81
+```
+Update chrome

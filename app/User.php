@@ -12,6 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Support\Facades\DB;
 use Cmgmyr\Messenger\Traits\Messagable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  *   @OA\Schema(  
  *      required={"id", "username", "firstname", "lastname", "email", "password"},
@@ -131,6 +132,7 @@ class User extends Authenticatable
     public function curricula()
     {
         return DB::table('curricula')
+            ->distinct()
             ->select('curricula.*', 'curriculum_group.id AS course_id', 'curriculum_group.group_id AS group_id',)
             ->leftjoin('curriculum_group', 'curricula.id', '=', 'curriculum_group.curriculum_id')
             ->leftjoin('group_user', 'group_user.group_id', '=', 'curriculum_group.group_id')    
@@ -138,6 +140,7 @@ class User extends Authenticatable
             ->orWhere('curricula.owner_id', $this->id) //user should also see curricula which he/she owns
             ->get();
     }
+    
     public function currentGroupEnrolments()
     {
         return $this->belongsToMany('App\Group', 'group_user')
@@ -147,6 +150,11 @@ class User extends Authenticatable
             ->where('organization_id', $this->current_organization_id)
             ->withTimestamps();
     } 
+    
+    public function logbookSubscription()
+    {
+        return $this->morphMany('App\LogbookSubscription', 'subscribable');
+    }
     
     public function roles()
     {

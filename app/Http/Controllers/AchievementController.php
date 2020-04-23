@@ -26,11 +26,6 @@ class AchievementController extends Controller
         
         foreach((array) $user_ids AS $user_id)
         {
-            $achievement = Achievement::where('referenceable_type', '=', $input['referenceable_type'])
-                                      ->where('referenceable_id', '=', $input['referenceable_id'])
-                                      ->where('user_id', '=', $user_id)->first();
-            
-//            if ($achievement === null) { //create new
                 $achievement = Achievement::updateOrCreate(
                     [
                         "referenceable_type" => $input['referenceable_type'],
@@ -43,15 +38,6 @@ class AchievementController extends Controller
                     ]
                     
                 ); 
-//            } else { //update
-//                $achievement->update([
-//                            "referenceable_type" => $input['referenceable_type'],
-//                            "referenceable_id"   => $input['referenceable_id'],
-//                            "user_id"            => $user_id,
-//                            "status"             => $this->calculateStatus($user_id, $input, $achievement->status),
-//                            "owner_id"           => auth()->user()->id,	
-//                ]); 
-//            }
             
             $achievement->save(); 
            

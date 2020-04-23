@@ -30,14 +30,7 @@ class OrganizationsController extends Controller
     public function list()
     {
         abort_unless(\Gate::allows('organization_access'), 403);
-        if (auth()->user()->role()->id == 1)
-        {
-            $organizations = Organization::all(); 
-        } 
-        else 
-        {
-            $organizations = auth()->user()->organizations()->get(); 
-        }
+        $organizations = (auth()->user()->role()->id == 1) ? Organization::all() : auth()->user()->organizations()->get();
               
         return DataTables::of($organizations)
             ->addColumn('status', function ($organizations) {
@@ -48,14 +41,15 @@ class OrganizationsController extends Controller
                     if (\Gate::allows('organization_show')){
                         $actions .= '<a href="'.route('organizations.show', $organizations->id).'" '
                                     . 'id="show-organization-'.$organizations->id.'" '
-                                    . 'class="btn text-primary p-1">'
+                                    . 'name="show-organization-'.$organizations->id.'" '
+                                    . 'class="btn p-1">'
                                     . '<i class="fa fa-list-alt"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('organization_edit')){
                         $actions .= '<a href="'.route('organizations.edit', $organizations->id).'"'
                                     . 'id="edit-organization-'.$organizations->id.'" '
-                                    . 'class="btn text-secondary p-1">'
+                                    . 'class="btn p-1">'
                                     . '<i class="fa fa-edit"></i>' 
                                     . '</a>';
                     }
@@ -64,7 +58,7 @@ class OrganizationsController extends Controller
                                     . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
                                     . '<button type="submit" '
                                     . 'id="delete-organization-'.$organizations->id.'" '
-                                    . 'class="pull-right btn text-danger p-1"><i class="fa fa-trash"></i></button>';
+                                    . 'class="pull-right btn p-0 m-1 text-danger"><i class="fa fa-trash"></i></button>';
                     }
               
                 return $actions;
@@ -203,7 +197,7 @@ class OrganizationsController extends Controller
         foreach ((request()->enrollment_list) AS $enrolment)
         {  
             
-            $return[] = OrganizationRoleUser::firstOrCreate(
+            $return[] = OrganizationRoleUser::updateOrCreate(
                     [
                         'user_id'         => $enrolment['user_id'],
                         'organization_id' => $enrolment['organization_id']

@@ -15,21 +15,16 @@ class LogbookController extends Controller
      */
     public function index()
     {
-        $logbooks = Logbook::all();
-        return view('logbooks.index')
-            ->with(compact('logbooks'));
+        return view('logbooks.index');
     }
     
     public function list()
     {
         
         abort_unless(\Gate::allows('logbook_access'), 403);
-        $logbooks = Logbook::select([
-            'id', 
-            'title',
-            ]);
-        
-        return DataTables::of($logbooks)
+        $logbooks = (auth()->user()->role()->id == 1) ? Logbook::all() : auth()->user()->logbookSubscription()->with(['logbook'])->get();      
+   
+        return empty($logbooks) ? '' : DataTables::of($logbooks)
             ->addColumn('action', function ($logbooks) {
                  $actions  = '';
                     if (\Gate::allows('logbook_show')){

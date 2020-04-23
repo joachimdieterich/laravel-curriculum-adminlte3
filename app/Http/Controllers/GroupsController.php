@@ -21,8 +21,8 @@ class GroupsController extends Controller
     {
         abort_unless(\Gate::allows('group_access'), 403);
 
-        $curricula =  auth()->user()->curricula();//Curriculum::all();
-        //dump($curricula);
+        $curricula =  (auth()->user()->role()->id == 1) ? Curriculum::all() : auth()->user()->curricula();
+
         return view('groups.index')
           ->with(compact('curricula'));
     }
@@ -30,7 +30,7 @@ class GroupsController extends Controller
     public function list()
     {
         abort_unless(\Gate::allows('group_access'), 403);
-        $groups = auth()->user()->groups()->get();      
+        $groups = (auth()->user()->role()->id == 1) ? Group::all() : auth()->user()->groups()->get();      
         
         return DataTables::of($groups)
             ->addColumn('grade', function ($groups) {
@@ -47,14 +47,14 @@ class GroupsController extends Controller
                     if (\Gate::allows('group_show')){
                         $actions .= '<a href="'.route('groups.show', $groups->id).'" '
                                     . 'id="show-group-'.$groups->id.'" '
-                                    . 'class="btn text-primary p-1">'
+                                    . 'class="btn p-1">'
                                     . '<i class="fa fa-list-alt"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('group_edit')){
                         $actions .= '<a href="'.route('groups.edit', $groups->id).'" '
                                     . 'id="edit-group-'.$groups->id.'" '
-                                    . 'class="btn text-secondary p-1">'
+                                    . 'class="btn p-1">'
                                     . '<i class="fa fa-edit"></i> '
                                     . '</a>';
                     }
@@ -87,9 +87,11 @@ class GroupsController extends Controller
     public function create()
     {
         abort_unless(\Gate::allows('group_create'), 403);
-        $grades = Grade::all();
-        $periods = Period::all();
-        $organizations = auth()->user()->organizations()->get();
+        
+        $grades  = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->type->grades()->get(); //Grade::all();
+        $periods = Organization::where('id',auth()->user()->current_organization_id)->get()->first()->periods;
+        $organizations = (auth()->user()->role()->id == 1) ? Organization::all() : auth()->user()->organizations()->get();
+        
         return view('groups.create')
                 ->with(compact('grades'))
                 ->with(compact('periods'))
@@ -133,9 +135,10 @@ class GroupsController extends Controller
     public function edit(Group $group)
     {
         abort_unless(\Gate::allows('group_edit'), 403);
-        $grades = Grade::all();
-        $periods = Period::all();
-        $organizations = auth()->user()->organizations()->get();
+        
+        $grades  = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->type->grades()->get(); //Grade::all();
+        $periods = Organization::where('id',auth()->user()->current_organization_id)->get()->first()->periods;
+        $organizations = (auth()->user()->role()->id == 1) ? Organization::all() : auth()->user()->organizations()->get();
         
         return view('groups.edit')
                 ->with(compact('group'))

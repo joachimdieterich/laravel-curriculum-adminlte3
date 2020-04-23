@@ -43,7 +43,7 @@
                 </p>
                 <hr>
 
-                <strong><i class="fa fa-phone mr-1"></i> Contact</strong>
+                <strong><i class="fa fa-phone mr-1"></i> {{ trans('global.contact') }}</strong>
                 <p class="text-muted">
                     {{ trans('global.organization.fields.phone') }}: {{ $organization->phone }}<br>
                     {{ trans('global.organization.fields.email') }}: {{ $organization->email }}

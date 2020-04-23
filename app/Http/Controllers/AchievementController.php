@@ -51,8 +51,8 @@ class AchievementController extends Controller
             
             $achievement->save(); 
            
-            $obj = EnablingObjective::find($input['referenceable_id'])->get();
-            (new ProgressController)->calculateProgress('App\TerminalObjective', $obj->first()->terminal_objective_id, $user_id);
+            $obj = EnablingObjective::find($input['referenceable_id']);
+            (new ProgressController)->calculateProgress('App\TerminalObjective', $obj->terminal_objective_id, $user_id);
         }
         // axios call? 
         if (request()->wantsJson()){    

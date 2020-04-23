@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Achievement;
 use App\EnablingObjective;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\ProgressController;
 
 class AchievementController extends Controller
@@ -31,23 +30,28 @@ class AchievementController extends Controller
                                       ->where('referenceable_id', '=', $input['referenceable_id'])
                                       ->where('user_id', '=', $user_id)->first();
             
-            if ($achievement === null) { //create new
-                $achievement = Achievement::firstOrCreate([
-                            "referenceable_type" => $input['referenceable_type'],
-                            "referenceable_id"   => $input['referenceable_id'],
-                            "user_id"            => $user_id,
-                            "status"             => $this->calculateStatus($user_id, $input),
-                            "owner_id"           => auth()->user()->id,	
-                ]); 
-            } else { //update
-                $achievement->update([
-                            "referenceable_type" => $input['referenceable_type'],
-                            "referenceable_id"   => $input['referenceable_id'],
-                            "user_id"            => $user_id,
-                            "status"             => $this->calculateStatus($user_id, $input, $achievement->status),
-                            "owner_id"           => auth()->user()->id,	
-                ]); 
-            }
+//            if ($achievement === null) { //create new
+                $achievement = Achievement::updateOrCreate(
+                    [
+                        "referenceable_type" => $input['referenceable_type'],
+                        "referenceable_id"   => $input['referenceable_id'],
+                        "user_id"            => $user_id,                        
+                    ],
+                    [
+                        "status"             => $this->calculateStatus($user_id, $input, ($achievement === null) ? '00' : $achievement->status),
+                        "owner_id"           => auth()->user()->id,	
+                    ]
+                    
+                ); 
+//            } else { //update
+//                $achievement->update([
+//                            "referenceable_type" => $input['referenceable_type'],
+//                            "referenceable_id"   => $input['referenceable_id'],
+//                            "user_id"            => $user_id,
+//                            "status"             => $this->calculateStatus($user_id, $input, $achievement->status),
+//                            "owner_id"           => auth()->user()->id,	
+//                ]); 
+//            }
             
             $achievement->save(); 
            
@@ -66,7 +70,7 @@ class AchievementController extends Controller
     /* calculate proper status id */
     protected function calculateStatus($user_id, $input, $status = '00')
     {
-        if(\Gate::allows('achievement_access') AND $user_id != auth()->user()->id)
+        if(\Gate::allows('achievement_create') AND $user_id != auth()->user()->id)
         {
             $status[1] = $input['status'];
         }

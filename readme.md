@@ -37,6 +37,7 @@ composer install --no-dev
 ```
 For production
 ```bash
+composer install 
 composer dump-autoload
 
 npm install

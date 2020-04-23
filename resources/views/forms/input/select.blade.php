@@ -2,7 +2,7 @@
      class="form-group {{ $errors->has( $field ) ? ' has-danger' : '' }} {{ isset($css) ? $css : '' }}" 
 >
     @if(isset($show_label))      
-        <label for="{{ $field }}" class="{{ isset($class_left) ? $class_left : 'col-sm-4' }}">
+        <label for="{{ $field }}" class="{{ isset($class_left) ? $class_left : 'p-0 col-sm-12' }}">
             
             {{ isset($label) ? $label :trans("global.{$model}.title_singular") }}
           
@@ -16,7 +16,7 @@
     @endif
         <select name="{{ $field }}[]" 
                 id="{{ $field }}" 
-                class="form-control select2 {{ $errors->has($field) ? ' is-invalid' : '' }} {{ isset($class_right) ? $class_right : 'col-sm-9' }}"
+                class="form-control select2 {{ $errors->has($field) ? ' is-invalid' : '' }} {{ isset($class_right) ? $class_right : 'col-sm-12' }}"
                 style="{{ isset($style) ? $style : 'width:100%;' }}"
                 @if(isset($onchange)) 
                     onchange="{{ $onchange }}"

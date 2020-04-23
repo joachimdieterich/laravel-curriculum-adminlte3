@@ -13,14 +13,13 @@
                       "show_label" => true,
                       "field" => "period_id",  
                       "options"=> $periods, 
-                      "value" => old('period_id', isset($group->period_id) ? $group->period_id : '') ])                                                          
-                      
+                      "value" => old('period_id', isset($group->period_id) ? $group->period_id : auth()->user()->current_period_id) ])                                                          
 @include ('forms.input.select', 
                       ["model" => "organization",
                       "show_label" => true,
                       "field" => "organization_id",  
                       "options"=> $organizations,  
-                      "value" => old('organization_id', isset($group->organization_id) ? $group->organization_id : '') ])                                                          
+                      "value" => old('organization_id', isset($group->organization_id) ? $group->organization_id : auth()->user()->current_organization_id) ])                                                          
 
 <div>
     <input 

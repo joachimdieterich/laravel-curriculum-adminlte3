@@ -27,8 +27,8 @@
                 <tr>
                     <th width="10"></th>
                     <th>{{ trans('global.curriculum.fields.title') }}</th>
-                    <th>{{ trans('global.state.title_singular') }}</th>
-                    <th>{{ trans('global.country.title_singular') }}</th>
+<!--                    <th>{{ trans('global.state.title_singular') }}</th>
+                    <th>{{ trans('global.country.title_singular') }}</th>-->
                     <th>{{ trans('global.grade.title_singular') }}</th>
                     <th>{{ trans('global.subject.title_singular') }}</th>
                     <th>{{ trans('global.owner') }}</th>
@@ -54,8 +54,8 @@ $(document).ready( function () {
         columns: [
                  { data: 'check'},
                  { data: 'title' },
-                 { data: 'state' },
-                 { data: 'country' },
+//                 { data: 'state' },
+//                 { data: 'country' },
                  { data: 'grade' },
                  { data: 'subject' },
                  { data: 'owner' },

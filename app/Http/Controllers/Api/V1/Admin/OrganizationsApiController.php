@@ -41,8 +41,16 @@ class OrganizationsApiController extends Controller {
     }
 
     public function enrol() 
-    {
-        return OrganizationRoleUser::firstOrCreate(request()->all());
+    {   
+        return OrganizationRoleUser::updateOrCreate(
+                [
+                        'user_id'         => request('user_id'),
+                        'organization_id' => request('organization_id')
+                    ],
+                    [
+                        'role_id'         => request('role_id')
+                    ]
+                );
     }
 
     public function expel() 

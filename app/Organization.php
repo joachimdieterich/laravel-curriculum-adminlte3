@@ -76,7 +76,12 @@ class Organization extends Model
     
     public function type()
     {
-        return $this->hasOne('App\OrganizationType', 'external_id', 'organization_type_id');
+        return $this->hasOne('App\OrganizationType', 'id', 'organization_type_id');
+    }
+    
+    public function periods()
+    {
+        return $this->hasMany('App\Period', 'organization_id', 'id');
     }
     
     public function status()

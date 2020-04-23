@@ -77,7 +77,8 @@
                 <strong><i class="fa fa-key mr-1"></i>{{ trans('global.roles') }}</strong>
                 <p class="text-muted">
                     @foreach($user->roles as $id => $roles)
-                        <button type="button" class="btn-xs btn-block btn-success pull-right">{{$roles->title}} @ {{ $roles->organizations->first()->title }}</button>
+                
+                        <button type="button" class="btn-xs btn-block btn-success pull-right">{{$roles->title}} @ {{ $user->organizations()->where('role_id', $roles->id)->first()->title }}</button>
                     @endforeach
                 </p>
 

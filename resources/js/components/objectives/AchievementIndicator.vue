@@ -103,7 +103,14 @@
                         }
                          return teacher; //todo option to show students self achievment status 
                     } else {
-                        this.status = '00';
+                        if (typeof this.objective.achievements !== 'undefined'){
+                            if (typeof this.objective.achievements[0] === 'object') {
+                                this.status = this.objective.achievements[0].status;
+                            }
+                        } else {
+                            this.status = '00';    
+                        }
+                        
                     }
                 } else {
                      return;  

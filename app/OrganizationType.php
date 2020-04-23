@@ -28,4 +28,9 @@ class OrganizationType extends Model
     {
         return $this->hasOne('App\Country', 'alpha2', 'country_id');   
     }
+    
+    public function grades()
+    {
+        return $this->hasMany('App\Grade', 'organization_type_id', 'id');
+    }
 }

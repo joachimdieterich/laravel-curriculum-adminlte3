@@ -184,7 +184,7 @@ Important! Start server in dusk environment.
 
 ```
 php artisan config:clear
-php artisan serve --env=dusk
+php artisan serve --env=dusk.testing
 ```
 
 Run browser tests

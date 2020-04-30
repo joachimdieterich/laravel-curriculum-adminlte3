@@ -14,7 +14,7 @@
         "axios": "^0.19.2",
         "bootstrap": "^4.4.1",
         "cross-env": "^7.0.2",
-        "jquery": "^3.4.1",
+        "jquery": "^3.5.0",
         "laravel-mix": "^5.0.4",
         "less": "^3.11.1",
         "less-loader": "^5.0.0",

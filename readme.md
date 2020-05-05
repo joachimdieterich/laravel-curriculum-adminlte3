@@ -100,8 +100,32 @@ Generate oAuth2 clients
 ```
 php artisan passport:install
 ```
-##
-OpenApi Documentation Endpoint
+The Password grant client can be used to access the API.
+
+## Accessing API
+
+### Getting access_token
+```
+POST https://localhost:[port]/oauth/token
+header
+Content-Type: 'application/json' 
+
+form-data
+client_id: [id]
+client_secret: [secret]
+grant_type: 'client_credentials'
+```
+Use access token to access API
+```
+GET 'http://localhost:8000/api/v1/users' 
+
+header 
+Content-Type: 'application/json' 
+X-Requested-With: 'XMLHttpRequest' 
+Authorization: 'Bearer [access_token]'
+``` 
+
+## OpenApi Documentation Endpoint
  
 Generate OpenApi Documentation
 ```
@@ -109,7 +133,6 @@ php artisan l5-swagger:generate
 ```
 
 localhost:[port]/api/documentation
-
 Info: If you want to use another url edit `@OA\Server` in `/app/Http/Controllers/Api/V1/OpenApiDefinitions/Setup.php` 
 
 ## SSO with SAML2

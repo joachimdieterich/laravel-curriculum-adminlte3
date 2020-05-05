@@ -11,7 +11,8 @@ use App\Organization;
 
 class OrganizationTest extends DuskTestCase
 {
-    
+
+
     /**
      * Add organization
      *
@@ -21,26 +22,30 @@ class OrganizationTest extends DuskTestCase
     {   
         $this->browse(function (Browser $browser) {
             $organization = Organization::first();
-            $browser->visit('/')
-                    ->type('email', 'admin@curriculumonline.de')
-                    ->type('password', 'password') // Enter plain password
-                    ->press('Login')
-                    ->visit(new Pages\OrganizationPage)
-                    ->waitForText($organization->title)
-                    ->assertSee('Add Organization')
-                    ->click('#add-organization')
-                    
-                    ->type('title', 'DuskTest')
-                    ->type('description', 'DuskTest Description')
-                    ->type('street', 'Dusk Street')
-                    ->type('postcode', '12345')
-                    ->type('city', 'Dusk City')
-                    ->type('phone', '0123 456789')
-                    ->type('email', 'dusk@curriculumonline.de')
-                    ->select('status', 1)
-                    
-                    ->click('#organization-save')
-                    ->waitForText('DuskTest');
+            $browser
+                ->visit('/login')
+                ->type('email', 'admin@curriculumonline.de')
+                ->type('password', 'password') // Enter plain password
+                ->press('login')
+                ->visit(new Pages\OrganizationPage)
+                ->waitForText($organization->title)
+                ->assertSee( trans('global.organization.create')  )
+                ->click('#add-organization')
+
+                ->type('title', 'DuskTest');
+            $browser
+                ->driver->executeScript('tinyMCE.get(\'description\').setContent(\'<p>DuskTest Description</p>\')');
+            $browser
+                ->type('street', 'Dusk Street')
+                ->type('postcode', '12345')
+                ->type('city', 'Dusk City')
+                ->type('phone', '0123 456789')
+                ->type('email', 'dusk@curriculumonline.de')
+                ->select2('#status_definition_id', 'aktiv')
+                ->screenshot('/admin/organization-add')
+
+                ->press('#organization-save')
+                ->waitForText('DuskTest');
         });     
     }
     
@@ -62,11 +67,11 @@ class OrganizationTest extends DuskTestCase
                 'phone'         => '0123 456789',
                 'email'         => 'dusk@curriculumonline.de',
                 'status_id'     => 1
-            ]);
+            ]);      
             $admin->loginAs(User::find(1))
                     ->visit(new Pages\OrganizationPage)
                     ->waitForText('DuskTest')
-                    ->click('#show-organization-'.$organization->id)
+                    ->click("#show-organization-{$organization->id}")
                     ->waitForText($organization->title)
                     ->assertSee($organization->description)
                     ->assertSee($organization->street)
@@ -74,8 +79,7 @@ class OrganizationTest extends DuskTestCase
                     ->assertSee($organization->city)
                     ->assertSee($organization->phone)
                     ->assertSee($organization->email)
-                    //->screenshot('see-organizational-details')
-                    ;
+                    ->screenshot('/admin/organization-show');
         });     
     }
     /**
@@ -105,7 +109,7 @@ class OrganizationTest extends DuskTestCase
                     ->type('title', 'DuskTest changed')
                     ->click('#organization-save')
                     ->waitForText('DuskTest')
-                    //->screenshot('see-organization')
+                    ->screenshot('/admin/organization-edit')
                     ;
 
         });     
@@ -136,7 +140,7 @@ class OrganizationTest extends DuskTestCase
                     ->click('#delete-organization-'.$organization->id)
                     ->waitForText('curriculumonline') //proof that datatable is loaded, curriculumonline is the seeded demo organization 
                     ->assertDontSee('DuskTest')
-                    //->screenshot('see-organization')
+                    //->screenshot('/admin/see-organization')
                     ;
         });     
     }

@@ -115,7 +115,7 @@ client_id: [id]
 client_secret: [secret]
 grant_type: 'client_credentials'
 ```
-Use access token to access API
+###Use access token to access API
 ```
 GET 'http://localhost:8000/api/v1/users' 
 

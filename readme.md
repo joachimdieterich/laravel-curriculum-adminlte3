@@ -117,7 +117,7 @@ grant_type: 'client_credentials'
 ```
 ### Use access token to access API
 ```
-GET 'http://localhost:8000/api/v1/users' 
+e.g. GET 'http://localhost:[port]/api/v1/users' 
 
 header 
 Content-Type: 'application/json' 

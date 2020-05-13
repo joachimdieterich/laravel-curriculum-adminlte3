@@ -31,11 +31,11 @@ sudo apt-get update
 git clone https://github.com/joachimdieterich/laravel-curriculum-adminlte3.git
 cd laravel-curriculum-adminlte3 
 ```
-For development
+For production
 ```bash
 composer install --no-dev
 ```
-For production
+For development
 ```bash
 composer install 
 composer dump-autoload

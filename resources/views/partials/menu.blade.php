@@ -235,12 +235,21 @@
                 @endcan
                 
                 <li class="nav-item">
+                    @if (env('SAML2_RLP_IDP_SL_URL') !== null)
+                    <a href="{{ env('SAML2_RLP_IDP_SL_URL') }}" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <p>
+                            <span>{{ trans('global.logout') }}</span>
+                        </p>
+                    </a>
+                    @else
                     <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
                         <i class="fas fa-sign-out-alt"></i>
                         <p>
                             <span>{{ trans('global.logout') }}</span>
                         </p>
                     </a>
+                    @endif
                 </li>
             </ul>
         </nav>

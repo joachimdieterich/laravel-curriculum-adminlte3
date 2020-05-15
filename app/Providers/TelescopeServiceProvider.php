@@ -36,7 +36,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
         // see:
         // https://github.com/laravel/telescope/issues/347#issuecomment-523550515
         // Disable the filter while in local or testing environment.
-        $disableFilter = $this->app->environment(['local', 'testing']);
+        $disableFilter = $this->app->environment(['local', 'testing', 'production']);
         Telescope::filter(function (IncomingEntry $entry) use ($disableFilter) {
             if ($disableFilter) {
                 return true;

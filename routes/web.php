@@ -176,7 +176,7 @@ Route::group(['middleware' => 'auth'], function () {
 });
 
 if ((env('APP_ENV') == 'local')){
-    Route::get('/phpinfo', function (){phpinfo();}); //available in local env
+    Route::get('/phpinfo', function (){phpinfo();})->middleware('admin');; //available in local env
 }
 
 if (env('GUEST_USER') !== null)

@@ -19,10 +19,20 @@ class UsersApiController extends Controller
 
     public function store()
     {
-        if ($user = User::create($this->filteredRequest()))
+        
+        if (User::withTrashed()->where('email', request()->email))
         {
-            $user->notify(new Welcome());
-         
+            User::withTrashed()->where('email', request()->email)->restore();
+            $user = User::where('email', request()->email)->get()->first();
+            $user->update($this->filteredRequest());
+        } 
+        else 
+        {
+            if ($user = User::create($this->filteredRequest()))
+            {
+                $user->notify(new Welcome());
+
+            }
         }
         return $user;
     }

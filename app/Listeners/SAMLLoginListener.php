@@ -36,8 +36,16 @@ class SAMLLoginListener
                 'attributes' => $user->getAttributes(),
                 'assertion' => $user->getRawSamlAssertion()
             ];   
-             $laravelUser = User::where('username', $user->getUserId())->get();//find user by ID or attribute
-             //if it does not exist create it and go on or show an error message
-             Auth::login($laravelUser->first());
+            $laravelUser = User::where('username', $user->getUserId())->get();//find user by ID or attribute
+             //if it does not exist create it and go on or show an error message        
+            Auth::login($laravelUser->first());
+            
+            // if users current_organization_id is not set -> get first organization as default
+            if (auth()->user()->current_organization_id === NULL)
+            {
+                $u = \App\User::find(auth()->user()->id);
+                $u->current_organization_id = auth()->user()->organizations()->first()->id;
+                $u->save();
+            }       
     }
 }

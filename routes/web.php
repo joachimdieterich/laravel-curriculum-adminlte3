@@ -175,9 +175,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('users', 'UsersController');
 });
 
-if ((env('APP_ENV') == 'local')){
-    Route::get('/phpinfo', function (){phpinfo();})->middleware('admin');; //available in local env
-}
+//if ((env('APP_ENV') == 'local')){
+//    Route::get('/phpinfo', function (){phpinfo();})->middleware('admin'); //available in local env
+//}
 
 if (env('GUEST_USER') !== null)
 {

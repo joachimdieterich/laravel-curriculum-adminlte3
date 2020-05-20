@@ -34,8 +34,8 @@ class Curriculum extends Model
     protected $attributes = [
         'state_id' => 'DE-RP',
         'country_id' => 'DE',
-        'color' => '#27AE60',
-        'grade_id' => 1, 
+        'color' => '#27AE60', 
+       'grade_id' => 1, 
         'subject_id' => 51, //Math
         'organization_type_id' => 1,
      ];
@@ -118,6 +118,11 @@ class Curriculum extends Model
             'id', // Local key on curriculum table...
             'content_id' // Local key on content_subscription table...
         )->where('subscribable_type', get_class($this)); 
+    }
+    
+    public function certificates()
+    {
+        return $this->hasMany('App\Certificate', 'curriculum_id', 'id');
     }
    
     public function courses(){

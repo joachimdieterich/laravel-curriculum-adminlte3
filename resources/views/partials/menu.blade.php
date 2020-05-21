@@ -1,4 +1,4 @@
-<aside class="main-sidebar sidebar-dark-primary elevation-4">
+<aside class="main-sidebar sidebar-dark-primary elevation-4">    
     <!-- Brand Logo -->
      <a href="{{ route("home") }}" class="brand-link p-1">
          <svg class="ml-2 mt-1 pl-1" version="1.0" xmlns="http://www.w3.org/2000/svg"
@@ -30,7 +30,7 @@
 
          <span class="pl-1 brand-text font-weight-bolder ">curriculum</span>
     </a>
-    
+    <div id="menu_top_placeholder" class="clearfix"></div>
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <!-- Sidebar user (optional) -->
@@ -47,7 +47,7 @@
               </a>
           </div>
         </div>
-        <div id="menu_top_placeholder" ></div>
+        
         <!-- Sidebar Menu -->
         <span class="clearfix"></span>
         <nav class="mt-2">

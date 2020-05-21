@@ -26,8 +26,8 @@
                     <tr>
                         <th width="10"></th>
                         <th>{{ trans('global.user.fields.username') }}</th>
-                        <th>{{ trans('global.user.fields.firstname') }}</th>
                         <th>{{ trans('global.user.fields.lastname') }}</th>
+                        <th>{{ trans('global.user.fields.firstname') }}</th>
                         <th>{{ trans('global.role.fields.title') }}</th>
                         <th>{{ trans('global.progress.title_singular') }}</th>
                     </tr>
@@ -226,16 +226,20 @@ $(document).ready( function () {
         serverSide: true,
         select: true,
         ajax: "/courses/list?course_id={{ $course->id }}",
-        
         columns: [
                  { data: 'check'},
                  { data: 'username' },
-                 { data: 'firstname' },
                  { data: 'lastname' },
+                 { data: 'firstname' },
                  { data: 'role' },
                  { data: 'progress' },
                 ],
-        buttons: [],
+        buttons: [
+             
+        ],
+        columnDefs: [
+            { "visible": false, "targets": 0 }
+        ]
     });
     
     //align header/body
@@ -252,11 +256,17 @@ $(document).ready( function () {
     $(window).on("scroll", function(table) {
         if (!isElementInViewport($("#content_top_placeholder"))){
             $("#users-datatable_wrapper").appendTo("#menu_top_placeholder");
-            $("#menu_top_placeholder").css({'background-color': '#ecf0f5', 'padding':'5px', 'webkit-transform':'translate3d(0,0,0)'});
+            $("#menu_top_placeholder").css({'background-color': '#ecf0f5', 'padding-top':'48px', 'webkit-transform':'translate3d(0,0,0)'});
+            $('.dataTables_length').hide();
+            $('.dataTables_filter').hide();
+            $('.dataTables_info').hide();
         } else {
             if (isElementInViewport($("#content_top_placeholder"))){
                 $("#users-datatable_wrapper").appendTo("#content_top_placeholder");
                 $("#menu_top_placeholder").css({'background-color': 'transparent', 'padding':'0px', 'webkit-transform':'translate3d(0,0,0)'});
+                $('.dataTables_length').show();
+                $('.dataTables_filter').show();
+                $('.dataTables_info').show();
             }
         } 
     });

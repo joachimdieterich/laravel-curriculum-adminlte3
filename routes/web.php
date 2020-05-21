@@ -183,10 +183,13 @@ if (env('GUEST_USER') !== null)
 {
     Route::get('/guest', function ()
     {
-        Auth::loginUsingId((env('GUEST_USER')), true);
-        if (auth()->user()->organizations()->first()->navigators()->first() != null)
+        if (Auth::user() == null)       //if no user is authenticated authenticate guest
         {
-            return redirect('/navigators/'.auth()->user()->organizations()->first()->navigators()->first()->id);
+            Auth::loginUsingId((env('GUEST_USER')), true);
+        }
+        if (\App\User::find(env('GUEST_USER'))->organizations()->first()->navigators()->first() != null) //use guests default navigator
+        {
+            return redirect('/navigators/'.\App\User::find(env('GUEST_USER'))->organizations()->first()->navigators()->first()->id);
         }
         else 
         {

@@ -18,4 +18,9 @@ class Quote extends Model
         return $this->belongsTo('App\Content', 'referenceable_id',  'id');
                 
     }
+    
+    public function subscriptions()
+    {
+        return $this->morphMany('App\QuoteSubescription', 'quotable');
+    }
 }

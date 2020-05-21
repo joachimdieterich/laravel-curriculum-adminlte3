@@ -20,6 +20,7 @@ use App\Glossar;
 use App\Group;
 use App\Country;
 use App\State;
+use App\User;
 use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Support\Facades\DB;
 
@@ -191,15 +192,16 @@ class CurriculumController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Curriculum $curriculum, $achievements = false)
-    {
-        
+    { 
         abort_unless(\Gate::allows('curriculum_show'), 403);
         //check if user is enrolled or admin -> else 403 
         
         abort_unless((auth()->user()->curricula()->contains('id', $curriculum->id) // user enrolled
-                  OR ($curriculum->owner_id == auth()->user()->id )
-                  OR (auth()->user()->currentRole()->first()->id == 1)), 403);     // or admin
-
+                  OR ($curriculum->owner_id == auth()->user()->id )                // or owner
+                  OR (auth()->user()->currentRole()->first()->id == 1)            // or admin
+                  OR ((env('GUEST_USER') != null) ? User::find(env('GUEST_USER'))->curricula()->contains('id', $curriculum->id) : false) //or allowed via guest
+                ), 403);     // or admin
+        
         $objectiveTypes = \App\ObjectiveType::all();
         $levels = \App\Level::all();
         

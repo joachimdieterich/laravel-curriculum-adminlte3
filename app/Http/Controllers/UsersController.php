@@ -116,6 +116,8 @@ class UsersController extends Controller
                 'role_id'         => 6 //student
             ]
         );
+        $user->current_organization_id = auth()->user()->current_organization_id; //set default org
+        $user->save();
         
         //$user->roles()->sync($request->input('roles', []));
          return redirect($user->path());

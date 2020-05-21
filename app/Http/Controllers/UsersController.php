@@ -102,7 +102,17 @@ class UsersController extends Controller
     {
         abort_unless(\Gate::allows('user_create'), 403);
 
-        $user = User::create($request->all());
+        if (User::withTrashed()->where('email', request()->email)->exists())
+        {
+            User::withTrashed()->where('email', request()->email)->restore();
+            $user = User::where('email', request()->email)->get()->first();
+            $user->update($request->all());
+        }
+        else
+        {
+            $user = User::create($request->all());
+        }
+        
         
         /*
          * Todo User have to be enroled to (creators) institution 

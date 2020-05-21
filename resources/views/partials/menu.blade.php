@@ -235,7 +235,8 @@
                 @endcan
                 
                 <li class="nav-item">
-                    @if (env('SAML2_RLP_IDP_SL_URL') !== null)
+                    {{ dump(env('SAML2_RLP_IDP_SL_URL')) }}
+                    @if ( ( env('SAML2_RLP_IDP_SL_URL') !== null ) AND ( !empty(env('SAML2_RLP_IDP_SL_URL')) ) )
                     <a href="{{ env('SAML2_RLP_IDP_SL_URL') }}" class="nav-link">
                         <i class="fas fa-sign-out-alt"></i>
                         <p>

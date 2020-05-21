@@ -80,6 +80,13 @@ class GlossarController extends Controller
      */
     public function destroy(Glossar $glossar)
     {
-        //
+        abort_unless(\Gate::allows('curriculum_delete'), 403);
+        // delete contents
+        foreach ($glossar->contents AS $content)
+        {
+            (new ContentController)->destroy($content); // delete or unsubscribe if content is still subscribed elsewhere
+        }
+        
+        return $glossar->delete();
     }
 }

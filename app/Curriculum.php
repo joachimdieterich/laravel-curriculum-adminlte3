@@ -129,6 +129,11 @@ class Curriculum extends Model
         return $this->hasMany('App\Course', 'curriculum_id', 'id');
     }
     
+    public function mediaSubscriptions()
+    {
+        return $this->morphMany('App\MediumSubscription', 'subscribable');
+    }
+    
     public function media()
     {
         return $this->hasManyThrough(

@@ -82,12 +82,20 @@ $(document).ready( function () {
                 url: url,
                 data: data
             })
-            .done(function () { location.reload() })
+            .done(function () { 
+                if (data['_method'] === 'DELETE'){
+                    $("#"+ ids).hide();
+                } else {
+                    location.reload() 
+                }
+            })
     }
 }
 
 function  destroyCurriculum(id) {
+    
     sendRequest('POST', "curricula/"+id, id, { _method: 'DELETE' });   
+   
 } 
 </script>
 

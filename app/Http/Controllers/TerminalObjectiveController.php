@@ -133,6 +133,53 @@ class TerminalObjectiveController extends Controller
         $objective_type_id  = $terminalObjective->objective_type_id;
         $order_id           = $terminalObjective->order_id;
         
+        // delete contents
+        foreach ($terminalObjective->contents AS $content)
+        {
+            (new ContentController)->destroy($content); // delete or unsubscribe if content is still subscribed elsewhere
+        }
+
+        //delete all achievements
+        $terminalObjective->achievements()
+                ->where('referenceable_type', '=', 'App\TerminalObjective')
+                ->where('referenceable_id', '=', $terminalObjective->id)
+                ->delete();
+        
+        // delete subscriptions
+        $terminalObjective->subscriptions()
+                ->where('terminal_objective_id', '=', $terminalObjective->id)
+                ->delete();
+        
+        // delete mediaSubscriptions -> media will not be deleted
+        $terminalObjective->mediaSubscriptions()
+                ->where('subscribable_type', '=', 'App\TerminalObjective')
+                ->where('subscribable_id', '=', $terminalObjective->id)
+                ->delete();
+        
+        // delete progresses
+        $terminalObjective->progresses()
+                ->where('referenceable_type', '=', 'App\TerminalObjective')
+                ->where('referenceable_id', '=', $terminalObjective->id)
+                ->delete();
+        
+        // delete quoteSubscriptions
+        $terminalObjective->quoteSubscriptions()
+                ->where('quotable_type', '=', 'App\TerminalObjective')
+                ->where('quotable_id', '=', $terminalObjective->id)
+                ->delete();
+        
+        // delete referenceSubscriptions
+        $terminalObjective->referenceSubscriptions()
+                ->where('referenceable_type', '=', 'App\TerminalObjective')
+                ->where('referenceable_id', '=', $terminalObjective->id)
+                ->delete();
+        
+        // delete repositorySubscriptions
+        $terminalObjective->repositorySubscriptions()
+                ->where('subscribable_type', '=', 'App\TerminalObjective')
+                ->where('subscribable_id', '=', $terminalObjective->id)
+                ->delete();
+                
         
         //delete objective
         $return = $terminalObjective->delete();

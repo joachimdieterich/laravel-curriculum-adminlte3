@@ -422,8 +422,56 @@ class CurriculumController extends Controller
     public function destroy(Curriculum $curriculum)
     {
         abort_unless(\Gate::allows('curriculum_delete'), 403);
-        $curriculum->delete();
-
+        
+        // detach groups
+        $curriculum->groups()->detach();
+        
+        // delete certificates
+        foreach ($curriculum->certificates AS $certificate)
+        {
+            (new CertificateController)->destroy($certificate);
+        }
+        
+        
+        
+        foreach ($curriculum->enablingObjectives AS $ena)
+        {
+            (new EnablingObjectiveController)->destroy($ena);
+        }
+        
+        foreach ($curriculum->terminalObjectives AS $ter)
+        {
+            (new TerminalObjectiveController)->destroy($ter);   
+        }
+        
+        //  delete glossar
+        $curriculum->glossar()->delete();
+       
+        // delete mediaSubscriptions -> media will not be deleted
+        $curriculum->mediaSubscriptions()
+                ->where('subscribable_type', '=', 'App\Curriculum')
+                ->where('subscribable_id', '=', $curriculum->id)
+                ->delete();
+        
+        // delete navigator_items
+        $curriculum->navigator_item()
+                ->where('referenceable_type', '=', 'App\Curriculum')
+                ->where('referenceable_id', '=', $curriculum->id)
+                ->delete();
+        
+        // delete contents 
+        foreach ($curriculum->contents AS $content)
+        {
+            (new ContentController)->destroy($content, 'App\Curriculum', $curriculum->id); // delete or unsubscribe if content is still subscribed elsewhere
+        }
+        
+        $return = $curriculum->delete();
+        
+        
+        //todo check/delete unrelated references(in references table)
+        if (request()->wantsJson()){    
+            return ['message' => $return];
+        }
         return back();
     }
     

@@ -27,7 +27,19 @@ class EnablingObjective extends Model
      
     public function terminalObjective()
     {
-        return $this->belongsTo('\App\TerminalObjective', 'terminal_objective_id', 'id');
+        return $this->belongsTo('App\TerminalObjective', 'terminal_objective_id', 'id');
+    }
+    
+    public function contents()
+    {
+        return $this->hasManyThrough(
+            'App\Content',
+            'App\ContentSubscription',
+            'subscribable_id', // Foreign key on content_subscription table...
+            'id', // Foreign key on content table...
+            'id', // Local key on enablin objectives table...
+            'content_id' // Local key on content_subscription table...
+        )->where('subscribable_type', get_class($this)); 
     }
     
     public function contentSubscriptions()
@@ -37,7 +49,7 @@ class EnablingObjective extends Model
     
     public function curriculum()
     {
-        return $this->belongsTo('\App\Curriculum', 'curriculum_id', 'id');
+        return $this->belongsTo('App\Curriculum', 'curriculum_id', 'id');
     }
     
     public function mediaSubscriptions()
@@ -74,9 +86,14 @@ class EnablingObjective extends Model
         return $this->morphMany('App\ReferenceSubscription', 'referenceable');
     }
     
+    public function repositorySubscriptions()
+    {
+        return $this->morphMany('App\RepositorySubscription', 'subscribable');
+    }
+    
     public function subscriptions()
     {
-        return $this->hasMany(EnablingObjectiveSubscription::class);
+        return $this->hasMany(EnablingObjectiveSubscriptions::class);
     }
     
     public function quoteSubscriptions()

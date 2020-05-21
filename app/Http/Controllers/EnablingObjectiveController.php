@@ -113,13 +113,53 @@ class EnablingObjectiveController extends Controller
      */
     public function destroy(EnablingObjective $enablingObjective)
     {
-        //abort_unless(\Gate::allows('objective_delete'), 403);
+        abort_unless(\Gate::allows('objective_delete'), 403);
         
         //set temp vars
         $curriculum_id          = $enablingObjective->curiculum_id;
         $terminal_objective_id  = $enablingObjective->terminal_objective_id;
         $order_id               = $enablingObjective->order_id;
         
+        
+        // delete contents
+        foreach ($enablingObjective->contents AS $content)
+        {
+            (new ContentController)->destroy($content); // delete or unsubscribe if content is still subscribed elsewhere
+        }
+        // delete achievements
+        $enablingObjective->achievements()
+                ->where('referenceable_type', '=', 'App\EnablingObjective')
+                ->where('referenceable_id', '=', $enablingObjective->id)
+                ->delete();
+        
+        // delete subscriptions
+        $enablingObjective->subscriptions()
+                ->where('enabling_objective_id', '=', $enablingObjective->id)
+                ->delete();
+        
+        // delete mediaSubscriptions -> media will not be deleted
+        $enablingObjective->mediaSubscriptions()
+                ->where('subscribable_type', '=', 'App\EnablingObjective')
+                ->where('subscribable_id', '=', $enablingObjective->id)
+                ->delete();
+        
+        // delete quoteSubscriptions/Quotes
+        $enablingObjective->quoteSubscriptions()
+                ->where('quotable_type', '=', 'App\EnablingObjective')
+                ->where('quotable_id', '=', $enablingObjective->id)
+                ->delete();
+        
+        // delete referenceSubscriptions
+        $enablingObjective->referenceSubscriptions()
+                ->where('referenceable_type', '=', 'App\EnablingObjective')
+                ->where('referenceable_id', '=', $enablingObjective->id)
+                ->delete();
+        
+        // delete repositorySubscriptions
+        $enablingObjective->repositorySubscriptions()
+                ->where('subscribable_type', '=', 'App\EnablingObjective')
+                ->where('subscribable_id', '=', $enablingObjective->id)
+                ->delete();
         
         //delete objective
         $return = $enablingObjective->delete();

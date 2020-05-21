@@ -107,18 +107,25 @@ class ContentController extends Controller
      * @param  \App\Content  $content
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Content $content)
+    public function destroy(Content $content, $subscribable_type = null, $subscribable_id = null )
     {
         /**
          * check if content is subscribed only by deleting reference
          * - if yes -> delete content_subscription and content
          * - if not -> delete only content_subscription
-         * 
-         */
-        
+         */   
         if ($content->subscriptions()->count() <= 1){ 
-            ContentSubscription::where('subscribable_type', request('subscribable')['content_subscriptions'][0]['subscribable_type'])
-                ->where('subscribable_id',request('subscribable')['id'])->delete();
+            
+            ContentSubscription::where('subscribable_type', (isset(request('subscribable')['content_subscriptions'][0]['subscribable_type'])) ? request('subscribable')['content_subscriptions'][0]['subscribable_type'] : $subscribable_type)
+                ->where('subscribable_id', (isset(request('subscribable')['id'])) ? request('subscribable')['id'] : $subscribable_id)->delete();
+            
+            // delete contents
+            foreach ($content->quotes AS $quote)
+            {
+                (new QuoteController)->destroy($quote); // delete and unsubscribe related objects
+            }
+            
+            //todo? delete unused categorie_categoie
             $content->delete();
             
         } else {

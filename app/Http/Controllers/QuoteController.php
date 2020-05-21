@@ -79,7 +79,11 @@ class QuoteController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy(Quote $quote)
-    {
-        //
+    {    
+        abort_unless(\Gate::allows('curriculum_delete'), 403);
+        foreach ($quote->subscriptions() AS $subscription)
+        {
+            (new QuoteSubscriptionController)->destroy($subscription); // delete and unsubscribe related objects
+        }
     }
 }

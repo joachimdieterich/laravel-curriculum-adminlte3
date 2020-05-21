@@ -34,6 +34,18 @@ class TerminalObjective extends Model
         return $this->morphMany('App\ContentSubscription', 'subscribable');
     }
     
+    public function contents()
+    {
+        return $this->hasManyThrough(
+            'App\Content',
+            'App\ContentSubscription',
+            'subscribable_id', // Foreign key on content_subscription table...
+            'id', // Foreign key on content table...
+            'id', // Local key on terminal objectives table...
+            'content_id' // Local key on content_subscription table...
+        )->where('subscribable_type', get_class($this)); 
+    }
+    
     public function curriculum()
     {
         return $this->belongsTo('\App\Curriculum', 'curriculum_id', 'id');
@@ -73,18 +85,29 @@ class TerminalObjective extends Model
         return $this->morphMany('App\ReferenceSubscription', 'referenceable');
     }
     
+    public function repositorySubscriptions()
+    {
+        return $this->morphMany('App\RepositorySubscription', 'subscribable');
+    }
+    
     public function subscriptions()
     {
-        return $this->hasMany(TerminalObjectiveSubscription::class);
+        return $this->hasMany(TerminalObjectiveSubscriptions::class);
     }
     
     public function quoteSubscriptions()
     {
         return $this->morphMany('App\QuoteSubscription', 'quotable');
     }
+    
     public function achievements()
     {
         return $this->morphMany('App\Achievement', 'referenceable');
+    }
+    
+    public function progresses()
+    {
+        return $this->morphMany('App\Progress', 'referenceable');
     }
     
 }

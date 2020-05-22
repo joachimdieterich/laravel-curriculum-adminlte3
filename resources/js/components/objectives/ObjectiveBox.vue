@@ -41,7 +41,8 @@
                 @eventSort="sortEvent"
                 ></Header>
 
-        <div class="panel-body boxwrap" >
+        <div class="panel-body boxwrap" 
+             @click.prevent="showDetails()">
             <div class="boxscroll" 
                  v-bind:style="{'background': background, 'background-color': backgroundcolor, 'border-color': objective.color }">
                 <div class="boxcontent" 
@@ -121,6 +122,9 @@
                 } 
                 window.location = this.location;
             },  
+            showDetails(modal) { 
+                location.href= '/'+this.type+'Objectives/'+this.objective.id;
+            },
             
         },
         computed: {

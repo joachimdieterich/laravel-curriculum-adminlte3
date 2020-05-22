@@ -206,7 +206,7 @@ class CurriculumController extends Controller
         $levels = \App\Level::all();
         
         $curriculum = Curriculum::with(['terminalObjectives', 
-                        //'terminalObjectives.media', 
+                        'terminalObjectives.media', 
                         'terminalObjectives.mediaSubscriptions', 
                         'terminalObjectives.referenceSubscriptions.siblings.referenceable', 
                         'terminalObjectives.quoteSubscriptions.siblings.quotable', 
@@ -214,7 +214,7 @@ class CurriculumController extends Controller
                             $query->where('user_id', auth()->user()->id);
                         },
                         'terminalObjectives.enablingObjectives', 
-                        //'terminalObjectives.enablingObjectives.media',
+                        'terminalObjectives.enablingObjectives.media',
                         'terminalObjectives.enablingObjectives.mediaSubscriptions', 
                         'terminalObjectives.enablingObjectives.referenceSubscriptions.siblings.referenceable', 
                         'terminalObjectives.enablingObjectives.quoteSubscriptions.siblings.quotable', 

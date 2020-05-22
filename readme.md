@@ -34,6 +34,9 @@ cd laravel-curriculum-adminlte3
 For production
 ```bash
 composer install --no-dev
+npm install
+npm update
+npm run production
 ```
 For development
 ```bash
@@ -42,7 +45,7 @@ composer dump-autoload
 
 npm install
 npm update
-npm run production
+npm run dev
 ```
 
 ### Step 2. 
@@ -233,3 +236,14 @@ The initial installation has 8 Roles:
 - Guest
 
 The [Permission-Map](permissionmap.md) gives a quick view over the permissions of those roles.
+
+### Further information
+
+If ```npm install``` fails with: ```Failed at the admin-lte@3.0.5 install script 'npm run plugins'.``` update node.
+
+Clear NPM's cache:
+```sudo npm cache clean -f```
+Install a little helper called 'n'
+```sudo npm install -g n```
+Install latest stable Node.js version
+```sudo n stable```

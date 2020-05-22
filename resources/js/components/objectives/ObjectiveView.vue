@@ -111,17 +111,25 @@
                              id="tab_1"  
                              name="tab_1">
                             <div class="row">
-                                 <div class="col-12">
-                                    <div class="row">
-                                       <div
-                                           v-for="subscription in objective.media_subscriptions" >
-                                           <medium :subscription="subscription" :medium="match(subscription.medium_id)" ></medium>  
-                                      </div> 
-                                      <div class="row">
-                                           <repository ref="repositoryPlugin"
-                                           :model="objective"></repository>
-                                       </div>
-                                    </div>
+                                <div class="col-12">
+                                     <div 
+                                        class="tab-pane active show" 
+                                        id="sub_medium"  
+                                        name="sub_medium">
+                                         <div class="col-12">
+                                             <div class="row">
+                                                <div
+                                                    v-for="subscription in objective.media_subscriptions" >
+                                                    <medium :subscription="subscription" :medium="match(subscription.medium_id)" ></medium>  
+                                               </div> 
+                                             </div>
+                                             <div class="row">
+                                                <repository ref="repositoryPlugin"
+                                                    :model="objective"></repository>
+                                             </div>
+                                         </div>
+                                         
+                                    </div>     
                                 </div>
                             </div>
                         </div><!-- /.tab-pane -->
@@ -301,6 +309,7 @@
             });
             
             this.filterContent();
+            this.loadExternal();
         },
         computed: {
             scr: function () {

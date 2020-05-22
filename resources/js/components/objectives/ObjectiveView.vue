@@ -274,7 +274,9 @@
                 this.type = 'terminal';
             }
             //this.media_subscriptions = event.params.content.media_subscriptions;
-
+            // always show media tab 
+            this.typetabs = [... new Set([{'id': 1, 'title': 'Medien'}])];
+            this.activetab = this.typetabs[0];
             if (this.objective.media_subscriptions.length != 0) {
                 this.typetabs = [... new Set([{'id': 1, 'title': 'Medien'}])];
                 axios.get('/sharingLevels').then(response => {
@@ -282,8 +284,6 @@
                 }).catch(e => {
                     //this.errors = response.data.errors;
                 });
-
-                this.activetab = this.typetabs[0];
             }
 
             axios.get('/'+this.type+'Objectives/' + this.objective.id + '/referenceSubscriptionSiblings').then(response => {

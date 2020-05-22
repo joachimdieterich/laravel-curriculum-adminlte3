@@ -474,7 +474,7 @@ class CurriculumController extends Controller
         if (request()->wantsJson()){    
             return ['message' => $return];
         }
-        return back();
+     //   return back();
     }
     
     protected function validateRequest()

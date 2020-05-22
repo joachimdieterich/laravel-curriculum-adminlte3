@@ -190,7 +190,7 @@ class TerminalObjectiveController extends Controller
         if (request()->wantsJson()){    
             return ['message' => $return];
         }
-        return $return; 
+        //return $return; 
     }
     
     public function referenceSubscriptionSiblings(TerminalObjective $terminalObjective)

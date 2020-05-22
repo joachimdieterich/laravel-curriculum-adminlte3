@@ -170,7 +170,7 @@ class EnablingObjectiveController extends Controller
         if (request()->wantsJson()){    
             return ['message' => $enablingObjective->path()];
         }
-        return $return; 
+        //return $return; 
     }
     
     

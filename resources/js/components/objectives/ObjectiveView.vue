@@ -140,12 +140,17 @@
                                                 <div
                                                     v-for="subscription in objective.media_subscriptions" >
                                                     <medium :subscription="subscription" :medium="match(subscription.medium_id)" ></medium>  
+                                                    
                                                </div> 
+                                               <div class="row">
+                                                    <repository ref="repositoryPlugin"
+                                                    :model="objective"></repository>
+                                                </div>
                                              </div>
                                          </div>
                                          
                                     </div>  
-                                    <div 
+<!--                                    <div 
                                         class="tab-pane" 
                                         id="sub_external"  
                                         name="sub_external">
@@ -155,7 +160,7 @@
                                                     :model="objective"></repository>
                                             </div>
                                         </div>
-                                     </div>    
+                                     </div>    -->
                                 </div>
                             </div>
                         </div><!-- /.tab-pane -->

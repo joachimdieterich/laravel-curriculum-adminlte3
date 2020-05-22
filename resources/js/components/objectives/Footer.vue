@@ -3,7 +3,7 @@
         <div class="p-0 col-12 boxflex">
             <span v-if="withmedia" >
                 <span class="fa fa-briefcase mr-1"
-                    @click.prevent="showModal('objective-medium-modal')">
+                    @click.prevent="showDetails()">
                 </span>
             </span>
             <span v-else >
@@ -20,9 +20,6 @@
              </AchievementIndicator>
 
             <span >  
-                <span class="fa fa-info ml-1 "
-                    @click.prevent="showDetails()">
-                </span>
             </span>
         </div>
     </div>

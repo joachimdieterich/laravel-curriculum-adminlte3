@@ -111,56 +111,17 @@
                              id="tab_1"  
                              name="tab_1">
                             <div class="row">
-                                <div class="col-12">
-                                    <ul class="nav nav-pills pull-left">
-                                        <li class="nav-item">
-                                            <a class="nav-link active show" 
-                                               href="#sub_medium" 
-                                               data-toggle="tab">
-                                                {{ trans('global.media.title') }}
-                                            </a>
-                                        </li>
-                                        <li class="nav-item" v-can="'external_medium_access'">
-                                            <a class="nav-link " 
-                                               href="#sub_external" 
-                                               data-toggle="tab"
-                                               @click="loadExternal()">
-                                                {{ trans('global.externalRepositorySubscription.title') }}
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>   
-                                <div class="col-12 tab-content">
-                                     <div 
-                                        class="tab-pane active show" 
-                                        id="sub_medium"  
-                                        name="sub_medium">
-                                         <div class="col-12">
-                                             <div class="row">
-                                                <div
-                                                    v-for="subscription in objective.media_subscriptions" >
-                                                    <medium :subscription="subscription" :medium="match(subscription.medium_id)" ></medium>  
-                                                    
-                                               </div> 
-                                               <div class="row">
-                                                    <repository ref="repositoryPlugin"
-                                                    :model="objective"></repository>
-                                                </div>
-                                             </div>
-                                         </div>
-                                         
-                                    </div>  
-<!--                                    <div 
-                                        class="tab-pane" 
-                                        id="sub_external"  
-                                        name="sub_external">
-                                        <div class="col-12">
-                                            <div class="row">
-                                                <repository ref="repositoryPlugin"
-                                                    :model="objective"></repository>
-                                            </div>
-                                        </div>
-                                     </div>    -->
+                                 <div class="col-12">
+                                    <div class="row">
+                                       <div
+                                           v-for="subscription in objective.media_subscriptions" >
+                                           <medium :subscription="subscription" :medium="match(subscription.medium_id)" ></medium>  
+                                      </div> 
+                                      <div class="row">
+                                           <repository ref="repositoryPlugin"
+                                           :model="objective"></repository>
+                                       </div>
+                                    </div>
                                 </div>
                             </div>
                         </div><!-- /.tab-pane -->

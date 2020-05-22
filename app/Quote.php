@@ -21,6 +21,6 @@ class Quote extends Model
     
     public function subscriptions()
     {
-        return $this->morphMany('App\QuoteSubescription', 'quotable');
+        return $this->morphMany('App\QuoteSubscription', 'quotable');
     }
 }

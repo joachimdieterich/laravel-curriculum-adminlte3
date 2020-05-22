@@ -42,13 +42,11 @@
                 <!--                    1 Files -->
                 <div class="tab-pane" id="'tab_1'"  
                      :class="(activetab == 1) ? 'active show' : ''">
-                     <div class="px-2" v-for="subscription in media_subscriptions" >
-                        <div class="row">
-                            <div class="col-12">
-                                <medium :subscription="subscription" :medium="match(subscription.medium_id)" ></medium>
-                            </div>
-                        </div>
-                    </div>     
+                     <div class="row">
+                        <div class="px-2" v-for="subscription in media_subscriptions" >
+                             <medium :subscription="subscription" :medium="match(subscription.medium_id)" ></medium>
+                       </div>     
+                    </div>
                 </div><!-- /.tab-pane -->
                 <!--                  2  References -->
                 <div class="tab-pane" id="'tab_2'"  

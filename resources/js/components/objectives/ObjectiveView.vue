@@ -23,12 +23,12 @@
                     <p v-html="objective.title"></p>
                 </div>
                 <!-- /.card-body -->
-                <div class="card-footer">
+<!--                <div class="card-footer">
                     <div class="float-left">
                         <small>{{ trans('global.enablingObjective.fields.time_approach') }}:{{objective.time_approach}}</small>
                     </div>
                     <small class="float-right" v-html="objective.updated_at"></small> 
-                </div>
+                </div>-->
             </div>
         </div>
           

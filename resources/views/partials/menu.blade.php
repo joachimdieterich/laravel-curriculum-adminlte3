@@ -117,7 +117,7 @@
                             "value" =>  old('current_organization_id', isset(auth()->user()->current_organization_id) ? auth()->user()->current_organization_id : '')])
                     </li>
                 @else
-                <li class="nav-item text-white px-3 py-2 text-bold" style="width:100%">
+                <li class="nav-item px-3 py-2 text-bold" style="width:100%">
                    {{ auth()->user()->organizations->first()->title }}
                 </li>
                 @endif 

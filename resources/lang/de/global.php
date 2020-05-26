@@ -6,7 +6,7 @@ return [
     'list'                                 => 'Liste',
     'show'                                 => 'anzeigen',
     'entries'                              => 'Einträge',
-    'search'                               => 'Suche',
+    'search'                               => 'Suchbegriff',
     'view'                                 => 'Ansicht',
     'edit'                                 => 'editieren',
     'delete'                               => 'löschen',

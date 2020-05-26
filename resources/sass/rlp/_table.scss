@@ -1,0 +1,179 @@
+/* Tabelle */
+.table {
+    color: #2F3A48;
+    /*border-collapse: collapse;*/
+    /*width: 100%;*/
+}
+
+.table td,
+.table th {
+    padding: 10px 0;
+}
+
+.table td:first-child,
+.table th:first-child {
+    padding: 10px;
+    padding-right:20px;
+}
+
+.table td:last-child,
+.table th:last-child {
+
+    width: 110px;
+    padding: 10px 10px 10px 0;
+}
+
+.table td:last-child a,
+.table th:last-child a,
+.table td:last-child button,
+.table th:last-child button
+{
+    padding: 0 .5rem !important;
+}
+
+.table td:last-child a:last-child,
+.table th:last-child a:last-child,
+.table td:last-child button:last-child,
+.table th:last-child button:last-child {
+ padding: 0 0 0 .5rem !important;
+}
+
+.table thead {
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.table tbody {
+    font-size: 14px;
+}
+
+tbody tr:hover :not(.status) {
+    color: #009CEE;
+    background-color: #F1F1F6;
+}
+
+.table tr {
+    border-top: 1px solid #dee2e6;
+}
+
+tbody tr:hover .icon-circle {
+    background-color: #F1F1F6;
+}
+
+.dataTables_filter {
+    font-size: 14px!important;
+    color: #fff;
+    background-color: #009cee;
+    border-radius: .25rem;
+}
+
+.dataTables_filter label {
+    padding: 20px 30px;
+    margin-bottom:0;
+    width: 100%;
+}
+.dataTables_filter input {
+     width: 100% !important;
+     margin:0 !important;
+}
+
+table.dataTable {
+    border:0 !important;
+    margin-top: 0!important;
+}
+.dataTable thead:first-child tr,
+{
+    border:1 !important;
+}
+.dataTable body:first-child tr,
+{
+    border:0 !important;
+}
+.table {
+    margin-bottom: 0 !important;
+    width:100% !important;
+}
+.dataTables_scrollHeadInner{
+    width:100%;
+}
+
+.dataTables_wrapper .dataTables_paginate ul li:first-child a {
+    border-top-left-radius: .25rem;
+    border-bottom-left-radius: .25rem;  
+}
+.dataTables_wrapper .dataTables_paginate ul li:last-child a {
+    border-top-right-radius: .25rem;
+    border-bottom-right-radius: .25rem;  
+}
+ 
+.dataTables_wrapper .dataTables_paginate ul li a {
+  background: none;
+  color: #737C83!important;
+  font-weight: 100;
+}
+.dataTables_wrapper .dataTables_paginate ul li:hover a{
+  background: #f4f4f4!important;
+  color: #009CEE!important;
+   
+}
+.dataTables_wrapper .dataTables_paginate ul li.active a{
+  background: none;
+  font-weight: 800;
+  color: black!important;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    float: left;
+}
+.dataTables_length {
+    padding-top: 10px;
+    float: right;
+}
+.dataTables_info{
+    clear:both;
+    float: none !important;
+}
+.dataTables_length label {
+    font-size: 16px;
+    font-weight: 400 !important;
+}
+.dataTables_length select {
+    width:60px
+}
+
+/* Checkboxen */
+
+
+table.dataTable tbody td.select-checkbox,
+table.dataTable tbody th.select-checkbox {
+  position: relative;
+  font-family: "Font Awesome 5 Free"; 
+  font-weight: 900; 
+  font-size: 20px;
+}
+table.dataTable tbody td.select-checkbox:before, 
+table.dataTable tbody td.select-checkbox:after,
+table.dataTable tbody th.select-checkbox:before,
+table.dataTable tbody th.select-checkbox:after {
+  border:0 !important;
+  padding-top:5px;
+}
+table.dataTable tbody td.select-checkbox:before,
+table.dataTable tbody th.select-checkbox:before {
+  position: sticky;
+  content: "\f0c8";
+  color: white!important; 
+  border-color: black!important;
+}
+table.dataTable tr.selected td.select-checkbox:after,
+table.dataTable tr.selected th.select-checkbox:after {
+  position: sticky;
+  content: "\f14a";
+  color: #009CEE!important;
+}
+
+table.dataTable tbody > tr.selected,
+table.dataTable tbody > tr > .selected {
+  background-color: #E3E3E5 !important;
+  color: #2F3A48 !important;
+}

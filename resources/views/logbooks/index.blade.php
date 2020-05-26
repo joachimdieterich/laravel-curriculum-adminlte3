@@ -15,7 +15,7 @@
     <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
-@can('user_create')
+@can('logbook_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
             <a id="add-logbook" 
@@ -26,40 +26,24 @@
         </div>
     </div>
 @endcan
-<div class="card">
-    <div class="card-body">
-        <table id="logbooks-datatable" class=" table table-bordered table-striped table-hover datatable">
-            <thead>
-                <tr>
-                    <th width="10"></th>
-                    <th>{{ trans('global.logbook.fields.title') }}</th>
-                    <th>{{ trans('global.datatables.action') }}</th>
-                </tr>
-            </thead>
-        </table>
-    </div>
-</div>
+
+<data-table-widgets></data-table-widgets>
 @endsection
 @section('scripts')
 @parent
 
 <script>
 $(document).ready( function () {
-    let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
     var table = $('#logbooks-datatable').DataTable({
-        processing: true,
-        serverSide: true,
         ajax: "{{ url('logbooks/list') }}",
-        columns: [
+        columns: 
+            [
                  { data: 'check'},
                  { data: 'title' },
                  { data: 'action' }
-                ],
-        buttons: dtButtons
+            ],
+        buttons: []
     });
-    //align header/body
-    $(".dataTables_scrollHeadInner").css({"width":"100%"});
-    $(".table ").css({"width":"100%"});
  });
 </script>
 

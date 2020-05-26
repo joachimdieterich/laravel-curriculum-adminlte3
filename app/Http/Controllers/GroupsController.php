@@ -55,16 +55,14 @@ class GroupsController extends Controller
                         $actions .= '<a href="'.route('groups.edit', $groups->id).'" '
                                     . 'id="edit-group-'.$groups->id.'" '
                                     . 'class="btn p-1">'
-                                    . '<i class="fa fa-edit"></i> '
+                                    . '<i class="fa fa-pencil-alt"></i> '
                                     . '</a>';
                     }
                     if (\Gate::allows('group_delete')){
-                        $actions .= '<form action="'.route('groups.destroy', $groups->id).'" method="POST" class="pull-right">'
-                                    . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
-                                    . '<button '
-                                    . 'type="submit" '
-                                    . 'id="delete-group-'.$groups->id.'" '
-                                    . 'class="btn text-danger p-1"><i class="fa fa-trash"></i> ';
+                        $actions .= '<button type="button" '
+                                . 'class="btn text-danger" '
+                                . 'onclick="destroyDataTableEntry(\'groups\','.$groups->id.')">'
+                                . '<i class="fa fa-trash"></i></button>';
                     }
               
                 return $actions;
@@ -72,9 +70,6 @@ class GroupsController extends Controller
            
             ->addColumn('check', '')
             ->setRowId('id')
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
             ->make(true);
     }
     

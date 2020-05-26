@@ -71,6 +71,7 @@ Vue.component('group-modal', require('./components/group/GroupModal.vue').defaul
 Vue.component('curriculum-view', require('./components/curriculum/CurriculumView.vue').default);
 Vue.component('curriculum-description-modal', require('./components/curriculum/CurriculumDescriptionModal.vue').default);
 Vue.component('terminal-objective-modal', require('./components/objectives/TerminalObjectiveModal.vue').default);
+Vue.component('data-table-widgets', require('./components/uiElements/DataTableWidgets.vue').default);
 Vue.component('enabling-objective-modal', require('./components/objectives/EnablingObjectiveModal.vue').default);
 Vue.component('objective-view', require('./components/objectives/ObjectiveView.vue').default);
 Vue.component('objective-box', require('./components/objectives/ObjectiveBox.vue').default);
@@ -115,3 +116,4 @@ Vue.directive('can', function (el, binding) {
 var app = new Vue({
     el: '#app'
 });    
+

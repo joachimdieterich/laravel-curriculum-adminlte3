@@ -18,25 +18,20 @@
         </div>
     </div>
 @endcan
-<div class="card">
-    <div class="card-body">
-        <table id="grades-datatable" class="table table-bordered table-striped table-hover datatable">
-            <thead>
-                <tr>
-                    <th width="10"> </th>
-                    <th>{{ trans('global.grade.fields.title') }}</th>
-                    <th>{{ trans('global.grade.fields.external_begin') }}</th>
-                    <th>{{ trans('global.grade.fields.external_end') }}</th>
-                    <th>{{ trans('global.organization.title_singular') }}</th>
-                    <th>{{ trans('global.datatables.action') }}</th>
-                </tr>
-            </thead>
-        </table>
-    </div>
-</div>
+<table id="grades-datatable" class="table table-hover datatable">
+    <thead>
+        <tr>
+            <th width="10"> </th>
+            <th>{{ trans('global.grade.fields.title') }}</th>
+            <th>{{ trans('global.grade.fields.external_begin') }}</th>
+            <th>{{ trans('global.grade.fields.external_end') }}</th>
+            <th>{{ trans('global.organization.title_singular') }}</th>
+            <th>{{ trans('global.datatables.action') }}</th>
+        </tr>
+    </thead>
+</table>
+
 <grade-modal></grade-modal>
-
-
 @endsection
 @section('scripts')
 @parent
@@ -74,9 +69,6 @@
 @endcan
 
  var table = $('#grades-datatable').DataTable({
-        processing: true,
-        serverSide: true,
-        select: true,
         ajax: "{{ url('grades/list') }}",
         columns: [
                  { data: 'check'},
@@ -86,7 +78,18 @@
                  { data: 'organization_type' },
                  { data: 'action' }
                 ],
+        columnDefs: [
+            { "visible": false, "targets": 0 },
+            {
+                orderable: false,
+                searchable: false,
+                targets: - 1
+            }
+        ],
         buttons: dtButtons
+    });
+    table.on( 'select', function ( e, dt, type, indexes ) { //on select event
+        window.location.href = "/grades/" + table.row({ selected: true }).data().id ;
     });
 })
 

@@ -58,7 +58,7 @@
                     'color' => '#605ca8',
                     'icon' => 'text-white fa fa-th fa-2x',
                     'title' => 'Digitale Lehrpläne',
-                    'content' => '<ul class="pt-2">
+                    'content' => '<ul class="pt-2 pl-4 font-weight-light">
                                     <li >Kompetenzraster</li>
                                     <li >Lehr- und Rahmenpläne</li>
                                     <li >überfachliche Bezüge</li>
@@ -73,7 +73,7 @@
                 'color' => '#3d9970',
                 'icon' => 'text-white fas fa-users fa-2x',
                 'title' => 'Lerngruppen',
-                'content' => '<ul class="pt-2">
+                'content' => '<ul class="pt-2 pl-4 font-weight-light">
                                 <li >Lerngruppen/Kurse organisieren</li>
                                 <li >Klassen/AGs</li>
                                 <li >geschützte Kommunikation</li>
@@ -87,7 +87,7 @@
                 'color' => '#ffc107',
                 'icon' => 'text-white fas fa-book fa-2x',
                 'title' => 'Kursbücher',
-                'content' => '<ul class="pt-2">
+                'content' => '<ul class="pt-2 pl-4 font-weight-light">
                                 <li >digitales Klassenbuch</li>
                                 <li >Unterricht dokumentieren</li>
                                 <li >(Haus-)Aufgaben</li>
@@ -102,7 +102,7 @@
                 'color' => '#d81b60',
                 'icon' => 'text-white fas fa-certificate fa-2x',
                 'title' => 'Zertifikate',
-                'content' => '<ul class="pt-2">
+                'content' => '<ul class="pt-2 pl-4 font-weight-light">
                                 <li >Selbsteinschätzungen</li>
                                 <li >Kompetenzen dokumentatieren</li>
                                 <li >Zertifikate drucken</li>

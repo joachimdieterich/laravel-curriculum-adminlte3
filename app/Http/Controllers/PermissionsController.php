@@ -7,6 +7,7 @@ use App\Http\Requests\MassDestroyPermissionRequest;
 use App\Http\Requests\StorePermissionRequest;
 use App\Http\Requests\UpdatePermissionRequest;
 use App\Permission;
+use Yajra\DataTables\DataTables;
 
 class PermissionsController extends Controller
 {
@@ -14,9 +15,39 @@ class PermissionsController extends Controller
     {
         abort_unless(\Gate::allows('permission_access'), 403);
 
-        $permissions = Permission::all();
+        return view('permissions.index');
+    }
+    
+    public function list()
+    {
+        abort_unless(\Gate::allows('permission_access'), 403);
 
-        return view('permissions.index', compact('permissions'));
+        $permissions = Permission::all();
+        
+        return DataTables::of($permissions)
+          
+            ->addColumn('action', function ($permissions) {
+                 $actions  = '';
+                    if (\Gate::allows('permission_edit')){
+                        $actions .= '<a href="'.route('permissions.edit', $permissions->id).'" '
+                                    . 'id="permission-user-'.$permissions->id.'" '
+                                    . 'class="btn">'
+                                    . '<i class="fa fa-pencil-alt"></i>'
+                                    . '</a>';
+                    }
+                    if (\Gate::allows('permission_delete')){
+                        $actions .= '<button type="button" '
+                                . 'class="btn text-danger" '
+                                . 'onclick="destroyDataTableEntry(\'permissions\','.$permissions->id.')">'
+                                . '<i class="fa fa-trash"></i></button>';
+                    }
+              
+                return $actions;
+            })
+           
+            ->addColumn('check', '')
+            ->setRowId('id')
+            ->make(true);
     }
 
     public function create()

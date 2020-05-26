@@ -17,11 +17,9 @@ class OrganizationTypesController extends Controller
 {
     public function index()
     {
-      
         abort_unless(\Gate::allows('organization_type_access'), 403);
 
-        $organization_types = OrganizationType::all();
-        
+        $organization_types = OrganizationType::all();   
 
         return view('organizationtypes.index', compact('organization_types'));
     }
@@ -40,26 +38,18 @@ class OrganizationTypesController extends Controller
         return DataTables::of($organization_types)
             ->addColumn('action', function ($organization_types) {
                  $actions  = '';
-                    if (\Gate::allows('organization_type_show')){
-                        $actions .= '<a href="'.route('organizationtypes.show', $organization_types->id).'" '
-                                    . 'id="show-organization-type-'.$organization_types->id.'" '
-                                    . 'class="btn btn-xs btn-success mr-1">'
-                                    . '<i class="fa fa-list-alt"></i>'
-                                    . '</a>';
-                    }
                     if (\Gate::allows('organization_type_edit')){
                         $actions .= '<a href="'.route('organizationtypes.edit', $organization_types->id).'" '
                                     . 'id="edit-organization-type-'.$organization_types->id.'" '
-                                    . 'class="btn btn-xs btn-primary text-white  mr-1">'
+                                    . 'class="btn">'
                                     . '<i class="fa fa-edit"></i>' 
                                     . '</a>';
                     }
                     if (\Gate::allows('organization_type_delete')){
-                        $actions .= '<form action="'.route('organizationtypes.destroy', $organization_types->id).'" method="POST" class="pull-right">'
-                                    . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
-                                    . '<button type="submit" '
-                                    . 'id="delete-organization-type-'.$organization_types->id.'" '
-                                    . 'class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>';
+                        $actions .= '<button type="button" '
+                                . 'class="btn text-danger" '
+                                . 'onclick="destroyDataTableEntry(\'organizationtypes\','.$organization_types->id.')">'
+                                . '<i class="fa fa-trash"></i></button>';
                     }
               
                 return $actions;

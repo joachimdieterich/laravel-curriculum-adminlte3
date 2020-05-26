@@ -6,17 +6,17 @@
 	"sInfoFiltered": 	"(gefiltert von _MAX_ Einträgen)",
 	"sInfoPostFix":  	"",
 	"sInfoThousands":  	".",
-	"sLengthMenu":   	"_MENU_ Einträge anzeigen",
+	"sLengthMenu":   	"Zeige _MENU_ Einträge pro Seite.",
 	"sLoadingRecords": 	"Wird geladen ..",
 	"sProcessing":   	"Bitte warten ..",
-	"sSearch":       	"Suchen",
+	"sSearch":       	"",
 	"sZeroRecords":  	"Keine Einträge vorhanden",
-	"oPaginate": {
-		"sFirst":    	"Erste",
-		"sPrevious": 	"Zurück",
-		"sNext":     	"Nächste",
-		"sLast":     	"Letzte"
-	},
+        "oPaginate": {
+            "sfirst":           "<i class=\"fa fa-angle-double-left\"></id>",
+            "slast":            "<i class=\"fa fa-angle-double-right\"></id>",
+            "snext":            "<i class=\"fa fa-angle-right\"></id>",
+            "sprevious":        "<i class=\"fa fa-angle-left\"></id>"
+        },
 	"oAria": {
 		"sSortAscending":  ": aktivieren, um Spalte aufsteigend zu sortieren",
 		"sSortDescending": ": aktivieren, um Spalte absteigend zu sortieren"

@@ -22,32 +22,20 @@ class LogbookController extends Controller
     {
         
         abort_unless(\Gate::allows('logbook_access'), 403);
-        $logbooks = (auth()->user()->role()->id == 1) ? Logbook::all() : auth()->user()->logbookSubscription()->with(['logbook'])->get();      
+        $logbooks = (auth()->user()->role()->id == 1) ? Logbook::all() : auth()->user()->logbooks()->get();      
    
         return empty($logbooks) ? '' : DataTables::of($logbooks)
             ->addColumn('action', function ($logbooks) {
                  $actions  = '';
-                    if (\Gate::allows('logbook_show')){
-                        $actions .= '<a href="'.route('logbooks.show', $logbooks->id).'" '
-                                    . 'id="show-logbook-'.$logbooks->id.'" '
-                                    . 'class="btn btn-xs btn-success mr-1">'
-                                    . '<i class="fa fa-list-alt"></i>'
-                                    . '</a>';
-                    }
                     if (\Gate::allows('logbook_edit')){
                         $actions .= '<a href="'.route('logbooks.edit', $logbooks->id).'" '
                                     . 'id="edit-logbook-'.$logbooks->id.'" '
-                                    . 'class="btn btn-xs btn-primary mr-1">'
-                                    . '<i class="fa fa-edit"></i>'
+                                    . 'class="px-2 text-black">'
+                                    . '<i class="fa fa-pencil-alt"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('logbook_delete')){
-                        $actions .= '<form action="'.route('logbooks.destroy', $logbooks->id).'" method="POST" class="float-right">'
-                                    . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
-                                    . '<button '
-                                    . 'type="submit" '
-                                    . 'id="delete-logbook-'.$logbooks->id.'" '
-                                    . 'class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>';
+                        $actions .= '<button type="button" class="btn text-danger" onclick="event.preventDefault();destroyDataTableEntry(\'logbooks\','.$logbooks->id.');"><i class="fa fa-trash"></i></button>';
                     }
               
                 return $actions;
@@ -55,9 +43,6 @@ class LogbookController extends Controller
            
             ->addColumn('check', '')
             ->setRowId('id')
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
             ->make(true);
     }
 
@@ -173,7 +158,7 @@ class LogbookController extends Controller
 
         $logbook->delete();
 
-        return back();
+        //return back();
     }
     
     protected function validateRequest()

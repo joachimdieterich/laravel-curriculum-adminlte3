@@ -42,27 +42,18 @@ class NavigatorController extends Controller
             })
             ->addColumn('action', function ($navigators) {
                  $actions  = '';
-                    if (\Gate::allows('navigator_show')){
-                        $actions .= '<a href="'.route('navigators.show', $navigators->id).'" '
-                                    . 'id="show-navigator-'.$navigators->id.'" '
-                                    . 'class="btn btn-xs btn-success mr-1">'
-                                    . '<i class="fa fa-list-alt"></i>'
-                                    . '</a>';
-                    }
                     if (\Gate::allows('navigator_edit')){
                         $actions .= '<a href="'.route('navigators.edit', $navigators->id).'" '
                                     . 'id="edit-navigator-'.$navigators->id.'" '
-                                    . 'class="btn btn-xs btn-primary mr-1">'
-                                    . '<i class="fa fa-edit"></i>'
+                                    . 'class="btn">'
+                                    . '<i class="fa fa-pencil-alt"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('navigator_delete')){
-                        $actions .= '<form action="'.route('navigators.destroy', $navigators->id).'" method="POST" class="float-right">'
-                                    . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
-                                    . '<button '
-                                    . 'type="submit" '
-                                    . 'id="delete-navigator-'.$navigators->id.'" '
-                                    . 'class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>';
+                        $actions .= '<button type="button" '
+                                . 'class="btn text-danger" '
+                                . 'onclick="destroyDataTableEntry(\'navigators\','.$navigators->id.')">'
+                                . '<i class="fa fa-trash"></i></button>';
                     }
               
                 return $actions;
@@ -70,9 +61,6 @@ class NavigatorController extends Controller
            
             ->addColumn('check', '')
             ->setRowId('id')
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
             ->make(true);
     }
 

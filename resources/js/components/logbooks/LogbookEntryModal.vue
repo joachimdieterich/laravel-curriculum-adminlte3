@@ -66,7 +66,7 @@
             </div>
             <div class="card-footer">
                 <span class="pull-right">
-                     <button type="button" class="btn btn-primary" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
+<!--                     <button type="button" class="btn btn-primary" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>-->
                      <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
                 </span>
             </div>
@@ -98,9 +98,9 @@
             }
         },
         methods: {
-            async submit(method) {
+            async submit() {
                 try {
-                    if (method === 'patch'){
+                    if (this.method === 'patch'){
                         this.form.description = tinyMCE.get('description').getContent();
                         this.form.begin = this.time[0];
                         this.form.end = this.time[1];
@@ -119,12 +119,13 @@
             },
             beforeOpen(event) {
                 if (event.params.id){
-                    this.load(event.params.id)
+                    this.load(event.params.id);
                 }
                 if (event.params.logbook_id){
                     this.form.logbook_id = event.params.logbook_id;
                 }
                 this.method = event.params.method; 
+                this.time = [moment().format("YYYY-MM-DD HH:mm:ss"), moment().add(30, 'minutes').format("YYYY-MM-DD HH:mm:ss")];
             },
            
             opened(){
@@ -132,17 +133,20 @@
             },
            
             beforeClose() {
-                //console.log('close')
+                
             },
             
             async load(id) {
                 try {
                     this.form.populate((await axios.get('/logbookEntries/'+id)).data.message);
+                    this.time = [this.form.begin, this.form.end];
+                    
                 } catch(error) {
                     //console.log('loading failed')
                 }
             },
             close(){
+                //console.log('close')
                 this.$modal.hide('logbook-entry-modal');
             }
         },

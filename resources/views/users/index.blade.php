@@ -18,24 +18,20 @@
         </div>
     </div>
 @endcan
-<div class="card">
-    <div class="card-body">
-        <table id="users-datatable" 
-               class="table table-bordered table-striped table-hover datatable">
-            <thead>
-                <tr>
-                    <th width="10"></th>
-                    <th>{{ trans('global.user.fields.username') }}</th>
-                    <th>{{ trans('global.user.fields.firstname') }}</th>
-                    <th>{{ trans('global.user.fields.lastname') }}</th>
-                    <th>{{ trans('global.user.fields.email') }}</th>
-                    <th>{{ trans('global.statuses') }}</th>
-                    <th>{{ trans('global.datatables.action') }}</th>
-                </tr>
-            </thead>     
-        </table>
-    </div>
-</div>
+<table id="users-datatable" 
+       class="table table-hover datatable">
+    <thead>
+        <tr>
+            <th width="10"></th>
+            <th>{{ trans('global.user.fields.username') }}</th>
+            <th>{{ trans('global.user.fields.firstname') }}</th>
+            <th>{{ trans('global.user.fields.lastname') }}</th>
+            <th>{{ trans('global.user.fields.email') }}</th>
+            <th>{{ trans('global.statuses') }}</th>
+            <th></th>
+        </tr>
+    </thead>     
+</table>
 
 <div class="row ">
     <div class="col-sm-12">
@@ -235,20 +231,7 @@ function resetPassword() {
     sendRequest('POST', "{{ route('users.massUpdate') }}", ids, { ids: ids, _method: 'PATCH', password: $('#password').val() });   
 }
 
-function destroyUser(id){
-    if (confirm('{{ trans('global.areYouSure') }}')) {
-        $.ajax({
-            headers: {'x-csrf-token': _token},
-            method: 'POST',
-            url: 'users/'+id,
-            data: { _method: 'DELETE' }})
-            .done(function () { 
-                 $("#"+id).closest('tr').remove();
-            })
-    }
-}
-
-function  massDestroyUser() {
+function massDestroyUser() {
     var ids = getDatatablesIds('#users-datatable');
     sendRequest('POST', "{{ route('users.massDestroy') }}", ids, { ids: ids, _method: 'DELETE' });   
 }   
@@ -260,9 +243,6 @@ $( function () {
 
     let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
     var table = $('#users-datatable').DataTable({
-        processing: true,
-        serverSide: true,
-        select: true,
         ajax: "{{ url('users/list') }}",
         columns: [
                  { data: 'check'},
@@ -275,9 +255,7 @@ $( function () {
                 ],
         buttons: dtButtons
     });
-    //align header/body
-    $(".dataTables_scrollHeadInner").css({"width":"100%"});
-    $(".table ").css({"width":"100%"});
+    
  });
 </script>
 

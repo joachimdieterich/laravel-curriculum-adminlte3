@@ -17,43 +17,43 @@
         </div>
     </div>
 @endcan
-<div class="card">
-    <div class="card-body">
-        <table id="roles-datatable" class="table table-condensed">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>{{ trans('global.organization.fields.title') }}</th>
-                    <th>{{ trans('global.datatables.action') }}</th>
-                </tr>
-            </thead>
-        </table>
-    </div>
-    
-</div>
+<table id="roles-datatable" class="table table-hover datatable">
+    <thead>
+        <tr>
+            <th></th>
+            <th>{{ trans('global.organization.fields.title') }}</th>
+            <th></th>
+        </tr>
+    </thead>
+</table>
 @endsection
 
 @section('scripts')
 @parent
 <script>
 $(document).ready( function () {
-
-    let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
+    let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons);
     
-    $('#roles-datatable').DataTable({
-        processing: true,
-        serverSide: true,
+    var table = $('#roles-datatable').DataTable({
         ajax: "{{ url('roles/list') }}",
         columns: [
                  { data: 'check'},
                  { data: 'title' },
                  { data: 'action' }
                 ],
+        columnDefs: [
+            { "visible": false, "targets": 0 },
+            {
+                orderable: false,
+                searchable: false,
+                targets: - 1
+            }
+        ],
         buttons: dtButtons
     });
-    //align header/body
-    $(".dataTables_scrollHeadInner").css({"width":"100%"});
-    $(".table ").css({"width":"100%"});
+    table.on( 'select', function ( e, dt, type, indexes ) { //on select event
+        window.location.href = "/roles/" + table.row({ selected: true }).data().id ;
+    });
  });
 </script>
 @endsection

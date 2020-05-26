@@ -1,20 +1,33 @@
 <template>
     <!-- timeline item -->
-    <div>
-        <i class="fa fa-book bg-green"></i>
-        <div class="timeline-item">
-            <span class="time">
-                <i class="fas fa-clock"></i>
-                {{ entry.begin }} - {{ entry.end }}
-            </span>
-            <h3 class="timeline-header">
-                <strong v-html="entry.title"></strong>
-            </h3>
-
-            <div class="timeline-body" v-html="entry.description"></div>
+    <div class="card col-12">
+        <div :id="'#logbook_'+entry.id" class="post pt-2">
+            <div class="user-block mb-0">
+                <span class="username ml-0">
+                  <span href="#">{{ entry.title }}</span> 
+                  <span href="#" class="float-right btn-tool">
+                      <i class="fa fa-edit mt-3"
+                         @click.prevent="edit()"></i>
+                  </span>
+                </span>
+                <span class="description ml-0">{{ postDate() }}</span>
+            </div>
             
-            <hr class="mb-1">
-            <div class="card-header p-2">
+            <span class="clearfix"></span>
+            <hr class="my-1">
+            <span class="" v-html="entry.description"></span>
+            
+            <button
+                class="btn disabled py-1 px-2 collapsed fa fa-angle-down"
+                data-toggle="collapse" 
+                :href="'#additions_'+entry.id"
+                :aria-controls="'additions_'+entry.id"
+                @click="$event.target.classList.toggle('fa-angle-up')"
+                >
+            </button>
+            
+            <div :id="'additions_'+entry.id" class="collapse">
+                <hr class="mt-0 mb-2">
                 <div class="pull-left" v-can="'logbook_entry_edit'">
                     <div class="btn-group" >
                     <button type="button " 
@@ -85,7 +98,7 @@
                     </li>
                 </ul>   
             </div>
-            
+            <span class="clearfix"></span>
             <div class="card-body p-2">
                 <div class="tab-content">
                     <!-- tab-pane -->
@@ -209,6 +222,9 @@
                 }
                
             },
+            edit() {
+                 this.$modal.show('logbook-entry-modal', { 'id': this.entry.id, 'method': 'patch'});
+            },
            
             filterContent(category){
                 if (category === 1){
@@ -236,8 +252,18 @@
              },
              say: function (msg) {
                 alert(msg);
-              }
+            },
+            postDate() {
+                var start = new Date(this.entry.begin);
+                var end = new Date(this.entry.end);
 
+                if (start.toDateString() === end.toDateString()) {
+                  return this.entry.begin + " - " + end.toLocaleTimeString();
+                } else {
+                  return this.entry.begin + " - " + this.entry.end;
+                }
+               
+            },
         },
         computed: {
             contentCategories: function() {

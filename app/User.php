@@ -156,6 +156,18 @@ class User extends Authenticatable
         return $this->morphMany('App\LogbookSubscription', 'subscribable');
     }
     
+     public function logbooks()
+    {
+        return $this->hasManyThrough(
+            'App\Logbook',
+            'App\LogbookSubscription',
+            'subscribable_id', // Foreign key on logbook_subscription table...
+            'id', // Foreign key on content table...
+            'id', // Local key on logbook table...
+            'logbook_id' // Local key on logbook_subscription table...
+        )->where('subscribable_type', get_class($this)); 
+    }
+    
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'organization_role_users')

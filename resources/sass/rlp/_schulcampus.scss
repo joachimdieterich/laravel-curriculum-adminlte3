@@ -1,0 +1,340 @@
+/* schulcampus */
+/* ICONS */
+
+@font-face {
+  font-family: 'scicons';
+  src: url('/fonts/vendor/schulcampusRLP/scicons.eot');
+  src: url('/fonts/vendor/schulcampusRLP/scicons.eot?#iefix') format('embedded-opentype'),
+       url('/fonts/vendor/schulcampusRLP/scicons.woff2') format('woff2'),
+       url('/fonts/vendor/schulcampusRLP/scicons.woff') format('woff'),
+       url('/fonts/vendor/schulcampusRLP/scicons.ttf') format('truetype'),
+       url('/fonts/vendor/schulcampusRLP/scicons.svg#svg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'scicons';
+    src: url('../font/scicons.svg?17224262#scicons') format('svg');
+  }
+}
+*/
+ 
+ [class^="icon-"]:before, [class*=" icon-"]:before {
+  font-family: "scicons";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+ 
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+  /* opacity: .8; */
+ 
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+ 
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+ 
+  /* Animation center compensation - margins should be symmetric */
+  /* remove if not needed */
+  margin-left: .2em;
+ 
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+ 
+  /* Font smoothing. That was taken from TWBS */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+ 
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+ 
+.icon-cancel:before { content: '\e800'; } /* '' */
+.icon-thumbs-up:before { content: '\e801'; } /* '' */
+.icon-thumbs-down:before { content: '\e802'; } /* '' */
+.icon-attention-circled:before { content: '\e803'; } /* '' */
+.icon-user-circle-o-1:before { content: '\e804'; } /* '' */
+.icon-list-alt:before { content: '\e805'; } /* '' */
+.icon-plus:before { content: '\e806'; } /* '' */
+.icon-video:before { content: '\e807'; } /* '' */
+.icon-videocam:before { content: '\e808'; } /* '' */
+.icon-th:before { content: '\e809'; } /* '' */
+.icon-ok:before { content: '\e80a'; } /* '' */
+.icon-info-circled:before { content: '\e80b'; } /* '' */
+.icon-attach:before { content: '\e80c'; } /* '' */
+.icon-print:before { content: '\e80d'; } /* '' */
+.icon-folder-open:before { content: '\e80e'; } /* '' */
+.icon-cog:before { content: '\e80f'; } /* '' */
+.icon-calendar:before { content: '\e810'; } /* '' */
+.icon-down-open:before { content: '\e811'; } /* '' */
+.icon-left-open:before { content: '\e812'; } /* '' */
+.icon-right-open:before { content: '\e813'; } /* '' */
+.icon-up-open:before { content: '\e814'; } /* '' */
+.icon-right-big:before { content: '\e815'; } /* '' */
+.icon-indent-left:before { content: '\e816'; } /* '' */
+.icon-indent-right:before { content: '\e817'; } /* '' */
+.icon-cog-alt:before { content: '\e818'; } /* '' */
+.icon-search:before { content: '\e819'; } /* '' */
+.icon-home:before { content: '\e81a'; } /* '' */
+.icon-lock:before { content: '\e81b'; } /* '' */
+.icon-users:before { content: '\e81c'; } /* '' */
+.icon-users-1:before { content: '\e81d'; } /* '' */
+.icon-user:before { content: '\e81e'; } /* '' */
+.icon-minus-circled:before { content: '\e81f'; } /* '' */
+.icon-edit:before { content: '\e820'; } /* '' */
+.icon-eye:before { content: '\e821'; } /* '' */
+.icon-attention-1:before { content: '\e822'; } /* '' */
+.icon-star-empty:before { content: '\e823'; } /* '' */
+.icon-star:before { content: '\e824'; } /* '' */
+.icon-bookmark:before { content: '\e825'; } /* '' */
+.icon-help-circled:before { content: '\e826'; } /* '' */
+.icon-key:before { content: '\e827'; } /* '' */
+.icon-actions-move-to-top:before { content: '\e828'; } /* '' */
+.icon-curriculum:before { content: '\e829'; } /* '' */
+.icon-tag:before { content: '\e82a'; } /* '' */
+.icon-doc-text-inv-1:before { content: '\e82b'; } /* '' */
+.icon-folder:before { content: '\e82c'; } /* '' */
+.icon-right-dir:before { content: '\e82d'; } /* '' */
+.icon-book-1:before { content: '\e82e'; } /* '' */
+.icon-block:before { content: '\e82f'; } /* '' */
+.icon-zoom-in:before { content: '\e830'; } /* '' */
+.icon-zoom-out:before { content: '\e831'; } /* '' */
+.icon-down-big:before { content: '\e832'; } /* '' */
+.icon-roadblock:before { content: '\e833'; } /* '' */
+.icon-ccw:before { content: '\e834'; } /* '' */
+.icon-flag:before { content: '\e835'; } /* '' */
+.icon-pencil:before { content: '\e836'; } /* '' */
+.icon-plus-circled:before { content: '\e837'; } /* '' */
+.icon-doc-new:before { content: '\e838'; } /* '' */
+.icon-arrows-cw:before { content: '\e839'; } /* '' */
+.icon-picture:before { content: '\e83a'; } /* '' */
+.icon-camera:before { content: '\e83b'; } /* '' */
+.icon-curriculums:before { content: '\e83c'; } /* '' */
+.icon-moodle:before { content: '\e83d'; } /* '' */
+.icon-forward:before { content: '\e83e'; } /* '' */
+.icon-right-bold:before { content: '\e83f'; } /* '' */
+.icon-left-dir:before { content: '\e840'; } /* '' */
+.icon-forward-1:before { content: '\e841'; } /* '' */
+.icon-lightbulb-on:before { content: '\e842'; } /* '' */
+.icon-floppy:before { content: '\e844'; } /* '' */
+.icon-logout:before { content: '\e845'; } /* '' */
+.icon-export:before { content: '\e846'; } /* '' */
+.icon-resize-vertical:before { content: '\e847'; } /* '' */
+.icon-up-dir:before { content: '\e848'; } /* '' */
+.icon-down-dir:before { content: '\e849'; } /* '' */
+.icon-down-open-1:before { content: '\e850'; } /* '' */
+.icon-left-open-1:before { content: '\e851'; } /* '' */
+.icon-right-open-1:before { content: '\e852'; } /* '' */
+.icon-right-big-1:before { content: '\e854'; } /* '' */
+.icon-indent-left-1:before { content: '\e855'; } /* '' */
+.icon-indent-right-1:before { content: '\e856'; } /* '' */
+.icon-users-2:before { content: '\e85b'; } /* '' */
+.icon-users-3:before { content: '\e85c'; } /* '' */
+.icon-user-1:before { content: '\e85d'; } /* '' */
+.icon-usersetting:before { content: '\e866'; } /* '' */
+.icon-userhead:before { content: '\e867'; } /* '' */
+.icon-schulcampus:before { content: '\e868'; } /* '' */
+.icon-tag-1:before { content: '\e869'; } /* '' */
+.icon-doc-text-inv-2:before { content: '\e86a'; } /* '' */
+.icon-folder-1:before { content: '\e86b'; } /* '' */
+.icon-right-dir-1:before { content: '\e86c'; } /* '' */
+.icon-question-circle-regular:before { content: '\e873'; } /* '' */
+.icon-actions-filter:before { content: '\e874'; } /* '' */
+.icon-actions-move-to-bottom:before { content: '\e875'; } /* '' */
+.icon-pencil-1:before { content: '\e876'; } /* '' */
+.icon-doc-new-1:before { content: '\e878'; } /* '' */
+.icon-arrows-cw-1:before { content: '\e879'; } /* '' */
+.icon-file-download-solid:before { content: '\e87c'; } /* '' */
+.icon-file-alt-solid:before { content: '\e87d'; } /* '' */
+.icon-file-medical-solid:before { content: '\e87e'; } /* '' */
+.icon-grip-lines-vertical-solid:before { content: '\e87f'; } /* '' */
+.icon-left-dir-1:before { content: '\e880'; } /* '' */
+.icon-user-circle-solid:before { content: '\e881'; } /* '' */
+.icon-user-cog-solid:before { content: '\e882'; } /* '' */
+.icon-user-friends-solid:before { content: '\e883'; } /* '' */
+.icon-shuffle:before { content: '\e884'; } /* '' */
+.icon-paste-1:before { content: '\e890'; } /* '' */
+.icon-circle-empty-1:before { content: '\e899'; } /* '' */
+.icon-circle-1:before { content: '\e89a'; } /* '' */
+.icon-help-1:before { content: '\e89c'; } /* '' */
+.icon-info-1:before { content: '\e89d'; } /* '' */
+.icon-lock-open-alt-1:before { content: '\e89f'; } /* '' */
+.icon-doc-text-inv-3:before { content: '\e8a4'; } /* '' */
+.icon-dot-circled-1:before { content: '\e8a9'; } /* '' */
+.icon-bank-1:before { content: '\e8aa'; } /* '' */
+.icon-graduation-cap-1:before { content: '\e8ab'; } /* '' */
+.icon-file-video-1:before { content: '\e8ac'; } /* '' */
+.icon-trash-1:before { content: '\e8af'; } /* '' */
+.icon-user-plus-1:before { content: '\e8b0'; } /* '' */
+.icon-user-times-1:before { content: '\e8b1'; } /* '' */
+.icon-docs:before { content: '\f0c5'; } /* '' */
+.icon-blank:before { content: '\f0c8'; } /* '' */
+.icon-menu:before { content: '\f0c9'; } /* '' */
+.icon-list-bullet:before { content: '\f0ca'; } /* '' */
+.icon-sort:before { content: '\f0dc'; } /* '' */
+.icon-mail-alt:before { content: '\f0e0'; } /* '' */
+.icon-paste:before { content: '\f0ea'; } /* '' */
+.icon-upload-cloud:before { content: '\f0ee'; } /* '' */
+.icon-bell-alt:before { content: '\f0f3'; } /* '' */
+.icon-angle-double-left:before { content: '\f100'; } /* '' */
+.icon-angle-double-right:before { content: '\f101'; } /* '' */
+.icon-angle-double-up:before { content: '\f102'; } /* '' */
+.icon-angle-double-down:before { content: '\f103'; } /* '' */
+.icon-angle-left:before { content: '\f104'; } /* '' */
+.icon-angle-right:before { content: '\f105'; } /* '' */
+.icon-angle-up:before { content: '\f106'; } /* '' */
+.icon-angle-down:before { content: '\f107'; } /* '' */
+.icon-circle-empty:before { content: '\f10c'; } /* '' */
+.icon-circle:before { content: '\f111'; } /* '' */
+.icon-folder-open-empty:before { content: '\f115'; } /* '' */
+.icon-help:before { content: '\f128'; } /* '' */
+.icon-info:before { content: '\f129'; } /* '' */
+.icon-attention-alt:before { content: '\f12a'; } /* '' */
+.icon-lock-open-alt:before { content: '\f13e'; } /* '' */
+.icon-ellipsis:before { content: '\f141'; } /* '' */
+.icon-play-circled:before { content: '\f144'; } /* '' */
+.icon-ok-squared:before { content: '\f14a'; } /* '' */
+.icon-doc-inv:before { content: '\f15b'; } /* '' */
+.icon-doc-text-inv:before { content: '\f15c'; } /* '' */
+.icon-sort-name-up:before { content: '\f15d'; } /* '' */
+.icon-sort-name-down:before { content: '\f15e'; } /* '' */
+.icon-sort-number-up:before { content: '\f162'; } /* '' */
+.icon-sort-number-down:before { content: '\f163'; } /* '' */
+.icon-dot-circled:before { content: '\f192'; } /* '' */
+.icon-bank:before { content: '\f19c'; } /* '' */
+.icon-graduation-cap:before { content: '\f19d'; } /* '' */
+.icon-file-video:before { content: '\f1c8'; } /* '' */
+.icon-paper-plane:before { content: '\f1d8'; } /* '' */
+.icon-share:before { content: '\f1e0'; } /* '' */
+.icon-plug:before { content: '\f1e6'; } /* '' */
+.icon-trash:before { content: '\f1f8'; } /* '' */
+.icon-user-plus:before { content: '\f234'; } /* '' */
+.icon-user-times:before { content: '\f235'; } /* '' */
+.icon-user-circle-o:before { content: '\f2be'; } /* '' */
+
+.icon-schulcampus {
+    margin-left: -4px;
+    padding-right: 4px;
+}
+//
+// Component: Text
+//
+
+// text modification
+.text-bold {
+  &, &.table td, &.table th {
+    font-weight: 700;
+  }
+}
+
+.text-xs {
+  font-size: $font-size-xs !important;
+}
+
+.text-sm {
+  font-size: $font-size-sm !important;
+}
+
+.text-md {
+  font-size: $font-size-base !important;
+}
+
+.text-lg {
+  font-size: $font-size-lg !important;
+}
+
+.text-xl {
+  font-size: $font-size-xl !important;
+}
+
+// text color variations
+@each $name, $color in $colors {
+  .text-#{$name} {
+    color: #{$color};
+  }
+}
+
+/* gleiche Breite */
+#topnav {
+    padding: 4px;
+    height: 56px !important;
+}
+#topnav button,
+#topnav .dropdown-menu {
+    width: 245px;
+    align-items: center;
+}
+#topnav.dropdown {
+    flex-wrap: wrap;
+}
+
+/* gleiche Breite */
+#topnav button,
+#topnav .dropdown-menu {
+    align-items: center;
+    left:3px !important;
+
+}
+#topnav.dropdown-menu-full,
+#usernav.dropdown-menu-full {
+    display: none;
+}
+
+#topnav.dropdown .btn:not(:focus) #topnav.dropdown-menu-full {
+    display: none;
+}
+.dropdown-menu-lime {
+    :hover {
+        color: #FFF !important;
+        background-color: #65A300!important;
+    }
+}
+.user-menu .dropdown-item:hover{
+        color: #FFF !important;
+        background-color: #65A300!important;
+    }
+
+.dropdown-menu-lime .dropdown-item.active,
+.dropdown-menu-lime .dropdown-item:active,
+.user-menu .dropdown-item:active {
+    color: #65A300 !important;
+    background-color: #C0CD00!important;
+}
+
+.dropdown-menu-lime .dropdown-item:focus,
+.user-menu .dropdown-item:focus{
+    color: #253100!important;
+    background-color: #C0CD00!important;
+}
+
+.logo {
+    font-weight: 400;
+    font-size: 19px;
+    text-align: left;
+    padding-left: 15px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    i {
+        font-size: 10px !important;
+    }
+}
+
+.brand-dropdown_icon {
+    font-size: 19px;
+}
+
+.user-menu {
+    font-size: 16px;
+    font-weight: 700;
+}

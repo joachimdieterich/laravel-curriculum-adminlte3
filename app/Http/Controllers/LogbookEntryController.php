@@ -63,7 +63,13 @@ class LogbookEntryController extends Controller
      */
     public function show(LogbookEntry $logbookEntry)
     {
-        //
+        abort_unless(\Gate::allows('logbook_show'), 403);
+        // axios call? 
+        if (request()->wantsJson()){   
+            return [
+                'message' => $logbookEntry
+            ];
+        }
     }
 
     /**
@@ -84,9 +90,18 @@ class LogbookEntryController extends Controller
      * @param  \App\LogbookEntry  $logbookEntry
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, LogbookEntry $logbookEntry)
+    public function update(LogbookEntry $logbookEntry)
     {
-        //
+        abort_unless(\Gate::allows('logbook_edit'), 403);    
+        
+        $logbookEntry->update($this->validateRequest());
+        
+        // axios call? 
+        if (request()->wantsJson()){    
+            return ['message' => '/logbooks' . $logbookEntry->logbook_id];
+            
+        }
+        return ;
     }
 
     /**

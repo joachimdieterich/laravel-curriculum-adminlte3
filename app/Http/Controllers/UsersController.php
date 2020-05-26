@@ -59,24 +59,22 @@ class UsersController extends Controller
                     if (\Gate::allows('user_show')){
                         $actions .= '<a href="'.route('users.show', $users->id).'" '
                                     . 'id="show-user-'.$users->id.'" '
-                                    . 'class="btn btn-xs btn-success mr-1">'
+                                    . 'class="btn">'
                                     . '<i class="fa fa-list-alt"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('user_edit')){
                         $actions .= '<a href="'.route('users.edit', $users->id).'" '
                                     . 'id="edit-user-'.$users->id.'" '
-                                    . 'class="btn btn-xs btn-primary  mr-1">'
-                                    . '<i class="fa fa-edit"></i>'
+                                    . 'class="btn">'
+                                    . '<i class="fa fa-pencil-alt"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('user_delete')){
-                        $actions .= '<form action="'.route('users.destroy', $users->id).'" method="POST" class="float-right">'
-                                    . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
-                                    . '<button '
-                                    . 'type="submit" ' 
-                                    . 'id="delete-user-'.$users->id.'" '
-                                    . 'class="btn btn-xs btn-danger"> <i class="fa fa-trash"></i></button></form>';
+                        $actions .= '<button type="button" '
+                                . 'class="btn text-danger" '
+                                . 'onclick="destroyDataTableEntry(\'users\','.$users->id.')">'
+                                . '<i class="fa fa-trash"></i></button>';
                     }
               
                 return $actions;
@@ -84,9 +82,6 @@ class UsersController extends Controller
            
             ->addColumn('check', '')
             ->setRowId('id')
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
             ->make(true);
     }
     
@@ -190,9 +185,11 @@ class UsersController extends Controller
     {
         abort_unless(\Gate::allows('user_delete'), 403);
 
-        $user->delete();
-
-        return back();
+        $return = $user->delete();
+        //todo concept to hard-delete users
+        if (request()->wantsJson()){    
+            return ['message' => $return];
+        }
     }
 
     public function massDestroy(MassDestroyUserRequest $request)

@@ -20,23 +20,20 @@
         </div>
     </div>
 @endcan
-<div class="card">
-    <div class="card-body">
-        <table id="organizations-datatable" class="table table-condensed">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>{{ trans('global.organization.fields.title') }}</th>
-                    <th>{{ trans('global.organization.fields.street') }}</th>
-                    <th>{{ trans('global.organization.fields.postcode') }}</th>
-                    <th>{{ trans('global.organization.fields.city') }}</th>
-                    <th>{{ trans('global.organization.fields.status') }}</th>
-                    <th>{{ trans('global.datatables.action') }}</th>
-                </tr>
-            </thead>
-        </table>
-    </div>
-</div>
+<table id="organizations-datatable" class="table table-hover datatable">
+    <thead>
+        <tr>
+            <th></th>
+            <th>{{ trans('global.organization.fields.title') }}</th>
+            <th>{{ trans('global.organization.fields.street') }}</th>
+            <th>{{ trans('global.organization.fields.postcode') }}</th>
+            <th>{{ trans('global.organization.fields.city') }}</th>
+            <th>{{ trans('global.organization.fields.status') }}</th>
+            <th>{{ trans('global.datatables.action') }}</th>
+        </tr>
+    </thead>
+</table>
+
 <organization-modal></organization-modal>
 
 
@@ -76,10 +73,7 @@ $(document).ready( function () {
     @endcan
     
     
-    $('#organizations-datatable').DataTable({
-        processing: true,
-        serverSide: true,
-        select: true,
+    var table = $('#organizations-datatable').DataTable({
         ajax: "{{ url('organizations/list') }}",
         columns: [
                  { data: 'check'},
@@ -90,11 +84,19 @@ $(document).ready( function () {
                  { data: 'status' },
                  { data: 'action' }
                 ],
+        columnDefs: [
+            { "visible": false, "targets": 0 },
+            {
+                orderable: false,
+                searchable: false,
+                targets: - 1
+            }
+        ],
         buttons: dtButtons
     });
-    //align header/body
-    $(".dataTables_scrollHeadInner").css({"width":"100%"});
-    $(".table ").css({"width":"100%"});
+    table.on( 'select', function ( e, dt, type, indexes ) { //on select event
+        window.location.href = "/organizations/" + table.row({ selected: true }).data().id ;
+    });
  });
 </script>
 

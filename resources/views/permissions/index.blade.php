@@ -17,97 +17,44 @@
         </div>
     </div>
 @endcan
-<div class="card">
-    <div class="card-body">
-        <div class="table-responsive">
-            <table id="permissions-datatable"
-                   class=" table table-bordered table-striped table-hover datatable">
-                <thead>
-                    <tr>
-                        <th width="10"></th>
-                        <th>{{ trans('global.permission.fields.title') }}</th>
-                        <th>{{ trans('global.datatables.action') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($permissions as $key => $permission)
-                        <tr data-entry-id="{{ $permission->id }}">
-                            <td></td>
-                            <td>{{ $permission->title ?? '' }}</td>
-                            <td>
-                                @can('permission_show')
-                                    <a class="btn btn-xs btn-success mr-1" href="{{ route('permissions.show', $permission->id) }}">
-                                        <i class="fa fa-list-alt"></i>
-                                    </a>
-                                @endcan
-                                @can('permission_edit')
-                                    <a class="btn btn-xs btn-primary mr-1" href="{{ route('permissions.edit', $permission->id) }}">
-                                        <i class="fa fa-edit"></i>
-                                    </a>
-                                @endcan
-                                @can('permission_delete')
-                                    <form action="{{ route('permissions.destroy', $permission->id) }}" 
-                                          method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" 
-                                          class="pull-right">
-                                        <input type="hidden" 
-                                               name="_method" 
-                                               value="DELETE">
-                                        <input type="hidden" 
-                                               name="_token" 
-                                               value="{{ csrf_token() }}">
-                                        <button type="submit" 
-                                                id="delete-grade-{{ $permission->id }}" 
-                                                class="btn btn-xs btn-danger">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
-                                    </form>
-                                @endcan
-                            </td>
-
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+<table id="users-datatable" 
+       class="table table-hover datatable">
+    <thead>
+        <tr>
+            <th width="10"></th>
+            <th>{{ trans('global.permission.fields.title') }}</th>
+            <th></th>
+        </tr>
+    </thead>     
+</table>
 @endsection
 @section('scripts')
 @parent
 <script>
     $(function () {
-        let deleteButton = {
-            text: '{{ trans('global.datatables.delete') }}',
-            url: "{{ route('permissions.massDestroy') }}",
-            className: 'btn-danger btn-xs',
-            action: function (e, dt, node, config) {
-                var ids = $.map(dt.rows({ selected: true }).nodes(), function (entry) {
-                    return $(entry).data('entry-id')
-                });
-
-                if (ids.length === 0) {
-                    alert('{{ trans('global.datatables.zero_selected') }}')
-                    return
+        let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons);
+        var table = $('#users-datatable').DataTable({
+            ajax: "{{ url('permissions/list') }}",
+            columns: [
+                     { data: 'check'},
+                     { data: 'title' },
+                     { data: 'action' }
+                    ],
+            columnDefs: [
+                { "visible": false, "targets": 0 },
+                {
+                    orderable: false,
+                    searchable: false,
+                    targets: - 1
                 }
+            ],
+            buttons: dtButtons
+    });
+    table.on( 'select', function ( e, dt, type, indexes ) { //on select event
+        window.location.href = "/permissions/" + table.row({ selected: true }).data().id ;
+    });
+});
 
-                if (confirm('{{ trans('global.areYouSure') }}')) {
-                    $.ajax({
-                        headers: {'x-csrf-token': _token},
-                        method: 'POST',
-                        url: config.url,
-                        data: { ids: ids, _method: 'DELETE' }})
-                        .done(function () { location.reload() })
-                }
-            }
-        }
-        
-    let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-    @can('permission_delete')
-        dtButtons.push(deleteButton)
-    @endcan
-
-    var table = $('#permissions-datatable').DataTable({ buttons: dtButtons })
-})
 
 </script>
 @endsection

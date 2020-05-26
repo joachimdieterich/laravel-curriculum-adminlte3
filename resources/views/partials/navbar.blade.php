@@ -1,12 +1,12 @@
 <ul class="navbar-nav ml-auto">
-      <!-- Messages Dropdown Menu -->
-      <li class="nav-item dropdown">
+       <!--Messages Dropdown Menu--> 
+<!--      <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
           <i class="far fa-comments"></i>
-<!--          <span class="badge badge-danger navbar-badge">0</span>-->
+          <span class="badge badge-danger navbar-badge">0</span>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-<!--          <a href="#" class="dropdown-item">
+          <a href="#" class="dropdown-item">
              Message Start 
             <div class="media">
               <img src="/media/1" alt="User Avatar" class="img-size-50 mr-3 img-circle">
@@ -20,9 +20,9 @@
               </div>
             </div>
              Message End 
-          </a>-->
+          </a>
           <div class="dropdown-divider"></div>
-<!--          <a href="#" class="dropdown-item">
+          <a href="#" class="dropdown-item">
              Message Start 
             <div class="media">
               <img src="/media/1" alt="User Avatar" class="img-size-50 img-circle mr-3">
@@ -36,42 +36,38 @@
               </div>
             </div>
              Message End 
-          </a>-->
+          </a>
           
           <div class="dropdown-divider"></div>
           <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
         </div>
-      </li>
-      <!-- Notifications Dropdown Menu -->
-      <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-bell"></i>
-          <span class="badge badge-warning navbar-badge">15</span>
-        </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <span class="dropdown-item dropdown-header">15 Notifications</span>
+      </li>-->
+       <!--Notifications Dropdown Menu--> 
+      <li class="dropdown">
+        <span class="user-menu dropdown-toggle" data-toggle="dropdown">
+          <img class="img-circle color-white" 
+                   src="{{ (auth()->user()->medium_id !== null) ? '/media/'.auth()->user()->medium_id  : Avatar::create(auth()->user()->fullName())->toBase64() }}" 
+                   alt="User profile picture"
+                   style="height: 2.1rem">
+          <b>{{ auth()->user()->fullName() }}</b>
+        </span>
+        <div class="user-menu dropdown-menu bg-lime dropdown-menu-lg dropdown-menu-right">
+          <span class="dropdown-item dropdown-header text-black">{{ optional(Auth::user()->role())->title}}</span>
           <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-envelope mr-2"></i> 4 new messages
-            <span class="float-right text-muted text-sm">3 mins</span>
+          <a href="{{route('users.show', auth()->user()->id)}}" class="dropdown-item">
+            <i class="fas fa-envelope mr-2 text-white"></i>{{ trans('global.myProfile') }}
           </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-users mr-2"></i> 8 friend requests
-            <span class="float-right text-muted text-sm">12 hours</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-file mr-2"></i> 3 new reports
-            <span class="float-right text-muted text-sm">2 days</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+          @if ( ( env('SAML2_RLP_IDP_SL_URL') !== null ) AND ( !empty(env('SAML2_RLP_IDP_SL_URL')) ) )
+            <a href="{{ env('SAML2_RLP_IDP_SL_URL') }}" class="dropdown-item">
+              <i class="fas fa-power-off mr-2 text-white"></i> {{ trans('global.logout') }}
+            </a>
+          @else
+            <a href="#" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
+              <i class="fas fa-power-off mr-2 text-white"></i> {{ trans('global.logout') }}
+            </a>
+          @endif
+         
         </div>
       </li>
-<!--      <li class="nav-item">
-        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#">
-          <i class="fas fa-th-large"></i>
-        </a>
-      </li>-->
+     
     </ul>

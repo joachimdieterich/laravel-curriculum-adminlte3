@@ -17,44 +17,47 @@
         </div>
     </div>
 @endcan
-<div class="card">
-    <div class="card-body">
-        <table id="organization_type_datatable" class="table table-condensed">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>{{ trans('global.organizationtype.fields.title') }}</th>
-                    <th>{{ trans('global.organizationtype.fields.external_id') }}</th>
-                    <th>{{ trans('global.country.title') }}</th>
-                    <th>{{ trans('global.state.title') }}</th>
-                    <th>{{ trans('global.datatables.action') }}</th>
-                </tr>
-            </thead>
-        </table>
-    </div>
-</div>
+<table id="organization_type_datatable" class="table table-hover datatable">
+    <thead>
+        <tr>
+            <th></th>
+            <th>{{ trans('global.organizationtype.fields.title') }}</th>
+            <th>{{ trans('global.organizationtype.fields.external_id') }}</th>
+            <th>{{ trans('global.country.title') }}</th>
+            <th>{{ trans('global.state.title') }}</th>
+            <th>{{ trans('global.datatables.action') }}</th>
+        </tr>
+    </thead>
+</table>
 
 @endsection
 @section('scripts')
 @parent
- <script>
+<script>
    $(document).ready( function () {
-    $('#organization_type_datatable').DataTable({
-           processing: true,
-           serverSide: true,
-           ajax: "{{ url('organizationtypes/list') }}",
-           columns: [
-                    { data: 'check'},
-                    { data: 'title' },
-                    { data: 'external_id' },
-                    { data: 'state_id' },
-                    { data: 'country_id' },
-                    { data: 'action' }
-                 ]
+   var table = $('#organization_type_datatable').DataTable({
+        ajax: "{{ url('organizationtypes/list') }}",
+        columns: [
+                 { data: 'check'},
+                 { data: 'title' },
+                 { data: 'external_id' },
+                 { data: 'state_id' },
+                 { data: 'country_id' },
+                 { data: 'action' }
+              ],
+        columnDefs: [
+            { "visible": false, "targets": 0 },
+            {
+                orderable: false,
+                searchable: false,
+                targets: - 1
+            }
+        ],
         });
+        table.on( 'select', function ( e, dt, type, indexes ) { //on select event
+            window.location.href = "/organizationtypes/" + table.row({ selected: true }).data().id ;
+        });
+
      });
-      //align header/body
-    $(".dataTables_scrollHeadInner").css({"width":"100%"});
-    $(".table ").css({"width":"100%"});
-  </script>
+</script>
 @endsection

@@ -1,13 +1,17 @@
 <template> 
     <div class="row">
         <div class="col-md-12">
-            <!-- The time line -->
+             <LogbookEntry 
+                v-for="entry in logbook.entries"
+                :entry="entry"> 
+            </LogbookEntry>
+<!--             The time line 
             <div class="timeline">
-                <!-- timeline time label -->
+                 timeline time label 
                 <div class="time-label">
                     <span class="bg-green">10 Feb. 2014</span>
                 </div>
-                <!-- /.timeline-label -->
+                 /.timeline-label 
                 <LogbookEntry 
                     v-for="entry in logbook.entries"
                     :entry="entry"> 
@@ -16,7 +20,7 @@
                 <div>
                   <i class="fas fa-clock bg-gray"></i>
                 </div>
-            </div>
+            </div>-->
         </div>
         <!-- /.col -->
     </div>

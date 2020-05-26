@@ -125,6 +125,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('periods', 'PeriodController');
     
     /* permission */
+    Route::get('permissions/list', 'PermissionsController@list')->name('permissions.list');
     Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');
     Route::resource('permissions', 'PermissionsController');
 

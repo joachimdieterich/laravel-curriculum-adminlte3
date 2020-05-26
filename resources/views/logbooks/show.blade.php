@@ -1,7 +1,7 @@
 @extends((Auth::user()->id == env('GUEST_USER')) ? 'layouts.contentonly' : 'layouts.master')
 
 @section('title')
-{{ trans('global.logbook.title_singular') }} | <small>{{ $logbook->title }}</small>
+<i class="fa fa-book mr-2"></i><small>{{ $logbook->title }}</small>
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item">
@@ -16,14 +16,14 @@
 @endsection
 
 @section('content')
- {!! $logbook->description !!}
+<!-- {!! $logbook->description !!}-->
     @can('logbook_entry_create')
         <div style="margin-bottom: 10px;" class="row">
             <div class="col-lg-12">
                 <button id="add-logbook-entry" 
                    class="btn btn-success" 
                     onclick="app.__vue__.$modal.show('logbook-entry-modal',  {'logbook_id': {{ $logbook->id }} });">
-                   {{ trans('global.logbookEntry.create') }}
+                   {{ trans('glo    bal.logbookEntry.create') }}
                 </button>
             </div>
         </div>

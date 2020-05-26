@@ -20,24 +20,19 @@
         </div>
     </div>
 @endcan
-<div class="card">
-    <div class="card-body">
-        <table id="curricula-datatable" class=" table table-bordered table-striped table-hover datatable">
-            <thead>
-                <tr>
-                    <th width="10"></th>
-                    <th>{{ trans('global.curriculum.fields.title') }}</th>
-<!--                    <th>{{ trans('global.state.title_singular') }}</th>
-                    <th>{{ trans('global.country.title_singular') }}</th>-->
-                    <th>{{ trans('global.grade.title_singular') }}</th>
-                    <th>{{ trans('global.subject.title_singular') }}</th>
-                    <th>{{ trans('global.owner') }}</th>
-                    <th width="120">{{ trans('global.datatables.action') }}</th>
-                </tr>
-            </thead>
-        </table>
-    </div>
-</div>
+
+<table id="curricula-datatable" class="table table-hover datatable">
+    <thead>
+        <tr>
+            <th width="10"></th>
+            <th>{{ trans('global.curriculum.fields.title') }}</th>
+            <th>{{ trans('global.grade.title_singular') }}</th>
+            <th>{{ trans('global.subject.title_singular') }}</th>
+            <th>{{ trans('global.owner') }}</th>
+            <th></th>
+        </tr>
+    </thead>
+</table>
 
 
 @endsection
@@ -46,57 +41,31 @@
 
 <script>
 $(document).ready( function () {
-    let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
+    let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons);
     var table = $('#curricula-datatable').DataTable({
-        processing: true,
-        serverSide: true,
         ajax: "{{ url('curricula/list') }}",
+       
         columns: [
-                 { data: 'check'},
-                 { data: 'title' },
-//                 { data: 'state' },
-//                 { data: 'country' },
-                 { data: 'grade' },
-                 { data: 'subject' },
-                 { data: 'owner' },
-                 { data: 'action' }
-                ],
-        buttons: dtButtons
+            { data: 'check'},
+            { data: 'title' },
+            { data: 'grade' },
+            { data: 'subject' },
+            { data: 'owner' },
+            { data: 'action' }
+        ],
+        columnDefs: [
+            { "visible": false, "targets": 0 },
+            {
+                orderable: false,
+                searchable: false,
+                targets: - 1
+            }
+        ],
     });
-    //align header/body
-    $(".dataTables_scrollHeadInner").css({"width":"100%"});
-    $(".table ").css({"width":"100%"});
-    
-    
+    table.on( 'select', function ( e, dt, type, indexes ) { //on select event
+        window.location.href = "/curricula/" + table.row({ selected: true }).data().id ;
+    });
  });
- 
- function sendRequest(method, url, ids, data){
-    if (ids.length === 0) {
-        alert('{{ trans('global.datatables.zero_selected') }}')
-        return
-    }
-    if (confirm('{{ trans('global.areYouSure') }}')) {
-        $.ajax({
-                headers: {'x-csrf-token': _token},
-                method: method,
-                url: url,
-                data: data
-            })
-            .done(function () { 
-                if (data['_method'] === 'DELETE'){
-                    $("#"+ ids).hide();
-                } else {
-                    location.reload() 
-                }
-            })
-    }
-}
-
-function  destroyCurriculum(id) {
-    
-    sendRequest('POST', "curricula/"+id, id, { _method: 'DELETE' });   
-   
-} 
 </script>
 
 @endsection

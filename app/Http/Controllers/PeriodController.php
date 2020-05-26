@@ -33,27 +33,18 @@ class PeriodController extends Controller
             })
             ->addColumn('action', function ($periods) {
                  $actions  = '';
-                    if (\Gate::allows('period_show')){
-                        $actions .= '<a href="'.route('periods.show', $periods->id).'" '
-                                    . 'id="show-period-'.$periods->id.'" '
-                                    . 'class="btn btn-xs btn-success mr-1">'
-                                    . '<i class="fa fa-list-alt"></i>'
-                                    . '</a>';
-                    }
                     if (\Gate::allows('period_edit')){
                         $actions .= '<a href="'.route('periods.edit', $periods->id).'" '
                                     . 'id="edit-period-'.$periods->id.'" '
-                                    . 'class="btn btn-xs btn-primary mr-1">'
-                                    . '<i class="fa fa-edit"></i>'
+                                    . 'class="btn ">'
+                                    . '<i class="fa fa-pencil-alt"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('period_delete')){
-                        $actions .= '<form action="'.route('periods.destroy', $periods->id).'" method="POST" class="float-right">'
-                                    . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
-                                    . '<button '
-                                    . 'type="submit" '
-                                    . 'id="delete-period-'.$periods->id.'" '
-                                    . 'class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>';
+                         $actions .= '<button type="button" '
+                                . 'class="btn text-danger" '
+                                . 'onclick="destroyDataTableEntry(\'periods\','.$periods->id.')">'
+                                . '<i class="fa fa-trash"></i></button>';
                     }
               
                 return $actions;

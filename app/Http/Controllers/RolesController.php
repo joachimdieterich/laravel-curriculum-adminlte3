@@ -31,24 +31,18 @@ class RolesController extends Controller
             
             ->addColumn('action', function ($roles) {
                  $actions  = '';
-                    if (\Gate::allows('role_show')){
-                        $actions .= '<a href="'.route('roles.show', $roles->id).'" '
-                                    . 'class="btn btn-xs btn-success mr-1">'
-                                    . '<i class="fa fa-list-alt"></i>'
-                                    . '</a>';
-                    }
                     if (\Gate::allows('role_edit')){
                         $actions .= '<a href="'.route('roles.edit', $roles->id).'" '
-                                    . 'class="btn btn-xs btn-primary mr-1">'
-                                    . '<i class="fa fa-edit"></i>'
+                                    . 'class="btn">'
+                                    . '<i class="fa fa-pencil-alt"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('role_delete')){
-                        $actions .= '<form action="'.route('roles.destroy', $roles->id).'" method="POST" class="float-right">'
-                                    . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
-                                    . '<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>';
+                        $actions .= '<button type="button" '
+                                . 'class="btn text-danger" '
+                                . 'onclick="destroyDataTableEntry(\'roles\','.$roles->id.')">'
+                                . '<i class="fa fa-trash"></i></button>';
                     }
-              
                 return $actions;
             })
            

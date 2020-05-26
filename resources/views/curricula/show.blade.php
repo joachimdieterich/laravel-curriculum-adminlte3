@@ -16,28 +16,26 @@
 @endsection
 
 @section('content')
-<div class="row">
-    <div class="col-12">
-        <div id="content_top_placeholder" style="height:0px;"></div>
-        @can('achievement_access')
-            @if(isset(json_decode($settings)->achievements))
-            <table id="users-datatable" class=" table table-bordered table-striped table-hover datatable">
-                <thead>
-                    <tr>
-                        <th width="10"></th>
-                        <th>{{ trans('global.user.fields.username') }}</th>
-                        <th>{{ trans('global.user.fields.lastname') }}</th>
-                        <th>{{ trans('global.user.fields.firstname') }}</th>
-                        <th>{{ trans('global.role.fields.title') }}</th>
-                        <th>{{ trans('global.progress.title_singular') }}</th>
-                    </tr>
-                </thead>     
-            </table>
-            @endif
-        @endcan
-    </div>
-</div>
-<div class="row">  
+
+<div id="content_top_placeholder" ></div>
+@can('achievement_access')
+    @if(isset(json_decode($settings)->achievements))
+    <table id="users-datatable" class="table table-hover datatable">
+        <thead>
+            <tr>
+                <th width="10"></th>
+                <th>{{ trans('global.user.fields.username') }}</th>
+                <th>{{ trans('global.user.fields.lastname') }}</th>
+                <th>{{ trans('global.user.fields.firstname') }}</th>
+                <th>{{ trans('global.role.fields.title') }}</th>
+                <th>{{ trans('global.progress.title_singular') }}</th>
+            </tr>
+        </thead>     
+    </table>
+    @endif
+@endcan
+
+<div id="curriculum_view_content" class="row">  
      <div class="col-12">
 <!--    <button type="button" class="btn btn-default" data-toggle="tooltip"  onclick="">
             <i class="fa fa-compress"></i>
@@ -221,10 +219,6 @@ function isElementInViewport (el) {
 $(document).ready( function () {
     //let dtButtons = false;//$.extend(true, [], $.fn.dataTable.defaults.buttons)
     table = $('#users-datatable').DataTable({
-        
-        processing: true,
-        serverSide: true,
-        select: true,
         ajax: "/courses/list?course_id={{ $course->id }}",
         columns: [
                  { data: 'check'},
@@ -234,17 +228,8 @@ $(document).ready( function () {
                  { data: 'role' },
                  { data: 'progress' },
                 ],
-        buttons: [
-             
-        ],
-        columnDefs: [
-            { "visible": false, "targets": 0 }
-        ]
+        buttons: [],
     });
-    
-    //align header/body
-    $(".dataTables_scrollHeadInner").css({"width":"100%"});
-    $(".table ").css({"width":"100%"});
     
     table.on( 'select', function ( e, dt, type, indexes ) { //on select event
         triggerVueEvent(type);
@@ -252,18 +237,20 @@ $(document).ready( function () {
     table.on( 'deselect', function ( e, dt, type, indexes ) { //on deselect event
         triggerVueEvent(type);
     });
-    
+        
     $(window).on("scroll", function(table) {
         if (!isElementInViewport($("#content_top_placeholder"))){
             $("#users-datatable_wrapper").appendTo("#menu_top_placeholder");
-            $("#menu_top_placeholder").css({'background-color': '#ecf0f5', 'padding-top':'48px', 'webkit-transform':'translate3d(0,0,0)'});
+            $("#menu_top_placeholder").css({'background-color': '#ecf0f5',  'webkit-transform':'translate3d(0,0,0)'});
+            $("#curriculum_view_content").css({'padding-top': '100px'});
             $('.dataTables_length').hide();
             $('.dataTables_filter').hide();
             $('.dataTables_info').hide();
         } else {
             if (isElementInViewport($("#content_top_placeholder"))){
                 $("#users-datatable_wrapper").appendTo("#content_top_placeholder");
-                $("#menu_top_placeholder").css({'background-color': 'transparent', 'padding':'0px', 'webkit-transform':'translate3d(0,0,0)'});
+                $("#menu_top_placeholder").css({'background-color': 'transparent', 'webkit-transform':'translate3d(0,0,0)'});
+                $("#curriculum_view_content").css({'padding-top': '0px'});
                 $('.dataTables_length').show();
                 $('.dataTables_filter').show();
                 $('.dataTables_info').show();

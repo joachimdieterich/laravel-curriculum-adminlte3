@@ -90,26 +90,24 @@ class CurriculumController extends Controller
             })
             ->addColumn('action', function ($curricula) {
                  $actions  = '';
-                    if (\Gate::allows('curriculum_show')){
-                        $actions .= '<a href="'.route('curricula.show', $curricula->id).'" '
-                                    . 'class="btn text-primary p-1">'
-                                    . '<i class="fa fa-list-alt"></i>'
-                                    . '</a>';
-                    }
+
                     if (\Gate::allows('curriculum_edit') AND ($curricula->owner_id == auth()->user()->id)){
                         $actions .= '<a href="'.route('curricula.edit', $curricula->id).'" '
-                                    . 'class="btn text-secondary p-1">'
-                                    . '<i class="fa fa-edit"></i>'
+                                    . 'class="btn">'
+                                    . '<i class="fa fa-pencil-alt"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('curriculum_edit') AND ($curricula->owner_id == auth()->user()->id)){
                         $actions .= '<a href="'.route('curricula.editOwner', $curricula->id).'" '
-                                    . 'class="btn text-secondary p-1">'
+                                    . 'class="btn">'
                                     . '<i class="fa fa-user"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('curriculum_delete') AND ($curricula->owner_id == auth()->user()->id)){
-                        $actions .= '<button type="button" class="pull-right btn text-danger p-1" onclick="destroyCurriculum('.$curricula->id.')"><i class="fa fa-trash"></i></button>';
+                        $actions .= '<button type="button" '
+                                . 'class="btn text-danger" '
+                                . 'onclick="destroyDataTableEntry(\'curricula\','.$curricula->id.')">'
+                                . '<i class="fa fa-trash"></i></button>';
                     }
               
                 return $actions;
@@ -117,9 +115,6 @@ class CurriculumController extends Controller
            
             ->addColumn('check', '')
             ->setRowId('id')
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
             ->make(true);
     }
 

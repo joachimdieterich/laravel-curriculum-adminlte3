@@ -38,27 +38,18 @@ class OrganizationsController extends Controller
             })
             ->addColumn('action', function ($organizations) {
                  $actions  = '';
-                    if (\Gate::allows('organization_show')){
-                        $actions .= '<a href="'.route('organizations.show', $organizations->id).'" '
-                                    . 'id="show-organization-'.$organizations->id.'" '
-                                    . 'name="show-organization-'.$organizations->id.'" '
-                                    . 'class="btn p-1">'
-                                    . '<i class="fa fa-list-alt"></i>'
-                                    . '</a>';
-                    }
                     if (\Gate::allows('organization_edit')){
                         $actions .= '<a href="'.route('organizations.edit', $organizations->id).'"'
                                     . 'id="edit-organization-'.$organizations->id.'" '
                                     . 'class="btn p-1">'
-                                    . '<i class="fa fa-edit"></i>' 
+                                    . '<i class="fa fa-pencil-alt"></i>' 
                                     . '</a>';
                     }
                     if (\Gate::allows('organization_delete')){
-                        $actions .= '<form action="'.route('organizations.destroy', $organizations->id).'" method="POST" class="pull-right">'
-                                    . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
-                                    . '<button type="submit" '
-                                    . 'id="delete-organization-'.$organizations->id.'" '
-                                    . 'class="pull-right btn p-0 m-1 text-danger"><i class="fa fa-trash"></i></button>';
+                        $actions .= '<button type="button" '
+                                . 'class="btn text-danger" '
+                                . 'onclick="destroyDataTableEntry(\'organizations\','.$organizations->id.')">'
+                                . '<i class="fa fa-trash"></i></button>';
                     }
               
                 return $actions;

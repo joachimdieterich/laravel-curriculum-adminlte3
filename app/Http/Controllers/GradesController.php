@@ -36,27 +36,18 @@ class GradesController extends Controller
            
             ->addColumn('action', function ($grades) {
                  $actions  = '';
-                    if (\Gate::allows('grade_show')){
-                        $actions .= '<a href="'.route('grades.show', $grades->id).'" '
-                                    . 'id="show-grade-'.$grades->id.'" '
-                                    . 'class="btn btn-xs btn-success mr-1">'
-                                    . '<i class="fa fa-list-alt"></i>'
-                                    . '</a>';
-                    }
                     if (\Gate::allows('grade_edit')){
                         $actions .= '<a href="'.route('grades.edit', $grades->id).'" '
                                     . 'id="edit-grade-'.$grades->id.'" '
-                                    . 'class="btn btn-xs btn-primary mr-1">'
-                                    . '<i class="fa fa-edit"></i>'
+                                    . 'class="btn">'
+                                    . '<i class="fa fa-pencil-alt"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('grade_delete')){
-                        $actions .= '<form action="'.route('grades.destroy', $grades->id).'" method="POST" class="pull-right">'
-                                    . '<input type="hidden" name="_method" value="delete">'. csrf_field().''
-                                    . '<button '
-                                    . 'type="submit" '
-                                    . 'id="delete-grade-'.$grades->id.'" '
-                                    . 'class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>';
+                        $actions .= '<button type="button" '
+                                . 'class="btn text-danger" '
+                                . 'onclick="destroyDataTableEntry(\'grades\','.$grades->id.')">'
+                                . '<i class="fa fa-trash"></i></button>';
                     }
               
                 return $actions;
@@ -64,9 +55,6 @@ class GradesController extends Controller
            
             ->addColumn('check', '')
             ->setRowId('id')
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
             ->make(true);
     }
 

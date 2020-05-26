@@ -27,7 +27,7 @@
                 "infoBoxClass" =>  'info-box-icon bg-danger elevation-1',
                 "infoBoxIcon" =>  'fas fa-book',
                 "infoText" =>  trans('global.logbook.title'),
-                "infoBoxNumber" =>  App\Logbook::all()->count(),
+                "infoBoxNumber" =>  count(auth()->user()->logbookSubscription),
             ])
         @endcan
         @can('task_access')

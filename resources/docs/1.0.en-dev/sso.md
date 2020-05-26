@@ -28,6 +28,8 @@ SAML2_RLP_IDP_ORG_NAME=org name
 SAML2_RLP_IDP_ORG_URL=some url
 ```
 
+If `SAML2_RLP_IDP_SSO_URL` SSO Login-Button is available, if `SAML2_RLP_IDP_SL_UR` is set, Logout uses this URL
+
 Further Settings are found in `config\saml2\rlp_idp_settings.php` and `config\saml2_settings.php`
 
 You also have to set up your IDP. The following routes will help you:
@@ -39,3 +41,4 @@ http://laravelurl/saml2/rlp/metadata
 http://laravelurl/saml2/rlp/sls
 ```
 More information at [aacotroneo/laravel-saml2](https://github.com/aacotroneo/laravel-saml2)
+

@@ -19,21 +19,16 @@
         </div>
     </div>
 @endcan
-<div class="card">
-    <div class="card-body">
-        <table id="navigators-datatable" class=" table table-bordered table-striped table-hover datatable">
-            <thead>
-                <tr>
-                    <th width="10"></th>
-                    <th>{{ trans('global.navigator.fields.title') }}</th>
-                    <th>{{ trans('global.organization.title_singular') }}</th>
-                    <th>{{ trans('global.datatables.action') }}</th>
-                </tr>
-            </thead>
-        </table>
-    </div>
-</div>
-
+<table id="navigators-datatable" class="table table-hover datatable">
+    <thead>
+        <tr>
+            <th width="10"></th>
+            <th>{{ trans('global.navigator.fields.title') }}</th>
+            <th>{{ trans('global.organization.title_singular') }}</th>
+            <th>{{ trans('global.datatables.action') }}</th>
+        </tr>
+    </thead>
+</table>
 
 @endsection
 @section('scripts')
@@ -43,8 +38,6 @@
 $(document).ready( function () {
     let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
     var table = $('#navigators-datatable').DataTable({
-        processing: true,
-        serverSide: true,
         ajax: "{{ url('navigators/list') }}",
         columns: [
                  { data: 'check'},
@@ -54,9 +47,9 @@ $(document).ready( function () {
                 ],
         buttons: dtButtons
     });
-    //align header/body
-    $(".dataTables_scrollHeadInner").css({"width":"100%"});
-    $(".table ").css({"width":"100%"});
+    table.on( 'select', function ( e, dt, type, indexes ) { //on select event
+        window.location.href = "/navigators/" + table.row({ selected: true }).data().id ;
+    });
  });
 </script>
 

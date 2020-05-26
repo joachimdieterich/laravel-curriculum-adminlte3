@@ -19,27 +19,22 @@
         </div>
     </div>
 @endcan
-<div class="card">
-    <div class="card-body">
-        <table id="periods-datatable" class="table table-bordered table-striped table-hover datatable">
-            <thead>
-                <tr>
-                    <th width="10"></th>
-                    <th>{{ trans('global.period.fields.title') }}</th>
-                    <th>{{ trans('global.period.fields.begin') }}</th>
-                    <th>{{ trans('global.period.fields.end') }}</th>
-                    <th>{{ trans('global.organization.title_singular') }}</th>
-                    <th>{{ trans('global.datatables.action') }}</th>
-                </tr>
-            </thead>
-        </table>
-    </div>
-</div>
+<table id="periods-datatable" class="table table-hover datatable">
+    <thead>
+        <tr>
+            <th width="10"></th>
+            <th>{{ trans('global.period.fields.title') }}</th>
+            <th>{{ trans('global.period.fields.begin') }}</th>
+            <th>{{ trans('global.period.fields.end') }}</th>
+            <th>{{ trans('global.organization.title_singular') }}</th>
+            <th>{{ trans('global.datatables.action') }}</th>
+        </tr>
+    </thead>
+</table>
 
 @endsection
 @section('scripts')
 @parent
-
 <script>
 $(document).ready( function () {
     let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
@@ -47,8 +42,6 @@ $(document).ready( function () {
     let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
     
     var table = $('#periods-datatable').DataTable({
-        processing: true,
-        serverSide: true,
         ajax: "{{ url('periods/list') }}",
         columns: [
                  { data: 'check'},
@@ -58,11 +51,19 @@ $(document).ready( function () {
                  { data: 'organization' },
                  { data: 'action' }
                 ],
+         columnDefs: [
+            { "visible": false, "targets": 0 },
+            {
+                orderable: false,
+                searchable: false,
+                targets: - 1
+            }
+        ],
         buttons: dtButtons
     });
-    //align header/body
-    $(".dataTables_scrollHeadInner").css({"width":"100%"});
-    $(".table ").css({"width":"100%"});
+     table.on( 'select', function ( e, dt, type, indexes ) { //on select event
+        window.location.href = "/periods/" + table.row({ selected: true }).data().id ;
+    });
  });
  
 function getDatatablesIds(selector){

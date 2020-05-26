@@ -19,21 +19,20 @@
         </div>
     </div>
 @endcan
-<div class="card">
-    <div class="card-body">
-        <table id="groups-datatable" class=" table table-bordered table-striped table-hover datatable">
-            <thead>
-                <tr>
-                    <th width="10"></th>
-                    <th>{{ trans('global.group.fields.title') }}</th>
-                    <th>{{ trans('global.grade.title_singular') }}</th>
-                    <th>{{ trans('global.period.title_singular') }}</th>
-                    <th>{{ trans('global.organization.title_singular') }}</th>
-                    <th>{{ trans('global.datatables.action') }}</th>
-                </tr>
-            </thead>
-        </table>
-    </div>
+
+<table id="groups-datatable" class="table table-hover datatable">
+    <thead>
+        <tr>
+            <th width="10"></th>
+            <th>{{ trans('global.group.fields.title') }}</th>
+            <th>{{ trans('global.grade.title_singular') }}</th>
+            <th>{{ trans('global.period.title_singular') }}</th>
+            <th>{{ trans('global.organization.title_singular') }}</th>
+            <th>{{ trans('global.datatables.action') }}</th>
+        </tr>
+    </thead>
+</table>
+ 
     
     <div class="row ">
         <div class="col-sm-12">
@@ -70,7 +69,7 @@
             </div>
         </div><!-- ./col-xs-12 -->  
     </div>
-</div>
+
 
 
 @endsection
@@ -95,22 +94,18 @@ $(document).ready( function () {
     @endcan
     
     var table = $('#groups-datatable').DataTable({
-        processing: true,
-        serverSide: true,
         ajax: "{{ url('groups/list') }}",
-        columns: [
+        columns: 
+            [
                  { data: 'check'},
                  { data: 'title' },
                  { data: 'grade' },
                  { data: 'period' },
                  { data: 'organization' },
                  { data: 'action' }
-                ],
+            ],
         buttons: dtButtons
     });
-    //align header/body
-    $(".dataTables_scrollHeadInner").css({"width":"100%"});
-    $(".table ").css({"width":"100%"});
  });
  
 function enroleToCurricula(){

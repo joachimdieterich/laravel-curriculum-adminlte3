@@ -31,7 +31,7 @@ class Kernel extends HttpKernel
         ],
         'client_credentials' => [
             \Laravel\Passport\Http\Middleware\CheckClientCredentials::class,
-            'throttle:60,1',
+            //'throttle:60,1',
             'bindings',
         ],
         'saml' => [

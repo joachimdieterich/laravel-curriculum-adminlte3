@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-
+use Aacotroneo\Saml2\Saml2Auth;
+use Illuminate\Http\Request;
 class LoginController extends Controller
 {
     /*
@@ -35,5 +36,24 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+    
+    public function logout(Request $request)
+    {
+        if (( env('SAML2_RLP_IDP_SSO_URL') !== null ) AND ( !empty(env('SAML2_RLP_IDP_SSO_URL')) ) )
+        {
+            return Saml2Auth::logout();
+        }
+        else 
+        {
+            $this->guard()->logout();
+
+            $request->session()->invalidate();
+
+            $request->session()->regenerateToken();
+
+            return $this->loggedOut($request) ?: redirect('/');
+        }
+        
     }
 }

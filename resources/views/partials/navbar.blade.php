@@ -65,6 +65,7 @@
           <a href="#" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
             <i class="fas fa-power-off mr-2 text-white"></i> {{ trans('global.logout') }}
           </a>
+          @endif
                    
         </div>
       </li>

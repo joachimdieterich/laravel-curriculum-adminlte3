@@ -37,7 +37,7 @@ return $settings = array(
      * Indicates how the parameters will be
      * retrieved from the sls request for signature validation
      */
-    'retrieveParametersFromServer' => false,
+    'retrieveParametersFromServer' => true,
 
     /**
      * Where to redirect after logout

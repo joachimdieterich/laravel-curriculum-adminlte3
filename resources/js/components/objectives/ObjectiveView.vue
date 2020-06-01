@@ -42,6 +42,19 @@
                                data-toggle="tab">{{ trans('global.description') }}</a>
                         </li>
                         
+                        <li class="nav-item">
+                            <a class="nav-link" 
+                               href="#related_objectives" 
+                               data-toggle="tab">
+                                <span v-if="type === 'terminal'" >
+                                    {{ trans('global.enablingObjective.title') }}
+                                </span>
+                                <span v-else >
+                                    {{ trans('global.terminalObjective.title_singular') }}
+                                </span>
+                            </a>
+                        </li>
+                        
                         <li class="nav-item" v-for="(item,index) in contentCategories" v-bind:value="'category_'+item.id">
                             <a class="nav-link" 
                                v-bind:href="'#category_'+item.id" 
@@ -49,14 +62,14 @@
                         </li>
                         
                         <li v-for="typetab in typetabs" class="nav-item">
-                        <a class="nav-link " 
-                           v-bind:href="'#tab_' + typetab.id" 
-                           data-toggle="tab">
-                           {{ typetab.title }}
-                        </a>
-                    </li>
+                            <a class="nav-link " 
+                               v-bind:href="'#tab_' + typetab.id" 
+                               data-toggle="tab">
+                               {{ typetab.title }}
+                            </a>
+                        </li>    
                         
-                    </ul>
+                    </ul>   
 <!--dropdown start-->
                     <div 
                         v-can="'objective_edit'" 
@@ -88,6 +101,7 @@
                         </div>
                     </div>
 <!--dropdown end-->
+                   
                 </div><!-- /.card-header -->
                 <div class="card-body">
                     <div class="tab-content">
@@ -95,6 +109,21 @@
                              id="description"  
                              v-html="objective.description"></div>
                         <!-- /.tab-pane -->
+                        <div class="tab-pane" 
+                             id="related_objectives" >
+                            <span v-if="type === 'enabling'">
+                                <ObjectiveBox type="terminal" 
+                                    :objective="objective.terminal_objective">
+                                </ObjectiveBox> 
+                            </span>
+                            <span v-else> 
+                                <ObjectiveBox 
+                                    v-for="enablingObjective in objective.enabling_objectives" 
+                                    type="enabling" 
+                                    :objective="enablingObjective">
+                                </ObjectiveBox> 
+                            </span>
+                        </div>
                         <!--                    1 Contents -->
                         <div class="tab-pane" 
                              v-for="(item,index) in contentCategories" 
@@ -168,6 +197,7 @@
     import Quotes from '../quote/Quotes';
     import ContentGroup from '../content/ContentGroup';
     import Repository from '../../../../app/Plugins/Repositories/resources/js/components/Media';
+    import ObjectiveBox from './ObjectiveBox'
 
     export default {
         props: {
@@ -331,6 +361,7 @@
             Quotes,
             ContentGroup,
             Repository,
+            ObjectiveBox,
         }
 
     }

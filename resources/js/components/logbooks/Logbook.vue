@@ -3,6 +3,7 @@
         <div class="col-md-12">
              <LogbookEntry 
                 v-for="entry in logbook.entries"
+                v-bind:key="entry.id"
                 :entry="entry"> 
             </LogbookEntry>
 <!--             The time line 

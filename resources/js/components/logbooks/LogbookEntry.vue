@@ -116,6 +116,7 @@
                          v-bind:id="'logbook_objectives_'+entry.id">
                         <objective-box 
                             v-for="terminal_subscription in entry.terminal_objective_subscriptions" 
+                            v-bind:key="terminal_subscription.id"
                             :objective="terminal_subscription.terminal_objective"
                             type="terminal"></objective-box>
                         <span class="clearfix"></span>

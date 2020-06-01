@@ -14,7 +14,7 @@ class AddUidToCurricula extends Migration
     public function up()
     {
         Schema::table('curricula', function (Blueprint $table) {
-            $table->char('ui', 31);
+            $table->char('ui', 31)->nullable();
         });
     }
 

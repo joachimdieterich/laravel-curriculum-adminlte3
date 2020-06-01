@@ -14,7 +14,7 @@ class AddUidToEnablingObjectives extends Migration
     public function up()
     {
         Schema::table('enabling_objectives', function (Blueprint $table) {
-            $table->char('ui', 31);
+            $table->char('ui', 31)->nullable();
         });
     }
 

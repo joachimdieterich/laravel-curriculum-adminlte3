@@ -23,7 +23,7 @@
                 <button id="add-logbook-entry" 
                    class="btn btn-success" 
                     onclick="app.__vue__.$modal.show('logbook-entry-modal',  {'logbook_id': {{ $logbook->id }} });">
-                   {{ trans('glo    bal.logbookEntry.create') }}
+                   {{ trans('global.logbookEntry.create') }}
                 </button>
             </div>
         </div>

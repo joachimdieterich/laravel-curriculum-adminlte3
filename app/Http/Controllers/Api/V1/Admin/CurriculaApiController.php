@@ -57,8 +57,10 @@ class CurriculaApiController extends Controller
         $prefix .= str_pad("001", 2, '0', STR_PAD_LEFT);
         
         // curriculum 
+        $curriculum->ui = $prefix."000000000000";
+        $curriculum->save();                         //persist unique curriulum identifier
         $metadata[] = [
-            'id'        => $prefix."000000000000", 
+            'id'        => $curriculum->ui, 
             'title'     => $curriculum->title, 
             'parent_id' => null
         ];
@@ -75,7 +77,7 @@ class CurriculaApiController extends Controller
                 $ter = 0;
                 $ter_type_previous_iteration = $terminalObjective->objective_type_id;
                 $ter_type++;
-                
+
                 $metadata[] = [
                     'id' => $prefix
                         .str_pad($ter_type, 3, '0', STR_PAD_LEFT)
@@ -88,11 +90,13 @@ class CurriculaApiController extends Controller
                 $ter = 1; //set/reset terminal_id
             } 
             // terminal objective
-            $metadata[] = [
-                'id' => $prefix
+            $terminalObjective->ui = $prefix
                     .str_pad($ter_type, 3, '0', STR_PAD_LEFT)
                     .str_pad($ter, 3, '0', STR_PAD_LEFT)
-                    ."000000", 
+                    ."000000";
+            $terminalObjective->save();                        //persist unique terminalobjective identifier
+            $metadata[] = [
+                'id' => $terminalObjective->ui, 
                 'title' => str_replace(array("\n", "\r", "\t"), ' ', strip_tags($terminalObjective->title)),
                 'parent_id' => $prefix
                     .str_pad($ter_type, 3, '0', STR_PAD_LEFT)
@@ -103,12 +107,14 @@ class CurriculaApiController extends Controller
             $ena = 1;
             foreach ($terminalObjective->enablingObjectives()->get() as $enablingObjective)
             {
-                $metadata[] = [
-                'id' => $prefix
+                $enablingObjective->ui = $prefix
                     .str_pad($ter_type, 3, '0', STR_PAD_LEFT)
                     .str_pad($ter, 3, '0', STR_PAD_LEFT)
                     .str_pad($ena, 3, '0', STR_PAD_LEFT)
-                    ."000", 
+                    ."000";
+                $enablingObjective->save();                        //persist unique enablingobjective identifier
+                $metadata[] = [
+                'id' => $enablingObjective->ui, 
                 'title' => str_replace(array("\n", "\r", "\t"), ' ', (strip_tags($enablingObjective->title))),
                 'parent_id' => $prefix
                     .str_pad($ter_type, 3, '0', STR_PAD_LEFT)

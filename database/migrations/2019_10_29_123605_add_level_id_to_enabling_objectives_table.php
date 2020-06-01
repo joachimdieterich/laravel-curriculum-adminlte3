@@ -29,7 +29,7 @@ class AddLevelIdToEnablingObjectivesTable extends Migration
     {
         Schema::table('enabling_objectives', function (Blueprint $table) {
             $table->dropForeign('level_id');
-            $table->dropColumn(level_id);//
+            $table->dropColumn('level_id');//
         });
     }
 }

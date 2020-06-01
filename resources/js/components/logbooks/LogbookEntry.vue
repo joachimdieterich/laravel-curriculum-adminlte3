@@ -246,17 +246,13 @@
                    .filter(e => arr[e]).map(e => arr[e]);
 
                  return unique;
-             },
-             
-             deleteTask(task){
-                 alert('deleteTask');
-             },
-             say: function (msg) {
+            },
+            say: function (msg) {
                 alert(msg);
             },
             postDate() {
-                var start = new Date(this.entry.begin);
-                var end = new Date(this.entry.end);
+                var start = new Date(this.entry.begin.replace(/-/g, "/"));
+                var end   = new Date(this.entry.end.replace(/-/g, "/"));
 
                 if (start.toDateString() === end.toDateString()) {
                   return this.entry.begin + " - " + end.toLocaleTimeString();

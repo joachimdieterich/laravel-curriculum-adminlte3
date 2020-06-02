@@ -16,7 +16,7 @@
                     <img id="holder" 
                         class="profile-user-img img-fluid img-circle" 
                         style="height:100px;" 
-                        src="{{ (auth()->user()->medium_id !== null) ? '/media/'.auth()->user()->medium_id  : Avatar::create(auth()->user()->fullName())->toBase64() }}" 
+                        src="{{ ($user->medium_id !== null) ? '/media/'.$user->medium_id  : Avatar::create($user->fullName())->toBase64() }}" 
                         alt="User profile picture">
                 </div>
                 <input id="thumbnail" 

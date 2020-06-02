@@ -33,44 +33,41 @@
     </thead>
 </table>
  
-    
-    <div class="row ">
-        <div class="col-sm-12">
-            <div class="card-body">  
-                <div class="form-horizontal col-xs-12">
-                    @include ('forms.input.info', ["value" => trans('global.enrol_info')])
+<hr>
 
-                    @include ('forms.input.select', 
-                        ["model" => "curriculum", 
-                        "show_label" => true,
-                        "multiple" => true,
-                        "field" => "group_curricula",  
-                        "options"=> $curricula, 
-                        "option_label" => "title",    
-                        "value" =>  old('group_id', isset($user->current_group_id) ? $user->current_group_id : '')])     
+<div class="row ">
+    <div class="col-sm-12">
+        <div class="form-horizontal col-xs-12">
+            @include ('forms.input.info', ["value" => trans('global.enrol_info')])
 
-                    <div class="btn-group pull-right" role="group" aria-label="...">    
-                        @include ('forms.input.button', 
-                            ["onclick" => "enroleToCurricula()", 
-                            "field" => "enroleToCurricula", 
-                            "type" => "button", "class" => 
-                            "btn btn-default pull-right mt-3", 
-                            "icon" => "fa fa-plus", 
-                            "label" => "In Lehrplan einschreiben"])
-                        @include ('forms.input.button', 
-                            ["onclick" => "expelFromCurricula()", 
-                            "field" => "expelFromCurricula", 
-                            "type" => "button", 
-                            "class" => "btn btn-default pull-right mt-3", 
-                            "icon" => "fa fa-minus", 
-                            "label" => "Aus Lehrplan ausschreiben"])
-                    </div>
-                </div>
+            @include ('forms.input.select', 
+                ["model" => "curriculum", 
+                "show_label" => true,
+                "multiple" => true,
+                "field" => "group_curricula",  
+                "options"=> $curricula, 
+                "option_label" => "title",    
+                "value" =>  old('group_id', isset($user->current_group_id) ? $user->current_group_id : '')])     
+
+            <div class="btn-group pull-right" role="group" aria-label="...">    
+                @include ('forms.input.button', 
+                    ["onclick" => "enroleToCurricula()", 
+                    "field" => "enroleToCurricula", 
+                    "type" => "button", "class" => 
+                    "btn btn-default pull-right mt-3", 
+                    "icon" => "fa fa-plus", 
+                    "label" => "In Lehrplan einschreiben"])
+                @include ('forms.input.button', 
+                    ["onclick" => "expelFromCurricula()", 
+                    "field" => "expelFromCurricula", 
+                    "type" => "button", 
+                    "class" => "btn btn-default pull-right mt-3", 
+                    "icon" => "fa fa-minus", 
+                    "label" => "Aus Lehrplan ausschreiben"])
             </div>
-        </div><!-- ./col-xs-12 -->  
-    </div>
-
-
+        </div>
+    </div><!-- ./col-xs-12 -->  
+</div>
 
 @endsection
 @section('scripts')

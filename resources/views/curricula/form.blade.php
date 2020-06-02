@@ -31,7 +31,7 @@
             "show_label" => true,
             "field" => "subject_id",  
             "options"=> $subjects, 
-            "option_id" => "external_id",
+            "option_id" => "id",
             "value" => old('subject_id', isset($curriculum->subject_id) ? $curriculum->subject_id : '') ])                                                          
                 
 @include ('forms.input.select', 

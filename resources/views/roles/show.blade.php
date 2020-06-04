@@ -9,22 +9,20 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-4">
+    <div class="col-lg-4 col-sm-12">
         <div class="card card-primary">
             <div class="card-header">
-                <div class="row">
-                    <div class="col-11">
-                        <h5 class="m-0">
-                            <i class="fas fa-user-tag mr-1"></i> {{ $role->title }}
-                        </h5>
-                    </div>
-                    <div>
-                        @can('role_edit')
-                             <a href="{{ route('roles.edit', $role->id) }}" >
-                                <i class="far fa-edit"></i>
-                             </a> 
-                        @endcan 
-                    </div>
+                <div class="card-title">
+                    <h5 class="m-0">
+                        <i class="fas fa-user-tag mr-1"></i> {{ $role->title }}
+                    </h5>
+                </div>
+                @can('role_edit')
+                <div class="card-tools pr-2">
+                    <a href="{{ route('roles.edit', $role->id) }}" >
+                       <i class="far fa-edit"></i>
+                    </a> 
+                @endcan 
                 </div>
             </div>
               <!-- /.card-header -->
@@ -43,7 +41,7 @@
         </div>
     </div>
     
-    <div class="col-md-8">
+    <div class="col-lg-8 col-sm-12">
             <div class="card">
               <div class="card-header p-2">
                 <ul class="nav nav-pills">

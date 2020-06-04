@@ -9,23 +9,21 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-4">
+    <div class="col-lg-4 col-sm-12">
         <div class="card card-primary">
             <div class="card-header">
-                <div class="row">
-                    <div class="col-11">
-                        <h5 class="m-0">
-                            <i class="fa fa-tasks mr-1"></i> {{ $task->title }}
-                        </h5>
-                    </div>
-                    <div>
-                        @can('task_edit')
-                        <a @click.prevent="$modal.show('task-modal', {'method': 'patch', 'id': '{{ $task->id }}'})" >
-                            <i class="far fa-edit"></i>
-                        </a> 
-                        @endcan 
-                    </div>
+                <div class="card-title">
+                    <h5 class="m-0">
+                        <i class="fa fa-tasks mr-1"></i> {{ $task->title }}
+                    </h5>
                 </div>
+                @can('task_edit')
+                <div class="card-tools pr-2">
+                    <a @click.prevent="$modal.show('task-modal', {'method': 'patch', 'id': '{{ $task->id }}'})" >
+                        <i class="far fa-edit"></i>
+                    </a> 
+                </div>
+                @endcan 
             </div>
             <!-- /.card-header -->
             <div class="card-body">

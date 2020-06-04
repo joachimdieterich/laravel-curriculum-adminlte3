@@ -195,15 +195,15 @@ class UsersController extends Controller
     public function massDestroy(MassDestroyUserRequest $request)
     {
         User::whereIn('id', request('ids'))->delete();
-        
-        
+           
         return response(null, 204);
     }
+    
     public function setCurrentOrganization()
     {
         User::where('id', auth()->user()->id)->update([
             'current_organization_id' => request('current_organization_id')
-                ]); 
+        ]); 
         
         return back();
     }

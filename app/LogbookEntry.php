@@ -24,12 +24,12 @@ class LogbookEntry extends Model
     
     public function enablingObjectiveSubscriptions()
     {
-        return $this->morphMany('App\enablingObjectiveSubscriptions', 'subscribable');
+        return $this->morphMany('App\EnablingObjectiveSubscriptions', 'subscribable');
     }
     
     public function terminalObjectiveSubscriptions()
     {
-        return $this->morphMany('App\terminalObjectiveSubscriptions', 'subscribable');
+        return $this->morphMany('App\TerminalObjectiveSubscriptions', 'subscribable');
     }
     
     public function taskSubscription()

@@ -117,20 +117,22 @@ class NavigatorItemController extends Controller
         ]);
         
         /* subscribe image */
-        if ($new_navigator_item['filepath'] != null OR $new_navigator_item['medium_id'] != null)
-        {    
-            if ($new_navigator_item['filepath'] != null)
-            {
-                $medium = $medium->getByFilemanagerPath($new_navigator_item['filepath']);
+        if (format_select_input($new_navigator_item['referenceable_type']) != 'App\Content')
+        {
+            if ($new_navigator_item['filepath'] != null OR $new_navigator_item['medium_id'] != null)
+            {    
+                if ($new_navigator_item['filepath'] != null)
+                {
+                    $medium = $medium->getByFilemanagerPath($new_navigator_item['filepath']);
+                }
+                else 
+                {
+                    $medium = Medium::find(format_select_input($new_navigator_item['medium_id'])); 
+                }
+
+                $medium->subscribe($navigator_item);
             }
-            else 
-            {
-                $medium = Medium::find(format_select_input($new_navigator_item['medium_id'])); 
-            }
-            
-            $medium->subscribe($navigator_item);
         }
-        
         
         // axios call? 
         if (request()->wantsJson()){    

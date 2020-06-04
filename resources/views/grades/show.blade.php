@@ -9,51 +9,46 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-4">
+    <div class="col-lg-4 col-sm-12">
         <div class="card card-primary">
             <div class="card-header">
-                <div class="row">
-                    <div class="col-11">
-                        <h5 class="m-0">
-                            <i class="fa fa-history mr-1"></i> {{ $grade->title }}
-                        </h5>
-                    </div>
-                    <div>
-                        @can('grade_edit')
-                             <a href="{{ route('grades.edit', $grade->id) }}" >
-                                <i class="far fa-edit"></i>
-                             </a> 
-                        @endcan 
-                    </div>
+                <div class="card-title">
+                    <h5 class="m-0">
+                        <i class="fa fa-history mr-1"></i> {{ $grade->title }}
+                    </h5>
                 </div>
+                @can('grade_edit')
+                <div class="card-tools pr-2">
+                    <a href="{{ route('grades.edit', $grade->id) }}" >
+                       <i class="far fa-edit"></i>
+                    </a> 
+                </div>
+                @endcan 
             </div>
-              <!-- /.card-header -->
-              <div class="card-body"> 
-                
+            <!-- /.card-header -->
+            <div class="card-body"> 
+
                 <strong><i class="fa fa-calendar mr-1"></i> {{ trans('global.grade.title_singular') }}</strong>
 
                 <p class="text-muted">
-                  {{ $grade->external_begin }} - {{ $grade->external_end }}
+                    {{ $grade->external_begin }} - {{ $grade->external_end }}
                 </p>
-                  
+
                 <hr>
                 <strong><i class="fa fa-university mr-1"></i> {{ trans('global.organizationtype.title_singular') }}</strong>
 
                 <p class="text-muted">
-                  {{ optional($grade->organizationType)->title }}
+                    {{ optional($grade->organizationType)->title }}
                 </p>
 
-                
-              </div>
-              <!-- /.card-body -->
-              <div class="card-footer">
-                <div class="float-left">
-                 
-                </div>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+                <div class="float-left"></div>
                 <small class="float-right">
                     {{ $grade->updated_at }}
                 </small> 
-              </div>
+            </div>
         </div>
     </div>
     

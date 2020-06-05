@@ -153,7 +153,13 @@
                 return this.type + '_' +this.objective.id;
             },
             opacity: function () {
-                return this.visibility/100;
+                if (this.objective.visibility == false) {
+                    this.visibility = 20/100;
+                    return this.visibility;
+                } else {
+                    return this.visibility/100;
+                }
+                
             },
             filter: function () {
                 return "alpha(opacity="+this.visibility+")";

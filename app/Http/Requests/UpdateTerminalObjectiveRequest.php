@@ -36,6 +36,9 @@ class UpdateTerminalObjectiveRequest extends FormRequest
             'order_id'  => [
                 'sometimes',
             ],
+             'visibility'  => [
+                'sometimes',
+            ],
           
         ];
     } 

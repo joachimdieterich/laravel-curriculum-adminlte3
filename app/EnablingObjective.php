@@ -13,7 +13,12 @@ class EnablingObjective extends Model
                             'curriculum_id',
                             'terminal_objective_id',
                             'level_id',
+                            'visibility',
                           ];
+    protected $casts = [
+        'visibility' => 'boolean',
+    ];
+
     protected $with = ['terminalObjective', 'level'];
     
     public function path(){

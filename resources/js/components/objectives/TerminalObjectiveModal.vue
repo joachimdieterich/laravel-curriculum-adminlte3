@@ -87,7 +87,10 @@
                         <p class="help-block" v-if="form.errors.objective_type_id" v-text="form.errors.objective_type_id[0]"></p>   
 
                     </div>
-
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="visibility" v-model="form.visibility" >
+                        <label class="form-check-label" for="visibility">{{ trans('global.navigator_item.fields.visibility_show') }}</label>
+                    </div>
                 </div>
                 <div class="card-footer">
                     <span class="pull-right">
@@ -119,6 +122,7 @@
                     'time_approach': '',
                     'curriculum_id': '',
                     'objective_type_id': '',
+                    'visibility': true,
                 }),
             }
         },

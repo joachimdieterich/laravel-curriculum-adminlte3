@@ -13,7 +13,11 @@ class TerminalObjective extends Model
                             'time_approach',
                             'curriculum_id',
                             'objective_type_id',
+                            'visibility',
                           ];
+    protected $casts = [
+        'visibility' => 'boolean',
+    ];
     
     public function path(){
         return "/curricula/{$this->curriculum_id}";

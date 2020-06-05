@@ -30,6 +30,9 @@ class StoreEnablingObjectiveRequest extends FormRequest
             'terminal_objective_id'  => [
                 'required',
             ],
+            'visibility'  => [
+                'sometimes',
+            ],
         ];
     }
 }

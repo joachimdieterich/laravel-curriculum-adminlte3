@@ -84,6 +84,10 @@
                     </multiselect>
                     <p class="help-block" v-if="form.errors.objective_type_id" v-text="form.errors.objective_type_id[0]"></p>   
                 </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="visibility" v-model="form.visibility" >
+                    <label class="form-check-label" for="visibility">{{ trans('global.navigator_item.fields.visibility_show') }}</label>
+                </div>
             </div>
                 <div class="card-footer">
                     <span class="pull-right">
@@ -115,6 +119,7 @@
                     'curriculum_id': '',
                     'terminal_objective_id': '',
                     'level_id': null,
+                    'visibility': true,
                 }),
             }
         },
@@ -159,7 +164,7 @@
             submit() {
                 var method = this.method.toLowerCase();
                 this.form.title = tinyMCE.get('title').getContent();
-                this.form.description = tinyMCE.get('description').getContent();
+                this.form.description = tinyMCE.get('description').getContent(); 
                 if (method === 'patch'){
                     this.requestUrl += '/'+this.form.id;
                 } 

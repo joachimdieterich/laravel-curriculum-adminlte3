@@ -33,6 +33,9 @@ class StoreTerminalObjectiveRequest extends FormRequest
             'objective_type_id'  => [
                 'required',
             ],
+             'visibility'  => [
+                'sometimes',
+            ],
         ];
     }
 }

@@ -33,6 +33,9 @@ class UpdateEnablingObjectiveRequest extends FormRequest
             'order_id'  => [
                 'sometimes',
             ],
+             'visibility'  => [
+                'sometimes',
+            ],
           
         ];
     } 

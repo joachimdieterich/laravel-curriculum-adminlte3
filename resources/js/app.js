@@ -24,13 +24,14 @@ Vue.prototype.$initTinyMCE = function (options) {
         selector: "textarea.my-editor",
         branding:false,
         plugins: [
-          "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-          "searchreplace wordcount visualblocks visualchars code fullscreen",
-          "insertdatetime media nonbreaking save table contextmenu directionality",
-          "emoticons template paste textcolor colorpicker textpattern"
+            "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+            "searchreplace wordcount visualblocks visualchars code fullscreen",
+            "insertdatetime media nonbreaking save table contextmenu directionality",
+            "emoticons template paste textcolor colorpicker textpattern"
         ],
         toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
         relative_urls: false,
+        entity_encoding : "raw",
 
         file_browser_callback : function(field_name, url, type, win) {
             var x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
@@ -40,22 +41,22 @@ Vue.prototype.$initTinyMCE = function (options) {
                 cmsURL = cmsURL + "&type=Files";
 
             tinyMCE.activeEditor.windowManager.open({
-                  file : cmsURL,
-                  title : 'Filemanager',
-                  width : x * 0.8,
-                  height : y * 0.8,
-                  resizable : "yes",
-                  close_previous : "no"
+                file : cmsURL,
+                title : 'Filemanager',
+                width : x * 0.8,
+                height : y * 0.8,
+                resizable : "yes",
+                close_previous : "no"
             });
-        },
+        }
     });
-}
+};
 
 import VModal from 'vue-js-modal';
 Vue.use(VModal, { dynamic: true});
 
-import Sticky from 'vue-sticky-directive'
-Vue.use(Sticky)
+import Sticky from 'vue-sticky-directive';
+Vue.use(Sticky);
 
 /**
  * The following block of code may be used to automatically register your

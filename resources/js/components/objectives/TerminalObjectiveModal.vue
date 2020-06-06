@@ -87,6 +87,9 @@
                         <p class="help-block" v-if="form.errors.objective_type_id" v-text="form.errors.objective_type_id[0]"></p>   
 
                     </div>
+                   <ColorPicker 
+                       :color="form.color" 
+                       v-model="form.color"></ColorPicker>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="visibility" v-model="form.visibility" >
                         <label class="form-check-label" for="visibility">{{ trans('global.navigator_item.fields.visibility_show') }}</label>
@@ -106,6 +109,7 @@
 <script>
     import Form from 'form-backend-validation';
     import Multiselect from 'vue-multiselect';
+    import ColorPicker from '../uiElements/ColorPicker';
 
     export default {
         data() {
@@ -124,6 +128,13 @@
                     'objective_type_id': '',
                     'visibility': true,
                 }),
+                colors: {
+                    hex: '#194d33',
+                    hsl: { h: 150, s: 0.5, l: 0.2, a: 1 },
+                    hsv: { h: 150, s: 0.66, v: 0.30, a: 1 },
+                    rgba: { r: 25, g: 77, b: 51, a: 1 },
+                    a: 1
+                  }
             }
         },
 
@@ -196,6 +207,7 @@
         },
         components: {
             Multiselect,
+            ColorPicker
         },
     }
 </script>

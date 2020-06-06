@@ -28,6 +28,7 @@
             <th>{{ trans('global.curriculum.fields.title') }}</th>
             <th>{{ trans('global.grade.title_singular') }}</th>
             <th>{{ trans('global.subject.title_singular') }}</th>
+            <th>{{ trans('global.organizationtype.title_singular') }}</th>
             <th>{{ trans('global.owner') }}</th>
             <th></th>
         </tr>
@@ -50,6 +51,7 @@ $(document).ready( function () {
             { data: 'title' },
             { data: 'grade' },
             { data: 'subject' },
+            { data: 'organizationtype' },
             { data: 'owner' },
             { data: 'action' }
         ],

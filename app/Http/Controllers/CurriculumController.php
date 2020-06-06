@@ -57,6 +57,7 @@ class CurriculumController extends Controller
             'country_id',
             'grade_id',
             'subject_id',
+            'organization_type_id',
             'owner_id',
             ]);
         } else {
@@ -67,6 +68,7 @@ class CurriculumController extends Controller
             'country_id',
             'grade_id',
             'subject_id',
+            'organization_type_id',
             'owner_id',
             ])->where('owner_id', auth()->user()->id);
         }
@@ -74,19 +76,22 @@ class CurriculumController extends Controller
         
         return DataTables::of($curricula)
             ->addColumn('state', function ($curricula) {
-                return isset($curricula->state()->first()->lang_de) ? $curricula->state()->first()->lang_de : '-';                
+                return isset($curricula->state->lang_de) ? $curricula->state->lang_de : '-';                
             })
             ->addColumn('country', function ($curricula) {
-                return $curricula->country()->first()->lang_de;                
+                return $curricula->country->lang_de;                
             })
             ->addColumn('grade', function ($curricula) {
-                return $curricula->grade()->first()->title;                
+                return $curricula->grade->title;                
             })
             ->addColumn('subject', function ($curricula) {
-                return $curricula->subject()->first()->title;
+                return $curricula->subject->title;
+            })
+            ->addColumn('organizationtype', function ($curricula) {
+                return $curricula->organizationType->title;
             })
             ->addColumn('owner', function ($curricula) {
-                return $curricula->owner()->first()->firstname.' '.$curricula->owner()->first()->lastname;                
+                return $curricula->owner->firstname.' '.$curricula->owner->lastname;                
             })
             ->addColumn('action', function ($curricula) {
                  $actions  = '';

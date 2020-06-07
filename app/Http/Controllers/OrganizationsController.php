@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 
 use App\Organization;
+use App\User;
 use App\Http\Requests\MassDestroyOrganizationRequest;
 use App\StatusDefinition;
 use App\OrganizationRoleUser;
@@ -209,9 +210,18 @@ class OrganizationsController extends Controller
         foreach ((request()->expel_list) AS $expel)
         {  
             $return[] = OrganizationRoleUser::where([
-                                        'user_id'         => $expel['user_id'],
-                                        'organization_id' => $expel['organization_id'],
-                                    ])->delete();
+                'user_id'         => $expel['user_id'],
+                'organization_id' => $expel['organization_id'],
+            ])->delete();
+            
+            // if users current_organization_id is equal to expelled organization reset current_organization_id
+            $u = \App\User::find($expel['user_id']);
+            
+            if ($u->current_organization_id == $expel['organization_id'])
+            {
+                $u->current_organization_id = $u->organizations()->first()->id;
+                $u->save();
+            } 
         }
         
         return $return;  

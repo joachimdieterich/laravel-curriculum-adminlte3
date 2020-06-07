@@ -13,7 +13,7 @@
   white-space: nowrap;
   padding: 0.5rem 1rem !important;
   background-color: $lime !important;;
-
+  position: static !important;
   &:hover {
     color: $white;
     text-decoration: none;

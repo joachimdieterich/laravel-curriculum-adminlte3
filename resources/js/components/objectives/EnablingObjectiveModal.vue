@@ -15,14 +15,12 @@
             <div class="card-header">
                 <h3 class="card-title">
                     <span v-if="method === 'post'">
-                        {{ trans('global.create')  }} 
+                        {{ trans('global.enablingObjective.create')  }} 
                     </span>
-                    
+
                     <span v-if="method === 'patch'">
-                        {{ trans('global.update')  }} 
+                        {{ trans('global.enablingObjective.edit')  }} 
                     </span>
-                   
-                    {{ trans('global.enablingObjective.title_singular') }}
                 </h3>
                 
                 <div class="card-tools">

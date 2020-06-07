@@ -14,16 +14,13 @@
         <div class="card" style="margin-bottom: 0px !important">
             <div class="card-header">
                 <h3 class="card-title">
-
                     <span v-if="method === 'post'">
-                        {{ trans('global.create')  }} 
+                        {{ trans('global.terminalObjective.create')  }} 
                     </span>
 
                     <span v-if="method === 'patch'">
-                        {{ trans('global.update')  }} 
+                        {{ trans('global.terminalObjective.edit')  }} 
                     </span>
-
-                    {{ trans('global.terminalObjective.title_singular') }}
                 </h3>
 
                 <div class="card-tools">

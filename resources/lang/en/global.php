@@ -832,14 +832,18 @@ return [
             'priority_id_helper'  => '',
        ],
     ],
-    'userStatus' =>[
-        'title'             => 'Users statuses',
-        'title_singular'    => 'Users status',
-        'create'            => 'Create users statuses',
-        'edit'              => 'Edit users statuses',
+    'absences' =>[
+        'title'             => 'Absences',
+        'title_singular'    => 'Absence',
+        'create'            => 'Absence erstellen',
+        'edit'              => 'Absence bearbeiten',
         'fields'            => [
             'id'            => 'ID',
             'id_helper'     => '',
+            'title'         => 'Title',
+            'title_helper'  => '',
+            'done'          => 'done',
+            'done_helper'   => '',
        ],
     ],
      'externalRepositorySubscription' =>[

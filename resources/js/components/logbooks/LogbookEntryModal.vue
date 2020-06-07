@@ -93,9 +93,9 @@
                     'title': '',
                     'description': '',
                     'begin': '',
-                    'end': '',
-                }),
-            }
+                    'end': ''
+                })
+            };
         },
         methods: {
             async submit() {

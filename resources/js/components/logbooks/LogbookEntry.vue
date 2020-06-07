@@ -9,26 +9,7 @@
                       <i class="fa fa-edit mt-3"
                          @click.prevent="edit()"></i>
                   </span>
-                </span>
-                <span class="description ml-0">{{ postDate() }}</span>
-            </div>
-            
-            <span class="clearfix"></span>
-            <hr class="my-1">
-            <span class="" v-html="entry.description"></span>
-            
-            <button
-                class="btn disabled py-1 px-2 collapsed fa fa-angle-down"
-                data-toggle="collapse" 
-                :href="'#additions_'+entry.id"
-                :aria-controls="'additions_'+entry.id"
-                @click="$event.target.classList.toggle('fa-angle-up')"
-                >
-            </button>
-            
-            <div :id="'additions_'+entry.id" class="collapse">
-                <hr class="mt-0 mb-2">
-                <div class="pull-left" v-can="'logbook_entry_edit'">
+                  <div class="pull-right" v-can="'logbook_entry_edit'">
                     <div class="btn-group" >
                     <button type="button " 
                             class="btn btn-default btn-sm dropdown-toggle " 
@@ -57,59 +38,75 @@
                             <i class="fa fa-tasks"></i>
                             <span class="ml-2">{{ trans('global.task.create') }}</span>
                         </button>
-                        <button class="dropdown-item" @click="say('Nicht verfügbar.')">
+                        <button class="dropdown-item" @click.prevent="open('absence-modal', 'referenceable');">
                             <i class="fa fa-user-times"></i>
-                            <span class="ml-2">{{ trans('global.userStatus.create') }}</span>
+                            <span class="ml-2">{{ trans('global.absences.create') }}</span>
                         </button>
-                        
+
                     </div>
                   </div>
                 </div>
-                
-                <ul class="nav nav-pills pull-right">
-                    <li class="nav-item small">
-                        <a class="nav-link active show" 
-                           v-bind:href="'#logbook_media_'+entry.id" 
-                           data-toggle="tab">
-                            {{ trans('global.media.title') }}
-                        </a>
-                    </li>
-                    <li class="nav-item small">
-                        <a class="nav-link" 
-                           v-bind:href="'#logbook_objectives_'+entry.id" 
-                           data-toggle="tab">
-                            {{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}
-                        </a>
-                    </li>
-                    <li class="nav-item small">
-                        <a class="nav-link" 
-                           v-bind:href="'#logbook_contents_'+entry.id" 
-                           data-toggle="tab">{{ trans('global.content.title') }}</a>
-                    </li>
-                    <li class="nav-item small">
-                        <a class="nav-link" 
-                           v-bind:href="'#logbook_tasks_'+entry.id" 
-                           data-toggle="tab">{{ trans('global.task.title') }}</a>
-                    </li>
-                    <li class="nav-item small">
-                        <a class="nav-link" 
-                           v-bind:href="'#logbook_userStatuses_'+entry.id" 
-                           data-toggle="tab">{{ trans('global.userStatus.title') }}</a>
-                    </li>
-                </ul>   
+                </span>
+                <span class="description ml-0">{{ postDate() }}</span>
             </div>
+            
             <span class="clearfix"></span>
+            
+            <ul class="nav nav-pills pull-right">
+                <li class="nav-item small">
+                    <a class="nav-link active show" 
+                       v-bind:href="'#logbook_description_'+entry.id" 
+                       data-toggle="tab">
+                        {{ trans('global.logbook.fields.description') }}
+                    </a>
+                </li>
+                <li class="nav-item small">
+                    <a class="nav-link" 
+                       v-bind:href="'#logbook_media_'+entry.id" 
+                       data-toggle="tab">
+                        {{ trans('global.media.title') }}
+                    </a>
+                </li>
+                <li class="nav-item small">
+                    <a class="nav-link" 
+                       v-bind:href="'#logbook_objectives_'+entry.id" 
+                       data-toggle="tab">
+                        {{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}
+                    </a>
+                </li>
+                <li class="nav-item small">
+                    <a class="nav-link" 
+                       v-bind:href="'#logbook_contents_'+entry.id" 
+                       data-toggle="tab">{{ trans('global.content.title') }}</a>
+                </li>
+                <li class="nav-item small">
+                    <a class="nav-link" 
+                       v-bind:href="'#logbook_tasks_'+entry.id" 
+                       data-toggle="tab">{{ trans('global.task.title') }}</a>
+                </li>
+                <li class="nav-item small">
+                    <a class="nav-link" 
+                       v-bind:href="'#logbook_userStatuses_'+entry.id" 
+                       data-toggle="tab">{{ trans('global.absences.title') }}</a>
+                </li>
+            </ul>  
+            <span class="clearfix"></span>
+            <hr class="m-1">
+            
+
             <div class="card-body p-2">
                 <div class="tab-content">
                     <!-- tab-pane -->
                     <div class="tab-pane active show" 
+                         v-bind:id="'logbook_description_'+entry.id">
+                         <span class="" v-html="entry.description"></span>
+                    </div>
+                    <!-- /.tab-pane -->
+                    <div class="tab-pane" 
                          v-bind:id="'logbook_media_'+entry.id">
-                        
                         <span v-for="subscription in entry.media_subscriptions">
                            <medium :subscription="subscription" :medium="subscription.medium" ></medium>  
-                        </span>
-                        
-                        
+                        </span> 
                     </div>
                     <!-- /.tab-pane -->
                     <div class="tab-pane" 
@@ -161,7 +158,7 @@
                     </div>
                     <!-- /.tab-pane -->
                     <!-- tab-pane -->
-                    <div class="tab-pane  show" 
+                    <div class="tab-pane show" 
                          v-bind:id="'logbook_tasks_'+entry.id"  
                          >
                          <task-list  class="p-2"
@@ -171,7 +168,7 @@
                     </div>
                     <!-- /.tab-pane -->
                     <!-- tab-pane -->
-                    <div class="tab-pane  show" 
+                    <div class="tab-pane show" 
                          v-bind:id="'logbook_userStatuses_'+entry.id"  
                          >logbook_userStatuses</div>
                     <!-- /.tab-pane -->
@@ -193,32 +190,37 @@
     export default {
         
         props: {
-            'entry': Object,
+            'logbook': Object,
+            'entry': Object
         },
         data() {
             return {
-                media: {},
+                media: {}
               
-            }
+            };
         },
         methods: {
             open(modal, relationKey) {
-                if (relationKey == 'referenceable'){
-                     this.$modal.show(modal, { 'referenceable_type': 'App\\LogbookEntry', 'referenceable_id' : this.entry.id});
+                if (modal === 'absence-modal'){
+                   // alert(JSON.stringify(_.merge({ 'referenceable_type': 'App\\LogbookEntry', 'referenceable_id': this.entry.id}, this.logbook)));
+                   
+                    this.$modal.show(modal, JSON.stringify(_.merge({ 'referenceable_type': 'App\\LogbookEntry', 'referenceable_id': this.entry.id}, this.logbook)));
+                }
+                else if (relationKey === 'referenceable'){
+                    this.$modal.show(modal, { 'referenceable_type': 'App\\LogbookEntry', 'referenceable_id': this.entry.id });
                 } else {
-                     this.$modal.show(modal, { 'subscribable_type': 'App\\LogbookEntry', 'subscribable_id' : this.entry.id});
-                     
+                    this.$modal.show(modal, { 'subscribable_type': 'App\\LogbookEntry', 'subscribable_id': this.entry.id });
                 }
                 //open tab
                 switch (modal) {
                     case "logbook-subscribe-objective-modal": 
-                        $('.nav-item a[href="#logbook_objectives_'+this.entry.id+'"]').tab('show')
+                        $('.nav-item a[href="#logbook_objectives_'+this.entry.id+'"]').tab('show');
                     break;
                     case "content-create-modal": 
-                        $('.nav-item a[href="#logbook_contents_1'+this.entry.id+'"]').tab('show')
+                        $('.nav-item a[href="#logbook_contents_1'+this.entry.id+'"]').tab('show');
                     break;
                     case "task-modal": 
-                        $('.nav-item a[href="#logbook_tasks_1'+this.entry.id+'"]').tab('show')
+                        $('.nav-item a[href="#logbook_tasks_1'+this.entry.id+'"]').tab('show');
                     break;
                 }
                

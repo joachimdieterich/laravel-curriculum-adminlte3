@@ -4,7 +4,8 @@
              <LogbookEntry 
                 v-for="entry in logbook.entries"
                 v-bind:key="entry.id"
-                :entry="entry"> 
+                :entry="entry"
+                :logbook="logbook"> 
             </LogbookEntry>
 <!--             The time line 
             <div class="timeline">

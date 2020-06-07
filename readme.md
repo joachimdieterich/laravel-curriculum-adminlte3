@@ -10,13 +10,12 @@ curriculum is a learning platform where teachers can create topic-based learning
 ## Installation
 
 ### Prerequisites
-- PHP 7.3 
-Extensions 
-- ghostscript 
+- PHP 7.3 Extensions: xml, dom, zip, curl, mbstring, bcmath
+- ghostscript
 - Imagemagick
-- xml, dom, zip, curl, mbstring, bcmath
-- git, composer 
-- Node.js ghostscript
+- git
+- composer
+- npm
 
 
 ### Step 1.

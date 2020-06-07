@@ -38,5 +38,6 @@
     <logbook-subscribe-objective-modal></logbook-subscribe-objective-modal>
     <content-create-modal></content-create-modal>
     <task-modal></task-modal>
+    <absence-modal></absence-modal>
 @endsection
 

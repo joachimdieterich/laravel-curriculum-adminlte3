@@ -123,6 +123,11 @@ class GroupsController extends Controller
     public function show(Group $group)
     {   
         abort_unless(\Gate::allows('group_access'), 403);
+         // axios call? 
+        if (request()->wantsJson()){    
+           // dump(json_encode($group->users));
+            return ['users' => json_encode($group->users)];
+        }
         return view('groups.show')
                 ->with(compact('group'));
     }

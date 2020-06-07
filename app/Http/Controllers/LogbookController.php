@@ -99,14 +99,16 @@ class LogbookController extends Controller
      */
     public function show(Logbook $logbook)
     {           
-        $logbook = $logbook->with(['entries.contentSubscriptions.content.categories', 
-                                   'entries.terminalObjectiveSubscriptions.terminalObjective',
-                                   'entries.enablingObjectiveSubscriptions.enablingObjective.terminalObjective',
-                                   'entries.taskSubscription.task.subscriptions' => function($query) {
-                                        $query->where('subscribable_id', auth()->user()->id)
-                                              ->where('subscribable_type', 'App\User');
-                                    },
-                                    'entries.mediaSubscriptions.medium'
+        $logbook = $logbook->with([
+                'subscriptions.subscribable',
+                'entries.contentSubscriptions.content.categories', 
+                'entries.terminalObjectiveSubscriptions.terminalObjective',
+                'entries.enablingObjectiveSubscriptions.enablingObjective.terminalObjective',
+                'entries.taskSubscription.task.subscriptions' => function($query) {
+                     $query->where('subscribable_id', auth()->user()->id)
+                           ->where('subscribable_type', 'App\User');
+                 },
+                 'entries.mediaSubscriptions.medium'
             ])->where('id', $logbook->id)->get()->first();
         
         return view('logbooks.show')

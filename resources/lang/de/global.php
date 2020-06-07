@@ -587,6 +587,8 @@ return [
     'terminalObjective' =>[
         'title'          => 'Bereiche',
         'title_singular' => 'Bereich',
+        'create'         => 'Bereich erstellen',
+        'edit'           => 'Bereich bearbeiten',
         'fields'         => [
             'id'                => 'ID',
             'id_helper'         => '',
@@ -607,6 +609,8 @@ return [
     'enablingObjective' =>[
         'title'          => 'Bausteine',
         'title_singular' => 'Baustein',
+        'create'         => 'Baustein erstellen',
+        'edit'           => 'Baustein bearbeiten',
         'fields'         => [
             'id'                => 'ID',
             'id_helper'         => '',
@@ -833,14 +837,18 @@ return [
             'priority_id_helper'  => '',
        ],
     ],
-    'userStatus' =>[
-        'title'             => 'Benutzerstatus',
-        'title_singular'    => 'Benutzerstatus',
-        'create'            => 'Benutzerstatus erstellen',
-        'edit'              => 'Benutzerstatus bearbeiten',
+    'absences' =>[
+        'title'             => 'Abwesenheit-Einträge',
+        'title_singular'    => 'Abwesenheit-Eintrag',
+        'create'            => 'Abwesenheit-Eintrag erstellen',
+        'edit'              => 'Abwesenheit-Eintrag bearbeiten',
         'fields'            => [
             'id'            => 'ID',
             'id_helper'     => '',
+            'reason'         => 'Abwesenheitsgrund',
+            'reason_helper'  => '',
+            'done'          => 'erledigt',
+            'done_helper'   => '',
        ],
     ],
     'externalRepositorySubscription' =>[

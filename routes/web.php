@@ -14,6 +14,8 @@ Auth::routes(['register' => false]);
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', 'HomeController@index')->name('home');
 
+    Route::resource('absences', 'AbsenceController');
+    
     Route::post('achievements', 'AchievementController@store');
     
     Route::resource('categories', 'CategorieController');

@@ -44,7 +44,7 @@ class CurriculaApiController extends Controller
     }
     
     
-    private function generateMetadataset($curriculum) {
+    private function generateMetadataset($curriculum) {    
         $metadata = array(); //{'id', 'title'}
         
         // generate organizational part of identifier
@@ -54,7 +54,7 @@ class CurriculaApiController extends Controller
         $prefix .= str_pad($curriculum->subject()->get()->first()->external_id, 5, '0', STR_PAD_LEFT); //includes subject type!
         $prefix .= str_pad($curriculum->grade()->get()->first()->external_begin, 2, '0', STR_PAD_LEFT);
         $prefix .= str_pad($curriculum->grade()->get()->first()->external_end, 2, '0', STR_PAD_LEFT);
-        $prefix .= str_pad("001", 2, '0', STR_PAD_LEFT);
+        $prefix .= str_pad("001", 2, '0', STR_PAD_LEFT); //version todo: dynamic
         
         // curriculum 
         $curriculum->ui = $prefix."000000000000";
@@ -83,7 +83,7 @@ class CurriculaApiController extends Controller
                         .str_pad($ter_type, 3, '0', STR_PAD_LEFT)
                         .str_pad($ter, 3, '0', STR_PAD_LEFT)
                         ."000000", 
-                    'title' => str_replace(array("\n", "\r", "\t"), ' ', strip_tags(ObjectiveType::where('id', $terminalObjective->objective_type_id)->get()->first()->title)),
+                    'title' => $this->format_data(ObjectiveType::where('id', $terminalObjective->objective_type_id)->get()->first()->title),
                     'parent_id' => $prefix
                         ."000000000000"
                 ];
@@ -97,7 +97,7 @@ class CurriculaApiController extends Controller
             $terminalObjective->save();                        //persist unique terminalobjective identifier
             $metadata[] = [
                 'id' => $terminalObjective->ui, 
-                'title' => str_replace(array("\n", "\r", "\t"), ' ', strip_tags($terminalObjective->title)),
+                'title' => $this->format_data($terminalObjective->title),
                 'parent_id' => $prefix
                     .str_pad($ter_type, 3, '0', STR_PAD_LEFT)
                     ."000000000",
@@ -115,7 +115,7 @@ class CurriculaApiController extends Controller
                 $enablingObjective->save();                        //persist unique enablingobjective identifier
                 $metadata[] = [
                 'id' => $enablingObjective->ui, 
-                'title' => str_replace(array("\n", "\r", "\t"), ' ', (strip_tags($enablingObjective->title))),
+                'title' => $this->format_data($enablingObjective->title),
                 'parent_id' => $prefix
                     .str_pad($ter_type, 3, '0', STR_PAD_LEFT)
                     .str_pad($ter, 3, '0', STR_PAD_LEFT)
@@ -128,6 +128,17 @@ class CurriculaApiController extends Controller
         }
         
         return $metadata;
+    }
+    
+    private function format_data($input)
+    {
+        $entry_limiter = 150;   //todo: should be set dynamic
+        
+        $input = preg_replace('/<br>/', ' ', $input);
+        $input = strip_tags($input);
+        $input = strlen($input) > $entry_limiter ? substr($input,0,$entry_limiter)."..." : $input;  // limit text   
+                                                   // replace multiple spaces, tabs, or linebrakes with one single space
+        return mb_ereg_replace('\s+', ' ', mb_convert_encoding($input, 'UTF-8', 'UTF-8'));
     }
 
    

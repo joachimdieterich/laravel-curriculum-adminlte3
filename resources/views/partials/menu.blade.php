@@ -272,24 +272,16 @@
                         </ul>
                     </li>
                 @endcan
-                
-<!--                <li class="nav-item">
-                    @if ( ( env('SAML2_RLP_IDP_SL_URL') !== null ) AND ( !empty(env('SAML2_RLP_IDP_SL_URL')) ) )
-                    <a href="{{ env('SAML2_RLP_IDP_SL_URL') }}" class="nav-link">
-                        <i class="fas fa-sign-out-alt"></i>
+                @if(auth()->user()->role()->id == 1)
+                <li class="nav-item">
+                    <a href="{{ route("configs.index") }}" class="nav-link {{ request()->is('organizations') || request()->is('organizations/*') ? 'active' : '' }}">
+                        <i class="fa fa-cogs"></i>
                         <p>
-                            <span>{{ trans('global.logout') }}</span>
+                            <span>{{ trans('global.config.title') }}</span>
                         </p>
                     </a>
-                    @else
-                    <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <p>
-                            <span>{{ trans('global.logout') }}</span>
-                        </p>
-                    </a>
-                    @endif
-                </li>-->
+                </li>
+                @endif
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

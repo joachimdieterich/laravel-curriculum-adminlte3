@@ -25,6 +25,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('certificates/generate', 'CertificateController@generate');
     Route::resource('certificates', 'CertificateController');
     
+    Route::get('configs/list', 'ConfigController@list');
+    Route::resource('configs', 'ConfigController');
+    
     Route::post('contents/{content}/destroy', 'ContentController@destroy')->name('contents.destroy'); //has to be post (has parameters)
     Route::resource('contents', 'ContentController');
     

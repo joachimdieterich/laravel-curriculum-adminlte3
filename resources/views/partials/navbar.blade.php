@@ -57,15 +57,9 @@
           <a href="{{route('users.show', auth()->user()->id)}}" class="dropdown-item">
             <i class="fas fa-envelope mr-2 text-white"></i>{{ trans('global.myProfile') }}
           </a>
-          @if ( ( env('SAML2_RLP_IDP_SL_URL') !== null ) AND ( !empty(env('SAML2_RLP_IDP_SL_URL')) ) )
-            <a href="{{ route('saml2_logout', 'rlp') }}" class="dropdown-item">
-              <i class="fas fa-power-off mr-2 text-white"></i> {{ trans('global.logout') }}
-            </a>
-          @else
           <a href="#" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
             <i class="fas fa-power-off mr-2 text-white"></i> {{ trans('global.logout') }}
           </a>
-          @endif
         </div>
       </li>
      

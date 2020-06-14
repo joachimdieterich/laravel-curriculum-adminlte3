@@ -34,6 +34,7 @@
 
 <body class="" >
     <div id="app">
+        @include('partials.topmenu') 
         <!-- Content Header (Page header) -->
         <section class="content-header p-2">
             <div class="container-fluid">

@@ -50,7 +50,7 @@ class ReferenceSubscriptionController extends Controller
         
         $reference = Reference::Create([
             'id'          => (string) Str::uuid(),
-            'description' => '',
+            'description' => $new_subscription['description'],
             'grade_id'    => isset($new_subscription['grade_id']) ? $new_subscription['grade_id'] : Curriculum::find($new_subscription['curriculum_id'])->grade_id,
             'owner_id'    => auth()->user()->id,	
         ]);
@@ -158,6 +158,7 @@ class ReferenceSubscriptionController extends Controller
             "enabling_objective_id" => 'sometimes',
             "subscribable_type" => 'required',
             "subscribable_id" => 'required',
+            "description" => 'sometimes', 
         ]);
     }
 }

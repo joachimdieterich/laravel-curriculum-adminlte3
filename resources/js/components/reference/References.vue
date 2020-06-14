@@ -1,5 +1,5 @@
 <template>
-    <div >
+    <div>
         <div class="card collapsed-card mb-2" v-for="curriculum in curricula_list">
             <div class="card-header">
                 <h3 class="card-title"  
@@ -36,7 +36,12 @@
                         </ObjectiveBox>
 
                         <div>
-                            <dt>{{ trans("global.curricula_cross_references_description") }} </dt>
+                            <dt>
+                                {{ trans("global.curricula_cross_references_description") }}
+                                <a class="pull-right pr-2 pointer"
+                                   @click.prevent="open('reference-objective-modal', filtered_reference.reference)">
+                                    <i class="fa fa-pencil-alt pl-2"></i></a>
+                             </dt>
                             <dd v-html="filtered_reference.reference.description"></dd>
                         </div>
                     </div>
@@ -80,7 +85,10 @@
             },
             tagName: function(i){
                 return 'curriculum_'+i;
-            }
+            },
+            open(modal, reference){
+                this.$modal.show(modal, {'id': reference.id, 'description': reference.description});
+            },
       
         }, 
        

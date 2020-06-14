@@ -46,7 +46,13 @@ class ReferenceController extends Controller
      */
     public function show(Reference $reference)
     {
-        //
+         
+        // axios call? 
+        if (request()->wantsJson()){  
+            return [
+                'reference' => $reference
+            ];
+        }
     }
 
     /**
@@ -69,7 +75,9 @@ class ReferenceController extends Controller
      */
     public function update(Request $request, Reference $reference)
     {
-        //
+        if (request()->wantsJson()){    
+            return ['message' => $reference->update($request->all())];
+        }
     }
 
     /**
@@ -81,5 +89,15 @@ class ReferenceController extends Controller
     public function destroy(Reference $reference)
     {
         //
+    }
+    
+    protected function validateRequest()
+    {               
+        return request()->validate([
+            'id'                => 'sometimes',
+            'description'       => 'sometimes',
+            'grade_id'          => 'sometimes',
+            'owner_id'          => 'sometimes',
+            ]);
     }
 }

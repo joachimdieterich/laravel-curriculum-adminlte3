@@ -29,7 +29,7 @@
             
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                 
-                <div class="form-group ">
+                <div v-if="method === 'post'" class="form-group ">
                     <label for="curriculua">
                         {{ trans('global.curriculum.title_singular') }}
                     </label>
@@ -50,12 +50,9 @@
                                {{ value.length }} options selected
                            </span>
                        </template>
-                   </multiselect>
-                    
-                    
-                    
+                   </multiselect>       
                 </div>
-                <div class="form-group ">
+                <div v-if="method === 'post'" class="form-group ">
                     <label for="terminalObjectives">
                         {{ trans('global.terminalObjective.title_singular') }}
                     </label>
@@ -78,7 +75,7 @@
                    </multiselect>
                    
                 </div>
-                <div class="form-group ">
+                <div v-if="method === 'post'" class="form-group ">
                     <label for="enablingObjectives">
                         {{ trans('global.enablingObjective.title_singular') }}
                     </label>
@@ -100,6 +97,16 @@
                        </template>
                    </multiselect>
                 </div>
+                
+                <div class="form-group ">
+                    <label for="description">{{ trans('global.description') }}</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        class="form-control description my-editor "
+                        v-model="form.description"
+                    ></textarea>
+                </div>
             </div>
             
             <div class="card-footer">
@@ -113,85 +120,109 @@
 </template>
 
 <script>
+    import Form from 'form-backend-validation';
     import Multiselect from 'vue-multiselect'
     export default {
         data() {
             return {
-                referenceable_type: null,
-                referenceable_id: null,
+                method: 'post',
+                form: new Form({
+                    'id': null,
+                    'referenceable_type': null,
+                    'referenceable_id': null,
+                    'curriculum_id': null,
+                    'terminal_objective_id': null,
+                    'enabling_objective_id': null,
+                    'description': null
+                }),
+                
                 curricula: {},
                 curriculum: {},
-                curriculum_id: null,
                 terminalObjectives: {},
                 terminalObjective: {},
-                terminal_objective_id: null,
                 enablingObjectives: {},
                 enablingObjective: {},
-                enabling_objective_id: null,
                 referenceRequestUrl: null,
             }
         },
         methods: {
+            
             async loadCurricula() {
                 try {  
                     this.curricula = (await axios.get('/curricula')).data.curricula;
                 } catch(error) {
                     this.errors = error.response.data.errors;
                 } 
-                this.terminal_objective_id = null; //reset selection
-                this.enabling_objective_id = null; 
+                this.form.terminal_objective_id = null; //reset selection
+                this.form.enabling_objective_id = null; 
             },
            
             async loadObjectives(value) {
-                this.curriculum_id = value.id;
+                this.form.curriculum_id = value.id;
                 try {    
                    this.terminalObjectives = (await axios.get('/curricula/'+value.id+'/objectives')).data.curriculum.terminal_objectives;
                    this.removeHtmlTags(this.terminalObjectives);
                 } catch(error) {
-                    this.errors = error.response.data.errors;
+                   this.errors = error.response.data.errors;
                 } 
             },
             loadEnabling(value){
                 let terminal = [].concat(...this.terminalObjectives.filter(ena => ena.enabling_objectives.find(e => e.terminal_objective_id === value.id)));
                 this.enablingObjectives = terminal[0].enabling_objectives;
                 this.removeHtmlTags(this.enablingObjectives);
-                this.terminal_objective_id = value.id;
+                this.form.terminal_objective_id = value.id;
                 this.requestUrl = this.referenceRequestUrl ? this.referenceRequestUrl : '/terminalObjectiveSubscriptions';
             },
             setEnabling(value){
-                this.enabling_objective_id = value.id;
+                this.form.enabling_objective_id = value.id;
                 this.requestUrl = this.referenceRequestUrl ? this.referenceRequestUrl : '/enablingObjectiveSubscriptions';
             },
             async submit() {
-                
                 try {
-                    this.location = (await axios.post(this.requestUrl, {
-                        'curriculum_id':            this.curriculum_id, 
-                        'terminal_objective_id':    this.terminal_objective_id,
-                        'enabling_objective_id':    this.enabling_objective_id,
-                        'subscribable_type':        this.referenceable_type,
-                        'subscribable_id':          this.referenceable_id,
-                    })).data.message;
-                    location.reload(true);
-                    
+                    if (this.method === 'patch'){
+                        await axios.patch('/references/'+this.form.id, {
+                            'description' : tinyMCE.get('description').getContent(),
+                        }).data.message;
+                        this.close();
+                    } else {
+                        this.location = (await axios.post(this.requestUrl, {
+                            'curriculum_id':         this.form.curriculum_id, 
+                            'terminal_objective_id': this.form.terminal_objective_id,
+                            'enabling_objective_id': this.form.enabling_objective_id,
+                            'subscribable_type':     this.form.referenceable_type,
+                            'subscribable_id':       this.form.referenceable_id,
+                            'description' :          tinyMCE.get('description').getContent(),
+                        })).data.message;
+                    }
+                    location.reload(true); 
                 } catch(error) {
                     //
                 }
             },
             
-            beforeOpen(event) {
-                this.loadCurricula();
-                if (event.params.referenceable_type){
-                    this.referenceable_type = event.params.referenceable_type;
-                    this.referenceable_id = event.params.referenceable_id;
+            beforeOpen(event) { 
+                if (event.params.id){
+                    this.method = "patch";
+                    this.form.id = event.params.id;
+                    this.form.description = event.params.description;
+                } else {
+                    this.method = "post";
+                    this.loadCurricula();
+                    if (event.params.referenceable_type){
+                        this.form.referenceable_type = event.params.referenceable_type;
+                        this.form.referenceable_id = event.params.referenceable_id;
+                    }
+                    if (event.params.requestUrl){
+                        this.referenceRequestUrl = event.params.requestUrl;
+                    }
                 }
-                if (event.params.requestUrl){
-                    this.referenceRequestUrl = event.params.requestUrl;
-                }
+                
              },
             beforeClose() {
             },
             opened(){
+                 this.$initTinyMCE();
+
             },
             
             close(){

@@ -275,7 +275,7 @@
                         $('.nav-item a[href="#tab_1"]').tab('show')
                     break;
                     case "reference-objective-modal": 
-                        $('.nav-item a[href="#tab_1"]').tab('show')
+                        $('.nav-item a[href="#tab_2"]').tab('show')
                     break;
                  
                 }

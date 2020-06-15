@@ -47,7 +47,7 @@ class LoginController extends Controller
     {
         if (( env('SAML2_RLP_IDP_SSO_URL') !== null ) AND ( !empty(env('SAML2_RLP_IDP_SSO_URL')) ) )
         {
-            return redirect()->action("/saml2/rlp/logout", 
+            return redirect()->action("\Aacotroneo\Saml2\Http\Controllers\Saml2Controller@logout", 
                 [
                     'returnTo'      => $request->query('returnTo'),
                     'sessionIndex'  => $request->session()->get('sessionIndex'),

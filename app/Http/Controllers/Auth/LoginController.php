@@ -49,6 +49,7 @@ class LoginController extends Controller
         {
             return redirect()->action("\Aacotroneo\Saml2\Http\Controllers\Saml2Controller@logout", 
                 [
+                    'idpName'       => 'rlp',
                     'returnTo'      => $request->query('returnTo'),
                     'sessionIndex'  => $request->session()->get('sessionIndex'),
                     'nameId'        => $request->session()->get('nameId'),

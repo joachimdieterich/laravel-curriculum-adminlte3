@@ -73,7 +73,7 @@
                     <!-- /.col -->
                 </div>
             </form>
-            @if (env('SAML2_RLP_IDP_SSO_URL') !== null)    
+            @if ( ( env('SAML2_RLP_IDP_SSO_URL') !== null ) AND ( !empty(env('SAML2_RLP_IDP_SSO_URL')) ) )
                 <div class="social-auth-links text-center mb-3">
                     <p>- OR -</p>
                     <a href="{{ route('saml2_login', ['idpName' => config('saml2_settings.idpNames')[0]]) }}" class="btn btn-block btn-primary">

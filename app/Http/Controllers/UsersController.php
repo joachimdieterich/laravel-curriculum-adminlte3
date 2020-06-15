@@ -23,7 +23,7 @@ class UsersController extends Controller
     public function index()
     {
         abort_unless(\Gate::allows('user_access'), 403);
- 
+        
         if (auth()->user()->role()->id == 1)
         {
             $organizations = Organization::all(); 

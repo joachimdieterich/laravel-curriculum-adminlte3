@@ -29,6 +29,8 @@ class SAMLLogoutListener
     public function handle(Saml2LogoutEvent $event)
     {
         Auth::logout();
+//        session()->flush();
+//        session()->save();
         Session::save();
     }
 }

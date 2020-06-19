@@ -80,11 +80,13 @@ class CourseController extends Controller
             'email_verified_at',
             'status_id'
             ])
-                ->join('group_user', 'users.id', '=', 'group_user.user_id')
-                ->join('curriculum_group', 'curriculum_group.group_id', '=', 'group_user.group_id')
-                ->where('curriculum_group.id', $course->id);
+            ->join('group_user', 'users.id', '=', 'group_user.user_id')
+            ->join('organization_role_users', 'organization_role_users.user_id', '=', 'group_user.user_id')
+            ->where('group_user.group_id', '=', $course->group_id)
+            ->where('organization_role_users.organization_id', '=', auth()->user()->current_organization_id)
+            ->where('organization_role_users.role_id', '=', 6);
         
-        return empty($users) ? null : DataTables::of($users)
+       return empty($users) ? null : DataTables::of($users)
             ->addColumn('role', function ($users) {
                 return $users->roles()->where('organization_id', auth()->user()->current_organization_id)->first()->title;                
             })

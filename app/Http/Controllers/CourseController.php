@@ -13,6 +13,11 @@ use App\ObjectiveType;
 
 class CourseController extends Controller
 {
+    public function index()
+    {
+        return view('home');
+    }
+    
     public function show(Course $course)
     {
         abort_unless(\Gate::allows('curriculum_show'), 403);        //check if user is enrolled or admin -> else 403 

@@ -58,6 +58,12 @@ Route::group(['middleware' => 'auth'], function () {
     /* enablingObjectiveSubscriptions */
     Route::resource('enablingObjectiveSubscriptions', 'EnablingObjectiveSubscriptionsController');
 
+    /* plugin eventmanagment */
+    Route::post('eventSubscriptions/destroySubscription', 'EventSubscriptionController@destroySubscription')->name('eventSubscriptions.destroySubscription');
+    Route::post('eventSubscriptions/searchRepository', 'EventSubscriptionController@searchEvents')->name('eventSubscriptions.searchEvents');
+    Route::post('eventSubscriptions/getEvents', 'EventSubscriptionController@getEvents')->name('eventSubscriptions.getEvents');
+    Route::resource('eventSubscriptions', 'EventSubscriptionControllerController');
+    
     /* grades */
     Route::get('grades/list', 'GradesController@list')->name('grades.list');
     Route::delete('grades/destroy', 'GradesController@massDestroy')->name('grades.massDestroy');
@@ -174,7 +180,7 @@ Route::group(['middleware' => 'auth'], function () {
     /* User */
     Route::delete('users/massDestroy', 'UsersController@massDestroy')->name('users.massDestroy');
     Route::patch('users/massUpdate', 'UsersController@massUpdate')->name('users.massUpdate');
-    Route::patch('users/setCurrentOrganization', 'UsersController@setCurrentOrganization')->name('users.setCurrentOrganization');
+    Route::patch('users/setCurrentOrganizationAndPeriod', 'UsersController@setCurrentOrganizationAndPeriod')->name('users.setCurrentOrganizationAndPeriod');
     Route::patch('users/setAvatar', 'UsersController@setAvatar')->name('users.setAvatar');
 
     Route::get('users/list', 'UsersController@list');

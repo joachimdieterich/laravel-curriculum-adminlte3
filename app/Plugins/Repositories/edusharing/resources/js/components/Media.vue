@@ -68,6 +68,7 @@
                     this.media = (await axios.post('/repositorySubscriptions/getMedia', {
                         subscribable_type: this.subscribable_type(),
                         subscribable_id: this.model.id,
+                        search: this.model.title,
                         repository: 'edusharing'
                     })).data.message;
                     

@@ -176,13 +176,16 @@ echo json_encode([
                $.fn.dataTable.ext.classes.sPageButton = '';
                });
                
-               function setCurrentOrganization(){
+               function setCurrentOrganizationAndPeriod(selectBox){
+                    var op = selectBox.options[selectBox.selectedIndex];
+                    var optgroup = op.parentNode;
                     $.ajax({
                         headers: {'x-csrf-token': _token},
                         method: 'POST',
-                        url: "{{ route('users.setCurrentOrganization') }}",
+                        url: "{{ route('users.setCurrentOrganizationAndPeriod') }}",
                         data: {
-                            current_organization_id: $('#current_organization_id').val(),
+                            current_period_id: op.value,
+                            current_organization_id: optgroup.id,
                             _method: 'PATCH',
                         }
                     })

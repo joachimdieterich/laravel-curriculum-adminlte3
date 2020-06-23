@@ -133,7 +133,7 @@ class User extends Authenticatable
     {
         return DB::table('curricula')
             ->distinct()
-            ->select('curricula.*', 'curriculum_group.id AS course_id', 'curriculum_group.group_id AS group_id',)
+            ->select('curricula.*', 'curriculum_group.id AS course_id', 'curriculum_group.group_id AS group_id')
             ->leftjoin('curriculum_group', 'curricula.id', '=', 'curriculum_group.curriculum_id')
             ->leftjoin('group_user', 'group_user.group_id', '=', 'curriculum_group.group_id')    
             ->where('group_user.user_id', $this->id)
@@ -142,12 +142,13 @@ class User extends Authenticatable
     }
     
     public function currentGroupEnrolments()
-    {
+    {   
         return $this->belongsToMany('App\Group', 'group_user')
             ->select('groups.*', 'curriculum_group.id AS course_id')
             ->join('curriculum_group', 'curriculum_group.group_id', '=', 'groups.id')
             ->where('period_id', $this->current_period_id)
             ->where('organization_id', $this->current_organization_id)
+            ->orderBy('groups.id')
             ->withTimestamps();
     } 
     
@@ -156,16 +157,26 @@ class User extends Authenticatable
         return $this->morphMany('App\LogbookSubscription', 'subscribable');
     }
     
-     public function logbooks()
+    public function logbooks()
     {
         return $this->hasManyThrough(
             'App\Logbook',
             'App\LogbookSubscription',
             'subscribable_id', // Foreign key on logbook_subscription table...
-            'id', // Foreign key on content table...
+            'id', // Foreign key on logbook table...
             'id', // Local key on logbook table...
             'logbook_id' // Local key on logbook_subscription table...
         )->where('subscribable_type', get_class($this)); 
+    }
+    
+    public function periods()
+    {
+        return DB::table('periods')
+            ->select('periods.*')
+            ->join('groups', 'groups.period_id', '=', 'periods.id')
+            ->join('group_user', 'group_user.group_id', '=', 'groups.id') 
+            ->where('group_user.user_id',  $this->id)
+            ->get();
     }
     
     public function roles()

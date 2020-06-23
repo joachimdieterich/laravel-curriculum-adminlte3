@@ -56,7 +56,6 @@ class eVewa extends EventmanagementPlugin
         $rake = RakePlus::create(strip_tags($params['search']), 'de_DE', 3);
         $phrase_scores = $rake->sort('asc')->get();
         
-        
             $params = array(
                 'method'=> 'lesePlrlpVeranstaltungen',
                 'session_id' => (string) $this->sessionId,
@@ -64,7 +63,7 @@ class eVewa extends EventmanagementPlugin
                 'page'=> '',
                 'limit'=> '',
                 'order'=> '',
-                'search'=> explode(' ',trim($phrase_scores[0]))[0], //doto better search in evewa!
+                'search'=> explode(' ',trim($phrase_scores[0]))[0], //todo better search in evewa!
                 'abgeschlossene'=> '',
                 'gs_ort'=> '',
                 'gs_plz'=> '',

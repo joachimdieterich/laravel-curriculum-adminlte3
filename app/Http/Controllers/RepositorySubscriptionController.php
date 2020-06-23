@@ -103,10 +103,13 @@ class RepositorySubscriptionController extends Controller
             $result->push($this->callPlugin($input['repository'], $subscription->value));
         }
         if (isset($input['search']))
-        {
+        {  
             $rake = RakePlus::create(strip_tags($input['search']), 'de_DE', 3);
-            $phrase_scores = $rake->sort('asc')->get();
-            $result->push($this->callPlugin($input['repository'], explode(' ',trim($phrase_scores[0]))[0]));
+            $phrase_scores = $rake->sort('asc')->get(); 
+            $repositoryPlugin = app()->make('App\RepositoryPlugin');
+            
+            $result->push($repositoryPlugin->plugins[$input['repository']]->searchRepository($phrase_scores[0]));
+            
         }
         
         if (request()->wantsJson()){    
@@ -125,7 +128,7 @@ class RepositorySubscriptionController extends Controller
     protected function callPlugin($plugin, $value)
     {
         $repositoryPlugin = app()->make('App\RepositoryPlugin');
-        return $repositoryPlugin->plugins[$plugin]->processReference(['value' => $value]);
+        return $repositoryPlugin->plugins[$plugin]->processReference($value);
     }
     
     public function destroySubscription(Request $request)

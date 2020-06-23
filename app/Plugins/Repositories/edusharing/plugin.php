@@ -76,11 +76,11 @@ class Edusharing extends RepositoryPlugin
         
     private function setTokens() 
     {
-        if (Config::where([
+        if (optional(Config::where([
                 ['referenceable_type', '=', 'App\Edusharing'],
                 ['key', '=',  'accessMode']
-            ])->get()->first()->value == 'personal')
-        {
+            ])->get()->first())->value == 'personal')
+        { 
             $this->getPersonalToken();
         }
         else
@@ -88,12 +88,10 @@ class Edusharing extends RepositoryPlugin
             $postFields = 'grant_type=' . $this->grant_type . '&client_id=' . $this->client_id . '&client_secret=' . $this->client_secret . '&username=' . $this->repoUser . '&password=' . $this->repoPwd;
             $raw        = $this->call ( $this->repoUrl . '/oauth2/token', 'POST', array (), $postFields );
             $return     = json_decode ( $raw );
-
             $this->accessToken = $return->access_token;
             return $return;
         }
-        
-        dump($this->accessToken);
+
     }
     
     public function getAbout() 
@@ -356,7 +354,6 @@ class Edusharing extends RepositoryPlugin
     }
 
     public function processReference($arguments){
-        dump('processReference');
         parse_str($arguments, $query);
 
         $apiEndpoint    = isset($query['endpoint']) ?  $query['endpoint'] : 'node';             
@@ -365,7 +362,6 @@ class Edusharing extends RepositoryPlugin
         $value          = isset($query['value']) ? $query['value'] : $arguments;          //e.g.11990503;
         $maxItems       = 40;
         $skipCount      = 0;
-
         //$nodes        = $this->getSearchCustom('-home-', array ('contentType' =>'FILES', 'property' => 'ccm:competence_digital2', 'value' => '11061007', 'maxItems' => 10));
         switch ($apiEndpoint) {
             case 'getSearchCustom': $nodes      = $this->getSearchCustom('-home-', array ('contentType' =>$contentType, 'property' => $property, 'value' => $value, 'maxItems' => $maxItems, 'skipCount' => $skipCount));

@@ -107,7 +107,7 @@ class RepositorySubscriptionController extends Controller
             $rake = RakePlus::create(strip_tags($input['search']), 'de_DE', 3);
             $phrase_scores = $rake->sort('asc')->get(); 
             $repositoryPlugin = app()->make('App\RepositoryPlugin');
-            dump($repositoryPlugin->plugins[$input['repository']]->searchRepository(['value' => $phrase_scores[0]]))
+            dump($repositoryPlugin->plugins[$input['repository']]->searchRepository(['value' => $phrase_scores[0]]));
             //$result->push();
             
         }

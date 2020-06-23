@@ -1,0 +1,53 @@
+{
+  "name": "donatello-za/rake-php-plus",
+  "type": "library",
+  "description": "Yet another PHP implementation of the Rapid Automatic Keyword Extraction algorithm (RAKE).",
+  "keywords": [
+    "rake",
+    "rapid",
+    "automatic",
+    "keyword",
+    "extraction",
+    "algorithm"
+  ],
+  "homepage": "https://github.com/Donatello-za/rake-php-plus",
+  "support": {
+    "issues": "https://github.com/Donatello-za/rake-php-plus/issues",
+    "source": "https://github.com/Donatello-za/rake-php-plus"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Don Schoeman",
+      "email": "ta.maximus@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.4.0",
+    "ext-json": "*",
+    "ext-mbstring": "*"
+  },
+  "require-dev": {
+    "php": ">=5.5.0",
+    "phpunit/phpunit": "~4.0|~5.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "DonatelloZa\\RakePlus\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0.13-dev"
+    }
+  },
+  "scripts": {
+    "test": "./vendor/bin/phpunit;",
+    "phpunit": "./vendor/bin/phpunit;"
+  }
+}

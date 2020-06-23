@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\RepositorySubscription;
 use Illuminate\Http\Request;
 
+use DonatelloZa\RakePlus\RakePlus;
+
 class RepositorySubscriptionController extends Controller
 {
     /**
@@ -98,7 +100,13 @@ class RepositorySubscriptionController extends Controller
         $result = collect([]);
         foreach($subscriptions as $subscription)
         {
-            $result->push($this->callPlugin($input['repository'], $subscription));
+            $result->push($this->callPlugin($input['repository'], $subscription->value));
+        }
+        if (isset($input['search']))
+        {
+            $rake = RakePlus::create(strip_tags($input['search']), 'de_DE', 3);
+            $phrase_scores = $rake->sort('asc')->get();
+            $result->push($this->callPlugin($input['repository'], explode(' ',trim($phrase_scores[0]))[0]));
         }
         
         if (request()->wantsJson()){    
@@ -114,10 +122,10 @@ class RepositorySubscriptionController extends Controller
         return $repositoryPlugin->plugins[$input['repository']]->searchRepository($request);
     }
     
-    protected function callPlugin($plugin, $subscription)
+    protected function callPlugin($plugin, $value)
     {
         $repositoryPlugin = app()->make('App\RepositoryPlugin');
-        return $repositoryPlugin->plugins[$plugin]->processReference($subscription->value);
+        return $repositoryPlugin->plugins[$plugin]->processReference(['value' => $value]);
     }
     
     public function destroySubscription(Request $request)
@@ -136,6 +144,7 @@ class RepositorySubscriptionController extends Controller
             'value' => 'sometimes',
             'subscribable_type' => 'sometimes|required',
             'subscribable_id'   => 'sometimes|required',
+            'search'            => 'sometimes',
             'repository'        => 'required',
         ]);
     }

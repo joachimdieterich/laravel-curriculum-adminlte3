@@ -2,110 +2,118 @@
     <div class="row" >
         <modals-container/>
         <div class="col-12">
-            <div class="card card-primary">
+            <div class="card">
                 <div class="card-header">
                     <div class="row">
                         <div class="col-12">
-                            <h5 class="m-0 pull-left">
-                                <i class="fa fa-bullseye mr-1"></i> 
-                            </h5>
+                            <ul class="nav nav-pills pull-left">
+                                <li class="nav-item">
+                                    <a class="nav-link active show" 
+                                       href="#objective" 
+                                       data-toggle="tab">
+                                        <i class="fa fa-bullseye"></i>
+                                        <span v-if="type === 'enabling'">{{ trans('global.enablingObjective.title_singular') }}</span>
+                                        <span v-else>{{ trans('global.terminalObjective.title_singular') }}</span>
+                                        </a>
+                                </li>
+                                
+                                <li class="nav-item">
+                                    <a class="nav-link " 
+                                       href="#description" 
+                                       data-toggle="tab">{{ trans('global.description') }}</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" 
+                                       href="#related_objectives" 
+                                       data-toggle="tab">
+                                        <span v-if="type === 'terminal'" >
+                                            {{ trans('global.enablingObjective.title') }}
+                                        </span>
+                                        <span v-else >
+                                            {{ trans('global.terminalObjective.title_singular') }}
+                                        </span>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item" v-for="(item,index) in contentCategories" v-bind:value="'category_'+item.id">
+                                    <a class="nav-link" 
+                                       v-bind:href="'#category_'+item.id" 
+                                       data-toggle="tab">{{ item.title }}</a>
+                                </li>
+
+                                <li v-for="typetab in typetabs" class="nav-item">
+                                    <a class="nav-link " 
+                                       v-bind:href="'#tab_' + typetab.id" 
+                                       data-toggle="tab">
+                                       {{ typetab.title }}
+                                    </a>
+                                </li>    
+
+                                <li class="nav-item">
+                                    <a class="nav-link " 
+                                       href="#events" 
+                                       data-toggle="tab">
+                                        <i class="fa fa-user-graduate"></i> 
+                                    </a>
+                                </li>    
+                            </ul> 
                         
                             <div class="pull-right" v-can="'objective_edit'">
-                                <a  @click="editObjective()">
-                                    <i class="far fa-edit"></i>
-                                </a> 
+            <!--dropdown start-->
+                                <div 
+                                    v-can="'objective_edit'" 
+                                    class="pull-right btn btn-default btn-flat dropdown-toggle" 
+                                    style="background-color: transparent;border:0!important;" 
+                                    data-toggle="dropdown" 
+                                    aria-expanded="false"> 
+                                    <span class="caret"></span>
+                                    <div class="dropdown-menu">
+                                        <button 
+                                             class="dropdown-item" 
+                                              @click.prevent="editObjective()">
+                                               <i class="far fa-edit mr-3"></i>
+                                             <span v-if="type === 'terminal'" >
+                                                {{ trans('global.terminalObjective.edit') }}
+                                             </span>
+                                             <span v-else >
+                                                {{ trans('global.enablingObjective.edit') }}
+                                             </span>
+                                        </button>
+                                        <button 
+                                             class="dropdown-item" 
+                                             @click.prevent="open('content-create-modal')">
+                                               <i class="fa fa-file mr-4"></i>
+                                               {{ trans('global.content.create') }}
+                                        </button>
+                                        <button 
+                                             class="dropdown-item" 
+                                             @click.prevent="open('medium-create-modal')">
+                                               <i class="fa fa-photo-video mr-3"></i>
+                                             {{ trans('global.media.add') }}
+                                        </button>
+                                        <button 
+                                             class="dropdown-item" 
+                                             @click.prevent="open('reference-objective-modal')">
+                                               <i class="fa fa-link mr-3"></i>
+                                             {{ trans('global.referenceable_types.objective') }}  
+                                        </button>
+                                        <hr >
+                                    </div>
+                                </div>
+            <!--dropdown end-->
                             </div>
                         </div>
                     </div>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body"> 
-                    <p v-html="objective.title"></p>
-                </div>
-                <!-- /.card-body -->
-<!--                <div class="card-footer">
-                    <div class="float-left">
-                        <small>{{ trans('global.enablingObjective.fields.time_approach') }}:{{objective.time_approach}}</small>
-                    </div>
-                    <small class="float-right" v-html="objective.updated_at"></small> 
-                </div>-->
-            </div>
-        </div>
-          
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header p-2">
-                    <ul class="nav nav-pills pull-left">
-                        <li class="nav-item">
-                            <a class="nav-link active show" 
-                               href="#description" 
-                               data-toggle="tab">{{ trans('global.description') }}</a>
-                        </li>
-                        
-                        <li class="nav-item">
-                            <a class="nav-link" 
-                               href="#related_objectives" 
-                               data-toggle="tab">
-                                <span v-if="type === 'terminal'" >
-                                    {{ trans('global.enablingObjective.title') }}
-                                </span>
-                                <span v-else >
-                                    {{ trans('global.terminalObjective.title_singular') }}
-                                </span>
-                            </a>
-                        </li>
-                        
-                        <li class="nav-item" v-for="(item,index) in contentCategories" v-bind:value="'category_'+item.id">
-                            <a class="nav-link" 
-                               v-bind:href="'#category_'+item.id" 
-                               data-toggle="tab">{{ item.title }}</a>
-                        </li>
-                        
-                        <li v-for="typetab in typetabs" class="nav-item">
-                            <a class="nav-link " 
-                               v-bind:href="'#tab_' + typetab.id" 
-                               data-toggle="tab">
-                               {{ typetab.title }}
-                            </a>
-                        </li>    
-                        
-                    </ul>   
-<!--dropdown start-->
-                    <div 
-                        v-can="'objective_edit'" 
-                        class="pull-right btn btn-default btn-flat dropdown-toggle" 
-                        style="background-color: transparent;border:0!important;" 
-                        data-toggle="dropdown" 
-                        aria-expanded="false"> 
-                        <span class="caret"></span>
-                        <div class="dropdown-menu">
-                            <button 
-                                 class="dropdown-item" 
-                                 @click.prevent="open('content-create-modal')">
-                                   <i class="fa fa-file mr-4"></i>
-                                 {{ trans('global.content.create') }}  
-                            </button>
-                            <button 
-                                 class="dropdown-item" 
-                                 @click.prevent="open('medium-create-modal')">
-                                   <i class="fa fa-photo-video mr-4"></i>
-                                 {{ trans('global.media.add') }}  
-                            </button>
-                            <button 
-                                 class="dropdown-item" 
-                                 @click.prevent="open('reference-objective-modal')">
-                                   <i class="fa fa-link mr-4"></i>
-                                 {{ trans('global.referenceable_types.objective') }}  
-                            </button>
-                            <hr >
-                        </div>
-                    </div>
-<!--dropdown end-->
-                   
-                </div><!-- /.card-header -->
-                <div class="card-body">
                     <div class="tab-content">
                         <div class="tab-pane active show" 
+                             id="objective"  
+                             v-html="objective.title"></div>
+                        
+                        <div class="tab-pane " 
                              id="description"  
                              v-html="objective.description"></div>
                         <!-- /.tab-pane -->
@@ -180,13 +188,30 @@
                                 :quote_curricula_list="quote_curricula_list"
                              ></quotes>
                         </div><!-- /.tab-pane -->
-  
+                        
+                        <div class="tab-pane " 
+                            id="events">
+                            <eventmanagement ref="eventPlugin"
+                                 :model="objective"></eventmanagement>
+                        </div>
                     </div>
                     <!-- /.tab-pane -->
-
-                </div><!-- /.card-body -->
+                     
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                    <div class="float-left">
+                        <small>
+                            {{ trans('global.enablingObjective.fields.time_approach') }}: {{objective.time_approach}}
+                        </small>
+                    </div>
+                    <small class="float-right">
+                        {{ trans('global.updated_at') }}: {{objective.updated_at}}
+                    </small> 
+                </div>
             </div>
         </div>
+          
         
     </div>
 </template>
@@ -197,6 +222,7 @@
     import Quotes from '../quote/Quotes';
     import ContentGroup from '../content/ContentGroup';
     import Repository from '../../../../app/Plugins/Repositories/resources/js/components/Media';
+    import Eventmanagement from '../../../../app/Plugins/Eventmanagement/resources/js/components/Events';
     import ObjectiveBox from './ObjectiveBox'
 
     export default {
@@ -292,6 +318,7 @@
              },
              loadExternal: function() {
                     this.$refs.repositoryPlugin.loader();
+                    this.$refs.eventPlugin.loader();
              }
             
         },
@@ -362,6 +389,7 @@
             ContentGroup,
             Repository,
             ObjectiveBox,
+            Eventmanagement,
         }
 
     }

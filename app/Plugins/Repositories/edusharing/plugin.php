@@ -93,6 +93,7 @@ class Edusharing extends RepositoryPlugin
             return $return;
         }
         
+        dump($this->accessToken);
     }
     
     public function getAbout() 
@@ -355,6 +356,7 @@ class Edusharing extends RepositoryPlugin
     }
 
     public function processReference($arguments){
+        dump('processReference');
         parse_str($arguments, $query);
 
         $apiEndpoint    = isset($query['endpoint']) ?  $query['endpoint'] : 'node';             

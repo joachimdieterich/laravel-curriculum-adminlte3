@@ -877,6 +877,18 @@ return [
             
        ],
     ],
+    'eventSubscription' =>[
+        'title'             => 'Events',
+        'title_singular'    => 'Event',
+        'create'            => 'Creat eventlink ',
+        'search'            => 'Search event',
+        'edit'              => 'Edit eventlink',
+        'fields'            => [
+            'id'            => 'ID',
+            'id_helper'     => '',
+            
+       ],
+    ],
     'message' =>[
         'title'             => 'Messages',
         'title_singular'    => 'Message',

@@ -883,6 +883,18 @@ return [
             
        ],
     ],
+    'eventSubscription' =>[
+        'title'             => 'Veranstaltungen',
+        'title_singular'    => 'Veranstaltunge',
+        'create'            => 'Veranstaltungen verknüpfen',
+        'search'            => 'Veranstaltungen suchen',
+        'edit'              => 'Veranstaltungslink bearbeiten',
+        'fields'            => [
+            'id'            => 'ID',
+            'id_helper'     => '',
+            
+       ],
+    ],
     'message' =>[
         'title'             => 'Nachrichten',
         'title_singular'    => 'Nachricht',

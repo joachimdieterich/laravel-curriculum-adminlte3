@@ -8,6 +8,7 @@ use App\Role;
 use App\OrganizationRoleUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Facades\Tests\Setup\OrganizationFactory;
+use Facades\Tests\Setup\PeriodFactory;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Hash;
 
@@ -167,16 +168,20 @@ class ManageUserTest extends TestCase
     {        
         
         $org1 = OrganizationFactory::create();
+        $period = PeriodFactory::create();
       
-        $this->patch("users/setCurrentOrganization" , 
+        $this->patch("users/setCurrentOrganizationAndPeriod" , 
                                                         [
                                                         'current_organization_id' => $org1->id,
+                                                        'current_period_id' => $period->id,
+                                                            
                                                         ],
                                                   );
        
         $this->assertDatabaseHas('users', [
             'id' => auth()->user()->id, 
             'current_organization_id' => $org1->id, 
+            'current_period_id' => $period->id, 
         ]);
         
     }

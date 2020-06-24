@@ -36,12 +36,16 @@
                     
                     @if (isset($optgroup[0]) && ($current_optgroup_id != $v->$optgroup_reference_field ))
                          <?php $optgroup_label = ((isset($optgroup_label)) ? $optgroup_label : 'title');
-                             $opt_label = $optgroup->where((isset($optgroup_id)) ? $optgroup_id : 'id', $v->$optgroup_reference_field)->first()->$optgroup_label ?>
-                        <optgroup label="{{ $opt_label }}">
+                             $opt_label = $optgroup->where((isset($optgroup_id)) ? $optgroup_id : 'id', $v->$optgroup_reference_field)->first()->$optgroup_label 
+                                     ?>
+                        <optgroup id="{{ $v->$optgroup_reference_field }}" label="{{ $opt_label }}">
                     @endif
                     
                         <option value="{{ $v->$o_id }}" {{ ( $v->$o_id == $value ) ? 'selected' : '' }}>
                            {{ (isset($option_label)) ? $v->$option_label :$v->title }}
+                            @if (isset($combine_labels) ? $combine_labels : false)
+                                | {{ $opt_label }}
+                            @endif
                         </option>
                 
                     @if (isset($optgroup[0]))
@@ -67,7 +71,7 @@
         $("#{{ $field }}").select2({
             placeholder: "{{ $placeholder }}",
             dropdownParent: $("#{{ $field }}").parent(),
-            allowClear: true
+            allowClear: "{{ $allowClear ?? true }}" 
         });
     });
     </script>

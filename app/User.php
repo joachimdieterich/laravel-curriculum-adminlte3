@@ -141,6 +141,20 @@ class User extends Authenticatable
             ->get();
     }
     
+    public function currentCurriculaEnrolments()
+    {
+        return DB::table('curricula')
+            ->distinct()
+            ->select('curricula.*', 'curriculum_group.id AS course_id', 'curriculum_group.group_id AS group_id')
+            ->leftjoin('curriculum_group', 'curricula.id', '=', 'curriculum_group.curriculum_id')
+            ->leftjoin('group_user', 'group_user.group_id', '=', 'curriculum_group.group_id')    
+            ->join('groups', 'groups.id', '=', 'group_user.group_id')    
+            ->where('groups.period_id', $this->current_period_id)
+            ->where('group_user.user_id', $this->id)
+            ->orderBy('group_id')
+            ->get();
+    }
+    
     public function currentGroupEnrolments()
     {   
         return $this->belongsToMany('App\Group', 'group_user')

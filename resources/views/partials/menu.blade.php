@@ -15,26 +15,33 @@
                     @include ('forms.input.select', 
                         ["model" => "group", 
                         "field" => "current_curriculum_group_id",  
-                        "options"=> auth()->user()->curricula(), 
+                        "options"=> auth()->user()->currentCurriculaEnrolments(), 
                         "option_id" => "course_id",
                         "onchange"=> "location = '/courses/'+this.value", 
                         "optgroup" => auth()->user()->currentGroupEnrolments()->get(),    
                         "optgroup_id" => "id",
                         "optgroup_reference_field" => "group_id",
                         "placeholder" => trans('global.course.title').'...',
+                        "allowClear" => false,
                         "value" =>  old('course_id', isset($course->id) ? $course->id : '')])
                 </li>
 <!--                <li class="nav-header pt-0">{{ strtoupper(trans('global.organization.title_singular')) }}</li>-->
-                @if (auth()->user()->organizations->count() > 1)
-                    <li class="nav-item" style="width:100%">
-                         @include ('forms.input.select', 
-                            ["model" => "organization", 
-                            "field" => "current_organization_id",  
-                            "options"=> auth()->user()->organizations, 
-                            "option_label" => "title",  
-                            "onchange"=> "setCurrentOrganization()",  
-                            "value" =>  old('current_organization_id', isset(auth()->user()->current_organization_id) ? auth()->user()->current_organization_id : '')])
-                    </li>
+                @if (auth()->user()->organizations->count() > 1) 
+                <li class="nav-item" style="width:100%">
+                   @include ('forms.input.select', 
+                        ["model" => "period", 
+                        "field" => "current_period_id",  
+                        "options"=> auth()->user()->periods(), 
+                        "option_id" => "id",
+                        "optgroup" => auth()->user()->organizations,    
+                        "optgroup_id" => "id",
+                        "optgroup_reference_field" => "organization_id",
+                        "placeholder" => trans('global.period.title').'...',
+                        "combine_labels" => true,
+                        "onchange"=> "setCurrentOrganizationAndPeriod(this)",  
+                        "allowClear" => false,
+                        "value" => old('current_period_id', isset(auth()->user()->current_period_id) ? auth()->user()->current_period_id : '') ])
+                </li>
                 @else
                 <li class="nav-item px-3 py-2 text-bold" style="width:100%">
                    {{ auth()->user()->organizations->first()->title }}

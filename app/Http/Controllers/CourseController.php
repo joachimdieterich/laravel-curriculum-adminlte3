@@ -27,29 +27,31 @@ class CourseController extends Controller
 
         $curriculum = Curriculum::with(['terminalObjectives', 
                         //'terminalObjectives.media', 
-                        'terminalObjectives.mediaSubscriptions', 
-                        'terminalObjectives.referenceSubscriptions', 
-                        'terminalObjectives.quoteSubscriptions', 
+//                        'terminalObjectives.mediaSubscriptions', 
+//                        'terminalObjectives.referenceSubscriptions', 
+//                        'terminalObjectives.quoteSubscriptions', 
                         'terminalObjectives.achievements' => function($query) {
                             $query->where('user_id', auth()->user()->id);
                         },
                         'terminalObjectives.enablingObjectives', 
                         //'terminalObjectives.enablingObjectives.media',
-                        'terminalObjectives.enablingObjectives.mediaSubscriptions', 
-                        'terminalObjectives.enablingObjectives.referenceSubscriptions', 
-                        'terminalObjectives.enablingObjectives.quoteSubscriptions', 
+                        //'terminalObjectives.enablingObjectives.mediaSubscriptions', 
+                        //'terminalObjectives.enablingObjectives.referenceSubscriptions', 
+                        //'terminalObjectives.enablingObjectives.quoteSubscriptions', 
                         'terminalObjectives.enablingObjectives.achievements' => function($query) {
                             $query->where('user_id', auth()->user()->id);
                         },        
-                        'contentSubscriptions.content', 
-                        'glossar.contents', 
-                        'media'])
+                        //'contentSubscriptions.content', 
+                        //'glossar.contents', 
+                        //'media'
+                        ])
                         ->find($course->curriculum_id);                                                
         $objectiveTypes = ObjectiveType::all();
         $certificates   = \App\Certificate::all();
         $logbook        = (null !==  $course->logbookSubscription()->get()->first()) ? $course->logbookSubscription()->get()->first()->logbook()->get()->first() : null;
         
         $settings= json_encode([
+            'course' => true,
             'edit' => false,
             'achievements' => true,
             'cross_reference_curriculum_id' => false

@@ -17,7 +17,7 @@
                                         </a>
                                 </li>
                                 
-                                <li class="nav-item">
+                                <li v-if="objective.description != ''" class="nav-item">
                                     <a class="nav-link " 
                                        href="#description" 
                                        data-toggle="tab">{{ trans('global.description') }}</a>
@@ -318,7 +318,7 @@
              },
              loadExternal: function() {
                     this.$refs.repositoryPlugin.loader();
-                    this.$refs.eventPlugin.loader();
+                    //this.$refs.eventPlugin.loader();
              }
             
         },

@@ -11,7 +11,7 @@
             <a href="/">{{ trans('global.home') }}</a>
         @endif
     </li>
-    <li class="breadcrumb-item active">{{ trans('global.curriculum.title_singular') }}</li>
+    <li class="breadcrumb-item "><a href="/curricula/{{$curriculum->id}}">{{ trans('global.curriculum.title_singular') }}</a></li>    
     <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 
@@ -35,7 +35,8 @@
     @endif
 @endcan
 
-<div id="curriculum_view_content" class="row">  
+<div id="curriculum_view_content" class="row"> 
+     @if(!isset(json_decode($settings)->course))
      <div class="col-12">
 <!--    <button type="button" class="btn btn-default" data-toggle="tooltip"  onclick="">
             <i class="fa fa-compress"></i>
@@ -161,7 +162,7 @@
                    "value" =>  old('current_curriculum_cross_reference_id', isset(auth()->user()->current_curriculum_cross_reference_id) ? auth()->user()->current_curriculum_cross_reference_id : '')])
         
     </div>
-    
+    @endif
     <curriculum-view
         ref="curriculumView"
         :curriculum="{{ $curriculum }}" 

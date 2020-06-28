@@ -64,16 +64,16 @@
                 "include" =>  'home.groupsInfo',
             ])
           @endcan
-          @can('user_access')
+          @if(auth()->user()->currentRole()->first()->id == 1)
             @include('partials.infobox', [
                 "infoBoxId" =>  'usersBox', 
                 "infoBoxRoute" =>  route("users.index"),
                 "infoBoxClass" =>  'info-box-icon bg-primary elevation-1',
                 "infoBoxIcon" =>  'fas fa-user',
                 "infoText" =>  trans('global.user.title'),
-                "infoBoxNumber" =>  App\User::all()->count(),
+                "infoBoxNumber" =>  count(App\Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->get()).'/'.App\User::all()->count(),
             ])
-          @endcan
+          @endif
           @can('navigator_access')
             @include('partials.infobox', [
                 "infoBoxId" =>  'navigatorsBox',

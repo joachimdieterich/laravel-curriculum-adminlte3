@@ -28,7 +28,7 @@
                     </a>
                 </span>
             @else
-                <span class="pull-right">
+<!--                <span class="pull-right">
                     <a
                     @if(isset($views))
                         id="login"
@@ -39,7 +39,7 @@
                         <i class="fa fa-sign-in-alt"></i> 
                         {{ trans('global.login') }}
                     </a>
-                </span>
+                </span>-->
             @endcan
             @if(isset($views))
                 @can('navigator_create')

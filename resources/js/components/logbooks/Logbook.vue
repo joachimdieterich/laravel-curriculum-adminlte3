@@ -1,10 +1,24 @@
 <template> 
     <div class="row">
+        <div class="col-md-12 pb-3">
+            <div id="logbook_filter" class="dataTables_filter">
+                <label >
+                    <input type="search" 
+                           class="form-control form-control-sm" 
+                           placeholder="Suchbegriff" 
+                           v-model="search"
+                           aria-controls="curricula-datatable">
+                </label>
+            </div>
+        </div>
+        
+
         <div class="col-md-12">
              <LogbookEntry 
                 v-for="entry in logbook.entries"
                 v-bind:key="entry.id"
                 :entry="entry"
+                :search="search"
                 :logbook="logbook"> 
             </LogbookEntry>
 <!--             The time line 
@@ -37,7 +51,7 @@
         }, 
         data () {
             return {
-                 
+                 search: ''
             };
         }, 
         

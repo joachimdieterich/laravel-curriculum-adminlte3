@@ -1,23 +1,23 @@
 <template>
     <!-- timeline item -->
-    <div class="card col-12">
-        <div :id="'#logbook_'+entry.id" class="post pt-2">
-            <div class="user-block mb-0">
-                <span class="username ml-0">
-                  <span href="#">{{ entry.title }}</span> 
-                  <span href="#" class="float-right btn-tool">
-                      <i class="fa fa-edit mt-3"
-                         @click.prevent="edit()"></i>
-                  </span>
-                  <div class="pull-right" v-can="'logbook_entry_edit'">
-                    <div class="btn-group" >
-                    <button type="button " 
-                            class="btn btn-default btn-sm dropdown-toggle " 
-                            style="background-color: transparent;color:#000;" 
+    <div :id="'#logbook_'+entry.id" 
+        class="card collapsed-card col-12"
+        :style="isActive"
+        >
+        <div class="user-block p-2"
+            data-card-widget="collapse" 
+            :data-target="'#logbook_body_'+entry.id" 
+            aria-expanded="true">
+
+            <span class="username ml-0">
+                
+                <div class="pull-right " v-can="'logbook_entry_edit'">
+
+                    <button type="button" 
+                            class="btn btn-tool  pt-3"
                             data-toggle="dropdown" 
-                            aria-expanded="false">
-                      <span class="caret"></span>
-                      {{ trans('global.logbookEntry.addition') }}
+                            aria-expanded="true">
+                        <i class="fa fa-plus"></i>
                     </button>
                     <div class="dropdown-menu" 
                          x-placement="top-start" 
@@ -42,17 +42,23 @@
                             <i class="fa fa-user-times"></i>
                             <span class="ml-2">{{ trans('global.absences.create') }}</span>
                         </button>
-
+                        <button class="dropdown-item" @click.prevent="edit()">
+                            <i class="fa fa-edit"></i>
+                            <span class="ml-2">{{ trans('global.logbookEntry.edit') }}</span>
+                        </button>
                     </div>
-                  </div>
                 </div>
-                </span>
+                <span href="#">{{ entry.title }}</span> 
                 <span class="description ml-0">{{ postDate() }}</span>
-            </div>
+            </span>
             
+        </div>
+
+        <div class="card-body p-0 collapse" :id="'#logbook_body_'+entry.id" >
+            <hr class="m-1">
             <span class="clearfix"></span>
-            
-            <ul class="nav nav-pills pull-right">
+
+            <ul class="nav nav-pills">
                 <li class="nav-item small">
                     <a class="nav-link active show" 
                        v-bind:href="'#logbook_description_'+entry.id" 
@@ -92,7 +98,7 @@
             </ul>  
             <span class="clearfix"></span>
             <hr class="m-1">
-            
+
 
             <div class="card-body p-2">
                 <div class="tab-content">
@@ -126,14 +132,14 @@
                                 type="enabling"></objective-box>
                             <span class="clearfix"></span>
                         </span>
-                        
-                        
+
+
                     </div>
                     <!-- /.tab-pane -->
                     <!-- tab-pane -->
                     <div class="tab-pane " 
                          v-bind:id="'logbook_contents_'+entry.id"  >
-                        
+
                         <ul class="nav nav-pills">
                             <li class="nav-item" v-for="(item,index) in contentCategories" v-bind:value="'category_'+item.id">
                                 <a class="nav-link show small" 
@@ -154,7 +160,7 @@
                                </content-group>
                            </div>
                         </div> 
-                        
+
                     </div>
                     <!-- /.tab-pane -->
                     <!-- tab-pane -->
@@ -164,7 +170,7 @@
                          <task-list  class="p-2"
                             :tasks="entry.task_subscription">
                          </task-list>   
-                        
+
                     </div>
                     <!-- /.tab-pane -->
                     <!-- tab-pane -->
@@ -172,11 +178,12 @@
                          v-bind:id="'logbook_userStatuses_'+entry.id"  
                          >logbook_userStatuses</div>
                     <!-- /.tab-pane -->
-                    
+
                 </div>
             </div>
-            
-        </div>
+
+        </div>      
+           
     </div>
     <!-- END timeline item -->
 </template>
@@ -191,11 +198,13 @@
         
         props: {
             'logbook': Object,
-            'entry': Object
+            'entry': Object,
+            'search': ''
         },
         data() {
             return {
-                media: {}
+                media: {},
+                active: true
               
             };
         },
@@ -228,7 +237,7 @@
             edit() {
                  this.$modal.show('logbook-entry-modal', { 'id': this.entry.id, 'method': 'patch'});
             },
-           
+            
             filterContent(category){
                 if (category === 1){
                     return [].concat(...this.entry.content_subscriptions.filter(c => c.content.categories.find(cat => cat.id === category)))
@@ -274,7 +283,13 @@
                 return this.getUnique(categories, 'id');
                 }   
             },
-           
+            isActive: function(){
+                if (this.entry.title.toLowerCase().indexOf(this.search.toLowerCase()) === -1){
+                    return "display:none";
+                } else {
+                    return "";
+                }
+            }
         },
         
         mounted() {

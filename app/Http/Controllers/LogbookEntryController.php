@@ -112,7 +112,49 @@ class LogbookEntryController extends Controller
      */
     public function destroy(LogbookEntry $logbookEntry)
     {
-        //
+        //delete all relations
+        
+        // delete mediaSubscriptions -> media will not be deleted
+        $logbookEntry->mediaSubscriptions()
+                ->where('subscribable_type', '=', 'App\LogbookEntry')
+                ->where('subscribable_id', '=', $logbookEntry->id)
+                ->delete();
+        
+        // delete terminalObjectiveSubscriptions
+        $logbookEntry->terminalObjectiveSubscriptions()
+                ->where('subscribable_type', '=', 'App\LogbookEntry')
+                ->where('subscribable_id', '=', $logbookEntry->id)
+                ->delete();
+        
+        // delete enablingObjectiveSubscriptions
+        $logbookEntry->enablingObjectiveSubscriptions()
+                ->where('subscribable_type', '=', 'App\LogbookEntry')
+                ->where('subscribable_id', '=', $logbookEntry->id)
+                ->delete();
+        
+        // delete contents 
+        foreach ($logbookEntry->contents AS $content)
+        {
+            (new ContentController)->destroy($content, 'App\LogbookEntry', $logbookEntry->id); // delete or unsubscribe if content is still subscribed elsewhere
+        }
+        
+        // delete taskSubscription
+        $logbookEntry->taskSubscription()
+                ->where('subscribable_type', '=', 'App\LogbookEntry')
+                ->where('subscribable_id', '=', $logbookEntry->id)
+                ->delete();
+        
+        // delete absences
+        $logbookEntry->absences()
+                ->where('referenceable_type', '=', 'App\LogbookEntry')
+                ->where('referenceable_id', '=', $logbookEntry->id)
+                ->delete();
+        $return = $logbookEntry->delete();
+        
+        if (request()->wantsJson()){    
+            return ['message' => $return];
+        }
+        
     }
     
     protected function validateRequest()

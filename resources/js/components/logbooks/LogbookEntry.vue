@@ -46,6 +46,11 @@
                             <i class="fa fa-edit"></i>
                             <span class="ml-2">{{ trans('global.logbookEntry.edit') }}</span>
                         </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="dropdown-item text-danger" @click.prevent="destroy()">
+                            <i class="fa fa-trash"></i>
+                            <span class="ml-2">{{ trans('global.delete') }}</span>
+                        </button>
                     </div>
                 </div>
                 <span href="#">{{ entry.title }}</span> 
@@ -237,6 +242,14 @@
             edit() {
                  this.$modal.show('logbook-entry-modal', { 'id': this.entry.id, 'method': 'patch'});
             },
+            async destroy(){
+                try {   
+                    this.location = (await axios.delete('/logbookEntries/'+this.entry.id)).data.message;
+                } catch(error) {
+                    alert(error);
+                }
+                location.reload(true);
+            }, 
             
             filterContent(category){
                 if (category === 1){
@@ -264,11 +277,12 @@
             postDate() {
                 var start = new Date(this.entry.begin.replace(/-/g, "/"));
                 var end   = new Date(this.entry.end.replace(/-/g, "/"));
+                var dateFormat = { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute:'2-digit'};
 
                 if (start.toDateString() === end.toDateString()) {
-                  return this.entry.begin + " - " + end.toLocaleTimeString();
+                  return start.toLocaleString([], dateFormat) + " - " + end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                 } else {
-                  return this.entry.begin + " - " + this.entry.end;
+                  return start.toLocaleString([], dateFormat) + " - " + end.toLocaleString([], dateFormat);
                 }
                
             },

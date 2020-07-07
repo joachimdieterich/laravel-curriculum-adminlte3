@@ -17,6 +17,24 @@ class LogbookEntry extends Model
         return $this->belongsTo('App\Logbook')->withTimestamps();
     }
     
+    public function absences()
+    {
+        return $this->morphMany('App\Absence', 'referenceable');
+    }
+    
+    
+    public function contents()
+    {
+        return $this->hasManyThrough(
+            'App\Content',
+            'App\ContentSubscription',
+            'subscribable_id', // Foreign key on content_subscription table...
+            'id', // Foreign key on content table...
+            'id', // Local key on logbookEntry table...
+            'content_id' // Local key on content_subscription table...
+        )->where('subscribable_type', get_class($this)); 
+    }
+    
     public function contentSubscriptions()
     {
         return $this->morphMany('App\ContentSubscription', 'subscribable');

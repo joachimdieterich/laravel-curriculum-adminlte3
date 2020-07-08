@@ -60,7 +60,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     /* plugin eventmanagment */
     Route::post('eventSubscriptions/destroySubscription', 'EventSubscriptionController@destroySubscription')->name('eventSubscriptions.destroySubscription');
-    Route::post('eventSubscriptions/searchRepository', 'EventSubscriptionController@searchEvents')->name('eventSubscriptions.searchEvents');
+    Route::post('eventSubscriptions/search', 'EventSubscriptionController@search')->name('eventSubscriptions.search');
     Route::post('eventSubscriptions/getEvents', 'EventSubscriptionController@getEvents')->name('eventSubscriptions.getEvents');
     Route::resource('eventSubscriptions', 'EventSubscriptionControllerController');
     

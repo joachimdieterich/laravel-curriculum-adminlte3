@@ -2,23 +2,27 @@
     <div class="row" >
         <modals-container/>
         <div class="col-12">
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <i class="fa fa-bullseye"></i>
+                        <span v-if="type === 'enabling'">{{ trans('global.enablingObjective.title_singular') }}</span>
+                        <span v-else>{{ trans('global.terminalObjective.title_singular') }}</span>
+                </div>
+                <div class="card-body" 
+                     v-html="objective.title">
+                </div>
+            </div>
+        </div>
+                
+        <div class="col-12">
             <div class="card">
                 <div class="card-header">
                     <div class="row">
                         <div class="col-12">
                             <ul class="nav nav-pills pull-left">
-                                <li class="nav-item">
-                                    <a class="nav-link active show" 
-                                       href="#objective" 
-                                       data-toggle="tab">
-                                        <i class="fa fa-bullseye"></i>
-                                        <span v-if="type === 'enabling'">{{ trans('global.enablingObjective.title_singular') }}</span>
-                                        <span v-else>{{ trans('global.terminalObjective.title_singular') }}</span>
-                                        </a>
-                                </li>
                                 
                                 <li v-if="objective.description != ''" class="nav-item">
-                                    <a class="nav-link " 
+                                    <a class="nav-link active show" 
                                        href="#description" 
                                        data-toggle="tab">{{ trans('global.description') }}</a>
                                 </li>
@@ -109,11 +113,8 @@
                 <!-- /.card-header -->
                 <div class="card-body"> 
                     <div class="tab-content">
-                        <div class="tab-pane active show" 
-                             id="objective"  
-                             v-html="objective.title"></div>
                         
-                        <div class="tab-pane " 
+                        <div class="tab-pane active show" 
                              id="description"  
                              v-html="objective.description"></div>
                         <!-- /.tab-pane -->
@@ -366,7 +367,7 @@
             });
             
             this.filterContent();
-            this.loadExternal();
+            this.loadExternal();    
         },
         computed: {
             scr: function () {

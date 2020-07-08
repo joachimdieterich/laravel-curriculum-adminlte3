@@ -4,8 +4,9 @@
     - [Configuration](/{{route}}/{{version}}/config)
     - [Upgrade](/{{route}}/{{version}}/upgrade)
 - ## Features
-    - [Navigators](/{{route}}/{{version}}/navigators)
     - [Authorization](/{{route}}/{{version}}/auth)
+    - [Navigators](/{{route}}/{{version}}/navigators)
+    - [Plugins](/{{route}}/{{version}}/plugins)
     - [Roles and Permissions](/{{route}}/{{version}}/role)
     - [SSO](/{{route}}/{{version}}/sso)
     - [Vue](/{{route}}/{{version}}/vue)

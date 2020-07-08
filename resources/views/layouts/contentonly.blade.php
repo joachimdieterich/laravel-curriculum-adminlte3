@@ -53,7 +53,11 @@
         <div class="pl-2 pr-2">
             @yield('content')
         </div>
+        <!-- Footer -->
+        @include('partials.footer', ['contentonly' => true])
+        
     </div>
+    
     <form id="logoutform" action="{{ route('logout') }}" method="POST" style="display: none;">
         {{ csrf_field() }}
     </form>

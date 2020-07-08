@@ -91,13 +91,8 @@ echo json_encode([
                 <!-- /.content -->
             </div>
             <!-- /.content-wrapper -->
-
-            <footer class="main-footer">
-                <div class="float-right d-none d-sm-block">
-                    <b>Version</b> 1.0.0
-                </div>
-                <strong>Copyright &copy; 2012-2020 <a href="http://github.com/joachimdieterich">Joachim Dieterich</a>.</strong> 
-            </footer>
+            <!-- Footer -->
+            @include('partials.footer')
             <!-- Logout Form -->
             <form id="logoutform" action="{{ route('logout') }}" method="POST" style="display: none;">
                 {{ csrf_field() }}

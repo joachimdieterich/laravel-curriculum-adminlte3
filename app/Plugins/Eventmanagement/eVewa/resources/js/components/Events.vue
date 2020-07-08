@@ -5,10 +5,34 @@
             <span class="sr-only">Loading...</span>
         </div>-->
         
-        <div v-for="event in entries.lesePlrlpVeranstaltungen.data" class=" pb-3 border-bottom">
-            <h5 > {{event.ARTIKEL}}</h5>
-            <div class="row">
-                <div class="col-2"><strong>VA-Nummer</strong></div>
+        <div class="form-group "
+            :class="errors.title ? 'has-error' : ''"
+              >
+            <label for="title">{{ trans('global.eventSubscription.search') }}</label>
+            <input
+                type="text" id="search"
+                name="eventId"
+                class="form-control"
+                v-model="search"
+                required
+                @keyup.enter="loader()" 
+                />
+             <p class="help-block" v-if="errors.searc" v-text="errors.search[0]"></p>
+        </div>
+        <div v-for="event in entries" class="border-bottom card collapsed-card">
+            <div class="card-header">
+            <span data-target="'navigator-item-content-'+event.ARTIKEL_NR" data-card-widget="collapse">{{event.ARTIKEL}}</span>
+            <div class="card-tools pull-right">
+                <button 
+                    :id="'navigator-item-content-'+event.ARTIKEL_NR"
+                    class="btn btn-tool" 
+                    :data-target="'#navigator-item-content-'+event.ARTIKEL_NR" data-card-widget="collapse">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+            </div>
+            <div :id="'navigator-item-content-'+event.ARTIKEL_NR" class="card-body collapse">
+              <div class="col-2"><strong>VA-Nummer</strong></div>
                 <div class="col-10" v-html="event.ARTIKEL_NR"></div>
                 
                 <div class="col-2"><strong>Beschreibung</strong></div>
@@ -38,6 +62,9 @@
                     </a>
                 </div>
             </div>
+            
+            
+          
         </div>
     </div>
 </template>
@@ -52,6 +79,7 @@
         data() {
             return {
                 entries: null,
+                search: this.model.title.replace(/(<([^>]+)>)/ig,""),
                 errors: {}
             }
         },
@@ -61,9 +89,9 @@
                     this.entries = (await axios.post('/eventSubscriptions/getEvents', {
                         subscribable_type: this.subscribable_type(),
                         subscribable_id: this.model.id,
-                        search: this.model.title,
+                        search: this.search,
                         plugin: 'evewa'
-                    })).data.message;
+                    })).data.message.lesePlrlpVeranstaltungen.data;
                     
                 } catch(error) {
                     //this.errors = error.response.data.errors;

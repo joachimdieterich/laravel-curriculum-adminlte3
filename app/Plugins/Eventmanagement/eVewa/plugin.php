@@ -52,9 +52,17 @@ class eVewa extends EventmanagementPlugin
      */
     public function lesePlrlpVeranstaltungen($params)
     {
-       
-        $rake = RakePlus::create(strip_tags($params['search']), 'de_DE', 3);
-        $phrase_scores = $rake->sort('asc')->get();
+       if (isset($params['propose']))
+       {
+           $rake = RakePlus::create(strip_tags($params['search']), 'de_DE', 3);
+            $phrase_scores = $rake->sort('asc')->get();
+            $search = explode(' ',trim($phrase_scores[0]))[0];
+       }
+       else
+       {
+          $search = $params['search'];
+       }
+        
         
             $params = array(
                 'method'=> 'lesePlrlpVeranstaltungen',
@@ -63,7 +71,7 @@ class eVewa extends EventmanagementPlugin
                 'page'=> '',
                 'limit'=> '',
                 'order'=> '',
-                'search'=> explode(' ',trim($phrase_scores[0]))[0], //todo better search in evewa!
+                'search'=> $search, //todo better search in evewa!
                 'abgeschlossene'=> '',
                 'gs_ort'=> '',
                 'gs_plz'=> '',

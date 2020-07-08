@@ -36,8 +36,9 @@
 @endcan
 
 <div id="curriculum_view_content" class="row"> 
-     @if(!isset(json_decode($settings)->course))
+     
      <div class="col-12">
+         @if(!isset(json_decode($settings)->course))
 <!--    <button type="button" class="btn btn-default" data-toggle="tooltip"  onclick="">
             <i class="fa fa-compress"></i>
         </button>-->
@@ -71,6 +72,41 @@
         @endif
         
         <div class="btn-group">        
+            <button type="button" class="btn btn-default" data-toggle="dropdown">
+                <i class="fa fa-print"></i>
+                <div class="dropdown-menu" >
+                    <a class="dropdown-item" 
+                       onclick="location.href='{{ route("print.curriculum", $curriculum->id) }}'">
+                        <i class="fa fa-th text-center" style="width:20px"></i>
+                        {{ trans('global.curriculum.print') }}
+                    </a>
+                    @if(isset($curriculum->glossar))
+                    <a class="dropdown-item" 
+                       onclick="location.href='{{ route("print.glossar", $curriculum->glossar->id) }}'">
+                        <i class="fa fa-equals text-center" style="width:20px"></i>
+                        {{ trans('global.glossar.print') }}
+                    </a>
+                    @endif
+                    <a class="dropdown-item" 
+                       onclick="location.href='{{ route("print.references", $curriculum->id) }}'">
+                        <i class="fa fa-link text-center" style="width:20px"></i>
+                        {{ trans('global.curriculum.print_references') }}
+                    </a>
+                </div>
+            </button>
+        </div>
+    @endif
+    
+        @if(isset($course))
+            @can('logbook_create')
+            <a class="btn btn-default btn-flat" 
+               href="/logbooks/{{isset($logbook) ? $logbook->id : 'create?subscribable_type=App\\Course&subscribable_id='. $course->id }}">
+                <i class="fas fa-book pr-1"></i>
+                {{ trans('global.logbook.title_singular') }}
+            </a>
+            @endcan
+        @endif
+     <div class="btn-group">        
             <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
                 {{ trans('global.details') }}
                 <span class="sr-only">Toggle Settings Dropdown</span>
@@ -105,39 +141,7 @@
                 </div>
             </button>
         </div>
-        <div class="btn-group">        
-            <button type="button" class="btn btn-default" data-toggle="dropdown">
-                <i class="fa fa-print"></i>
-                <div class="dropdown-menu" >
-                    <a class="dropdown-item" 
-                       onclick="location.href='{{ route("print.curriculum", $curriculum->id) }}'">
-                        <i class="fa fa-th text-center" style="width:20px"></i>
-                        {{ trans('global.curriculum.print') }}
-                    </a>
-                    @if(isset($curriculum->glossar))
-                    <a class="dropdown-item" 
-                       onclick="location.href='{{ route("print.glossar", $curriculum->glossar->id) }}'">
-                        <i class="fa fa-equals text-center" style="width:20px"></i>
-                        {{ trans('global.glossar.print') }}
-                    </a>
-                    @endif
-                    <a class="dropdown-item" 
-                       onclick="location.href='{{ route("print.references", $curriculum->id) }}'">
-                        <i class="fa fa-link text-center" style="width:20px"></i>
-                        {{ trans('global.curriculum.print_references') }}
-                    </a>
-                </div>
-            </button>
-        </div>
-        @if(isset($course))
-            @can('logbook_create')
-            <a class="btn btn-default btn-flat" 
-               href="/logbooks/{{isset($logbook) ? $logbook->id : 'create?subscribable_type=App\\Course&subscribable_id='. $course->id }}">
-                <i class="fas fa-book pr-1"></i>
-                {{ trans('global.logbook.title_singular') }}
-            </a>
-            @endcan
-        @endif
+    @if(!isset(json_decode($settings)->course))
         @if(isset($certificates))
             @can('certificate_access')
             <a class="btn btn-default btn-flat" 
@@ -160,9 +164,9 @@
                    "option_label" => "title",  
                    "onchange"=> "triggerSetCrossReferenceCurriculumId(this.value)",  
                    "value" =>  old('current_curriculum_cross_reference_id', isset(auth()->user()->current_curriculum_cross_reference_id) ? auth()->user()->current_curriculum_cross_reference_id : '')])
-        
+    @endif    
     </div>
-    @endif
+    
     <curriculum-view
         ref="curriculumView"
         :curriculum="{{ $curriculum }}" 

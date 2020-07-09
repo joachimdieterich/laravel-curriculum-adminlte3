@@ -1,8 +1,8 @@
 <template >
-    <div sticky-container> 
-        <ul v-sticky sticky-offset="{top: 70}"
+    <div sticky-container > 
+        <ul v-sticky sticky-offset="{top: 70}" 
             v-bind:id="'content_'+category.id" 
-            class="pull-right content-index-list">
+            class="hidden-sm pull-right content-index-list">
             <li v-for="(item,index) in contents" 
                 class="content-index-list-item ">
                 <span @click="scrollTo('content_'+category.id+'_'+item.content.id)" 
@@ -71,7 +71,10 @@
     line-height: 1.5;
     padding: .75rem;
 }
-.content-group {
-    margin-right:200px;
+
+@media (min-width: 576px){
+    .content-group {
+        margin-right:200px;
+    } 
 }
 </style>

@@ -596,3 +596,25 @@ body:not(.sidebar-mini-md) {
     transition: none !important;
   }
 }
+
+
+.hidden-xs {
+  @media (max-width: map-get($grid-breakpoints, xs)) {
+    display: none;
+  }
+}
+.hidden-sm {
+  @media (max-width: map-get($grid-breakpoints, sm))  {
+    display: none;
+  }
+}
+.hidden-md {
+  @media (max-width: map-get($grid-breakpoints, md)) {
+    display: none;
+  }
+}
+.hidden-lg {
+  @media (max-width: map-get($grid-breakpoints, lg)) {
+    display: none;
+  }
+}

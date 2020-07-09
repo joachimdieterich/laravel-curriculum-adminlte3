@@ -33,7 +33,9 @@
         <div class="col-lg-2 pt-2">
             <a class="text-white-50 text-decoration-none " 
                href="http://curriculumonline.de">
-                <b>curriculum</b>online Version 1.0.0
+                <small>
+                    <b>curriculum</b>online Version 1.0.0
+                </small>
             </a>
         </div>
     </div>

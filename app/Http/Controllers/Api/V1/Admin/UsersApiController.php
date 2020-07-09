@@ -86,7 +86,7 @@ class UsersApiController extends Controller
       
         return ['enrollments' => $user->groups()->with(['curricula'])->get(), 
                 'notifications' => $user->notifications,
-                'events' => [$event] 
+                'events' => [/*$event*/] 
                ];
     }
     

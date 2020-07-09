@@ -317,6 +317,7 @@ class Edusharing extends RepositoryPlugin
 
     //https://[EDUSHARINGDOMAIN]/edu-sharing/swagger/#!/SEARCH_v1/searchByProperty
     public function getSearchCustom($repository, $params) {
+        dump($this->repoUrl . '/rest/search/v1/custom/' . $repository.'?'.http_build_query($params));
         $ret =$this->call ( $this->repoUrl . '/rest/search/v1/custom/' . $repository.'?'.http_build_query($params));
         return json_decode($ret, true);
     }
@@ -332,7 +333,7 @@ class Edusharing extends RepositoryPlugin
     public function searchRepository($query)
     {
       
-        $repo    = isset($query['repo']) ? $query['repo'] : '-home-';    //e.g.'FILES';
+        $repo           = isset($query['repo']) ? $query['repo'] : '-home-';    //e.g.'FILES';
         $contentType    = isset($query['contentType']) ? $query['contentType'] : 'ALL';    //e.g.'FILES';
         $property       = isset($query['property']) ? $query['property'] : "cm:name";      //e.g.'ccm:competence_digital2';
         $value          = $query['value'];          //e.g.11990503;

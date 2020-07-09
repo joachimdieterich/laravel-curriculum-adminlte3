@@ -54,7 +54,7 @@ class SAMLLoginListener
                     ->select('periods.*')
                     ->join('groups', 'groups.period_id', '=', 'periods.id')
                     ->join('group_user', 'group_user.group_id', '=', 'groups.id') 
-                    ->where('group_user.user_id',  $this->id)
+                    ->where('group_user.user_id',  $u->id)
                     ->where('groups.organization_id', $u->current_organization_id)
                     ->get()->first())->id;
             $u->save();

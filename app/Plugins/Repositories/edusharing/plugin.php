@@ -357,8 +357,8 @@ class Edusharing extends RepositoryPlugin
         parse_str($arguments, $query);
 
         $apiEndpoint    = isset($query['endpoint']) ?  $query['endpoint'] : 'node';             
-        $contentType    = isset($query['contentType']) ? $query['contentType'] : null;    //e.g.'FILES';
-        $property       = isset($query['property']) ? $query['property'] : null;      //e.g.'ccm:competence_digital2';
+        $contentType    = isset($query['contentType']) ? $query['contentType'] : 'ALL';    //e.g.'FILES';
+        $property       = isset($query['property']) ? $query['property'] : "cm:name";      //e.g.'ccm:competence_digital2';
         $value          = isset($query['value']) ? $query['value'] : $arguments;          //e.g.11990503;
         $maxItems       = 40;
         $skipCount      = 0;

@@ -107,7 +107,7 @@ class RepositorySubscriptionController extends Controller
         if (isset($input['search']))
         {  
             $rake = RakePlus::create(strip_tags($input['search']), 'de_DE', 3);
-            $phrase_scores = $rake->sortByScore('desc')->scores();
+            $phrase_scores = $rake->sort('asc')->scores(); 
             $repositoryPlugin = app()->make('App\RepositoryPlugin');
             dump(array_key_first($phrase_scores));
             //$nodes = $repositoryPlugin->plugins[$input['repository']]->searchRepository(['value' => array_key_first($phrase_scores)]);

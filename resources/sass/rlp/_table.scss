@@ -155,11 +155,13 @@ table.dataTable tbody td.select-checkbox:before,
 table.dataTable tbody td.select-checkbox:after,
 table.dataTable tbody th.select-checkbox:before,
 table.dataTable tbody th.select-checkbox:after {
+  top: 0 !important;
   border:0 !important;
   padding-top:5px;
 }
 table.dataTable tbody td.select-checkbox:before,
 table.dataTable tbody th.select-checkbox:before {
+  top: 0 !important;
   position: sticky;
   content: "\f0c8";
   color: white!important; 
@@ -167,6 +169,7 @@ table.dataTable tbody th.select-checkbox:before {
 }
 table.dataTable tr.selected td.select-checkbox:after,
 table.dataTable tr.selected th.select-checkbox:after {
+  top: 0 !important;
   position: sticky;
   content: "\f14a";
   color: #009CEE!important;

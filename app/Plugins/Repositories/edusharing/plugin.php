@@ -397,7 +397,7 @@ class Edusharing extends RepositoryPlugin
                 'value'       => isset($node['ref']['id']) ? $node['ref']['id'] : $arguments, //value field in db
                 'node_id'     => isset($node['ref']['id']) ? $node['ref']['id'] : null,
                 'license'     => isset($node['licenseURL']) ? $node['licenseURL'] : null,
-                'title'       => getReadableTitle($node), //isset($node['title']) ?  $node['title'] : $node['name'],
+                'title'       => $this->getReadableTitle($node), //isset($node['title']) ?  $node['title'] : $node['name'],
                 'description' => isset($node['description']) ? $node['description'] : '',
                 'thumb'       => isset($node['preview']['url']) ? $node['preview']['url'] : '',
                 'path'        => isset($node['ref']['id']) ? $this->repoUrl . '/components/render/' .$node['ref']['id'] : ''

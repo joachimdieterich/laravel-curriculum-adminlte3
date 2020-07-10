@@ -104,14 +104,15 @@ class RepositorySubscriptionController extends Controller
         {
             $result->push($repositoryPlugin->plugins[$input['repository']]->processReference($subscription->value));
         }
-//        if (isset($input['search']))
-//        {  
-//            $rake = RakePlus::create(strip_tags($input['search']), 'de_DE', 3);
-//            $phrase_scores = $rake->sort('asc')->scores(); 
-//            $repositoryPlugin = app()->make('App\RepositoryPlugin');
-//            
-//            $nodes = $repositoryPlugin->plugins[$input['repository']]->searchRepository(['value' => array_key_first($phrase_scores)]);
-//            
+        if (isset($input['search']))
+        {  
+            $rake = RakePlus::create(strip_tags($input['search']), 'de_DE', 3);
+            $phrase_scores = $rake->sortByScore('desc')->scores();
+            $repositoryPlugin = app()->make('App\RepositoryPlugin');
+            dump(array_key_first($phrase_scores));
+            //$nodes = $repositoryPlugin->plugins[$input['repository']]->searchRepository(['value' => array_key_first($phrase_scores)]);
+            $result->push($repositoryPlugin->plugins[$input['repository']]->processReference( array_key_first($phrase_scores)));
+            
 //            foreach ($nodes['nodes'] as $node) {
 //                if ($node['mediatype'] == 'folder'){ //todo es muss überlegt werden, ob subfolder geladen werden
 //                    continue;
@@ -126,7 +127,7 @@ class RepositorySubscriptionController extends Controller
 //                    'path'        => env('EDUSHARING_REPO_URL', '') . '/components/render/' .$node['ref']['id']
 //              ]]);
 //            }
-//        }
+        }
         
         if (request()->wantsJson()){    
             return ['message' => $result];

@@ -271,9 +271,13 @@ class Edusharing extends RepositoryPlugin
             default : break;
         }
 
+//        $headers = array_merge ( array (
+//                        'Accept: application/json',
+//                        'Authorization: Bearer ' . $this->accessToken 
+//        ), $additionalHeaders );
         $headers = array_merge ( array (
                         'Accept: application/json',
-                        'Authorization: Bearer ' . $this->accessToken 
+                        'Authorization: EDU-TICKET ' . $this->accessToken 
         ), $additionalHeaders );
         curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
 
@@ -311,7 +315,7 @@ class Edusharing extends RepositoryPlugin
     }
 
     public function getRendering($repository, $node) {
-        dump($this->repoUrl . '/rest/rendering/v1/details/' . $repository . '/' . $node);
+        //dump($this->repoUrl . '/rest/rendering/v1/details/' . $repository . '/' . $node);
         $ret = $this->call($this->repoUrl . '/rest/rendering/v1/details/' . $repository . '/' . $node);
         return json_decode($ret, true);
     }
@@ -321,9 +325,9 @@ class Edusharing extends RepositoryPlugin
     //https://[EDUSHARINGDOMAIN]/edu-sharing/rest/search/v1/custom/-home-?contentType=ALL&property=cm:name&value=20200422&maxItems=10&skipCount=0
 
     public function getSearchCustom($repository, $params) {
-        dump($this->repoUrl . '/rest/search/v1/custom/' . $repository.'?'.http_build_query($params));
+        //dump($this->repoUrl . '/rest/search/v1/custom/' . $repository.'?'.http_build_query($params));
         $ret =$this->call ( $this->repoUrl . '/rest/search/v1/custom/' . $repository.'?'.http_build_query($params));
-        dump($ret);
+        //dump($ret);
         return json_decode($ret, true);
     }
 

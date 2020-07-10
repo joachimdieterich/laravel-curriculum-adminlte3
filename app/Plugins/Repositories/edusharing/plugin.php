@@ -318,8 +318,9 @@ class Edusharing extends RepositoryPlugin
 
     //https://[EDUSHARINGDOMAIN]/edu-sharing/rest/search/v1/custom/-home-?contentType=ALL&property=cm:name&value=curriculum&maxItems=10&skipCount=0
     public function getSearchCustom($repository, $params) {
-        //dump($this->repoUrl . '/rest/search/v1/custom/' . $repository.'?'.http_build_query($params));
+        dump($this->repoUrl . '/rest/search/v1/custom/' . $repository.'?'.http_build_query($params));
         $ret =$this->call ( $this->repoUrl . '/rest/search/v1/custom/' . $repository.'?'.http_build_query($params));
+        dump($ret);
         return json_decode($ret, true);
     }
 

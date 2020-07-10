@@ -67,11 +67,11 @@
             <!--dropdown start-->
                                 <div 
                                     v-can="'objective_edit'" 
-                                    class="pull-right btn btn-default btn-flat dropdown-toggle" 
+                                    class="pull-right btn btn-default btn-flat " 
                                     style="background-color: transparent;border:0!important;" 
                                     data-toggle="dropdown" 
                                     aria-expanded="false"> 
-                                    <span class="caret"></span>
+                                    <i class="fa fa-plus"></i>
                                     <div class="dropdown-menu">
                                         <button 
                                              class="dropdown-item" 

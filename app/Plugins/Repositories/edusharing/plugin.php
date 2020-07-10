@@ -370,7 +370,7 @@ class Edusharing extends RepositoryPlugin
             case 'getNodeChildren': $nodes      = $this->getChildren('-home-', $value, array ('maxItems' => $maxItems, 'skipCount' => $skipCount));
                 break;
             case 'node':            $result = $this->getRendering('-home-', $value);
-                dump($result);
+                
                                     if (isset($result['node'])){
                                         $nodes['nodes'][] =$result['node'] ;
                                     } else {
@@ -387,6 +387,7 @@ class Edusharing extends RepositoryPlugin
             if ($node['mediatype'] == 'folder'){ //todo es muss überlegt werden, ob subfolder geladen werden
                 continue;
             }
+            dump($node);
             $collection->push([
                 'value'       => $arguments, //value field in db
                 'node_id'     => $node['ref']['id'],

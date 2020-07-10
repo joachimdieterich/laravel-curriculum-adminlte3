@@ -387,17 +387,17 @@ class Edusharing extends RepositoryPlugin
             if ($node['mediatype'] == 'folder'){ //todo es muss überlegt werden, ob subfolder geladen werden
                 continue;
             }
-            dump($node);
+            
             $collection->push([
-                'value'       => $arguments, //value field in db
-                'node_id'     => $node['ref']['id'],
-                'license'     => $node['licenseURL'],
+                'value'       => isset($node['ref']['id']) ? $node['ref']['id'] : $arguments, //value field in db
+                'node_id'     => isset($node['ref']['id']) ? $node['ref']['id'] : null,
+                'license'     => isset($node['licenseURL']) ? $node['licenseURL'] : null,
                 'title'       => isset($node['title']) ?  $node['title'] : $node['name'],
-                'description' => $node['description'],
-                'thumb'       => $node['preview']['url'],
-                'path'        => $this->repoUrl . '/components/render/' .$node['ref']['id']
+                'description' => isset($node['description']) ? $node['description'] : '',
+                'thumb'       => isset($node['preview']['url']) ? $node['preview']['url'] : '',
+                'path'        => isset($node['ref']['id']) ? $this->repoUrl . '/components/render/' .$node['ref']['id'] : ''
             ]);
-            dump($node);
+            dump($collection);
         }
 dump('finished');
         return $collection;

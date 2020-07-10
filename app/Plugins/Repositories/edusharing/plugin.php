@@ -382,12 +382,12 @@ class Edusharing extends RepositoryPlugin
         }
 
         $collection = collect([]);
-        dump('start');
+        
         foreach ($nodes['nodes'] as $node) {
             if ($node['mediatype'] == 'folder'){ //todo es muss überlegt werden, ob subfolder geladen werden
                 continue;
             }
-            dump('add to collection');
+            dump($node);
             $collection->push([
                 'value'       => $arguments, //value field in db
                 'node_id'     => $node['ref']['id'],

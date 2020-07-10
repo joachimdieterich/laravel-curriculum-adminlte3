@@ -382,7 +382,7 @@ class Edusharing extends RepositoryPlugin
         }
 
         $collection = collect([]);
-        
+        dump($nodes['nodes']);
         foreach ($nodes['nodes'] as $node) {
             if ($node['mediatype'] == 'folder'){ //todo es muss überlegt werden, ob subfolder geladen werden
                 continue;

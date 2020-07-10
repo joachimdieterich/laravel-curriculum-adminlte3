@@ -311,6 +311,7 @@ class Edusharing extends RepositoryPlugin
     }
 
     public function getRendering($repository, $node) {
+        dump($this->repoUrl . '/rest/rendering/v1/details/' . $repository . '/' . $node);
         $ret = $this->call($this->repoUrl . '/rest/rendering/v1/details/' . $repository . '/' . $node);
         return json_decode($ret, true);
     }

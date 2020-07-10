@@ -39,7 +39,7 @@ class ApiUserDashboardTest extends TestCase {
                 ->assertSee(json_encode([
                     'enrollments' => User::find(1)->groups()->with(['curricula'])->get(),
                     'notifications' => User::find(1)->notifications,
-                    'events' => [$event],
+                    'events' => [/*$event*/],
                     ]));
     }
 

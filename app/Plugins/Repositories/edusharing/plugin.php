@@ -318,6 +318,7 @@ class Edusharing extends RepositoryPlugin
 
     //https://[EDUSHARINGDOMAIN]/edu-sharing/rest/search/v1/custom/-home-?contentType=ALL&property=cm:name&value=curriculum&maxItems=10&skipCount=0
     public function getSearchCustom($repository, $params) {
+        dump($this->repoUrl . '/rest/search/v1/custom/' . $repository.'?'.http_build_query($params));
         $ret =$this->call ( $this->repoUrl . '/rest/search/v1/custom/' . $repository.'?'.http_build_query($params));
         return json_decode($ret, true);
     }
@@ -382,7 +383,7 @@ class Edusharing extends RepositoryPlugin
         }
 
         $collection = collect([]);
-        dump($nodes['nodes']);
+        
         foreach ($nodes['nodes'] as $node) {
             if ($node['mediatype'] == 'folder'){ //todo es muss überlegt werden, ob subfolder geladen werden
                 continue;
@@ -397,9 +398,9 @@ class Edusharing extends RepositoryPlugin
                 'thumb'       => isset($node['preview']['url']) ? $node['preview']['url'] : '',
                 'path'        => isset($node['ref']['id']) ? $this->repoUrl . '/components/render/' .$node['ref']['id'] : ''
             ]);
-            dump($collection);
+
         }
-dump('finished');
+        
         return $collection;
     }
 

@@ -317,6 +317,9 @@ class Edusharing extends RepositoryPlugin
     }
 
     //https://[EDUSHARINGDOMAIN]/edu-sharing/rest/search/v1/custom/-home-?contentType=ALL&property=cm:name&value=curriculum&maxItems=10&skipCount=0
+    //https://[EDUSHARINGDOMAIN]/edu-sharing/rest/search/v1/custom/-home-?contentType=ALL&property=cm:name&value=20200422&maxItems=40&skipCount=0
+    //https://[EDUSHARINGDOMAIN]/edu-sharing/rest/search/v1/custom/-home-?contentType=ALL&property=cm:name&value=20200422&maxItems=10&skipCount=0
+
     public function getSearchCustom($repository, $params) {
         dump($this->repoUrl . '/rest/search/v1/custom/' . $repository.'?'.http_build_query($params));
         $ret =$this->call ( $this->repoUrl . '/rest/search/v1/custom/' . $repository.'?'.http_build_query($params));
@@ -394,7 +397,7 @@ class Edusharing extends RepositoryPlugin
                 'value'       => isset($node['ref']['id']) ? $node['ref']['id'] : $arguments, //value field in db
                 'node_id'     => isset($node['ref']['id']) ? $node['ref']['id'] : null,
                 'license'     => isset($node['licenseURL']) ? $node['licenseURL'] : null,
-                'title'       => isset($node['title']) ?  $node['title'] : $node['name'],
+                'title'       => getReadableTitle($node), //isset($node['title']) ?  $node['title'] : $node['name'],
                 'description' => isset($node['description']) ? $node['description'] : '',
                 'thumb'       => isset($node['preview']['url']) ? $node['preview']['url'] : '',
                 'path'        => isset($node['ref']['id']) ? $this->repoUrl . '/components/render/' .$node['ref']['id'] : ''
@@ -405,7 +408,15 @@ class Edusharing extends RepositoryPlugin
         return $collection;
     }
 
-   
+    private function getReadableTitle($node){
+        
+        $title = isset($node['title']) ?  $node['title'] : '';
+        if (empty(trim($title)))
+        {
+            $title = $node['name'];
+        }
+        return $title;
+    }
 
     public function store($query){
         

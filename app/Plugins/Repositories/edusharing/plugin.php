@@ -370,6 +370,7 @@ class Edusharing extends RepositoryPlugin
             case 'getNodeChildren': $nodes      = $this->getChildren('-home-', $value, array ('maxItems' => $maxItems, 'skipCount' => $skipCount));
                 break;
             case 'node':            $result = $this->getRendering('-home-', $value);
+                dump($result);
                                     if (isset($result['node'])){
                                         $nodes['nodes'][] =$result['node'] ;
                                     } else {

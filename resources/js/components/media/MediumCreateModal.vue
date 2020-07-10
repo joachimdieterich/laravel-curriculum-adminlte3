@@ -41,22 +41,22 @@
                   <li class="nav-item" v-can="'external_medium_create'"><a class="nav-link" href="#external" data-toggle="tab" @click="setTab('external')">{{ trans('global.externalRepositorySubscription.title_singular') }}</a></li>
                 </ul>
               
-             
+                <hr>
                 <div class="tab-content pt-2">
                     <div class="tab-pane active show" id="media" v-can="'medium_create'">
                         <div id="lfm" 
                              class="pull-left"
                            data-input="thumbnail" 
                            data-preview="holder" >
+                            <img id="holder" 
+                                style="height:100px;" 
+                                src="" >
                             <button 
                                 class="btn btn-primary pull-left" 
                                 onclick="$(this).hide();">
                                 <i class="fa fa-plus"></i>
                                 {{ trans('global.media.add') }}
                             </button>
-                            <img id="holder" 
-                                style="height:100px;" 
-                                src="" >
                         </div>
                           <input id="thumbnail" 
                                   name="filepath"
@@ -89,11 +89,11 @@
              
                      
             </div>
-            <div class="card-footer">
+<!--            <div class="card-footer">
                 <span class="pull-right">
                      <button type="button" class="btn btn-primary" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
                 </span>
-            </div>
+            </div>-->
             
         </div>
     </modal>

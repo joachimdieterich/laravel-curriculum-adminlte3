@@ -98,12 +98,14 @@ class RepositorySubscriptionController extends Controller
                 ->where('repository', $input['repository'])->get();
         
         $result = collect([]);
+        
+        $repositoryPlugin = app()->make('App\RepositoryPlugin'); 
         foreach($subscriptions as $subscription)
         {
-            $result->push($this->callPlugin($input['repository'], $subscription->value));
+            $result->push($repositoryPlugin->plugins[$input['repository']]->processReference($subscription->value));
         }
-        if (isset($input['search']))
-        {  
+//        if (isset($input['search']))
+//        {  
 //            $rake = RakePlus::create(strip_tags($input['search']), 'de_DE', 3);
 //            $phrase_scores = $rake->sort('asc')->scores(); 
 //            $repositoryPlugin = app()->make('App\RepositoryPlugin');
@@ -124,7 +126,7 @@ class RepositorySubscriptionController extends Controller
 //                    'path'        => env('EDUSHARING_REPO_URL', '') . '/components/render/' .$node['ref']['id']
 //              ]]);
 //            }
-        }
+//        }
         
         if (request()->wantsJson()){    
             return ['message' => $result];

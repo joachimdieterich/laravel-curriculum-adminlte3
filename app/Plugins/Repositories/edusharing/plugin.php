@@ -382,12 +382,12 @@ class Edusharing extends RepositoryPlugin
         }
 
         $collection = collect([]);
-        
+        dump('start');
         foreach ($nodes['nodes'] as $node) {
             if ($node['mediatype'] == 'folder'){ //todo es muss überlegt werden, ob subfolder geladen werden
                 continue;
             }
-            
+            dump('add to collection');
             $collection->push([
                 'value'       => $arguments, //value field in db
                 'node_id'     => $node['ref']['id'],
@@ -397,8 +397,9 @@ class Edusharing extends RepositoryPlugin
                 'thumb'       => $node['preview']['url'],
                 'path'        => $this->repoUrl . '/components/render/' .$node['ref']['id']
             ]);
+            dump($node);
         }
-dump($collection);
+dump('finished');
         return $collection;
     }
 

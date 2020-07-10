@@ -387,7 +387,7 @@ class Edusharing extends RepositoryPlugin
             if ($node['mediatype'] == 'folder'){ //todo es muss überlegt werden, ob subfolder geladen werden
                 continue;
             }
-            dump($node);
+            
             $collection->push([
                 'value'       => $arguments, //value field in db
                 'node_id'     => $node['ref']['id'],
@@ -398,7 +398,7 @@ class Edusharing extends RepositoryPlugin
                 'path'        => $this->repoUrl . '/components/render/' .$node['ref']['id']
             ]);
         }
-
+dump($collection);
         return $collection;
     }
 

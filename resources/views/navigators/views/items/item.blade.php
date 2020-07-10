@@ -1,7 +1,8 @@
 <div
     id="navigator-item-{{ $item->id }}"
+    
     class="box box-objective pointer {{ $item->css_class }} my-1" 
-    style="height: 300px !important; min-width: 200px !important; padding: 0;background: url('{{isset($item->medium->id) ? route('media.show', ($item->medium->id)) : Avatar::create('test')->toGravatar(['d' => 'identicon', 'r' => 'pg', 's' => 100])}}') center center;  background-size: cover;"
+    style="height: 300px !important; min-width: 200px !important; padding: 0;background: url('{{isset($item->medium->id) ? route('media.show', ($item->medium->id)) : Avatar::create($item->title)->toGravatar(['d' => 'identicon', 'r' => 'pg', 's' => 100])}}') center center;  background-size: cover;"
     onclick="{{ $onclick }}">
     
     <div class="symbol" style="position: absolute;

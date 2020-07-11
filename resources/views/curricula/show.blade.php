@@ -141,7 +141,7 @@
                 </div>
             </button>
         </div>
-    @if(!isset(json_decode($settings)->course))
+    
         @if(isset($certificates))
             @can('certificate_access')
             <a class="btn btn-default btn-flat" 
@@ -151,7 +151,7 @@
             </a>
             @endcan
         @endif
-        
+    @if(!isset(json_decode($settings)->course))    
     </div>
         
         @include ('forms.input.select', 

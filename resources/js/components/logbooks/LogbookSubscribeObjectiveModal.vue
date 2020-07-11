@@ -58,7 +58,7 @@
 
                 <div class="form-group ">
                     <label for="enablingObjectives">
-                        {{ trans('global.terminalObjective.title_singular') }}
+                        {{ trans('global.enablingObjective.title_singular') }}
                     </label>
                     <select name="enablingObjectives" 
                             id="enablingObjectives" 

@@ -30,72 +30,41 @@
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                 
                 <div v-if="method === 'post'" class="form-group ">
-                    <label for="curriculua">
+                    <label for="curricula">
                         {{ trans('global.curriculum.title_singular') }}
                     </label>
-                    
-                    <multiselect :options="curricula" 
-                                :multiple="false" 
-                                :close-on-select="true" 
-                                :clear-on-select="false" 
-                                :preserve-search="true" 
-                                v-model="curriculum"
-                                placeholder="Select" 
-                                label="title" 
-                                track-by="id" 
-                                :preselect-first="true"
-                                @input="loadObjectives">
-                       <template slot="selection" slot-scope="{ values, search, isOpen }">
-                           <span class="multiselect__single" v-if="values.length &amp;&amp; !isOpen">
-                               {{ value.length }} options selected
-                           </span>
-                       </template>
-                   </multiselect>       
+                    <select name="curricula" 
+                            id="curricula" 
+                            v-model="curriculum_id"
+                            class="form-control select2 "
+                            style="width:100%;"
+                            >
+                         <option v-for="(item,index) in curricula" v-bind:value="item.id">{{ item.title }}</option>
+                    </select>     
                 </div>
                 <div v-if="method === 'post'" class="form-group ">
                     <label for="terminalObjectives">
                         {{ trans('global.terminalObjective.title_singular') }}
                     </label>
-                    <multiselect :options="terminalObjectives" 
-                                :multiple="false" 
-                                :close-on-select="true" 
-                                :clear-on-select="false" 
-                                :preserve-search="true" 
-                                v-model="terminalObjective"
-                                placeholder="Select" 
-                                label="title" 
-                                track-by="id" 
-                                :preselect-first="true"
-                                @input="loadEnabling">
-                       <template slot="selection" slot-scope="{ values, search, isOpen }">
-                           <span class="multiselect__single" v-if="values.length &amp;&amp; !isOpen">
-                               {{ value.length }} options selected
-                           </span>
-                       </template>
-                   </multiselect>
-                   
+                    <select name="terminalObjectives" 
+                            id="terminalObjectives" 
+                            class="form-control select2 "
+                            style="width:100%;"
+                            >
+                         <option v-for="(item,index) in terminalObjectives" v-bind:value="item.id">{{ item.title }}</option>
+                    </select>     
                 </div>
                 <div v-if="method === 'post'" class="form-group ">
                     <label for="enablingObjectives">
                         {{ trans('global.enablingObjective.title_singular') }}
                     </label>
-                    <multiselect :options="enablingObjectives" 
-                                :multiple="false" 
-                                :close-on-select="true" 
-                                :clear-on-select="false" 
-                                :preserve-search="true" 
-                                v-model="enablingObjective"
-                                placeholder="Select" 
-                                label="title" 
-                                track-by="id" 
-                                :preselect-first="true"
-                                @input="setEnabling">
-                       <template slot="selection" slot-scope="{ values, search, isOpen }">
-                           <span class="multiselect__single" v-if="values.length &amp;&amp; !isOpen">
-                               {{ value.length }} options selected
-                           </span>
-                       </template>
-                   </multiselect>
+                    <select name="enablingObjectives" 
+                            id="enablingObjectives" 
+                            class="form-control select2 "
+                            style="width:100%;"
+                            >
+                         <option v-for="(item,index) in enablingObjectives" v-bind:value="item.id">{{ item.title }}</option>
+                    </select>     
                 </div>
                 
                 <div class="form-group ">
@@ -121,7 +90,6 @@
 
 <script>
     import Form from 'form-backend-validation';
-    import Multiselect from 'vue-multiselect'
     export default {
         data() {
             return {
@@ -157,25 +125,30 @@
                 this.form.enabling_objective_id = null; 
             },
            
-            async loadObjectives(value) {
-                this.form.curriculum_id = value.id;
+            async loadObjectives(id) {
+                this.form.curriculum_id = parseInt(id)
                 try {    
-                   this.terminalObjectives = (await axios.get('/curricula/'+value.id+'/objectives')).data.curriculum.terminal_objectives;
+                   this.terminalObjectives = (await axios.get('/curricula/'+this.form.curriculum_id+'/objectives')).data.curriculum.terminal_objectives;
                    this.removeHtmlTags(this.terminalObjectives);
+                   this.form.terminal_objective_id = this.terminalObjectives[0].id;
+                   this.loadEnabling(this.form.terminal_objective_id);
                 } catch(error) {
                    this.errors = error.response.data.errors;
                 } 
             },
-            loadEnabling(value){
-                let terminal = [].concat(...this.terminalObjectives.filter(ena => ena.enabling_objectives.find(e => e.terminal_objective_id === value.id)));
+            loadEnabling(id){
+                let terminal = [].concat(...this.terminalObjectives.filter(ena => ena.enabling_objectives.find(e => e.terminal_objective_id === parseInt(id))));
                 this.enablingObjectives = terminal[0].enabling_objectives;
                 this.removeHtmlTags(this.enablingObjectives);
-                this.form.terminal_objective_id = value.id;
+                this.form.terminal_objective_id = parseInt(id);
+                this.form.enabling_objective_id = terminal[0].enabling_objectives[0].id;
                 this.requestUrl = this.referenceRequestUrl ? this.referenceRequestUrl : '/terminalObjectiveSubscriptions';
+                this.initSelect2();
             },
-            setEnabling(value){
-                this.form.enabling_objective_id = value.id;
+            setEnabling(id){
+                this.form.enabling_objective_id = parseInt(id);
                 this.requestUrl = this.referenceRequestUrl ? this.referenceRequestUrl : '/enablingObjectiveSubscriptions';
+                this.initSelect2();
             },
             async submit() {
                 try {
@@ -221,10 +194,39 @@
             beforeClose() {
             },
             opened(){
-                 this.$initTinyMCE();
-
+                this.$initTinyMCE();
+                this.initSelect2(); 
+                this.curricula = {};
+                this.terminalObjectives = {};
+                this.enablingObjectives = {};
             },
-            
+            initSelect2(){
+                $("#curricula").select2({
+                    dropdownParent: $("#curricula").parent(),
+                    allowClear: false
+                }).on('select2:select', function (e) { 
+                    this.loadObjectives(e.params.data.id);
+                    this.terminalObjectives = {};
+                    this.enablingObjectives = {};
+                }.bind(this)) //make loadObjectives accessible!
+                .val(this.form.curriculum_id).trigger('change'); //set value
+                
+                $("#terminalObjectives").select2({
+                    dropdownParent: $("#terminalObjectives").parent(),
+                    allowClear: false
+                }).on('select2:select', function (e) {
+                    this.loadEnabling(e.params.data.id);
+                }.bind(this)) //make loadEnabling accessible!
+                .val(this.form.terminal_objective_id).trigger('change'); //set value
+                
+                $("#enablingObjectives").select2({
+                    dropdownParent: $("#enablingObjectives").parent(),
+                    allowClear: false
+                }).on('select2:select', function (e) {
+                    this.setEnabling(e.params.data.id);
+                }.bind(this)) //make setEnabling accessible!    
+               .val(this.form.enabling_objective_id).trigger('change'); //set value
+            },
             close(){
                 this.$modal.hide('reference-objective-modal');
             },
@@ -236,9 +238,6 @@
             }
             
         },
-        components: {
-                Multiselect, 
-            },
     }
 </script>
 

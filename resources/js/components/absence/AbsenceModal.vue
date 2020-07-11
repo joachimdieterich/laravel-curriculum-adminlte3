@@ -47,29 +47,21 @@
                         />
                      <p class="help-block" v-if="errors.reason" v-text="errors.reason[0]"></p>
                 </div>
-                <div class="form-group ">
-                    <label for="users">
-                        {{ trans('global.user.title') }} *
+                
+                 <div class="form-group ">
+                    <label for="categorie">
+                        {{ trans('global.user.title') }}
                     </label>
-                    
-                    <multiselect 
-                        :options="user_list" 
-                        :multiple="false" 
-                        :close-on-select="true" 
-                        :clear-on-select="false" 
-                        :preserve-search="true" 
-                        v-model="users"
-                        placeholder="Bitte wählen" 
-                        label="username" 
-                        track-by="id" 
-                        :preselect-first="true">
-                        <template slot="selection" slot-scope="{ values, search, isOpen }">
-                            <span class="multiselect__single" v-if="values.length &amp;&amp; !isOpen">
-                                {{ value.length }} options selected
-                            </span>
-                        </template>
-                    </multiselect>    
+                    <select name="users[]" 
+                            id="users" 
+                            class="form-control select2 "
+                            style="width:100%;"
+                            multiple=true    
+                       >
+                         <option v-for="(item,index) in user_list" v-bind:value="item.id">{{ item.username }}</option>
+                    </select>     
                 </div>
+                
                 <div class="form-check">
                     <input type="checkbox" class="form-check-input" id="done" v-model="done" >
                     <label class="form-check-label" for="visibility">{{ trans('global.absences.fields.done') }}</label>
@@ -79,7 +71,7 @@
             
             <div class="card-footer">
                 <span class="pull-right">
-                     <button type="button" class="btn btn-primary" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
+<!--                     <button type="button" class="btn btn-primary" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>-->
                      <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
                 </span>
             </div>  
@@ -88,7 +80,6 @@
 </template>
 
 <script>
-    import Multiselect from 'vue-multiselect'
     export default {
         data() {
             return {
@@ -116,7 +107,7 @@
                 try {
                     this.location = (await axios.post('/absences', {
                         'reason':               this.reason, 
-                        'absent_user_id':       this.users.id,
+                        'absent_user_ids':      $("#users").val(),
                         'referenceable_type':   this.params.referenceable_type,
                         'referenceable_id':     this.params.referenceable_id,
                         'done':                 this.done
@@ -142,6 +133,13 @@
             beforeClose() {
             },
             opened(){
+                this.initSelect2(); 
+            },
+            initSelect2(){
+                $("#users").select2({
+                    dropdownParent: $("#users").parent(),
+                    allowClear: true
+                });  
             },
             close(){
                 this.$modal.hide('absence-modal');
@@ -149,7 +147,7 @@
             
         },
         components: {
-            Multiselect
+           
         }
     }
 </script>

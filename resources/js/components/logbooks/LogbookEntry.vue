@@ -42,11 +42,11 @@
                             <i class="fa fa-user-times"></i>
                             <span class="ml-2">{{ trans('global.absences.create') }}</span>
                         </button>
+                        <div class="dropdown-divider"></div>
                         <button class="dropdown-item" @click.prevent="edit()">
                             <i class="fa fa-edit"></i>
                             <span class="ml-2">{{ trans('global.logbookEntry.edit') }}</span>
                         </button>
-                        <div class="dropdown-divider"></div>
                         <button class="dropdown-item text-danger" @click.prevent="destroy()">
                             <i class="fa fa-trash"></i>
                             <span class="ml-2">{{ trans('global.delete') }}</span>

@@ -180,8 +180,12 @@
                     <!-- /.tab-pane -->
                     <!-- tab-pane -->
                     <div class="tab-pane show" 
-                         v-bind:id="'logbook_userStatuses_'+entry.id"  
-                         >logbook_userStatuses</div>
+                         v-bind:id="'logbook_userStatuses_'+entry.id"  >
+                        <absences  class="p-2"
+                            :absences="entry.absences">
+                         </absences>   
+                             
+                    </div>
                     <!-- /.tab-pane -->
 
                 </div>
@@ -194,6 +198,7 @@
 </template>
 
 <script>
+    import Absences from '../absence/Absences';
     import ContentGroup from '../content/ContentGroup';
     import ObjectiveBox from '../objectives/ObjectiveBox';
     import TaskList from '../uiElements/TaskList';
@@ -216,8 +221,6 @@
         methods: {
             open(modal, relationKey) {
                 if (modal === 'absence-modal'){
-                   // alert(JSON.stringify(_.merge({ 'referenceable_type': 'App\\LogbookEntry', 'referenceable_id': this.entry.id}, this.logbook)));
-                   
                     this.$modal.show(modal, JSON.stringify(_.merge({ 'referenceable_type': 'App\\LogbookEntry', 'referenceable_id': this.entry.id}, this.logbook)));
                 }
                 else if (relationKey === 'referenceable'){
@@ -310,10 +313,11 @@
             
         },   
         components: {
+            Absences, 
             Medium,
             ContentGroup,
             ObjectiveBox,
-            TaskList,
+            TaskList
         }
         
     }

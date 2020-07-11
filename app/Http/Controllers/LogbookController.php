@@ -101,6 +101,7 @@ class LogbookController extends Controller
     {           
         $logbook = $logbook->with([
                 'subscriptions.subscribable',
+                'entries.absences.owner', 
                 'entries.contentSubscriptions.content.categories', 
                 'entries.terminalObjectiveSubscriptions.terminalObjective',
                 'entries.enablingObjectiveSubscriptions.enablingObjective.terminalObjective',

@@ -90,7 +90,14 @@ class AbsenceController extends Controller
      */
     public function update(Request $request, Absence $absence)
     {
-        //
+        abort_unless(\Gate::allows('absence_edit'), 403);
+
+        if (request()->wantsJson()){  
+            if ($absence->update($request->all())){
+                return ['done' => $absence->done];
+            }
+            
+        } 
     }
 
     /**
@@ -101,9 +108,11 @@ class AbsenceController extends Controller
      */
     public function destroy(Absence $absence)
     {
-        //
-   
-        
+        abort_unless(\Gate::allows('absence_delete'), 403);
+
+        if (request()->wantsJson()){    
+            return ['message' => $absence->delete()];
+        } 
     }
     
     protected function validateRequest()

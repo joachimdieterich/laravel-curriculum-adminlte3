@@ -80,7 +80,7 @@
             
             <div class="card-footer">
                 <span class="pull-right">
-                     <button type="button" class="btn btn-primary" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
+<!--                     <button type="button" class="btn btn-primary" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>-->
                      <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
                 </span>
             </div>  
@@ -153,10 +153,9 @@
             async submit() {
                 try {
                     if (this.method === 'patch'){
-                        await axios.patch('/references/'+this.form.id, {
+                        this.location = (await axios.patch('/references/'+this.form.id, {
                             'description' : tinyMCE.get('description').getContent(),
-                        }).data.message;
-                        this.close();
+                        })).data.message;
                     } else {
                         this.location = (await axios.post(this.requestUrl, {
                             'curriculum_id':         this.form.curriculum_id, 

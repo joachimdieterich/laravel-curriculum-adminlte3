@@ -59,29 +59,21 @@
                     <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
                 </div>
                 
-                <div class="form-group" 
-                    :class="form.errors.title ? 'has-error' : ''">
-                    <label for="level_id" >{{ trans("global.objectiveType.title_singular") }}</label>
-
-                    <multiselect v-model="value" 
-                                :options="levels" 
-                                :multiple="false" 
-                                :close-on-select="true" 
-                                :clear-on-select="false" 
-                                :preserve-search="true" 
-                                placeholder="Pick some" 
-                                label="title" 
-                                track-by="id" 
-                                :preselect-first="false"
-                                @input="onChange">
-                        <template slot="selection" slot-scope="{ values, search, isOpen }">
-                               <span class="multiselect__single" v-if="values.length &amp;&amp; !isOpen">
-                                   {{ value.length }} options selected
-                               </span>
-                        </template>
-                    </multiselect>
-                    <p class="help-block" v-if="form.errors.objective_type_id" v-text="form.errors.objective_type_id[0]"></p>   
+                <div class="form-group ">
+                    <label for="level_id">
+                        {{ trans("global.objectiveType.title_singular") }}
+                    </label>
+                    <select name="level_id" 
+                            id="level_id" 
+                            class="form-control select2 "
+                            style="width:100%;"
+                            value
+                            >
+                        <option value="">-</option>
+                        <option v-for="(item,index) in levels" v-bind:value="item.id">{{ item.title }}</option>
+                    </select>     
                 </div>
+                
                 <div class="form-check">
                     <input type="checkbox" class="form-check-input" id="visibility" v-model="form.visibility" >
                     <label class="form-check-label" for="visibility">{{ trans('global.navigator_item.fields.visibility_show') }}</label>
@@ -100,7 +92,6 @@
 
 <script>
     import Form from 'form-backend-validation';
-    import Multiselect from 'vue-multiselect';
     
     export default {
         data() {
@@ -124,7 +115,7 @@
         
         methods: {
             onChange(value) {
-                this.form.level_id = value.id
+                this.form.level_id = value.id;
             },
             findObjectByKey(array, key, value) {
                 for (var i = 0;
@@ -148,6 +139,17 @@
             },
             opened(){
                 this.$initTinyMCE();
+                this.initSelect2(); 
+            },
+            initSelect2(){
+                $("#level_id").select2({
+                    dropdownParent: $("#level_id").parent(),
+                    allowClear: false
+                }).on('select2:select', function (e) { 
+                    this.onChange(e.params.data);
+                }.bind(this)); //make onChange accessible! 
+                $("#level_id").val(this.form.level_id).trigger('change'); //set value
+               
             },
             beforeClose() { 
                 //console.log('close') 
@@ -169,13 +171,12 @@
                 
                 this.form.submit(method, this.requestUrl)
                     .then(/*response => alert('Your objective was created'+response.message.title)*/)
-                    .catch(response => function ()
-                        {
-                            if (response.errors) 
-                            {
-                               alert(response.errors); 
-                            }
-                        });
+                    .catch(response => function () {
+                    if (response.errors) 
+                    {
+                       alert(response.errors); 
+                    }
+                });
                 //todo .then .catch
             },
             close(){
@@ -186,13 +187,9 @@
         },
         created() {
             this.loadData();
-            
         },
         mounted() {
             //console.log('Component mounted.')
-        },
-        components: {
-            Multiselect,
         }
     }
 </script>

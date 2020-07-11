@@ -8,6 +8,7 @@
         draggable=".draggable"
         :resizable=true
         @before-open="beforeOpen"
+        @opened="opened"
         @before-close="beforeClose"
         style="z-index: 1100">
         <div class="card" style="margin-bottom: 0px !important">
@@ -28,28 +29,19 @@
             </div>
             <form >
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                <div class="form-group" >
-                   <label for="certificate_id" >{{ trans("global.certificate.title_singular") }}</label>
-
-                   <multiselect :options="certificates" 
-                                :multiple="false" 
-                                :close-on-select="true" 
-                                :clear-on-select="false" 
-                                :preserve-search="true" 
-                                v-model="certificate"
-                                placeholder="Pick some" 
-                                label="title" 
-                                track-by="id" 
-                                :preselect-first="true"
-                                @input="onChange">
-                       <template slot="selection" slot-scope="{ values, search, isOpen }">
-                           <span class="multiselect__single" v-if="values.length &amp;&amp; !isOpen">
-                               {{ value.length }} options selected
-                           </span>
-                       </template>
-                   </multiselect>
-
+                 <div class="form-group ">
+                    <label for="level_id">
+                        {{ trans("global.certificate.title_singular") }}
+                    </label>
+                    <select name="certificates" 
+                            id="certificates" 
+                            class="form-control select2 "
+                            style="width:100%;"
+                            >
+                        <option v-for="(item,index) in certificates" v-bind:value="item.id">{{ item.title }}</option>
+                    </select>     
                 </div>
+               
                 <div class="form-group " >
                    <label for="title">{{ trans('global.date') }} *</label>
                    <input 
@@ -74,7 +66,7 @@
 </template>
 
 <script>
-    import Multiselect from 'vue-multiselect'
+    
     export default {
         props: {
             'certificates': Array
@@ -92,7 +84,6 @@
         },
         methods: {
             async generateCertificate() {
-                
                 try {                    
                    this.location = (await axios.post('/certificates/generate', {
                        'certificate_id': this.certificate_id, 
@@ -106,14 +97,29 @@
                 
             },
             onChange(value){
+               
                 this.certificate_id = value.id;
+                
             },
             beforeOpen(event) { 
                 if (event.params.curriculum_id){
                     this.curriculum_id =  event.params.curriculum_id;
                 }
             },
-            
+            opened(){
+                this.initSelect2(); 
+            },
+            initSelect2(){
+                $("#certificates").select2({
+                    dropdownParent: $("#certificates").parent(),
+                    allowClear: false
+                }).on('select2:select', function (e) { 
+                    this.onChange(e.params.data);
+                }.bind(this)) //make onChange accessible! 
+                 .val(certificates[0].id).trigger('change'); //set default
+               
+               
+            },
             beforeClose() { 
                 //console.log('close') 
             },
@@ -128,9 +134,5 @@
         mounted() {
             //console.log('Component mounted.')
         },
-        components: {
-            Multiselect, 
-        },
     }
 </script>
-<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

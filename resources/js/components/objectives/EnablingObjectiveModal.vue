@@ -147,8 +147,8 @@
                     allowClear: false
                 }).on('select2:select', function (e) { 
                     this.onChange(e.params.data);
-                }.bind(this)); //make onChange accessible! 
-                $("#level_id").val(this.form.level_id).trigger('change'); //set value
+                }.bind(this))  //make onChange accessible! 
+                .val(this.form.level_id).trigger('change'); //set value
                
             },
             beforeClose() { 

@@ -149,6 +149,7 @@
                 }                
             },
             opened(){
+                this.form.id = '';
                 this.form.title = '';
                 this.form.description = '';
                 this.$initTinyMCE();

@@ -60,30 +60,19 @@
                         <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
                     </div>
 
-                    <div class="form-group" 
-                         :class="form.errors.title ? 'has-error' : ''">
-                        <label for="objective_type_id" >{{ trans("global.objectiveType.title_singular") }}</label>
-
-                        <multiselect v-model="value" 
-                                     :options="objectiveTypes" 
-                                     :multiple="false" 
-                                     :close-on-select="true" 
-                                     :clear-on-select="false" 
-                                     :preserve-search="true" 
-                                     placeholder="Pick some" 
-                                     label="title" 
-                                     track-by="id" 
-                                     :preselect-first="true"
-                                     @input="onChange">
-                            <template slot="selection" slot-scope="{ values, search, isOpen }">
-                                <span class="multiselect__single" v-if="values.length &amp;&amp; !isOpen">
-                                    {{ value.length }} options selected
-                                </span>
-                            </template>
-                        </multiselect>
-                        <p class="help-block" v-if="form.errors.objective_type_id" v-text="form.errors.objective_type_id[0]"></p>   
-
+                    <div class="form-group ">
+                        <label for="objectiveTypes">
+                            {{ trans("global.objectiveType.title_singular") }}
+                        </label>
+                        <select name="objectiveTypes" 
+                                id="objectiveTypes" 
+                                class="form-control select2 "
+                                style="width:100%;"
+                                >
+                            <option v-for="(item,index) in objectiveTypes" v-bind:value="item.id">{{ item.title }}</option>
+                        </select>     
                     </div>
+
                    <ColorPicker 
                        :color="form.color" 
                        v-model="form.color"></ColorPicker>
@@ -105,7 +94,6 @@
 
 <script>
     import Form from 'form-backend-validation';
-    import Multiselect from 'vue-multiselect';
     import ColorPicker from '../uiElements/ColorPicker';
 
     export default {
@@ -122,7 +110,7 @@
                     'color': '#008000',
                     'time_approach': '',
                     'curriculum_id': '',
-                    'objective_type_id': '',
+                    'objective_type_id': 1,
                     'visibility': true,
                 }),
                 colors: {
@@ -161,7 +149,20 @@
                 }                
             },
             opened(){
+                this.form.title = '';
+                this.form.description = '';
                 this.$initTinyMCE();
+                this.initSelect2(); 
+            },
+            initSelect2(){
+                $("#objectiveTypes").select2({
+                    dropdownParent: $("#objectiveTypes").parent(),
+                    allowClear: false
+                }).on('select2:select', function (e) { 
+                    this.onChange(e.params.data);
+                }.bind(this))  //make onChange accessible! 
+                .val(this.form.objective_type_id).trigger('change'); //set value
+               
             },
             beforeClose() {
                 //console.log('close')
@@ -196,17 +197,13 @@
             }
         },
         created() {
-
             this.loadData();
         },
         mounted() {
             //console.log('Component mounted.')
         },
         components: {
-            Multiselect,
             ColorPicker
         },
     }
 </script>
-
-<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

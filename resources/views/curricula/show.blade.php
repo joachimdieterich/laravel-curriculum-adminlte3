@@ -113,7 +113,7 @@
                 <div class="dropdown-menu" >
                     @can('certificate_create')
                         <a class="dropdown-item" 
-                           onclick="location.href='{{ route("certificates.create") }}'">
+                           onclick="location.href='{{ route("certificates.create", ['curriculum_id' => $curriculum->id]) }}'">
                             <i class="fa fa-certificate text-center" style="width:20px"></i>
                             {{ trans('global.certificate.create') }}
                         </a>

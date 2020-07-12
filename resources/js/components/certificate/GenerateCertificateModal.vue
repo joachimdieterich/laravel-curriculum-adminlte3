@@ -94,12 +94,10 @@
                 } catch(error) {
                     this.errors = error.response.data.errors;
                 } 
-                
+                window.location = this.location;
             },
             onChange(value){
-               
                 this.certificate_id = value.id;
-                
             },
             beforeOpen(event) { 
                 if (event.params.curriculum_id){
@@ -117,8 +115,6 @@
                     this.onChange(e.params.data);
                 }.bind(this)) //make onChange accessible! 
                  .val(certificates[0].id).trigger('change'); //set default
-               
-               
             },
             beforeClose() { 
                 //console.log('close') 
@@ -133,6 +129,6 @@
         },
         mounted() {
             //console.log('Component mounted.')
-        },
+        }
     }
 </script>

@@ -14,7 +14,7 @@
         <form method="POST"
               action="{{ route("certificates.store") }}">
             @include ('certificates.form', [
-                'certificate' => new App\Certificate,
+                'certificate' => $certificate, 
                 'buttonText' =>  trans('global.certificate.create')
             ]) 
         </form>

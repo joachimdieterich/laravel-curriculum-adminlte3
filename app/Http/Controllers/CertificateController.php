@@ -87,15 +87,20 @@ class CertificateController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         abort_unless(\Gate::allows('certificate_create'), 403);
         
-        $curricula = Curriculum::where('owner_id', auth()->user()->id)->get();
+        $curricula = Curriculum::where('id', $request->query('curriculum_id'))->get();
         $organisations = auth()->user()->organizations()->get();
+        
+        $certificate = new Certificate();
+        $certificate->curriculum_id = $request->query('curriculum_id');
+        $certificate->organization_id = auth()->user()->current_organization_id;
         
         return view('certificates.create')
                 ->with(compact('curricula'))
+                ->with(compact('certificate'))
                 ->with(compact('organisations'));
     }
 
@@ -205,7 +210,7 @@ class CertificateController extends Controller
     {
         abort_unless(\Gate::allows('certificate_create'), 403);
         $certificate = Certificate::find(request()->certificate_id)->get(); 
-        
+        $generated_files = [];
         foreach ((array) request()->user_ids as $id) 
         {   
             $user = User::where('id', $id)->get()->first();
@@ -252,6 +257,7 @@ class CertificateController extends Controller
             $html_to_print = relativeToAbsoutePaths($html_to_print);
             
             $filename = $timestamp.$user->lastname."_".$user->firstname.".pdf";
+           
             $meta = '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">';
             SnappyPdf::loadHTML($meta.$html_to_print)
                     ->setPaper('a4')
@@ -259,30 +265,52 @@ class CertificateController extends Controller
                     ->setOption('margin-bottom', 0)
                     ->save(storage_path("app/".config('lfm.files_folder_name')."/".auth()->user()->id."/".$filename));
             
-            $media = new Medium([
+            $this->addFileToDb($filename);
+        
+            array_push($generated_files, ['filename' => $filename, 'path' => Storage::disk('local')->path(config('lfm.files_folder_name')."/".auth()->user()->id."/".$filename)]);
+        }
+        
+        if (request()->wantsJson()){    
+            return ['message' => $this->zipper($generated_files)];
+        }
+    }
+    
+    protected function zipper($files)
+    {
+        $filename = date("Y-m-d_H-i-s").".zip";
+        $zip_file = storage_path("app/".config('lfm.files_folder_name')."/".auth()->user()->id."/".$filename);
+        $zip = new \ZipArchive();
+        $zip->open($zip_file, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+        foreach ($files as $file) {
+            $zip->addFile($file['path'], $file['filename']);
+        }
+        
+        $zip->close();
+        
+        return $this->addFileToDb($filename); //returns $media->path()
+    }
+
+    protected function addFileToDb($filename)
+    {
+        $media = new Medium([
                 'path'          => "/".config('lfm.files_folder_name')."/".auth()->user()->id."/",
                 'title'         => $filename,
                 'medium_name'   => $filename,
-                'description'   => $user->lastname."_".$user->firstname.".pdf",
+                'description'   => '',
                 'author'        => auth()->user()->fullName(),
                 'publisher'     => '',
                 'city'          => '',
                 'date'          => date("Y-m-d_H-i-s"),
                 'size'          => File::size(Storage::disk('local')->path(config('lfm.files_folder_name')."/".auth()->user()->id."/".$filename)),
                 'mime_type'     => File::mimeType(Storage::disk('local')->path(config('lfm.files_folder_name')."/".auth()->user()->id."/".$filename)),
-                'license_id'    => 2,//$media_node->getAttribute('license'), //hack fix false entries in import files
+                'license_id'    => 2,
 
                 'owner_id'      => auth()->user()->id,
             ]); 
-            $media->save();
-            
-        }
-        
-        if (request()->wantsJson()){    
-            return ['message' => $media->path()];
-        }
+        $media->save();
+        return  $media->path();
     }
-    
+
     protected function validateRequest()
     {               
         return request()->validate([

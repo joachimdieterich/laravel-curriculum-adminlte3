@@ -251,24 +251,25 @@ class CertificateController extends Controller
             /* replace relative media links with absolute paths to get snappy working */ 
             $html_to_print = relativeToAbsoutePaths($html_to_print);
             
+            $filename = $timestamp.$user->lastname."_".$user->firstname.".pdf";
             $meta = '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">';
             SnappyPdf::loadHTML($meta.$html_to_print)
                     ->setPaper('a4')
                    // ->setOrientation('landscape')
                     ->setOption('margin-bottom', 0)
-                    ->save(storage_path("app/".config('lfm.files_folder_name')."/".auth()->user()->id."/".$timestamp.$user->lastname."_".$user->firstname.".pdf"));
+                    ->save(storage_path("app/".config('lfm.files_folder_name')."/".auth()->user()->id."/".$filename));
             
             $media = new Medium([
                 'path'          => "/".config('lfm.files_folder_name')."/".auth()->user()->id."/",
-                'title'         => date("Y-m-d_H-i-s").$user->lastname."_".$user->firstname.".pdf",
-                'medium_name'   => date("Y-m-d_H-i-s").$user->lastname."_".$user->firstname.".pdf",
+                'title'         => $filename,
+                'medium_name'   => $filename,
                 'description'   => $user->lastname."_".$user->firstname.".pdf",
                 'author'        => auth()->user()->fullName(),
                 'publisher'     => '',
                 'city'          => '',
                 'date'          => date("Y-m-d_H-i-s"),
-                'size'          => File::size(Storage::disk('local')->path(config('lfm.files_folder_name')."/".auth()->user()->id."/".$timestamp.$user->lastname."_".$user->firstname.".pdf")),
-                'mime_type'     => File::mimeType(Storage::disk('local')->path(config('lfm.files_folder_name')."/".auth()->user()->id."/".$timestamp.$user->lastname."_".$user->firstname.".pdf")),
+                'size'          => File::size(Storage::disk('local')->path(config('lfm.files_folder_name')."/".auth()->user()->id."/".$filename)),
+                'mime_type'     => File::mimeType(Storage::disk('local')->path(config('lfm.files_folder_name')."/".auth()->user()->id."/".$filename)),
                 'license_id'    => 2,//$media_node->getAttribute('license'), //hack fix false entries in import files
 
                 'owner_id'      => auth()->user()->id,

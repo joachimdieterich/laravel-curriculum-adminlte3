@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Curriculum;
 use App\Course;
+use App\Certificate;
 use App\User;
 use App\TerminalObjective;
 use App\EnablingObjective;
@@ -47,7 +48,15 @@ class CourseController extends Controller
                         ])
                         ->find($course->curriculum_id);                                                
         $objectiveTypes = ObjectiveType::all();
-        $certificates   = \App\Certificate::all();
+        $certificates   = Certificate::where([
+                            ['curriculum_id', '=', $course->curriculum_id],
+                            ['organization_id', '=', auth()->user()->current_organization_id]
+                        ])
+                        ->orWhere([
+                            ['curriculum_id', '=', $course->curriculum_id],
+                            ['global', '=', 1]
+                        ])
+                        ->get();
         $logbook        = (null !==  $course->logbookSubscription()->get()->first()) ? $course->logbookSubscription()->get()->first()->logbook()->get()->first() : null;
         
         $settings= json_encode([

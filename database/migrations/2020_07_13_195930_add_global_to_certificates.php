@@ -15,6 +15,7 @@ class AddGlobalToCertificates extends Migration
     {
         Schema::table('certificates', function (Blueprint $table) {
             $table->boolean('global')->default(0);
+            $table->string('type')->default('user'); //group, organization...
         });
     }
 
@@ -27,6 +28,7 @@ class AddGlobalToCertificates extends Migration
     {
         Schema::table('certificates', function (Blueprint $table) {
             $table->dropColumn('global');
+            $table->dropColumn('type');
         });
     }
 }

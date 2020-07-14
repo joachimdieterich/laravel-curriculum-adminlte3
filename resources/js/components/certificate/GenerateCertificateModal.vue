@@ -27,7 +27,6 @@
                  </div>
               
             </div>
-            <form >
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                  <div class="form-group ">
                     <label for="level_id">
@@ -56,11 +55,25 @@
             </div>
                 <div class="card-footer">
                      <span class="pull-right">
-                         <button type="button" class="btn btn-info" @click="$modal.hide('certificate-generate-modal')">{{ trans('global.cancel') }}</button>
-                         <button class="btn btn-primary" @click="generateCertificate()" >{{ trans('global.generate') }}</button>
+<!--                         <button type="button" class="btn btn-info" >{{ trans('global.cancel') }}</button>-->
+                         <button v-if="!download_url" id="btn_generate" class="btn btn-primary" @click="generateCertificate()" >
+                             <div v-if="download_url === false" class="text-center text-white">
+                                    <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                                    <span class="sr-only">Loading...</span>
+                            </div>
+                             <span v-else> {{ trans('global.generate') }} </span>
+                         </button>
+                           
+                         <a v-if="download_url" id="btn_download" 
+                            class="btn btn-primary hidden" 
+                            :href="download_url" 
+                            target="_blank"
+                            @click="$modal.hide('certificate-generate-modal')">
+                             <i class="fa fa-download"></i>
+                             {{ trans('global.downloadFile') }}
+                         </a>
                     </span>
                 </div>
-            </form>
         </div>
     </modal>
 </template>
@@ -79,22 +92,24 @@
                 date: new Date().toLocaleDateString(),
                 curriculum_id: null,
                 requestUrl: '/certificates/generate',
-                location: null
+                download_url: null
             }
         },
         methods: {
             async generateCertificate() {
-                try {                    
-                   this.location = (await axios.post('/certificates/generate', {
+                this.download_url = false;
+                try {          
+                   this.download_url = (await axios.post('/certificates/generate', {
                        'certificate_id': this.certificate_id, 
                        'user_ids' : getDatatablesIds('#users-datatable'), 
                        'date': this.date, 
                        'curriculum_id': this.curriculum_id
                    })).data.message;
+
                 } catch(error) {
                     this.errors = error.response.data.errors;
                 } 
-                window.location = this.location;
+                
             },
             onChange(value){
                 this.certificate_id = value.id;
@@ -103,6 +118,7 @@
                 if (event.params.curriculum_id){
                     this.curriculum_id =  event.params.curriculum_id;
                 }
+                Object.assign(this.$data, this.$options.data.apply(this)) //reset data() !
             },
             opened(){
                 this.initSelect2(); 

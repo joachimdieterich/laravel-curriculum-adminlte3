@@ -17,8 +17,9 @@ class TerminalObjective extends Model
                           ];
     protected $casts = [
         'visibility' => 'boolean',
+        'referencing_curriculum_id' => 'object'
     ];
-    
+
     public function path(){
         return "/curricula/{$this->curriculum_id}";
     }

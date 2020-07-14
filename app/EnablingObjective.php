@@ -17,6 +17,7 @@ class EnablingObjective extends Model
                           ];
     protected $casts = [
         'visibility' => 'boolean',
+        'referencing_curriculum_id' => 'object'
     ];
 
     protected $with = ['terminalObjective', 'level'];

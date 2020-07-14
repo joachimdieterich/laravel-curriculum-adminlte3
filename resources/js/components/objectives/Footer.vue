@@ -45,8 +45,8 @@
         },
         computed: {
              withmedia: function () {
-                if ((typeof this.objective.media_subscriptions !== 'undefined') || (typeof this.objective.reference_subscriptions !== 'undefined')){
-                     if (this.objective.media_subscriptions.length > 0 || this.objective.reference_subscriptions.length > 0){
+                if ((typeof this.objective.media_subscriptions !== 'undefined') || (typeof this.objective.referencing_curriculum_id !== "undefined")){
+                     if (this.objective.media_subscriptions.length > 0 || this.objective.referencing_curriculum_id !== null){
                          return true;
                      }
                 }

@@ -208,16 +208,16 @@ class CurriculumController extends Controller
         $curriculum = Curriculum::with(['terminalObjectives', 
                         'terminalObjectives.media', 
                         'terminalObjectives.mediaSubscriptions', 
-                        'terminalObjectives.referenceSubscriptions.siblings.referenceable', 
-                        'terminalObjectives.quoteSubscriptions.siblings.quotable', 
+//                        'terminalObjectives.referenceSubscriptions.siblings.referenceable', 
+//                        'terminalObjectives.quoteSubscriptions.siblings.quotable', 
                         'terminalObjectives.achievements' => function($query) {
                             $query->where('user_id', auth()->user()->id);
                         },
                         'terminalObjectives.enablingObjectives', 
                         'terminalObjectives.enablingObjectives.media',
                         'terminalObjectives.enablingObjectives.mediaSubscriptions', 
-                        'terminalObjectives.enablingObjectives.referenceSubscriptions.siblings.referenceable', 
-                        'terminalObjectives.enablingObjectives.quoteSubscriptions.siblings.quotable', 
+//                        'terminalObjectives.enablingObjectives.referenceSubscriptions.siblings.referenceable', 
+//                        'terminalObjectives.enablingObjectives.quoteSubscriptions.siblings.quotable', 
                         'terminalObjectives.enablingObjectives.achievements' => function($query) {
                             $query->where('user_id', auth()->user()->id);
                         },        

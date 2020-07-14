@@ -128,6 +128,7 @@
                             <span v-else> 
                                 <ObjectiveBox 
                                     v-for="enablingObjective in objective.enabling_objectives" 
+                                    v-bind:key="'ena_'+enablingObjective.id"
                                     type="enabling" 
                                     :objective="enablingObjective">
                                 </ObjectiveBox> 

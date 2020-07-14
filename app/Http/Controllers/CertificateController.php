@@ -209,76 +209,217 @@ class CertificateController extends Controller
     public function generate(Request $request)
     {
         abort_unless(\Gate::allows('certificate_create'), 403);
-        $certificate = Certificate::find(request()->certificate_id)->get(); 
+        $certificate = Certificate::find(request()->certificate_id); 
+        
+        switch ($certificate->type) 
+        {
+            case 'user':            return $this->generateForUsers($certificate);
+                break;
+            case 'group':           return $this->generateForGroup($certificate);
+                break;
+            case 'organization':    return $this->generateForOrganization($certificate);
+                break;
+
+            default:
+                break;
+        }
+    }
+    
+    /**
+     * Generate certificate(s) for user(s)
+     * @param object $certificate
+     * @return string medium->path()
+     */
+    protected function generateForUsers($certificate)
+    {
         $generated_files = [];
         foreach ((array) request()->user_ids as $id) 
         {   
             $user = User::where('id', $id)->get()->first();
-            $date = request()->date;
-            $timestamp = date("Y-m-d_H-i-s");
-            $html_to_print = $certificate->first()->body;
+            
             //replace placeholder
-            $html_to_print = str_replace('{{$firstname}}', $user->firstname, $html_to_print);
-            $html_to_print = str_replace('{{$lastname}}', $user->lastname, $html_to_print);
-            $html_to_print = str_replace('{{$date}}', $date, $html_to_print);
-            $html_to_print = preg_replace_callback( 
+            $html = $this->replaceFields(
+                    $certificate->body, 
+                    $user, 
+                    Organization::where('id', auth()->user()->current_organization_id)->get()->first(), 
+                    request()->date);
+           
+            $html = preg_replace_callback( 
                 '/<progress\s+[^>]*reference_type="(.*?)"\s+[^>]*reference_id="(.*?)"\s+[^>]*min_value="(.*?)"[^>]*>(.*?)<\/progress>/mis', 
                 function($match) use($user)
                 { 
                     // evaluate progress
                     // Example
-                    // Full match	<progress reference_type="App\TerminalObjective" reference_id="1" min_value="60"/><img src="/media/2"/></progress>
-                    // Group 1.	App\TerminalObjective
-                    // Group 2.	1
-                    // Group 3.	60
-                    // Group 4.	<img src="/media/2"/>
+                    // Full match <progress reference_type="App\TerminalObjective" reference_id="1" min_value="60"/><img src="/media/2"/></progress>
+                    // Group 1 | $match[1] App\TerminalObjective
+                    // Group 2 | $match[2] 1
+                    // Group 3 | $match[3] 60
+                    // Group 4 | $match[4] <img src="/media/2"/>
 
                     $associable_type = 'App\User';
                     $associable_id = $user->id;
 
-    //             foreach(explode(",", $match[2]) as $terid) // recalc progress -> only for dev 
-    //             {
-    //                (new ProgressController)->calculateProgress('App\TerminalObjective', $terid, $associable_id);
-    //             }
+                    // foreach(explode(",", $match[2]) as $terid) // recalc progress -> only for dev 
+                    // {
+                    //      (new ProgressController)->calculateProgress('App\TerminalObjective', $terid, $associable_id);
+                    // }
 
                     $progress = \App\Progress::where('referenceable_type', $match[1])
                                 ->whereIn('referenceable_id', explode(",", $match[2]))
                                 ->where('associable_type', $associable_type)
                                 ->where('associable_id', $associable_id)
                                 ->get();
-                    return ($progress->avg('value') != null AND $progress->avg('value') >= (integer) $match[3]) ? $match[4] : '';   
+                    
+                    return ($progress->avg('value') != null AND $progress->avg('value') >= (integer) $match[3]) 
+                            ? $match[4] 
+                            : $match[4].'<div style="display: block; position: absolute; top:0; height:100%; width: 140px; background: white; opacity: 0.8;"></div>';
                 }, 
 
-                $html_to_print 
+                $html 
             );     
             //end progress
 
-            /* replace relative media links with absolute paths to get snappy working */ 
-            $html_to_print = relativeToAbsoutePaths($html_to_print);
+            $filename = date("Y-m-d_H-i-s").$user->lastname."_".$user->firstname.".pdf";
+            $path     = config('lfm.files_folder_name')."/".auth()->user()->id."/";
+            $this->buildPdf($html, $path, $filename);
             
-            $filename = $timestamp.$user->lastname."_".$user->firstname.".pdf";
-           
-            $meta = '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">';
-            SnappyPdf::loadHTML($meta.$html_to_print)
-                    ->setPaper('a4')
-                   // ->setOrientation('landscape')
-                    ->setOption('margin-bottom', 0)
-                    ->save(storage_path("app/".config('lfm.files_folder_name')."/".auth()->user()->id."/".$filename));
-            
-            $this->addFileToDb($filename);
-        
-            array_push($generated_files, ['filename' => $filename, 'path' => Storage::disk('local')->path(config('lfm.files_folder_name')."/".auth()->user()->id."/".$filename)]);
-        }
+            array_push($generated_files, ['filename' => $filename, 'path' => Storage::disk('local')->path($path.$filename)]);
+        }//end foreach
         
         if (request()->wantsJson()){    
-            return ['message' => $this->zipper($generated_files)];
+            return ['message' => $this->zipper($path, $generated_files)];
         }
     }
     
-    protected function zipper($files)
+    /**
+     * Generate certificate for group
+     * @param object $certificate
+     */
+    protected function generateForGroup($certificate)
+    {
+        $td_style   = 'style="border-bottom: 1px solid silver;border-right: 1px solid silver;"';
+        
+        $html  = '<table repeat_header="1" style="width: 100%;padding-bottom: 10px;" border="0"><tbody>'
+                .'<thead><tr><td style="border-bottom: 1px solid silver;"><strong>Ziele / Namen</strong></td>';
+        foreach ((array) request()->user_ids as $id) 
+        {   
+            $user = User::where('id', $id)->get()->first();
+            $html .= '<td '.$td_style.'><strong>'.$user->firstname.' '.$user->lastname.'</strong></td>';
+        }
+        $html .= '</tr></thead>';
+        
+        $curriculum = Curriculum::with([
+                'terminalObjectives', 
+                'terminalObjectives.enablingObjectives'])
+            ->find($certificate->curriculum_id);
+                                
+        foreach ($curriculum->terminalObjectives as $ter_value) 
+        {
+            $html .= '<tr><td '.$td_style.'><strong>'.strip_tags($ter_value->title).'</strong></td>';
+            foreach((array) request()->user_ids as $id)
+            {
+                $html .= '<td '.$td_style.'></td>';
+            }
+            $html .= '</tr>';
+            foreach ($ter_value->enablingObjectives as $ena) 
+            {
+                
+                $html .= '<tr><td style="width: 25%;border-bottom: 1px solid silver;border-right: 1px solid silver;">'.$ena->id.strip_tags($ena->title).'</td>';
+                    foreach((array) request()->user_ids as $user_id)
+                    {
+                        $html .='<td style="text-align: center; border-bottom: 1px solid silver;border-right: 1px solid silver;">';
+                        $html .= $this->achievementIndicator(optional(\App\Achievement::where(
+                            [
+                                "referenceable_type" => 'App\EnablingObjective',
+                                "referenceable_id"   => $ena->id,
+                                "user_id"            => $user_id,                        
+                            ])->get()->first())->status);
+                        
+                        $html .= '</td>';
+                    }
+                $html .= '</tr>';
+            }
+        }
+        
+        $timestamp = date("Y-m-d_H-i-s");
+        $html .='</tbody></table>';
+        $filename = $timestamp.$user->lastname."_".$user->firstname.".pdf";
+        $path = config('lfm.files_folder_name')."/".auth()->user()->id."/";
+        
+        if (request()->wantsJson()){    
+            return ['message' => $this->buildPdf($html, $path, $filename, 'landscape')];
+        }
+    }
+    
+    
+    protected function replaceFields($string, $user, $organization, $date)
+    {
+        $search = array(
+            '{{$firstname}}', 
+            '{{$lastname}}', 
+            '{{$organization_title}}',
+            '{{$organization_street}}',
+            '{{$organization_postcode}}', 
+            '{{$organization_city}}', 
+            '{{$date}}');
+        
+        $replace = array(
+            $user->firstname, 
+            $user->lastname, 
+            $organization->title, 
+            $organization->street, 
+            $organization->postcode, 
+            $organization->city, 
+            $date);
+        
+        return str_replace($search, $replace, $string);
+    }
+    
+    protected function achievementIndicator($status)
+    {
+        $span_style = 'style="text-align: center; font-family: Arial Unicode MS, Lucida Grande"';
+
+        switch (true) {
+            case in_array($status, array("01","11","21","31")): $html ='<span '.$span_style.'>&#10004;</span>';
+                break;
+            case in_array($status, array("02","12","22","32")): $html ='<span '.$span_style.'>(&#10004;)</span>';
+                break;
+            case in_array($status, array("03","13","23","33")): $html ='<span '.$span_style.'>&#10007;</span>';
+                break;
+
+            default:  $html ='<span '.$span_style.'></span>';
+                break;
+        }
+        return $html;
+    }
+    
+    /**
+     * Generate certificate for organization
+     * @param object $certificate
+     */
+    protected function generateForOrganization($certificate)
+    {
+        //todo
+    }
+    
+    protected function buildPdf($html, $path, $filename, $orientation = 'portrait')
+    {
+        /* replace relative media links with absolute paths to get snappy working */ 
+        $html = relativeToAbsoutePaths($html);
+
+        SnappyPdf::loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'.$html)
+                ->setPaper('a4')
+                ->setOrientation($orientation)
+                ->setOption('margin-bottom', 0)
+                ->save(storage_path("app/".$path.$filename));
+
+        return $this->addFileToDb($filename);
+    }
+    
+    protected function zipper($path, $files)
     {
         $filename = date("Y-m-d_H-i-s").".zip";
-        $zip_file = storage_path("app/".config('lfm.files_folder_name')."/".auth()->user()->id."/".$filename);
+        $zip_file = storage_path("app/".$path.$filename);
         $zip = new \ZipArchive();
         $zip->open($zip_file, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
         foreach ($files as $file) {

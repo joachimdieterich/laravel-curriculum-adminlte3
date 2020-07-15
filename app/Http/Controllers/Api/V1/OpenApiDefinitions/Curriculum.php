@@ -59,7 +59,7 @@
 
 /**
 * @OA\Get(
-*      path="/v1/curricula/{curriculum}/metadataset",
+*      path="/v1/curricula/{curriculum}/metadataset?password={password}",
 *      operationId="getSingleMetadataset",
 *      tags={"Curriculum v1"},
 *      summary="Get metadataset of curriculum by Id",
@@ -74,6 +74,15 @@
 *          in="path",
 *          @OA\Schema(
 *              type="integer"
+*          )
+*      ),
+*     @OA\Parameter(
+*          name="password",
+*          description="metadata password",
+*          required=true,
+*          in="path",
+*          @OA\Schema(
+*              type="string"
 *          )
 *      ),
 *      @OA\Response(
@@ -95,7 +104,7 @@
 
 /**
 * @OA\Get(
-*      path="/v1/curricula/metadatasets",
+*      path="/v1/curricula/metadatasets?password={password}",
 *      operationId="getAllMetadatasets",
 *      tags={"Curriculum v1"},
 *      summary="Get all metadataset of existing curricula",
@@ -103,6 +112,15 @@
 *      security={
 *           {"passport": {"*"}},
 *      },
+*     @OA\Parameter(
+*          name="password",
+*          description="metadata password",
+*          required=true,
+*          in="path",
+*          @OA\Schema(
+*              type="string"
+*          )
+*      ),
 *      @OA\Response(
 *          response=200,
 *          description="successful operation",

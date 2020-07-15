@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Curriculum;
 use App\ObjectiveType;
+use Illuminate\Http\Request;
+use App\Config;
 
 class CurriculaApiController extends Controller
 {
@@ -23,14 +25,29 @@ class CurriculaApiController extends Controller
         
     }
     
-    public function getSingleMetadataset(Curriculum $curriculum)
+    public function getSingleMetadataset(Curriculum $curriculum, Request $request)
     {
+        $metadata_password = Config::where([
+                ['key', '=',  'metadata_password']
+            ])->get()->first()->value;
+        if ($metadata_password != $request->query('password'))
+        {
+            return 'forbidden';
+        }
+        
         return $this->generateMetadataset($curriculum);
-
     }
     
-    public function getAllMetadatasets()
+    public function getAllMetadatasets(Request $request)
     {
+        $metadata_password = Config::where([
+                ['key', '=',  'metadata_password']
+            ])->get()->first()->value;
+        if ($metadata_password != $request->query('password'))
+        {
+            return 'forbidden';
+        }
+        
         $curricula = Curriculum::all();
         
         $metadata = array(); //{'id', 'title'}

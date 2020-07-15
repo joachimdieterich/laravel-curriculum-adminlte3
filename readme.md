@@ -137,6 +137,15 @@ php artisan l5-swagger:generate
 localhost:[port]/api/documentation
 Info: If you want to use another url edit `@OA\Server` in `/app/Http/Controllers/Api/V1/OpenApiDefinitions/Setup.php` 
 
+
+To use the following metadata endpoints, you have to set `password=[pw]` has to be set.
+```
+/v1/curricula/{curriculum}/metadataset?password={password}
+/v1/curricula/metadatasets?password={password}
+```
+Route::get('curricula/{curriculum}/metadataset', 'CurriculaApiController@getSingleMetadataset');
+The password is stored in configs table key = 'metadata_password', data_type = 'string'. (Use http://localhost:8000/configs/create)
+
 ## SSO with SAML2
 Curriculum uses [aacotroneo/laravel-saml2](https://github.com/aacotroneo/laravel-saml2) to integrate a SP (service provider).
 
@@ -235,6 +244,13 @@ The initial installation has 8 Roles:
 - Guest
 
 The [Permission-Map](permissionmap.md) gives a quick view over the permissions of those roles.
+
+
+### Artisan commands
+To refresh curriculum references (referencing_curriculum_id on terminal- and enablingObjectives) based on reference_subscriptions and quote_subscriptions use the following command.
+```bash
+php artisan objectives:refreshReferences
+```
 
 ### Further information
 

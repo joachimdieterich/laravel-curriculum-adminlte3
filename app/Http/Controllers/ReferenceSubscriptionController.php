@@ -39,7 +39,7 @@ class ReferenceSubscriptionController extends Controller
     public function store(Request $request)
     {
         $new_subscription   = $this->validateRequest();
-        $uuid               = Str::uuid();
+
         if (($new_subscription['subscribable_type'] ==  "App\TerminalObjective" AND $new_subscription['terminal_objective_id'] == $new_subscription['subscribable_id'])
             OR
             ($new_subscription['subscribable_type'] ==  "App\EnablingObjective" AND $new_subscription['enabling_objective_id'] == $new_subscription['subscribable_id'])
@@ -64,7 +64,7 @@ class ReferenceSubscriptionController extends Controller
         ]);
         
         if ($subscription){ //generate sibling
-            $subscription = ReferenceSubscription::Create([
+            $sibling = ReferenceSubscription::Create([
                 'reference_id'       => $reference->id,
                 'referenceable_type' => ($new_subscription['enabling_objective_id'] != null) ? "App\EnablingObjective" : "App\TerminalObjective",
                 'referenceable_id'   => ($new_subscription['enabling_objective_id'] != null)  ? $new_subscription['enabling_objective_id'] : $new_subscription['terminal_objective_id'],
@@ -73,6 +73,31 @@ class ReferenceSubscriptionController extends Controller
                 'owner_id'           => auth()->user()->id,	
             ]);
         }
+        //adding to $subscription->referenceable models referencing_curriculum_id
+        $model = $subscription->referenceable;
+        $curricula_ids = (array) $model->referencing_curriculum_id;
+        if (!in_array($new_subscription['curriculum_id'], $curricula_ids))
+        {
+            array_push($curricula_ids, $new_subscription['curriculum_id']);
+        }
+
+        $model->referencing_curriculum_id = $curricula_ids;
+        $model->save();
+        
+        //adding to $subscription->referenceable models referencing_curriculum_id
+        $curriculum_id = app()->make($sibling->referenceable_type)::where('id', $sibling->referenceable_id)->get()->first()->curriculum_id;
+        
+        $model2 = $sibling->referenceable;
+        $curricula_ids = (array) $model2->referencing_curriculum_id;
+        if (!in_array($curriculum_id, $curricula_ids))
+        {
+            array_push($curricula_ids, $curriculum_id);
+        }
+
+        $model2->referencing_curriculum_id = $curricula_ids;
+        $model2->save();
+        
+        
         if (request()->wantsJson()){    
             return ['message' => 'ok'];
         }

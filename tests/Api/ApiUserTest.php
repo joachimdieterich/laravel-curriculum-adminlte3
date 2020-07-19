@@ -49,14 +49,14 @@ class ApiUserTest extends TestCase
     public function an_authificated_client_can_create_an_user()
     { 
         $this->signInApiAdmin();
-        
+        $date = date("Y-m-d H:i:s");
         $this->post("/api/v1/users" , $attributes = [
             'username' => 'username',
             'common_name' => "cn_username",
             'firstname' => "firstname",
             'lastname' => "lastname",
             'email' => "username@curriclumonline.de",
-            'email_verified_at' => date("Y-m-d H:i:s"),
+            'email_verified_at' => $date,
             'password' => 'password', 
         ]);
 
@@ -66,7 +66,7 @@ class ApiUserTest extends TestCase
             'firstname' => "firstname",
             'lastname' => "lastname",
             'email' => "username@curriclumonline.de",
-            'email_verified_at' => date("Y-m-d H:i:s"),
+            'email_verified_at' => $date,
         ]);
     } 
     
@@ -77,13 +77,14 @@ class ApiUserTest extends TestCase
     { 
         $this->signInApiAdmin();
         $this->withoutExceptionHandling();
+        $date = date("Y-m-d H:i:s");
         $new_user = $this->post("/api/v1/users" ,  $attributes = [
             'username' => 'username',
             'common_name' => "cn_username",
             'firstname' => "firstname",
             'lastname' => "lastname",
             'email' => "username@curriclumonline.de",
-            'email_verified_at' => date("Y-m-d H:i:s"),
+            'email_verified_at' => $date,
             'password' => 'password', // password
         ]); 
         
@@ -98,7 +99,7 @@ class ApiUserTest extends TestCase
             'firstname' => 'newfirstname',
             'lastname' => 'newlastname',
             'email' => "username@curriclumonline.de",
-            'email_verified_at' => date("Y-m-d H:i:s"),
+            'email_verified_at' => $date,
         ]);
     }
     
@@ -108,14 +109,14 @@ class ApiUserTest extends TestCase
     public function an_authificated_client_can_delete_an_user()
     { 
         $this->signInApiAdmin();
-        
+        $date = date("Y-m-d H:i:s");
         $new_user = $this->post("/api/v1/users" ,  $attributes = [
             'username' => 'username',
             'common_name' => "cn_username",
             'firstname' => "firstname",
             'lastname' => "lastname",
             'email' => "username@curriclumonline.de",
-            'email_verified_at' => date("Y-m-d H:i:s"),
+            'email_verified_at' => $date,
             'password' => 'password', 
         ]); 
         
@@ -127,7 +128,7 @@ class ApiUserTest extends TestCase
             'firstname' => 'newfirstname',
             'lastname' => 'newlastname',
             'email' => "username@curriclumonline.de",
-            'email_verified_at' => date("Y-m-d H:i:s"),
+            'email_verified_at' => $date,
         ]);
     }
     

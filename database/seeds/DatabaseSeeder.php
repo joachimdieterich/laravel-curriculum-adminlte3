@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             LicensesTableSeeder::class,
             ContentsTableSeeder::class,
             ObjectiveTypeTableSeeder::class,
+            CurriculumTypeTableSeeder::class,
             CurriculumTableSeeder::class,
             CurriculumGroupTableSeeder::class,
             MediaTableSeeder::class,

@@ -103,6 +103,11 @@ class Curriculum extends Model
         return $this->hasMany('App\TerminalObjective', 'curriculum_id', 'id')->orderBy('objective_type_id');
     }
     
+    public function type()
+    {
+        return $this->belongsTo('App\CurriculumType', 'type_id', 'id');
+    }
+    
     public function contentSubscriptions()
     {
         return $this->morphMany('App\ContentSubscription', 'subscribable');

@@ -48,7 +48,7 @@ class CurriculaApiController extends Controller
             return 'forbidden';
         }
         
-        $curricula = Curriculum::all();
+        $curricula = Curriculum::where('type_id', 1)->get(); //only export global curricula, todo: pass type_id as param
         
         $metadata = array(); //{'id', 'title'}
         

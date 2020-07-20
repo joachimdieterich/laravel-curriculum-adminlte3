@@ -6,7 +6,7 @@
         @endif 
     </label>
     <input 
-        type="text"   
+        type="{{ $type ?? 'text' }}"   
         id="{{ $field }}" 
         name="{{ $field }}" 
         class="form-control" 

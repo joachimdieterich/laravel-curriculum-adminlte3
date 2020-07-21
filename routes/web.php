@@ -80,6 +80,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('groupList', 'GroupsController@groupList');
     Route::resource('groups', 'GroupsController');
     
+    Route::delete('plans/massDestroy', 'PlanController@massDestroy')->name('plans.massDestroy');
+    Route::get('plans/list', 'PlanController@list');
+    Route::resource('plans', 'PlanController');
+    
     Route::resource('levels', 'LevelController');
     
     /* logbooks */
@@ -140,8 +144,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');
     Route::resource('permissions', 'PermissionsController');
 
-    Route::get('print/glossar/{glossar}', 'PrintController@glossar')->name('print.glossar');
     Route::get('print/content/{content}', 'PrintController@content')->name('print.content');
+    Route::get('print/glossar/{glossar}', 'PrintController@glossar')->name('print.glossar');
+    Route::get('print/{model}/{id}', 'PrintController@model')->name('print.model');
     Route::get('print/curriculum/{curriculum}', 'PrintController@curriculum')->name('print.curriculum');
     Route::get('print/curriculum/{curriculum}/references', 'PrintController@references')->name('print.references');
     

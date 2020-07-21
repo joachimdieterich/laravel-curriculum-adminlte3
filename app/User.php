@@ -106,6 +106,11 @@ class User extends Authenticatable
         return $this->hasMany(Content::class, 'owner_id')->latest('updated_at');
     }
     
+    public function plans()
+    {
+        return $this->hasMany(Plan::class, 'owner_id')->latest('updated_at');
+    }
+    
     public function currentGroups()
     {
         return $this->belongsToMany('App\Group', 'group_user')

@@ -78,6 +78,12 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
+        $task = $task->with(['contentSubscriptions.content.categories', 
+                'terminalObjectiveSubscriptions.terminalObjective',
+                'enablingObjectiveSubscriptions.enablingObjective.terminalObjective',
+                'mediaSubscriptions.medium'])
+                ->where('id', $task->id)->get()->first();
+        
         abort_unless(\Gate::allows('task_show'), 403);
         // axios call? 
         if (request()->wantsJson()){  

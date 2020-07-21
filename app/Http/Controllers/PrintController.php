@@ -41,6 +41,18 @@ class PrintController extends Controller
         return $this->print($html, 'glossar.pdf', 'save');
     }
     
+    public function model($model, $id)
+    {
+        $view = class_basename($model);
+        $model =  app()->make($model)::find($id);
+        
+        $html = view('print.'. $view)
+                ->with(compact('model'))
+                ->render();
+         
+        return $this->print($html, $model->title.'.pdf', 'download' );
+    }
+    
     public function references(Curriculum $curriculum)
     {
         //dd($curriculum->terminalObjectives->pluck('referenceSubscriptions.*.siblings.*.referenceable.curriculum.title')->flatten()->values()->unique() );

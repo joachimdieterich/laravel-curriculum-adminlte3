@@ -26,7 +26,7 @@
                             <i class="fa fa-file"></i>
                             <span class="ml-2">{{ trans('global.media.title') }}</span>
                         </button>
-                        <button class="dropdown-item" @click.prevent="open('logbook-subscribe-objective-modal', 'referenceable');">
+                        <button class="dropdown-item" @click.prevent="open('subscribe-objective-modal', 'referenceable');">
                             <i class="fa fa-bullseye"></i>
                             <span class="ml-2">{{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}</span>
                         </button>
@@ -105,7 +105,7 @@
             <hr class="m-1">
 
 
-            <div class="card-body p-2">
+            <div class="p-2">
                 <div class="tab-content">
                     <!-- tab-pane -->
                     <div class="tab-pane active show" 

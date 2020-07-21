@@ -5,16 +5,33 @@
                
                
                     <!-- Before each timeline item corresponds to one icon on the left scale -->
-                    <span>
-                        <i v-if="subscription.subscribable_type === 'App\\User'" class="fas fa-user"></i>
-                        <i v-else-if="subscription.subscribable_type === 'App\\Group'" class="fas fa-users "></i> 
-                        <i v-else-if="subscription.subscribable_type === 'App\\LogbookEntry'" class="fas fa-book "></i> 
-                        <a href="#" class="text-md"> 
-                            {{ ((subscription.subscribable.title) ? subscription.subscribable.title : subscription.subscribable.username) }} ({{subscription.owner.username}})
+                    <span  v-if="subscription.subscribable_type === 'App\\User'">
+                        <i class="fas fa-user pr-1"></i>
+                        <a href="#" class="text-md link-muted"> 
+                            {{ ((subscription.subscribable.title) ? subscription.subscribable.title+" ("+subscription.owner.firstname+" "+subscription.owner.lastname+")" : subscription.subscribable.firstname+' '+subscription.subscribable.lastname ) }} 
+                        </a>
+                    </span>
+                    <span  v-else-if="subscription.subscribable_type === 'App\\Group'">
+                        <i  class="fas fa-users pr-1"></i> 
+                        <a href="#" class="text-md link-muted"> 
+                            {{ ((subscription.subscribable.title) ? subscription.subscribable.title+" ("+subscription.owner.firstname+" "+subscription.owner.lastname+")" : subscription.subscribable.firstname+' '+subscription.subscribable.lastname ) }} 
+                        </a>
+                    </span>
+                    <span v-else-if="subscription.subscribable_type === 'App\\LogbookEntry'">
+                        <i class="fas fa-book pr-1"></i> 
+                        <a href="#" class="text-md link-muted"> 
+                            {{ ((subscription.subscribable.title) ? subscription.subscribable.title+" ("+subscription.owner.firstname+" "+subscription.owner.lastname+")" : subscription.subscribable.firstname+' '+subscription.subscribable.lastname ) }} 
+                        </a>
+                    </span>    
+                        
+                    <span v-else-if="subscription.subscribable_type === 'App\\Plan'">
+                        <i  class="far fa-clipboard pr-1"></i> 
+                        <a :href="'/plans/'+subscription.subscribable.id" class="text-md link-muted"> 
+                            {{ ((subscription.subscribable.title) ? subscription.subscribable.title+" ("+subscription.owner.firstname+" "+subscription.owner.lastname+")" : subscription.subscribable.firstname+' '+subscription.subscribable.lastname ) }} 
                         </a>
                     </span>
                     <!-- Time -->
-                    <span class="pull-right "><i class="fas fa-clock"></i> <span v-html="subscription.created_at"></span></span>
+                    <span class="pull-right "><i class="fa fa-link pr-1"></i> <span v-html="subscription.created_at"></span></span>
                     
                 
             </div>

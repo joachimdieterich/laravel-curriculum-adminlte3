@@ -1,7 +1,7 @@
 <template>
     <modal 
-        id="logbook-subscribe-objective-modal" 
-        name="logbook-subscribe-objective-modal" 
+        id="subscribe-objective-modal" 
+        name="subscribe-objective-modal" 
         height="auto" 
         :adaptive=true
         draggable=".draggable"
@@ -193,7 +193,7 @@
                
             },
             close(){
-                this.$modal.hide('logbook-subscribe-objective-modal');
+                this.$modal.hide('subscribe-objective-modal');
             },
             removeHtmlTags(array, field){
                 var i;

@@ -124,11 +124,13 @@
                     this.requestUrl += '/' + this.form.id;
                 }
 
-                this.form.submit(method, this.requestUrl);
+                this.form.submit(method, this.requestUrl)
+                    .then(response => location.reload(true)
+                    //todo .catch
+                );
 
                 this.$modal.hide('task-modal');
-                location.reload(true);
-                //todo .then .catch
+                
             },
             
             beforeOpen(event) {
@@ -139,7 +141,13 @@
                 } else if(event.params.subscribable_type){
                     this.form.subscribable_type = event.params.subscribable_type;
                     this.form.subscribable_id = event.params.subscribable_id;
-                } 
+                    if(event.params.start_date){
+                        this.form.start_date = event.params.start_date;
+                        this.form.due_date = event.params.due_date; 
+                    } else if(event.params.due_date){
+                        this.form.due_date = event.params.due_date;
+                    } 
+                }  
              },
             opened(){
                 this.$initTinyMCE();

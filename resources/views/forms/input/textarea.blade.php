@@ -10,7 +10,7 @@
         name="{{ $field }}" 
         class="form-control description my-editor "
         rows="{{ $rows }}"
-        placeholder="{{ __( $placeholder ) }}" 
+        placeholder="{{ __( $placeholder ?? '') }}" 
         @if(isset($required)) 
          required 
         @endif

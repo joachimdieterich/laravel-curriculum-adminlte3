@@ -49,7 +49,7 @@
                 <div class="card-tools pr-2">
                     <a href="{{ route('users.edit', $user->id) }}" >
                         <i class="far fa-edit"></i>
-                    </a> 
+                    </a>
                 </div>
                 @endcan
             </div>

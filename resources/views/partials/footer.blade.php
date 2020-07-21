@@ -1,8 +1,8 @@
 @if(isset($contentonly))
-<footer class="main-footer py-1"
+<footer class="main-footer py-1 no-print"
         style="background-color:#737c83; position: fixed;left: 0;bottom: 0;width: 100%;margin-left:0 !important">
 @else
-<footer class="main-footer py-1"
+<footer class="main-footer py-1 no-print"
         style="background-color:#737c83">
 @endif
     <div class="row">
@@ -20,10 +20,12 @@
                 @php ($footer_iterator = 1)
                 @while ( env('FOOTER_TITLE_'.$footer_iterator) )
                 <li class="nav-item flex-fill ">
-                    <a class=" nav-item d-none d-sm-inline-block text-white text-decoration-none" 
-                       href="{{ env('FOOTER_URL_'.$footer_iterator) }}">
-                        {{ env('FOOTER_TITLE_'.$footer_iterator) }}
-                    </a>
+                    <small>
+                        <a class=" nav-item d-none d-sm-inline-block text-white text-decoration-none" 
+                            href="{{ env('FOOTER_URL_'.$footer_iterator) }}">
+                             {{ env('FOOTER_TITLE_'.$footer_iterator) }}
+                         </a>
+                    </small>
                 </li>
                 @php ($footer_iterator++)
                 @endwhile

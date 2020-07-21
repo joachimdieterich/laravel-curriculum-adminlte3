@@ -9,8 +9,11 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-lg-4 col-sm-12">
-        <div class="card card-primary">
+    <div class="col-12">
+        @foreach($group->curricula as $id => $currculum)
+            @include ('navigators.views.items.item', [ 'item' => $currculum, 'onclick' => "location.href='/curricula/{$currculum->id}';" ])
+        @endforeach
+<!--        <div class="card card-primary">
             <div class="card-header">
                 <div class="card-title">
                     <h5 class="m-0">
@@ -25,7 +28,7 @@
                 </div> 
                 @endcan
             </div>
-            <!-- /.card-header -->
+             /.card-header 
             <div class="card-body"> 
                 <strong><i class="fa fa-university mr-1"></i> {{ trans('global.organization.title_singular') }}</strong>
 
@@ -62,7 +65,7 @@
                 </p>
 
             </div>
-            <!-- /.card-body -->
+             /.card-body 
             <div class="card-footer">
                 <div class="float-left">
 
@@ -71,10 +74,10 @@
                     {{ $group->updated_at }}
                 </small> 
             </div>
-        </div>
+        </div>-->
     </div>
     
-    <div class="col-lg-8 col-sm-12">
+<!--    <div class="col-lg-8 col-sm-12">
         <div class="card">
             <div class="card-header p-2">
                 <ul class="nav nav-pills">
@@ -82,28 +85,28 @@
                     <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">Timeline</a></li>
                     <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Settings</a></li>
                 </ul>
-            </div><!-- /.card-header -->
+            </div> /.card-header 
             <div class="card-body">
                 <div class="tab-content">
                     <div class="tab-pane active show" id="activity">
                         Activity Tab
                     </div>
-                    <!-- /.tab-pane -->
+                     /.tab-pane 
                     <div class="tab-pane" id="timeline">
-                        <!-- The timeline -->
+                         The timeline 
                         timeline
                     </div>
-                    <!-- /.tab-pane -->
+                     /.tab-pane 
 
                     <div class="tab-pane" id="settings">
                         Organisational Settings
                     </div>
-                    <!-- /.tab-pane -->
+                     /.tab-pane 
                 </div>
-                <!-- /.tab-content -->
-            </div><!-- /.card-body -->
+                 /.tab-content 
+            </div> /.card-body 
         </div>
-        <!-- /.nav-tabs-custom -->
-    </div>
+         /.nav-tabs-custom 
+    </div>-->
 </div>
 @endsection

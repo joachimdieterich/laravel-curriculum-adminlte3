@@ -72,6 +72,7 @@ return [
     'curricula_cross_references_description'=> 'Suggestions for lesson planning',
     'myProfile'                            => 'My Profile',
     'settings'                             => 'Settings',
+    'minutes'                              => 'Minutes',
     'Config'              =>[
         'title'          => 'Configs',
         'title_singular' => 'Config',
@@ -914,5 +915,46 @@ return [
             'message_helper'     => '',
        ],
     ],
-    
+    'plan' =>[
+        'title'             => 'Plans',
+        'title_singular'    => 'Plan',
+        'create'            => 'Create plan',
+        'search'            => 'Search plan',
+        'edit'              => 'Edit plan',
+        'fields'            => [
+            'id'            => 'ID',
+            'id_helper'     => '',
+            'type'          => 'Typ',
+            'type_helper'   => '',
+            'title'         => 'Title',
+            'title_helper'  => '',
+            'description'         => 'Description',
+            'description_helper'  => '',
+            'begin'        => 'Start date',
+            'begin_helper' => '',
+            'end'          => 'Due date',
+            'end_helper'   => '',
+            'duration'          => 'Duration',
+            'duration_helper'   => 'Specify how much time (in minutes) should be scheduled to complete the learning/work schedule.',
+            
+       ],
+    ],
+    'planItem' =>[
+        'title'             => 'Aufgaben',
+        'title_singular'    => 'Aufgabe',
+        'create'            => 'Aufgabe erstellen',
+        'search'            => 'Aufgabe suchen',
+        'edit'              => 'Aufgabe bearbeiten',
+        'fields'            => [
+            'id'            => 'ID',
+            'id_helper'     => '',
+            'type'          => 'Typ',
+            'type_helper'   => '',
+            'title'         => 'Titel',
+            'title_helper'  => '',
+            'description'         => 'Beschreibung',
+            'description_helper'  => '',
+           
+       ],
+    ],
 ];

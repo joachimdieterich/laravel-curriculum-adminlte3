@@ -194,7 +194,8 @@
                         <div class="tab-pane " 
                             id="events">
                             <eventmanagement ref="eventPlugin"
-                                 :model="objective"></eventmanagement>
+                                 :model="objective"
+                                 :curriculum="objective.curriculum"></eventmanagement>
                         </div>
                     </div>
                     <!-- /.tab-pane -->

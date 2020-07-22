@@ -64,36 +64,14 @@ class eVewa extends EventmanagementPlugin
        }
         
         
-            $params = array(
-                'method'=> 'lesePlrlpVeranstaltungen',
-                'session_id' => (string) $this->sessionId,
-                'mandant'=> '',
-                'page'=> '',
-                'limit'=> '',
-                'order'=> '',
-                'search'=> $search, //todo better search in evewa!
-                'abgeschlossene'=> '',
-                'gs_ort'=> '',
-                'gs_plz'=> '',
-                'veranstalter'=> '',
-                'von'=> '',
-                'bis'=> '',
-                'schulartentag'=> '',
-                'zielgruppentag'=> '',
-            );
-        //dump($params) ;   
-        
-       
-        
-//        $params = array_replace_recursive( //replace defaults with given params
-//             array(
+//            $params = array(
 //                'method'=> 'lesePlrlpVeranstaltungen',
 //                'session_id' => (string) $this->sessionId,
 //                'mandant'=> '',
 //                'page'=> '',
 //                'limit'=> '',
 //                'order'=> '',
-//                'search'=> '',
+//                'search'=> $search, //todo better search in evewa!
 //                'abgeschlossene'=> '',
 //                'gs_ort'=> '',
 //                'gs_plz'=> '',
@@ -102,7 +80,29 @@ class eVewa extends EventmanagementPlugin
 //                'bis'=> '',
 //                'schulartentag'=> '',
 //                'zielgruppentag'=> '',
-//            ), $params);
+//            );
+        //dump($params) ;   
+        
+       
+        
+        $params = array_replace_recursive( //replace defaults with given params
+             array(
+                'method'=> 'lesePlrlpVeranstaltungen',
+                'session_id' => (string) $this->sessionId,
+                'mandant'=> '',
+                'page'=> '',
+                'limit'=> '',
+                'order'=> '',
+                'search'=> '',
+                'abgeschlossene'=> '',
+                'gs_ort'=> '',
+                'gs_plz'=> '',
+                'veranstalter'=> '',
+                'von'=> '',
+                'bis'=> '',
+                'schulartentag'=> '',
+                'zielgruppentag'=> '',
+            ), $params);
 //        
         
         $raw = $this->call ( $this->url, 'GET', http_build_query($params) );
@@ -161,12 +161,6 @@ class eVewa extends EventmanagementPlugin
             case 'POST' :
                     curl_setopt ( $ch, CURLOPT_POST, true );
                     break;
-//            case 'PUT' :
-//                    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-//                    break;
-//            case 'DELETE' :
-//                    curl_setopt ( $ch, CURLOPT_CUSTOMREQUEST, "DELETE" );
-//                    break;
             default : break;
         }
 

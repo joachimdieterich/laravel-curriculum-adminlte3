@@ -1,5 +1,8 @@
 <template >
-    <events ref="eventPlugin" :model="model">    
+    <events ref="eventPlugin" 
+        :model="model"
+        :curriculum="curriculum"
+            >    
     </events>
 </template>
 
@@ -8,7 +11,8 @@
     import events from '../../../eVewa/resources/js/components/Events';
     export default {
         props: {
-            model: {},
+            model: Object,
+            curriculum: Object,
         },
         data() {
             return {

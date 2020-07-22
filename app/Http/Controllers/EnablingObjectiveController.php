@@ -62,7 +62,8 @@ class EnablingObjectiveController extends Controller
     {
 
         $objective = EnablingObjective::where('id', $enablingObjective->id)
-            ->with(['media', 'mediaSubscriptions', 
+            ->with(['curriculum', 'curriculum.subject',
+                    'media', 'mediaSubscriptions', 
                     'referenceSubscriptions.siblings.referenceable', 'quoteSubscriptions.siblings.quotable',
                     'contentSubscriptions.content.categories']) 
             ->get()->first();

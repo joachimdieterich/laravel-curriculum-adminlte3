@@ -888,7 +888,9 @@ return [
         'title'             => 'Veranstaltungen',
         'title_singular'    => 'Veranstaltunge',
         'create'            => 'Veranstaltungen verknüpfen',
-        'search'            => 'Veranstaltungen suchen',
+        'search'            => '(Fortbildungs-)Veranstaltungen suchen',
+        'search_subject'    => '... nach Fach',
+        'search_keyword'    => '... mit individuellem Suchbegriff',
         'edit'              => 'Veranstaltungslink bearbeiten',
         'fields'            => [
             'id'            => 'ID',

@@ -61,7 +61,9 @@ class TerminalObjectiveController extends Controller
     public function show(TerminalObjective $terminalObjective)
     {
         $objective = TerminalObjective::where('id', $terminalObjective->id)
-            ->with(['media', 'mediaSubscriptions', 'enablingObjectives',
+            ->with(['curriculum', 'curriculum.subject',
+                    'media', 'mediaSubscriptions', 
+                    'enablingObjectives',
                     'referenceSubscriptions.siblings.referenceable', 'quoteSubscriptions.siblings.quotable',
                     'contentSubscriptions.content.categories']) 
             ->get()->first();

@@ -883,6 +883,8 @@ return [
         'title_singular'    => 'Event',
         'create'            => 'Creat eventlink ',
         'search'            => 'Search event',
+        'search_subject'    => '... by subject',
+        'search_keyword'    => '... individual search term',
         'edit'              => 'Edit eventlink',
         'fields'            => [
             'id'            => 'ID',

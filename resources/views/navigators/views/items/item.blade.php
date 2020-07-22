@@ -22,10 +22,8 @@
                 <i class="fa fa-photo-video text-white pt-2"></i>
                 @break
              @default
-             <!--@case('App\Curriculum')-->
-                <i class="fa fa-th text-white  pt-2"></i>
+                <i class="fa fa-th text-white pt-2"></i>
                 @break   
-           
         @endswitch
     </div>
         @can('navigator_create')

@@ -9,7 +9,7 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-lg-4 col-sm-12">
+    <div class="col-lg-3 col-sm-12">
         <div class="card card-primary card-outline">
             <div class="card-body box-profile">
                 <div id="lfm" data-input="thumbnail" data-preview="holder" class="text-center">
@@ -79,20 +79,6 @@
                     <button type="button" class="btn-xs btn-block btn-success pull-right">{{$roles->title}} @ {{ $user->organizations()->where('role_id', $roles->id)->first()->title }}</button>
                     @endforeach
                 </p>
-
-                <hr>
-
-                <strong><i class="fa fa-envelope mr-1"></i> Contact</strong>
-
-                <p class="text-muted">
-                    {{ $user->email }}<br>
-                    {{ trans('global.user.fields.email_verified_at') }} {{ $user->email_verified_at }}
-                </p>
-
-                <hr>
-
-                <strong><i class="fa fa-file-alt mr-1"></i> Notes</strong>
-                <p class="text-muted"></p>
             </div>
             <!-- /.card-body -->
             <div class="card-footer">
@@ -106,28 +92,31 @@
         </div>
     </div>
 
-    <div class="col-lg-8 col-sm-12">
+    <div class="col-lg-9 col-sm-12">
         <div class="card">
             <div class="card-header p-2">
                 <ul class="nav nav-pills">
-                    <li class="nav-item"><a class="nav-link active show" href="#activity" data-toggle="tab">Activity</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">Timeline</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Settings</a></li>
+                    <li class="nav-item"><a class="nav-link active show" href="#contact" data-toggle="tab">{{ trans('global.contactdetail.title_singular') }}</a></li>
                 </ul>
             </div><!-- /.card-header -->
             <div class="card-body">
                 <div class="tab-content">
-                    <div class="tab-pane active show" id="activity">
-                        Activity Tab
+                    <div class="tab-pane active show" id="contact">
+                        @if(auth()->user()->contactDetail != null) 
+                            @include('partials.users.contactdetails', [
+                                'contactdetail' => auth()->user()->contactDetail, 
+                                'organization'  => \App\Organization::find(auth()->user()->current_organization_id)
+                                ]) 
+                        @else
+                            <a 
+                                id="add-plan"
+                                class="btn btn-success" 
+                                href="{{ route("contactdetails.create") }}">
+                                {{ trans('global.contactdetail.create') }}    
+                            </a>
+                        @endif
                     </div><!-- /.tab-pane -->
-                    <div class="tab-pane" id="timeline">
-                        <!-- The timeline -->
-                        timeline
-                    </div><!-- /.tab-pane -->
-
-                    <div class="tab-pane" id="settings">
-                        Organisational Settings
-                    </div><!-- /.tab-pane -->
+                   
                 </div><!-- /.tab-content -->
             </div><!-- /.card-body -->
         </div><!-- /.nav-tabs-custom -->

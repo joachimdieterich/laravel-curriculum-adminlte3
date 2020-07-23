@@ -101,6 +101,11 @@ class User extends Authenticatable
         $this->notify(new ResetPassword($token));
     }
     
+    public function contactDetail()
+    {
+        return $this->hasOne('App\ContactDetail', 'owner_id', 'id');
+    }
+    
     public function contents()
     {
         return $this->hasMany(Content::class, 'owner_id')->latest('updated_at');

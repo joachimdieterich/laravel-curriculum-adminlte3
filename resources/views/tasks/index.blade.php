@@ -20,12 +20,48 @@
         </div>
     </div>
 @endcan
+<div class="row">
+    <div class="col-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-center"><i class="fa fa-plus"></i></div>
+            </div>
+        </div>   
+    </div>
+    <div class="col-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-center"><i class="fa fa-plus"></i></div>
+            </div>
+        </div>   
+    </div>
+    <div class="col-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-center"><i class="fa fa-plus"></i></div>
+            </div>
+        </div>   
+    </div>
+</div>
+
 <div class="card">
     <div class="card-body">
+        
+            <div class="col-4">
+                @include('tasks.tasklist', [
+                "tasks" =>  $tasks,
+            ])
+            </div>
+            <div class="col-4">
+                @include('tasks.tasklist', [
+                "tasks" =>  $tasks,
+            ])
+            </div>
+        </div>
         @include('tasks.tasklist', [
                 "tasks" =>  $tasks,
             ])
-    </div>
+    
 </div>
 <task-modal></task-modal>
 @endsection

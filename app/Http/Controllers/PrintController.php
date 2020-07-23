@@ -77,7 +77,7 @@ class PrintController extends Controller
         
         $pdf = SnappyPdf::loadHTML($meta.$html)
                    ->setPaper('a4')
-                   ->setOrientation($orientation)
+                   ->setOrientation($orientation)   
                    ->setOption('margin-top', 20)
                    ->setOption('margin-left', 20)
                    ->setOption('margin-right', 20)

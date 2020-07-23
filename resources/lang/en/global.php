@@ -959,4 +959,23 @@ return [
            
        ],
     ],
+    'contactdetail' =>[
+        'title'             => 'Contact',
+        'title_singular'    => 'Contact',
+        'create'            => 'Create contact',
+        'edit'              => 'Edit contact',
+        'fields'            => [
+            'id'            => 'ID',
+            'id_helper'     => '',
+            'email'          => 'Email',
+            'email_helper'   => '',
+            'phone'         => 'Phone',
+            'phone_helper'  => '',
+            'mobile'         => 'Mobile',
+            'mobile_helper'  => '',
+            'notes'         => 'Notes/Office Hours',
+            'notes_helper'  => '',
+           
+       ],
+    ],
 ];

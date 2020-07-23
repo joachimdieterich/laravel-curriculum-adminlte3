@@ -964,4 +964,23 @@ return [
            
        ],
     ],
+    'contactdetail' =>[
+        'title'             => 'Kontaktdaten',
+        'title_singular'    => 'Kontaktdaten',
+        'create'            => 'Kontaktdaten erstellen',
+        'edit'              => 'Kontaktdaten bearbeiten',
+        'fields'            => [
+            'id'            => 'ID',
+            'id_helper'     => '',
+            'email'          => 'E-mail',
+            'email_helper'   => '',
+            'phone'         => 'Telefon',
+            'phone_helper'  => '',
+            'mobile'         => 'Handy',
+            'mobile_helper'  => '',
+            'notes'         => 'Notizen/Sprechzeiten',
+            'notes_helper'  => '',
+           
+       ],
+    ],
 ];

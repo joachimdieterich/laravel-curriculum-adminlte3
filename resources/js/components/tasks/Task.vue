@@ -33,16 +33,11 @@
             <!-- /.card-body -->
             
             <div v-can="'task_edit'" class="card-footer">
-                <div class="float-left">
-                    
-                </div>
                 <small class="float-right">
                     {{ task.updated_at }}
                 </small> 
             </div>
-            
         </div>
-        
         
         <div class="card">
             <div class="card-header">
@@ -82,8 +77,26 @@
                 </div>
                 <ul class="nav nav-pills">
                     <li class="nav-item small"><a class="nav-link active show" href="#activity" data-toggle="tab">{{ trans('global.subscription-billing') }}</a></li>
+                    <li class="nav-item small">
+                        <a class="nav-link" 
+                           v-bind:href="'#task_contents_'+task.id" 
+                           data-toggle="tab">{{ trans('global.content.title') }}</a>
+                    </li> 
+                    <li class="nav-item small">
+                        <a class="nav-link" 
+                           v-bind:href="'#task_objectives_'+task.id" 
+                           data-toggle="tab">
+                            {{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}
+                        </a>
+                    </li>
+                    <li class="nav-item small">
+                        <a class="nav-link" 
+                           v-bind:href="'#task_media_'+task.id" 
+                           data-toggle="tab">
+                            {{ trans('global.media.title') }}
+                        </a>
+                    </li>
                     <li class="nav-item small"><a class="nav-link" href="#timeline" data-toggle="tab">{{ trans('global.history') }}</a></li>
-                    <li class="nav-item small"><a class="nav-link" href="#settings" data-toggle="tab">{{ trans('global.settings') }}</a></li>
                 </ul>
                 
             </div><!-- /.card-header -->
@@ -91,17 +104,64 @@
             <div class="card-body">
 
                 <div class="tab-content">
-                    <div class="tab-pane active show" id="activity">
-                        <task-timeline :task="task"></task-timeline>           
-                        
-                    </div><!-- /.tab-pane -->
+                     <div class="tab-pane active show" id="activity">
+                          <task-timeline :task="task"></task-timeline>           
+
+                     </div><!-- /.tab-pane -->
+                     <div class="tab-pane " 
+                         v-bind:id="'task_contents_'+task.id"  >
+
+                        <ul class="nav nav-pills">
+                            <li class="nav-item" v-for="(item,index) in contentCategories" v-bind:value="'category_'+item.id">
+                                <a class="nav-link show small" 
+                                   v-bind:href="'#category_'+item.id" 
+                                   :class="{ 'active': index === 0 }"
+                                   data-toggle="tab">{{ item.title }}</a>
+                            </li>
+                        </ul>
+                        <hr class="mt-1">
+                        <div class="tab-content">
+                            <div class="tab-pane" 
+                                v-for="(item,index) in contentCategories" 
+                                v-bind:id="'category_'+item.id"
+                                :class="{ 'active': index === 0 }">
+                               <content-group  class="p-2"
+                                   :contents="filterContent(item.id)"
+                                   :category="item">
+                               </content-group>
+                           </div>
+                        </div> 
+
+                    </div>
+                    <div class="tab-pane" 
+                         v-bind:id="'task_media_'+task.id">
+                        <span v-for="subscription in task.media_subscriptions">
+                           <medium :subscription="subscription" :medium="subscription.medium" ></medium>  
+                        </span> 
+                    </div>
+                    
+                    <div class="tab-pane" 
+                         v-bind:id="'task_objectives_'+task.id">
+                        <objective-box 
+                            v-for="terminal_subscription in task.terminal_objective_subscriptions" 
+                            v-bind:key="terminal_subscription.id"
+                            :objective="terminal_subscription.terminal_objective"
+                            type="terminal"></objective-box>
+                        <span class="clearfix"></span>
+                        <span v-for="enabling_subscription in task.enabling_objective_subscriptions">
+                            <objective-box 
+                                :objective="enabling_subscription.enabling_objective.terminal_objective"
+                                type="terminal"></objective-box>
+                            <objective-box 
+                                :objective="enabling_subscription.enabling_objective"
+                                type="enabling"></objective-box>
+                            <span class="clearfix"></span>
+                        </span>
+                    </div>
                     <div class="tab-pane" id="timeline"><!-- The timeline -->
                         
                     </div><!-- /.tab-pane -->
 
-                    <div class="tab-pane" id="settings">
-                        Organisational Settings
-                    </div><!-- /.tab-pane -->
                 </div><!-- /.tab-content -->
             </div><!-- /.card-body -->
         </div><!-- /.nav-tabs-custom -->       

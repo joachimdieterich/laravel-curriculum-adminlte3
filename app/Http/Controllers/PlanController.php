@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Plan;
 use App\PlanType;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 
 class PlanController extends Controller
@@ -30,7 +31,7 @@ class PlanController extends Controller
             ->addColumn('action', function ($plans) {
                  $actions  = '';
                     if (\Gate::allows('plan_edit')){
-                        $actions .= '<a href="'.route('plan.edit', $plans->id).'"'
+                        $actions .= '<a href="'.route('plans.edit', $plans->id).'"'
                                     . 'id="edit-plan-'.$plans->id.'" '
                                     . 'class="btn p-1">'
                                     . '<i class="fa fa-pencil-alt"></i>' 
@@ -129,7 +130,12 @@ class PlanController extends Controller
      */
     public function edit(Plan $plan)
     {
-        //
+        abort_unless(\Gate::allows('plan_edit'), 403);
+        $types = PlanType::all();
+        
+        return view('plans.edit')
+                ->with(compact('plan'))
+                ->with(compact('types'));
     }
 
     /**
@@ -141,7 +147,16 @@ class PlanController extends Controller
      */
     public function update(Request $request, Plan $plan)
     {
-        //
+        abort_unless(\Gate::allows('plan_edit'), 403);
+        $clean_data = $this->validateRequest();        
+        if (isset($clean_data['type_id']))
+        {
+            $clean_data['type_id'] =  format_select_input($clean_data['type_id']);  //hack to prevent array to string conversion
+        }
+        
+        $plan->update($clean_data);
+        
+        return redirect($plan->path());
     }
 
     /**
@@ -152,7 +167,12 @@ class PlanController extends Controller
      */
     public function destroy(Plan $plan)
     {
-        //
+        
+        abort_unless(\Gate::allows('plan_delete'), 403);
+
+        $plan->delete();
+
+        return back();
     }
     
     protected function validateRequest()

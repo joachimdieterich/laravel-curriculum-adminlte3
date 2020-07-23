@@ -1,11 +1,13 @@
-<ul class="todo-list" data-widget="todo-list">
+
+<ul class="todo-list" 
+    data-widget="todo-list">
     @foreach ($tasks as $task)
     <li>
         <!-- drag handle -->
-<!--               <span class="handle">
+               <span class="handle">
             <i class="fas fa-ellipsis-v"></i>
             <i class="fas fa-ellipsis-v"></i>
-        </span>-->
+        </span>
         <!-- checkbox -->
         <div  class="icheck-primary d-inline ml-2">
             <input 
@@ -35,8 +37,6 @@
         </div>
     </li>
     @endforeach
-
-
 </ul>
 
 @section('scripts')

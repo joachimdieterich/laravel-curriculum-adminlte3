@@ -8,27 +8,24 @@
     <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
-<div class="card">
+<div class="card pb-3">
     <div class="card-header">
         <div class="card-title">
             <h5 class="m-0">
-                <i class="far fa-clipboard mr-1"></i> 
+                <i class="fa fa-clipboard-list mr-1"></i> 
                 {{ $plan->title }}
             </h5>
             <small>{{ $plan->type->title}} </small> 
         </div>
 @can('plan_edit')
-        <div class="card-tools pr-2 no-print">   
-            <a class="pr-2 text-decoration-none link-muted" href="/contacts/{{ $plan->owner->id }}">
-                <i class="fa fa-chalkboard-teacher "></i>
-                 {{ $plan->owner->fullname() }}
-            </a>
-            <a href="{{route('plans.edit', $plan->id) }}" >
-                <i class="far fa-edit"></i>
-            </a>  
-            <a href="{{ route('print.model', ['model' => 'App\Plan', 'id' =>  $plan->id]) }}" >
+        <div class="card-tools pr-2 no-print">              
+            <a href="{{ route('print.model', ['model' => 'App\Plan', 'id' =>  $plan->id]) }}" class="link-muted pr-4">
                 <i class="fa fa-print"></i>
             </a>
+            
+             <a href="{{route('plans.edit', $plan->id) }}" class="link-muted">
+                <i class="far fa-edit"></i>
+            </a>  
         </div>
 @endcan
 
@@ -36,25 +33,37 @@
     <!-- /.card-header -->
     <div class="card-body">
         <div class="row">
-            <span class="col-12">
-                 {{ $plan->description }}
+            <span class="col-9 col-xs-12">
+                 {!! $plan->description !!}
             </span>
+            <span class="col-sm-3 col-xs-12">
+                <span class="row">
+                    @if($plan->owner->contactdetail != null)
+                    <span class="col-12 pb-3">
+                        <a class="pr-2 text-decoration-none link-muted" href="{{ $plan->owner->contactdetail->path() }}">
+                            <i class="fa fa-chalkboard-teacher "></i>
+                             {{ $plan->owner->fullname() }}
+                        </a>
+                    </span>
+                    @endif
+                     <span  class="col-12 pb-1">
+                        <i class="fa fa-calendar pr-1"></i>
+                        {{ $plan->begin }}
+                    </span>
+                    <span class="col-12 pb-1">
+                        <i class="fa fa-calendar-check pr-1"></i>
+                        {{ $plan->end }}
+                    </span>        
+                    <span class="col-12 pb-1">
+                        <i class="fa fa-stopwatch pr-1"></i>
+                        {{ $plan->duration }} {{trans('global.minutes')}}
+                    </span>   
+                    
+                </span>               
+            </span>        
+            
         </div>
-        <hr>
-        <div class="row">
-            <span class="col-md-4 col-sm-12">
-                <i class="fa fa-calendar pr-1"></i>
-                {{ $plan->begin }}
-            </span>        
-            <span class="col-md-4 col-sm-12">
-                <i class="fa fa-calendar-check pr-1"></i>
-                {{ $plan->end }}
-            </span>        
-            <span class="col-md-4 col-sm-12">
-                <i class="fa fa-stopwatch pr-1"></i>
-                {{ $plan->duration }} {{trans('global.minutes')}}
-            </span>        
-        </div>
+        
        
     </div>
     
@@ -97,11 +106,9 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
                 <i class="fa fa-hiking mr-1"></i> 
                 {{ $day->locale('de')->dayName }}, {{ $day->isoFormat('LL') }}
             </div>
-           
         </div>
     @endif
 @endforeach
 
 <task-modal></task-modal>
-
 @endsection

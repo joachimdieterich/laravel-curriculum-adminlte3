@@ -28,7 +28,7 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
 
 @foreach ($period as $day)
     @if($day->isWeekday() == true)
-    
+
         @if($day->format('yy-m-d') == $today)
             @php $class = 'card-secondary'; @endphp
         @else
@@ -45,7 +45,7 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
                     "hide_due_date"  => true
                 ])
             </div>
-            
+
         </div>
     @else
         <div class="card bg-transparent">
@@ -53,7 +53,7 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
                 <i class="fa fa-hiking mr-1"></i> 
                 {{ $day->locale('de')->dayName }}, {{ $day->isoFormat('LL') }}
             </div>
-           
+
         </div>
     @endif
 @endforeach

@@ -28,6 +28,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('configs/list', 'ConfigController@list');
     Route::resource('configs', 'ConfigController');
     
+     Route::resource('contactdetails', 'ContactDetailController');
+    
     Route::post('contents/{content}/destroy', 'ContentController@destroy')->name('contents.destroy'); //has to be post (has parameters)
     Route::resource('contents', 'ContentController');
     
@@ -79,10 +81,6 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('groupList', 'GroupsController@groupList');
     Route::resource('groups', 'GroupsController');
-    
-    Route::delete('plans/massDestroy', 'PlanController@massDestroy')->name('plans.massDestroy');
-    Route::get('plans/list', 'PlanController@list');
-    Route::resource('plans', 'PlanController');
     
     Route::resource('levels', 'LevelController');
     
@@ -144,6 +142,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');
     Route::resource('permissions', 'PermissionsController');
 
+    Route::delete('plans/massDestroy', 'PlanController@massDestroy')->name('plans.massDestroy');
+    Route::get('plans/list', 'PlanController@list');
+    Route::resource('plans', 'PlanController');
+    
     Route::get('print/content/{content}', 'PrintController@content')->name('print.content');
     Route::get('print/glossar/{glossar}', 'PrintController@glossar')->name('print.glossar');
     Route::get('print/{model}/{id}', 'PrintController@model')->name('print.model');

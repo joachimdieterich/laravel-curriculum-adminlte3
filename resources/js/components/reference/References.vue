@@ -38,7 +38,7 @@
                         <div>
                             <dt>
                                 {{ trans("global.curricula_cross_references_description") }}
-                                <a class="pull-right pr-2 pointer"
+                                <a v-can="reference_edit" class="pull-right pr-2 pointer"
                                    @click.prevent="open('reference-objective-modal', filtered_reference.reference)">
                                     <i class="fa fa-pencil-alt pl-2"></i></a>
                              </dt>

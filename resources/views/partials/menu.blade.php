@@ -71,6 +71,16 @@
                         </a>
                     </li>
                 @endcan
+                @can('plan_access')
+                    <li class="nav-item">
+                        <a href="{{ route("plans.index") }}" class="nav-link {{ request()->is('plans') || request()->is('plans/*') ? 'active' : '' }}">
+                            <i class="fa fa-clipboard-list"></i>
+                            <p>
+                                <span>{{ trans('global.plan.title') }}</span>
+                            </p>
+                        </a>
+                    </li>
+                @endcan
                 @can('task_access')
                     <li class="nav-item">
                         <a href="{{ route("tasks.index") }}" class="nav-link {{ request()->is('tasks') || request()->is('tasks/*') ? 'active' : '' }}">

@@ -28,7 +28,7 @@ class UsersController extends Controller
         {
             $organizations = Organization::all(); 
             $roles = Role::all();
-            $groups = Group::all()->orderBy('organization_id', 'desc')->get()  ;
+            $groups = Group::orderBy('organization_id', 'desc')->get() ;
         } 
         else 
         {

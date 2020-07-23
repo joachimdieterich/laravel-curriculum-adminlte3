@@ -34,7 +34,7 @@ class UsersController extends Controller
         {
             $organizations = auth()->user()->organizations()->get(); 
             $roles = Role::where('id', '>',  auth()->user()->role()->id)->get();
-            $groups = auth()->user()->groups()->orderBy('organization_id', 'desc')->get();
+            $groups = (auth()->user()->role()->id == 4) ? Group::where('organization_id', auth()->user()->current_organization_id)->get() : auth()->user()->groups()->orderBy('organization_id', 'desc')->get();   
         }
         $status_definitions = StatusDefinition::all();
         

@@ -30,7 +30,17 @@ class GroupsController extends Controller
     public function list()
     {
         abort_unless(\Gate::allows('group_access'), 403);
-        $groups = (auth()->user()->role()->id == 1) ? Group::all() : auth()->user()->groups()->get();      
+        
+        switch (auth()->user()->role()->id) {
+            case 1:  $groups = Group::all();
+                break;
+            case 4:  $groups = Group::where('organization_id', auth()->user()->current_organization_id)->get();
+                break;
+
+            default: $groups = auth()->user()->groups()->get();
+                break;
+        }
+        //$groups = (auth()->user()->role()->id == 1) ? Group::all() : auth()->user()->groups()->get();      
         
         return DataTables::of($groups)
             ->addColumn('grade', function ($groups) {

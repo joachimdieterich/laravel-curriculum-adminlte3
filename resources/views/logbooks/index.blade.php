@@ -29,22 +29,3 @@
 
 <data-table-widgets></data-table-widgets>
 @endsection
-@section('scripts')
-@parent
-
-<script>
-$(document).ready( function () {
-    var table = $('#logbooks-datatable').DataTable({
-        ajax: "{{ url('logbooks/list') }}",
-        columns: 
-            [
-                 { data: 'check'},
-                 { data: 'title' },
-                 { data: 'action' }
-            ],
-        buttons: []
-    });
- });
-</script>
-
-@endsection

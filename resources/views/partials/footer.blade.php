@@ -20,12 +20,10 @@
                 @php ($footer_iterator = 1)
                 @while ( env('FOOTER_TITLE_'.$footer_iterator) )
                 <li class="nav-item flex-fill ">
-                    <small>
-                        <a class=" nav-item d-none d-sm-inline-block text-white text-decoration-none" 
-                            href="{{ env('FOOTER_URL_'.$footer_iterator) }}">
-                             {{ env('FOOTER_TITLE_'.$footer_iterator) }}
-                         </a>
-                    </small>
+                    <a class=" nav-item d-none d-sm-inline-block text-white text-decoration-none" 
+                        href="{{ env('FOOTER_URL_'.$footer_iterator) }}">
+                         {{ env('FOOTER_TITLE_'.$footer_iterator) }}
+                     </a>
                 </li>
                 @php ($footer_iterator++)
                 @endwhile

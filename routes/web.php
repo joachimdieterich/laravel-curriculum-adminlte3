@@ -64,7 +64,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('eventSubscriptions/destroySubscription', 'EventSubscriptionController@destroySubscription')->name('eventSubscriptions.destroySubscription');
     Route::post('eventSubscriptions/search', 'EventSubscriptionController@search')->name('eventSubscriptions.search');
     Route::post('eventSubscriptions/getEvents', 'EventSubscriptionController@getEvents')->name('eventSubscriptions.getEvents');
-    Route::resource('eventSubscriptions', 'EventSubscriptionControllerController');
+    Route::resource('eventSubscriptions', 'EventSubscriptionController');
     
     /* grades */
     Route::get('grades/list', 'GradesController@list')->name('grades.list');
@@ -81,6 +81,10 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('groupList', 'GroupsController@groupList');
     Route::resource('groups', 'GroupsController');
+    
+    Route::resource('Kanban', 'KanbanController');
+    Route::resource('KanbanItem', 'KanbanItemController');
+    Route::resource('KanbanStatus', 'KanbanStatusController');
     
     Route::resource('levels', 'LevelController');
     

@@ -48,11 +48,11 @@ class UsersController extends Controller
     
     public function list()
     {
-        $users = (auth()->user()->role()->id == 1) ? User::all() : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->get();
+        $users = (auth()->user()->role()->id == 1) ? User::with(['status'])->get() : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->with(['status'])->get();
         
         return DataTables::of($users)
             ->addColumn('status', function ($users) {
-                return $users->status()->first()->lang_de;                
+                return $users->status->lang_de;                
             })
             ->addColumn('action', function ($users) {
                  $actions  = '';

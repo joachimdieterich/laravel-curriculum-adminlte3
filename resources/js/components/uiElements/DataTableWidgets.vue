@@ -2,11 +2,12 @@
     <div class="row">
         <div v-for="entry in entries.data"
              class="col-sm-6 col-md-6 col-lg-4" :id="entry.id">
-            <a :href="'logbooks/'+entry.id"
+            <a :href="modelUrl+'/'+entry.id"
                 class="text-decoration-none text-black">
                 <div class="info-box elevation-1">
                     <span class="info-box-icon bg-info elevation-1">
-                        <i class="fa fa-book"></i>
+                        <i v-if="modelUrl == 'logbooks'" class="fa fa-book"></i>
+                        <i v-if="modelUrl == 'kanbans'" class="fa fa-columns"></i>
                     </span>
 
                     <div class="info-box-content">
@@ -22,6 +23,8 @@
 
 <script> 
     export default {
+        props: ['modelUrl'],
+        
         data () {
             return {
                 entries: ''
@@ -29,19 +32,18 @@
         }, 
         
         mounted() {
-           axios.get('logbooks/list')
+            axios.get(this.modelUrl+'/list')
                 .then(response => (this.entries = response.data))
                 .catch(function (error) {
                 // handle error
-                console.log(error);
-                });
-          
+               // console.log(error);
+                });  
         },
          methods: {
             decodeHtml(html) {
                 var txt = document.createElement("textarea");
                 txt.innerHTML = html;
-                return txt.value;
+                return txt.value.replace(/<[^>]+>/g, '');
             },
             
          }

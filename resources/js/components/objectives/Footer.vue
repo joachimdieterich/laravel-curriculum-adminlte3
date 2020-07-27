@@ -45,8 +45,13 @@
         },
         computed: {
              withmedia: function () {
-                if ((typeof this.objective.media_subscriptions !== 'undefined') || (typeof this.objective.referencing_curriculum_id !== "undefined")){
-                     if (this.objective.media_subscriptions.length > 0 || this.objective.referencing_curriculum_id !== null){
+                if (typeof this.objective.media_subscriptions !== 'undefined') {
+                     if (this.objective.media_subscriptions.length > 0 ){
+                         return true;
+                     }
+                }
+                if (typeof this.objective.referencing_curriculum_id !== "undefined"){
+                     if ( this.objective.referencing_curriculum_id !== null){
                          return true;
                      }
                 }

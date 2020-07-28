@@ -5,15 +5,20 @@ namespace App\Http\Middleware;
 use App\Role;
 use Closure;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Cache;
 
 class AuthGates
 {
     public function handle($request, Closure $next)
     {
+        
         $user = \Auth::user();
        
         if (/* !app()->runningInConsole() && */ $user) { // get permissions in console
-            $roles = Role::with('permissions')->get();
+            //$roles = Role::with('permissions')->get();
+            $roles =  Cache::rememberForever('roles', function () {
+                return Role::with('permissions')->get();
+            });
 
             foreach ($roles as $role) {
                 foreach ($role->permissions as $permissions) {

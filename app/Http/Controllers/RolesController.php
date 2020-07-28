@@ -70,6 +70,10 @@ class RolesController extends Controller
         $role = Role::create($request->all());
         $role->permissions()->sync($request->input('permissions', []));
 
+        Cache::rememberForever('roles', 60, function () {
+                return Role::with('permissions')->get();
+            });
+            
         return redirect()->route('roles.index');
     }
 

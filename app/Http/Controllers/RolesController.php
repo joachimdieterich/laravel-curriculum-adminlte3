@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateRoleRequest;
 use App\Permission;
 use App\Role;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Cache;
 
 class RolesController extends Controller
 {
@@ -70,7 +71,7 @@ class RolesController extends Controller
         $role = Role::create($request->all());
         $role->permissions()->sync($request->input('permissions', []));
 
-        Cache::rememberForever('roles', 60, function () {
+        Cache::rememberForever('roles', function () {
                 return Role::with('permissions')->get();
             });
             
@@ -94,6 +95,9 @@ class RolesController extends Controller
 
         $role->update($request->all());
         $role->permissions()->sync($request->input('permissions', []));
+        Cache::rememberForever('roles', function () {
+                return Role::with('permissions')->get();
+            });
 
         return redirect()->route('roles.index');
     }

@@ -41,34 +41,34 @@ class CertificateController extends Controller
             'curriculum_id',
             'organization_id',
             'owner_id',
-            ])->where('owner_id', auth()->user()->id)->get();
+            ])->with(['organization', 'curriculum', 'owner'])->where('owner_id', auth()->user()->id)->get();
         
         return DataTables::of($certificates)
             ->addColumn('organization', function ($certificates) {
-                return $certificates->organization()->first()->title;                
+                return $certificates->organization->title;                
             })
             ->addColumn('curriculum', function ($certificates) {
-                return $certificates->curriculum()->first()->title;                
+                return $certificates->curriculum->title;                
             })
             ->addColumn('owner', function ($certificates) {
-                return $certificates->owner()->first()->firstname.' '.$certificates->owner()->first()->lastname;                
+                return $certificates->owner->firstname.' '.$certificates->owner->lastname;                
             })
             ->addColumn('action', function ($certificates) {
                  $actions  = '';
                     if (\Gate::allows('certificate_show')){
                         $actions .= '<a href="'.route('certificates.show', $certificates->id).'" '
-                                    . 'class="btn btn-xs btn-success mr-1">'
-                                    . '<i class="fa fa-list-alt"></i> Show'
+                                    . 'class="btn">'
+                                    . '<i class="fa fa-list-alt"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('certificate_edit')){
                         $actions .= '<a href="'.route('certificates.edit', $certificates->id).'" '
-                                    . 'class="btn btn-xs btn-primary mr-1">'
-                                    . '<i class="fa fa-edit"></i> Edit'
+                                    . 'class="btn">'
+                                    . '<i class="fa fa-edit"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('certificate_delete')){
-                        $actions .= '<button type="button" class="btn btn-xs btn-danger" onclick="destroyCertificate('.$certificates->id.')"><i class="fa fa-trash"></i> Delete</button>';
+                        $actions .= '<button type="button" class="btn text-danger" onclick="destroyCertificate('.$certificates->id.')"><i class="fa fa-trash"></i></button>';
                     }
               
                 return $actions;

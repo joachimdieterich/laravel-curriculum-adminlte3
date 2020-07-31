@@ -82,9 +82,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('groupList', 'GroupsController@groupList');
     Route::resource('groups', 'GroupsController');
     
-    Route::resource('Kanban', 'KanbanController');
-    Route::resource('KanbanItem', 'KanbanItemController');
-    Route::resource('KanbanStatus', 'KanbanStatusController');
+    Route::get('kanbans/list', 'KanbanController@list');
+    Route::resource('kanbans', 'KanbanController');
+    Route::put('kanbanItems/sync', 'KanbanItemController@sync')->name('kanbanItems.sync');
+    Route::resource('kanbanItems', 'KanbanItemController');
+    Route::put('kanbanStatuses/sync', 'KanbanStatusController@sync')->name('kanbanStatuses.sync');
+    Route::resource('kanbanStatuses', 'KanbanStatusController');
+    
+    Route::resource('kanbanSubscriptions', 'kanbanSubscriptionController');
     
     Route::resource('levels', 'LevelController');
     

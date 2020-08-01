@@ -24,6 +24,11 @@ class PermissionRoleTableSeeder extends Seeder
                 'certificate_show', 
                 'certificate_edit', 
                 'certificate_delete', 
+                'content_access', 
+                'content_create', 
+                'content_show',
+                'content_edit',
+                'content_delete',
                 'course_create', 
                 'course_show', 
                 'course_edit', 
@@ -153,6 +158,11 @@ class PermissionRoleTableSeeder extends Seeder
                 'categorie_show', 
                 'certificate_access', 
                 'certificate_show', 
+                'content_access', 
+                'content_create', 
+                'content_show',
+                'content_edit',
+                'content_delete',
                 'course_create', 
                 'course_show', 
                 'course_edit', 
@@ -191,6 +201,9 @@ class PermissionRoleTableSeeder extends Seeder
             $user_permission_list = [
                 'achievement_create', 
                 'curriculum_show',
+                'content_access', 
+                'content_create', 
+                'content_show',
                 'logbook_access',
                 'logbook_show',
                 'logbook_entry_access',
@@ -199,6 +212,7 @@ class PermissionRoleTableSeeder extends Seeder
                 'navigator_show', 
                 'task_access',
                 'task_show',
+                
             ];
             
             return in_array($permission->title, $user_permission_list);

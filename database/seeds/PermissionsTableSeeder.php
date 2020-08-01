@@ -692,6 +692,158 @@ class PermissionsTableSeeder extends Seeder
                 'created_at' => '2019-04-15 19:14:42',
                 'updated_at' => '2019-04-15 19:14:42',
             ],
+            [
+                'id'        => '138',
+                'title'     =>'plan_access',
+                'created_at'=>'2020-06-07 17:57:10',
+                'updated_at'=>'2020-06-07 17:57:10',
+            ],
+            [
+                'id'        => '139',
+                'title'     =>'plan_create',
+                'created_at'=>'2020-06-07 17:57:19',
+                'updated_at'=>'2020-06-07 17:57:19',
+            ] ,
+            [
+                'id'        => '140',
+                'title'     =>'plan_show',
+                'created_at'=>'2020-06-07 17:57:27',
+                'updated_at'=>'2020-06-07 17:57:27',
+            ] ,
+            [
+                'id'        => '141',
+                'title'     =>'plan_edit',
+                'created_at'=>'2020-06-07 17:57:35',
+                'updated_at'=>'2020-06-07 17:57:35',
+            ] ,
+            [
+                'id'        => '142',
+                'title'     =>'plan_delete',
+                'created_at'=>'2020-06-07 17:57:44',
+                'updated_at'=>'2020-06-07 17:57:44',
+            ] ,
+            [
+                'id'        => '143',
+                'title'     =>'reference_access',
+                'created_at'=>'2020-06-07 17:57:10',
+                'updated_at'=>'2020-06-07 17:57:10',
+            ] ,
+            [
+                'id'        => '144',
+                'title'     =>'reference_create',
+                'created_at'=>'2020-06-07 17:57:19',
+                'updated_at'=>'2020-06-07 17:57:19',
+            ] ,
+            [
+                'id'        => '145',
+                'title'     =>'reference_show',
+                'created_at'=>'2020-06-07 17:57:27',
+                'updated_at'=>'2020-06-07 17:57:27',
+            ] ,
+            [
+                'id'        => '146',
+                'title'     =>'reference_edit',
+                'created_at'=>'2020-06-07 17:57:35',
+                'updated_at'=>'2020-06-07 17:57:35',
+            ] ,
+            [
+                'id'        => '147',
+                'title'     =>'reference_delete',
+                'created_at'=>'2020-06-07 17:57:44',
+                'updated_at'=>'2020-06-07 17:57:44',
+            ] ,
+            [
+                'id'        => '148',
+                'title'     =>'contactdetail_access',
+                'created_at'=>'2020-06-07 17:57:10',
+                'updated_at'=>'2020-06-07 17:57:10',
+            ] ,
+            [
+                'id'        => '149',
+                'title'     =>'contactdetail_create',
+                'created_at'=>'2020-06-07 17:57:19',
+                'updated_at'=>'2020-06-07 17:57:19',
+            ] ,
+            [
+                'id'        => '150',
+                'title'     =>'contactdetail_show',
+                'created_at'=>'2020-06-07 17:57:27',
+                'updated_at'=>'2020-06-07 17:57:27',
+              
+            ] ,
+            [
+                'id'        => '151',
+                'title'=>'contactdetail_edit',
+                'created_at'=>'2020-06-07 17:57:35',
+                'updated_at'=>'2020-06-07 17:57:35',
+            ] ,
+            [
+                'id'        => '152',
+                'title'     =>'contactdetail_delete',
+                'created_at'=>'2020-06-07 17:57:44',
+                'updated_at'=>'2020-06-07 17:57:44',
+            ] ,
+            [
+                'id'        => '153',
+                'title'     =>'kanban_access',
+                'created_at'=>'2020-06-07 17:57:10',
+                'updated_at'=>'2020-06-07 17:57:10',
+            ] ,
+            [
+                'id'        => '154',
+                'title'     =>'kanban_create',
+                'created_at'=>'2020-06-07 17:57:19',
+                'updated_at'=>'2020-06-07 17:57:19',
+            ] ,
+            [
+                'id'        => '155',
+                'title'     =>'kanban_show',
+                'created_at'=>'2020-06-07 17:57:27',
+                'updated_at'=>'2020-06-07 17:57:27',
+            ] ,
+            [
+                'id'        => '156',
+                'title'     =>'kanban_edit',
+                'created_at'=>'2020-06-07 17:57:35',
+                'updated_at'=>'2020-06-07 17:57:35',
+            ] ,
+            [
+                'id'        => '157',
+                'title'     =>'kanban_delete',
+                'created_at'=>'2020-06-07 17:57:44',
+                'updated_at'=>'2020-06-07 17:57:44',
+            ] ,
+            [
+                'id'        => '158',
+                'title'=>'content_access',
+                'created_at'=>'2020-06-07 17:57:10',
+                'updated_at'=>'2020-06-07 17:57:10',
+            ] ,
+            [
+                'id'        => '159',
+                'title'     =>'content_create',
+                'created_at'=>'2020-06-07 17:57:19',
+                'updated_at'=>'2020-06-07 17:57:19',
+            ] ,
+            [
+                'id'        => '160',
+                'title'     =>'content_show',
+                'created_at'=>'2020-06-07 17:57:27',
+                'updated_at'=>'2020-06-07 17:57:27', 
+            ] ,
+            [
+                'id'        => '161',
+                'title'     =>'content_edit',
+                'created_at'=>'2020-06-07 17:57:35',
+                'updated_at'=>'2020-06-07 17:57:35',
+            ] ,
+            [
+                'id'        => '162',
+                'title'     =>'content_delete',
+                'created_at'=>'2020-06-07 17:57:44',
+                'updated_at'=>'2020-06-07 17:57:44',
+            ] 
+            
             ];
 
         Permission::insert($permissions);

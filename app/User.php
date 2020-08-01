@@ -4,6 +4,7 @@ namespace App;
 
 use Carbon\Carbon;
 use Hash;
+use Laravolt\Avatar\Facade;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -278,5 +279,10 @@ class User extends Authenticatable
     public function users()
     {
         return (auth()->user()->role()->id == 1) ? User::select('id','username', 'firstname', 'lastname')->get() : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->select('id','username', 'firstname', 'lastname')->get(); //todo, get all users of all organizations not only current
+    }
+    
+    public function getAvatarAttribute()
+    {
+        return ($this->medium_id !== null) ? '/media/'.$this->medium_id  : (new \Laravolt\Avatar\Avatar)->create($this->fullName())->toBase64()->encoded;
     }
 }

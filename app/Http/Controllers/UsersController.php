@@ -216,12 +216,21 @@ class UsersController extends Controller
     public function setAvatar()
     {
         $medium = new Medium();
-        dump(request());
+        //sdump(request());
         User::where('id', auth()->user()->id)->update([
             'medium_id' => (null !== $medium->getByFilemanagerPath(request('filepath'))) ? $medium->getByFilemanagerPath(request('filepath'))->id : null,
                 ]); 
         
         return back();
     }
- 
+    
+    public function getAvatar(User $user)
+    {
+        if (request()->wantsJson()){    
+            return ['avatar' => ($user->medium_id !== null) ? '/media/'.$user->medium_id  : (new \Laravolt\Avatar\Avatar)->create($user->fullName())->toBase64()];
+        } else {
+            return ($user->medium_id !== null) ? '/media/'.$user->medium_id  : (new \Laravolt\Avatar\Avatar)->create($user->fullName())->toBase64();    
+        }
+        
+    }
 }

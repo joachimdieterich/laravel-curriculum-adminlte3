@@ -70,6 +70,7 @@
                             class="form-control select2 "
                             style="width:100%;"
                             multiple=true    
+                            v-model="form.categorie_ids"
                        >
                          <option v-for="(item,index) in categories" v-bind:value="item.id">{{ item.title }}</option>
                     </select>     
@@ -131,9 +132,9 @@
             }
         },
         methods: {
-            async submit(method) {
+            async submit( ) {
                 try {
-                    if (method === 'patch'){
+                    if (this.method === 'patch'){
                         this.form.content = tinyMCE.get('content').getContent();
                         this.form.categorie_ids = $("#categorie").val()
                         this.location = (await axios.patch('/contents/'+this.form.id, this.form)).data.message;
@@ -158,6 +159,9 @@
                 }
                 if (event.params.referenceable_id){
                     this.form.referenceable_id = event.params.referenceable_id;
+                }
+                if (event.params.categorie_ids){
+                    this.form.categorie_ids = event.params.categorie_ids;
                 }
                 this.method = event.params.method; 
             },

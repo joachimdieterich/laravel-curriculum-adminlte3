@@ -50,8 +50,7 @@ class Content extends Model
     
     public function categories()
     {
-        return $this->belongsToMany('App\Categorie')
-                    ->withTimestamps();
+        return $this->belongsToMany('App\Categorie'); //should be without timestamp to get sync working
     }
   
 }

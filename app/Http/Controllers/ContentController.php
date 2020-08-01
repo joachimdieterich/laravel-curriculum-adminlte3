@@ -39,6 +39,7 @@ class ContentController extends Controller
      */
     public function store(Request $request)
     {
+        abort_unless(\Gate::allows('content_create'), 403);
         //persist
         $input = $this->validateRequest();
         $content = Content::Create([
@@ -85,7 +86,7 @@ class ContentController extends Controller
      */
     public function edit(Content $content)
     {
-        //
+        
     }
 
     /**
@@ -97,7 +98,21 @@ class ContentController extends Controller
      */
     public function update(Request $request, Content $content)
     {
-         //$content->categories()->sync($input['categorie_ids']);
+        abort_unless(\Gate::allows('content_edit'), 403);
+
+        $input = $this->validateRequest();
+        $content->update([
+            'title' => $input['title'],
+            'content' => $input['content'],
+            'owner_id'  => auth()->user()->id,
+        ]);
+        $content->categories()->sync($input['categorie_ids']);
+        
+        if (request()->wantsJson()){    
+            return ['message' => $content];
+        }
+        
+        //$content->categories()->sync($input['categorie_ids']);
     }
 
     /**
@@ -108,15 +123,26 @@ class ContentController extends Controller
      */
     public function destroy(Content $content, $subscribable_type = null, $subscribable_id = null )
     {
+        abort_unless(\Gate::allows('content_delete'), 403);
         /**
          * check if content is subscribed only by deleting reference
          * - if yes -> delete content_subscription and content
          * - if not -> delete only content_subscription
          */   
+        
+        $input = $this->validateRequest();
+        if (isset($input['referenceable_id']) AND isset($input['referenceable_type'])){
+            $subscribable_type = $input['referenceable_type'];
+            $subscribable_id   = $input['referenceable_id'];
+        }
+        
         if ($content->subscriptions()->count() <= 1){ 
             
-            ContentSubscription::where('subscribable_type', (isset(request('subscribable')['content_subscriptions'][0]['subscribable_type'])) ? request('subscribable')['content_subscriptions'][0]['subscribable_type'] : $subscribable_type)
-                ->where('subscribable_id', (isset(request('subscribable')['id'])) ? request('subscribable')['id'] : $subscribable_id)->delete();
+            ContentSubscription::where('subscribable_type', 
+                    (isset(request('subscribable')['content_subscriptions'][0]['subscribable_type'])) ? request('subscribable')['content_subscriptions'][0]['subscribable_type'] : $subscribable_type)
+                ->where('subscribable_id', (isset(request('subscribable')['id'])) ? request('subscribable')['id'] : $subscribable_id)
+                ->where('content_id', $content->id)
+                ->delete();
             
             // delete contents
             foreach ($content->quotes AS $quote)
@@ -129,7 +155,9 @@ class ContentController extends Controller
             
         } else {
             ContentSubscription::where('subscribable_type', request('subscribable')['content_subscriptions'][0]['subscribable_type'])
-                ->where('subscribable_id',request('subscribable')['id'])->delete();
+                ->where('subscribable_id',request('subscribable')['id'])
+                ->where('content_id', $content->id)
+                ->delete();
         }
         // axios call? 
         if (request()->wantsJson()){    

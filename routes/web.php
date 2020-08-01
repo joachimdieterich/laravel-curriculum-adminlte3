@@ -200,6 +200,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::patch('users/setAvatar', 'UsersController@setAvatar')->name('users.setAvatar');
 
     Route::get('users/list', 'UsersController@list');
+    Route::get('users/{user}/avatar', 'UsersController@getAvatar');
     Route::resource('users', 'UsersController');
 });
 

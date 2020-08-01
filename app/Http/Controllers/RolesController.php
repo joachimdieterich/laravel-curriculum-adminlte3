@@ -71,9 +71,7 @@ class RolesController extends Controller
         $role = Role::create($request->all());
         $role->permissions()->sync($request->input('permissions', []));
 
-        Cache::rememberForever('roles', function () {
-                return Role::with('permissions')->get();
-            });
+        Cache::forget('roles'); //cache should update next time
             
         return redirect()->route('roles.index');
     }
@@ -95,9 +93,8 @@ class RolesController extends Controller
 
         $role->update($request->all());
         $role->permissions()->sync($request->input('permissions', []));
-        Cache::rememberForever('roles', function () {
-                return Role::with('permissions')->get();
-            });
+        
+        Cache::forget('roles'); //cache should update next time
 
         return redirect()->route('roles.index');
     }

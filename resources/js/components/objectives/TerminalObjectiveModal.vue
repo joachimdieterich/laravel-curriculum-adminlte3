@@ -1,4 +1,4 @@
-<template>
+    <template>
     <modal 
         id="terminal-objective-modal" 
         name="terminal-objective-modal" 
@@ -72,13 +72,26 @@
                             <option v-for="(item,index) in objectiveTypes" v-bind:value="item.id">{{ item.title }}</option>
                         </select>     
                     </div>
-
-                   <ColorPicker 
+                    <div class="form-group ">
+                    <ColorPicker 
                        :color="form.color" 
                        v-model="form.color"></ColorPicker>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="visibility" v-model="form.visibility" >
-                        <label class="form-check-label" for="visibility">{{ trans('global.navigator_item.fields.visibility_show') }}</label>
+                    </div>
+                    <div class="form-group ">
+                        <label for="time_approach">{{ trans('global.terminalObjective.fields.time_approach') }}</label>
+                        <input
+                            type="text" id="time_approach"
+                            name="title"
+                            class="form-control"
+                            v-model="form.time_approach"
+                            />
+                        <p class="help-block" v-if="form.errors.time_approach" v-text="form.errors.time_approach[0]"></p>
+                    </div>
+                    <div class="form-group ">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="visibility" v-model="form.visibility" >
+                            <label class="form-check-label" for="visibility">{{ trans('global.navigator_item.fields.visibility_show') }}</label>
+                        </div>
                     </div>
                 </div>
                 <div class="card-footer">
@@ -138,6 +151,9 @@
             },
 
             beforeOpen(event) {
+                this.form.id = '';
+                this.form.title = '';
+                this.form.description = '';
                 if (event.params.objective) {
                     this.method = event.params.method;
                     this.form.populate(event.params.objective);
@@ -149,9 +165,6 @@
                 }                
             },
             opened(){
-                this.form.id = '';
-                this.form.title = '';
-                this.form.description = '';
                 this.$initTinyMCE();
                 this.initSelect2(); 
             },

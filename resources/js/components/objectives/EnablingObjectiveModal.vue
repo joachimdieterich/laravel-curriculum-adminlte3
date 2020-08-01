@@ -72,10 +72,21 @@
                         <option v-for="(item,index) in levels" v-bind:value="item.id">{{ item.title }}</option>
                     </select>     
                 </div>
-                
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="visibility" v-model="form.visibility" >
-                    <label class="form-check-label" for="visibility">{{ trans('global.navigator_item.fields.visibility_show') }}</label>
+                <div class="form-group ">
+                    <label for="time_approach">{{ trans('global.enablingObjective.fields.time_approach') }}</label>
+                    <input
+                        type="text" id="time_approach"
+                        name="title"
+                        class="form-control"
+                        v-model="form.time_approach"
+                        />
+                    <p class="help-block" v-if="form.errors.time_approach" v-text="form.errors.time_approach[0]"></p>
+                </div>
+                <div class="form-group ">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="visibility" v-model="form.visibility" >
+                        <label class="form-check-label" for="visibility">{{ trans('global.navigator_item.fields.visibility_show') }}</label>
+                    </div>
                 </div>
             </div>
                 <div class="card-footer">
@@ -126,6 +137,9 @@
                 return null;
             },
             beforeOpen(event) { 
+                this.form.id = '';
+                this.form.title = '';
+                this.form.description = '';
                 if (event.params.objective){
                     this.method = event.params.method;
                     this.form.populate( event.params.objective );
@@ -137,9 +151,6 @@
                 }
             },
             opened(){
-                this.form.id = '';
-                this.form.title = '';
-                this.form.description = '';
                 this.$initTinyMCE();
                 this.initSelect2(); 
             },
@@ -168,7 +179,7 @@
                 this.form.title = tinyMCE.get('title').getContent();
                 this.form.description = tinyMCE.get('description').getContent(); 
                 if (method === 'patch'){
-                    this.requestUrl += '/'+this.form.id;
+                    this.requestUrl += '/' + this.form.id;
                 } 
                 
                 this.form.submit(method, this.requestUrl)

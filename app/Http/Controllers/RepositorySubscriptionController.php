@@ -168,6 +168,5 @@ class RepositorySubscriptionController extends Controller
             'repository'        => 'required',
         ]);
     }
-    
-    
+      
 }

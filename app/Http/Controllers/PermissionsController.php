@@ -78,7 +78,7 @@ class PermissionsController extends Controller
         abort_unless(\Gate::allows('permission_edit'), 403);
 
         $permission->update($request->all());
-
+            
         return redirect()->route('permissions.index');
     }
 

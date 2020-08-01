@@ -100,13 +100,19 @@ class CourseController extends Controller
             ->join('organization_role_users', 'organization_role_users.user_id', '=', 'group_user.user_id')
             ->where('group_user.group_id', '=', $course->group_id)
             ->where('organization_role_users.organization_id', '=', auth()->user()->current_organization_id)
-            ->where('organization_role_users.role_id', '=', 6);
+            ->where('organization_role_users.role_id', '=', 6)
+            ->with(['progresses' => function($query) use ($course){
+                $query->where('referenceable_type', 'App\Curriculum')
+                      ->where('referenceable_id', $course->curriculum_id);
+            }]);
         
        return empty($users) ? null : DataTables::of($users)
             ->addColumn('role', function ($users) {
                 return $users->roles()->where('organization_id', auth()->user()->current_organization_id)->first()->title;                
             })
-            ->addColumn('progress', function ($users) use ($course){
+     //    ->addColumn('progress', isset($users->progresses) ? $users->progresses->first()->value : 0)
+            ->addColumn('progress',
+                    function ($users) use ($course){
                 return isset($users->progresses()
                                     ->where('referenceable_type', 'App\Curriculum')
                                     ->where('referenceable_id', $course->curriculum_id)

@@ -274,4 +274,9 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Achievement')->whereDate('updated_at', Carbon::today())->get();
     }
+    
+    public function users()
+    {
+        return (auth()->user()->role()->id == 1) ? User::select('id','username', 'firstname', 'lastname')->get() : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->select('id','username', 'firstname', 'lastname')->get(); //todo, get all users of all organizations not only current
+    }
 }

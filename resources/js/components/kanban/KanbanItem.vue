@@ -5,8 +5,7 @@
                 <img
                     class="img-circle color-white"
                     style="height: 1.6rem"
-                    src="https://pickaface.net/gallery/avatar/unr_sample_161118_2054_ynlrg.png"
-                    alt="Avatar"/>
+                    :src="avatar"/>
                 <button type="button" 
                         class="btn btn-flat py-0 px-2 " 
                         style="background-color: transparent;" 
@@ -70,7 +69,7 @@
         },
         data() {
             return {
-               
+                avatar: null,
               
             };
         },
@@ -86,13 +85,16 @@
             },
             edit(){
                 this.$emit("item-edit", this.item);
-            }
-           
+            },
+             
+         
         },
-        computed: {
-            
+        created(){
+                axios.get("/users/" + this.item.owner_id + "/avatar")
+                     .then(res =>  { 
+                         this.avatar =  res.data.avatar.encoded;
+                    });
         },
-        
         mounted() {
             
         },   

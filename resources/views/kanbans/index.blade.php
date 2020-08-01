@@ -1,7 +1,7 @@
 @extends((Auth::user()->id == env('GUEST_USER')) ? 'layouts.contentonly' : 'layouts.master')
 
 @section('title')
-    {{ trans('global.logbook.title') }}
+    {{ trans('global.kanban.title') }}
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item">
@@ -11,21 +11,40 @@
             <a href="/">{{ trans('global.home') }}</a>
         @endif
     </li>
-    <li class="breadcrumb-item active">{{ trans('global.logbook.title') }}</li>
+    <li class="breadcrumb-item active">{{ trans('global.kanban.title') }}</li>
     <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
-@can('logbook_create')
+@can('kanban_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <a id="add-logbook" 
+            <a id="add-kanban" 
                class="btn btn-success" 
-               href="{{ route("logbooks.create") }}" >
-               {{ trans('global.logbook.create') }}
+               href="{{ route("kanbans.create") }}" >
+               {{ trans('global.kanban.create') }}
             </a>
         </div>
     </div>
 @endcan
 
-<data-table-widgets model-url="logbooks"></data-table-widgets>
+<data-table-widgets model-url="kanbans"></data-table-widgets>
+@endsection
+@section('scripts')
+@parent
+
+<script>
+$(document).ready( function () {
+    var table = $('#kanbans-datatable').DataTable({
+        ajax: "{{ url('kanbans/list') }}",
+        columns: 
+            [
+                 { data: 'check'},
+                 { data: 'title' },
+                 { data: 'action' }
+            ],
+        buttons: []
+    });
+ });
+</script>
+
 @endsection

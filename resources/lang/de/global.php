@@ -15,6 +15,7 @@ return [
     'cancel'                               => 'Abbrechen',
     'close'                                => 'schließen',
     'generate'                             => 'erzeugen',
+    'share'                                => 'Teilen',
     'pleaseSelect'                         => 'Bitte wählen ',
     'areYouSure'                           => 'Sind Sie sicher?',
     'allRightsReserved'                    => 'Alle Rechte vorbehalten.',
@@ -380,6 +381,7 @@ return [
     'team-management-singular'             => 'Team',
     'site_title'                           => 'curriculum',
     'history'                              => 'Verlauf',
+    'can_edit'                             => 'darf bearbeiten',
     'permission'                           => [
         'title'          => 'Berechtigungen',
         'title_singular' => 'Berechtigung',

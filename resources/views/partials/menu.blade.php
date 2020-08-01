@@ -81,6 +81,16 @@
                         </a>
                     </li>
                 @endcan
+                @can('kanban_access')
+                    <li class="nav-item">
+                        <a href="{{ route("kanbans.index") }}" class="nav-link {{ request()->is('kanbans') || request()->is('kanbans/*') ? 'active' : '' }}">
+                            <i class="fa fa-columns"></i>
+                            <p>
+                                <span>{{ trans('global.kanban.title') }}</span>
+                            </p>
+                        </a>
+                    </li>
+                @endcan
                 @can('task_access')
                     <li class="nav-item">
                         <a href="{{ route("tasks.index") }}" class="nav-link {{ request()->is('tasks') || request()->is('tasks/*') ? 'active' : '' }}">
@@ -91,6 +101,7 @@
                         </a>
                     </li>
                 @endcan
+                
                 @can('user_access')
                     <li class="nav-item has-treeview menu-open {{ request()->is('permissions*') ? 'menu-open' : '' }} {{ request()->is('roles*') ? 'menu-open' : '' }} {{ request()->is('users*') ? 'menu-open' : '' }}">
                         <a class="nav-link nav-dropdown-toggle">
@@ -210,7 +221,7 @@
                 @endcan
                 @if(auth()->user()->role()->id == 1)
                 <li class="nav-item">
-                    <a href="{{ route("configs.index") }}" class="nav-link {{ request()->is('organizations') || request()->is('organizations/*') ? 'active' : '' }}">
+                    <a href="{{ route("configs.index") }}" class="nav-link {{ request()->is('configs') || request()->is('configs/*') ? 'active' : '' }}">
                         <i class="fa fa-cogs"></i>
                         <p>
                             <span>{{ trans('global.config.title') }}</span>

@@ -15,6 +15,7 @@ return [
     'cancel'                               => 'Cancel',
     'close'                                => 'Close',
     'generate'                             => 'Generate',
+    'share'                                => 'Share',
     'pleaseSelect'                         => 'Please select',
     'areYouSure'                           => 'Are you sure?',
     'allRightsReserved'                    => 'All rights reserved.',
@@ -380,6 +381,7 @@ return [
     'team-management-singular'             => 'Team',
     'site_title'                           => 'curriculum',
     'history'                              => 'History',
+    'can_edit'                             => 'darf bearbeiten',
     'permission'                           => [
         'title'          => 'Permissions',
         'title_singular' => 'Permission',

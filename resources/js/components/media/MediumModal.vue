@@ -27,7 +27,7 @@
             </div>
             
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                <embed :src="scr" width="100%" height="600px" class="full-height">
+                <embed :src="scr" width="200" height="150" scale="tofit">
             </div>
             <div class="card-footer">
                  <span class="pull-right">

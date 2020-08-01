@@ -94,8 +94,8 @@ class KanbanController extends Controller
     public function show(Kanban $kanban)
     {
         $kanban   = $kanban->with(['statuses', 'statuses.items' => function($query) use ($kanban) {
-                       $query->where('kanban_id', $kanban->id)->orderBy('order_id');
-                 }, 'statuses.items.subscribable'])->where('id', $kanban->id)->get()->first();
+                         $query->where('kanban_id', $kanban->id)->with(['owner'])->orderBy('order_id');
+                    }, 'statuses.items.subscribable'])->where('id', $kanban->id)->get()->first();
        
         return view('kanbans.show')
                 ->with(compact('kanban'));

@@ -11,6 +11,16 @@
                 <div class="card-body" 
                      v-html="objective.title">
                 </div>
+                <div class="card-footer">
+                    <div class="float-left">
+                        <small>
+                            {{ trans('global.enablingObjective.fields.time_approach') }}: {{objective.time_approach}}
+                        </small>
+                    </div>
+                    <small class="float-right">
+                        {{ trans('global.updated_at') }}: {{objective.updated_at}}
+                    </small> 
+                </div>
             </div>
         </div>
                 
@@ -202,16 +212,6 @@
                      
                 </div>
                 <!-- /.card-body -->
-                <div class="card-footer">
-                    <div class="float-left">
-                        <small>
-                            {{ trans('global.enablingObjective.fields.time_approach') }}: {{objective.time_approach}}
-                        </small>
-                    </div>
-                    <small class="float-right">
-                        {{ trans('global.updated_at') }}: {{objective.updated_at}}
-                    </small> 
-                </div>
             </div>
         </div>
           

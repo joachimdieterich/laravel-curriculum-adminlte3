@@ -21,9 +21,7 @@ class CreateKanbanItemsTable extends Migration
             
             $table->unsignedbigInteger('kanban_id');
             $table->unsignedbigInteger('kanban_status_id');
-            $table->string('subscribable_type')->nullable();
-            $table->unsignedbigInteger('subscribable_id')->nullable();
-            
+
             $table->unsignedbigInteger('owner_id');
             $table->timestamps();
             

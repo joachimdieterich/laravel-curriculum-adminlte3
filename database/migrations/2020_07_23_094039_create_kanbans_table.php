@@ -18,6 +18,8 @@ class CreateKanbansTable extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             
+            $table->unsignedbigInteger('medium_id')->nullable();
+            
             $table->unsignedbigInteger('owner_id');
             $table->timestamps();
             

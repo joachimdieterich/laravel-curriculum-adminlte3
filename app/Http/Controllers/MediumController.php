@@ -57,7 +57,7 @@ class MediumController extends Controller
         }
         
         $path = storage_path('app'.$medium->path.$medium->medium_name);
-        //dump($path);
+        //dd($path);
         if (!file_exists($path)) {
             abort(404);
         }

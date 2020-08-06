@@ -130,9 +130,13 @@
         },
        
         mounted() {
-             axios.get('/repositorySubscriptions').then(response => {
-                this.subscriptions = response.data.subscriptions
-            }).catch(e => {
+            axios.get('/repositorySubscriptions', {
+                    'subscribable_id': this.model.subscribable_id, 
+                    'subscribable_type': this.model.subscribable_typ })
+                .then(response => {
+                    this.subscriptions = response.data.subscriptions;
+                })
+                .catch(e => {
                 this.errors = error.response.data.errors;
             });
         },

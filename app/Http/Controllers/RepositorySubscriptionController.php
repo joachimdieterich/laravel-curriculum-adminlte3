@@ -14,9 +14,12 @@ class RepositorySubscriptionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $subscriptions = RepositorySubscription::where('owner_id', auth()->user()->id)->get();
+        $input = $this->validateRequest();
+        $subscriptions = RepositorySubscription::where('owner_id', auth()->user()->id)
+                ->where('subscribable_id', $input['subscribable_id'])
+                ->where('repository', $input['repository'])->get();
         return ['subscriptions' => $subscriptions];
     }
 

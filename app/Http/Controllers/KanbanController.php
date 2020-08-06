@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Kanban;
+use App\Medium;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -74,6 +75,7 @@ class KanbanController extends Controller
         $kanban = Kanban::Create([
             'title'         => $new_kanban['title'],
             'description'   => $new_kanban['description'],
+            'medium_id'     => $this->getMediumIdByInputFilepath($new_kanban),
             'owner_id'      => auth()->user()->id,
         ]);
         
@@ -83,6 +85,23 @@ class KanbanController extends Controller
         }
         
         return redirect($kanban->path());
+    }
+    
+    /**
+     * If $input['filepath'] is set and medium exists, id is return, else return is null
+     * @param array $input
+     * @return mixed
+     */
+    public function getMediumIdByInputFilepath($input){
+        if (isset($input['filepath']))
+        {
+            $medium = new Medium();
+            return (null !== $medium->getByFilemanagerPath($input['filepath'])) ? $medium->getByFilemanagerPath($input['filepath'])->id : null;
+        } 
+        else
+        {
+            return null;
+        }
     }
 
     /**
@@ -94,7 +113,10 @@ class KanbanController extends Controller
     public function show(Kanban $kanban)
     {
         $kanban   = $kanban->with(['statuses', 'statuses.items' => function($query) use ($kanban) {
-                         $query->where('kanban_id', $kanban->id)->with(['owner'])->orderBy('order_id');
+                    $query->where('kanban_id', $kanban->id)->with(['owner', 'taskSubscription.task.subscriptions' => function($query) {
+                         $query->where('subscribable_id', auth()->user()->id)
+                               ->where('subscribable_type', 'App\User');
+                 }, 'mediaSubscriptions', 'media'])->orderBy('order_id');
                     }, 'statuses.items.subscribable'])->where('id', $kanban->id)->get()->first();
        
         return view('kanbans.show')
@@ -149,6 +171,7 @@ class KanbanController extends Controller
         return request()->validate([
             'title'         => 'sometimes|required',
             'description'   => 'sometimes',
+            'filepath'      => 'sometimes',
         ]);
     }
 }

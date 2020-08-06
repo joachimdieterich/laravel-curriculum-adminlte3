@@ -111,9 +111,11 @@ class KanbanStatusController extends Controller
 
         $kanban_id = $request->columns[0]['kanban_id'];
         if (request()->wantsJson()){    
-            return ['message' => Kanban::where('id', $kanban_id)->with(['statuses', 'statuses.items' => function($query) use ($kanban_id) 
-            {
-                $query->where('kanban_id', $kanban_id);
+            return ['message' => Kanban::where('id', $kanban_id)->with(['statuses', 'statuses.items' => function($query) use ($kanban_id) {
+                    $query->where('kanban_id', $kanban_id)->with(['owner', 'taskSubscription.task.subscriptions' => function($query) {
+                         $query->where('subscribable_id', auth()->user()->id)
+                               ->where('subscribable_type', 'App\User');
+                 }, 'mediaSubscriptions', 'media'])->orderBy('order_id');
             }, 'statuses.items.subscribable'])->get()->first()->statuses];
                 
         }

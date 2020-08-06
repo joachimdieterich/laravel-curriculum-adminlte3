@@ -64,9 +64,11 @@ class KanbanItemController extends Controller
 
         $kanban_id = $request->columns[0]['id'];
         if (request()->wantsJson()){    
-            return ['message' => Kanban::with(['statuses', 'statuses.items' => function($query) use ($kanban_id)
-                {
-                       $query->where('kanban_id', $kanban_id)->orderBy('order_id');
+            return ['message' => Kanban::with(['statuses', 'statuses.items' => function($query) use ($kanban_id) {
+                    $query->where('kanban_id', $kanban_id)->with(['owner', 'taskSubscription.task.subscriptions' => function($query) {
+                         $query->where('subscribable_id', auth()->user()->id)
+                               ->where('subscribable_type', 'App\User');
+                 }, 'mediaSubscriptions', 'media'])->orderBy('order_id');
                  }, 'statuses.items.subscribable'])->where('id', $kanban_id)->get()->first()->statuses];
         }
        
@@ -130,6 +132,7 @@ class KanbanItemController extends Controller
     public function destroy(KanbanItem $kanbanItem)
     {
         abort_unless(\Gate::allows('kanban_delete'), 403);
+        $kanbanItem->mediaSubscriptions()->delete();
         if (request()->wantsJson()){    
             return ['message' => $kanbanItem->delete()];
         }

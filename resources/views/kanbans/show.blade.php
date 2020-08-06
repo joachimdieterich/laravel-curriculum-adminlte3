@@ -22,6 +22,7 @@
 
 @section('content')
 <!-- {!! $kanban->description !!}-->
+<div >
     @can('kanban_entry_create')
         <div style="margin-bottom: 10px;" class="row">
             <div class="col-lg-12">
@@ -37,9 +38,13 @@
     <!-- Timelime example  -->
     <div 
          style="position:absolute; width: calc(100vw - 270px);height: calc(100vh - 200px);overflow-x:auto;overflow-y: hidden;">
-        <kanban-board  :kanban="{{ $kanban }}" ></kanban-board>
+        <kanban-board  :kanban="{{ $kanban }}"></kanban-board>
     </div>
-    <!-- /.timeline -->
-   <subscribe-modal></subscribe-modal>
+</div>
+<!-- /.timeline -->
+<subscribe-modal></subscribe-modal>
+<medium-modal></medium-modal>
+<medium-create-modal></medium-create-modal>
+<task-modal></task-modal>
 @endsection
 

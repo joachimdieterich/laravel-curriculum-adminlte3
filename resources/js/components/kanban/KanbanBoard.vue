@@ -15,14 +15,10 @@
                 >
                 <div class="card-header border-bottom-0 p-0"
                      :key="status.id">
-                    <strong >
-                        {{ status.title }}
-                    </strong>
-                    <div 
-                         class="btn btn-flat py-0 pl-0 pull-left" 
+                    <strong>{{ status.title }}</strong>
+                    <div class="btn btn-flat py-0 pl-0 pull-left" 
                          data-toggle="dropdown" 
-                         aria-expanded="false"
-                         >
+                         aria-expanded="false">
                         <i class="fas fa-bars"></i>
                         <div class="dropdown-menu" 
                              x-placement="top-start">
@@ -50,20 +46,19 @@
                 </div>
                 
                 <KanbanItemCreate
-                v-if="newItem === status.id"
-                :status="status"
-                :item="item"
-                v-on:item-added="handleItemAdded"
-                v-on:item-updated="handleItemUpdated"
-                v-on:item-canceled="closeForm"
-                style=" z-index: 2"></KanbanItemCreate>
+                    v-if="newItem === status.id"
+                    :status="status"
+                    :item="item"
+                    v-on:item-added="handleItemAdded"
+                    v-on:item-updated="handleItemUpdated"
+                    v-on:item-canceled="closeForm"
+                    style=" z-index: 2"></KanbanItemCreate>
                 <div style="position:absolute; top:35px;bottom:0;overflow-y:scroll; z-index: 1"
                      :style="'width:' + itemwidth + 'px;'">
                     <draggable
                         class="flex-1 overflow-hidden"
                         v-model="status.items"
                         v-bind="itemDragOptions"
-
                         @end="handleItemMoved">
                         <transition-group
                             v-for="item in status.items"
@@ -71,26 +66,23 @@
                             style="min-height:50px; display:flex;flex-direction: column;"
                             :style="'width:' + itemwidth + 'px;'"
                             class="pr-3"
-                            tag="KanbanItem">
+                            tag="span">
                             <!-- Items -->
-                            <KanbanItem 
-                                :key="item.id"
-                                :item="item"
-                                :width="itemwidth"
-                                v-on:item-destroyed="handleItemDestroyed"
-                                v-on:item-edit="handleItemEdit"
-                              />
-
+                            <span :key="item.id">
+                                 <KanbanItem   
+                                    :item="item"
+                                    :width="itemwidth"
+                                    v-on:item-destroyed="handleItemDestroyed"
+                                    v-on:item-edit="handleItemEdit"/>
+                            </span>
                             <!--  ./Items -->
                         </transition-group>
                     </draggable>
                 </div>
-                
             </div>
-            <div
-                class=" no-border  pr-2"
-                style="float:left;"
-                :style="'width:' + itemwidth + 'px;'">
+            <div class=" no-border  pr-2"
+                 style="float:left;"
+                 :style="'width:' + itemwidth + 'px;'">
                     <div class="card-header border-bottom-0 p-0">
                         <strong class="text-secondary btn px-1 py-0"  @click="openForm('status')">
                             <i class="fa fa-plus"></i> {{ trans('global.kanbanStatus.create') }}
@@ -103,19 +95,14 @@
                 v-on:status-added="handleStatusAdded"
                 v-on:status-canceled="closeForm"/>
             </div>
-
-            
         </draggable>
-       
-        
         <!-- ./Columns -->
     </div>
-  
 </template>
 
 <script>
     import draggable from "vuedraggable"; // import the vuedraggable 
-    import KanbanItem from '../kanban/KanbanItem';
+    import KanbanItem from './KanbanItem';
     import KanbanItemCreate from "./KanbanItemCreate"; 
     import KanbanStatusCreate from "./KanbanStatusCreate"; 
     
@@ -269,7 +256,7 @@
 </script>
 <style scoped>
 .status-drag {
-  transition: transform 0.5s;
-  transition-property: all;
+    transition: transform 0.5s;
+    transition-property: all;
 }
 </style>

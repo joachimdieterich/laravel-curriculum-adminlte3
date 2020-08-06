@@ -24,7 +24,40 @@
                   v-model.trim="form.description"
                  ></textarea>
                  <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
-             </div>
+            </div>
+            <span v-if="item != null">
+                <div v-if="item.media[0] != null">
+                    <span v-if="item.media[0].mime_type == 'image/jpeg'">
+    <!--                    <button class="btn btn-danger btn-sm pull-right top-0">
+                          <small><i class="fa fa-trash"></i></small>
+                       </button>-->
+                        <img 
+                        :src="'/media/'+item.media[0].id"
+                        style="object-fit: cover; height:150;width:100%;"
+                        class="pb-2"/> 
+                    </span>
+
+                    <embed v-else
+                         :src="'/media/'+item.media[0].id" 
+                         width="100%" 
+                         height="150"
+                         class="pb-2">
+                </div>
+            </span>
+            <div v-if="form.title != ''">
+                <button class="btn btn-block btn-outline-secondary mb-2" 
+                        @click.prevent="open('medium-create-modal', 'referenceable');">
+                    <i class="fa fa-photo-video"></i>
+                    <span class="ml-2">{{ trans('global.media.add') }}</span>
+                </button>
+                <button class="btn btn-block btn-outline-secondary mb-2" 
+                         @click.prevent="open('task-modal', 'subscribable');">
+                    <i class="fas fa-tasks"></i>
+                    <span class="ml-2">{{ trans('global.task.create') }}</span>
+                </button>
+            </div>
+
+              
 
             <button
                 @click="$emit('item-canceled')"
@@ -81,6 +114,23 @@ export default {
         }
     },
     methods: {
+        open(modal, relationKey) {
+            if (this.method === 'post'){
+                axios.post(this.requestUrl, this.form) //persist item to get kanbanItem.id
+                    .then(res => { 
+                         this.form.populate( res.data.message );
+                         this.method = 'patch'; //now use edit mode
+                         if (relationKey === 'referenceable'){
+                             this.$modal.show(modal, { 'referenceable_type': 'App\\KanbanItem', 'referenceable_id': this.form.id });
+                         } else {
+                            this.$modal.show(modal, { 'subscribable_type': 'App\\KanbanItem', 'subscribable_id': this.form.id });
+                        }
+                    })
+                    .catch(error => { // Handle the error returned from our request
+                        this.form.errors = error.response.data.errors;
+                    }); 
+            }       
+        },
         submit() {
             var method = this.method.toLowerCase();
             if (method === 'patch') {

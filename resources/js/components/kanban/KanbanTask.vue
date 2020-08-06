@@ -1,36 +1,26 @@
 <template>
-    <ul class="todo-list" data-widget="todo-list">
-                            
-        <li v-for="task in tasks" >
-            <!-- drag handle -->
-<!--               <span class="handle">
-                <i class="fas fa-ellipsis-v"></i>
-                <i class="fas fa-ellipsis-v"></i>
-            </span>-->
-            <!-- checkbox -->
-            <div  class="icheck-primary d-inline ml-2">
+    <div >                  
+        <div v-for="task in tasks">
+            <div class="py-1">
                 <input 
                     type="checkbox" 
                     value="" 
                     name="todo1" 
                     id="todoCheck1" 
+                    class="pull-right my-2"
                     @click="complete(task.task.id)"
                     v-bind:checked="isCompleted(task)">
-                <label for="todoCheck1"></label>
+                <a class="text-muted small " :href="'/tasks/'+task.task.id" v-html="task.task.title"></a>
             </div>
-            <!-- todo text -->
-            <span class="text"><a :href="'/tasks/'+task.task.id" v-html="task.task.title"></a></span>
-            <!-- Emphasis label -->
-            <small class="badge badge-primary pull-right"><i class="far fa-clock"></i> <span v-html="task.task.due_date"></span></small>
-            <!-- General tools such as edit or delete-->
-            <div class="tools">
-                <a onclick="deleteTask(task.task)" >
-                    <i class="fas fa-trash"></i>
-                </a>
-            </div>
-        </li>
+           
+            <small class="badge badge-primary pull-left mt-1 mb-2">
+                <i class="far fa-clock"></i>
+                <span v-html="date(task.task.due_date)"></span>
+            </small>
+            
+        </div>
 
-    </ul>
+    </div>
 </template>
 
 <script>
@@ -63,7 +53,13 @@
                 }
                 
                 return returnvalue;
-            }   
+            },
+            date(date) {
+                var value = new Date(date.replace(/-/g, "/"));
+                var dateFormat = { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric'};
+
+                return value.toLocaleString([], dateFormat);
+            },
         },
         
         mounted(){

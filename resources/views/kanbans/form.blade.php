@@ -12,11 +12,24 @@
                     "placeholder" => trans('global.kanban.fields.description'),  
                     "rows" => 3, 
                     "value" => old('description', isset($logbook) ? $kanban->description : '')])                                                                                                                          
-
-<div>
+@include ('forms.input.file', 
+            ["model" => "media", 
+            "field" => "path", 
+            "label" => false,
+            "value" => old('path', isset($media->path) ? '/laravel-filemanager'.$media->relativePath() : '')])
+<div class="pt-3">
     <input 
         id="logbook-save"
         class="btn btn-info" 
         type="submit" 
         value="{{ $buttonText }}">
 </div>
+                    
+@section('scripts')
+@parent
+<script>
+$(document).ready( function () {                     
+    $('#lfm').filemanager('files');
+});
+</script>
+@endsection

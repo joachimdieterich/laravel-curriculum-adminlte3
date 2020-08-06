@@ -735,8 +735,8 @@ return [
         ]   
     ],
     'referenceable_types' =>[
-        'objective'         => 'Bereich/Baustein verknüpfen (Überfachliche Bezüge)',
-        'objective_title'   => 'Bereich/Baustein (Überfachliche Bezüge)',
+        'objective'         => 'Überfachliche Bezüge',
+        'objective_title'   => 'Überfachliche Bezüge',
         'navigator_view'    => 'Navigator-Ansicht verknüpfen',
         'curriculum'        => 'Curriculum verknüpfen',
         'content'           => 'Text verknüpfen',

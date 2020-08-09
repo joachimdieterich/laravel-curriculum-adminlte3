@@ -8,7 +8,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
     <title>{{ trans('global.site_title') }}</title>
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet" />
+    <link href="{{ mix('css/app.css') }}" rel="stylesheet" />
      @yield('styles')
     
     <script>    

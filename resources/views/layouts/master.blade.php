@@ -7,9 +7,9 @@
         <!-- Tell the browser to be responsive to screen width -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{{ trans('global.site_title') }}</title>
-        <link href="{{ asset('css/app.css') }}" rel="stylesheet" />
+        <link href="{{ mix('css/app.css') }}" rel="stylesheet" />
         <link href="{{ asset('css/custom.css') }}" rel="stylesheet" />
-        <script src="{{ asset('node_modules/tinymce/tinymce.min.js') }}"></script>
+        
         @yield('styles')
         <script>
             window.trans = <?php

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <link href="{{ public_path('css/app.css') }}" rel="stylesheet" />
+    <link href="{{ mix('css/app.css') }}" rel="stylesheet" />
     <link href="{{ public_path('css/custom.css') }}" rel="stylesheet" />
 </head>
 

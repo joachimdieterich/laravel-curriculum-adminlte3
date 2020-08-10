@@ -12,7 +12,7 @@ class PeriodesTableSeeder extends Seeder
                     'title'=>'Test',
                     'begin' => '2019-04-15 19:14:42',
                     'end' => '2023-04-15 19:14:42',
-                    'organization_id' => 1,
+                  //  'organization_id' => 1,
                     'owner_id' => 1,
                     ],
                    

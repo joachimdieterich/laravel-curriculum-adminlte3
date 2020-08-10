@@ -19,13 +19,13 @@ class CreatePeriodsTable extends Migration
             $table->timestamp('begin');
             $table->timestamp('end')->nullable();
             
-            $table->unsignedbigInteger('organization_id')->nullable();
+            //$table->unsignedbigInteger('organization_id')->nullable();
             
             $table->unsignedbigInteger('owner_id')->nullable();
             
             $table->timestamps();
             
-            $table->foreign('organization_id')->references('id')->on('organizations');
+           // $table->foreign('organization_id')->references('id')->on('organizations'); //will be dropped
             $table->foreign('owner_id')->references('id')->on('users');
         });
     }

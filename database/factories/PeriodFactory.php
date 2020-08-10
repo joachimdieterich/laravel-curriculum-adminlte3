@@ -19,7 +19,6 @@ $factory->define(Period::class, function (Faker $faker) {
         'title'             => $start_date->format('Y'). '-' . $end_date->format('Y'),
         'begin'             => $start_date_string,
         'end'               => $end_date_string,
-        'organization_id'   => null,
         'owner_id'          => null
       
     ];

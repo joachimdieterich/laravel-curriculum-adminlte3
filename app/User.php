@@ -194,13 +194,15 @@ class User extends Authenticatable
         )->where('subscribable_type', get_class($this)); 
     }
     
+
     public function periods()
     {
         return DB::table('periods')
-            ->select('periods.*')
+            ->select('periods.*', 'groups.organization_id AS organization_id')
             ->join('groups', 'groups.period_id', '=', 'periods.id')
             ->join('group_user', 'group_user.group_id', '=', 'groups.id') 
             ->where('group_user.user_id',  $this->id)
+            ->distinct()
             ->get();
     }
     

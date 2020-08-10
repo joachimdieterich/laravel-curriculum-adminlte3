@@ -81,7 +81,9 @@ class Organization extends Model
     
     public function periods()
     {
-        return $this->hasMany('App\Period', 'organization_id', 'id');
+        return $this->belongsToMany('App\Period', 'groups')
+            ->withPivot(['period_id', 'organization_id']);
+        //return $this->hasMany('App\Period', 'organization_id', 'id');
     }
     
     public function status()

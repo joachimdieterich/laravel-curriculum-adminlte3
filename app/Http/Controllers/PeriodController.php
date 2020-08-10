@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Organization;
+//use App\Organization;
 use App\Period;
 use Yajra\DataTables\DataTables;
 
@@ -24,13 +24,13 @@ class PeriodController extends Controller
             'title', 
             'begin', 
             'end', 
-            'organization_id',
+//            'organization_id',
             ]);       
         
         return DataTables::of($periods)
-            ->addColumn('organization', function ($periods) {
-                return isset($periods->organization()->first()->title) ? $periods->organization()->first()->title : 'global';                
-            })
+//            ->addColumn('organization', function ($periods) {
+//                return isset($periods->organization()->first()->title) ? $periods->organization()->first()->title : 'global';                
+//            })
             ->addColumn('action', function ($periods) {
                  $actions  = '';
                     if (\Gate::allows('period_edit')){
@@ -67,9 +67,9 @@ class PeriodController extends Controller
     {
         abort_unless(\Gate::allows('period_create'), 403);
 
-        $organizations = auth()->user()->organizations()->get();
-        return view('periods.create')
-                    ->with(compact('organizations'));
+        //$organizations = auth()->user()->organizations()->get();
+        return view('periods.create');
+                 //   ->with(compact('organizations'));
     }
     
     public function store()
@@ -81,7 +81,7 @@ class PeriodController extends Controller
             'title' => $new_period['title'],
             'begin' => $new_period['begin'],
             'end' => $new_period['end'],
-            'organization_id' => format_select_input($new_period['organization_id']),
+         //   'organization_id' => format_select_input($new_period['organization_id']),
             'owner_id' => auth()->user()->id
         ]);
         
@@ -102,10 +102,10 @@ class PeriodController extends Controller
     {
         abort_unless(\Gate::allows('period_edit'), 403);
 
-        $organizations = auth()->user()->organizations()->get();
+        //$organizations = auth()->user()->organizations()->get();
         return view('periods.edit')
-                    ->with(compact('period'))
-                    ->with(compact('organizations'));
+                    ->with(compact('period'));
+              //      ->with(compact('organizations'));
     }
     
     public function update(Period $period)
@@ -116,7 +116,7 @@ class PeriodController extends Controller
             'title' => $new_period['title'],
             'begin' => $new_period['begin'],
             'end' => $new_period['end'],
-            'organization_id' => format_select_input($new_period['organization_id']),
+           // 'organization_id' => format_select_input($new_period['organization_id']),
             'owner_id' => auth()->user()->id
         ]);
 
@@ -158,7 +158,7 @@ class PeriodController extends Controller
             'title'             => 'sometimes|required',
             'begin'             => 'sometimes',
             'end'               => 'sometimes',
-            'organization_id'   => 'sometimes',
+         //  'organization_id'   => 'sometimes',
             'owner_id'          => 'sometimes',
         ]);
     }

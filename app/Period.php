@@ -26,10 +26,12 @@ class Period extends Model
     {
         return route('periods.show', $this->id);
     }
-    
+
     public function organization()
     {
-        return $this->hasOne('App\Organization', 'id', 'organization_id');
+        return $this->belongsToMany('App\Organization', 'groups')
+            ->withPivot(['period_id', 'organization_id']);
+        //return $this->hasMany('App\Period', 'organization_id', 'id');
     }
     
     public function owner()

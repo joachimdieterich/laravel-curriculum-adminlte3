@@ -17,7 +17,6 @@
             @method('PATCH')
             @include('periods.form', [
                 'period'        => $period,
-                'organizations' => $organizations,
                 'buttonText'    => trans('global.period.edit')
             ])
         </form>

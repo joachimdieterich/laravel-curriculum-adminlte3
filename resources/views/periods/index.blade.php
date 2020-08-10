@@ -26,7 +26,6 @@
             <th>{{ trans('global.period.fields.title') }}</th>
             <th>{{ trans('global.period.fields.begin') }}</th>
             <th>{{ trans('global.period.fields.end') }}</th>
-            <th>{{ trans('global.organization.title_singular') }}</th>
             <th>{{ trans('global.datatables.action') }}</th>
         </tr>
     </thead>
@@ -48,7 +47,6 @@ $(document).ready( function () {
                  { data: 'title' },
                  { data: 'begin' },
                  { data: 'end' },
-                 { data: 'organization' },
                  { data: 'action' }
                 ],
          columnDefs: [

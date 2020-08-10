@@ -20,38 +20,29 @@
                 @can('period_edit')
                 <div class="card-tools pr-2">
                     <a href="{{ route('periods.edit', $period->id) }}" >
-                       <i class="far fa-edit"></i>
+                        <i class="far fa-edit"></i>
                     </a>        
                 </div>
                 @endcan 
             </div>
-              <!-- /.card-header -->
-              <div class="card-body"> 
-                
+            <!-- /.card-header -->
+            <div class="card-body"> 
+
                 <strong><i class="fa fa-calendar mr-1"></i> {{ trans('global.period.title_singular') }}</strong>
 
                 <p class="text-muted">
-                  {{ $period->begin }} - {{ $period->end }}
-                </p>
-                  
-                <hr>
-                <strong><i class="fa fa-university mr-1"></i> {{ trans('global.organization.title_singular') }}</strong>
-
-                <p class="text-muted">
-                  {{ optional($period->organization)->title }}
-                </p>
-
-                
-              </div>
-              <!-- /.card-body -->
-              <div class="card-footer">
+                    {{ $period->begin }} - {{ $period->end }}
+                </p>                
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
                 <div class="float-left">
-                 
+
                 </div>
                 <small class="float-right">
                     {{ $period->updated_at }}
                 </small> 
-              </div>
+            </div>
         </div>
     </div>
     

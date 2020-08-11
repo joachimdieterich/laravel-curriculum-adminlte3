@@ -350,7 +350,7 @@
                 if (response.data.siblings.length !== 0) {
                     this.reference_subscriptions = response.data.siblings;
                     this.curricula_list = response.data.curricula_list;
-                    this.typetabs = this.typetabs.concat([{'id': 2, 'title': 'Bereich/Baustein (Überfachliche Bezüge)'}]);
+                    this.typetabs = this.typetabs.concat([{'id': 2, 'title': 'Überfachliche Bezüge'}]);
                     this.activetab = this.typetabs[0].id;
                 }
             }).catch(e => {

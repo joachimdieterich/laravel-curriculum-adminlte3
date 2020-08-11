@@ -208,7 +208,7 @@ class CertificateController extends Controller
      */
     public function generate(Request $request)
     {
-        abort_unless(\Gate::allows('certificate_create'), 403);
+        abort_unless(\Gate::allows('certificate_access'), 403);
         $certificate = Certificate::find(request()->certificate_id); 
         
         switch ($certificate->type) 

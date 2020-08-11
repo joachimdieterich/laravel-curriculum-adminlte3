@@ -411,6 +411,7 @@ class CertificateController extends Controller
                 ->setPaper('a4')
                 ->setOrientation($orientation)
                 ->setOption('margin-bottom', 0)
+                ->setOption('enable-local-file-access', true)
                 ->save(storage_path("app/".$path.$filename));
 
         return $this->addFileToDb($filename);

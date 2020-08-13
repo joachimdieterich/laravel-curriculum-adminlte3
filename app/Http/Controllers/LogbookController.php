@@ -24,17 +24,20 @@ class LogbookController extends Controller
         abort_unless(\Gate::allows('logbook_access'), 403);
         $logbooks = (auth()->user()->role()->id == 1) ? Logbook::all() : auth()->user()->logbooks()->get();      
    
+        $edit_gate = \Gate::allows('logbook_edit');
+        $delete_gate = \Gate::allows('logbook_delete');
+        
         return empty($logbooks) ? '' : DataTables::of($logbooks)
-            ->addColumn('action', function ($logbooks) {
+            ->addColumn('action', function ($logbooks) use ($edit_gate, $delete_gate) {
                  $actions  = '';
-                    if (\Gate::allows('logbook_edit')){
+                    if ($edit_gate){
                         $actions .= '<a href="'.route('logbooks.edit', $logbooks->id).'" '
                                     . 'id="edit-logbook-'.$logbooks->id.'" '
                                     . 'class="px-2 text-black">'
                                     . '<i class="fa fa-pencil-alt"></i>'
                                     . '</a>';
                     }
-                    if (\Gate::allows('logbook_delete')){
+                    if ($delete_gate){
                         $actions .= '<button type="button" class="btn text-danger" onclick="event.preventDefault();destroyDataTableEntry(\'logbooks\','.$logbooks->id.');"><i class="fa fa-trash"></i></button>';
                     }
               

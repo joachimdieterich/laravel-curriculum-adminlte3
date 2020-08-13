@@ -26,18 +26,21 @@ class PlanController extends Controller
     {
         abort_unless(\Gate::allows('plan_access'), 403);
         $plans = (auth()->user()->role()->id == 1) ? Plan::all() : auth()->user()->plans();
-              
+        
+        $edit_gate = \Gate::allows('user_edit');
+        $delete_gate = \Gate::allows('user_delete');      
+        
         return DataTables::of($plans)
-            ->addColumn('action', function ($plans) {
+            ->addColumn('action', function ($plans) use ($edit_gate, $delete_gate){
                  $actions  = '';
-                    if (\Gate::allows('plan_edit')){
+                    if ($edit_gate){
                         $actions .= '<a href="'.route('plans.edit', $plans->id).'"'
                                     . 'id="edit-plan-'.$plans->id.'" '
                                     . 'class="btn p-1">'
                                     . '<i class="fa fa-pencil-alt"></i>' 
                                     . '</a>';
                     }
-                    if (\Gate::allows('plan_delete')){
+                    if ($delete_gate){
                         $actions .= '<button type="button" '
                                 . 'class="btn text-danger" '
                                 . 'onclick="destroyDataTableEntry(\'plans\','.$plans->id.')">'

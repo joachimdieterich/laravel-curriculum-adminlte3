@@ -27,8 +27,8 @@ class PlanController extends Controller
         abort_unless(\Gate::allows('plan_access'), 403);
         $plans = (auth()->user()->role()->id == 1) ? Plan::all() : auth()->user()->plans();
         
-        $edit_gate = \Gate::allows('user_edit');
-        $delete_gate = \Gate::allows('user_delete');      
+        $edit_gate = \Gate::allows('plan_edit');
+        $delete_gate = \Gate::allows('plan_delete');      
         
         return DataTables::of($plans)
             ->addColumn('action', function ($plans) use ($edit_gate, $delete_gate){

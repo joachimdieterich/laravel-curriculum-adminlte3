@@ -24,8 +24,8 @@ class PermissionsController extends Controller
 
         $permissions = Permission::all();
          
-        $edit_gate = \Gate::allows('user_edit');
-        $delete_gate = \Gate::allows('user_delete');
+        $edit_gate = \Gate::allows('permission_edit');
+        $delete_gate = \Gate::allows('permission_delete');
         
         return DataTables::of($permissions)
           

@@ -27,23 +27,27 @@ class GradesController extends Controller
             'external_begin', 
             'external_end', 
             'organization_type_id',
-            ]);       
+            ]);  
+        
+        
+        $edit_gate = \Gate::allows('grade_edit');
+        $delete_gate = \Gate::allows('grade_delete');
         
         return DataTables::of($grades)
             ->addColumn('organization_type', function ($grades) {
                 return isset($grades->organizationType()->first()->title) ? $grades->organizationType()->first()->title : 'default';                
             })
            
-            ->addColumn('action', function ($grades) {
+            ->addColumn('action', function ($grades) use ($edit_gate, $delete_gate) {
                  $actions  = '';
-                    if (\Gate::allows('grade_edit')){
+                    if ($edit_gate){
                         $actions .= '<a href="'.route('grades.edit', $grades->id).'" '
                                     . 'id="edit-grade-'.$grades->id.'" '
                                     . 'class="btn">'
                                     . '<i class="fa fa-pencil-alt"></i>'
                                     . '</a>';
                     }
-                    if (\Gate::allows('grade_delete')){
+                    if ($delete_gate){
                         $actions .= '<button type="button" '
                                 . 'class="btn text-danger" '
                                 . 'onclick="destroyDataTableEntry(\'grades\','.$grades->id.')">'

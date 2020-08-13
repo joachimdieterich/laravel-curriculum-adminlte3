@@ -28,17 +28,20 @@ class RolesController extends Controller
             'title'
             ]);
         
+        $edit_gate = \Gate::allows('user_edit');
+        $delete_gate = \Gate::allows('user_delete');
+        
         return DataTables::of($roles)
             
-            ->addColumn('action', function ($roles) {
+            ->addColumn('action', function ($roles) use ($edit_gate, $delete_gate) {
                  $actions  = '';
-                    if (\Gate::allows('role_edit')){
+                    if ($edit_gate){
                         $actions .= '<a href="'.route('roles.edit', $roles->id).'" '
                                     . 'class="btn">'
                                     . '<i class="fa fa-pencil-alt"></i>'
                                     . '</a>';
                     }
-                    if (\Gate::allows('role_delete')){
+                    if ($delete_gate){
                         $actions .= '<button type="button" '
                                 . 'class="btn text-danger" '
                                 . 'onclick="destroyDataTableEntry(\'roles\','.$roles->id.')">'

@@ -28,8 +28,8 @@ class RolesController extends Controller
             'title'
             ]);
         
-        $edit_gate = \Gate::allows('user_edit');
-        $delete_gate = \Gate::allows('user_delete');
+        $edit_gate = \Gate::allows('role_edit');
+        $delete_gate = \Gate::allows('role_delete');
         
         return DataTables::of($roles)
             

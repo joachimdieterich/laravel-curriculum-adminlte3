@@ -27,20 +27,24 @@ class PeriodController extends Controller
 //            'organization_id',
             ]);       
         
+        
+        $edit_gate = \Gate::allows('period_edit');
+        $delete_gate = \Gate::allows('period_delete');
+        
         return DataTables::of($periods)
 //            ->addColumn('organization', function ($periods) {
 //                return isset($periods->organization()->first()->title) ? $periods->organization()->first()->title : 'global';                
 //            })
-            ->addColumn('action', function ($periods) {
+            ->addColumn('action', function ($periods) use ($edit_gate, $delete_gate) {
                  $actions  = '';
-                    if (\Gate::allows('period_edit')){
+                    if ($edit_gate){
                         $actions .= '<a href="'.route('periods.edit', $periods->id).'" '
                                     . 'id="edit-period-'.$periods->id.'" '
                                     . 'class="btn ">'
                                     . '<i class="fa fa-pencil-alt"></i>'
                                     . '</a>';
                     }
-                    if (\Gate::allows('period_delete')){
+                    if ($delete_gate){
                          $actions .= '<button type="button" '
                                 . 'class="btn text-danger" '
                                 . 'onclick="destroyDataTableEntry(\'periods\','.$periods->id.')">'

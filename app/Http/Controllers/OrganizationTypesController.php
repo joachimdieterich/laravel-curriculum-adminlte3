@@ -35,17 +35,20 @@ class OrganizationTypesController extends Controller
             'state_id', 
             'country_id']);
         
+        $edit_gate = \Gate::allows('organization_type_edit');
+        $delete_gate = \Gate::allows('organization_type_delete');
+        
         return DataTables::of($organization_types)
-            ->addColumn('action', function ($organization_types) {
+            ->addColumn('action', function ($organization_types) use ($edit_gate, $delete_gate){
                  $actions  = '';
-                    if (\Gate::allows('organization_type_edit')){
+                    if ($edit_gate){
                         $actions .= '<a href="'.route('organizationtypes.edit', $organization_types->id).'" '
                                     . 'id="edit-organization-type-'.$organization_types->id.'" '
                                     . 'class="btn">'
                                     . '<i class="fa fa-edit"></i>' 
                                     . '</a>';
                     }
-                    if (\Gate::allows('organization_type_delete')){
+                    if ($delete_gate){
                         $actions .= '<button type="button" '
                                 . 'class="btn text-danger" '
                                 . 'onclick="destroyDataTableEntry(\'organizationtypes\','.$organization_types->id.')">'

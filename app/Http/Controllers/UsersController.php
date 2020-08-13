@@ -50,27 +50,31 @@ class UsersController extends Controller
     {
         $users = (auth()->user()->role()->id == 1) ? User::with(['status'])->get() : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->with(['status'])->get();
         
+        $show_gate = \Gate::allows('user_show');
+        $edit_gate = \Gate::allows('user_edit');
+        $delete_gate = \Gate::allows('user_delete');
+        
         return DataTables::of($users)
             ->addColumn('status', function ($users) {
                 return $users->status->lang_de;                
             })
-            ->addColumn('action', function ($users) {
+            ->addColumn('action', function ($users) use ($show_gate, $edit_gate, $delete_gate) {
                  $actions  = '';
-                    if (\Gate::allows('user_show')){
+                    if ($show_gate){
                         $actions .= '<a href="'.route('users.show', $users->id).'" '
                                     . 'id="show-user-'.$users->id.'" '
                                     . 'class="btn">'
                                     . '<i class="fa fa-list-alt"></i>'
                                     . '</a>';
                     }
-                    if (\Gate::allows('user_edit')){
+                    if ($edit_gate){
                         $actions .= '<a href="'.route('users.edit', $users->id).'" '
                                     . 'id="edit-user-'.$users->id.'" '
                                     . 'class="btn">'
                                     . '<i class="fa fa-pencil-alt"></i>'
                                     . '</a>';
                     }
-                    if (\Gate::allows('user_delete')){
+                    if ($delete_gate){
                         $actions .= '<button type="button" '
                                 . 'class="btn text-danger" '
                                 . 'onclick="destroyDataTableEntry(\'users\','.$users->id.')">'

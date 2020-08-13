@@ -73,6 +73,8 @@ class CurriculumController extends Controller
             ])->where('owner_id', auth()->user()->id);
         }
        
+        $edit_gate = \Gate::allows('curriculum_edit');
+        $delete_gate = \Gate::allows('curriculum_delete');
         
         return DataTables::of($curricula)
             ->addColumn('state', function ($curricula) {
@@ -93,22 +95,22 @@ class CurriculumController extends Controller
             ->addColumn('owner', function ($curricula) {
                 return $curricula->owner->firstname.' '.$curricula->owner->lastname;                
             })
-            ->addColumn('action', function ($curricula) {
+            ->addColumn('action', function ($curricula) use ($edit_gate, $delete_gate) {
                  $actions  = '';
 
-                    if (\Gate::allows('curriculum_edit') AND ($curricula->owner_id == auth()->user()->id)){
+                    if ($edit_gate AND ($curricula->owner_id == auth()->user()->id)){
                         $actions .= '<a href="'.route('curricula.edit', $curricula->id).'" '
                                     . 'class="btn">'
                                     . '<i class="fa fa-pencil-alt"></i>'
                                     . '</a>';
                     }
-                    if (\Gate::allows('curriculum_edit') AND ($curricula->owner_id == auth()->user()->id)){
+                    if ($edit_gate AND ($curricula->owner_id == auth()->user()->id)){
                         $actions .= '<a href="'.route('curricula.editOwner', $curricula->id).'" '
                                     . 'class="btn">'
                                     . '<i class="fa fa-user"></i>'
                                     . '</a>';
                     }
-                    if (\Gate::allows('curriculum_delete') AND ($curricula->owner_id == auth()->user()->id)){
+                    if ($delete_gate AND ($curricula->owner_id == auth()->user()->id)){
                         $actions .= '<button type="button" '
                                 . 'class="btn text-danger" '
                                 . 'onclick="destroyDataTableEntry(\'curricula\','.$curricula->id.')">'

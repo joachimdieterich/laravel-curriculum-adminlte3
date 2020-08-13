@@ -36,20 +36,23 @@ class NavigatorController extends Controller
             'organization_id'
             ]);
         
+        $edit_gate = \Gate::allows('navigator_edit');
+        $delete_gate = \Gate::allows('navigator_delete');
+        
         return DataTables::of($navigators)
             ->addColumn('organization', function ($navigators) {
                 return $navigators->organization()->first()->title;                
             })
-            ->addColumn('action', function ($navigators) {
+            ->addColumn('action', function ($navigators) use ($edit_gate, $delete_gate) {
                  $actions  = '';
-                    if (\Gate::allows('navigator_edit')){
+                    if ($edit_gate){
                         $actions .= '<a href="'.route('navigators.edit', $navigators->id).'" '
                                     . 'id="edit-navigator-'.$navigators->id.'" '
                                     . 'class="btn">'
                                     . '<i class="fa fa-pencil-alt"></i>'
                                     . '</a>';
                     }
-                    if (\Gate::allows('navigator_delete')){
+                    if ($delete_gate){
                         $actions .= '<button type="button" '
                                 . 'class="btn text-danger" '
                                 . 'onclick="destroyDataTableEntry(\'navigators\','.$navigators->id.')">'

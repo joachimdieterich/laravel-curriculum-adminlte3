@@ -32,21 +32,24 @@ class OrganizationsController extends Controller
     {
         abort_unless(\Gate::allows('organization_access'), 403);
         $organizations = (auth()->user()->role()->id == 1) ? Organization::all() : auth()->user()->organizations()->get();
-              
+          
+        $edit_gate = \Gate::allows('organization_edit');
+        $delete_gate = \Gate::allows('organization_delete');
+        
         return DataTables::of($organizations)
             ->addColumn('status', function ($organizations) {
                 return $organizations->status()->first()->lang_de;                
             })
-            ->addColumn('action', function ($organizations) {
+            ->addColumn('action', function ($organizations) use ($edit_gate, $delete_gate){
                  $actions  = '';
-                    if (\Gate::allows('organization_edit')){
+                    if ($edit_gate){
                         $actions .= '<a href="'.route('organizations.edit', $organizations->id).'"'
                                     . 'id="edit-organization-'.$organizations->id.'" '
                                     . 'class="btn p-1">'
                                     . '<i class="fa fa-pencil-alt"></i>' 
                                     . '</a>';
                     }
-                    if (\Gate::allows('organization_delete')){
+                    if ($delete_gate){
                         $actions .= '<button type="button" '
                                 . 'class="btn text-danger" '
                                 . 'onclick="destroyDataTableEntry(\'organizations\','.$organizations->id.')">'

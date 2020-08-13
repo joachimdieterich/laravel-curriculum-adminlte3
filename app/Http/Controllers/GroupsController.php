@@ -42,6 +42,10 @@ class GroupsController extends Controller
         }
         //$groups = (auth()->user()->role()->id == 1) ? Group::all() : auth()->user()->groups()->get();      
         
+        $show_gate = \Gate::allows('group_show');
+        $edit_gate = \Gate::allows('group_edit');
+        $delete_gate = \Gate::allows('group_delete');
+        
         return DataTables::of($groups)
             ->addColumn('grade', function ($groups) {
                 return $groups->grade()->first()->title;                
@@ -52,23 +56,23 @@ class GroupsController extends Controller
             ->addColumn('organization', function ($groups) {
                 return $groups->organization()->first()->title;                
             })
-            ->addColumn('action', function ($groups) {
+            ->addColumn('action', function ($groups) use ($show_gate, $edit_gate, $delete_gate) {
                  $actions  = '';
-                    if (\Gate::allows('group_show')){
+                    if ($show_gate){
                         $actions .= '<a href="'.route('groups.show', $groups->id).'" '
                                     . 'id="show-group-'.$groups->id.'" '
                                     . 'class="btn p-1">'
                                     . '<i class="fa fa-list-alt"></i>'
                                     . '</a>';
                     }
-                    if (\Gate::allows('group_edit')){
+                    if ($edit_gate){
                         $actions .= '<a href="'.route('groups.edit', $groups->id).'" '
                                     . 'id="edit-group-'.$groups->id.'" '
                                     . 'class="btn p-1">'
                                     . '<i class="fa fa-pencil-alt"></i> '
                                     . '</a>';
                     }
-                    if (\Gate::allows('group_delete')){
+                    if ($delete_gate){
                         $actions .= '<button type="button" '
                                 . 'class="btn text-danger" '
                                 . 'onclick="destroyDataTableEntry(\'groups\','.$groups->id.')">'

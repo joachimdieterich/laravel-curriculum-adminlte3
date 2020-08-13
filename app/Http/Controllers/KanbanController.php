@@ -27,17 +27,21 @@ class KanbanController extends Controller
         abort_unless(\Gate::allows('kanban_access'), 403);
         $kanbans = (auth()->user()->role()->id == 1) ? Kanban::all() : auth()->user()->kanbans()->get();      
    
+        $edit_gate = \Gate::allows('kanban_edit');
+        $delete_gate = \Gate::allows('kanban_delete');
+
+        
         return empty($kanbans) ? '' : DataTables::of($kanbans)
-            ->addColumn('action', function ($kanbans) {
+            ->addColumn('action', function ($kanbans) use ($edit_gate, $delete_gate) {
                  $actions  = '';
-                    if (\Gate::allows('kanban_edit')){
+                    if ($edit_gate){
                         $actions .= '<a href="'.route('kanbans.edit', $kanbans->id).'" '
                                     . 'id="edit-kanban-'.$kanbans->id.'" '
                                     . 'class="px-2 text-black">'
                                     . '<i class="fa fa-pencil-alt"></i>'
                                     . '</a>';
                     }
-                    if (\Gate::allows('kanban_delete')){
+                    if ($delete_gate){
                         $actions .= '<button type="button" class="btn text-danger" onclick="event.preventDefault();destroyDataTableEntry(\'kanbans\','.$kanbans->id.');"><i class="fa fa-trash"></i></button>';
                     }
               

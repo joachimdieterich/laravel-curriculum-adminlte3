@@ -106,7 +106,7 @@ class CourseController extends Controller
                       ->where('referenceable_id', $course->curriculum_id);
             }]);
         
-       return empty($users) ? null : DataTables::of($users)
+        return empty($users) ? null : DataTables::of($users)
             ->addColumn('role', function ($users) {
                 return $users->roles()->where('organization_id', auth()->user()->current_organization_id)->first()->title;                
             })

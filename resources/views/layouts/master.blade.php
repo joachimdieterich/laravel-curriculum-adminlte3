@@ -118,6 +118,7 @@ echo json_encode([
         <script src="{{ asset('node_modules/moment/js/moment.min.js') }}"></script>
         <script src="{{ asset('node_modules/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}"></script>
         <script src="{{ asset('js/main.js') }}"></script>   
+        <script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script>
         <script>
             $(function() {
 //                let copyButtonTrans     = '{{ trans('global.datatables.copy') }}'

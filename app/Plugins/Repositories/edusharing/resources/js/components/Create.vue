@@ -22,20 +22,25 @@
                         <li v-for="medium in media" 
                             :id="medium.ref.id"
                             class="nav-item" >
-                            <a href="#">{{medium.name}} 
-                                <span :id="'link_btn_'+medium.ref.id" class="pull-right badge bg-blue" @click="linkMedium(medium.ref.id);">
-                                    <i class="fa fa-link" ></i>
+                            <a :href="medium.contentUrl" 
+                                class="link-muted" 
+                                target="_blank">
+                                {{medium.name}} 
+                                <span class="pull-right custom-control custom-switch custom-switch-on-green">
+                                    <input  :checked="getSubscriptionStatus(medium.ref.id)"
+                                            type="checkbox" 
+                                            class="custom-control-input pt-1 " 
+                                            :id="'subscription_input'+medium.ref.id" 
+                                             @click="setSubscription(medium.ref.id)">
+                                    <label class="custom-control-label " :for="'subscription_input'+medium.ref.id" ></label>
                                 </span>
-                                <span :id="'unlink_btn_'+medium.ref.id" class="pull-right badge bg-red invisible" @click="unlinkMedium(medium.ref.id);">
-                                    <i class="fa fa-unlink" ></i>
-                                </span>
+                           
                             </a>
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
-
 
     </div>
 </template>
@@ -45,48 +50,59 @@
     
     export default {
         props: {
-                'model': {},
+                'model': {}
               },
         data() {
             return {
                 media: null,
                 errors: {},
                 search: '',
-                subscriptions: null
-            }
+                subscriptions: Object
+            };
         },
         methods: {
-            async linkMedium(id) {
-                try {
-                    await axios.post('/repositorySubscriptions', {
+            linkMedium(id) {
+                axios.post('/repositorySubscriptions', {
                         value: id, 
                         subscribable_id: this.model.subscribable_id, 
                         subscribable_type: this.model.subscribable_type, 
                         repository: 'edusharing' 
-                    }).data;
-                } catch(error) {
-                    //this.errors = error.response.data.errors;
-                }
-                $("#"+id).addClass( "bg-green" );
-                $("#link_btn_"+id).addClass( "invisible" );
-                $("#unlink_btn_"+id).removeClass( "invisible" );
+                })
+                .then(res => { 
+                   this.subscriptions.push(res.data.subscription);
+                })
+                .catch(error => { // Handle the error returned from our request
+                    console.log(error.response);
+                }); 
             },
-            async unlinkMedium(id) {
-                try {
-                    await axios.post('/repositorySubscriptions/destroySubscription', {
-                        value: id, 
-                        subscribable_id: this.model.subscribable_id, 
-                        subscribable_type: this.model.subscribable_type, 
-                        repository: 'edusharing' 
-                    }).data;
-                } catch(error) {
-                    //this.errors = error.response.data.errors;
-                }
-                $("#"+id).removeClass( "bg-green" );
-                $("#link_btn_"+id).removeClass( "invisible" );
-                $("#unlink_btn_"+id).addClass( "invisible" );
+            unlinkMedium(id) {
+                axios.post('/repositorySubscriptions/destroySubscription', {
+                    value: id, 
+                    subscribable_id: this.model.subscribable_id, 
+                    subscribable_type: this.model.subscribable_type, 
+                    repository: 'edusharing' 
+                })
+                .then(res => { 
+                    let index = this.subscriptions.indexOf(id);
+
+                    this.subscriptions.splice(index, 1);
+                   
+                    
+                })
+                .catch(error => { // Handle the error returned from our request
+                      console.log(error.response);
+                }); 
             },
-            
+            getSubscriptionStatus(id){
+                return this.subscriptions.filter(subscription => subscription.value === id).length;
+            },
+            setSubscription(id) { 
+                if(this.getSubscriptionStatus(id) === 0){
+                    this.linkMedium(id);
+                } else { 
+                    this.unlinkMedium(id);
+                }
+            },
             async getSearch() {
                 try {
                     this.media = (await axios.post('/repositorySubscriptions/searchRepository', {
@@ -113,33 +129,28 @@
             },
             href(medium) {
                 return medium.thumb;
-            },
-            ui(){
-                this.subscriptions.forEach(function(item){
-                    $(document.getElementById(item.value)).addClass( "bg-green" );
-                    $(document.getElementById('link_btn_'+item.value)).addClass( "invisible" );
-                    $(document.getElementById('unlink_btn_'+item.value)).removeClass( "invisible" );
-                });
             }
         },
-        updated() {
-            this.ui();
-        },
+       
         computed: {
             
         },
        
         mounted() {
             axios.get('/repositorySubscriptions', {
-                    'subscribable_id': this.model.subscribable_id, 
-                    'subscribable_type': this.model.subscribable_typ })
+                    params: {
+                        subscribable_type: this.model.subscribable_type, 
+                        subscribable_id:   this.model.subscribable_id, 
+                        repository: 'edusharing'
+                    }
+                })
                 .then(response => {
                     this.subscriptions = response.data.subscriptions;
                 })
                 .catch(e => {
                 this.errors = error.response.data.errors;
             });
-        },
+        }
    
     }
 </script>

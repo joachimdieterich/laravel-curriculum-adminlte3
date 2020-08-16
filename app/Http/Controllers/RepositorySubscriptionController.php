@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\RepositorySubscription;
 use Illuminate\Http\Request;
 
-use DonatelloZa\RakePlus\RakePlus;
+//use DonatelloZa\RakePlus\RakePlus;
 
 class RepositorySubscriptionController extends Controller
 {
@@ -18,6 +18,7 @@ class RepositorySubscriptionController extends Controller
     {
         $input = $this->validateRequest();
         $subscriptions = RepositorySubscription::where('owner_id', auth()->user()->id)
+                ->where('subscribable_type', $input['subscribable_type'])
                 ->where('subscribable_id', $input['subscribable_id'])
                 ->where('repository', $input['repository'])->get();
         return ['subscriptions' => $subscriptions];
@@ -44,7 +45,9 @@ class RepositorySubscriptionController extends Controller
         $input = $this->validateRequest();
         
         $repositoryPlugin = app()->make('App\RepositoryPlugin');
-        return $repositoryPlugin->plugins[$input['repository']]->store($request);
+        if (request()->wantsJson()){    
+            return ['subscription' => $repositoryPlugin->plugins[$input['repository']]->store($request)];
+        }
     }
 
     /**
@@ -164,11 +167,11 @@ class RepositorySubscriptionController extends Controller
     {               
         
         return request()->validate([
-            'value' => 'sometimes',
+            'value'             => 'sometimes',
             'subscribable_type' => 'sometimes|required',
             'subscribable_id'   => 'sometimes|required',
             'search'            => 'sometimes',
-            'repository'        => 'required',
+            'repository'        => 'sometimes',
         ]);
     }
       

@@ -363,13 +363,14 @@ class CertificateController extends Controller
     protected function replaceFields($string, $user, $organization, $date)
     {
         $search = array(
-            '{{$firstname}}', 
-            '{{$lastname}}', 
-            '{{$organization_title}}',
-            '{{$organization_street}}',
-            '{{$organization_postcode}}', 
-            '{{$organization_city}}', 
-            '{{$date}}');
+            '<span id="firstname"></span>',
+            '<span id="lastname"></span>',
+            '<span id="organization_title"></span>',
+            '<span id="organization_street"></span>',
+            '<span id="organization_postcode"></span>',
+            '<span id="organization_city"></span>',
+            '<span id="date"></span>'
+           );
         
         $replace = array(
             $user->firstname, 

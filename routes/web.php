@@ -123,6 +123,8 @@ Route::group(['middleware' => 'auth'], function () {
     
     Route::post('mediumSubscriptions/destroy', 'MediumSubscriptionController@destroySubscription');
     Route::resource('mediumSubscriptions', 'MediumSubscriptionController');
+    Route::delete('media/massDestroy', 'MediumController@massDestroy')->name('media.massDestroy');
+    Route::get('media/list', 'MediumController@list')->name('media.list');
     Route::resource('media', 'MediumController');
 
 

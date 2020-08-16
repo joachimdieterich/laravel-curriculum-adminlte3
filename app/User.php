@@ -194,6 +194,10 @@ class User extends Authenticatable
         )->where('subscribable_type', get_class($this)); 
     }
     
+    public function media()
+    {
+        return $this->hasMany(Media::class, 'owner_id');
+    }
 
     public function periods()
     {

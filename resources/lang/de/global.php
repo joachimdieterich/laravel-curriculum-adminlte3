@@ -682,6 +682,10 @@ return [
             'license_id_helper' => '',
             'owner_id'          => 'Eigentümer_id',
             'owner_id_helper'   => '',
+            'public'            => 'öffentliche Freigabe',
+            'public_helper'     => '',
+            'created_at'        => 'Erstellungdatum',
+            'created_at_helper' => '',
         ],
     ],
     'navigator' =>[

@@ -281,13 +281,21 @@ class CertificateController extends Controller
 
             $filename = date("Y-m-d_H-i-s").$user->lastname."_".$user->firstname.".pdf";
             $path     = config('lfm.files_folder_name')."/".auth()->user()->id."/";
-            $this->buildPdf($html, $path, $filename);
+            $pathOfNewFile = $this->buildPdf($html, $path, $filename);
             
             array_push($generated_files, ['filename' => $filename, 'path' => Storage::disk('local')->path($path.$filename)]);
         }//end foreach
         
         if (request()->wantsJson()){    
-            return ['message' => $this->zipper($path, $generated_files)];
+            if (count($generated_files) > 1) //zip if more than one files
+            {
+                return ['message' => $this->zipper($path, $generated_files)];
+            } 
+            else //only one file ? return pdf
+            {
+                return ['message' => $pathOfNewFile];
+            }
+            
         }
     }
     
@@ -446,10 +454,17 @@ class CertificateController extends Controller
                 'size'          => File::size(Storage::disk('local')->path(config('lfm.files_folder_name')."/".auth()->user()->id."/".$filename)),
                 'mime_type'     => File::mimeType(Storage::disk('local')->path(config('lfm.files_folder_name')."/".auth()->user()->id."/".$filename)),
                 'license_id'    => 2,
-
+                
+                'public'        => 0,           //certificates can not be accessed without owership/subscription
                 'owner_id'      => auth()->user()->id,
             ]); 
         $media->save();
+        
+        /*
+         * add subscription 
+         */
+        $media->subscribe(auth()->user(), 4);
+        
         return  $media->path();
     }
 

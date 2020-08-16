@@ -38,10 +38,33 @@
 <div id="curriculum_view_content" class="row"> 
      
      <div class="col-12">
-         @if(!isset(json_decode($settings)->course))
+    @if(isset($course))
+        @can('achievement_access')
+            <a class="btn btn-default btn-flat" 
+              href="/curricula/{{ $course->id }}">
+                <i class="fas fa-th"></i>
+            </a>
+        @endcan
+        @can('logbook_create')
+            <a class="btn btn-default btn-flat" 
+               href="/logbooks/{{isset($logbook) ? $logbook->id : 'create?subscribable_type=App\\Course&subscribable_id='. $course->id }}">
+                <i class="fas fa-book pr-1"></i>
+                {{ trans('global.logbook.title_singular') }}
+            </a>
+        @endcan
+    @else 
+        @can('achievement_access')
+            <a class="btn btn-default btn-flat" 
+               href="/courses/{{ $curriculum->id }}">
+                <i class="fas fa-users"></i>
+            </a>
+        @endcan
+    @endif
+    @if(!isset(json_decode($settings)->course))
 <!--    <button type="button" class="btn btn-default" data-toggle="tooltip"  onclick="">
             <i class="fa fa-compress"></i>
         </button>-->
+
     <div class="btn-group">
         @if (isset($curriculum->contents[0]))
             <dropdown-button 
@@ -97,15 +120,8 @@
         </div>
     @endif
     
-        @if(isset($course))
-            @can('logbook_create')
-            <a class="btn btn-default btn-flat" 
-               href="/logbooks/{{isset($logbook) ? $logbook->id : 'create?subscribable_type=App\\Course&subscribable_id='. $course->id }}">
-                <i class="fas fa-book pr-1"></i>
-                {{ trans('global.logbook.title_singular') }}
-            </a>
-            @endcan
-        @endif
+    
+    
      <div class="btn-group">        
             <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
                 {{ trans('global.details') }}
@@ -223,6 +239,7 @@ function isElementInViewport (el) {
 
 $(document).ready( function () {
     //let dtButtons = false;//$.extend(true, [], $.fn.dataTable.defaults.buttons)
+    
     table = $('#users-datatable').DataTable({
         ajax: "/courses/list?course_id={{ $course->id }}",
         columns: [
@@ -235,6 +252,8 @@ $(document).ready( function () {
                 ],
         buttons: [],
     });
+    
+    
     
     table.on( 'select', function ( e, dt, type, indexes ) { //on select event
         triggerVueEvent(type);

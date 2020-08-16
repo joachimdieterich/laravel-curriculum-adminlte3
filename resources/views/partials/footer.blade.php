@@ -16,11 +16,11 @@
         </div>
 
         <div class="navbar-expand col-lg-8">
-            <ul class="navbar-nav d-flex pt-2">
+            <ul class="navbar-nav d-flex p-2">
                 @php ($footer_iterator = 1)
                 @while ( env('FOOTER_TITLE_'.$footer_iterator) )
                 <li class="nav-item flex-fill ">
-                    <a class=" nav-item d-none d-sm-inline-block text-white text-decoration-none" 
+                    <a class=" nav-item d-none d-sm-inline-block text-white small text-decoration-none" 
                         href="{{ env('FOOTER_URL_'.$footer_iterator) }}">
                          {{ env('FOOTER_TITLE_'.$footer_iterator) }}
                      </a>
@@ -30,7 +30,7 @@
             </ul>
         </div>
 
-        <div class="col-lg-2 pt-2">
+        <div class="col-lg-2 pt-2 d-none d-sm-inline-block ">
             <a class="text-white-50 text-decoration-none " 
                href="http://curriculumonline.de">
                 <small>

@@ -1,7 +1,5 @@
 <template>
-    <div
-      class="card mr-2"
-    >
+    <div class="card mr-2">
         <div class="card-body px-3 py-2">
             <div class="form-group">
                 <input
@@ -46,12 +44,12 @@
             </span>
             <div v-if="form.title != ''">
                 <button class="btn btn-block btn-outline-secondary mb-2" 
-                        @click.prevent="open('medium-create-modal', 'referenceable');">
+                        @click.stop.prevent="open('medium-create-modal', 'referenceable');">
                     <i class="fa fa-photo-video"></i>
                     <span class="ml-2">{{ trans('global.media.add') }}</span>
                 </button>
                 <button class="btn btn-block btn-outline-secondary mb-2" 
-                         @click.prevent="open('task-modal', 'subscribable');">
+                         @click.stop.prevent="open('task-modal', 'subscribable');">
                     <i class="fas fa-tasks"></i>
                     <span class="ml-2">{{ trans('global.task.create') }}</span>
                 </button>

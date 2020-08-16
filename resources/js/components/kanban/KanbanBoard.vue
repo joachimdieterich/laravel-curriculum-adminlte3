@@ -10,9 +10,8 @@
             <div            
                 v-for="status in statuses"
                 :key="'header_'+status.id"
-                class=" no-border  pr-2"
-                :style="'float:left;width:' + itemwidth + 'px;'"
-                >
+                class=" no-border pr-2"
+                :style="'float:left;width:' + itemwidth + 'px;'">
                 <div class="card-header border-bottom-0 p-0"
                      :key="status.id">
                     <strong>{{ status.title }}</strong>
@@ -46,20 +45,20 @@
                 </div>
                 
                 <KanbanItemCreate
-                    v-if="newItem === status.id"
-                    :status="status"
-                    :item="item"
-                    v-on:item-added="handleItemAdded"
-                    v-on:item-updated="handleItemUpdated"
-                    v-on:item-canceled="closeForm"
-                    style=" z-index: 2"></KanbanItemCreate>
+                        v-if="newItem === status.id"
+                        :status="status"
+                        :item="item"
+                        v-on:item-added="handleItemAdded"
+                        v-on:item-updated="handleItemUpdated"
+                        v-on:item-canceled="closeForm"
+                        style=" z-index: 2"></KanbanItemCreate>
                 <div style="position:absolute; top:35px;bottom:0;overflow-y:scroll; z-index: 1"
                      :style="'width:' + itemwidth + 'px;'">
                     <draggable
                         class="flex-1 overflow-hidden"
                         v-model="status.items"
                         v-bind="itemDragOptions"
-                        @end="handleItemMoved">
+                        @end="handleItemMoved">            
                         <transition-group
                             v-for="item in status.items"
                             :key="'transition_group-'+item.id"
@@ -190,7 +189,6 @@
                     const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should replace the item
                         status => status.id === updatedItem.kanban_status_id
                     );
-            
                     const itemIndex = this.statuses[statusIndex].items.findIndex(   // Find the index of the item where we should replace the item
                         item => item.id === updatedItem.id
                     );

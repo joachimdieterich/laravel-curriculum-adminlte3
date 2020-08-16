@@ -209,7 +209,7 @@ class CurriculumController extends Controller
         
         $curriculum = Curriculum::with(['terminalObjectives', 
                         'terminalObjectives.media', 
-                        'terminalObjectives.mediaSubscriptions', 
+//                        'terminalObjectives.mediaSubscriptions', 
 //                        'terminalObjectives.referenceSubscriptions.siblings.referenceable', 
 //                        'terminalObjectives.quoteSubscriptions.siblings.quotable', 
                         'terminalObjectives.achievements' => function($query) {
@@ -217,7 +217,7 @@ class CurriculumController extends Controller
                         },
                         'terminalObjectives.enablingObjectives', 
                         'terminalObjectives.enablingObjectives.media',
-                        'terminalObjectives.enablingObjectives.mediaSubscriptions', 
+//                        'terminalObjectives.enablingObjectives.mediaSubscriptions', 
 //                        'terminalObjectives.enablingObjectives.referenceSubscriptions.siblings.referenceable', 
 //                        'terminalObjectives.enablingObjectives.quoteSubscriptions.siblings.quotable', 
                         'terminalObjectives.enablingObjectives.achievements' => function($query) {

@@ -5,7 +5,7 @@ os:
 
 php: 
     - 7.3
-    
+ 
 before_script:
     - chmod 777 -R storage
     - cp .env.travis .env
@@ -14,8 +14,9 @@ before_script:
     - php artisan key:generate
     - php artisan migrate
     - php artisan passport:keys
+    - nvm install node
     - npm run production
-    
+   
 script:
     - vendor/bin/phpunit
  

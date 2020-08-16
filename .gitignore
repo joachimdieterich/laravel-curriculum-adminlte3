@@ -1,5 +1,5 @@
-# Laravel 5 & Lumen specific
-/node_modules
+# Laravel 6 & Lumen specific
+/node_modules/*
 /public/
 /public/hot
 /public/storage
@@ -8,7 +8,7 @@
 /storage/api-docs
 /storage/*
 !/storage/framework/
-/vendor
+/vendor/*
 
 .env.*.php
 .env.php

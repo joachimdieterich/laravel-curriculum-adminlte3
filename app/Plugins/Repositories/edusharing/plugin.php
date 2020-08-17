@@ -346,7 +346,7 @@ class Edusharing extends RepositoryPlugin
         $contentType    = isset($query['contentType']) ? $query['contentType'] : 'ALL';    //e.g.'FILES';
         $property       = isset($query['property']) ? $query['property'] : "cm:name";      //e.g.'ccm:competence_digital2';
         $value          = $query['value'];          //e.g.11990503;
-        $maxItems       = 40;
+        $maxItems       = 75;
         $skipCount      = 0;
         return $this->getSearchCustom($repo, array ('contentType' =>$contentType, 'property' => $property, 'value' => $value, 'maxItems' => $maxItems, 'skipCount' => $skipCount));
     }

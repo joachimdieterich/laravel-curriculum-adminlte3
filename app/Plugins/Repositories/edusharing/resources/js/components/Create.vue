@@ -19,6 +19,16 @@
                 </div>
                 <div >
                     <ul class="nav flex-column">
+                        <li v-if="searchResults !== ''">{{ searchResults }} {{ trans('global.entries') }}
+                            <span class="pull-right custom-control custom-switch custom-switch-on-green">
+                                <input  :checked="allSubscribed"
+                                        type="checkbox" 
+                                        class="custom-control-input pt-1 " 
+                                        id="subscription_input_all" 
+                                         @click="subscribeAll">
+                                <label class="custom-control-label " for="subscription_input_all" ></label>
+                            </span>
+                        </li>
                         <li v-for="medium in media" 
                             :id="medium.ref.id"
                             class="nav-item" >
@@ -57,7 +67,8 @@
                 media: null,
                 errors: {},
                 search: '',
-                subscriptions: Object
+                subscriptions: Object,
+                allSubscribed: false
             };
         },
         methods: {
@@ -99,8 +110,17 @@
             setSubscription(id) { 
                 if(this.getSubscriptionStatus(id) === 0){
                     this.linkMedium(id);
+                    return true;
                 } else { 
                     this.unlinkMedium(id);
+                    return false;
+                }
+            },
+            
+            subscribeAll(){
+                var index;
+                for (index = 0; index < this.media.length; ++index) {
+                    this.allSubscribed = this.setSubscription(this.media[index].ref.id);
                 }
             },
             async getSearch() {
@@ -133,7 +153,9 @@
         },
        
         computed: {
-            
+            searchResults: function () {
+                return (this.media ? this.media.length : '');
+             }
         },
        
         mounted() {

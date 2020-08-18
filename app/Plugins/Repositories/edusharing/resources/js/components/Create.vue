@@ -97,8 +97,6 @@
                     let index = this.subscriptions.indexOf(id);
 
                     this.subscriptions.splice(index, 1);
-                   
-                    
                 })
                 .catch(error => { // Handle the error returned from our request
                       console.log(error.response);
@@ -123,16 +121,26 @@
                     this.allSubscribed = this.setSubscription(this.media[index].ref.id);
                 }
             },
-            async getSearch() {
-                try {
-                    this.media = (await axios.post('/repositorySubscriptions/searchRepository', {
-                        value:this.search,
-                        repository: 'edusharing'
-                    })).data.nodes;
-                } catch(error) {
-                    //this.errors = error.response.data.errors;
-                }
-                
+            getSearch() {
+                axios.post('/repositorySubscriptions/searchRepository', {
+                    value:this.search,
+                    repository: 'edusharing'
+                })
+                .then(res => { 
+                    this.media = res.data.nodes;
+                    var index, status;
+                    status = true;
+                    for (index = 0; index < this.media.length; ++index) {
+                        if (this.getSubscriptionStatus(this.media[index].ref.id) < 1){
+                            status = false;
+                            break;
+                        }
+                    }
+                    this.allSubscribed = status;
+                })
+                .catch(error => { // Handle the error returned from our request
+                     console.log(error.response);
+                }); 
             },
             
             subscribable_type() {
@@ -140,7 +148,6 @@
                 if (typeof this.model.terminal_objective === 'object'){
                     reference_class = 'App\\EnablingObjective';
                 } 
-
                 return reference_class;
             },
             

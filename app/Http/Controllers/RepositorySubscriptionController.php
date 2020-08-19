@@ -110,34 +110,20 @@ class RepositorySubscriptionController extends Controller
         {
             $result->push($repositoryPlugin->plugins[$input['repository']]->processReference($subscription->value));
         }
-//        if (isset($input['search']))
-//        {  
-//            $rake = RakePlus::create(strip_tags($input['search']), 'de_DE', 3);
-//            $phrase_scores = $rake->sort('asc')->scores(); 
-//            $repositoryPlugin = app()->make('App\RepositoryPlugin');
-//            dump(array_key_first($phrase_scores));
-//            //$nodes = $repositoryPlugin->plugins[$input['repository']]->searchRepository(['value' => array_key_first($phrase_scores)]);
-//            $result->push($repositoryPlugin->plugins[$input['repository']]->processReference( array_key_first($phrase_scores)));
-//            
-////            foreach ($nodes['nodes'] as $node) {
-////                if ($node['mediatype'] == 'folder'){ //todo es muss überlegt werden, ob subfolder geladen werden
-////                    continue;
-////                }
-////                $result->push([[
-////                    'value'       => $node['ref']['id'], //value field in db
-////                    'node_id'     => $node['ref']['id'],
-////                    'license'     => $node['licenseURL'],
-////                    'title'       => isset($node['title']) ?  $node['title'] : $node['name'],
-////                    'description' => $node['description'],
-////                    'thumb'       => $node['preview']['url'],
-////                    'path'        => env('EDUSHARING_REPO_URL', '') . '/components/render/' .$node['ref']['id']
-////              ]]);
-////            }
-//        }
         
+        /*
+         * Get media by subscribablye identifier if (curriculum, terminal, or enabling objective)
+         */
+        $allowed_models = array("App\Curriculum", "App\TerminalObjective", "App\EnablingObjective");
+        if (in_array($input['subscribable_type'], $allowed_models)) {
+            $model = $input['subscribable_type']::find($input['subscribable_id']);
+            $result->push($repositoryPlugin->plugins[$input['repository']]->processReference('endpoint=getSearchCustom&property=ccm:curriculum&value='.$model->ui));
+        }
+       
         if (request()->wantsJson()){    
             return ['message' => $result];
         }
+        
     }
     
     public function searchRepository(Request $request)

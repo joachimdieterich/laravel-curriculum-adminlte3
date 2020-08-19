@@ -120,11 +120,13 @@ class Edusharing extends RepositoryPlugin
         );
     }
     
-    public function getGroup($group) {
+    public function getGroup($group) 
+    {
         return json_decode($this->call ( $this->repoUrl . '/rest/iam/v1/groups/-home-/' . urlencode ( $group ) ), true);
     }
     
-    public function createGroup($group) {
+    public function createGroup($group) 
+    {
         $this->call ( 
             $this->repoUrl . '/rest/iam/v1/groups/-home-/' . urlencode ( $group ['groupname'] ), 
             'POST', 
@@ -133,11 +135,13 @@ class Edusharing extends RepositoryPlugin
         );
     }
     
-    public function addMember($group, $member) {
+    public function addMember($group, $member) 
+    {
         $this->call ( $this->repoUrl . '/rest/iam/v1/groups/-home-/' . urlencode ( $group ) . '/members/' . urlencode ( $member ), 'PUT' );
     }
     
-    public function loginToScope($userName, $password, $scope = '') {
+    public function loginToScope($userName, $password, $scope = '') 
+    {
         $ret = $this->call ( 
             $this->repoUrl . '/authentication/v1/loginToScope', 
             'POST', 
@@ -153,11 +157,13 @@ class Edusharing extends RepositoryPlugin
         return json_decode($ret, true);
     }
     
-    public function getUser($username = '-me-') {
+    public function getUser($username = '-me-') 
+    {
         return $this->call ( $this->repoUrl . '/rest/iam/v1/people/-home-/' . urlencode ( $username ) );
     }
     
-    public function createIoNode($title, $folderId) {
+    public function createIoNode($title, $folderId) 
+    {
         $postFields = array (
             array ( 
                 'name' => '{http://www.alfresco.org/model/content/1.0}name',
@@ -172,7 +178,8 @@ class Edusharing extends RepositoryPlugin
         );
     }
     
-    public function addNodeContent($nodeId, $versionComment, $mimetype, $postFields) {
+    public function addNodeContent($nodeId, $versionComment, $mimetype, $postFields) 
+    {
         return $this->call (
             $this->repoUrl . '/rest/node/v1/nodes/-home-/' . urlencode ( $nodeId ) . '/content?versionComment=' . urlencode ( $versionComment ) . '&mimetype=' . urlencode ( $mimetype ), 
             'POST',
@@ -181,7 +188,8 @@ class Edusharing extends RepositoryPlugin
         );
     }
     
-    public function setPermissions($nodeId, $permissions) {
+    public function setPermissions($nodeId, $permissions) 
+    {
         $postFields = array (
             'inherited' => false,
             'permissions' => $permissions 
@@ -193,7 +201,8 @@ class Edusharing extends RepositoryPlugin
         );
     }
 
-    public function createFolder($title, $parentId) {
+    public function createFolder($title, $parentId) 
+    {
         $postFields = array (
             array (
                 'name' => '{http://www.alfresco.org/model/content/1.0}name',
@@ -210,7 +219,8 @@ class Edusharing extends RepositoryPlugin
         return $return->node->ref->id;
     }
 
-    public function setOrganization($organization, $folderId) {
+    public function setOrganization($organization, $folderId) 
+    {
         $this->call(
             $this->repoUrl . '/rest/organization/v1/organizations/-home-/'.$organization . '?folder=' . $folderId, 
             'PUT', 
@@ -219,27 +229,32 @@ class Edusharing extends RepositoryPlugin
         );
     }
 
-    public function getCompanyHome() {
+    public function getCompanyHome() 
+    {
         $return = json_decode($this->call($this->repoUrl . '/rest/node/v1/nodes/-home-?query=' . urlencode('PATH:"/app:company_home"')), true);
         return $return['nodes'][0]['ref']['id'];
     }
     
-    public function searchNodes($repository, $params) {
+    public function searchNodes($repository, $params) 
+    {
         $return = $this->call($this->repoUrl . '/rest/node/v1/nodes/' . $repository.'?'.http_build_query($params));
         return json_decode($return, true);
     }
 
-    public function getPerson($person = '-me-') {
+    public function getPerson($person = '-me-') 
+    {
         $return = $this->call($this->repoUrl . '/rest/iam/v1/people/-home-/' . $person);
         return json_decode($return, true);
     }
 
-    public function getAllGroups() {
+    public function getAllGroups() 
+    {
         $ret = $this->call($this->repoUrl . '/rest/iam/v1/groups/-home-?pattern=*');
         return json_decode($ret, true);
     }
 
-    public function getOrganizations() {
+    public function getOrganizations() 
+    {
         $ret = $this->call($this->repoUrl . '/rest/organization/v1/organizations/-home-');
         return json_decode($ret, true);
     }
@@ -251,14 +266,16 @@ class Edusharing extends RepositoryPlugin
         curl_setopt ( $ch, CURLOPT_CONNECTTIMEOUT, 5);  //timeout in seconds
         curl_setopt ( $ch, CURLOPT_TIMEOUT, 10); //timeout in seconds
 
-        if ($this->proxy){
+        if ($this->proxy)
+        {
             curl_setopt ( $ch, CURLOPT_PROXY, $this->proxy);
             if ($this->proxy_port){
                 curl_setopt ( $ch, CURLOPT_PROXYPORT, $this->proxy_port);
             }
         }
 
-        switch ($httpMethod) {
+        switch ($httpMethod) 
+        {
             case 'POST' :
                     curl_setopt ( $ch, CURLOPT_POST, true );
                     break;
@@ -281,26 +298,30 @@ class Edusharing extends RepositoryPlugin
         ), $additionalHeaders );
         curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
 
-        if (! empty ( $postFields )) {
-                curl_setopt ( $ch, CURLOPT_POSTFIELDS, $postFields );
+        if (! empty ( $postFields )) 
+        {
+            curl_setopt ( $ch, CURLOPT_POSTFIELDS, $postFields );
         }
 
         $exec = curl_exec ( $ch );
 
-        if ($exec === false) {
-                 error_log($url . ' ---> ' .  curl_error ( $ch ) .' ---> Error-Code:' .curl_errno($ch)); // for debugging
-                //throw new Exception ( curl_error ( $ch ) );
+        if ($exec === false) 
+        {
+            error_log($url . ' ---> ' .  curl_error ( $ch ) .' ---> Error-Code:' .curl_errno($ch)); // for debugging
+           //throw new Exception ( curl_error ( $ch ) );
         }
 
         $httpcode = curl_getinfo ( $ch, CURLINFO_HTTP_CODE );
-        if ($httpcode != 200) {
-                //deal with it
+        if ($httpcode != 200) 
+        {
+            //deal with it
         }
         curl_close ( $ch );
         return $exec;
     }
 
-    public function getCollections($repository, $collection) {
+    public function getCollections($repository, $collection) 
+    {
         $getFields = array (
                         'repository' => $repository,
                         'collection' => $collection 
@@ -314,7 +335,8 @@ class Edusharing extends RepositoryPlugin
         return json_decode($ret, true);
     }
 
-    public function getRendering($repository, $node) {
+    public function getRendering($repository, $node) 
+    {
         //dump($this->repoUrl . '/rest/rendering/v1/details/' . $repository . '/' . $node);
         $ret = $this->call($this->repoUrl . '/rest/rendering/v1/details/' . $repository . '/' . $node);
         return json_decode($ret, true);
@@ -324,14 +346,16 @@ class Edusharing extends RepositoryPlugin
     //https://[EDUSHARINGDOMAIN]/edu-sharing/rest/search/v1/custom/-home-?contentType=ALL&property=cm:name&value=20200422&maxItems=40&skipCount=0
     //https://[EDUSHARINGDOMAIN]/edu-sharing/rest/search/v1/custom/-home-?contentType=ALL&property=cm:name&value=20200422&maxItems=10&skipCount=0
 
-    public function getSearchCustom($repository, $params) {
+    public function getSearchCustom($repository, $params) 
+    {
         //dump($this->repoUrl . '/rest/search/v1/custom/' . $repository.'?'.http_build_query($params));
         $ret =$this->call ( $this->repoUrl . '/rest/search/v1/custom/' . $repository.'?'.http_build_query($params));
         //dump($ret);
         return json_decode($ret, true);
     }
 
-    public function getChildren($repository, $parentId, $params) {
+    public function getChildren($repository, $parentId, $params) 
+    {
         $children = $this->call($this->repoUrl . '/rest/node/v1/nodes/'. $repository.'/'.$parentId.'/children?'.http_build_query($params));
         return json_decode($children, true);
     }
@@ -351,36 +375,47 @@ class Edusharing extends RepositoryPlugin
         return $this->getSearchCustom($repo, array ('contentType' =>$contentType, 'property' => $property, 'value' => $value, 'maxItems' => $maxItems, 'skipCount' => $skipCount));
     }
     
-    public function getExternalsubscriptions ($model, $id, $files){
-        $subscriptions = ExternalRepositorySubscriptions::where('subscribable_type', get_class($model))
-                                                ->where('subscribable_id', $model->id)
-                                                ->where('repository', self::PLUGINNAME)->get();
-        $this->setTokens(); //(re)set token
-        foreach ($subscriptions as $subscription) {
-            $es_array = array_merge($es_array, $this->processReference($subscription->value));
-        }
-
-        return $files;
+//    public function getExternalsubscriptions ($model, $id, $files)
+//    {
+//        $subscriptions = ExternalRepositorySubscriptions::where('subscribable_type', get_class($model))
+//                                                ->where('subscribable_id', $model->id)
+//                                                ->where('repository', self::PLUGINNAME)->get();
+//        $this->setTokens(); //(re)set token
+//        foreach ($subscriptions as $subscription) 
+//        {
+//            $es_array = array_merge($es_array, $this->processReference($subscription->value));
+//        }
+//
+//        return $files;
+//    }
+    
+    public function getExternalMediaByIdentifier()
+    {
+        
     }
 
-    public function processReference($arguments){
+    public function processReference($arguments)
+    {
         parse_str($arguments, $query);
 
         $apiEndpoint    = isset($query['endpoint']) ?  $query['endpoint'] : 'node';             
         $contentType    = isset($query['contentType']) ? $query['contentType'] : 'ALL';    //e.g.'FILES';
+        $combineMode    = isset($query['combineMode']) ? $query['combineMode'] : 'AND';    // AND / OR
         $property       = isset($query['property']) ? $query['property'] : "cm:name";      //e.g.'ccm:competence_digital2';
         $value          = isset($query['value']) ? $query['value'] : $arguments;          //e.g.11990503;
-        $maxItems       = 40;
+        $maxItems       = isset($query['maxItems']) ? $query['maxItems'] : 40;
         $skipCount      = 0;
+        
         //$nodes        = $this->getSearchCustom('-home-', array ('contentType' =>'FILES', 'property' => 'ccm:competence_digital2', 'value' => '11061007', 'maxItems' => 10));
         switch ($apiEndpoint) {
-            case 'getSearchCustom': $nodes      = $this->getSearchCustom('-home-', array ('contentType' =>$contentType, 'property' => $property, 'value' => $value, 'maxItems' => $maxItems, 'skipCount' => $skipCount));
+            case 'getSearchCustom': $nodes      = $this->getSearchCustom('-home-', array ('contentType' => $contentType, 'combineMode' => $combineMode, 'property' => $property, 'value' => $value, 'maxItems' => $maxItems, 'skipCount' => $skipCount));
                 break;
             case 'getNodeChildren': $nodes      = $this->getChildren('-home-', $value, array ('maxItems' => $maxItems, 'skipCount' => $skipCount));
                 break;
             case 'node':            $result = $this->getRendering('-home-', $value);
                 
-                                    if (isset($result['node'])){
+                                    if (isset($result['node']))
+                                    {
                                         $nodes['nodes'][] =$result['node'] ;
                                     } else {
                                         return;
@@ -391,9 +426,11 @@ class Edusharing extends RepositoryPlugin
         }
 
         $collection = collect([]);
-        
-        foreach ($nodes['nodes'] as $node) {
-            if ($node['mediatype'] == 'folder'){ //todo es muss überlegt werden, ob subfolder geladen werden
+            
+        foreach ($nodes['nodes'] as $node) 
+        {
+            if ($node['mediatype'] == 'folder') //todo es muss überlegt werden, ob subfolder geladen werden
+            { 
                 continue;
             }
             
@@ -412,7 +449,8 @@ class Edusharing extends RepositoryPlugin
         return $collection;
     }
 
-    private function getReadableTitle($node){
+    private function getReadableTitle($node)
+    {
         
         $title = isset($node['title']) ?  $node['title'] : '';
         if (empty(trim($title)))
@@ -422,7 +460,8 @@ class Edusharing extends RepositoryPlugin
         return $title;
     }
 
-    public function store($query){
+    public function store($query)
+    {
         
         return RepositorySubscription::firstOrCreate([
             'subscribable_type' => $query['subscribable_type'],
@@ -436,7 +475,8 @@ class Edusharing extends RepositoryPlugin
         
     }
     
-    public function destroy($query){
+    public function destroy($query)
+    {
         $subsciption =  RepositorySubscription::where('subscribable_type', $query['subscribable_type'])
                                 ->where('subscribable_id', $query['subscribable_id'])
                                 ->where('repository', self::PLUGINNAME)
@@ -457,7 +497,8 @@ class Edusharing extends RepositoryPlugin
 //get ticket via soap
 
 // auth_data snippet
-function edusharing_get_auth_data() {
+function edusharing_get_auth_data() 
+{
     return array(
         array('key'  => 'userid', 'value'  => auth()->user()->username),
         array('key'  => 'lastname', 'value'  => auth()->user()->firstname),
@@ -469,7 +510,8 @@ function edusharing_get_auth_data() {
 }
 
 // SOAP-Client
-class mod_edusharing_sig_soap_client extends SoapClient {
+class mod_edusharing_sig_soap_client extends SoapClient 
+{
 
     /**
      * Set app properties and soap headers
@@ -477,7 +519,8 @@ class mod_edusharing_sig_soap_client extends SoapClient {
      * @param string $wsdl
      * @param array $options
      */
-    public function __construct($wsdl, $options = array()) {
+    public function __construct($wsdl, $options = array()) 
+    {
         ini_set('default_socket_timeout', 15);
         parent::__construct($wsdl, $options);
         $this->edusharing_set_soap_headers();
@@ -488,7 +531,8 @@ class mod_edusharing_sig_soap_client extends SoapClient {
      *
      * @throws Exception
      */
-    private function edusharing_set_soap_headers() {
+    private function edusharing_set_soap_headers() 
+    {
         $appId   = Config::where([
                 ['referenceable_type', '=', 'App\Edusharing'],
                 ['key', '=',  'appId']

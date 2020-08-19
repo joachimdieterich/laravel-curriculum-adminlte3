@@ -370,8 +370,8 @@ class Edusharing extends RepositoryPlugin
         $contentType    = isset($query['contentType']) ? $query['contentType'] : 'ALL';    //e.g.'FILES';
         $property       = isset($query['property']) ? $query['property'] : "cm:name";      //e.g.'ccm:competence_digital2';
         $value          = $query['value'];          //e.g.11990503;
-        $maxItems       = 100;
-        $skipCount      = 0;
+        $maxItems       = isset($query['maxItems']) ? $query['maxItems'] : 100;             // used for pagination
+        $skipCount      = isset($query['skipCount']) ? $query['skipCount'] : ($query['page'] * $maxItems);            // used for pagination
         return $this->getSearchCustom($repo, array ('contentType' =>$contentType, 'property' => $property, 'value' => $value, 'maxItems' => $maxItems, 'skipCount' => $skipCount));
     }
     
@@ -399,12 +399,12 @@ class Edusharing extends RepositoryPlugin
         parse_str($arguments, $query);
 
         $apiEndpoint    = isset($query['endpoint']) ?  $query['endpoint'] : 'node';             
-        $contentType    = isset($query['contentType']) ? $query['contentType'] : 'ALL';    //e.g.'FILES';
+        $contentType    = isset($query['contentType']) ? $query['contentType'] : 'ALL';    // e.g.'FILES';
         $combineMode    = isset($query['combineMode']) ? $query['combineMode'] : 'AND';    // AND / OR
-        $property       = isset($query['property']) ? $query['property'] : "cm:name";      //e.g.'ccm:competence_digital2';
-        $value          = isset($query['value']) ? $query['value'] : $arguments;          //e.g.11990503;
-        $maxItems       = isset($query['maxItems']) ? $query['maxItems'] : 40;
-        $skipCount      = 0;
+        $property       = isset($query['property']) ? $query['property'] : "cm:name";      // e.g.'ccm:competence_digital2';
+        $value          = isset($query['value']) ? $query['value'] : $arguments;           // e.g.11990503;
+        $maxItems       = isset($query['maxItems']) ? $query['maxItems'] : 40;             // used for pagination
+        $skipCount      = isset($query['skipCount']) ? $query['skipCount'] : 0;            // used for pagination
         
         //$nodes        = $this->getSearchCustom('-home-', array ('contentType' =>'FILES', 'property' => 'ccm:competence_digital2', 'value' => '11061007', 'maxItems' => 10));
         switch ($apiEndpoint) {

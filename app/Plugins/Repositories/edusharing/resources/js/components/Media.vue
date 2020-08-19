@@ -45,6 +45,22 @@
 
             </div>
         </span>
+        <div v-if="media !== null" class="row pt-1" style="width:100% !important;">
+            <span class="col-6">
+               <button type="button" 
+                  class="btn btn-block btn-primary"
+                  :class="page > 0 ? '' : 'disabled'"
+                  @click="lastPage()"><i class="fa fa-arrow-left"></i></button>
+           </span>
+
+            <span class="col-6">
+               <button type="button" 
+                  class="btn btn-block btn-primary"
+                  :class="media[0].length == maxItems ? '' : 'disabled'"
+                  @click="nextPage()"><i class="fa fa-arrow-right"></i></button>
+           </span>
+
+        </div>
     </div>
 </template>
 
@@ -57,8 +73,10 @@
               },
         data() {
             return {
-                media: null,
-                errors: {}
+                media:   null,
+                page:    0,
+                maxItems: 20,
+                errors:  {}
             }
         },
         methods: {
@@ -69,6 +87,8 @@
                         subscribable_type: this.subscribable_type(),
                         subscribable_id: this.model.id,
                         search: this.model.title,
+                        page: this.page,
+                        maxItems: this.maxItems,
                         repository: 'edusharing'
                     })).data.message;
                     
@@ -111,6 +131,19 @@
             },
             href(medium) {
                 return medium.thumb;
+            },
+            lastPage() {
+                this.page = this.page - 1
+                if (this.page == -1){
+                    this.page = 0;
+                } else{
+                    this.loader(); 
+                }
+                
+            },
+            nextPage() {
+                this.page = this.page + 1;
+                this.loader(); 
             },
         },
         computed: {

@@ -117,7 +117,8 @@ class RepositorySubscriptionController extends Controller
         $allowed_models = array("App\Curriculum", "App\TerminalObjective", "App\EnablingObjective");
         if (in_array($input['subscribable_type'], $allowed_models)) {
             $model = $input['subscribable_type']::find($input['subscribable_id']);
-            $result->push($repositoryPlugin->plugins[$input['repository']]->processReference('endpoint=getSearchCustom&property=ccm:curriculum&value='.$model->ui));
+            
+            $result->push($repositoryPlugin->plugins[$input['repository']]->processReference('endpoint=getSearchCustom&property=ccm:curriculum&value='.$model->ui.'&maxItems='.$input['maxItems'].'&skipCount='.($input['maxItems'] * $input['page']) ));
         }
        
         if (request()->wantsJson()){    
@@ -157,6 +158,8 @@ class RepositorySubscriptionController extends Controller
             'subscribable_type' => 'sometimes|required',
             'subscribable_id'   => 'sometimes|required',
             'search'            => 'sometimes',
+            'page'              => 'sometimes',
+            'maxItems'          => 'sometimes',
             'repository'        => 'sometimes',
         ]);
     }

@@ -84,20 +84,20 @@
             </div>
         </div>
         
-         <div v-if="entries !== null" class="row" >
-             <span class="col-6">
-                 <button type="button" 
-                    class="btn btn-block btn-primary"
-                    @click="lastPage()"><i class="fa fa-arrow-left"></i></button>
-             </span>
-             
-             <span class="col-6">
-                 <button type="button" 
-                    class="btn btn-block btn-primary"
-                    @click="nextPage()"><i class="fa fa-arrow-right"></i></button>
-             </span>
-             
-         </div>
+        <div v-if="entries !== null" class="row" >
+            <span class="col-6">
+                <button type="button" 
+                   class="btn btn-block btn-primary"
+                   @click="lastPage()"><i class="fa fa-arrow-left"></i></button>
+            </span>
+
+            <span class="col-6">
+                <button type="button" 
+                   class="btn btn-block btn-primary"
+                   @click="nextPage()"><i class="fa fa-arrow-right"></i></button>
+            </span>
+
+        </div>
         
     </div>
 </template>

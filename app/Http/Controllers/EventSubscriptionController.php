@@ -115,7 +115,7 @@ class EventSubscriptionController extends Controller
             'subscribable_type' => 'sometimes|required',
             'subscribable_id'   => 'sometimes|required',
             'search'            => 'sometimes',
-            'page'            => 'sometimes',
+            'page'              => 'sometimes',
             'plugin'            => 'required',
         ]);
     }

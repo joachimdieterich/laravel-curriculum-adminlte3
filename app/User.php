@@ -260,6 +260,24 @@ class User extends Authenticatable
     
     public function currentRole()
     { 
+        if ($this->current_organization_id === NULL)
+        {
+            $this->current_organization_id = $this->organizations()->first()->id;
+            $this->save();
+        }
+        
+        if ($this->current_period_id === NULL)
+        {
+            $this->current_period_id = optional(DB::table('periods')
+                    ->select('periods.*')
+                    ->join('groups', 'groups.period_id', '=', 'periods.id')
+                    ->join('group_user', 'group_user.group_id', '=', 'groups.id') 
+                    ->where('group_user.user_id',  $this->id)
+                    ->where('groups.organization_id', $this->current_organization_id)
+                    ->get()->first())->id;
+            $this->save();
+        }  
+        
         return $this->roles()
                 ->where('user_id', '=', $this->id)
                 ->where('organization_id', $this->current_organization_id)

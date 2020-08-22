@@ -31,16 +31,17 @@
                    @include ('forms.input.select', 
                         ["model" => "period", 
                         "field" => "current_period_id",  
-                        "options"=> auth()->user()->organizations, 
+                        "options"=> auth()->user()->periods(), 
                         "option_id" => "id",
-                        "optgroup" => auth()->user()->periods(),    
-                        "optgroup_id" => "organization_id",
-                        "optgroup_reference_field" => "id",
+                        "optgroup" => auth()->user()->organizations,    
+                        "optgroup_id" => "id",
+                        "optgroup_reference_field" => "organization_id",
                         "placeholder" => trans('global.period.title').'...',
                         "combine_labels" => true,
                         "onchange"=> "setCurrentOrganizationAndPeriod(this)",  
                         "allowClear" => false,
-                        "value" => old('current_period_id', isset(auth()->user()->current_period_id) ? auth()->user()->current_period_id : '') ])
+                        "value" => ''
+                        ])
                 </li>
                 @else
                 <li class="nav-item px-3 py-2 text-bold" style="width:100%">

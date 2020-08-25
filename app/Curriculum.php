@@ -95,12 +95,12 @@ class Curriculum extends Model
     
     public function enablingObjectives()
     {
-        return $this->hasMany('App\EnablingObjective', 'curriculum_id', 'id');
+        return $this->hasMany('App\EnablingObjective', 'curriculum_id', 'id')->orderBy('order_id');
     }
     
     public function terminalObjectives()
     {
-        return $this->hasMany('App\TerminalObjective', 'curriculum_id', 'id')->orderBy('objective_type_id');
+        return $this->hasMany('App\TerminalObjective', 'curriculum_id', 'id')->orderBy('objective_type_id')->orderBy('order_id');
     }
     
     public function type()

@@ -31,7 +31,7 @@ class TerminalObjective extends Model
     
     public function enablingObjectives()
     {
-        return $this->hasMany('App\EnablingObjective', 'terminal_objective_id', 'id');
+        return $this->hasMany('App\EnablingObjective', 'terminal_objective_id', 'id')->orderBy('order_id');
     }
     
     public function contentSubscriptions()

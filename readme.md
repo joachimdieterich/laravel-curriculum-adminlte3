@@ -252,6 +252,11 @@ To refresh curriculum references (referencing_curriculum_id on terminal- and ena
 php artisan objectives:refreshReferences
 ```
 
+To generate a metadataset of all curricula (with type_id == 1), the number at the end will be used as version number.
+```bash
+php artisan curriculum:metadataset 001
+```
+
 ### Further information
 
 If ```npm install``` fails with: ```Failed at the admin-lte@3.0.5 install script 'npm run plugins'.``` update node.

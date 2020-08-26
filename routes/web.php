@@ -89,7 +89,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::put('kanbanStatuses/sync', 'KanbanStatusController@sync')->name('kanbanStatuses.sync');
     Route::resource('kanbanStatuses', 'KanbanStatusController');
     
-    Route::resource('kanbanSubscriptions', 'kanbanSubscriptionController');
+    Route::resource('kanbanSubscriptions', 'KanbanSubscriptionController');
     
     Route::resource('levels', 'LevelController');
     

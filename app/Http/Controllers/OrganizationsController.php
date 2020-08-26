@@ -22,23 +22,21 @@ class OrganizationsController extends Controller
     public function index()
     {
         abort_unless(\Gate::allows('organization_access'), 403);
-        $organizations = auth()->user()->organizations(); // Todo: Admins should see all Organizations
-        
-        return view('organizations.index')
-                ->with(compact('organizations')); 
+
+        return view('organizations.index');
     }
 
     public function list()
     {
         abort_unless(\Gate::allows('organization_access'), 403);
         $organizations = (auth()->user()->role()->id == 1) ? Organization::all() : auth()->user()->organizations()->get();
-          
+
         $edit_gate = \Gate::allows('organization_edit');
         $delete_gate = \Gate::allows('organization_delete');
-        
+
         return DataTables::of($organizations)
             ->addColumn('status', function ($organizations) {
-                return $organizations->status()->first()->lang_de;                
+                return $organizations->status()->first()->lang_de;
             })
             ->addColumn('action', function ($organizations) use ($edit_gate, $delete_gate){
                  $actions  = '';
@@ -46,7 +44,7 @@ class OrganizationsController extends Controller
                         $actions .= '<a href="'.route('organizations.edit', $organizations->id).'"'
                                     . 'id="edit-organization-'.$organizations->id.'" '
                                     . 'class="btn p-1">'
-                                    . '<i class="fa fa-pencil-alt"></i>' 
+                                    . '<i class="fa fa-pencil-alt"></i>'
                                     . '</a>';
                     }
                     if ($delete_gate){
@@ -55,10 +53,10 @@ class OrganizationsController extends Controller
                                 . 'onclick="destroyDataTableEntry(\'organizations\','.$organizations->id.')">'
                                 . '<i class="fa fa-trash"></i></button>';
                     }
-              
+
                 return $actions;
             })
-           
+
             ->addColumn('check', '')
             ->setRowId('id')
             ->setRowAttr([
@@ -75,7 +73,7 @@ class OrganizationsController extends Controller
     {
         abort_unless(\Gate::allows('organization_create'), 403);
         $status_definitions = StatusDefinition::all();
-        
+
         return view('organizations.create')
                 ->with(compact('status_definitions'));
     }
@@ -91,9 +89,9 @@ class OrganizationsController extends Controller
     {
         abort_unless(\Gate::allows('organization_create'), 403);
         $organization = Organization::firstOrCreate($this->validateRequest());
-        
-        // axios call? 
-        if (request()->wantsJson()){    
+
+        // axios call?
+        if (request()->wantsJson()){
             return ['message' => $organization->path()];
         }
         //dd($organization->path());
@@ -110,14 +108,14 @@ class OrganizationsController extends Controller
     public function show(Organization $organization)
     {
         abort_unless(\Gate::allows('organization_show'), 403);
-        // axios call? 
-        if (request()->wantsJson()){   
+        // axios call?
+        if (request()->wantsJson()){
             return [
                 'message' => $organization
             ];
         }
         $status_definitions = StatusDefinition::all();
-        
+
         return view('organizations.show')
                 ->with(compact('organization'))
                 ->with(compact('status_definitions'));
@@ -148,16 +146,16 @@ class OrganizationsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Organization $organization)
-    { 
+    {
         abort_unless(\Gate::allows('organization_edit'), 403);
-        $clean_data = $this->validateRequest();        
+        $clean_data = $this->validateRequest();
         if (isset(request()->status_id[0]))
         {
             $clean_data['status_id'] =  request()->status_id[0];  //hack to prevent array to string conversion
         }
-        
+
         $organization->update($clean_data);
-        
+
         return redirect($organization->path());
     }
 
@@ -176,7 +174,7 @@ class OrganizationsController extends Controller
 
         return back();
     }
-    
+
     public function massDestroy(MassDestroyOrganizationRequest $request)
     {
         abort_unless(\Gate::allows('organization_delete'), 403);
@@ -184,14 +182,14 @@ class OrganizationsController extends Controller
 
         return response(null, 204);
     }
-    
+
     public function enrol()
     {
         abort_unless(\Gate::allows('organization_enrolment'), 403);
-        
+
         foreach ((request()->enrollment_list) AS $enrolment)
-        {  
-            
+        {
+
             $return[] = OrganizationRoleUser::updateOrCreate(
                     [
                         'user_id'         => $enrolment['user_id'],
@@ -202,37 +200,37 @@ class OrganizationsController extends Controller
                     ]
                 );
         }
-        
-        return $return;  
+
+        return $return;
     }
-    
+
     public function expel()
     {
         abort_unless(\Gate::allows('organization_enrolment'), 403);
-        
+
         foreach ((request()->expel_list) AS $expel)
-        {  
+        {
             $return[] = OrganizationRoleUser::where([
                 'user_id'         => $expel['user_id'],
                 'organization_id' => $expel['organization_id'],
             ])->delete();
-            
+
             // if users current_organization_id is equal to expelled organization reset current_organization_id
-            $u = \App\User::find($expel['user_id']);
-            
+            $u = User::find($expel['user_id']);
+
             if ($u->current_organization_id == $expel['organization_id'])
             {
                 $u->current_organization_id = $u->organizations()->first()->id;
                 $u->save();
-            } 
+            }
         }
-        
-        return $return;  
+
+        return $return;
     }
-    
+
     protected function validateRequest()
-    {               
-        
+    {
+
         return request()->validate([
             'title'         => 'sometimes|required',
             'description'   => 'sometimes',

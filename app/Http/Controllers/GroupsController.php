@@ -32,12 +32,12 @@ class GroupsController extends Controller
         abort_unless(\Gate::allows('group_access'), 403);
 
         switch (auth()->user()->role()->id) {
-            case 1:  $groups = Group::all();
+            case 1:  $groups = Group::with(['grade', 'period', 'organization'])->get();
                 break;
-            case 4:  $groups = Group::where('organization_id', auth()->user()->current_organization_id)->get();
+            case 4:  $groups = Group::where('organization_id', auth()->user()->current_organization_id)->with(['grade', 'period', 'organization'])->get();
                 break;
 
-            default: $groups = auth()->user()->groups()->get();
+            default: $groups = auth()->user()->groups()->with(['grade', 'period', 'organization'])->get();
                 break;
         }
         //$groups = (auth()->user()->role()->id == 1) ? Group::all() : auth()->user()->groups()->get();
@@ -48,13 +48,13 @@ class GroupsController extends Controller
 
         return DataTables::of($groups)
             ->addColumn('grade', function ($groups) {
-                return $groups->grade()->first()->title;
+                return $groups->grade->title;
             })
             ->addColumn('period', function ($groups) {
-                return $groups->period()->first()->title;
+                return $groups->period->title;
             })
             ->addColumn('organization', function ($groups) {
-                return $groups->organization()->first()->title;
+                return $groups->organization->title;
             })
             ->addColumn('action', function ($groups) use ($show_gate, $edit_gate, $delete_gate) {
                  $actions  = '';

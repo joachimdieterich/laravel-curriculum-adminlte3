@@ -94,9 +94,7 @@ $(document).ready( function () {
         ],
         buttons: dtButtons
     });
-    table.on( 'select', function ( e, dt, type, indexes ) { //on select event
-        window.location.href = "/configs/" + table.row({ selected: true }).data().id ;
-    });
+    
  });
 </script>
 

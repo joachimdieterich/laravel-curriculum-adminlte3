@@ -247,12 +247,13 @@ The [Permission-Map](permissionmap.md) gives a quick view over the permissions o
 
 
 ### Artisan commands
+#### References between curricula
 To refresh curriculum references (referencing_curriculum_id on terminal- and enablingObjectives) based on reference_subscriptions and quote_subscriptions use the following command.
 ```bash
 php artisan objectives:refreshReferences
 ```
-
-To generate a metadataset of all curricula (with type_id == 1), the number at the end will be used as version number.
+#### Generate metadataset 
+To generate a metadataset for API ```/v1/curricula/metadatasets?password={password}``` of all curricula (with type_id == 1), the number at the end will be used as version number.
 ```bash
 php artisan curriculum:metadataset 001
 ```

@@ -15,35 +15,34 @@ class ConfigController extends Controller
      */
     public function index()
     {
-        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin 
+        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
         $configs = Config::all();
-        return view('configs.index')->with(compact('configs')); 
+        return view('configs.index')->with(compact('configs'));
     }
-    
+
     public function list()
     {
-        abort_unless(auth()->user()->role()->id == 1, 403);
+        $users_current_role = auth()->user()->role()->id;
+        abort_unless($users_current_role == 1, 403);
         $configs = Config::all() ;
-              
+
         return DataTables::of($configs)
-            ->addColumn('action', function ($configs) {
+            ->addColumn('action', function ($configs) use ($users_current_role){
                  $actions  = '';
-                    if (auth()->user()->role()->id == 1){
+                    if ($users_current_role == 1){
                         $actions .= '<a href="'.route('configs.edit', $configs->id).'"'
                                     . 'id="edit-config-'.$configs->id.'" '
                                     . 'class="btn p-1">'
-                                    . '<i class="fa fa-pencil-alt"></i>' 
-                                    . '</a>';
-                    }
-                    if (auth()->user()->role()->id == 1){
-                        $actions .= '<button type="button" '
+                                    . '<i class="fa fa-pencil-alt"></i>'
+                                    . '</a>'
+                                . '<button type="button" '
                                 . 'class="btn text-danger" '
                                 . 'onclick="destroyDataTableEntry(\'configs\','.$configs->id.')">'
                                 . '<i class="fa fa-trash"></i></button>';
                     }
                 return $actions;
             })
-           
+
             ->addColumn('check', '')
             ->setRowId('id')
             ->setRowAttr([
@@ -59,7 +58,7 @@ class ConfigController extends Controller
      */
     public function create()
     {
-        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin 
+        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
         return view('configs.create');
     }
 
@@ -71,8 +70,8 @@ class ConfigController extends Controller
      */
     public function store(Request $request)
     {
-        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin 
-        $config = Config::firstOrCreate($this->validateRequest()); 
+        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
+        $config = Config::firstOrCreate($this->validateRequest());
         return redirect(route('configs.index'));
     }
 
@@ -84,7 +83,7 @@ class ConfigController extends Controller
      */
     public function show(Config $config)
     {
-        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin 
+        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
     }
 
     /**
@@ -95,8 +94,8 @@ class ConfigController extends Controller
      */
     public function edit(Config $config)
     {
-        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin 
-        
+        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
+
         return view('configs.edit')
                 ->with(compact('config'));
     }
@@ -109,10 +108,10 @@ class ConfigController extends Controller
      */
     public function update(Config $config)
     {
-        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin 
-          
+        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
+
         $config->update($this->validateRequest());
-        
+
         return redirect(route('configs.index'));
     }
 
@@ -124,14 +123,14 @@ class ConfigController extends Controller
      */
     public function destroy(Config $config)
     {
-        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin 
+        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
         $config->delete();
 
         return back();
     }
-    
+
     protected function validateRequest()
-    {     
+    {
         return request()->validate([
             'key'                => 'sometimes|required',
             'value'              => 'sometimes',

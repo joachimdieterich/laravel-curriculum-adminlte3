@@ -29,14 +29,14 @@ class OrganizationsController extends Controller
     public function list()
     {
         abort_unless(\Gate::allows('organization_access'), 403);
-        $organizations = (auth()->user()->role()->id == 1) ? Organization::all() : auth()->user()->organizations()->get();
+        $organizations = (auth()->user()->role()->id == 1) ? Organization::with(['status'])->get() : User::where('id', auth()->user()->id)->get()->first()->organizations()->with(['status'])->get();
 
         $edit_gate = \Gate::allows('organization_edit');
         $delete_gate = \Gate::allows('organization_delete');
 
         return DataTables::of($organizations)
             ->addColumn('status', function ($organizations) {
-                return $organizations->status()->first()->lang_de;
+                return $organizations->status->lang_de;
             })
             ->addColumn('action', function ($organizations) use ($edit_gate, $delete_gate){
                  $actions  = '';

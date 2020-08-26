@@ -17,27 +17,27 @@ class GradesController extends Controller
 
         return view('grades.index');
     }
-    
+
     public function list()
     {
         abort_unless(\Gate::allows('grade_access'), 403);
         $grades = Grade::select([
-            'id', 
-            'title', 
-            'external_begin', 
-            'external_end', 
+            'id',
+            'title',
+            'external_begin',
+            'external_end',
             'organization_type_id',
-            ]);  
-        
-        
+            ])->with('organizationType')->get();
+
+
         $edit_gate = \Gate::allows('grade_edit');
         $delete_gate = \Gate::allows('grade_delete');
-        
+
         return DataTables::of($grades)
             ->addColumn('organization_type', function ($grades) {
-                return isset($grades->organizationType()->first()->title) ? $grades->organizationType()->first()->title : 'default';                
+                return isset($grades->organizationType->title) ? $grades->organizationType->title : 'default';
             })
-           
+
             ->addColumn('action', function ($grades) use ($edit_gate, $delete_gate) {
                  $actions  = '';
                     if ($edit_gate){
@@ -53,10 +53,10 @@ class GradesController extends Controller
                                 . 'onclick="destroyDataTableEntry(\'grades\','.$grades->id.')">'
                                 . '<i class="fa fa-trash"></i></button>';
                     }
-              
+
                 return $actions;
             })
-           
+
             ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
@@ -74,7 +74,7 @@ class GradesController extends Controller
     {
         abort_unless(\Gate::allows('grade_create'), 403);
         $new_grade = $this->validateRequest();
-        
+
         $grades = Grade::create([
             'title' => $new_grade['title'],
             'external_begin' => $new_grade['external_begin'],
@@ -132,15 +132,15 @@ class GradesController extends Controller
 
         return response(null, 204);
     }
-    
+
     protected function validateRequest()
-    {   
+    {
         return request()->validate([
             'title'                  => 'sometimes|required',
             'external_begin'         => 'sometimes|required',
             'external_end'           => 'sometimes|required',
             'organization_type_id'   => 'sometimes|required',
-            
+
         ]);
     }
 }

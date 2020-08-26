@@ -23,21 +23,21 @@ class UsersController extends Controller
     public function index()
     {
         abort_unless(\Gate::allows('user_access'), 403);
-        
+
         if (auth()->user()->role()->id == 1)
         {
-            $organizations = Organization::all(); 
+            $organizations = Organization::all();
             $roles = Role::all();
             $groups = Group::orderBy('organization_id', 'desc')->get() ;
-        } 
-        else 
+        }
+        else
         {
-            $organizations = auth()->user()->organizations()->get(); 
+            $organizations = auth()->user()->organizations()->get();
             $roles = Role::where('id', '>',  auth()->user()->role()->id)->get();
-            $groups = (auth()->user()->role()->id == 4) ? Group::where('organization_id', auth()->user()->current_organization_id)->get() : auth()->user()->groups()->orderBy('organization_id', 'desc')->get();   
+            $groups = (auth()->user()->role()->id == 4) ? Group::where('organization_id', auth()->user()->current_organization_id)->get() : auth()->user()->groups()->orderBy('organization_id', 'desc')->get();
         }
         $status_definitions = StatusDefinition::all();
-        
+
         return view('users.index')
           //>with(compact('users'))
           ->with(compact('organizations'))
@@ -45,18 +45,18 @@ class UsersController extends Controller
           ->with(compact('groups'))
           ->with(compact('roles'));
     }
-    
+
     public function list()
     {
         $users = (auth()->user()->role()->id == 1) ? User::with(['status'])->get() : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->with(['status'])->get();
-        
+
         $show_gate = \Gate::allows('user_show');
         $edit_gate = \Gate::allows('user_edit');
         $delete_gate = \Gate::allows('user_delete');
-        
+
         return DataTables::of($users)
             ->addColumn('status', function ($users) {
-                return $users->status->lang_de;                
+                return $users->status->lang_de;
             })
             ->addColumn('action', function ($users) use ($show_gate, $edit_gate, $delete_gate) {
                  $actions  = '';
@@ -80,15 +80,15 @@ class UsersController extends Controller
                                 . 'onclick="destroyDataTableEntry(\'users\','.$users->id.')">'
                                 . '<i class="fa fa-trash"></i></button>';
                     }
-              
+
                 return $actions;
             })
-           
+
             ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
     }
-    
+
 
     public function create()
     {
@@ -111,10 +111,10 @@ class UsersController extends Controller
         {
             $user = User::create($request->all());
         }
-        
-        
+
+
         /*
-         * Todo User have to be enroled to (creators) institution 
+         * Enrol user to (creators) institution. Every user have to be enrolled to an institution!
          */
         OrganizationRoleUser::firstOrCreate(
             [
@@ -127,7 +127,7 @@ class UsersController extends Controller
         );
         $user->current_organization_id = auth()->user()->current_organization_id; //set default org
         $user->save();
-        
+
         //$user->roles()->sync($request->input('roles', []));
          return redirect($user->path());
     }
@@ -152,7 +152,7 @@ class UsersController extends Controller
 
         return redirect()->route('users.index');
     }
-    
+
     public function massUpdate(MassUpdateUserRequest $request)
     {
         //dd(request());
@@ -160,16 +160,16 @@ class UsersController extends Controller
         {
             User::whereIn('id', request('ids'))->update([
             'password' => Hash::make($request->password)
-                ]); 
+                ]);
         }
-        
+
         if (isset(request()->status_id[0]))
         {
         User::whereIn('id', request('ids'))->update([
             'status_id' => $request->status_id
-                ]);  
+                ]);
         }
-        
+
         return response(null, 204);
     }
 
@@ -191,7 +191,7 @@ class UsersController extends Controller
 
         $return = $user->delete();
         //todo concept to hard-delete users
-        if (request()->wantsJson()){    
+        if (request()->wantsJson()){
             return ['message' => $return];
         }
     }
@@ -199,20 +199,20 @@ class UsersController extends Controller
     public function massDestroy(MassDestroyUserRequest $request)
     {
         User::whereIn('id', request('ids'))->delete();
-           
+
         return response(null, 204);
     }
-    
+
     public function setCurrentOrganizationAndPeriod()
     {
         User::where('id', auth()->user()->id)->update([
             'current_period_id' => request('current_period_id'),
             'current_organization_id' => request('current_organization_id')
-        ]); 
-        
+        ]);
+
         return back();
     }
-   
+
     /**
      * Set users Profile Image
      * @return type
@@ -223,18 +223,18 @@ class UsersController extends Controller
         //sdump(request());
         User::where('id', auth()->user()->id)->update([
             'medium_id' => (null !== $medium->getByFilemanagerPath(request('filepath'))) ? $medium->getByFilemanagerPath(request('filepath'))->id : null,
-                ]); 
-        
+                ]);
+
         return back();
     }
-    
+
     public function getAvatar(User $user)
     {
-        if (request()->wantsJson()){    
+        if (request()->wantsJson()){
             return ['avatar' => ($user->medium_id !== null) ? '/media/'.$user->medium_id  : (new \Laravolt\Avatar\Avatar)->create($user->fullName())->toBase64()];
         } else {
-            return ($user->medium_id !== null) ? '/media/'.$user->medium_id  : (new \Laravolt\Avatar\Avatar)->create($user->fullName())->toBase64();    
+            return ($user->medium_id !== null) ? '/media/'.$user->medium_id  : (new \Laravolt\Avatar\Avatar)->create($user->fullName())->toBase64();
         }
-        
+
     }
 }

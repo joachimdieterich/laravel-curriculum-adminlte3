@@ -21,7 +21,7 @@ class GroupsController extends Controller
     {
         abort_unless(\Gate::allows('group_access'), 403);
 
-        $curricula =  (auth()->user()->role()->id == 1) ? Curriculum::all() : auth()->user()->curricula();
+        $curricula =  (auth()->user()->role()->id == 1) ? Curriculum::all() : Curriculum::where('type_id', 1)->get();
 
         return view('groups.index')
           ->with(compact('curricula'));

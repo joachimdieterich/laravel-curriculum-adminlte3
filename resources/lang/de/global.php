@@ -93,7 +93,7 @@ return [
             'data_type'          => 'Daten-Typ',
             'data_type_helper'   => '',
         ],
-    ],  
+    ],
     'date'                                 => 'Datum',
     'region'                               => 'Region',
     'place'                                => 'Ort',
@@ -444,7 +444,7 @@ return [
             'title'              => 'Titel',
             'title_helper'       => '',
         ],
-    ],  
+    ],
     'grade'              =>[
         'title'          => 'Klassen-/Lernstufen',
         'title_singular' => 'Klassen-/Lernstufe',
@@ -460,7 +460,7 @@ return [
             'external_end'          => 'Ende',
             'external_end_helper'   => '',
         ],
-    ],  
+    ],
     'organizationtype' =>[
         'title'          => 'Organisations-Typen',
         'title_singular' => 'Organisation-Typ',
@@ -474,7 +474,7 @@ return [
             'external_id'        => 'External ID',
             'external_id_helper' => '',
         ],
-    ],  
+    ],
     'state' =>[
         'title'          => 'Bundesländer/Regionen',
         'title_singular' => 'Bundesland/Region',
@@ -484,7 +484,7 @@ return [
             'lang_de'            => 'Titel',
             'lang_de_helper'     => '',
         ],
-    ],  
+    ],
     'country' =>[
         'title'          => 'Länder',
         'title_singular' => 'Land',
@@ -510,7 +510,7 @@ return [
             'langNL'             => 'Titel (langNL)',
             'langNL_helper'      => '',
         ],
-    ],  
+    ],
     'status' =>[
         'title'          => 'Status',
         'title_singular' => 'Status',
@@ -524,7 +524,7 @@ return [
             'lang_en'           => 'Titel (lang_en)',
             'lang_en_helper'    => '',
         ],
-    ], 
+    ],
     'period' =>[
         'title'           => 'Lernzeiträume',
         'title_singular'  => 'Lernzeitraum',
@@ -540,7 +540,7 @@ return [
             'end'         => 'Ende',
             'end_helper'  => '',
         ],
-    ], 
+    ],
     'subject' =>[
         'title'          => 'Fächer',
         'title_singular' => 'Fach',
@@ -565,7 +565,7 @@ return [
             'title_helper'      => '',
             'content'           => 'Inhalt',
             'content_helper'    => '',
-        ]   
+        ]
     ],
     'categorie' =>[
         'title'          => 'Kategorien',
@@ -577,7 +577,7 @@ return [
             'id_helper'     => '',
             'title'         => 'Titel',
             'title_helper'  => '',
-        ]   
+        ]
     ],
     'curriculum' =>[
         'title'          => 'Curricula',
@@ -605,6 +605,15 @@ return [
             'date_helper'           => '',
             'color'                 => 'Farbe',
             'color_helper'          => '',
+        ],
+    ],
+    'curriculumtype' =>[
+        'title'          => 'Typ',
+        'title_singular' => 'Typ',
+        'fields'         => [
+            'id'         => 'ID',
+            'id_helper'  => '',
+            'title'      => 'Titel',
         ],
     ],
     'terminalObjective' =>[
@@ -712,7 +721,7 @@ return [
             'title_helper'      => '',
             'description'       => 'Beschreibung',
             'description_helper'=> '',
-        ]   
+        ]
     ],
     'navigator_item' =>[
         'title'          => 'Navigator-Blöcke',
@@ -736,7 +745,7 @@ return [
             'css_class_helper'          => '',
             'visibility_show'           => 'anzeigen',
             'visibility_hide'           => 'ausblenden'
-        ]   
+        ]
     ],
     'referenceable_types' =>[
         'objective'         => 'Überfachliche Bezüge',
@@ -766,7 +775,7 @@ return [
             'user_id_helper'            => '',
             'owner_id'                  => 'Eigentümer Id',
             'owner_id_helper'           => '',
-        ]   
+        ]
     ],
     'progress' =>[
         'title'          => 'Fortschritte',
@@ -784,7 +793,7 @@ return [
             'associable_id_helper'      => '',
             'value'                     => 'Wert',
             'value_helper'              => '',
-        ]   
+        ]
     ],
     'certificate' =>[
         'title'          => 'Zertifkate',
@@ -807,7 +816,7 @@ return [
             'organization_id_helper'=> '',
             'owner_id'              => 'Eigentümer Id',
             'owner_id_helper'       => '',
-        ]   
+        ]
     ],
     'logbook' =>[
         'title'             => 'Logbücher',
@@ -887,7 +896,7 @@ return [
         'fields'            => [
             'id'            => 'ID',
             'id_helper'     => '',
-            
+
        ],
     ],
     'eventSubscription' =>[
@@ -901,7 +910,7 @@ return [
         'fields'            => [
             'id'            => 'ID',
             'id_helper'     => '',
-            
+
        ],
     ],
     'message' =>[
@@ -967,7 +976,7 @@ return [
             'title_helper'  => '',
             'description'         => 'Beschreibung',
             'description_helper'  => '',
-           
+
        ],
     ],
     'contactdetail' =>[
@@ -986,7 +995,7 @@ return [
             'mobile_helper'  => '',
             'notes'         => 'Notizen/Sprechzeiten',
             'notes_helper'  => '',
-           
+
        ],
     ],
     'kanban' =>[

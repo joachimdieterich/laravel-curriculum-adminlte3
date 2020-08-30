@@ -29,6 +29,7 @@
             <th>{{ trans('global.grade.title_singular') }}</th>
             <th>{{ trans('global.subject.title_singular') }}</th>
             <th>{{ trans('global.organizationtype.title_singular') }}</th>
+            <th>{{ trans('global.curriculumtype.title') }}</th>
             <th>{{ trans('global.owner') }}</th>
             <th></th>
         </tr>
@@ -45,13 +46,14 @@ $(document).ready( function () {
     let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons);
     var table = $('#curricula-datatable').DataTable({
         ajax: "{{ url('curricula/list') }}",
-       
+
         columns: [
             { data: 'check'},
             { data: 'title' },
             { data: 'grade' },
             { data: 'subject' },
             { data: 'organizationtype' },
+            { data: 'type' },
             { data: 'owner' },
             { data: 'action' }
         ],

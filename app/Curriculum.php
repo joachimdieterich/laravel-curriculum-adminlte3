@@ -35,9 +35,10 @@ class Curriculum extends Model
         'state_id' => 'DE-RP',
         'country_id' => 'DE',
         'color' => '#27AE60',
-       'grade_id' => 1,
+        'grade_id' => 1,
         'subject_id' => 51, //Math
         'organization_type_id' => 1,
+        'type_id' => 1,
      ];
 
     public function path()
@@ -105,7 +106,7 @@ class Curriculum extends Model
 
     public function type()
     {
-        return $this->belongsTo('App\CurriculumType', 'type_id', 'id');
+        return $this->hasOne('App\CurriculumType', 'id', 'type_id');
     }
 
     public function contentSubscriptions()

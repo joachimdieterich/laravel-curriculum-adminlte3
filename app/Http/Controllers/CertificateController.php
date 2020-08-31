@@ -25,33 +25,33 @@ class CertificateController extends Controller
         abort_unless(\Gate::allows('certificate_access'), 403);
 
         //$certificates = Certificate::where('owner_id', auth()->user()->id)->get();
-       
+
         return view('certificates.index');
           //->with(compact('certificates'));
     }
-    
+
     public function list()
     {
         abort_unless(\Gate::allows('certificate_access'), 403);
         $certificates = Certificate::select([
-            'id', 
-            'title', 
+            'id',
+            'title',
             'description',
             'body',
             'curriculum_id',
             'organization_id',
             'owner_id',
             ])->with(['organization', 'curriculum', 'owner'])->where('owner_id', auth()->user()->id)->get();
-        
+
         return DataTables::of($certificates)
             ->addColumn('organization', function ($certificates) {
-                return $certificates->organization->title;                
+                return $certificates->organization->title;
             })
             ->addColumn('curriculum', function ($certificates) {
-                return $certificates->curriculum->title;                
+                return $certificates->curriculum->title;
             })
             ->addColumn('owner', function ($certificates) {
-                return $certificates->owner->firstname.' '.$certificates->owner->lastname;                
+                return $certificates->owner->firstname.' '.$certificates->owner->lastname;
             })
             ->addColumn('action', function ($certificates) {
                  $actions  = '';
@@ -70,10 +70,10 @@ class CertificateController extends Controller
                     if (\Gate::allows('certificate_delete')){
                         $actions .= '<button type="button" class="btn text-danger" onclick="destroyCertificate('.$certificates->id.')"><i class="fa fa-trash"></i></button>';
                     }
-              
+
                 return $actions;
             })
-           
+
             ->addColumn('check', '')
             ->setRowId('id')
             ->setRowAttr([
@@ -90,14 +90,14 @@ class CertificateController extends Controller
     public function create(Request $request)
     {
         abort_unless(\Gate::allows('certificate_create'), 403);
-        
+
         $curricula = Curriculum::where('id', $request->query('curriculum_id'))->get();
         $organisations = auth()->user()->organizations()->get();
-        
+
         $certificate = new Certificate();
         $certificate->curriculum_id = $request->query('curriculum_id');
         $certificate->organization_id = auth()->user()->current_organization_id;
-        
+
         return view('certificates.create')
                 ->with(compact('curricula'))
                 ->with(compact('certificate'))
@@ -122,14 +122,14 @@ class CertificateController extends Controller
             'curriculum_id'   => format_select_input($input['curriculum_id']),
             'organization_id' => format_select_input($input['organization_id']),
             'owner_id'        => auth()->user()->id,
-            
+
         ]);
-        
-        // axios call? 
-        if (request()->wantsJson()){    
+
+        // axios call?
+        if (request()->wantsJson()){
             return ['message' => $certificate->path()];
         }
-        
+
         return redirect($certificate->path());
     }
 
@@ -156,7 +156,7 @@ class CertificateController extends Controller
         abort_unless(\Gate::allows('certificate_edit'), 403);
         $curricula = Curriculum::where('owner_id', auth()->user()->id)->get();
         $organisations = auth()->user()->organizations()->get();
-        
+
         return view('certificates.edit')
             ->with(compact('certificate'))
             ->with(compact('curricula'))
@@ -173,7 +173,7 @@ class CertificateController extends Controller
     public function update(Request $request, Certificate $certificate)
     {
         abort_unless(\Gate::allows('certificate_edit'), 403);
-        
+
         $certificate->update([
             'title' => $request['title'],
             'description' => $request['description'],
@@ -199,7 +199,7 @@ class CertificateController extends Controller
 
         return back();
     }
-    
+
     /**
      * Generate a certificate based on existing template
      *
@@ -209,9 +209,9 @@ class CertificateController extends Controller
     public function generate(Request $request)
     {
         abort_unless(\Gate::allows('certificate_access'), 403);
-        $certificate = Certificate::find(request()->certificate_id); 
-        
-        switch ($certificate->type) 
+        $certificate = Certificate::find(request()->certificate_id);
+
+        switch ($certificate->type)
         {
             case 'user':            return $this->generateForUsers($certificate);
                 break;
@@ -224,7 +224,7 @@ class CertificateController extends Controller
                 break;
         }
     }
-    
+
     /**
      * Generate certificate(s) for user(s)
      * @param object $certificate
@@ -233,21 +233,21 @@ class CertificateController extends Controller
     protected function generateForUsers($certificate)
     {
         $generated_files = [];
-        foreach ((array) request()->user_ids as $id) 
-        {   
+        foreach ((array) request()->user_ids as $id)
+        {
             $user = User::where('id', $id)->get()->first();
-            
+
             //replace placeholder
             $html = $this->replaceFields(
-                    $certificate->body, 
-                    $user, 
-                    Organization::where('id', auth()->user()->current_organization_id)->get()->first(), 
+                    $certificate->body,
+                    $user,
+                    Organization::where('id', auth()->user()->current_organization_id)->get()->first(),
                     request()->date);
-           
-            $html = preg_replace_callback( 
-                '/<progress\s+[^>]*reference_type="(.*?)"\s+[^>]*reference_id="(.*?)"\s+[^>]*min_value="(.*?)"[^>]*>(.*?)<\/progress>/mis', 
+
+            $html = preg_replace_callback(
+                '/<progress\s+[^>]*reference_type="(.*?)"\s+[^>]*reference_id="(.*?)"\s+[^>]*min_value="(.*?)"[^>]*>(.*?)<\/progress>/mis',
                 function($match) use($user)
-                { 
+                {
                     // evaluate progress
                     // Example
                     // Full match <progress reference_type="App\TerminalObjective" reference_id="1" min_value="60"/><img src="/media/2"/></progress>
@@ -259,7 +259,7 @@ class CertificateController extends Controller
                     $associable_type = 'App\User';
                     $associable_id = $user->id;
 
-                    // foreach(explode(",", $match[2]) as $terid) // recalc progress -> only for dev 
+                    // foreach(explode(",", $match[2]) as $terid) // recalc progress -> only for dev
                     // {
                     //      (new ProgressController)->calculateProgress('App\TerminalObjective', $terid, $associable_id);
                     // }
@@ -269,36 +269,36 @@ class CertificateController extends Controller
                                 ->where('associable_type', $associable_type)
                                 ->where('associable_id', $associable_id)
                                 ->get();
-                    
-                    return ($progress->avg('value') != null AND $progress->avg('value') >= (integer) $match[3]) 
-                            ? $match[4] 
-                            : $match[4].'<div style="display: block; position: absolute; top:0; height:100%; width: 140px; background: white; opacity: 0.8;"></div>';
-                }, 
 
-                $html 
-            );     
+                    return ($progress->avg('value') != null AND $progress->avg('value') >= (integer) $match[3])
+                            ? $match[4]
+                            : $match[4].'<div style="display: block; position: absolute; top:0; height:100%; width: 140px; background: white; opacity: 0.8;"></div>';
+                },
+
+                $html
+            );
             //end progress
 
             $filename = date("Y-m-d_H-i-s").$user->lastname."_".$user->firstname.".pdf";
             $path     = config('lfm.files_folder_name')."/".auth()->user()->id."/";
             $pathOfNewFile = $this->buildPdf($html, $path, $filename);
-            
+
             array_push($generated_files, ['filename' => $filename, 'path' => Storage::disk('local')->path($path.$filename)]);
         }//end foreach
-        
-        if (request()->wantsJson()){    
+
+        if (request()->wantsJson()){
             if (count($generated_files) > 1) //zip if more than one files
             {
                 return ['message' => $this->zipper($path, $generated_files)];
-            } 
+            }
             else //only one file ? return pdf
             {
                 return ['message' => $pathOfNewFile];
             }
-            
+
         }
     }
-    
+
     /**
      * Generate certificate for group
      * @param object $certificate
@@ -306,22 +306,22 @@ class CertificateController extends Controller
     protected function generateForGroup($certificate)
     {
         $td_style   = 'style="border-bottom: 1px solid silver;border-right: 1px solid silver;"';
-        
+
         $html  = '<table repeat_header="1" style="width: 100%;padding-bottom: 10px;" border="0"><tbody>'
                 .'<thead><tr><td style="border-bottom: 1px solid silver;"><strong>Ziele / Namen</strong></td>';
-        foreach ((array) request()->user_ids as $id) 
-        {   
+        foreach ((array) request()->user_ids as $id)
+        {
             $user = User::where('id', $id)->get()->first();
             $html .= '<td '.$td_style.'><strong>'.$user->firstname.' '.$user->lastname.'</strong></td>';
         }
         $html .= '</tr></thead>';
-        
+
         $curriculum = Curriculum::with([
-                'terminalObjectives', 
+                'terminalObjectives',
                 'terminalObjectives.enablingObjectives'])
             ->find($certificate->curriculum_id);
-                                
-        foreach ($curriculum->terminalObjectives as $ter_value) 
+
+        foreach ($curriculum->terminalObjectives as $ter_value)
         {
             $html .= '<tr><td '.$td_style.'><strong>'.strip_tags($ter_value->title).'</strong></td>';
             foreach((array) request()->user_ids as $id)
@@ -329,10 +329,10 @@ class CertificateController extends Controller
                 $html .= '<td '.$td_style.'></td>';
             }
             $html .= '</tr>';
-            foreach ($ter_value->enablingObjectives as $ena) 
+            foreach ($ter_value->enablingObjectives as $ena)
             {
-                
-                $html .= '<tr><td style="width: 25%;border-bottom: 1px solid silver;border-right: 1px solid silver;">'.$ena->id.strip_tags($ena->title).'</td>';
+
+                $html .= '<tr><td style="width: 25%;border-bottom: 1px solid silver;border-right: 1px solid silver;">'.strip_tags($ena->title).'</td>';
                     foreach((array) request()->user_ids as $user_id)
                     {
                         $html .='<td style="text-align: center; border-bottom: 1px solid silver;border-right: 1px solid silver;">';
@@ -340,26 +340,26 @@ class CertificateController extends Controller
                             [
                                 "referenceable_type" => 'App\EnablingObjective',
                                 "referenceable_id"   => $ena->id,
-                                "user_id"            => $user_id,                        
+                                "user_id"            => $user_id,
                             ])->get()->first())->status);
-                        
+
                         $html .= '</td>';
                     }
                 $html .= '</tr>';
             }
         }
-        
+
         $timestamp = date("Y-m-d_H-i-s");
         $html .='</tbody></table>';
         $filename = $timestamp.$user->lastname."_".$user->firstname.".pdf";
         $path = config('lfm.files_folder_name')."/".auth()->user()->id."/";
-        
-        if (request()->wantsJson()){    
+
+        if (request()->wantsJson()){
             return ['message' => $this->buildPdf($html, $path, $filename, 'landscape')];
         }
     }
-    
-    
+
+
     protected function replaceFields($string, $user, $organization, $date)
     {
         $search = array(
@@ -371,19 +371,19 @@ class CertificateController extends Controller
             '<span id="organization_city"></span>',
             '<span id="date"></span>'
            );
-        
+
         $replace = array(
-            $user->firstname, 
-            $user->lastname, 
-            $organization->title, 
-            $organization->street, 
-            $organization->postcode, 
-            $organization->city, 
+            $user->firstname,
+            $user->lastname,
+            $organization->title,
+            $organization->street,
+            $organization->postcode,
+            $organization->city,
             $date);
-        
+
         return str_replace($search, $replace, $string);
     }
-    
+
     protected function achievementIndicator($status)
     {
         $span_style = 'style="text-align: center; font-family: Arial Unicode MS, Lucida Grande"';
@@ -401,7 +401,7 @@ class CertificateController extends Controller
         }
         return $html;
     }
-    
+
     /**
      * Generate certificate for organization
      * @param object $certificate
@@ -410,10 +410,10 @@ class CertificateController extends Controller
     {
         //todo
     }
-    
+
     protected function buildPdf($html, $path, $filename, $orientation = 'portrait')
     {
-        /* replace relative media links with absolute paths to get snappy working */ 
+        /* replace relative media links with absolute paths to get snappy working */
         $html = relativeToAbsoutePaths($html);
 
         SnappyPdf::loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'.$html)
@@ -425,7 +425,7 @@ class CertificateController extends Controller
 
         return $this->addFileToDb($filename);
     }
-    
+
     protected function zipper($path, $files)
     {
         $filename = date("Y-m-d_H-i-s").".zip";
@@ -435,9 +435,9 @@ class CertificateController extends Controller
         foreach ($files as $file) {
             $zip->addFile($file['path'], $file['filename']);
         }
-        
+
         $zip->close();
-        
+
         return $this->addFileToDb($filename); //returns $media->path()
     }
 
@@ -455,22 +455,22 @@ class CertificateController extends Controller
                 'size'          => File::size(Storage::disk('local')->path(config('lfm.files_folder_name')."/".auth()->user()->id."/".$filename)),
                 'mime_type'     => File::mimeType(Storage::disk('local')->path(config('lfm.files_folder_name')."/".auth()->user()->id."/".$filename)),
                 'license_id'    => 2,
-                
+
                 'public'        => 0,           //certificates can not be accessed without owership/subscription
                 'owner_id'      => auth()->user()->id,
-            ]); 
+            ]);
         $media->save();
-        
+
         /*
-         * add subscription 
+         * add subscription
          */
         $media->subscribe(auth()->user(), 4);
-        
+
         return  $media->path();
     }
 
     protected function validateRequest()
-    {               
+    {
         return request()->validate([
             'title'                 => 'sometimes|required',
             'description'           => 'sometimes',

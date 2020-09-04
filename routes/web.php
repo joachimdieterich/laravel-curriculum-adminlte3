@@ -15,28 +15,28 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', 'HomeController@index')->name('home');
 
     Route::resource('absences', 'AbsenceController');
-    
+
     Route::post('achievements', 'AchievementController@store');
-    
+
     Route::resource('categories', 'CategorieController');
-   
+
     Route::get('certificates/list', 'CertificateController@list');
     //Route::get('certificates/generate', 'CertificateController@generate'); //for testing only
     Route::post('certificates/generate', 'CertificateController@generate');
     Route::resource('certificates', 'CertificateController');
-    
+
     Route::get('configs/list', 'ConfigController@list');
     Route::resource('configs', 'ConfigController');
-    
+
      Route::resource('contactdetails', 'ContactDetailController');
-    
+
     Route::post('contents/{content}/destroy', 'ContentController@destroy')->name('contents.destroy'); //has to be post (has parameters)
     Route::resource('contents', 'ContentController');
-    
+
     /* courses */
     Route::get('courses/list', 'CourseController@list');
     Route::resource('courses', 'CourseController');
-  
+
     /* country */
     Route::get('countries/{country}/states', 'CountryController@getStates')->name('countries.states');
 
@@ -65,7 +65,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('eventSubscriptions/search', 'EventSubscriptionController@search')->name('eventSubscriptions.search');
     Route::post('eventSubscriptions/getEvents', 'EventSubscriptionController@getEvents')->name('eventSubscriptions.getEvents');
     Route::resource('eventSubscriptions', 'EventSubscriptionController');
-    
+
     /* grades */
     Route::get('grades/list', 'GradesController@list')->name('grades.list');
     Route::delete('grades/destroy', 'GradesController@massDestroy')->name('grades.massDestroy');
@@ -81,46 +81,46 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('groupList', 'GroupsController@groupList');
     Route::resource('groups', 'GroupsController');
-    
+
     Route::get('kanbans/list', 'KanbanController@list');
     Route::resource('kanbans', 'KanbanController');
     Route::put('kanbanItems/sync', 'KanbanItemController@sync')->name('kanbanItems.sync');
     Route::resource('kanbanItems', 'KanbanItemController');
     Route::put('kanbanStatuses/sync', 'KanbanStatusController@sync')->name('kanbanStatuses.sync');
     Route::resource('kanbanStatuses', 'KanbanStatusController');
-    
+
     Route::resource('kanbanSubscriptions', 'KanbanSubscriptionController');
-    
+
     Route::resource('levels', 'LevelController');
-    
+
     /* logbooks */
     Route::get('logbooks/list', 'LogbookController@list');
     Route::resource('logbooks', 'LogbookController');
-    
+
     /* logbook entries */
     Route::resource('logbookEntries', 'LogbookEntryController');
-   
+
     /* Messages */
     Route::get('messages', 'MessagesController@index')->name('messages');
     Route::get('messages/create', 'MessagesController@create')->name('messages.create');
     Route::post('messages', 'MessagesController@store')->name('messages.store');
     Route::get('messages/{id}', 'MessagesController@show')->name('messages.show');
     Route::put('messages/{id}', 'MessagesController@update')->name('messages.update');
-   
-    /* Navigators */ 
+
+    /* Navigators */
     Route::get('navigators/list', 'NavigatorController@list');
     Route::resource('navigators', 'NavigatorController');
-    
+
     Route::get('navigators/{navigator}/{navigator_view}', 'NavigatorViewController@show')->name('navigator.view');
-   
+
     /* Navigator Views */
     Route::resource('navigatorViews', 'NavigatorViewController');
-    
+
     /* Navigator Views */
     Route::resource('navigatorItems', 'NavigatorItemController');
-    
+
     /* media */
-    
+
     Route::post('mediumSubscriptions/destroy', 'MediumSubscriptionController@destroySubscription');
     Route::resource('mediumSubscriptions', 'MediumSubscriptionController');
     Route::delete('media/massDestroy', 'MediumController@massDestroy')->name('media.massDestroy');
@@ -143,11 +143,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('organizationtypes/list', 'OrganizationTypesController@list')->name('organizationtypes.list');
     Route::delete('organizationtypes/destroy', 'OrganizationTypesController@massDestroy')->name('organizationtypes.massDestroy');
     Route::resource('organizationtypes', 'OrganizationTypesController');
-   
+
     /* period */
     Route::get('periods/list', 'PeriodController@list')->name('periods.list');
     Route::resource('periods', 'PeriodController');
-    
+
     /* permission */
     Route::get('permissions/list', 'PermissionsController@list')->name('permissions.list');
     Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');
@@ -156,15 +156,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('plans/massDestroy', 'PlanController@massDestroy')->name('plans.massDestroy');
     Route::get('plans/list', 'PlanController@list');
     Route::resource('plans', 'PlanController');
-    
+
     Route::get('print/content/{content}', 'PrintController@content')->name('print.content');
     Route::get('print/glossar/{glossar}', 'PrintController@glossar')->name('print.glossar');
     Route::get('print/{model}/{id}', 'PrintController@model')->name('print.model');
     Route::get('print/curriculum/{curriculum}', 'PrintController@curriculum')->name('print.curriculum');
     Route::get('print/curriculum/{curriculum}/references', 'PrintController@references')->name('print.references');
-    
+
     Route::resource('progresses', 'ProgressController');
-   
+
     Route::post('repositorySubscriptions/destroySubscription', 'RepositorySubscriptionController@destroySubscription')->name('repositorySubscriptions.destroySubscription');
     Route::post('repositorySubscriptions/searchRepository', 'RepositorySubscriptionController@searchRepository')->name('repositorySubscriptions.searchRepository');
     Route::post('repositorySubscriptions/getMedia', 'RepositorySubscriptionController@getMedia')->name('repositorySubscriptions.getMedia');
@@ -198,7 +198,8 @@ Route::group(['middleware' => 'auth'], function () {
     /* User */
     Route::delete('users/massDestroy', 'UsersController@massDestroy')->name('users.massDestroy');
     Route::patch('users/massUpdate', 'UsersController@massUpdate')->name('users.massUpdate');
-    Route::patch('users/setCurrentOrganizationAndPeriod', 'UsersController@setCurrentOrganizationAndPeriod')->name('users.setCurrentOrganizationAndPeriod');
+    Route::patch('users/setCurrentOrganization', 'UsersController@setCurrentOrganization')->name('users.setCurrentOrganization');
+    Route::patch('users/setCurrentPeriod', 'UsersController@setCurrentPeriod')->name('users.setCurrentPeriod');
     Route::patch('users/setAvatar', 'UsersController@setAvatar')->name('users.setAvatar');
 
     Route::get('users/list', 'UsersController@list');
@@ -222,9 +223,9 @@ if (env('GUEST_USER') !== null)
         {
             return redirect('/navigators/'.\App\User::find(env('GUEST_USER'))->organizations()->first()->navigators()->first()->id);
         }
-        else 
+        else
         {
             return redirect('/');
         }
-    }); 
+    });
 }

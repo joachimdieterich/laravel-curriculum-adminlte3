@@ -203,11 +203,19 @@ class UsersController extends Controller
         return response(null, 204);
     }
 
-    public function setCurrentOrganizationAndPeriod()
+    public function setCurrentOrganization()
     {
         User::where('id', auth()->user()->id)->update([
-            'current_period_id' => request('current_period_id'),
+            'current_period_id' => (request('current_period_id')) ? request('current_period_id') : 1,
             'current_organization_id' => request('current_organization_id')
+        ]);
+
+        return back();
+    }
+    public function setCurrentPeriod()
+    {
+        User::where('id', auth()->user()->id)->update([
+            'current_period_id' => request('current_period_id')
         ]);
 
         return back();

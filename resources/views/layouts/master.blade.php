@@ -9,7 +9,7 @@
         <title>{{ trans('global.site_title') }}</title>
         <link href="{{ mix('css/app.css') }}" rel="stylesheet" />
         <link href="{{ asset('css/custom.css') }}" rel="stylesheet" />
-        
+
         @yield('styles')
         <script>
             window.trans = <?php
@@ -106,7 +106,7 @@ echo json_encode([
         </div>
         <!-- ./wrapper -->
 
-        <script src="{{ asset('js/app.js') }}"></script>    
+        <script src="{{ asset('js/app.js') }}"></script>
         <script src="{{ asset('node_modules/datatables.net/js/jquery.dataTables.min.js') }}"></script>
         <script src="{{ asset('node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
         <script src="{{ asset('node_modules/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
@@ -117,7 +117,7 @@ echo json_encode([
         <script src="{{ asset('node_modules/datatables.net-select/js/dataTables.select.min.js') }}"></script>
         <script src="{{ asset('node_modules/moment/js/moment.min.js') }}"></script>
         <script src="{{ asset('node_modules/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}"></script>
-        <script src="{{ asset('js/main.js') }}"></script>   
+        <script src="{{ asset('js/main.js') }}"></script>
         <script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script>
         <script>
             $(function() {
@@ -130,10 +130,10 @@ echo json_encode([
                 let languages = {
                     'de': '{{ asset("datatables/i18n/German.json") }}',
                     'en': '{{ asset("datatables/i18n/English.json") }}',
-                    'fr': '{{ asset("datatables/i18n/French.json") }}', 
-                };     
+                    'fr': '{{ asset("datatables/i18n/French.json") }}',
+                };
                 $.extend(true, $.fn.dataTable.Buttons.defaults.dom.button, { className: 'btn-primary py-2 ml-1' })
-                
+
                     $.extend(true, $.fn.dataTable.defaults, {
                     processing: true,
                     serverSide: true,
@@ -147,7 +147,7 @@ echo json_encode([
                             "previous":   '<i class="fa fa-angle-left"></id>',
                         },
                     },
-                    columnDefs: [ 
+                    columnDefs: [
                         {
                             orderable: false,
                             className: 'select-checkbox',
@@ -171,38 +171,49 @@ echo json_encode([
                     });
                $.fn.dataTable.ext.classes.sPageButton = '';
                });
-               
-               function setCurrentOrganizationAndPeriod(selectBox){
+
+                function setCurrentOrganization(selectBox){
                     var op = selectBox.options[selectBox.selectedIndex];
-                    var optgroup = op.parentNode;
                     $.ajax({
                         headers: {'x-csrf-token': _token},
                         method: 'POST',
-                        url: "{{ route('users.setCurrentOrganizationAndPeriod') }}",
+                        url: "{{ route('users.setCurrentOrganization') }}",
+                        data: {
+                            current_organization_id: op.value,
+                            _method: 'PATCH',
+                        }
+                    })
+                        .done(function () { location.reload() })
+                }
+               function setCurrentOrganizationAndPeriod(selectBox){
+                    var op = selectBox.options[selectBox.selectedIndex];
+                    $.ajax({
+                        headers: {'x-csrf-token': _token},
+                        method: 'POST',
+                        url: "{{ route('users.setCurrentPeriod') }}",
                         data: {
                             current_period_id: op.value,
-                            current_organization_id: optgroup.id,
                             _method: 'PATCH',
                         }
                     })
                     .done(function () { location.reload() })
                }
-               
+
                function destroyDataTableEntry(route, id){
-                    if (confirm('{{ trans('global.areYouSure') }}')) {    
+                    if (confirm('{{ trans('global.areYouSure') }}')) {
                         $.ajax({
                             headers: {'x-csrf-token': _token},
                             method: 'POST',
                             url: route+'/'+id,
                             data: { _method: 'DELETE' }
                         })
-                        .done(function () { 
+                        .done(function () {
                             $("#"+id).hide();
                         });
                     }
                 }
         </script>
-        
+
         @yield('scripts')
     </body>
 </html>

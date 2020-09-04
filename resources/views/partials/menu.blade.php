@@ -1,24 +1,24 @@
-<aside class="main-sidebar sidebar-light-primary">    
+<aside class="main-sidebar sidebar-light-primary">
     <!-- Brand Logo/menu -->
     @include('partials.topmenu')
     <div id="menu_top_placeholder" class="clearfix"></div>
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <!-- Sidebar user (optional) -->
-        
-        
+
+
         <!-- Sidebar Menu -->
         <span class="clearfix"></span>
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar " data-widget="treeview" role="menu" data-accordion="false">
                 <li class="nav-item" style="width:100%">
-                    @include ('forms.input.select', 
-                        ["model" => "group", 
-                        "field" => "current_curriculum_group_id",  
-                        "options"=> auth()->user()->currentCurriculaEnrolments(), 
+                    @include ('forms.input.select',
+                        ["model" => "group",
+                        "field" => "current_curriculum_group_id",
+                        "options"=> auth()->user()->currentCurriculaEnrolments(),
                         "option_id" => "course_id",
-                        "onchange"=> "location = '/courses/'+this.value", 
-                        "optgroup" => auth()->user()->currentGroupEnrolments()->get(),    
+                        "onchange"=> "location = '/courses/'+this.value",
+                        "optgroup" => auth()->user()->currentGroupEnrolments()->get(),
                         "optgroup_id" => "id",
                         "optgroup_reference_field" => "group_id",
                         "placeholder" => trans('global.course.title').'...',
@@ -26,31 +26,39 @@
                         "value" =>  old('course_id', isset($course->id) ? $course->id : '')])
                 </li>
 <!--                <li class="nav-header pt-0">{{ strtoupper(trans('global.organization.title_singular')) }}</li>-->
-                @if (auth()->user()->organizations->count() > 1) 
+                @if (auth()->user()->organizations->count() > 1)
                 <li class="nav-item" style="width:100%">
-                   @include ('forms.input.select', 
-                        ["model" => "period", 
-                        "field" => "current_period_id",  
-                        "options"=> auth()->user()->periods(), 
+                   @include ('forms.input.select',
+                        ["model" => "organization",
+                        "field" => "current_organization_id",
+                        "options"=> auth()->user()->organizations,
                         "option_id" => "id",
-                        "optgroup" => auth()->user()->organizations,    
-                        "optgroup_id" => "id",
-                        "optgroup_reference_field" => "organization_id",
-                        "placeholder" => trans('global.period.title').'...',
-                        "combine_labels" => true,
-                        "onchange"=> "setCurrentOrganizationAndPeriod(this)",  
+                        "placeholder" => trans('global.organization.title').'...',
+                        "onchange"=> "setCurrentOrganization(this)",
                         "allowClear" => false,
-                        "value" => ''
+                        "value" => auth()->user()->current_organization_id
                         ])
+                    @if (auth()->user()->currentPeriods()->count() > 1)
+                        @include ('forms.input.select',
+                           ["model" => "period",
+                           "field" => "current_period_id",
+                           "options"=> auth()->user()->currentPeriods(),
+                           "option_id" => "id",
+                           "placeholder" => trans('global.period.title').'...',
+                           "onchange"=> "setCurrentOrganizationAndPeriod(this)",
+                           "allowClear" => false,
+                           "value" => auth()->user()->current_period_id
+                           ])
+                    @endif
                 </li>
                 @else
                 <li class="nav-item px-3 py-2 text-bold" style="width:100%">
                    {{ auth()->user()->organizations->first()->title }}
                 </li>
-                @endif 
+                @endif
             </ul>
         </nav>
-        <nav class="mt-2"> 
+        <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 @can('curriculum_access')
                     <li class="nav-item">
@@ -102,7 +110,7 @@
                         </a>
                     </li>
                 @endcan
-                
+
                 @can('user_access')
                     <li class="nav-item has-treeview menu-open {{ request()->is('permissions*') ? 'menu-open' : '' }} {{ request()->is('roles*') ? 'menu-open' : '' }} {{ request()->is('users*') ? 'menu-open' : '' }}">
                         <a class="nav-link nav-dropdown-toggle">
@@ -146,7 +154,7 @@
                         </ul>
                     </li>
                 @endcan
-                
+
                 @can('organization_access')
                     <li class="nav-item has-treeview menu-open {{ request()->is('permissions*') ? 'menu-open' : '' }} {{ request()->is('roles*') ? 'menu-open' : '' }} {{ request()->is('users*') ? 'menu-open' : '' }}">
                         <a class="nav-link nav-dropdown-toggle">
@@ -157,7 +165,7 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            
+
                             @can('navigator_access')
                                 <li class="nav-item">
                                     <a href="{{ route("navigators.index") }}" class="nav-link {{ request()->is('navigators') || request()->is('navigators/*') ? 'active' : '' }}">
@@ -216,7 +224,7 @@
                                     </p>
                                 </a>
                             </li>
-                            
+
                         </ul>
                     </li>
                 @endcan

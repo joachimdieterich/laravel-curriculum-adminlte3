@@ -136,7 +136,7 @@ class GroupsController extends Controller
      */
     public function show(Group $group)
     {
-        abort_unless(\Gate::allows('group_access'), 403);
+        abort_unless(\Gate::allows('group_show'), 403);
          // axios call?
         if (request()->wantsJson()){
            // dump(json_encode($group->users));

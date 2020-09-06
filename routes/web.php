@@ -2,7 +2,6 @@
 
 Route::redirect('/', '/features');
 Route::get('/features', 'OpenController@features')->name('features');
-Route::get('/laravel-filemanager', abort('403') );
 
 Route::get('/impressum', 'OpenController@impressum')->name('impressum');
 

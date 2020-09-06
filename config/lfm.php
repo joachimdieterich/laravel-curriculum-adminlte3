@@ -8,7 +8,7 @@ return [
     */
 
     // Include to pre-defined routes from package or not. Middlewares
-    'use_package_routes' => true,
+    'use_package_routes' => false,
 
     // Middlewares which should be applied to all package routes.
     // For laravel 5.1 and before, remove 'web' from the array.
@@ -110,7 +110,7 @@ return [
 
     // permissions to be set on file upload.
     'create_file_mode' => 0644,
-    
+
     // If true, it will attempt to chmod the file after upload
     'should_change_file_mode' => true,
 

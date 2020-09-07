@@ -11,23 +11,23 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js(['resources/js/app.js', 'vendor/select2/select2/dist/js/select2.min.js', 'vendor/unisharp/laravel-filemanager/public/js/lfm.js'], 'public/js')
+mix.js(['resources/js/app.js', 'vendor/select2/select2/dist/js/select2.min.js'], 'public/js')
    .js('node_modules/popper.js/dist/popper.js', 'public/js').sourceMaps()
    .sass('resources/sass/app.scss', 'public/css')
    .version();
-  
-/* TinyMCE */   
+
+/* TinyMCE */
 mix.copyDirectory('node_modules/tinymce/plugins', 'public/node_modules/tinymce/plugins');
 mix.copyDirectory('node_modules/tinymce/skins', 'public/node_modules/tinymce/skins');
 mix.copyDirectory('node_modules/tinymce/themes', 'public/node_modules/tinymce/themes');
 mix.copyDirectory('node_modules/tinymce', 'public/node_modules/tinymce');
-/* Fontawesome */   
+/* Fontawesome */
 mix.copyDirectory('node_modules/@fortawesome/fontawesome-free/webfonts', 'public/fonts/vendor/@fortawesome/fontawesome-free');
-/* Bootstrap colorpicker */   
+/* Bootstrap colorpicker */
 mix.copyDirectory('node_modules/bootstrap-colorpicker/dist', 'public/node_modules/bootstrap-colorpicker');
-/* Bootstrap datetimepicker */   
+/* Bootstrap datetimepicker */
 mix.copyDirectory('node_modules/@activix/bootstrap-datetimepicker/js', 'public/node_modules/bootstrap-datetimepicker');
-/* Datatables */   
+/* Datatables */
 mix.copyDirectory('node_modules/datatables.net/js', 'public/node_modules/datatables.net/js');
 mix.copyDirectory('node_modules/datatables.net-bs4/js', 'public/node_modules/datatables.net-bs4/js');
 mix.copyDirectory('node_modules/datatables.net-buttons/js', 'public/node_modules/datatables.net-buttons/js');

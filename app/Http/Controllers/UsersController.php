@@ -48,16 +48,13 @@ class UsersController extends Controller
 
     public function list()
     {
-        $users = (auth()->user()->role()->id == 1) ? User::with(['status'])->get() : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->with(['status'])->get();
+        $users = (auth()->user()->role()->id == 1) ? User::all() : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users();
 
         $show_gate = \Gate::allows('user_show');
         $edit_gate = \Gate::allows('user_edit');
         $delete_gate = \Gate::allows('user_delete');
 
         return DataTables::of($users)
-            ->addColumn('status', function ($users) {
-                return $users->status->lang_de;
-            })
             ->addColumn('action', function ($users) use ($show_gate, $edit_gate, $delete_gate) {
                  $actions  = '';
                     if ($show_gate){

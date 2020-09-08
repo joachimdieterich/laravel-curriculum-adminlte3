@@ -8,6 +8,7 @@ use App\Http\Requests\MassUpdateUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Role;
+use Illuminate\Support\Facades\DB;
 use App\User;
 use App\Organization;
 use App\Group;
@@ -48,7 +49,7 @@ class UsersController extends Controller
 
     public function list()
     {
-        $users = (auth()->user()->role()->id == 1) ? User::all() : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users();
+        $users = (auth()->user()->role()->id == 1) ? DB::table('users')->select('id', 'username', 'firstname', 'lastname', 'email') : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users();
 
         $show_gate = \Gate::allows('user_show');
         $edit_gate = \Gate::allows('user_edit');

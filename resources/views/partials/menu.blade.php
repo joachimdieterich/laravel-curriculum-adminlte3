@@ -11,7 +11,19 @@
         <span class="clearfix"></span>
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar " data-widget="treeview" role="menu" data-accordion="false">
+
                 <li class="nav-item" style="width:100%">
+                    @include ('forms.input.select',
+                        ["model" => "group",
+                        "field" => "current_curriculum_group_id",
+                        "options"=> auth()->user()->groups,
+                        "option_id" => "id",
+                        "onchange"=> "location = '/groups/'+this.value",
+                        "placeholder" => trans('global.group.title').'...',
+                        "allowClear" => false,
+                        "value" =>  old('course_id', isset($course->id) ? $course->id : '')])
+                </li>
+                {{--<li class="nav-item" style="width:100%">
                     @include ('forms.input.select',
                         ["model" => "group",
                         "field" => "current_curriculum_group_id",
@@ -24,7 +36,7 @@
                         "placeholder" => trans('global.course.title').'...',
                         "allowClear" => false,
                         "value" =>  old('course_id', isset($course->id) ? $course->id : '')])
-                </li>
+                </li>--}}
 <!--                <li class="nav-header pt-0">{{ strtoupper(trans('global.organization.title_singular')) }}</li>-->
                 @if (auth()->user()->organizations->count() > 1)
                 <li class="nav-item" style="width:100%">

@@ -155,12 +155,13 @@ class User extends Authenticatable
     public function currentCurriculaEnrolments()
     {
         return DB::table('curricula')
-            ->distinct()
-            ->select('curricula.*', 'curriculum_group.id AS course_id', 'curriculum_group.group_id AS group_id')
+           // ->distinct()
+            ->select('curricula.id', 'curricula.title', 'curriculum_group.id AS course_id', 'curriculum_group.group_id AS group_id')
             ->leftjoin('curriculum_group', 'curricula.id', '=', 'curriculum_group.curriculum_id')
             ->leftjoin('group_user', 'group_user.group_id', '=', 'curriculum_group.group_id')
             ->join('groups', 'groups.id', '=', 'group_user.group_id')
             ->where('groups.period_id', $this->current_period_id)
+            ->where('groups.organization_id', $this->current_organization_id)
             ->where('group_user.user_id', $this->id)
             ->orderBy('group_id')
             ->get();
@@ -170,7 +171,7 @@ class User extends Authenticatable
     {
         return $this->belongsToMany('App\Group', 'group_user')
             ->select('groups.*', 'curriculum_group.id AS course_id')
-            ->join('curriculum_group', 'curriculum_group.group_id', '=', 'groups.id')
+            ->leftjoin('curriculum_group', 'curriculum_group.group_id', '=', 'groups.id')
             ->where('period_id', $this->current_period_id)
             ->where('organization_id', $this->current_organization_id)
             ->orderBy('groups.id')
@@ -296,7 +297,7 @@ class User extends Authenticatable
 
     public function users()
     {
-        return (auth()->user()->role()->id == 1) ? User::select('id','username', 'firstname', 'lastname')->get() : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->select('id','username', 'firstname', 'lastname')->get(); //todo, get all users of all organizations not only current
+        return (auth()->user()->role()->id == 1) ? User::select('id','username', 'firstname', 'lastname') : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->select('id','username', 'firstname', 'lastname'); //todo, get all users of all organizations not only current
     }
 
     public function getAvatarAttribute()

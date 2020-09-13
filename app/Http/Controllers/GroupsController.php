@@ -98,7 +98,7 @@ class GroupsController extends Controller
         abort_unless(\Gate::allows('group_create'), 403);
 
         $grades  = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->type->grades()->get(); //Grade::all();
-        $periods = Organization::where('id',auth()->user()->current_organization_id)->get()->first()->periods;
+        $periods = Period::all();//Organization::where('id',auth()->user()->current_organization_id)->get()->first()->periods;
         $organizations = (auth()->user()->role()->id == 1) ? Organization::all() : auth()->user()->organizations()->get();
 
         return view('groups.create')
@@ -153,7 +153,7 @@ class GroupsController extends Controller
         abort_unless(\Gate::allows('group_edit'), 403);
 
         $grades  = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->type->grades()->get(); //Grade::all();
-        $periods = Organization::where('id',auth()->user()->current_organization_id)->get()->first()->periods;
+        $periods = Period::all();//Organization::where('id',auth()->user()->current_organization_id)->get()->first()->periods;
         $organizations = (auth()->user()->role()->id == 1) ? Organization::all() : auth()->user()->organizations()->get();
 
         return view('groups.edit')

@@ -10,7 +10,7 @@
         <!-- Sidebar Menu -->
         <span class="clearfix"></span>
         <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar " data-widget="treeview" role="menu" data-accordion="false">
+            <ul class="nav nav-pills nav-sidebar" data-widget="treeview" role="menu" data-accordion="false">
                 <li class="nav-item" style="width:100%">
                     @include ('forms.input.select',
                         ["model" => "group",
@@ -20,6 +20,8 @@
                         "onchange"=> "location = '/courses/'+this.value",
                         "optgroup" => auth()->user()->currentGroupEnrolments()->get(),
                         "optgroup_id" => "id",
+                        "optgroup_icon" => "fa fa-users",
+                        "optgroup_class" => "small",
                         "optgroup_reference_field" => "group_id",
                         "placeholder" => trans('global.course.title').'...',
                         "allowClear" => false,
@@ -33,6 +35,7 @@
                         "field" => "current_organization_id",
                         "options"=> auth()->user()->organizations,
                         "option_id" => "id",
+                        "option_icon" => "fa fa-university",
                         "placeholder" => trans('global.organization.title').'...',
                         "onchange"=> "setCurrentOrganization(this)",
                         "allowClear" => false,

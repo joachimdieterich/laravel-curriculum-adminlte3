@@ -37,8 +37,8 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
-    /** 
-     * Overwrite Logout 
+    /**
+     * Overwrite Logout
      * If SSO is set add sessionIndex and nameId to request
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -47,15 +47,15 @@ class LoginController extends Controller
     {
         if (( env('SAML2_RLP_IDP_SSO_URL') !== null ) AND ( !empty(env('SAML2_RLP_IDP_SSO_URL')) ) )
         {
-            return redirect()->action("\Aacotroneo\Saml2\Http\Controllers\Saml2Controller@logout", 
+            return redirect()->action("\Aacotroneo\Saml2\Http\Controllers\Saml2Controller@logout",
                 [
-                    'idpName'       => 'rlp',
-                    'returnTo'      => $request->query('returnTo'),
+                    'idpName'       => 'rlp', //todo: add use dynamic value (env?)
+                    'returnTo'      => env('SAML2_RLP_IDP_HOST'), //$request->query('returnTo'),
                     'sessionIndex'  => $request->session()->get('sessionIndex'),
                     'nameId'        => $request->session()->get('nameId'),
                 ]);
         }
-        else 
+        else
         {
             $this->guard()->logout();
 
@@ -65,6 +65,6 @@ class LoginController extends Controller
 
             return $this->loggedOut($request) ?: redirect('/');
         }
-        
+
     }
 }

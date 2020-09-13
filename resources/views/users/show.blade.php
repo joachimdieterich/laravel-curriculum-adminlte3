@@ -11,83 +11,72 @@
 <div class="row">
     <div class="col-lg-3 col-sm-12">
         <div class="card card-primary card-outline">
-            <div class="card-body box-profile">
+        <div class="card-body box-profile">
                 <div id="lfm" data-input="thumbnail" data-preview="holder" class="text-center">
-                    <img id="holder" 
-                         class="profile-user-img img-fluid img-circle" 
-                         style="height:100px;" 
-                         src="{{ ($user->medium_id !== null) ? '/media/'.$user->medium_id  : Avatar::create($user->fullName())->toBase64() }}" 
+                    <img id="holder"
+                         class="profile-user-img img-fluid img-circle"
+                         style="height:100px;"
+                         src="{{ ($user->medium_id !== null) ? '/media/'.$user->medium_id  : Avatar::create($user->fullName())->toBase64() }}"
                          alt="User profile picture">
                 </div>
-                <input id="thumbnail" 
+                <input id="thumbnail"
                        name="filepath"
-                       class="invisible" 
-                       type="text" 
+                       class="invisible"
+                       type="text"
                        onchange="setAvatar();"
-                       >  
+                       >
+
                 <h3 class="profile-username text-center">{{ $user->firstname }} {{ $user->lastname }}</h3>
 
                 <p class="text-muted text-center">{{ $user->username }} ({{ (null !== $user->currentRole()->first()) ? $user->currentRole()->first()->title : '' }})</p>
-
-                <ul class="list-group list-group-unbordered mb-3">
+            @can('user_edit')
+                <a class="float-right link-muted" href="{{ route('users.edit', $user->id) }}" >
+                    <i class="far fa-edit"></i>
+                </a>
+            @endcan
+              {{--  <ul class="list-group list-group-unbordered mb-3">
                     <li class="list-group-item">
                         <b>Accomplished</b> <a class="float-right">1,322</a>
                     </li>
-                </ul>
+                </ul>--}}
             </div>
             <!-- /.card-body -->
         </div>
 
         <div class="card card-primary">
-            <div class="card-header">
-                <div class="card-title">
-                    <h5 class="m-0">
-                        {{ trans('global.about') }}
-                    </h5>
-                </div>
-                @can('user_edit')
-                <div class="card-tools pr-2">
-                    <a href="{{ route('users.edit', $user->id) }}" >
-                        <i class="far fa-edit"></i>
-                    </a>
-                </div>
-                @endcan
-            </div>
+
             <!-- /.card-header -->
             <div class="card-body">
-                <strong><i class="fa fa-users mr-1"></i>{{ trans('global.organization.title_singular') }}</strong>
-                <p class="text-muted">
+                <strong><i class="fa fa-university mr-1"></i>{{ trans('global.organization.title_singular') }}</strong>
+                    <ul class="pl-4">
                     @foreach($user->organizations as $id => $organizations)
-                    <button type="button" class="btn-xs btn-block btn-success pull-right">{{$organizations->title}} @ {{ $user->roles()->where('organization_id', $organizations->id)->first()->title }}</button>
+                        <li class="small">{{$organizations->title}} @ {{ $user->roles()->where('organization_id', $organizations->id)->first()->title }}</li>
                     @endforeach
-                </p>
-
-                <hr> 
+                    </ul>
+                <hr>
 
                 <strong><i class="fa fa-users mr-1"></i>{{ trans('global.group.title_singular') }}</strong>
-                <p class="text-muted">
+                    <ul class="pl-4">
                     @foreach($user->groups as $id => $groups)
-                    <button type="button" class="btn-xs btn-block btn-success pull-right">{{$groups->title}} @ {{ $groups->organization->title }}</button>
+                        <li class="small">{{$groups->title}} @ {{ $groups->organization->title }}</li>
                     @endforeach
-                </p>
-
+                    </ul>
                 <hr>
                 <strong><i class="fa fa-key mr-1"></i>{{ trans('global.roles') }}</strong>
-                <p class="text-muted">
+                    <ul class="pl-4">
                     @foreach($user->roles as $id => $roles)
-
-                    <button type="button" class="btn-xs btn-block btn-success pull-right">{{$roles->title}} @ {{ $user->organizations()->where('role_id', $roles->id)->first()->title }}</button>
+                        <li class="small">{{$roles->title}} @ {{ $user->organizations()->where('role_id', $roles->id)->first()->title }}</li>
                     @endforeach
-                </p>
+                    </ul>
             </div>
             <!-- /.card-body -->
             <div class="card-footer">
-                <div class="float-left">
-                    <button type="button" class="btn-xs btn-block btn-{{$status_definitions[$user->status_id]->color_css_class}} pull-right">{{$status_definitions[$user->status_id]->lang_de}}</button>                  
-                </div>
+                {{--<div class="float-left">
+                    <button type="button" class="btn-xs btn-block btn-{{$status_definitions[$user->status_id]->color_css_class}} pull-right">{{$status_definitions[$user->status_id]->lang_de}}</button>
+                </div>--}}
                 <small class="float-right">
                     {{ $user->updated_at }}
-                </small> 
+                </small>
             </div>
         </div>
     </div>
@@ -102,32 +91,78 @@
             <div class="card-body">
                 <div class="tab-content">
                     <div class="tab-pane active show" id="contact">
-                        @if(auth()->user()->contactDetail != null) 
+                        @if(auth()->user()->contactDetail != null)
                             @include('partials.users.contactdetails', [
-                                'contactdetail' => auth()->user()->contactDetail, 
+                                'contactdetail' => auth()->user()->contactDetail,
                                 'organization'  => \App\Organization::find(auth()->user()->current_organization_id)
-                                ]) 
+                                ])
                         @else
-                            <a 
+                            <a
                                 id="add-plan"
-                                class="btn btn-success" 
+                                class="btn btn-success"
                                 href="{{ route("contactdetails.create") }}">
-                                {{ trans('global.contactdetail.create') }}    
+                                {{ trans('global.contactdetail.create') }}
                             </a>
                         @endif
                     </div><!-- /.tab-pane -->
-                   
+
                 </div><!-- /.tab-content -->
             </div><!-- /.card-body -->
-        </div><!-- /.nav-tabs-custom -->
+        </div><!-- /.card -->
+
+        @if (auth()->user()->role()->id == 1)
+        <div class="card">
+            <div class="card-header p-2">
+                Debug
+            </div><!-- /.card-header -->
+            <div class="card-body">
+                User
+                @foreach([App\User::find($user->id)] as $usr)
+                    <li class="small">id: {{ $usr->id }}; </li>
+                    <li class="small">common_name: {{ $usr->common_name }}; </li>
+                    <li class="small">firstname: {{ $usr->firstname }}; </li>
+                    <li class="small">lastname: {{ $usr->lastname }}; </li>
+                    <li class="small">email: {{ $usr->email }}; </li>
+                    <li class="small">status: {{ $usr->status }}; </li>
+                    <li class="small">current_organization_id: {{ $usr->current_organization_id }}; </li>
+                    <li class="small">current_period_id: {{ $usr->current_period_id }}; </li>
+                @endforeach
+                <br/>
+                currentCurriculaEnrolments:
+                @foreach(App\User::find($user->id)->currentCurriculaEnrolments() as $cur_enr)
+                    <li class="small">id: {{ $cur_enr->id }}; title: {{ $cur_enr->title }};  course_id: {{ $cur_enr->course_id }};  group_id: {{ $cur_enr->group_id }}; </li>
+                @endforeach
+                <br/>
+                currentGroupEnrolments:
+                @foreach(App\User::find($user->id)->currentGroupEnrolments as $grp_enr)
+                    <li class="small">id: {{ $grp_enr->id }}; title: {{ $grp_enr->title }};  period_id: {{ $grp_enr->period_id }};  course_id: {{ $grp_enr->course_id }}; </li>
+                @endforeach
+                <br/>
+                Groups:
+                @foreach(App\User::find($user->id)->groups as $groups)
+                    <li class="small">id: {{ $groups->id }}; title: {{ $groups->title }};  period_id: {{ $groups->period_id }};  organization_id: {{ $groups->organization_id }}; </li>
+                @endforeach
+                <br/>
+
+                organizations:
+                @foreach(App\User::find($user->id)->organizations as $org)
+                    <li class="small">id: {{ $org->id }}; title: {{ $org->title }}; </li>
+                @endforeach
+                <br/>
+
+            </div><!-- /.card-body -->
+        </div><!-- /.card -->
+            @endif
     </div>
+
+
 </div>
 @endsection
 
 @section('scripts')
 @parent
 <script>
-$(document).ready( function () {                     
+$(document).ready( function () {
     $('#lfm').filemanager('files');
 });
 
@@ -145,5 +180,5 @@ function setAvatar()
     .done(function () { location.reload() })
 }
 </script>
- 
+
 @endsection

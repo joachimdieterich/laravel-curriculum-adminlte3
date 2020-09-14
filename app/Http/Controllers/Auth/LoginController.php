@@ -50,7 +50,7 @@ class LoginController extends Controller
             return redirect()->action("\Aacotroneo\Saml2\Http\Controllers\Saml2Controller@logout",
                 [
                     'idpName'       => 'rlp', //todo: add use dynamic value (env?)
-                    'returnTo'      => env('SAML2_RLP_IDP_HOST'), //$request->query('returnTo'),
+                    'returnTo'      => $request->query('returnTo'),
                     'sessionIndex'  => $request->session()->get('sessionIndex'),
                     'nameId'        => $request->session()->get('nameId'),
                 ]);
@@ -63,7 +63,7 @@ class LoginController extends Controller
 
             $request->session()->regenerateToken();
 
-            return $this->loggedOut($request) ?: redirect('/');
+            return $this->loggedOut($request) ? env('SAML2_RLP_IDP_HOST') : redirect('/');
         }
 
     }

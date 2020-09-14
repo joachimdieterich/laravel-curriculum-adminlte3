@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreUserRequest;
-use App\Http\Requests\UpdateUserRequest;
 use App\User;
 use App\Notifications\Welcome;
 
@@ -19,14 +17,14 @@ class UsersApiController extends Controller
 
     public function store()
     {
-        
+
         if (User::withTrashed()->where('email', request()->email)->exists())
         {
             User::withTrashed()->where('email', request()->email)->restore();
             $user = User::where('email', request()->email)->get()->first();
             $user->update($this->filteredRequest());
-        } 
-        else 
+        }
+        else
         {
             if ($user = User::create($this->filteredRequest()))
             {
@@ -38,8 +36,8 @@ class UsersApiController extends Controller
     }
 
     public function update(User $user) {
-        if ($user->update($this->filteredRequest())) 
-        {  
+        if ($user->update($this->filteredRequest()))
+        {
             return $user->fresh();
         }
     }
@@ -51,31 +49,31 @@ class UsersApiController extends Controller
 
     public function destroy(User $user)
     {
-        if ($user->delete()) 
+        if ($user->delete())
         {
             return ['message' => 'Successful deleted'];
         }
     }
-    
+
     public function withGroups(User $user)
     {
         return  $user->where('id', $user->id)->with('groups')->get();
     }
-    
+
     public function withOrganizations(User $user)
     {
         return  $user->where('id', $user->id)->with('organizations')->get();
     }
-    
+
     public function withRoles(User $user)
     {
         return  $user->where('id', $user->id)->with('roles')->get();
     }
-   
-    
+
+
     public function dashboard(User $user)
     {
-        //Dummy fullcalendar event 
+        //Dummy fullcalendar event
         $event = [
             "Event from curriculum", //event title
                 false, //full day event?
@@ -83,13 +81,13 @@ class UsersApiController extends Controller
                 '2019-08-02 12:00:00 UTC+2', //end time, must be a DateTime object or valid DateTime format (http://bit.ly/1z7QWbg),
                 1 //optional event ID
         ];
-      
-        return ['enrollments' => $user->groups()->with(['curricula'])->get(), 
+
+        return ['enrollments' => $user->currentGroups()->with(['curricula'])->get(), //todo: select only used fields of curricula
                 'notifications' => $user->notifications,
-                'events' => [/*$event*/] 
+                'events' => [/*$event*/]
                ];
     }
-    
+
     protected function filteredRequest() {
         return array_filter(request()->all()); //filter to ignore fields with null values
     }

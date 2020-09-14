@@ -41,7 +41,7 @@
     @if(isset($course))
         @can('achievement_access')
             <a class="btn btn-default btn-flat"
-              href="/curricula/{{ $course->id }}">
+              href="/curricula/{{ $course->curriculum_id }}">
                 <i class="fas fa-th"></i>
             </a>
         @endcan

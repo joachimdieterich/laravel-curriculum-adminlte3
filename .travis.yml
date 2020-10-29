@@ -3,13 +3,13 @@ language: php
 os:
     - linux
 
-php: 
+php:
     - 7.3
- 
+
 before_script:
     - chmod 777 -R storage
     - cp .env.travis .env
-    - composer self-update
+    - composer self-update --2
     - composer install --no-interaction
     - php artisan key:generate
     - php artisan migrate
@@ -18,13 +18,13 @@ before_script:
     - npm install --global cross-env
     - npm install
     - npm run production
-   
+
 script:
     - vendor/bin/phpunit
- 
+
 services:
     - redis-server
-    
+
 cache:
     directories:
         - vendor

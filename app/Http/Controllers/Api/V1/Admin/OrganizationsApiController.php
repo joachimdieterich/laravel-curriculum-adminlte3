@@ -59,7 +59,7 @@ class OrganizationsApiController extends Controller {
         if (OrganizationRoleUser::where(request()->all())->delete())
         {
             //reset current org id
-            $user = User::where('id', request('user_id'));
+            $user = User::where('id', request('user_id'))->get()->first();
             $user->current_organization_id = NULL;
             $user->current_period_id = NULL;
             $user->save();

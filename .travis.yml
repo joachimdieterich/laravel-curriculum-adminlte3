@@ -10,6 +10,7 @@ before_script:
     - chmod 777 -R storage
     - cp .env.travis .env
     - composer install --no-interaction
+    - composer self-update
     - php artisan key:generate
     - php artisan migrate
     - php artisan passport:keys

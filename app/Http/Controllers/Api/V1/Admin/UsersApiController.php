@@ -18,10 +18,10 @@ class UsersApiController extends Controller
     public function store()
     {
 
-        if (User::withTrashed()->where('username', request()->username)->exists())
+        if (User::withTrashed()->where('common_name', request()->common_name)->exists())
         {
-            User::withTrashed()->where('username', request()->username)->restore();
-            $user = User::where('username', request()->username)->get()->first();
+            User::withTrashed()->where('common_name', request()->common_name)->restore();
+            $user = User::where('common_name', request()->common_name)->get()->first();
             $user->update($this->filteredRequest());
         }
         else

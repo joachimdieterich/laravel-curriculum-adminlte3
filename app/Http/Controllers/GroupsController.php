@@ -186,6 +186,12 @@ class GroupsController extends Controller
     {
         abort_unless(\Gate::allows('group_delete'), 403);
 
+        // first delete all relations
+        $group->curricula()->detach();
+        $group->users()->detach();
+
+        //todo: delete subscriptions ( eg. kanban), yet no relation in Group.php
+
         $group->delete();
 
         return back();

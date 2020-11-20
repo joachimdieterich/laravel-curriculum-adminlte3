@@ -21,8 +21,8 @@ class GroupsApiController extends Controller {
     }
 
     public function update(Group $group) {
-        if ($group->update($this->filteredRequest())) 
-        { 
+        if ($group->update($this->filteredRequest()))
+        {
             return $group->fresh();
         }
     }
@@ -30,19 +30,26 @@ class GroupsApiController extends Controller {
     public function show(Group $group) {
         return $group;
     }
-    
+
     public function members(Group $group) {
         return $group->users;
     }
 
     public function destroy(Group $group) {
-        if ($group->delete()) 
+
+        // first delete all relations
+        $group->curricula()->detach();
+        $group->users()->detach();
+
+        //todo: delete subscriptions ( eg. kanban), yet no relation in Group.php
+
+        if ($group->delete())
         {
             return ['message' => 'Successful deleted'];
         }
     }
-    
-    public function enrol() 
+
+    public function enrol()
     {
         $group = Group::findOrFail(request()->input('group_id'));
         $user = User::findOrFail(request()->input('user_id'));
@@ -58,7 +65,7 @@ class GroupsApiController extends Controller {
         return $return;
     }
 
-    public function expel() 
+    public function expel()
     {
         $user = User::find(request()->input('user_id'));
         if ($user->groups()->detach(['group_id' => request()->input('group_id')]))
@@ -66,7 +73,7 @@ class GroupsApiController extends Controller {
             return ['message' => 'Successful expelled'];
         }
     }
-    
+
 
     protected function filteredRequest() {
         return array_filter(request()->all()); //filter to ignore fields with null values

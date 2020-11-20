@@ -36,7 +36,7 @@
 *           mediaType="application/x-www-form-urlencoded",
 *           @OA\Schema(
 *               type="object",
-*               required={"username", "firstname", "lastname", "email", "password"},
+*               required={"common_name", "username", "firstname", "lastname", "email", "password"},
 *               @OA\Property(
 *                   property="common_name",
 *                   description="common_name",
@@ -86,18 +86,18 @@
 *                   property="current_period_id",
 *                   description="current_period_id",
 *                   type="string"
-*               ) 
+*               )
 *           )
 *       )
 *   ),
-*      
+*
 *      @OA\Response(
 *          response=200,
 *          description="successful operation",
 *          @OA\JsonContent(ref="#/components/schemas/User"),
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*      
+*
 * )
 */
 
@@ -176,20 +176,20 @@
 *                   property="current_period_id",
 *                   description="current_period_id",
 *                   type="string"
-*               ) 
+*               )
 *           )
 *       )
 *   ),
-*      
+*
 *       @OA\Response(
 *          response=200,
 *          description="successful operation",
-*          @OA\JsonContent(ref="#/components/schemas/User")   
+*          @OA\JsonContent(ref="#/components/schemas/User")
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*      
+*
 * )
-* 
+*
 */
 
 
@@ -241,15 +241,15 @@
 *              type="integer"
 *          )
 *      ),
-*      
+*
 *      @OA\Response(
 *          response=200,
-*          description="successful operation",   
+*          description="successful operation",
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*      
+*
 * )
-* 
+*
 */
 
 

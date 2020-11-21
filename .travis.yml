@@ -16,7 +16,6 @@ before_script:
     - php artisan passport:keys
     - nvm install node
     - npm install --global cross-env
-    - npm install
     - npm run production
 
 script:

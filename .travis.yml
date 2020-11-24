@@ -1,32 +1,32 @@
 language: php
 
 os:
-    - linux
+  - linux
 
 php:
-    - 7.3
+  - 7.3
 
 before_script:
-    - chmod 777 -R storage
-    - cp .env.travis .env
-    - composer self-update
-    - composer install --no-interaction
-    - php artisan key:generate
-    - php artisan migrate
-    - php artisan passport:keys
-    - nvm install node
-    - npm install --global cross-env
-    - npm install
-    - npm run production
+  - chmod 777 -R storage
+  - cp .env.travis .env
+  - composer self-update
+  - composer install --no-interaction
+  - php artisan key:generate
+  - php artisan migrate
+  - php artisan passport:keys
+  - nvm install node
+  - npm install --global cross-env
+  - npm install
+  - npm run production
 
 script:
-    - vendor/bin/phpunit
+  - vendor/bin/phpunit
 
 services:
-    - redis-server
+  - redis-server
 
 cache:
-    directories:
-        - vendor
+  directories:
+    - vendor
 env:
-    LANGUAGE=de
+  LANGUAGE=de

@@ -1,5 +1,5 @@
 <?php
-namespace App;
+namespace App\Plugins\Repositories;
 
 /**
  *
@@ -7,11 +7,11 @@ namespace App;
  */
 class RepositoryPlugin {
     public $plugins = array();
-    
+
     public function __construct()
     {
-        $this->plugins['edusharing'] = new Edusharing();
+        $this->plugins['edusharing'] = new \App\Plugins\Repositories\edusharing\Edusharing();
     }
-    
+
 }
 

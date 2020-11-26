@@ -8,7 +8,7 @@ use Laravel\Dusk\Chrome;
 use App\User;
 
 
-class ExampleTest extends DuskTestCase
+class LoginTest extends DuskTestCase
 {
 
     /**
@@ -17,8 +17,8 @@ class ExampleTest extends DuskTestCase
      * @return void
      */
     public function testOrganization()
-    {   
-        $this->browse(function (Browser $browser) 
+    {
+        $this->browse(function (Browser $browser)
         {
             $browser->visit('/')
                     ->type('email', 'admin@curriculumonline.de')

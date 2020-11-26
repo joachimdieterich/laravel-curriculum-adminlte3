@@ -1,15 +1,9 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-namespace App;
+namespace App\Plugins\Eventmanagement\eVewa;
 
 use DonatelloZa\RakePlus\RakePlus;
 
-use App\EventmanagementPlugin;
+use App\Plugins\Eventmanagement\EventmanagementPlugin;
 
 /**
  * Description of plugin
@@ -23,38 +17,38 @@ class eVewa extends EventmanagementPlugin
     private $password;
     private $url;
     private $sessionId;
-        
+
     private $proxy = false;
     private $proxy_port = false;
-        
+
     public function about()
     {
         return "eVewa plugin";
     }
-    
-    public function __construct() 
-    {    
-        $this->user      = env('EVEWA_API_USER', ''); 
+
+    public function __construct()
+    {
+        $this->user      = env('EVEWA_API_USER', '');
         $this->password  = env('EVEWA_API_PASSWORD', '');
         $this->url       = env('EVEWA_API_URL', '');
-        
+
         $this->getSessionId();
-        
+
         $this->proxy     = env('EVEWA_PROXY', false);
         $this->proxy     = env('EVEWA_PROXY_PORT', false);
-        
+
     }
     /**
-     * Gibt eine Liste an Veranstaltungen aus. Die Beschreibung der Parameter kann dem "definition"-Tag entnommen werden. 
+     * Gibt eine Liste an Veranstaltungen aus. Die Beschreibung der Parameter kann dem "definition"-Tag entnommen werden.
      * Dort befinden sich ebenfalls alle Lookup-Daten.
-     * @param type $params
+     * @param array $params
      * @return object
      */
     public function lesePlrlpVeranstaltungen($params)
     {
        if (isset($params['propose']))
        {
-           $rake = RakePlus::create(strip_tags($params['search']), 'de_DE', 3);
+            $rake = RakePlus::create(strip_tags($params['search']), 'de_DE', 3);
             $phrase_scores = $rake->sort('asc')->get();
             $search = explode(' ',trim($phrase_scores[0]))[0];
        }
@@ -62,8 +56,8 @@ class eVewa extends EventmanagementPlugin
        {
           $search = $params['search'];
        }
-        
-        
+
+
 //            $params = array(
 //                'method'=> 'lesePlrlpVeranstaltungen',
 //                'session_id' => (string) $this->sessionId,
@@ -81,10 +75,10 @@ class eVewa extends EventmanagementPlugin
 //                'schulartentag'=> '',
 //                'zielgruppentag'=> '',
 //            );
-        //dump($params) ;   
-        
-       
-        
+        //dump($params) ;
+
+
+
         $params = array_replace_recursive( //replace defaults with given params
              array(
                 'method'=> 'lesePlrlpVeranstaltungen',
@@ -103,8 +97,8 @@ class eVewa extends EventmanagementPlugin
                 'schulartentag'=> '',
                 'zielgruppentag'=> '',
             ), $params);
-//        
-        
+//
+
         $raw = $this->call ( $this->url, 'GET', http_build_query($params) );
         return simplexml_load_string($raw);
     }
@@ -122,28 +116,28 @@ class eVewa extends EventmanagementPlugin
                 'mandant'=> '',
                 'artikelnr'=> '',
             ), $params);
-        
+
         $raw = $this->call ( $this->url, 'GET', http_build_query($params) );
         return simplexml_load_string($raw);
     }
-    
-        
-    private function isLoggedIn() 
+
+
+    private function isLoggedIn()
     {
         $postFields = 'method=isloggedin&session_id=' . $this->sessionId;
         $raw        = $this->call ( $this->url, 'GET', $postFields );
         return (simplexml_load_string($raw)->isloggedin->code == 200) ? true : false;
     }
-    
+
     private function getSessionId()
     {
         $postFields      = 'method=login&user=' . $this->user . '&pw=' . $this->password;
         $raw             = $this->call ( $this->url, 'GET', $postFields );
-        $this->sessionId =  isset(simplexml_load_string($raw)->login)? simplexml_load_string($raw)->login->session_id : false;   
-        
+        $this->sessionId =  isset(simplexml_load_string($raw)->login)? simplexml_load_string($raw)->login->session_id : false;
+
     }
 
-    private function call($url, $httpMethod = '', $postFields = array()) {      
+    private function call($url, $httpMethod = '', $postFields = array()) {
         $ch = curl_init ();
         curl_setopt ( $ch, CURLOPT_URL, $url );
         curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1 );

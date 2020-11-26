@@ -43,9 +43,9 @@ class RepositorySubscriptionController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        
-        $repositoryPlugin = app()->make('App\RepositoryPlugin');
-        if (request()->wantsJson()){    
+
+        $repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
+        if (request()->wantsJson()){
             return ['subscription' => $repositoryPlugin->plugins[$input['repository']]->store($request)];
         }
     }
@@ -57,8 +57,8 @@ class RepositorySubscriptionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(RepositorySubscription $repositorySubscription)
-    {   
-      
+    {
+
     }
 
     /**
@@ -92,67 +92,67 @@ class RepositorySubscriptionController extends Controller
      */
     public function destroy()
     {
-       
+
     }
-    
+
     public function getMedia(Request $request)
     {
         $input = $this->validateRequest();
-        
+
         $subscriptions = RepositorySubscription::where('subscribable_type', $input['subscribable_type'])
                 ->where('subscribable_id', $input['subscribable_id'])
                 ->where('repository', $input['repository'])->get();
-        
+
         $result = collect([]);
-        
-        $repositoryPlugin = app()->make('App\RepositoryPlugin'); 
+
+        $repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
         foreach($subscriptions as $subscription)
         {
             $result->push($repositoryPlugin->plugins[$input['repository']]->processReference($subscription->value));
         }
-        
+
         /*
          * Get media by subscribablye identifier if (curriculum, terminal, or enabling objective)
          */
         $allowed_models = array("App\Curriculum", "App\TerminalObjective", "App\EnablingObjective");
         if (in_array($input['subscribable_type'], $allowed_models)) {
             $model = $input['subscribable_type']::find($input['subscribable_id']);
-            
+
             $result->push($repositoryPlugin->plugins[$input['repository']]->processReference('endpoint=getSearchCustom&property=ccm:curriculum&value='.$model->ui.'&maxItems='.$input['maxItems'].'&skipCount='.($input['maxItems'] * $input['page']) ));
         }
-       
-        if (request()->wantsJson()){    
+
+        if (request()->wantsJson()){
             return ['message' => $result];
         }
-        
+
     }
-    
+
     public function searchRepository(Request $request)
     {
         $input = $this->validateRequest();
-        
-        $repositoryPlugin = app()->make('App\RepositoryPlugin');
+
+        $repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
         return $repositoryPlugin->plugins[$input['repository']]->searchRepository($request);
     }
-    
+
     protected function callPlugin($plugin, $value)
     {
-        $repositoryPlugin = app()->make('App\RepositoryPlugin');
+        $repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
         return $repositoryPlugin->plugins[$plugin]->processReference($value);
     }
-    
+
     public function destroySubscription(Request $request)
     {
         $input = $this->validateRequest();
-        
-        $repositoryPlugin = app()->make('App\RepositoryPlugin');
+
+        $repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
         return $repositoryPlugin->plugins[$input['repository']]->destroy($request);
     }
 
 
     protected function validateRequest()
-    {               
-        
+    {
+
         return request()->validate([
             'value'             => 'sometimes',
             'subscribable_type' => 'sometimes|required',
@@ -163,5 +163,5 @@ class RepositorySubscriptionController extends Controller
             'repository'        => 'sometimes',
         ]);
     }
-      
+
 }

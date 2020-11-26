@@ -1,23 +1,23 @@
 <template >
-   
+
     <span v-if="type === 'enabling'">
 
-        <i class="t-18 margin-r-5 text-green pointer_hand" 
+        <i class="t-18 margin-r-5 text-green pointer"
            v-bind:class="[green_css, fabadge]"
            v-bind:data-count="[green_count]"
            @click.prevent="achieve('1')">
         </i>
-        <i class="t-18 margin-r-5 text-orange pointer_hand"
+        <i class="t-18 margin-r-5 text-orange pointer"
            v-bind:class="[orange_css, fabadge]"
            v-bind:data-count="[orange_count]"
            @click.prevent="achieve('2')">
         </i>
-        <i class="t-18 margin-r-5 text-red pointer_hand" 
+        <i class="t-18 margin-r-5 text-red pointer"
            v-bind:class="[red_css, fabadge]"
            v-bind:data-count="[red_count]"
            @click.prevent="achieve('3')">
-        </i>    
-        <i class="t-18 margin-r-5 text-gray pointer_hand"
+        </i>
+        <i class="t-18 margin-r-5 text-gray pointer"
            v-bind:class="[white_css, fabadge]"
            v-bind:data-count="[white_count]"
            @click.prevent="achieve('0')">
@@ -25,7 +25,7 @@
 
 <!--    <i style="font-size:18px;" class="fa fa-comments text-primary margin-r-5 pointer_hand"></i>-->
     </span>
-     
+
 </template>
 
 
@@ -52,9 +52,9 @@
                 white_student_count: 0,
                 white_teacher_count: 0,
             };
-        }, 
+        },
         methods: {
-         
+
             async achieve(status){
                 let archievement = {
                     'referenceable_type': (this.type === 'terminal' ? 'App\\TerminalObjective' : 'App\\EnablingObjective'),
@@ -62,16 +62,16 @@
                     'user_id': ($('#users-datatable').DataTable().rows({ selected: true }).ids().toArray()),
                     'status': status
                 }
-                try {   
+                try {
                     this.status = (await axios.post('/achievements', archievement)).data.message;
 //                    calculateProgress(); //todo?
                 } catch(error) {
                     alert(error);
                 }
-            }, 
-            calculate_css(number) { 
+            },
+            calculate_css(number) {
                 var status = "far fa-circle";
-                
+
                 if (this.status.charAt(0) === number &&
                            this.status.charAt(1) === number){
                     status = "fa fa-check-circle";
@@ -80,40 +80,40 @@
                 } else if (this.status.charAt(1) === number){
                     status = "far fa-check-circle";
                 }
-                
+
                 return status;
             },
-            calculate_count(number) {    
-                var student = 0, teacher = 0; 
+            calculate_count(number) {
+                var student = 0, teacher = 0;
                 if (typeof this.objective.achievements !== 'undefined'){
-                    if (typeof this.objective.achievements[0] === 'object' && this.settings.achievements === true) { 
+                    if (typeof this.objective.achievements[0] === 'object' && this.settings.achievements === true) {
                         for (let i = 0; i < (this.objective.achievements).length; i++){
                             //console.log('ena:'+ this.objective.id +' lenght:'+ this.objective.achievements.length+' i:'+i+' student: '+this.objective.achievements[i].status.charAt(0)+' teacher: '+ this.objective.achievements[i].status.charAt(1));
                             if (this.objective.achievements[i].status.charAt(0) === number &&
                                 this.objective.achievements[i].status.charAt(1) === number){
                                  student++;
-                                 teacher++;  
-                             } 
+                                 teacher++;
+                             }
                              else if (this.objective.achievements[i].status.charAt(0) === number){
-                                 student++; 
-                             } 
+                                 student++;
+                             }
                              else if (this.objective.achievements[i].status.charAt(1) === number){
-                                 teacher++;   
+                                 teacher++;
                              }
                         }
-                         return teacher; //todo option to show students self achievment status 
+                         return teacher; //todo option to show students self achievement status
                     } else {
                         if (typeof this.objective.achievements !== 'undefined'){
                             if (typeof this.objective.achievements[0] === 'object') {
                                 this.status = this.objective.achievements[0].status;
                             }
                         } else {
-                            this.status = '00';    
+                            this.status = '00';
                         }
-                        
+
                     }
                 } else {
-                     return;  
+                     return;
                 }
             }
         },
@@ -147,7 +147,7 @@
                 if (window.Laravel.permissions.indexOf('achievement_access') !== -1){
                     return "fabadge";
                 }
-                
+
             }
         },
         watch: {
@@ -162,8 +162,8 @@
                 if (typeof this.objective.achievements[0] === 'object') {
                     this.status = this.objective.achievements[0].status;
                 }
-            } 
+            }
         },
-    
+
     }
 </script>

@@ -21,7 +21,7 @@ use SOAPHeader;
 class Edusharing extends RepositoryPlugin
 {
     const PLUGINNAME = 'edusharing';
-    private $accessToken = '';
+    private $accessToken = null;
     private $grant_type;
     private $client_id;
     private $client_secret;

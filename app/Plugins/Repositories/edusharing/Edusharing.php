@@ -79,7 +79,8 @@ class Edusharing extends RepositoryPlugin
         if (optional(Config::where([
                 ['referenceable_type', '=', 'App\Edusharing'],
                 ['key', '=',  'accessMode']
-            ])->get()->first())->value == 'personal')
+            ])->get()->first())->value == 'personal'
+        AND Auth::user()->id != env('GUEST_USER'))
         {
             $this->getPersonalToken();
         }

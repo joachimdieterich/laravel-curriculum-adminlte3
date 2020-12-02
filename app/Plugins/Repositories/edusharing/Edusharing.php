@@ -354,6 +354,34 @@ class Edusharing extends RepositoryPlugin
         return json_decode($ret, true);
     }
 
+    public function getSearchQueriesV2($repository, $params)
+    {
+        $postFields = array (
+            'criterias' => [
+                array (
+                    'property' => $params['property'],
+                    'values' => array ( $params['value'] )
+                ),
+                /* todo: check effect of search_context for results
+                array (
+                    'property' => "ccm:search_context",
+                    'values' => array("rlp-curriculum")
+                )*/
+            ]
+
+        );
+
+        //dump($this->repoUrl . '/rest/search/v1/queriesV2/' . $repository.'/-default-/curriculum?'.http_build_query($params));
+        $ret =$this->call( $this->repoUrl . '/rest/search/v1/queriesV2/' . $repository.'/-default-/curriculum?'.http_build_query($params),
+            'POST',
+            array ( 'Content-Type: application/json' ),
+            json_encode ( $postFields )
+        );
+
+        //dump($ret);
+        return json_decode($ret, true);
+    }
+
     public function getChildren($repository, $parentId, $params)
     {
         $children = $this->call($this->repoUrl . '/rest/node/v1/nodes/'. $repository.'/'.$parentId.'/children?'.http_build_query($params));
@@ -409,6 +437,8 @@ class Edusharing extends RepositoryPlugin
         //$nodes        = $this->getSearchCustom('-home-', array ('contentType' =>'FILES', 'property' => 'ccm:competence_digital2', 'value' => '11061007', 'maxItems' => 10));
         switch ($apiEndpoint) {
             case 'getSearchCustom': $nodes      = $this->getSearchCustom('-home-', array ('contentType' => $contentType, 'combineMode' => $combineMode, 'property' => $property, 'value' => $value, 'maxItems' => $maxItems, 'skipCount' => $skipCount));
+                break;
+            case 'getSearchQueriesV2': $nodes      = $this->getSearchQueriesV2('-home-', array ('contentType' => $contentType, 'combineMode' => $combineMode, 'property' => $property, 'value' => $value, 'maxItems' => $maxItems, 'skipCount' => $skipCount));
                 break;
             case 'getNodeChildren': $nodes      = $this->getChildren('-home-', $value, array ('maxItems' => $maxItems, 'skipCount' => $skipCount));
                 break;
@@ -500,7 +530,7 @@ class Edusharing extends RepositoryPlugin
 function edusharing_get_auth_data()
 {
     return array(
-        array('key'  => 'userid', 'value'  => auth()->user()->username),
+        array('key'  => 'userid', 'value'  => auth()->user()->common_name),
         array('key'  => 'lastname', 'value'  => auth()->user()->firstname),
         array('key'  => 'firstname', 'value'  => auth()->user()->lastname),
         array('key'  => 'email', 'value'  => auth()->user()->email),

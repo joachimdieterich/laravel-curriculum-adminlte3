@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\RepositoryPlugin;
+use Plugins\Repositories\RepositoryPlugin;
 
 
 class PluginServiceProvider extends ServiceProvider
@@ -17,5 +17,5 @@ class PluginServiceProvider extends ServiceProvider
     public $singletons = [
         RepositoryPlugin::class => RepositoryPlugin::class,
     ];
-   
+
 }

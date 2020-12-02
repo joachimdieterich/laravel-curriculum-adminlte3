@@ -13,6 +13,7 @@ use App\RepositorySubscription;
 use App\Config;
 use SoapClient;
 use SOAPHeader;
+use Illuminate\Support\Facades\Auth;
 /**
  * Description of plugin
  *

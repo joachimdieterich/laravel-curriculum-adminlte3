@@ -300,7 +300,7 @@ class Edusharing extends RepositoryPlugin
         }
         else
         {
-            headers = array_merge ( array (
+            $headers = array_merge ( array (
                 'Accept: application/json'
             ), $additionalHeaders );
         }

@@ -83,14 +83,14 @@ class Edusharing extends RepositoryPlugin
         {
             $this->getPersonalToken();
         }
-        else
+        /*else
         {
             $postFields = 'grant_type=' . $this->grant_type . '&client_id=' . $this->client_id . '&client_secret=' . $this->client_secret . '&username=' . $this->repoUser . '&password=' . $this->repoPwd;
             $raw        = $this->call ( $this->repoUrl . '/oauth2/token', 'POST', array (), $postFields );
             $return     = json_decode ( $raw );
             $this->accessToken = $return->access_token;
             return $return;
-        }
+        }*/
 
     }
 
@@ -292,10 +292,19 @@ class Edusharing extends RepositoryPlugin
 //                        'Accept: application/json',
 //                        'Authorization: Bearer ' . $this->accessToken
 //        ), $additionalHeaders );
-        $headers = array_merge ( array (
-                        'Accept: application/json',
-                        'Authorization: EDU-TICKET ' . $this->accessToken
-        ), $additionalHeaders );
+        if ($this->accessToken){
+            $headers = array_merge ( array (
+                'Accept: application/json',
+                'Authorization: EDU-TICKET ' . $this->accessToken
+            ), $additionalHeaders );
+        }
+        else
+        {
+            headers = array_merge ( array (
+                'Accept: application/json'
+            ), $additionalHeaders );
+        }
+
         curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
 
         if (! empty ( $postFields ))

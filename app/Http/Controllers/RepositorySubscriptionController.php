@@ -99,7 +99,8 @@ class RepositorySubscriptionController extends Controller
     {
         $input = $this->validateRequest();
 
-        $subscriptions = RepositorySubscription::where('subscribable_type', $input['subscribable_type'])
+        /* not used anymore */
+        /*$subscriptions = RepositorySubscription::where('subscribable_type', $input['subscribable_type'])
                 ->where('subscribable_id', $input['subscribable_id'])
                 ->where('repository', $input['repository'])->get();
 
@@ -109,7 +110,7 @@ class RepositorySubscriptionController extends Controller
         foreach($subscriptions as $subscription)
         {
             $result->push($repositoryPlugin->plugins[$input['repository']]->processReference($subscription->value));
-        }
+        }*/
 
         /*
          * Get media by subscribablye identifier if (curriculum, terminal, or enabling objective)
@@ -118,16 +119,23 @@ class RepositorySubscriptionController extends Controller
         if (in_array($input['subscribable_type'], $allowed_models)) {
             $model = $input['subscribable_type']::find($input['subscribable_id']);
 
-            $result->push($repositoryPlugin->plugins[$input['repository']]->processReference('endpoint=getSearchQueriesV2&property=ccm:curriculum&value='.$model->ui.'&maxItems='.$input['maxItems'].'&skipCount='.($input['maxItems'] * $input['page']) ));
-            //$result->push($repositoryPlugin->plugins[$input['repository']]->processReference('endpoint=getSearchCustom&property=ccm:curriculum&value='.$model->ui.'&maxItems='.$input['maxItems'].'&skipCount='.($input['maxItems'] * $input['page']) ));
-
+            if (!empty($model->ui))
+            {
+                $result->push($repositoryPlugin->plugins[$input['repository']]->processReference('endpoint=getSearchQueriesV2&property=ccm:curriculum&value='.$model->ui.'&maxItems='.$input['maxItems'].'&skipCount='.($input['maxItems'] * $input['page']) ));
+                //$result->push($repositoryPlugin->plugins[$input['repository']]->processReference('endpoint=getSearchCustom&property=ccm:curriculum&value='.$model->ui.'&maxItems='.$input['maxItems'].'&skipCount='.($input['maxItems'] * $input['page']) ));
+            }
+            else
+            {
+                //dump('ui: '.$model->ui);
+                $result = null;
+            }
         }
 
         if (request()->wantsJson()){
             return ['message' => $result];
         }
-
     }
+
 
     public function searchRepository(Request $request)
     {

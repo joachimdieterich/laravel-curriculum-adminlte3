@@ -238,10 +238,14 @@ html.maximized-card {
 }
 
 .card-title {
-  float: left;
-  font-size: $card-title-font-size;
-  font-weight: $card-title-font-weight;
-  margin: 0;
+    float: left;
+    font-size: $card-title-font-size;
+    font-weight: $card-title-font-weight;
+    margin: 0;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 80%;
 }
 
 .card-text {

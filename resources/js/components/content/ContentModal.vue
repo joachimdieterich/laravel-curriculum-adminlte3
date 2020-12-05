@@ -1,8 +1,8 @@
 <template>
-    <modal 
-        id="content-modal" 
-        name="content-modal" 
-        height="auto" 
+    <modal
+        id="content-modal"
+        name="content-modal"
+        height="auto"
         width="100%"
         :maxWidth=900
         :adaptive=true
@@ -12,22 +12,22 @@
         @opened="opened"
         @before-close="beforeClose"
         style="z-index: 1200">
-        <div class="card" 
-             style="margin-bottom: 0px !important">
+        <div class="card"
+             style="margin-bottom: 0 !important">
             <div class="card-header">
                  <h3 class="card-title">
                     {{ content.title }}
                  </h3>
-                
+
                  <div class="card-tools">
                      <button v-can="'curriculum_edit'"
-                             type="button" 
+                             type="button"
                              class="btn btn-tool"
                              @click="del()">
                         <i class="fa fa-trash text-danger"></i>
                      </button>
                      <button v-can="'curriculum_edit'"
-                             type="button" 
+                             type="button"
                              class="btn btn-tool"
                              @click="edit('content-create-modal')">
                         <i class="fa fa-edit"></i>
@@ -39,9 +39,9 @@
                         <i class="fa fa-times"></i>
                      </button>
                  </div>
-              
+
             </div>
-            
+
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;"
                  v-html="content.content">
                 {{ content.content }}
@@ -51,13 +51,13 @@
                      <button type="button" class="btn btn-primary" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
                 </span>
             </div>
-            
+
         </div>
     </modal>
 </template>
 
 <script>
-    
+
     export default {
         data() {
             return {
@@ -73,39 +73,39 @@
                     this.content = event.params.content;
                     //console.log(event.params.quote);
                     if (event.params.quote) {
-                        this.quote = event.params.quote;   
+                        this.quote = event.params.quote;
                     }
                     if (event.params.subscribable) {
-                        this.subscribable = event.params.subscribable;   
+                        this.subscribable = event.params.subscribable;
                     }
                 }
             },
-            opened(event){
+            opened(){
                 this.$nextTick(function () {
-                    document.getElementById('quote_'+this.quote).scrollIntoView({ block: 'start', behavior: 'smooth' })     
+                    document.getElementById('quote_'+this.quote).scrollIntoView({ block: 'start', behavior: 'smooth' })
                 });
-               
+
             },
             beforeClose() {
             },
             edit(modal){
-                 this.$modal.show(modal, { 'id': this.content.id });
+                 this.$modal.show(modal, { 'id': this.content.id, 'method': 'patch' });
             },
             async del(){
-                try {   
+                try {
                     await axios.post('/contents/'+this.content.id+'/destroy',  { 'subscribable': this.subscribable } );
                 }
                 catch(error) {
                     this.errors = response.data.errors;
                 }
                location.reload();
-            },             
+            },
             close(){
                 this.$modal.hide('content-modal');
             }
         },
-        
-        
-        
+
+
+
     }
 </script>

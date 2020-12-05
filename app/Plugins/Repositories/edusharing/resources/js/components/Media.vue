@@ -1,5 +1,5 @@
 <template>
-    <div class="col-12">      
+    <div class="col-12">
         <div id="loading" class="overlay text-center" style="width:100% !important;">
             <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
             <span class="sr-only">Loading...</span>
@@ -7,11 +7,11 @@
         <span v-for="media_subscription in media">
             <div v-for="medium in media_subscription"
                  :id="medium.node_id"
-                 class="box box-objective pointer my-1" 
+                 class="box box-objective pointer my-1"
                  style="height: 300px !important; min-width: 200px !important; padding: 0; background-size: cover;"
                  :style="{'background-image':'url('+href(medium)+')'}"
-                 @click="show(medium)">    
-                <div class="symbol" 
+                 @click="show(medium)">
+                <div class="symbol"
                     style="position: absolute;
                     padding: 6px;
                     z-index: 1;
@@ -24,20 +24,20 @@
 
                     <i class="fa fa-photo-video text-white pt-2"></i>
                 </div>
-                <span 
+                <span
                     v-can="'medium_delete'"
-                    class="p-1 pointer_hand" 
+                    class="p-1 pointer_hand"
                     accesskey="" style="position:absolute; top:0px; height: 30px; width:100%;">
-                        <button 
+                        <button
                             id="delete-navigator-item"
-                            type="submit" 
+                            type="submit"
                             class="btn btn-danger btn-sm pull-right"
                             @click.stop="unlinkMedium(medium.node_id, medium.value);">
                             <small><i class="fa fa-unlink"></i></small>
                         </button>
-                </span>   
+                </span>
 
-                <span class="bg-white text-center p-1 overflow-auto " 
+                <span class="bg-white text-center p-1 overflow-auto "
                       style="position:absolute; bottom:0px; height: 150px; width:100%;">
                     <h6 class="events-heading pt-1 hyphens" v-html="medium.title"></h6>
                     <p class=" text-muted small" v-html="medium.description"></p>
@@ -47,14 +47,14 @@
         </span>
         <div v-if="media !== null" class="row pt-1" style="width:100% !important;">
             <span class="col-6">
-               <button type="button" 
+               <button type="button"
                   class="btn btn-block btn-primary"
                   :class="page > 0 ? '' : 'disabled'"
                   @click="lastPage()"><i class="fa fa-arrow-left"></i></button>
            </span>
 
             <span class="col-6">
-               <button type="button" 
+               <button type="button"
                   class="btn btn-block btn-primary"
                   :class="media[0].length == maxItems ? '' : 'disabled'"
                   @click="nextPage()"><i class="fa fa-arrow-right"></i></button>
@@ -66,7 +66,7 @@
 
 
 <script>
-    
+
     export default {
         props: {
                 'model': {},
@@ -80,7 +80,6 @@
             }
         },
         methods: {
-            
             async loader() {
                 try {
                     this.media = (await axios.post('/repositorySubscriptions/getMedia', {
@@ -91,7 +90,7 @@
                         maxItems: this.maxItems,
                         repository: 'edusharing'
                     })).data.message;
-                    
+
                 } catch(error) {
                     //this.errors = error.response.data.errors;
                 }
@@ -101,13 +100,13 @@
                     if (id !== value){
                         if (confirm("Diese Medium ist Teil einer Sammlung. Soll die gesamte Sammlung entfernt werden?") == false) {
                            return;
-                        } 
+                        }
                     }
                     await axios.post('/repositorySubscriptions/destroySubscription', {
-                                value: value, 
-                                subscribable_id: this.model.id, 
+                                value: value,
+                                subscribable_id: this.model.id,
                                 subscribable_type: this.subscribable_type(),
-                                repository: 'edusharing' 
+                                repository: 'edusharing'
                             }).data;
                 } catch(error) {
                     //this.errors = error.response.data.errors;
@@ -116,17 +115,17 @@
                 $("#link_btn_"+id).removeClass( "invisible" );
                 $("#unlink_btn_"+id).addClass( "invisible" );
             },
-          
+
             subscribable_type() {
                 var reference_class = 'App\\TerminalObjective';
                 if (typeof this.model.terminal_objective === 'object'){
                     reference_class = 'App\\EnablingObjective';
-                } 
+                }
 
                 return reference_class;
             },
-            
-            show(medium) {   
+
+            show(medium) {
                 window.open(medium.path, '_blank');
             },
             href(medium) {
@@ -137,26 +136,26 @@
                 if (this.page == -1){
                     this.page = 0;
                 } else{
-                    this.loader(); 
+                    this.loader();
                 }
-                
+
             },
             nextPage() {
                 this.page = this.page + 1;
-                this.loader(); 
+                this.loader();
             },
         },
         computed: {
-            
+
         },
         watch: {
-            media: function (value, oldValue) { 
+            media: function (value, oldValue) {
                 $("#loading").remove();
             }
         },
         bevorOpen() {
-            
+
         },
-   
+
     }
 </script>

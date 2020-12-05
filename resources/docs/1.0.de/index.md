@@ -2,3 +2,5 @@
     - [Überblick](/{{route}}/{{version}}/overview)
 - ## Features
     - [Navigatoren](/{{route}}/{{version}}/navigators)
+    - [Curricula](/{{route}}/{{version}}/curricula)
+        - [PDFs erstellen](/{{route}}/{{version}}/pdf)

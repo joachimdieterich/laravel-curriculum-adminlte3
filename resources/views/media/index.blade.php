@@ -11,12 +11,20 @@
 @can('medium_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <a 
+            <a
                 id="add-medium"
-                class="btn btn-success" 
-                href="{{ route("media.create") }}">
-                {{ trans('global.media.create') }}    
+                class="btn btn-success"
+                onclick="app.__vue__.$modal.show('medium-create-modal',  {'description': {{ json_encode('') }} });">
+                {{ trans('global.media.create') }}
             </a>
+        </div>
+        <div class="col-lg-12">
+            @include ('forms.input.file',
+            ["model" => "media",
+            "field" => "path",
+            "label" => false,
+            "value" => old('path', isset($media->path) ? $media->id : '')])
+
         </div>
     </div>
 @endcan
@@ -33,7 +41,9 @@
     </thead>
 </table>
 
+
 <medium-modal></medium-modal>
+<medium-create-modal></medium-create-modal>
 
 
 @endsection
@@ -41,7 +51,6 @@
 @parent
 <script>
 $(document).ready( function () {
-    
     let dtButtons = '';
     @can('medium_delete')
         let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
@@ -70,18 +79,18 @@ $(document).ready( function () {
         dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
         dtButtons.push(deleteButton)
     @endcan
-    
-    
+
+
     var table = $('#media-datatable').DataTable({
         ajax: "{{ url('media/list') }}",
         columns: [
-                 { data: 'check'},
-                 { data: 'title' },
-                 { data: 'size' },
-                 { data: 'created_at' },
-                 { data: 'public' },
-                 { data: 'action' }
-                ],
+            { data: 'check'},
+            { data: 'title' },
+            { data: 'size' },
+            { data: 'created_at' },
+            { data: 'public' },
+            { data: 'action' }
+        ],
         columnDefs: [
             { "visible": false, "targets": 0 },
             {

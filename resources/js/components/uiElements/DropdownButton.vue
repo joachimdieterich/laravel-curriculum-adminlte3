@@ -1,14 +1,14 @@
 <template>
     <span>
-        <button type="button" 
-                class="btn btn-default btn-flat dropdown-toggle" 
-                style="background-color: transparent;" 
+        <button type="button"
+                class="btn btn-default btn-flat dropdown-toggle"
+                style="background-color: transparent;"
                 v-bind:style="styles"
-                data-toggle="dropdown" 
+                data-toggle="dropdown"
                 aria-expanded="false">
-            {{ label }} 
+            {{ label }}
             <span class="caret"></span>
-            <div class="dropdown-menu" 
+            <div class="dropdown-menu"
                 x-placement="top-start">
                <span v-for="entry in entries">
                    <hr v-if="entry.hr === true ">
@@ -25,23 +25,20 @@
 <script>
     export default {
         props: {
-            'label': '', 
+            'label': '',
             'entries': {},
+            'subscribable_type': '',
+            'subscribable_id': '',
             'parent': {},
             'model': '',
             'styles': ''
         },
-        
-        
         methods: {
-            show(model, entry) {   
-                this.$modal.show(model.toLowerCase()+'-modal', { 'content': entry, 'subscribable': JSON.parse(this.parent)});
+            show(model, entry) {
+                this.$modal.show(model.toLowerCase()+'-modal', { 'content': entry, 'subscribable': JSON.parse(this.parent), 'subscribable_type' : this.subscribable_type, 'subscribable_id' : this.subscribable_id});
             },
-           
         },
         mounted(){
-            
         }
-        
     }
 </script>

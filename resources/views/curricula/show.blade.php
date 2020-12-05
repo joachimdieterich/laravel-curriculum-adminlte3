@@ -15,6 +15,9 @@
     <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 
+@section('sidebar')
+    asdfasdf
+@endsection
 @section('content')
 
 <div id="content_top_placeholder" ></div>
@@ -78,13 +81,22 @@
         @endif
 
         @if (count($curriculum->media) > 0)
-            <dropdown-button
+                <button type="button"
+                        class="btn btn-default"
+                        data-widget="control-sidebar"
+                        data-slide="true">
+                    <i class="fa fa-folder-open"></i>
+                </button>
+
+            {{--<dropdown-button
                 label="{{ trans('global.curricula_media_subscriptions') }}"
                 model="{{ class_basename($curriculum->media[0]) }}"
                 :entries="{{ $curriculum->media }}"
-                parent="{{ json_encode($curriculum) }}"
+                parent="{{ json_encode([]) }}"
+                subscribable_type="App\Curriculum"
+                :subscribable_id="{{ $curriculum->id }}"
                 styles="border-left:0px"
-            ></dropdown-button>
+            ></dropdown-button>--}}
         @endif
 
         <div class="btn-group">
@@ -127,6 +139,7 @@
                             {{ trans('global.certificate.create') }}
                         </a>
                     @endcan
+
                     <a class="dropdown-item"
                        onclick="app.__vue__.$modal.show('curriculum-description-modal',  {'description': {{ json_encode($curriculum->description) }} });">
                         <span class="">
@@ -136,6 +149,15 @@
                     </a>
                     @can('curriculum_edit')
                     <hr>
+                    {{--@can('medium_create')
+                        <a class="dropdown-item"
+                           onclick="app.__vue__.$modal.show('medium-create-modal',  {'referenceable_type': 'App\\Curriculum', 'referenceable_id': {{ $curriculum->id }}});">
+                        <span class="">
+                        <i class="fa fa-photo-video text-center" style="width:20px"> </i>
+                        {{ trans('global.media.add') }}
+                        </span>
+                        </a>
+                    @endcan--}}
                     <a class="dropdown-item"
                        onclick="app.__vue__.$modal.show('content-create-modal',  {'referenceable_type': 'App\\Curriculum', 'referenceable_id': {{ $curriculum->id }}});">
                         <i class="fa fa-file-alt text-center" style="width:20px"></i>
@@ -190,6 +212,7 @@
 <content-create-modal></content-create-modal>
 <objective-medium-modal></objective-medium-modal>
 <medium-modal></medium-modal>
+<medium-create-modal></medium-create-modal>
 @if(isset($certificates))
     <certificate-generate-modal  :certificates="{{ $certificates }}" ></certificate-generate-modal>
 @endif

@@ -81,7 +81,7 @@ class Edusharing extends RepositoryPlugin
                 ['referenceable_type', '=', 'App\Edusharing'],
                 ['key', '=',  'accessMode']
             ])->get()->first())->value == 'personal'
-        AND Auth::user()->id != env('GUEST_USER'))
+        AND Auth::user()->id != env('GUEST_USER')) //only get Token if authenticated with common_name
         {
             $this->getPersonalToken();
         }
@@ -356,12 +356,10 @@ class Edusharing extends RepositoryPlugin
     //https://[EDUSHARINGDOMAIN]/edu-sharing/rest/search/v1/custom/-home-?contentType=ALL&property=cm:name&value=curriculum&maxItems=10&skipCount=0
     //https://[EDUSHARINGDOMAIN]/edu-sharing/rest/search/v1/custom/-home-?contentType=ALL&property=cm:name&value=20200422&maxItems=40&skipCount=0
     //https://[EDUSHARINGDOMAIN]/edu-sharing/rest/search/v1/custom/-home-?contentType=ALL&property=cm:name&value=20200422&maxItems=10&skipCount=0
-
     public function getSearchCustom($repository, $params)
     {
-        //dump($this->repoUrl . '/rest/search/v1/custom/' . $repository.'?'.http_build_query($params));
         $ret =$this->call ( $this->repoUrl . '/rest/search/v1/custom/' . $repository.'?'.http_build_query($params));
-        //dump($ret);
+
         return json_decode($ret, true);
     }
 
@@ -389,7 +387,6 @@ class Edusharing extends RepositoryPlugin
             json_encode ( $postFields )
         );
 
-        //dump($ret);
         return json_decode($ret, true);
     }
 
@@ -404,7 +401,6 @@ class Edusharing extends RepositoryPlugin
      */
     public function searchRepository($query)
     {
-
         $repo           = isset($query['repo']) ? $query['repo'] : '-home-';    //e.g.'FILES';
         $contentType    = isset($query['contentType']) ? $query['contentType'] : 'ALL';    //e.g.'FILES';
         $property       = isset($query['property']) ? $query['property'] : "cm:name";      //e.g.'ccm:competence_digital2';
@@ -428,11 +424,6 @@ class Edusharing extends RepositoryPlugin
 //        return $files;
 //    }
 
-    public function getExternalMediaByIdentifier()
-    {
-
-    }
-
     public function processReference($arguments)
     {
         parse_str($arguments, $query);
@@ -449,7 +440,7 @@ class Edusharing extends RepositoryPlugin
         switch ($apiEndpoint) {
             case 'getSearchCustom': $nodes      = $this->getSearchCustom('-home-', array ('contentType' => $contentType, 'combineMode' => $combineMode, 'property' => $property, 'value' => $value, 'maxItems' => $maxItems, 'skipCount' => $skipCount));
                 break;
-            case 'getSearchQueriesV2': $nodes      = $this->getSearchQueriesV2('-home-', array ('contentType' => $contentType, 'combineMode' => $combineMode, 'property' => $property, 'value' => $value, 'maxItems' => $maxItems, 'skipCount' => $skipCount));
+            case 'getSearchQueriesV2': $nodes   = $this->getSearchQueriesV2('-home-', array ('contentType' => $contentType, 'combineMode' => $combineMode, 'property' => $property, 'value' => $value, 'maxItems' => $maxItems, 'skipCount' => $skipCount));
                 break;
             case 'getNodeChildren': $nodes      = $this->getChildren('-home-', $value, array ('maxItems' => $maxItems, 'skipCount' => $skipCount));
                 break;

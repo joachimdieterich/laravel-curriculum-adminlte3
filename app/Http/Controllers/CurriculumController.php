@@ -34,15 +34,12 @@ class CurriculumController extends Controller
      */
     public function index()
     {
-        abort_unless(\Gate::allows('curriculum_access'), 403);
-
-        $curricula = Curriculum::where('owner_id', auth()->user()->id)->get();
-
         if (request()->wantsJson()){
-            return ['curricula' => $curricula];
+            return ['curricula' => auth()->user()->curricula()]; //no gate! every user should get his enrolled curricula
         }
-        return view('curricula.index')
-          ->with(compact('curricula'));
+
+        abort_unless(\Gate::allows('curriculum_access'), 403); //check here, cause json return should work for all users
+        return view('curricula.index');
     }
 
     public function list()

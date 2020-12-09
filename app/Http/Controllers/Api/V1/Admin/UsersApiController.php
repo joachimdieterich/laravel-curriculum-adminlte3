@@ -26,6 +26,18 @@ class UsersApiController extends Controller
         }
         else
         {
+            //tempfix for false provisioned users
+            // todo:
+            if (User::withTrashed()->where('username', request()->username)->exists()){
+
+                $user = User::withTrashed()->where('username', request()->username)->get()->first();
+                $user->update(['username' => 'alt_'.request()->username]);
+            }
+            if (User::withTrashed()->where('email', request()->email)->exists()){
+                $user = User::withTrashed()->where('email', request()->email)->get()->first();
+                $user->update(['email' => 'alt_'.request()->email]);
+            }
+            //end tempfix
             if ($user = User::create($this->filteredRequest()))
             {
                 $user->notify(new Welcome());

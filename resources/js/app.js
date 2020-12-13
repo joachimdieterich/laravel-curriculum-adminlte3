@@ -6,12 +6,12 @@
  */
 
 require('./bootstrap');
- 
+
 //vue
 window.Vue = require('vue');
 
 // use trans function like in blade
-import _ from 'lodash'; //needed to get 
+import _ from 'lodash'; //needed to get
 
 Vue.prototype.trans = (key) => {
     return _.get(window.trans, key, key);
@@ -58,13 +58,23 @@ Vue.use(VModal, { dynamic: true});
 import Sticky from 'vue-sticky-directive';
 Vue.use(Sticky);
 
+var filter = function(text, length, clamp){
+    clamp = clamp || '...';
+    var node = document.createElement('div');
+    node.innerHTML = text;
+    var content = node.textContent;
+    return content.length > length ? content.slice(0, length) + clamp : content;
+};
+
+Vue.filter('truncate', filter);
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
  * components and automatically register them with their "basename".
  *
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */ 
+ */
 Vue.component('organization-modal', require('./components/organization/OrganizationModal.vue').default);
 Vue.component('group-modal', require('./components/group/GroupModal.vue').default);
 
@@ -96,17 +106,17 @@ Vue.component('subscribe-modal', require('./components/subscription/SubscribeMod
 /**
  * Custom Vue directive "can" to check against permissions.
  * If permission is not given element gets style display:none
- * 
- * ! Always check permissions in the backand. 
+ *
+ * ! Always check permissions in the backand.
  * This directive enables shorter syntax on vue.
- * 
+ *
  * Example:
  * <element v-can="'curriculum_edit'" ><element>
- * 
+ *
  * @type Vue
  */
-            
-Vue.directive('can', function (el, binding) {    
+
+Vue.directive('can', function (el, binding) {
     if(window.Laravel.permissions.indexOf(binding.value) == -1){
         el.style.display = 'none';
     }
@@ -120,5 +130,5 @@ Vue.directive('can', function (el, binding) {
  */
 var app = new Vue({
     el: '#app'
-});    
+});
 

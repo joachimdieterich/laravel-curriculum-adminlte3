@@ -3,13 +3,13 @@
 <div class="header" style="margin-top:-25px;">
     <div class="row p-3">
         <div class="col-12">
-            
+
             <h5 class="ml-2 pull-left">
-                <i class="fa fa-map-signs mr-1"></i> 
+                <i class="fa fa-map-signs mr-1"></i>
                 {{ $navigators->title }} <small>| {{ isset($views->title) ? $views->title : ''}}
                     <br>
-                    {{ isset($views->description) ? $views->description : ''}}
-                </small>    
+                    {{ isset($views->description) ? strip_tags($views->description) : ''}}
+                </small>
             </h5>
 
             @can('navigator_create')
@@ -18,12 +18,12 @@
                     @if(isset($views))
                         id="add-navigator-items"
                         href="{{route('navigatorItems.create', ['navigator_id' => $navigators->id, 'view_id' => $views->id])}}"
-                    @else   
+                    @else
                         id="add-navigator-view"
-                        href="{{route('navigatorViews.create', ['navigator' => $navigators->id])}}"            
+                        href="{{route('navigatorViews.create', ['navigator' => $navigators->id])}}"
                     @endif
                     class=" btn btn-primary btn-xs mr-1">
-                        <i class="fa fa-plus"></i> 
+                        <i class="fa fa-plus"></i>
                         {{ trans('global.add') }}
                     </a>
                 </span>
@@ -36,7 +36,7 @@
                         onclick="event.preventDefault(); document.getElementById('logoutform').submit();"
                     @endif
                     class=" btn btn-primary btn-xs">
-                        <i class="fa fa-sign-in-alt"></i> 
+                        <i class="fa fa-sign-in-alt"></i>
                         {{ trans('global.login') }}
                     </a>
                 </span>-->
@@ -47,25 +47,25 @@
                         <a href="{{route('navigatorViews.edit', $views->id)}}"
                             id="edit-navigator-view"
                             class=" btn btn-primary btn-xs mr-1">
-                            <i class="fa fa-edit"></i> 
+                            <i class="fa fa-edit"></i>
                             {{ trans('global.edit') }}
-                        </a> 
+                        </a>
                     </span>
                     <span class="pull-right">
                         <form action="{{route('navigatorViews.destroy', $views->id)}}" method="POST" enctype="multipart/form-data">
                             @csrf
-                            @method('DELETE')    
+                            @method('DELETE')
                         <button type="submit"
                             id="delete-navigator-view"
                             class=" btn btn-danger btn-xs mr-1">
-                            <i class="fa fa-trash"></i> 
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.delete') }}
-                        </button> 
+                        </button>
                         </form>
                     </span>
                 @endcan
             @endif
-           
+
         </div>
        <div class="col-12">
            <ol class="breadcrumb m-0">

@@ -24,6 +24,9 @@
                 @if(isset($multiple))
                     multiple="multiple"
                 @endif
+                @if(isset($readonly))
+                    disabled="disabled"
+                @endif
                >
 
             <?php $current_optgroup_id = 'false'; ?>

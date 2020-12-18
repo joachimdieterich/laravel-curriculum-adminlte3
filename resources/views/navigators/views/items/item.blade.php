@@ -51,29 +51,31 @@
                 @break
         @endswitch
     </div>
-        @can('navigator_create')
-        <span class="p-1 pointer_hand"
-           accesskey="" style="position:absolute; top:0px; height: 30px; width:100%;">
-           <form action="{{route('navigatorItems.destroy', ['navigatorItem' => $item->id])}}"
-                 method="POST"
-                 enctype="multipart/form-data"
-                 onclick="event.stopPropagation();">
-               @csrf
-               @method('DELETE')
-               <button
-                   id="delete-navigator-item-{{ $item->id }}"
-                   type="submit" class="btn btn-danger btn-sm pull-right">
-                   <small><i class="fa fa-trash"></i></small>
-               </button>
-           </form>
-           <a href="{{route('navigatorItems.edit', ['navigatorItem' => $item->id, 'navigator_id'])}}"
-              class="btn btn-primary btn-sm pull-right mr-1">
-               <small><i class="fa fa-edit"></i></small>
-           </a>
+        @if(!isset($readonly))
+            @can('navigator_create')
+            <span class="p-1 pointer_hand"
+               accesskey="" style="position:absolute; top:0px; height: 30px; width:100%;">
+               <form action="{{route('navigatorItems.destroy', ['navigatorItem' => $item->id])}}"
+                     method="POST"
+                     enctype="multipart/form-data"
+                     onclick="event.stopPropagation();">
+                   @csrf
+                   @method('DELETE')
+                   <button
+                       id="delete-navigator-item-{{ $item->id }}"
+                       type="submit" class="btn btn-danger btn-sm pull-right">
+                       <small><i class="fa fa-trash"></i></small>
+                   </button>
+               </form>
+               <a href="{{route('navigatorItems.edit', ['navigatorItem' => $item->id, 'navigator_id'])}}"
+                  class="btn btn-primary btn-sm pull-right mr-1">
+                   <small><i class="fa fa-edit"></i></small>
+               </a>
 
 
-       </span>
-        @endcan
+           </span>
+            @endcan
+        @endif
 
 
     <span class="bg-white text-center p-1 overflow-auto "
@@ -83,7 +85,7 @@
            {{ $item->title }}
        </h6>
        <p class=" text-muted small">
-           {{ strip_tags($item->description) }}
+           {{{ html_entity_decode(strip_tags( $item->description)) }}}
        </p>
 
    </span>

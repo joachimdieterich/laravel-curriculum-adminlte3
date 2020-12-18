@@ -558,6 +558,7 @@ return [
         'title_singular' => 'Inhalt',
         'create'         => 'Inhalt erstellen',
         'edit'           => 'Inhalt bearbeiten',
+        'copy'           => 'Inhalt aus bestehendem Curriculum übernehmen',
         'fields'         => [
             'id'                => 'ID',
             'id_helper'         => '',

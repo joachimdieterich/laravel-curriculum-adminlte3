@@ -13,10 +13,17 @@
                   class="pl-2">{{subscriptions[currentSlide-1].content.title}}</span>
         </h3>
         <div class="card-tools">
-            <button type="button" class="btn btn-tool "
+            <button v-can="'content_create'"
+                    type="button" class="btn btn-tool "
                     role="button"
                     @click="show('content-create-modal')">
                 <i class="fa fa-plus"></i>
+            </button>
+            <button v-can="'content_create'"
+                    type="button" class="btn btn-tool "
+                    role="button"
+                    @click="show('content-subscription-modal')">
+                <i class="fa fa-paste"></i>
             </button>
             <button type="button" class="btn btn-tool "
                     href="#contentCarousel" role="button"
@@ -62,27 +69,36 @@
                                            @click="setSlide(index+1)">
                                          {{item.content.title}}
                                      </span>
-                                         <span v-can="'curriculum_create'"
-                                               class="pull-right"><!--Order_id: {{ item.order_id }}-->
-                                             <span v-if="(item.order_id != 0)"
-                                                   class="btn-tool fa fa-arrow-up"
-                                                   @click.prevent="sortEvent(item,-1)">
-                                             </span>
+                                     <span v-can="'content_delete'"
+                                           class="pull-right">
+                                         <span
+                                             class="btn-tool fa fa-trash text-danger"
+                                             @click.prevent="deleteSubscription(item)"
+                                             >
+                                         </span>
+                                    </span>
+                                     <span v-can="'content_create'"
+                                           class="pull-right"><!--Order_id: {{ item.order_id }}-->
+                                         <span v-if="(item.order_id != 0)"
+                                               class="btn-tool fa fa-arrow-up"
+                                               @click.prevent="sortEvent(item,1)">
+                                         </span>
 
-                                            <span  v-if="( subscriptions.length-1 != item.order_id)"
-                                                   class="btn-tool fa fa-arrow-down"
-                                                   @click.prevent="sortEvent(item,1)">
-
-                                            </span>
+                                        <span  v-if="( subscriptions.length-1 != item.order_id)"
+                                               class="btn-tool fa fa-arrow-down"
+                                               @click.prevent="sortEvent(item,-1)"
+                                               >
                                         </span>
-                                         <br>
-                                         <small class="text-muted"
-                                                data-target="#contentCarousel"
-                                                :data-slide-to="index+1"
-                                                @click="setSlide(index+1)">
-                                            {{item.content.content | truncate(200, '...')}}
-                                         </small>
-                                     </span>
+                                    </span>
+
+                                     <br>
+                                     <small class="text-muted"
+                                            data-target="#contentCarousel"
+                                            :data-slide-to="index+1"
+                                            @click="setSlide(index+1)">
+                                        {{item.content.content | truncate(200, '...')}}
+                                     </small>
+                                 </span>
 
                              </li>
                         </span>
@@ -98,7 +114,10 @@
             </div>
         </div>
     </div>
-
+    <content-subscription-modal
+        :subscribable_type="subscribable_type"
+        :subscribable_id="subscribable_id"
+    ></content-subscription-modal>
     </div>
 </template>
 
@@ -153,9 +172,16 @@
                 } catch(error) {
                     this.errors = error.response.data.errors;
                 }
-
             },
-
+            async deleteSubscription(contentSubscription){
+                try {
+                    await axios.post('/contents/'+contentSubscription.content_id+'/destroy',  { 'referenceable_type': contentSubscription.subscribable_type, 'referenceable_id': contentSubscription.subscribable_id } );
+                }
+                catch(error) {
+                    this.errors = error.response.data.errors;
+                }
+                location.reload();
+            },
 
         },
 

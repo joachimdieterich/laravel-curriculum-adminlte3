@@ -557,6 +557,7 @@ return [
         'title'          => 'Contents',
         'title_singular' => 'Content',
         'create'         => 'Create Content',
+        'copy'           => 'Copy Content',
         'edit'           => 'Edit Content',
         'fields'         => [
             'id'         => 'ID',

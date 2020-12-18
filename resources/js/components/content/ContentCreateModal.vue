@@ -185,7 +185,7 @@
             },
             opened(){
                 this.$initTinyMCE();
-                wthis.initSelect2();
+                this.initSelect2();
             },
             initSelect2(){
                 $("#categorie").select2({

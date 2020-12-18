@@ -34,7 +34,8 @@ class CurriculumController extends Controller
      */
     public function index()
     {
-        if (request()->wantsJson()){
+        if (request()->wantsJson())
+        {
             return ['curricula' => auth()->user()->curricula()]; //no gate! every user should get his enrolled curricula
         }
 
@@ -241,6 +242,12 @@ class CurriculumController extends Controller
             'edit' => true,
             'cross_reference_curriculum_id' => false
         ]);
+
+        //axios request?
+        if (request()->wantsJson()){
+
+            return ['contents' => $curriculum->contents];
+        }
 
         return view('curricula.show')
                 ->with(compact('curriculum'))

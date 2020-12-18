@@ -34,14 +34,14 @@ class MediaCRUDTest extends TestCase
     /** @test
      * Use Route: POST, media, media.store
      */
-    public function an_administrator_upload_an_media()
+    /*public function an_administrator_upload_an_media()
     {
 
         $this->post("media" , $attributes = factory('App\Medium')->raw())
                 ->assertStatus(201);
 
         $this->assertDatabaseHas('media', $attributes);
-    }
+    }*/
 
     /** @test
      * Use Route: POST, roles, roles.index

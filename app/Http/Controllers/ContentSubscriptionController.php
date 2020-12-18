@@ -46,7 +46,34 @@ class ContentSubscriptionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        abort_unless(\Gate::allows('content_create'), 403);
+        $subscription_request = $this->validateRequest();
+        $order_id = $this->getMaxOrderId($subscription_request['subscribable_type'], $subscription_request['subscribable_id']);
+
+        foreach ($subscription_request['content_id'] AS $content_id)
+        {
+            $response = [];
+            $exists = ContentSubscription::where('content_id' , $content_id)
+                ->where('subscribable_type', $subscription_request['subscribable_type'])
+                ->where('subscribable_id',  $subscription_request['subscribable_id'])
+                ->first();
+            if ($exists === null){
+                $response[] = ContentSubscription::create([
+                        'content_id'        => $content_id,
+                        'subscribable_type' => $subscription_request['subscribable_type'],
+                        'subscribable_id'   => $subscription_request['subscribable_id'],
+                        'sharing_level_id'  => 1, //todo: should be dynamic
+                        'order_id'          => $order_id,
+                        'visibility'        => 1,
+                        'owner_id'          => auth()->user()->id
+                ]
+                );
+            }
+
+            $order_id++;
+        }
+
+        return $response;
     }
 
     /**
@@ -79,6 +106,7 @@ class ContentSubscriptionController extends Controller
      */
     public function update(Request $request)
     {
+        abort_unless(\Gate::allows('content_create'), 403);
         //first get existing data to later adjust order_id
         $subscription_request = $this->validateRequest();
         $old_subscription = ContentSubscription::where('content_id', $subscription_request['content_id'])
@@ -126,7 +154,7 @@ class ContentSubscriptionController extends Controller
         return (is_numeric($order_id)) ? $order_id + 1 : 0 ;
     }
 
-    protected function resetOrderIds( $subscribable_type, $subscribable_id, $order_id, $direction = 'down')
+   /* protected function resetOrderIds( $subscribable_type, $subscribable_id, $order_id, $direction = 'down') //see  contentController@destroy
     {
         return (new ContentSubscription)
             ->where('subscribable_type', $subscribable_type)
@@ -135,7 +163,7 @@ class ContentSubscriptionController extends Controller
             ->update([
                 'order_id'=> DB::raw('order_id'. ( ($direction === 'down') ? '-1' : '+1') )
             ]);
-    }
+    }*/
 
     protected function toggleOrderId($old_subscription, $new_order_id)
     {

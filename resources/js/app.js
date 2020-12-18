@@ -81,7 +81,7 @@ Vue.component('group-modal', require('./components/group/GroupModal.vue').defaul
 
 Vue.component('absence-modal', require('./components/absence/AbsenceModal.vue').default);
 Vue.component('curriculum-view', require('./components/curriculum/CurriculumView.vue').default);
-/*Vue.component('curriculum-description-modal', require('./components/curriculum/CurriculumDescriptionModal.vue').default);*/
+/*Vue.component('curriculum-description-modal', require('./components/curriculum/CurriculumDescriptionModal.vue').default);*/ //todo: remove file
 Vue.component('terminal-objective-modal', require('./components/objectives/TerminalObjectiveModal.vue').default);
 Vue.component('data-table-widgets', require('./components/uiElements/DataTableWidgets.vue').default);
 Vue.component('enabling-objective-modal', require('./components/objectives/EnablingObjectiveModal.vue').default);
@@ -90,6 +90,7 @@ Vue.component('objective-box', require('./components/objectives/ObjectiveBox.vue
 Vue.component('dropdown-button', require('./components/uiElements/DropdownButton.vue').default);
 Vue.component('content-modal', require('./components/content/ContentModal.vue').default);
 Vue.component('content-create-modal', require('./components/content/ContentCreateModal.vue').default);
+Vue.component('content-subscription-modal', require('./components/content/ContentSubscriptionModal.vue').default);
 Vue.component('reference-objective-modal', require('./components/reference/ReferenceObjectiveModal.vue').default);
 Vue.component('medium-modal', require('./components/media/MediumModal.vue').default);
 Vue.component('medium-create-modal', require('./components/media/MediumCreateModal.vue').default);

@@ -1,8 +1,8 @@
 <template>
-    <modal 
-        id="content-create-modal" 
-        name="content-create-modal" 
-        height="auto" 
+    <modal
+        id="content-create-modal"
+        name="content-create-modal"
+        height="auto"
         :adaptive=true
         draggable=".draggable"
         :resizable=true
@@ -10,21 +10,21 @@
         @opened="opened"
         @before-close="beforeClose"
         style="z-index: 1200">
-        <div class="card" 
+        <div class="card"
              style="margin-bottom: 0px !important">
             <div class="card-header">
                  <h3 class="card-title">
                     <span v-if="method === 'post'">
-                        {{ trans('global.create')  }} 
+                        {{ trans('global.create')  }}
                     </span>
-                    
+
                     <span v-if="method === 'patch'">
-                        {{ trans('global.update')  }} 
+                        {{ trans('global.update')  }}
                     </span>
-                   
+
                     {{ trans('global.content.title_singular') }}
                  </h3>
-                
+
                  <div class="card-tools">
                      <button type="button" class="btn btn-tool draggable" >
                         <i class="fa fa-arrows-alt"></i>
@@ -32,9 +32,9 @@
                      <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
                         <i class="fa fa-times"></i>
                      </button>
-                 </div> 
+                 </div>
             </div>
-            
+
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                 <div class="form-group "
                     :class="form.errors.title ? 'has-error' : ''"
@@ -53,32 +53,32 @@
                 <div class="form-group ">
                     <label for="content">{{ trans('global.content.fields.content') }}</label>
                     <textarea
-                    id="content" 
-                    name="content" 
-                    class="form-control description my-editor "                  
+                    id="content"
+                    name="content"
+                    class="form-control description my-editor "
                     v-model="form.content"
                     ></textarea>
                     <p class="help-block" v-if="form.errors.content" v-text="form.errors.content[0]"></p>
                 </div>
-                
+
                 <div class="form-group ">
                     <label for="categorie">
                         {{ trans('global.categorie.title_singular') }}
                     </label>
-                    <select name="categorie[]" 
-                            id="categorie" 
+                    <select name="categorie[]"
+                            id="categorie"
                             class="form-control select2 "
                             style="width:100%;"
-                            multiple=true    
+                            multiple=true
                             v-model="form.categorie_ids"
                        >
                          <option v-for="(item,index) in categories" v-bind:value="item.id">{{ item.title }}</option>
-                    </select>     
+                    </select>
                 </div>
-                
+
                 <div class="form-group "
                      v-can="'categorie_create'">
-                    <label for="add_categorie" 
+                    <label for="add_categorie"
                            class="pull-right" >
                         <a @click="toggle_categorie_input()">
                             <i class="fa fa-plus"></i> {{ trans('global.categorie.title_singular') }}
@@ -86,11 +86,11 @@
                     </label>
                     <div class="input-group"
                          >
-                        <input id="add_categorie" 
-                               type="text" 
-                               class="form-control " 
+                        <input id="add_categorie"
+                               type="text"
+                               class="form-control "
                                :class="this.show_add_categorie"
-                               data-original-title="" 
+                               data-original-title=""
                                title="">
                         <div class="input-group-append"
                               :class="this.show_add_categorie">
@@ -98,7 +98,7 @@
                         </div>
                     </div>
                 </div>
-                
+
             </div>
             <div class="card-footer">
                 <span class="pull-right">
@@ -106,7 +106,7 @@
                      <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
                 </span>
             </div>
-            
+
         </div>
     </modal>
 </template>
@@ -144,7 +144,7 @@
                         this.form.categorie_ids = $("#categorie").val()
                         this.location = (await axios.post('/contents', this.form)).data.message;
                         location.reload(true);
-                    } 
+                    }
                 } catch(error) {
                     this.form.errors = error.response.data.form.errors;
                 }
@@ -163,7 +163,7 @@
                 if (event.params.categorie_ids){
                     this.form.categorie_ids = event.params.categorie_ids;
                 }
-                this.method = event.params.method; 
+                this.method = event.params.method;
             },
             async getCategories() {
                 try {
@@ -185,15 +185,13 @@
             },
             opened(){
                 this.$initTinyMCE();
-                $('#lfm').filemanager('files');
-                
-                this.initSelect2(); 
+                wthis.initSelect2();
             },
             initSelect2(){
                 $("#categorie").select2({
                     dropdownParent: $("#categorie").parent(),
                     allowClear: true
-                });  
+                });
             },
             toggle_categorie_input() {
                 this.show_add_categorie = this.show_add_categorie === 'invisible' ? '' : 'invisible';
@@ -216,6 +214,6 @@
             }
         },
         mounted() {
-        },     
+        },
     }
 </script>

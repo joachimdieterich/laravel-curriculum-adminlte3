@@ -8,17 +8,18 @@
     </label>
     @endif
     <span class="input-group-btn">
-        <a id="lfm"
+        <a id="openMediumCreateModal"
            class="btn btn-primary text-white"
            onclick="app.__vue__.$modal.show('medium-create-modal',  {'description': {{ json_encode('') }} });">
             <i class="fa fa-photo-video"></i>
             {{ trans('global.'.$model.'.title_singular') }}
         </a>
     </span>
-    <input id="medium_id"
-        class="form-control"
-        type="hidden"
-        value="{{ $value }}"
+    <input id="{{ $field }}"
+           name="{{ $field }}"
+           class="form-control"
+           type="hidden"
+           value="{{ $value }}"
         >
     @if($errors->has( $field ))
         <p class="help-block">
@@ -26,7 +27,11 @@
         </p>
     @endif
 </div>
+
 <img id="holder"
+     @if($value != '')
+     src="/media/{{$value}}"
+     @endif
     style="margin-top:15px;max-height:100px;">
 
 <medium-create-modal></medium-create-modal>
@@ -39,8 +44,8 @@
             //reload thumbs
             $('#holder').attr("src", '/media/'+ $('#medium_id').val());
 
+
         });
     });
 </script>
-
 @endsection

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ContentSubscription;
 use App\Glossar;
 use Illuminate\Http\Request;
 
@@ -46,7 +47,15 @@ class GlossarController extends Controller
      */
     public function show(Glossar $glossar)
     {
-        //
+        $subscriptions = ContentSubscription::where([
+            'subscribable_type' => "App\Glossar",
+            'subscribable_id'   => $glossar->id
+        ])->orderBy('order_id');
+
+
+        if (request()->wantsJson()){
+            return ['message' => $subscriptions->with(['content'])->get()];
+        }
     }
 
     /**
@@ -86,7 +95,7 @@ class GlossarController extends Controller
         {
             (new ContentController)->destroy($content); // delete or unsubscribe if content is still subscribed elsewhere
         }
-        
+
         return $glossar->delete();
     }
 }

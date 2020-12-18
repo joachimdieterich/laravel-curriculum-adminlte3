@@ -31,6 +31,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('contents/{content}/destroy', 'ContentController@destroy')->name('contents.destroy'); //has to be post (has parameters)
     Route::resource('contents', 'ContentController');
+    Route::patch('contentSubscriptions', 'ContentSubscriptionController@update');
+    Route::resource('contentSubscriptions', 'ContentSubscriptionController');
 
     /* courses */
     Route::get('courses/list', 'CourseController@list');
@@ -45,6 +47,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('curricula/list', 'CurriculumController@list');
     Route::get('curricula/import', 'CurriculumImportController@import')->name('curricula.import');
     Route::post('curricula/import/store', 'CurriculumImportController@store')->name('curricula.import.store');
+    Route::get('curricula/references', 'CurriculumController@references');
     Route::get('curricula/{curriculum}/achievements', 'CurriculumController@showAchievements')->name('curricula.showAchievements');
     Route::post('curricula/{curriculum}/achievements', 'CurriculumController@getAchievements')->name('curricula.getAchievements');
     Route::get('curricula/{curriculum}/objectives', 'CurriculumController@getObjectives')->name('curricula.getObjectives');
@@ -65,6 +68,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('eventSubscriptions/getEvents', 'EventSubscriptionController@getEvents')->name('eventSubscriptions.getEvents');
     Route::resource('eventSubscriptions', 'EventSubscriptionController');
 
+    Route::resource('glossar', 'GlossarController');
     /* grades */
     Route::get('grades/list', 'GradesController@list')->name('grades.list');
     Route::delete('grades/destroy', 'GradesController@massDestroy')->name('grades.massDestroy');
@@ -125,6 +129,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('media/massDestroy', 'MediumController@massDestroy')->name('media.massDestroy');
     Route::get('media/list', 'MediumController@list')->name('media.list');
     Route::post('media/{medium}/destroy', 'MediumController@destroy')->name('media.destroy'); //has to be post (has parameters)
+    Route::get('media/{medium}/thumb', 'MediumController@thumb')->name('media.thumb');
     Route::resource('media', 'MediumController');
 
 

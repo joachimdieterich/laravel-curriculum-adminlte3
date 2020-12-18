@@ -8,41 +8,41 @@ use Illuminate\Support\Facades\Storage;
 
 class Medium extends Model
 {
-    
+
     protected $guarded = [];
-    
+
     public function path()
     {
         return "/media/{$this->id}";
     }
-    
+
     public function absolutePath()
     {
         if ($this->mime_type !== 'url')
         {
             return Storage::disk('local')->path(ltrim($this->path . $this->medium_name, '/'));
-        } 
-        else 
+        }
+        else
         {
             return $this->path;
         }
     }
-    
+
     public function relativePath()
     {
         return $this->path.$this->medium_name;
     }
-    
+
     public function license()
     {
         return $this->hasOne('App\License', 'id', 'license_id');
     }
-    
+
     public function subscriptions()
     {
         return $this->hasMany('App\MediumSubscription');
     }
-    
+
     public function subscribe($model, $sharing_level_id = 1, $visibility = true)
     {
         $subscribe = new MediumSubscription([
@@ -51,11 +51,11 @@ class Medium extends Model
 			"subscribable_id"=> $model->id,
 			"sharing_level_id"=> $sharing_level_id,
 			"visibility"=> $visibility,
-			"owner_id"=> auth()->user()->id,	
-	]);
+			"owner_id"=> auth()->user()->id,
+	    ]);
         $subscribe->save();
     }
-    
+
     public function getByFilemanagerPath($path)
     {
         return $this->where('path', str_replace(config('lfm.url_prefix', 'laravel-filemanager').'/', '', dirname($path)).'/')
@@ -63,9 +63,9 @@ class Medium extends Model
                     ->get()
                     ->first();
     }
-    
+
     /**
-     * 
+     *
      * @param type $eventPath
      * @param type $cutBasename if true basename is cut off
      * @param type $basePath
@@ -78,7 +78,7 @@ class Medium extends Model
         {
             return str_replace(basename($filePath), "", str_replace(storage_path()."/{$basePath}", "", $eventPath));
         }
-        else 
+        else
         {
             return str_replace(storage_path()."/{$basePath}", "", $eventPath);
         }

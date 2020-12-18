@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Content;
 use App\Curriculum;
 use App\Medium;
+use App\MediumSubscription;
 use App\NavigatorItem;
 use App\NavigatorView;
 use Illuminate\Http\Request;
@@ -35,11 +36,11 @@ class NavigatorItemController extends Controller
         $position            = $this->getPositions();
         $css_classes         = $this->getCssClasses();
         $visibility          = $this->getVisibility();
-        
+
         $curricula = Curriculum::all();
         $navigator_id = request()->navigator_id;
         $view_id = request()->view_id;
-        
+
         return view('navigators.views.items.create')
                     ->with(compact('navigator_id'))
                     ->with(compact('view_id'))
@@ -60,10 +61,10 @@ class NavigatorItemController extends Controller
     {
         abort_unless(\Gate::allows('navigator_create'), 403);
         $new_navigator_item = $this->validateRequest();
-       
+
         $navigator_id = request()->navigator_id;
         $view_id = request()->view_id;
-        
+
         $medium = new Medium();
         switch (format_select_input($new_navigator_item['referenceable_type'])) {
             case 'App\Content':         $content = new Content([
@@ -76,12 +77,12 @@ class NavigatorItemController extends Controller
                                         $description      = Str::limit($new_navigator_item['description'], 200);
                                         $referenceable_id = $content->id;
                 break;
-            
+
             case 'App\Curriculum':      $referenceable_id = format_select_input($new_navigator_item['referenceable_id']);
-                                        
+
                                         $curriculum = Curriculum::find($referenceable_id);
                                         $title            = $curriculum->title;
-                                        $description      = $curriculum->description; 
+                                        $description      = $curriculum->description;
                                         $new_navigator_item['medium_id'] = $curriculum->medium_id;  //todo how to update medium_id if curriculum->medium_id is changed
                 break;
             case 'App\NavigatorView':   $navigator_view = new NavigatorView([
@@ -90,16 +91,16 @@ class NavigatorItemController extends Controller
                                                                 'navigator_id' => $navigator_id
                                                              ]);
                                         $navigator_view->save();
-                                        
+
                                         $title            = $new_navigator_item['title'];
                                         $description      = $new_navigator_item['description'];
                                         $referenceable_id = $navigator_view->id;
                 break;
             case 'App\Medium':          $title            = $new_navigator_item['title'];
                                         $description      = $new_navigator_item['description'];
-                                        $referenceable_id = $medium->getByFilemanagerPath($new_navigator_item['filepath'])->id;
+                                        $referenceable_id = $new_navigator_item['medium_id'] ;//$medium->getByFilemanagerPath($new_navigator_item['filepath'])->id;
                 break;
-            
+
 
             default:
                 break;
@@ -115,34 +116,26 @@ class NavigatorItemController extends Controller
             'css_class'          => format_select_input($new_navigator_item['css_class']),
             'visibility'         => format_select_input($new_navigator_item['visibility'])
         ]);
-        
-        /* subscribe image */
-        if (format_select_input($new_navigator_item['referenceable_type']) != 'App\Content')
-        {
-            if ($new_navigator_item['filepath'] != null OR $new_navigator_item['medium_id'] != null)
-            {    
-                if ($new_navigator_item['filepath'] != null)
-                {
-                    $medium = $medium->getByFilemanagerPath($new_navigator_item['filepath']);
-                }
-                else 
-                {
-                    $medium = Medium::find(format_select_input($new_navigator_item['medium_id'])); 
-                }
 
-                $medium->subscribe($navigator_item);
-            }
+        /* subscribe image */
+        if (format_select_input($new_navigator_item['referenceable_type']) != 'App\Content'
+            AND
+            $new_navigator_item['medium_id'] != null)
+        {
+            $medium = Medium::find(format_select_input($new_navigator_item['medium_id']));
+
+            $medium->subscribe($navigator_item);
         }
-        
-        // axios call? 
-        if (request()->wantsJson()){    
+
+        // axios call?
+        if (request()->wantsJson()){
             return ['message' => $navigator_item->path()];
         }
-        
+
         return redirect()->route("navigator.view", ['navigator' => $navigator_id, 'navigator_view' => $view_id]);
     }
 
-    
+
 
     /**
      * Show the form for editing the specified resource.
@@ -157,16 +150,18 @@ class NavigatorItemController extends Controller
         $position            = $this->getPositions();
         $css_classes         = $this->getCssClasses();
         $visibility          = $this->getVisibility();
-        
+
         $curricula = Curriculum::all();
         $navigator = $navigatorItem->navigatorView->navigator;
         $navigatorView = $navigatorItem->navigatorView;
-        
+        $medium = $navigatorItem->medium;
+
         //dd($navigatorItem);
         return view('navigators.views.items.edit')
                     ->with(compact('navigator'))
                     ->with(compact('navigatorView'))
                     ->with(compact('navigatorItem'))
+                    ->with(compact('medium'))
                     ->with(compact('referenceable_types'))
                     ->with(compact('position'))
                     ->with(compact('css_classes'))
@@ -184,14 +179,27 @@ class NavigatorItemController extends Controller
     public function update(Request $request, NavigatorItem $navigatorItem)
     {
         abort_unless(\Gate::allows('navigator_edit'), 403);
-        
-        $navigatorItem->update([
+
+        $model = $navigatorItem->update([
             'title'       => $request['title'],
             'description' => Str::limit($request['title'], 200),
             'position'    => format_select_input($request['position']),
             'css_class'   => format_select_input($request['css_class']),
             'visibility'  => format_select_input($request['visibility'])
         ]);
+
+        if ($request['medium_id'] != null)
+        {
+            MediumSubscription::where([
+                    "subscribable_type"=> get_class($navigatorItem),
+                    "subscribable_id"=> $navigatorItem->id,
+                ])
+                ->update(["medium_id" =>  format_select_input($request['medium_id']),
+                    "sharing_level_id"=> 1, //todo: dynamic var
+                    "visibility"=> 1, //todo: dynamic var
+                    "owner_id"=> auth()->user()->id,]
+                );
+        }
 
         return redirect()->route("navigator.view", ['navigator' => request()->navigator_id, 'navigator_view' => request()->view_id]);
     }
@@ -209,55 +217,56 @@ class NavigatorItemController extends Controller
 
         return back();
     }
-    
+
     protected function validateRequest()
-    {   
-        
+    {
+
         return request()->validate([
+            'id'                => 'sometimes',
             'title'             => 'sometimes',
             'description'       => 'sometimes',
             'referenceable_type'=> 'sometimes',
             'referenceable_id'  => 'sometimes',
-            'filepath'          => 'sometimes',
+            'medium_id'         => 'sometimes',
             'position'          => 'sometimes',
             'css_class'         => 'sometimes',
             'visibility'        => 'sometimes',
         ]);
     }
-    
+
     protected function getReferenceableTypes()
     {
         return [
-            (object) ['class' => 'App\NavigatorView', 'label' => trans('global.referenceable_types.navigator_view')], 
-            (object) ['class' => 'App\Curriculum', 'label' => trans('global.referenceable_types.curriculum')], 
-            (object) ['class' => 'App\Content', 'label' => trans('global.referenceable_types.content')], 
-            (object) ['class' => 'App\Medium', 'label' => trans('global.referenceable_types.medium')], 
+            (object) ['class' => 'App\NavigatorView', 'label' => trans('global.referenceable_types.navigator_view')],
+            (object) ['class' => 'App\Curriculum', 'label' => trans('global.referenceable_types.curriculum')],
+            (object) ['class' => 'App\Content', 'label' => trans('global.referenceable_types.content')],
+            (object) ['class' => 'App\Medium', 'label' => trans('global.referenceable_types.medium')],
         ];
     }
-    
+
     protected function getPositions()
     {
         return [
-            (object) ['id' => 'content', 'label' => trans('global.content.title_singular')], 
-            (object) ['id' => 'footer', 'label' => trans('global.footer')], 
-            (object) ['id' => 'header', 'label' => trans('global.header')], 
+            (object) ['id' => 'content', 'label' => trans('global.content.title_singular')],
+            (object) ['id' => 'footer', 'label' => trans('global.footer')],
+            (object) ['id' => 'header', 'label' => trans('global.header')],
         ];
     }
-    
+
     protected function getCssClasses()
     {
         return [
-            (object) ['class' => 'col-xs-12', 'label' => 'col-xs-12'], 
-            (object) ['class' => 'col-12', 'label' => 'col-12'], 
+            (object) ['class' => 'col-xs-12', 'label' => 'col-xs-12'],
+            (object) ['class' => 'col-12', 'label' => 'col-12'],
         ];
     }
-    
+
     protected function getVisibility()
     {
         return  [
-            (object) ['id' => '1', 'label' => trans('global.navigator_item.fields.visibility_show')], 
-            (object) ['id' => '0', 'label' => trans('global.navigator_item.fields.visibility_hide')], 
+            (object) ['id' => '1', 'label' => trans('global.navigator_item.fields.visibility_show')],
+            (object) ['id' => '0', 'label' => trans('global.navigator_item.fields.visibility_hide')],
         ];
     }
-    
+
 }

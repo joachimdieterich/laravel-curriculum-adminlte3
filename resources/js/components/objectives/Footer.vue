@@ -1,7 +1,7 @@
 <template >
     <div class="boxfooter row" v-bind:style="{ 'color': textcolor }">
-        <div class="p-0 col-12 boxflex">
-            <span v-if="withmedia" >
+        <div class="p-0 col-12 ">
+            <!--<span v-if="withmedia" >
                 <span class="fa fa-briefcase mr-1"
                     @click.prevent="showDetails()">
                 </span>
@@ -9,18 +9,16 @@
             <span v-else >
                 <span class="fa fa-briefcase mr-1 text-gray" style="cursor: not-allowed">
                 </span>
-            </span>
+            </span>-->
 
-             <AchievementIndicator 
-                 v-can="'achievement_create'" 
+             <AchievementIndicator
+                 v-can="'achievement_create'"
                  v-if="(typeof this.objective.achievements !== 'undefined')"
                 :objective="objective"
                 :type="type"
                 :settings="settings">
              </AchievementIndicator>
 
-            <span >  
-            </span>
         </div>
     </div>
 </template>
@@ -36,14 +34,14 @@
                 settings:{}
             },
         methods: {
-             showModal(modal) { 
+             showModal(modal) {
                 this.$modal.show(modal, {'content': this.objective, 'type': this.type});
             },
-            showDetails(modal) { 
+            showDetails(modal) {
                 location.href= '/'+this.type+'Objectives/'+this.objective.id;
             },
         },
-        computed: {
+        /*computed: {
              withmedia: function () {
                 if (typeof this.objective.media_subscriptions !== 'undefined') {
                      if (this.objective.media_subscriptions.length > 0 ){
@@ -57,9 +55,9 @@
                 }
                 return false;
             },
-        },
+        },*/
         components: {
-            AchievementIndicator, 
+            AchievementIndicator,
         },
     }
 </script>

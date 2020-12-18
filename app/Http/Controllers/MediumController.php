@@ -177,6 +177,41 @@ class MediumController extends Controller
         abort(403);
     }
 
+    public function thumb(Medium $medium) //todo: return smaller images/files/thumbs
+    {
+        /* id link */
+        if (($medium->mime_type != 'url') ){
+            $path = storage_path('app'.$medium->path.$medium->medium_name);
+            //dd($path);
+            if (!file_exists($path)) {
+                abort(404);
+            }
+        }
+        /*
+         * Medium is public (sharing_level_id == 1) or user is owner
+         */
+        if (($medium->public == true) OR ($medium->owner_id == auth()->user()->id))
+        {
+            return ($medium->mime_type != 'url') ? response()->file($path) : redirect($medium->path); //return file or url
+        }
+
+        /* checkIfUserHasSubscription and visibility*/
+        if ($medium->subscriptions())
+        {
+            foreach ($medium->subscriptions AS $subscription)
+            {
+                if ($this->checkIfUserHasSubscription($subscription))
+                {
+                    return ($medium->mime_type != 'url') ? response()->file($path) : redirect($medium->path); //return file or url
+                }
+            }
+        }
+        /* end checkIfUserHasSubscription and visibility */
+
+        /* user has permission to access this file ! */
+        abort(403);
+    }
+
     /**
      * Show the form for editing the specified resource.
      *

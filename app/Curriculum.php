@@ -111,7 +111,7 @@ class Curriculum extends Model
 
     public function contentSubscriptions()
     {
-        return $this->morphMany('App\ContentSubscription', 'subscribable');
+        return $this->morphMany('App\ContentSubscription', 'subscribable')->orderBy('order_id');
     }
 
     public function contents()

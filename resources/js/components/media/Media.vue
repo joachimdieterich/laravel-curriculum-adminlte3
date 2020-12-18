@@ -1,11 +1,11 @@
 <template >
 <div>
     <div v-if="format =='list'">
-        <div class="card-tools">
+        <!--<div class="card-tools">
             <button type="button" class="btn btn-tool" data-widget="control-sidebar" data-slide="true">
                 <i class="fa fa-times"></i>
             </button>
-        </div>
+        </div>-->
         <table
                id="sidebar_media_datatable"
                class="table table-hover datatable">
@@ -139,8 +139,6 @@
                         return "fa fa-file";
                         break;
                 }
-
-
             }
         },
 

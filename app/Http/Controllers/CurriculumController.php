@@ -182,9 +182,8 @@ class CurriculumController extends Controller
             'type_id'               => format_select_input($input['type_id']),
             'state_id'              => format_select_input($input['state_id']),
             'country_id'            => format_select_input($input['country_id']),
-            'medium_id'             => $this->getMediumIdByInputFilepath($input),
+            'medium_id'             => $input['medium_id'],
             'owner_id'              => auth()->user()->id,
-
         ]);
 
         // axios call?
@@ -216,25 +215,28 @@ class CurriculumController extends Controller
         $levels = \App\Level::all();
 
         $curriculum = Curriculum::with(['terminalObjectives',
-                        'terminalObjectives.media',
+//                        'terminalObjectives.media',
 //                        'terminalObjectives.mediaSubscriptions',
 //                        'terminalObjectives.referenceSubscriptions.siblings.referenceable',
+//                        'terminalObjectives.referenceSubscriptions',
 //                        'terminalObjectives.quoteSubscriptions.siblings.quotable',
                         'terminalObjectives.achievements' => function($query) {
                             $query->where('user_id', auth()->user()->id);
                         },
                         'terminalObjectives.enablingObjectives',
-                        'terminalObjectives.enablingObjectives.media',
+//                        'terminalObjectives.enablingObjectives.media',
 //                        'terminalObjectives.enablingObjectives.mediaSubscriptions',
+            //'terminalObjectives.enablingObjectives.referenceSubscriptions',
 //                        'terminalObjectives.enablingObjectives.referenceSubscriptions.siblings.referenceable',
 //                        'terminalObjectives.enablingObjectives.quoteSubscriptions.siblings.quotable',
                         'terminalObjectives.enablingObjectives.achievements' => function($query) {
                             $query->where('user_id', auth()->user()->id);
                         },
-                        'contentSubscriptions.content',
+                        /*'contentSubscriptions.content',*/
                         'glossar.contents',
-                        'media'])
-                        ->find($curriculum->id);
+                        //'media'
+        ])
+        ->find($curriculum->id);
         $settings= json_encode([
             'edit' => true,
             'cross_reference_curriculum_id' => false
@@ -379,7 +381,7 @@ class CurriculumController extends Controller
             'type_id'               => format_select_input($input['type_id']),
             'state_id'              => isset($input['state_id']) ? format_select_input($input['state_id']) : null,
             'country_id'            => format_select_input($input['country_id']),
-            'medium_id'             => $this->getMediumIdByInputFilepath($input),
+            'medium_id'             => $input['medium_id'],
             'owner_id'              => auth()->user()->id,
         ]);
 
@@ -391,7 +393,7 @@ class CurriculumController extends Controller
      * @param array $input
      * @return mixed
      */
-    public function getMediumIdByInputFilepath($input){
+    /*public function getMediumIdByInputFilepath($input){
         if (isset($input['filepath']))
         {
             $medium = new Medium();
@@ -401,7 +403,7 @@ class CurriculumController extends Controller
         {
             return null;
         }
-    }
+    }*/
 
     public function enrol()
     {
@@ -415,7 +417,14 @@ class CurriculumController extends Controller
         return $return;
     }
 
-     public function expel()
+    public function references()
+    {
+        if (request()->wantsJson()){
+            return ['message' => auth()->user()->currentCurriculaEnrolments()];
+        }
+    }
+
+    public function expel()
     {
         abort_unless(\Gate::allows('course_create'), 403);
 
@@ -507,7 +516,7 @@ class CurriculumController extends Controller
             'type_id'               => 'sometimes',
             'state_id'              => 'sometimes',
             'country_id'            => 'sometimes',
-            'filepath'              => 'sometimes',
+            'medium_id'              => 'sometimes',
             'owner_id'              => 'sometimes',
             ]);
     }

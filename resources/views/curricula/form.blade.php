@@ -15,9 +15,9 @@
 
 @include ('forms.input.file',
             ["model" => "media",
-            "field" => "path",
+            "field" => "medium_id",
             "label" => false,
-            "value" => old('path', isset($media->path) ? '/laravel-filemanager'.$media->relativePath() : '')])
+            "value" => old('medium_id', isset($media->id) ? $media->id : '')])
 
 @include ('forms.input.select',
             ["model" => "grade",

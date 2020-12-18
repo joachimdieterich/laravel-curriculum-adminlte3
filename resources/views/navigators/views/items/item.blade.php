@@ -1,10 +1,35 @@
+@if(strpos($item->medium, 'image'))
 <div
     id="navigator-item-{{ $item->id }}"
-    
-    class="box box-objective pointer {{ $item->css_class }} my-1" 
-    style="height: 300px !important; min-width: 200px !important; padding: 0;background: url('{{isset($item->medium->id) ? route('media.show', ($item->medium->id)) : Avatar::create($item->title)->toGravatar(['d' => 'identicon', 'r' => 'pg', 's' => 100])}}') center center;  background-size: cover;"
+    class="box box-objective pointer {{ $item->css_class }} my-1"
+    style="height: 300px !important;
+        min-width: 200px !important;
+        padding: 0;
+        background: url('{{isset($item->medium->id) ? route('media.thumb', ($item->medium->id)) : Avatar::create($item->title)->toGravatar(['d' => 'identicon', 'r' => 'pg', 's' => 100])}}') top center no-repeat;
+        background-size: contain;"
     onclick="{{ $onclick }}">
-    
+@else
+<div
+    id="navigator-item-{{ $item->id }}"
+    class="box box-objective pointer {{ $item->css_class }} my-1"
+    style="height: 300px !important;
+        min-width: 200px !important;
+        padding: 0;"
+    onclick="{{ $onclick }}">
+    @switch(true)
+        @case(strpos($item->medium, 'pdf'))
+        <i class="far fa-file-pdf text-primary text-center pt-2"
+           style="position:absolute; top: 0px; height: 150px !important; width: 100%; font-size:800%;"></i>
+        @break
+        @default
+        <i class="far fa-file text-primary text-center pt-2"
+           style="position:absolute; top: 0px; height: 150px !important; width: 100%; font-size:800%;"></i>
+        @break
+    @endswitch
+
+@endif
+
+
     <div class="symbol" style="position: absolute;
         padding: 6px;
         z-index: 1;
@@ -23,40 +48,42 @@
                 @break
              @default
                 <i class="fa fa-th text-white pt-2"></i>
-                @break   
+                @break
         @endswitch
     </div>
         @can('navigator_create')
-        <span class="p-1 pointer_hand" 
+        <span class="p-1 pointer_hand"
            accesskey="" style="position:absolute; top:0px; height: 30px; width:100%;">
-           <form action="{{route('navigatorItems.destroy', ['navigatorItem' => $item->id])}}" 
-                 method="POST" 
+           <form action="{{route('navigatorItems.destroy', ['navigatorItem' => $item->id])}}"
+                 method="POST"
                  enctype="multipart/form-data"
                  onclick="event.stopPropagation();">
                @csrf
-               @method('DELETE')   
-               <button 
+               @method('DELETE')
+               <button
                    id="delete-navigator-item-{{ $item->id }}"
                    type="submit" class="btn btn-danger btn-sm pull-right">
                    <small><i class="fa fa-trash"></i></small>
                </button>
            </form>
-    <!--       <a href="{{route('navigatorItems.edit', ['navigatorItem' => $item->id, 'navigator_id'])}}"
-                   class="btn btn-primary btn-sm pull-right mr-1">
+           <a href="{{route('navigatorItems.edit', ['navigatorItem' => $item->id, 'navigator_id'])}}"
+              class="btn btn-primary btn-sm pull-right mr-1">
                <small><i class="fa fa-edit"></i></small>
-           </a>-->
-       </span>   
-        @endcan
-    
+           </a>
 
-    <span class="bg-white text-center p-1 overflow-auto " 
+
+       </span>
+        @endcan
+
+
+    <span class="bg-white text-center p-1 overflow-auto "
          style="position:absolute; bottom:0px; height: 150px; width:100%;">
 
        <h6 class="events-heading pt-1 hyphens">
            {{ $item->title }}
        </h6>
        <p class=" text-muted small">
-           {{ strip_tags($item->description) }}   
+           {{ strip_tags($item->description) }}
        </p>
 
    </span>

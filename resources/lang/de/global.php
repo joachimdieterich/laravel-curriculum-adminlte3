@@ -655,6 +655,9 @@ return [
     'glossar' =>[
         'title'          => 'Glossare',
         'title_singular' => 'Glossar',
+        'add'            => 'Glossar hinzufügen',
+        'create'         => 'Glossar erstellen',
+        'edit'           => 'Glossar bearbeiten',
         'print'          => 'Glossar drucken',
     ],
     'media' =>[

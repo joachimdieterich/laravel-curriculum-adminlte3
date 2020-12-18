@@ -643,7 +643,7 @@ return [
         'title'          => 'Enabling Objectives',
         'title_singular' => 'Enabling Objective',
         'create'         => 'Create enabling objective',
-        'edit'           => 'Create enabling objective',
+        'edit'           => 'Edit enabling objective',
         'fields'         => [
             'id'         => 'ID',
             'id_helper'  => '',
@@ -655,6 +655,9 @@ return [
     'glossar' =>[
         'title'          => 'Glossary',
         'title_singular' => 'Glossaries',
+        'add'            => 'Add Glossary',
+        'create'         => 'Create Glossary ',
+        'edit'           => 'Edit GlosGlossarysar',
         'print'          => 'Print glossary',
     ],
     'media' =>[

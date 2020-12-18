@@ -14,7 +14,9 @@
             <div class="card-header">
                  <h3 class="card-title">
                      <span v-if="edit == true">
-                         <input type="text"
+                         <input
+                             id="save-medium"
+                             type="text"
                                 v-model="medium.title"
                          style="font-size: 1.1rem; font-weight: 400; border: 0; border-bottom: 1px; border-style:solid; margin: 0; width: 400px;"
                          @keyup.enter="saveMedium()"/>

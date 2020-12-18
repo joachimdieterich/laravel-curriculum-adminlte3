@@ -168,7 +168,8 @@
                              @click="close()">
                          {{ trans('global.close') }}
                      </button>
-                    <button class="btn btn-primary pull-right"
+                    <button type="button"
+                            class="btn btn-primary pull-right"
                             @click="saveToForm()" >
                         {{ trans('global.save') }}
                     </button>
@@ -259,6 +260,7 @@
                     .then((response) => {
                         setTimeout(() => {
                             this.files = response.data;
+                            this.selectedFiles = this.files[0].id; //todo: select all files
                             this.message = 'OK';
                             this.reset();
                             this.getAllFile();
@@ -268,8 +270,8 @@
             reset() {
                 this.currentStatus = STATUS_INITIAL;
                 this.uploadError = null;
-                this.progressBar = false,
-                this.$refs.file.value = '';
+                this.progressBar = false;
+                //this.$refs.file.value = '';
             },
             beforeOpen(event) {
                 if (event.params.referenceable_type){

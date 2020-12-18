@@ -174,19 +174,17 @@
         },
         watch: {
             cross_reference: function() {
-                if (this.settings.cross_reference_curriculum_id !== false){ // reset view with x button
+                if ((this.settings.cross_reference_curriculum_id !== false) || (this.settings.cross_reference_curriculum_id === "") ){ // reset view with x button
                     this.visibility = 40;
 
-                        if (typeof this.objective.referencing_curriculum_id !== "undefined" ){
-                            if ( this.objective.referencing_curriculum_id !== null ){
-                                 if (this.objective.referencing_curriculum_id.indexOf(this.settings.cross_reference_curriculum_id))
-                                {
-                                    this.visibility = 100;
-                                }
+                    if (typeof this.objective.referencing_curriculum_id !== "undefined" ){
+                        if ( this.objective.referencing_curriculum_id !== null ){
+                            if (this.objective.referencing_curriculum_id.includes(parseInt(this.settings.cross_reference_curriculum_id)))
+                            {
+                                this.visibility = 100;
                             }
-
                         }
-
+                    }
 
 //                    if (typeof this.objective.quote_subscriptions !== "undefined"){
 //                        let check = this.objective.quote_subscriptions.find(c => c.siblings.find(s => s.quotable.curriculum_id == this.settings.cross_reference_curriculum_id))
@@ -194,17 +192,11 @@
 //                              this.visibility = 100;
 //                        }
 //                    }
-//                    if (typeof this.objective.reference_subscriptions !== "undefined"){
-//                        let check = this.objective.reference_subscriptions.find(c => c.siblings.find(s => s.referenceable.curriculum_id == this.settings.cross_reference_curriculum_id))
-//                        if (typeof check !== "undefined"){
-//                              this.visibility = 100;
-//                        }
-//                    }
-//                    if (this.settings.cross_reference_curriculum_id === ""){
-//                         this.visibility = 100;
-//                         return;
-//                     }
+
+                } else {
+                    this.visibility = 100;
                 }
+
             }
         },
         created: function () {

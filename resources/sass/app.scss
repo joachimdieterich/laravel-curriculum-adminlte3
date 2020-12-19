@@ -87,10 +87,6 @@ body {
     font: bold .4em sans-serif;
 }
 
-.overflow-auto{
-    -webkit-scrollbar {
-        display: none;
-    }
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-}
+.hide-scrollbars::-webkit-scrollbar { width: 0 !important }
+.hide-scrollbars { overflow: -moz-scrollbars-none; }
+.hide-scrollbars { -ms-overflow-style: none; }

@@ -23,22 +23,22 @@
   background: $white;
   margin-bottom: 20px;
   width: 100%;
-  box-shadow: $box-boxshadow; 
+  box-shadow: $box-boxshadow;
 
   &.box-objective{
       margin: 0px;
       height:50px;
       border: 1px solid $gray-lte;
   }
-  
-  
+
+
   // Box color variations
   &.box-primary {
     background-color: $light-blue;
     > .box-header > .box-title > a {
             color: $white;
     }
-    
+
   }
   &.box-info {
     background-color: $info;
@@ -197,7 +197,7 @@
   display: block;
   padding: $box-padding;
   position: relative;
-  
+
   //Add bottom border
   &.with-border {
     border: 1px solid $box-border-color;
@@ -273,7 +273,7 @@
   color: $black;
   border: 1px solid $box-border-color;
   padding: $box-padding;
-  
+
   &.small {
       border-left:0px;
       border-right:0px;
@@ -465,7 +465,7 @@
 
     // The attachment
     > .attachment {
-     
+
       background: #f4f4f4;
       margin-left: 65px;
       margin-right: 15px;
@@ -482,7 +482,7 @@
         margin: 0;
 
       }
-      
+
     }
   }
 
@@ -509,7 +509,7 @@
     .terminal-row{
         padding-bottom: 10px;
     }
-    
+
     .box {
         &.box-objective {
         float: left;
@@ -529,7 +529,7 @@
             padding: 5px 2px 0 2px;
             height: 100px;
             width: 20px;
-            text-align: center;  
+            text-align: center;
         }
 
         .boxscroll{
@@ -537,14 +537,19 @@
             padding-top: 5px;
             overflow-x: hidden;
             overflow-y: auto;
-            height: 146px!important;  
+            -webkit-scrollbar {
+                display: none;
+            }
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+            height: 146px!important;
         }
 
         .boxwrap {
             width: 100%;
             overflow:hidden;
             padding: 0 0 0 20px;
-        } 
+        }
 
         .boxcontent {    /*Hack: boxwrap, boxscroll and boxcontent used to hide scroll crossbrowser compatible*/
             width: 100%;
@@ -552,9 +557,9 @@
             padding-left: 10px;
             padding-right: 40px;
             font-size: 90%;
-        }    
+        }
 
-        .boxfooter {   
+        .boxfooter {
             margin: -150px 0 0 15px;
             padding: 4px 10px 4px 10px;
             position:absolute;
@@ -570,7 +575,7 @@
             text-align: center;
             padding: 3px 1px 5px 1px;
             float: none !important;
-            
+
         }
     }
 }
@@ -596,7 +601,7 @@
         height: 5px;
         font-size: 90%;
         position: relative;
-        
+
         /* add top right radius*/
     -webkit-border-top-right-radius: 0 !important;
      -moz-border-top-right-radius: 0 !important;
@@ -607,17 +612,17 @@
         }
 
         .boxscroll{
-            width:200px; 
+            width:200px;
             padding-top: 5px;
             padding-right: 25px; /*for Firefox only*/
             overflow-x: hidden;
             overflow-y: auto;
-            height: 150px!important;  
+            height: 150px!important;
             background:
 		/* Shadow covers */
 		linear-gradient(white 30%, rgba(255,255,255,0)),
 		linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
-		
+
 		/* Shadows */
 		radial-gradient(50% 0, farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)),
 		radial-gradient(50% 100%,farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
@@ -637,39 +642,39 @@
             background-attachment: local, local, scroll, scroll;
             height: 140px !important;
 
-        }   
+        }
         .boxwrap {
             overflow:hidden;
             padding: 0px;
-        } 
+        }
 
 
         .boxcontent {    /*Hack: boxwrap, boxscroll and boxcontent used to hide scroll crossbrowser compatible*/
             margin: 0px;
-            width:200px; 
+            width:200px;
             padding-left: 10px;
             padding-right: 10px;
             font-size: 90%;
         }
 
-        .boxfooter {    
+        .boxfooter {
             position:absolute;
             margin: 0px;
             padding: 4px 10px 0 10px;
             top: 173px;
-            bottom:0px; 
-            left:0px; 
+            bottom:0px;
+            left:0px;
             right:0px;
             height: 25px;
             width:100%;
-            font-size: 90%;    
+            font-size: 90%;
             text-align: left !important;
             /* get rid of top right radius*/
         -webkit-border-top-right-radius: 0 !important;
          -moz-border-top-right-radius: 0 !important;
               border-top-right-radius: 0 !important;
         }
-        
+
         .boxflex{
             display: -webkit-box!important;
             display: -ms-flexbox!important;
@@ -677,8 +682,8 @@
             -webkit-box-pack: justify!important;
             -ms-flex-pack: justify!important;
             justify-content: space-between!important;
-            
+
         }
     }
-    
+
 }

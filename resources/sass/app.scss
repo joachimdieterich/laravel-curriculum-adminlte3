@@ -86,3 +86,11 @@ body {
     min-width: 2em;
     font: bold .4em sans-serif;
 }
+
+.overflow-auto{
+    -webkit-scrollbar {
+        display: none;
+    }
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}

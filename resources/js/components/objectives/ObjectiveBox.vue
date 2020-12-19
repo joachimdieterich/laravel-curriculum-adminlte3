@@ -43,7 +43,7 @@
 
         <div class="panel-body boxwrap pointer"
              @click.prevent="showDetails()">
-            <div class="boxscroll"
+            <div class="boxscroll hide-scrollbars"
                  v-bind:style="{'background': background, 'background-color': backgroundcolor, 'border-color': objective.color }">
                 <div class="boxcontent"
                      v-bind:style="{ 'color': textcolor }"

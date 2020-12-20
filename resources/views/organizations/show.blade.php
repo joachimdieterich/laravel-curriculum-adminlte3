@@ -18,10 +18,10 @@
                     </h5>
                 </div>
                 @can('organization_edit')
-                <div class="card-tools pr-2">   
+                <div class="card-tools pr-2">
                     <a href="{{ route('organizations.edit', $organization->id) }}" >
                         <i class="far fa-edit"></i>
-                    </a>  
+                    </a>
                 </div>
                 @endcan
             </div>
@@ -41,7 +41,7 @@
                 </p>
                 <hr>
 
-                <strong><i class="fa fa-phone mr-1"></i> {{ trans('global.contact.title_singular') }}</strong>
+                <strong><i class="fa fa-phone mr-1"></i> {{ trans('global.contactdetail.title_singular') }}</strong>
                 <p class="text-muted">
                     {{ trans('global.organization.fields.phone') }}: {{ $organization->phone }}<br>
                     {{ trans('global.organization.fields.email') }}: {{ $organization->email }}
@@ -54,11 +54,11 @@
             <!-- /.card-body -->
             <div class="card-footer">
                 <div class="float-left">
-                    <button type="button" class="btn-xs btn-block btn-{{$status_definitions[$organization->status_id]->color_css_class}} pull-right">{{$status_definitions[$organization->status_id]->lang_de}}</button>                  
+                    <button type="button" class="btn-xs btn-block btn-{{$status_definitions[$organization->status_id]->color_css_class}} pull-right">{{$status_definitions[$organization->status_id]->lang_de}}</button>
                 </div>
                 <small class="float-right">
                     {{ $organization->updated_at }}
-                </small> 
+                </small>
             </div>
         </div>
     </div>

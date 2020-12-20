@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Country;
 use App\Http\Controllers\Controller;
 
 use App\Organization;
+use App\OrganizationType;
+use App\State;
 use App\User;
 use App\Http\Requests\MassDestroyOrganizationRequest;
 use App\StatusDefinition;
@@ -73,9 +76,15 @@ class OrganizationsController extends Controller
     {
         abort_unless(\Gate::allows('organization_create'), 403);
         $status_definitions = StatusDefinition::all();
+        $organization_types = OrganizationType::all();
+        $countries = Country::all();
+        $states = State::where('country', 'DE')->get();
 
         return view('organizations.create')
-                ->with(compact('status_definitions'));
+            ->with(compact('status_definitions'))
+            ->with(compact('countries'))
+            ->with(compact('states'))
+            ->with(compact('organization_types'));
     }
 
     /**
@@ -88,7 +97,17 @@ class OrganizationsController extends Controller
     public function store()
     {
         abort_unless(\Gate::allows('organization_create'), 403);
-        $organization = Organization::firstOrCreate($this->validateRequest());
+
+        $new_organization = $this->validateRequest();
+        $organization = Organization::firstOrCreate(
+            array_merge($this->validateRequest(),
+                [
+                    'organization_type_id' => format_select_input($new_organization['organization_type_id']),
+                    'state_id' => format_select_input($new_organization['state_id']),
+                    'country_id' => format_select_input($new_organization['country_id'])
+                ]
+            )
+        );
 
         // axios call?
         if (request()->wantsJson()){
@@ -132,9 +151,16 @@ class OrganizationsController extends Controller
     {
         abort_unless(\Gate::allows('organization_edit'), 403);
         $status_definitions = StatusDefinition::all();
+        $organization_types = OrganizationType::all();
+        $countries = Country::all();
+        $states = State::where('country', 'DE')->get();
+
         return view('organizations.edit')
-                ->with(compact('organization'))
-                ->with(compact('status_definitions'));
+            ->with(compact('organization'))
+            ->with(compact('countries'))
+            ->with(compact('states'))
+            ->with(compact('status_definitions'))
+            ->with(compact('organization_types'));
     }
 
     /**
@@ -149,9 +175,14 @@ class OrganizationsController extends Controller
     {
         abort_unless(\Gate::allows('organization_edit'), 403);
         $clean_data = $this->validateRequest();
+        $clean_data['state_id'] =  format_select_input($clean_data['state_id']);
+        $clean_data['country_id'] =  format_select_input($clean_data['country_id']);
+        $clean_data['organization_type_id'] =  format_select_input($clean_data['organization_type_id']);
+
         if (isset(request()->status_id[0]))
         {
             $clean_data['status_id'] =  request()->status_id[0];  //hack to prevent array to string conversion
+
         }
 
         $organization->update($clean_data);

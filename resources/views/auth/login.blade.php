@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 <body class="hold-transition login-page">
-    
+
 <div class="login-box">
     <div class="login-logo m-1 ">
          <svg class="mt-1" version="1.0" xmlns="http://www.w3.org/2000/svg"
@@ -29,8 +29,8 @@
                        -112 74 -3 9 -19 78 -34 152 -16 75 -34 146 -41 157 -20 39 -182 79 -436 108
                        -145 17 -283 19 -304 6z"/>
              </g>
-        </svg> 
-                
+        </svg>
+
         <h3 class="font-weight-light text-white"><strong>curriculum</strong>online</h3>
     </div>
     <div class="card">
@@ -44,7 +44,7 @@
             <form action="{{ route('login') }}" method="POST">
                 {{ csrf_field() }}
                 <div class="input-group mb-3">
-                    <input type="email" class="form-control" placeholder="{{ trans('global.login_email') }}" name="email">
+                    <input type="text" class="form-control" placeholder="{{ trans('global.login_email') }} / {{ trans('global.user_name') }}" name="email">
                            <div class="input-group-append">
                         <div class="input-group-text">
                             <span class="fas fa-envelope"></span>
@@ -59,7 +59,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="row">
                     <div class="col-6">
                         @if (env('GUEST_USER') !== null)
@@ -107,7 +107,7 @@
         background-attachment: fixed !important;
         background-size: cover !important;
     }
-    
+
     .center-icon{
         display:inline-block;
         font-size: 40px;

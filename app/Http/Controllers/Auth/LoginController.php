@@ -37,6 +37,33 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+
+    /**
+     * Enable Login with email or username
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function login(Request $request)
+    {
+        $input = $request->all();
+
+        $this->validate($request, [
+            'email' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        $fieldType = filter_var($request->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        if(auth()->attempt(array($fieldType => $input['email'], 'password' => $input['password'])))
+        {
+            return redirect()->route('home');
+        } else {
+            return redirect()->route('login')
+                ->with('error','Email-Address And Password Are Wrong.');
+        }
+
+    }
+
     /**
      * Overwrite Logout
      * If SSO is set add sessionIndex and nameId to request

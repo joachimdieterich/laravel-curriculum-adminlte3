@@ -3,11 +3,15 @@
     id="navigator-item-{{ $item->id }}"
     class="box box-objective pointer {{ $item->css_class }} my-1"
     style="height: 300px !important;
-        min-width: 200px !important;
+        min-width: 200px !important;"
+    onclick="{{ $onclick }}">
+    <div style="height: 150px !important;
+        min-width: 198px !important;
         padding: 0;
         background: url('{{isset($item->medium->id) ? route('media.thumb', ($item->medium->id)) : Avatar::create($item->title)->toGravatar(['d' => 'identicon', 'r' => 'pg', 's' => 100])}}') top center no-repeat;
-        background-size: contain;"
-    onclick="{{ $onclick }}">
+        background-size: cover;">
+
+    </div>
 @else
 <div
     id="navigator-item-{{ $item->id }}"

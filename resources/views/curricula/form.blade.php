@@ -57,13 +57,3 @@
 <div>
     <input class="btn btn-info" type="submit" value="{{ $buttonText }}">
 </div>
-
-@section('scripts')
-@parent
-<script>
-$(document).ready( function () {
-    $('#lfm').filemanager('files');
-});
-</script>
-
-@endsection

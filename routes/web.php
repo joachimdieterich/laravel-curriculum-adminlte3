@@ -185,6 +185,10 @@ Route::group(['middleware' => 'auth'], function () {
     /* statusdefinitions  */
     Route::resource('statusdefinitions', 'StatusDefinitionController');
 
+    /* subjects  */
+    Route::get('subjects/list', 'SubjectController@list')->name('subjects.list');
+    Route::resource('subjects', 'SubjectController');
+
     /* tasks */
     Route::patch('tasks/{task}/complete', 'TaskController@complete')->name('tasks.complete');
     Route::get('tasks/{task}/activity', 'TaskController@activity')->name('tasks.activity');

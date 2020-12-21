@@ -8,8 +8,13 @@
         min-width: 200px !important;
         background:top center no-repeat; background-size: cover;
         padding: 0;"
-        v-bind:style="{ backgroundImage: 'url(\'/media/' + course.curriculum.medium_id + ') ' }"
         @click="openCurriculum()">
+        <div style="height: 150px !important;
+        min-width: 198px !important;
+        padding: 0;
+        background-size: cover;"
+        v-bind:style="{ backgroundImage: 'url(\'/media/' + course.curriculum.medium_id + ') ' }">
+        </div>
         <a v-can="'course_show'"
             @click.stop.prevent="openCourse()"
            class="btn btn-primary btn-sm pull-right  m-2">

@@ -12,20 +12,21 @@
     <div class="col-lg-3 col-sm-12">
         <div class="card card-primary card-outline">
         <div class="card-body box-profile">
-                <div id="lfm" data-input="thumbnail" data-preview="holder" class="text-center">
-                    <img id="holder"
-                         class="profile-user-img img-fluid img-circle"
-                         style="height:100px;"
-                         src="{{ ($user->medium_id !== null) ? '/media/'.$user->medium_id  : Avatar::create($user->fullName())->toBase64() }}"
-                         alt="User profile picture">
-                </div>
-                <input id="thumbnail"
-                       name="filepath"
-                       class="invisible"
-                       type="text"
-                       onchange="setAvatar();"
-                       >
-
+            <div class="text-center">
+                <img id="avatarThumb"
+                     name="avatarThumb"
+                     class="profile-user-img img-fluid img-circle"
+                     style="height:100px;"
+                     src="{{ ($user->medium_id !== null) ? '/media/'.$user->medium_id  : Avatar::create($user->fullName())->toBase64() }}"
+                     alt="User profile picture"
+                     onclick="app.__vue__.$modal.show('medium-create-modal',  {'target': 'medium_id', 'description': {{ json_encode('') }} });">
+            </div>
+            <input id="medium_id"
+                   name="medium_id"
+                   class="form-control"
+                   type="hidden"
+                   onchange="setAvatar()"
+                   value="{{ $user->medium_id  }}">
                 <h3 class="profile-username text-center">{{ $user->firstname }} {{ $user->lastname }}</h3>
 
                 <p class="text-muted text-center">{{ $user->username }} ({{ (null !== $user->currentRole()->first()) ? $user->currentRole()->first()->title : '' }})</p>
@@ -154,17 +155,15 @@
         </div><!-- /.card -->
             @endif
     </div>
-
-
 </div>
+
+<medium-create-modal></medium-create-modal>
+
 @endsection
 
 @section('scripts')
 @parent
 <script>
-$(document).ready( function () {
-    $('#lfm').filemanager('files');
-});
 
 function setAvatar()
 {
@@ -173,7 +172,7 @@ function setAvatar()
             method: 'POST',
             url: "{{ route('users.setAvatar') }}",
             data: {
-                filepath: $('#thumbnail').val(),
+                medium_id: $('#medium_id').val(),
                 _method: 'PATCH',
             }
     })

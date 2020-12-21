@@ -306,7 +306,7 @@ return [
     'outbox'                               => 'Postausgang',
     'inbox'                                => 'Posteingang',
     'recipient'                            => 'Empfänger',
-    'subject'                              => 'Betreff',
+    'message_subject'                     => 'Betreff',
     'message'                              => 'Nachricht',
     'send'                                 => 'Senden',
     'reply'                                => 'Antwort',
@@ -550,7 +550,9 @@ return [
             'id'         => 'ID',
             'id_helper'  => '',
             'title'      => 'Titel',
+            'title_helper'  => '',
             'title_short'=> 'Titel (kurz)',
+            'title_short_helper'  => '',
         ],
     ],
     'content' =>[

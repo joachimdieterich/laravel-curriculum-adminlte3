@@ -76,6 +76,11 @@ class PermissionRoleTableSeeder extends Seeder
                 'task_show',
                 'task_edit',
                 'task_delete',
+                'subject_access',
+                'subject_create',
+                'subject_show',
+                'subject_edit',
+                'subject_delete',
             ];
 
             return in_array($permission->title, $creator_permission_list);

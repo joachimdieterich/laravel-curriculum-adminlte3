@@ -1,6 +1,6 @@
 
 <!-- /.header -->
-<div class="header"> 
+<div class="header">
     @include('navigators.views.items.items', ['position' => 'header'])
 </div>
 
@@ -12,3 +12,4 @@
     @include('navigators.views.items.items', ['position' => 'footer'])
 </div>
 
+<content-create-modal></content-create-modal>

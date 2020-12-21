@@ -11,8 +11,8 @@
     <link href="{{ mix('css/app.css') }}" rel="stylesheet" />
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet" />
     @yield('styles')
-    
-    <script>    
+
+    <script>
         window.trans = <?php
         // copy all translations from /resources/lang/CURRENT_LOCALE/* to global JS variable
         $lang_files = File::files(resource_path() . '/lang/' . App::getLocale());
@@ -34,7 +34,7 @@
 
 <body class="" >
     <div id="app">
-        @include('partials.topmenu') 
+        @include('partials.topmenu')
         <!-- Content Header (Page header) -->
         <section class="content-header p-2">
             <div class="container-fluid">
@@ -55,16 +55,17 @@
         </div>
         <!-- Footer -->
         @include('partials.footer', ['contentonly' => true])
-        
+
     </div>
-    
+
     <form id="logoutform" action="{{ route('logout') }}" method="POST" style="display: none;">
         {{ csrf_field() }}
     </form>
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
+    <script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script>
     @yield('scripts')
-    
+
 </body>
 
 </html>

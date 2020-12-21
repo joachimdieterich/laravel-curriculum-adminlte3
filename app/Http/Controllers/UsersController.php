@@ -225,11 +225,16 @@ class UsersController extends Controller
      */
     public function setAvatar()
     {
-        $medium = new Medium();
-        //sdump(request());
-        User::where('id', auth()->user()->id)->update([
-            'medium_id' => (null !== $medium->getByFilemanagerPath(request('filepath'))) ? $medium->getByFilemanagerPath(request('filepath'))->id : null,
+        if (null !== request('medium_id'))
+        {
+            $medium = Medium::find(request('medium_id'));
+            $medium->public = 1;
+            $medium->save();
+
+            User::where('id', auth()->user()->id)->update([
+                'medium_id' => $medium->id,
                 ]);
+        }
 
         return back();
     }

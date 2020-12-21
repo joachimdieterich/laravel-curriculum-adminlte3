@@ -78,12 +78,12 @@ class MediumController extends Controller
 
             $files = $request->file('file');
             $uploaded = new Collection();
-
+            $pathPrefix = '/users/'.auth()->user()->id.'/';
             foreach ($files AS $file)
             {
                 $filename = time() .   '_' . pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . '.' . $file->getClientOriginalExtension(); //todo: filename should be editable
 
-                if ($file->storeAs($input['path'], $filename, config('filesystems.default')))
+                if ($file->storeAs($pathPrefix.$input['path'], $filename, config('filesystems.default')))
                 {
                     $uploaded->push($this->onStore($file, $filename, $input));
                     if (($input['subscribable_type'] !== 'null') AND ($input['subscribable_id'] !== 'null'))
@@ -100,9 +100,9 @@ class MediumController extends Controller
 
     public function onStore($file, $filename, $input)
     {
-
+        $pathPrefix = '/users/'.auth()->user()->id.'/';
         return Medium::create([
-            'path'          => '/'.$input['path'].'/',
+            'path'          => $pathPrefix.(($input['path'] == '') ?'' :$input['path'].'/'),
             'medium_name'   => $filename,
             'title'         => (isset($input['title']) ? $input['title'] : $file->getClientOriginalName()),
             'description'   => (isset($input['description']) ? $input['description'] : ''),

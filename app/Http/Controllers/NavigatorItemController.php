@@ -123,7 +123,8 @@ class NavigatorItemController extends Controller
             $new_navigator_item['medium_id'] != null)
         {
             $medium = Medium::find(format_select_input($new_navigator_item['medium_id']));
-
+            $medium->public = 1; //navigator items should be visible for all users
+            $medium->save();
             $medium->subscribe($navigator_item);
         }
 
@@ -190,15 +191,16 @@ class NavigatorItemController extends Controller
 
         if ($request['medium_id'] != null)
         {
+            //first delete old subscriptions
             MediumSubscription::where([
-                    "subscribable_type"=> get_class($navigatorItem),
-                    "subscribable_id"=> $navigatorItem->id,
-                ])
-                ->update(["medium_id" =>  format_select_input($request['medium_id']),
-                    "sharing_level_id"=> 1, //todo: dynamic var
-                    "visibility"=> 1, //todo: dynamic var
-                    "owner_id"=> auth()->user()->id,]
-                );
+                "subscribable_type"=> get_class($navigatorItem),
+                "subscribable_id"=> $navigatorItem->id,
+            ])->delete();
+            $medium = Medium::find(format_select_input($request['medium_id']));
+            $medium->public = 1; //navigator items should be visible for all users
+            $medium->save();
+            $medium->subscribe($navigatorItem);
+
         }
 
         return redirect()->route("navigator.view", ['navigator' => request()->navigator_id, 'navigator_view' => request()->view_id]);

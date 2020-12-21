@@ -409,7 +409,7 @@ class PermissionsTableSeeder extends Seeder
                 'title'      => 'period_delete',
                 'created_at' => '2019-04-15 19:14:42',
                 'updated_at' => '2019-04-15 19:14:42',
-            ],           
+            ],
             [
                 'id'         => '91',
                 'title'      => 'course_access',
@@ -769,7 +769,7 @@ class PermissionsTableSeeder extends Seeder
                 'title'     =>'contactdetail_show',
                 'created_at'=>'2020-06-07 17:57:27',
                 'updated_at'=>'2020-06-07 17:57:27',
-              
+
             ] ,
             [
                 'id'        => '151',
@@ -829,7 +829,7 @@ class PermissionsTableSeeder extends Seeder
                 'id'        => '160',
                 'title'     =>'content_show',
                 'created_at'=>'2020-06-07 17:57:27',
-                'updated_at'=>'2020-06-07 17:57:27', 
+                'updated_at'=>'2020-06-07 17:57:27',
             ] ,
             [
                 'id'        => '161',
@@ -842,9 +842,69 @@ class PermissionsTableSeeder extends Seeder
                 'title'     =>'content_delete',
                 'created_at'=>'2020-06-07 17:57:44',
                 'updated_at'=>'2020-06-07 17:57:44',
-            ] 
-            
-            ];
+            ] ,
+            [
+                'id'        => '163',
+                'title'=>'subject_access',
+                'created_at'=>'2020-06-07 17:57:10',
+                'updated_at'=>'2020-06-07 17:57:10',
+            ] ,
+            [
+                'id'        => '164',
+                'title'     =>'subject_create',
+                'created_at'=>'2020-06-07 17:57:19',
+                'updated_at'=>'2020-06-07 17:57:19',
+            ] ,
+            [
+                'id'        => '165',
+                'title'     =>'subject_show',
+                'created_at'=>'2020-06-07 17:57:27',
+                'updated_at'=>'2020-06-07 17:57:27',
+            ] ,
+            [
+                'id'        => '166',
+                'title'     =>'subject_edit',
+                'created_at'=>'2020-06-07 17:57:35',
+                'updated_at'=>'2020-06-07 17:57:35',
+            ] ,
+            [
+                'id'        => '167',
+                'title'     =>'subject_delete',
+                'created_at'=>'2020-06-07 17:57:44',
+                'updated_at'=>'2020-06-07 17:57:44',
+            ],
+            [
+                'id'        => '168',
+                'title'     =>'glossar_access',
+                'created_at'=>'2020-06-07 17:57:10',
+                'updated_at'=>'2020-06-07 17:57:10',
+            ] ,
+            [
+                'id'        => '169',
+                'title'     =>'glossar_create',
+                'created_at'=>'2020-06-07 17:57:19',
+                'updated_at'=>'2020-06-07 17:57:19',
+            ] ,
+            [
+                'id'        => '170',
+                'title'     =>'glossar_show',
+                'created_at'=>'2020-06-07 17:57:27',
+                'updated_at'=>'2020-06-07 17:57:27',
+            ] ,
+            [
+                'id'        => '171',
+                'title'     =>'glossar_edit',
+                'created_at'=>'2020-06-07 17:57:35',
+                'updated_at'=>'2020-06-07 17:57:35',
+            ] ,
+            [
+                'id'        => '172',
+                'title'     =>'glossar_delete',
+                'created_at'=>'2020-06-07 17:57:44',
+                'updated_at'=>'2020-06-07 17:57:44',
+            ]
+
+        ];
 
         Permission::insert($permissions);
     }

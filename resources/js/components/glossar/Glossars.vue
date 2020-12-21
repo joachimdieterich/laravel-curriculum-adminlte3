@@ -13,6 +13,12 @@
                   class="pl-2">{{subscriptions[currentSlide-1].content.title}}</span>
         </h3>
         <div class="card-tools">
+            <button v-can="'content_create'"
+                    type="button" class="btn btn-tool "
+                    role="button"
+                    @click="show('content-create-modal')">
+                <i class="fa fa-plus"></i>
+            </button>
             <button type="button" class="btn btn-tool draggable"
                     href="#glossarCarousel" role="button"
                     data-slide="prev"
@@ -49,12 +55,22 @@
                 <div class="carousel-item active">
                     <ul class="list-unstyled p-3" title="Index">
                         <span v-for="(item,index) in subscriptions">
-                             <li class="pb-2"
-                                 data-target="#glossarCarousel"
-                                 :data-slide-to="index+1"
-                                 @click="setSlide(index+1)">
+                             <li class="pb-2">
                                  <span class="pointer">
-                                     {{item.content.title}}<br>
+                                     <span data-target="#glossarCarousel"
+                                           :data-slide-to="index+1"
+                                           @click="setSlide(index+1)">
+                                         {{item.content.title}}
+                                     </span>
+                                    <span v-can="'glossar_delete'"
+                                          class="pull-right">
+                                         <span
+                                             class="btn-tool fa fa-trash text-danger"
+                                             @click.prevent="deleteSubscription(item)"
+                                         >
+                                         </span>
+                                     </span>
+                                     <br>
                                      <small class="text-muted">
                                         {{item.content.content | truncate(200, '...')}}
                                      </small>
@@ -91,6 +107,9 @@
             }
         },
         methods: {
+            show(modal){
+                this.$modal.show(modal, { 'referenceable_type': 'App\\Glossar', 'referenceable_id': this.glossar.id/*, 'method': 'patch' */ });
+            },
             setSlide(id){
                 this.currentSlide = id;
             },
@@ -107,7 +126,16 @@
                 } else {
                     this.currentSlide++;
                 }
-            }
+            },
+            async deleteSubscription(contentSubscription){
+                try {
+                    await axios.post('/contents/'+contentSubscription.content_id+'/destroy',  { 'referenceable_type': contentSubscription.subscribable_type, 'referenceable_id': contentSubscription.subscribable_id } );
+                }
+                catch(error) {
+                    this.errors = error.response.data.errors;
+                }
+                location.reload();
+            },
         },
         beforeMount() {
              axios.get('/glossar/'+this.glossar.id)

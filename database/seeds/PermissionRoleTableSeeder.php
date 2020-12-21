@@ -81,6 +81,11 @@ class PermissionRoleTableSeeder extends Seeder
                 'subject_show',
                 'subject_edit',
                 'subject_delete',
+                'glossar_access',
+                'glossar_create',
+                'glossar_show',
+                'glossar_edit',
+                'glossar_delete',
             ];
 
             return in_array($permission->title, $creator_permission_list);

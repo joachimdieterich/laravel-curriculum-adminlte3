@@ -23,9 +23,9 @@ class GlossarController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        return $this->store($request);
     }
 
     /**
@@ -36,7 +36,16 @@ class GlossarController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        abort_unless(\Gate::allows('glossar_create'), 403);
+
+        $new_glossar = $this->validateRequest();
+
+        $glossar = Glossar::create([
+            'subscribable_type' => $new_glossar['subscribable_type'],
+            'subscribable_id' => $new_glossar['subscribable_id'],
+        ]);
+        return back();
+
     }
 
     /**
@@ -50,11 +59,11 @@ class GlossarController extends Controller
         $subscriptions = ContentSubscription::where([
             'subscribable_type' => "App\Glossar",
             'subscribable_id'   => $glossar->id
-        ])->orderBy('order_id');
+        ])->with(['content'])->get(); //todo: sort by content
 
 
         if (request()->wantsJson()){
-            return ['message' => $subscriptions->with(['content'])->get()];
+            return ['message' => $subscriptions];
         }
     }
 
@@ -97,5 +106,13 @@ class GlossarController extends Controller
         }
 
         return $glossar->delete();
+    }
+
+    protected function validateRequest()
+    {
+        return request()->validate([
+            'subscribable_type'       => 'required',
+            'subscribable_id'         => 'required'
+        ]);
     }
 }

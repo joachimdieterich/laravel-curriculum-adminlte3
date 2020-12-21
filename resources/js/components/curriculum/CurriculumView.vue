@@ -47,7 +47,7 @@
                     <i class="fa fa-book-open pr-2"></i>{{trans('global.glossar.title_singular')}}
                 </a>
                 <a v-else
-                   v-can="'logbook_create'"
+                   v-can="'glossar_create'"
                    class="nav-link link-muted"
                    id="glossar-nav-tab"
                    :href="'/glossar/create?subscribable_type=App\\Curriculum&subscribable_id='+ curriculum.id "

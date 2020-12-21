@@ -61,8 +61,7 @@
                 <div class="carousel-item active">
                     <ul class="list-unstyled p-3" title="Index">
                         <span v-for="(item,index) in subscriptions">
-                             <li class="pb-2"
-                                 >
+                             <li class="pb-2">
                                  <span class="pointer">
                                      <span data-target="#contentCarousel"
                                            :data-slide-to="index+1"
@@ -76,7 +75,7 @@
                                              @click.prevent="deleteSubscription(item)"
                                              >
                                          </span>
-                                    </span>
+                                     </span>
                                      <span v-can="'content_create'"
                                            class="pull-right"><!--Order_id: {{ item.order_id }}-->
                                          <span v-if="(item.order_id != 0)"
@@ -89,8 +88,7 @@
                                                @click.prevent="sortEvent(item,-1)"
                                                >
                                         </span>
-                                    </span>
-
+                                     </span>
                                      <br>
                                      <small class="text-muted"
                                             data-target="#contentCarousel"

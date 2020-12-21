@@ -61,7 +61,7 @@
                     <p class="help-block" v-if="form.errors.content" v-text="form.errors.content[0]"></p>
                 </div>
 
-                <div class="form-group ">
+                <div class="form-group " >
                     <label for="categorie">
                         {{ trans('global.categorie.title_singular') }}
                     </label>

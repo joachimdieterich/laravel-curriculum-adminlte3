@@ -1,6 +1,6 @@
 <?php
 
-Route::redirect('/', '/features');
+Route::redirect('/', '/home');
 Route::get('/features', 'OpenController@features')->name('features');
 
 Route::get('/impressum', 'OpenController@impressum')->name('impressum');

@@ -33,6 +33,7 @@
         <tr>
             <th></th>
             <th>{{ trans('global.media.fields.title') }}</th>
+            <th>{{ trans('global.media.fields.description') }}</th>
             <th>{{ trans('global.media.fields.size') }}</th>
             <th>{{ trans('global.media.fields.created_at') }}</th>
             <th>{{ trans('global.media.fields.public') }}</th>
@@ -44,7 +45,6 @@
 
 <medium-modal></medium-modal>
 <medium-create-modal></medium-create-modal>
-
 
 @endsection
 @section('scripts')
@@ -86,6 +86,7 @@ $(document).ready( function () {
         columns: [
             { data: 'check'},
             { data: 'title' },
+            { data: 'description' },
             { data: 'size' },
             { data: 'created_at' },
             { data: 'public' },
@@ -102,7 +103,8 @@ $(document).ready( function () {
         buttons: dtButtons
     });
     table.on( 'select', function ( e, dt, type, indexes ) { //on select event
-        window.location.href = "/media/" + table.row({ selected: true }).data().id ;
+        app.__vue__.$modal.show('medium-modal', { 'content': {'id': table.row({ selected: true }).data().id , 'title': table.row({ selected: true }).data().title, 'description': table.row({ selected: true }).data().description}});
+        //window.location.href = "/media/" + table.row({ selected: true }).data().id ;
     });
  });
 </script>

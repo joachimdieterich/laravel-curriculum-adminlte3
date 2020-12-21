@@ -12,8 +12,10 @@
             <thead>
             <tr>
                 <th class="px-2">
-                    {{ trans('global.media.title') }}
-                    <span class="float-right"
+                    {{ trans('global.media.fields.title') }}
+                    <span
+                        v-can="'medium_create'"
+                        class="float-right"
                           @click="show('medium-create', subscription)">
                         <i class="fa fa-plus"></i>
                     </span>

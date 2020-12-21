@@ -194,7 +194,7 @@
                 tab: 'media',
                 target:'medium_id',
                 form: new Form({
-                    'path': 'public',
+                    'path': '',
                     'subscribable_type': null,
                     'subscribable_id': null,
                     'repository':null
@@ -231,15 +231,15 @@
                         })
                     }
 
-                });
-                 /!*   .then(()=>{
+                });*/
+               /* .then(()=>{
                     $("#media_create_datatable").DataTable({
                         "paging": true,
                         "ordering": false,
                         "info": true,
                         "autoWidth": false
                     });
-                });*!/*/
+                });*/
             },
 
             uploadSubmit(formData) {

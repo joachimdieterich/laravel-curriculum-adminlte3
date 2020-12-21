@@ -10,9 +10,15 @@
 @section('content')
 <div class="row">
     <div class="col-12">
+        <group-view
+            :group="{{ $group }}"
+            :courses="{{ $courses }}">
+        </group-view>
+        <br>
+{{--
         @foreach($group->curricula as $id => $curriculum)
             @include ('navigators.views.items.item', [ 'item' => $curriculum, 'onclick' => "location.href='/curricula/{$curriculum->id}';" , 'readonly' => true])
-        @endforeach
+        @endforeach--}}
     </div>
 </div>
 @endsection

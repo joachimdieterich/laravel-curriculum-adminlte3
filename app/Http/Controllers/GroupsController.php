@@ -142,10 +142,10 @@ class GroupsController extends Controller
            // dump(json_encode($group->users));
             return ['users' => json_encode($group->users)];
         }
-        $courses = $group->courses();
+        $courses = $group->courses()->with('curriculum')->get();
         return view('groups.show')
                 ->with(compact('group'))
-            ->with(compact('courses'));
+                ->with(compact('courses'));
     }
 
     public function edit(Group $group)

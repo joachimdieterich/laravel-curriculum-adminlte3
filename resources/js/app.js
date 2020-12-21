@@ -81,6 +81,7 @@ Vue.component('group-modal', require('./components/group/GroupModal.vue').defaul
 
 Vue.component('absence-modal', require('./components/absence/AbsenceModal.vue').default);
 Vue.component('curriculum-view', require('./components/curriculum/CurriculumView.vue').default);
+Vue.component('group-view', require('./components/group/GroupView.vue').default);
 /*Vue.component('curriculum-description-modal', require('./components/curriculum/CurriculumDescriptionModal.vue').default);*/ //todo: remove file
 Vue.component('terminal-objective-modal', require('./components/objectives/TerminalObjectiveModal.vue').default);
 Vue.component('data-table-widgets', require('./components/uiElements/DataTableWidgets.vue').default);
@@ -104,6 +105,7 @@ Vue.component('task', require('./components/tasks/Task.vue').default);
 Vue.component('task-timeline', require('./components/tasks/Timeline.vue').default);
 Vue.component('kanban-board', require('./components/kanban/KanbanBoard.vue').default);
 Vue.component('subscribe-modal', require('./components/subscription/SubscribeModal.vue').default);
+//Vue.component('sidebar', require('./components/uiElements/Sidebar.vue').default);
 /**
  * Custom Vue directive "can" to check against permissions.
  * If permission is not given element gets style display:none

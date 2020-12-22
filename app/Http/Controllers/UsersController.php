@@ -18,6 +18,8 @@ use App\OrganizationRoleUser;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Request;
 use Yajra\DataTables\DataTables;
+use App\Imports\UsersImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UsersController extends Controller
 {
@@ -247,5 +249,33 @@ class UsersController extends Controller
             return ($user->medium_id !== null) ? '/media/'.$user->medium_id  : (new \Laravolt\Avatar\Avatar)->create($user->fullName())->toBase64();
         }
 
+    }
+
+    public function createImport()
+    {
+        abort_unless(\Gate::allows('user_create'), 403);
+
+        return view('users.import');
+    }
+
+    public function storeImport(Request $request)
+    {
+        abort_unless(\Gate::allows('user_create'), 403);
+
+        $import = $this->validateImportRequest($request);
+
+        $medium = Medium::find($import['medium_id']);
+        Excel::import(new UsersImport($request), storage_path('app'.$medium->path.$medium->medium_name));
+
+        return view('users.import');
+    }
+
+    protected function validateImportRequest()
+    {
+        return request()->validate(
+            [
+                'medium_id'            => 'required',
+            ]
+        );
     }
 }

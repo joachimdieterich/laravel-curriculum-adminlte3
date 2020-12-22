@@ -15,6 +15,9 @@
                class="btn btn-success" href="{{ route("users.create") }}">
                {{ trans('global.user.create') }}
             </a>
+            <a class="btn btn-success" href="{{ route("users.createImport") }}" >
+                {{ trans('global.user.import') }}
+            </a>
         </div>
     </div>
 @endcan

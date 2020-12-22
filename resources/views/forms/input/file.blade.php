@@ -11,7 +11,7 @@
         <a id="openMediumCreateModal"
            class="btn btn-primary text-white"
            onclick="app.__vue__.$modal.show('medium-create-modal',  {'description': {{ json_encode('') }} });">
-            <i class="fa fa-photo-video"></i>
+            <i class="fa fa-cloud-upload-alt pr-2"></i>
             {{ trans('global.'.$model.'.title_singular') }}
         </a>
     </span>
@@ -19,8 +19,7 @@
            name="{{ $field }}"
            class="form-control"
            type="hidden"
-           value="{{ $value }}"
-        >
+           value="{{ $value }}">
     @if($errors->has( $field ))
         <p class="help-block">
             {{ $errors->first( $field ) }}
@@ -35,7 +34,6 @@
     style="margin-top:15px;max-height:100px;">
 
 <medium-create-modal></medium-create-modal>
-
 @section('scripts')
 @parent
 <script>
@@ -43,8 +41,6 @@
         $('#medium_id').on('change', function() {
             //reload thumbs
             $('#holder').attr("src", '/media/'+ $('#medium_id').val());
-
-
         });
     });
 </script>

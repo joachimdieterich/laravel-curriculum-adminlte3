@@ -113,7 +113,7 @@ return [
 
      /*
     |--------------------------------------------------------------------------
-    | Application Template 
+    | Application Template
     |--------------------------------------------------------------------------
     |
     | When your application is in debug mode, detailed error messages with
@@ -123,7 +123,7 @@ return [
     */
 
     'template' => env('APP_TEMPLATE', 'default'),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Encryption Key
@@ -192,17 +192,17 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\TelescopeServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-           
+
         /*
          * Plugin Provider
          */
         App\Providers\PluginServiceProvider::class,
-        
+
         /*
          * Datatables
          */
         Yajra\Datatables\DatatablesServiceProvider::class,
-        
+
         /*
          * PDF Generator
          */
@@ -211,7 +211,11 @@ return [
          * Messaging
          */
         Cmgmyr\Messenger\MessengerServiceProvider::class,
-        
+        /*
+         *  Laravel Excel
+         */
+        Maatwebsite\Excel\ExcelServiceProvider::class,
+
     ],
 
     /*
@@ -243,6 +247,7 @@ return [
         'Datatables'   => Yajra\Datatables\Facades\Datatables::class,
         'Eloquent'     => Illuminate\Database\Eloquent\Model::class,
         'Event'        => Illuminate\Support\Facades\Event::class,
+        'Excel'        => Maatwebsite\Excel\Facades\Excel::class,
         'File'         => Illuminate\Support\Facades\File::class,
         'Gate'         => Illuminate\Support\Facades\Gate::class,
         'Hash'         => Illuminate\Support\Facades\Hash::class,

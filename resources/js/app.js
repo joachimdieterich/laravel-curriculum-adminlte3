@@ -105,7 +105,7 @@ Vue.component('task', require('./components/tasks/Task.vue').default);
 Vue.component('task-timeline', require('./components/tasks/Timeline.vue').default);
 Vue.component('kanban-board', require('./components/kanban/KanbanBoard.vue').default);
 Vue.component('subscribe-modal', require('./components/subscription/SubscribeModal.vue').default);
-//Vue.component('sidebar', require('./components/uiElements/Sidebar.vue').default);
+Vue.component('sidebar', require('./components/uiElements/Sidebar.vue').default);
 /**
  * Custom Vue directive "can" to check against permissions.
  * If permission is not given element gets style display:none

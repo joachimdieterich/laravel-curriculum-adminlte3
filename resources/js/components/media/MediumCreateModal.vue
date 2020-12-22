@@ -76,7 +76,7 @@
                                   method="post"
                                   v-if="isInitial || isSaving">
                                 <div class="alert alert-success" v-if="message">
-                                    {{ message[0] }}
+                                    {{ message }}
                                 </div>
                                 <div class="dropbox text-secondary">
                                     <input type="file"

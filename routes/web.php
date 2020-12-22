@@ -109,6 +109,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('messages', 'MessagesController@store')->name('messages.store');
     Route::get('messages/{id}', 'MessagesController@show')->name('messages.show');
     Route::put('messages/{id}', 'MessagesController@update')->name('messages.update');
+    Route::post('messages/{id}/destroy', 'MessagesController@destroy')->name('messages.destroy');
 
     /* Navigators */
     Route::get('navigators/list', 'NavigatorController@list');
@@ -210,7 +211,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::patch('users/setCurrentOrganization', 'UsersController@setCurrentOrganization')->name('users.setCurrentOrganization');
     Route::patch('users/setCurrentPeriod', 'UsersController@setCurrentPeriod')->name('users.setCurrentPeriod');
     Route::patch('users/setAvatar', 'UsersController@setAvatar')->name('users.setAvatar');
-
+    Route::get('users/import', 'UsersController@createImport')->name('users.createImport');
+    Route::post('users/import', 'UsersController@storeImport')->name('users.storeImport');
     Route::get('users/list', 'UsersController@list');
     Route::get('users/{user}/avatar', 'UsersController@getAvatar');
     Route::resource('users', 'UsersController');

@@ -12,20 +12,20 @@
     <div class="card-header">
         <div class="card-title">
             <h5 class="m-0">
-                <i class="fa fa-clipboard-list mr-1"></i> 
+                <i class="fa fa-clipboard-list mr-1"></i>
                 {{ $plan->title }}
             </h5>
-            <small>{{ $plan->type->title}} </small> 
+            <small>{{ $plan->type->title}} </small>
         </div>
 @can('plan_edit')
-        <div class="card-tools pr-2 no-print">              
+        <div class="card-tools pr-2 no-print">
             <a href="{{ route('print.model', ['model' => 'App\Plan', 'id' =>  $plan->id]) }}" class="link-muted pr-4">
                 <i class="fa fa-print"></i>
             </a>
-            
+
              <a href="{{route('plans.edit', $plan->id) }}" class="link-muted">
                 <i class="far fa-edit"></i>
-            </a>  
+            </a>
         </div>
 @endcan
 
@@ -53,20 +53,17 @@
                     <span class="col-12 pb-1">
                         <i class="fa fa-calendar-check pr-1"></i>
                         {{ $plan->end }}
-                    </span>        
+                    </span>
                     <span class="col-12 pb-1">
                         <i class="fa fa-stopwatch pr-1"></i>
                         {{ $plan->duration }} {{trans('global.minutes')}}
-                    </span>   
-                    
-                </span>               
-            </span>        
-            
+                    </span>
+
+                </span>
+            </span>
         </div>
-        
-       
     </div>
-    
+
 </div>
 @php
 $period = Carbon\CarbonPeriod::create($plan->begin, $plan->end);
@@ -75,7 +72,7 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
 
 @foreach ($period as $day)
     @if($day->isWeekday() == true)
-    
+
         @if($day->format('yy-m-d') == $today)
             @php $class = 'card-secondary card-outline'; @endphp
         @else
@@ -83,7 +80,7 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
         @endif
         <div class="card {{ $class }}">
             <div class="card-header">
-                <i class="fas fa-calendar-day mr-1"></i> 
+                <i class="fas fa-calendar-day mr-1"></i>
                 {{ $day->locale('de')->dayName }}, {{ $day->isoFormat('LL') }}
             </div>
             <div class="card-body py-2">
@@ -98,12 +95,12 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
                 </div>
                 @endcan
             </div>
-            
+
         </div>
     @else
         <div class="card bg-transparent">
-            <div class="card-header">              
-                <i class="fa fa-hiking mr-1"></i> 
+            <div class="card-header">
+                <i class="fa fa-hiking mr-1"></i>
                 {{ $day->locale('de')->dayName }}, {{ $day->isoFormat('LL') }}
             </div>
         </div>

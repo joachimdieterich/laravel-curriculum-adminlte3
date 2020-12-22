@@ -18,18 +18,18 @@ class PlanController extends Controller
     public function index()
     {
         abort_unless(\Gate::allows('plan_access'), 403);
-        
-        return view('plans.index'); 
+
+        return view('plans.index');
     }
-    
+
     public function list()
     {
         abort_unless(\Gate::allows('plan_access'), 403);
         $plans = (auth()->user()->role()->id == 1) ? Plan::all() : auth()->user()->plans();
-        
+
         $edit_gate = \Gate::allows('plan_edit');
-        $delete_gate = \Gate::allows('plan_delete');      
-        
+        $delete_gate = \Gate::allows('plan_delete');
+
         return DataTables::of($plans)
             ->addColumn('action', function ($plans) use ($edit_gate, $delete_gate){
                  $actions  = '';
@@ -37,7 +37,7 @@ class PlanController extends Controller
                         $actions .= '<a href="'.route('plans.edit', $plans->id).'"'
                                     . 'id="edit-plan-'.$plans->id.'" '
                                     . 'class="btn p-1">'
-                                    . '<i class="fa fa-pencil-alt"></i>' 
+                                    . '<i class="fa fa-pencil-alt"></i>'
                                     . '</a>';
                     }
                     if ($delete_gate){
@@ -46,10 +46,10 @@ class PlanController extends Controller
                                 . 'onclick="destroyDataTableEntry(\'plans\','.$plans->id.')">'
                                 . '<i class="fa fa-trash"></i></button>';
                     }
-              
+
                 return $actions;
             })
-           
+
             ->addColumn('check', '')
             ->setRowId('id')
             ->setRowAttr([
@@ -66,10 +66,11 @@ class PlanController extends Controller
     public function create()
     {
         abort_unless(\Gate::allows('plan_create'), 403);
-        
+
         $plan  = new Plan();
-        $types = PlanType::all();
-        
+        //$types = PlanType::all()
+        $types = PlanType::where('id', 1)->get();
+
         return view('plans.create')
                 ->with(compact('types'))
                 ->with(compact('plan'));
@@ -84,7 +85,7 @@ class PlanController extends Controller
     public function store(Request $request)
     {
        abort_unless(\Gate::allows('plan_create'), 403);
-        
+
         $input = $this->validateRequest();
         $plan = Plan::firstOrCreate([
             'title'             => $input['title'],
@@ -95,13 +96,13 @@ class PlanController extends Controller
             'type_id'           => format_select_input($input['type_id']),
             'owner_id'          => auth()->user()->id
         ]);
-        
-         // axios call? 
-        if (request()->wantsJson()){    
+
+         // axios call?
+        if (request()->wantsJson()){
             return ['message' => $plan->path()];
         }
-        
-        return redirect($plan->path());
+
+        return redirect('/plans');
     }
 
     /**
@@ -113,14 +114,14 @@ class PlanController extends Controller
     public function show(Plan $plan)
     {
         abort_unless(\Gate::allows('plan_show'), 403);
-        
-        // axios call? 
-        if (request()->wantsJson()){  
+
+        // axios call?
+        if (request()->wantsJson()){
             return [
                 'plan' => $plan
             ];
         }
-        
+
         return view('plans.show')
                 ->with(compact('plan'));
     }
@@ -135,7 +136,7 @@ class PlanController extends Controller
     {
         abort_unless(\Gate::allows('plan_edit'), 403);
         $types = PlanType::all();
-        
+
         return view('plans.edit')
                 ->with(compact('plan'))
                 ->with(compact('types'));
@@ -151,14 +152,14 @@ class PlanController extends Controller
     public function update(Request $request, Plan $plan)
     {
         abort_unless(\Gate::allows('plan_edit'), 403);
-        $clean_data = $this->validateRequest();        
+        $clean_data = $this->validateRequest();
         if (isset($clean_data['type_id']))
         {
             $clean_data['type_id'] =  format_select_input($clean_data['type_id']);  //hack to prevent array to string conversion
         }
-        
+
         $plan->update($clean_data);
-        
+
         return redirect($plan->path());
     }
 
@@ -170,17 +171,17 @@ class PlanController extends Controller
      */
     public function destroy(Plan $plan)
     {
-        
+
         abort_unless(\Gate::allows('plan_delete'), 403);
 
         $plan->delete();
 
         return back();
     }
-    
+
     protected function validateRequest()
-    {               
-        
+    {
+
         return request()->validate([
             'title'         => 'sometimes|required',
             'description'   => 'sometimes',

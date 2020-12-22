@@ -221,7 +221,16 @@ class OrganizationsController extends Controller
         foreach ((request()->enrollment_list) AS $enrolment)
         {
 
-            $return[] = OrganizationRoleUser::updateOrCreate(
+            if (auth()->user()->id == $enrolment['user_id']
+                AND auth()->user()->role()->id == 1
+                AND auth()->user()->current_organization_id == $enrolment['organization_id'])
+            {
+                // do nothing -> admin should not degrade itself
+            }
+            else
+            {
+                //current admin should not be edited
+                $return[] = OrganizationRoleUser::updateOrCreate(
                     [
                         'user_id'         => $enrolment['user_id'],
                         'organization_id' => $enrolment['organization_id']
@@ -230,6 +239,8 @@ class OrganizationsController extends Controller
                         'role_id'         => $enrolment['role_id']
                     ]
                 );
+            }
+
         }
 
         return $return;

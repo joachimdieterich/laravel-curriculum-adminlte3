@@ -5,7 +5,7 @@
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item">
-        @if (Auth::user()->id == env('GUEST_USER')) 
+        @if (Auth::user()->id == env('GUEST_USER'))
             <a href="/navigators/{{Auth::user()->organizations()->where('organization_id', '=',  Auth::user()->current_organization_id)->first()->navigators()->first()->id}}">Home</a>
         @else
             <a href="/">{{ trans('global.home') }}</a>
@@ -18,7 +18,8 @@
 @section('content')
     <objective-view
         ref="curriculumView"
-        :objective="{{ $objective }}" 
+        :repository="{{ $repository }}"
+        :objective="{{ $objective }}"
     >
     </objective-view>
 <terminal-objective-modal></terminal-objective-modal>

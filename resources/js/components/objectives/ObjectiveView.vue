@@ -1,4 +1,4 @@
-<template> 
+<template>
     <div class="row" >
         <modals-container/>
         <div class="col-12">
@@ -8,7 +8,7 @@
                         <span v-if="type === 'enabling'">{{ trans('global.enablingObjective.title_singular') }}</span>
                         <span v-else>{{ trans('global.terminalObjective.title_singular') }}</span>
                 </div>
-                <div class="card-body" 
+                <div class="card-body"
                      v-html="objective.title">
                 </div>
                 <div class="card-footer">
@@ -19,27 +19,27 @@
                     </div>
                     <small class="float-right">
                         {{ trans('global.updated_at') }}: {{objective.updated_at}}
-                    </small> 
+                    </small>
                 </div>
             </div>
         </div>
-                
+
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
                     <div class="row">
                         <div class="col-12">
                             <ul class="nav nav-pills pull-left">
-                                
+
                                 <li v-if="objective.description != ''" class="nav-item">
-                                    <a class="nav-link active show" 
-                                       href="#description" 
+                                    <a class="nav-link active show"
+                                       href="#description"
                                        data-toggle="tab">{{ trans('global.description') }}</a>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a class="nav-link" 
-                                       href="#related_objectives" 
+                                    <a class="nav-link"
+                                       href="#related_objectives"
                                        data-toggle="tab">
                                         <span v-if="type === 'terminal'" >
                                             {{ trans('global.enablingObjective.title') }}
@@ -51,40 +51,40 @@
                                 </li>
 
                                 <li class="nav-item" v-for="(item,index) in contentCategories" v-bind:value="'category_'+item.id">
-                                    <a class="nav-link" 
-                                       v-bind:href="'#category_'+item.id" 
+                                    <a class="nav-link"
+                                       v-bind:href="'#category_'+item.id"
                                        data-toggle="tab">{{ item.title }}</a>
                                 </li>
 
                                 <li v-for="typetab in typetabs" class="nav-item">
-                                    <a class="nav-link " 
-                                       v-bind:href="'#tab_' + typetab.id" 
+                                    <a class="nav-link "
+                                       v-bind:href="'#tab_' + typetab.id"
                                        data-toggle="tab">
                                        {{ typetab.title }}
                                     </a>
-                                </li>    
+                                </li>
 
                                 <li class="nav-item">
-                                    <a class="nav-link " 
-                                       href="#events" 
+                                    <a class="nav-link "
+                                       href="#events"
                                        data-toggle="tab">
-                                        <i class="fa fa-user-graduate"></i> 
+                                        <i class="fa fa-user-graduate"></i>
                                     </a>
-                                </li>    
-                            </ul> 
-                        
+                                </li>
+                            </ul>
+
                             <div class="pull-right" v-can="'objective_edit'">
             <!--dropdown start-->
-                                <div 
-                                    v-can="'objective_edit'" 
-                                    class="pull-right btn btn-default btn-flat " 
-                                    style="background-color: transparent;border:0!important;" 
-                                    data-toggle="dropdown" 
-                                    aria-expanded="false"> 
+                                <div
+                                    v-can="'objective_edit'"
+                                    class="pull-right btn btn-default btn-flat "
+                                    style="background-color: transparent;border:0!important;"
+                                    data-toggle="dropdown"
+                                    aria-expanded="false">
                                     <i class="fa fa-plus"></i>
                                     <div class="dropdown-menu">
-                                        <button 
-                                             class="dropdown-item" 
+                                        <button
+                                             class="dropdown-item"
                                               @click.prevent="editObjective()">
                                                <i class="far fa-edit mr-3"></i>
                                              <span v-if="type === 'terminal'" >
@@ -94,23 +94,23 @@
                                                 {{ trans('global.enablingObjective.edit') }}
                                              </span>
                                         </button>
-                                        <button 
-                                             class="dropdown-item" 
+                                        <button
+                                             class="dropdown-item"
                                              @click.prevent="open('content-create-modal')">
                                                <i class="fa fa-file mr-4"></i>
                                                {{ trans('global.content.create') }}
                                         </button>
-                                        <button 
-                                             class="dropdown-item" 
+                                        <button
+                                             class="dropdown-item"
                                              @click.prevent="open('medium-create-modal')">
                                                <i class="fa fa-photo-video mr-3"></i>
                                              {{ trans('global.media.add') }}
                                         </button>
-                                        <button 
-                                             class="dropdown-item" 
+                                        <button
+                                             class="dropdown-item"
                                              @click.prevent="open('reference-objective-modal')">
                                                <i class="fa fa-link mr-3"></i>
-                                             {{ trans('global.referenceable_types.objective') }}  
+                                             {{ trans('global.referenceable_types.objective') }}
                                         </button>
                                         <hr >
                                     </div>
@@ -121,87 +121,90 @@
                     </div>
                 </div>
                 <!-- /.card-header -->
-                <div class="card-body"> 
+                <div class="card-body">
                     <div class="tab-content">
-                        
-                        <div class="tab-pane active show" 
-                             id="description"  
+
+                        <div class="tab-pane active show"
+                             id="description"
                              v-html="objective.description"></div>
                         <!-- /.tab-pane -->
-                        <div class="tab-pane" 
+                        <div class="tab-pane"
                              id="related_objectives" >
                             <span v-if="type === 'enabling'">
-                                <ObjectiveBox type="terminal" 
+                                <ObjectiveBox type="terminal"
                                     :objective="objective.terminal_objective">
-                                </ObjectiveBox> 
+                                </ObjectiveBox>
                             </span>
-                            <span v-else> 
-                                <ObjectiveBox 
-                                    v-for="enablingObjective in objective.enabling_objectives" 
+                            <span v-else>
+                                <ObjectiveBox
+                                    v-for="enablingObjective in objective.enabling_objectives"
                                     v-bind:key="'ena_'+enablingObjective.id"
-                                    type="enabling" 
+                                    type="enabling"
                                     :objective="enablingObjective">
-                                </ObjectiveBox> 
+                                </ObjectiveBox>
                             </span>
                         </div>
                         <!--                    1 Contents -->
-                        <div class="tab-pane" 
-                             v-for="(item,index) in contentCategories" 
+                        <div class="tab-pane"
+                             v-for="(item,index) in contentCategories"
                              v-bind:id="'category_'+item.id"
                              >
-                            <content-group 
+                            <content-group
                                 :contents="filterContent(item.id)"
                                 :category="item">
                             </content-group>
                         </div>
-                   
+
                         <!--                    1 Files -->
-                        <div class="tab-pane" 
-                             id="tab_1"  
+                        <div class="tab-pane"
+                             id="tab_1"
                              name="tab_1">
                             <div class="row">
                                 <div class="col-12">
-                                     <div 
-                                        class="tab-pane active show" 
-                                        id="sub_medium"  
+                                     <div
+                                        class="tab-pane active show"
+                                        id="sub_medium"
                                         name="sub_medium">
                                          <div class="col-12">
                                              <div class="row">
                                                 <div
                                                     v-for="subscription in objective.media_subscriptions" >
-                                                    <medium :subscription="subscription" :medium="match(subscription.medium_id)" ></medium>  
-                                               </div> 
+                                                    <medium :subscription="subscription" :medium="match(subscription.medium_id)" ></medium>
+                                               </div>
                                              </div>
                                              <div class="row">
-                                                <repository ref="repositoryPlugin"
+                                                <repository
+                                                    v-if="repository"
+                                                    :repository="repository"
+                                                    ref="repositoryPlugin"
                                                     :model="objective"></repository>
                                              </div>
                                          </div>
-                                         
-                                    </div>     
+
+                                    </div>
                                 </div>
                             </div>
                         </div><!-- /.tab-pane -->
                         <!--                  2  References -->
-                        <div class="tab-pane" 
-                             id="tab_2"  
+                        <div class="tab-pane"
+                             id="tab_2"
                              name="tab_2">
-                             <references 
-                                :reference_subscriptions="reference_subscriptions" 
-                                :curricula_list="curricula_list" 
+                             <references
+                                :reference_subscriptions="reference_subscriptions"
+                                :curricula_list="curricula_list"
                                 ></references>
                         </div><!-- /.tab-pane -->
                         <!--                  3  Quotes -->
-                        <div class="tab-pane" 
+                        <div class="tab-pane"
                              id="tab_3"
                              name="tab_3">
-                             <quotes 
-                                :quote_subscriptions="quote_subscriptions" 
+                             <quotes
+                                :quote_subscriptions="quote_subscriptions"
                                 :quote_curricula_list="quote_curricula_list"
                              ></quotes>
                         </div><!-- /.tab-pane -->
-                        
-                        <div class="tab-pane " 
+
+                        <div class="tab-pane "
                             id="events">
                             <eventmanagement ref="eventPlugin"
                                  :model="objective"
@@ -209,13 +212,13 @@
                         </div>
                     </div>
                     <!-- /.tab-pane -->
-                     
+
                 </div>
                 <!-- /.card-body -->
             </div>
         </div>
-          
-        
+
+
     </div>
 </template>
 
@@ -230,8 +233,9 @@
 
     export default {
         props: {
-            'objective': Object
-        },    
+            'objective': Object,
+            'repository': Object
+        },
         data() {
             return {
                 type: null,
@@ -251,7 +255,7 @@
             }
         },
         methods: {
-            editObjective() {     
+            editObjective() {
                 this.$modal.show(this.type+'-objective-modal', {'objective': this.objective, 'method': 'PATCH' });
             },
             filterMedia(typetab) {
@@ -268,7 +272,7 @@
                              .concat(...this.objective.content_subscriptions.filter(c => c.content.categories.length === 0));
                 } else {
                     return [].concat(...this.objective.content_subscriptions.filter(c => c.content.categories.find(cat => cat.id === category)));
-                }    
+                }
             },
             match(medium_id) {
                 let medium = this.objective.media; //to array
@@ -296,17 +300,17 @@
                 } else {
                     this.$modal.show(modal, {'referenceable_type': reference_class, 'referenceable_id': this.objective.id});
                 }
-                
-                
+
+
                 //open tab
                 switch (modal) {
-                    case "medium-create-modal": 
+                    case "medium-create-modal":
                         $('.nav-item a[href="#tab_1"]').tab('show')
                     break;
-                    case "reference-objective-modal": 
+                    case "reference-objective-modal":
                         $('.nav-item a[href="#tab_2"]').tab('show')
                     break;
-                 
+
                 }
             },
             getUnique(arr, comp) {
@@ -323,9 +327,9 @@
                     this.$refs.repositoryPlugin.loader();
                     //this.$refs.eventPlugin.loader();
              }
-            
+
         },
-        mounted() {    
+        mounted() {
             this.typetabs = []; //reset
             //console.log(event.params.content);
             if (typeof this.objective.terminal_objective === 'object'){
@@ -334,7 +338,7 @@
                 this.type = 'terminal';
             }
             //this.media_subscriptions = event.params.content.media_subscriptions;
-            // always show media tab 
+            // always show media tab
             this.typetabs = [... new Set([{'id': 1, 'title': 'Medien'}])];
             this.activetab = this.typetabs[0];
             if (this.objective.media_subscriptions.length != 0) {
@@ -367,9 +371,9 @@
             }).catch(e => {
                 //this.errors = response.data.errors;
             });
-            
+
             this.filterContent();
-            this.loadExternal();    
+            this.loadExternal();
         },
         computed: {
             scr: function () {

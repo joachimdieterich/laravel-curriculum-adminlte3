@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Config;
 use App\TerminalObjective;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreTerminalObjectiveRequest;
@@ -67,8 +68,13 @@ class TerminalObjectiveController extends Controller
                     'referenceSubscriptions.siblings.referenceable', 'quoteSubscriptions.siblings.quotable',
                     'contentSubscriptions.content.categories'])
             ->get()->first();
+
+        $repository = Config::where('key', 'repository')->get()->first();
+
         return view('objectives.show')
-            ->with(compact('objective'));
+            ->with(compact('objective'))
+            ->with(compact('repository'));
+
     }
 
     /**

@@ -1,5 +1,7 @@
 <template >
-    <media ref="mediaPlugin" :model="model">    
+    <media
+        v-if="repository.value == 'edusharing'"
+        ref="mediaPlugin" :model="model">
     </media>
 </template>
 
@@ -8,8 +10,9 @@
     import media from '../../../edusharing/resources/js/components/Media';
     export default {
         props: {
-                model: {},
-              },
+            model: {},
+            repository: Object
+        },
         data() {
             return {
                 errors: {}
@@ -17,16 +20,11 @@
         },
         methods: {
             loader: function() {
-                this.$refs.mediaPlugin.loader();
+                    this.$refs.mediaPlugin.loader();
             }
-          
+
         },
-        computed: {
-          
-        },
-        bevorOpen() {
-            
-        },
+
         components: {
             media,
         }

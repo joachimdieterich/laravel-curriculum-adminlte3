@@ -19,7 +19,17 @@ EDUSHARING_REPO_PWD="[password]"
 EDUSHARING_REPO_PROXY=false
 EDUSHARING_REPO_PROXY_PORT=false
 ```
-
+Adding the following fields to config table. This could be done as administrator in the frontend under config/Einstellungen.
+```
+INSERT INTO `configs` (`key`, `value`, `referenceable_type`, `referenceable_id`, `data_type`)
+VALUES
+	('privateKey', '-----BEGIN PRIVATE KEY----[Key goes here]-----END PRIVATE KEY-----', 'App\\Edusharing', NULL, 'string'),
+	('appId', 'curriculum', 'App\\Edusharing', NULL, 'string'),
+	('wsdl', 'https://[URL]/edu-sharing/services/authbyapp?wsdl', 'App\\Edusharing', NULL, 'string'),
+	('accessMode', 'personal', 'App\\Edusharing', NULL, 'string'),
+	('metadata_password', ‚[PW]‘, NULL, NULL, 'string'),
+	('repository', 'edusharing', NULL, NULL, 'string'); 
+```
 <a name="section-1"></a>
 ## eVewa
 Adding following lines to `.env` to config eVewa plugin (without square brackets)

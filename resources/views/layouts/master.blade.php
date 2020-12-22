@@ -99,10 +99,10 @@ echo json_encode([
             </form>
 
             <!-- Control Sidebar -->
-            {{--<aside class="control-sidebar control-sidebar-light">
+            <aside class="control-sidebar control-sidebar-light">
                 <!-- Control sidebar content goes here -->
                 @include('partials.sidebar')
-            </aside>--}}
+            </aside>
             <!-- /.control-sidebar -->
         </div>
         <!-- ./wrapper -->

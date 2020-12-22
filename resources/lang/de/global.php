@@ -167,6 +167,7 @@ return [
                     <li>Die Schüsselwerte <strong>username, password, firstname, lastname, email</strong> und <strong>organization_id</strong> müssen gesetzt werden.</li>
                     <li>Zusätzlich kann das Feld <strong>group_id</strong> und <strong>role_id</strong> definiert werden. </li><li>Mögliche ID-Werte für organization_id, group_id und role_id finden Sie in den Tabellen. Wird eine neue Lerngruppe eingegeben, erstellt curriculum diese beim Import.</li>
                 </ul>',
+        'dsgvoExport'   => 'Benutzerdaten exportieren',
         'fields'         => [
             'id'                       => 'ID',
             'id_helper'                => '',

@@ -211,6 +211,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::patch('users/setCurrentOrganization', 'UsersController@setCurrentOrganization')->name('users.setCurrentOrganization');
     Route::patch('users/setCurrentPeriod', 'UsersController@setCurrentPeriod')->name('users.setCurrentPeriod');
     Route::patch('users/setAvatar', 'UsersController@setAvatar')->name('users.setAvatar');
+    Route::get('users/{user}/dsgvoExport', 'UsersController@dsgvoExport')->name('users.dsgvoExport');
     Route::get('users/import', 'UsersController@createImport')->name('users.createImport');
     Route::post('users/import', 'UsersController@storeImport')->name('users.storeImport');
     Route::get('users/list', 'UsersController@list');

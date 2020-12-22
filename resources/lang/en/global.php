@@ -167,6 +167,7 @@ return [
                     <li>The key values <strong>username, password, firstname, lastname, email</strong> and <strong>organization_id</strong> must be set.</li>
                     <li>In addition, the field <strong>group_id</strong> and <strong>role_id</strong> can be defined. </li><li>Possible ID values for organization_id, group_id and role_id can be found in the tables. If a new learning group is entered, curriculum creates it during import.</li>
                 </ul>',
+        'dsgvoExport'   => 'Export user related data',
         'fields'         => [
             'id'                       => 'ID',
             'id_helper'                => '',

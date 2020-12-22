@@ -270,6 +270,11 @@ class UsersController extends Controller
         return view('users.import');
     }
 
+    public function dsgvoExport($id){
+        abort_unless(\Gate::allows('user_access'), 403);
+        return User::where('id', $id)->with(['contactDetail','groups','roles','organizations', 'achievements'])->get()->first();
+    }
+
     protected function validateImportRequest()
     {
         return request()->validate(

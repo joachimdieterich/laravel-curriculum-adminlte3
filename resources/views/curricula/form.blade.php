@@ -17,7 +17,7 @@
             ["model" => "media",
             "field" => "medium_id",
             "label" => false,
-            "value" => old('medium_id', isset($media->id) ? $media->id : '')])
+            "value" => old('medium_id', isset($curriculum->medium_id) ? $curriculum->medium_id : '')])
 
 @include ('forms.input.select',
             ["model" => "grade",

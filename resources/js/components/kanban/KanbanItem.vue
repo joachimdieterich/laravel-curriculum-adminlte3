@@ -6,21 +6,21 @@
                     class="img-circle color-white"
                     style="height: 1.6rem"
                     :src="avatar"/>
-                <div class="btn btn-flat py-0 px-2 " 
-                     style="background-color: transparent;" 
-                     data-toggle="dropdown" 
+                <div class="btn btn-flat py-0 px-2 "
+                     style="background-color: transparent;"
+                     data-toggle="dropdown"
                      aria-expanded="false">
                     <i class="fas fa-ellipsis-v"></i>
                     <div class="dropdown-menu" x-placement="top-start">
-                        <button class="dropdown-item py-1" 
+                        <button class="dropdown-item py-1"
                                 @click="edit()">
                             <i class="fa fa-pencil-alt mr-4"></i>
                             {{ trans('global.kanbanItem.edit') }}
                         </button>
                         <hr class="my-1">
-                        <button 
+                        <button
                             v-can="'kanban_delete'"
-                            class="dropdown-item py-1 text-red" 
+                            class="dropdown-item py-1 text-red"
                             @click="deleteItem()">
                             <i class="fa fa-trash mr-4"></i>
                             {{ trans('global.delete') }}
@@ -33,25 +33,22 @@
 
         </div>
         <div class="card-body p-0">
-            <div v-if="item.description !== null" 
+            <div v-if="item.description !== null"
                  class="text-muted small px-3 py-2">
                 {{ item.description }}
-            </div> 
-            
-            <kanbanTask 
-                class="mx-3 "
-                 :tasks="item.task_subscription">
-            </kanbanTask> 
-           
-            <div v-if="item.media[0] != null">
-                <img v-if="item.media[0].mime_type == 'image/jpeg'"
-                     :src="'/media/'+item.media[0].id"
-                     style="object-fit: cover; height:150; "
-                     :style="'width:' + (width - 18) +'px;'"/>
-                     <embed v-else
-                     :src="'/media/'+item.media[0].id" :width="(width - 18)" height="150" class="">
             </div>
 
+            <kanbanTask
+                class="mx-3 "
+                 :tasks="item.task_subscription">
+            </kanbanTask>
+
+            <span v-if="item.media[0] != null">
+                <medium-renderer
+                    :medium="item.media[0]"
+                    :width="252"
+                ></medium-renderer>
+            </span>
         </div>
 
 
@@ -66,17 +63,18 @@
 
 <script>
     import kanbanTask from './KanbanTask';
-    
+    import mediumRenderer from '../media/MediaRenderer';
+
     export default {
         props: {
             'item': Object,
             'width': Number
-             
+
         },
         data() {
             return {
                 avatar: null,
-              
+
             };
         },
         methods: {
@@ -92,19 +90,20 @@
             edit(){
                 this.$emit("item-edit", this.item);
             },
-             
-         
+
+
         },
         created(){
-                axios.get("/users/" + this.item.owner_id + "/avatar")
-                     .then(res =>  { 
-                         this.avatar =  res.data.avatar.encoded;
-                    });
+            axios.get("/users/" + this.item.owner_id + "/avatar")
+                 .then(res =>  {
+                     this.avatar =  res.data.avatar.encoded;
+                });
         },
-  
+
         components: {
-           kanbanTask
+            kanbanTask,
+            mediumRenderer
         }
-        
+
     }
 </script>

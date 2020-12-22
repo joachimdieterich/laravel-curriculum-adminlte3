@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Organization;
 use App\User;
 use Carbon\Carbon;
 use Cmgmyr\Messenger\Models\Message;
@@ -9,6 +10,7 @@ use Cmgmyr\Messenger\Models\Participant;
 use Cmgmyr\Messenger\Models\Thread;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 
@@ -25,12 +27,20 @@ class MessagesController extends Controller
         //$threads = Thread::getAllLatest()->get();
 
         // All threads that user is participating in
-        $threads = Thread::forUser(Auth::id())->latest('updated_at')->get();
-        
+        $threads = Thread::forUser(Auth::id())->with(['messages'=> function ($q)  {
+            $q->latest('created_at');
+        }, 'messages.user'])->latest('updated_at')->get();
+
+
         $inbox = $threads->count();
         // All threads that user is participating in, with new messages
         // $threads = Thread::forUserWithNewMessages(Auth::id())->latest('updated_at')->get();
-   
+
+        if (request()->wantsJson()){
+            $users = (auth()->user()->role()->id == 1) ? DB::table('users')->select('id', 'username', 'firstname', 'lastname', 'medium_id') : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users();
+            return ['threads' => $threads,
+                'users' => $users->get() ];
+        }
         return view('messenger.index', compact('threads', 'inbox'));
     }
 
@@ -43,7 +53,7 @@ class MessagesController extends Controller
     public function show($id)
     {
         $threads = Thread::forUser(Auth::id())->latest('updated_at')->get();
-        
+
         $inbox = $threads->count();
         try {
             $thread = Thread::findOrFail($id);
@@ -74,7 +84,7 @@ class MessagesController extends Controller
     {
         $users = User::where('id', '!=', Auth::id())->get();
         $inbox = Thread::forUserWithNewMessages(Auth::id())->latest('updated_at')->get()->count();
-        
+
         return view('messenger.create', compact('users', 'inbox'));
     }
 
@@ -107,9 +117,18 @@ class MessagesController extends Controller
 
         // Recipients
         if (Request::has('recipients')) {
-            $thread->addParticipant($input['recipients']);
-        }
+            if($input['recipients'] != null){
+                $thread->addParticipant($input['recipients']);
+            }
 
+        }
+        if (request()->wantsJson()){
+            $newEntry = Thread::where('id',$thread->id)->with(['messages'=> function ($q)  {
+                $q->latest('created_at');
+            }, 'messages.user'])
+                ->latest('updated_at')->get();
+            return ['thread' => $newEntry];
+        }
         return redirect()->route('messages');
     }
 
@@ -148,9 +167,30 @@ class MessagesController extends Controller
 
         // Recipients
         if (Request::has('recipients')) {
-            $thread->addParticipant(Request::input('recipients'));
+            if(Request::input('recipients') != null) {
+                $thread->addParticipant(Request::input('recipients'));
+            }
         }
 
+        // axios call?
+        if (request()->wantsJson()){
+            $newEntry = Thread::where('id',$id)->with(['messages'=> function ($q)  {
+                $q->latest('created_at');
+            }, 'messages.user'])
+                ->latest('updated_at')->get();
+            return ['thread' => $newEntry];
+        }
         return redirect()->route('messages.show', $id);
+    }
+
+    public function destroy($id)
+    {
+        $message = Message::find($id);
+
+        $return = $message->delete();
+        //todo: concept to hard-delete messages
+        if (request()->wantsJson()){
+            return ['message' => $return];
+        }
     }
 }

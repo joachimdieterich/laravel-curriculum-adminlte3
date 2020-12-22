@@ -11,6 +11,10 @@
 @section('content')
 @include('messenger.partials.flash')
 <div class="row">
+
+
+
+
     @include('messenger.partials.menu')
     <div class="col-md-9">
           <div class="card card-primary card-outline">
@@ -32,7 +36,7 @@
             <!-- /.card-header -->
             <div class="card-body p-0">
               <!--<div class="mailbox-controls">-->
-<!--                 Check all button 
+<!--                 Check all button
                 <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="far fa-square"></i>
                 </button>
                 <div class="btn-group">
@@ -40,7 +44,7 @@
                   <button type="button" class="btn btn-default btn-sm"><i class="fas fa-reply"></i></button>
                   <button type="button" class="btn btn-default btn-sm"><i class="fas fa-share"></i></button>
                 </div>
-                 /.btn-group 
+                 /.btn-group
                 <button type="button" class="btn btn-default btn-sm"><i class="fas fa-sync-alt"></i></button>
                 <div class="float-right">
                   1-50/200
@@ -48,7 +52,7 @@
                     <button type="button" class="btn btn-default btn-sm"><i class="fas fa-chevron-left"></i></button>
                     <button type="button" class="btn btn-default btn-sm"><i class="fas fa-chevron-right"></i></button>
                   </div>
-                   /.btn-group 
+                   /.btn-group
                 </div>-->
                 <!-- /.float-right -->
               <!--</div>-->
@@ -65,7 +69,7 @@
             <!-- /.card-body -->
             <div class="card-footer p-0">
 <!--              <div class="mailbox-controls">
-                 Check all button 
+                 Check all button
                 <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="far fa-square"></i>
                 </button>
                 <div class="btn-group">
@@ -73,7 +77,7 @@
                   <button type="button" class="btn btn-default btn-sm"><i class="fas fa-reply"></i></button>
                   <button type="button" class="btn btn-default btn-sm"><i class="fas fa-share"></i></button>
                 </div>
-                 /.btn-group 
+                 /.btn-group
                 <button type="button" class="btn btn-default btn-sm"><i class="fas fa-sync-alt"></i></button>
                 <div class="float-right">
                   1-50/200
@@ -81,9 +85,9 @@
                     <button type="button" class="btn btn-default btn-sm"><i class="fas fa-chevron-left"></i></button>
                     <button type="button" class="btn btn-default btn-sm"><i class="fas fa-chevron-right"></i></button>
                   </div>
-                   /.btn-group 
+                   /.btn-group
                 </div>
-                 /.float-right 
+                 /.float-right
               </div>-->
             </div>
           </div>

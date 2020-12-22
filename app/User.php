@@ -13,6 +13,8 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Support\Facades\DB;
 use Cmgmyr\Messenger\Traits\Messagable;
+use Cmgmyr\Messenger\Models\Thread;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  *   @OA\Schema(
@@ -236,6 +238,12 @@ class User extends Authenticatable
                 ->withPivot(['user_id', 'role_id', 'organization_id'])
                 ->where('organization_role_users.organization_id', $this->current_organization_id)->first();
     }
+
+    public function unreadMessagesCount()
+    {
+        return Thread::userUnreadMessagesCount($this->id);
+    }
+
     /**
      * permissions of the current role
      */

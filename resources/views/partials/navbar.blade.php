@@ -1,5 +1,5 @@
 <ul class="navbar-nav ml-auto">
-       <!--Messages Dropdown Menu--> 
+       <!--Messages Dropdown Menu-->
 <!--      <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
           <i class="far fa-comments"></i>
@@ -7,7 +7,7 @@
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
           <a href="#" class="dropdown-item">
-             Message Start 
+             Message Start
             <div class="media">
               <img src="/media/1" alt="User Avatar" class="img-size-50 mr-3 img-circle">
               <div class="media-body">
@@ -19,11 +19,11 @@
                 <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
               </div>
             </div>
-             Message End 
+             Message End
           </a>
           <div class="dropdown-divider"></div>
           <a href="#" class="dropdown-item">
-             Message Start 
+             Message Start
             <div class="media">
               <img src="/media/1" alt="User Avatar" class="img-size-50 img-circle mr-3">
               <div class="media-body">
@@ -35,20 +35,30 @@
                 <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
               </div>
             </div>
-             Message End 
+             Message End
           </a>
-          
+
           <div class="dropdown-divider"></div>
           <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
         </div>
       </li>-->
-       <!--Notifications Dropdown Menu--> 
+    @can('user_create')
+    <li class="nav-item pr-4">
+        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#">
+            <i class="far fa-comments"></i>
+            <span class="badge badge-danger navbar-badge"
+            style="right:0px">{{--{{ auth()->user()->newThreadsCount() }}--}}</span>
+        </a>
+    </li>
+    @endcan
+       <!--Notifications Dropdown Menu-->
       <li class="dropdown">
         <span class="user-menu dropdown-toggle" data-toggle="dropdown">
-          <img class="img-circle color-white" 
-                   src="{{ (auth()->user()->medium_id !== null) ? '/media/'.auth()->user()->medium_id  : Avatar::create(auth()->user()->fullName())->toBase64() }}" 
+          <img class="img-circle color-white"
+
+                   src="{{ (auth()->user()->medium_id !== null) ? '/media/'.auth()->user()->medium_id  : Avatar::create(auth()->user()->fullName())->toBase64() }}"
                    alt="User profile picture"
-                   style="height: 2.1rem">
+                   style="height: 40px;width: 40px;">
           <b>{{ auth()->user()->fullName() }}</b>
         </span>
         <div class="user-menu dropdown-menu bg-lime dropdown-menu-lg dropdown-menu-right">
@@ -62,5 +72,5 @@
           </a>
         </div>
       </li>
-     
+
     </ul>

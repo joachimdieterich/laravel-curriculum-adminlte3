@@ -1,6 +1,6 @@
 @if(isset($contentonly))
 <footer class="main-footer py-1 no-print"
-        style="background-color:#737c83; position: fixed;left: 0;bottom: 0;width: 100%;margin-left:0 !important">
+        style="background-color:#737c83; position: fixed;left: 0;bottom: 0;width: 100%;margin-left:0 !important;" >
 @else
 <footer class="main-footer py-1 no-print"
         style="background-color:#737c83">
@@ -20,7 +20,7 @@
                 @php ($footer_iterator = 1)
                 @while ( env('FOOTER_TITLE_'.$footer_iterator) )
                 <li class="nav-item flex-fill ">
-                    <a class=" nav-item d-none d-sm-inline-block text-white small text-decoration-none" 
+                    <a class=" nav-item d-none d-sm-inline-block text-white small text-decoration-none"
                         href="{{ env('FOOTER_URL_'.$footer_iterator) }}">
                          {{ env('FOOTER_TITLE_'.$footer_iterator) }}
                      </a>
@@ -31,7 +31,7 @@
         </div>
 
         <div class="col-lg-2 pt-2 d-none d-sm-inline-block ">
-            <a class="text-white-50 text-decoration-none " 
+            <a class="text-white-50 text-decoration-none "
                href="http://curriculumonline.de">
                 <small>
                     Version 1.0.0

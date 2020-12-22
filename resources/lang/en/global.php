@@ -160,6 +160,13 @@ return [
         'title_singular' => 'User',
         'create'         => 'Create user',
         'edit'           => 'Edit user',
+        'import'         => 'Import users',
+        'import_helper'  => 'The CSV file must have the following format:
+                <ul>
+                    <li>The first line must contain the key values (e.g.:username, password, firstname, lastname, email, role_id, confirmed, postalcode, city, state, country).</li>
+                    <li>The key values <strong>username, password, firstname, lastname, email</strong> and <strong>organization_id</strong> must be set.</li>
+                    <li>In addition, the field <strong>group_id</strong> and <strong>role_id</strong> can be defined. </li><li>Possible ID values for organization_id, group_id and role_id can be found in the tables. If a new learning group is entered, curriculum creates it during import.</li>
+                </ul>',
         'fields'         => [
             'id'                       => 'ID',
             'id_helper'                => '',

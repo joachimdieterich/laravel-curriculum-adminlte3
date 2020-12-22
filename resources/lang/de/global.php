@@ -160,6 +160,13 @@ return [
         'title_singular' => 'Benutzer',
         'create'         => 'Benutzer erstellen',
         'edit'           => 'Benutzer bearbeiten',
+        'import'         => 'Benutzer importieren',
+        'import_helper'  => 'Die CSV-Datei muss folgendes Format haben:
+                <ul>
+                    <li>Die ersten Zeile muss die Schlüsselwerte enthalten (z.B.:username, password, firstname, lastname, email, role_id, confirmed, postalcode, city, state, country).</li>
+                    <li>Die Schüsselwerte <strong>username, password, firstname, lastname, email</strong> und <strong>organization_id</strong> müssen gesetzt werden.</li>
+                    <li>Zusätzlich kann das Feld <strong>group_id</strong> und <strong>role_id</strong> definiert werden. </li><li>Mögliche ID-Werte für organization_id, group_id und role_id finden Sie in den Tabellen. Wird eine neue Lerngruppe eingegeben, erstellt curriculum diese beim Import.</li>
+                </ul>',
         'fields'         => [
             'id'                       => 'ID',
             'id_helper'                => '',

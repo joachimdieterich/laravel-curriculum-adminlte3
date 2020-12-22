@@ -3,27 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\CurriculumType;
-use App\Http\Controllers\Controller;
 
 use App\Curriculum;
 use App\Grade;
 use App\Subject;
 use App\Organization;
 use App\OrganizationType;
-use App\TerminalObjective;
-use App\EnablingObjective;
-use App\Medium;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
-use DOMDocument;
-use App\Content;
-use App\Glossar;
 use App\Group;
 use App\Country;
 use App\State;
 use App\User;
-use Barryvdh\Snappy\Facades\SnappyPdf;
-use Illuminate\Support\Facades\DB;
 
 class CurriculumController extends Controller
 {
@@ -400,17 +391,6 @@ class CurriculumController extends Controller
      * @param array $input
      * @return mixed
      */
-    /*public function getMediumIdByInputFilepath($input){
-        if (isset($input['filepath']))
-        {
-            $medium = new Medium();
-            return (null !== $medium->getByFilemanagerPath($input['filepath'])) ? $medium->getByFilemanagerPath($input['filepath'])->id : null;
-        }
-        else
-        {
-            return null;
-        }
-    }*/
 
     public function enrol()
     {

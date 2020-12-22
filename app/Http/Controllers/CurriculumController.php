@@ -523,7 +523,7 @@ class CurriculumController extends Controller
             'type_id'               => 'sometimes',
             'state_id'              => 'sometimes',
             'country_id'            => 'sometimes',
-            'medium_id'              => 'sometimes',
+            'medium_id'             => 'sometimes',
             'owner_id'              => 'sometimes',
             ]);
     }

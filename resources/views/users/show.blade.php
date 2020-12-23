@@ -65,8 +65,8 @@
                 <hr>
                 <strong><i class="fas fa-user-tag mr-1"></i>{{ trans('global.roles') }}</strong>
                     <ul class="pl-4">
-                    @foreach($user->roles as $id => $roles)
-                        <li class="small">{{$roles->title}} @ {{ $user->organizations()->where('role_id', $roles->id)->first()->title }}</li>
+                    @foreach($user->organizations as $id => $organizations)
+                        <li class="small">{{ $user->roles()->where('organization_id', $organizations->id)->first()->title }} @ {{$organizations->title}}</li>
                     @endforeach
                     </ul>
             </div>

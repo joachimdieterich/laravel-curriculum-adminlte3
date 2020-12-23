@@ -153,6 +153,11 @@ class PermissionRoleTableSeeder extends Seeder
                 'task_show',
                 'task_edit',
                 'task_delete',
+                'message_access',
+                'message_create',
+                'message_show',
+                'message_edit',
+                'message_delete',
             ];
 
             return in_array($permission->title, $schooladmin_permission_list);
@@ -200,6 +205,11 @@ class PermissionRoleTableSeeder extends Seeder
                 'task_show',
                 'task_edit',
                 'task_delete',
+                'message_access',
+                'message_create',
+                'message_show',
+                'message_edit',
+                'message_delete',
             ];
 
             return in_array($permission->title, $teacher_permission_list);
@@ -222,6 +232,10 @@ class PermissionRoleTableSeeder extends Seeder
                 'navigator_show',
                 'task_access',
                 'task_show',
+                'message_access',
+                'message_create',
+                'message_show',
+                'message_edit'
 
             ];
 
@@ -240,6 +254,10 @@ class PermissionRoleTableSeeder extends Seeder
                 'navigator_show',
                 'task_access',
                 'task_show',
+                'message_access',
+                'message_create',
+                'message_show',
+                'message_edit',
             ];
 
             return in_array($permission->title, $parent_permission_list);

@@ -42,7 +42,7 @@
           <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
         </div>
       </li>-->
-    @can('user_create')
+    @can('message_access')
     <li class="nav-item pr-4">
         <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#">
             <i class="far fa-comments"></i>

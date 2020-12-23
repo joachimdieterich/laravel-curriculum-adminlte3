@@ -9,7 +9,7 @@
         :resizable=true
         @before-open="beforeOpen"
         @before-close="beforeClose"
-        style="z-index: 1100">
+        style="z-index: 1300">
         <div class="card" style="margin-bottom: 0px !important">
             <div class="card-header">
                  <h3 class="card-title">

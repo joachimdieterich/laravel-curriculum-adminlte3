@@ -133,10 +133,12 @@
                                     </tr>
                                     </thead>
                                     <tr v-for="file in files">
-                                        <td style="width: 60px">
+                                        <td style="width: 60px" class="pointer"
+                                            @click="edit(file)">
                                             <img v-if="file.mime_type.includes('image')"
                                                 :src="'/media/'+file.id" height="50" /></td>
-                                        <td><a :href="'/media/'+file.id">{{ file.title }}</a></td>
+                                        <td class="pointer"
+                                            @click="edit(file)">{{ file.title }}</td>
                                         <td style="width: 20px"><input
                                             v-model="selectedFiles"
                                             :value="file.id"
@@ -297,7 +299,9 @@
             setTab(tab){
                 this.tab = tab;
             },
-
+            edit(file){
+                this.$modal.show('medium-modal', { 'content': {'id': file.id , 'title': file.title, 'description': file.description}});
+            },
             beforeClose() {
             },
             saveToForm() {

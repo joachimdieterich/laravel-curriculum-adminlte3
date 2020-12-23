@@ -38,10 +38,18 @@
                     <ul class="nav flex-column">
                         <li class="nav-link text-sm" v-can="'medium_create'">
                             <a class="active show link-muted"
+                               href="#upload"
+                               data-toggle="tab"
+                               @click="setTab('upload')">
+                                {{ trans('global.media.upload') }}
+                            </a>
+                        </li>
+                        <li class="nav-link text-sm" v-can="'medium_create'">
+                            <a class="link-muted"
                                href="#media"
                                data-toggle="tab"
                                @click="setTab('media')">
-                                {{ trans('global.media.title_singular') }}
+                                {{ trans('global.media.title') }}
                             </a>
                         </li>
                         <li class="nav-link text-sm" v-can="'link_create'">
@@ -67,7 +75,7 @@
                      style="min-height: 350px">
                     <div class="tab-content p-2">
                         <div class="tab-pane active show"
-                             id="media"
+                             id="upload"
                              v-can="'medium_create'">
 
                             <form action="javascript:void(0)"
@@ -83,6 +91,7 @@
                                            class="input-file"
                                            multiple
                                            :disabled="isSaving"
+                                           :accept="accept"
                                            ref="file"
                                            name="file"
                                            @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
@@ -95,7 +104,6 @@
                                         Uploading {{ fileCount }} files...
                                     </p>
                                 </div>
-
                             </form>
 
                             <div class="progress"
@@ -108,33 +116,40 @@
                                      aria-valuemax="100">
                                 </div>
                             </div>
+                        </div><!-- /.tab-pane -->
 
-
-                            <table id="media_create_datatable" class="table table-hover datatable">
-                                <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>{{ trans('global.media.fields.title') }}</th>
-                                   <!-- <th>{{ trans('global.media.fields.size') }}</th>
-                                    <th>{{ trans('global.media.fields.created_at') }}</th>
-                                    <th>{{ trans('global.media.fields.public') }}</th>
-                                    <th>{{ trans('global.datatables.action') }}</th>-->
-                                </tr>
-                                </thead>
-                                <tr v-for="file in files">
-                                    <th><input
-                                        v-model="selectedFiles"
-                                        :value="file.id"
-                                        type="checkbox"
-                                        id="medium"></th>
-                                    <th><a :href="'/media/'+file.id">{{ file.title }}</a></th>
-                                 <!--   <th>{{ file.size }}</th>
-                                    <th>{{ file.created_at }}</th>
-                                    <th>{{ file.public }}</th>
-                                    <th>{{ file.action }}</th>-->
-                                </tr>
-                            </table>
-
+                        <div class="tab-pane" id="media" v-can="'medium_create'">
+                            <div class="form-group " >
+                                <table id="media_create_datatable" class="table table-hover datatable">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: 60px" ></th>
+                                        <th>{{ trans('global.media.fields.title') }}</th>
+                                        <th style="width: 20px"></th>
+                                        <!-- <th>{{ trans('global.media.fields.size') }}</th>
+                                         <th>{{ trans('global.media.fields.created_at') }}</th>
+                                         <th>{{ trans('global.media.fields.public') }}</th>
+                                         <th>{{ trans('global.datatables.action') }}</th>-->
+                                    </tr>
+                                    </thead>
+                                    <tr v-for="file in files">
+                                        <td style="width: 60px">
+                                            <img v-if="file.mime_type.includes('image')"
+                                                :src="'/media/'+file.id" height="50" /></td>
+                                        <td><a :href="'/media/'+file.id">{{ file.title }}</a></td>
+                                        <td style="width: 20px"><input
+                                            v-model="selectedFiles"
+                                            :value="file.id"
+                                            type="checkbox"
+                                            id="medium"
+                                        ></td>
+                                        <!--   <th>{{ file.size }}</th>
+                                           <th>{{ file.created_at }}</th>
+                                           <th>{{ file.public }}</th>
+                                           <th>{{ file.action }}</th>-->
+                                    </tr>
+                                </table>
+                            </div>
                         </div><!-- /.tab-pane -->
 
                         <div class="tab-pane" id="link" v-can="'link_create'">
@@ -209,36 +224,23 @@
                 message: '',
                 file: '',
                 files: [],
-                selectedFiles: []
+                selectedFiles: [],
+                accept:'',
+                datatable: null
+
             }
         },
         created() {
             this.getAllFile();
         },
         methods: {
-
             getAllFile() {
-                /*axios.get('/media/list')
+                /*axios.get('/media')
                      .then((response)=>{
                     for(let i = 0; i < response.data.length;i++)
                     {
-                        this.files.push({
-                            title: response.data[i].title,
-                            size: response.data[i].size,
-                            created_at: response.data[i].created_at,
-                            public: response.data[i].public,
-                            action: response.data[i].action
-                        })
+                        this.files.push(response.data[i])
                     }
-
-                });*/
-               /* .then(()=>{
-                    $("#media_create_datatable").DataTable({
-                        "paging": true,
-                        "ordering": false,
-                        "info": true,
-                        "autoWidth": false
-                    });
                 });*/
             },
 
@@ -271,7 +273,6 @@
                 this.currentStatus = STATUS_INITIAL;
                 this.uploadError = null;
                 this.progressBar = false;
-                //this.$refs.file.value = '';
             },
             beforeOpen(event) {
                 if (event.params.referenceable_type){
@@ -288,6 +289,9 @@
                 }
                 if (event.params.target){
                     this.form.target = event.params.target;
+                }
+                if (event.params.accept){
+                    this.accept = event.params.accept;
                 }
             },
             setTab(tab){
@@ -334,6 +338,18 @@
         },
         mounted() {
             this.reset();
+
+            this.dataTable = $('#media_create_datatable').DataTable({});
+            const url = '/media/list';
+            fetch(url)
+
+                .then(res => {
+                    res.data.forEach(item => {
+                        this.files.push(item);
+                    });
+
+
+                })
         },
         components: {
             RepositoryPluginCreate

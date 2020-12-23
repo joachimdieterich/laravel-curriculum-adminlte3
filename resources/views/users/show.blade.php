@@ -19,7 +19,7 @@
                      style="height:100px;"
                      src="{{ ($user->medium_id !== null) ? '/media/'.$user->medium_id  : Avatar::create($user->fullName())->toBase64() }}"
                      alt="User profile picture"
-                     onclick="app.__vue__.$modal.show('medium-create-modal',  {'target': 'medium_id', 'description': {{ json_encode('') }} });">
+                     onclick="app.__vue__.$modal.show('medium-create-modal',  {'target': 'medium_id', 'description': {{ json_encode('') }}, 'accept': 'image/*' });">
             </div>
             <input id="medium_id"
                    name="medium_id"

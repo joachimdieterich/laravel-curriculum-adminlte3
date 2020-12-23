@@ -22,6 +22,11 @@ class MediumController extends Controller
     {
         abort_unless(\Gate::allows('medium_access'), 403);
 
+        if (request()->wantsJson()){
+            return Medium::where('owner_id', auth()->user()->id)->get();
+        }
+
+
         return view('media.index');
     }
 

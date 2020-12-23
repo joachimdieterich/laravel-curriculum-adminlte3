@@ -10,7 +10,7 @@
     <span class="input-group-btn">
         <a id="openMediumCreateModal"
            class="btn btn-primary text-white"
-           onclick="app.__vue__.$modal.show('medium-create-modal',  {'description': {{ json_encode('') }} });">
+           onclick="app.__vue__.$modal.show('medium-create-modal',  {'description': {{ json_encode('') }} ,'accept': '{{ isset($accept) ? $accept : ''}}' });">
             <i class="fa fa-cloud-upload-alt pr-2"></i>
             {{ trans('global.'.$model.'.title_singular') }}
         </a>

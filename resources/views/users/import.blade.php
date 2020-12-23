@@ -60,6 +60,7 @@
                              ["model" => "user",
                              "field" => "medium_id",
                              "label" => false,
+                             "accept" => "text/csv,application/csv",
                              "value" => old('medium_id', isset($curriculum->medium_id) ? $curriculum->medium_id : '')])
                     <div>
                         <input class="btn btn-info" type="submit" value="{{ trans('global.user.create') }}">

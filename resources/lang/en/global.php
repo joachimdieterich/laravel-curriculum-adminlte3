@@ -677,6 +677,7 @@ return [
         'add'            => 'Add Media',
         'create'         => 'Create Media',
         'edit'           => 'Edit Media',
+        'upload'         => 'Upload Media',
         'link'           => 'Link',
         'fields'            => [
             'id'                => 'ID',

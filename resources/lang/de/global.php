@@ -677,6 +677,7 @@ return [
         'add'            => 'Medien hinzufügen',
         'create'         => 'Medium erstellen',
         'edit'           => 'Medium bearbeiten',
+        'upload'         => 'Medium hochladen',
         'link'           => 'Link',
         'fields'            => [
             'id'                => 'ID',

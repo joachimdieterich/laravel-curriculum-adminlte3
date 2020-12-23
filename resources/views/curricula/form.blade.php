@@ -17,6 +17,7 @@
             ["model" => "media",
             "field" => "medium_id",
             "label" => false,
+            "accept" => "image/*",
             "value" => old('medium_id', isset($curriculum->medium_id) ? $curriculum->medium_id : '')])
 
 @include ('forms.input.select',

@@ -42,9 +42,7 @@
     </thead>
 </table>
 
-
 <medium-modal></medium-modal>
-<medium-create-modal></medium-create-modal>
 
 @endsection
 @section('scripts')

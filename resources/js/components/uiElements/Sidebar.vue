@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="direct-chat direct-chat-primary p-0"
-        style="z-index:1000000;position: relative;">
+        style="position: relative;">
             <div class="card-header">
                 <div class="d-flex justify-content-around">
                     <!--<span data-toggle="tooltip" class="badge badge-primary">{{ threads.length }}</span>-->
@@ -65,7 +65,8 @@
                             @click="open('contacts')">
                         <i class="fa fa-user-plus"></i>
                     </button>-->
-                    <h5 class="mb-0">
+                    <h5 class="mb-0"
+                    style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
                         {{ activeThread.subject }}
                     </h5>
                 </div>
@@ -74,6 +75,26 @@
             <!-- /.card-header -->
             <!-- Users -->
             <div class="card-body">
+                <div v-if="view == 'chat'"
+                     class="card-footer"
+                     style="z-index:1000000 !important;">
+                    <form action="#" method="post">
+                        <div class="input-group">
+                            <input type="text"
+                                   name="message"
+                                   v-model="form.message"
+                                   :placeholder="trans('global.message.fields.message')+'...'"
+                                   class="form-control">
+                            <span class="input-group-append">
+                      <button class="btn btn-primary "
+                              @keyup.enter="submitMessage()"
+                              @click.prevent="submitMessage()">
+                            {{ trans('global.message.send') }}
+                      </button>
+                    </span>
+                        </div>
+                    </form>
+                </div>
                 <div class="direct-chat-messages"
                      v-if="users.length > 0 && view == 'contacts'"
                      :style="'height: '+ windowHeight +'px !important'">
@@ -112,7 +133,7 @@
                 <!-- Chat -->
                 <div class="direct-chat-messages"
                      v-if="typeof activeThread === 'object' && view == 'chat'"
-                    :style="'height: '+ windowHeight +'px !important'">
+                    :style="'height: '+ (windowHeight - 33) +'px !important'">
                     <!-- Message. Default to the left -->
                     <div
                          v-for="(message, index) in activeThread.messages"
@@ -140,10 +161,16 @@
                                 :size="40"
                         ></avatar>
                         <!-- /.direct-chat-img -->
-                        <div class="direct-chat-text">
-                            <i v-if="user.id == message.user.id"
-                               class="text-danger pull-right p-1 fa fa-trash pointer"
-                               @click="destroyMessage(message)"></i>
+                        <div class="direct-chat-text"
+                             @mouseover="hover = message.id"
+                             @mouseleave="hover = false">
+                                <i v-if="user.id == message.user.id && hover == message.id"
+                                   class="text-danger pull-right p-1 fa fa-trash pointer"
+                                   @click="destroyMessage(message)"></i>
+                                <i v-else-if="hover == message.id"
+                                   v-can="'message_delete'"
+                                   class="text-danger pull-right p-1 fa fa-trash pointer"
+                                   @click="destroyMessage(message)"></i>
                             {{ message.body }}
                         </div>
                         <!-- /.direct-chat-text -->
@@ -197,23 +224,17 @@
                      :style="'height: '+ windowHeight +'px !important'">
                     <form action="#" method="post">
                         <div class="form-group">
-                            <label for="subject">
-                                {{ trans('global.message.fields.subject') }}
-                            </label>
                             <input type="text"
                                    id="subject"
                                    name="subject"
                                    v-model="form.subject"
-                                   placeholder="Type Subject ..."
+                                   :placeholder=" trans('global.message.fields.subject') "
                                    class="form-control">
                             <p class="helper-block"></p>
-                            <label for="message">
-                                {{ trans('global.message.fields.message') }}
-                            </label>
                             <textarea
                                    name="message"
                                    v-model="form.message"
-                                   placeholder="Type Message ..."
+                                   :placeholder="trans('global.message.fields.message')"
                                    class="form-control"></textarea>
                             <p class="helper-block"></p>
 
@@ -232,26 +253,7 @@
 
             </div>
             <!-- /.card-body -->
-            <div v-if="view == 'chat'"
-                 class="card-footer"
-                 style="z-index:1000000 !important;">
-                <form action="#" method="post">
-                    <div class="input-group">
-                        <input type="text"
-                               name="message"
-                               v-model="form.message"
-                               placeholder="Type Message ..."
-                               class="form-control">
-                        <span class="input-group-append">
-                      <button class="btn btn-primary "
-                              @keyup.enter="submitMessage()"
-                              @click.prevent="submitMessage()">
-                            {{ trans('global.message.send') }}
-                      </button>
-                    </span>
-                    </div>
-                </form>
-            </div>
+
             <!-- /.card-footer-->
         </div>
         <!--/.direct-chat -->
@@ -276,6 +278,7 @@
                     'message': '',
                     'recipients': ''
                 }),
+                hover: false,
                 search: '',
                 view:'chat',
                 windowHeight: (window.innerHeight - 220),
@@ -348,21 +351,24 @@
                             this.errors = error.response.data.errors;
                      });
             },
+            externalLoadMessagesEvent: function(ids) {
+                axios.get('/messages')
+                    .then(response => {
+                        if (response.data.threads.length > 0){
+                            this.threads = response.data.threads;
+                            this.activeThread = this.threads[0];
+                        } else {
+                            this.activeThread = [];
+                        }
+                        this.users = response.data.users;
+                    })
+                    .catch(e => {
+                        this.errors = error.response.data.errors;
+                    });
+            },
         },
         beforeMount() {
-            axios.get('/messages')
-                .then(response => {
-                    if (response.data.threads.length > 0){
-                        this.threads = response.data.threads;
-                        this.activeThread = this.threads[0];
-                    } else {
-                        this.activeThread = [];
-                    }
-                    this.users = response.data.users;
-                })
-                .catch(e => {
-                    this.errors = error.response.data.errors;
-                });
+
         },
         mounted(){
             this.$nextTick(() => {
@@ -380,3 +386,4 @@
 
     }
 </script>
+

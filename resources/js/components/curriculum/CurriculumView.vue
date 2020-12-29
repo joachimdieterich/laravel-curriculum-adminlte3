@@ -10,7 +10,7 @@
                    role="tab"
                    aria-controls="curriculm-tab"
                    aria-selected="false">
-                    <i class="fas fa-th"></i>
+                    <i class="fas fa-th "></i>
                 </a>
             </li>
             <li class="nav-item">
@@ -61,14 +61,14 @@
                    v-can="'logbook_access'"
                    class="nav-link link-muted"
                    :href="'/logbooks/'+ logbook.id "
-                   id="certificate-nav-tab">
+                   id="logbooks-nav-tab">
                     <i class="fas fa-book pr-2"></i>{{trans('global.logbook.title_singular')}}
                 </a>
                 <a v-else
                    v-can="'logbook_create'"
                    class="nav-link link-muted"
                    :href="'/logbooks/create?subscribable_type=App\\Course&subscribable_id='+ course.id "
-                   id="certificate-nav-tab">
+                   id="logbooks-nav-tab">
                     <i class="fas fa-book pr-2"></i>{{trans('global.logbook.create')}}
                 </a>
 

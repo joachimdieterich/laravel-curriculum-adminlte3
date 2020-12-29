@@ -12,7 +12,8 @@
     <div class="col-12">
         <group-view
             :group="{{ $group }}"
-            :courses="{{ $courses }}">
+            :courses="{{ $courses }}"
+        >
         </group-view>
         <br>
 {{--

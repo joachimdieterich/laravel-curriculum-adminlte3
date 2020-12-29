@@ -55,7 +55,7 @@
                     <i class="fa fa-book-open pr-2"></i>{{trans('global.glossar.create')}}
                 </a>
             </li>-->
-            <li class="nav-item ">
+           <!-- <li class="nav-item ">
                 <a v-if="logbook"
                    v-can="'logbook_access'"
                    class="nav-link link-muted"
@@ -70,7 +70,7 @@
                    id="certificate-nav-tab">
                     <i class="fas fa-book pr-2"></i>{{trans('global.logbook.create')}}
                 </a>
-            </li>
+            </li>-->
 
             <li v-can="'group_edit'"
                 class="nav-item ml-auto">

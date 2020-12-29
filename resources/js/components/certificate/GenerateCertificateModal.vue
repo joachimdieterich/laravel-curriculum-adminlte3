@@ -89,6 +89,7 @@
                 method: 'post',
                 certificate: null,
                 certificate_id: null,
+                curriculum_id:null,
                 date: new Date().toLocaleDateString(),
                 curriculum_id: null,
                 requestUrl: '/certificates/generate',
@@ -115,11 +116,10 @@
                 this.certificate_id = value.id;
             },
             beforeOpen(event) {
-
+                Object.assign(this.$data, this.$options.data.apply(this)) //reset data() !
                 if (event.params.curriculum_id){
                     this.curriculum_id =  event.params.curriculum_id;
                 }
-                Object.assign(this.$data, this.$options.data.apply(this)) //reset data() !
             },
             opened(){
                 this.initSelect2();

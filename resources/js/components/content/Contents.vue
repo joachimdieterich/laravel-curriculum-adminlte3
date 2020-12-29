@@ -1,7 +1,8 @@
 <template >
 <div class="card">
     <div class="card-header px-3">
-        <h3 class="card-title">
+        <h3 class="card-title"
+            v-if="subscriptions.length !== 0">
             <span data-target="#contentCarousel"
                   data-slide-to="0"
                   class="text-sm">
@@ -25,22 +26,26 @@
                     @click="show('content-subscription-modal')">
                 <i class="fa fa-paste"></i>
             </button>
-            <button type="button" class="btn btn-tool "
-                    href="#contentCarousel" role="button"
-                    data-slide="prev"
-                    @click="prev()">
+            <button
+                v-if="subscriptions.length !== 0"
+                type="button" class="btn btn-tool "
+                href="#contentCarousel" role="button"
+                data-slide="prev"
+                @click="prev()">
                 <i class="fa fa-arrow-left"></i>
             </button>
-            <button type="button" class="btn btn-tool "
-                    href="#contentCarousel" role="button"
-                    data-slide="next"
-                    @click="next()">
+            <button
+                v-if="subscriptions.length !== 0"
+                type="button" class="btn btn-tool "
+                href="#contentCarousel" role="button"
+                data-slide="next"
+                @click="next()">
                 <i class="fa fa-arrow-right"></i>
             </button>
         </div>
     </div>
 
-    <div class="card-content">
+    <div class="card-content"  v-if="subscriptions.length !== 0">
         <div id="contentCarousel" class="carousel slide" data-interval="false">
             <ol class="carousel-indicators">
                 <li data-target="#contentCarousel"
@@ -85,8 +90,7 @@
 
                                         <span  v-if="( subscriptions.length-1 != item.order_id)"
                                                class="btn-tool fa fa-arrow-down"
-                                               @click.prevent="sortEvent(item,-1)"
-                                               >
+                                               @click.prevent="sortEvent(item,-1)">
                                         </span>
                                      </span>
                                      <br>
@@ -97,7 +101,6 @@
                                         {{item.content.content | truncate(200, '...')}}
                                      </small>
                                  </span>
-
                              </li>
                         </span>
                     </ul>
@@ -108,7 +111,6 @@
                     <div class="p-3"
                          v-html="item.content.content"></div>
                 </div>
-
             </div>
         </div>
     </div>

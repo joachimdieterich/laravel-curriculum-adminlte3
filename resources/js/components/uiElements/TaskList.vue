@@ -1,6 +1,6 @@
 <template>
     <ul class="todo-list" data-widget="todo-list">
-                            
+
         <li v-for="task in tasks" >
             <!-- drag handle -->
 <!--               <span class="handle">
@@ -9,11 +9,11 @@
             </span>-->
             <!-- checkbox -->
             <div  class="icheck-primary d-inline ml-2">
-                <input 
-                    type="checkbox" 
-                    value="" 
-                    name="todo1" 
-                    id="todoCheck1" 
+                <input
+                    type="checkbox"
+                    value=""
+                    name="todo1"
+                    id="todoCheck1"
                     @click="complete(task.task.id)"
                     v-bind:checked="isCompleted(task)">
                 <label for="todoCheck1"></label>
@@ -29,7 +29,6 @@
                 </a>
             </div>
         </li>
-
     </ul>
 </template>
 
@@ -44,15 +43,14 @@
                 task: null
             };
         },
-        
+
         methods: {
             async complete(id) {
-                try {  
+                try {
                     this.status = (await axios.patch('/tasks/'+id+'/complete')).data.status;
                 } catch(error) {
                     this.errors = error.response.data.errors;
-                } 
-                //alert(this.status);
+                }
             },
              isCompleted(task) {
                 var returnvalue = false;
@@ -61,14 +59,14 @@
                         returnvalue = true;
                     }
                 }
-                
+
                 return returnvalue;
-            }   
+            }
         },
-        
+
         mounted(){
-            
+
         }
-        
+
     }
 </script>

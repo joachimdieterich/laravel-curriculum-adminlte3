@@ -1,9 +1,9 @@
 <div id="{{ $field }}_form_group" class="form-group{{ $errors->has( $field ) ? ' has-danger' : '' }}">
     <label for="{{ $field }}">
         {{ trans('global.'.$model.'.fields.'.$field) }}
-        @if(isset($required)) 
-            * 
-        @endif 
+        @if(isset($required))
+            *
+        @endif
     </label>
 
     <div class="input-group">
@@ -12,30 +12,30 @@
                 <i class="far fa-calendar-alt"></i>
             </span>
         </div>
-        <input 
-            name="{{ $field }}" 
+        <input
+            name="{{ $field }}"
             id="{{ $field }}"
-            type="text" 
-            class="form-control {{ $errors->has($field) ? ' is-invalid' : '' }}" 
-            value="{{ $value }}" 
-            @if(isset($placeholder)) 
-                placeholder="{{ __($placeholder) }}" 
-            @endif 
-            @if(isset($readonly)) 
+            type="text"
+            class="form-control {{ $errors->has($field) ? ' is-invalid' : '' }}"
+            value="{{ $value }}"
+            @if(isset($placeholder))
+                placeholder="{{ __($placeholder) }}"
+            @endif
+            @if(isset($readonly))
                 readonly
-            @endif 
-            @if(isset($required)) 
-                'required' 
+            @endif
+            @if(isset($required))
+                required
             @endif
             />
             @if ($errors->has( $field ))
-                <span 
-                    id="{{ $field }}-error" 
-                    class="error text-danger" 
+                <span
+                    id="{{ $field }}-error"
+                    class="error text-danger"
                     for="input-{{ $field }}">{{ $errors->first( $field ) }}
                 </span>
             @endif
-    </div> 
+    </div>
 </div>
 
 @section('scripts')

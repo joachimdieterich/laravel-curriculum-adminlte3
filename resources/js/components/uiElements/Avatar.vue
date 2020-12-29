@@ -54,7 +54,7 @@
                 }
 
                 context.fillStyle = this.colours[colourIndex];
-                context.fillRect (0, 0, canvas.width, canvas.height);
+                context.fillRect (0, 0, this.size, this.size);
                 context.font = (this.size/2.5)+"px Arial";
                 context.textAlign = "center";
                 context.fillStyle = "#FFF";

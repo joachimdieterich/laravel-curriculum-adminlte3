@@ -5,12 +5,11 @@
     style="height: 300px !important;
         min-width: 200px !important;"
     onclick="{{ $onclick }}">
-    <div style="height: 150px !important;
-        min-width: 198px !important;
+    <div style="min-height: 150px !important;
+        min-width: 197px !important;
         padding: 0;
         background: url('{{isset($item->medium->id) ? route('media.thumb', ($item->medium->id)) : Avatar::create($item->title)->toGravatar(['d' => 'identicon', 'r' => 'pg', 's' => 100])}}') top center no-repeat;
         background-size: cover;">
-
     </div>
 @else
 <div

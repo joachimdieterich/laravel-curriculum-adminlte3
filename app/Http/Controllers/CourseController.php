@@ -56,6 +56,10 @@ class CourseController extends Controller
                             ['curriculum_id', '=', $course->curriculum_id],
                             ['global', '=', 1]
                         ])
+                        ->orWhere([
+                            ['type', '=', 'group'],
+                            ['global', '=', 1]
+                        ])
                         ->get();
         $logbook        = (null !==  $course->logbookSubscription()->get()->first()) ? $course->logbookSubscription()->get()->first()->logbook()->get()->first() : null;
 

@@ -319,7 +319,7 @@ class CertificateController extends Controller
         $curriculum = Curriculum::with([
                 'terminalObjectives',
                 'terminalObjectives.enablingObjectives'])
-            ->find($certificate->curriculum_id);
+            ->find((request()->curriculum_id != null) ? request()->curriculum_id : $certificate->curriculum_id);
 
         foreach ($curriculum->terminalObjectives as $ter_value)
         {

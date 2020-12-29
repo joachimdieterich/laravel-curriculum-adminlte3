@@ -46,7 +46,7 @@ class TaskController extends Controller
     public function store(Request $request)
     {
         abort_unless(\Gate::allows('task_create'), 403);
-        
+
         $input = $this->validateRequest();
         $task = Task::firstOrCreate([
             'title'             => $input['title'],
@@ -55,15 +55,15 @@ class TaskController extends Controller
             'due_date'          => $input['due_date'],
             'owner_id'          => auth()->user()->id
         ]);
-        
+
         //subscribe to model
         if (isset($input['subscribable_type']) AND isset($input['subscribable_id'])){
             $model = $input['subscribable_type']::find($input['subscribable_id']);
             $task->subscribe($model);
         }
-        
-        // axios call? 
-        if (request()->wantsJson()){    
+
+        // axios call?
+        if (request()->wantsJson()){
             return ['message' => $task->path()];
         }
         //dd($organization->path());
@@ -78,21 +78,21 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        $task = $task->with(['contentSubscriptions.content.categories', 
+        $task = $task->with(['contentSubscriptions.content.categories',
                 'terminalObjectiveSubscriptions.terminalObjective',
                 'enablingObjectiveSubscriptions.enablingObjective.terminalObjective',
                 'mediaSubscriptions.medium'])
                 ->where('id', $task->id)->get()->first();
-        
+
         abort_unless(\Gate::allows('task_show'), 403);
-        // axios call? 
-        if (request()->wantsJson()){  
+        // axios call?
+        if (request()->wantsJson()){
             return [
                 'task' => $task
             ];
         }
         $status_definitions = StatusDefinition::all();
-        
+
         return view('tasks.show')
                 ->with(compact('task'))
                 ->with(compact('status_definitions'));
@@ -119,7 +119,7 @@ class TaskController extends Controller
     public function update(Request $request, Task $task)
     {
         abort_unless(\Gate::allows('task_edit'), 403);
-        
+
         $input = $this->validateRequest();
         $task->update([
             'title'             => $input['title'],
@@ -128,7 +128,7 @@ class TaskController extends Controller
             'due_date'          => $input['due_date'],
         ]);
 
-        if (request()->wantsJson()){    
+        if (request()->wantsJson()){
             return ['message' => $task->path()];
         }
         return redirect($task->path());
@@ -143,46 +143,49 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         abort_unless(\Gate::allows('task_delete'), 403);
-        
-        
+
+
         $task->subscriptions()->delete(); //first delete subscriptions
         $task->delete();
 
+        if (request()->wantsJson()){
+            return ['message' => '/tasks'];
+        }
         return back();
     }
-    
+
     public function complete(Request $request, Task $task)
     {
         abort_unless(\Gate::allows('task_access'), 403);
-        
+
         $input = $this->validateRequest();
-        
+
         //subscribe to model if not already subscribed
         $subscription = $task->subscribe(auth()->user());
         ($subscription->completion_date == null) ? $subscription->complete() : $subscription->incomplete();
 
-        if (request()->wantsJson()){    
+        if (request()->wantsJson()){
             return ['status' => $task->path()];
         }
         return redirect($task->path());
     }
-    
+
     public function activity(Request $request, Task $task)
     {
         abort_unless(\Gate::allows('task_access'), 403);
-        
+
         $activity = Task::with(['subscriptions.statuses.model', 'subscriptions.subscribable', 'subscriptions.owner'])
                 ->where('id', $task->id)->get()->first();
-        if (request()->wantsJson()){    
+        if (request()->wantsJson()){
             return ['activity' => $activity];
         }
         return redirect($activity);
     }
-   
-    
+
+
     protected function validateRequest()
-    {               
-        
+    {
+
         return request()->validate([
             'id'                => 'sometimes',
             'title'             => 'sometimes|required',

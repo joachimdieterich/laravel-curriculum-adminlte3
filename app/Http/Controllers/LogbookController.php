@@ -17,16 +17,16 @@ class LogbookController extends Controller
     {
         return view('logbooks.index');
     }
-    
+
     public function list()
     {
-        
+
         abort_unless(\Gate::allows('logbook_access'), 403);
-        $logbooks = (auth()->user()->role()->id == 1) ? Logbook::all() : auth()->user()->logbooks()->get();      
-   
+        $logbooks = (auth()->user()->role()->id == 1) ? Logbook::all() : auth()->user()->logbooks()->get();
+
         $edit_gate = \Gate::allows('logbook_edit');
         $delete_gate = \Gate::allows('logbook_delete');
-        
+
         return empty($logbooks) ? '' : DataTables::of($logbooks)
             ->addColumn('action', function ($logbooks) use ($edit_gate, $delete_gate) {
                  $actions  = '';
@@ -40,10 +40,10 @@ class LogbookController extends Controller
                     if ($delete_gate){
                         $actions .= '<button type="button" class="btn text-danger" onclick="event.preventDefault();destroyDataTableEntry(\'logbooks\','.$logbooks->id.');"><i class="fa fa-trash"></i></button>';
                     }
-              
+
                 return $actions;
             })
-           
+
             ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
@@ -57,7 +57,7 @@ class LogbookController extends Controller
     public function create()
     {
         abort_unless(\Gate::allows('logbook_create'), 403);
-        
+
         $logbooks = Logbook::all();
         return view('logbooks.create')
                 ->with(compact('logbooks'));
@@ -73,24 +73,24 @@ class LogbookController extends Controller
     {
         abort_unless(\Gate::allows('logbook_create'), 403);
         $new_logbook = $this->validateRequest();
-        
+
         $logbook = Logbook::Create([
             'title'         => $new_logbook['title'],
             'description'   => $new_logbook['description'],
             'owner_id'      => auth()->user()->id,
         ]);
-        
+
         //subscribe to model
         if (isset($new_logbook['subscribable_type']) AND isset($new_logbook['subscribable_id'])){
             $model = $new_logbook['subscribable_type']::find($new_logbook['subscribable_id']);
             $logbook->subscribe($model);
         }
-        
-        // axios call? 
-        if (request()->wantsJson()){    
+
+        // axios call?
+        if (request()->wantsJson()){
             return ['message' => $logbook->path()];
         }
-        
+
         return redirect($logbook->path());
     }
 
@@ -101,20 +101,18 @@ class LogbookController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Logbook $logbook)
-    {           
+    {
         $logbook = $logbook->with([
                 'subscriptions.subscribable',
-                'entries.absences.owner', 
-                'entries.contentSubscriptions.content.categories', 
+                'entries.absences.owner',
                 'entries.terminalObjectiveSubscriptions.terminalObjective',
                 'entries.enablingObjectiveSubscriptions.enablingObjective.terminalObjective',
                 'entries.taskSubscription.task.subscriptions' => function($query) {
                      $query->where('subscribable_id', auth()->user()->id)
                            ->where('subscribable_type', 'App\User');
-                 },
-                 'entries.mediaSubscriptions.medium'
+                 }
             ])->where('id', $logbook->id)->get()->first();
-        
+
         return view('logbooks.show')
                 ->with(compact('logbook'));
     }
@@ -128,7 +126,7 @@ class LogbookController extends Controller
     public function edit(Logbook $logbook)
     {
         abort_unless(\Gate::allows('logbook_edit'), 403);
-        
+
         return view('logbooks.edit')
                 ->with(compact('logbook'));
     }
@@ -143,7 +141,7 @@ class LogbookController extends Controller
     public function update(Request $request, Logbook $logbook)
     {
         abort_unless(\Gate::allows('logbook_edit'), 403);
-        
+
         $logbook->update([
             'title' => $request['title'],
             'description' => $request['description'],
@@ -166,10 +164,10 @@ class LogbookController extends Controller
 
         //return back();
     }
-    
+
     protected function validateRequest()
-    {   
-        
+    {
+
         return request()->validate([
             'title'         => 'sometimes|required',
             'description'   => 'sometimes',

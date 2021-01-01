@@ -98,15 +98,13 @@ class RepositorySubscriptionController extends Controller
     public function getMedia(Request $request)
     {
         $input = $this->validateRequest();
-
+        $repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
+        $result = collect([]);
         /* not used anymore */
         /*$subscriptions = RepositorySubscription::where('subscribable_type', $input['subscribable_type'])
                 ->where('subscribable_id', $input['subscribable_id'])
                 ->where('repository', $input['repository'])->get();
 
-        $result = collect([]);
-
-        $repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
         foreach($subscriptions as $subscription)
         {
             $result->push($repositoryPlugin->plugins[$input['repository']]->processReference($subscription->value));
@@ -122,7 +120,6 @@ class RepositorySubscriptionController extends Controller
             if (!empty($model->ui))
             {
                 $result->push($repositoryPlugin->plugins[$input['repository']]->processReference('endpoint=getSearchQueriesV2&property=ccm:curriculum&value='.$model->ui.'&maxItems='.$input['maxItems'].'&skipCount='.($input['maxItems'] * $input['page']) ));
-                //$result->push($repositoryPlugin->plugins[$input['repository']]->processReference('endpoint=getSearchCustom&property=ccm:curriculum&value='.$model->ui.'&maxItems='.$input['maxItems'].'&skipCount='.($input['maxItems'] * $input['page']) ));
             }
             else
             {

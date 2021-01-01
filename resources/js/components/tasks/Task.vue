@@ -48,9 +48,10 @@
 
         <ul class="nav nav-tabs">
             <li class="nav-item small">
-                <a class="nav-link active show link-muted"
+                <a class="nav-link link-muted"
                    v-bind:href="'#task_contents_'+task.id"
-                   data-toggle="tab">
+                   data-toggle="tab"
+                   @click="loaderEvent()">
                     <i class="fa fa-align-justify pr-2"></i>{{ trans('global.content.title') }}</a>
             </li>
             <li class="nav-item small">
@@ -96,10 +97,12 @@
         </ul>
 
         <div class="tab-content">
-             <div class="tab-pane active show"
+             <div class="tab-pane"
                  v-bind:id="'task_contents_'+task.id"  >
-                 <contents subscribable_type="App\Task"
-                           :subscribable_id="task.id"></contents>
+                 <contents
+                     ref="Contents"
+                     subscribable_type="App\Task"
+                     :subscribable_id="task.id"></contents>
             </div>
             <div class="tab-pane"
                  v-bind:id="'task_media_'+task.id">
@@ -185,6 +188,9 @@ export default {
             }
             window.open(this.location);
         },
+        loaderEvent: function() {
+            this.$refs.Contents.loaderEvent();
+        }
     },
 
     mounted() {

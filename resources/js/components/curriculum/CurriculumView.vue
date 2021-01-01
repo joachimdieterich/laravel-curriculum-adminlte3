@@ -20,7 +20,9 @@
                    href="#content-tab"
                    role="tab"
                    aria-controls="content-tab"
-                   aria-selected="true">
+                   aria-selected="true"
+                   @click="loaderEvent()"
+                >
                     <i class="fa fa-align-justify pr-2"></i>{{trans('global.content.title')}}
                 </a>
             </li>
@@ -125,8 +127,10 @@
                  id="content-tab"
                  role="tab"
                  aria-labelledby="content-nav-tab">
-                <contents subscribable_type="App\Curriculum"
-                :subscribable_id="curriculum.id"></contents>
+                <contents
+                    ref="Contents"
+                    subscribable_type="App\Curriculum"
+                    :subscribable_id="curriculum.id"></contents>
             </div>
             <div class="tab-pane fade "
                  id="medium-tab"
@@ -199,6 +203,9 @@
             show(modal){
                 this.$modal.show(modal, { 'curriculum_id': this.curriculum.id });
             },
+            loaderEvent: function() {
+                this.$refs.Contents.loaderEvent();
+            }
         },
         mounted() {
             this.$on('addTerminalObjective', function(newTerminalObjective) {

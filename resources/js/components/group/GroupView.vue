@@ -20,7 +20,8 @@
                    href="#content-tab"
                    role="tab"
                    aria-controls="content-tab"
-                   aria-selected="true">
+                   aria-selected="true"
+                   @click="loaderEvent()">
                     <i class="fa fa-align-justify pr-2"></i>{{trans('global.content.title')}}
                 </a>
             </li>
@@ -94,7 +95,9 @@
                  id="content-tab"
                  role="tab"
                  aria-labelledby="content-nav-tab">
-                <contents subscribable_type="App\Group"
+                <contents
+                 ref="Contents"
+                 subscribable_type="App\Group"
                 :subscribable_id="group.id"></contents>
             </div>
             <div class="tab-pane fade "
@@ -139,6 +142,9 @@
         },
 
         methods: {
+            loaderEvent: function() {
+                this.$refs.Contents.loaderEvent();
+            }
 
         },
         mounted() {

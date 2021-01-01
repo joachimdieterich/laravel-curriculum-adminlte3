@@ -78,7 +78,8 @@
                 <li class="nav-item small">
                     <a class="nav-link"
                        v-bind:href="'#logbook_contents_'+entry.id"
-                       data-toggle="tab">{{ trans('global.content.title') }}</a>
+                       data-toggle="tab"
+                       @click="loaderEvent()">{{ trans('global.content.title') }}</a>
                 </li>
                 <li class="nav-item small">
                     <a class="nav-link"
@@ -133,8 +134,10 @@
                     <!-- tab-pane -->
                     <div class="tab-pane "
                          v-bind:id="'logbook_contents_'+entry.id"  >
-                        <contents subscribable_type="App\LogbookEntry"
-                                  :subscribable_id="entry.id"></contents>
+                        <contents
+                            ref="Contents"
+                            subscribable_type="App\LogbookEntry"
+                            :subscribable_id="entry.id"></contents>
                     </div>
                     <!-- /.tab-pane -->
                     <!-- tab-pane -->
@@ -227,6 +230,9 @@
                 }
 
             },
+            loaderEvent: function() {
+                this.$refs.Contents.loaderEvent();
+            }
         },
         computed: {
 

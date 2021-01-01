@@ -16,7 +16,6 @@ class AuthGates
         $user = \Auth::user();
 
         if (/* !app()->runningInConsole() && */ $user) { // get permissions in console
-            //$roles = Role::with('permissions')->get();
             $roles =  Cache::rememberForever('roles', function () {
                 return Role::with('permissions')->get();
             });
@@ -26,11 +25,10 @@ class AuthGates
                     $permissionsArray[$permissions->title][] = $role->id;
                 }
             }
-
+            $current_role_id = $user->role()->id;
             foreach ($permissionsArray as $title => $roles) {
-                Gate::define($title, function (\App\User $user) use ($title, $roles) {
-                    return in_array($user->role()->id, $roles) ? true : false; //only check current role
-                    //return count(array_intersect($user->roles->pluck('id')->toArray(), $roles)) > 0; //check all users roles
+                Gate::define($title, function () use ($current_role_id, $title, $roles) {
+                    return in_array($current_role_id, $roles) ? true : false; //only check current role
                 });
             }
 
@@ -52,7 +50,6 @@ class AuthGates
                         ->get()->first())->id;
                 $user->save();
             }
-
         }
 
         return $next($request);

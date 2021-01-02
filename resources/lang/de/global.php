@@ -916,6 +916,7 @@ return [
     ],
     'eventSubscription' =>[
         'title'             => 'Veranstaltungen',
+        'title_alt'         => 'Fortbildungen',
         'title_singular'    => 'Veranstaltunge',
         'create'            => 'Veranstaltungen verknüpfen',
         'search'            => '(Fortbildungs-)Veranstaltungen suchen',

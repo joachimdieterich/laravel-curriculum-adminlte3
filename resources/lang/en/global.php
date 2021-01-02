@@ -912,6 +912,7 @@ return [
     'eventSubscription' =>[
         'title'             => 'Events',
         'title_singular'    => 'Event',
+        'title_alt'         => 'Trainings',
         'create'            => 'Creat eventlink ',
         'search'            => 'Search event',
         'search_subject'    => '... by subject',

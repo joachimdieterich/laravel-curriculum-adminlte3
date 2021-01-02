@@ -8,7 +8,7 @@
                   class="text-sm">
                 <i class="fa fa-list"></i>
             </span>
-            <span v-if="currentSlide == 0"
+            <span v-if="currentSlide === 0"
                   class="pl-2">Index</span>
             <span v-else
                   class="pl-2">{{subscriptions[currentSlide-1].content.title}}</span>
@@ -53,7 +53,6 @@
                     class="active"
                     @click="setSlide(0)"></li>
                 <li v-for="(item,index) in subscriptions"
-                    tooldata-toggle="tooltip"
                     data-placement="top"
                     :title="item.content.title"
                     data-target="#contentCarousel"
@@ -65,48 +64,47 @@
             <div class="carousel-inner">
                 <div class="carousel-item active">
                     <ul class="list-unstyled p-3" title="Index">
-                        <span v-for="(item,index) in subscriptions">
-                             <li class="pb-2">
-                                 <span class="pointer">
-                                     <span data-target="#contentCarousel"
-                                           :data-slide-to="index+1"
-                                           @click="setSlide(index+1)">
-                                         {{item.content.title}}
-                                     </span>
-                                     <span v-can="'content_delete'"
-                                           class="pull-right">
-                                         <span
-                                             class="btn-tool fa fa-trash text-danger"
-                                             @click.prevent="deleteSubscription(item)"
-                                             >
-                                         </span>
-                                     </span>
-                                     <span v-can="'content_create'"
-                                           class="pull-right"><!--Order_id: {{ item.order_id }}-->
-                                         <span v-if="(item.order_id != 0)"
-                                               class="btn-tool fa fa-arrow-up"
-                                               @click.prevent="sortEvent(item,1)">
-                                         </span>
-
-                                        <span  v-if="( subscriptions.length-1 != item.order_id)"
-                                               class="btn-tool fa fa-arrow-down"
-                                               @click.prevent="sortEvent(item,-1)">
-                                        </span>
-                                     </span>
-                                     <br>
-                                     <small class="text-muted"
-                                            data-target="#contentCarousel"
-                                            :data-slide-to="index+1"
-                                            @click="setSlide(index+1)">
-                                        {{item.content.content | truncate(200, '...')}}
-                                     </small>
+                         <li v-for="(item,index) in subscriptions"
+                             class="pb-2">
+                             <span class="pointer">
+                                 <span data-target="#contentCarousel"
+                                       :data-slide-to="index+1"
+                                       @click="setSlide(index+1)">
+                                     {{item.content.title}}
                                  </span>
-                             </li>
-                        </span>
+                                 <span v-can="'content_delete'"
+                                       class="pull-right">
+                                     <span
+                                         class="btn-tool fa fa-trash text-danger"
+                                         @click.prevent="deleteSubscription(item)"
+                                         >
+                                     </span>
+                                 </span>
+                                 <span v-can="'content_create'"
+                                       class="pull-right"><!--Order_id: {{ item.order_id }}-->
+                                     <span v-if="(item.order_id !== 0)"
+                                           class="btn-tool fa fa-arrow-up"
+                                           @click.prevent="sortEvent(item,-1)">
+                                     </span>
+
+                                    <span  v-if="( subscriptions.length-1 !== item.order_id)"
+                                           class="btn-tool fa fa-arrow-down"
+                                           @click.prevent="sortEvent(item,1)">
+                                    </span>
+                                 </span>
+                                 <br>
+                                 <small class="text-muted"
+                                        data-target="#contentCarousel"
+                                        :data-slide-to="index+1"
+                                        @click="setSlide(index+1)">
+                                    {{item.content.content | truncate(200, '...')}}
+                                 </small>
+                             </span>
+                         </li>
                     </ul>
                 </div>
 
-                <div v-for="(item,index) in subscriptions"
+                <div v-for="item in subscriptions"
                      class="carousel-item" :title="item.content.title">
                     <div class="p-3"
                          v-html="item.content.content"></div>
@@ -150,7 +148,7 @@
                 }
             },
             next(){
-                if (this.currentSlide == this.subscriptions.length){
+                if (this.currentSlide === this.subscriptions.length){
                     this.currentSlide = 0;
                 } else {
                     this.currentSlide++;
@@ -188,15 +186,9 @@
                         this.subscriptions = response.data.message;
                     })
                     .catch(e => {
-                        this.errors = error.response.data.errors;
+                        this.errors = e.data.errors;
                     });
             }
-
-        },
-
-
-        beforeMount() {
-
         },
 
     }

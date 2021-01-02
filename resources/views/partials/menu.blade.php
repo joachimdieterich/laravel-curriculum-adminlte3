@@ -61,7 +61,7 @@
                 @endif
             </ul>
         </nav>
-        <nav class="mt-2">
+        <nav class="mt-0">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 @can('curriculum_access')
                     <li class="nav-item">

@@ -1,8 +1,8 @@
 <template>
-    <modal 
-        id="reference-objective-modal" 
-        name="reference-objective-modal" 
-        height="auto" 
+    <modal
+        id="reference-objective-modal"
+        name="reference-objective-modal"
+        height="auto"
         :adaptive=true
         draggable=".draggable"
         :resizable=true
@@ -10,13 +10,12 @@
         @opened="opened"
         @before-close="beforeClose"
         style="z-index: 1100">
-        <div class="card" 
-             style="margin-bottom: 0px !important">
+        <div class="card"
+             style="margin-bottom: 0 !important">
             <div class="card-header">
                  <h3 class="card-title">
                     {{ trans('global.referenceable_types.objective') }}
                  </h3>
-                
                  <div class="card-tools">
                      <button type="button" class="btn btn-tool draggable" >
                         <i class="fa fa-arrows-alt"></i>
@@ -24,49 +23,48 @@
                      <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
                         <i class="fa fa-times"></i>
                      </button>
-                 </div> 
+                 </div>
             </div>
-            
+
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                
+
                 <div v-if="method === 'post'" class="form-group ">
                     <label for="curricula">
                         {{ trans('global.curriculum.title_singular') }}
                     </label>
-                    <select name="curricula" 
-                            id="curricula" 
-                            v-model="curriculum_id"
+                    <select name="curricula"
+                            id="curricula"
                             class="form-control select2 "
                             style="width:100%;"
                             >
-                         <option v-for="(item,index) in curricula" v-bind:value="item.id">{{ item.title }}</option>
-                    </select>     
+                         <option v-for="item in curricula" v-bind:value="item.id">{{ item.title }}</option>
+                    </select>
                 </div>
                 <div v-if="method === 'post'" class="form-group ">
                     <label for="terminalObjectives">
                         {{ trans('global.terminalObjective.title_singular') }}
                     </label>
-                    <select name="terminalObjectives" 
-                            id="terminalObjectives" 
+                    <select name="terminalObjectives"
+                            id="terminalObjectives"
                             class="form-control select2 "
                             style="width:100%;"
                             >
-                         <option v-for="(item,index) in terminalObjectives" v-bind:value="item.id">{{ item.title }}</option>
-                    </select>     
+                         <option v-for="item in terminalObjectives" v-bind:value="item.id">{{ item.title }}</option>
+                    </select>
                 </div>
                 <div v-if="method === 'post'" class="form-group ">
                     <label for="enablingObjectives">
                         {{ trans('global.enablingObjective.title_singular') }}
                     </label>
-                    <select name="enablingObjectives" 
-                            id="enablingObjectives" 
+                    <select name="enablingObjectives"
+                            id="enablingObjectives"
                             class="form-control select2 "
                             style="width:100%;"
                             >
-                         <option v-for="(item,index) in enablingObjectives" v-bind:value="item.id">{{ item.title }}</option>
-                    </select>     
+                         <option v-for="item in enablingObjectives" v-bind:value="item.id">{{ item.title }}</option>
+                    </select>
                 </div>
-                
+
                 <div class="form-group ">
                     <label for="description">{{ trans('global.description') }}</label>
                     <textarea
@@ -77,13 +75,13 @@
                     ></textarea>
                 </div>
             </div>
-            
+
             <div class="card-footer">
                 <span class="pull-right">
 <!--                     <button type="button" class="btn btn-primary" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>-->
                      <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
                 </span>
-            </div>  
+            </div>
         </div>
     </modal>
 </template>
@@ -103,7 +101,7 @@
                     'enabling_objective_id': null,
                     'description': null
                 }),
-                
+
                 curricula: {},
                 curriculum: {},
                 terminalObjectives: {},
@@ -114,27 +112,27 @@
             }
         },
         methods: {
-            
+
             async loadCurricula() {
-                try {  
+                try {
                     this.curricula = (await axios.get('/curricula')).data.curricula;
                 } catch(error) {
                     this.errors = error.response.data.errors;
-                } 
+                }
                 this.form.terminal_objective_id = null; //reset selection
-                this.form.enabling_objective_id = null; 
+                this.form.enabling_objective_id = null;
             },
-           
+
             async loadObjectives(id) {
                 this.form.curriculum_id = parseInt(id)
-                try {    
+                try {
                    this.terminalObjectives = (await axios.get('/curricula/'+this.form.curriculum_id+'/objectives')).data.curriculum.terminal_objectives;
                    this.removeHtmlTags(this.terminalObjectives);
                    this.form.terminal_objective_id = this.terminalObjectives[0].id;
                    this.loadEnabling(this.form.terminal_objective_id);
                 } catch(error) {
                    this.errors = error.response.data.errors;
-                } 
+                }
             },
             loadEnabling(id){
                 let terminal = [].concat(...this.terminalObjectives.filter(ena => ena.enabling_objectives.find(e => e.terminal_objective_id === parseInt(id))));
@@ -158,7 +156,7 @@
                         })).data.message;
                     } else {
                         this.location = (await axios.post(this.requestUrl, {
-                            'curriculum_id':         this.form.curriculum_id, 
+                            'curriculum_id':         this.form.curriculum_id,
                             'terminal_objective_id': this.form.terminal_objective_id,
                             'enabling_objective_id': this.form.enabling_objective_id,
                             'subscribable_type':     this.form.referenceable_type,
@@ -166,13 +164,13 @@
                             'description' :          tinyMCE.get('description').getContent(),
                         })).data.message;
                     }
-                    location.reload(true); 
+                    location.reload(true);
                 } catch(error) {
                     //
                 }
             },
-            
-            beforeOpen(event) { 
+
+            beforeOpen(event) {
                 if (event.params.id){
                     this.method = "patch";
                     this.form.id = event.params.id;
@@ -188,13 +186,13 @@
                         this.referenceRequestUrl = event.params.requestUrl;
                     }
                 }
-                
+
              },
             beforeClose() {
             },
             opened(){
                 this.$initTinyMCE();
-                this.initSelect2(); 
+                this.initSelect2();
                 this.curricula = {};
                 this.terminalObjectives = {};
                 this.enablingObjectives = {};
@@ -203,13 +201,13 @@
                 $("#curricula").select2({
                     dropdownParent: $("#curricula").parent(),
                     allowClear: false
-                }).on('select2:select', function (e) { 
+                }).on('select2:select', function (e) {
                     this.loadObjectives(e.params.data.id);
                     this.terminalObjectives = {};
                     this.enablingObjectives = {};
                 }.bind(this)) //make loadObjectives accessible!
                 .val(this.form.curriculum_id).trigger('change'); //set value
-                
+
                 $("#terminalObjectives").select2({
                     dropdownParent: $("#terminalObjectives").parent(),
                     allowClear: false
@@ -217,26 +215,25 @@
                     this.loadEnabling(e.params.data.id);
                 }.bind(this)) //make loadEnabling accessible!
                 .val(this.form.terminal_objective_id).trigger('change'); //set value
-                
+
                 $("#enablingObjectives").select2({
                     dropdownParent: $("#enablingObjectives").parent(),
                     allowClear: false
                 }).on('select2:select', function (e) {
                     this.setEnabling(e.params.data.id);
-                }.bind(this)) //make setEnabling accessible!    
+                }.bind(this)) //make setEnabling accessible!
                .val(this.form.enabling_objective_id).trigger('change'); //set value
             },
             close(){
                 this.$modal.hide('reference-objective-modal');
             },
-            removeHtmlTags(array, field){
+            removeHtmlTags(array){
                 var i;
-                for (i = 0; i < array.length; i++) { 
+                for (i = 0; i < array.length; i++) {
                     array[i].title = array[i].title.replace(/<[^>]+>/g, '');
                 }
             }
-            
-        },
+        }
     }
 </script>
 

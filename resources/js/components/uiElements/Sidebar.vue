@@ -118,10 +118,10 @@
                                     <span class="contacts-list-name text-black link-muted">
                                           {{user.firstname}} {{user.lastname}}
                                         <small class="contacts-list-date float-right">
-                                            ddd
+
                                         </small>
                                       </span>
-                                      <span class="contacts-list-msg  link-muted">...</span>
+                                      <span class="contacts-list-msg  link-muted">{{user.username}}</span>
                                 </div>
                                 <!-- /.contacts-list-info -->
                             </a>
@@ -206,7 +206,7 @@
                                                 {{ diffForHumans(thread.messages[0].created_at) }}
                                             </small>
                                       </span>
-                                      <span class="contacts-list-msg  link-muted">{{ thread.subject }}</span>
+                                      <span class="contacts-list-msg link-muted">{{thread.subject | truncate(27, '...')}}</span>
                                 </div>
                                 <!-- /.contacts-list-info -->
                             </a>

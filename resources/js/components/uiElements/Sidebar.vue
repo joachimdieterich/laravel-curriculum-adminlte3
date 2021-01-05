@@ -42,7 +42,7 @@
                     <input type="search"
                            name="message"
                            v-model="search"
-                           placeholder="Suchbegriff ..."
+                           placeholder="Name ..."
                            class="form-control">
                 </div>
             </div>
@@ -96,7 +96,7 @@
                     </form>
                 </div>
                 <div class="direct-chat-messages"
-                     v-if="users.length > 0 && view == 'contacts'"
+                     v-if="users.length > 0 && view == 'contacts' && search.length > 2"
                      :style="'height: '+ windowHeight +'px !important'">
                         <ul class="contacts-list">
                             <li v-for="(user, index) in users"

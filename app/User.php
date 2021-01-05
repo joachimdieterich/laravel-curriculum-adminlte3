@@ -4,6 +4,7 @@ namespace App;
 
 use Carbon\Carbon;
 use Hash;
+use Illuminate\Support\Facades\Cache;
 use Laravolt\Avatar\Facade;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -142,11 +143,11 @@ class User extends Authenticatable
             ->get();
     }
 
-    public function curricula()
+    public function curricula($select = ['curricula.*', 'curriculum_group.id AS course_id', 'curriculum_group.group_id AS group_id'])
     {
         return DB::table('curricula')
             ->distinct()
-            ->select('curricula.*', 'curriculum_group.id AS course_id', 'curriculum_group.group_id AS group_id')
+            ->select($select)
             ->leftjoin('curriculum_group', 'curricula.id', '=', 'curriculum_group.curriculum_id')
             ->leftjoin('group_user', 'group_user.group_id', '=', 'curriculum_group.group_id')
             ->where('group_user.user_id', $this->id)
@@ -235,8 +236,8 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsToMany(Role::class, 'organization_role_users')
-                ->withPivot(['user_id', 'role_id', 'organization_id'])
-                ->where('organization_role_users.organization_id', $this->current_organization_id)->first();
+            ->withPivot(['user_id', 'role_id', 'organization_id'])
+            ->where('organization_role_users.organization_id', $this->current_organization_id)->first();
     }
 
     public function unreadMessagesCount()

@@ -27,7 +27,7 @@ class CurriculumController extends Controller
     {
         if (request()->wantsJson())
         {
-            return ['curricula' => auth()->user()->curricula()]; //no gate! every user should get his enrolled curricula
+            return ['curricula' => auth()->user()->curricula(['curricula.*'])]; //no gate! every user should get his enrolled curricula
         }
 
         abort_unless(\Gate::allows('curriculum_access'), 403); //check here, cause json return should work for all users

@@ -173,7 +173,7 @@
                     this.edit_title();
                 })
                 .catch(error => {
-                    alert(error.response.data.errors);
+                    //alert(error.response.data.errors);
                     this.errors = error.response.data.errors;
                 });
             },

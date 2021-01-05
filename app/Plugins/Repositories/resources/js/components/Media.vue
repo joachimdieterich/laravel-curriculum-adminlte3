@@ -5,7 +5,6 @@
     </media>
 </template>
 
-
 <script>
     import media from '../../../edusharing/resources/js/components/Media';
     export default {
@@ -20,9 +19,10 @@
         },
         methods: {
             loader: function() {
+                if (this.repository.value == 'edusharing'){
                     this.$refs.mediaPlugin.loader();
+                }
             }
-
         },
 
         components: {

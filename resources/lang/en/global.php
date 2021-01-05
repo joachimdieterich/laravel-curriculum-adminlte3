@@ -569,6 +569,7 @@ return [
         'create'         => 'Create Content',
         'copy'           => 'Copy Content',
         'edit'           => 'Edit Content',
+        'no_content'     => 'No (further) contents available.',
         'fields'         => [
             'id'         => 'ID',
             'id_helper'  => '',
@@ -679,6 +680,7 @@ return [
         'edit'           => 'Edit Media',
         'upload'         => 'Upload Media',
         'link'           => 'Link',
+        'no_media'       => 'Nothing here yet.',
         'fields'            => [
             'id'                => 'ID',
             'id_helper'         => '',
@@ -706,6 +708,10 @@ return [
             'license_id_helper' => '',
             'owner_id'          => 'Owner_id',
             'owner_id_helper'   => '',
+            'public'            => 'public',
+            'public_helper'     => '',
+            'created_at'        => 'created at',
+            'created_at_helper' => '',
         ],
     ],
     'navigator' =>[
@@ -760,6 +766,7 @@ return [
     ],
     'referenceable_types' =>[
         'objective'       => 'Link terminal/enabling objective',
+        'add_reference'   => 'Add Reference',
         'navigator_view' => 'Link a navigator view',
         'curriculum' => 'Link a curriculum',
         'content' => 'Link a text',

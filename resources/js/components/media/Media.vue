@@ -11,7 +11,7 @@
                class="table table-hover datatable">
             <thead>
             <tr>
-                <th class="px-2">
+                <th class="px-2 card-tools">
                     {{ trans('global.media.fields.title') }}
                     <span
                         v-can="'medium_create'"
@@ -22,18 +22,22 @@
                 </th>
             </tr>
             </thead>
+            <tr v-if="subscriptions.length === 0">
+                <td style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 100px;"
+                    class="link-muted text-sm px-2 ">
+                    {{ trans('global.media.no_media') }}
 
+                </td>
+            </tr>
             <tr v-for="subscription in subscriptions">
                 <!--<td> <img v-if="subsciption.medium.mime_type =='JPG'"
                           :src="'/media/'+subsciption.medium.id" width="30" height="30"/></td>-->
                 <td style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 100px;"
-                    class="link-muted text-sm px-2"
+                    class="link-muted text-sm px-2 pointer"
                     @click="show('medium', subscription.medium)">
                     <i class="pr-2"
                        v-bind:class="[iconCss(subscription.medium.mime_type)]"></i>{{ subscription.medium.title }}
                 </td>
-
-
             </tr>
         </table>
     </div>
@@ -150,10 +154,6 @@
             }).catch(e => {
                 this.errors = error.response.data.errors;
             });
-
         },
-
-
-
     }
 </script>

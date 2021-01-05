@@ -15,13 +15,13 @@ abstract class DuskTestCase extends BaseTestCase
 {
     use CreatesApplication;
 
-    
+
     public function setUp() : void
     {
         parent::setUp();
         Artisan::call('migrate:fresh --seed');
     }
-    
+
     /**
      * Prepare for Dusk test execution.
      *
@@ -35,8 +35,8 @@ abstract class DuskTestCase extends BaseTestCase
             $this->driver->executeScript("$(\"html, body\").animate({scrollTop: $(\"$selector\").offset().top}, 0);");
             return $this;
         });
-        
-        
+
+
     }
 
     /**
@@ -48,7 +48,7 @@ abstract class DuskTestCase extends BaseTestCase
     {
         $options = (new ChromeOptions)->addArguments([
             '--disable-gpu',
-            '--headless',
+            //'--headless',
             '--window-size=1920,1080',
         ]);
 

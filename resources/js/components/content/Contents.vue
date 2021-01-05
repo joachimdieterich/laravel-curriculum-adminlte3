@@ -11,7 +11,13 @@
             <span v-if="currentSlide === 0"
                   class="pl-2">Index</span>
             <span v-else
-                  class="pl-2">{{subscriptions[currentSlide-1].content.title}}</span>
+                  class="pl-2">{{subscriptions[currentSlide-1].content.title}}
+            </span>
+        </h3>
+        <h3 v-else class="card-title">
+            <span
+                  class="pl-2">{{ trans('global.content.no_content') }}
+            </span>
         </h3>
         <div class="card-tools">
             <button v-can="'content_create'"

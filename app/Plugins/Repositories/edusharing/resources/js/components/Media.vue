@@ -46,20 +46,21 @@
             </div>
         </span>
         <div v-if="media !== null" class="row pt-1" style="width:100% !important;">
-            <span class="col-6">
-               <button type="button"
-                  class="btn btn-block btn-primary"
-                  :class="page > 0 ? '' : 'disabled'"
-                  @click="lastPage()"><i class="fa fa-arrow-left"></i></button>
-           </span>
+            <span v-if="[0].length > maxItems">
+                <span class="col-6">
+                   <button type="button"
+                           class="btn btn-block btn-primary"
+                           :class="page > 0 ? '' : 'disabled'"
+                           @click="lastPage()"><i class="fa fa-arrow-left"></i></button>
+               </span>
 
-            <span class="col-6">
-               <button type="button"
-                  class="btn btn-block btn-primary"
-                  :class="media[0].length == maxItems ? '' : 'disabled'"
-                  @click="nextPage()"><i class="fa fa-arrow-right"></i></button>
-           </span>
-
+                <span class="col-6">
+                   <button type="button"
+                           class="btn btn-block btn-primary"
+                           :class="media[0].length == maxItems ? '' : 'disabled'"
+                           @click="nextPage()"><i class="fa fa-arrow-right"></i></button>
+               </span>
+            </span>
         </div>
     </div>
 </template>
@@ -90,6 +91,7 @@
                         maxItems: this.maxItems,
                         repository: 'edusharing'
                     })).data.message;
+
 
                 } catch(error) {
                     //this.errors = error.response.data.errors;

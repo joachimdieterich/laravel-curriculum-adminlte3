@@ -64,9 +64,7 @@ class EnablingObjectiveController extends Controller
 
         $objective = EnablingObjective::where('id', $enablingObjective->id)
             ->with(['curriculum', 'curriculum.subject',
-                    'media', 'mediaSubscriptions',
-                    'referenceSubscriptions.siblings.referenceable', 'quoteSubscriptions.siblings.quotable',
-                    'contentSubscriptions.content.categories'])
+                    'referenceSubscriptions.siblings.referenceable', 'quoteSubscriptions.siblings.quotable'])
             ->get()->first();
 
         $repository = Config::where('key', 'repository')->get()->first();

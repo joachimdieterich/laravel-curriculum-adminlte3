@@ -569,6 +569,7 @@ return [
         'create'         => 'Inhalt erstellen',
         'edit'           => 'Inhalt bearbeiten',
         'copy'           => 'Inhalt aus bestehendem Curriculum übernehmen',
+        'no_content'     => 'Keine (zusätzlichen) Inhalte vorhanden.',
         'fields'         => [
             'id'                => 'ID',
             'id_helper'         => '',
@@ -678,6 +679,7 @@ return [
         'create'         => 'Medium erstellen',
         'edit'           => 'Medium bearbeiten',
         'upload'         => 'Medium hochladen',
+        'no_media'       => 'Es wurden noch keine Medien verknüpft.',
         'link'           => 'Link',
         'fields'            => [
             'id'                => 'ID',
@@ -763,8 +765,8 @@ return [
         ]
     ],
     'referenceable_types' =>[
-        'objective'         => 'Überfachliche Bezüge',
-        'objective_title'   => 'Überfachliche Bezüge',
+        'objective'         => 'Querverweise',
+        'add_reference'     => 'Querverweise hinzufügen',
         'navigator_view'    => 'Navigator-Ansicht verknüpfen',
         'curriculum'        => 'Curriculum verknüpfen',
         'content'           => 'Text verknüpfen',

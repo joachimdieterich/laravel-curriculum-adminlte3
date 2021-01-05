@@ -7,12 +7,14 @@ use App\Navigator;
 use App\NavigatorView;
 use App\NavigatorItem;
 use App\Curriculum;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
 use Laravel\Dusk\Chrome;
 use App\User;
 
 class GuestNavigatorTest extends DuskTestCase
 {
+    use DatabaseMigrations;
     var $navigator;
     var $navigator_view;
     var $navigator_item;

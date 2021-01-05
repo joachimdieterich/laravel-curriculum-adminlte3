@@ -10,6 +10,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Laravolt\Avatar\Avatar;
 use Yajra\DataTables\DataTables;
+use Intervention\Image\Facades\Image;
 
 class MediumController extends Controller
 {
@@ -39,14 +40,13 @@ class MediumController extends Controller
 
         return DataTables::of($media)
             ->addColumn('action', function ($media) use ($delete_gate){
-                 $actions  = '';
-
-                    if ($delete_gate){
-                        $actions .= '<button type="button" '
-                                . 'class="btn text-danger" '
-                                . 'onclick="destroyDataTableEntry(\'media\','.$media->id.')">'
-                                . '<i class="fa fa-trash"></i></button>';
-                    }
+                $actions  = '';
+                if ($delete_gate){
+                    $actions .= '<button type="button" '
+                            . 'class="btn text-danger" '
+                            . 'onclick="destroyDataTableEntry(\'media\','.$media->id.')">'
+                            . '<i class="fa fa-trash"></i></button>';
+                }
 
                 return $actions;
             })
@@ -182,14 +182,24 @@ class MediumController extends Controller
         abort(403);
     }
 
-    public function thumb(Medium $medium) //todo: return smaller images/files/thumbs
+    public function thumb(Medium $medium, $size = 200) //todo: return smaller images/files/thumbs
     {
         /* id link */
         if (($medium->mime_type != 'url') ){
-            $path = storage_path('app'.$medium->path.$medium->medium_name);
-            //dd($path);
+            $path       = storage_path('app'.$medium->path.$medium->medium_name);
+            $thumb_path = storage_path('app'.$medium->path.'th_'.$size.'_'.$medium->medium_name);
+
             if (!file_exists($path)) {
                 abort(404);
+            }
+            if (!file_exists($thumb_path)) {
+                $img = Image::make($path)->resize($size, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+                // save file as jpg with medium quality
+                $img->save($thumb_path, 60);
+            } else {
+                $img = Image::make($thumb_path);
             }
         }
         /*
@@ -197,7 +207,7 @@ class MediumController extends Controller
          */
         if (($medium->public == true) OR ($medium->owner_id == auth()->user()->id))
         {
-            return ($medium->mime_type != 'url') ? response()->file($path) : redirect($medium->path); //return file or url
+            return ($medium->mime_type != 'url') ?  $img->response('jpg') : redirect($medium->path); //return file or url
         }
 
         /* checkIfUserHasSubscription and visibility*/
@@ -207,11 +217,12 @@ class MediumController extends Controller
             {
                 if ($this->checkIfUserHasSubscription($subscription))
                 {
-                    return ($medium->mime_type != 'url') ? response()->file($path) : redirect($medium->path); //return file or url
+                    return ($medium->mime_type != 'url') ? $img->response('jpg') : redirect($medium->path); //return file or url
                 }
             }
         }
         /* end checkIfUserHasSubscription and visibility */
+
 
         /* user has permission to access this file ! */
         abort(403);

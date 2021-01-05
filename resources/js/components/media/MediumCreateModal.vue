@@ -346,14 +346,13 @@
             this.dataTable = $('#media_create_datatable').DataTable({});
             const url = '/media/list';
             fetch(url)
+            .then(res => {
+                res.data.forEach(item => {
+                    this.files.push(item);
+                });
 
-                .then(res => {
-                    res.data.forEach(item => {
-                        this.files.push(item);
-                    });
 
-
-                })
+            })
         },
         components: {
             RepositoryPluginCreate

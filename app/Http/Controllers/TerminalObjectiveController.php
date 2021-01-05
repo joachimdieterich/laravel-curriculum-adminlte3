@@ -63,10 +63,8 @@ class TerminalObjectiveController extends Controller
     {
         $objective = TerminalObjective::where('id', $terminalObjective->id)
             ->with(['curriculum', 'curriculum.subject',
-                    'media', 'mediaSubscriptions',
                     'enablingObjectives',
-                    'referenceSubscriptions.siblings.referenceable', 'quoteSubscriptions.siblings.quotable',
-                    'contentSubscriptions.content.categories'])
+                    'referenceSubscriptions.siblings.referenceable', 'quoteSubscriptions.siblings.quotable'])
             ->get()->first();
 
         $repository = Config::where('key', 'repository')->get()->first();

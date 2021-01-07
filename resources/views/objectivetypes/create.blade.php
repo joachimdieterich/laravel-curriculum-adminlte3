@@ -15,7 +15,7 @@
               method="POST"
               enctype="multipart/form-data">
             @include ('objectivetypes.form', [
-                'objectivetype' => new App\Objectivetype,
+                'objectivetype' => new App\ObjectiveType,
                 'buttonText' => trans('global.objectiveType.create')
             ])
         </form>

@@ -87,7 +87,7 @@ class ObjectiveTypeController extends Controller
             'title'         => $new_type['title']
         ]);
 
-        return redirect()->route('objectiveTypes.index');
+        return redirect()->route('objectivetypes.index');
     }
 
     /**
@@ -113,7 +113,7 @@ class ObjectiveTypeController extends Controller
     {
         abort_unless(\Gate::allows('objectivetype_edit'), 403);
 
-        return view('objectiveTypes.edit')
+        return view('objectivetypes.edit')
             ->with(compact('objectiveType'));
     }
 
@@ -133,7 +133,7 @@ class ObjectiveTypeController extends Controller
             'title'         => $new_type['title'],
         ]);
 
-        return redirect()->route('objectiveTypes.index');
+        return redirect()->route('objectivetypes.index');
     }
 
     /**

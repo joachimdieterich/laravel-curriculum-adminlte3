@@ -135,6 +135,7 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     /* objectiveTypes */
+    Route::get('objectiveTypes/list', 'ObjectiveTypeController@list')->name('objectiveTypes.list');
     Route::resource('objectiveTypes', 'ObjectiveTypeController');
 
     /* Organization */

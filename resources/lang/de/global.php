@@ -644,10 +644,13 @@ return [
     'objectiveType' =>[
         'title'          => 'Typ',
         'title_singular' => 'Typ',
+        'create'         => 'Typ erstellen',
+        'edit'           => 'Typ bearbeiten',
         'fields'         => [
             'id'         => 'ID',
             'id_helper'  => '',
             'title'      => 'Titel',
+            'title_helper'      => '',
         ],
     ],
     'enablingObjective' =>[

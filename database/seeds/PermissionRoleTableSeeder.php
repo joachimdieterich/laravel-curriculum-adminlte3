@@ -86,6 +86,16 @@ class PermissionRoleTableSeeder extends Seeder
                 'glossar_show',
                 'glossar_edit',
                 'glossar_delete',
+                'message_access',
+                'message_create',
+                'message_show',
+                'message_edit',
+                'message_delete',
+                'objectivetype_access',
+                'objectivetype_create',
+                'objectivetype_show',
+                'objectivetype_edit',
+                'objectivetype_delete',
             ];
 
             return in_array($permission->title, $creator_permission_list);
@@ -103,6 +113,7 @@ class PermissionRoleTableSeeder extends Seeder
                 'logbook_entry_show',
                 'task_access',
                 'task_show',
+
             ];
 
             return in_array($permission->title, $indexer_permission_list);

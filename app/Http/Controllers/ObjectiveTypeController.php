@@ -87,7 +87,7 @@ class ObjectiveTypeController extends Controller
             'title'         => $new_type['title']
         ]);
 
-        return redirect()->route('objectivetypes.index');
+        return redirect()->route('objectiveTypes.index');
     }
 
     /**
@@ -133,7 +133,7 @@ class ObjectiveTypeController extends Controller
             'title'         => $new_type['title'],
         ]);
 
-        return redirect()->route('objectivetypes.index');
+        return redirect()->route('objectiveTypes.index');
     }
 
     /**

@@ -86,6 +86,14 @@
                                          >
                                      </span>
                                  </span>
+                                 <span v-can="'content_edit'"
+                                       class="pull-right">
+                                     <span
+                                         class="btn-tool fa fa-pencil-alt"
+                                         @click.prevent="edit(item)"
+                                         >
+                                     </span>
+                                 </span>
                                  <span v-can="'content_create'"
                                        class="pull-right"><!--Order_id: {{ item.order_id }}-->
                                      <span v-if="(item.order_id !== 0)"
@@ -176,6 +184,9 @@
                 } catch(error) {
                     this.errors = error.response.data.errors;
                 }
+            },
+            edit(contentSubscription){
+                this.$modal.show('content-create-modal', { 'id': contentSubscription.content_id, 'method': 'patch' });
             },
             async deleteSubscription(contentSubscription){
                 try {

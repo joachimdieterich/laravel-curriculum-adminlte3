@@ -9,6 +9,7 @@
         @before-open="beforeOpen"
         @opened="opened"
         @before-close="beforeClose"
+        width="900"
         style="z-index: 1200">
         <div class="card"
              style="margin-bottom: 0px !important">
@@ -37,8 +38,7 @@
 
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                 <div class="form-group "
-                    :class="form.errors.title ? 'has-error' : ''"
-                      >
+                    :class="form.errors.title ? 'has-error' : ''">
                     <label for="title">{{ trans('global.content.fields.title') }} *</label>
                     <input
                         type="text" id="title"
@@ -70,8 +70,7 @@
                             class="form-control select2 "
                             style="width:100%;"
                             multiple=true
-                            v-model="form.categorie_ids"
-                       >
+                            v-model="form.categorie_ids">
                          <option v-for="(item,index) in categories" v-bind:value="item.id">{{ item.title }}</option>
                     </select>
                 </div>
@@ -84,8 +83,7 @@
                             <i class="fa fa-plus"></i> {{ trans('global.categorie.title_singular') }}
                         </a>
                     </label>
-                    <div class="input-group"
-                         >
+                    <div class="input-group">
                         <input id="add_categorie"
                                type="text"
                                class="form-control "
@@ -106,7 +104,6 @@
                      <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
                 </span>
             </div>
-
         </div>
     </modal>
 </template>

@@ -17,41 +17,6 @@ Vue.prototype.trans = (key) => {
     return _.get(window.trans, key, key);
 };
 
-Vue.prototype.$initTinyMCE = function (options) {
-    tinyMCE.remove();
-    tinymce.init({
-        path_absolute : "/",
-        selector: "textarea.my-editor",
-        branding:false,
-        plugins: [
-            "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-            "searchreplace wordcount visualblocks visualchars code fullscreen",
-            "insertdatetime media nonbreaking save table directionality",
-            "emoticons template paste textpattern"
-        ],
-        toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
-        relative_urls: false,
-        entity_encoding : "raw",
-
-        file_browser_callback : function(field_name, url, type, win) {
-            var x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
-            var y = window.innerHeight|| document.documentElement.clientHeight|| document.getElementsByTagName('body')[0].clientHeight;
-
-            var cmsURL =  "/" + 'laravel-filemanager?field_name=' + field_name;
-                cmsURL = cmsURL + "&type=Files";
-
-            tinyMCE.activeEditor.windowManager.open({
-                file : cmsURL,
-                title : 'Filemanager',
-                width : x * 0.8,
-                height : y * 0.8,
-                resizable : "yes",
-                close_previous : "no"
-            });
-        }
-    });
-};
-
 import VModal from 'vue-js-modal';
 Vue.use(VModal, { dynamic: true});
 
@@ -105,6 +70,72 @@ Vue.component('task-timeline', require('./components/tasks/Timeline.vue').defaul
 Vue.component('kanban-board', require('./components/kanban/KanbanBoard.vue').default);
 Vue.component('subscribe-modal', require('./components/subscription/SubscribeModal.vue').default);
 Vue.component('sidebar', require('./components/uiElements/Sidebar.vue').default);
+
+
+Vue.prototype.$initTinyMCE = function (options) {
+    tinyMCE.remove();
+    tinymce.init({
+        path_absolute : "/",
+        selector: "textarea.my-editor",
+        branding:false,
+        plugins: [
+            "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+            "searchreplace wordcount visualblocks visualchars code fullscreen",
+            "insertdatetime media nonbreaking save table directionality",
+            "emoticons template paste textpattern example"
+        ],
+        toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media example",
+        relative_urls: false,
+        entity_encoding : "raw",
+
+        file_browser_callback : function(field_name, url, type, win) {
+            var x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
+            var y = window.innerHeight|| document.documentElement.clientHeight|| document.getElementsByTagName('body')[0].clientHeight;
+
+            /*var cmsURL =  "/" + 'laravel-filemanager?field_name=' + field_name;
+                cmsURL = cmsURL + "&type=Files";
+
+            tinyMCE.activeEditor.windowManager.open({
+                file : cmsURL,
+                title : 'Filemanager',
+                width : x * 0.8,
+                height : y * 0.8,
+                resizable : "yes",
+                close_previous : "no"
+            });*/
+        }
+    });
+
+
+    tinymce.PluginManager.add('example', function(editor, url) {
+        var openDialog = function () {
+            document.querySelector("#app").__vue__.$modal.show('medium-create-modal');
+            $('#medium_id').on('change', function() {
+                //reload thumbs
+                editor.setContent('<img src="/media/'+ document.getElementById('medium_id').value +'" width="500">', {format: 'raw'});
+            });
+        };
+
+        // Add a button that opens a window
+        editor.ui.registry.addButton('example', {
+            text: 'Medien',
+            onAction: function ()  {
+                // Open window
+                openDialog();
+            }
+        });
+
+        return {
+            getMetadata: function () {
+                return  {
+                    name: 'Example plugin',
+                    url: 'http://exampleplugindocsurl.com'
+                };
+            }
+        };
+    });
+
+};
 /**
  * Custom Vue directive "can" to check against permissions.
  * If permission is not given element gets style display:none

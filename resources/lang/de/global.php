@@ -633,6 +633,7 @@ return [
         'title_singular' => 'Bereich',
         'create'         => 'Bereich erstellen',
         'edit'           => 'Bereich bearbeiten',
+        'move_to_curriculum' => 'Bereich in anderes Curriculum verschieben',
         'fields'         => [
             'id'                => 'ID',
             'id_helper'         => '',

@@ -76,6 +76,7 @@
 </div>
 <terminal-objective-modal></terminal-objective-modal>
 <enabling-objective-modal></enabling-objective-modal>
+<move-terminal-objective-modal></move-terminal-objective-modal>
 <content-modal></content-modal>
 <content-create-modal></content-create-modal>
 <objective-medium-modal></objective-medium-modal>

@@ -633,6 +633,7 @@ return [
         'title_singular' => 'Terminal Objective',
         'create'         => 'Create terminal objective',
         'edit'           => 'Edit terminal objective',
+        'move_to_curriculum' => 'Move terminal objective to other curriculum',
         'fields'         => [
             'id'             => 'ID',
             'id_helper'      => '',

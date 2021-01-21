@@ -3,18 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Config;
+use App\EnablingObjective;
 use App\TerminalObjective;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreTerminalObjectiveRequest;
 use App\Http\Requests\UpdateTerminalObjectiveRequest;
-use DB;
+use Illuminate\Support\Facades\DB;
 use App\ReferenceSubscription;
 use App\QuoteSubscription;
 use Illuminate\Support\Collection;
 
 class TerminalObjectiveController extends Controller
 {
-
 
     /**
      * Display a listing of the resource.
@@ -98,16 +98,24 @@ class TerminalObjectiveController extends Controller
         //first get existing data to later adjust order_id
         $old_objective = TerminalObjective::find(request('id'));
 
-
         // update objective type
-        if ($request->has('objective_type_id')){
+        if ($request->has('objective_type_id'))
+        {
             $order_id = $this->getMaxOrderId(request('curriculum_id'), request('objective_type_id'));
             $request->request->add(['order_id' => $order_id]);
-            if ( ($terminalObjective->update($request->all()) == true) AND ($old_objective->order_id != request('order_id'))){
+            // if moved to another curriculum
+            if ( $old_objective->curriculum_id != request('curriculum_id') )
+            {
+                if ($terminalObjective->update(['curriculum_id' => request('curriculum_id'), 'order_id' => $order_id]) == true)
+                {
+                    $this->moveToCurriculum($old_objective, $request);
+                }
+            }
+            else if ( ($terminalObjective->update($request->all()) == true) AND ($old_objective->order_id != request('order_id'))){
                 $this->resetOrderIds($old_objective->curriculum_id, $old_objective->objective_type_id, $old_objective->order_id);
             }
             if (request()->wantsJson()){
-                return ['message' => '/curricula/'.$old_objective->curriculum_id];
+                return ['message' => '/curricula/'.request('curriculum_id')];
             }
         }
 
@@ -121,6 +129,19 @@ class TerminalObjectiveController extends Controller
         // default
 
         return $terminalObjective->update($request->all());
+    }
+
+    /**
+     * do calculations when objective is moved to another curriculum
+     * @param \App\TerminalObjective $old_objective
+     * @param $request
+     */
+    public function moveToCurriculum($old_objective, $request)
+    {
+        $this->resetOrderIds($old_objective->curriculum_id, $old_objective->objective_type_id, $old_objective->order_id);
+        DB::table('enabling_objectives')
+            ->where('terminal_objective_id', $old_objective->id)
+            ->update(['curriculum_id' => request('curriculum_id')]);
     }
 
     /**
@@ -294,10 +315,10 @@ class TerminalObjectiveController extends Controller
         $responseA = (new TerminalObjective)->where('curriculum_id', $old_objective->curriculum_id)
                             ->where('objective_type_id', $old_objective->objective_type_id)
                             ->where('order_id', '=', $new_order_id)
-                            ->update([ 'order_id'=> $old_objective->order_id ]);
+                            ->update([ 'order_id' => $old_objective->order_id ]);
 
         $responseB = (new TerminalObjective)->where('id', $old_objective->id)
-                                ->update([ 'order_id'=> $new_order_id]);
+                                ->update([ 'order_id' => $new_order_id]);
 
         if (($responseA == true) AND ($responseB == true))
         {

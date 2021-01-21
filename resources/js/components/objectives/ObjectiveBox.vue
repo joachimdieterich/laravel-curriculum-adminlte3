@@ -81,6 +81,13 @@
                       value: this.type+'-objective-modal'
                     },
                     {
+                        title: 'Move',
+                        icon: 'fa fa-arrows-alt',
+                        action: 'update',
+                        model: this.type+'Objectives',
+                        value: 'move-'+this.type+'-objective-modal'
+                    },
+                    {
                       hr: true,
                     },
                     {

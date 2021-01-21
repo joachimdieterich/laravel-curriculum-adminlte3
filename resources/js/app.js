@@ -70,7 +70,7 @@ Vue.component('task-timeline', require('./components/tasks/Timeline.vue').defaul
 Vue.component('kanban-board', require('./components/kanban/KanbanBoard.vue').default);
 Vue.component('subscribe-modal', require('./components/subscription/SubscribeModal.vue').default);
 Vue.component('sidebar', require('./components/uiElements/Sidebar.vue').default);
-
+Vue.component('move-terminal-objective-modal', require('./components/objectives/MoveTerminalObjectiveModal.vue').default);
 
 Vue.prototype.$initTinyMCE = function (options) {
     tinyMCE.remove();

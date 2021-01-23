@@ -4,7 +4,7 @@
             id="terminalObjectivesTopNav">
             <li v-for="typetab in typetabs" class="nav-item pl-0 pr-2 pb-2 pt-2">
                 <a class="nav-link " :href="'#tab_' + typetab"
-                   :class="(activetab === typetab) ? 'active' : ''"
+                   :class="(activetab == typetab) ? 'active' : ''"
                    @click="setActiveTab(typetab)"
                    data-toggle="tab">
                     {{ getTypeTitle(typetab)[0]['title'] }}
@@ -28,7 +28,7 @@
         <hr class="mt-0">
         <div v-for="typetab in typetabs" class="tab-content">
             <div class="tab-pane" :id="'tab_' + typetab"
-                 :class="(activetab === typetab) ? 'active show' : ''">
+                 :class="(activetab == typetab) ? 'active show' : ''">
                  <div v-for="objective in filterTerminalObjectives(typetab)" :id="'terminalObjective_' + objective.id" >
                     <div class="row">
                         <div class="col-12 terminal-row">

@@ -42,24 +42,6 @@
 @endcan
 
 <div id="curriculum_view_content" class="row">
-   {{--  <div class="col-12">
-
-
-    @if(!isset(json_decode($settings)->course))
-
-        @include ('forms.input.select',
-                   ["model" => "curriculum",
-                   "field" => "id",
-                   "css" => "pull-right m-0",
-                   "style" => "float:left; width:200px",
-                   "options"=> auth()->user()->currentCurriculaEnrolments(),
-                   "placeholder" => trans('global.curricula_cross_references'),
-                   "option_label" => "title",
-                   "onchange"=> "triggerSetCrossReferenceCurriculumId(this.value)",
-                   "value" =>  old('current_curriculum_cross_reference_id', isset(auth()->user()->current_curriculum_cross_reference_id) ? auth()->user()->current_curriculum_cross_reference_id : '')])
-    @endif
-    </div>--}}
-
     <curriculum-view
         ref="curriculumView"
         @if(isset($course))
@@ -74,8 +56,7 @@
         :settings="{{ $settings }}">
     </curriculum-view>
 </div>
-<terminal-objective-modal></terminal-objective-modal>
-<enabling-objective-modal></enabling-objective-modal>
+
 <move-terminal-objective-modal></move-terminal-objective-modal>
 <content-modal></content-modal>
 <content-create-modal></content-create-modal>
@@ -88,13 +69,9 @@
 @endsection
 @section('scripts')
 @parent
-{{--<script>
-function triggerSetCrossReferenceCurriculumId(curriculum_id){
-    app.__vue__.$refs.curriculumView.setCrossReferenceCurriculumId(curriculum_id);
-}
-</script>--}}
+
 @if(isset(json_decode($settings)->achievements))
-    <script>
+<script>
 
 function getDatatablesIds(selector){
     return $(selector).DataTable().rows({ selected: true }).ids().toArray();
@@ -102,7 +79,7 @@ function getDatatablesIds(selector){
 
 function triggerVueEvent(type){
     if ( type === 'row' ) {
-        app.__vue__.$refs.curriculumView.externalEvent(getDatatablesIds('#users-datatable')); //pass Ids to vue component
+        app.__vue__.$refs.curriculumView.$refs.terminalObjectives.externalEvent(getDatatablesIds('#users-datatable')); //pass Ids to terminalObjectives vue component
     }
 }
 
@@ -117,8 +94,8 @@ function isElementInViewport (el) {
     return (
         rect.top >= 0 &&
         rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
     );
 }
 
@@ -137,8 +114,6 @@ $(document).ready( function () {
                 ],
         buttons: [],
     });
-
-
 
     table.on( 'select', function ( e, dt, type, indexes ) { //on select event
         triggerVueEvent(type);
@@ -169,7 +144,7 @@ $(document).ready( function () {
 
  });
 
-    </script>
+</script>
 @endif
 
 @endsection

@@ -49,7 +49,8 @@ class TerminalObjectiveController extends Controller
         $terminalObjective = TerminalObjective::create(array_merge($request->all(), ['order_id' => $order_id]));
 
         if (request()->wantsJson()){
-            return ['message' => $terminalObjective->path()];
+            return ['message' => $terminalObjective];
+            //return ['message' => $terminalObjective->path()];
         }
     }
 

@@ -1,8 +1,8 @@
 <template>
-    <modal 
-        id="enabling-objective-modal" 
-        name="enabling-objective-modal" 
-        height="auto" 
+    <modal
+        id="enabling-objective-modal"
+        name="enabling-objective-modal"
+        height="auto"
         :adaptive=true
         :scrollable=true
         draggable=".draggable"
@@ -15,14 +15,14 @@
             <div class="card-header">
                 <h3 class="card-title">
                     <span v-if="method === 'post'">
-                        {{ trans('global.enablingObjective.create')  }} 
+                        {{ trans('global.enablingObjective.create')  }}
                     </span>
 
                     <span v-if="method === 'patch'">
-                        {{ trans('global.enablingObjective.edit')  }} 
+                        {{ trans('global.enablingObjective.edit')  }}
                     </span>
                 </h3>
-                
+
                 <div class="card-tools">
                    <button type="button" class="btn btn-tool draggable" >
                      <i class="fa fa-arrows-alt"></i>
@@ -53,24 +53,24 @@
                     <textarea
                     id="description"
                     name="description"
-                    class="form-control description my-editor "   
+                    class="form-control description my-editor "
                     v-model="form.description"
                     ></textarea>
                     <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
                 </div>
-                
+
                 <div class="form-group ">
                     <label for="level_id">
                         {{ trans("global.objectiveType.title_singular") }}
                     </label>
-                    <select name="level_id" 
-                            id="level_id" 
+                    <select name="level_id"
+                            id="level_id"
                             class="form-control select2 "
                             style="width:100%;"
                             >
                         <option value="">-</option>
                         <option v-for="(item,index) in levels" v-bind:value="item.id">{{ item.title }}</option>
-                    </select>     
+                    </select>
                 </div>
                 <div class="form-group ">
                     <label for="time_approach">{{ trans('global.enablingObjective.fields.time_approach') }}</label>
@@ -92,7 +92,7 @@
                 <div class="card-footer">
                     <span class="pull-right">
                          <button type="button" class="btn btn-info" data-widget="remove" @click="close()">{{ trans('global.cancel') }}</button>
-                         <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
+                         <button class="btn btn-primary" @click.prevent="submit()" >{{ trans('global.save') }}</button>
                     </span>
                 </div>
             </form>
@@ -102,7 +102,7 @@
 
 <script>
     import Form from 'form-backend-validation';
-    
+
     export default {
         data() {
             return {
@@ -122,7 +122,7 @@
                 }),
             }
         },
-        
+
         methods: {
             onChange(value) {
                 this.form.level_id = value.id;
@@ -136,7 +136,7 @@
                 }
                 return null;
             },
-            beforeOpen(event) { 
+            beforeOpen(event) {
                 this.form.id = '';
                 this.form.title = '';
                 this.form.description = '';
@@ -152,20 +152,20 @@
             },
             opened(){
                 this.$initTinyMCE();
-                this.initSelect2(); 
+                this.initSelect2();
             },
             initSelect2(){
                 $("#level_id").select2({
                     dropdownParent: $("#level_id").parent(),
                     allowClear: false
-                }).on('select2:select', function (e) { 
+                }).on('select2:select', function (e) {
                     this.onChange(e.params.data);
-                }.bind(this))  //make onChange accessible! 
+                }.bind(this))  //make onChange accessible!
                 .val(this.form.level_id).trigger('change'); //set value
-               
+
             },
-            beforeClose() { 
-                //console.log('close') 
+            beforeClose() {
+                //console.log('close')
             },
             loadData: function () {
                 axios.get('/levels').then(response => {
@@ -177,25 +177,21 @@
             submit() {
                 var method = this.method.toLowerCase();
                 this.form.title = tinyMCE.get('title').getContent();
-                this.form.description = tinyMCE.get('description').getContent(); 
+                this.form.description = tinyMCE.get('description').getContent();
                 if (method === 'patch'){
                     this.requestUrl += '/' + this.form.id;
-                } 
-                
-                this.form.submit(method, this.requestUrl)
-                    .then(/*response => alert('Your objective was created'+response.message.title)*/)
-                    .catch(response => function () {
-                    if (response.errors) 
-                    {
-                       alert(response.errors); 
-                    }
-                });
-                //todo .then .catch
+                }
+
+                this.form.submit(method, this.requestUrl);
+
+                this.$parent.$emit('addEnablingObjective', this.form);
+
+                this.$modal.hide('enabling-objective-modal');
             },
             close(){
                 tinymce.remove()
                 this.$modal.hide('enabling-objective-modal');
-        
+
             }
         },
         created() {

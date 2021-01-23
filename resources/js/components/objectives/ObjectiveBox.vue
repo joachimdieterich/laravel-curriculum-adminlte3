@@ -36,6 +36,7 @@
                 :type="type"
                 :menuEntries="menuEntries"
                 :settings="settings"
+                :max_id="max_id"
                 :textcolor="textcolor"
                 @eventDelete="deleteEvent"
                 @eventSort="sortEvent"
@@ -69,6 +70,7 @@
                 objective: {},
                 type: {},
                 settings: {},
+                max_id: Number
               },
          data() {
             return {
@@ -106,7 +108,6 @@
                 this.$modal.show(modal, { 'objective': this.objective, 'method': 'post' });
             },
             async deleteEvent(object){
-                //console.log('delete'+object);
                 try {
                     this.location = (await axios.delete('/'+this.type+'Objectives/'+this.objective.id)).data.message
                 }
@@ -121,7 +122,7 @@
                     'id': this.objective.id,
                     'order_id': this.objective.order_id + parseInt(amount)
                 }
-                //console.log(JSON.stringify(objective));
+
                 try {
                     this.location = (await axios.patch('/'+this.type+'Objectives/'+this.objective.id, objective)).data.message;
                 } catch(error) {

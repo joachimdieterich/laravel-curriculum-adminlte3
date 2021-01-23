@@ -1,8 +1,8 @@
     <template>
-    <modal 
-        id="terminal-objective-modal" 
-        name="terminal-objective-modal" 
-        height="auto" 
+    <modal
+        id="terminal-objective-modal"
+        name="terminal-objective-modal"
+        height="auto"
         :adaptive=true
         :scrollable=true
         draggable=".draggable"
@@ -15,11 +15,11 @@
             <div class="card-header">
                 <h3 class="card-title">
                     <span v-if="method === 'post'">
-                        {{ trans('global.terminalObjective.create')  }} 
+                        {{ trans('global.terminalObjective.create')  }}
                     </span>
 
                     <span v-if="method === 'patch'">
-                        {{ trans('global.terminalObjective.edit')  }} 
+                        {{ trans('global.terminalObjective.edit')  }}
                     </span>
                 </h3>
 
@@ -42,7 +42,7 @@
                         <textarea
                             id="title"
                             name="title"
-                            class="form-control description my-editor "                  
+                            class="form-control description my-editor "
                             v-model="form.title"
                         ></textarea>
                         <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
@@ -54,7 +54,7 @@
                         <textarea
                             id="description"
                             name="description"
-                            class="form-control description my-editor "                  
+                            class="form-control description my-editor "
                             v-model="form.description"
                          ></textarea>
                         <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
@@ -64,17 +64,17 @@
                         <label for="objectiveTypes">
                             {{ trans("global.objectiveType.title_singular") }}
                         </label>
-                        <select name="objectiveTypes" 
-                                id="objectiveTypes" 
+                        <select name="objectiveTypes"
+                                id="objectiveTypes"
                                 class="form-control select2 "
                                 style="width:100%;"
                                 >
                             <option v-for="(item,index) in objectiveTypes" v-bind:value="item.id">{{ item.title }}</option>
-                        </select>     
+                        </select>
                     </div>
                     <div class="form-group ">
-                    <ColorPicker 
-                       :color="form.color" 
+                    <ColorPicker
+                       :color="form.color"
                        v-model="form.color"></ColorPicker>
                     </div>
                     <div class="form-group ">
@@ -97,7 +97,7 @@
                 <div class="card-footer">
                     <span class="pull-right">
                          <button type="button" class="btn btn-info" data-widget="remove" @click="close()">{{ trans('global.cancel') }}</button>
-                         <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
+                         <button class="btn btn-primary" @click.prevent="submit()" >{{ trans('global.save') }}</button>
                     </span>
                 </div>
             </form>
@@ -162,21 +162,21 @@
                         'id': this.form.objective_type_id,
                         'title': this.findObjectByKey(this.objectiveTypes, 'id', this.form.objective_type_id).title
                     };
-                }                
+                }
             },
             opened(){
                 this.$initTinyMCE();
-                this.initSelect2(); 
+                this.initSelect2();
             },
             initSelect2(){
                 $("#objectiveTypes").select2({
                     dropdownParent: $("#objectiveTypes").parent(),
                     allowClear: false
-                }).on('select2:select', function (e) { 
+                }).on('select2:select', function (e) {
                     this.onChange(e.params.data);
-                }.bind(this))  //make onChange accessible! 
+                }.bind(this))  //make onChange accessible!
                 .val(this.form.objective_type_id).trigger('change'); //set value
-               
+
             },
             beforeClose() {
                 //console.log('close')
@@ -194,11 +194,10 @@
                 var method = this.method.toLowerCase();
                 this.form.title = tinyMCE.get('title').getContent();
                 this.form.description = tinyMCE.get('description').getContent();
-                
+
                 if (method === 'patch') {
                     this.requestUrl += '/' + this.form.id;
                 }
-
                 this.form.submit(method, this.requestUrl);
 
                 this.$parent.$emit('addTerminalObjective', this.form);

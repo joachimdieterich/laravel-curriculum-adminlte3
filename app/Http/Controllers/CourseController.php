@@ -26,7 +26,8 @@ class CourseController extends Controller
         abort_unless((auth()->user()->curricula()->contains('id', $course->curriculum_id) // user enrolled
                   OR (auth()->user()->currentRole()->first()->id == 1)), 403);                // or admin
 
-        $curriculum = Curriculum::with(['terminalObjectives',
+        $curriculum = Curriculum::with([
+            'terminalObjectives',
                         'terminalObjectives.media',
                         'terminalObjectives.mediaSubscriptions',
 //                        'terminalObjectives.referenceSubscriptions',

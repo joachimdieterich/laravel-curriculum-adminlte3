@@ -206,6 +206,5 @@
             Glossars,
             Contents
         }
-
     }
 </script>

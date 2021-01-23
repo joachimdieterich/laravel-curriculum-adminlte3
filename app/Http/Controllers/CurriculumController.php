@@ -206,27 +206,8 @@ class CurriculumController extends Controller
         $objectiveTypes = \App\ObjectiveType::all();
         $levels = \App\Level::all();
 
-        $curriculum = Curriculum::with(['terminalObjectives',
-//                        'terminalObjectives.media',
-//                        'terminalObjectives.mediaSubscriptions',
-//                        'terminalObjectives.referenceSubscriptions.siblings.referenceable',
-//                        'terminalObjectives.referenceSubscriptions',
-//                        'terminalObjectives.quoteSubscriptions.siblings.quotable',
-                        'terminalObjectives.achievements' => function($query) {
-                            $query->where('user_id', auth()->user()->id);
-                        },
-                        'terminalObjectives.enablingObjectives',
-//                        'terminalObjectives.enablingObjectives.media',
-//                        'terminalObjectives.enablingObjectives.mediaSubscriptions',
-            //'terminalObjectives.enablingObjectives.referenceSubscriptions',
-//                        'terminalObjectives.enablingObjectives.referenceSubscriptions.siblings.referenceable',
-//                        'terminalObjectives.enablingObjectives.quoteSubscriptions.siblings.quotable',
-                        'terminalObjectives.enablingObjectives.achievements' => function($query) {
-                            $query->where('user_id', auth()->user()->id);
-                        },
-                        /*'contentSubscriptions.content',*/
-                        'glossar.contents',
-                        //'media'
+        $curriculum = Curriculum::with([
+            'glossar.contents'
         ])
         ->find($curriculum->id);
         $settings= json_encode([
@@ -236,7 +217,6 @@ class CurriculumController extends Controller
 
         //axios request?
         if (request()->wantsJson()){
-
             return ['contents' => $curriculum->contents];
         }
 
@@ -259,7 +239,16 @@ class CurriculumController extends Controller
 
     public function getObjectives(Curriculum $curriculum)
     {
-        $curriculum = Curriculum::where('id', $curriculum->id)->with('terminalObjectives.enablingObjectives')->get()->first();
+        $curriculum = Curriculum::with(
+            [
+                'terminalObjectives',
+                'terminalObjectives.achievements',
+                'terminalObjectives.enablingObjectives',
+                'terminalObjectives.enablingObjectives.achievements'
+            ])
+            ->find($curriculum->id);
+
+    //  $curriculum = Curriculum::where('id', $curriculum->id)->with('terminalObjectives.enablingObjectives')->get()->first(); //replaced to use lazy loading on curriculum/courseview
         if (request()->wantsJson()){
             return ['curriculum' => $curriculum];
         }
@@ -278,16 +267,18 @@ class CurriculumController extends Controller
                   OR (auth()->user()->currentRole()->first()->id == 1)), 403);     // or admin
         $user_ids = request()->user_ids;
 
-        $curriculum = Curriculum::with(['terminalObjectives',
-                        'terminalObjectives.achievements' => function($query) use ($user_ids) {
-                                                            $query->whereIn('user_id', $user_ids);
-                                                        },
-                        'terminalObjectives.enablingObjectives',
-                        'terminalObjectives.enablingObjectives.achievements' => function($query) use ($user_ids) {
-                                                            $query->whereIn('user_id', $user_ids);
-                                                        },
-                        ])
-                        ->find($curriculum->id);
+        $curriculum = Curriculum::with(
+            [
+                'terminalObjectives',
+                'terminalObjectives.achievements' => function($query) use ($user_ids) {
+                                                    $query->whereIn('user_id', $user_ids);
+                                                },
+                'terminalObjectives.enablingObjectives',
+                'terminalObjectives.enablingObjectives.achievements' => function($query) use ($user_ids) {
+                                                    $query->whereIn('user_id', $user_ids);
+                                                },
+            ])
+            ->find($curriculum->id);
         if (request()->wantsJson()){
             return ['curriculum' => $curriculum];
         }

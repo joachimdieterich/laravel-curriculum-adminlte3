@@ -37,7 +37,8 @@
                             <ObjectiveBox
                                 type="terminal"
                                 :objective="objective"
-                                :settings="settings">
+                                :settings="settings"
+                                :max_id="max_ids[activetab]">
                             </ObjectiveBox>
 
                             <div class="ml-auto">
@@ -58,13 +59,16 @@
              v-can="'curriculum_edit'"
              v-if="settings.edit === true">
             <div id="createTerminalRow" class="col-12">
-            <ObjectiveBox type="createterminal"
-                          :objective="{'curriculum_id': curriculum.id}"
-                          :settings="settings"
-                          ></ObjectiveBox>
+            <ObjectiveBox
+                type="createterminal"
+                :objective="{'curriculum_id': curriculum.id}"
+                :settings="settings"
+                :max_id="max_ids[activetab]"
+              ></ObjectiveBox>
             </div>
         </div>
-
+        <terminal-objective-modal></terminal-objective-modal>
+        <enabling-objective-modal></enabling-objective-modal>
     </div>
 </template>
 
@@ -82,19 +86,22 @@
                 settings: {
                     'last': null,
                 },
+                max_ids: {},
                 typetabs: {},
                 activetab: null,
                 currentCurriculaEnrolments: null,
-                errors: {}
+                errors: {},
+
+                terminal_objectives: Object
             }
         },
         methods: {
             filterTerminalObjectives(typetab) {
-                let filteredTerminalObjectives = this.curriculum.terminal_objectives;
+                let filteredTerminalObjectives = this.terminal_objectives;
                 filteredTerminalObjectives = filteredTerminalObjectives.filter(
                     t => t.objective_type_id === typetab
                   );
-
+                this.max_ids[typetab] = filteredTerminalObjectives[filteredTerminalObjectives.length-1].id;
                 return filteredTerminalObjectives;
             },
             getTypeTitle(id){
@@ -108,35 +115,71 @@
             setActiveTab(typetab){
                 this.activetab = typetab;
             },
+            loadObjectives(objective_type_id = 0){
+                axios.get('/curricula/' + this.curriculum.id + '/objectives' )
+                    .then(response => {
+                        this.terminal_objectives = response.data.curriculum.terminal_objectives;
+                        if (this.terminal_objectives.length != 0 && objective_type_id == 0){
+                            this.settings.last = this.terminal_objectives[this.terminal_objectives.length-1].id;
+
+                            this.typetabs  = [ ... new Set(this.terminal_objectives.map(t => t.objective_type_id))];
+                            this.activetab = this.typetabs[0];
+                        }
+                    })
+                    .catch(e => {
+                        this.errors = error.response.data.errors;
+                    });
+            },
+            externalEvent: function(ids) {
+                this.reloadEnablingObjectives(ids);
+            },
+            async reloadEnablingObjectives(ids) {
+                try {
+                    this.terminal_objectives = (await axios.post('/curricula/'+this.curriculum.id+'/achievements', {'user_ids' : ids})).data.curriculum.terminal_objectives;
+                } catch(error) {
+                    this.errors = error.response.data.errors;
+                }
+            },
+
 
         },
         mounted() {
+
             this.settings = this.$attrs.settings;
 
-            if (this.curriculum.terminal_objectives.length != 0){
-                this.settings.last = this.curriculum.terminal_objectives[this.curriculum.terminal_objectives.length-1].id;
+            this.loadObjectives();
 
-                this.typetabs = [ ... new Set(this.curriculum.terminal_objectives.map(t => t.objective_type_id))];
-
-                this.activetab = this.typetabs[0];
-            }
             //load users curricula for cross reference selector
             axios.get('/curricula/references')
                 .then(response => {
                     this.currentCurriculaEnrolments = response.data.message;
+                    this.$nextTick(() => {
+                        $("#currentCurriculaEnrolmentSelector").select2({
+                            value: null,
+                            placeholder: "Querverweise",
+                            allowClear: true
+                        }).on('select2:select', function (e) {
+                            this.$parent.setCrossReferenceCurriculumId($("#currentCurriculaEnrolmentSelector").val());
+                        }.bind(this))
+                        .on('select2:clear', function (e) {
+                            this.$parent.setCrossReferenceCurriculumId(false);
+                        }.bind(this));
+                        $("#currentCurriculaEnrolmentSelector").val(null).trigger('change');
+                    })
+
                 })
                 .catch(e => {
                     this.errors = error.response.data.errors;
                 });
-            this.$nextTick(() => {
-                $("#currentCurriculaEnrolmentSelector").select2({
-                    placeholder: "Querverweise",
-                    allowClear: true
-                }).on('select2:select', function (e) {
-                    this.$parent.setCrossReferenceCurriculumId($("#currentCurriculaEnrolmentSelector").val());
-                }.bind(this));
-            })
 
+            //eventlistener
+            this.$on('addTerminalObjective', function(newTerminalObjective) {
+                this.activetab = newTerminalObjective.objective_type_id;
+                this.loadObjectives(this.activetab);
+            });
+            this.$on('addEnablingObjective', function(newEnablingObjective) {
+                this.loadObjectives(this.activetab)
+            });
 
         },
 

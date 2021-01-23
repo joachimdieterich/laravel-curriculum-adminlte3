@@ -48,7 +48,7 @@ class EnablingObjectiveController extends Controller
         $enablingObjective = EnablingObjective::create(array_merge($request->all(), ['order_id' => $order_id]));
 
         if (request()->wantsJson()){
-            return ['message' => $enablingObjective->path()];
+            return ['message' => $enablingObjective];
         }
         return back();
     }

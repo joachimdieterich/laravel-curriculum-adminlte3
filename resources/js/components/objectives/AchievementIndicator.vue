@@ -1,6 +1,6 @@
 <template >
 
-    <span v-if="type === 'enabling'">
+    <span v-if="type === 'enabling' && settings.edit === false">
 
         <i class="t-18 margin-r-5 text-green pointer"
            v-bind:class="[green_css, fabadge]"
@@ -154,10 +154,13 @@
             objective: function (val, oldVal) {
                 if (typeof this.objective.achievements[0] === 'object'){
                     this.status = val.achievements[0].status;
+                } else {
+                    this.status = '00';
                 }
             },
         },
         created() {
+
             if (typeof this.objective.achievements !== 'undefined'){
                 if (typeof this.objective.achievements[0] === 'object') {
                     this.status = this.objective.achievements[0].status;

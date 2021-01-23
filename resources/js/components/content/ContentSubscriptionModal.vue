@@ -73,10 +73,8 @@
 
     export default {
         props: {
-
             subscribable_type: '',
-            subscribable_id: '',
-
+            subscribable_id: ''
         },
         data() {
             return {
@@ -96,7 +94,8 @@
                 try {
                     this.form.content_id = $("#contents").val();
                     this.location = (await axios.post('/contentSubscriptions', this.form)).data.message;
-                    location.reload(true);
+                    this.$parent.$emit('addContent', this.form);
+                    this.close();
                 } catch(error) {
                     this.form.errors = error.response.data.form.errors;
                 }

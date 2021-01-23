@@ -135,12 +135,14 @@
                         this.form.content = tinyMCE.get('content').getContent();
                         this.form.categorie_ids = $("#categorie").val()
                         this.location = (await axios.patch('/contents/'+this.form.id, this.form)).data.message;
-                        location.reload(true);
+                        this.$parent.$emit('addContent', this.form);
+                        this.close();
                     } else {
                         this.form.content = tinyMCE.get('content').getContent();
                         this.form.categorie_ids = $("#categorie").val()
                         this.location = (await axios.post('/contents', this.form)).data.message;
-                        location.reload(true);
+                        this.$parent.$emit('addContent', this.form);
+                        this.close();
                     }
                 } catch(error) {
                     this.form.errors = error.response.data.form.errors;

@@ -183,10 +183,8 @@
                 }
 
                 this.form.submit(method, this.requestUrl);
-
                 this.$parent.$emit('addEnablingObjective', this.form);
-
-                this.$modal.hide('enabling-objective-modal');
+                this.close();
             },
             close(){
                 tinymce.remove()

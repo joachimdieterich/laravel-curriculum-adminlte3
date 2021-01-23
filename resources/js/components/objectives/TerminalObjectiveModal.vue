@@ -199,11 +199,9 @@
                     this.requestUrl += '/' + this.form.id;
                 }
                 this.form.submit(method, this.requestUrl);
-
                 this.$parent.$emit('addTerminalObjective', this.form);
+                this.close();
 
-                this.$modal.hide('terminal-objective-modal');
-                //todo .then .catch
             },
              close(){
                 this.$modal.hide('terminal-objective-modal');

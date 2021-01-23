@@ -137,6 +137,7 @@
         :subscribable_type="subscribable_type"
         :subscribable_id="subscribable_id"
     ></content-subscription-modal>
+    <content-create-modal></content-create-modal>
     </div>
 </template>
 
@@ -226,6 +227,12 @@
                     });
             }
         },
+        mounted() {
+            this.currentSlide = 0;
+            this.$on('addContent', function(newContent) {
+                this.loaderEvent();
+            });
+        }
 
     }
 </script>

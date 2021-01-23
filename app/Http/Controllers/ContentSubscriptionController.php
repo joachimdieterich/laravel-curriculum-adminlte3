@@ -115,7 +115,6 @@ class ContentSubscriptionController extends Controller
             ->get()->first();
         // update order_id
         if ($request->has('order_id')){
-
             if ($this->toggleOrderId($old_subscription, request('order_id'))){
                 $subscriptions = ContentSubscription::where([
                     'subscribable_type' => $subscription_request['subscribable_type'],
@@ -127,9 +126,50 @@ class ContentSubscriptionController extends Controller
                     return ['message' => $subscriptions->with(['content'])->get()];
                 }
             }
-
-
         }
+    }
+    /**
+     * Reset order_ids
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function reset(Request $request)
+    {
+        abort_unless(\Gate::allows('content_create'), 403);
+        //first get existing data to later adjust order_id
+        $subscription_request = $this->validateRequest();
+
+        $reset_subscriptions = (new ContentSubscription)
+            ->where('subscribable_type', $subscription_request['subscribable_type'])
+            ->where('subscribable_id', $subscription_request['subscribable_id'])
+            ->orderBy('created_at', 'ASC')
+            ->get();
+
+        if ($reset_subscriptions->count() > 1)
+        {
+            $i = 0;
+            foreach ($reset_subscriptions AS $subscription)
+            {
+                DB::table('content_subscriptions')
+                    ->where('content_id', $subscription->content_id)
+                    ->where('subscribable_type', $subscription->subscribable_type)
+                    ->where('subscribable_id', $subscription->subscribable_id)
+                    ->where('order_id', '=', $subscription->order_id)
+                    ->update(['order_id' => $i]);
+                $i++;
+            }
+        }
+
+        $subscriptions = ContentSubscription::where([
+            'subscribable_type' => $subscription_request['subscribable_type'],
+            'subscribable_id'   => $subscription_request['subscribable_id']
+        ])->orderBy('order_id');
+
+        if (request()->wantsJson()){
+            return ['message' => $subscriptions->with(['content'])->get()];
+        }
+
     }
 
     /**

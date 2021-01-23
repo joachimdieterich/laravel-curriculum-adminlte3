@@ -32,6 +32,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('contents/{content}/destroy', 'ContentController@destroy')->name('contents.destroy'); //has to be post (has parameters)
     Route::resource('contents', 'ContentController');
     Route::patch('contentSubscriptions', 'ContentSubscriptionController@update');
+    Route::patch('contentSubscriptions/reset', 'ContentSubscriptionController@reset');
     Route::resource('contentSubscriptions', 'ContentSubscriptionController');
 
     /* courses */

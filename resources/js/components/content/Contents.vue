@@ -20,6 +20,7 @@
             </span>
         </h3>
         <div class="card-tools">
+
             <button v-can="'content_create'"
                     type="button" class="btn btn-tool "
                     role="button"
@@ -31,6 +32,13 @@
                     role="button"
                     @click="show('content-subscription-modal')">
                 <i class="fa fa-paste"></i>
+            </button>
+            <button v-can="'content_create'"
+                    type="button" class="btn btn-tool "
+                    role="button"
+                    data-toggle="tooltip" data-container="body" title="Reihenfolge zurücksetzen"
+                    @click.prevent="fixOrderIds()">
+                <i class="fa fa-wrench"></i>
             </button>
             <button
                 v-if="subscriptions.length !== 0"
@@ -65,7 +73,6 @@
                     :data-slide-to="index+1"
                     @click="setSlide(index+1)"
                 ></li>
-
             </ol>
             <div class="carousel-inner">
                 <div class="carousel-item active">
@@ -181,6 +188,18 @@
                 //console.log(JSON.stringify(objective));
                 try {
                     this.subscriptions = (await axios.patch('/contentSubscriptions/', subscription)).data.message;
+                } catch(error) {
+                    this.errors = error.response.data.errors;
+                }
+            },
+            async fixOrderIds() {
+                let subscription = {
+                    'subscribable_type': this.subscribable_type,
+                    'subscribable_id':   this.subscribable_id,
+                }
+
+                try {
+                    this.subscriptions = (await axios.patch('/contentSubscriptions/reset', subscription)).data.message;
                 } catch(error) {
                     this.errors = error.response.data.errors;
                 }

@@ -73,7 +73,6 @@
                    id="logbooks-nav-tab">
                     <i class="fas fa-book pr-2"></i>{{trans('global.logbook.create')}}
                 </a>
-
             </li>
 
             <li v-if="course"
@@ -118,6 +117,7 @@
         <div class="tab-content" id="custom-content-below-tabContent">
             <div class="tab-pane fade show active" id="curriculm-tab" role="tabpanel" aria-labelledby="curriculm-nav-tab">
                 <TerminalObjectives
+                    ref="terminalObjectives"
                     :curriculum="cur"
                     :objectivetypes="objectivetypes"
                     :settings="settings">
@@ -142,7 +142,7 @@
                 </media>
             </div>
             <div v-if="curriculum.glossar != null"
-                class="tab-pane fade"
+                 class="tab-pane fade"
                  id="glossar-tab"
                  role="tab"
                  aria-labelledby="glossar-nav-tab">
@@ -175,8 +175,6 @@
             'usersCurricula': null,
             'current_curriculum_cross_reference_id': null,
             'logbook': null,
-//           'terminalobjectives': Array,
-//           'enablingobjectives': Array,
             'objectivetypes': Array,
             'settings': Object,
         },
@@ -187,16 +185,6 @@
         },
 
         methods: {
-            externalEvent: function(ids) {
-               this.reloadEnablingObjectives(ids);
-            },
-            async reloadEnablingObjectives(ids) {
-                try {
-                    this.cur = (await axios.post('/curricula/'+this.curriculum.id+'/achievements', {'user_ids' : ids})).data.curriculum;
-                } catch(error) {
-                    this.errors = error.response.data.errors;
-                }
-            },
             setCrossReferenceCurriculumId: function(curriculum_id) { //can be called external
                 this.settings.cross_reference_curriculum_id = curriculum_id;
             },
@@ -209,7 +197,7 @@
         },
         mounted() {
             this.$on('addTerminalObjective', function(newTerminalObjective) {
-                //console.log(newTerminalObjective);
+                //console.log(newTerminalObjective); todo: used?
              });
         },
         components: {

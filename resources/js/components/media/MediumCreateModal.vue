@@ -214,7 +214,8 @@
                     'path': '',
                     'subscribable_type': null,
                     'subscribable_id': null,
-                    'repository':null
+                    'repository':null,
+                    'public': 0
                 }),
                 endpoints: {},
                 endpoint:'',
@@ -253,6 +254,7 @@
                 formData.append('subscribable_type', this.form.subscribable_type);
                 formData.append('subscribable_id', this.form.subscribable_id);
                 formData.append('repository', this.form.repository);
+                formData.append('public', this.form.public);
                 axios.post('/media', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data'
@@ -294,6 +296,9 @@
                 }
                 if (event.params.accept){
                     this.accept = event.params.accept;
+                }
+                if (event.params.public){
+                    this.form.public = event.params.public;
                 }
             },
             setTab(tab){

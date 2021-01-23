@@ -211,11 +211,13 @@
             async deleteSubscription(contentSubscription){
                 try {
                     await axios.post('/contents/'+contentSubscription.content_id+'/destroy',  { 'referenceable_type': contentSubscription.subscribable_type, 'referenceable_id': contentSubscription.subscribable_id } );
+                    // remove on page
+                    let index = this.subscriptions.indexOf(contentSubscription);
+                    this.subscriptions.splice(index, 1);
                 }
                 catch(error) {
                     this.errors = error.response.data.errors;
                 }
-                location.reload();
             },
             loaderEvent(){
                 axios.get('/contentSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id)

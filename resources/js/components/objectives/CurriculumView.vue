@@ -14,8 +14,6 @@
     export default {
         props: {
             'curriculum': Object,
-//            'terminalobjectives': Array,
-//           'enablingobjectives': Array,
             'objectivetypes': Array,
             'settings': Object,
         },

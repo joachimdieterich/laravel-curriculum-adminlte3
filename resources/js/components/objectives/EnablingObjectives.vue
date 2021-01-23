@@ -41,10 +41,11 @@
         mounted() {
             this.settings = this.settings;
 
-            if (this.objectives.length != 0)
+            if (this.objectives.length != 0) {
                 this.localSettings.last = this.objectives[this.objectives.length-1].id;
             }
         },
+
         components: {
             ObjectiveBox
         }

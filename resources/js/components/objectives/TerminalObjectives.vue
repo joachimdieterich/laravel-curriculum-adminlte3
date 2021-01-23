@@ -1,17 +1,16 @@
 <template>
     <div>
-
         <ul class="nav nav-pills"
             id="terminalObjectivesTopNav">
             <li v-for="typetab in typetabs" class="nav-item pl-0 pr-2 pb-2 pt-2">
                 <a class="nav-link " :href="'#tab_' + typetab"
-                   :class="(activetab == typetab) ? 'active' : ''"
+                   :class="(activetab === typetab) ? 'active' : ''"
                    @click="setActiveTab(typetab)"
                    data-toggle="tab">
                     {{ getTypeTitle(typetab)[0]['title'] }}
                 </a>
             </li>
-            <div class="form-group pt-2 ml-auto">
+            <li class="form-group pt-2 ml-auto">
                 <select
                     name="currentCurriculaEnrolmentSelector"
                     id="currentCurriculaEnrolmentSelector"
@@ -24,12 +23,12 @@
                         {{ item.title }}
                     </option>
                 </select>
-            </div>
+            </li>
         </ul>
         <hr class="mt-0">
         <div v-for="typetab in typetabs" class="tab-content">
             <div class="tab-pane" :id="'tab_' + typetab"
-                 :class="(activetab == typetab) ? 'active show' : ''">
+                 :class="(activetab === typetab) ? 'active show' : ''">
                  <div v-for="objective in filterTerminalObjectives(typetab)" :id="'terminalObjective_' + objective.id" >
                     <div class="row">
                         <div class="col-12 terminal-row">
@@ -105,12 +104,9 @@
                 return filteredTerminalObjectives;
             },
             getTypeTitle(id){
-
-                var typeObject = this.objectivetypes.filter(
+                return this.objectivetypes.filter(
                     t => t.id === id
-                  );
-
-                return typeObject;
+                );
             },
             setActiveTab(typetab){
                 this.activetab = typetab;
@@ -119,15 +115,16 @@
                 axios.get('/curricula/' + this.curriculum.id + '/objectives' )
                     .then(response => {
                         this.terminal_objectives = response.data.curriculum.terminal_objectives;
-                        if (this.terminal_objectives.length != 0 && objective_type_id == 0){
+                        if (this.terminal_objectives.length !== 0){
                             this.settings.last = this.terminal_objectives[this.terminal_objectives.length-1].id;
-
                             this.typetabs  = [ ... new Set(this.terminal_objectives.map(t => t.objective_type_id))];
-                            this.activetab = this.typetabs[0];
+                            if (objective_type_id === 0){
+                                this.activetab = this.typetabs[0];
+                            }
                         }
                     })
                     .catch(e => {
-                        this.errors = error.response.data.errors;
+                        this.errors = e.data.errors;
                     });
             },
             externalEvent: function(ids) {
@@ -140,13 +137,9 @@
                     this.errors = error.response.data.errors;
                 }
             },
-
-
         },
         mounted() {
-
             this.settings = this.$attrs.settings;
-
             this.loadObjectives();
 
             //load users curricula for cross reference selector
@@ -158,18 +151,17 @@
                             value: null,
                             placeholder: "Querverweise",
                             allowClear: true
-                        }).on('select2:select', function (e) {
+                        }).on('select2:select', function () {
                             this.$parent.setCrossReferenceCurriculumId($("#currentCurriculaEnrolmentSelector").val());
                         }.bind(this))
-                        .on('select2:clear', function (e) {
+                        .on('select2:clear', function () {
                             this.$parent.setCrossReferenceCurriculumId(false);
                         }.bind(this));
                         $("#currentCurriculaEnrolmentSelector").val(null).trigger('change');
                     })
-
                 })
                 .catch(e => {
-                    this.errors = error.response.data.errors;
+                    this.errors = e.data.errors;
                 });
 
             //eventlistener
@@ -180,7 +172,6 @@
             this.$on('addEnablingObjective', function(newEnablingObjective) {
                 this.loadObjectives(this.activetab)
             });
-
         },
 
         components: {

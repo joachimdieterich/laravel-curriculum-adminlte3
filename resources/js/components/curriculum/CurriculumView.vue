@@ -196,9 +196,6 @@
             }
         },
         mounted() {
-            this.$on('addTerminalObjective', function(newTerminalObjective) {
-                //console.log(newTerminalObjective); todo: used?
-             });
         },
         components: {
             TerminalObjectives,

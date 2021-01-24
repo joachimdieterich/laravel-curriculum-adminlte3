@@ -28,6 +28,13 @@
                            v-bind:class="entry.icon"></i>
                         {{ entry.title }}
                     </button>
+                    <button v-else-if="entry.action === 'resetOrderIds' "
+                            class="dropdown-item"
+                            @click="resetOrderIds(entry)">
+                        <i class="mr-4"
+                           v-bind:class="entry.icon"></i>
+                        {{ entry.title }}
+                    </button>
                     <button v-else-if="entry.action === 'delete' "
                             class="dropdown-item"
                             @click="emitDeleteEvent()">

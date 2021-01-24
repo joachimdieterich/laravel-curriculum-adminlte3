@@ -107,11 +107,20 @@
             <li v-can="'curriculum_edit'"
                 class="nav-item">
                 <a class="nav-link link-muted"
+                   @click="resetOrderIds('/curricula/'+ curriculum.id +'/resetOrderIds')"
+                   id="config-nav-tab">
+                    <i class="fa fa-wrench"></i>
+                </a>
+            </li>
+            <li v-can="'curriculum_edit'"
+                class="nav-item">
+                <a class="nav-link link-muted"
                    :href="'/curricula/'+ curriculum.id +'/edit'"
                    id="config-nav-tab">
                     <i class="fa fa-cog"></i>
                 </a>
             </li>
+
         </ul>
 
         <div class="tab-content" id="custom-content-below-tabContent">
@@ -193,7 +202,18 @@
             },
             loaderEvent: function() {
                 this.$refs.Contents.loaderEvent();
-            }
+            },
+            resetOrderIds(path) {
+                if (confirm("Reihenfolge zurücksetzen?")){
+                    try {
+                        axios.patch(path);
+                    } catch(error) {
+                        this.errors = error.response.data.errors;
+                    }
+                    window.location = '/curricula/'+ this.curriculum.id;
+
+                }
+            },
         },
         mounted() {
         },

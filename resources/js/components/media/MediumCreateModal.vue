@@ -398,7 +398,6 @@
                         this.to = response.data.to;
                         this.total = response.data.total;
                     });
-                this.setTable();
             },
 
         },

@@ -477,6 +477,40 @@ class CurriculumController extends Controller
      //   return back();
     }
 
+    public function resetOrderIds(Curriculum $curriculum)
+    {
+        $curriculum = Curriculum::with(
+            [
+                'terminalObjectives',
+                'terminalObjectives.enablingObjectives'
+            ])
+            ->find($curriculum->id);
+        $t = 0;
+        $currentObjectiveType = $curriculum->terminalObjectives->first()->objective_type_id;
+        foreach ($curriculum->terminalObjectives as $terminalObjective)
+        {
+            if ($currentObjectiveType != $terminalObjective->objective_type_id)
+            {
+                $currentObjectiveType = $terminalObjective->objective_type_id;
+                $t = 0;
+            }
+
+            $e = 0;
+            $terminalObjective->order_id = $t;
+            $terminalObjective->save();
+            $t++;
+
+            foreach ($terminalObjective->enablingObjectives as $enablingObjective)
+            {
+                $enablingObjective->order_id = $e;
+                $enablingObjective->save();
+                $e++;
+            }
+        }
+
+         $this->show($curriculum);
+    }
+
     protected function validateRequest()
     {
 

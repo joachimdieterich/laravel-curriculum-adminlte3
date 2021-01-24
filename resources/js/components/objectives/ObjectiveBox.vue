@@ -85,7 +85,7 @@
                     {
                         title: 'Move',
                         icon: 'fa fa-arrows-alt',
-                        action: 'update',
+                        action: 'move',
                         model: this.type+'Objectives',
                         value: 'move-'+this.type+'-objective-modal'
                     },

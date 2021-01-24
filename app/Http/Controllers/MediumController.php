@@ -19,12 +19,12 @@ class MediumController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         abort_unless(\Gate::allows('medium_access'), 403);
 
         if (request()->wantsJson()){
-            return Medium::where('owner_id', auth()->user()->id)->get();
+            return Medium::where('owner_id', auth()->user()->id)->paginate($request->input('per_page'));
         }
 
 

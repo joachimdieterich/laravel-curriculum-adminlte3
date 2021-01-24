@@ -6,6 +6,7 @@ return [
     'list'                                 => 'List',
     'show'                                 => 'Show',
     'entries'                              => 'Entries',
+    'perPage'                              => 'Entries per page',
     'search'                               => 'Search',
     'view'                                 => 'View',
     'edit'                                 => 'Edit',

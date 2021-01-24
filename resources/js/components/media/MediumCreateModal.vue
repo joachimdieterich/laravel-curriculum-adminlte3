@@ -3,6 +3,8 @@
         id="medium-create-modal"
         name="medium-create-modal"
         height="auto"
+        width="100%"
+        :maxWidth=900
         :adaptive=true
         draggable=".draggable"
         :resizable=true
@@ -119,8 +121,8 @@
                         </div><!-- /.tab-pane -->
 
                         <div class="tab-pane" id="media" v-can="'medium_create'">
-                            <div class="form-group " >
-                                <table id="media_create_datatable" class="table table-hover datatable">
+                            <div class="form-group table-responsive" style="height: 300px;">
+                                <table id="media_create_datatable" class="table table-head-fixed">
                                     <thead>
                                     <tr>
                                         <th style="width: 60px" ></th>
@@ -132,11 +134,12 @@
                                          <th>{{ trans('global.datatables.action') }}</th>-->
                                     </tr>
                                     </thead>
+                                    <tbody>
                                     <tr v-for="file in files">
                                         <td style="width: 60px" class="pointer"
                                             @click="edit(file)">
                                             <img v-if="file.mime_type.includes('image')"
-                                                :src="'/media/'+file.id" height="50" /></td>
+                                                :src="'/media/' + file.id + '/thumb'" height="50" /></td>
                                         <td class="pointer"
                                             @click="edit(file)">{{ file.title }}</td>
                                         <td style="width: 20px"><input
@@ -150,7 +153,55 @@
                                            <th>{{ file.public }}</th>
                                            <th>{{ file.action }}</th>-->
                                     </tr>
+                                    </tbody>
                                 </table>
+
+                            </div>
+                            <div class="row">
+                                <div class="dataTables_paginate paging_full_numbers col-6" id="media_create_datatable_paginate">
+                                    <ul class="pagination">
+                                        <li class="first" id="media_create_datatable_first">
+                                            <a class="page-link"
+                                               @click="getFiles(first_page_url)">
+                                                <i class="fa fa-angle-double-left"></i></a>
+                                        </li>
+                                        <li class=" previous disabled" id="media_create_datatable_previous">
+                                            <a class="page-link"
+                                               @click="getFiles(prev_page_url)">
+                                                <i class="fa fa-angle-left"></i>
+                                            </a>
+                                        </li>
+                                        <li class=" active">
+                                            <a class="page-link">{{this.current_page}}</a>
+                                        </li>
+                                        <li class=" next" id="media_create_datatable_next">
+                                            <a class="page-link"
+                                               @click="getFiles(next_page_url)">
+                                                <i class="fa fa-angle-right"></i>
+                                            </a>
+                                        </li>
+                                        <li class=" last" id="media_create_datatable_last">
+                                            <a class="page-link"
+                                               @click="getFiles(last_page_url)">
+                                                <i class="fa fa-angle-double-right"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="col-6 pt-1" id="media_create_datatable_length">
+                                    <label class="small font-weight-light pull-right">
+                                        <select
+                                            name="media_create_datatable_length"
+                                            class="custom-select custom-select-sm form-control form-control-sm"
+                                            style="width:60px"
+                                            v-model="per_page">
+                                            <option value="10" :selected="per_page === 10" >10</option>
+                                            <option value="25" :selected="per_page === 25">25</option>
+                                            <option value="50" :selected="per_page === 50">50</option>
+                                            <option value="100" :selected="per_page === 100">100</option>
+                                        </select> {{ trans('global.perPage') }}</label>
+                                </div>
                             </div>
                         </div><!-- /.tab-pane -->
 
@@ -229,24 +280,25 @@
                 files: [],
                 selectedFiles: [],
                 accept:'',
-                datatable: null
-
+                datatable: null,
+                //pagination
+                current_page: 1,
+                first_page_url: "/media?page=1",
+                from: 1,
+                last_page: 166,
+                last_page_url: null,
+                next_page_url: null,
+                path: "/media",
+                per_page: 10,
+                prev_page_url: null,
+                to: null,
+                total: null
             }
         },
         created() {
-            this.getAllFile();
+
         },
         methods: {
-            getAllFile() {
-                /*axios.get('/media')
-                     .then((response)=>{
-                    for(let i = 0; i < response.data.length;i++)
-                    {
-                        this.files.push(response.data[i])
-                    }
-                });*/
-            },
-
             uploadSubmit(formData) {
                 this.currentStatus = STATUS_SAVING;
                 this.message = '';
@@ -269,7 +321,7 @@
                             this.selectedFiles = this.files[0].id; //todo: select all files
                             this.message = 'OK';
                             this.reset();
-                            this.getAllFile();
+                            //this.getFiles();
                         })
                     });
             },
@@ -328,7 +380,26 @@
                      });
 
                 this.uploadSubmit(formData);
-            }
+            },
+            getFiles(path = this.path) {
+
+                axios.get(path, { params: { per_page: this.per_page } })
+                    .then((response)=>{
+                        this.files = response.data.data;
+                        this.current_page = response.data.current_page;
+                        this.first_page_url = response.data.first_page_url;
+                        this.from = response.data.from;
+                        this.last_page = response.data.last_page;
+                        this.last_page_url = response.data.last_page_url;
+                        this.next_page_url = response.data.next_page_url;
+                        this.path = response.data.path;
+                        this.per_page = response.data.per_page;
+                        this.prev_page_url = response.data.prev_page_url;
+                        this.to = response.data.to;
+                        this.total = response.data.total;
+                    });
+                this.setTable();
+            },
 
         },
         computed: {
@@ -347,17 +418,7 @@
         },
         mounted() {
             this.reset();
-
-            this.dataTable = $('#media_create_datatable').DataTable({});
-            const url = '/media/list';
-            fetch(url)
-            .then(res => {
-                res.data.forEach(item => {
-                    this.files.push(item);
-                });
-
-
-            })
+            this.getFiles();
         },
         components: {
             RepositoryPluginCreate

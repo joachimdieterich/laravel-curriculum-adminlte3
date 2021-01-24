@@ -11,14 +11,6 @@
 @can('medium_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <a
-                id="add-medium"
-                class="btn btn-success"
-                onclick="app.__vue__.$modal.show('medium-create-modal',  {'description': {{ json_encode('') }} });">
-                {{ trans('global.media.create') }}
-            </a>
-        </div>
-        <div class="col-lg-12">
             @include ('forms.input.file',
             ["model" => "media",
             "field" => "path",

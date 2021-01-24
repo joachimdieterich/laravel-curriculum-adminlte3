@@ -6,6 +6,7 @@ return [
     'list'                                 => 'Liste',
     'show'                                 => 'anzeigen',
     'entries'                              => 'Einträge',
+    'perPage'                              => 'Einträge pro Seite',
     'search'                               => 'Suchbegriff',
     'view'                                 => 'Ansicht',
     'edit'                                 => 'editieren',

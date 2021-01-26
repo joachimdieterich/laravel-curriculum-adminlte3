@@ -149,6 +149,9 @@
                 }
             },
             beforeOpen(event) {
+                this.form.id = '';
+                this.form.title = '';
+                this.form.content = '';
                 this.getCategories();
                 if (event.params.id){
                     this.load(event.params.id)

@@ -8,7 +8,7 @@
         </h5>
 
         <div style="text-align: center; padding: 25px; font-size:100px;"
-             @click.prevent="showModal('terminal-objective-modal')">
+             @click.prevent="showModal('terminal-objective-modal', )">
              +
         </div>
     </div>
@@ -68,6 +68,7 @@
     export default {
         props: {
                 objective: {},
+                objective_type_id: {},
                 type: {},
                 settings: {},
                 max_id: Number
@@ -105,7 +106,7 @@
         },
         methods: {
             showModal(modal) {
-                this.$modal.show(modal, { 'objective': this.objective, 'method': 'post' });
+                this.$modal.show(modal, { 'objective': this.objective, 'method': 'post' , 'objective_type_id': this.objective_type_id});
             },
             async deleteEvent(object){
                 try {

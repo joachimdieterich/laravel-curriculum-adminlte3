@@ -154,6 +154,9 @@
                 this.form.id = '';
                 this.form.title = '';
                 this.form.description = '';
+                if (event.params.objective_type_id) {
+                    this.form.objective_type_id = event.params.objective_type_id;
+                }
                 if (event.params.objective) {
                     this.method = event.params.method;
                     this.form.populate(event.params.objective);

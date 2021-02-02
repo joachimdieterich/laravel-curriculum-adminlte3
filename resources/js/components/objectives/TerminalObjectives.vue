@@ -61,6 +61,7 @@
             <ObjectiveBox
                 type="createterminal"
                 :objective="{'curriculum_id': curriculum.id}"
+                :objective_type_id="activetab"
                 :settings="settings"
                 :max_id="max_ids[activetab]"
               ></ObjectiveBox>

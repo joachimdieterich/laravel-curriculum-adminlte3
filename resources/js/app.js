@@ -100,7 +100,7 @@ Vue.prototype.$initTinyMCE = function (options) {
             document.querySelector("#app").__vue__.$modal.show('medium-create-modal', {'public': 1 });
             $('#medium_id').on('change', function() {
                 //reload thumbs
-                editor.setContent('<img src="/media/'+ document.getElementById('medium_id').value +'" width="500">', {format: 'raw'});
+                editor.insertContent('<img src="/media/'+ document.getElementById('medium_id').value +'" width="500">', {format: 'raw'});
             });
         };
 

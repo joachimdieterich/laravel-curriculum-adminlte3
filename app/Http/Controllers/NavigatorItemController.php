@@ -152,10 +152,10 @@ class NavigatorItemController extends Controller
         $css_classes         = $this->getCssClasses();
         $visibility          = $this->getVisibility();
 
-        $curricula = Curriculum::all();
-        $navigator = $navigatorItem->navigatorView->navigator;
-        $navigatorView = $navigatorItem->navigatorView;
-        $medium = $navigatorItem->medium;
+        $curricula           = Curriculum::all();
+        $navigator           = $navigatorItem->navigatorView->navigator;
+        $navigatorView       = $navigatorItem->navigatorView;
+        $medium              = $navigatorItem->medium;
 
         //dd($navigatorItem);
         return view('navigators.views.items.edit')
@@ -183,7 +183,7 @@ class NavigatorItemController extends Controller
 
         $model = $navigatorItem->update([
             'title'       => $request['title'],
-            'description' => Str::limit($request['title'], 200),
+            'description' => Str::limit($request['description'], 200),
             'position'    => format_select_input($request['position']),
             'css_class'   => format_select_input($request['css_class']),
             'visibility'  => format_select_input($request['visibility'])

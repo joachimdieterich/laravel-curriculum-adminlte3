@@ -154,7 +154,7 @@
                 this.form.content = '';
                 this.getCategories();
                 if (event.params.id){
-                    this.load(event.params.id)
+                    this.load(event.params.id);
                 }
                 if (event.params.referenceable_type){
                     this.form.referenceable_type = event.params.referenceable_type;
@@ -207,6 +207,7 @@
             async load(id) {
                 try {
                     this.form.populate((await axios.get('/contents/'+id)).data.message);
+                    tinyMCE.get('content').setContent(this.form.content);
                 } catch(error) {
                     //console.log('loading failed')
                 }
@@ -216,6 +217,7 @@
             }
         },
         mounted() {
+
         },
     }
 </script>

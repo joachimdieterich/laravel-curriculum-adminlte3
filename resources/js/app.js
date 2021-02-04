@@ -73,7 +73,7 @@ Vue.component('sidebar', require('./components/uiElements/Sidebar.vue').default)
 Vue.component('move-terminal-objective-modal', require('./components/objectives/MoveTerminalObjectiveModal.vue').default);
 
 Vue.prototype.$initTinyMCE = function (options) {
-    tinyMCE.remove();
+    tinymce.remove();
     tinymce.init({
         path_absolute : "/",
         selector: "textarea.my-editor",
@@ -116,8 +116,8 @@ Vue.prototype.$initTinyMCE = function (options) {
         return {
             getMetadata: function () {
                 return  {
-                    name: 'Example plugin',
-                    url: 'http://exampleplugindocsurl.com'
+                    name: 'Curriculum Media Plugin',
+                    url: 'http://curriculumonline.de'
                 };
             }
         };

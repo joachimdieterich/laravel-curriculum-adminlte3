@@ -46,10 +46,10 @@
                        data-toggle="tab">
                         <i class="fa fa-sitemap pr-1"></i>
                         <span v-if="type === 'terminal'" >
-                            {{ trans('global.enablingObjective.title') }}
+                            {{ trans('global.subordinate_element_singular') }}
                         </span>
                         <span v-else >
-                            {{ trans('global.terminalObjective.title_singular') }}
+                            {{ trans('global.superordinate_element_singular') }}
                         </span>
                     </a>
                 </li>
@@ -63,7 +63,7 @@
                        aria-selected="true"
                        @click="loaderEvent()"
                     >
-                        <i class="fa fa-align-justify pr-2"></i>{{trans('global.content.title')}}
+                        <i class="fa fa-align-justify pr-2"></i>{{trans('global.content.index_alt')}}
                     </a>
                 </li>
 

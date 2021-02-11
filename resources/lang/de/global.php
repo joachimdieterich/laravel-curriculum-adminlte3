@@ -133,6 +133,11 @@ return [
     'simple_user'                          => 'Einfacher Nutzer',
     'title'                                => 'Titel',
     'enrol_info'                           => 'Markierte Gruppen in Lehrpläne / Kompetenzraster ein bzw. ausschreiben.',
+    'objective_tab'                        => 'Kompetenzerwerb',
+    'superordinate_element_singular'       => 'Übergeordnetes Element',
+    'superordinate_element'                => 'Übergeordnete Elemente',
+    'subordinate_element_singular'         => 'Untergeordnetes Element',
+    'subordinate_element'                  => 'Übergeordnete Elemente',
     'roles'                                => 'Rollen',
     'role'                                 => [
         'title'          => 'Rollen',
@@ -571,6 +576,8 @@ return [
         'edit'           => 'Inhalt bearbeiten',
         'copy'           => 'Inhalt aus bestehendem Curriculum übernehmen',
         'no_content'     => 'Keine (zusätzlichen) Inhalte vorhanden.',
+        'index'          => 'Inhaltsverzeichnis',
+        'index_alt'      => 'Hinweise/Ergänzungen',
         'fields'         => [
             'id'                => 'ID',
             'id_helper'         => '',

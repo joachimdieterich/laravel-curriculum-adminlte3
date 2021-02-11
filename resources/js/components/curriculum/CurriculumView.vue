@@ -3,17 +3,6 @@
         <ul class="nav nav-tabs"
             role="tablist">
             <li class="nav-item">
-                <a class="nav-link link-muted active"
-                   id="curriculm-nav-tab"
-                   data-toggle="pill"
-                   href="#curriculm-tab"
-                   role="tab"
-                   aria-controls="curriculm-tab"
-                   aria-selected="false">
-                    <i class="fas fa-th "></i>
-                </a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link link-muted"
                    id="content-nav-tab"
                    data-toggle="pill"
@@ -23,7 +12,18 @@
                    aria-selected="true"
                    @click="loaderEvent()"
                 >
-                    <i class="fa fa-align-justify pr-2"></i>{{trans('global.content.title')}}
+                    <i class="fa fa-align-justify pr-2"></i>{{trans('global.content.index')}}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link link-muted active"
+                   id="curriculm-nav-tab"
+                   data-toggle="pill"
+                   href="#curriculm-tab"
+                   role="tab"
+                   aria-controls="curriculm-tab"
+                   aria-selected="false">
+                    <i class="fas fa-th pr-2"></i>{{trans('global.objective_tab')}}
                 </a>
             </li>
             <li class="nav-item ">

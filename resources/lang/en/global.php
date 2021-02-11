@@ -133,6 +133,11 @@ return [
     'simple_user'                          => 'Simple user',
     'title'                                => 'Title',
     'enrol_info'                           => 'Enrol/expel group to curricula',
+    'objective_tab'                        => 'Objectives',
+    'superordinate_element_singular'       => 'Superordinate Element',
+    'superordinate_element'                => 'Superordinate Elements',
+    'subordinate_element_singular'         => 'Subordinate Element',
+    'subordinate_element'                  => 'Subordinate Elements',
     'roles'                                => 'Roles',
     'role'                                 => [
         'title'          => 'Roles',
@@ -571,6 +576,8 @@ return [
         'copy'           => 'Copy Content',
         'edit'           => 'Edit Content',
         'no_content'     => 'No (further) contents available.',
+        'index'          => 'Table of contents',
+        'index_alt'      => 'Hinweise/Ergänzungen',
         'fields'         => [
             'id'         => 'ID',
             'id_helper'  => '',

@@ -21,11 +21,12 @@
                         <i class="fa fa-trash"></i>
                     </button>
                 </form>
-                @endcan
                 <a onclick="app.__vue__.$modal.show('content-create-modal',  { 'id': {{ $item->referenceable_id }}, 'method': 'patch' });"
-                   class="btn btn-primary btn-sm pull-right mr-1">
+                   class="btn btn-tool">
                     <small><i class="fa fa-edit"></i></small>
                 </a>
+                @endcan
+
                 <a class="btn btn-tool" href="{{ route("print.content",  $item->referenceable_id) }}" target="_blank">
                     <i class="fa fa-print"></i>
                 </a>

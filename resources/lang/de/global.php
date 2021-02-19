@@ -137,7 +137,7 @@ return [
     'superordinate_element_singular'       => 'Übergeordnetes Element',
     'superordinate_element'                => 'Übergeordnete Elemente',
     'subordinate_element_singular'         => 'Untergeordnetes Element',
-    'subordinate_element'                  => 'Übergeordnete Elemente',
+    'subordinate_element'                  => 'Untergeordnete Elemente',
     'roles'                                => 'Rollen',
     'role'                                 => [
         'title'          => 'Rollen',

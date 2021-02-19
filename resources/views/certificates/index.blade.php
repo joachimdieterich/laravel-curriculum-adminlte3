@@ -9,30 +9,28 @@
 @endsection
 @section('content')
 @can('user_create')
+
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
+
             <a class="btn btn-success" href="{{ route("certificates.create") }}" >
                 {{ trans('global.certificate.create') }}
             </a>
         </div>
     </div>
 @endcan
-<div class="card">
-    <div class="card-body">
-        <table id="certificates-datatable" class=" table table-bordered table-striped table-hover datatable">
-            <thead>
-                <tr>
-                    <th width="10"></th>
-                    <th>{{ trans('global.certificate.fields.title') }}</th>
-                    <th>{{ trans('global.curriculum.title_singular') }}</th>
-                    <th>{{ trans('global.organization.title_singular') }}</th>
-                    <th>{{ trans('global.user.title_singular') }}</th>
-                    <th>{{ trans('global.datatables.action') }}</th>
-                </tr>
-            </thead>
-        </table>
-    </div>
-</div>
+<table id="certificates-datatable" class="table table-hover datatable">
+    <thead>
+    <tr>
+        <th width="10"></th>
+        <th>{{ trans('global.certificate.fields.title') }}</th>
+        <th>{{ trans('global.curriculum.title_singular') }}</th>
+        <th>{{ trans('global.organization.title_singular') }}</th>
+        <th>{{ trans('global.user.title_singular') }}</th>
+        <th>{{ trans('global.datatables.action') }}</th>
+    </tr>
+    </thead>
+</table>
 
 
 @endsection
@@ -66,6 +64,7 @@ $(document).ready( function () {
     //align header/body
     $(".dataTables_scrollHeadInner").css({"width":"100%"});
     $(".table ").css({"width":"100%"});
+
  });
 </script>
 

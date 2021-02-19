@@ -74,10 +74,26 @@ tbody tr:hover .icon-circle {
 }
 .dataTables_filter input {
     width: 100% !important;
+    height: 42px !important;
     margin: 0 !important;
+    padding:0 10px;
     -moz-appearance: searchfield !important;
     -webkit-appearance: searchfield !important;
     appearance: searchfield !important;
+}
+
+.dataTables_filter input::-webkit-search-cancel-button {
+    -webkit-appearance: searchfield-cancel-button;
+}
+
+dataTables_scrollBody {
+    border-bottom: 0 !important
+}
+
+table.dataTable > thead > tr,
+table.dataTable > thead > tr > th,
+table.dataTable > thead > tr > td {
+    border-top: 0 !important
 }
 
 table.dataTable {

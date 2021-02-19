@@ -138,6 +138,15 @@
                     this.errors = error.response.data.errors;
                 }
             },
+
+            checkCrossReferenceInLocalStorage(){
+                if (localStorage.getItem( 'currentCurriculaEnrolmentSelectorValue' ) !== null){
+                    $("#currentCurriculaEnrolmentSelector").val(localStorage.getItem( 'currentCurriculaEnrolmentSelectorValue' )).trigger('change');
+                    this.$parent.setCrossReferenceCurriculumId($("#currentCurriculaEnrolmentSelector").val());
+                } else {
+                    $("#currentCurriculaEnrolmentSelector").val(null).trigger('change');
+                }
+            }
         },
         mounted() {
             this.settings = this.$attrs.settings;
@@ -153,12 +162,14 @@
                             placeholder: "Querverweise",
                             allowClear: true
                         }).on('select2:select', function () {
+                            localStorage.setItem( 'currentCurriculaEnrolmentSelectorValue', $("#currentCurriculaEnrolmentSelector").val() );
                             this.$parent.setCrossReferenceCurriculumId($("#currentCurriculaEnrolmentSelector").val());
                         }.bind(this))
                         .on('select2:clear', function () {
                             this.$parent.setCrossReferenceCurriculumId(false);
+                            localStorage.removeItem( 'currentCurriculaEnrolmentSelectorValue');
                         }.bind(this));
-                        $("#currentCurriculaEnrolmentSelector").val(null).trigger('change');
+                       this.checkCrossReferenceInLocalStorage(); // load value from localStorage
                     })
                 })
                 .catch(e => {

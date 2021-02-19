@@ -73,8 +73,11 @@ tbody tr:hover .icon-circle {
     width: 100%;
 }
 .dataTables_filter input {
-     width: 100% !important;
-     margin:0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    -moz-appearance: searchfield !important;
+    -webkit-appearance: searchfield !important;
+    appearance: searchfield !important;
 }
 
 table.dataTable {
@@ -99,13 +102,13 @@ table.dataTable {
 
 .dataTables_wrapper .dataTables_paginate ul li:first-child a {
     border-top-left-radius: .25rem;
-    border-bottom-left-radius: .25rem;  
+    border-bottom-left-radius: .25rem;
 }
 .dataTables_wrapper .dataTables_paginate ul li:last-child a {
     border-top-right-radius: .25rem;
-    border-bottom-right-radius: .25rem;  
+    border-bottom-right-radius: .25rem;
 }
- 
+
 .dataTables_wrapper .dataTables_paginate ul li a {
   background: none;
   color: #737C83!important;
@@ -114,7 +117,7 @@ table.dataTable {
 .dataTables_wrapper .dataTables_paginate ul li:hover a{
   background: #f4f4f4!important;
   color: #009CEE!important;
-   
+
 }
 .dataTables_wrapper .dataTables_paginate ul li.active a{
   background: none;
@@ -147,11 +150,11 @@ table.dataTable {
 table.dataTable tbody td.select-checkbox,
 table.dataTable tbody th.select-checkbox {
   position: relative;
-  font-family: "Font Awesome 5 Free"; 
-  font-weight: 900; 
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
   font-size: 20px;
 }
-table.dataTable tbody td.select-checkbox:before, 
+table.dataTable tbody td.select-checkbox:before,
 table.dataTable tbody td.select-checkbox:after,
 table.dataTable tbody th.select-checkbox:before,
 table.dataTable tbody th.select-checkbox:after {
@@ -164,7 +167,7 @@ table.dataTable tbody th.select-checkbox:before {
   top: 0 !important;
   position: sticky;
   content: "\f0c8";
-  color: white!important; 
+  color: white!important;
   border-color: black!important;
 }
 table.dataTable tr.selected td.select-checkbox:after,

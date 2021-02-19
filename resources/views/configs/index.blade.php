@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-{{ trans('global.config.title') }} 
+{{ trans('global.config.title') }}
 
 @endsection
 @section('breadcrumb')
@@ -13,11 +13,11 @@
 @if(auth()->user()->role()->id == 1)
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <a 
+            <a
                 id="add-config"
-                class="btn btn-success" 
+                class="btn btn-success"
                 href="{{ route("configs.create") }}">
-                {{ trans('global.config.create') }}    
+                {{ trans('global.config.create') }}
             </a>
         </div>
     </div>
@@ -42,7 +42,7 @@
 @parent
 <script>
 $(document).ready( function () {
-    
+
     let dtButtons = '';
     @can('config_delete')
         let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
@@ -71,8 +71,8 @@ $(document).ready( function () {
         dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
         dtButtons.push(deleteButton)
     @endcan
-    
-    
+
+
     var table = $('#configs-datatable').DataTable({
         ajax: "{{ url('configs/list') }}",
         columns: [
@@ -92,9 +92,16 @@ $(document).ready( function () {
                 targets: - 1
             }
         ],
+        bStateSave: true,
+        fnStateSave: function (oSettings, oData) {
+            localStorage.setItem( 'DataTables', JSON.stringify(oData) );
+        },
+        fnStateLoad: function (oSettings) {
+            return JSON.parse( localStorage.getItem('DataTables') );
+        },
         buttons: dtButtons
     });
-    
+
  });
 </script>
 

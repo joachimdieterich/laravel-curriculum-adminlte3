@@ -254,6 +254,13 @@ $( function () {
                  { data: 'email' },
                  { data: 'action' }
                 ],
+        bStateSave: true,
+        fnStateSave: function (oSettings, oData) {
+            localStorage.setItem( 'DataTables', JSON.stringify(oData) );
+        },
+        fnStateLoad: function (oSettings) {
+            return JSON.parse( localStorage.getItem('DataTables') );
+        },
         buttons: dtButtons
     });
 

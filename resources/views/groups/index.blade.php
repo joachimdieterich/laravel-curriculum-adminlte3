@@ -12,7 +12,7 @@
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
             <a id="add-group"
-               class="btn btn-success" 
+               class="btn btn-success"
                href="{{ route("groups.create") }}" >
                {{ trans('global.group.create') }}
             </a>
@@ -32,7 +32,7 @@
         </tr>
     </thead>
 </table>
- 
+
 <hr>
 
 <div class="row ">
@@ -40,33 +40,33 @@
         <div class="form-horizontal col-xs-12">
             @include ('forms.input.info', ["value" => trans('global.enrol_info')])
 
-            @include ('forms.input.select', 
-                ["model" => "curriculum", 
+            @include ('forms.input.select',
+                ["model" => "curriculum",
                 "show_label" => true,
                 "multiple" => true,
-                "field" => "group_curricula",  
-                "options"=> $curricula, 
-                "option_label" => "title",    
-                "value" =>  old('group_id', isset($user->current_group_id) ? $user->current_group_id : '')])     
+                "field" => "group_curricula",
+                "options"=> $curricula,
+                "option_label" => "title",
+                "value" =>  old('group_id', isset($user->current_group_id) ? $user->current_group_id : '')])
 
-            <div class="btn-group pull-right" role="group" aria-label="...">    
-                @include ('forms.input.button', 
-                    ["onclick" => "enroleToCurricula()", 
-                    "field" => "enroleToCurricula", 
-                    "type" => "button", "class" => 
-                    "btn btn-default pull-right mt-3", 
-                    "icon" => "fa fa-plus", 
+            <div class="btn-group pull-right" role="group" aria-label="...">
+                @include ('forms.input.button',
+                    ["onclick" => "enroleToCurricula()",
+                    "field" => "enroleToCurricula",
+                    "type" => "button", "class" =>
+                    "btn btn-default pull-right mt-3",
+                    "icon" => "fa fa-plus",
                     "label" => "In Lehrplan einschreiben"])
-                @include ('forms.input.button', 
-                    ["onclick" => "expelFromCurricula()", 
-                    "field" => "expelFromCurricula", 
-                    "type" => "button", 
-                    "class" => "btn btn-default pull-right mt-3", 
-                    "icon" => "fa fa-minus", 
+                @include ('forms.input.button',
+                    ["onclick" => "expelFromCurricula()",
+                    "field" => "expelFromCurricula",
+                    "type" => "button",
+                    "class" => "btn btn-default pull-right mt-3",
+                    "icon" => "fa fa-minus",
                     "label" => "Aus Lehrplan ausschreiben"])
             </div>
         </div>
-    </div><!-- ./col-xs-12 -->  
+    </div><!-- ./col-xs-12 -->
 </div>
 
 @endsection
@@ -85,14 +85,15 @@ $(document).ready( function () {
             sendRequest('POST', config.url, ids, { ids: ids, _method: 'DELETE' });
         }
     }
+
     let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
     @can('group_delete')
         dtButtons.push(deleteButton)
     @endcan
-    
+
     var table = $('#groups-datatable').DataTable({
         ajax: "{{ url('groups/list') }}",
-        columns: 
+        columns:
             [
                  { data: 'check'},
                  { data: 'title' },
@@ -101,14 +102,23 @@ $(document).ready( function () {
                  { data: 'organization' },
                  { data: 'action' }
             ],
-        buttons: dtButtons
+            bStateSave: true,
+            fnStateSave: function (oSettings, oData) {
+                localStorage.setItem( 'DataTables', JSON.stringify(oData) );
+            },
+            fnStateLoad: function (oSettings) {
+                return JSON.parse( localStorage.getItem('DataTables') );
+            },
+
+        buttons: dtButtons,
+
     });
- });
- 
+});
+
 function enroleToCurricula(){
     var ids = getDatatablesIds('#groups-datatable');
     sendRequest('POST', '/curricula/enrol', ids, { enrollment_list: generateProcessList(ids), _method: 'POST'});
-    
+
 }
 
 function expelFromCurricula(){
@@ -122,7 +132,7 @@ function getDatatablesIds(selector){
 
 function generateProcessList(ids){
     var processList = [];
-    for (i = 0; i < ids.length; i++) { 
+    for (i = 0; i < ids.length; i++) {
         processList.push({
             group_id: ids[i],
             curriculum_id: $('#group_curricula').val(),
@@ -130,7 +140,7 @@ function generateProcessList(ids){
     }
     return processList;
 }
-  
+
 function sendRequest(method, url, ids, data){
     if (ids.length === 0) {
         alert('{{ trans('global.datatables.zero_selected') }}')
@@ -145,7 +155,7 @@ function sendRequest(method, url, ids, data){
         })
         .done(function () { location.reload() })
     }
-}  
+}
 </script>
 
 

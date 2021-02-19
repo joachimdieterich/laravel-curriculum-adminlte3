@@ -11,7 +11,7 @@
 @can('grade_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <a id="add-grade" 
+            <a id="add-grade"
                 class="btn btn-success" href="{{ route("grades.create") }}">
                 {{ trans('global.grade.create') }}
             </a>
@@ -86,6 +86,13 @@
                 targets: - 1
             }
         ],
+        bStateSave: true,
+        fnStateSave: function (oSettings, oData) {
+            localStorage.setItem( 'DataTables', JSON.stringify(oData) );
+        },
+        fnStateLoad: function (oSettings) {
+            return JSON.parse( localStorage.getItem('DataTables') );
+        },
         buttons: dtButtons
     });
     table.on( 'select', function ( e, dt, type, indexes ) { //on select event

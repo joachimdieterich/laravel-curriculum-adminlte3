@@ -17,7 +17,7 @@
         </div>
     </div>
 @endcan
-<table id="users-datatable" 
+<table id="users-datatable"
        class="table table-hover datatable">
     <thead>
         <tr>
@@ -25,7 +25,7 @@
             <th>{{ trans('global.permission.fields.title') }}</th>
             <th></th>
         </tr>
-    </thead>     
+    </thead>
 </table>
 @endsection
 @section('scripts')
@@ -48,6 +48,13 @@
                     targets: - 1
                 }
             ],
+            bStateSave: true,
+            fnStateSave: function (oSettings, oData) {
+                localStorage.setItem( 'DataTables', JSON.stringify(oData) );
+            },
+            fnStateLoad: function (oSettings) {
+                return JSON.parse( localStorage.getItem('DataTables') );
+            },
             buttons: dtButtons
     });
     table.on( 'select', function ( e, dt, type, indexes ) { //on select event

@@ -11,11 +11,11 @@
 @can('organization_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <a 
+            <a
                 id="add-organization"
-                class="btn btn-success" 
+                class="btn btn-success"
                 href="{{ route("organizations.create") }}">
-                {{ trans('global.organization.create') }}    
+                {{ trans('global.organization.create') }}
             </a>
         </div>
     </div>
@@ -42,7 +42,7 @@
 @parent
 <script>
 $(document).ready( function () {
-    
+
     let dtButtons = '';
     @can('organization_delete')
         let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
@@ -71,8 +71,8 @@ $(document).ready( function () {
         dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
         dtButtons.push(deleteButton)
     @endcan
-    
-    
+
+
     var table = $('#organizations-datatable').DataTable({
         ajax: "{{ url('organizations/list') }}",
         columns: [
@@ -92,6 +92,13 @@ $(document).ready( function () {
                 targets: - 1
             }
         ],
+        bStateSave: true,
+        fnStateSave: function (oSettings, oData) {
+            localStorage.setItem( 'DataTables', JSON.stringify(oData) );
+        },
+        fnStateLoad: function (oSettings) {
+            return JSON.parse( localStorage.getItem('DataTables') );
+        },
         buttons: dtButtons
     });
     table.on( 'select', function ( e, dt, type, indexes ) { //on select event

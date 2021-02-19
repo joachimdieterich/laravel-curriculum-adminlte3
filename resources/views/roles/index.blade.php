@@ -33,7 +33,7 @@
 <script>
 $(document).ready( function () {
     let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons);
-    
+
     var table = $('#roles-datatable').DataTable({
         ajax: "{{ url('roles/list') }}",
         columns: [
@@ -49,6 +49,13 @@ $(document).ready( function () {
                 targets: - 1
             }
         ],
+        bStateSave: true,
+        fnStateSave: function (oSettings, oData) {
+            localStorage.setItem( 'DataTables', JSON.stringify(oData) );
+        },
+        fnStateLoad: function (oSettings) {
+            return JSON.parse( localStorage.getItem('DataTables') );
+        },
         buttons: dtButtons
     });
     table.on( 'select', function ( e, dt, type, indexes ) { //on select event

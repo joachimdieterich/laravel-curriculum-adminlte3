@@ -11,11 +11,11 @@
 @can('contactdetail_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <a 
+            <a
                 id="add-contactdetail"
-                class="btn btn-success" 
+                class="btn btn-success"
                 href="{{ route("contactdetails.create") }}">
-                {{ trans('global.contactdetail.create') }}    
+                {{ trans('global.contactdetail.create') }}
             </a>
         </div>
     </div>
@@ -35,7 +35,7 @@
 @parent
 <script>
 $(document).ready( function () {
-    
+
     let dtButtons = '';
     var table = $('#contactdetails-datatable').DataTable({
         ajax: "{{ url('contactdetails/list') }}",
@@ -52,6 +52,13 @@ $(document).ready( function () {
                 targets: - 1
             }
         ],
+        bStateSave: true,
+        fnStateSave: function (oSettings, oData) {
+            localStorage.setItem( 'DataTables', JSON.stringify(oData) );
+        },
+        fnStateLoad: function (oSettings) {
+            return JSON.parse( localStorage.getItem('DataTables') );
+        },
         buttons: dtButtons
     });
     table.on( 'select', function ( e, dt, type, indexes ) { //on select event

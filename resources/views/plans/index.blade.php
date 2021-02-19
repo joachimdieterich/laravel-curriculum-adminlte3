@@ -11,11 +11,11 @@
 @can('plan_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <a 
+            <a
                 id="add-plan"
-                class="btn btn-success" 
+                class="btn btn-success"
                 href="{{ route("plans.create") }}">
-                {{ trans('global.plan.create') }}    
+                {{ trans('global.plan.create') }}
             </a>
         </div>
     </div>
@@ -35,7 +35,7 @@
 @parent
 <script>
 $(document).ready( function () {
-    
+
     let dtButtons = '';
     var table = $('#plans-datatable').DataTable({
         ajax: "{{ url('plans/list') }}",
@@ -52,6 +52,13 @@ $(document).ready( function () {
                 targets: - 1
             }
         ],
+        bStateSave: true,
+        fnStateSave: function (oSettings, oData) {
+            localStorage.setItem( 'DataTables', JSON.stringify(oData) );
+        },
+        fnStateLoad: function (oSettings) {
+            return JSON.parse( localStorage.getItem('DataTables') );
+        },
         buttons: dtButtons
     });
     table.on( 'select', function ( e, dt, type, indexes ) { //on select event

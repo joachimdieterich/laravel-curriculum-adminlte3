@@ -11,8 +11,8 @@
 @can('user_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <a id="add-navigator" 
-               class="btn btn-success" 
+            <a id="add-navigator"
+               class="btn btn-success"
                href="{{ route("navigators.create") }}" >
                {{ trans('global.navigator.create') }}
             </a>
@@ -45,6 +45,13 @@ $(document).ready( function () {
                  { data: 'organization' },
                  { data: 'action' }
                 ],
+        bStateSave: true,
+        fnStateSave: function (oSettings, oData) {
+            localStorage.setItem( 'DataTables', JSON.stringify(oData) );
+        },
+        fnStateLoad: function (oSettings) {
+            return JSON.parse( localStorage.getItem('DataTables') );
+        },
         buttons: dtButtons
     });
     table.on( 'select', function ( e, dt, type, indexes ) { //on select event

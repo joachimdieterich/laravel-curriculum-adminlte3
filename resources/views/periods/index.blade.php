@@ -12,7 +12,7 @@
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
             <a id="add-period"
-               class="btn btn-success" 
+               class="btn btn-success"
                href="{{ route("periods.create") }}" >
                {{ trans('global.period.create') }}
             </a>
@@ -37,9 +37,9 @@
 <script>
 $(document).ready( function () {
     let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
-    
+
     let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-    
+
     var table = $('#periods-datatable').DataTable({
         ajax: "{{ url('periods/list') }}",
         columns: [
@@ -57,20 +57,27 @@ $(document).ready( function () {
                 targets: - 1
             }
         ],
+        bStateSave: true,
+        fnStateSave: function (oSettings, oData) {
+            localStorage.setItem( 'DataTables', JSON.stringify(oData) );
+        },
+        fnStateLoad: function (oSettings) {
+            return JSON.parse( localStorage.getItem('DataTables') );
+        },
         buttons: dtButtons
     });
      table.on( 'select', function ( e, dt, type, indexes ) { //on select event
         window.location.href = "/periods/" + table.row({ selected: true }).data().id ;
     });
  });
- 
+
 function getDatatablesIds(selector){
     return $(selector).DataTable().rows({ selected: true }).ids().toArray();
 }
 
 function generateProcessList(ids){
     var processList = [];
-    for (i = 0; i < ids.length; i++) { 
+    for (i = 0; i < ids.length; i++) {
         processList.push({
             period_id: ids[i],
             curriculum_id: $('#period_curricula').val(),
@@ -78,7 +85,7 @@ function generateProcessList(ids){
     }
     return processList;
 }
-  
+
 function sendRequest(method, url, ids, data){
     if (ids.length === 0) {
         alert('{{ trans('global.datatables.zero_selected') }}')
@@ -93,6 +100,6 @@ function sendRequest(method, url, ids, data){
         })
         .done(function () { location.reload() })
     }
-}  
+}
 </script>
 @endsection

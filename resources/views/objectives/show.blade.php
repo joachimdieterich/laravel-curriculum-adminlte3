@@ -11,7 +11,7 @@
             <a href="/">{{ trans('global.home') }}</a>
         @endif
     </li>
-    <li class="breadcrumb-item "><a href="/curricula/{{ $objective->curriculum_id}}">{{ trans('global.curriculum.title_singular') }}</a></li>
+    <li class="breadcrumb-item "><a href="/curricula/{{ $objective->curriculum_id}}">{{ Str::limit($objective->curriculum->title, 10) }}</a></li>
     <li class="breadcrumb-item active">{{ trans('global.details') }}</li>
     <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection

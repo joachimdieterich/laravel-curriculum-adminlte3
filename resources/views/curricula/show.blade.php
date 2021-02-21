@@ -13,10 +13,10 @@
     </li>
     @if(isset($course))
         @can('achievement_access')
-            <li class="breadcrumb-item "><a href="/curricula/{{ $course->curriculum_id }}">{{ trans('global.curriculum.title_singular') }}</a></li>
+            <li class="breadcrumb-item "><a href="/curricula/{{ $course->curriculum_id }}">{{ Str::limit($curriculum->title, 10) }}</a></li>
         @endcan
     @else
-        <li class="breadcrumb-item "><a href="/curricula/{{$curriculum->id}}">{{ trans('global.curriculum.title_singular') }}</a></li>
+        <li class="breadcrumb-item "><a href="/curricula/{{$curriculum->id}}">{{ Str::limit($curriculum->title, 10) }}</a></li>
     @endif
     <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection

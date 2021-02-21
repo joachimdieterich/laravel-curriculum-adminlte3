@@ -2,7 +2,8 @@
     <div>
         <ul class="nav nav-pills"
             id="terminalObjectivesTopNav">
-            <li v-for="typetab in typetabs" class="nav-item pl-0 pr-2 pb-2 pt-2">
+            <li v-for="typetab in typetabs"
+                class="nav-item pl-0 pr-2 pb-2 pt-2">
                 <a class="nav-link " :href="'#tab_' + typetab"
                    :class="(activetab == typetab) ? 'active' : ''"
                    @click="setActiveTab(typetab)"

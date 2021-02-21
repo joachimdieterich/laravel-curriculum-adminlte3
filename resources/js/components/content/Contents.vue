@@ -1,6 +1,8 @@
 <template >
-<div class="card">
-    <div class="card-header px-3">
+<div class="card"
+     style="border: 0 !important">
+    <div class="card-header px-3"
+    >
         <h3 class="card-title"
             v-if="subscriptions.length !== 0">
             <span data-target="#contentCarousel"
@@ -15,8 +17,8 @@
             </span>
         </h3>
         <h3 v-else class="card-title">
-            <span
-                  class="pl-2">{{ trans('global.content.no_content') }}
+            <span class="pl-2">
+                {{ trans('global.content.no_content') }}
             </span>
         </h3>
         <div class="card-tools">

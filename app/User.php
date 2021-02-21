@@ -173,7 +173,7 @@ class User extends Authenticatable
     public function currentGroupEnrolments()
     {
         return $this->belongsToMany('App\Group', 'group_user')
-            ->select('groups.*', 'curriculum_group.id AS course_id')
+            ->select('groups.*', 'curriculum_group.id AS course_id', 'curriculum_group.curriculum_id')
             ->leftjoin('curriculum_group', 'curriculum_group.group_id', '=', 'groups.id')
             ->where('period_id', $this->current_period_id)
             ->where('organization_id', $this->current_organization_id)

@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class TerminalObjective extends Model
 {
-    protected $fillable = [ 'title', 
+    protected $fillable = [ 'title',
                             'description',
-                            'order_id', 
-                            'color', 
+                            'order_id',
+                            'color',
                             'time_approach',
                             'curriculum_id',
                             'objective_type_id',
@@ -23,22 +23,22 @@ class TerminalObjective extends Model
     public function path(){
         return "/curricula/{$this->curriculum_id}";
     }
-    
+
     public function type()
     {
-        return $this->belongsTo('App\ObjectiveType', 'id', 'objective_type_id');
+        return $this->belongsTo('App\ObjectiveType', 'objective_type_id', 'id');
     }
-    
+
     public function enablingObjectives()
     {
         return $this->hasMany('App\EnablingObjective', 'terminal_objective_id', 'id')->orderBy('order_id');
     }
-    
+
     public function contentSubscriptions()
     {
         return $this->morphMany('App\ContentSubscription', 'subscribable');
     }
-    
+
     public function contents()
     {
         return $this->hasManyThrough(
@@ -48,19 +48,19 @@ class TerminalObjective extends Model
             'id', // Foreign key on content table...
             'id', // Local key on terminal objectives table...
             'content_id' // Local key on content_subscription table...
-        )->where('subscribable_type', get_class($this)); 
+        )->where('subscribable_type', get_class($this));
     }
-    
+
     public function curriculum()
     {
         return $this->belongsTo('\App\Curriculum', 'curriculum_id', 'id');
     }
-    
+
     public function mediaSubscriptions()
     {
         return $this->morphMany('App\MediumSubscription', 'subscribable');
     }
-    
+
     public function media()
     {
         return $this->hasManyThrough(
@@ -70,9 +70,9 @@ class TerminalObjective extends Model
             'id', // Foreign key on medium table...
             'id', // Local key on terminal objectives table...
             'medium_id' // Local key on medium_subscription table...
-        )->where('subscribable_type', get_class($this)); 
+        )->where('subscribable_type', get_class($this));
     }
-    
+
     public function references()
     {
         return $this->hasManyThrough(
@@ -82,37 +82,37 @@ class TerminalObjective extends Model
             'id', // Foreign key on reference table...
             'id', // Local key on terminal_objectives table...
             'reference_id' // Local key on reference_subscription table...
-        )->where('referenceable_type', get_class($this)); 
+        )->where('referenceable_type', get_class($this));
     }
-    
+
     public function referenceSubscriptions()
     {
         return $this->morphMany('App\ReferenceSubscription', 'referenceable');
     }
-    
+
     public function repositorySubscriptions()
     {
         return $this->morphMany('App\RepositorySubscription', 'subscribable');
     }
-    
+
     public function subscriptions()
     {
         return $this->hasMany(TerminalObjectiveSubscriptions::class);
     }
-    
+
     public function quoteSubscriptions()
     {
         return $this->morphMany('App\QuoteSubscription', 'quotable');
     }
-    
+
     public function achievements()
     {
         return $this->morphMany('App\Achievement', 'referenceable');
     }
-    
+
     public function progresses()
     {
         return $this->morphMany('App\Progress', 'referenceable');
     }
-    
+
 }

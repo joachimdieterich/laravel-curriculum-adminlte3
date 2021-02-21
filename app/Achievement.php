@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 class Achievement extends Model
 {
     protected $guarded = [''];
-    
+
     protected $cast = ['status' => 'string']; //important to get id as unique string
     //public $incrementing = false;
 //    protected function setKeysForSaveQuery(Builder $query)
@@ -17,5 +17,15 @@ class Achievement extends Model
 //            ->where('referenceable_id', '=', $this->referenceable_id);
 //        return $query;
 //    }
-    
+
+    public function user()
+    {
+        return $this->hasOne('App\User', 'id', 'user_id');
+    }
+
+    public function owner()
+    {
+        return $this->hasOne('App\User', 'id', 'owner_id');
+    }
+
 }

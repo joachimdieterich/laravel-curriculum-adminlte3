@@ -202,6 +202,7 @@ return [
         ],
     ],
     'name'                                 => 'Name',
+    'teacher'                              => 'Lehrkraft/Dozent',
     'remember_token'                       => 'Remember token',
     'permissions'                          => 'Berechtigungen',
     'user_actions'                         => 'Benutzeraktionen',

@@ -202,6 +202,7 @@ return [
         ],
     ],
     'name'                                 => 'Name',
+    'teacher'                              => 'Teacher',
     'remember_token'                       => 'Remember token',
     'permissions'                          => 'Permissions',
     'user_actions'                         => 'User actions',

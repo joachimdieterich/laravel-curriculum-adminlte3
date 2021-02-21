@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 
 use App\Config;
 use App\EnablingObjective;
+use App\Group;
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreEnablingObjectiveRequest;
 use App\Http\Requests\UpdateEnablingObjectiveRequest;
@@ -63,7 +65,7 @@ class EnablingObjectiveController extends Controller
     {
 
         $objective = EnablingObjective::where('id', $enablingObjective->id)
-            ->with(['curriculum', 'curriculum.subject',
+            ->with(['curriculum', 'curriculum.subject', 'terminalObjective.type',
                     'referenceSubscriptions.siblings.referenceable', 'quoteSubscriptions.siblings.quotable'])
             ->get()->first();
 
@@ -281,6 +283,53 @@ class EnablingObjectiveController extends Controller
             return '/curricula/'.$old_objective->curriculum_id;
         }
 
+    }
+
+    /**
+     * Display the specified resource with achievements.
+     *
+     * @param  \App\EnablingObjective  $enablingObjective
+     * @return array
+     */
+    public function showAchievements(EnablingObjective $enablingObjective, $group = null)
+    {
+
+        if ($group == 'null')
+        {
+            $user_ids =  [ auth()->user()->id ];
+        }
+        else
+        {
+            $user_ids = Group::find($group)->users()->get()->pluck('id');
+        }
+
+        $result = ['objective' => EnablingObjective::with(
+                    ['achievements' => function($query) use ($user_ids)
+                        {
+                            $query->whereIn('user_id', $user_ids)->with(['owner', 'user']);
+                        }
+                    ])->find($enablingObjective->id),
+                    'users' => User::select([
+                            'users.id',
+                            'firstname',
+                            'lastname',
+                        ])
+                        ->join('group_user', 'users.id', '=', 'group_user.user_id')
+                        ->join('organization_role_users', 'organization_role_users.user_id', '=', 'group_user.user_id')
+                        ->where('group_user.group_id', '=', $group)
+                        ->where('organization_role_users.organization_id', '=', auth()->user()->current_organization_id)
+                        ->where('organization_role_users.role_id', '=', 6)
+                        ->get(),
+                    'groups' => auth()->user()->currentGroupEnrolments()->where('curriculum_id', $enablingObjective->curriculum_id)->get()
+        ];
+
+
+
+        if (request()->wantsJson())
+        {
+
+            return $result;
+        }
     }
 
 

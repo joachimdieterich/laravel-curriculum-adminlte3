@@ -10,9 +10,11 @@
                id="sidebar_media_datatable"
                class="table table-hover datatable">
             <thead>
-            <tr>
-                <th class="px-2 card-tools">
-                    {{ trans('global.media.fields.title') }}
+            <tr style="border-top: 0 !important">
+                <th class="px-2 card-tools"
+                    style="border-top: 0 !important"
+                    >
+                    <span v-if="subscriptions.length !== 0">{{ trans('global.media.fields.title') }}</span>
                     <span
                         v-can="'medium_create'"
                         class="float-right"
@@ -22,12 +24,12 @@
                 </th>
             </tr>
             </thead>
-            <tr v-if="subscriptions.length === 0">
-                <td style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 100px;"
+            <tr >
+                <!--<td style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 100px;"
                     class="link-muted text-sm px-2 ">
                     {{ trans('global.media.no_media') }}
 
-                </td>
+                </td>-->
             </tr>
             <tr v-for="subscription in subscriptions">
                 <!--<td> <img v-if="subsciption.medium.mime_type =='JPG'"

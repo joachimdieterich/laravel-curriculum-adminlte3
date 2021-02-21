@@ -34,7 +34,11 @@
         props: {
                 objective: {},
                 type:{},
-                settings:{}
+                settings:{},
+                users:{
+                    type: Array,
+                    default: () => []
+                }
             },
          data () {
             return {
@@ -56,10 +60,14 @@
         methods: {
 
             async achieve(status){
+                var selected = this.users;
+                if (selected.length === 0){
+                    selected = ($('#users-datatable').DataTable().rows({ selected: true }).ids().toArray())
+                }
                 let archievement = {
                     'referenceable_type': (this.type === 'terminal' ? 'App\\TerminalObjective' : 'App\\EnablingObjective'),
                     'referenceable_id': this.objective.id,
-                    'user_id': ($('#users-datatable').DataTable().rows({ selected: true }).ids().toArray()),
+                    'user_id': selected,
                     'status': status
                 }
                 try {
@@ -73,7 +81,7 @@
                 var status = "far fa-circle";
 
                 if (this.status.charAt(0) === number &&
-                           this.status.charAt(1) === number){
+                    this.status.charAt(1) === number){
                     status = "fa fa-check-circle";
                 } else if (this.status.charAt(0) === number){
                     status = "fa fa-circle";
@@ -153,6 +161,7 @@
         watch: {
             objective: function (val, oldVal) {
                 if (typeof this.objective.achievements[0] === 'object'){
+                    //console.log(val.achievements[0].status);
                     this.status = val.achievements[0].status;
                 } else {
                     this.status = '00';

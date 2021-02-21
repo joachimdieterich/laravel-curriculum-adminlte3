@@ -1,6 +1,7 @@
 <template>
     <div>
-        <div class="card collapsed-card mb-2" v-for="curriculum in curricula_list">
+        <div class="card collapsed-card mb-2 pointer"
+             v-for="curriculum in curricula_list">
             <div class="card-header">
                 <h3 class="card-title"
                     data-card-widget="collapse"

@@ -6,11 +6,11 @@
                 <div class="card-header">
                     <i class="fa fa-bullseye"></i>
                     <span v-if="type === 'enabling'">{{ trans('global.enablingObjective.title_singular') }}</span>
-                    <span v-else>{{ trans('global.terminalObjective.title_singular') }}</span>
+                    <span v-else> {{ trans('global.terminalObjective.title_singular') }}</span>
 
                     <div v-can="'task_edit'" class="card-tools pr-2">
                         <a @click.prevent="editObjective()" >
-                            <i class="far fa-edit"></i>
+                            <i class="fa fa-pencil-alt"></i>
                         </a>
                     </div>
                 </div>
@@ -36,7 +36,7 @@
                        href="#description"
                        data-toggle="tab">
                         <i class="fa fa-info pr-1"></i>
-                        {{ trans('global.description') }}
+                        <span v-if="help">{{ trans('global.description') }}</span>
                     </a>
                 </li>
 
@@ -46,10 +46,10 @@
                        data-toggle="tab">
                         <i class="fa fa-sitemap pr-1"></i>
                         <span v-if="type === 'terminal'" >
-                            {{ trans('global.subordinate_element_singular') }}
+                            <span v-if="help">{{ trans('global.subordinate_element') }}</span>
                         </span>
                         <span v-else >
-                            {{ trans('global.superordinate_element_singular') }}
+                            <span v-if="help">{{ trans('global.superordinate_element_singular') }}</span>
                         </span>
                     </a>
                 </li>
@@ -61,9 +61,9 @@
                        role="tab"
                        aria-controls="content-tab"
                        aria-selected="true"
-                       @click="loaderEvent()"
-                    >
-                        <i class="fa fa-align-justify pr-2"></i>{{trans('global.content.index_alt')}}
+                       @click="loaderEvent()">
+                        <i class="fa fa-align-justify pr-2"></i>
+                        <span v-if="help">{{trans('global.content.index_alt')}}</span>
                     </a>
                 </li>
 
@@ -71,7 +71,8 @@
                     <a class="nav-link small link-muted"
                        href="#tab_media"
                        data-toggle="tab">
-                        <i class="fa fa-folder-open pr-2"></i>{{trans('global.media.title')}}
+                        <i class="fa fa-folder-open pr-2"></i>
+                        <span v-if="help">{{trans('global.media.title')}}</span>
                     </a>
                 </li>
 
@@ -80,7 +81,19 @@
                        href="#references"
                        data-toggle="tab">
                         <i class="fa fa-project-diagram pr-1"></i>
-                        {{trans('global.referenceable_types.objective')}}
+                        <span v-if="help">{{trans('global.referenceable_types.objective')}}</span>
+                    </a>
+                </li>
+
+                <li v-can="'achievement_access'"
+                    v-if="this.type === 'enabling'"
+                    class="nav-item">
+                    <a class="nav-link small link-muted"
+                       href="#achievements"
+                       data-toggle="tab"
+                       @click="loadAchievements()">
+                        <i class="far fa-check-circle pr-1"></i>
+                        <span v-if="help">{{trans('global.objective_tab')}}</span>
                     </a>
                 </li>
 
@@ -89,11 +102,15 @@
                        href="#events"
                        data-toggle="tab">
                         <i class="fa fa-user-graduate pr-1"></i>
-                        {{trans('global.eventSubscription.title_alt')}}
+                        <span v-if="help">{{trans('global.eventSubscription.title_alt')}}</span>
                     </a>
                 </li>
-
-
+               <!-- <li class="nav-item pull-right">
+                    <a class="nav-link small link-muted"
+                       @click="help = !help">
+                        <i class="fa fa-question pr-1"></i>
+                    </a>
+                </li>-->
             </ul>
 
             <div class="tab-content ">
@@ -148,30 +165,10 @@
                                 class="tab-pane active show"
                                 id="sub_medium"
                                 name="sub_medium">
-                                 <div class="col-12 px-0">
-                                     <span v-if="type === 'enabling'">
-                                         <media
-                                             subscribable_type="App\EnablingObjective"
-                                             :subscribable_id="objective.id"
-                                             format="list">
-                                         </media>
-                                     </span>
-                                     <span v-if="type === 'terminal'">
-                                         <media
-                                             subscribable_type="App\TerminalObjective"
-                                             :subscribable_id="objective.id"
-                                             format="list">
-                                         </media>
-                                     </span>
-
-                                     <div class="row">
-                                        <repository
-                                            v-if="repository"
-                                            :repository="repository"
-                                            ref="repositoryPlugin"
-                                            :model="objective"></repository>
-                                     </div>
-                                 </div>
+                                 <objectiveMedia
+                                     :objective="objective"
+                                     :repository="repository"
+                                     :type="type"/>
                             </div>
                         </div>
                     </div>
@@ -198,6 +195,18 @@
                     ></quotes>
                 </div>
 
+                <div v-can="'achievement_access'"
+                    class="tab-pane pt-2 box"
+                     id="achievements">
+                    <Achievements
+                        v-if="this.type === 'enabling'"
+                        ref="Achievements"
+                        :objective="objective"
+                        :type="type"
+                        :settings="setting">
+                    </Achievements>
+                </div>
+
                 <div class="tab-pane pt-2"
                     id="events">
                     <eventmanagement ref="eventPlugin"
@@ -213,10 +222,10 @@
     import References from '../reference/References';
     import Quotes from '../quote/Quotes';
     import Contents from '../content/Contents';
-    import Repository from '../../../../app/Plugins/Repositories/resources/js/components/Media';
     import Eventmanagement from '../../../../app/Plugins/Eventmanagement/resources/js/components/Events';
     import ObjectiveBox from './ObjectiveBox'
-    import Media from '../media/Media';
+    import Achievements from './Achievements'
+    import ObjectiveMedia from "./ObjectiveMedia";
 
     export default {
         props: {
@@ -232,6 +241,7 @@
                 quote_subscriptions: [],
                 quote_curricula_list: [],
                 categories: [],
+                help: true,
                 setting: {
                     'last': null
                 },
@@ -239,6 +249,7 @@
             }
         },
         methods: {
+
             editObjective() {
                 this.$modal.show(this.type+'-objective-modal', {'objective': this.objective, 'method': 'PATCH' });
             },
@@ -254,12 +265,15 @@
                 }
 
             },
-            loadExternal: function() {
-                    this.$refs.repositoryPlugin.loader();
+           /* loadExternal: function() {
+                this.$refs.repositoryPlugin.loader();
                     //this.$refs.eventPlugin.loader();
-             },
+             },*/
             loaderEvent: function() {
                 this.$refs.Contents.loaderEvent();
+            },
+            loadAchievements() {
+                this.$refs.Achievements.loaderEvent();
             }
 
         },
@@ -289,7 +303,7 @@
                 //this.errors = response.data.errors;
             });
 
-            this.loadExternal();
+            /*this.loadExternal();*/
         },
         computed: {
             scr: function () {
@@ -297,13 +311,13 @@
             },
         },
         components: {
-            Media,
+            ObjectiveMedia,
             References,
             Quotes,
-            Repository,
             ObjectiveBox,
             Eventmanagement,
             Contents,
+            Achievements
         }
 
     }

@@ -25,7 +25,7 @@
 
 
 <script>
-    import AchievementIndicator from './AchievementIndicator'
+    import AchievementIndicator from './AchievementIndicator';
     export default {
         props: {
                 objective: {},

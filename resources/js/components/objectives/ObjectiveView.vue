@@ -219,7 +219,8 @@
                 </div>
 
                 <div class="tab-pane pt-2"
-                     id="prerequisites">
+                     id="prerequisites"
+                     v-can="'prerequisite_access'">
                     <div class="card-tools"
                          v-can="'prerequisite_create'">
                         <button

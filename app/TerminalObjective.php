@@ -115,4 +115,14 @@ class TerminalObjective extends Model
         return $this->morphMany('App\Progress', 'referenceable');
     }
 
+    public function predecessors()
+    {
+        return $this->morphMany('App\Prerequisites', 'successor');
+    }
+
+    public function successors()
+    {
+        return $this->morphMany('App\Prerequisites', 'predecessor');
+    }
+
 }

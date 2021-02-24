@@ -166,4 +166,14 @@ class Curriculum extends Model
     {
         return $this->morphOne('App\NavigatorItem', 'referenceable');
     }
+
+    public function predecessors()
+    {
+        return $this->morphMany('App\Prerequisites', 'successor');
+    }
+
+    public function successors()
+    {
+        return $this->morphMany('App\Prerequisites', 'predecessor');
+    }
 }

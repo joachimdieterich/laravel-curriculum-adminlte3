@@ -991,7 +991,6 @@ return [
             'end_helper'   => '',
             'duration'          => 'Duration',
             'duration_helper'   => 'Specify how much time (in minutes) should be scheduled to complete the learning/work schedule.',
-
        ],
     ],
     'planItem' =>[
@@ -1080,5 +1079,12 @@ return [
             'kanban_id'      => 'Kanban ID',
             'kanban_helper'  => '',
        ],
+    ],
+    'prerequisite' =>[
+        'title'             => 'Prerequisites',
+        'title_singular'    => 'Prerequisite',
+        'create'            => 'Link prerequisite',
+        'edit'              => 'Edit prerequisite-link',
+        'delete'            => 'Delete prerequisite-link',
     ],
 ];

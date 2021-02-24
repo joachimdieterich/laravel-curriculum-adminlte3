@@ -32,6 +32,7 @@
         "@fortawesome/fontawesome-free": "^5.15.1",
         "admin-lte": "^3.0.5",
         "babel-loader": "^8.2.2",
+        "d3-mitch-tree": "^1.1.2",
         "datatables.net": "^1.10.22",
         "datatables.net-bs4": "^1.10.22",
         "form-backend-validation": "^2.4.0",

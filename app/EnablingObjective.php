@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class EnablingObjective extends Model
 {
-    protected $fillable = [ 'title', 
+    protected $fillable = [ 'title',
                             'description',
-                            'order_id', 
+                            'order_id',
                             'time_approach',
                             'curriculum_id',
                             'terminal_objective_id',
@@ -21,21 +21,21 @@ class EnablingObjective extends Model
     ];
 
     protected $with = ['terminalObjective', 'level'];
-    
+
     public function path(){
         return "/curricula/{$this->curriculum_id}";
     }
-    
+
     public function type()
     {
         return $this->belongsTo('App\TerminalObjective', 'id', 'terminal_objective_id');
     }
-     
+
     public function terminalObjective()
     {
         return $this->belongsTo('App\TerminalObjective', 'terminal_objective_id', 'id');
     }
-    
+
     public function contents()
     {
         return $this->hasManyThrough(
@@ -45,24 +45,24 @@ class EnablingObjective extends Model
             'id', // Foreign key on content table...
             'id', // Local key on enablin objectives table...
             'content_id' // Local key on content_subscription table...
-        )->where('subscribable_type', get_class($this)); 
+        )->where('subscribable_type', get_class($this));
     }
-    
+
     public function contentSubscriptions()
     {
         return $this->morphMany('App\ContentSubscription', 'subscribable');
     }
-    
+
     public function curriculum()
     {
         return $this->belongsTo('App\Curriculum', 'curriculum_id', 'id');
     }
-    
+
     public function mediaSubscriptions()
     {
         return $this->morphMany('App\MediumSubscription', 'subscribable');
     }
-    
+
     public function media()
     {
         return $this->hasManyThrough(
@@ -72,9 +72,9 @@ class EnablingObjective extends Model
             'id', // Foreign key on medium table...
             'id', // Local key on enabling_objectives table...
             'medium_id' // Local key on medium_subscription table...
-        )->where('subscribable_type', get_class($this)); 
+        )->where('subscribable_type', get_class($this));
     }
-    
+
     public function references()
     {
         return $this->hasManyThrough(
@@ -84,24 +84,24 @@ class EnablingObjective extends Model
             'id', // Foreign key on reference table...
             'id', // Local key on enabling_objectives table...
             'reference_id' // Local key on reference_subscription table...
-        )->where('referenceable_type', get_class($this)); 
+        )->where('referenceable_type', get_class($this));
     }
-   
+
     public function referenceSubscriptions()
     {
         return $this->morphMany('App\ReferenceSubscription', 'referenceable');
     }
-    
+
     public function repositorySubscriptions()
     {
         return $this->morphMany('App\RepositorySubscription', 'subscribable');
     }
-    
+
     public function subscriptions()
     {
         return $this->hasMany(EnablingObjectiveSubscriptions::class);
     }
-    
+
     public function quoteSubscriptions()
     {
         return $this->morphMany('App\QuoteSubscription', 'quotable');
@@ -111,10 +111,20 @@ class EnablingObjective extends Model
     {
         return $this->morphMany('App\Achievement', 'referenceable');
     }
-    
-    public function level() 
+
+    public function level()
     {
         return $this->hasOne('App\Level', 'id', 'level_id');
     }
-    
+
+    public function predecessors()
+    {
+        return $this->morphMany('App\Prerequisites', 'successor');
+    }
+
+    public function successors()
+    {
+        return $this->morphMany('App\Prerequisites', 'predecessor');
+    }
+
 }

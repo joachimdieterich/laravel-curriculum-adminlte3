@@ -661,6 +661,7 @@ return [
             'id_helper'  => '',
             'title'      => 'Titel',
             'title_helper'      => '',
+            'title_short'=> 'Kurzbezeichnung',
         ],
     ],
     'enablingObjective' =>[
@@ -1077,6 +1078,13 @@ return [
             'order_id_helper'       => '',
             'kanban_id'      => 'Kanban ID',
             'kanban_helper'  => '',
-       ],
+        ],
+    ],
+    'prerequisite' =>[
+        'title'             => 'Vorwissen',
+        'title_singular'    => 'Vorwissen',
+        'create'            => 'Vorwissen verknüpfen',
+        'edit'              => 'Vorwissen (Verknüpfung) bearbeiten',
+        'delete'            => 'Vorwissen  (Verknüpfung) löschen',
     ],
 ];

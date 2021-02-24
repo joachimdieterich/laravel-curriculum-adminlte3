@@ -97,6 +97,17 @@
                     </a>
                 </li>
 
+                <li v-can="'prerequisite_access'"
+                    class="nav-item">
+                    <a class="nav-link small link-muted"
+                       href="#prerequisites"
+                       data-toggle="tab"
+                       @click="loadPrerequisites()">
+                        <i class="fa fa-puzzle-piece pr-1"></i>
+                        <span v-if="help">{{trans('global.prerequisite.title')}}</span>
+                    </a>
+                </li>
+
                 <li class="nav-item">
                     <a class="nav-link small link-muted"
                        href="#events"
@@ -176,9 +187,9 @@
                 <!--                References -->
                 <div class="tab-pane pt-2"
                      id="references">
-                    <div class="card-tools">
+                    <div class="card-tools"
+                         v-can="'objective_edit'">
                         <button
-                            v-can="'objective_edit'"
                             class="dropdown-item "
                             @click.prevent="open('reference-objective-modal')">
                             <i class="fa fa-plus pull-right"></i>
@@ -208,6 +219,24 @@
                 </div>
 
                 <div class="tab-pane pt-2"
+                     id="prerequisites">
+                    <div class="card-tools"
+                         v-can="'prerequisite_create'">
+                        <button
+                            v-can="'objective_edit'"
+                            class="dropdown-item "
+                            @click.prevent="open('prerequisite-modal')">
+                            <i class="fa fa-plus pull-right"></i>
+                        </button>
+                    </div>
+                    <prerequisites
+                        ref="Prerequisites"
+                        :successor_type="model"
+                        :successor_id="objective.id"/>
+                </div>
+
+
+                <div class="tab-pane pt-2"
                     id="events">
                     <eventmanagement ref="eventPlugin"
                          :model="objective"
@@ -226,6 +255,7 @@
     import ObjectiveBox from './ObjectiveBox'
     import Achievements from './Achievements'
     import ObjectiveMedia from "./ObjectiveMedia";
+    import Prerequisites from "../prerequisites/Prerequisites";
 
     export default {
         props: {
@@ -245,44 +275,35 @@
                 setting: {
                     'last': null
                 },
+                model: '',
                 errors: {}
             }
         },
         methods: {
-
             editObjective() {
                 this.$modal.show(this.type+'-objective-modal', {'objective': this.objective, 'method': 'PATCH' });
             },
             open(modal) {
-                var reference_class = 'App\\EnablingObjective';
-                if (this.type === 'terminal'){
-                    reference_class = 'App\\TerminalObjective';
-                }
                 if (modal == 'reference-objective-modal'){
-                    this.$modal.show(modal, {'referenceable_type': reference_class, 'referenceable_id': this.objective.id, 'requestUrl': '/referenceSubscriptions'});
+                    this.$modal.show(modal, {'referenceable_type': this.model, 'referenceable_id': this.objective.id, 'requestUrl': '/referenceSubscriptions'});
                 } else {
-                    this.$modal.show(modal, {'referenceable_type': reference_class, 'referenceable_id': this.objective.id});
+                    this.$modal.show(modal, {'referenceable_type': this.model, 'referenceable_id': this.objective.id});
                 }
-
             },
-           /* loadExternal: function() {
-                this.$refs.repositoryPlugin.loader();
-                    //this.$refs.eventPlugin.loader();
-             },*/
+
             loaderEvent: function() {
                 this.$refs.Contents.loaderEvent();
             },
             loadAchievements() {
                 this.$refs.Achievements.loaderEvent();
-            }
+            },
+            loadPrerequisites(){
+                this.$refs.Prerequisites.loaderEvent();
+            },
 
         },
         mounted() {
-            if (typeof this.objective.terminal_objective === 'object'){
-                this.type = 'enabling';
-            } else {
-                this.type = 'terminal';
-            }
+
 
             axios.get('/'+this.type+'Objectives/' + this.objective.id + '/referenceSubscriptionSiblings').then(response => {
                 if (response.data.siblings.length !== 0) {
@@ -303,7 +324,14 @@
                 //this.errors = response.data.errors;
             });
 
-            /*this.loadExternal();*/
+            if (typeof this.objective.terminal_objective === 'object'){
+                this.type = 'enabling';
+                this.model = 'App\\EnablingObjective';
+            } else {
+                this.type = 'terminal';
+                this.model = 'App\\TerminalObjective';
+            }
+
         },
         computed: {
             scr: function () {
@@ -311,6 +339,7 @@
             },
         },
         components: {
+            Prerequisites,
             ObjectiveMedia,
             References,
             Quotes,

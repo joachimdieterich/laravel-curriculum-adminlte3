@@ -71,6 +71,7 @@ Vue.component('kanban-board', require('./components/kanban/KanbanBoard.vue').def
 Vue.component('subscribe-modal', require('./components/subscription/SubscribeModal.vue').default);
 Vue.component('sidebar', require('./components/uiElements/Sidebar.vue').default);
 Vue.component('move-terminal-objective-modal', require('./components/objectives/MoveTerminalObjectiveModal.vue').default);
+Vue.component('prerequisite-modal', require('./components/prerequisites/PrerequisiteObjectiveModal.vue').default);
 
 Vue.prototype.$initTinyMCE = function (options) {
     tinymce.remove();

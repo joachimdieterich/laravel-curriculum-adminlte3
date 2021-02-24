@@ -30,6 +30,7 @@
 <medium-modal></medium-modal>
 <medium-create-modal></medium-create-modal>
 <reference-objective-modal></reference-objective-modal>
+<prerequisite-modal></prerequisite-modal>
 @endsection
 @section('scripts')
 @parent

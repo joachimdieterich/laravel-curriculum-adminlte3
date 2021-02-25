@@ -578,7 +578,7 @@ return [
         'copy'           => 'Inhalt aus bestehendem Curriculum übernehmen',
         'no_content'     => 'Keine (zusätzlichen) Inhalte vorhanden.',
         'index'          => 'Inhaltsverzeichnis',
-        'index_alt'      => 'Hinweise/Ergänzungen',
+        'index_alt'      => 'Anregungen zur Unterrichtsgestaltung',
         'fields'         => [
             'id'                => 'ID',
             'id_helper'         => '',

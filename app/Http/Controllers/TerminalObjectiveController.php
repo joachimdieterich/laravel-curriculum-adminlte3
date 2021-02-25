@@ -161,6 +161,8 @@ class TerminalObjectiveController extends Controller
         $objective_type_id  = $terminalObjective->objective_type_id;
         $order_id           = $terminalObjective->order_id;
 
+        $terminalObjective->enablingObjectives()->delete();
+
         // delete contents
         foreach ($terminalObjective->contents AS $content)
         {
@@ -207,6 +209,16 @@ class TerminalObjectiveController extends Controller
                 ->where('subscribable_type', '=', 'App\TerminalObjective')
                 ->where('subscribable_id', '=', $terminalObjective->id)
                 ->delete();
+        // delete prerequisites entries (predecessors)
+        $terminalObjective->predecessors()
+            ->where('successor_type', '=', 'App\TerminalObjective')
+            ->where('successor_id', '=', $terminalObjective->id)
+            ->delete();
+        // delete prerequisites entries (successors)
+        $terminalObjective->successors()
+            ->where('predecessor_type', '=', 'App\TerminalObjective')
+            ->where('predecessor_id', '=', $terminalObjective->id)
+            ->delete();
 
 
         //delete objective

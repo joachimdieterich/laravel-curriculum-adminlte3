@@ -25,7 +25,6 @@
 <terminal-objective-modal></terminal-objective-modal>
 <enabling-objective-modal></enabling-objective-modal>
 <content-modal></content-modal>
-<content-create-modal></content-create-modal>
 <objective-medium-modal></objective-medium-modal>
 <medium-modal></medium-modal>
 <medium-create-modal></medium-create-modal>

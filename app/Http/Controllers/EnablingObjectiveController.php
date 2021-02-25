@@ -165,6 +165,16 @@ class EnablingObjectiveController extends Controller
                 ->where('subscribable_type', '=', 'App\EnablingObjective')
                 ->where('subscribable_id', '=', $enablingObjective->id)
                 ->delete();
+        // delete prerequisites entries (predecessors)
+        $enablingObjective->predecessors()
+            ->where('successor_type', '=', 'App\EnablingObjective')
+            ->where('successor_id', '=', $enablingObjective->id)
+            ->delete();
+        // delete prerequisites entries (successors)
+        $enablingObjective->successors()
+            ->where('predecessor_type', '=', 'App\EnablingObjective')
+            ->where('predecessor_id', '=', $enablingObjective->id)
+            ->delete();
 
         //delete objective
         $return = $enablingObjective->delete();

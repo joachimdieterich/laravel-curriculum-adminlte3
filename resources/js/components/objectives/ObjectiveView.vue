@@ -304,7 +304,13 @@
 
         },
         mounted() {
-
+            if (typeof this.objective.terminal_objective === 'object'){
+                this.type = 'enabling';
+                this.model = 'App\\EnablingObjective';
+            } else {
+                this.type = 'terminal';
+                this.model = 'App\\TerminalObjective';
+            }
 
             axios.get('/'+this.type+'Objectives/' + this.objective.id + '/referenceSubscriptionSiblings').then(response => {
                 if (response.data.siblings.length !== 0) {
@@ -325,13 +331,7 @@
                 //this.errors = response.data.errors;
             });
 
-            if (typeof this.objective.terminal_objective === 'object'){
-                this.type = 'enabling';
-                this.model = 'App\\EnablingObjective';
-            } else {
-                this.type = 'terminal';
-                this.model = 'App\\TerminalObjective';
-            }
+
 
         },
         computed: {

@@ -313,4 +313,16 @@ class User extends Authenticatable
     {
         return ($this->medium_id !== null) ? '/media/'.$this->medium_id  : (new \Laravolt\Avatar\Avatar)->create($this->fullName())->toBase64()->encoded;
     }
+
+    public function tasks()
+    {
+        return $this->hasManyThrough(
+            'App\Task',
+            'App\TaskSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'task_id'
+        )->where('subscribable_type', get_class($this));
+    }
 }

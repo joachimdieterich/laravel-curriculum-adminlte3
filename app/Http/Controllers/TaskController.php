@@ -17,11 +17,12 @@ class TaskController extends Controller
     public function index()
     {
         abort_unless(\Gate::allows('task_access'), 403);
-        $tasks = Task::with(['subscriptions' => function($query) {
+        $tasks = auth()->user()->tasks;
+        /*    Task::with(['subscriptions' => function($query) {
                             $query->where('subscribable_type', 'App\User')
                                   ->where('subscribable_id', auth()->user()->id);
                         },  'subscriptions.statuses.model', 'subscriptions.subscribable', 'subscriptions.owner'])
-                        ->get();
+                        ->get();*/
         //dd($tasks);
         return view('tasks.index')
                 ->with(compact('tasks'));

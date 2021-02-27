@@ -12,14 +12,14 @@
                     required
                     />
                 <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
-             </div>
-             <div class="form-group mb-2">
+            </div>
+            <div class="form-group mb-2">
                  <textarea
-                 id="description"
-                 name="description"
-                 placeholder="Beschreibung"
-                 class="form-control description my-editor "
-                  v-model.trim="form.description"
+                     id="description"
+                     name="description"
+                     placeholder="Beschreibung"
+                     class="form-control description my-editor "
+                     v-model.trim="form.description"
                  ></textarea>
                  <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
             </div>
@@ -31,14 +31,16 @@
                     ></medium-renderer>
                 </span>
             </span>
-            <div v-if="form.title != ''">
+            <div v-if="form.title != '' && method === 'post'">
                 <button class="btn btn-block btn-outline-secondary mb-2"
+                        v-can="'medium_create'"
                         @click.stop.prevent="open('medium-create-modal', 'referenceable');">
                     <i class="fa fa-photo-video"></i>
                     <span class="ml-2">{{ trans('global.media.add') }}</span>
                 </button>
                 <button class="btn btn-block btn-outline-secondary mb-2"
-                         @click.stop.prevent="open('task-modal', 'subscribable');">
+                        v-can="'task_create'"
+                        @click.stop.prevent="open('task-modal', 'subscribable');">
                     <i class="fas fa-tasks"></i>
                     <span class="ml-2">{{ trans('global.task.create') }}</span>
                 </button>
@@ -116,6 +118,12 @@ export default {
                     .catch(error => { // Handle the error returned from our request
                         this.form.errors = error.response.data.errors;
                     });
+            } else {
+                if (relationKey === 'referenceable'){
+                    this.$modal.show(modal, { 'referenceable_type': 'App\\KanbanItem', 'referenceable_id': this.form.id });
+                } else {
+                    this.$modal.show(modal, { 'subscribable_type': 'App\\KanbanItem', 'subscribable_id': this.form.id });
+                }
             }
         },
         submit() {

@@ -115,10 +115,10 @@ class User extends Authenticatable
         return $this->hasMany(Content::class, 'owner_id')->latest('updated_at');
     }
 
-    public function plans()
+    /*public function plans()
     {
         return $this->hasMany(Plan::class, 'owner_id')->latest('updated_at');
-    }
+    }*/
 
     public function currentGroups()
     {
@@ -198,9 +198,33 @@ class User extends Authenticatable
         )->where('subscribable_type', get_class($this));
     }
 
+    public function kanbans()
+    {
+        return $this->hasManyThrough(
+            'App\Kanban',
+            'App\KanbanSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'kanban_id'
+        )->where('subscribable_type', get_class($this));
+    }
+
     public function media()
     {
         return $this->hasMany(Media::class, 'owner_id');
+    }
+
+    public function plans()
+    {
+        return $this->hasManyThrough(
+            'App\Plan',
+            'App\PlanSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'plan_id'
+        )->where('subscribable_type', get_class($this));
     }
 
     public function periods()
@@ -213,6 +237,7 @@ class User extends Authenticatable
             ->distinct()
             ->get();
     }
+
     public function currentPeriods()
     {
         return DB::table('periods')

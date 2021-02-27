@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Kanban;
 use App\Medium;
+use App\Organization;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -20,17 +21,30 @@ class KanbanController extends Controller
 
         return view('kanbans.index');
     }
-    
+    protected function userKanbans()
+    {
+        $userCanSee = auth()->user()->kanbans;
+
+        foreach(auth()->user()->currentGroups AS $group)
+        {
+            $userCanSee = $userCanSee->merge($group->kanbans);
+        }
+
+        $organization = Organization::find(auth()->user()->current_organization_id)->kanbans;
+        $userCanSee = $userCanSee->merge($organization);
+
+        return $userCanSee->unique();
+    }
     public function list()
     {
-        
+
         abort_unless(\Gate::allows('kanban_access'), 403);
-        $kanbans = (auth()->user()->role()->id == 1) ? Kanban::all() : auth()->user()->kanbans()->get();      
-   
+        $kanbans = (auth()->user()->role()->id == 1) ? Kanban::all() : $this->userKanbans();
+
         $edit_gate = \Gate::allows('kanban_edit');
         $delete_gate = \Gate::allows('kanban_delete');
 
-        
+
         return empty($kanbans) ? '' : DataTables::of($kanbans)
             ->addColumn('action', function ($kanbans) use ($edit_gate, $delete_gate) {
                  $actions  = '';
@@ -44,10 +58,10 @@ class KanbanController extends Controller
                     if ($delete_gate){
                         $actions .= '<button type="button" class="btn text-danger" onclick="event.preventDefault();destroyDataTableEntry(\'kanbans\','.$kanbans->id.');"><i class="fa fa-trash"></i></button>';
                     }
-              
+
                 return $actions;
             })
-           
+
             ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
@@ -61,7 +75,7 @@ class KanbanController extends Controller
     public function create()
     {
         abort_unless(\Gate::allows('kanban_create'), 403);
-        
+
         return view('kanbans.create');
     }
 
@@ -75,22 +89,22 @@ class KanbanController extends Controller
     {
         abort_unless(\Gate::allows('kanban_create'), 403);
         $new_kanban = $this->validateRequest();
-        
+
         $kanban = Kanban::Create([
             'title'         => $new_kanban['title'],
             'description'   => $new_kanban['description'],
             'medium_id'     => $this->getMediumIdByInputFilepath($new_kanban),
             'owner_id'      => auth()->user()->id,
         ]);
-        
-        // axios call? 
-        if (request()->wantsJson()){    
+
+        // axios call?
+        if (request()->wantsJson()){
             return ['message' => $kanban->path()];
         }
-        
+
         return redirect($kanban->path());
     }
-    
+
     /**
      * If $input['filepath'] is set and medium exists, id is return, else return is null
      * @param array $input
@@ -101,7 +115,7 @@ class KanbanController extends Controller
         {
             $medium = new Medium();
             return (null !== $medium->getByFilemanagerPath($input['filepath'])) ? $medium->getByFilemanagerPath($input['filepath'])->id : null;
-        } 
+        }
         else
         {
             return null;
@@ -122,7 +136,7 @@ class KanbanController extends Controller
                                ->where('subscribable_type', 'App\User');
                  }, 'mediaSubscriptions', 'media'])->orderBy('order_id');
                     }, 'statuses.items.subscribable'])->where('id', $kanban->id)->get()->first();
-       
+
         return view('kanbans.show')
                 ->with(compact('kanban'));
     }
@@ -168,10 +182,10 @@ class KanbanController extends Controller
         $kanban->delete();
 
     }
-    
+
     protected function validateRequest()
-    {   
-        
+    {
+
         return request()->validate([
             'title'         => 'sometimes|required',
             'description'   => 'sometimes',

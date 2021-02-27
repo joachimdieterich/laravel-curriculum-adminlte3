@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Plan;
+use App\Group;
+use App\Organization;
 use App\PlanType;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -22,10 +24,25 @@ class PlanController extends Controller
         return view('plans.index');
     }
 
+    protected function userPlans()
+    {
+        $userCanSee = auth()->user()->plans;
+
+        foreach(auth()->user()->currentGroups AS $group)
+        {
+            $userCanSee = $userCanSee->merge($group->plans);
+        }
+
+        $organization = Organization::find(auth()->user()->current_organization_id)->plans;
+        $userCanSee = $userCanSee->merge($organization);
+
+        return $userCanSee->unique();
+    }
+
     public function list()
     {
         abort_unless(\Gate::allows('plan_access'), 403);
-        $plans = (auth()->user()->role()->id == 1) ? Plan::all() : auth()->user()->plans();
+        $plans = (auth()->user()->role()->id == 1) ? Plan::all() : $this->userPlans();
 
         $edit_gate = \Gate::allows('plan_edit');
         $delete_gate = \Gate::allows('plan_delete');
@@ -171,9 +188,9 @@ class PlanController extends Controller
      */
     public function destroy(Plan $plan)
     {
-
         abort_unless(\Gate::allows('plan_delete'), 403);
 
+        $plan->subscriptions()->delete();
         $plan->delete();
 
         return back();
@@ -181,7 +198,6 @@ class PlanController extends Controller
 
     protected function validateRequest()
     {
-
         return request()->validate([
             'title'         => 'sometimes|required',
             'description'   => 'sometimes',

@@ -9,36 +9,36 @@
             v-if="item.subscribable_type === subscribing_model"
             class="item">
             <span v-if="item.subscribable_type === 'App\\User'">
-            {{ item.subscribable.firstname }}  {{ item.subscribable.lastname }}  
+            {{ item.subscribable.firstname }}  {{ item.subscribable.lastname }}
             </span>
             <span v-else>
             {{ item.subscribable.title }}
             </span>
-             
+
             <span class="pull-right custom-control custom-switch custom-switch-on-green">
                 <input  v-model="item.editable"
-                        type="checkbox" 
-                        class="custom-control-input pt-1 " 
-                        :id="'subscription_input'+item.id" 
+                        type="checkbox"
+                        class="custom-control-input pt-1 "
+                        :id="'subscription_input'+item.id"
                          @click="setPermission(item.id, item.editable)">
                 <label class="custom-control-label " :for="'subscription_input'+item.id" ></label>
             </span>
-           
+
             <span class="pull-right pr-2" ></span>
-            
-                
+
+
             <button class="btn btn-flat py-0 pull-right"
                 @click="unsubscribe(item.id)">
                 <i class="fa fa-trash text-danger vuehover" ></i>
             </button>
         </li>
     </ul>
-    
+
 </template>
 
 
 <script>
-    
+
     export default {
         props: {
                 modelUrl: String,
@@ -51,10 +51,10 @@
             }
         },
         methods: {
-                     
+
             async unsubscribe(id) { //id of external reference and value in db
                 try {
-                    await axios.delete('/' + this.modelUrl + 'Subscriptions/' + id + '/destroy' ).data;
+                    await axios.delete('/' + this.modelUrl + 'Subscriptions/' + id  ).data;
                 } catch(error) {
                     //this.errors = error.response.data.errors;
                 }
@@ -66,12 +66,12 @@
                 } catch(error) {
                     //this.errors = error.response.data.errors;
                 }
-               
+
             }
         },
-        
-       
-   
+
+
+
     }
 </script>
 <style scoped>
@@ -80,6 +80,6 @@
     }
 li:hover .vuehover {
         display: block;
-    }    
+    }
 
 </style>

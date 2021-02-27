@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateKanbanSubscriptionsTable extends Migration
+class CreatePlanSubscriptionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreateKanbanSubscriptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('kanban_subscriptions', function (Blueprint $table) {
+        Schema::create('plan_subscriptions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedbigInteger('kanban_id');
+            $table->unsignedbigInteger('plan_id');
             $table->string('subscribable_type');
             $table->unsignedbigInteger('subscribable_id');
 
@@ -24,7 +24,7 @@ class CreateKanbanSubscriptionsTable extends Migration
 
             $table->timestamps();
 
-            $table->foreign('kanban_id')->references('id')->on('kanbans');
+            $table->foreign('plan_id')->references('id')->on('plans');
             $table->foreign('owner_id')->references('id')->on('users');
 
         });
@@ -37,6 +37,6 @@ class CreateKanbanSubscriptionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('kanban_subscriptions');
+        Schema::dropIfExists('plan_subscriptions');
     }
 }

@@ -1,8 +1,8 @@
 <template>
-    <modal 
-        id="subscribe-modal" 
-        name="subscribe-modal" 
-        height="auto" 
+    <modal
+        id="subscribe-modal"
+        name="subscribe-modal"
+        height="auto"
         :adaptive=true
         draggable=".draggable"
         :resizable=true
@@ -10,7 +10,7 @@
         @opened="opened"
         @before-close="beforeClose"
         style="z-index: 2000">
-        <div class="card" 
+        <div class="card"
              style="margin-bottom: 0px !important">
             <div class="card-header">
                 <h3 class="card-title">
@@ -24,7 +24,7 @@
                     <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
                         <i class="fa fa-times"></i>
                     </button>
-                </div> 
+                </div>
             </div>
 
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
@@ -54,74 +54,77 @@
                       </a>
                   </li>-->
                 </ul>
-                
+
                 <div class="tab-content pt-2">
                     <!-- User Tab -->
                     <div class="tab-pane active show" id="user_subscription" v-can="'kanban_create'">
                          <div class="form-group pt-2">
-                            <select name="users" 
-                                    id="users" 
+                            <select name="users"
+                                    id="users"
                                     class="form-control select2 "
                                     style="width:100%;"
                                     >
+                                 <option></option>
                                  <option v-for="(item,index) in subscribers.users" v-bind:value="item.id">{{ item.firstname }} {{ item.lastname }}</option>
-                            </select>     
+                            </select>
                         </div>
-                        <subscribers 
+                        <subscribers
                             :modelUrl="modelUrl"
-                            :subscriptions="subscribers.subscriptions" 
+                            :subscriptions="subscribers.subscriptions"
                             :subscribing_model="'App\\User'"/>
-                        
+
                     </div>
-                    
-                     
+
+
                     <!-- Group Tab -->
                     <div class="tab-pane" id="group_subscription" v-can="'kanban_create'">
                          <div class="form-group pt-2 ">
-                            <select name="groups" 
-                                    id="groups" 
+                            <select name="groups"
+                                    id="groups"
                                     class="form-control select2 "
                                     style="width:100%;"
                                     >
+                                 <option></option>
                                  <option v-for="(item,index) in subscribers.groups" v-bind:value="item.group_id">{{ item.title }}</option>
-                            </select>     
+                            </select>
                         </div>
-                        <subscribers 
+                        <subscribers
                             :modelUrl="modelUrl"
-                            :subscriptions="subscribers.subscriptions" 
+                            :subscriptions="subscribers.subscriptions"
                             :subscribing_model="'App\\Group'"/>
-                        
+
                     </div>
-                    
+
                     <!-- Organization Tab -->
                     <div class="tab-pane" id="organization_subscription" v-can="'kanban_create'">
                          <div class="form-group pt-2">
-                            <select name="organizations" 
-                                    id="organizations" 
+                            <select name="organizations"
+                                    id="organizations"
                                     class="form-control select2 "
                                     style="width:100%;"
                                     >
+                                 <option></option>
                                  <option v-for="(item,index) in subscribers.organizations" v-bind:value="item.organization_id">{{ item.title }}</option>
-                            </select>     
+                            </select>
                         </div>
-                        
-                        
-                        
-                        <subscribers 
+
+
+
+                        <subscribers
                             :modelUrl="modelUrl"
-                            :subscriptions="subscribers.subscriptions" 
+                            :subscriptions="subscribers.subscriptions"
                             :subscribing_model="'App\\Organization'"/>
                     </div>
-                    
+
                     <!-- Global Tab -->
 <!--                    <div class="tab-pane" id="global_subscription" v-can="'kanban_create'">
                          <div class="form-group pt-2">
-                            select global 
+                            select global
                         </div>
-                        
+
                     </div>-->
-                </div> 
-                
+                </div>
+
             </div>
             <div class="card-footer">
                 <span class="pull-right">
@@ -135,79 +138,79 @@
 <script>
     import subscribers from "./Subscribers";
     export default {
-        
+
         data() {
             return {
                 modelUrl: null,
                 modelId: null,
                 subscribable_id: null,
                 subscribable_type: null,
-                
+
                 subscribers: Object,
                 hover: false,
             };
         },
         methods: {
             beforeOpen(event) {
-                
+
                 this.modelUrl =  event.params.modelUrl;
                 this.modelId  =  event.params.modelId;
                 this.loadSubscribers();
             },
             beforeClose() {
             },
-            
+
             opened(){
-                this.initSelect2(); 
+                this.initSelect2();
             },
-           
+
             close(){
                 this.$modal.hide('subscribe-modal');
             },
             async loadSubscribers() {
-                try {  
+                try {
                     this.subscribers = (await axios.get('/' + this.modelUrl + 'Subscriptions?' + this.modelUrl + '_id='+this.modelId)).data.subscribers;
                 } catch(error) {
                     this.errors = error.response.data.errors;
-                } 
+                }
             },
             initSelect2(){
                 $("#users").select2({
                     dropdownParent: $("#users").parent(),
                     allowClear: false
-                }).on('select2:select', function (e) { 
+                }).on('select2:select', function (e) {
                     this.subscribe('App\\User', e.params.data.id, this.modelId);
-                }.bind(this)); 
+                }.bind(this));
                 $("#groups").select2({
                     dropdownParent: $("#groups").parent(),
                     allowClear: false
-                }).on('select2:select', function (e) { 
+                }).on('select2:select', function (e) {
                     this.subscribe('App\\Group', e.params.data.id, this.modelId);
-                }.bind(this)); 
+                }.bind(this));
                 $("#organizations").select2({
                     dropdownParent: $("#organizations").parent(),
                     allowClear: false
-                }).on('select2:select', function (e) { 
+                }).on('select2:select', function (e) {
                     this.subscribe('App\\Organization', e.params.data.id, this.modelId);
-                }.bind(this)); 
-            }, 
+                }.bind(this));
+            },
             async subscribe(subscribable_type, subscribable_id, model_id) {
                 try {
                     this.subscribers.subscriptions = (await axios.post('/' + this.modelUrl + 'Subscriptions', {
-                        'model_id':          model_id, 
+                        'model_id':          model_id,
                         'subscribable_type': subscribable_type,
                         'subscribable_id':   subscribable_id
                     })).data.subscription;
-                    
+
                 } catch(error) {
                     //
                 }
             }
-            
+
         },
         components: {
             subscribers,
         }
-          
+
     }
 </script>

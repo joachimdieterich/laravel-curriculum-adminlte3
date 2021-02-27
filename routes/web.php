@@ -167,6 +167,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('plans/list', 'PlanController@list');
     Route::resource('plans', 'PlanController');
 
+    Route::resource('planSubscriptions', 'PlanSubscriptionController');
+
     Route::resource('prerequisites', 'PrerequisitesController');
 
     Route::get('print/content/{content}', 'PrintController@content')->name('print.content');

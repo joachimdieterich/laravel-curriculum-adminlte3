@@ -1,6 +1,10 @@
 @extends('layouts.master')
 @section('title')
     {{ trans('global.plan.title_singular') }}
+    <button class="btn btn-flat"
+            onclick="app.__vue__.$modal.show('subscribe-modal',  {'modelId': {{ $plan->id }}, 'modelUrl': 'plan' });">
+        <i class="fa fa-share-alt text-secondary"></i>
+    </button>
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
@@ -106,6 +110,6 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
         </div>
     @endif
 @endforeach
-
+<subscribe-modal></subscribe-modal>
 <task-modal></task-modal>
 @endsection

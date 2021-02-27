@@ -97,4 +97,28 @@ class Organization extends Model
         return $this->hasMany('App\Navigator');
     }
 
+    public function kanbans()
+    {
+        return $this->hasManyThrough(
+            'App\Kanban',
+            'App\KanbanSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'kanban_id'
+        )->where('subscribable_type', get_class($this));
+    }
+
+    public function plans()
+    {
+        return $this->hasManyThrough(
+            'App\Plan',
+            'App\PlanSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'plan_id'
+        )->where('subscribable_type', get_class($this));
+    }
+
 }

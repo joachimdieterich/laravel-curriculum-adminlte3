@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Kanban;
-use App\KanbanSubscription;
+use App\Plan;
+use App\PlanSubscription;
 use Illuminate\Http\Request;
 
-class KanbanSubscriptionController extends Controller
+class PlanSubscriptionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -22,7 +22,7 @@ class KanbanSubscriptionController extends Controller
                     'users' =>  auth()->user()->users()->select('users.id','users.firstname','users.lastname')->get(),
                     'groups' => auth()->user()->groups()->select('group_id','title')->get(),
                     'organizations' => auth()->user()->organizations()->select('organization_id','title')->get(),
-                    'subscriptions' => Kanban::find(request('kanban_id'))->subscriptions()->with('subscribable')->get()
+                    'subscriptions' => Plan::find(request('plan_id'))->subscriptions()->with('subscribable')->get()
                     ]
                 ];
         }
@@ -36,60 +36,60 @@ class KanbanSubscriptionController extends Controller
      */
     public function store(Request $request)
     {
-        abort_unless(\Gate::allows('kanban_create'), 403);
+        abort_unless(\Gate::allows('plan_create'), 403);
         $input = $this->validateRequest();
 
-        $subscribe = KanbanSubscription::updateOrCreate([
-                "kanban_id"         => $input['model_id'],
-                "subscribable_type" => $input['subscribable_type'],
-                "subscribable_id"   => $input['subscribable_id'],
-            ],[
-                "editable"=> isset($input['editable']) ? $input['editable'] : false,
-                "owner_id"=> auth()->user()->id,
-            ]);
+        $subscribe = PlanSubscription::updateOrCreate([
+            "plan_id"           => $input['model_id'],
+            "subscribable_type" => $input['subscribable_type'],
+            "subscribable_id"   => $input['subscribable_id'],
+        ],[
+            "editable"=> isset($input['editable']) ? $input['editable'] : false,
+            "owner_id"=> auth()->user()->id,
+        ]);
         $subscribe->save();
 
         if (request()->wantsJson()){
-            return ['subscription' => Kanban::find($input['model_id'])->subscriptions()->with('subscribable')->get()];
+            return ['subscription' => Plan::find($input['model_id'])->subscriptions()->with('subscribable')->get()];
         }
     }
+
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\KanbanSubscription  $kanbanSubscription
+     * @param  \App\PlanSubscription  $planSubscription
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, KanbanSubscription $kanbanSubscription)
+    public function update(Request $request, PlanSubscription $planSubscription)
     {
-        abort_unless(\Gate::allows('kanban_edit'), 403);
+        abort_unless(\Gate::allows('plan_edit'), 403);
         $input = $this->validateRequest();
 
-        $kanbanSubscription->update([
+        $planSubscription->update([
             "editable"=> isset($input['editable']) ? $input['editable'] : false,
             "owner_id"=> auth()->user()->id,
         ]);
 
         if (request()->wantsJson()){
-            return ['editable' => $kanbanSubscription->editable];
+            return ['editable' => $planSubscription->editable];
         }
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\KanbanSubscription  $kanbanSubscription
+     * @param  \App\PlanSubscription  $planSubscription
      * @return \Illuminate\Http\Response
      */
-    public function destroy(KanbanSubscription $kanbanSubscription)
+    public function destroy(PlanSubscription $planSubscription)
     {
-        abort_unless(\Gate::allows('kanban_delete'), 403);
+        abort_unless(\Gate::allows('plan_delete'), 403);
 
         if (request()->wantsJson()){
-            return ['message' => $kanbanSubscription->delete()];
+            return ['message' => $planSubscription->delete()];
         }
-
     }
 
     protected function validateRequest()

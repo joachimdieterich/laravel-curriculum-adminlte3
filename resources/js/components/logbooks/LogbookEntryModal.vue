@@ -1,8 +1,8 @@
 <template>
-    <modal 
-        id="logbook-entry-modal" 
-        name="logbook-entry-modal" 
-        height="auto" 
+    <modal
+        id="logbook-entry-modal"
+        name="logbook-entry-modal"
+        height="auto"
         :adaptive=true
         draggable=".draggable"
         :resizable=true
@@ -10,19 +10,19 @@
         @opened="opened"
         @before-close="beforeClose"
         style="z-index: 1000">
-        <div class="card" 
+        <div class="card"
              style="margin-bottom: 0px !important">
             <div class="card-header">
                  <h3 class="card-title">
                     <span v-if="method === 'post'">
-                        {{ trans('global.logbookEntry.create')  }} 
+                        {{ trans('global.logbookEntry.create')  }}
                     </span>
-                    
+
                     <span v-if="method === 'patch'">
-                        {{ trans('global.logbookEntry.update')  }} 
+                        {{ trans('global.logbookEntry.edit')  }}
                     </span>
                  </h3>
-                
+
                  <div class="card-tools">
                      <button type="button" class="btn btn-tool draggable" >
                         <i class="fa fa-arrows-alt"></i>
@@ -30,9 +30,9 @@
                      <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
                         <i class="fa fa-times"></i>
                      </button>
-                 </div> 
+                 </div>
             </div>
-            
+
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                 <div class="form-group "
                     :class="form.errors.title ? 'has-error' : ''"
@@ -51,26 +51,23 @@
                 <div class="form-group ">
                     <label for="description">{{ trans('global.logbook.fields.description') }}</label>
                     <textarea
-                    id="description" 
-                    name="description" 
-                    class="form-control description my-editor "                  
+                    id="description"
+                    name="description"
+                    class="form-control description my-editor "
                     v-model="form.description"
                     ></textarea>
                     <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
                 </div>
                 <date-picker class="w-100"
-                    v-model="time" 
+                    v-model="time"
                     type="datetime" range
                     valueType="YYYY-MM-DD HH:mm:ss"></date-picker>
-
             </div>
             <div class="card-footer">
                 <span class="pull-right">
-<!--                     <button type="button" class="btn btn-primary" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>-->
                      <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
                 </span>
             </div>
-            
         </div>
     </modal>
 </template>
@@ -112,7 +109,7 @@
                         this.form.end = this.time[1];
                         this.location = (await axios.post('/logbookEntries', this.form)).data.message;
                         location.reload(true);
-                    } 
+                    }
                 } catch(error) {
                     this.form.errors = error.response.data.form.errors;
                 }
@@ -124,23 +121,20 @@
                 if (event.params.logbook_id){
                     this.form.logbook_id = event.params.logbook_id;
                 }
-                this.method = event.params.method; 
+                this.method = event.params.method;
                 this.time = [moment().format("YYYY-MM-DD HH:mm:ss"), moment().add(30, 'minutes').format("YYYY-MM-DD HH:mm:ss")];
             },
-           
+
             opened(){
                 this.$initTinyMCE();
             },
-           
-            beforeClose() {
-                
-            },
-            
+
+            beforeClose() {},
+
             async load(id) {
                 try {
                     this.form.populate((await axios.get('/logbookEntries/'+id)).data.message);
                     this.time = [this.form.begin, this.form.end];
-                    
                 } catch(error) {
                     //console.log('loading failed')
                 }
@@ -151,9 +145,9 @@
             }
         },
         mounted() {
-        },     
-        components: { 
-            DatePicker 
+        },
+        components: {
+            DatePicker
         },
     }
 </script>

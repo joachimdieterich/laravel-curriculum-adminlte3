@@ -118,6 +118,13 @@
             }
         },
         methods: {
+            loader() {
+                axios.get('/mediumSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id).then(response => {
+                    this.subscriptions = response.data.message;
+                }).catch(e => {
+                    this.errors = error.response.data.errors;
+                });
+            },
            show(model, entry) {
                 this.$modal.show(model.toLowerCase()+'-modal', { 'content': entry, 'subscribable_type': this.subscribable_type, 'subscribable_id': this.subscribable_id});
             },
@@ -147,15 +154,11 @@
                         return "fa fa-file";
                         break;
                 }
-            }
+            },
+
         },
 
-        beforeMount() {
-             axios.get('/mediumSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id).then(response => {
-                this.subscriptions = response.data.message;
-            }).catch(e => {
-                this.errors = error.response.data.errors;
-            });
-        },
+
+
     }
 </script>

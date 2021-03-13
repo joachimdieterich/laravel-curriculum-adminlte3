@@ -70,7 +70,8 @@
                 <li class="nav-item">
                     <a class="nav-link small link-muted"
                        href="#tab_media"
-                       data-toggle="tab">
+                       data-toggle="tab"
+                       @click="loadMedia()">
                         <i class="fa fa-folder-open pr-2"></i>
                         <span v-if="help">{{trans('global.media.title')}}</span>
                     </a>
@@ -177,6 +178,8 @@
                                 id="sub_medium"
                                 name="sub_medium">
                                  <objectiveMedia
+                                     ref="Media"
+                                     :model="model"
                                      :objective="objective"
                                      :repository="repository"
                                      :type="type"/>
@@ -300,6 +303,9 @@
             },
             loadPrerequisites(){
                 this.$refs.Prerequisites.loaderEvent();
+            },
+            loadMedia(){
+                this.$refs.Media.loaderEvent();
             },
 
         },

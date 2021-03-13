@@ -38,9 +38,10 @@
                  v-bind:class="[(currentTab === 1) ? 'active' : '']"
                  id="objective-media-internal"
                  role="tabpanel"
-                 aria-labelledby="curriculm-nav-tab">
+                 aria-labelledby="curriculum-nav-tab">
                 <media
-                    subscribable_type="getModel()"
+                    ref="objectiveMedia"
+                    :subscribable_type="model"
                     :subscribable_id="objective.id"
                     format="list">
                 </media>
@@ -50,7 +51,7 @@
                  v-bind:class="[(currentTab === 2) ? 'active' : '']"
                  id="objective-media-external"
                  role="tabpanel"
-                 aria-labelledby="curriculm-nav-tab">
+                 aria-labelledby="curriculum-nav-tab">
                 <div class="row">
                     <repository
                         v-if="repository"
@@ -77,7 +78,8 @@
         props: {
             objective: {},
             repository: {},
-            type: {}
+            type: {},
+            model: {}
         },
         data() {
             return {
@@ -88,12 +90,8 @@
             setCurrentTab(id){
                 this.currentTab = id;
             },
-            getModel(){
-                if (type === 'terminal'){
-                    return "App\\TerminalObjective"
-                } else {
-                    return "App\\EnablingObjective"
-                }
+            loaderEvent() {
+                this.$refs.objectiveMedia.loader();
             }
         },
         mounted() {

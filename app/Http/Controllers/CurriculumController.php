@@ -9,7 +9,9 @@ use App\Grade;
 use App\Subject;
 use App\Organization;
 use App\OrganizationType;
+use App\Medium;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\DataTables;
 use App\Group;
 use App\Country;
@@ -423,6 +425,7 @@ class CurriculumController extends Controller
      */
     public function destroy(Curriculum $curriculum)
     {
+        //todo: delete media attached to content, descriptions...
         abort_unless(\Gate::allows('curriculum_delete'), 403);
 
         // detach groups
@@ -433,8 +436,6 @@ class CurriculumController extends Controller
         {
             (new CertificateController)->destroy($certificate);
         }
-
-
 
         foreach ($curriculum->enablingObjectives AS $ena)
         {
@@ -450,6 +451,8 @@ class CurriculumController extends Controller
         $curriculum->glossar()->delete();
 
         // delete mediaSubscriptions -> media will not be deleted
+        $media = $curriculum->media;
+
         $curriculum->mediaSubscriptions()
                 ->where('subscribable_type', '=', 'App\Curriculum')
                 ->where('subscribable_id', '=', $curriculum->id)
@@ -468,6 +471,12 @@ class CurriculumController extends Controller
         }
 
         $return = $curriculum->delete();
+
+        //delete unused media
+        foreach ($media AS $medium)
+        {
+            Medium::where('id', $medium->id)->delete();
+        }
 
 
         //todo check/delete unrelated references(in references table)
@@ -513,7 +522,6 @@ class CurriculumController extends Controller
 
     protected function validateRequest()
     {
-
         return request()->validate([
             'title'                 => 'sometimes',
             'description'           => 'sometimes',

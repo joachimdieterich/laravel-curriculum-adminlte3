@@ -112,6 +112,14 @@
                     <i class="fa fa-wrench"></i>
                 </a>
             </li>
+            <li v-can="'curriculum_create'"
+                class="nav-item">
+                <a class="nav-link link-muted"
+                   @click="exportCurriculum()"
+                   id="config-nav-tab">
+                    <i class="fas fa-cloud-download-alt"></i>
+                </a>
+            </li>
             <li v-can="'curriculum_edit'"
                 class="nav-item">
                 <a class="nav-link link-muted"
@@ -168,7 +176,10 @@
             </div>
 
         </div>
+        <curriculum-export-modal v-can="'curriculum_create'"></curriculum-export-modal>
+
     </div>
+
 </template>
 
 <script>
@@ -214,6 +225,9 @@
 
                 }
             },
+            exportCurriculum(){
+                this.$modal.show('curriculum-export-modal', {'id': this.curriculum.id });
+            }
         },
         mounted() {
         },

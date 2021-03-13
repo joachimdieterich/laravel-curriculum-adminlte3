@@ -166,7 +166,7 @@ class TerminalObjectiveController extends Controller
         // delete contents
         foreach ($terminalObjective->contents AS $content)
         {
-            (new ContentController)->destroy($content); // delete or unsubscribe if content is still subscribed elsewhere
+            (new ContentController)->destroy($content, 'App\TerminalObjective', $terminalObjective->id); // delete or unsubscribe if content is still subscribed elsewhere
         }
 
         //delete all achievements

@@ -280,7 +280,7 @@ class CertificateController extends Controller
             //end progress
 
             $filename = date("Y-m-d_H-i-s").$user->lastname."_".$user->firstname.".pdf";
-            $path     = config('lfm.files_folder_name')."/".auth()->user()->id."/";
+            $path     = "users/".auth()->user()->id."/";
             $pathOfNewFile = $this->buildPdf($html, $path, $filename);
 
             array_push($generated_files, ['filename' => $filename, 'path' => Storage::disk('local')->path($path.$filename)]);
@@ -352,7 +352,7 @@ class CertificateController extends Controller
         $timestamp = date("Y-m-d_H-i-s");
         $html .='</tbody></table>';
         $filename = $timestamp.$user->lastname."_".$user->firstname.".pdf";
-        $path = config('lfm.files_folder_name')."/".auth()->user()->id."/";
+        $path = "users/".auth()->user()->id."/";
 
         if (request()->wantsJson()){
             return ['message' => $this->buildPdf($html, $path, $filename, 'landscape')];
@@ -444,7 +444,7 @@ class CertificateController extends Controller
     protected function addFileToDb($filename)
     {
         $media = new Medium([
-                'path'          => "/".config('lfm.files_folder_name')."/".auth()->user()->id."/",
+                'path'          => "/users/".auth()->user()->id."/",
                 'title'         => $filename,
                 'medium_name'   => $filename,
                 'description'   => '',
@@ -452,8 +452,8 @@ class CertificateController extends Controller
                 'publisher'     => '',
                 'city'          => '',
                 'date'          => date("Y-m-d_H-i-s"),
-                'size'          => File::size(Storage::disk('local')->path(config('lfm.files_folder_name')."/".auth()->user()->id."/".$filename)),
-                'mime_type'     => File::mimeType(Storage::disk('local')->path(config('lfm.files_folder_name')."/".auth()->user()->id."/".$filename)),
+                'size'          => File::size(Storage::disk('local')->path("users/".auth()->user()->id."/".$filename)),
+                'mime_type'     => File::mimeType(Storage::disk('local')->path("users/".auth()->user()->id."/".$filename)),
                 'license_id'    => 2,
 
                 'public'        => 0,           //certificates can not be accessed without owership/subscription

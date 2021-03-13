@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Config;
 use App\EnablingObjective;
 use App\Group;
+use App\Medium;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreEnablingObjectiveRequest;
@@ -129,7 +130,7 @@ class EnablingObjectiveController extends Controller
         // delete contents
         foreach ($enablingObjective->contents AS $content)
         {
-            (new ContentController)->destroy($content); // delete or unsubscribe if content is still subscribed elsewhere
+            (new ContentController)->destroy($content, 'App\EnablingObjective', $enablingObjective->id); // delete or unsubscribe if content is still subscribed elsewhere
         }
         // delete achievements
         $enablingObjective->achievements()
@@ -142,7 +143,8 @@ class EnablingObjectiveController extends Controller
                 ->where('enabling_objective_id', '=', $enablingObjective->id)
                 ->delete();
 
-        // delete mediaSubscriptions -> media will not be deleted
+        // delete mediaSubscriptions
+        $media = $enablingObjective->media;
         $enablingObjective->mediaSubscriptions()
                 ->where('subscribable_type', '=', 'App\EnablingObjective')
                 ->where('subscribable_id', '=', $enablingObjective->id)
@@ -182,8 +184,14 @@ class EnablingObjectiveController extends Controller
         //reset order_ids
         $this->resetOrderIds($curriculum_id, $terminal_objective_id, $order_id);
 
+        //delete unused media
+        foreach ($media AS $medium)
+        {
+            Medium::where('id', $medium->id)->delete();
+        }
+
         if (request()->wantsJson()){
-            return ['message' => $enablingObjective->path()];
+            return ['message' => $return];
         }
         //return $return;
     }

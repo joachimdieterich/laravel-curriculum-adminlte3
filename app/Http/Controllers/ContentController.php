@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Content;
 use App\ContentSubscription;
 
+use App\Medium;
 use Illuminate\Http\Request;
 use \Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Support\Facades\DB;
@@ -137,6 +138,14 @@ class ContentController extends Controller
             $subscribable_id   = $input['referenceable_id'];
         }
 
+        //delete unused embedded media
+        $media = $content->media;
+
+        $content->mediaSubscriptions()
+            ->where('subscribable_type', '=', 'App\Content')
+            ->where('subscribable_id', '=', $content->id)
+            ->delete();
+
         if ($content->subscriptions()->count() <= 1){
 
             ContentSubscription::where('subscribable_type',
@@ -171,6 +180,12 @@ class ContentController extends Controller
                 ->update([
                     'order_id'=> DB::raw('order_id -1')
                 ]);
+        }
+
+        //delete unused media
+        foreach ($media AS $medium)
+        {
+            Medium::where('id', $medium->id)->delete();
         }
         // axios call?
         if (request()->wantsJson()){

@@ -607,6 +607,7 @@ return [
         'edit'           => 'Curriculum bearbeiten',
         'edit_owner'     => 'Besitzer von curriculum ändern',
         'import'         => 'Curriculum importieren',
+        'export'         => 'Curriculum exportieren',
         'print'          => 'Curriculum drucken',
         'print_references' => 'Querverweise drucken',
         'fields'         => [

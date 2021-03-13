@@ -36,7 +36,6 @@
     </thead>
 </table>
 
-
 @endsection
 @section('scripts')
 @parent
@@ -76,7 +75,10 @@ $(document).ready( function () {
     table.on( 'select', function ( e, dt, type, indexes ) { //on select event
         window.location.href = "/curricula/" + table.row({ selected: true }).data().id ;
     });
+
+
  });
+
 </script>
 
 @endsection

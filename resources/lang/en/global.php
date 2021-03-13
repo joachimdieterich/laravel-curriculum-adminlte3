@@ -607,6 +607,7 @@ return [
         'edit'             => 'Edit curriculum',
         'edit_owner'       => 'Edit owner of curriculum',
         'import'           => 'Import curriculum',
+        'export'           => 'Export curriculum',
         'print'            => 'Print curriculum',
         'print_references' => 'Print curriculum references',
         'fields'         => [

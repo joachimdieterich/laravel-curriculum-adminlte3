@@ -46,6 +46,7 @@ Vue.component('group-modal', require('./components/group/GroupModal.vue').defaul
 
 Vue.component('absence-modal', require('./components/absence/AbsenceModal.vue').default);
 Vue.component('curriculum-view', require('./components/curriculum/CurriculumView.vue').default);
+Vue.component('curriculum-export-modal', require('./components/curriculum/CurriculumExportModal.vue').default);
 Vue.component('group-view', require('./components/group/GroupView.vue').default);
 Vue.component('terminal-objective-modal', require('./components/objectives/TerminalObjectiveModal.vue').default);
 Vue.component('data-table-widgets', require('./components/uiElements/DataTableWidgets.vue').default);

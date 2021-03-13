@@ -41,6 +41,23 @@ class Content extends Model
         $subscribe->save();
     }
 
+    public function mediaSubscriptions()
+    {
+        return $this->morphMany('App\MediumSubscription', 'subscribable');
+    }
+
+    public function media()
+    {
+        return $this->hasManyThrough(
+            'App\Medium',
+            'App\MediumSubscription',
+            'subscribable_id', // Foreign key on medium_subscription table...
+            'id', // Foreign key on medium table...
+            'id', // Local key on curriculum table...
+            'medium_id' // Local key on medium_subscription table...
+        )->where('subscribable_type', get_class($this));
+    }
+
     public function quotes()
     {
         return $this->hasMany('App\Quote', 'referenceable_id', 'id');

@@ -21,14 +21,14 @@ class EventServiceProvider extends ServiceProvider
         ],
         'Aacotroneo\Saml2\Events\Saml2LoginEvent' => [
 			'App\Listeners\SAMLLoginListener'
-	],
+	    ],
         'Aacotroneo\Saml2\Events\Saml2LogoutEvent' => [
 			'App\Listeners\SAMLLogoutListener'
-	],
+	    ],
     ];
-    
+
     protected $subscribe = [
-        UploadListener::class
+
     ];
 
     /**
@@ -39,7 +39,5 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         parent::boot();
-
-        //
     }
 }

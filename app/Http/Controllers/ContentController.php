@@ -6,32 +6,13 @@ use App\Content;
 use App\ContentSubscription;
 
 use App\Medium;
+use App\MediumSubscription;
 use Illuminate\Http\Request;
 use \Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Support\Facades\DB;
 
 class ContentController extends Controller
 {
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        return view('contents.create');
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -49,6 +30,9 @@ class ContentController extends Controller
             'content' => $input['content'],
             'owner_id'  => auth()->user()->id,
         ]);
+        // subscribe embedded media to content
+        $this->checkForEmbeddedMedia($content);
+
 
         //subscribe to model
         if (isset($input['referenceable_type']) AND isset($input['referenceable_id'])){
@@ -81,17 +65,6 @@ class ContentController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Content  $content
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Content $content)
-    {
-
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -108,6 +81,8 @@ class ContentController extends Controller
             'content' => $input['content'],
             'owner_id'  => auth()->user()->id,
         ]);
+        // subscribe embedded media to content
+        $this->checkForEmbeddedMedia($content);
         $content->categories()->sync($input['categorie_ids']);
 
         if (request()->wantsJson()){
@@ -193,7 +168,31 @@ class ContentController extends Controller
         }
     }
 
-    protected function validateRequest(){
+    protected function checkForEmbeddedMedia($content)
+    {
+        preg_match_all('/src="\\/media\\/(.+?)"/s', $content->content, $matches, PREG_SET_ORDER, 0);
+        foreach ($matches as $match)
+        {
+            $this->subscribeMediaToModel($content,  Medium::find($match[1]));
+        }
+    }
+
+    private function subscribeMediaToModel($model, $medium)
+    {
+            $subscribe = MediumSubscription::updateOrCreate([
+                "medium_id"         => $medium->id,
+                "subscribable_type" => get_class($model),
+                "subscribable_id"   => $model->id,
+            ],[
+                "sharing_level_id"  => 1, // has to be global = 1
+                "visibility"        => 1, // has to be public  = 1
+                "owner_id"          => auth()->user()->id,
+            ]);
+            $subscribe->save();
+    }
+
+    protected function validateRequest()
+    {
         return request()->validate([
             'title' => 'sometimes',
             'content' => 'sometimes|required',

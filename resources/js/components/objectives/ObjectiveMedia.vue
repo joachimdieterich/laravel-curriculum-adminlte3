@@ -33,7 +33,7 @@
         <div class="tab-content"
              id="custom-content-below-tabContent">
 
-            <div v-can="'external_medium'"
+            <div v-can="'medium_access'"
                  class="tab-pane fade show "
                  v-bind:class="[(currentTab === 1) ? 'active' : '']"
                  id="objective-media-internal"

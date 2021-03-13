@@ -437,6 +437,7 @@ class Edusharing extends RepositoryPlugin
         $skipCount      = isset($query['skipCount']) ? $query['skipCount'] : 0;            // used for pagination
 
         //$nodes        = $this->getSearchCustom('-home-', array ('contentType' =>'FILES', 'property' => 'ccm:competence_digital2', 'value' => '11061007', 'maxItems' => 10));
+
         switch ($apiEndpoint) {
             case 'getSearchCustom': $nodes      = $this->getSearchCustom('-home-', array ('contentType' => $contentType, 'combineMode' => $combineMode, 'property' => $property, 'value' => $value, 'maxItems' => $maxItems, 'skipCount' => $skipCount));
                 break;
@@ -458,6 +459,9 @@ class Edusharing extends RepositoryPlugin
         }
 
         $collection = collect([]);
+        if (!isset($nodes['nodes'])){
+            return $collection; //end early if no data is given
+        }
 
         foreach ($nodes['nodes'] as $node)
         {

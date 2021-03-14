@@ -16,14 +16,15 @@
 }
 
 .box {
-  font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  border-radius: 0px;
-  position: relative;
-  border: 0;
-  background: $white;
-  margin-bottom: 20px;
-  width: 100%;
-  box-shadow: $box-boxshadow;
+      font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      border-radius: 0px;
+      position: relative;
+      border: 0;
+      background: $white;
+      margin-bottom: 20px;
+      width: 100%;
+      box-shadow: $box-boxshadow;
+      border-radius: 0.5rem;
 
   &.box-objective{
       margin: 0px;

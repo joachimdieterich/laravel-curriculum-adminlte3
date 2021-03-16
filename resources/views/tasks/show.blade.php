@@ -12,12 +12,10 @@
     <div class="col-12">
         <task :task="{{ $task }}"></task>
     </div>
-
 </div>
 
 <medium-modal></medium-modal>
 <medium-create-modal></medium-create-modal>
 <subscribe-objective-modal></subscribe-objective-modal>
-<content-create-modal></content-create-modal>
 <task-modal></task-modal>
 @endsection

@@ -8,29 +8,7 @@
         </div>-->
         <table
                id="sidebar_media_datatable"
-               class="table table-hover datatable">
-            <thead>
-            <tr style="border-top: 0 !important">
-                <th class="px-2 card-tools"
-                    style="border-top: 0 !important"
-                    >
-                    <span v-if="subscriptions.length !== 0">{{ trans('global.media.fields.title') }}</span>
-                    <span
-                        v-can="'medium_create'"
-                        class="float-right"
-                          @click="show('medium-create', subscription)">
-                        <i class="fa fa-plus"></i>
-                    </span>
-                </th>
-            </tr>
-            </thead>
-            <tr >
-                <!--<td style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 100px;"
-                    class="link-muted text-sm px-2 ">
-                    {{ trans('global.media.no_media') }}
-
-                </td>-->
-            </tr>
+               class="table table-hover datatable media_table">
             <tr v-for="subscription in subscriptions">
                 <!--<td> <img v-if="subsciption.medium.mime_type =='JPG'"
                           :src="'/media/'+subsciption.medium.id" width="30" height="30"/></td>-->
@@ -41,17 +19,25 @@
                        v-bind:class="[iconCss(subscription.medium.mime_type)]"></i>{{ subscription.medium.title }}
                 </td>
             </tr>
+            <tr>
+                <td
+                    class="py-2 link-muted text-sm pointer"
+                    v-can="'medium_create'"
+                    @click="show('medium-create', subscription)">
+                    <i class="fa fa-plus px-2 "></i> {{ trans('global.media.add')}}
+                </td>
+            </tr>
         </table>
     </div>
 
 
     <div v-else
-    v-for="subscription in subscriptions"
-    v-bind:id="'medium_'+subscription.medium.id"
-    class="box box-objective pointer my-1"
-    style="height: 300px !important; min-width: 200px !important; padding: 0; background-size: 100%,50%;"
-    :style="{'background-image':'url('+href(subscription.medium.id)+')'}"
-    @click="show('medium', subscription.medium)"
+        v-for="subscription in subscriptions"
+        v-bind:id="'medium_'+subscription.medium.id"
+        class="box box-objective pointer my-1"
+        style="height: 300px !important; min-width: 200px !important; padding: 0; background-size: 100%,50%;"
+        :style="{'background-image':'url('+href(subscription.medium.id)+')'}"
+        @click="show('medium', subscription.medium)"
     >
     <div class="symbol"
          style="position: absolute;
@@ -118,26 +104,30 @@
             }
         },
         methods: {
-            loader() {
-                axios.get('/mediumSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id).then(response => {
+            loader() { //todo: remove duplicate in beforMount.
+                axios.get('/mediumSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id).then(response => {
                     this.subscriptions = response.data.message;
                 }).catch(e => {
                     this.errors = error.response.data.errors;
                 });
             },
-           show(model, entry) {
-                this.$modal.show(model.toLowerCase()+'-modal', { 'content': entry, 'subscribable_type': this.subscribable_type, 'subscribable_id': this.subscribable_id});
+            show(model, entry) {
+                this.$modal.show(model.toLowerCase() + '-modal', {
+                    'content': entry,
+                    'subscribable_type': this.subscribable_type,
+                    'subscribable_id': this.subscribable_id
+                });
             },
             async unlinkMedium(subscription) { //id of external reference and value in db
                 try {
                     await axios.post('/mediumSubscriptions/destroy', subscription).data;
-                } catch(error) {
+                } catch (error) {
                     //this.errors = error.response.data.errors;
                 }
-                $("#medium_"+this.medium.id).hide();
+                $("#medium_" + this.medium.id).hide();
             },
             href: function (id) {
-                return '/media/'+ id;
+                return '/media/' + id;
             },
             iconCss(mimeType) {
                 switch (true) {
@@ -155,10 +145,24 @@
                         break;
                 }
             },
-
         },
-
-
+        beforeMount() {
+            if (this.subscribable_type  != ''){
+                axios.get('/mediumSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id).then(response => {
+                    this.subscriptions = response.data.message;
+                }).catch(e => {
+                    this.errors = error.response.data.errors;
+                });
+            }
+        },
 
     }
 </script>
+<style scoped>
+    .media_table,
+    .media_table tr:first-child,
+    .media_table tr:first-child td
+    {
+        border-top: 0px !important;
+    }
+</style>

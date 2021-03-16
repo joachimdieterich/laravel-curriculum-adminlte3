@@ -1,10 +1,10 @@
 <template>
-    <!-- timeline item -->
     <div :id="'#logbook_'+entry.id"
-        class="card collapsed-card col-12"
-        :style="isActive"
+         class="card col-12"
+         :class="{'collapsed-card' : first == false}"
+         :style="isActive"
         >
-        <div class="user-block p-2"
+        <div class="user-block p-2 "
             data-card-widget="collapse"
             :data-target="'#logbook_body_'+entry.id"
             aria-expanded="true">
@@ -12,44 +12,25 @@
             <span class="username ml-0">
                 <div class="pull-right " v-can="'logbook_entry_edit'">
                     <button type="button"
-                            class="btn btn-tool  pt-3"
-                            data-toggle="dropdown"
-                            aria-expanded="true">
-                        <i class="fa fa-plus"></i>
+                            class="btn btn-tool pt-3"
+                            @click.prevent="destroy()">
+                        <i class="fa fa-trash "></i>
                     </button>
-                    <div class="dropdown-menu"
-                         x-placement="top-start"
-                         style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, -2px, 0px);">
-                        <button class="dropdown-item" @click.prevent="open('subscribe-objective-modal', 'referenceable');">
-                            <i class="fa fa-bullseye"></i>
-                            <span class="ml-2">{{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}</span>
-                        </button>
-                        <button class="dropdown-item" @click.prevent="open('task-modal', 'subscribable');">
-                            <i class="fa fa-tasks"></i>
-                            <span class="ml-2">{{ trans('global.task.create') }}</span>
-                        </button>
-                        <button class="dropdown-item" @click.prevent="open('absence-modal', 'referenceable');">
-                            <i class="fa fa-user-times"></i>
-                            <span class="ml-2">{{ trans('global.absences.create') }}</span>
-                        </button>
-                        <div class="dropdown-divider"></div>
-                        <button class="dropdown-item" @click.prevent="edit()">
-                            <i class="fa fa-edit"></i>
-                            <span class="ml-2">{{ trans('global.logbookEntry.edit') }}</span>
-                        </button>
-                        <button class="dropdown-item text-danger" @click.prevent="destroy()">
-                            <i class="fa fa-trash"></i>
-                            <span class="ml-2">{{ trans('global.delete') }}</span>
-                        </button>
-                    </div>
+                     <button type="button"
+                             class="btn btn-tool pt-3"
+                             @click.prevent="edit()">
+                        <i class="fa fa-pencil-alt "></i>
+                    </button>
                 </div>
-                <span href="#">{{ entry.title }}</span>
-                <span class="description ml-0">{{ postDate() }}</span>
+                <span >{{ entry.title }}</span>
+                <span class="description ml-0 ">{{ postDate() }}</span>
             </span>
 
         </div>
 
-        <div class="card-body p-0 collapse" :id="'#logbook_body_'+entry.id" >
+        <div class="card-body p-0 "
+             :class="{'collapse' : first == false}"
+             :id="'#logbook_body_'+entry.id" >
             <hr class="m-1">
             <span class="clearfix"></span>
 
@@ -86,17 +67,20 @@
                        v-bind:href="'#logbook_tasks_'+entry.id"
                        data-toggle="tab">{{ trans('global.task.title') }}</a>
                 </li>
-                <li class="nav-item small">
+                <li v-can="'absence_access'"
+                    v-if="displayAbsences()"
+                    class="nav-item small">
                     <a class="nav-link"
                        v-bind:href="'#logbook_userStatuses_'+entry.id"
-                       data-toggle="tab">{{ trans('global.absences.title') }}</a>
+                       data-toggle="tab"
+                       @click="loaderAbsences()">{{ trans('global.absences.title') }}</a>
                 </li>
             </ul>
             <span class="clearfix"></span>
             <hr class="m-1">
 
 
-            <div class="p-2">
+            <div class="pb-2 px-1">
                 <div class="tab-content">
                     <!-- tab-pane -->
                     <div class="tab-pane active show"
@@ -104,7 +88,8 @@
                          <span class="" v-html="entry.description"></span>
                     </div>
                     <!-- /.tab-pane -->
-                    <div class="tab-pane"
+                    <div v-can="'medium_access'"
+                         class="tab-pane"
                          v-bind:id="'logbook_media_'+entry.id">
                         <media subscribable_type="App\LogbookEntry"
                                :subscribable_id="entry.id"
@@ -114,6 +99,7 @@
                     <!-- /.tab-pane -->
                     <div class="tab-pane"
                          v-bind:id="'logbook_objectives_'+entry.id">
+
                         <objective-box
                             v-for="terminal_subscription in entry.terminal_objective_subscriptions"
                             v-bind:key="terminal_subscription.id"
@@ -129,30 +115,51 @@
                                 type="enabling"></objective-box>
                             <span class="clearfix"></span>
                         </span>
-                    </div>
-                    <!-- /.tab-pane -->
-                    <!-- tab-pane -->
-                    <div class="tab-pane "
-                         v-bind:id="'logbook_contents_'+entry.id"  >
-                        <contents
-                            ref="Contents"
-                            subscribable_type="App\LogbookEntry"
-                            :subscribable_id="entry.id"></contents>
-                    </div>
-                    <!-- /.tab-pane -->
-                    <!-- tab-pane -->
-                    <div class="tab-pane show"
-                         v-bind:id="'logbook_tasks_'+entry.id">
-                         <task-list  class="p-2"
-                            :tasks="entry.task_subscription">
-                         </task-list>
+                        <ul  v-can="'reference_create'" class="todo-list" data-widget="todo-list">
+                            <li class="pointer bg-white">
+                                <a @click="open('subscribe-objective-modal', 'referenceable');">
+                                    <i class="px-2 fa fa-plus text-muted"></i> {{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}
+                                </a>
+                            </li>
+                        </ul>
 
                     </div>
                     <!-- /.tab-pane -->
                     <!-- tab-pane -->
-                    <div class="tab-pane show"
+                    <div v-can="'content_access'"
+                         class="tab-pane "
+                         v-bind:id="'logbook_contents_'+entry.id"  >
+                        <contents
+                            class="mb-0"
+                            ref="Contents"
+                            subscribable_type="App\LogbookEntry"
+                            :subscribable_id="entry.id">
+
+                        </contents>
+                    </div>
+                    <!-- /.tab-pane -->
+                    <!-- tab-pane -->
+                    <div v-can="'task_access'"
+                         class="tab-pane show"
+                         v-bind:id="'logbook_tasks_'+entry.id">
+                         <task-list
+                             class="pb-2"
+                            :tasks="entry.task_subscription"
+                            :subscribable_id="entry.id"
+                            subscribable_type="App\LogbookEntry">
+                         </task-list>
+                    </div>
+                    <!-- /.tab-pane -->
+                    <!-- tab-pane -->
+                    <div  v-can="'absence_access'"
+                          v-if="displayAbsences()"
+                          class="tab-pane show"
                          v-bind:id="'logbook_userStatuses_'+entry.id"  >
-                        <absences  class="p-2"
+                        <absences
+                            class="pb-2"
+                            ref="Absences"
+                            :entry="entry"
+                            :logbook="logbook"
                             :absences="entry.absences">
                         </absences>
 
@@ -176,35 +183,22 @@
         props: {
             'logbook': Object,
             'entry': Object,
-            'search': ''
+            'search': '',
+            'first': false
         },
         data() {
             return {
                 media: {},
                 active: true
-
             };
         },
         methods: {
             open(modal, relationKey) {
-                if (modal === 'absence-modal'){
-                    this.$modal.show(modal, JSON.stringify(_.merge({ 'referenceable_type': 'App\\LogbookEntry', 'referenceable_id': this.entry.id}, this.logbook)));
-                }
-                else if (relationKey === 'referenceable'){
+                if (relationKey === 'referenceable'){
                     this.$modal.show(modal, { 'referenceable_type': 'App\\LogbookEntry', 'referenceable_id': this.entry.id });
                 } else {
                     this.$modal.show(modal, { 'subscribable_type': 'App\\LogbookEntry', 'subscribable_id': this.entry.id });
                 }
-                //open tab
-                switch (modal) {
-                    case "logbook-subscribe-objective-modal":
-                        $('.nav-item a[href="#logbook_objectives_'+this.entry.id+'"]').tab('show');
-                    break;
-                    case "task-modal":
-                        $('.nav-item a[href="#logbook_tasks_1'+this.entry.id+'"]').tab('show');
-                    break;
-                }
-
             },
             edit() {
                  this.$modal.show('logbook-entry-modal', { 'id': this.entry.id, 'method': 'patch'});
@@ -228,14 +222,23 @@
                 } else {
                   return start.toLocaleString([], dateFormat) + " - " + end.toLocaleString([], dateFormat);
                 }
-
             },
+            displayAbsences(){
+                const exists = this.logbook.subscriptions.findIndex(            // Only Show absences on group and course subscriptions
+                    subscription => subscription.subscribable_type === "App\\Course" || subscription.subscribable_type === "App\\Group"
+                );
+
+                return (exists !== -1) ? true : false;
+            },
+
             loaderEvent: function() {
                 this.$refs.Contents.loaderEvent();
+            },
+            loaderAbsences: function() {
+                this.$refs.Absences.loaderEvent();
             }
         },
         computed: {
-
             isActive: function(){
                 if (this.entry.title.toLowerCase().indexOf(this.search.toLowerCase()) === -1){
                     return "display:none";

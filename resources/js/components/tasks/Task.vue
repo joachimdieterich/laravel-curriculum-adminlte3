@@ -77,26 +77,9 @@
                 </a>
             </li>
             <!--<li class="nav-item small"><a class="nav-link link-muted" href="#timeline" data-toggle="tab">{{ trans('global.history') }}</a></li>-->
-            <li v-can="'task_edit'"
-                class="nav-item ml-auto">
-                <a class="nav-link link-muted pb-0"
-                   id="config-nav-tab"
-                   data-toggle="dropdown">
-                    <i class="fa fa-cog"></i>
-                </a>
-
-                <div class="dropdown-menu"
-                     x-placement="top-start"
-                     style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, -2px, 0px);">
-                    <button class="dropdown-item" @click.prevent="open('subscribe-objective-modal', 'referenceable');">
-                        <i class="fa fa-bullseye"></i>
-                        <span class="ml-2">{{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}</span>
-                    </button>
-                </div>
-            </li>
         </ul>
 
-        <div class="tab-content">
+        <div class="tab-content" >
              <div class="tab-pane"
                  v-bind:id="'task_contents_'+task.id"  >
                  <contents
@@ -114,13 +97,14 @@
 
             <div class="tab-pane"
                  v-bind:id="'task_objectives_'+task.id">
-                <objective-box
-                    v-for="terminal_subscription in task.terminal_objective_subscriptions"
-                    v-bind:key="terminal_subscription.id"
-                    :objective="terminal_subscription.terminal_objective"
-                    type="terminal"></objective-box>
-                <span class="clearfix"></span>
-                <span v-for="enabling_subscription in task.enabling_objective_subscriptions">
+                <div class="p-2">
+                    <objective-box
+                        v-for="terminal_subscription in task.terminal_objective_subscriptions"
+                        v-bind:key="terminal_subscription.id"
+                        :objective="terminal_subscription.terminal_objective"
+                        type="terminal"></objective-box>
+                    <span class="clearfix"></span>
+                    <span v-for="enabling_subscription in task.enabling_objective_subscriptions">
                     <objective-box
                         :objective="enabling_subscription.enabling_objective.terminal_objective"
                         type="terminal"></objective-box>
@@ -129,6 +113,15 @@
                         type="enabling"></objective-box>
                     <span class="clearfix"></span>
                 </span>
+                    <ul  v-can="'reference_create'" class="todo-list" data-widget="todo-list">
+                        <li class="pointer bg-white">
+                            <a @click="open('subscribe-objective-modal', 'referenceable');">
+                                <i class="px-2 fa fa-plus text-muted"></i> {{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
             </div>
             <div class="tab-pane" id="activity">
                 <task-timeline

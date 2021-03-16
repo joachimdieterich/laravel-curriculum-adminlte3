@@ -18,10 +18,17 @@
                     v-bind:checked="isCompleted(task)">
                 <label for="todoCheck1"></label>
             </div>
-            <!-- todo text -->
-            <span class="text"><a :href="'/tasks/'+task.task.id" v-html="task.task.title"></a></span>
-            <!-- Emphasis label -->
-            <small class="badge badge-primary pull-right"><i class="far fa-clock"></i> <span v-html="task.task.due_date"></span></small>
+
+            <span class="text">
+                <a class="link-muted text-decoration-none"
+                   :href="'/tasks/'+task.task.id"
+                   v-html="task.task.title"></a>
+            </span>
+
+            <small class="badge badge-primary pull-right p-1 mt-1">
+                <i class="far fa-clock"></i>
+                <span v-html="task.task.due_date"></span>
+            </small>
             <!-- General tools such as edit or delete-->
             <div class="tools">
                 <a onclick="deleteTask(task.task)" >
@@ -29,13 +36,20 @@
                 </a>
             </div>
         </li>
+        <li class="pointer bg-white">
+            <a @click.prevent="open('task-modal');">
+                <i class="px-2 fa fa-plus text-muted"></i> {{ trans('global.task.create')}}
+            </a>
+        </li>
     </ul>
 </template>
 
 <script>
     export default {
         props: {
-            'tasks': ''
+            'tasks': '',
+            'subscribable_type': String,
+            'subscribable_id': Number,
         },
         data() {
             return {
@@ -45,6 +59,9 @@
         },
 
         methods: {
+            open(modal, relationKey) {
+                this.$modal.show(modal, { 'subscribable_type': this.subscribable_type, 'subscribable_id': this.subscribable_id });
+            },
             async complete(id) {
                 try {
                     this.status = (await axios.patch('/tasks/'+id+'/complete')).data.status;

@@ -4,11 +4,11 @@
             role="tablist">
             <li class="nav-item">
                 <a class="nav-link link-muted active"
-                   id="curriculm-nav-tab"
+                   id="curriculum-nav-tab"
                    data-toggle="pill"
-                   href="#curriculm-tab"
+                   href="#curriculum-tab"
                    role="tab"
-                   aria-controls="curriculm-tab"
+                   aria-controls="curriculum-tab"
                    aria-selected="false">
                     <i class="fas fa-th"></i>
                 </a>
@@ -56,22 +56,22 @@
                     <i class="fa fa-book-open pr-2"></i>{{trans('global.glossar.create')}}
                 </a>
             </li>-->
-           <!-- <li class="nav-item ">
-                <a v-if="logbook"
-                   v-can="'logbook_access'"
+           <li class="nav-item "
+               v-can="'logbook_access'">
+                <a v-if="logbooks"
                    class="nav-link link-muted"
-                   :href="'/logbooks/'+ logbook.id "
-                   id="certificate-nav-tab">
+                   :href="'/logbooks/'+ logbooks[0].id "
+                   id="logbook-nav-tab">
                     <i class="fas fa-book pr-2"></i>{{trans('global.logbook.title_singular')}}
                 </a>
                 <a v-else
                    v-can="'logbook_create'"
                    class="nav-link link-muted"
                    :href="'/logbooks/create?subscribable_type=App\\Group&subscribable_id='+ group.id "
-                   id="certificate-nav-tab">
+                   id="logbook-nav-tab">
                     <i class="fas fa-book pr-2"></i>{{trans('global.logbook.create')}}
                 </a>
-            </li>-->
+            </li>
 
             <li v-can="'group_edit'"
                 class="nav-item ml-auto">
@@ -83,8 +83,12 @@
             </li>
         </ul>
 
-        <div class="tab-content" id="custom-content-below-tabContent">
-            <div class="tab-pane fade show active pt-2" id="curriculm-tab" role="tabpanel" aria-labelledby="curriculm-nav-tab">
+        <div class="tab-content"
+             id="custom-content-below-tabContent">
+            <div class="tab-pane fade show active pt-2"
+                 id="curriculum-tab"
+                 role="tabpanel"
+                 aria-labelledby="curriculum-nav-tab">
                 <course-item
                     v-for="(item,index) in courses"
                     :key="'course_item'+index"
@@ -109,7 +113,7 @@
                        format="list">
                 </media>
             </div>-->
-            <div v-if="group.glossar != null"
+            <!--<div v-if="group.glossar != null"
                 class="tab-pane fade"
                  id="glossar-tab"
                  role="tab"
@@ -117,7 +121,7 @@
                 <glossars
                     :glossar="group.glossar">
                 </glossars>
-            </div>
+            </div>-->
 
         </div>
     </div>
@@ -133,7 +137,7 @@
         props: {
             'group': Array,
             'courses': Array,
-            'logbook': null,
+            'logbooks': Array,
         },
         data () {
             return {

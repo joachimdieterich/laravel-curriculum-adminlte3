@@ -917,6 +917,8 @@ return [
             'reason_helper'  => '',
             'done'          => 'erledigt',
             'done_helper'   => '',
+            'time'          => 'versäumte Zeit (Minuten)',
+            'time_helper'   => '',
        ],
     ],
     'externalRepositorySubscription' =>[

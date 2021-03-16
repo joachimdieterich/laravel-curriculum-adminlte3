@@ -917,6 +917,8 @@ return [
             'title_helper'  => '',
             'done'          => 'done',
             'done_helper'   => '',
+            'time'          => 'absence time (minutes)',
+            'time_helper'   => '',
        ],
     ],
      'externalRepositorySubscription' =>[

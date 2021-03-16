@@ -8,6 +8,8 @@
     <div style="min-height: 150px !important;
         min-width: 197px !important;
         padding: 0;
+        border-top-left-radius: 0.4rem;
+        border-top-right-radius: 0.4rem;
         background: url('{{isset($item->medium->id) ? route('media.thumb', ($item->medium->id)) : Avatar::create($item->title)->toGravatar(['d' => 'identicon', 'r' => 'pg', 's' => 100])}}') top center no-repeat;
         background-size: cover;">
     </div>

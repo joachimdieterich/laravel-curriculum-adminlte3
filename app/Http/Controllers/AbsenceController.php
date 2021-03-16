@@ -18,16 +18,6 @@ class AbsenceController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -37,9 +27,9 @@ class AbsenceController extends Controller
     {
         abort_unless(\Gate::allows('absence_create'), 403);
         $new_absence = $this->validateRequest();
-        
+
         foreach ($new_absence['absent_user_ids'] AS $user_id)
-        { 
+        {
             $absence = Absence::updateOrCreate(
                 [
                     'referenceable_type' => $new_absence['referenceable_type'],
@@ -48,13 +38,14 @@ class AbsenceController extends Controller
                 ],
                 [
                     'reason'             => $new_absence['reason'],
-                    'done'               => isset($new_absence['done']) ? $new_absence['done'] : 0, 
+                    'done'               => isset($new_absence['done']) ? $new_absence['done'] : 0,
+                    'time'               => isset($new_absence['time']) ? $new_absence['time'] : 0,
                     'owner_id'           => auth()->user()->id
-                ]    
+                ]
             );
         }
-        // axios call? 
-        if (request()->wantsJson()){    
+        // axios call?
+        if (request()->wantsJson()){
             return ['message' => $absence];
         }
     }
@@ -71,17 +62,6 @@ class AbsenceController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Absence  $absence
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Absence $absence)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -92,12 +72,12 @@ class AbsenceController extends Controller
     {
         abort_unless(\Gate::allows('absence_edit'), 403);
 
-        if (request()->wantsJson()){  
+        if (request()->wantsJson()){
             if ($absence->update($request->all())){
                 return ['done' => $absence->done];
             }
-            
-        } 
+
+        }
     }
 
     /**
@@ -110,23 +90,24 @@ class AbsenceController extends Controller
     {
         abort_unless(\Gate::allows('absence_delete'), 403);
 
-        if (request()->wantsJson()){    
+        if (request()->wantsJson()){
             return ['message' => $absence->delete()];
-        } 
+        }
     }
-    
+
     protected function validateRequest()
-    {   
-        
+    {
+
         return request()->validate([
             'id'                 => 'sometimes',
             'reason'             => 'sometimes|required',
             'absent_user_ids'    => 'sometimes',
             'done'               => 'sometimes',
+            'time'               => 'sometimes',
             'owner_id'           => 'sometimes',
             'referenceable_type' => 'sometimes',
             'referenceable_id'   => 'sometimes',
         ]);
     }
-    
+
 }

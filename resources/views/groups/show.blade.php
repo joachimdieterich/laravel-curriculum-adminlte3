@@ -13,6 +13,7 @@
         <group-view
             :group="{{ $group }}"
             :courses="{{ $courses }}"
+            :logbooks="{{ $group->logbooks }}"
         >
         </group-view>
         <br>

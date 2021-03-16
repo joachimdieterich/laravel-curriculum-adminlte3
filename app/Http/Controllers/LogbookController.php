@@ -22,7 +22,12 @@ class LogbookController extends Controller
     {
 
         abort_unless(\Gate::allows('logbook_access'), 403);
-        $logbooks = (auth()->user()->role()->id == 1) ? Logbook::all() : auth()->user()->logbooks()->get();
+
+        $logbooks = (auth()->user()->role()->id == 1) ? Logbook::all() : Logbook::with('subscriptions')
+            ->whereHas('subscriptions', function($query)  {
+                 $query->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id'))
+                    ->orWhere('subscribable_type', "App\Course")->whereIn('subscribable_id', auth()->user()->currentGroupEnrolments->pluck('course_id'));
+            })->get();
 
         $edit_gate = \Gate::allows('logbook_edit');
         $delete_gate = \Gate::allows('logbook_delete');
@@ -102,9 +107,15 @@ class LogbookController extends Controller
      */
     public function show(Logbook $logbook)
     {
+        //todo: check if user has permission to see logbook
+        abort_unless((auth()->user()->logbooks->contains('id', $logbook->id) // user owns logbook
+            OR ($logbook->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() //user is enroled in group
+            OR ($logbook->subscriptions->where('subscribable_type', "App\Course")->whereIn('subscribable_id', auth()->user()->currentGroupEnrolments->pluck('course_id')))->isNotEmpty()
+            OR (auth()->user()->currentRole()->first()->id == 1)), 403);                // or admin
         $logbook = $logbook->with([
                 'subscriptions.subscribable',
-                'entries.absences.owner',
+                'entries.absences.owner', //todo: lazyload
+                'entries.absences.absent_user',
                 'entries.terminalObjectiveSubscriptions.terminalObjective',
                 'entries.enablingObjectiveSubscriptions.enablingObjective.terminalObjective',
                 'entries.taskSubscription.task.subscriptions' => function($query) {

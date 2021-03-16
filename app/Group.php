@@ -84,4 +84,20 @@ class Group extends Model
         )->where('subscribable_type', get_class($this));
     }
 
+    public function logbookSubscription()
+    {
+        return $this->morphMany('App\LogbookSubscription', 'subscribable');
+    }
+
+    public function logbooks()
+    {
+        return $this->hasManyThrough(
+            'App\Logbook',
+            'App\LogbookSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'logbook_id'
+        )->where('subscribable_type', get_class($this));
+    }
 }

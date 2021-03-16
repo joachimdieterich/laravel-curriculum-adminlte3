@@ -5,7 +5,7 @@
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item">
-        @if (Auth::user()->id == env('GUEST_USER')) 
+        @if (Auth::user()->id == env('GUEST_USER'))
             <a href="/navigators/{{Auth::user()->organizations()->where('organization_id', '=',  Auth::user()->current_organization_id)->first()->navigators()->first()->id}}">Home</a>
         @else
             <a href="/">{{ trans('global.home') }}</a>
@@ -18,8 +18,8 @@
 @can('logbook_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <a id="add-logbook" 
-               class="btn btn-success" 
+            <a id="add-logbook"
+               class="btn btn-success"
                href="{{ route("logbooks.create") }}" >
                {{ trans('global.logbook.create') }}
             </a>
@@ -27,5 +27,52 @@
     </div>
 @endcan
 
-<data-table-widgets model-url="logbooks"></data-table-widgets>
+<table id="logbooks-datatable" class="table table-hover datatable">
+    <thead>
+    <tr>
+        <th width="10"></th>
+        <th>{{ trans('global.logbook.fields.title') }}</th>
+        <th>{{ trans('global.datatables.action') }}</th>
+    </tr>
+    </thead>
+</table>
+{{--<data-table-widgets model-url="logbooks"></data-table-widgets>--}}
+@endsection
+
+@section('scripts')
+    @parent
+    <script>
+        $(function () {
+
+            let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
+            var table = $('#logbooks-datatable').DataTable({
+                ajax: "{{ url('logbooks/list') }}",
+                columns: [
+                    { data: 'check'},
+                    { data: 'title' },
+                    { data: 'action' }
+                ],
+                columnDefs: [
+                    { "visible": false, "targets": 0 },
+                    {
+                        orderable: false,
+                        searchable: false,
+                        targets: - 1
+                    }
+                ],
+                bStateSave: true,
+                fnStateSave: function (oSettings, oData) {
+                    localStorage.setItem( 'DataTables', JSON.stringify(oData) );
+                },
+                fnStateLoad: function (oSettings) {
+                    return JSON.parse( localStorage.getItem('DataTables') );
+                },
+                buttons: dtButtons
+            });
+            table.on( 'select', function ( e, dt, type, indexes ) { //on select event
+                window.location.href = "/logbooks/" + table.row({ selected: true }).data().id ;
+            });
+        })
+
+    </script>
 @endsection

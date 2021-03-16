@@ -33,7 +33,6 @@ class ContentController extends Controller
         // subscribe embedded media to content
         $this->checkForEmbeddedMedia($content);
 
-
         //subscribe to model
         if (isset($input['referenceable_type']) AND isset($input['referenceable_id'])){
             $model = $input['referenceable_type']::find($input['referenceable_id']);
@@ -199,8 +198,7 @@ class ContentController extends Controller
             'categorie_ids' => 'sometimes',
             'referenceable_id' => 'sometimes',
             'referenceable_type' => 'sometimes',
-
-            ]);
+        ]);
     }
 
 }

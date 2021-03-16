@@ -190,7 +190,10 @@ class UsersController extends Controller
         abort_unless(\Gate::allows('user_delete'), 403);
 
         $return = $user->delete();
-        //todo concept to hard-delete users
+        //todo: concept to hard-delete users
+        // - add user to db DeletedUser
+        // - this DeletedUser.id gets data, which can't be deleted
+        
         if (request()->wantsJson()){
             return ['message' => $return];
         }

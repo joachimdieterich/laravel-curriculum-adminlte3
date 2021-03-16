@@ -30,6 +30,7 @@
                 <i class="fa fa-plus"></i>
             </button>
             <button v-can="'content_create'"
+                    v-if="subscribable_type === 'App\\Curriculum'"
                     type="button" class="btn btn-tool "
                     role="button"
                     @click="show('content-subscription-modal')">

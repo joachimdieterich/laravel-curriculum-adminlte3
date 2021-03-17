@@ -17,26 +17,6 @@ class TerminalObjectiveController extends Controller
 {
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -77,17 +57,6 @@ class TerminalObjectiveController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\TerminalObjective  $terminalObjective
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(TerminalObjective $terminalObjective)
-    {
-
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -116,7 +85,7 @@ class TerminalObjectiveController extends Controller
                 $this->resetOrderIds($old_objective->curriculum_id, $old_objective->objective_type_id, $old_objective->order_id);
             }
             if (request()->wantsJson()){
-                return ['message' => '/curricula/'.request('curriculum_id')];
+                return ['message' => $terminalObjective];
             }
         }
 

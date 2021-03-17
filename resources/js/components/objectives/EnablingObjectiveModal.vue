@@ -179,17 +179,18 @@
                 this.form.title = tinyMCE.get('title').getContent();
                 this.form.description = tinyMCE.get('description').getContent();
                 if (method === 'patch'){
-                    this.requestUrl += '/' + this.form.id;
+                    this.form.patch(this.requestUrl + '/' + this.form.id)
+                             .then(response => this.$parent.$emit('addEnablingObjective', response.message));
+                } else {
+                    this.form.post(this.requestUrl)
+                             .then(response => this.$parent.$emit('addEnablingObjective', response.message));
                 }
 
-                this.form.submit(method, this.requestUrl);
-                this.$parent.$emit('addEnablingObjective', this.form);
                 this.close();
             },
             close(){
                 tinymce.remove()
                 this.$modal.hide('enabling-objective-modal');
-
             }
         },
         created() {

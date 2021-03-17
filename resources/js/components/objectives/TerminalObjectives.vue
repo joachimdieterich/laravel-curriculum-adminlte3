@@ -183,7 +183,7 @@
                 this.loadObjectives(this.activetab);
             });
             this.$on('addEnablingObjective', function(newEnablingObjective) {
-                this.loadObjectives(this.activetab)
+                this.loadObjectives(this.activetab);
             });
         },
 

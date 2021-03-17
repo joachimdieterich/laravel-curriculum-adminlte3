@@ -123,7 +123,7 @@
                     'color': '#008000',
                     'time_approach': '',
                     'curriculum_id': '',
-                    'objective_type_id': 1,
+                    'objective_type_id': '',
                     'visibility': true,
                 }),
                 colors: {
@@ -199,15 +199,18 @@
                 this.form.description = tinyMCE.get('description').getContent();
 
                 if (method === 'patch') {
-                    this.requestUrl += '/' + this.form.id;
+                    this.form.patch( this.requestUrl + '/' + this.form.id)
+                        .then(response => this.$parent.$emit('addTerminalObjective', response.message));
+                } else {
+                    this.form.post(this.requestUrl)
+                        .then(response =>  this.$parent.$emit('addTerminalObjective', response.message));
                 }
-                this.form.submit(method, this.requestUrl);
-                this.$parent.$emit('addTerminalObjective', this.form);
                 this.close();
 
             },
-             close(){
-                this.$modal.hide('terminal-objective-modal');
+            close(){
+                 tinymce.remove()
+                 this.$modal.hide('terminal-objective-modal');
             }
         },
         created() {

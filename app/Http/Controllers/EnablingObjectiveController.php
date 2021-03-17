@@ -18,25 +18,6 @@ use Illuminate\Support\Collection;
 
 class EnablingObjectiveController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -75,17 +56,6 @@ class EnablingObjectiveController extends Controller
         return view('objectives.show')
             ->with(compact('objective'))
             ->with(compact('repository'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\EnablingObjective  $enablingObjective
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(EnablingObjective $enablingObjective)
-    {
-
     }
 
     /**

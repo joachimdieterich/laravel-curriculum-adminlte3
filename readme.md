@@ -165,6 +165,11 @@ SAML2_RLP_IDP_CONTACT_EMAIL=email
 
 SAML2_RLP_IDP_ORG_NAME=org name
 SAML2_RLP_IDP_ORG_URL=some url
+
+SAML2_LOGOUT_ROUTE=some url
+SAML2_LOGIN_ROUTE=some url
+SAML2_ERROR_ROUTE=some url
+
 ```
 
 Further Settings are found in `config\saml2\rlp_idp_settings.php` and `config\saml2_settings.php`

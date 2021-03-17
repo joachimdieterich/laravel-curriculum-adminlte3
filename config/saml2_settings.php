@@ -42,17 +42,17 @@ return $settings = array(
     /**
      * Where to redirect after logout
      */
-    'logoutRoute' => '/',
+    'logoutRoute' => env('SAML2_LOGOUT_ROUTE', '/'),
 
     /**
      * Where to redirect after login if no other option was provided
      */
-    'loginRoute' => '/',
+    'loginRoute' => env('SAML2_LOGIN_ROUTE', '/'),
 
     /**
      * Where to redirect after login if no other option was provided
      */
-    'errorRoute' => '/',
+    'errorRoute' => env('SAML2_ERROR_ROUTE', '/'),
 
     // If 'proxyVars' is True, then the Saml lib will trust proxy headers
     // e.g X-Forwarded-Proto / HTTP_X_FORWARDED_PROTO. This is useful if

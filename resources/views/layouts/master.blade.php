@@ -31,7 +31,7 @@ echo json_encode([
 ?>;
         </script>
     </head>
-    <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+    <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
         <!-- Site wrapper -->
         <div id="app" class="wrapper">
             <!-- Navbar -->

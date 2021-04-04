@@ -17,6 +17,29 @@ Vue.prototype.trans = (key) => {
     return _.get(window.trans, key, key);
 };
 
+/**
+ * Store current ab in browser storage
+ * example @click="setTab('#logbook_'+entry.id, '#logbook_description_'+entry.id)"
+ * @param key
+ * @param value
+ */
+Vue.prototype.setLocalStorage = (key, value) => {
+    localStorage.setItem(key, value);
+};
+/**
+ * check if current value is set in browser storage
+ * example: :class="activeTab('#logbook_'+entry.id, '#logbook_description_'+entry.id)"
+ * @param key
+ * @param value
+ * @param class_string
+ * @returns {string}
+ */
+Vue.prototype.checkLocalStorage = (key, value, class_string = "active") => {
+    if (localStorage.getItem(key) === value){
+        return class_string;
+    }
+};
+
 import VModal from 'vue-js-modal';
 Vue.use(VModal, { dynamic: true});
 
@@ -43,7 +66,7 @@ Vue.filter('truncate', filter);
 Vue.component('organization-modal', require('./components/organization/OrganizationModal.vue').default);
 Vue.component('group-modal', require('./components/group/GroupModal.vue').default);
 
-
+Vue.component('admin-view', require('./components/admin/AdminView.vue').default);
 Vue.component('absence-modal', require('./components/absence/AbsenceModal.vue').default);
 Vue.component('curriculum-view', require('./components/curriculum/CurriculumView.vue').default);
 Vue.component('curriculum-export-modal', require('./components/curriculum/CurriculumExportModal.vue').default);
@@ -152,6 +175,7 @@ Vue.directive('can', function (el, binding) {
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 var app = new Vue({
-    el: '#app'
+    el: '#app',
+
 });
 

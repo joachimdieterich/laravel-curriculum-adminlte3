@@ -19,7 +19,7 @@ Vue.prototype.trans = (key) => {
 
 /**
  * Store current ab in browser storage
- * example @click="setTab('#logbook_'+entry.id, '#logbook_description_'+entry.id)"
+ * example @click="setLocalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id)"
  * @param key
  * @param value
  */
@@ -28,7 +28,7 @@ Vue.prototype.setLocalStorage = (key, value) => {
 };
 /**
  * check if current value is set in browser storage
- * example: :class="activeTab('#logbook_'+entry.id, '#logbook_description_'+entry.id)"
+ * example: :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id)"
  * @param key
  * @param value
  * @param class_string

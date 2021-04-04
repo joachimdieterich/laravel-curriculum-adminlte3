@@ -95,6 +95,18 @@ return [
             'data_type_helper'   => '',
         ],
     ],
+    'metadataset'              => [
+        'title'          => 'Metadatensets',
+        'title_singular' => 'Metadatenset',
+        'create'         => 'Metadatenset erstellen',
+        'edit'           => 'Metadatenset bearbeiten',
+        'fields'         => [
+            'id'                 => 'ID',
+            'id_helper'          => '',
+            'version'            => 'Version',
+            'version_helper'     => '',
+        ],
+    ],
     'date'                                 => 'Datum',
     'region'                               => 'Region',
     'place'                                => 'Ort',

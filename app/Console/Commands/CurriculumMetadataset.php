@@ -83,6 +83,26 @@ class CurriculumMetadataset extends Command
      * changed -> 25.08.2020
      * Country State OrgType Subject AgeBegin AgeEnd  Version CurriculumID  TerminalType TerminalObjective EnablingObjective
      * 276     11    00      00074   01       01      001     000           000          000               000
+     * changed -> xx.xx.2021
+     * Country State OrgType Subject AgeBegin AgeEnd  CurriculumID   TerminalType TerminalObjective EnablingObjective
+     * 276     11    00      00074   01       01      001            000000       000               000
+     *
+     * CurriculumID
+     * ea47cd5a-7c30-42db-8b09-773cb43ddf66
+     * partent_id: null
+     *
+     * TerminalType
+     * ea47cd5a-7c30-42db-8b09-773cb43ddf66 912ee9d9-dfd3-4d20-918f-eadce7aec767
+     * partent_id: ea47cd5a-7c30-42db-8b09-773cb43ddf66
+     *
+     * TerminalObjective
+     * 08d1bf67-4a2c-4c1d-a7ed-7b309b0d7da6
+     * partent_id: ea47cd5a-7c30-42db-8b09-773cb43ddf66912ee9d9-dfd3-4d20-918f-eadce7aec767
+     *
+     * EnablingObjective
+     * 4f9b647f-7e06-47c3-af7c-27cbeb7e007a
+     * partent_id: 08d1bf67-4a2c-4c1d-a7ed-7b309b0d7da6
+     *
      */
     private function processCurriculum($curriculum, $version, $curriculum_iterator)
     {
@@ -104,6 +124,7 @@ class CurriculumMetadataset extends Command
         {
 
             // terminal objective type
+            // if objective_types are added/removed the ID will eventually change. This affects childrens parent_id.
             if ($ter_type_previous_iteration != $terminalObjective->objective_type_id)
             {
                 $ter = 0; // reset on new objective type

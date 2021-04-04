@@ -107,6 +107,10 @@ Route::group(['middleware' => 'auth'], function () {
     /* logbook entries */
     Route::resource('logbookEntries', 'LogbookEntryController');
 
+    /* Metadataset */
+    Route::get('metadatasets/list', 'MetadatasetController@list');
+    Route::resource('metadatasets', 'MetadatasetController');
+
     /* Messages */
     Route::get('messages', 'MessagesController@index')->name('messages');
     Route::get('messages/create', 'MessagesController@create')->name('messages.create');

@@ -1,7 +1,7 @@
 <template>
     <div :id="'#logbook_'+entry.id"
          class="card col-12"
-         :class="{'collapsed-card' : first == false}"
+         :class="{'collapsed-card' : first === false}"
          :style="isActive"
         >
         <div class="user-block p-2 "
@@ -10,7 +10,7 @@
             aria-expanded="true">
 
             <span class="username ml-0">
-                <div class="pull-right " v-can="'logbook_entry_edit'">
+                <span class="pull-right " v-can="'logbook_entry_edit'">
                     <button type="button"
                             class="btn btn-tool pt-3"
                             @click.prevent="destroy()">
@@ -21,7 +21,7 @@
                              @click.prevent="edit()">
                         <i class="fa fa-pencil-alt "></i>
                     </button>
-                </div>
+                </span>
                 <span >{{ entry.title }}</span>
                 <span class="description ml-0 ">{{ postDate() }}</span>
             </span>
@@ -29,48 +29,60 @@
         </div>
 
         <div class="card-body p-0 "
-             :class="{'collapse' : first == false}"
+             :class="{'collapse' : first === false}"
              :id="'#logbook_body_'+entry.id" >
             <hr class="m-1">
             <span class="clearfix"></span>
 
             <ul class="nav nav-pills">
-                <li class="nav-item small">
-                    <a class="nav-link active show"
+                <li class="nav-item small"
+                    @click="setLocalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id)">
+                    <a class="nav-link show"
+                       :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id)"
                        v-bind:href="'#logbook_description_'+entry.id"
                        data-toggle="tab">
                         {{ trans('global.logbook.fields.description') }}
                     </a>
                 </li>
-                <li class="nav-item small">
+                <li class="nav-item small"
+                    @click="setLocalStorage('#logbook_'+entry.id, '#logbook_media_'+entry.id)">
                     <a class="nav-link"
+                       :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_media_'+entry.id)"
                        v-bind:href="'#logbook_media_'+entry.id"
                        data-toggle="tab">
                         {{ trans('global.media.title') }}
                     </a>
                 </li>
-                <li class="nav-item small">
+                <li class="nav-item small"
+                    @click="setLocalStorage('#logbook_'+entry.id, '#logbook_objectives_'+entry.id)">
                     <a class="nav-link"
+                       :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_objectives_'+entry.id)"
                        v-bind:href="'#logbook_objectives_'+entry.id"
                        data-toggle="tab">
                         {{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}
                     </a>
                 </li>
-                <li class="nav-item small">
+                <li class="nav-item small"
+                    @click="setLocalStorage('#logbook_'+entry.id, '#logbook_contents_'+entry.id)">
                     <a class="nav-link"
+                       :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_contents_'+entry.id)"
                        v-bind:href="'#logbook_contents_'+entry.id"
                        data-toggle="tab"
                        @click="loaderEvent()">{{ trans('global.content.title') }}</a>
                 </li>
-                <li class="nav-item small">
+                <li class="nav-item small"
+                    @click="setLocalStorage('#logbook_'+entry.id, '#logbook_tasks_'+entry.id)">
                     <a class="nav-link"
+                       :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_tasks_'+entry.id)"
                        v-bind:href="'#logbook_tasks_'+entry.id"
                        data-toggle="tab">{{ trans('global.task.title') }}</a>
                 </li>
                 <li v-can="'absence_access'"
                     v-if="displayAbsences()"
-                    class="nav-item small">
+                    class="nav-item small"
+                    @click="setLocalStorage('#logbook_'+entry.id, '#logbook_userStatuses_'+entry.id)">
                     <a class="nav-link"
+                       :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_userStatuses_'+entry.id)"
                        v-bind:href="'#logbook_userStatuses_'+entry.id"
                        data-toggle="tab"
                        @click="loaderAbsences()">{{ trans('global.absences.title') }}</a>
@@ -83,13 +95,15 @@
             <div class="pb-2 px-1">
                 <div class="tab-content">
                     <!-- tab-pane -->
-                    <div class="tab-pane active show"
+                    <div class="tab-pane"
+                         :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id)"
                          v-bind:id="'logbook_description_'+entry.id">
                          <span class="" v-html="entry.description"></span>
                     </div>
                     <!-- /.tab-pane -->
                     <div v-can="'medium_access'"
                          class="tab-pane"
+                         :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_media_'+entry.id)"
                          v-bind:id="'logbook_media_'+entry.id">
                         <media subscribable_type="App\LogbookEntry"
                                :subscribable_id="entry.id"
@@ -98,6 +112,7 @@
                     </div>
                     <!-- /.tab-pane -->
                     <div class="tab-pane"
+                         :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_objectives_'+entry.id)"
                          v-bind:id="'logbook_objectives_'+entry.id">
 
                         <objective-box
@@ -128,6 +143,7 @@
                     <!-- tab-pane -->
                     <div v-can="'content_access'"
                          class="tab-pane "
+                         :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_contents_'+entry.id)"
                          v-bind:id="'logbook_contents_'+entry.id"  >
                         <contents
                             class="mb-0"
@@ -140,7 +156,8 @@
                     <!-- /.tab-pane -->
                     <!-- tab-pane -->
                     <div v-can="'task_access'"
-                         class="tab-pane show"
+                         class="tab-pane"
+                         :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_tasks_'+entry.id)"
                          v-bind:id="'logbook_tasks_'+entry.id">
                          <task-list
                              class="pb-2"
@@ -153,7 +170,8 @@
                     <!-- tab-pane -->
                     <div  v-can="'absence_access'"
                           v-if="displayAbsences()"
-                          class="tab-pane show"
+                          class="tab-pane "
+                          :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_userStatuses_'+entry.id)"
                          v-bind:id="'logbook_userStatuses_'+entry.id"  >
                         <absences
                             class="pb-2"
@@ -228,7 +246,7 @@
                     subscription => subscription.subscribable_type === "App\\Course" || subscription.subscribable_type === "App\\Group"
                 );
 
-                return (exists !== -1) ? true : false;
+                return (exists !== -1);
             },
 
             loaderEvent: function() {
@@ -236,7 +254,7 @@
             },
             loaderAbsences: function() {
                 this.$refs.Absences.loaderEvent();
-            }
+            },
         },
         computed: {
             isActive: function(){
@@ -245,7 +263,7 @@
                 } else {
                     return "";
                 }
-            }
+            },
         },
 
         components: {

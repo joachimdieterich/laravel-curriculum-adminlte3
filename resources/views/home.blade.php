@@ -19,7 +19,7 @@
                 "infoBoxNumber" =>  count(auth()->user()->curricula()).'/'.App\Curriculum::all()->count(),
             ])
         @endcan
-       
+
         @can('logbook_access')
             @include('partials.infobox', [
                 "infoBoxId" =>  'logbooksBox',
@@ -66,7 +66,7 @@
           @endcan
           @if(auth()->user()->currentRole()->first()->id == 1)
             @include('partials.infobox', [
-                "infoBoxId" =>  'usersBox', 
+                "infoBoxId" =>  'usersBox',
                 "infoBoxRoute" =>  route("users.index"),
                 "infoBoxClass" =>  'info-box-icon bg-primary elevation-1',
                 "infoBoxIcon" =>  'fas fa-user',
@@ -94,8 +94,8 @@
                 "infoBoxNumber" =>  App\Period::all()->count(),
             ])
           @endcan
-         
-          
+
+
         @include('partials.infobox', [
             "infoBoxId" =>  'archivementsBox',
             "infoBoxRoute" =>  '',
@@ -105,19 +105,19 @@
             "infoBoxNumber" =>  trans('global.dashboard.today').': '.count(auth()->user()->achievements_today()->where('status', '>=', 10)->where('status', '<', 30))
             .'<br>'.trans('global.dashboard.statistic_archievements_total').': '.count(auth()->user()->achievements->where('status', '>=', 10)->where('status', '<', 30)),
         ])
-        
+
         @include('partials.infobox', [
             "infoBoxId" =>  'onlineBox',
             "infoBoxRoute" =>  '',
             "infoBoxClass" =>  'info-box-icon bg-pink elevation-1',
             "infoBoxIcon" =>  'fas fa-plug',
             "infoText" =>   trans('global.dashboard.online') ,
-            "infoBoxNumber" =>  trans('global.dashboard.now_online').': '. now_online() 
+            "infoBoxNumber" =>  trans('global.dashboard.now_online').': '. now_online()
             .'<br>'.trans('global.dashboard.today').': '.today_online(),
         ])
-            
-         
-    </div>     
+
+
+    </div>
 </div>
 
 @endsection

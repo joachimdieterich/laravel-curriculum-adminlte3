@@ -8,7 +8,7 @@
     <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
-@can('user_create')
+@can('group_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
             <a id="add-group"
@@ -34,7 +34,7 @@
 </table>
 
 <hr>
-
+@can('group_enrolment')
 <div class="row ">
     <div class="col-sm-12">
         <div class="form-horizontal col-xs-12">
@@ -68,6 +68,7 @@
         </div>
     </div><!-- ./col-xs-12 -->
 </div>
+@endcan
 
 @endsection
 @section('scripts')

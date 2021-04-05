@@ -38,7 +38,7 @@
                 <li class="nav-item small"
                     @click="setLocalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id)">
                     <a class="nav-link show"
-                       :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id)"
+                       :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id, 'active', true)"
                        v-bind:href="'#logbook_description_'+entry.id"
                        data-toggle="tab">
                         {{ trans('global.logbook.fields.description') }}
@@ -96,7 +96,7 @@
                 <div class="tab-content">
                     <!-- tab-pane -->
                     <div class="tab-pane"
-                         :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id)"
+                         :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id, 'active', true)"
                          v-bind:id="'logbook_description_'+entry.id">
                          <span class="" v-html="entry.description"></span>
                     </div>

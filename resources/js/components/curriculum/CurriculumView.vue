@@ -2,7 +2,8 @@
     <div class="col-12">
         <ul class="nav nav-tabs"
             role="tablist">
-            <li class="nav-item">
+            <li class="nav-item"
+                @click="setLocalStorage('#curriculum_'+curriculum.id, '#content-tab')">
                 <a class="nav-link link-muted"
                    id="content-nav-tab"
                    data-toggle="pill"
@@ -15,8 +16,9 @@
                     <i class="fa fa-align-justify pr-2"></i>{{trans('global.content.index')}}
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link link-muted active"
+            <li class="nav-item"
+                @click="setLocalStorage('#curriculum_'+curriculum.id, '#curriculm-tab')">
+                <a class="nav-link link-muted"
                    id="curriculm-nav-tab"
                    data-toggle="pill"
                    href="#curriculm-tab"
@@ -26,7 +28,8 @@
                     <i class="fas fa-th pr-2"></i>{{trans('global.objective_tab')}}
                 </a>
             </li>
-            <li class="nav-item ">
+            <li class="nav-item "
+                @click="setLocalStorage('#curriculum_'+curriculum.id, '#medium-tab')">
                 <a class="nav-link link-muted"
                    id="medium-nav-tab"
                    data-toggle="pill"
@@ -37,7 +40,8 @@
                     <i class="fa fa-folder-open pr-2"></i>{{trans('global.media.title')}}
                 </a>
             </li>
-            <li class="nav-item ">
+            <li class="nav-item "
+                @click="setLocalStorage('#curriculum_'+curriculum.id, '#glossar-tab')">
                 <a v-if="curriculum.glossar != null"
                    class="nav-link link-muted"
                    id="glossar-nav-tab"
@@ -58,7 +62,7 @@
                 </a>
             </li>
             <li v-if="course"
-                class="nav-item ">
+                class="nav-item">
                 <a v-if="logbook"
                    v-can="'logbook_access'"
                    class="nav-link link-muted"
@@ -93,7 +97,8 @@
                     <i class="fa fa-certificate pr-2"></i>{{trans('global.certificate.create')}}
                 </a>
             </li>
-            <li class="nav-item ">
+            <li class="nav-item "
+                @click="setLocalStorage('#curriculum_'+curriculum.id, '#description-tab')">
                 <a class="nav-link link-muted"
                    id="description-nav-tab"
                    data-toggle="pill"

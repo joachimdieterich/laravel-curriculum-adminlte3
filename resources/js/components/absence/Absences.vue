@@ -22,12 +22,12 @@
             'absences': Array,
             'subscribable_type': String,
             'subscribable_id': Number,
-            'logbook': Array,
-            'entry': Array,
+            'logbook': {},
+            'entry': {},
         },
         data() {
             return {
-
+                errors: {}
             }
         },
 
@@ -44,7 +44,7 @@
                         this.subscriptions = response.data.message;
                     })
                     .catch(e => {
-                        this.errors = e.data.errors;
+                        //this.errors = e.data.errors;
                     });
             }
         },

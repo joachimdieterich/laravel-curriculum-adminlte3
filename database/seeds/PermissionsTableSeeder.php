@@ -992,6 +992,36 @@ class PermissionsTableSeeder extends Seeder
                 'title'     =>'prerequisite_delete',
                 'created_at'=>'2020-06-07 17:57:44',
                 'updated_at'=>'2020-06-07 17:57:44',
+            ],
+            [
+                'id'        => '188',
+                'title'     =>'artefact_access',
+                'created_at'=>'2020-06-07 17:57:10',
+                'updated_at'=>'2020-06-07 17:57:10',
+            ] ,
+            [
+                'id'        => '189',
+                'title'     =>'artefact_create',
+                'created_at'=>'2020-06-07 17:57:19',
+                'updated_at'=>'2020-06-07 17:57:19',
+            ] ,
+            [
+                'id'        => '190',
+                'title'     =>'artefact_show',
+                'created_at'=>'2020-06-07 17:57:27',
+                'updated_at'=>'2020-06-07 17:57:27',
+            ] ,
+            [
+                'id'        => '191',
+                'title'     =>'artefact_edit',
+                'created_at'=>'2020-06-07 17:57:35',
+                'updated_at'=>'2020-06-07 17:57:35',
+            ] ,
+            [
+                'id'        => '192',
+                'title'     =>'artefact_delete',
+                'created_at'=>'2020-06-07 17:57:44',
+                'updated_at'=>'2020-06-07 17:57:44',
             ]
 
 

@@ -12,7 +12,7 @@
                 role="tab"
                 aria-controls="objective-media-internal"
                 aria-selected="true"
-                @click="setCurrentTab(1)">
+                @click="setCurrentTab(1);loaderEvent();">
                 <i class="fa fa-hdd"></i> lokal
             </li>
             <li v-can="'external_medium_access'"
@@ -26,6 +26,18 @@
                 aria-selected="true"
                 @click="setCurrentTab(2)">
                 <i class="fa fa-cloud"></i> Mediathek
+            </li>
+            <li v-can="'artefact_access'"
+                class="btn btn-sm btn-outline-secondary m-2 "
+                v-bind:class="[(currentTab === 3) ? 'active' : '']"
+                id="objective-media-artefacts-nav"
+                data-toggle="pill"
+                href="#objective-media-artefacts"
+                role="tab"
+                aria-controls="objective-media-artefacts"
+                aria-selected="true"
+                @click="setCurrentTab(3);loaderEvent()">
+                <i class="fa fa-graduation-cap"></i> {{ trans('global.artefact.title') }}
             </li>
 
         </ul>
@@ -61,6 +73,20 @@
                     </repository>
                 </div>
             </div>
+            <div v-can="'artefact_access'"
+                 class="tab-pane fade show "
+                 v-bind:class="[(currentTab === 3) ? 'active' : '']"
+                 id="objective-media-artefacts"
+                 role="tabpanel"
+                 aria-labelledby="curriculum-nav-tab">
+                <media
+                    ref="artefactsMedia"
+                    :url="'/artefacts'"
+                    :subscribable_type="model"
+                    :subscribable_id="objective.id"
+                    format="list">
+                </media>
+            </div>
         </div>
 
     </div>
@@ -92,6 +118,7 @@
             },
             loaderEvent() {
                 this.$refs.objectiveMedia.loader();
+                this.$refs.artefactsMedia.loader();
             }
         },
         mounted() {

@@ -1102,4 +1102,11 @@ return [
         'edit'              => 'Edit prerequisite-link',
         'delete'            => 'Delete prerequisite-link',
     ],
+    'artefact' =>[
+        'title'             => 'Artefacts',
+        'title_singular'    => 'Artefact',
+        'create'            => 'Create artefact',
+        'edit'              => 'Edit Artefact',
+        'delete'            => 'Delete Artefact',
+    ],
 ];

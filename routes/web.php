@@ -19,6 +19,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('achievements', 'AchievementController@store');
 
+    Route::post('artefacts/destroy', 'ArtefactController@destroySubscription');
+    Route::resource('artefacts', 'ArtefactController');
+
     Route::resource('categories', 'CategorieController');
 
     Route::get('certificates/list', 'CertificateController@list');
@@ -230,6 +233,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('users/import', 'UsersController@createImport')->name('users.createImport');
     Route::post('users/import', 'UsersController@storeImport')->name('users.storeImport');
     Route::get('users/list', 'UsersController@list');
+    Route::get('users/current', 'UsersController@getCurrentUser')->name('users.getCurrentUser');
     Route::get('users/{user}/avatar', 'UsersController@getAvatar');
     Route::resource('users', 'UsersController');
 });

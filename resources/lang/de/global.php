@@ -1102,4 +1102,11 @@ return [
         'edit'              => 'Vorwissen (Verknüpfung) bearbeiten',
         'delete'            => 'Vorwissen  (Verknüpfung) löschen',
     ],
+    'artefact' =>[
+        'title'             => 'Artefakte',
+        'title_singular'    => 'Artefakt',
+        'create'            => 'Artefakt erstellen',
+        'edit'              => 'Artefakt bearbeiten',
+        'delete'            => 'Artefakt löschen',
+    ],
 ];

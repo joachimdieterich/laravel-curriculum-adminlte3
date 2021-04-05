@@ -193,9 +193,16 @@ class UsersController extends Controller
         //todo: concept to hard-delete users
         // - add user to db DeletedUser
         // - this DeletedUser.id gets data, which can't be deleted
-        
+
         if (request()->wantsJson()){
             return ['message' => $return];
+        }
+    }
+
+    public function getCurrentUser()
+    {
+        if (request()->wantsJson()){
+            return ['user' => auth()->user()];
         }
     }
 

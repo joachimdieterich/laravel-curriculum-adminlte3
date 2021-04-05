@@ -355,6 +355,7 @@ class MediumController extends Controller
             'subscribable_type' => 'sometimes',
             'subscribable_id' => 'sometimes',
             'repository' => 'sometimes',
+            'artefact' => 'sometimes',
             'file.*' => 'sometimes|mimes:jpg,jpeg,png,gif,bmp,tiff,tif,ico,svg,mov,mp4,m4v,mpeg,mpg,mp3,m4a,m4b,wav,mid,avi,ppt,pps,pptx,doc,docx,pdf,xls,xlsx,xps,odt,odp,ods,odg,odc,odb,odf,key,numbers,pages,csv,txt,rtx,rtf,zip,psd,xcf',
 
             'title' => 'sometimes',

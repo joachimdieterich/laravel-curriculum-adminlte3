@@ -1,11 +1,6 @@
 <template >
 <div>
     <div v-if="format =='list'">
-        <!--<div class="card-tools">
-            <button type="button" class="btn btn-tool" data-widget="control-sidebar" data-slide="true">
-                <i class="fa fa-times"></i>
-            </button>
-        </div>-->
         <table
                id="sidebar_media_datatable"
                class="table table-hover datatable media_table">
@@ -15,14 +10,26 @@
                 <td style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 100px;"
                     class="link-muted text-sm px-2 pointer"
                     @click="show('medium', subscription.medium)">
+
                     <i class="pr-2"
-                       v-bind:class="[iconCss(subscription.medium.mime_type)]"></i>{{ subscription.medium.title }}
+                       v-bind:class="[iconCss(subscription.medium.mime_type)]"></i>
+                    {{ subscription.medium.title }}
+
+                    <i class="pull-right fa fa-graduation-cap"
+                       v-if="subscription.visibility && currentUser.id === subscription.owner_id"
+                       v-can="'artefact_create'"
+                       @click.stop="setArtefact(subscription.medium.id)"></i>
+                    <i v-else-if="currentUser.id === subscription.user_id"
+                       v-can="'artefact_delete'"
+                       class="pull-right fa fa-trash text-danger"
+                       @click.stop="destroyArtefact(subscription.medium.id)"></i>
                 </td>
             </tr>
             <tr>
                 <td
                     class="py-2 link-muted text-sm pointer"
                     v-can="'medium_create'"
+                    v-if="url == '/mediumSubscriptions'"
                     @click="show('medium-create', subscription)">
                     <i class="fa fa-plus px-2 "></i> {{ trans('global.media.add')}}
                 </td>
@@ -95,17 +102,22 @@
             subscribable_type: '',
             subscribable_id: '',
             medium: {},
-            format: ''
+            format: '',
+            url: {
+                type: String,
+                default: '/mediumSubscriptions'
+            }
         },
         data() {
             return {
                 subscriptions: {},
-                errors: {}
+                errors: {},
+                currentUser: {}
             }
         },
         methods: {
             loader() { //todo: remove duplicate in beforMount.
-                axios.get('/mediumSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id).then(response => {
+                axios.get(this.url + '?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id).then(response => {
                     this.subscriptions = response.data.message;
                 }).catch(e => {
                     this.errors = error.response.data.errors;
@@ -120,7 +132,7 @@
             },
             async unlinkMedium(subscription) { //id of external reference and value in db
                 try {
-                    await axios.post('/mediumSubscriptions/destroy', subscription).data;
+                    await axios.post(this.url + '/destroy', subscription).data;
                 } catch (error) {
                     //this.errors = error.response.data.errors;
                 }
@@ -145,10 +157,37 @@
                         break;
                 }
             },
+            setArtefact(medium_id) {
+                axios.post('/artefacts', {
+                    subscribable_type: this.subscribable_type,
+                    subscribable_id: this.subscribable_id,
+                    medium_id: medium_id
+                }).then((response) => {
+                    this.loader();
+                    alert('Artefakt hinzugefügt!');
+
+                });
+
+            },
+            destroyArtefact(medium_id) {
+                axios.post('/artefacts/destroy', {
+                    subscribable_type: this.subscribable_type,
+                    subscribable_id: this.subscribable_id,
+                    medium_id: medium_id
+                })
+                .then((response) => {
+                    this.loader();
+                });
+
+
+            }
         },
         beforeMount() {
+            axios.get('/users/current').then(response => {
+                this.currentUser =  response.data.user
+            })
             if (this.subscribable_type  != ''){
-                axios.get('/mediumSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id).then(response => {
+                axios.get(this.url + '?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id).then(response => {
                     this.subscriptions = response.data.message;
                 }).catch(e => {
                     this.errors = error.response.data.errors;

@@ -14,7 +14,7 @@ class AbsenceController extends Controller
      */
     public function index()
     {
-        //
+        abort(404);
     }
 
     /**
@@ -48,6 +48,7 @@ class AbsenceController extends Controller
         if (request()->wantsJson()){
             return ['message' => $absence];
         }
+        abort(404);
     }
 
     /**
@@ -58,7 +59,7 @@ class AbsenceController extends Controller
      */
     public function show(Absence $absence)
     {
-        //
+        abort(404);
     }
 
     /**
@@ -78,6 +79,7 @@ class AbsenceController extends Controller
             }
 
         }
+        abort(404);
     }
 
     /**
@@ -93,6 +95,7 @@ class AbsenceController extends Controller
         if (request()->wantsJson()){
             return ['message' => $absence->delete()];
         }
+        abort(404);
     }
 
     protected function validateRequest()

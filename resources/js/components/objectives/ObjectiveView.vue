@@ -31,8 +31,11 @@
 
             <ul class="nav nav-tabs ">
                 <li v-if="objective.description != ''"
-                    class="nav-item small">
-                    <a class="nav-link active show link-muted"
+                    class="nav-item small"
+                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_description_'+objective.id)"
+                >
+                    <a class="nav-link show link-muted"
+                       :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_description_'+objective.id, 'active', true)"
                        href="#description"
                        data-toggle="tab">
                         <i class="fa fa-info pr-1"></i>
@@ -40,8 +43,11 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                <li class="nav-item"
+                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_related_objectives_'+objective.id)"
+                >
                     <a class="nav-link small link-muted"
+                       :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_description_'+objective.id)"
                        href="#related_objectives"
                        data-toggle="tab">
                         <i class="fa fa-sitemap pr-1"></i>
@@ -54,12 +60,15 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                <li class="nav-item"
+                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_content_tab_'+objective.id)"
+                >
                     <a class="nav-link small link-muted"
+                       :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_content_tab_'+objective.id)"
                        data-toggle="tab"
-                       href="#content-tab"
+                       href="#content_tab"
                        role="tab"
-                       aria-controls="content-tab"
+                       aria-controls="content_tab"
                        aria-selected="true"
                        @click="loaderEvent()">
                         <i class="fa fa-align-justify pr-2"></i>
@@ -67,8 +76,10 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                <li class="nav-item"
+                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_tab_media_'+objective.id)">
                     <a class="nav-link small link-muted"
+                       :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_tab_media_'+objective.id)"
                        href="#tab_media"
                        data-toggle="tab"
                        @click="loadMedia()">
@@ -77,8 +88,10 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                <li class="nav-item"
+                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_references_'+objective.id)">
                     <a class="nav-link small link-muted"
+                       :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_references_'+objective.id)"
                        href="#references"
                        data-toggle="tab">
                         <i class="fa fa-project-diagram pr-1"></i>
@@ -86,10 +99,12 @@
                     </a>
                 </li>
 
-                <li v-can="'achievement_access'"
+                <li v-can="'achievement_create'"
                     v-if="this.type === 'enabling'"
-                    class="nav-item">
+                    class="nav-item"
+                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_achievements_'+objective.id)">
                     <a class="nav-link small link-muted"
+                       :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_achievements_'+objective.id)"
                        href="#achievements"
                        data-toggle="tab"
                        @click="loadAchievements()">
@@ -99,8 +114,10 @@
                 </li>
 
                 <li v-can="'prerequisite_access'"
-                    class="nav-item">
+                    class="nav-item"
+                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_prerequisites_'+objective.id)">
                     <a class="nav-link small link-muted"
+                       :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_prerequisites_'+objective.id)"
                        href="#prerequisites"
                        data-toggle="tab"
                        @click="loadPrerequisites()">
@@ -109,8 +126,10 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                <li class="nav-item"
+                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_events_'+objective.id)">
                     <a class="nav-link small link-muted"
+                       :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_events_'+objective.id)"
                        href="#events"
                        data-toggle="tab">
                         <i class="fa fa-user-graduate pr-1"></i>
@@ -127,13 +146,15 @@
 
             <div class="tab-content ">
                 <!-- 1 Description -->
-                <div class="tab-pane active show "
+                <div class="tab-pane show "
+                     :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_description_'+objective.id, 'active', true)"
                      id="description"
                      >
                     <div class="card-body" v-html="objective.description"></div>
                 </div>
                 <!-- /.tab-pane -->
                 <div class="tab-pane pt-2"
+                     :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_related_objectives_'+objective.id)"
                      id="related_objectives" >
                     <span v-if="type === 'enabling'">
                         <ObjectiveBox type="terminal"
@@ -151,7 +172,8 @@
                 </div>
                 <!--                    1 Contents -->
                 <div class="tab-pane fade "
-                     id="content-tab"
+                     :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_content_tab_'+objective.id)"
+                     id="content_tab"
                      role="tab"
                      aria-labelledby="content-nav-tab">
                     <span v-if="type === 'enabling'">
@@ -169,6 +191,7 @@
                 </div>
                 <!--                    1 Files -->
                 <div class="tab-pane"
+                     :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_tab_media_'+objective.id)"
                      id="tab_media"
                      name="tab_media">
                     <div class="row">
@@ -189,6 +212,7 @@
                 </div><!-- /.tab-pane -->
                 <!--                References -->
                 <div class="tab-pane pt-2"
+                     :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_references_'+objective.id)"
                      id="references">
                     <div class="card-tools"
                          v-can="'objective_edit'">
@@ -209,8 +233,9 @@
                     ></quotes>
                 </div>
 
-                <div v-can="'achievement_access'"
-                    class="tab-pane pt-2 box"
+                <div v-can="'achievement_create'"
+                     class="tab-pane pt-2 box"
+                     :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_achievements_'+objective.id)"
                      id="achievements">
                     <Achievements
                         v-if="this.type === 'enabling'"
@@ -222,6 +247,7 @@
                 </div>
 
                 <div class="tab-pane pt-2"
+                     :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_prerequisites_'+objective.id)"
                      id="prerequisites"
                      v-can="'prerequisite_access'">
                     <div class="card-tools"
@@ -239,8 +265,8 @@
                         :successor_id="objective.id"/>
                 </div>
 
-
                 <div class="tab-pane pt-2"
+                     :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_events_'+objective.id)"
                     id="events">
                     <eventmanagement ref="eventPlugin"
                          :model="objective"

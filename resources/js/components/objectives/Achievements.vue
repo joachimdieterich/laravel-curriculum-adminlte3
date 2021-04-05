@@ -1,6 +1,41 @@
 <template >
 <div>
+
+    <table class="table m-0 border-top-0"
+           style="border-top: 0"
+           v-permission="'achievement_create'"
+           v-hide-if-permission="'achievement_access'"
+           >
+        <thead class=" border-top-0">
+        <tr class="border-top-0">
+            <th class="border-top-0">{{trans('global.name')}}</th>
+            <th class="border-top-0">{{trans('global.created_at')}}</th>
+            <th class="border-top-0">{{trans('global.updated_at')}}</th>
+            <th class="border-top-0">{{trans('global.teacher')}}</th>
+            <th class="border-top-0">Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr >
+            <td>{{ objective.achievements[0].user.firstname }} {{ objective.achievements[0].user.lastname }}</td>
+            <td>{{ objective.achievements[0].created_at }}</td>
+            <td>{{ objective.achievements[0].updated_at }}</td>
+            <td>{{ objective.achievements[0].owner.firstname }} {{ objective.achievements[0].owner.lastname }}</td>
+            <td>
+                <AchievementIndicator
+                    v-permission="'achievement_create'"
+                    :objective="objective"
+                    :type="type"
+                    :users="[objective.achievements[0].user.id]"
+                    :settings="{'achievements' : false, 'edit': false}">
+                </AchievementIndicator>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
     <div v-if="this.groups.length !== 0"
+         v-permission="'achievement_access'"
          class="form-group p-2" >
         <label for="achievements_group">
             {{ trans('global.group.title_singular') }}
@@ -15,10 +50,10 @@
         </select>
     </div>
 
-
     <table class="table m-0 border-top-0"
            style="border-top: 0"
-           v-if="(this.objectiveWithAchievement.achievements.length !== 0)">
+           v-if="(this.objectiveWithAchievement.achievements.length !== 0)"
+           v-permission="'achievement_access'">
         <thead class=" border-top-0">
         <tr class="border-top-0">
             <th class="border-top-0">{{trans('global.name')}}</th>
@@ -36,7 +71,7 @@
                 <td>{{ currentUser(item.id).achievements[0].owner.firstname }} {{ currentUser(item.id).achievements[0].owner.lastname }}</td>
                 <td>
                     <AchievementIndicator
-                        v-can="'achievement_create'"
+                        v-permission="'achievement_create'"
                         :objective="currentUser(item.id)"
                         :type="type"
                         :users="[item.id]"

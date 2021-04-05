@@ -32,10 +32,14 @@ Vue.prototype.setLocalStorage = (key, value) => {
  * @param key
  * @param value
  * @param class_string
+ * @param is_default_element
  * @returns {string}
  */
-Vue.prototype.checkLocalStorage = (key, value, class_string = "active") => {
-    if (localStorage.getItem(key) === value){
+Vue.prototype.checkLocalStorage = (key, value, class_string = "active", is_default_element = false) => {
+    if (localStorage.getItem(key) === value) {
+        return class_string;
+    }
+    if (localStorage.getItem(key) === null && is_default_element === true) {
         return class_string;
     }
 };
@@ -168,6 +172,50 @@ Vue.directive('can', function (el, binding) {
     }
     return window.Laravel.permissions.indexOf(binding.value) !== -1;
 });
+
+Vue.directive('hide-if-permission', function (el, binding) {
+    if(window.Laravel.permissions.indexOf(binding.value) !== -1){
+        el.style.display = 'none';
+    }
+});
+
+/**
+ * Custom Vue directive "can" to check against permissions.
+ * If permission is not given element gets removed from dom
+ *
+ * ! Always check permissions in the backand.
+ * This directive enables shorter syntax on vue.
+ *
+ * Example:
+ * <element v-permission="'curriculum_edit'" ><element>
+ *
+ * @type Vue
+ */
+Vue.directive('permission', function (el, binding, vnode) {
+    if(window.Laravel.permissions.indexOf(binding.value) == -1){
+        // replace HTMLElement with comment node
+        const comment = document.createComment('removing elements, missing permission: ' + binding.value);
+        Object.defineProperty(comment, 'setAttribute', {
+            value: () => undefined,
+        });
+        vnode.elm = comment;
+        vnode.text = ' ';
+        vnode.isComment = true;
+        vnode.context = undefined;
+        vnode.tag = undefined;
+        vnode.data.directives = undefined;
+
+        if (vnode.componentInstance) {
+            vnode.componentInstance.$el = comment;
+        }
+
+        if (el.parentNode) {
+            el.parentNode.replaceChild(comment, el);
+        }
+    }
+
+});
+
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

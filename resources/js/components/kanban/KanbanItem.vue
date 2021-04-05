@@ -10,7 +10,7 @@
                      style="background-color: transparent;"
                      data-toggle="dropdown"
                      aria-expanded="false">
-                    <i class="fas fa-ellipsis-v"></i>
+                    <i class="text-muted fas fa-ellipsis-v"></i>
                     <div class="dropdown-menu" x-placement="top-start">
                         <button class="dropdown-item py-1"
                                 @click="edit()">

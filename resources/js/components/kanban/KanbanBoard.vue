@@ -1,13 +1,13 @@
 <template>
     <div :style="kanbanWidth"
         class="m-0">
-        <!-- Columns (Statuses) --> 
-        
+        <!-- Columns (Statuses) -->
+
         <draggable
             v-model="statuses"
             v-bind="columnDragOptions"
             @end="handleStatusMoved">
-            <div            
+            <div
                 v-for="status in statuses"
                 :key="'header_'+status.id"
                 class=" no-border pr-2"
@@ -15,11 +15,11 @@
                 <div class="card-header border-bottom-0 p-0"
                      :key="status.id">
                     <strong>{{ status.title }}</strong>
-                    <div class="btn btn-flat py-0 pl-0 pull-left" 
-                         data-toggle="dropdown" 
+                    <div class="btn btn-flat py-0 pl-0 pull-left"
+                         data-toggle="dropdown"
                          aria-expanded="false">
-                        <i class="fas fa-bars"></i>
-                        <div class="dropdown-menu" 
+                        <i class="text-muted fas fa-bars"></i>
+                        <div class="dropdown-menu"
                              x-placement="top-start">
                             <span>
                                 <button class="dropdown-item py-1" @click="">
@@ -27,9 +27,9 @@
                                     {{ trans('global.kanbanStatus.edit') }}
                                 </button>
                                 <hr class="my-1">
-                                <button 
+                                <button
                                     v-can="'kanban_delete'"
-                                    class="dropdown-item py-1 text-red" 
+                                    class="dropdown-item py-1 text-red"
                                     @click="deleteStatus(status)">
                                     <i class="fa fa-trash mr-4"></i>
                                     {{ trans('global.delete') }}
@@ -38,12 +38,12 @@
                         </div>
                     </div>
                      <div v-show="newItem !== status.id"
-                         class="btn btn-flat py-0 mr-2 pull-right" 
+                         class="btn btn-flat py-0 mr-2 pull-right"
                          @click="openForm('item', status.id)">
-                         <i class="fa fa-plus-circle"></i>
+                         <i class="text-muted fa fa-plus-circle"></i>
                      </div>
                 </div>
-                
+
                 <KanbanItemCreate
                         v-if="newItem === status.id"
                         :status="status"
@@ -58,7 +58,7 @@
                         class="flex-1 overflow-hidden"
                         v-model="status.items"
                         v-bind="itemDragOptions"
-                        @end="handleItemMoved">            
+                        @end="handleItemMoved">
                         <transition-group
                             v-for="item in status.items"
                             :key="'transition_group-'+item.id"
@@ -68,7 +68,7 @@
                             tag="span">
                             <!-- Items -->
                             <span :key="item.id">
-                                 <KanbanItem   
+                                 <KanbanItem
                                     :item="item"
                                     :width="itemwidth"
                                     v-on:item-destroyed="handleItemDestroyed"
@@ -100,14 +100,14 @@
 </template>
 
 <script>
-    import draggable from "vuedraggable"; // import the vuedraggable 
+    import draggable from "vuedraggable"; // import the vuedraggable
     import KanbanItem from './KanbanItem';
-    import KanbanItemCreate from "./KanbanItemCreate"; 
-    import KanbanStatusCreate from "./KanbanStatusCreate"; 
-    
-    
+    import KanbanItemCreate from "./KanbanItemCreate";
+    import KanbanStatusCreate from "./KanbanStatusCreate";
+
+
     export default {
-        
+
         props: {
             'kanban': Object,
             'search': ''
@@ -116,7 +116,7 @@
             return {
                 statuses: this.kanban.statuses,
                 newItem: 0, // track the ID of the status we want to add to
-                newStatus: 0, 
+                newStatus: 0,
                 itemwidth: 270,
                 item: null,
             };
@@ -136,11 +136,11 @@
                     this.item = null;
                     if (type == 'status'){
                         this.newStatus = value;
-                        
+
                     } else {
                         this.newItem = value;
                     }
-                  
+
                 },
                 // reset the statusId and close form
                 closeForm() {
@@ -149,8 +149,8 @@
                 },
                 handleStatusAdded(newStatus){
                     newStatus['items'] = [];            //add items to prevent error if item is created without reloading page
-                    this.statuses.push(newStatus);  
-                    this.closeForm(); 
+                    this.statuses.push(newStatus);
+                    this.closeForm();
                 },
                 handleItemAdded(newItem) {      // add a item to the correct column in our list
                     const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should add the item
@@ -161,7 +161,7 @@
 
                     this.closeForm();                                     // Reset and close the AddItemForm
                 },
-               
+
                 handleItemMoved() {
                     // Send the entire list of statuses to the server
                     axios.put("/kanbanItems/sync", {columns: this.statuses})
@@ -176,9 +176,9 @@
                     const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should add the item
                         status => status.id === item.kanban_status_id
                     );
-                    
+
                     let index = this.statuses[statusIndex].items.indexOf(item);
-                    
+
                     this.statuses[statusIndex].items.splice(index, 1);
                 },
                 handleItemEdit(item){
@@ -208,13 +208,13 @@
                                     console.log(err.response);
                                  });
                     }
-                }, 
+                },
                 handleStatusDestroyed(status){
                     let index = this.statuses.indexOf(status);
                     this.statuses.splice(index, 1);
                 },
-                
-           
+
+
         },
         computed: {
             columnDragOptions() {
@@ -237,19 +237,19 @@
             newStatusId() {
                 return this.statuses.length;
             }
-            
+
         },
-        
+
         mounted() {
-            
-        },   
+
+        },
         components: {
             draggable,
             KanbanItem,
             KanbanItemCreate,
             KanbanStatusCreate,
         }
-        
+
     }
 </script>
 <style scoped>

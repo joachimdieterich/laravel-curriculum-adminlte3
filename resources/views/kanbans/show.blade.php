@@ -1,8 +1,7 @@
 @extends((Auth::user()->id == env('GUEST_USER')) ? 'layouts.contentonly' : 'layouts.master')
 
 @section('title')
-<i class="fa fa-columns mr-2"></i>
-    <small>{{ $kanban->title }} </small> 
+    <small>{{ $kanban->title }} </small>
     <button class="btn btn-flat"
             onclick="app.__vue__.$modal.show('subscribe-modal',  {'modelId': {{ $kanban->id }}, 'modelUrl': 'kanban' });">
         <i class="fa fa-share-alt text-secondary"></i>
@@ -10,7 +9,7 @@
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item">
-        @if (Auth::user()->id == env('GUEST_USER')) 
+        @if (Auth::user()->id == env('GUEST_USER'))
             <a href="/navigators/{{Auth::user()->organizations()->where('organization_id', '=',  Auth::user()->current_organization_id)->first()->navigators()->first()->id}}">Home</a>
         @else
             <a href="/">{{ trans('global.home') }}</a>
@@ -26,17 +25,17 @@
     @can('kanban_entry_create')
         <div style="margin-bottom: 10px;" class="row">
             <div class="col-lg-12">
-                <button id="add-kanban-entry" 
-                   class="btn btn-success" 
+                <button id="add-kanban-entry"
+                   class="btn btn-success"
                     onclick="app.__vue__.$modal.show('kanban-entry-modal',  {'kanban_id': {{ $kanban->id }} });">
                    {{ trans('global.kanbanEntry.create') }}
                 </button>
             </div>
         </div>
     @endcan
-    
+
     <!-- Timelime example  -->
-    <div 
+    <div
          style="position:absolute; width: calc(100vw - 270px);height: calc(100vh - 200px);overflow-x:auto;overflow-y: hidden;">
         <kanban-board  :kanban="{{ $kanban }}"></kanban-board>
     </div>

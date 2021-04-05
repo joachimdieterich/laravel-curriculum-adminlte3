@@ -1,9 +1,11 @@
 <template >
 
     <ul class="products-list product-list-in-card pl-2 pr-2">
-        <li>&nbsp;<span class="btn btn-flat pull-right py-0"><small>{{ trans('global.can_edit') }}</small></span></li>
+        <li v-if="filterSubscriptions().length != 0">&nbsp;
+            <span class="btn btn-flat pull-right py-0"><small>{{ trans('global.can_edit') }}</small></span>
+        </li>
         <li style="clear:right;"
-            v-for="(item,index) in subscriptions"
+            v-for="(item,index) in filterSubscriptions()"
             :id="'subscription_'+item.id"
             v-bind:value="item.id"
             v-if="item.subscribable_type === subscribing_model"
@@ -67,7 +69,13 @@
                     //this.errors = error.response.data.errors;
                 }
 
+            },
+            filterSubscriptions() {
+                return  this.subscriptions.filter(
+                    s => s.subscribable_type === this.subscribing_model
+                );
             }
+
         },
 
 

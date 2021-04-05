@@ -48,7 +48,12 @@ class EnablingObjectiveController extends Controller
 
         $objective = EnablingObjective::where('id', $enablingObjective->id)
             ->with(['curriculum', 'curriculum.subject', 'terminalObjective.type',
-                    'referenceSubscriptions.siblings.referenceable', 'quoteSubscriptions.siblings.quotable'])
+                    'referenceSubscriptions.siblings.referenceable', 'quoteSubscriptions.siblings.quotable',
+                    'achievements' => function($query)
+                        {
+                            $query->where('user_id', auth()->user()->id)->with(['owner', 'user']);
+                        }
+                    ])
             ->get()->first();
 
         $repository = Config::where('key', 'repository')->get()->first();

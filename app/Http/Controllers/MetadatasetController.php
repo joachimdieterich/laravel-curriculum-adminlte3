@@ -120,9 +120,15 @@ class MetadatasetController extends Controller
 
         // generate curriculum part of identifier
         $this->setModelUuid($curriculum);
-        $metadata[] = [
+        /*$metadata[] = [
             'id'        => $curriculum->uuid,
             'old_id'    => $curriculum->ui,
+            'title'     => $curriculum->title,
+            'parent_id' => null
+        ];*/
+        //hack for rlp until new edusharing-version is active
+        $metadata[] = [
+            'id'        => ($curriculum->ui != null) ? $curriculum->ui : $curriculum->uuid,
             'title'     => $curriculum->title,
             'parent_id' => null
         ];
@@ -138,19 +144,31 @@ class MetadatasetController extends Controller
             {
                 $previous_objectiveType = $current_objectiveType->uuid;
 
-                $metadata[] = [
+               /* $metadata[] = [
                     'id' => $curriculum->uuid.$current_objectiveType->uuid, //concat curriculum->uuid and objectiveType->uuid to get it unique for every curriculum
                     'old_id'    => 'null',
                     'title' => $this->format_data(ObjectiveType::where('id', $terminalObjective->objective_type_id)->get()->first()->title),
                     'parent_id' => $curriculum->uuid
+                ];*/
+                $metadata[] = [
+                    'id' => $curriculum->uuid.$current_objectiveType->uuid, //concat curriculum->uuid and objectiveType->uuid to get it unique for every curriculum
+                    'old_id'    => 'null',
+                    'title' => $this->format_data(ObjectiveType::where('id', $terminalObjective->objective_type_id)->get()->first()->title),
+                    'parent_id' => ($curriculum->ui != null) ? $curriculum->ui : $curriculum->uuid,
                 ];
             }
 
             // terminal objective
             $this->setModelUuid($terminalObjective);
-            $metadata[] = [
+            /*$metadata[] = [
                 'id'        => $terminalObjective->uuid,
                 'old_id'    => $terminalObjective->ui,
+                'title'     => $this->format_data($terminalObjective->title),
+                'parent_id' => $curriculum->uuid.$current_objectiveType->uuid, // combined uuids
+            ];*/
+            //hack for rlp until new edusharing-version is active
+            $metadata[] = [
+                'id'        => ($terminalObjective->ui != null) ? $terminalObjective->ui : $terminalObjective->uuid,
                 'title'     => $this->format_data($terminalObjective->title),
                 'parent_id' => $curriculum->uuid.$current_objectiveType->uuid, // combined uuids
             ];
@@ -159,11 +177,17 @@ class MetadatasetController extends Controller
             foreach ($terminalObjective->enablingObjectives()->get() as $enablingObjective)
             {
                 $this->setModelUuid($enablingObjective);
-                $metadata[] = [
+               /* $metadata[] = [
                     'id'        => $enablingObjective->uuid,
                     'old_id'    => $enablingObjective->ui,
                     'title'     => $this->format_data($enablingObjective->title),
                     'parent_id' => $terminalObjective->uuid,
+                ];*/
+                //hack for rlp until new edusharing-version is active
+                $metadata[] = [
+                    'id'        => ($enablingObjective->ui != null) ? $enablingObjective->ui : $enablingObjective->uuid,
+                    'title'     => $this->format_data($enablingObjective->title),
+                    'parent_id' => ($terminalObjective->ui != null) ? $terminalObjective->ui : $terminalObjective->uuid,
                 ];
             }
 

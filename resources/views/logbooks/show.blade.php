@@ -1,7 +1,7 @@
 @extends((Auth::user()->id == env('GUEST_USER')) ? 'layouts.contentonly' : 'layouts.master')
 
 @section('title')
-<i class="fa fa-book mr-2"></i><small>{{ $logbook->title }}</small>
+<small>{{ $logbook->title }}</small>
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item">
@@ -29,9 +29,8 @@
         </div>
     @endcan
 
-    <!-- Timelime example  -->
-        <logbook  :logbook="{{ $logbook }}"></logbook>
-    <!-- /.timeline -->
+    <logbook  :logbook="{{ $logbook }}"></logbook>
+
     <medium-modal></medium-modal>
     <medium-create-modal></medium-create-modal>
     <logbook-entry-modal></logbook-entry-modal>
@@ -39,4 +38,3 @@
     <task-modal></task-modal>
     <absence-modal></absence-modal>
 @endsection
-

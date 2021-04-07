@@ -2,25 +2,34 @@
     <div :id="'#logbook_'+entry.id"
          class="card col-12"
          :class="{'collapsed-card' : first === false}"
-         :style="isActive"
-        >
+         :style="isActive">
         <div class="user-block p-2 "
             data-card-widget="collapse"
             :data-target="'#logbook_body_'+entry.id"
             aria-expanded="true">
 
             <span class="username ml-0">
-                <span class="pull-right " v-can="'logbook_entry_edit'">
-                    <button type="button"
-                            class="btn btn-tool pt-3"
-                            @click.prevent="destroy()">
+                <span class="pull-right " v-permission="'logbook_entry_edit'">
+                    <button
+                        type="button"
+                        class="btn btn-tool pt-3"
+                        @click.stop="print()">
+                        <i class="fa fa-print "></i>
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-tool pt-3"
+                        @click.stop="destroy()">
                         <i class="fa fa-trash "></i>
                     </button>
-                     <button type="button"
-                             class="btn btn-tool pt-3"
-                             @click.prevent="edit()">
+                    <button
+                         type="button"
+                         class="btn btn-tool pt-3"
+                         @click.stop="edit()">
                         <i class="fa fa-pencil-alt "></i>
                     </button>
+
+
                 </span>
                 <span >{{ entry.title }}</span>
                 <span class="description ml-0 ">{{ postDate() }}</span>
@@ -28,7 +37,7 @@
 
         </div>
 
-        <div class="card-body p-0 "
+        <div class="card-body p-0"
              :class="{'collapse' : first === false}"
              :id="'#logbook_body_'+entry.id" >
             <hr class="m-1">
@@ -77,7 +86,7 @@
                        v-bind:href="'#logbook_tasks_'+entry.id"
                        data-toggle="tab">{{ trans('global.task.title') }}</a>
                 </li>
-                <li v-can="'absence_access'"
+                <li v-permission="'absence_access'"
                     v-if="displayAbsences()"
                     class="nav-item small"
                     @click="setLocalStorage('#logbook_'+entry.id, '#logbook_userStatuses_'+entry.id)">
@@ -101,7 +110,7 @@
                          <span class="" v-html="entry.description"></span>
                     </div>
                     <!-- /.tab-pane -->
-                    <div v-can="'medium_access'"
+                    <div v-permission="'medium_access'"
                          class="tab-pane"
                          :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_media_'+entry.id)"
                          v-bind:id="'logbook_media_'+entry.id">
@@ -130,7 +139,7 @@
                                 type="enabling"></objective-box>
                             <span class="clearfix"></span>
                         </span>
-                        <ul  v-can="'reference_create'" class="todo-list" data-widget="todo-list">
+                        <ul  v-permission="'reference_create'" class="todo-list" data-widget="todo-list">
                             <li class="pointer bg-white">
                                 <a @click="open('subscribe-objective-modal', 'referenceable');">
                                     <i class="px-2 fa fa-plus text-muted"></i> {{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}
@@ -141,7 +150,7 @@
                     </div>
                     <!-- /.tab-pane -->
                     <!-- tab-pane -->
-                    <div v-can="'content_access'"
+                    <div v-permission="'content_access'"
                          class="tab-pane "
                          :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_contents_'+entry.id)"
                          v-bind:id="'logbook_contents_'+entry.id"  >
@@ -155,7 +164,7 @@
                     </div>
                     <!-- /.tab-pane -->
                     <!-- tab-pane -->
-                    <div v-can="'task_access'"
+                    <div v-permission="'task_access'"
                          class="tab-pane"
                          :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_tasks_'+entry.id)"
                          v-bind:id="'logbook_tasks_'+entry.id">
@@ -168,7 +177,7 @@
                     </div>
                     <!-- /.tab-pane -->
                     <!-- tab-pane -->
-                    <div  v-can="'absence_access'"
+                    <div  v-permission="'absence_access'"
                           v-if="displayAbsences()"
                           class="tab-pane "
                           :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_userStatuses_'+entry.id)"
@@ -255,6 +264,9 @@
             loaderAbsences: function() {
                 this.$refs.Absences.loaderEvent();
             },
+            print(){
+                location.href = '/print/LogbookEntry/'+this.entry.id
+            }
         },
         computed: {
             isActive: function(){

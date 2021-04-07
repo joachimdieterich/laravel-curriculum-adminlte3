@@ -15,12 +15,12 @@
                        v-bind:class="[iconCss(subscription.medium.mime_type)]"></i>
                     {{ subscription.medium.title }}
 
-                    <i class="pull-right fa fa-graduation-cap"
+                    <i class="pull-right fa fa-graduation-cap text-muted"
                        v-if="subscription.visibility && currentUser.id === subscription.owner_id"
-                       v-can="'artefact_create'"
+                       v-permission="'artefact_create'"
                        @click.stop="setArtefact(subscription.medium.id)"></i>
                     <i v-else-if="currentUser.id === subscription.user_id"
-                       v-can="'artefact_delete'"
+                       v-permission="'artefact_delete'"
                        class="pull-right fa fa-trash text-danger"
                        @click.stop="destroyArtefact(subscription.medium.id)"></i>
                 </td>
@@ -28,7 +28,7 @@
             <tr>
                 <td
                     class="py-2 link-muted text-sm pointer"
-                    v-can="'medium_create'"
+                    v-permission="'medium_create'"
                     v-if="url == '/mediumSubscriptions'"
                     @click="show('medium-create', subscription)">
                     <i class="fa fa-plus px-2 "></i> {{ trans('global.media.add')}}
@@ -67,7 +67,7 @@
     <i v-if="subscription.medium.mime_type === 'url'" class="fa fa-link text-primary text-center pt-2"
        style="position:absolute; top: 0px; height: 150px !important; width: 100%; font-size:800%;"></i>
     <span
-        v-can="'medium_delete'"
+        v-permission="'medium_delete'"
         class="p-1 pointer_hand"
         accesskey=""
         style="position:absolute; top:0px; height: 30px; width:100%;" >

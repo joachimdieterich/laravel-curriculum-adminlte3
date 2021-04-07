@@ -2,7 +2,7 @@
 @include ('forms.input.text',
             ["model" => "metadataset",
             "field" => "version",
-            "placeholder" => "1",
+            "placeholder" => "Bitte Versionsnummer eingeben",
             "required" => true,
             "value" => old('version', isset($metadataset->version) ? $metadataset->version : '')])
 

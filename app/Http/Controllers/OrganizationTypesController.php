@@ -45,7 +45,7 @@ class OrganizationTypesController extends Controller
                         $actions .= '<a href="'.route('organizationtypes.edit', $organization_types->id).'" '
                                     . 'id="edit-organization-type-'.$organization_types->id.'" '
                                     . 'class="btn">'
-                                    . '<i class="fa fa-edit"></i>'
+                                    . '<i class="fa fa-pencil-alt"></i>'
                                     . '</a>';
                     }
                     if ($delete_gate){

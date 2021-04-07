@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    {{ trans('global.contact.create') }}
+    {{ trans('global.contactdetail.create') }}
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
@@ -11,8 +11,8 @@
 
 <div class="card">
     <div class="card-body">
-        <form action="{{ route("contactdetails.store") }}" 
-              method="POST" 
+        <form action="{{ route("contactdetails.store") }}"
+              method="POST"
               enctype="multipart/form-data">
             @include ('contactdetails.form', [
                 'contact' =>  new App\ContactDetail(),

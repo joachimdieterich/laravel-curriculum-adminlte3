@@ -24,7 +24,7 @@
 @can('plan_edit')
         <div class="card-tools pr-2 no-print">
             <a href="{{ route('print.model', ['model' => 'App\Plan', 'id' =>  $plan->id]) }}" class="link-muted pr-4">
-                <i class="fa fa-print"></i>
+                <i class="fa fa-print text-muted"></i>
             </a>
 
              <a href="{{route('plans.edit', $plan->id) }}" class="link-muted">
@@ -41,12 +41,13 @@
                  {!! $plan->description !!}
             </span>
             <span class="col-sm-3 col-xs-12">
-                <span class="row">
+                <span class="row text-muted">
                     @if($plan->owner->contactdetail != null)
                     <span class="col-12 pb-3">
-                        <a class="pr-2 text-decoration-none link-muted" href="{{ $plan->owner->contactdetail->path() }}">
-                            <i class="fa fa-chalkboard-teacher "></i>
-                             {{ $plan->owner->fullname() }}
+                        <a class="pr-2 text-decoration-none link-muted"
+                           href="{{ $plan->owner->contactdetail->path() }}">
+                            <i class="fa fa-graduation-cap "></i>
+                            {{ trans('global.contactdetail.title_singular') }}: {{ $plan->owner->fullname() }}
                         </a>
                     </span>
                     @endif
@@ -90,12 +91,12 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
             <div class="card-body py-2">
                 @include('tasks.tasklist', [
                     "tasks" =>  $plan->tasks()->whereDate('start_date', $day->format('yy-m-d'))->get(),
-                    "hide_due_date"  => true
+                    "hide_due_date" => true
                 ])
                 @can('plan_edit')
-                <div class="text-center py-1"
+                <div class="text-muted"
                      onclick="app.__vue__.$modal.show('task-modal',  { 'subscribable_type': 'App\\Plan', 'subscribable_id':  {{ $plan->id }} , 'start_date': '{{ $day }}',  'due_date': '{{ $plan->end }}'});">
-                    <i class="fa fa-plus-circle fa-1x"></i>
+                    <i class="fa fa-plus p-2"></i>{{ trans('global.task.create') }}
                 </div>
                 @endcan
             </div>

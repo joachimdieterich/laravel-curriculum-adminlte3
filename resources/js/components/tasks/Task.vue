@@ -14,7 +14,7 @@
                     </a>
                     <a v-can="'task_edit'"
                        @click.prevent="$modal.show('task-modal', {'method': 'patch', 'id': '{{ task.id }}'})" >
-                        <i class="far fa-edit"></i>
+                        <i class="fa fa-pencil-alt"></i>
                     </a>
                 </div>
 

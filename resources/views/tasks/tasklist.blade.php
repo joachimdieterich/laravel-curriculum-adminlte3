@@ -1,8 +1,8 @@
 
-<ul class="todo-list" 
+<ul class="todo-list pb-1"
     data-widget="todo-list">
     @foreach ($tasks as $task)
-    <li>
+    <li class="bg-light">
         <!-- drag handle -->
                <span class="handle">
             <i class="fas fa-ellipsis-v"></i>
@@ -10,11 +10,11 @@
         </span>
         <!-- checkbox -->
         <div  class="icheck-primary d-inline ml-2">
-            <input 
-                type="checkbox" 
-                value="" 
-                name="todo1" 
-                id="todoCheck1" 
+            <input
+                type="checkbox"
+                value=""
+                name="todo1"
+                id="todoCheck1"
                 onclick="complete( {{ $task->id }} )"
 
                 {{ (optional($task->subscriptions->where('subscribable_type', 'App\User')->where('subscribable_id', auth()->user()->id)->first())->completion_date != null) ? "checked" : "" }}
@@ -52,7 +52,7 @@ function complete(id) {
     .done(function () { location.reload() })
 }
 function destroy(id) {
-    sendRequest('POST', "/tasks/"+id, id, { _method: 'DELETE' });   
+    sendRequest('POST', "/tasks/"+id, id, { _method: 'DELETE' });
 }
 function sendRequest(method, url, ids, data){
     if (ids.length === 0) {
@@ -71,4 +71,4 @@ function sendRequest(method, url, ids, data){
 }
 
 </script>
-@endsection      
+@endsection

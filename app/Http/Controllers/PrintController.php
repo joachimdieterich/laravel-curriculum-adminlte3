@@ -47,7 +47,7 @@ class PrintController extends Controller
         $model= str_starts_with($model, 'App\\') ? $model : "App\\".$model;
         $model =  app()->make($model)::find($id);
 
-        $html = view('print.'. $view)
+        $html = view('print.'. strtolower($view))
                 ->with(compact('model'))
                 ->render();
 

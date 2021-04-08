@@ -14,7 +14,7 @@ class MetadatasetController extends Controller
     public function index()
     {
         abort_unless(\Gate::allows('metadataset_access'), 403);
-        return view('Metadatasets.index');
+        return view('metadatasets.index');
     }
 
     public function list()

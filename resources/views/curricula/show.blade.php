@@ -116,9 +116,11 @@ $(document).ready( function () {
 
     table.on( 'select', function ( e, dt, type, indexes ) { //on select event
         triggerVueEvent(type);
+        app.__vue__.$refs.curriculumView.externalEvent(true);
     });
     table.on( 'deselect', function ( e, dt, type, indexes ) { //on deselect event
         triggerVueEvent(type);
+        app.__vue__.$refs.curriculumView.externalEvent(false);
     });
 
     $(window).on("scroll", function(table) {

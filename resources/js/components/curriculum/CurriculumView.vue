@@ -79,7 +79,7 @@
                 </a>
             </li>
 
-            <li v-if="course"
+            <li v-if="course && showGenerateCertificate"
                 v-can="'certificate_access'"
                 class="nav-item ml-auto">
                 <a class="nav-link link-muted"
@@ -205,7 +205,8 @@
         },
         data () {
             return {
-                cur: this.curriculum
+                cur: this.curriculum,
+                showGenerateCertificate: false
             };
         },
 
@@ -232,7 +233,10 @@
             },
             exportCurriculum(){
                 this.$modal.show('curriculum-export-modal', {'id': this.curriculum.id });
-            }
+            },
+            externalEvent: function(value) {
+                this.showGenerateCertificate = value;
+            },
         },
         mounted() {
         },

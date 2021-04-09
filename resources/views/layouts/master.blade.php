@@ -39,7 +39,8 @@ echo json_encode([
                 <!-- Left navbar links -->
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+                        <a class="nav-link" data-widget="pushmenu"
+                           onclick="toggleMenu()"><i class="fas fa-bars"></i></a>
                     </li>
 <!--                    <li class="nav-item d-none d-sm-inline-block">
                         <a href="#" class="nav-link">Contact</a>
@@ -214,6 +215,17 @@ echo json_encode([
                         });
                     }
                 }
+
+               function toggleMenu(){
+                    if (localStorage.getItem('menu_toggle_class') == 'sidebar-collapse') {
+                        localStorage.setItem('menu_toggle_class', '');
+                    } else {
+                        localStorage.setItem('menu_toggle_class', 'sidebar-collapse');
+                    }
+               }
+               if (localStorage.getItem('menu_toggle_class') === 'sidebar-collapse') {
+                    $("body").addClass('sidebar-collapse');
+               }
         </script>
 
         @yield('scripts')

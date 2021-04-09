@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\Notifications\Welcome;
+use PetstoreIO\UserController;
 
 class UsersApiController extends Controller
 {
@@ -62,6 +63,21 @@ class UsersApiController extends Controller
         if ($user->delete())
         {
             return ['message' => 'Successful deleted'];
+        } else {
+            return ['message' => 'Deleting failed'];
+        }
+    }
+
+    public function forceDestroy($id)
+    {
+
+        $user= User::withTrashed()->findOrFail($id);
+
+        if ((new \App\Http\Controllers\UsersController())->forceDestroy($user))
+        {
+            return ['message' => 'Successful deleted'];
+        } else {
+            return ['message' => 'Deleting failed'];
         }
     }
 

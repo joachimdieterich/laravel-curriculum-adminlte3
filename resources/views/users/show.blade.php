@@ -32,8 +32,15 @@
                 <p class="text-muted text-center">{{ $user->username }} ({{ (null !== $user->currentRole()->first()) ? $user->currentRole()->first()->title : '' }})</p>
             @can('user_edit')
                 <a class="float-right link-muted" href="{{ route('users.edit', $user->id) }}" >
-                    <i class="far fa-edit"></i>
+                    <i class="fa fa-pencil-alt"></i>
                 </a>
+            @endcan
+            @can('user_delete')
+                <form class="pull-left" action="{{ route('users.forceDestroy', $user->id) }}" method="POST">
+                    @method('DELETE')
+                    @csrf
+                    <button class="btn btn-flat"><i class="fa fa-trash text-danger"></i></button>
+                </form>
             @endcan
               {{--  <ul class="list-group list-group-unbordered mb-3">
                     <li class="list-group-item">

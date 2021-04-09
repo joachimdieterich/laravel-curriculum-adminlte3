@@ -16,6 +16,7 @@ use App\StatusDefinition;
 use App\Medium;
 use App\OrganizationRoleUser;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Request;
 use Yajra\DataTables\DataTables;
 use App\Imports\UsersImport;
@@ -293,4 +294,165 @@ class UsersController extends Controller
             ]
         );
     }
+
+    public function forceDestroy(User $user)
+    {
+        $fallback_user = User::firstOrCreate(
+            ['common_name' =>  'deletet_user'],
+            [
+                'username' => env('APP_FALLBACK_USER_USERNAME', 'Deleted User'),
+                'firstname' => env('APP_FALLBACK_USER_FIRSTNAME', 'Deleted'),
+                'lastname' => env('APP_FALLBACK_USER_LASTNAME', 'User'),
+                'email' => env('APP_FALLBACK_USER_EMAIL', 'User'),
+                'password' => Str::uuid(),
+            ]
+        );
+        // absences
+        $user->absences()->delete(); //user has absence  owner_id is an other user
+
+        DB::table('absences')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+
+
+        //achievements
+        $user->achievements()->delete();
+        DB::table('achievements')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+        $user->artefacts()->delete();
+
+        DB::table('certificates')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+
+        $user->contactDetail()->delete();
+
+        // delete contents
+        foreach ($user->contents AS $content)
+        {
+            (new ContentController)->destroy($content, 'App\User', $user->id); // delete or unsubscribe if content is still subscribed elsewhere
+        }
+        DB::table('contents')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+
+        DB::table('content_subscriptions')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+
+        DB::table('curricula')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+
+        DB::table('enabling_objective_subscriptions')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+
+        DB::table('event_subscriptions')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+
+        $user->groups()->detach(); //expel
+
+        DB::table('kanban_items')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+        DB::table('kanban_statuses')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+        DB::table('kanban_subscriptions')
+            ->where('subscribable_type', "App\User")
+            ->where('subscribable_id', $user->id)
+            ->delete(); //delete individual subscriptions
+        DB::table('kanban_subscriptions')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+        DB::table('kanbans')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+
+        DB::table('logbook_entries')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+        DB::table('logbook_subscriptions')
+            ->where('subscribable_type', "App\User")
+            ->where('subscribable_id', $user->id)
+            ->delete(); //delete individual subscriptions
+        DB::table('logbook_subscriptions')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+        DB::table('logbooks')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+
+        //delete unused media
+        foreach ($user->media() AS $medium)
+        {
+            Medium::where('id', $medium->id)->delete();
+        }
+        DB::table('medium_subscriptions')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+
+        //Todo: harddelete messages Cmgmyr\Messenger
+
+        $user->notifications()->delete();
+
+        $user->organizations()->detach(); //expel
+
+        $user->periods(); // inherit
+        DB::table('periods')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+
+        DB::table('plan_subscriptions')
+            ->where('subscribable_type', "App\User")
+            ->where('subscribable_id', $user->id)
+            ->delete(); //delete individual subscriptions
+        DB::table('plan_subscriptions')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+        // todo: check if $user->ownsPlans() are subscribed, if not delete
+        DB::table('plans')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+
+        $user->progresses()->delete();  //delete progresses
+
+        DB::table('quote_subscriptions')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+        DB::table('quotes')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+
+        DB::table('reference_subscriptions')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+        DB::table('references')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+
+        DB::table('repository_subscriptions')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+
+        DB::table('task_subscriptions')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+        DB::table('tasks')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+
+        DB::table('terminal_objective_subscriptions')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+
+
+        $user->forceDelete();
+        return redirect()->route('users.index');
+    }
+
+
 }

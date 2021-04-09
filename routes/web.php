@@ -235,6 +235,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('users/list', 'UsersController@list');
     Route::get('users/current', 'UsersController@getCurrentUser')->name('users.getCurrentUser');
     Route::get('users/{user}/avatar', 'UsersController@getAvatar');
+    Route::delete('users/{user}/forceDestroy', 'UsersController@forceDestroy')->name('users.forceDestroy');
     Route::resource('users', 'UsersController');
 });
 

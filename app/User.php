@@ -83,6 +83,46 @@ class User extends Authenticatable
         return "{$this->firstname} {$this->lastname}";
     }
 
+    public function absences()
+    {
+        return $this->hasMany('App\Absence', 'absent_user_id');
+    }
+
+    public function achievements()
+    {
+        return $this->hasMany('App\Achievement');
+    }
+
+    public function achievements_today()
+    {
+        return $this->hasMany('App\Achievement')->whereDate('updated_at', Carbon::today())->get();
+    }
+
+    public function artefacts()
+    {
+        return $this->hasMany('App\Artefact');
+    }
+
+    public function certificates()
+    {
+        return $this->hasMany('App\Certificate', 'owner_id');
+    }
+
+    public function contactDetail()
+    {
+        return $this->hasOne('App\ContactDetail', 'owner_id');
+    }
+
+    public function contentSubscriptions()
+    {
+        return $this->hasMany('App\ContentSubscription', 'owner_id');
+    }
+
+    public function ownsCurricula()
+    {
+        return $this->hasMany('App\Curriculum', 'owner_id');
+    }
+
     public function getEmailVerifiedAtAttribute($value)
     {
         return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('panel.date_format') . ' ' . config('panel.time_format')) : null;
@@ -105,20 +145,10 @@ class User extends Authenticatable
         $this->notify(new ResetPassword($token));
     }
 
-    public function contactDetail()
-    {
-        return $this->hasOne('App\ContactDetail', 'owner_id', 'id');
-    }
-
     public function contents()
     {
         return $this->hasMany(Content::class, 'owner_id')->latest('updated_at');
     }
-
-    /*public function plans()
-    {
-        return $this->hasMany(Plan::class, 'owner_id')->latest('updated_at');
-    }*/
 
     public function currentGroups()
     {
@@ -181,6 +211,18 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    public function kanbans()
+    {
+        return $this->hasManyThrough(
+            'App\Kanban',
+            'App\KanbanSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'kanban_id'
+        )->where('subscribable_type', get_class($this));
+    }
+
     public function logbookSubscription()
     {
         return $this->morphMany('App\LogbookSubscription', 'subscribable');
@@ -198,21 +240,9 @@ class User extends Authenticatable
         )->where('subscribable_type', get_class($this));
     }
 
-    public function kanbans()
-    {
-        return $this->hasManyThrough(
-            'App\Kanban',
-            'App\KanbanSubscription',
-            'subscribable_id',
-            'id',
-            'id',
-            'kanban_id'
-        )->where('subscribable_type', get_class($this));
-    }
-
     public function media()
     {
-        return $this->hasMany(Media::class, 'owner_id');
+        return $this->hasMany('App\Medium', 'owner_id');
     }
 
     public function plans()
@@ -250,6 +280,16 @@ class User extends Authenticatable
             ->get();
     }
 
+    public function ownsPrerequisites()
+    {
+        return $this->hasMany('App\Prerequisites', 'owner_id');
+    }
+
+    public function progresses()
+    {
+        return $this->morphMany('App\Progress', 'associable');
+    }
+
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'organization_role_users')
@@ -283,6 +323,18 @@ class User extends Authenticatable
             ->get();
     }
 
+    public function tasks()
+    {
+        return $this->hasManyThrough(
+            'App\Task',
+            'App\TaskSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'task_id'
+        )->where('subscribable_type', get_class($this));
+    }
+
     public function organizations()
     {
         return $this->belongsToMany(Organization::class, 'organization_role_users')
@@ -314,21 +366,6 @@ class User extends Authenticatable
 
     }
 
-    public function progresses()
-    {
-        return $this->morphMany('App\Progress', 'associable');
-    }
-
-    public function achievements()
-    {
-        return $this->hasMany('App\Achievement');
-    }
-
-    public function achievements_today()
-    {
-        return $this->hasMany('App\Achievement')->whereDate('updated_at', Carbon::today())->get();
-    }
-
     public function users()
     {
         return (auth()->user()->role()->id == 1) ? User::select('id','username', 'firstname', 'lastname') : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->select('id','username', 'firstname', 'lastname'); //todo, get all users of all organizations not only current
@@ -339,15 +376,4 @@ class User extends Authenticatable
         return ($this->medium_id !== null) ? '/media/'.$this->medium_id  : (new \Laravolt\Avatar\Avatar)->create($this->fullName())->toBase64()->encoded;
     }
 
-    public function tasks()
-    {
-        return $this->hasManyThrough(
-            'App\Task',
-            'App\TaskSubscription',
-            'subscribable_id',
-            'id',
-            'id',
-            'task_id'
-        )->where('subscribable_type', get_class($this));
-    }
 }

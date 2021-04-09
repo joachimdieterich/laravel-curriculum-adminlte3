@@ -227,8 +227,8 @@
 *      path="/v1/users/{user}",
 *      operationId="deleteUser",
 *      tags={"User v1"},
-*      summary="Delete user by Id",
-*      description="Delete a user object",
+*      summary="(Soft)-Delete user by Id",
+*      description="(Soft)-Delete a user object",
 *      security={
 *           {"passport": {"*"}},
 *      },
@@ -251,6 +251,36 @@
 * )
 *
 */
+
+/**
+ * @OA\Delete(
+ *      path="/v1/users/{user}/force",
+ *      operationId="forceDeleteUser",
+ *      tags={"User v1"},
+ *      summary="(Force)-Delete user by Id",
+ *      description="(Force)-Delete a user object",
+ *      security={
+ *           {"passport": {"*"}},
+ *      },
+ *      @OA\Parameter(
+ *          name="user",
+ *          description="User id",
+ *          required=true,
+ *          in="path",
+ *          @OA\Schema(
+ *              type="integer"
+ *          )
+ *      ),
+ *
+ *      @OA\Response(
+ *          response=200,
+ *          description="successful operation",
+ *       ),
+ *       @OA\Response(response=400, description="Bad request"),
+ *
+ * )
+ *
+ */
 
 
 /**

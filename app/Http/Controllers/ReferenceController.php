@@ -4,28 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Reference;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ReferenceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -35,6 +17,7 @@ class ReferenceController extends Controller
      */
     public function store(Request $request)
     {
+        abort_unless(\Gate::allows('objective_create'), 403);
          return Reference::create($request->all());
     }
 
@@ -46,24 +29,12 @@ class ReferenceController extends Controller
      */
     public function show(Reference $reference)
     {
-         
-        // axios call? 
-        if (request()->wantsJson()){  
+        // axios call?
+        if (request()->wantsJson()){
             return [
                 'reference' => $reference
             ];
         }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Reference  $reference
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Reference $reference)
-    {
-        //
     }
 
     /**
@@ -75,7 +46,8 @@ class ReferenceController extends Controller
      */
     public function update(Request $request, Reference $reference)
     {
-        if (request()->wantsJson()){    
+        abort_unless(\Gate::allows('objective_edit'), 403);
+        if (request()->wantsJson()){
             return ['message' => $reference->update($request->all())];
         }
     }
@@ -88,11 +60,18 @@ class ReferenceController extends Controller
      */
     public function destroy(Reference $reference)
     {
-        //
+        abort_unless(\Gate::allows('objective_delete'), 403);
+        DB::table('reference_subscriptions')
+            ->where('reference_id',  $reference->id)
+            ->delete(); //delete individual subscriptions
+        $reference->delete();
+        if (request()->wantsJson()){
+            return ['message' =>'deleted'];
+        }
     }
-    
+
     protected function validateRequest()
-    {               
+    {
         return request()->validate([
             'id'                => 'sometimes',
             'description'       => 'sometimes',

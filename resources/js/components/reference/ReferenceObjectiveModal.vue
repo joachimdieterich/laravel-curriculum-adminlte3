@@ -17,12 +17,20 @@
                     {{ trans('global.referenceable_types.objective') }}
                  </h3>
                  <div class="card-tools">
+                     <button v-permission="'objective_delete'"
+                             v-if="method !== 'post'"
+                             type="button"
+                             class="btn btn-tool"
+                             @click="del()">
+                         <i class="fa fa-trash text-danger"></i>
+                     </button>
                      <button type="button" class="btn btn-tool draggable" >
                         <i class="fa fa-arrows-alt"></i>
                      </button>
                      <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
                         <i class="fa fa-times"></i>
                      </button>
+
                  </div>
             </div>
 
@@ -232,7 +240,16 @@
                 for (i = 0; i < array.length; i++) {
                     array[i].title = array[i].title.replace(/<[^>]+>/g, '');
                 }
-            }
+            },
+            async del(){
+                try {
+                    await axios.delete('/references/'+this.form.id);
+                }
+                catch(error) {
+                    this.errors = response.data.errors;
+                }
+                location.reload();
+            },
         }
     }
 </script>

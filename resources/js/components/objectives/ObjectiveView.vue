@@ -215,7 +215,7 @@
                      :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_references_'+objective.id)"
                      id="references">
                     <div class="card-tools"
-                         v-can="'objective_edit'">
+                         v-permission="'objective_edit'">
                         <button
                             class="dropdown-item "
                             @click.prevent="open('reference-objective-modal')">

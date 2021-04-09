@@ -112,12 +112,14 @@
             <li v-can="'curriculum_edit'"
                 class="nav-item">
                 <a class="nav-link link-muted"
+                   data-toggle="tooltip" title="Fix order_ids"
                    @click="resetOrderIds('/curricula/'+ curriculum.id +'/resetOrderIds')"
                    id="config-nav-tab">
                     <i class="fa fa-wrench"></i>
                 </a>
             </li>
             <li v-can="'curriculum_create'"
+                data-toggle="tooltip" title="Export curriculum"
                 class="nav-item">
                 <a class="nav-link link-muted"
                    @click="exportCurriculum()"
@@ -130,7 +132,7 @@
                 <a class="nav-link link-muted"
                    :href="'/curricula/'+ curriculum.id +'/edit'"
                    id="config-nav-tab">
-                    <i class="fa fa-cog"></i>
+                    <i class="fa fa-pencil-alt"></i>
                 </a>
             </li>
 

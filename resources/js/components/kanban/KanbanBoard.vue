@@ -52,12 +52,13 @@
                         v-on:item-updated="handleItemUpdated"
                         v-on:item-canceled="closeForm"
                         style=" z-index: 2"></KanbanItemCreate>
-                <div style="position:absolute; top:35px;bottom:0;overflow-y:scroll; z-index: 1"
+                <div style="position:absolute; top:35px; bottom:0;overflow-y:scroll; z-index: 1"
                      :style="'width:' + itemwidth + 'px;'">
                     <draggable
                         class="flex-1 overflow-hidden"
                         v-model="status.items"
                         v-bind="itemDragOptions"
+                        style="min-height:500px;"
                         @end="handleItemMoved">
                         <transition-group
                             v-for="item in status.items"

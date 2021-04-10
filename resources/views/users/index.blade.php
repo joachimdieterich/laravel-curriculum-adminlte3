@@ -69,7 +69,7 @@
                 <div class="tab-content">
                     @can('user_reset_password')
                         <div id="tab_password" class="tab-pane active row " >
-                            <div class="form-horizontal col-xs-12">
+                            <div class="form-horizontal col-xs-12 px-4">
                             @include ('forms.input.info', ["value" => "Neues Passwort für markierte Benutzer festlegen. Passwort muss mind. 6 Zeichen lang sein."])
                             @include ('forms.input.password', ["model" => "user", "field" => "password", "placeholder" => "New Password", "type" => "password", "value" => ""])
 <!--                            @include ('forms.input.checkbox', ["field" => "login_password_confirmation", "value" => ""])-->
@@ -80,7 +80,7 @@
 
                     @can('group_enrolment')
                         <div id="tab_group" class="tab-pane row " >
-                            <div class="form-horizontal col-xs-12">
+                            <div class="form-horizontal col-xs-12 px-4">
                                 @include ('forms.input.info', ["value" => "Markierte Benutzer in Lerngruppe ein bzw. ausschreiben.\nBenutzer muss an der entsprechenden Institution eingeschrieben sein, damit  die Lerngruppe angezeigt wird."])
 
                                 @include ('forms.input.select',
@@ -103,7 +103,7 @@
                     @endcan
                     @can('organization_enrolment')
                         <div id="tab_organization" class="tab-pane row " >
-                            <div class="form-horizontal col-xs-12">
+                            <div class="form-horizontal col-xs-12 px-4">
                                 @include ('forms.input.info', ["value" => "Beim Zuweisen einer Rolle werden die markierten Nutzer automatisch in die aktuelle/ausgewählte Institution eingeschrieben bzw. die Daten aktualisiert."])
                                 @include ('forms.input.select',
                                     ["model" => "organization",
@@ -127,7 +127,7 @@
                         </div>
 
                         <div id="tab_register" class="tab-pane row " >
-                            <div class="form-horizontal col-xs-12">
+                            <div class="form-horizontal col-xs-12  px-4">
                                  @include ('forms.input.select',
                                 ["model" => "statusdefinition",
                                 "show_label" => true,
@@ -142,7 +142,9 @@
                     @endcan
                     @can('user_delete')
                         <div id="tab_delete" class="tab-pane row" >
-                            <div class="form-horizontal col-xs-12">
+                            <div class="form-horizontal col-xs-12 px-4">
+
+                                {{ trans('global.forceDelete') }}
                                 @include ('forms.input.button', ["onclick" => "massDestroyUser()", "field" => "deleteUser", "type" => "button", "class" => "btn btn-danger pull-right mt-3", "icon" => "fa fa-trash", "label" => "Markierte Benutzer löschen"])
                             </div>
                         </div>

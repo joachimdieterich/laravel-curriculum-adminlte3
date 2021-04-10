@@ -207,10 +207,17 @@ class UsersController extends Controller
         }
     }
 
+    /**
+     * ! No soft delete !
+     * @param MassDestroyUserRequest $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
     public function massDestroy(MassDestroyUserRequest $request)
     {
-        User::whereIn('id', request('ids'))->delete();
-
+        foreach(request('ids') AS $id)
+        {
+            $this->forceDestroy(User::withTrashed()->find($id));
+        }
         return response(null, 204);
     }
 

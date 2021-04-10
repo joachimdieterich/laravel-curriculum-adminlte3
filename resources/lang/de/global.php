@@ -11,6 +11,7 @@ return [
     'view'                                 => 'Ansicht',
     'edit'                                 => 'editieren',
     'delete'                               => 'löschen',
+    'forceDelete'                          => 'Datensatz endgültig löschen.',
     'save'                                 => 'speichern',
     'open'                                 => 'öffnen',
     'cancel'                               => 'Abbrechen',

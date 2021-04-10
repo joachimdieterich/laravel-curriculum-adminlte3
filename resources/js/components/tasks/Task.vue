@@ -8,13 +8,13 @@
                     </h5>
                 </div>
                 <div  class="card-tools pr-2">
-                    <a v-can="'task_delete'"
+                    <a v-permission="'task_delete'"
                        @click.prevent="destroy()" >
                         <i class="fa fa-trash text-danger pr-4"></i>
                     </a>
-                    <a v-can="'task_edit'"
+                    <a v-permission="'task_edit'"
                        @click.prevent="$modal.show('task-modal', {'method': 'patch', 'id': '{{ task.id }}'})" >
-                        <i class="fa fa-pencil-alt"></i>
+                        <i class="fa fa-pencil-alt text-muted"></i>
                     </a>
                 </div>
 
@@ -22,11 +22,11 @@
             <!-- /.card-header -->
             <div class="card-body py-2">
                 <div class="row small">
-                    <span class="col-md-6 col-sm-12 ">
+                    <span class="col-md-6 col-sm-12 text-muted">
                         <i class="fa fa-calendar pr-1"></i>
                         {{ task.start_date }}
                     </span>
-                    <span class="col-md-6 col-sm-12">
+                    <span class="col-md-6 col-sm-12 text-muted">
                         <i class="fa fa-calendar-check pr-1"></i>
                         {{ task.start_date }}
                     </span>
@@ -39,7 +39,7 @@
             </div>
             <!-- /.card-body -->
 
-            <!--<div v-can="'task_edit'" class="card-footer">
+            <!--<div v-permission="'task_edit'" class="card-footer">
                 <small class="float-right">
                     {{ task.updated_at }}
                 </small>
@@ -113,7 +113,7 @@
                         type="enabling"></objective-box>
                     <span class="clearfix"></span>
                 </span>
-                    <ul  v-can="'reference_create'" class="todo-list" data-widget="todo-list">
+                    <ul  v-permission="'reference_create'" class="todo-list" data-widget="todo-list">
                         <li class="pointer bg-white">
                             <a @click="open('subscribe-objective-modal', 'referenceable');">
                                 <i class="px-2 fa fa-plus text-muted"></i> {{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}

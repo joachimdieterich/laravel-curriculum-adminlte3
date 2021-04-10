@@ -35,13 +35,6 @@
                     <i class="fa fa-pencil-alt"></i>
                 </a>
             @endcan
-            @can('user_delete')
-                <form class="pull-left" action="{{ route('users.forceDestroy', $user->id) }}" method="POST">
-                    @method('DELETE')
-                    @csrf
-                    <button class="btn btn-flat"><i class="fa fa-trash text-danger"></i></button>
-                </form>
-            @endcan
               {{--  <ul class="list-group list-group-unbordered mb-3">
                     <li class="list-group-item">
                         <b>Accomplished</b> <a class="float-right">1,322</a>

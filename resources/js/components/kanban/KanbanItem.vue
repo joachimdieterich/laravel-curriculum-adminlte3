@@ -52,8 +52,8 @@
         </div>
 
 
-        <div class="card-footer py-2 px-3 border-top-0">
-            <span class="text-muted"
+        <div class="card-footer px-3 py-2 border-top-0">
+            <span class="text-muted pull-right"
                   style="font-size: .6rem">{{item.created_at}}</span>
             <!--<span class="float-right badge bg-gray-light badge-btn mt-1 small">KanbanItem</span>-->
         </div>

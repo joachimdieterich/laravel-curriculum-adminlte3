@@ -35,8 +35,8 @@
     @endcan
 
     <!-- Timelime example  -->
-    <div
-         style="position:absolute; width: calc(100vw - 270px);height: calc(100vh - 200px);overflow-x:auto;overflow-y: hidden;">
+    <div id="kanban_board_wrapper"
+         style="position:absolute; width: calc(100vw - 270px);height: calc(100vh - 175px);overflow-x:auto;overflow-y: hidden;">
         <kanban-board  :kanban="{{ $kanban }}"></kanban-board>
     </div>
 </div>
@@ -45,5 +45,18 @@
 <medium-modal></medium-modal>
 <medium-create-modal></medium-create-modal>
 <task-modal></task-modal>
+@endsection
+
+@section('scripts')
+@parent
+
+<script>
+    $(function() {
+        if (localStorage.getItem('menu_toggle_class') === 'sidebar-collapse') {
+            $("#kanban_board_wrapper").width($("#kanban_board_wrapper").width()+170);
+        }
+    });
+</script>
+
 @endsection
 

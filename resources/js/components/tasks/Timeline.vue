@@ -6,26 +6,32 @@
             <span  v-if="subscription.subscribable_type === 'App\\User'">
                 <i class="fas fa-user pr-1"></i>
                 <a href="#" class="link-muted">
-                    {{ ((subscription.subscribable.title) ? subscription.subscribable.title+" ("+subscription.owner.firstname+" "+subscription.owner.lastname+")" : subscription.subscribable.firstname+' '+subscription.subscribable.lastname ) }}
+                    {{ trans('global.user.title_singular')}}: {{ ((subscription.subscribable.title) ? subscription.subscribable.title+" ("+subscription.owner.firstname+" "+subscription.owner.lastname+")" : subscription.subscribable.firstname+' '+subscription.subscribable.lastname ) }}
                 </a>
             </span>
             <span  v-else-if="subscription.subscribable_type === 'App\\Group'">
                 <i  class="fas fa-users pr-1"></i>
                 <a href="#" class="link-muted">
-                    {{ ((subscription.subscribable.title) ? subscription.subscribable.title+" ("+subscription.owner.firstname+" "+subscription.owner.lastname+")" : subscription.subscribable.firstname+' '+subscription.subscribable.lastname ) }}
+                    {{ trans('global.group.title_singular')}}: {{ ((subscription.subscribable.title) ? subscription.subscribable.title+" ("+subscription.owner.firstname+" "+subscription.owner.lastname+")" : subscription.subscribable.firstname+' '+subscription.subscribable.lastname ) }}
                 </a>
             </span>
             <span v-else-if="subscription.subscribable_type === 'App\\LogbookEntry'">
                 <i class="fas fa-book pr-1"></i>
                 <a href="#" class="link-muted">
-                    {{ ((subscription.subscribable.title) ? subscription.subscribable.title+" ("+subscription.owner.firstname+" "+subscription.owner.lastname+")" : subscription.subscribable.firstname+' '+subscription.subscribable.lastname ) }}
+                    {{ trans('global.logbook.title_singular')}}: {{ ((subscription.subscribable.title) ? subscription.subscribable.title+" ("+subscription.owner.firstname+" "+subscription.owner.lastname+")" : subscription.subscribable.firstname+' '+subscription.subscribable.lastname ) }}
                 </a>
             </span>
 
             <span v-else-if="subscription.subscribable_type === 'App\\Plan'">
                 <i  class="far fa-clipboard pr-1"></i>
                 <a :href="'/plans/'+subscription.subscribable.id" class="link-muted">
-                    {{ ((subscription.subscribable.title) ? subscription.subscribable.title+" ("+subscription.owner.firstname+" "+subscription.owner.lastname+")" : subscription.subscribable.firstname+' '+subscription.subscribable.lastname ) }}
+                    {{ trans('global.plan.title_singular')}}: {{ ((subscription.subscribable.title) ? subscription.subscribable.title+" ("+subscription.owner.firstname+" "+subscription.owner.lastname+")" : subscription.subscribable.firstname+' '+subscription.subscribable.lastname ) }}
+                </a>
+            </span>
+           <span v-else-if="subscription.subscribable_type === 'App\\KanbanItem'">
+                <i class="fa fa-columns pr-1"></i>
+                <a href="#" class="link-muted">
+                    {{ trans('global.kanban.title_singular')}}: {{ ((subscription.subscribable.title) ? subscription.subscribable.title+" ("+subscription.owner.firstname+" "+subscription.owner.lastname+")" : subscription.subscribable.firstname+' '+subscription.subscribable.lastname ) }}
                 </a>
             </span>
             <!-- Time -->

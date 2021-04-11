@@ -111,7 +111,9 @@ class LogbookController extends Controller
         abort_unless((auth()->user()->logbooks->contains('id', $logbook->id) // user owns logbook
             OR ($logbook->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() //user is enroled in group
             OR ($logbook->subscriptions->where('subscribable_type', "App\Course")->whereIn('subscribable_id', auth()->user()->currentGroupEnrolments->pluck('course_id')))->isNotEmpty()
-            OR (auth()->user()->currentRole()->first()->id == 1)), 403);                // or admin
+            OR (auth()->user()->currentRole()->first()->id == 1)
+            OR (auth()->user()->id == $logbook->owner_id)
+        ), 403);                // or admin
         $logbook = $logbook->with([
                 'subscriptions.subscribable',
                 'entries.absences.owner', //todo: lazyload

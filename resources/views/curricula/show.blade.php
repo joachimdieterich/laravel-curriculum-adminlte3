@@ -29,7 +29,11 @@
     <table id="users-datatable" class="table table-hover datatable">
         <thead>
             <tr>
-                <th width="10"></th>
+                <th width="10">
+                    <a onclick="togglePosition()" class="link-muted">
+                        <i id="toggleIcon" class="fa fa-arrow-left"></i>
+                    </a>
+                </th>
                 <th>{{ trans('global.user.fields.username') }}</th>
                 <th>{{ trans('global.user.fields.lastname') }}</th>
                 <th>{{ trans('global.user.fields.firstname') }}</th>
@@ -40,6 +44,7 @@
     </table>
     @endif
 @endcan
+
 
 <div id="curriculum_view_content" class="row">
     <curriculum-view
@@ -98,9 +103,32 @@ function isElementInViewport (el) {
     );
 }
 
+function togglePosition(){
+    if (localStorage.getItem('#users-datatable-position') === 'content')
+    {
+        localStorage.setItem('#users-datatable-position', 'menu');
+        $("#users-datatable_wrapper").appendTo("#menu_top_placeholder");
+        $("#menu_top_placeholder").css({'background-color': '#ecf0f5',  'webkit-transform':'translate3d(0,0,0)'});
+        $("#toggleIcon").removeClass('fa-arrow-left');
+        $("#toggleIcon").addClass('fa-arrow-right');
+        $('.dataTables_length').hide();
+        $('.dataTables_filter').hide();
+        $('.dataTables_info').hide();
+    } else {
+        localStorage.setItem('#users-datatable-position', 'content');
+        $("#users-datatable_wrapper").appendTo("#content_top_placeholder");
+        $("#menu_top_placeholder").css({'background-color': 'transparent', 'webkit-transform':'translate3d(0,0,0)'});
+        $("#toggleIcon").removeClass('fa-arrow-right');
+        $("#toggleIcon").addClass('fa-arrow-left');
+        $('.dataTables_length').show();
+        $('.dataTables_filter').show();
+        $('.dataTables_info').show();
+    }
+}
+
 $(document).ready( function () {
     //let dtButtons = false;//$.extend(true, [], $.fn.dataTable.defaults.buttons)
-
+    localStorage.setItem('#users-datatable-position', 'content');
     table = $('#users-datatable').DataTable({
         ajax: "/courses/list?course_id={{ $course->id }}",
         columns: [
@@ -123,8 +151,11 @@ $(document).ready( function () {
         app.__vue__.$refs.curriculumView.externalEvent(false);
     });
 
-    $(window).on("scroll", function(table) {
-        if (!isElementInViewport($("#content_top_placeholder"))){
+
+
+   /* $(window).on("scroll", function(table) {
+        if (!isElementInViewport($("#users-datatable")) && (localStorage.getItem('#users-datatable-position') === 'content')){
+            localStorage.setItem('#users-datatable-position', 'menu');
             $("#users-datatable_wrapper").appendTo("#menu_top_placeholder");
             $("#menu_top_placeholder").css({'background-color': '#ecf0f5',  'webkit-transform':'translate3d(0,0,0)'});
             $("#curriculum_view_content").css({'padding-top': '100px'});
@@ -133,6 +164,7 @@ $(document).ready( function () {
             $('.dataTables_info').hide();
         } else {
             if (isElementInViewport($("#content_top_placeholder"))){
+                localStorage.setItem('#users-datatable-position', 'content');
                 $("#users-datatable_wrapper").appendTo("#content_top_placeholder");
                 $("#menu_top_placeholder").css({'background-color': 'transparent', 'webkit-transform':'translate3d(0,0,0)'});
                 $("#curriculum_view_content").css({'padding-top': '0px'});
@@ -141,7 +173,7 @@ $(document).ready( function () {
                 $('.dataTables_info').show();
             }
         }
-    });
+    });*/
 
  });
 

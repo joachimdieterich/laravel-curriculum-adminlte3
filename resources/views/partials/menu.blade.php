@@ -219,6 +219,16 @@
                                     </a>
                                 </li>
                             @endcan
+                            @can('certificate_edit')
+                                <li class="nav-item">
+                                    <a href="{{ route("certificates.index") }}" class="nav-link {{ request()->is('certificates') || request()->is('certificates/*') ? 'active' : '' }}">
+                                        <i class="fa fa-certificate"></i>
+                                        <p>
+                                            <span>{{ trans('global.certificate.title') }}</span>
+                                        </p>
+                                    </a>
+                                </li>
+                            @endcan
                             <li class="nav-item">
                                 <a href="{{ route("organizations.index") }}" class="nav-link {{ request()->is('organizations') || request()->is('organizations/*') ? 'active' : '' }}">
                                     <i class="fas fa-university"></i>

@@ -3,48 +3,71 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\KanbanItemSubscription;
 
 class KanbanItem extends Model
 {
     protected $guarded = [];
-    
+
     public function path()
     {
         return route('kanban.show', $this->id);
     }
-     
+
     public function kanban()
     {
-        return $this->belongsTo('App\Kanban', 'id', 'kanban_id');   
-    
+        return $this->belongsTo('App\Kanban', 'id', 'kanban_id');
+
     }
-    
+
     public function subscribable()
     {
         return $this->morphTo();
     }
-    
+    public function subscriptions()
+    {
+        return $this->hasMany(KanbanItemSubscription::class);
+    }
+
+    public function userSubscriptions()
+    {
+        return $this->hasMany(KanbanItemSubscription::class)
+            ->where('subscribable_type', 'App\User');
+    }
+
+    public function groupSubscriptions()
+    {
+        return $this->hasMany(KanbanItemSubscription::class)
+            ->where('subscribable_type', 'App\Group');
+    }
+
+    public function organizationSubscriptions()
+    {
+        return $this->hasMany(KanbanItemSubscription::class)
+            ->where('subscribable_type', 'App\Organization');
+    }
+
     public function status()
     {
-        return $this->hasOne('App\KanbanStatus', 'id', 'kanban_status_id');   
-    
+        return $this->hasOne('App\KanbanStatus', 'id', 'kanban_status_id');
+
     }
-    
+
     public function owner()
     {
-        return $this->hasOne('App\User', 'id', 'owner_id');   
+        return $this->hasOne('App\User', 'id', 'owner_id');
     }
-    
+
     public function mediaSubscriptions()
     {
         return $this->morphMany('App\MediumSubscription', 'subscribable');
     }
-    
+
     public function taskSubscription()
     {
         return $this->morphMany('App\TaskSubscription', 'subscribable');
     }
-    
+
     public function media()
     {
         return $this->hasManyThrough(
@@ -54,8 +77,8 @@ class KanbanItem extends Model
             'id', // Foreign key on medium table...
             'id', // Local key on enabling_objectives table...
             'medium_id' // Local key on medium_subscription table...
-        )->where('subscribable_type', get_class($this)); 
+        )->where('subscribable_type', get_class($this));
     }
-    
-    
+
+
 }

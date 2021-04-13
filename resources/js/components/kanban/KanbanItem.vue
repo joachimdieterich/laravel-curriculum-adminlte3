@@ -12,10 +12,15 @@
                      aria-expanded="false">
                     <i class="text-muted fas fa-ellipsis-v"></i>
                     <div class="dropdown-menu" x-placement="top-start">
-                        <button class="dropdown-item py-1"
+                        <button class="dropdown-item text-secondary  py-1"
                                 @click="edit()">
                             <i class="fa fa-pencil-alt mr-4"></i>
                             {{ trans('global.kanbanItem.edit') }}
+                        </button>
+                        <button class="dropdown-item text-secondary  py-1"
+                                @click="open('subscribe-modal')">
+                            <i class="fa fa-share-alt mr-4"></i>
+                            {{ trans('global.share') }}
                         </button>
                         <hr class="my-1">
                         <button
@@ -89,6 +94,9 @@
             },
             edit(){
                 this.$emit("item-edit", this.item);
+            },
+            open(modal) {
+                this.$modal.show(modal, { 'modelUrl': 'kanbanItem', 'modelId': this.item.id });
             },
 
 

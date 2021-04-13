@@ -103,6 +103,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('kanbanSubscriptions', 'KanbanSubscriptionController');
 
+    Route::resource('kanbanItemSubscriptions', 'KanbanItemSubscriptionController');
+
     Route::resource('levels', 'LevelController');
 
     /* logbooks */

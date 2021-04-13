@@ -57,6 +57,7 @@ return [
     'month'                                => 'Monat',
     'logout'                               => 'Abmelden',
     'calendar'                             => 'Kalender',
+    'percent_accomplished'                 => 'Prozentwert, bei dem Inhalt sichtbar wird',
     'dashboard'                            =>[
         'title'                            => 'Dashboard',
         'actual'                           => 'Aktuell',

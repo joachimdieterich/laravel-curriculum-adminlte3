@@ -9,8 +9,9 @@
 @endsection
 @section('content')
 <div class="row">
-   Todo Preview for 
+   Todo Preview for
    {{ $certificate }}
+    {!! $certificate->body !!}
 </div>
 
 @endsection

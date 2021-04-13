@@ -92,6 +92,7 @@ Vue.component('certificate-generate-modal', require('./components/certificate/Ge
 Vue.component('logbook', require('./components/logbooks/Logbook.vue').default);
 Vue.component('logbook-entry-modal', require('./components/logbooks/LogbookEntryModal.vue').default);
 Vue.component('subscribe-objective-modal', require('./components/objectives/SubscribeObjectiveModal.vue').default);
+Vue.component('objective-progress-subscription-modal', require('./components/objectives/ObjectiveProgressSubscriptionModal.vue').default);
 Vue.component('task-modal', require('./components/tasks/TaskModal.vue').default);
 Vue.component('task', require('./components/tasks/Task.vue').default);
 Vue.component('task-timeline', require('./components/tasks/Timeline.vue').default);

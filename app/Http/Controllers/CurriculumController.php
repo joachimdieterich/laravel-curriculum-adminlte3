@@ -249,6 +249,7 @@ class CurriculumController extends Controller
                 'terminalObjectives.enablingObjectives.achievements'
             ])
             ->find($curriculum->id);
+        //todo: only get achievments of defined users
 
     //  $curriculum = Curriculum::where('id', $curriculum->id)->with('terminalObjectives.enablingObjectives')->get()->first(); //replaced to use lazy loading on curriculum/courseview
         if (request()->wantsJson()){

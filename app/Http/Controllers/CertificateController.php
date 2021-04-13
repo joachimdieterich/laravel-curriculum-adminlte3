@@ -64,7 +64,7 @@ class CertificateController extends Controller
                     if (\Gate::allows('certificate_edit')){
                         $actions .= '<a href="'.route('certificates.edit', $certificates->id).'" '
                                     . 'class="btn">'
-                                    . '<i class="fa fa-edit"></i>'
+                                    . '<i class="fa fa-pencil-alt"></i>'
                                     . '</a>';
                     }
                     if (\Gate::allows('certificate_delete')){
@@ -245,12 +245,12 @@ class CertificateController extends Controller
                     request()->date);
 
             $html = preg_replace_callback(
-                '/<progress\s+[^>]*reference_type="(.*?)"\s+[^>]*reference_id="(.*?)"\s+[^>]*min_value="(.*?)"[^>]*>(.*?)<\/progress>/mis',
+                '/<span\s+[^>]*reference_type="(.*?)"\s+[^>]*reference_id="(.*?)"\s+[^>]*min_value="(.*?)"[^>]*>(.*?)<\/span>/mis',
                 function($match) use($user)
                 {
                     // evaluate progress
                     // Example
-                    // Full match <progress reference_type="App\TerminalObjective" reference_id="1" min_value="60"/><img src="/media/2"/></progress>
+                    // Full match <span reference_type="App\TerminalObjective" reference_id="1" min_value="60"/><img src="/media/2"/></span>
                     // Group 1 | $match[1] App\TerminalObjective
                     // Group 2 | $match[2] 1
                     // Group 3 | $match[3] 60
@@ -362,7 +362,27 @@ class CertificateController extends Controller
 
     protected function replaceFields($string, $user, $organization, $date)
     {
+        //enhance replacement
         $search = array(
+            '/<span (.*)id="firstname"(.*)>(.*)<\/span>/Umi',
+            '/<span (.*)id="lastname"(.*)>(.*)<\/span>/Umi',
+            '/<span (.*)id="organization_title"(.*)>(.*)<\/span>/Umi',
+            '/<span (.*)id="organization_street"(.*)>(.*)<\/span>/Umi',
+            '/<span (.*)id="organization_postcode"(.*)>(.*)<\/span>/Umi',
+            '/<span (.*)id="organization_city"(.*)>(.*)<\/span>/Umi',
+            '/<span (.*)id="date"(.*)>(.*)<\/span>/Umi',
+        );
+        $replace = array(
+            $user->firstname,
+            $user->lastname,
+            $organization->title,
+            $organization->street,
+            $organization->postcode,
+            $organization->city,
+            $date);
+
+        return preg_replace($search, $replace, $string);
+        /*$search = array(
             '<span id="firstname"></span>',
             '<span id="lastname"></span>',
             '<span id="organization_title"></span>',
@@ -381,7 +401,7 @@ class CertificateController extends Controller
             $organization->city,
             $date);
 
-        return str_replace($search, $replace, $string);
+        return str_replace($search, $replace, $string);*/
     }
 
     protected function achievementIndicator($status)

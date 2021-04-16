@@ -207,7 +207,7 @@ class GroupsController extends Controller
 
     public function enrol()
     {
-        abort_unless(\Gate::allows('group_create'), 403);
+        abort_unless(\Gate::allows('group_enrolment'), 403);
 
         foreach ((request()->enrollment_list) AS $enrolment)
         {
@@ -228,7 +228,7 @@ class GroupsController extends Controller
 
     public function expel()
     {
-        abort_unless(\Gate::allows('group_create'), 403);
+        abort_unless(\Gate::allows('group_enrolment'), 403);
 
         foreach ((request()->expel_list) AS $expel)
         {

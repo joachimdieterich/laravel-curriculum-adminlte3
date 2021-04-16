@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\Notifications\Welcome;
-use PetstoreIO\UserController;
 
 class UsersApiController extends Controller
 {

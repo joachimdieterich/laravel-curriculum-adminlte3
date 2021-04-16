@@ -80,7 +80,7 @@
             </li>
 
             <li v-if="course && showGenerateCertificate"
-                v-can="'certificate_access'"
+                v-permission="'certificate_access'"
                 class="nav-item ml-auto">
                 <a class="nav-link link-muted"
                    @click="show('certificate-generate-modal')"
@@ -88,8 +88,7 @@
                     <i class="fa fa-certificate pr-2"></i>{{trans('global.certificate.generate')}}
                 </a>
             </li>
-            <li v-else
-                v-can="'certificate_create'"
+            <li v-permission="'certificate_create'"
                 class="nav-item ml-auto">
                 <a class="nav-link link-muted"
                    :href="'/certificates/create?curriculum_id='+ curriculum.id "

@@ -66,7 +66,9 @@
 {{--<content-modal></content-modal>--}}
 <objective-medium-modal></objective-medium-modal>
 <medium-modal></medium-modal>
+@can('medium_create')
 <medium-create-modal></medium-create-modal>
+@endcan
 @if(isset($certificates))
     <certificate-generate-modal  :certificates="{{ $certificates }}" ></certificate-generate-modal>
 @endif

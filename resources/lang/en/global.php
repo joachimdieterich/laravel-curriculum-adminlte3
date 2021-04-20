@@ -74,7 +74,7 @@ return [
     'curricula_media_subscriptions'        => 'Media',
     'curricula_cross_references'           => 'Cross references',
     'curricula_cross_references_description'=> 'Suggestions for lesson planning',
-    'myProfile'                            => 'My Profile',
+    'myProfile'                            => 'Userprofile',
     'settings'                             => 'Settings',
     'minutes'                              => 'Minutes',
     'config'              =>[

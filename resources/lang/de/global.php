@@ -74,7 +74,7 @@ return [
     'curricula_media_subscriptions'        => 'Medien',
     'curricula_cross_references'           => 'Querverweise',
     'curricula_cross_references_description'=> 'Anregung zur Unterrichtsgestaltung',
-    'myProfile'                            => 'Mein Profil',
+    'myProfile'                            => 'Nutzerprofil',
     'settings'                             => 'Einstellungen',
     'minutes'                              => 'Minuten',
     'config'              =>[

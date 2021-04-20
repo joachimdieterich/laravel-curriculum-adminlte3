@@ -8,8 +8,8 @@
     <div style="min-height: 150px !important;
         min-width: 197px !important;
         padding: 0;
-        border-top-left-radius: 0.4rem;
-        border-top-right-radius: 0.4rem;
+        border-top-left-radius: 0.2rem;
+        border-top-right-radius: 0.2rem;
         background: url('{{isset($item->medium->id) ? route('media.thumb', ($item->medium->id)) : Avatar::create($item->title)->toGravatar(['d' => 'identicon', 'r' => 'pg', 's' => 100])}}') top center no-repeat;
         background-size: cover;">
     </div>
@@ -84,7 +84,8 @@
 
 
     <span class="bg-white text-center p-1 overflow-auto "
-         style="position:absolute; bottom:0px; height: 150px; width:100%;">
+         style="position:absolute; bottom:0px; height: 150px; width:100%; border-bottom-left-radius: 0.2rem;
+        border-bottom-right-radius: 0.2rem;">
 
        <h6 class="events-heading pt-1 hyphens">
            {{ $item->title }}

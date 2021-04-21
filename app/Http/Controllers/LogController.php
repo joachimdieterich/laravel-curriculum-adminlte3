@@ -20,6 +20,9 @@ class LogController extends Controller
      */
     public static function set(string $key, $value = null, $increase = 1)
     {
+        if (app()->runningUnitTests()) {
+            return ;
+        }
         return Log::updateOrCreate(
             [
                 'key'        =>  $key,
@@ -54,6 +57,9 @@ class LogController extends Controller
 
     public static function  setStatistics()
     {
+        if (app()->runningUnitTests()) {
+            return ;
+        }
         LogController::set('browser', Browser::browserName());
         LogController::setDevice();
     }

@@ -181,7 +181,7 @@ class UsersController extends Controller
     public function show(User $user)
     {
         abort_unless(\Gate::allows('user_show'), 403);
-        abort_unless(auth()->user()->mayAccessUser($user), 403);
+        abort_unless(((auth()->user()->role()->id == 1) OR (auth()->user()->mayAccessUser($user))), 403);
 
         $status_definitions = StatusDefinition::all();
         $user->load('roles');
@@ -195,7 +195,7 @@ class UsersController extends Controller
     public function destroy(User $user)
     {
         abort_unless(\Gate::allows('user_delete'), 403);
-        abort_unless(auth()->user()->mayAccessUser($user), 403);
+        abort_unless(((auth()->user()->role()->id == 1) OR (auth()->user()->mayAccessUser($user))), 403);
 
         $return = $user->delete();
         //todo: concept to hard-delete users

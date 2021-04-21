@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\LogController;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Aacotroneo\Saml2\Saml2Auth;
 use Illuminate\Http\Request;
@@ -56,6 +57,8 @@ class LoginController extends Controller
         $fieldType = filter_var($request->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
         if(auth()->attempt(array($fieldType => $input['email'], 'password' => $input['password'])))
         {
+            LogController::set('login');
+            LogController::set('activeOrg', auth()->user()->current_organization_id);
             return redirect()->route('home');
         } else {
             return redirect()->route('login')

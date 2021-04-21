@@ -2,29 +2,30 @@
 
 namespace App;
 
+use App\Http\Controllers\LogController;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\ModelStatus\HasStatuses;
 
 class TaskSubscription extends Model
 {
     protected $guarded = [];
-    
+
     use HasStatuses;
-    
-    
+
+
     public function subscribable()
     {
         return $this->morphTo();
     }
-    
+
     public function task(){
         return $this->belongsTo('App\Task', 'task_id', 'id');
     }
-    
+
     public function complete()
     {
         $this->update(['completion_date' => date("Y-m-d H:i:s")]);
-
+        LogController::set(get_class($this).'@'.__FUNCTION__);
        // $this->recordActivity('completed_task');
     }
 
@@ -34,13 +35,13 @@ class TaskSubscription extends Model
     public function incomplete()
     {
         $this->update(['completion_date' => null]);
-
+        LogController::set(get_class($this).'@'.__FUNCTION__);
         // $this->recordActivity('incompleted_task');
     }
-    
+
     public function owner()
     {
-        return $this->hasOne('App\User', 'id', 'owner_id');   
+        return $this->hasOne('App\User', 'id', 'owner_id');
     }
-    
+
 }

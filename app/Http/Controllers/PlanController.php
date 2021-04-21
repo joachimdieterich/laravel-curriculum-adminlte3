@@ -114,6 +114,7 @@ class PlanController extends Controller
             'owner_id'          => auth()->user()->id
         ]);
 
+        LogController::set(get_class($this).'@'.__FUNCTION__);
          // axios call?
         if (request()->wantsJson()){
             return ['message' => $plan->path()];
@@ -131,7 +132,7 @@ class PlanController extends Controller
     public function show(Plan $plan)
     {
         abort_unless(\Gate::allows('plan_show'), 403);
-
+        abort_unless($this->userPlans()->contains($plan), 403);
         // axios call?
         if (request()->wantsJson()){
             return [
@@ -152,6 +153,7 @@ class PlanController extends Controller
     public function edit(Plan $plan)
     {
         abort_unless(\Gate::allows('plan_edit'), 403);
+        abort_unless($this->userPlans()->contains($plan), 403);
         $types = PlanType::all();
 
         return view('plans.edit')
@@ -169,6 +171,7 @@ class PlanController extends Controller
     public function update(Request $request, Plan $plan)
     {
         abort_unless(\Gate::allows('plan_edit'), 403);
+        abort_unless($this->userPlans()->contains($plan), 403);
         $clean_data = $this->validateRequest();
         if (isset($clean_data['type_id']))
         {
@@ -189,6 +192,7 @@ class PlanController extends Controller
     public function destroy(Plan $plan)
     {
         abort_unless(\Gate::allows('plan_delete'), 403);
+        abort_unless($this->userPlans()->contains($plan), 403);
 
         $plan->subscriptions()->delete();
         $plan->delete();

@@ -24,15 +24,15 @@ class RolesController extends Controller
     {
         abort_unless(\Gate::allows('role_access'), 403);
         $roles = Role::select([
-            'id', 
+            'id',
             'title'
             ]);
-        
+
         $edit_gate = \Gate::allows('role_edit');
         $delete_gate = \Gate::allows('role_delete');
-        
+
         return DataTables::of($roles)
-            
+
             ->addColumn('action', function ($roles) use ($edit_gate, $delete_gate) {
                  $actions  = '';
                     if ($edit_gate){
@@ -49,7 +49,7 @@ class RolesController extends Controller
                     }
                 return $actions;
             })
-           
+
             ->addColumn('check', '')
             ->setRowId('id')
             ->setRowAttr([
@@ -57,7 +57,7 @@ class RolesController extends Controller
             ])
             ->make(true);
     }
-    
+
     public function create()
     {
         abort_unless(\Gate::allows('role_create'), 403);
@@ -66,7 +66,7 @@ class RolesController extends Controller
 
         return view('roles.create', compact('permissions'));
     }
-   
+
     public function store(StoreRoleRequest $request)
     {
         abort_unless(\Gate::allows('role_create'), 403);
@@ -75,7 +75,7 @@ class RolesController extends Controller
         $role->permissions()->sync($request->input('permissions', []));
 
         Cache::forget('roles'); //cache should update next time
-            
+
         return redirect()->route('roles.index');
     }
 
@@ -96,7 +96,7 @@ class RolesController extends Controller
 
         $role->update($request->all());
         $role->permissions()->sync($request->input('permissions', []));
-        
+
         Cache::forget('roles'); //cache should update next time
 
         return redirect()->route('roles.index');
@@ -120,10 +120,4 @@ class RolesController extends Controller
         return back();
     }
 
-    public function massDestroy(MassDestroyRoleRequest $request)
-    {
-        Role::whereIn('id', request('ids'))->delete();
-
-        return response(null, 204);
-    }
 }

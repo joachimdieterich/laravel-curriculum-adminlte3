@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Listeners;
+use App\Http\Controllers\LogController;
 use App\User;
 use Aacotroneo\Saml2\Events\Saml2LoginEvent;
 use Illuminate\Support\Facades\Auth;
@@ -36,7 +37,7 @@ class SAMLLoginListener
         session(['nameId' => $user->getNameId()]);
 
         $laravelUser = User::where('username', $user->getUserId())->get();//find user by ID or attribute
-         //if it does not exist create it and go on or show an error message        
+         //if it does not exist create it and go on or show an error message
         Auth::login($laravelUser->first());
 
         // if users current_organization_id is not set -> get first organization as default
@@ -45,7 +46,7 @@ class SAMLLoginListener
             $u = \App\User::find(auth()->user()->id);
             $u->current_organization_id = auth()->user()->organizations()->first()->id;
             $u->save();
-        }       
+        }
         // if users current_period_id is not set -> if not enroled in group current_period_id == null
         if (auth()->user()->current_period_id === NULL)
         {
@@ -53,11 +54,15 @@ class SAMLLoginListener
             $u->current_period_id = optional(DB::table('periods')
                     ->select('periods.*')
                     ->join('groups', 'groups.period_id', '=', 'periods.id')
-                    ->join('group_user', 'group_user.group_id', '=', 'groups.id') 
+                    ->join('group_user', 'group_user.group_id', '=', 'groups.id')
                     ->where('group_user.user_id',  $u->id)
                     ->where('groups.organization_id', $u->current_organization_id)
                     ->get()->first())->id;
             $u->save();
-        }       
+        }
+
+        //setStatistics
+        LogController::set('ssoLogin');
+        LogController::set('activeOrg', auth()->user()->current_organization_id);
     }
 }

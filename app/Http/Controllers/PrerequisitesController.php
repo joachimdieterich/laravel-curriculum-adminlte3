@@ -23,15 +23,6 @@ class PrerequisitesController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -77,40 +68,6 @@ class PrerequisitesController extends Controller
 
     }
 
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Prerequisites  $prerequisites
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Prerequisites $prerequisites)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Prerequisites  $prerequisites
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Prerequisites $prerequisites)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Prerequisites  $prerequisites
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Prerequisites $prerequisites)
-    {
-        //
-    }
 
     /**
      * Remove the specified resource from storage.

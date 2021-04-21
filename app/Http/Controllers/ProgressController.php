@@ -17,28 +17,19 @@ class ProgressController extends Controller
      */
     public function index()
     {
-        $user_id = 1;
+        /*$user_id = 1;
         $terminal_objective  = 2;
         $enabling_objectives = EnablingObjective::where('terminal_objective_id', $terminal_objective)->get();
-                
+
         $total_achieved = Achievement::where('referenceable_type', 'App\\EnablingObjective')
                                 ->where('user_id', $user_id)
                                 ->whereIn('referenceable_id', $enabling_objectives->pluck('id'))
                                 ->where(DB::raw(' RIGHT(status,1) = 1 OR RIGHT(status,1) = 2'))
                                 ->get();
 
-        $percentage = $total_achieved->count() / $enabling_objectives->count() *100;         
+        $percentage = $total_achieved->count() / $enabling_objectives->count() *100;         */
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -48,10 +39,11 @@ class ProgressController extends Controller
      */
     public function store(Request $request)
     {
+        //todo: check if function is used -> calculateTerminalObjectiveProgress
         switch ($request->referencable_type) {
-            case 'App\TerminalObjective':  
+            case 'App\TerminalObjective':
                 $input = $this->validateRequest();
-               
+
                 $enabling_objectives = \App\EnablingObjective::where('terminal_objective_id', $input['parent_id'])->get();
 
                 $total_achieved = \App\Achievement::where('referenceable_type', 'App\\EnablingObjective')
@@ -60,7 +52,7 @@ class ProgressController extends Controller
                                         ->where(DB::raw('RIGHT(status,1) = 1 OR RIGHT(status,1) = 2'))
                                         ->get();
                 $progress = Progress::updateOrCreate(
-                    [                           
+                    [
                         'referenceable_type' => $input['referenceable_type'],
                         'referenceable_id' => $input['parent_id'],
                         'associable_type' => 'App\\User',
@@ -68,64 +60,19 @@ class ProgressController extends Controller
                     ],
                     [
                         'value' => ($total_achieved->count() / $enabling_objectives->count() *100)
-                    ]    
+                    ]
                 );
                 break;
 
             default:
                 break;
         }
-       
+
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Progress  $progress
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Progress $progress)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Progress  $progress
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Progress $progress)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Progress  $progress
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Progress $progress)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Progress  $progress
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Progress $progress)
-    {
-        //
-    }
-    
     protected function validateRequest()
-    {               
-        
+    {
+
         return request()->validate([
             'referenceable_type'    => 'required',
             'referenceable_id'      => 'required',
@@ -134,7 +81,7 @@ class ProgressController extends Controller
             'value'                 => 'required'
             ]);
     }
-    
+
     /**
      * Example (new ProgressController)->calculateProgress('App\TerminalObjective', $terminal_objective_id, $user_id);
      * @param type $parent_model
@@ -147,9 +94,9 @@ class ProgressController extends Controller
         $dynamicFunction = 'calculate'.class_basename($parent_model).'Progress';
         return $this->$dynamicFunction($parent_model, $parent_id, $user_id);
     }
-    
+
     /**
-     * calculate users terminal objective progress based on enabling objectives achievements 
+     * calculate users terminal objective progress based on enabling objectives achievements
      * @param type $parent_model
      * @param type $parent_id
      * @param type $user_id
@@ -173,7 +120,7 @@ class ProgressController extends Controller
                 'associable_id' => $user_id,
             ],
             [
-                'value' => ($total_achieved->count() / $enabling_objectives->count() *100)    
+                'value' => ($total_achieved->count() / $enabling_objectives->count() *100)
             ]
 
         );

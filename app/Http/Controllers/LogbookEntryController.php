@@ -37,7 +37,7 @@ class LogbookEntryController extends Controller
     {
         abort_unless(\Gate::allows('logbook_entry_create'), 403);
         $new_entry = $this->validateRequest();
-        
+
         $entry = LogbookEntry::firstOrCreate([
             'logbook_id'=> $new_entry['logbook_id'],
             'title' => $new_entry['title'],
@@ -46,15 +46,17 @@ class LogbookEntryController extends Controller
             'end' => $new_entry['end'],
             'owner_id' => auth()->user()->id
         ]);
-        
-        // axios call? 
-        if (request()->wantsJson()){    
+
+        LogController::set(get_class($this).'@'.__FUNCTION__);
+
+        // axios call?
+        if (request()->wantsJson()){
             return ['message' => $entry->path()];
         }
-        
+
         return back();
     }
-   
+
     /**
      * Display the specified resource.
      *
@@ -64,8 +66,9 @@ class LogbookEntryController extends Controller
     public function show(LogbookEntry $logbookEntry)
     {
         abort_unless(\Gate::allows('logbook_show'), 403);
-        // axios call? 
-        if (request()->wantsJson()){   
+        //todo: check if user has permission to see logbookEntry
+
+        if (request()->wantsJson()){
             return [
                 'message' => $logbookEntry
             ];
@@ -92,14 +95,14 @@ class LogbookEntryController extends Controller
      */
     public function update(LogbookEntry $logbookEntry)
     {
-        abort_unless(\Gate::allows('logbook_edit'), 403);    
-        
+        abort_unless(\Gate::allows('logbook_edit'), 403);
+
         $logbookEntry->update($this->validateRequest());
-        
-        // axios call? 
-        if (request()->wantsJson()){    
+
+        // axios call?
+        if (request()->wantsJson()){
             return ['message' => '/logbooks' . $logbookEntry->logbook_id];
-            
+
         }
         return ;
     }
@@ -113,52 +116,52 @@ class LogbookEntryController extends Controller
     public function destroy(LogbookEntry $logbookEntry)
     {
         //delete all relations
-        
+
         // delete mediaSubscriptions -> media will not be deleted
         $logbookEntry->mediaSubscriptions()
                 ->where('subscribable_type', '=', 'App\LogbookEntry')
                 ->where('subscribable_id', '=', $logbookEntry->id)
                 ->delete();
-        
+
         // delete terminalObjectiveSubscriptions
         $logbookEntry->terminalObjectiveSubscriptions()
                 ->where('subscribable_type', '=', 'App\LogbookEntry')
                 ->where('subscribable_id', '=', $logbookEntry->id)
                 ->delete();
-        
+
         // delete enablingObjectiveSubscriptions
         $logbookEntry->enablingObjectiveSubscriptions()
                 ->where('subscribable_type', '=', 'App\LogbookEntry')
                 ->where('subscribable_id', '=', $logbookEntry->id)
                 ->delete();
-        
-        // delete contents 
+
+        // delete contents
         foreach ($logbookEntry->contents AS $content)
         {
             (new ContentController)->destroy($content, 'App\LogbookEntry', $logbookEntry->id); // delete or unsubscribe if content is still subscribed elsewhere
         }
-        
+
         // delete taskSubscription
         $logbookEntry->taskSubscription()
                 ->where('subscribable_type', '=', 'App\LogbookEntry')
                 ->where('subscribable_id', '=', $logbookEntry->id)
                 ->delete();
-        
+
         // delete absences
         $logbookEntry->absences()
                 ->where('referenceable_type', '=', 'App\LogbookEntry')
                 ->where('referenceable_id', '=', $logbookEntry->id)
                 ->delete();
         $return = $logbookEntry->delete();
-        
-        if (request()->wantsJson()){    
+
+        if (request()->wantsJson()){
             return ['message' => $return];
         }
-        
+
     }
-    
+
     protected function validateRequest()
-    {   
+    {
         return request()->validate([
             'logbook_id'        => 'sometimes|required',
             'title'             => 'sometimes|required',
@@ -168,5 +171,5 @@ class LogbookEntryController extends Controller
             'owner_id'          => 'sometimes',
         ]);
     }
-    
+
 }

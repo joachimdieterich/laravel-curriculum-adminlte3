@@ -72,7 +72,7 @@ class UsersApiController extends Controller
 
         $user= User::withTrashed()->findOrFail($id);
 
-        if ((new \App\Http\Controllers\UsersController())->forceDestroy($user))
+        if ((new \App\Http\Controllers\UsersController())->forceDestroy($user, true))
         {
             return ['message' => 'Successful deleted'];
         } else {

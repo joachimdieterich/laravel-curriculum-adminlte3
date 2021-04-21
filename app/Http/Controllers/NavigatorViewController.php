@@ -17,9 +17,9 @@ class NavigatorViewController extends Controller
      * @return Response
      */
     public function create()
-    {   
+    {
         abort_unless(\Gate::allows('navigator_create'), 403);
-        
+
         return view('navigators.views.create');
     }
 
@@ -33,13 +33,13 @@ class NavigatorViewController extends Controller
     {
         abort_unless(\Gate::allows('navigator_create'), 403);
         $new_navigator_item = $this->validateRequest();
-                                        
+
         $navigator_view= NavigatorView::Create([
             'title'         => $new_navigator_item['title'],
             'description'   => $new_navigator_item['description'],
             'navigator_id'  => $new_navigator_item['navigator_id']
         ]);
-                                        
+
         return redirect()->route("navigator.view", ['navigator' => $new_navigator_item['navigator_id'], 'navigator_view' => $navigator_view->id]);
     }
 
@@ -50,14 +50,17 @@ class NavigatorViewController extends Controller
      * @return Response
      */
     public function show(Navigator $navigator, NavigatorView $navigator_view)
-    {   
-        
+    {
+
         $navigators = Navigator::where('id', $navigator->id)->get()->first();
         $views      = NavigatorView::where('id', $navigator_view->id)
                                     ->where('navigator_id', $navigator->id)
                                     ->with(['items'])
                                     ->get()->first();
         $breadcrumbs = $this->breadcrumbs($views);
+
+        LogController::set(get_class($this).'@'.__FUNCTION__, $navigator_view->id);
+
         return view('navigators.show')
                 ->with(compact('navigators'))
                 ->with(compact('views'))
@@ -87,7 +90,7 @@ class NavigatorViewController extends Controller
     public function update(Request $request, NavigatorView $navigatorView)
     {
         abort_unless(\Gate::allows('navigator_edit'), 403);
-        
+
         $navigatorView->update([
             'title' => $request['title'],
             'description' => $request['description']
@@ -110,22 +113,22 @@ class NavigatorViewController extends Controller
         if ($navigatorItem != null)
         {
             $navigatorItem->delete();
-        }    
+        }
         $navigator_id = $navigatorView->navigator_id;
         $navigatorView->delete();
-        
+
         return redirect()->route('navigators.show', $navigator_id);
     }
-    
+
     /**
-     * Generate breadcrumb 
+     * Generate breadcrumb
      * @param NavigatorView $view
      * @return array
      */
     protected function breadcrumbs($view)
     {
         $entries = array();
-        
+
         $first_view = NavigatorView::where('navigator_id', $view->navigator->id)->get()->first();
         $entries[] = ['href' => '/navigators/'.$view->navigator->id.'/'.$view->id, 'title' => $view->title];
         $current_view = $view;
@@ -138,17 +141,17 @@ class NavigatorViewController extends Controller
                                     ->get()->first();
             $entries[] = ['href' => '/navigators/'.$view->navigator->id.'/'.$current_view->id, 'title' => $current_view->title];
         }
-        
+
         return array_reverse($entries);
     }
-    
+
     protected function validateRequest()
-    {     
+    {
         return request()->validate([
             'title'             => 'sometimes',
             'description'       => 'sometimes',
             'navigator_id'      => 'sometimes'
-           
+
         ]);
     }
 }

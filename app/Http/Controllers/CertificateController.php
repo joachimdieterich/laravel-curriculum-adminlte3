@@ -211,9 +211,12 @@ class CertificateController extends Controller
         abort_unless(\Gate::allows('certificate_access'), 403);
         $certificate = Certificate::find(request()->certificate_id);
 
+
+
         switch ($certificate->type)
         {
-            case 'user':            return $this->generateForUsers($certificate);
+            case 'user':            LogController::set(get_class($this).'@'.__FUNCTION__, request()->certificate_id, (is_array(request()->user_ids)) ? count(request()->user_ids) : 1);
+                                    return $this->generateForUsers($certificate);
                 break;
             case 'group':           return $this->generateForGroup($certificate);
                 break;
@@ -236,7 +239,7 @@ class CertificateController extends Controller
         foreach ((array) request()->user_ids as $id)
         {
             $user = User::where('id', $id)->get()->first();
-
+            abort_unless(auth()->user()->mayAccessUser($user), 403);
             //replace placeholder
             $html = $this->replaceFields(
                     $certificate->body,
@@ -311,6 +314,7 @@ class CertificateController extends Controller
                 .'<thead><tr><td style="border-bottom: 1px solid silver;"><strong>Ziele / Namen</strong></td>';
         foreach ((array) request()->user_ids as $id)
         {
+            abort_unless(auth()->user()->mayAccessUser($id), 403);
             $user = User::where('id', $id)->get()->first();
             $html .= '<td '.$td_style.'><strong>'.$user->firstname.' '.$user->lastname.'</strong></td>';
         }
@@ -382,26 +386,6 @@ class CertificateController extends Controller
             $date);
 
         return preg_replace($search, $replace, $string);
-        /*$search = array(
-            '<span id="firstname"></span>',
-            '<span id="lastname"></span>',
-            '<span id="organization_title"></span>',
-            '<span id="organization_street"></span>',
-            '<span id="organization_postcode"></span>',
-            '<span id="organization_city"></span>',
-            '<span id="date"></span>'
-           );
-
-        $replace = array(
-            $user->firstname,
-            $user->lastname,
-            $organization->title,
-            $organization->street,
-            $organization->postcode,
-            $organization->city,
-            $date);
-
-        return str_replace($search, $replace, $string);*/
     }
 
     protected function achievementIndicator($status)

@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\LogController;
+
+LogController::setStatistics();
+
 Route::redirect('/', '/home');
 Route::get('/features', 'OpenController@features')->name('features');
 
@@ -139,7 +143,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('navigatorItems', 'NavigatorItemController');
 
     /* media */
-
     Route::post('mediumSubscriptions/destroy', 'MediumSubscriptionController@destroySubscription');
     Route::resource('mediumSubscriptions', 'MediumSubscriptionController');
     Route::delete('media/massDestroy', 'MediumController@massDestroy')->name('media.massDestroy');
@@ -196,13 +199,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('repositorySubscriptions/getMedia', 'RepositorySubscriptionController@getMedia')->name('repositorySubscriptions.getMedia');
     Route::resource('repositorySubscriptions', 'RepositorySubscriptionController');
     /* Roles */
-    Route::delete('roles/massDestroy', 'RolesController@massDestroy')->name('roles.massDestroy');
     Route::get('roles/list', 'RolesController@list')->name('roles.list');
     Route::resource('roles', 'RolesController');
 
     /* sharingLevels */
     Route::resource('sharingLevels', 'SharingLevelController');
 
+    Route::resource('statistics', 'StatisticController');
     /* statusdefinitions  */
     Route::resource('statusdefinitions', 'StatusDefinitionController');
 
@@ -251,7 +254,9 @@ if (env('GUEST_USER') !== null)
     {
         if (Auth::user() == null)       //if no user is authenticated authenticate guest
         {
+            \App\Http\Controllers\LogController::set('guestLogin');
             Auth::loginUsingId((env('GUEST_USER')), true);
+
         }
         if (\App\User::find(env('GUEST_USER'))->organizations()->first()->navigators()->first() != null) //use guests default navigator
         {

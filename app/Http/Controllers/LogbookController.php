@@ -91,6 +91,8 @@ class LogbookController extends Controller
             $logbook->subscribe($model);
         }
 
+        LogController::set(get_class($this).'@'.__FUNCTION__);
+
         // axios call?
         if (request()->wantsJson()){
             return ['message' => $logbook->path()];
@@ -107,7 +109,7 @@ class LogbookController extends Controller
      */
     public function show(Logbook $logbook)
     {
-        //todo: check if user has permission to see logbook
+
         abort_unless((auth()->user()->logbooks->contains('id', $logbook->id) // user owns logbook
             OR ($logbook->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() //user is enroled in group
             OR ($logbook->subscriptions->where('subscribable_type', "App\Course")->whereIn('subscribable_id', auth()->user()->currentGroupEnrolments->pluck('course_id')))->isNotEmpty()

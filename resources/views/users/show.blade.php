@@ -75,13 +75,13 @@
                 {{--<div class="float-left">
                     <button type="button" class="btn-xs btn-block btn-{{$status_definitions[$user->status_id]->color_css_class}} pull-right">{{$status_definitions[$user->status_id]->lang_de}}</button>
                 </div>--}}
-                @can('user_access')
+                {{--@can('user_access')
                 <div class="float-left">
                     <a class="btn-xs btn-success" href="/users/{{ $user->id }}/dsgvoExport" >
                         {{ trans('global.user.dsgvoExport') }}
                     </a>
                 </div>
-                @endcan
+                @endcan--}}
                 <small class="float-right">
                     {{ $user->updated_at }}
                 </small>

@@ -43,6 +43,9 @@ class PrintController extends Controller
 
     public function model($model, $id)
     {
+        //todo: check if user has permission to see this model
+        abort(403);
+        /*
         $view = class_basename($model);
         $model= str_starts_with($model, 'App\\') ? $model : "App\\".$model;
         $model =  app()->make($model)::find($id);
@@ -51,7 +54,7 @@ class PrintController extends Controller
                 ->with(compact('model'))
                 ->render();
 
-        return $this->print($html, $model->title.'.pdf', 'download' );
+        return $this->print($html, $model->title.'.pdf', 'download' );*/
     }
 
     public function references(Curriculum $curriculum)
@@ -83,6 +86,8 @@ class PrintController extends Controller
                    ->setOption('margin-left', 20)
                    ->setOption('margin-right', 20)
                    ->setOption('margin-bottom', 20);
+
+        LogController::set(get_class($this).'@'.__FUNCTION__);
 
         switch ($target) {
             case 'inline': //open in same window

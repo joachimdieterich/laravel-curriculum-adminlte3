@@ -230,15 +230,19 @@ class OrganizationsController extends Controller
             else
             {
                 //current admin should not be edited
-                $return[] = OrganizationRoleUser::updateOrCreate(
-                    [
-                        'user_id'         => $enrolment['user_id'],
-                        'organization_id' => $enrolment['organization_id']
-                    ],
-                    [
-                        'role_id'         => $enrolment['role_id']
-                    ]
-                );
+                if ( auth()->user()->role()->id <=  $enrolment['role_id'])  //only allow roles below or equal
+                {
+                    $return[] = OrganizationRoleUser::updateOrCreate(
+                        [
+                            'user_id'         => $enrolment['user_id'],
+                            'organization_id' => $enrolment['organization_id']
+                        ],
+                        [
+                            'role_id'         => $enrolment['role_id']
+                        ]
+                    );
+                }
+
             }
 
         }

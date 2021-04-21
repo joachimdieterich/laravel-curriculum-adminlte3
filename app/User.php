@@ -368,12 +368,23 @@ class User extends Authenticatable
 
     public function users()
     {
-        return (auth()->user()->role()->id == 1) ? User::select('id','username', 'firstname', 'lastname') : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->select('id','username', 'firstname', 'lastname'); //todo, get all users of all organizations not only current
+        return (auth()->user()->role()->id == 1) ? User::select('id','username', 'firstname', 'lastname') : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->select('id','username', 'firstname', 'lastname', 'deleted_at'); //todo, get all users of all organizations not only current
     }
 
     public function getAvatarAttribute()
     {
         return ($this->medium_id !== null) ? '/media/'.$this->medium_id  : (new \Laravolt\Avatar\Avatar)->create($this->fullName())->toBase64()->encoded;
+    }
+
+    public function mayAccessUser($user, $context = 'organization')
+    {
+        switch ($context){
+            case 'organization': return $user->organizations->pluck('id')->contains($this->current_organization_id);
+            //Todo: check for groups
+            break;
+            default: return false;
+        }
+
     }
 
 }

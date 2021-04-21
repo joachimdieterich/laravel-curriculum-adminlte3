@@ -17,7 +17,7 @@ class ReferenceController extends Controller
      */
     public function store(Request $request)
     {
-        abort_unless(\Gate::allows('objective_create'), 403);
+         abort_unless(\Gate::allows('objective_create'), 403);
          return Reference::create($request->all());
     }
 
@@ -29,7 +29,6 @@ class ReferenceController extends Controller
      */
     public function show(Reference $reference)
     {
-        // axios call?
         if (request()->wantsJson()){
             return [
                 'reference' => $reference

@@ -180,6 +180,7 @@ class CurriculumController extends Controller
             'owner_id'              => auth()->user()->id,
         ]);
 
+        LogController::set(get_class($this).'@'.__FUNCTION__);
         // axios call?
         if (request()->wantsJson()){
             return ['message' => $curriculum->path()];
@@ -197,6 +198,7 @@ class CurriculumController extends Controller
     public function show(Curriculum $curriculum, $achievements = false)
     {
         abort_unless(\Gate::allows('curriculum_show'), 403);
+        LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
         //check if user is enrolled or admin -> else 403
 
         abort_unless((auth()->user()->curricula()->contains('id', $curriculum->id) // user enrolled

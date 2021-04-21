@@ -21,6 +21,7 @@
         </div>
     </div>
 @endcan
+
 <table id="users-datatable"
        class="table table-hover datatable">
     <thead>
@@ -30,6 +31,7 @@
             <th>{{ trans('global.user.fields.firstname') }}</th>
             <th>{{ trans('global.user.fields.lastname') }}</th>
             <th>{{ trans('global.user.fields.email') }}</th>
+            <th>{{ trans('global.user.fields.deleted_at') }}</th>
             <th></th>
         </tr>
     </thead>
@@ -246,6 +248,8 @@ $( function () {
     });
 
     let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
+
+
     var table = $('#users-datatable').DataTable({
         ajax: "{{ url('users/list') }}",
         columns: [
@@ -254,6 +258,7 @@ $( function () {
                  { data: 'firstname' },
                  { data: 'lastname' },
                  { data: 'email' },
+                 { data: 'deleted_at', "defaultContent": null},
                  { data: 'action' }
                 ],
         bStateSave: true,

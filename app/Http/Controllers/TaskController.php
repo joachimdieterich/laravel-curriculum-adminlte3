@@ -29,16 +29,6 @@ class TaskController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -63,11 +53,13 @@ class TaskController extends Controller
             $task->subscribe($model);
         }
 
+        LogController::set(get_class($this).'@'.__FUNCTION__);
+
         // axios call?
         if (request()->wantsJson()){
             return ['message' => $task->path()];
         }
-        //dd($organization->path());
+
         return redirect($task->path());
     }
 
@@ -97,17 +89,6 @@ class TaskController extends Controller
         return view('tasks.show')
                 ->with(compact('task'))
                 ->with(compact('status_definitions'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Task  $task
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Task $task)
-    {
-        //
     }
 
     /**
@@ -145,7 +126,6 @@ class TaskController extends Controller
     {
         abort_unless(\Gate::allows('task_delete'), 403);
 
-
         $task->subscriptions()->delete(); //first delete subscriptions
         $task->delete();
 
@@ -158,8 +138,6 @@ class TaskController extends Controller
     public function complete(Request $request, Task $task)
     {
         abort_unless(\Gate::allows('task_access'), 403);
-
-        $input = $this->validateRequest();
 
         //subscribe to model if not already subscribed
         $subscription = $task->subscribe(auth()->user());
@@ -182,7 +160,6 @@ class TaskController extends Controller
         }
         return redirect($activity);
     }
-
 
     protected function validateRequest()
     {

@@ -24,7 +24,6 @@ class SubjectController extends Controller
             'title_short'
         ])->get();
 
-
         $edit_gate = \Gate::allows('subject_edit');
         $delete_gate = \Gate::allows('subject_delete');
 

@@ -10,25 +10,6 @@ use Illuminate\Support\Str;
 
 class ReferenceSubscriptionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -47,12 +28,12 @@ class ReferenceSubscriptionController extends Controller
         {
             return false;
         }
-        
+
         $reference = Reference::Create([
             'id'          => (string) Str::uuid(),
             'description' => $new_subscription['description'],
             'grade_id'    => isset($new_subscription['grade_id']) ? $new_subscription['grade_id'] : Curriculum::find($new_subscription['curriculum_id'])->grade_id,
-            'owner_id'    => auth()->user()->id,	
+            'owner_id'    => auth()->user()->id,
         ]);
         $subscription = ReferenceSubscription::Create([
             'reference_id'       => $reference->id,
@@ -60,9 +41,9 @@ class ReferenceSubscriptionController extends Controller
             'referenceable_id'   => $new_subscription['subscribable_id'],
             'sharing_level_id'   => isset($new_subscription['sharing_level_id']) ? $new_subscription['sharing_level_id'] : 1,
             'visibility'         => isset($new_subscription['visibility']) ? $new_subscription['visibility'] : true,
-            'owner_id'           => auth()->user()->id,	
+            'owner_id'           => auth()->user()->id,
         ]);
-        
+
         if ($subscription){ //generate sibling
             $sibling = ReferenceSubscription::Create([
                 'reference_id'       => $reference->id,
@@ -70,7 +51,7 @@ class ReferenceSubscriptionController extends Controller
                 'referenceable_id'   => ($new_subscription['enabling_objective_id'] != null)  ? $new_subscription['enabling_objective_id'] : $new_subscription['terminal_objective_id'],
                 'sharing_level_id'   => isset($new_subscription['sharing_level_id']) ? $new_subscription['sharing_level_id'] : 1,
                 'visibility'         => isset($new_subscription['visibility']) ? $new_subscription['visibility'] : true,
-                'owner_id'           => auth()->user()->id,	
+                'owner_id'           => auth()->user()->id,
             ]);
         }
         //adding to $subscription->referenceable models referencing_curriculum_id
@@ -83,10 +64,10 @@ class ReferenceSubscriptionController extends Controller
 
         $model->referencing_curriculum_id = $curricula_ids;
         $model->save();
-        
+
         //adding to $subscription->referenceable models referencing_curriculum_id
         $curriculum_id = app()->make($sibling->referenceable_type)::where('id', $sibling->referenceable_id)->get()->first()->curriculum_id;
-        
+
         $model2 = $sibling->referenceable;
         $curricula_ids = (array) $model2->referencing_curriculum_id;
         if (!in_array($curriculum_id, $curricula_ids))
@@ -96,9 +77,9 @@ class ReferenceSubscriptionController extends Controller
 
         $model2->referencing_curriculum_id = $curricula_ids;
         $model2->save();
-        
-        
-        if (request()->wantsJson()){    
+
+
+        if (request()->wantsJson()){
             return ['message' => 'ok'];
         }
     }
@@ -111,51 +92,18 @@ class ReferenceSubscriptionController extends Controller
      */
     public function show(ReferenceSubscription $referenceSubscription)
     {
-       
+        abort_unless(auth()->user()->role()->id == 1, 403); //only admins for debug purposes
         $reference_subscription = ReferenceSubscription::where('reference_id', $referenceSubscription->reference_id)
                         ->with(['siblings' => function($query) use ($referenceSubscription) {
                                 $query->where('reference_id', $referenceSubscription->reference_id)
                                 ->where('referenceable_id', '!=', $referenceSubscription->referenceable_id)
                                 ->where('referenceable_type', '=', $referenceSubscription->referenceable_type);
                             }])->get();
-//      
+
         dd($reference_subscription);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\ReferenceSubscription  $referenceSubscription
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(ReferenceSubscription $referenceSubscription)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\ReferenceSubscription  $referenceSubscription
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, ReferenceSubscription $referenceSubscription)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\ReferenceSubscription  $referenceSubscription
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(ReferenceSubscription $referenceSubscription)
-    {
-        //
-    }
-    
    /**
      * Display the specified resource.
      *
@@ -164,7 +112,6 @@ class ReferenceSubscriptionController extends Controller
      */
     public function siblings(ReferenceSubscription $referenceSubscription)
     {
-       //dd($referenceSubscription);
         return ReferenceSubscription::where('reference_id', $referenceSubscription->reference_id)
                         ->with(['siblings' => function($query) use ($referenceSubscription) {
                                 $query->where('reference_id', $referenceSubscription->reference_id)
@@ -173,9 +120,9 @@ class ReferenceSubscriptionController extends Controller
                             }])->get();
 
     }
-    
+
     protected function validateRequest()
-    {   
+    {
         return request()->validate([
             "curriculum_id" => 'sometimes|required',
             "grade_id" => 'sometimes',
@@ -183,7 +130,7 @@ class ReferenceSubscriptionController extends Controller
             "enabling_objective_id" => 'sometimes',
             "subscribable_type" => 'required',
             "subscribable_id" => 'required',
-            "description" => 'sometimes', 
+            "description" => 'sometimes',
         ]);
     }
 }

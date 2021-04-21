@@ -23,6 +23,8 @@ class EventSubscriptionController extends Controller
         $vm = new EventmanagementPlugin();
         $events = $vm->plugins[env('EVENTMANAGEMENTPLUGIN')]->lesePlrlpVeranstaltungen(['search'=> $input['search'], 'page' => $input['page']]);
 
+        LogController::set(get_class($this).'@'.__FUNCTION__, $input['search'], (int) $events->lesePlrlpVeranstaltungen->GESAMT);
+
         if (request()->wantsJson()){
             return ['message' => $events];
         }

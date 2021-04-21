@@ -38,20 +38,20 @@ class ContactDetailController extends Controller
     public function store(Request $request)
     {
         abort_unless(\Gate::allows('contactdetail_create'), 403);
-        
+
         $input = $this->validateRequest();
         $contactdetail = ContactDetail::firstOrCreate([
             'email' => $input['email'],
             'phone' => $input['phone'],
             'mobile'=> $input['mobile'],
-            'notes' => $input['notes'],  
-            'owner_id' => auth()->user()->id,  
+            'notes' => $input['notes'],
+            'owner_id' => auth()->user()->id,
         ]);
-         // axios call? 
-        if (request()->wantsJson()){    
+         // axios call?
+        if (request()->wantsJson()){
             return ['message' => $contactdetail->path()];
         }
-        
+
         return redirect($contactdetail->path());
     }
 
@@ -64,16 +64,17 @@ class ContactDetailController extends Controller
     public function show(ContactDetail $contactdetail)
     {
         abort_unless(\Gate::allows('contactdetail_show'), 403);
-        
+        abort_unless(auth()->user()->mayAccessUser($contactdetail->owner_id), 403);
+
         $user = User::find($contactdetail->owner_id);
         $organization = Organization::find(auth()->user()->current_organization_id);
-        // axios call? 
-        if (request()->wantsJson()){  
+        // axios call?
+        if (request()->wantsJson()){
             return [
                 'contactdetail' => $contactdetail
             ];
         }
-        
+
         return view('contactdetails.show')
                 ->with(compact('contactdetail'))
                 ->with(compact('user'))
@@ -89,7 +90,9 @@ class ContactDetailController extends Controller
     public function edit(ContactDetail $contactdetail)
     {
         abort_unless(\Gate::allows('contactdetail_edit'), 403);
-        
+        abort_unless(($contactdetail->owner_id == auth()->user()->id), 403);
+
+
         return view('contactdetails.edit')
                 ->with(compact('contactdetail'));
     }
@@ -103,10 +106,11 @@ class ContactDetailController extends Controller
      */
     public function update(Request $request, ContactDetail $contactdetail)
     {
-        abort_unless(\Gate::allows('contactdetail_edit'), 403); 
-        
+        abort_unless(\Gate::allows('contactdetail_edit'), 403);
+        abort_unless(($contactdetail->owner_id == auth()->user()->id), 403);
+
         $contactdetail->update($this->validateRequest());
-        
+
         return redirect($contactdetail->path());
     }
 
@@ -118,9 +122,10 @@ class ContactDetailController extends Controller
      */
     public function destroy(ContactDetail $contactdetail)
     {
-        //
+        abort_unless(\Gate::allows('contactdetail_delete'), 403);
+        abort_unless(($contactdetail->owner_id == auth()->user()->id), 403);
     }
-    
+
      protected function validateRequest(){
         return request()->validate([
             'email'  => 'sometimes|email',

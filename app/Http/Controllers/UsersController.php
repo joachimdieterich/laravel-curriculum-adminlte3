@@ -52,7 +52,7 @@ class UsersController extends Controller
 
     public function list()
     {
-        $users = (auth()->user()->role()->id == 1) ? DB::table('users')->select('id', 'username', 'firstname', 'lastname', 'email') : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users();
+        $users = (auth()->user()->role()->id == 1) ? DB::table('users')->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at') : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users();
 
         $show_gate = \Gate::allows('user_show');
         $edit_gate = \Gate::allows('user_edit');
@@ -136,6 +136,7 @@ class UsersController extends Controller
     public function edit(User $user)
     {
         abort_unless(\Gate::allows('user_edit'), 403);
+        abort_unless(auth()->user()->mayAccessUser($user), 403);
 
         $roles = Role::all()->pluck('title', 'id');
 
@@ -147,6 +148,7 @@ class UsersController extends Controller
     public function update(UpdateUserRequest $request, User $user)
     {
         abort_unless(\Gate::allows('user_edit'), 403);
+        abort_unless(auth()->user()->mayAccessUser($user), 403);
 
         $user->update($request->all());
         //$user->roles()->sync($request->input('roles', []));
@@ -156,7 +158,9 @@ class UsersController extends Controller
 
     public function massUpdate(MassUpdateUserRequest $request)
     {
-        //dd(request());
+        //check if currentUser can access requested user
+        abort_unless((auth()->user()->role()->id == 1), 403);
+
         if (isset(request()->password[0]))
         {
             User::whereIn('id', request('ids'))->update([
@@ -177,6 +181,8 @@ class UsersController extends Controller
     public function show(User $user)
     {
         abort_unless(\Gate::allows('user_show'), 403);
+        abort_unless(auth()->user()->mayAccessUser($user), 403);
+
         $status_definitions = StatusDefinition::all();
         $user->load('roles');
         $user->load('organizations');
@@ -189,6 +195,7 @@ class UsersController extends Controller
     public function destroy(User $user)
     {
         abort_unless(\Gate::allows('user_delete'), 403);
+        abort_unless(auth()->user()->mayAccessUser($user), 403);
 
         $return = $user->delete();
         //todo: concept to hard-delete users
@@ -214,6 +221,8 @@ class UsersController extends Controller
      */
     public function massDestroy(MassDestroyUserRequest $request)
     {
+        abort_unless(\Gate::allows('user_delete'), 403);
+
         foreach(request('ids') AS $id)
         {
             $this->forceDestroy(User::withTrashed()->find($id));
@@ -227,6 +236,8 @@ class UsersController extends Controller
             'current_period_id' => (request('current_period_id')) ? request('current_period_id') : 1,
             'current_organization_id' => request('current_organization_id')
         ]);
+
+        LogController::set('activeOrg', request('current_organization_id')); //set statistics
 
         return back();
     }
@@ -261,6 +272,9 @@ class UsersController extends Controller
 
     public function getAvatar(User $user)
     {
+        //check if currentUser can access requested user
+        abort_unless(in_array(auth()->user()->current_organization_id, $user->organizations->pluck('id')->toArray()), 403);
+
         if (request()->wantsJson()){
             return ['avatar' => ($user->medium_id !== null) ? '/media/'.$user->medium_id  : (new \Laravolt\Avatar\Avatar)->create($user->fullName())->toBase64()];
         } else {
@@ -289,8 +303,10 @@ class UsersController extends Controller
     }
 
     public function dsgvoExport($id){
+        abort_unless(auth()->user()->role()->id == 1, 403); //only admins!
         abort_unless(\Gate::allows('user_access'), 403);
-        return User::where('id', $id)->with(['contactDetail','groups','roles','organizations', 'achievements'])->get()->first();
+
+        return User::where('id', auth()->user()-id())->with(['contactDetail','groups','roles','organizations', 'achievements'])->get()->first();
     }
 
     protected function validateImportRequest()
@@ -302,8 +318,13 @@ class UsersController extends Controller
         );
     }
 
-    public function forceDestroy(User $user)
+    public function forceDestroy(User $user, $permission = false)
     {
+        if ($permission == false){
+            abort_unless(\Gate::allows('user_delete'), 403); //if permission != true (for API) check via Gate
+            abort_unless(auth()->user()->role()->id == 1, 403); //only admins!
+        }
+
         $fallback_user = User::firstOrCreate(
             ['common_name' =>  'deletet_user'],
             [
@@ -373,6 +394,13 @@ class UsersController extends Controller
             ->where('subscribable_id', $user->id)
             ->delete(); //delete individual subscriptions
         DB::table('kanban_subscriptions')
+            ->where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+        DB::table('kanban_item_subscriptions')
+            ->where('subscribable_type', "App\User")
+            ->where('subscribable_id', $user->id)
+            ->delete(); //delete individual subscriptions
+        DB::table('kanban_item_subscriptions')
             ->where('owner_id', $user->id)
             ->update(['owner_id' => $fallback_user->id]);
         DB::table('kanbans')

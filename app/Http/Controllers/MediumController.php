@@ -98,6 +98,7 @@ class MediumController extends Controller
                 }
             }
 
+            LogController::set(get_class($this).'@'.__FUNCTION__, null, (is_array($files)) ? count($files) : 1);
             return response()->json($uploaded->all());
         }
 

@@ -25,23 +25,23 @@ class NavigatorController extends Controller
         return view('navigators.index')
           ->with(compact('navigators'));
     }
-    
+
     public function list()
     {
-        
+
         abort_unless(\Gate::allows('navigator_access'), 403);
         $navigators = Navigator::select([
-            'id', 
-            'title', 
+            'id',
+            'title',
             'organization_id'
             ]);
-        
+
         $edit_gate = \Gate::allows('navigator_edit');
         $delete_gate = \Gate::allows('navigator_delete');
-        
+
         return DataTables::of($navigators)
             ->addColumn('organization', function ($navigators) {
-                return $navigators->organization()->first()->title;                
+                return $navigators->organization()->first()->title;
             })
             ->addColumn('action', function ($navigators) use ($edit_gate, $delete_gate) {
                  $actions  = '';
@@ -58,10 +58,10 @@ class NavigatorController extends Controller
                                 . 'onclick="destroyDataTableEntry(\'navigators\','.$navigators->id.')">'
                                 . '<i class="fa fa-trash"></i></button>';
                     }
-              
+
                 return $actions;
             })
-           
+
             ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
@@ -75,7 +75,7 @@ class NavigatorController extends Controller
     public function create()
     {
         abort_unless(\Gate::allows('navigator_create'), 403);
-        
+
         $organizations = auth()->user()->organizations()->get();
         return view('navigators.create')
                 ->with(compact('organizations'));
@@ -91,17 +91,17 @@ class NavigatorController extends Controller
     {
         abort_unless(\Gate::allows('navigator_create'), 403);
         $new_navigator = $this->validateRequest();
-        
+
         $navigator = Navigator::firstOrCreate([
             'title' => $new_navigator['title'],
             'organization_id' => format_select_input($new_navigator['organization_id'])
         ]);
-        
-        // axios call? 
-        if (request()->wantsJson()){    
+
+        // axios call?
+        if (request()->wantsJson()){
             return ['message' => $navigator->path()];
         }
-        
+
         return redirect($navigator->path());
     }
 
@@ -118,11 +118,14 @@ class NavigatorController extends Controller
                                     ->with(['items'])
                                     ->get()->first();
         $breadcrumbs = $this->breadcrumbs($views);
+
+        LogController::set(get_class($this).'@'.__FUNCTION__, $navigator->id);
+
         return view('navigators.show')
                 ->with(compact('navigators'))
                 ->with(compact('views'))
                 ->with(compact('breadcrumbs'));
-       
+
     }
 
     /**
@@ -135,7 +138,7 @@ class NavigatorController extends Controller
     {
         abort_unless(\Gate::allows('navigator_edit'), 403);
         $organizations = auth()->user()->organizations()->get();
-        
+
         return view('navigators.edit')
                 ->with(compact('navigator'))
                 ->with(compact('organizations'));
@@ -151,7 +154,7 @@ class NavigatorController extends Controller
     public function update(Request $request, Navigator $navigator)
     {
         abort_unless(\Gate::allows('navigator_edit'), 403);
-        
+
         $navigator->update([
             'title' => $request['title'],
             'organization_id' => format_select_input($request['organization_id']),
@@ -174,9 +177,9 @@ class NavigatorController extends Controller
 
         return back();
     }
-    
+
     /**
-     * Generate breadcrumb 
+     * Generate breadcrumb
      * @param NavigatorView $view
      * @return array
      */
@@ -198,13 +201,13 @@ class NavigatorController extends Controller
                 $entries[] = ['href' => '/navigators/'.$view->navigator->id.'/'.$current_view->id, 'title' => $current_view->title];
             }
         }
-        
+
         return array_reverse($entries);
     }
-    
+
     protected function validateRequest()
-    {   
-        
+    {
+
         return request()->validate([
             'title'             => 'sometimes|required',
             'organization_id'   => 'sometimes',

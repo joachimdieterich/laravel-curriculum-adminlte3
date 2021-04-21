@@ -127,6 +127,7 @@ class RepositorySubscriptionController extends Controller
                 $result = null;
             }
         }
+        LogController::set(get_class($this).'@'.__FUNCTION__, $model->uuid, $result->count());
 
         if (request()->wantsJson()){
             return ['message' => $result];

@@ -97,6 +97,7 @@ class KanbanController extends Controller
             'owner_id'      => auth()->user()->id,
         ]);
 
+        LogController::set(get_class($this).'@'.__FUNCTION__);
         // axios call?
         if (request()->wantsJson()){
             return ['message' => $kanban->path()];
@@ -136,6 +137,8 @@ class KanbanController extends Controller
                                ->where('subscribable_type', 'App\User');
                  }, 'mediaSubscriptions', 'media'])->orderBy('order_id');
                     }, 'statuses.items.subscribable'])->where('id', $kanban->id)->get()->first();
+
+        LogController::set(get_class($this).'@'.__FUNCTION__);
 
         return view('kanbans.show')
                 ->with(compact('kanban'));

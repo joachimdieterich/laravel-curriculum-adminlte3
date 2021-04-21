@@ -15,6 +15,7 @@ class PlanSubscriptionController extends Controller
      */
     public function index()
     {
+        abort_unless(\Gate::allows('plan_create'), 403);
         if (request()->wantsJson()){
             return [
                 'subscribers' =>

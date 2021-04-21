@@ -137,6 +137,7 @@ class GroupsController extends Controller
     public function show(Group $group)
     {
         abort_unless(\Gate::allows('group_show'), 403);
+        LogController::set(get_class($this).'@'.__FUNCTION__, $group->id);
          // axios call?
         if (request()->wantsJson()){
            // dump(json_encode($group->users));

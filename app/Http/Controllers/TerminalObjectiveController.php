@@ -28,6 +28,8 @@ class TerminalObjectiveController extends Controller
         $order_id = $this->getMaxOrderId(request('curriculum_id'), request('objective_type_id'));
         $terminalObjective = TerminalObjective::create(array_merge($request->all(), ['order_id' => $order_id]));
 
+        LogController::set(get_class($this).'@'.__FUNCTION__);
+
         if (request()->wantsJson()){
             return ['message' => $terminalObjective];
             //return ['message' => $terminalObjective->path()];

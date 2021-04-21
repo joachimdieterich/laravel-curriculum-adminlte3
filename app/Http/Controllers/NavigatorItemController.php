@@ -32,6 +32,8 @@ class NavigatorItemController extends Controller
      */
     public function create()
     {
+        abort_unless(\Gate::allows('navigator_create'), 403);
+
         $referenceable_types = $this->getReferenceableTypes();
         $position            = $this->getPositions();
         $css_classes         = $this->getCssClasses();

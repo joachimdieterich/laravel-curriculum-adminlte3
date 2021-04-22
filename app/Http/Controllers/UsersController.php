@@ -326,7 +326,7 @@ class UsersController extends Controller
         }
 
         $fallback_user = User::firstOrCreate(
-            ['common_name' =>  'deletet_user'],
+            ['common_name' =>  'deleted_user'],
             [
                 'username' => env('APP_FALLBACK_USER_USERNAME', 'Deleted User'),
                 'firstname' => env('APP_FALLBACK_USER_FIRSTNAME', 'Deleted'),

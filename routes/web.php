@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\LogController;
 
-LogController::setStatistics();
+
 
 Route::redirect('/', '/home');
 Route::get('/features', 'OpenController@features')->name('features');

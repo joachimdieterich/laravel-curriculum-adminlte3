@@ -14,7 +14,6 @@ class AdminController extends Controller
     public function index()
     {
         abort_unless(\Gate::allows('permission_create'), 403);
-        abort_unless((auth()->user()->id === 1), 403); //only side-admins
 
         return view('admin.show');//
     }

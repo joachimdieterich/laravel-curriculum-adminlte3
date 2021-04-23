@@ -21,6 +21,7 @@ class StatisticController extends Controller
         {
             switch (request('chart')) {
                 case 'login':
+                case 'ssoLogin':
                 case 'guestLogin':
                     return ['message' => $this->getLogins(request('chart'))];
                     break;

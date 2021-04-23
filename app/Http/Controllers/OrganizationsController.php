@@ -127,7 +127,8 @@ class OrganizationsController extends Controller
     public function show(Organization $organization)
     {
         abort_unless(\Gate::allows('organization_show'), 403);
-        // axios call?
+        abort_unless(auth()->user()->organizations->contains($organization), 403);
+
         if (request()->wantsJson()){
             return [
                 'message' => $organization
@@ -150,6 +151,7 @@ class OrganizationsController extends Controller
     public function edit(Organization $organization)
     {
         abort_unless(\Gate::allows('organization_edit'), 403);
+        abort_unless(auth()->user()->organizations->contains($organization), 403);
         $status_definitions = StatusDefinition::all();
         $organization_types = OrganizationType::all();
         $countries = Country::all();
@@ -174,6 +176,8 @@ class OrganizationsController extends Controller
     public function update(Organization $organization)
     {
         abort_unless(\Gate::allows('organization_edit'), 403);
+        abort_unless(auth()->user()->organizations->contains($organization), 403);
+
         $clean_data = $this->validateRequest();
         $clean_data['state_id'] =  format_select_input($clean_data['state_id']);
         $clean_data['country_id'] =  format_select_input($clean_data['country_id']);
@@ -200,6 +204,7 @@ class OrganizationsController extends Controller
     public function destroy(Organization $organization)
     {
         abort_unless(\Gate::allows('organization_delete'), 403);
+        abort_unless(auth()->user()->organizations->contains($organization), 403);
 
         $organization->delete();
 
@@ -232,6 +237,7 @@ class OrganizationsController extends Controller
                 //current admin should not be edited
                 if ( auth()->user()->role()->id <=  $enrolment['role_id'])  //only allow roles below or equal
                 {
+                    abort_unless(auth()->user()->organizations->contains($enrolment['organization_id']), 403);
                     $return[] = OrganizationRoleUser::updateOrCreate(
                         [
                             'user_id'         => $enrolment['user_id'],
@@ -256,6 +262,7 @@ class OrganizationsController extends Controller
 
         foreach ((request()->expel_list) AS $expel)
         {
+            abort_unless(auth()->user()->organizations->contains($expel['organization_id']), 403);
             $return[] = OrganizationRoleUser::where([
                 'user_id'         => $expel['user_id'],
                 'organization_id' => $expel['organization_id'],

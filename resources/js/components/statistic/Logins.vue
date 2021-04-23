@@ -1,8 +1,10 @@
 <template>
     <div class="card">
         <div class="w-full flex-1 p-2">
-            Registered Users
+            Registered Users (local)
             <D3LineChart :config="chart_config" :datum="chart_data_login"></D3LineChart>
+            Registered Users (sso)
+            <D3LineChart :config="chart_config" :datum="chart_data_ssoLogin"></D3LineChart>
             Guests
             <D3LineChart :config="chart_config" :datum="chart_data_guestLogin"></D3LineChart>
         </div>
@@ -21,6 +23,7 @@ export default {
     data() {
         return {
             chart_data_login: [],
+            chart_data_ssoLogin: [],
             chart_data_guestLogin: [],
            /* chart_data: [
                 {hours: 238, production: 134, date: 2000},
@@ -79,6 +82,9 @@ export default {
                     if (chart === 'login'){
                         this.chart_data_login = response.data.message;
                     }
+                    if (chart === 'ssoLogin'){
+                        this.chart_data_ssoLogin = response.data.message;
+                    }
                     if (chart === 'guestLogin'){
                         this.chart_data_guestLogin = response.data.message;
                     }
@@ -98,6 +104,7 @@ export default {
     mounted() {
         this.loaderEvent('login');
         this.loaderEvent('guestLogin');
+        this.loaderEvent('ssoLogin');
     }
 }
 </script>

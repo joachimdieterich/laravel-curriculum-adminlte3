@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\Grade;
 use App\Http\Controllers\Controller;
 use App\Group;
+use App\Period;
 use App\User;
 use App\OrganizationRoleUser;
+use Carbon\Carbon;
 
 
 class GroupsApiController extends Controller {
@@ -17,11 +20,27 @@ class GroupsApiController extends Controller {
     }
 
     public function store() {
-        return Group::create($this->filteredRequest());
+
+        return Group::firstOrCreate([
+            'title' => request()->input('title'),
+            'grade_id' => request()->input('grade_id'),
+            'period_id' => $this->getPeriod()->id,
+            'organization_id' => request()->input('organization_id')
+        ]);
+
+        //return Group::create($this->filteredRequest());
     }
 
     public function update(Group $group) {
-        if ($group->update($this->filteredRequest()))
+
+        if (
+            $group->update([
+                'title' => request()->input('title'),
+                'grade_id' => request()->input('grade_id'),
+                'period_id' => $this->getPeriod()->id,
+                'organization_id' => request()->input('organization_id')
+            ])
+        )
         {
             return $group->fresh();
         }
@@ -74,9 +93,35 @@ class GroupsApiController extends Controller {
         }
     }
 
-
     protected function filteredRequest() {
         return array_filter(request()->all()); //filter to ignore fields with null values
+    }
+
+    /**
+     * @return Period
+     */
+    private function getPeriod()
+    {
+
+        if ((request()->input('period')) AND strtolower(request()->input('period')) != 'null')
+        {
+            $dates = explode("/", request()->input('period'), 2); //get begin and end of period
+
+            return Period::firstOrCreate(
+                [
+                    'title' => request()->input('period'),
+                ],
+                [
+                    'begin' => Carbon::createFromDate($dates[0])->format('Y-m-d h:m:s'),
+                    'end' => Carbon::createFromDate($dates[1])->format('Y-m-d h:m:s'),
+                    'owner_id' => 1 //api call
+                ]);
+        }
+        else
+        {
+            $id = (strtolower(request()->input('period_id')) == 'null') ? 1 : request()->input('period_id');
+            return Period::find($id);
+        }
     }
 
 }

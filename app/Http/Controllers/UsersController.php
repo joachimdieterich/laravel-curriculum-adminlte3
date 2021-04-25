@@ -30,12 +30,19 @@ class UsersController extends Controller
 
         if (auth()->user()->role()->id == 1)
         {
+            if (request()->wantsJson()){
+                return ['users' => json_encode(DB::table('users')->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get())];
+            }
             $organizations = Organization::all();
             $roles = Role::all();
             $groups = Group::orderBy('organization_id', 'desc')->get() ;
         }
         else
         {
+            if (request()->wantsJson()){
+                return ['users' => json_encode(Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->get())];
+            }
+
             $organizations = auth()->user()->organizations()->get();
             $roles = Role::where('id', '>',  auth()->user()->role()->id)->get();
             $groups = (auth()->user()->role()->id == 4) ? Group::where('organization_id', auth()->user()->current_organization_id)->get() : auth()->user()->groups()->orderBy('organization_id', 'desc')->get();
@@ -112,7 +119,6 @@ class UsersController extends Controller
         {
             $user = User::create($request->all());
         }
-
 
         /*
          * Enrol user to (creators) institution. Every user have to be enrolled to an institution!

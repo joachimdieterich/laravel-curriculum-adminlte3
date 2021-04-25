@@ -13,7 +13,7 @@ class AdminController extends Controller
      */
     public function index()
     {
-        abort_unless(\Gate::allows('permission_create'), 403);
+        abort_unless(is_admin(), 403);
 
         return view('admin.show');//
     }

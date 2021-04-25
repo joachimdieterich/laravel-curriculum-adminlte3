@@ -21,7 +21,7 @@ class GroupsController extends Controller
     {
         abort_unless(\Gate::allows('group_access'), 403);
 
-        $curricula =  (auth()->user()->role()->id == 1) ? Curriculum::all() : Curriculum::where('type_id', 1)->get();
+        $curricula =  (is_admin()) ? Curriculum::all() : Curriculum::where('type_id', 1)->get();
 
         return view('groups.index')
           ->with(compact('curricula'));
@@ -137,7 +137,7 @@ class GroupsController extends Controller
     public function show(Group $group)
     {
         abort_unless(\Gate::allows('group_show'), 403);
-        abort_unless(auth()->user()->groups->contains($group), 403);
+        abort_unless((auth()->user()->groups->contains($group) OR is_admin()), 403);
         LogController::set(get_class($this).'@'.__FUNCTION__, $group->id);
          // axios call?
         if (request()->wantsJson()){
@@ -153,7 +153,7 @@ class GroupsController extends Controller
     public function edit(Group $group)
     {
         abort_unless(\Gate::allows('group_edit'), 403);
-        abort_unless(auth()->user()->groups->contains($group), 403);
+        abort_unless((auth()->user()->groups->contains($group) OR is_admin()), 403);
 
         $grades  = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->type->grades()->get(); //Grade::all();
         $periods = Period::all();//Organization::where('id',auth()->user()->current_organization_id)->get()->first()->periods;
@@ -170,7 +170,7 @@ class GroupsController extends Controller
     public function update(UpdateGroupRequest $request, Group $group)
     {
         abort_unless(\Gate::allows('group_edit'), 403);
-        abort_unless(auth()->user()->groups->contains($group), 403);
+        abort_unless((auth()->user()->groups->contains($group) OR is_admin()), 403);
 
         $group->update([
             'title' => $request['title'],
@@ -189,7 +189,7 @@ class GroupsController extends Controller
     public function destroy(Group $group)
     {
         abort_unless(\Gate::allows('group_delete'), 403);
-        abort_unless(auth()->user()->groups->contains($group), 403);
+        abort_unless((auth()->user()->groups->contains($group) OR is_admin()), 403);
 
         // first delete all relations
         $group->curricula()->detach();
@@ -205,9 +205,12 @@ class GroupsController extends Controller
     public function massDestroy(MassDestroyGroupRequest $request)
     {
         abort_unless(\Gate::allows('group_delete'), 403);
-        abort_unless(auth()->user()->groups->contains($group), 403);
 
-        Group::whereIn('id', request('ids'))->delete();
+        foreach (request('ids') AS $id)
+        {
+            abort_unless((auth()->user()->groups->contains($id) OR is_admin()), 403);
+            Group::where('id', $id)->delete();
+        }
 
         return response(null, 204);
     }
@@ -218,7 +221,7 @@ class GroupsController extends Controller
 
         foreach ((request()->enrollment_list) AS $enrolment)
         {
-            abort_unless(auth()->user()->groups->contains($enrolment['group_id']), 403);
+            abort_unless((auth()->user()->groups->contains($enrolment['group_id']) OR is_admin()), 403);
 
             $group = Group::findOrFail($enrolment['group_id']);
             $user = User::findOrFail($enrolment['user_id']);
@@ -229,7 +232,6 @@ class GroupsController extends Controller
                                     );
 
             $return[] = $user->groups()->syncWithoutDetaching($enrolment['group_id']);
-
         }
 
         return $return;
@@ -241,7 +243,7 @@ class GroupsController extends Controller
 
         foreach ((request()->expel_list) AS $expel)
         {
-            abort_unless(auth()->user()->groups->contains($expel['group_id']), 403);
+            abort_unless((auth()->user()->groups->contains($expel['group_id'])OR is_admin()), 403);
             $user = User::find($expel['user_id']);
             $return[] = $user->groups()->detach($expel['group_id']);
         }

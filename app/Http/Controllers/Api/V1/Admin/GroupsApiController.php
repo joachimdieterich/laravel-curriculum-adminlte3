@@ -22,10 +22,10 @@ class GroupsApiController extends Controller {
     public function store() {
 
         return Group::firstOrCreate([
-            'title' => request()->input('title'),
-            'grade_id' => request()->input('grade_id'),
-            'period_id' => $this->getPeriod()->id,
-            'organization_id' => request()->input('organization_id')
+            'title'             => request()->input('title'),
+            'grade_id'          => request()->input('grade_id'),
+            'period_id'         => $this->getPeriod()->id,
+            'organization_id'   => request()->input('organization_id')
         ]);
 
         //return Group::create($this->filteredRequest());
@@ -35,10 +35,10 @@ class GroupsApiController extends Controller {
 
         if (
             $group->update([
-                'title' => request()->input('title'),
-                'grade_id' => request()->input('grade_id'),
-                'period_id' => $this->getPeriod()->id,
-                'organization_id' => request()->input('organization_id')
+                'title'             => (request()->input('title')) ?: $group->title,
+                'grade_id'          => (request()->input('grade_id')) ?: $group->grade_id,
+                'period_id'         => ($this->getPeriod()->id) ?: $group->period_id,
+                'organization_id'   => (request()->input('organization_id')) ?: $group->organization_id
             ])
         )
         {
@@ -117,11 +117,15 @@ class GroupsApiController extends Controller {
                     'owner_id' => 1 //api call
                 ]);
         }
+        else if ((request()->input('period_id')) AND  strtolower(request()->input('period_id')) != 'null')
+        {
+            return Period::find(request()->input('period_id'));
+        }
         else
         {
-            $id = (strtolower(request()->input('period_id')) == 'null') ? 1 : request()->input('period_id');
-            return Period::find($id);
+            return Period::find(1); //fallback
         }
+
     }
 
 }

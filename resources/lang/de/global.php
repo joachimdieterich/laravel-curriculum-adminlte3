@@ -178,6 +178,7 @@ return [
     'user'                                 => [
         'title'          => 'Benutzer',
         'title_singular' => 'Benutzer',
+        'add'            => 'Benutzer hinzufügen',
         'create'         => 'Benutzer erstellen',
         'edit'           => 'Benutzer bearbeiten',
         'import'         => 'Benutzer importieren',

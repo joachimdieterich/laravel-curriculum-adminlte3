@@ -178,6 +178,7 @@ return [
     'user'                                 => [
         'title'          => 'Users',
         'title_singular' => 'User',
+        'add'            => 'Add user',
         'create'         => 'Create user',
         'edit'           => 'Edit user',
         'import'         => 'Import users',

@@ -11,10 +11,10 @@ require 'rake-php-plus-master/src/RakePlus.php';
 if (!function_exists('format_select_input')) {
 
     /**
-     * helper function for selects 
+     * helper function for selects
      * if input is an array, it returns the first value of array
      * else it returns the input
-     * 
+     *
      * returns integer
      */
     function format_select_input($input) {
@@ -29,7 +29,7 @@ if (!function_exists('getImmediateChildrenByTagName')) {
     /**
     * Traverse an elements children and collect those nodes that
     * have the tagname specified in $tagName. Non-recursive
-    * Source: http://stackoverflow.com/questions/3049648/php-domelementgetelementsbytagname-anyway-to-get-just-the-immediate-matching 
+    * Source: http://stackoverflow.com/questions/3049648/php-domelementgetelementsbytagname-anyway-to-get-just-the-immediate-matching
     *
     * @param DOMElement $element
     * @param string $tagName
@@ -48,21 +48,21 @@ if (!function_exists('getImmediateChildrenByTagName')) {
 
 if (!function_exists('relativeToAbsoutePaths')) {
     function relativeToAbsoutePaths($input) {
-        return preg_replace_callback( 
-                '/<img\s+[^>]*src="\/media\/(.*?)"(\s+[^>]*)[^>]*>/mi', 
-                function($match) 
-                { 
+        return preg_replace_callback(
+                '/<img\s+[^>]*src="\/media\/(.*?)"(\s+[^>]*)[^>]*>/mi',
+                function($match)
+                {
                     $media = App\Medium::find($match[1]);
                     if ($media !== null)
                     {
-                        return (( "<img src=\"{$media->absolutePath()}\"{$match[2]}>"));      
+                        return (( "<img src=\"{$media->absolutePath()}\"{$match[2]}>"));
                     } else {
                         return "[Image not available]";
                     }
-                    
-                }, 
-                $input 
-            ); 
+
+                },
+                $input
+            );
     }
 }
 
@@ -128,35 +128,35 @@ if (!function_exists('str_contains')) {
 
 if (!function_exists('is_dir_empty')) {
     function is_dir_empty($dir) {
-        if (!is_readable($dir)) return NULL; 
+        if (!is_readable($dir)) return NULL;
         return (count(scandir($dir)) == 2);
     }
 }
 
 if (!function_exists('find_all_files')) {
-   
-    function find_all_files($dir) 
-    { 
+
+    function find_all_files($dir)
+    {
         $result = array();
-        $root = scandir($dir); 
-        foreach($root as $value) 
-        { 
-            if($value === '.' || $value === '..') {continue;} 
-            if(is_file("$dir/$value")) {$result[]="$dir/$value";continue;} 
-            foreach(find_all_files("$dir/$value") as $value) 
-            { 
-                $result[]=$value; 
-            } 
-        } 
-        return $result; 
-    } 
+        $root = scandir($dir);
+        foreach($root as $value)
+        {
+            if($value === '.' || $value === '..') {continue;}
+            if(is_file("$dir/$value")) {$result[]="$dir/$value";continue;}
+            foreach(find_all_files("$dir/$value") as $value)
+            {
+                $result[]=$value;
+            }
+        }
+        return $result;
+    }
 }
 
 if (!function_exists('now_online')) {
     function now_online(){
 
          // Get time session life time from config.
-         $time =  time() - (config('session.lifetime')*60); 
+         $time =  time() - (config('session.lifetime')*60);
 
          // Total login users (user can be log on 2 devices will show once.)
          $totalActiveUsers = DB::table('sessions')
@@ -178,5 +178,12 @@ if (!function_exists('today_online')) {
          count(DB::raw('DISTINCT user_id'));
 
          return $totalActiveUsers;
+    }
+}
+
+if (!function_exists('is_admin')) {
+    function is_admin(){
+
+         return (auth()->user()->role()->id == 1);
     }
 }

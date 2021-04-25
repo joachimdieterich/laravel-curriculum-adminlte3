@@ -25,7 +25,7 @@
 *          )
 *      ),
 *      @OA\Parameter(
-*          name="remamber_me",
+*          name="remember_me",
 *          description="User password",
 *          required=false,
 *          in="path",
@@ -50,7 +50,7 @@
 *      tags={"Auth v1"},
 *      summary="Get the authenticated User",
 *      description="Returns a user object",
-*     
+*
 *      @OA\Response(
 *          response=200,
 *          description="successful operation"

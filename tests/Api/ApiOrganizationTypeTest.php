@@ -10,32 +10,34 @@ class ApiOrganizationTypeTest extends TestCase {
 
     use RefreshDatabase;
 
-    /** @test */
-    public function an_unauthificated_client_can_not_get_organization_types() 
+    /** @test
+     * Use Route: GET, /api/v1/organizationtypes
+     */
+    public function an_authenticated_client_can_not_get_organization_types()
     {
         $this->get('/api/v1/organizationtypes')->assertStatus(302);
         $this->contains('login');
     }
 
-    /** @test 
-     * Use Route: GET, /api/v1/organizations/types
+    /** @test
+     * Use Route: GET, /api/v1/organizationtypes
      */
-    public function an_authificated_client_can_get_all_organization_types() 
+    public function an_authenticated_client_can_get_all_organization_types()
     {
         $this->signInApiAdmin();
 
         $this->get('/api/v1/organizationtypes')
                 ->assertStatus(200)
-                ->assertJson(OrganizationType::all()->toArray()); 
+                ->assertJson(OrganizationType::all()->toArray());
     }
 
-    /** @test 
-     * Use Route: GET, /api/v1/organizations/types/{id}
+    /** @test
+     * Use Route: GET, /api/v1/organizationtypes/{id}
      */
-    public function an_authificated_client_can_get_a_state() 
+    public function an_authenticated_client_can_get_a_state()
     {
         $this->signInApiAdmin();
-        
+
         $this->get('/api/v1/organizationtypes/2')
                 ->assertStatus(200)
                 ->assertJson(OrganizationType::find(2)->toArray());

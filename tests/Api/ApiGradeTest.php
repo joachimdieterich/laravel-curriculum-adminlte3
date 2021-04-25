@@ -11,17 +11,17 @@ class ApiGradeTest extends TestCase {
     use RefreshDatabase;
 
     /** @test */
-    public function an_unauthificated_client_can_not_get_grades() 
+    public function an_authenticated_client_can_not_get_grades()
     {
-        
+
         $this->get('/api/v1/grades')->assertStatus(302);
         $this->contains('login');
     }
 
-    /** @test 
+    /** @test
      * Use Route: GET, /api/v1/grades
      */
-    public function an_authificated_client_can_get_all_grades() 
+    public function an_authenticated_client_can_get_all_grades()
     {
 
         $this->signInApiAdmin();
@@ -30,10 +30,10 @@ class ApiGradeTest extends TestCase {
                 ->assertStatus(200);
     }
 
-    /** @test 
+    /** @test
      * Use Route: GET, /api/v1/grades/{id}
      */
-    public function an_authificated_client_can_get_a_grade() 
+    public function an_authenticated_client_can_get_a_grade()
     {
         $this->signInApiAdmin();
 

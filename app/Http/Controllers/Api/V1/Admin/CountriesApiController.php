@@ -19,8 +19,6 @@ class CountriesApiController extends Controller
     {
 
         return $country;
-        
-    }
 
-   
+    }
 }

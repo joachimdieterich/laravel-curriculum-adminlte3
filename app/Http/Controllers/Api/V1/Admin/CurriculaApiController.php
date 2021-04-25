@@ -20,19 +20,25 @@ class CurriculaApiController extends Controller
 
     public function show(Curriculum $curriculum)
     {
-
         return $curriculum;
-
     }
 
     public function getSingleMetadataset(Curriculum $curriculum, Request $request)
     {
-        $metadata_password = Config::where([
-                ['key', '=',  'metadata_password']
-            ])->get()->first()->value;
-        if ($metadata_password != $request->query('password'))
+        $config = Config::where([
+            ['key', '=',  'metadata_password']
+        ])->get();
+
+        if ($config->first() !== null)
         {
-            return 'forbidden';
+            if ($config->first()->value != $request->query('password'))
+            {
+                return response()->json(['error' => 'Not authorized.'],403);
+            }
+        }
+        else
+        {
+            return response()->json(['error' => 'config (metadata_password) missing'],420);
         }
 
         return 'deactivated: please use /v1/curricula/metadatasets?password={password}';//$this->generateMetadataset($curriculum);
@@ -40,17 +46,27 @@ class CurriculaApiController extends Controller
 
     public function getAllMetadatasets(Request $request)
     {
-        $metadata_password = Config::where([
-                ['key', '=',  'metadata_password']
-            ])->get()->first()->value;
-        if ($metadata_password != $request->query('password'))
-        {
-            return 'forbidden';
-        }
+        $config = Config::where([
+            ['key', '=',  'metadata_password']
+        ])->get();
 
-        //use 'php artisan curriculum:metadataset [Versionsnumber]' to generate metadataset
-        $metadata =  DB::table('metadatasets')->latest('updated_at')->first();
-        return $metadata->metadataset;
+        if ($config->first() !== null)
+        {
+            if ($config->first()->value != $request->query('password'))
+            {
+                return response()->json(['error' => 'Not authorized.'],403);
+            }
+            else
+            {
+                //use 'php artisan curriculum:metadataset [Versionsnumber]' to generate metadataset
+                $metadata =  DB::table('metadatasets')->latest('updated_at')->first();
+                return $metadata->metadataset;
+            }
+        }
+        else
+        {
+            return response()->json(['error' => 'config (metadata_password) missing'],420);
+        }
 
     }
 }

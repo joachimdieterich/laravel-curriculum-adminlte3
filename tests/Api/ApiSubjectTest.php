@@ -11,16 +11,16 @@ class ApiSubjectTest extends TestCase {
     use RefreshDatabase;
 
     /** @test */
-    public function an_unauthificated_client_can_not_get_subjects() 
+    public function an_authenticated_client_can_not_get_subjects()
     {
         $this->get('/api/v1/subjects')->assertStatus(302);
         $this->contains('login');
     }
 
-    /** @test 
+    /** @test
      * Use Route: GET, /api/v1/subjects
      */
-    public function an_authificated_client_can_get_all_subjects() 
+    public function an_authenticated_client_can_get_all_subjects()
     {
 
         $this->signInApiAdmin();
@@ -30,10 +30,10 @@ class ApiSubjectTest extends TestCase {
                 ->assertJson(Subject::all()->toArray());
     }
 
-    /** @test 
+    /** @test
      * Use Route: GET, /api/v1/subjects/{id}
      */
-    public function an_authificated_client_can_get_a_subject() 
+    public function an_authenticated_client_can_get_a_subject()
     {
         $this->signInApiAdmin();
 

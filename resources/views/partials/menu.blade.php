@@ -115,7 +115,8 @@
                 @endcan
 
                 @can('user_access')
-                    <li class="nav-item has-treeview menu-open {{ request()->is('permissions*') ? 'menu-open' : '' }} {{ request()->is('roles*') ? 'menu-open' : '' }} {{ request()->is('users*') ? 'menu-open' : '' }}">
+                        <li class="nav-header">{{ trans('global.user_management') }}</li>
+<!--                    <li class="nav-item has-treeview menu-open {{ request()->is('permissions*') ? 'menu-open' : '' }} {{ request()->is('roles*') ? 'menu-open' : '' }} {{ request()->is('users*') ? 'menu-open' : '' }}">
                         <a class="nav-link nav-dropdown-toggle">
                             <i class="fas fa-users"></i>
                             <p>
@@ -123,7 +124,7 @@
                                 <i class="right fa fa-angle-left"></i>
                             </p>
                         </a>
-                        <ul class="nav nav-treeview">
+                        <ul class="nav nav-treeview">-->
                             @can('permission_access')
                                 <li class="nav-item">
                                     <a href="{{ route("permissions.index") }}" class="nav-link {{ request()->is('permissions') || request()->is('permissions/*') ? 'active' : '' }}">
@@ -154,20 +155,22 @@
                                     </a>
                                 </li>
                             @endcan
-                        </ul>
-                    </li>
+                   {{--     </ul>
+                    </li>--}}
                 @endcan
 
+
                 @can('organization_access')
-                    <li class="nav-item has-treeview menu-open {{ request()->is('permissions*') ? 'menu-open' : '' }} {{ request()->is('roles*') ? 'menu-open' : '' }} {{ request()->is('users*') ? 'menu-open' : '' }}">
+                        <li class="nav-header">{{ trans('global.organization_management') }}</li>
+<!--                    <li class="nav-item has-treeview menu-open {{ request()->is('permissions*') ? 'menu-open' : '' }} {{ request()->is('roles*') ? 'menu-open' : '' }} {{ request()->is('users*') ? 'menu-open' : '' }}">
                         <a class="nav-link nav-dropdown-toggle">
                             <i class="fas fa-university"></i>
                             <p>
                                 <span>{{ trans('global.organization_management') }}</span>
                                 <i class="right fa fa-angle-left"></i>
                             </p>
-                        </a>
-                        <ul class="nav nav-treeview">
+                        </a>-->
+<!--                        <ul class="nav nav-treeview">-->
 
                             @can('navigator_access')
                                 <li class="nav-item">
@@ -238,19 +241,9 @@
                                 </a>
                             </li>
 
-                        </ul>
-                    </li>
+<!--                        </ul>
+                    </li>-->
                 @endcan
-                @if(auth()->user()->role()->id == 1)
-                <li class="nav-item">
-                    <a href="{{ route("configs.index") }}" class="nav-link {{ request()->is('configs') || request()->is('configs/*') ? 'active' : '' }}">
-                        <i class="fa fa-cogs"></i>
-                        <p>
-                            <span>{{ trans('global.config.title') }}</span>
-                        </p>
-                    </a>
-                </li>
-                @endif
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

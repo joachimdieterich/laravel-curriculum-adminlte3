@@ -67,6 +67,11 @@
           <a href="{{route('users.show', auth()->user()->id)}}" class="dropdown-item">
             <i class="fas fa-id-card mr-2 text-white"></i>{{ trans('global.myProfile') }}
           </a>
+          @if(auth()->user()->role()->id == 1)
+            <a href="{{ route("admin.index") }}" class="dropdown-item">
+                <i class="fa fa-cogs  mr-2 text-white"></i>{{ trans('global.config.title') }}
+            </a>
+          @endif
           <a href="#" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
             <i class="fas fa-power-off mr-2 text-white"></i> {{ trans('global.logout') }}
           </a>

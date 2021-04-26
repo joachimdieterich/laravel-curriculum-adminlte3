@@ -2,8 +2,6 @@
 
 use App\Http\Controllers\LogController;
 
-
-
 Route::redirect('/', '/home');
 Route::get('/features', 'OpenController@features')->name('features');
 
@@ -15,9 +13,10 @@ Auth::routes(['register' => false]);
 
 
 Route::group(['middleware' => 'auth'], function () {
+    LogController::setStatistics();
     Route::get('/home', 'HomeController@index')->name('home');
 
-    Route::get('/admin', 'AdminController@index')->name('admin');
+    Route::get('/admin', 'AdminController@index')->name('admin.index');
 
     Route::resource('absences', 'AbsenceController');
 
@@ -252,6 +251,7 @@ if (env('GUEST_USER') !== null)
 {
     Route::get('/guest', function ()
     {
+        LogController::setStatistics();
         if (Auth::user() == null)       //if no user is authenticated authenticate guest
         {
             \App\Http\Controllers\LogController::set('guestLogin');

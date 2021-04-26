@@ -64,6 +64,5 @@ class SAMLLoginListener
         //setStatistics
         LogController::set('ssoLogin');
         LogController::set('activeOrg', auth()->user()->current_organization_id);
-        LogController::setStatistics();
     }
 }

@@ -1,5 +1,5 @@
 <template>
-    <div class="col-12">
+    <div class="col-12 px-0">
         <ul class="nav nav-tabs"
             role="tablist">
             <li class="nav-item">
@@ -11,6 +11,18 @@
                    aria-controls="curriculum-tab"
                    aria-selected="false">
                     <i class="fas fa-th"></i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link link-muted"
+                   id="content-nav-tab"
+                   data-toggle="pill"
+                   href="#users-tab"
+                   role="tab"
+                   aria-controls="users-tab"
+                   aria-selected="true"
+                   @click="loadGroupUsers()">
+                    <i class="fa fa-users"></i>
                 </a>
             </li>
            <!-- <li class="nav-item">
@@ -95,6 +107,14 @@
                     :course="item">
                 </course-item>
             </div>
+            <div class="tab-pane fade "
+                 id="users-tab"
+                 role="tab"
+                 aria-labelledby="users-nav-tab">
+                <users
+                    ref="Users"
+                    :group="group"></users>
+            </div>
             <!--<div class="tab-pane fade "
                  id="content-tab"
                  role="tab"
@@ -132,6 +152,7 @@
     import Glossars from '../glossar/Glossars';
     import Media from '../media/Media';
     import Contents from '../content/Contents';
+    import Users from "../users/Users";
 
     export default {
         props: {
@@ -148,6 +169,9 @@
         methods: {
             loaderEvent: function() {
                 this.$refs.Contents.loaderEvent();
+            },
+            loadGroupUsers: function() {
+                this.$refs.Users.loaderEvent();
             }
 
         },
@@ -155,6 +179,7 @@
 
         },
         components: {
+            Users,
             CourseItem,
             Media,
             Glossars,

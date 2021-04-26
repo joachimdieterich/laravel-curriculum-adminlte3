@@ -50,7 +50,7 @@ return [
     'emailVerificationSuccess'             => 'Benutzer-E-Mail erfolgreich verifiziert',
     'yourAccountNeedsAdminApproval'        => 'Ihre Benutzerkont benötigen eine Freigabe durch einen Administrator, bevor sie sich anmelden können',
     'timeFrom'                             => 'Von',
-    'timeTo'                               => 'An',
+    'timeTo'                               => 'Bis',
     'filterDate'                           => 'Nach Datum filtern',
     'reports'                              => 'Berichte',
     'year'                                 => 'Jahr',

@@ -14,30 +14,20 @@
                     <i class="fa fa-chart-pie pr-2"></i>{{trans('global.dashboard.statistic')}}
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link link-muted "
-                   id="admin-nav-tab"
-                   data-toggle="pill"
-                   href="#admin-tab"
-                   role="tab"
-                   aria-controls="admin-tab"
-                   aria-selected="true">
-                    <i class="fas fa-th"></i>
-                </a>
-            </li>
            <li class="nav-item">
                 <a class="nav-link link-muted"
                    id="metadata-nav-tab"
-                   data-toggle="pill"
-                   href="#metadata-tab"
-                   role="tab"
-                   aria-controls="metadata-tab"
-                   aria-selected="false"
-                   @click="loaderEvent()">
+                   href="/metadatasets">
                     <i class="fa fa-barcode pr-2"></i>{{trans('global.metadataset.title')}}
                 </a>
             </li>
-
+            <li class="nav-item">
+                <a class="nav-link link-muted "
+                   id="admin-nav-tab"
+                   href="/configs">
+                    <i class="fa fa-cogs pr-2"></i>{{trans('global.config.title')}}
+                </a>
+            </li>
         </ul>
 
         <div class="tab-content"
@@ -51,49 +41,59 @@
                 <div class="row">
                     <span media="print"
                           class="col-12 mt-2">
-                        <input class="pull-right"
-                               v-model="date"
-                               type="date"/>
+                        <span  class="pull-left">
+                            <label for="from">{{ trans('global.timeFrom')}}</label>
+                            <input id="from"
+                                   v-model="date_begin"
+                                   type="date"/>
+                        </span>
+                        <span  class="pull-right">
+                            <label for="to">{{ trans('global.timeTo')}}</label>
+                            <input id="to"
+                                   v-model="date_end"
+                                   type="date"/>
+                        </span>
+
                     </span>
                     <span class="col-6 mt-2">
-                        <devices :date="date"></devices>
+                        <devices :date_begin="date_begin" :date_end="date_end"></devices>
                     </span>
                     <span class="col-6 mt-2">
-                        <browser :date="date"></browser>
+                        <browser :date_begin="date_begin" :date_end="date_end"></browser>
                     </span>
                     <span class="col-6 mt-1">
-                        <organizations :date="date"></organizations>
+                        <organizations :date_begin="date_begin" :date_end="date_end"></organizations>
                     </span>
                     <span class="col-6 mt-1">
-                        <groups :date="date"></groups>
+                        <groups :date_begin="date_begin" :date_end="date_end"></groups>
                     </span>
                     <span class="col-6 mt-1">
-                        <achievements :date="date"></achievements>
+                        <achievements :date_begin="date_begin" :date_end="date_end"></achievements>
                     </span>
                     <span class="col-6 mt-1">
-                        <certificates :date="date"></certificates>
+                        <certificates :date_begin="date_begin" :date_end="date_end"></certificates>
                     </span>
                     <span class="col-6 mt-1">
-                        <curricula :date="date"></curricula>
+                        <curricula :date_begin="date_begin" :date_end="date_end"></curricula>
                     </span>
                     <span class="col-6 mt-1">
-                        <courses :date="date"></courses>
+                        <courses :date_begin="date_begin" :date_end="date_end"></courses>
                     </span>
                     <span class="col-6 mt-1">
-                        <events :date="date"></events>
+                        <events :date_begin="date_begin" :date_end="date_end"></events>
                     </span>
                     <span class="col-6 mt-1">
-                        <repository :date="date"></repository>
+                        <repository :date_begin="date_begin" :date_end="date_end"></repository>
                     </span>
                     <span class="col-12 mt-1">
-                        <logins :date="date"></logins>
+                        <logins :date_begin="date_begin" :date_end="date_end"></logins>
                     </span>
 
                 </div>
 
             </div>
 
-            <div class="tab-pane fade pt-2"
+<!--            <div class="tab-pane fade pt-2"
                  id="admin-tab"
                  role="tabpanel"
                  aria-labelledby="curriculum-nav-tab">
@@ -104,7 +104,7 @@
                  role="tab"
                  aria-labelledby="metadata-nav-tab">
                 metadata
-            </div>
+            </div>-->
         </div>
     </div>
 </template>
@@ -128,7 +128,8 @@
         },
         data () {
             return {
-                date: new Date().toISOString().slice(0, 10),
+                date_begin: new Date().toISOString().slice(0, 10),
+                date_end:   new Date().toISOString().slice(0, 10),
 
             };
         },

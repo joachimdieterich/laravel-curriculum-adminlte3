@@ -95,7 +95,12 @@ export default {
         }
     },
     watch: {
-        date: {
+        date_begin: {
+            handler: function(){
+                this.loaderEvent();
+            }
+        },
+        date_end: {
             handler: function(){
                 this.loaderEvent();
             }

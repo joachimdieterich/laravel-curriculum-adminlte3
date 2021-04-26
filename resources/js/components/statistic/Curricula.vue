@@ -36,7 +36,8 @@ export default {
         D3PieChart
     },
     props: {
-        'date': String,
+        'date_begin': String,
+        'date_end': String,
     },
     data() {
         return {
@@ -57,7 +58,7 @@ export default {
     },
     methods: {
         loaderEvent() {
-            axios.get('/statistics?chart=curricula&date='+this.date)
+            axios.get('/statistics?chart=curricula&date_begin=' + this.date_begin + '&date_end=' + this.date_end)
                 .then(response => {
                     this.chart_data = response.data.message;
                 }).catch(e => {
@@ -66,7 +67,12 @@ export default {
         }
     },
     watch: {
-        date: {
+        date_begin: {
+            handler: function(){
+                this.loaderEvent();
+            }
+        },
+        date_end: {
             handler: function(){
                 this.loaderEvent();
             }
@@ -81,7 +87,7 @@ export default {
                 total.push(val.counter) // the value of the current key.
             });
 
-            return total.reduce(function(total, num){ return total + num }, 0);
+            return total.reduce(function(total, num){ return Number(total) + Number(num) }, 0);
 
         }
     },

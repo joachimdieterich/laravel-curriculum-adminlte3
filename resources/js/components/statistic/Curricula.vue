@@ -7,16 +7,28 @@
                 :config="chart_config"
                 :datum="chart_data"
             ></D3PieChart>
+            <input type="search"
+                   class="form-control form-control-sm"
+                   style="border:0;"
+                   placeholder="Suchbegriff"
+                   v-model="search">
         </div>
-        <div class="card-footer bg-light p-0">
+        <div class="card-footer bg-light p-0"
+             style="max-height:225px; overflow-y: auto">
             <ul class="nav nav-pills flex-column">
-                <li v-for="item in chart_data" class="nav-item">
+                <li v-for="item in chart_data"
+                    class="nav-item"
+                    :style="isVisible(item)">
                     <span  class="nav-link">
                         {{item.value}}
                         <span class="float-right">
                         {{item.counter}}</span>
                     </span>
                 </li>
+            </ul>
+        </div>
+        <div class="card-footer bg-light p-0">
+            <ul class="nav nav-pills flex-column">
                 <li class="nav-item text-bold">
                     <span class="nav-link">
                         Total
@@ -41,6 +53,7 @@ export default {
     },
     data() {
         return {
+            search: '',
             chart_data: [],
             date: new Date().toISOString().slice(0, 10),
             chart_config: {
@@ -64,7 +77,21 @@ export default {
                 }).catch(e => {
 
             });
-        }
+        },
+        isVisible(item){
+            if (item.value === null){
+                if (this.search.toLowerCase() != ''){
+                    return "display:none";
+                } else {
+                    return "";
+                }
+            }
+            if (item.value.toLowerCase().indexOf(this.search.toLowerCase()) === -1){
+                return "display:none";
+            } else {
+                return "";
+            }
+        },
     },
     watch: {
         date_begin: {
@@ -88,8 +115,8 @@ export default {
             });
 
             return total.reduce(function(total, num){ return Number(total) + Number(num) }, 0);
+        },
 
-        }
     },
     mounted() {
         this.loaderEvent();

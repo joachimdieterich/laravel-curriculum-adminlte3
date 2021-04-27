@@ -1,7 +1,8 @@
-<template class="p-2">
+<template :id="{{ this.id }}"
+          class="p-2">
     <div class="card">
         <div class="w-full flex-1 p-2">
-            Certificates
+            {{ this.title }}
             <D3PieChart
                 class="p-6"
                 :config="chart_config"
@@ -10,7 +11,7 @@
             <input type="search"
                    class="form-control form-control-sm"
                    style="border:0;"
-                   placeholder="Suchbegriff"
+                   :placeholder="trans('global.search')+'...'"
                    v-model="search">
         </div>
         <div class="card-footer bg-light p-0"
@@ -31,7 +32,7 @@
             <ul class="nav nav-pills flex-column">
                 <li class="nav-item text-bold">
                     <span class="nav-link">
-                        Total
+                        {{ trans('global.sum') }}
                         <span class="float-right">
                         {{total}}</span>
                     </span>
@@ -48,6 +49,9 @@ export default {
         D3PieChart
     },
     props: {
+        'id' : String,
+        'title': String,
+        'chart': String,
         'date_begin': String,
         'date_end': String,
     },
@@ -70,11 +74,10 @@ export default {
     },
     methods: {
         loaderEvent() {
-            axios.get('/statistics?chart=certificates&date_begin=' + this.date_begin + '&date_end=' + this.date_end)
+            axios.get('/statistics?chart=' + this.chart + '&date_begin=' + this.date_begin + '&date_end=' + this.date_end)
                 .then(response => {
                     this.chart_data = response.data.message;
                 }).catch(e => {
-
             });
         },
         isVisible(item){
@@ -108,13 +111,11 @@ export default {
         total: function(){
 
             let total = [];
-
             Object.entries(this.chart_data).forEach(([key, val]) => {
                 total.push(val.counter) // the value of the current key.
             });
 
             return total.reduce(function(total, num){ return Number(total) + Number(num) }, 0);
-
         }
     },
     mounted() {
@@ -122,4 +123,3 @@ export default {
     }
 }
 </script>
-

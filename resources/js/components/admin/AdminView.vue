@@ -56,34 +56,84 @@
 
                     </span>
                     <span class="col-6 mt-2">
-                        <devices :date_begin="date_begin" :date_end="date_end"></devices>
+                        <pie-chart id="devices_chart"
+                                   title="Devices"
+                                   chart="devices"
+                                   :date_begin="date_begin"
+                                   :date_end="date_end">
+                        </pie-chart>
                     </span>
                     <span class="col-6 mt-2">
-                        <browser :date_begin="date_begin" :date_end="date_end"></browser>
+                        <pie-chart id="browsers_chart"
+                                   title="Browser"
+                                   chart="browsers"
+                                   :date_begin="date_begin"
+                                   :date_end="date_end">
+                        </pie-chart>
                     </span>
                     <span class="col-6 mt-1">
-                        <organizations :date_begin="date_begin" :date_end="date_end"></organizations>
+                       <pie-chart id="organizations_chart"
+                                   :title="trans('global.active')+ ' ' + trans('global.organization.title')"
+                                   chart="organizations"
+                                   :date_begin="date_begin"
+                                   :date_end="date_end">
+                        </pie-chart>
                     </span>
                     <span class="col-6 mt-1">
-                        <groups :date_begin="date_begin" :date_end="date_end"></groups>
+                        <pie-chart id="groups_chart"
+                                   :title="trans('global.active')+ ' ' + trans('global.group.title')"
+                                   chart="groups"
+                                   :date_begin="date_begin"
+                                   :date_end="date_end">
+                        </pie-chart>
                     </span>
                     <span class="col-6 mt-1">
-                        <achievements :date_begin="date_begin" :date_end="date_end"></achievements>
+                        <pie-chart id="achievements_chart"
+                                   :title="trans('global.achievement.title')"
+                                   chart="achievements"
+                                   :date_begin="date_begin"
+                                   :date_end="date_end">
+                        </pie-chart>
                     </span>
                     <span class="col-6 mt-1">
-                        <certificates :date_begin="date_begin" :date_end="date_end"></certificates>
+                        <pie-chart id="certificates_chart"
+                                   :title=" trans('global.certificate.title')"
+                                   chart="certificates"
+                                   :date_begin="date_begin"
+                                   :date_end="date_end">
+                        </pie-chart>
                     </span>
                     <span class="col-6 mt-1">
-                        <curricula :date_begin="date_begin" :date_end="date_end"></curricula>
+                        <pie-chart id="curricula_chart"
+                                   :title="trans('global.active')+ ' ' + trans('global.curriculum.title')"
+                                   chart="curricula"
+                                   :date_begin="date_begin"
+                                   :date_end="date_end">
+                        </pie-chart>
                     </span>
                     <span class="col-6 mt-1">
-                        <courses :date_begin="date_begin" :date_end="date_end"></courses>
+                        <pie-chart id="courses_chart"
+                                   :title="trans('global.active')+ ' ' + trans('global.course.title')"
+                                   chart="courses"
+                                   :date_begin="date_begin"
+                                   :date_end="date_end">
+                        </pie-chart>
                     </span>
                     <span class="col-6 mt-1">
-                        <events :date_begin="date_begin" :date_end="date_end"></events>
+                        <pie-chart id="eventSubscription_chart"
+                                   :title="trans('global.eventSubscription.title')"
+                                   chart="eventPlugin"
+                                   :date_begin="date_begin"
+                                   :date_end="date_end">
+                        </pie-chart>
                     </span>
                     <span class="col-6 mt-1">
-                        <repository :date_begin="date_begin" :date_end="date_end"></repository>
+                        <pie-chart id="repositoryPlugin_chart"
+                                   :title="trans('global.externalRepositorySubscription.title')"
+                                   chart="repositoryPlugin"
+                                   :date_begin="date_begin"
+                                   :date_end="date_end">
+                        </pie-chart>
                     </span>
                     <span class="col-12 mt-1">
                         <logins :date_begin="date_begin" :date_end="date_end"></logins>
@@ -110,17 +160,8 @@
 </template>
 
 <script>
-    import Browser from '../statistic/Browser';
     import Logins from '../statistic/Logins';
-    import Devices from '../statistic/Devices';
-    import Curricula from '../statistic/Curricula';
-    import Courses from '../statistic/Courses';
-    import Events from '../statistic/Events';
-    import Organizations from '../statistic/Organizations';
-    import Groups from '../statistic/Groups';
-    import Achievements from "../statistic/Achievements";
-    import Certificates from "../statistic/Certificates";
-    import Repository from "../statistic/Repository";
+    import PieChart from "../statistic/PieChart";
 
     export default {
         props: {
@@ -144,17 +185,8 @@
 
         },
         components: {
-            Repository,
-            Certificates,
-            Achievements,
-            Browser,
+            PieChart,
             Logins,
-            Devices,
-            Curricula,
-            Courses,
-            Events,
-            Organizations,
-            Groups,
         }
 
     }

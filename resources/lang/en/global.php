@@ -77,6 +77,8 @@ return [
     'myProfile'                            => 'Userprofile',
     'settings'                             => 'Settings',
     'minutes'                              => 'Minutes',
+    'sum'                                  => 'Sum',
+    'active'                               => 'Active',
     'config'              =>[
         'title'          => 'Configs',
         'title_singular' => 'Config',

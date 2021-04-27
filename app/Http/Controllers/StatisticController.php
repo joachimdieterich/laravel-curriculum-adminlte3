@@ -28,7 +28,7 @@ class StatisticController extends Controller
                 case 'guestLogin':
                     return ['message' => $this->getLogins(request('chart'))];
                     break;
-                case 'browser':
+                case 'browsers':
                     return ['message' => $this->getEntriesByKey('browser', request('date_begin'), request('date_end'))];
                     break;
                 case 'devices':
@@ -40,10 +40,10 @@ class StatisticController extends Controller
                 case 'courses':
                     return ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\CourseController@show', 'curricula', request('date_begin'), request('date_end'))];
                     break;
-                case 'eventplugin':
+                case 'eventPlugin':
                     return ['message' => $this->getEntriesByKey('App\Http\Controllers\EventSubscriptionController@getEvents', request('date_begin'), request('date_end'))];
                     break;
-                case 'repositoryplugin':
+                case 'repositoryPlugin':
                     return ['message' => $this->getEntriesByKeyWithRelatedTitleFromUuid('App\Http\Controllers\RepositorySubscriptionController@getMedia', 'enabling_objectives', request('date_begin'), request('date_end'), 'uuid')];
                     break;
                 case 'organizations':

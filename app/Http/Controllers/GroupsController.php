@@ -137,7 +137,10 @@ class GroupsController extends Controller
     public function show(Group $group)
     {
         abort_unless(\Gate::allows('group_show'), 403);
-        abort_unless((auth()->user()->groups->contains($group) OR is_admin()), 403);
+        abort_unless((auth()->user()->groups->contains($group)
+            OR is_admin()
+            OR (Group::find($group)->first()->organization_id == auth()->user()->current_organization_id)), 403);
+
         LogController::set(get_class($this).'@'.__FUNCTION__, $group->id);
          // axios call?
         if (request()->wantsJson()){
@@ -153,7 +156,9 @@ class GroupsController extends Controller
     public function edit(Group $group)
     {
         abort_unless(\Gate::allows('group_edit'), 403);
-        abort_unless((auth()->user()->groups->contains($group) OR is_admin()), 403);
+        abort_unless((auth()->user()->groups->contains($group)
+            OR is_admin()
+            OR (Group::find($group)->first()->organization_id == auth()->user()->current_organization_id)), 403);
 
         $grades  = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->type->grades()->get(); //Grade::all();
         $periods = Period::all();//Organization::where('id',auth()->user()->current_organization_id)->get()->first()->periods;
@@ -170,7 +175,9 @@ class GroupsController extends Controller
     public function update(UpdateGroupRequest $request, Group $group)
     {
         abort_unless(\Gate::allows('group_edit'), 403);
-        abort_unless((auth()->user()->groups->contains($group) OR is_admin()), 403);
+        abort_unless((auth()->user()->groups->contains($group)
+            OR is_admin()
+            OR (Group::find($group)->first()->organization_id == auth()->user()->current_organization_id)), 403);
 
         $group->update([
             'title' => $request['title'],
@@ -189,7 +196,9 @@ class GroupsController extends Controller
     public function destroy(Group $group)
     {
         abort_unless(\Gate::allows('group_delete'), 403);
-        abort_unless((auth()->user()->groups->contains($group) OR is_admin()), 403);
+        abort_unless((auth()->user()->groups->contains($group)
+            OR is_admin()
+            OR (Group::find($group)->first()->organization_id == auth()->user()->current_organization_id)), 403);
 
         // first delete all relations
         $group->curricula()->detach();
@@ -206,9 +215,14 @@ class GroupsController extends Controller
     {
         abort_unless(\Gate::allows('group_delete'), 403);
 
+
         foreach (request('ids') AS $id)
         {
             abort_unless((auth()->user()->groups->contains($id) OR is_admin()), 403);
+            abort_unless((auth()->user()->groups->contains($id)
+                OR is_admin()
+                OR (Group::find($id)->first()->organization_id == auth()->user()->current_organization_id)), 403);
+
             Group::where('id', $id)->delete();
         }
 
@@ -221,7 +235,9 @@ class GroupsController extends Controller
 
         foreach ((request()->enrollment_list) AS $enrolment)
         {
-            abort_unless((auth()->user()->groups->contains($enrolment['group_id']) OR is_admin()), 403);
+            abort_unless((auth()->user()->groups->contains($enrolment['group_id'])
+                OR is_admin()
+                OR (Group::find($enrolment['group_id'])->first()->organization_id == auth()->user()->current_organization_id)), 403);
 
             $group = Group::findOrFail($enrolment['group_id']);
             $user = User::findOrFail($enrolment['user_id']);
@@ -243,7 +259,10 @@ class GroupsController extends Controller
 
         foreach ((request()->expel_list) AS $expel)
         {
-            abort_unless((auth()->user()->groups->contains($expel['group_id'])OR is_admin()), 403);
+            abort_unless((auth()->user()->groups->contains($expel['group_id'])
+                OR is_admin()
+                OR (Group::find($expel['group_id'])->first()->organization_id == auth()->user()->current_organization_id)), 403);
+
             $user = User::find($expel['user_id']);
             $return[] = $user->groups()->detach($expel['group_id']);
         }

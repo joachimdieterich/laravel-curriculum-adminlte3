@@ -20,7 +20,7 @@ class LogController extends Controller
      */
     public static function set(string $key, $value = null, $increase = 1)
     {
-        if (app()->runningUnitTests()) {
+        if (app()->runningUnitTests() or app()->runningInConsole()) {
             return ;
         }
         return Log::updateOrCreate(

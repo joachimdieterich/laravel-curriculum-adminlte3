@@ -43,7 +43,7 @@ class LogController extends Controller
         }
         if  (Browser::isTablet())
         {
-            return LogController::set('device', 'tablet');
+            return LogController::set('device', 'Tablet');
         }
         if  (Browser::isDesktop())
         {
@@ -57,7 +57,7 @@ class LogController extends Controller
 
     public static function  setStatistics()
     {
-        if (app()->runningUnitTests()) {
+        if (app()->runningUnitTests() or app()->runningInConsole()) {
             return ;
         }
         LogController::set('browser', Browser::browserName());

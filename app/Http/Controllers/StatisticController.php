@@ -91,7 +91,7 @@ class StatisticController extends Controller
     {
         return Log::groupBy('logs.value')
             ->selectRaw( "{$table}.title, logs.value, sum(`logs`.`counter`) AS counter")
-            ->where('key', "{$key}")
+            ->where('key', $key)
             ->whereBetween('logs.created_at', [
                 Carbon::createFromDate($date_begin)->startOfDay()->format('Y-m-d H:i:s'),
                 Carbon::createFromDate($date_end)->endOfDay()->format('Y-m-d H:i:s')

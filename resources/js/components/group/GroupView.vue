@@ -2,26 +2,32 @@
     <div class="col-12 px-0">
         <ul class="nav nav-tabs"
             role="tablist">
-            <li class="nav-item">
-                <a class="nav-link link-muted active"
+            <li class="nav-item"
+                @click="setLocalStorage('#group_'+group.id, '#group_curriculum_'+group.id)">
+                <a class="nav-link link-muted"
+                   :class="checkLocalStorage('#group_'+group.id, '#group_curriculum_'+group.id, 'active', true)"
                    id="curriculum-nav-tab"
                    data-toggle="pill"
                    href="#curriculum-tab"
                    role="tab"
                    aria-controls="curriculum-tab"
-                   aria-selected="false">
+                   aria-selected="false"
+                  >
                     <i class="fas fa-th"></i>
                 </a>
             </li>
-            <li class="nav-item">
+            <li v-can="'group_edit'"
+                class="nav-item"
+                @click="setLocalStorage('#group_'+group.id, '#group_users_'+group.id);">
                 <a class="nav-link link-muted"
+                   :class="checkLocalStorage('#group_'+group.id, '#group_users_'+group.id)"
                    id="content-nav-tab"
                    data-toggle="pill"
                    href="#users-tab"
                    role="tab"
                    aria-controls="users-tab"
                    aria-selected="true"
-                   @click="loadGroupUsers()">
+                >
                     <i class="fa fa-users"></i>
                 </a>
             </li>
@@ -97,7 +103,8 @@
 
         <div class="tab-content"
              id="custom-content-below-tabContent">
-            <div class="tab-pane fade show active pt-2"
+            <div class="tab-pane show pt-2"
+                 :class="checkLocalStorage('#group_'+group.id, '#group_curriculum_'+group.id, 'active', true)"
                  id="curriculum-tab"
                  role="tabpanel"
                  aria-labelledby="curriculum-nav-tab">
@@ -107,7 +114,9 @@
                     :course="item">
                 </course-item>
             </div>
-            <div class="tab-pane fade "
+            <div v-can="'group_edit'"
+                 class="tab-pane "
+                 :class="checkLocalStorage('#group_'+group.id, '#group_users_'+group.id)"
                  id="users-tab"
                  role="tab"
                  aria-labelledby="users-nav-tab">

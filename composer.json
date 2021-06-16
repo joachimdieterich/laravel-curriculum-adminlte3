@@ -33,7 +33,8 @@
         "profburial/wkhtmltopdf-binaries-osx": "0.12.1",
         "select2/select2": "^4.0",
         "spatie/laravel-model-status": "^1.9",
-        "yajra/laravel-datatables-oracle": "~9.0"
+        "yajra/laravel-datatables-oracle": "~9.0",
+        "": ""
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",

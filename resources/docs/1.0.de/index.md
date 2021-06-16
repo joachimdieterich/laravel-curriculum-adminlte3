@@ -1,5 +1,6 @@
 - ## Erste Schritte
     - [Überblick](/{{route}}/{{version}}/overview)
+    - [Changelog](/{{route}}/{{version}}/changelog)
 - ## Features
     - [Navigatoren](/{{route}}/{{version}}/navigators)
     - [Curricula](/{{route}}/{{version}}/curricula)

@@ -30,9 +30,9 @@
 
         },
         mounted() {
-            this.id = 'user-avatar'+this._uid;
+            this.id = 'user-avatar' + this._uid;
 
-            let initials = this.firstname[0].charAt(0).toUpperCase() + this.lastname[1].charAt(0).toUpperCase();
+            let initials = this.firstname[0].charAt(0).toUpperCase() + this.lastname[0].charAt(0).toUpperCase();
 
             let charIndex = initials.charCodeAt(0) - 65;
             let colourIndex = charIndex % 19;
@@ -55,7 +55,7 @@
 
                 context.fillStyle = this.colours[colourIndex];
                 context.fillRect (0, 0, this.size, this.size);
-                context.font = (this.size/2.5)+"px Arial";
+                context.font = (this.size/2.5) + "px Arial";
                 context.textAlign = "center";
                 context.fillStyle = "#FFF";
                 context.fillText(initials, canvasCssWidth / 2, canvasCssHeight / 1.495);

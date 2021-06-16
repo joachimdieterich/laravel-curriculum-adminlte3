@@ -250,7 +250,12 @@ class GroupsController extends Controller
             $return[] = $user->groups()->syncWithoutDetaching($enrolment['group_id']);
         }
 
-        return $return;
+        if (request()->wantsJson()){
+            return ['users' => $group->users];
+        } else {
+            return $return;
+        }
+
     }
 
     public function expel()
@@ -267,7 +272,11 @@ class GroupsController extends Controller
             $return[] = $user->groups()->detach($expel['group_id']);
         }
 
-        return $return;
+        if (request()->wantsJson()){
+            return ['users' => Group::findOrFail($expel['group_id'])->users];
+        } else {
+            return $return;
+        }
     }
 
     protected function validateRequest()

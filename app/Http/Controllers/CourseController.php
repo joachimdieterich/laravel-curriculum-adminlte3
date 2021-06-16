@@ -32,16 +32,12 @@ class CourseController extends Controller
             'terminalObjectives',
                         'terminalObjectives.media',
                         'terminalObjectives.mediaSubscriptions',
-//                        'terminalObjectives.referenceSubscriptions',
-//                        'terminalObjectives.quoteSubscriptions',
                         'terminalObjectives.achievements' => function($query) {
                             $query->where('user_id', auth()->user()->id);
                         },
                         'terminalObjectives.enablingObjectives',
                         'terminalObjectives.enablingObjectives.media',
                         'terminalObjectives.enablingObjectives.mediaSubscriptions',
-                        //'terminalObjectives.enablingObjectives.referenceSubscriptions',
-                        //'terminalObjectives.enablingObjectives.quoteSubscriptions',
                         'terminalObjectives.enablingObjectives.achievements' => function($query) {
                             $query->where('user_id', auth()->user()->id);
                         },

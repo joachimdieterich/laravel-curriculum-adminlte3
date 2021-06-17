@@ -25,7 +25,9 @@ class AuthGates
                     $permissionsArray[$permissions->title][] = $role->id;
                 }
             }
-            $current_role_id = $user->role()->id;
+
+            $current_role_id = ($user->role() !== NULL) ? $user->role()->id : abort(503, 'Fehlende Organisationszugehörigkeit');
+            //$current_role_id =  $user->role()->id;
             foreach ($permissionsArray as $title => $roles) {
                 Gate::define($title, function () use ($current_role_id, $title, $roles) {
                     return in_array($current_role_id, $roles) ? true : false; //only check current role

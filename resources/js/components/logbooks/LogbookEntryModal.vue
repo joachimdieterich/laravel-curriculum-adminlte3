@@ -9,7 +9,7 @@
         @before-open="beforeOpen"
         @opened="opened"
         @before-close="beforeClose"
-        style="z-index: 1000">
+        style="z-index: 1100">
         <div class="card"
              style="margin-bottom: 0px !important">
             <div class="card-header">

@@ -16,7 +16,7 @@
                     <i class="fas fa-th"></i>
                 </a>
             </li>
-            <li v-can="'group_edit'"
+            <li v-permission="'group_enrolment'"
                 class="nav-item"
                 @click="setLocalStorage('#group_'+group.id, '#group_users_'+group.id);">
                 <a class="nav-link link-muted"
@@ -66,7 +66,7 @@
                     <i class="fa fa-book-open pr-2"></i>{{trans('global.glossar.title_singular')}}
                 </a>
                 <a v-else
-                   v-can="'glossar_create'"
+                   v-permission="'glossar_create'"
                    class="nav-link link-muted"
                    id="glossar-nav-tab"
                    :href="'/glossar/create?subscribable_type=App\\Group&subscribable_id='+ group.id "
@@ -75,7 +75,7 @@
                 </a>
             </li>-->
           <!-- <li class="nav-item "
-               v-can="'logbook_access'">
+               v-permission="'logbook_access'">
                 <a v-if="logbooks"
                    class="nav-link link-muted"
                    :href="'/logbooks/'+ logbooks[0].id "
@@ -83,7 +83,7 @@
                     <i class="fas fa-book pr-2"></i>{{trans('global.logbook.title_singular')}}
                 </a>
                 <a v-else
-                   v-can="'logbook_create'"
+                   v-permission="'logbook_create'"
                    class="nav-link link-muted"
                    :href="'/logbooks/create?subscribable_type=App\\Group&subscribable_id='+ group.id "
                    id="logbook-nav-tab">
@@ -91,7 +91,7 @@
                 </a>
             </li>-->
 
-            <li v-can="'group_edit'"
+            <li v-permission="'group_enrolment'"
                 class="nav-item ml-auto">
                 <a class="nav-link link-muted"
                    :href="'/groups/'+ group.id +'/edit'"
@@ -114,7 +114,7 @@
                     :course="item">
                 </course-item>
             </div>
-            <div v-can="'group_edit'"
+            <div v-permission="'group_enrolment'"
                  class="tab-pane "
                  :class="checkLocalStorage('#group_'+group.id, '#group_users_'+group.id)"
                  id="users-tab"

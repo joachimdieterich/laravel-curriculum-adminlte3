@@ -181,6 +181,7 @@ table.dataTable tbody th.select-checkbox:after {
 table.dataTable tbody td.select-checkbox:before,
 table.dataTable tbody th.select-checkbox:before {
   top: 0 !important;
+    padding-top: 0 !important;
   position: sticky;
   content: "\f0c8";
   color: white!important;

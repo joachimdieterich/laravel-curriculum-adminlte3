@@ -161,6 +161,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::delete('organizations/massDestroy', 'OrganizationsController@massDestroy')->name('organizations.massDestroy');
     Route::get('organizations/list', 'OrganizationsController@list')->name('organizations.list');
+    Route::get('organizations/{organization}/edit/address', 'OrganizationsController@editAddress')->name('organizations.editAddress');
+    Route::patch('organizations/{organization}/address', 'OrganizationsController@updateAddress')->name('organizations.updateAddress');
     Route::resource('organizations', 'OrganizationsController');
 
     /* organizationtype */

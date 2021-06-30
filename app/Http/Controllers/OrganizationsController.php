@@ -165,6 +165,15 @@ class OrganizationsController extends Controller
             ->with(compact('organization_types'));
     }
 
+    public function editAddress(Organization $organization)
+    {
+        abort_unless(\Gate::allows('organization_edit_address'), 403);
+        abort_unless((auth()->user()->organizations->contains($organization) OR is_admin()), 403);
+
+        return view('organizations.editAddress')
+            ->with(compact('organization'));
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -186,9 +195,19 @@ class OrganizationsController extends Controller
         if (isset(request()->status_id[0]))
         {
             $clean_data['status_id'] =  request()->status_id[0];  //hack to prevent array to string conversion
-
         }
 
+        $organization->update($clean_data);
+
+        return redirect($organization->path());
+    }
+
+    public function updateAddress(Organization $organization)
+    {
+        abort_unless(\Gate::allows('organization_edit_address'), 403);
+        abort_unless((auth()->user()->organizations->contains($organization) OR is_admin()), 403);
+
+        $clean_data = $this->validateRequest();
         $organization->update($clean_data);
 
         return redirect($organization->path());

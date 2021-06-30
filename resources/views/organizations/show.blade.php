@@ -20,7 +20,7 @@
                 @can('organization_edit')
                 <div class="card-tools pr-2">
                     <a href="{{ route('organizations.edit', $organization->id) }}" >
-                        <i class="far fa-edit"></i>
+                        <i class="fas fa-pencil-alt"></i>
                     </a>
                 </div>
                 @endcan
@@ -34,6 +34,10 @@
                 <hr>
 
                 <strong><i class="fa fa-map-marker mr-1"></i> {{ trans('global.place') }}</strong>
+                <a class="pull-right link-muted"
+                   href="{{ route('organizations.editAddress', $organization->id) }}" >
+                    <i class="fas fa-pencil-alt"></i>
+                </a>
                 <p class="text-muted">
                     {{ $organization->street }}<br>
                     {{ $organization->postcode }} {{ $organization->city }}<br>

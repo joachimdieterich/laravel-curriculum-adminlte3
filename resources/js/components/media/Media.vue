@@ -15,6 +15,7 @@
                        v-bind:class="[iconCss(subscription.medium.mime_type)]"></i>
                     {{ subscription.medium.title }}
 
+
                     <i class="pull-right fa fa-graduation-cap text-muted"
                        v-if="subscription.visibility && currentUser.id === subscription.owner_id"
                        v-permission="'artefact_create'"
@@ -23,6 +24,10 @@
                        v-permission="'artefact_delete'"
                        class="pull-right fa fa-trash text-danger"
                        @click.stop="destroyArtefact(subscription.medium.id)"></i>
+
+                    <license class="pull-right pr-2"
+                             :licenseId="subscription.medium.license_id">
+                    </license>
                 </td>
             </tr>
             <tr>
@@ -96,6 +101,7 @@
 
 <script>
 
+    import License from '../uiElements/License'
     export default {
         props: {
             subscription: {},
@@ -194,6 +200,9 @@
                 });
             }
         },
+        components: {
+            License
+        }
 
     }
 </script>

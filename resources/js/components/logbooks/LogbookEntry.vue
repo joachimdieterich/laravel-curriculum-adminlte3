@@ -82,6 +82,7 @@
                     </a>
                 </li>
                 <li class="nav-item small"
+                    v-permission="'reference_access'"
                     @click="setLocalStorage('#logbook_'+entry.id, '#logbook_objectives_'+entry.id)">
                     <a class="nav-link"
                        :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_objectives_'+entry.id)"
@@ -155,6 +156,7 @@
                     </div>
                     <!-- /.tab-pane -->
                     <div class="tab-pane"
+                         v-permission="'reference_access'"
                          :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_objectives_'+entry.id)"
                          v-bind:id="'logbook_objectives_'+entry.id">
 

@@ -158,7 +158,7 @@ Vue.prototype.$initTinyMCE = function (options) {
  * Custom Vue directive "can" to check against permissions.
  * If permission is not given element gets style display:none
  *
- * ! Always check permissions in the backand.
+ * ! Always check permissions in the backend.
  * This directive enables shorter syntax on vue.
  *
  * Example:
@@ -181,21 +181,31 @@ Vue.directive('hide-if-permission', function (el, binding) {
 });
 
 /**
- * Custom Vue directive "can" to check against permissions.
- * If permission is not given element gets removed from dom
+ * Custom Vue directive "permission" to check against permissions.
+ * If permission(s) is/are not given element gets removed from dom
  *
- * ! Always check permissions in the backand.
+ * ! Always check permissions in the backend.
  * This directive enables shorter syntax on vue.
  *
  * Example:
  * <element v-permission="'curriculum_edit'" ><element>
+ * <element v-permission="'content_create, ' + subscribable_type + '_content_create'" ><element>
+ *  ! you have to use 'App\\Curriculum_content_create' to get 'App\Curriculum_content_create'
  *
  * @type Vue
  */
 Vue.directive('permission', function (el, binding, vnode) {
-    if(window.Laravel.permissions.indexOf(binding.value) == -1){
+    let allowed = false;
+
+    binding.value.split(',').forEach(function (permission){
+        if(window.Laravel.permissions.indexOf(permission.trim()) !== -1) {
+            allowed = true;
+        }
+    });
+
+    if (allowed == false){
         // replace HTMLElement with comment node
-        const comment = document.createComment('removing elements, missing permission: ' + binding.value);
+        const comment = document.createComment('removing elements, missing permission(s): ' + binding.value);
         Object.defineProperty(comment, 'setAttribute', {
             value: () => undefined,
         });

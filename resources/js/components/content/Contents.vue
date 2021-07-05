@@ -22,21 +22,20 @@
             </span>
         </h3>
         <div class="card-tools">
-
-            <button v-can="'content_create'"
+            <button v-permission="'content_create, ' + subscribable_type + '_content_create'"
                     type="button" class="btn btn-tool "
                     role="button"
                     @click="show('content-create-modal')">
                 <i class="fa fa-plus"></i>
             </button>
-            <button v-can="'content_create'"
+            <button v-permission="'content_create, ' + subscribable_type + '_content_create'"
                     v-if="subscribable_type === 'App\\Curriculum'"
                     type="button" class="btn btn-tool "
                     role="button"
                     @click="show('content-subscription-modal')">
                 <i class="fa fa-paste"></i>
             </button>
-            <button v-can="'content_create'"
+            <button v-permission="'content_create, ' + subscribable_type + '_content_create'"
                     type="button" class="btn btn-tool "
                     role="button"
                     data-toggle="tooltip" data-container="body" title="Reihenfolge zurücksetzen"
@@ -88,7 +87,7 @@
                                        @click="setSlide(index+1)">
                                      {{item.content.title}}
                                  </span>
-                                 <span v-can="'content_delete'"
+                                 <span v-permission="'content_delete, ' + subscribable_type + '_content_delete'"
                                        class="pull-right">
                                      <span
                                          class="btn-tool fa fa-trash text-danger"
@@ -96,7 +95,7 @@
                                          >
                                      </span>
                                  </span>
-                                 <span v-can="'content_edit'"
+                                 <span v-permission="'content_edit, ' + subscribable_type + '_content_edit'"
                                        class="pull-right">
                                      <span
                                          class="btn-tool fa fa-pencil-alt"
@@ -104,7 +103,7 @@
                                          >
                                      </span>
                                  </span>
-                                 <span v-can="'content_create'"
+                                 <span v-permission="'content_create, ' + subscribable_type + '_content_create'"
                                        class="pull-right"><!--Order_id: {{ item.order_id }}-->
                                      <span v-if="(item.order_id !== 0)"
                                            class="btn-tool fa fa-arrow-up"

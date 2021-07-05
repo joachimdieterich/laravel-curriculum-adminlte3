@@ -44,6 +44,7 @@ class PrintController extends Controller
     public function model($model, $id)
     {
         //todo: check if user has permission to see this model
+        //delegate to model class?
         abort(403);
         /*
         $view = class_basename($model);

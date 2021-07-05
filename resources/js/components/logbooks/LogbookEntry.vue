@@ -10,12 +10,12 @@
 
             <span class="username ml-0">
                 <span class="pull-right " v-permission="'logbook_entry_edit'">
-                    <button
+<!--                    <button
                         type="button"
                         class="btn btn-tool pt-3"
                         @click.stop="print()">
                         <i class="fa fa-print "></i>
-                    </button>
+                    </button>-->
                     <button
                         type="button"
                         class="btn btn-tool pt-3"
@@ -53,7 +53,26 @@
                         {{ trans('global.logbook.fields.description') }}
                     </a>
                 </li>
+                <li v-permission="'content_access'"
+                    class="nav-item small"
+                    @click="setLocalStorage('#logbook_'+entry.id, '#logbook_contents_'+entry.id)">
+                    <a class="nav-link"
+                       :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_contents_'+entry.id)"
+                       v-bind:href="'#logbook_contents_'+entry.id"
+                       data-toggle="tab"
+                       @click="loaderEvent()">{{ trans('global.content.title') }}</a>
+                </li>
+                <li v-permission="'task_access'"
+                    class="nav-item small"
+
+                    @click="setLocalStorage('#logbook_'+entry.id, '#logbook_tasks_'+entry.id)">
+                    <a class="nav-link"
+                       :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_tasks_'+entry.id)"
+                       v-bind:href="'#logbook_tasks_'+entry.id"
+                       data-toggle="tab">{{ trans('global.task.title') }}</a>
+                </li>
                 <li class="nav-item small"
+                    v-permission="'medium_access'"
                     @click="setLocalStorage('#logbook_'+entry.id, '#logbook_media_'+entry.id)">
                     <a class="nav-link"
                        :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_media_'+entry.id)"
@@ -71,21 +90,7 @@
                         {{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}
                     </a>
                 </li>
-                <li class="nav-item small"
-                    @click="setLocalStorage('#logbook_'+entry.id, '#logbook_contents_'+entry.id)">
-                    <a class="nav-link"
-                       :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_contents_'+entry.id)"
-                       v-bind:href="'#logbook_contents_'+entry.id"
-                       data-toggle="tab"
-                       @click="loaderEvent()">{{ trans('global.content.title') }}</a>
-                </li>
-                <li class="nav-item small"
-                    @click="setLocalStorage('#logbook_'+entry.id, '#logbook_tasks_'+entry.id)">
-                    <a class="nav-link"
-                       :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_tasks_'+entry.id)"
-                       v-bind:href="'#logbook_tasks_'+entry.id"
-                       data-toggle="tab">{{ trans('global.task.title') }}</a>
-                </li>
+
                 <li v-permission="'absence_access'"
                     v-if="displayAbsences()"
                     class="nav-item small"
@@ -109,6 +114,35 @@
                          v-bind:id="'logbook_description_'+entry.id">
                          <span class="" v-html="entry.description"></span>
                     </div>
+
+                    <!-- tab-pane -->
+                    <div v-permission="'content_access'"
+                         class="tab-pane "
+                         :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_contents_'+entry.id)"
+                         v-bind:id="'logbook_contents_'+entry.id"
+                    >
+                        <contents
+                            class="mb-0"
+                            ref="Contents"
+                            subscribable_type="App\LogbookEntry"
+                            :subscribable_id="entry.id">
+
+                        </contents>
+                    </div>
+                    <!-- /.tab-pane -->
+                    <!-- tab-pane -->
+                    <div v-permission="'task_access'"
+                         class="tab-pane"
+                         :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_tasks_'+entry.id)"
+                         v-bind:id="'logbook_tasks_'+entry.id">
+                        <task-list
+                            class="pb-2"
+                            :tasks="entry.task_subscription"
+                            :subscribable_id="entry.id"
+                            subscribable_type="App\LogbookEntry">
+                        </task-list>
+                    </div>
+                    <!-- /.tab-pane -->
                     <!-- /.tab-pane -->
                     <div v-permission="'medium_access'"
                          class="tab-pane"
@@ -149,33 +183,7 @@
 
                     </div>
                     <!-- /.tab-pane -->
-                    <!-- tab-pane -->
-                    <div v-permission="'content_access'"
-                         class="tab-pane "
-                         :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_contents_'+entry.id)"
-                         v-bind:id="'logbook_contents_'+entry.id"  >
-                        <contents
-                            class="mb-0"
-                            ref="Contents"
-                            subscribable_type="App\LogbookEntry"
-                            :subscribable_id="entry.id">
 
-                        </contents>
-                    </div>
-                    <!-- /.tab-pane -->
-                    <!-- tab-pane -->
-                    <div v-permission="'task_access'"
-                         class="tab-pane"
-                         :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_tasks_'+entry.id)"
-                         v-bind:id="'logbook_tasks_'+entry.id">
-                         <task-list
-                             class="pb-2"
-                            :tasks="entry.task_subscription"
-                            :subscribable_id="entry.id"
-                            subscribable_type="App\LogbookEntry">
-                         </task-list>
-                    </div>
-                    <!-- /.tab-pane -->
                     <!-- tab-pane -->
                     <div  v-permission="'absence_access'"
                           v-if="displayAbsences()"

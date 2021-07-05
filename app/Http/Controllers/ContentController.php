@@ -22,9 +22,10 @@ class ContentController extends Controller
      */
     public function store(Request $request)
     {
-        abort_unless(\Gate::allows('content_create'), 403);
-        //persist
         $input = $this->validateRequest();
+        abort_unless((\Gate::allows('content_create') OR
+            \Gate::allows($input['referenceable_type'].'_content_create')), 403);
+
         $content = Content::Create([
             'title' => $input['title'],
             'content' => $input['content'],
@@ -34,11 +35,14 @@ class ContentController extends Controller
         $this->checkForEmbeddedMedia($content);
 
         //subscribe to model
-        if (isset($input['referenceable_type']) AND isset($input['referenceable_id'])){
+        if (isset($input['referenceable_type']) and isset($input['referenceable_id']))
+        {
             $model = $input['referenceable_type']::find($input['referenceable_id']);
             $content->subscribe($model);
         }
-        $content->categories()->attach($input['categorie_ids']);
+
+        // not used -> see github issue: Remove category from ContentCreateModal (not used) #210
+        // $content->categories()->attach($input['categorie_ids']);
 
         // axios call?
         if (request()->wantsJson()){
@@ -72,9 +76,12 @@ class ContentController extends Controller
      */
     public function update(Request $request, Content $content)
     {
-        abort_unless(\Gate::allows('content_edit'), 403);
-
         $input = $this->validateRequest();
+
+        abort_unless((\Gate::allows('content_edit') OR
+            \Gate::allows($input['referenceable_type'].'_content_edit')), 403);
+        //todo: check if user is owner or has creator/admin role
+
         $content->update([
             'title' => $input['title'],
             'content' => $input['content'],
@@ -82,13 +89,14 @@ class ContentController extends Controller
         ]);
         // subscribe embedded media to content
         $this->checkForEmbeddedMedia($content);
-        $content->categories()->sync($input['categorie_ids']);
+
+        // not used -> see github issue: Remove category from ContentCreateModal (not used) #210
+        // $content->categories()->attach($input['categorie_ids']);
 
         if (request()->wantsJson()){
             return ['message' => $content];
         }
 
-        //$content->categories()->sync($input['categorie_ids']);
     }
 
     /**
@@ -99,18 +107,21 @@ class ContentController extends Controller
      */
     public function destroy(Content $content, $subscribable_type = null, $subscribable_id = null )
     {
-        abort_unless(\Gate::allows('content_delete'), 403);
-        /**
-         * check if content is subscribed only by deleting reference
-         * - if yes -> delete content_subscription and content
-         * - if not -> delete only content_subscription
-         */
-
         $input = $this->validateRequest();
         if (isset($input['referenceable_id']) AND isset($input['referenceable_type'])){
             $subscribable_type = $input['referenceable_type'];
             $subscribable_id   = $input['referenceable_id'];
         }
+
+        abort_unless((\Gate::allows('content_delete') OR
+            \Gate::allows($subscribable_type.'_content_delete')), 403);
+
+        //todo: check if user is owner or has creator/admin role
+        /**
+         * check if content is subscribed only by deleting reference
+         * - if yes -> delete content_subscription and content
+         * - if not -> delete only content_subscription
+         */
 
         //delete unused embedded media
         $media = $content->media;

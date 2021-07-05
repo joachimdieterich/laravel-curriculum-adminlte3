@@ -61,42 +61,6 @@
                     <p class="help-block" v-if="form.errors.content" v-text="form.errors.content[0]"></p>
                 </div>
 
-                <div class="form-group " >
-                    <label for="categorie">
-                        {{ trans('global.categorie.title_singular') }}
-                    </label>
-                    <select name="categorie[]"
-                            id="categorie"
-                            class="form-control select2 "
-                            style="width:100%;"
-                            multiple=true
-                            v-model="form.categorie_ids">
-                         <option v-for="(item,index) in categories" v-bind:value="item.id">{{ item.title }}</option>
-                    </select>
-                </div>
-
-                <div class="form-group "
-                     v-can="'categorie_create'">
-                    <label for="add_categorie"
-                           class="pull-right" >
-                        <a @click="toggle_categorie_input()">
-                            <i class="fa fa-plus"></i> {{ trans('global.categorie.title_singular') }}
-                        </a>
-                    </label>
-                    <div class="input-group">
-                        <input id="add_categorie"
-                               type="text"
-                               class="form-control "
-                               :class="this.show_add_categorie"
-                               data-original-title=""
-                               title="">
-                        <div class="input-group-append"
-                              :class="this.show_add_categorie">
-                          <a class="input-group-text" @click="addCategorie()"><i class="fas fa-save"></i></a>
-                        </div>
-                    </div>
-                </div>
-
             </div>
             <div class="card-footer">
                 <span class="pull-right">
@@ -133,13 +97,11 @@
                 try {
                     if (this.method === 'patch'){
                         this.form.content = tinyMCE.get('content').getContent();
-                        this.form.categorie_ids = $("#categorie").val()
                         this.location = (await axios.patch('/contents/'+this.form.id, this.form)).data.message;
                         this.$parent.$emit('addContent', this.form);
                         this.close();
                     } else {
                         this.form.content = tinyMCE.get('content').getContent();
-                        this.form.categorie_ids = $("#categorie").val()
                         this.location = (await axios.post('/contents', this.form)).data.message;
                         this.$parent.$emit('addContent', this.form);
                         this.close();
@@ -152,7 +114,6 @@
                 this.form.id = '';
                 this.form.title = '';
                 this.form.content = '';
-                this.getCategories();
                 if (event.params.id){
                     this.load(event.params.id);
                 }
@@ -162,47 +123,13 @@
                 if (event.params.referenceable_id){
                     this.form.referenceable_id = event.params.referenceable_id;
                 }
-                if (event.params.categorie_ids){
-                    this.form.categorie_ids = event.params.categorie_ids;
-                }
                 this.method = event.params.method;
-            },
-            async getCategories() {
-                try {
-                    this.categories = (await axios.get('/categories/')).data.message;
-                } catch(error) {
-                    console.log('loading failed')
-                }
-            },
-            async addCategorie() {
-                if ($("#add_categorie").val() !== ''){
-                    try {
-                        this.categories = (await axios.post('/categories', {'title': $("#add_categorie").val() })).data.message;
-                    } catch(error) {
-                        alert(error.response.data.form.errors);
-                    }
-                    this.initSelect2();
-                    this.toggle_categorie_input();
-                }
             },
             opened(){
                 this.$initTinyMCE();
-                this.initSelect2();
-            },
-            initSelect2(){
-                $("#categorie").select2({
-                    dropdownParent: $("#categorie").parent(),
-                    allowClear: true
-                });
-            },
-            toggle_categorie_input() {
-                this.show_add_categorie = this.show_add_categorie === 'invisible' ? '' : 'invisible';
             },
             beforeClose() {
                 //console.log('close')
-            },
-            onChange(value){
-                this.form.categorie_ids = value.id;
             },
             async load(id) {
                 try {

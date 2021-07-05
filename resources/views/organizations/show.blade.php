@@ -58,7 +58,7 @@
             <!-- /.card-body -->
             <div class="card-footer">
                 <div class="float-left">
-                    <button type="button" class="btn-xs btn-block btn-{{$status_definitions[$organization->status_id]->color_css_class}} pull-right">{{$status_definitions[$organization->status_id]->lang_de}}</button>
+                    <span class="btn-xs btn-block btn-{{$status_definitions[$organization->status_id]->color_css_class}} pull-right">{{$status_definitions[$organization->status_id]->lang_de}}</span>
                 </div>
                 <small class="float-right">
                     {{ $organization->updated_at }}
@@ -67,7 +67,7 @@
         </div>
     </div>
 
-    <div class="col-lg-8 col-sm-12">
+<!--    <div class="col-lg-8 col-sm-12">
         <div class="card">
             <div class="card-header p-2">
                 <ul class="nav nav-pills">
@@ -75,24 +75,24 @@
                     <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">Timeline</a></li>
                     <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Settings</a></li>
                 </ul>
-            </div><!-- /.card-header -->
+            </div>&lt;!&ndash; /.card-header &ndash;&gt;
             <div class="card-body">
                 <div class="tab-content">
                     <div class="tab-pane active show" id="activity">
 
                         Activity Tab
 
-                    </div><!-- /.tab-pane -->
-                    <div class="tab-pane" id="timeline"><!-- The timeline -->
+                    </div>&lt;!&ndash; /.tab-pane &ndash;&gt;
+                    <div class="tab-pane" id="timeline">&lt;!&ndash; The timeline &ndash;&gt;
                         timeline
-                    </div><!-- /.tab-pane -->
+                    </div>&lt;!&ndash; /.tab-pane &ndash;&gt;
 
                     <div class="tab-pane" id="settings">
                         Organisational Settings
-                    </div><!-- /.tab-pane -->
-                </div><!-- /.tab-content -->
-            </div><!-- /.card-body -->
-        </div><!-- /.nav-tabs-custom -->
-    </div>
+                    </div>&lt;!&ndash; /.tab-pane &ndash;&gt;
+                </div>&lt;!&ndash; /.tab-content &ndash;&gt;
+            </div>&lt;!&ndash; /.card-body &ndash;&gt;
+        </div>&lt;!&ndash; /.nav-tabs-custom &ndash;&gt;
+    </div>-->
 </div>
 @endsection

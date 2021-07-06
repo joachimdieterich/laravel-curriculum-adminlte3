@@ -49,8 +49,13 @@
 *               ),
 *               @OA\Property(
 *                   property="period_id",
-*                   description="Periode Id",
+*                   description="Period Id",
 *                   type="integer",
+*               ),
+*               @OA\Property(
+*                  property="period",
+*                  description="Period",
+*                  type="string",
 *               ),
 *               @OA\Property(
 *                   property="organization_id",
@@ -60,14 +65,14 @@
 *           )
 *       )
 *   ),
-*      
+*
 *      @OA\Response(
 *          response=200,
 *          description="successful operation",
 *          @OA\JsonContent(ref="#/components/schemas/Group"),
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*      
+*
 * )
 */
 
@@ -113,6 +118,11 @@
 *                   type="integer",
 *               ),
 *               @OA\Property(
+*                  property="period",
+*                  description="Period",
+*                  type="string",
+*               ),
+*               @OA\Property(
 *                   property="organization_id",
 *                   description="Organization Id",
 *                   type="integer"
@@ -120,16 +130,16 @@
 *           )
 *       )
 *   ),
-*      
+*
 *       @OA\Response(
 *          response=200,
 *          description="successful operation",
-*          @OA\JsonContent(ref="#/components/schemas/Group")   
+*          @OA\JsonContent(ref="#/components/schemas/Group")
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*      
+*
 * )
-* 
+*
 */
 
 /**
@@ -209,15 +219,15 @@
 *              type="integer"
 *          )
 *      ),
-*      
+*
 *      @OA\Response(
 *          response=200,
-*          description="successful operation",   
+*          description="successful operation",
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*      
+*
 * )
-* 
+*
 */
 
 /**
@@ -249,16 +259,16 @@
 *           )
 *       )
 *   ),
-*      
+*
 *       @OA\Response(
 *          response=200,
 *          description="successful operation",
-*          @OA\JsonContent(ref="#/components/schemas/Group")   
+*          @OA\JsonContent(ref="#/components/schemas/Group")
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*      
+*
 * )
-* 
+*
 */
 
 /**
@@ -290,13 +300,13 @@
 *           )
 *       )
 *   ),
-*      
+*
 *       @OA\Response(
 *          response=200,
 *          description="successful operation",
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*      
+*
 * )
-* 
+*
 */

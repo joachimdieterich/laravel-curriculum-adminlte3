@@ -262,6 +262,7 @@ To generate a metadataset for API ```/v1/curricula/metadatasets?password={passwo
 ```bash
 php artisan curriculum:metadataset 001
 ```
+Update: Metadatasets now can be created via ```/metadatasets``` in the frontend.
 
 ### Further information
 

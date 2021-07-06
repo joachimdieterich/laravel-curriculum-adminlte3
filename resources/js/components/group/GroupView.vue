@@ -91,7 +91,7 @@
                 </a>
             </li>-->
 
-            <li v-permission="'group_enrolment'"
+            <li v-permission="'group_edit'"
                 class="nav-item ml-auto">
                 <a class="nav-link link-muted"
                    :href="'/groups/'+ group.id +'/edit'"

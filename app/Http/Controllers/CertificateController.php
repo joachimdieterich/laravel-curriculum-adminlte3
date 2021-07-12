@@ -282,7 +282,7 @@ class CertificateController extends Controller
             );
             //end progress
 
-            $filename = date("Y-m-d_H-i-s").$user->lastname."_".$user->firstname.".pdf";
+            $filename = date("Y-m-d_H-i-s").str_replace_special_chars($user->lastname."_".$user->firstname).".pdf";//Username escape german umlaute
             $path     = "users/".auth()->user()->id."/";
             $pathOfNewFile = $this->buildPdf($html, $path, $filename);
 
@@ -353,9 +353,10 @@ class CertificateController extends Controller
             }
         }
 
-        $timestamp = date("Y-m-d_H-i-s");
+        //$timestamp = date("Y-m-d_H-i-s");
         $html .='</tbody></table>';
-        $filename = $timestamp.$user->lastname."_".$user->firstname.".pdf";
+        $filename = date("Y-m-d_H-i-s").str_replace_special_chars($user->lastname."_".$user->firstname).".pdf";//Username escape german umlaute
+        //$filename = $timestamp.$user->lastname."_".$user->firstname.".pdf";
         $path = "users/".auth()->user()->id."/";
 
         if (request()->wantsJson()){

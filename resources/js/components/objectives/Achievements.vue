@@ -3,7 +3,7 @@
 
     <table class="table m-0 border-top-0"
            style="border-top: 0"
-           v-permission="'achievement_create'"
+           v-permission="'achievement_create_student'"
            v-hide-if-permission="'achievement_access'"
            >
         <thead class=" border-top-0">
@@ -17,10 +17,23 @@
         </thead>
         <tbody>
         <tr >
-            <td>{{ objective.achievements[0].user.firstname }} {{ objective.achievements[0].user.lastname }}</td>
-            <td>{{ objective.achievements[0].created_at }}</td>
-            <td>{{ objective.achievements[0].updated_at }}</td>
-            <td>{{ objective.achievements[0].owner.firstname }} {{ objective.achievements[0].owner.lastname }}</td>
+
+            <td v-if="objective.achievements[0]" >
+                {{ objective.achievements[0].user.firstname }} {{ objective.achievements[0].user.lastname }}
+            </td>
+            <td v-else></td>
+            <td v-if="objective.achievements[0]" >
+                {{ objective.achievements[0].created_at }}
+            </td>
+            <td v-else></td>
+            <td v-if="objective.achievements[0]" >
+                {{ objective.achievements[0].updated_at }}
+            </td>
+            <td v-else></td>
+            <td v-if="objective.achievements[0]" >
+                {{ objective.achievements[0].owner.firstname }} {{ objective.achievements[0].owner.lastname }}
+            </td>
+            <td v-else></td>
             <td>
                 <AchievementIndicator
                     v-permission="'achievement_create'"
@@ -60,15 +73,35 @@
             <th class="border-top-0">{{trans('global.created_at')}}</th>
             <th class="border-top-0">{{trans('global.updated_at')}}</th>
             <th class="border-top-0">{{trans('global.teacher')}}</th>
+<!--            <th class="border-top-0">Comment</th>-->
             <th class="border-top-0">Status</th>
         </tr>
         </thead>
         <tbody>
             <tr v-for="(item,index) in users" >
                 <td>{{ item.firstname }} {{ item.lastname }}</td>
-                <td>{{ currentUser(item.id).achievements[0].created_at }}</td>
-                <td>{{ currentUser(item.id).achievements[0].updated_at }}</td>
-                <td>{{ currentUser(item.id).achievements[0].owner.firstname }} {{ currentUser(item.id).achievements[0].owner.lastname }}</td>
+                <td
+                    v-if="currentUser(item.id).achievements[0]" >
+                    {{ currentUser(item.id).achievements[0].created_at }}
+                </td>
+                <td v-else></td>
+                <td
+                    v-if="currentUser(item.id).achievements[0]">
+                    {{ currentUser(item.id).achievements[0].updated_at }}
+                </td>
+                <td v-else></td>
+                <td
+                    v-if="currentUser(item.id).achievements[0]">
+                    {{ currentUser(item.id).achievements[0].owner.firstname }} {{ currentUser(item.id).achievements[0].owner.lastname }}
+                </td>
+                <td v-else></td>
+<!--                <td v-if="currentUser(item.id).achievements[0]">
+                    <i style="font-size:18px;"
+                       class="far fa-comment-alt text-muted pointer"
+                       @click.prevent="$modal.show('note-modal', {'method': 'post', 'noteable_type': 'App\\Achievement', 'noteable_id': currentUser(item.id).achievements[0].id})">
+                    </i>
+                </td>-->
+                <td v-else></td>
                 <td>
                     <AchievementIndicator
                         v-permission="'achievement_create'"
@@ -81,7 +114,7 @@
             </tr>
         </tbody>
     </table>
-
+    <note-modal></note-modal>
 </div>
 
 </template>

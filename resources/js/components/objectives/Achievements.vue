@@ -100,8 +100,8 @@
                        class="far fa-comment-alt text-muted pointer"
                        @click.prevent="$modal.show('note-modal', {'method': 'post', 'noteable_type': 'App\\Achievement', 'noteable_id': currentUser(item.id).achievements[0].id})">
                     </i>
-                </td>-->
-                <td v-else></td>
+                </td>
+                <td v-else></td>-->
                 <td>
                     <AchievementIndicator
                         v-permission="'achievement_create'"

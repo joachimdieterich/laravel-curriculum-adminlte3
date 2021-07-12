@@ -2,10 +2,12 @@
 
 @section('title')
     <small>{{ $kanban->title }} </small>
+    @can('kanban_create')
     <button class="btn btn-flat"
             onclick="app.__vue__.$modal.show('subscribe-modal',  {'modelId': {{ $kanban->id }}, 'modelUrl': 'kanban' });">
         <i class="fa fa-share-alt text-secondary"></i>
     </button>
+    @endcan
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item">

@@ -30,25 +30,25 @@
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                 <ul class="nav nav-pills">
                   <!-- User -->
-                  <li class="nav-item" v-can="'kanban_create'">
+                  <li class="nav-item" >
                       <a class="nav-link active show" href="#user_subscription" data-toggle="tab">
                           <i class="fa fa-user mr-3"></i>{{ trans('global.user.title') }}
                       </a>
                   </li>
                   <!-- Group -->
-                  <li class="nav-item" v-can="'kanban_create'">
+                  <li class="nav-item" >
                       <a class="nav-link" href="#group_subscription" data-toggle="tab">
                           <i class="fa fa-users mr-3"></i>{{ trans('global.group.title') }}
                       </a>
                   </li>
                   <!-- Organization -->
-                  <li class="nav-item" v-can="'kanban_create'">
+                  <li class="nav-item" >
                       <a class="nav-link" href="#organization_subscription" data-toggle="tab" >
                           <i class="fa fa-university mr-3"></i>{{ trans('global.organization.title') }}
                       </a>
                   </li>
                   <!-- Global -->
-<!--                  <li class="nav-item" v-can="'kanban_create'">
+<!--                  <li class="nav-item" >
                       <a class="nav-link" href="#global_subscription" data-toggle="tab" >
                           <i class="sc-icon-dd icon-curriculum text-secondary mr-3"></i>{{ trans('global.all') }}
                       </a>
@@ -57,7 +57,7 @@
 
                 <div class="tab-content pt-2">
                     <!-- User Tab -->
-                    <div class="tab-pane active show" id="user_subscription" v-can="'kanban_create'">
+                    <div class="tab-pane active show" id="user_subscription" >
                          <div class="form-group pt-2">
                             <select name="users"
                                     id="users"
@@ -69,6 +69,7 @@
                             </select>
                         </div>
                         <subscribers
+                            v-if="typeof subscribers.subscriptions != 'undefined'"
                             :modelUrl="modelUrl"
                             :subscriptions="subscribers.subscriptions"
                             :subscribing_model="'App\\User'"/>
@@ -77,7 +78,7 @@
 
 
                     <!-- Group Tab -->
-                    <div class="tab-pane" id="group_subscription" v-can="'kanban_create'">
+                    <div class="tab-pane" id="group_subscription">
                          <div class="form-group pt-2 ">
                             <select name="groups"
                                     id="groups"
@@ -89,14 +90,14 @@
                             </select>
                         </div>
                         <subscribers
+                            v-if="typeof subscribers.subscriptions != 'undefined'"
                             :modelUrl="modelUrl"
                             :subscriptions="subscribers.subscriptions"
                             :subscribing_model="'App\\Group'"/>
-
                     </div>
 
                     <!-- Organization Tab -->
-                    <div class="tab-pane" id="organization_subscription" v-can="'kanban_create'">
+                    <div class="tab-pane" id="organization_subscription" >
                          <div class="form-group pt-2">
                             <select name="organizations"
                                     id="organizations"
@@ -107,17 +108,15 @@
                                  <option v-for="(item,index) in subscribers.organizations" v-bind:value="item.organization_id">{{ item.title }}</option>
                             </select>
                         </div>
-
-
-
                         <subscribers
+                            v-if="typeof subscribers.subscriptions != 'undefined'"
                             :modelUrl="modelUrl"
                             :subscriptions="subscribers.subscriptions"
                             :subscribing_model="'App\\Organization'"/>
                     </div>
 
                     <!-- Global Tab -->
-<!--                    <div class="tab-pane" id="global_subscription" v-can="'kanban_create'">
+<!--                    <div class="tab-pane" id="global_subscription" >
                          <div class="form-group pt-2">
                             select global
                         </div>

@@ -1,7 +1,13 @@
 @extends((Auth::user()->id == env('GUEST_USER')) ? 'layouts.contentonly' : 'layouts.master')
 
 @section('title')
-<small>{{ $logbook->title }}</small>
+    <small>{{ $logbook->title }}</small>
+    @can('logbook_create')
+    <button class="btn btn-flat"
+            onclick="app.__vue__.$modal.show('subscribe-modal',  {'modelId': {{ $logbook->id }}, 'modelUrl': 'logbook' });">
+        <i class="fa fa-share-alt text-secondary"></i>
+    </button>
+    @endcan
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item">
@@ -37,4 +43,5 @@
     <subscribe-objective-modal></subscribe-objective-modal>
     <task-modal></task-modal>
     <absence-modal></absence-modal>
+    <subscribe-modal></subscribe-modal>
 @endsection

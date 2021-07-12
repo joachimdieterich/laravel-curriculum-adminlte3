@@ -113,6 +113,7 @@ Route::group(['middleware' => 'auth'], function () {
     /* logbooks */
     Route::get('logbooks/list', 'LogbookController@list');
     Route::resource('logbooks', 'LogbookController');
+    Route::resource('logbookSubscriptions', 'LogbookSubscriptionController');
 
     /* logbook entries */
     Route::resource('logbookEntries', 'LogbookEntryController');
@@ -140,6 +141,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     /* Navigator Views */
     Route::resource('navigatorItems', 'NavigatorItemController');
+
+    /* Notes */
+   /* Route::resource('notes', 'NoteController');*/
 
     /* media */
     Route::post('mediumSubscriptions/destroy', 'MediumSubscriptionController@destroySubscription');

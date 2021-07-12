@@ -22,8 +22,7 @@
            v-bind:data-count="[white_count]"
            @click.prevent="achieve('0')">
         </i>
-
-<!--    <i style="font-size:18px;" class="fa fa-comments text-primary margin-r-5 pointer_hand"></i>-->
+        
     </span>
 
 </template>

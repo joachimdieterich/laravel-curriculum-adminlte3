@@ -27,7 +27,9 @@ class LogbookController extends Controller
             ->whereHas('subscriptions', function($query)  {
                  $query->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id'))
                     ->orWhere('subscribable_type', "App\Course")->whereIn('subscribable_id', auth()->user()->currentGroupEnrolments->pluck('course_id'));
-            })->get();
+            })
+            ->orWhere('owner_id',  auth()->user()->id )
+            ->get();
 
         $edit_gate = \Gate::allows('logbook_edit');
         $delete_gate = \Gate::allows('logbook_delete');

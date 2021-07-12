@@ -112,7 +112,7 @@ class ProgressController extends Controller
                                 ->whereIn('referenceable_id', $enabling_objectives->pluck('id'))
                                 ->whereRaw('(RIGHT(status,1) = "1" OR RIGHT(status,1) = "2")')
                                 ->get();
-        return Progress::updateOrCreate(
+        $progress = Progress::updateOrCreate(
             [
                 'referenceable_type' => $parent_model,
                 'referenceable_id' => $parent_id,
@@ -124,5 +124,31 @@ class ProgressController extends Controller
             ]
 
         );
+
+        $this->calculateProgress('App\Curriculum', $enabling_objectives->first()->curriculum_id, $user_id);
+
+        return $progress;
+    }
+
+    public function calculateCurriculumProgress($parent_model, $parent_id, $user_id)
+    {
+        $terminal_objectives = \App\TerminalObjective::where('curriculum_id', $parent_id)->get();
+        $terminal_objective_progresses = Progress::where('referenceable_type', 'App\\TerminalObjective')
+                ->where('associable_id', $user_id)
+                ->whereIn('referenceable_id', $terminal_objectives->pluck('id'))
+                ->get();
+
+        return Progress::updateOrCreate(
+            [
+                'referenceable_type' => $parent_model,
+                'referenceable_id' => $parent_id,
+                'associable_type' => 'App\\User',
+                'associable_id' => $user_id,
+            ],
+            [
+                'value' => floor( $terminal_objective_progresses->sum('value') / $terminal_objectives->count() )
+            ]
+        );
+
     }
 }

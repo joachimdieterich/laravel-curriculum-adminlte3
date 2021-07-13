@@ -15,17 +15,34 @@ class LogbookSubscriptionController extends Controller
      */
     public function index()
     {
-        if (request()->wantsJson()){
-            return [
-                'subscribers' =>
-                    [
-                        'users' =>  auth()->user()->users()->select('users.id','users.firstname','users.lastname')->get(),
-                        'groups' => auth()->user()->groups()->select('group_id','title')->get(),
-                        'organizations' => auth()->user()->organizations()->select('organization_id','title')->get(),
-                        'subscriptions' => Logbook::find(request('logbook_id'))->subscriptions()->with('subscribable')->get()
-                    ]
-            ];
+        $input = $this->validateRequest();
+        if (isset($input['subscribable_type']) AND isset($input['subscribable_id']))
+        {
+            $subscriptions = LogbookSubscription::where([
+                'subscribable_type' => $input['subscribable_type'],
+                'subscribable_id'   => $input['subscribable_id']
+            ]);
+
+
+            if (request()->wantsJson()){
+                return ['subscriptions' => $subscriptions->with(['logbook'])->get()];
+            }
         }
+        else
+        {
+            if (request()->wantsJson()){
+                return [
+                    'subscribers' =>
+                        [
+                            'users' =>  auth()->user()->users()->select('users.id','users.firstname','users.lastname')->get(),
+                            'groups' => auth()->user()->groups()->select('group_id','title')->get(),
+                            'organizations' => auth()->user()->organizations()->select('organization_id','title')->get(),
+                            'subscriptions' => Logbook::find(request('logbook_id'))->subscriptions()->with('subscribable')->get()
+                        ]
+                ];
+            }
+        }
+
     }
 
     /**

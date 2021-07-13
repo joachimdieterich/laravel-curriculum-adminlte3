@@ -31,6 +31,21 @@
                     <i class="fa fa-users"></i>
                 </a>
             </li>
+            <li class="nav-item "
+                v-permission="'logbook_access'"
+                @click="setLocalStorage('#group_'+group.id, '#group_logbooks_'+group.id);">
+                <a class="nav-link link-muted"
+                   :class="checkLocalStorage('#group_'+group.id, '#group_logbooks_'+group.id)"
+                   id="content-nav-tab"
+                   data-toggle="pill"
+                   href="#logbook-tab"
+                   role="tab"
+                   aria-controls="logbook-tab"
+                   aria-selected="true"
+                >
+                    <i class="fas fa-book "></i>
+                </a>
+            </li>
            <!-- <li class="nav-item">
                 <a class="nav-link link-muted"
                    id="content-nav-tab"
@@ -74,22 +89,7 @@
                     <i class="fa fa-book-open pr-2"></i>{{trans('global.glossar.create')}}
                 </a>
             </li>-->
-          <!-- <li class="nav-item "
-               v-permission="'logbook_access'">
-                <a v-if="logbooks"
-                   class="nav-link link-muted"
-                   :href="'/logbooks/'+ logbooks[0].id "
-                   id="logbook-nav-tab">
-                    <i class="fas fa-book pr-2"></i>{{trans('global.logbook.title_singular')}}
-                </a>
-                <a v-else
-                   v-permission="'logbook_create'"
-                   class="nav-link link-muted"
-                   :href="'/logbooks/create?subscribable_type=App\\Group&subscribable_id='+ group.id "
-                   id="logbook-nav-tab">
-                    <i class="fas fa-book pr-2"></i>{{trans('global.logbook.create')}}
-                </a>
-            </li>-->
+
 
             <li v-permission="'group_edit'"
                 class="nav-item ml-auto">
@@ -124,6 +124,18 @@
                     ref="Users"
                     :group="group"></users>
             </div>
+            <div v-permission="'logbook_access'"
+               class="tab-pane "
+                 :class="checkLocalStorage('#group_'+group.id, '#group_logbooks_'+group.id)"
+                id="logbook-tab"
+                role="tab"
+                aria-labelledby="logbook-nav-tab">
+                <logbooks
+                    ref="Logbooks"
+                    subscribable_type="App\Group"
+                    :subscribable_id="group.id"
+                ></logbooks>
+           </div>
             <!--<div class="tab-pane fade "
                  id="content-tab"
                  role="tab"
@@ -152,6 +164,7 @@
                 </glossars>
             </div>-->
 
+
         </div>
     </div>
 </template>
@@ -162,12 +175,12 @@
     import Media from '../media/Media';
     import Contents from '../content/Contents';
     import Users from "../users/Users";
+    import Logbooks from "../logbooks/Logbooks";
 
     export default {
         props: {
             'group': Array,
             'courses': Array,
-            'logbooks': Array,
         },
         data () {
             return {
@@ -181,6 +194,9 @@
             },
             loadGroupUsers: function() {
                 this.$refs.Users.loaderEvent();
+            },
+            loadLogbooks: function() {
+                this.$refs.Logbooks.loaderEvent();
             }
 
         },
@@ -192,7 +208,8 @@
             CourseItem,
             Media,
             Glossars,
-            Contents
+            Contents,
+            Logbooks
         }
 
     }

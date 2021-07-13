@@ -88,7 +88,7 @@
         },
         methods: {
             loaderEvent: function() {
-                axios.get('/groups/' + this.group.id)
+                axios.get('/groups/' + this.group.id + '?json=true')
                     .then(response => {
                         this.users = JSON.parse(response.data.users);
                     }).catch(e => {

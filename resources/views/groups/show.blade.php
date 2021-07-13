@@ -13,10 +13,8 @@
         <group-view
             :group="{{ $group }}"
             :courses="{{ $courses }}"
-            :logbooks="{{ $group->logbooks }}"
         >
         </group-view>
-        <br>
 {{--
         @foreach($group->curricula as $id => $curriculum)
             @include ('navigators.views.items.item', [ 'item' => $curriculum, 'onclick' => "location.href='/curricula/{$curriculum->id}';" , 'readonly' => true])

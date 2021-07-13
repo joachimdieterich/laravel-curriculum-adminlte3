@@ -1,7 +1,7 @@
 <template >
 <div>
 
-    <table class="table m-0 border-top-0"
+<!--    <table class="table m-0 border-top-0"
            style="border-top: 0"
            v-permission="'achievement_create_self_assessment'"
            v-hide-if-permission="'achievement_access'"
@@ -36,18 +36,26 @@
             <td v-else></td>
             <td>
                 <AchievementIndicator
+                    v-if="objective.achievements[0]"
                     v-permission="'achievement_create'"
                     :objective="objective"
                     :type="type"
                     :users="[objective.achievements[0].user.id]"
                     :settings="{'achievements' : false, 'edit': false}">
                 </AchievementIndicator>
+                <AchievementIndicator
+                    v-else
+                    v-permission="'achievement_create'"
+                    :objective="objective"
+                    :type="type"
+                    :settings="{'achievements' : false, 'edit': false}">
+                </AchievementIndicator>
             </td>
         </tr>
         </tbody>
-    </table>
+    </table>-->
 
-    <div v-if="this.groups.length !== 0"
+    <div v-if="this.groups.length"
          v-permission="'achievement_access'"
          class="form-group p-2" >
         <label for="achievements_group">
@@ -65,7 +73,7 @@
 
     <table class="table m-0 border-top-0"
            style="border-top: 0"
-           v-if="(this.objectiveWithAchievement.achievements.length !== 0)"
+           v-if="this.users.length"
            v-permission="'achievement_access'">
         <thead class=" border-top-0">
         <tr class="border-top-0">
@@ -114,7 +122,7 @@
             </tr>
         </tbody>
     </table>
-    <note-modal></note-modal>
+<!--    <note-modal></note-modal>-->
 </div>
 
 </template>

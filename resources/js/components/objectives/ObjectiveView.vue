@@ -99,7 +99,7 @@
                     </a>
                 </li>
 
-                <li v-can="'achievement_create'"
+                <li v-can="'achievement_access'"
                     v-if="this.type === 'enabling'"
                     class="nav-item"
                     @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_achievements_'+objective.id)">
@@ -233,7 +233,7 @@
                     ></quotes>
                 </div>
 
-                <div v-can="'achievement_create'"
+                <div v-can="'achievement_access'"
                      class="tab-pane pt-2 box"
                      :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_achievements_'+objective.id)"
                      id="achievements">

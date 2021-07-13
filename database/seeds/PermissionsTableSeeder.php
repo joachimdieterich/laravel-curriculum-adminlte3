@@ -1052,7 +1052,98 @@ class PermissionsTableSeeder extends Seeder
                 'title'     =>'metadataset_delete',
                 'created_at'=>'2020-06-07 17:57:44',
                 'updated_at'=>'2020-06-07 17:57:44',
+            ],
+            [
+                'id'        => '198',
+                'title'     =>'artefact_access',
+                'created_at'=>'2020-06-07 17:57:10',
+                'updated_at'=>'2020-06-07 17:57:10',
+            ] ,
+            [
+                'id'        => '199',
+                'title'     =>'artefact_create',
+                'created_at'=>'2020-06-07 17:57:19',
+                'updated_at'=>'2020-06-07 17:57:19',
+            ] ,
+            [
+                'id'        => '200',
+                'title'     =>'artefact_show',
+                'created_at'=>'2020-06-07 17:57:27',
+                'updated_at'=>'2020-06-07 17:57:27',
+            ] ,
+            [
+                'id'        => '201',
+                'title'     =>'artefact_edit',
+                'created_at'=>'2020-06-07 17:57:35',
+                'updated_at'=>'2020-06-07 17:57:35',
+            ] ,
+            [
+                'id'        => '202',
+                'title'     =>'artefact_delete',
+                'created_at'=>'2020-06-07 17:57:44',
+                'updated_at'=>'2020-06-07 17:57:44',
+            ],
+            [
+                'id'        => '203',
+                'title'     =>'contactdetail_access',
+                'created_at'=>'2020-06-07 17:57:10',
+                'updated_at'=>'2020-06-07 17:57:10',
+            ] ,
+            [
+                'id'        => '204',
+                'title'     =>'contactdetail_create',
+                'created_at'=>'2020-06-07 17:57:19',
+                'updated_at'=>'2020-06-07 17:57:19',
+            ] ,
+            [
+                'id'        => '205',
+                'title'     =>'contactdetail_show',
+                'created_at'=>'2020-06-07 17:57:27',
+                'updated_at'=>'2020-06-07 17:57:27',
+            ] ,
+            [
+                'id'        => '206',
+                'title'     =>'contactdetail_edit',
+                'created_at'=>'2020-06-07 17:57:35',
+                'updated_at'=>'2020-06-07 17:57:35',
+            ] ,
+            [
+                'id'        => '207',
+                'title'     =>'contactdetail_delete',
+                'created_at'=>'2020-06-07 17:57:44',
+                'updated_at'=>'2020-06-07 17:57:44',
+            ],
+            [
+                'id'        => '208',
+                'title'     =>'organization_edit_address',
+                'created_at'=>'2020-06-07 17:57:10',
+                'updated_at'=>'2020-06-07 17:57:10',
+            ] ,
+            [
+                'id'        => '209',
+                'title'     =>'App\Curriculum_content_create',
+                'created_at'=>'2020-06-07 17:57:19',
+                'updated_at'=>'2020-06-07 17:57:19',
+            ] ,
+            [
+                'id'        => '210',
+                'title'     =>'App\LogbookEntry_content_create',
+                'created_at'=>'2020-06-07 17:57:27',
+                'updated_at'=>'2020-06-07 17:57:27',
+            ] ,
+            [
+                'id'        => '211',
+                'title'     =>'App\Task_content_create',
+                'created_at'=>'2020-06-07 17:57:35',
+                'updated_at'=>'2020-06-07 17:57:35',
+            ] ,
+            [
+                'id'        => '212',
+                'title'     =>'achievement_create_self_assessment',
+                'created_at'=>'2020-06-07 17:57:44',
+                'updated_at'=>'2020-06-07 17:57:44',
             ]
+
 
 
         ];

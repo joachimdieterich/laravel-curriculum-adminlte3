@@ -19,7 +19,7 @@ class AchievementController extends Controller
      */
     public function store(Request $request)
     {
-        abort_unless((\Gate::allows('achievement_create') OR \Gate::allows('achievement_create_student')), 403);
+        abort_unless((\Gate::allows('achievement_create') OR \Gate::allows('achievement_create_self_assessment')), 403);
 
         $input = $this->validateRequest();
 
@@ -68,7 +68,7 @@ class AchievementController extends Controller
             abort_unless((auth()->user()->role()->id <= 5), 403); //only Teacher and roles above
             $status[1] = $input['status'];
         }
-        else if(\Gate::allows('achievement_create_student')) // self assesment
+        else if(\Gate::allows('achievement_create_self_assessment')) // self_assessment
         {
             $status[0] = $input['status'];
         }

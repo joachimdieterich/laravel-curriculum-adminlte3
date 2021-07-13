@@ -3,7 +3,7 @@
 
     <table class="table m-0 border-top-0"
            style="border-top: 0"
-           v-permission="'achievement_create_student'"
+           v-permission="'achievement_create_self_assessment'"
            v-hide-if-permission="'achievement_access'"
            >
         <thead class=" border-top-0">

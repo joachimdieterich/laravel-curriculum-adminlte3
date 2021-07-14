@@ -6,6 +6,7 @@ use App\Content;
 use App\Medium;
 use App\Curriculum;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class CurriculumExportController extends Controller
@@ -90,6 +91,10 @@ class CurriculumExportController extends Controller
 
         $this->zipFiles($filename, $exportFolder);
         Storage::deleteDirectory($exportFolder);                                // clean up
+
+        if (request()->wantsJson()){
+            return ['path' => $this->addFileToDb($filename.".cur")];
+        }
     }
 
     private function checkMediaLinksInContent($array, $exportFolder)
@@ -186,6 +191,33 @@ class CurriculumExportController extends Controller
             }
         }
         $zip->close();
+    }
+
+    protected function addFileToDb($filename)
+    {
+        $media = new Medium([
+            'path'          => "/export/",
+            'title'         => $filename,
+            'medium_name'   => $filename,
+            'description'   => '',
+            'author'        => auth()->user()->fullName(),
+            'publisher'     => '',
+            'city'          => '',
+            'date'          => date("Y-m-d_H-i-s"),
+            'size'          => File::size(Storage::disk('local')->path("export/".$filename)),
+            'mime_type'     => File::mimeType(Storage::disk('local')->path("export/".$filename)),
+            'license_id'    => 2,
+            'public'        => 0,           //certificates can not be accessed without owership/subscription
+            'owner_id'      => auth()->user()->id,
+        ]);
+        $media->save();
+
+        /*
+         * add subscription
+         */
+        $media->subscribe(auth()->user(), 4);
+
+        return  $media->path();
     }
 
 }

@@ -163,7 +163,7 @@ class MediumController extends Controller
          */
         if (($medium->public == true) OR ($medium->owner_id == auth()->user()->id))
         {
-            return ($medium->mime_type != 'url') ? response()->file($path) : redirect($medium->path); //return file or url
+            return ($medium->mime_type != 'url') ? response()->file($path, ['Content-Disposition' => 'filename="'.$medium->medium_name.'"']) : redirect($medium->path); //return file or url
         }
 
         /* checkIfUserHasSubscription and visibility*/

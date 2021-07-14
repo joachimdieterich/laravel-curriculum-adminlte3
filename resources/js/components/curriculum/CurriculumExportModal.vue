@@ -34,8 +34,23 @@
 
             <div class="card-footer">
                 <span class="pull-right">
-                     <button type="button" class="btn btn-default" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
-                     <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
+                     <button id="btn_generate"
+                             v-if="download_url === false"
+                             class="btn btn-primary"  >
+                         <div  class="text-center text-white">
+                            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                            <span class="sr-only">Loading...</span>
+                         </div>
+                     </button>
+
+                     <a v-if="download_url" id="btn_download"
+                        class="btn btn-primary hidden"
+                        :href="download_url"
+                        target="_blank"
+                        @click="$modal.hide('curriculum-export-modal')">
+                         <i class="fa fa-download"></i>
+                         {{ trans('global.downloadFile') }}
+                     </a>
                 </span>
             </div>
         </div>
@@ -46,7 +61,8 @@
     export default {
         data() {
             return {
-                id: Number
+                id: Number,
+                download_url: false
             }
         },
         methods: {
@@ -61,7 +77,8 @@
             process() {
                 axios.get('/curricula/' + this.id + '/export')
                      .then((response) => {
-                         this.$modal.hide('curriculum-export-modal');
+                         this.download_url = response.data.path;
+                         //this.$modal.hide('curriculum-export-modal');
                      });
             },
 

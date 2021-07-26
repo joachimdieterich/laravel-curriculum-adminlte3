@@ -30,7 +30,7 @@
             </div>
 
             <ul class="nav nav-tabs ">
-                <li v-if="objective.description != ''"
+                <li v-if="objective.description !== ''"
                     class="nav-item small"
                     @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_description_'+objective.id)"
                 >
@@ -47,7 +47,7 @@
                     @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_related_objectives_'+objective.id)"
                 >
                     <a class="nav-link small link-muted"
-                       :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_description_'+objective.id)"
+                       :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_related_objectives_'+objective.id)"
                        href="#related_objectives"
                        data-toggle="tab">
                         <i class="fa fa-sitemap pr-1"></i>
@@ -192,14 +192,12 @@
                 <!--                    1 Files -->
                 <div class="tab-pane"
                      :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_tab_media_'+objective.id)"
-                     id="tab_media"
-                     name="tab_media">
+                     id="tab_media">
                     <div class="row">
                         <div class="col-12">
                              <div
                                 class="tab-pane active show"
-                                id="sub_medium"
-                                name="sub_medium">
+                                id="sub_medium">
                                  <objectiveMedia
                                      ref="Media"
                                      :model="model"
@@ -314,7 +312,7 @@
                 this.$modal.show(this.type+'-objective-modal', {'objective': this.objective, 'method': 'PATCH' });
             },
             open(modal) {
-                if (modal == 'reference-objective-modal'){
+                if (modal === 'reference-objective-modal'){
                     this.$modal.show(modal, {'referenceable_type': this.model, 'referenceable_id': this.objective.id, 'requestUrl': '/referenceSubscriptions'});
                 } else {
                     this.$modal.show(modal, {'referenceable_type': this.model, 'referenceable_id': this.objective.id});
@@ -351,6 +349,7 @@
 
                 }
             }).catch(e => {
+                console.log(e)
                 //this.errors = response.data.errors;
             });
 
@@ -360,6 +359,7 @@
                     this.quote_curricula_list = response.data.curricula_list;
                  }
             }).catch(e => {
+                console.log(e)
                 //this.errors = response.data.errors;
             });
 

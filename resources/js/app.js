@@ -87,6 +87,7 @@ Vue.component('content-subscription-modal', require('./components/content/Conten
 Vue.component('reference-objective-modal', require('./components/reference/ReferenceObjectiveModal.vue').default);
 Vue.component('medium-modal', require('./components/media/MediumModal.vue').default);
 Vue.component('medium-create-modal', require('./components/media/MediumCreateModal.vue').default);
+Vue.component('note-modal', require('./components/note/NoteModal.vue').default);
 Vue.component('objective-medium-modal', require('./components/objectives/ObjectiveMediumModal.vue').default);
 Vue.component('certificate-generate-modal', require('./components/certificate/GenerateCertificateModal.vue').default);
 Vue.component('logbook', require('./components/logbooks/Logbook.vue').default);

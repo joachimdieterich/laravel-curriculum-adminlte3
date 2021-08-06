@@ -16,7 +16,7 @@
                 "infoBoxClass" =>  'info-box-icon bg-info elevation-1',
                 "infoBoxIcon" =>  'fas fa-th',
                 "infoText" =>  "Curricula",
-                "infoBoxNumber" =>  count(auth()->user()->curricula()).'/'.App\Curriculum::all()->count(),
+                "infoBoxNumber" =>  count(auth()->user()->curricula()).'/'.App\Curriculum::count(),
             ])
         @endcan
 
@@ -39,7 +39,7 @@
                 "infoBoxClass" =>  'info-box-icon bg-success elevation-1',
                 "infoBoxIcon" =>  'fa fa-tasks',
                 "infoText" =>  trans('global.task.title'),
-                "infoBoxNumber" =>  App\Task::all()->count(),
+                "infoBoxNumber" =>  App\Task::count(),
             ])
           @endcan
           @can('organization_access')
@@ -49,7 +49,7 @@
                 "infoBoxClass" =>  'info-box-icon bg-warning elevation-1',
                 "infoBoxIcon" =>  'fas fa-university',
                 "infoText" =>  trans('global.organization.title'),
-                "infoBoxNumber" =>  count(auth()->user()->organizations).'/'.App\Organization::all()->count(),
+                "infoBoxNumber" =>  count(auth()->user()->organizations).'/'.App\Organization::count(),
                 "include" =>  'home.organizationsInfo',
             ])
           @endcan
@@ -60,7 +60,7 @@
                 "infoBoxClass" =>  'info-box-icon bg-purple elevation-1',
                 "infoBoxIcon" =>  'fas fa-users',
                 "infoText" =>  trans('global.group.title'),
-                "infoBoxNumber" =>  count(auth()->user()->groups).'/'.App\Group::all()->count(),
+                "infoBoxNumber" =>  count(auth()->user()->groups).'/'.App\Group::count(),
                 "include" =>  'home.groupsInfo',
             ])
           @endcan
@@ -71,7 +71,7 @@
                 "infoBoxClass" =>  'info-box-icon bg-primary elevation-1',
                 "infoBoxIcon" =>  'fas fa-user',
                 "infoText" =>  trans('global.user.title'),
-                "infoBoxNumber" =>  count(App\Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->get()).'/'.App\User::all()->count(),
+                "infoBoxNumber" =>  count(App\Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->get()).'/'.App\User::count(),
             ])
           @endif
           @can('navigator_access')
@@ -81,7 +81,7 @@
                 "infoBoxClass" =>  'info-box-icon bg-olive elevation-1',
                 "infoBoxIcon" =>  'fa fa-map-signs',
                 "infoText" =>  trans('global.navigator.title'),
-                "infoBoxNumber" =>  App\Navigator::all()->count(),
+                "infoBoxNumber" =>  App\Navigator::count(),
             ])
           @endcan
           @can('period_access')
@@ -91,7 +91,7 @@
                 "infoBoxClass" =>  'info-box-icon bg-pink elevation-1',
                 "infoBoxIcon" =>  'fa fa-history',
                 "infoText" =>  trans('global.period.title'),
-                "infoBoxNumber" =>  App\Period::all()->count(),
+                "infoBoxNumber" =>  App\Period::count(),
             ])
           @endcan
 
@@ -101,9 +101,9 @@
             "infoBoxRoute" =>  '',
             "infoBoxClass" =>  'info-box-icon bg-pink elevation-1',
             "infoBoxIcon" =>  'fas fa-chart-bar',
-            "infoText" =>   trans('global.dashboard.statistic_archievements') ,
+            "infoText" =>   trans('global.dashboard.statistic_achievements') ,
             "infoBoxNumber" =>  trans('global.dashboard.today').': '.count(auth()->user()->achievements_today()->where('status', '>=', 10)->where('status', '<', 30))
-            .'<br>'.trans('global.dashboard.statistic_archievements_total').': '.count(auth()->user()->achievements->where('status', '>=', 10)->where('status', '<', 30)),
+            .'<br>'.trans('global.dashboard.statistic_achievements_total').': '.count(auth()->user()->achievements->where('status', '>=', 10)->where('status', '<', 30)),
         ])
 
         @include('partials.infobox', [

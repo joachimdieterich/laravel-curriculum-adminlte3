@@ -2,11 +2,11 @@
 <!-- Brand Logo/menu -->
 @if(  env('BRAND_MENU_TITLE_1') )
 <div id="topnav" class="bg-lime">
-    <button 
-        type="button" 
-        data-toggle="dropdown" 
+    <button
+        type="button"
+        data-toggle="dropdown"
         class="btn dropdown-menu-lime p-0 m-0" >
-        <div id="mainpage-0" 
+        <div id="mainpage-0"
              class="logo">
             <svg  class="p-1" version="1.0" xmlns="http://www.w3.org/2000/svg"
                 height="32.000000pt" viewBox="0 0 400.000000 460.000000"
@@ -37,14 +37,14 @@
             <span class="brand-txt pl-3">{{ env('APP_NAME') }} <i class="fa fa-chevron-down"></i></span>
 
         </div>
-    </button> 
+    </button>
     <div class="dropdown-menu bg-lime dropdown-menu-lime elevation-2">
     @php ($brand_iterator = 1)
     @while ( env('BRAND_MENU_TITLE_'.$brand_iterator) )
-        <a href="{{ env('BRAND_MENU_HREF_'.$brand_iterator) }}" class=" dropdown-item">
-            <i class="brand-dropdown_icon {{ env('BRAND_MENU_ICON_'.$brand_iterator) }} text-white"></i> 
+        <a href="{{ env('BRAND_MENU_HREF_'.$brand_iterator) }}" class="dropdown-item">
+            <i class="brand-dropdown_icon {{ env('BRAND_MENU_ICON_'.$brand_iterator) }} fa-fw text-white"></i>
             <span  class="font-weight-light pl-1">{{ env('BRAND_MENU_TITLE_'.$brand_iterator) }}</span>
-        </a> 
+        </a>
     @php ($brand_iterator++)
     @endwhile
 
@@ -82,4 +82,3 @@
         <span class="pl-1 brand-text ">{{ env('APP_NAME') }}</span>
    </a>
 @endif
-    

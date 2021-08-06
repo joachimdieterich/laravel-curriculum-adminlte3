@@ -102,3 +102,7 @@ body {
 .hide-scrollbars::-webkit-scrollbar { width: 0 !important }
 .hide-scrollbars { overflow: -moz-scrollbars-none; }
 .hide-scrollbars { -ms-overflow-style: none; }
+
+.hide {
+    display: none;
+}

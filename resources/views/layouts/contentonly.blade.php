@@ -61,9 +61,10 @@
     <form id="logoutform" action="{{ route('logout') }}" method="POST" style="display: none;">
         {{ csrf_field() }}
     </form>
+    <script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script>
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
-    <script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script>
+
     @yield('scripts')
 
 </body>

@@ -108,7 +108,7 @@ echo json_encode([
             <!-- /.control-sidebar -->
         </div>
         <!-- ./wrapper -->
-
+        <script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script>
         <script src="{{ asset('js/app.js') }}"></script>
         <script src="{{ asset('node_modules/datatables.net/js/jquery.dataTables.min.js') }}"></script>
         <script src="{{ asset('node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
@@ -121,7 +121,7 @@ echo json_encode([
         <script src="{{ asset('node_modules/moment/js/moment.min.js') }}"></script>
         <script src="{{ asset('node_modules/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}"></script>
         <script src="{{ asset('js/main.js') }}"></script>
-        <script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script>
+
         <script>
             $(function() {
 //                let copyButtonTrans     = '{{ trans('global.datatables.copy') }}'

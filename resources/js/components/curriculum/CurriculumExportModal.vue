@@ -7,9 +7,7 @@
         draggable=".draggable"
         :resizable=true
         @before-open="beforeOpen"
-        @opened="opened"
-        @before-close="beforeClose"
-        style="z-index: 1000">
+        style="z-index: 1200">
         <div class="card"
              style="margin-bottom: 0px !important">
             <div class="card-header">
@@ -28,8 +26,6 @@
             </div>
 
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-
-
             </div>
 
             <div class="card-footer">
@@ -66,14 +62,6 @@
             }
         },
         methods: {
-            async load(id) {
-                try {
-                    //this.form.populate((await axios.get('/tasks/'+id)).data.message);
-                } catch(error) {
-                    //console.log('loading failed')
-                }
-            },
-
             process() {
                 axios.get('/curricula/' + this.id + '/export')
                      .then((response) => {
@@ -88,17 +76,9 @@
                     this.process()
                 }
              },
-            opened(){},
-            beforeClose(event) {},
-
             close(){
                 this.$modal.hide('curriculum-export-modal');
             },
-
-
-        },
-        components: {
-
         },
     }
 </script>

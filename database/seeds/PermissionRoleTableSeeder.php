@@ -181,6 +181,11 @@ class PermissionRoleTableSeeder extends Seeder
                 'message_show',
                 'message_edit',
                 'message_delete',
+                'note_access',
+                'note_create',
+                'note_show',
+                'note_edit',
+                'note_delete',
             ];
 
             return in_array($permission->title, $schooladmin_permission_list);
@@ -239,6 +244,11 @@ class PermissionRoleTableSeeder extends Seeder
                 'message_show',
                 'message_edit',
                 'message_delete',
+                'note_access',
+                'note_create',
+                'note_show',
+                'note_edit',
+                'note_delete',
             ];
 
             return in_array($permission->title, $teacher_permission_list);

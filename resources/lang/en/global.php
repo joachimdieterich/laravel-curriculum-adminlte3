@@ -79,6 +79,12 @@ return [
     'minutes'                              => 'Minutes',
     'sum'                                  => 'Sum',
     'active'                               => 'Active',
+    'App\Achievement'   => 'Achievement',
+    'App\Course'        => 'Course',
+    'App\Curriculum'    => 'Curriculum',
+    'App\User'          => 'User',
+    'App\Group'         => 'Group',
+    'App\Organization'  => 'Organization',
     'config'              =>[
         'title'          => 'Configs',
         'title_singular' => 'Config',
@@ -1113,5 +1119,19 @@ return [
         'create'            => 'Create artefact',
         'edit'              => 'Edit Artefact',
         'delete'            => 'Delete Artefact',
+    ],
+    'note' =>[
+        'title'             => 'Notes',
+        'title_singular'    => 'Note',
+        'create'            => 'Create note',
+        'edit'              => 'Edit note',
+        'delete'            => 'Delete note',
+        'delete_helper'     => 'Should the note be deleted?',
+        'fields'            => [
+            'id'            => 'ID',
+            'id_helper'     => '',
+            'content'       => 'Inhalt',
+            'content'       => '',
+        ],
     ],
 ];

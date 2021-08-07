@@ -143,7 +143,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('navigatorItems', 'NavigatorItemController');
 
     /* Notes */
-   /* Route::resource('notes', 'NoteController');*/
+    Route::resource('notes', 'NoteController');
 
     /* media */
     Route::post('mediumSubscriptions/destroy', 'MediumSubscriptionController@destroySubscription');

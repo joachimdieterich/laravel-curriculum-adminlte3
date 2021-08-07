@@ -31,12 +31,14 @@
             </small>
             <!-- General tools such as edit or delete-->
             <div class="tools">
-                <a onclick="deleteTask(task.task)" >
+                <a v-permission="'task_delete, ' + subscribable_type + '_task_delete'"
+                   onclick="deleteTask(task.task)" >
                     <i class="fas fa-trash"></i>
                 </a>
             </div>
         </li>
-        <li class="pointer bg-white">
+        <li v-permission="'task_create, ' + subscribable_type + '_task_create'"
+            class="pointer bg-white">
             <a @click.prevent="open('task-modal');">
                 <i class="px-2 fa fa-plus text-muted"></i> {{ trans('global.task.create')}}
             </a>

@@ -21,10 +21,13 @@ class GroupsController extends Controller
     {
         abort_unless(\Gate::allows('group_access'), 403);
 
-        $curricula =  (is_admin()) ? Curriculum::all() : Curriculum::where('type_id', 1)->get();
-
-        return view('groups.index')
-          ->with(compact('curricula'));
+        if (request()->wantsJson()){
+            return ['groups' => json_encode(auth()->user()->groups)];
+        } else {
+            $curricula =  (is_admin()) ? Curriculum::all() : Curriculum::where('type_id', 1)->get();
+            return view('groups.index')
+                ->with(compact('curricula'));
+        }
     }
 
     public function list()

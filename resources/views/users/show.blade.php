@@ -93,16 +93,26 @@
         <div class="card">
             <div class="card-header p-2">
                 <ul class="nav nav-pills">
-                    <li class="nav-item"><a class="nav-link active show" href="#contact" data-toggle="tab">{{ trans('global.contactdetail.title_singular') }}</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link active show" href="#contact" data-toggle="tab">
+                            {{ trans('global.contactdetail.title_singular') }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link show" href="#notes" data-toggle="tab">
+                            {{ trans('global.note.title') }}
+                        </a>
+                    </li>
                 </ul>
+
             </div><!-- /.card-header -->
             <div class="card-body">
                 <div class="tab-content">
                     <div class="tab-pane active show" id="contact">
-                        @if(auth()->user()->contactDetail != null)
+                        @if($user->contactDetail != null)
                             @include('partials.users.contactdetails', [
-                                'contactdetail' => auth()->user()->contactDetail,
-                                'organization'  => \App\Organization::find(auth()->user()->current_organization_id)
+                                'contactdetail' => $user->contactDetail,
+                                'organization'  => \App\Organization::find($user->current_organization_id)
                                 ])
                         @else
                             <a
@@ -112,6 +122,11 @@
                                 {{ trans('global.contactdetail.create') }}
                             </a>
                         @endif
+                    </div><!-- /.tab-pane -->
+                    <div class="tab-pane show" id="notes">
+                        <notes notable_type="App\User"
+                               notable_id="{{ $user->id }}"
+                               :show_tabs=false ></notes>
                     </div><!-- /.tab-pane -->
 
                 </div><!-- /.tab-content -->

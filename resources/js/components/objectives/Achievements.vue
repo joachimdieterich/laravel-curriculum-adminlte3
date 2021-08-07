@@ -1,7 +1,7 @@
 <template >
 <div>
 
-<!--    <table class="table m-0 border-top-0"
+    <table class="table m-0 border-top-0"
            style="border-top: 0"
            v-permission="'achievement_create_self_assessment'"
            v-hide-if-permission="'achievement_access'"
@@ -53,7 +53,7 @@
             </td>
         </tr>
         </tbody>
-    </table>-->
+    </table>
 
     <div v-if="this.groups.length"
          v-permission="'achievement_access'"
@@ -81,7 +81,7 @@
             <th class="border-top-0">{{trans('global.created_at')}}</th>
             <th class="border-top-0">{{trans('global.updated_at')}}</th>
             <th class="border-top-0">{{trans('global.teacher')}}</th>
-<!--            <th class="border-top-0">Comment</th>-->
+            <th class="border-top-0">{{trans('global.notes')}}</th>
             <th class="border-top-0">Status</th>
         </tr>
         </thead>
@@ -103,13 +103,13 @@
                     {{ currentUser(item.id).achievements[0].owner.firstname }} {{ currentUser(item.id).achievements[0].owner.lastname }}
                 </td>
                 <td v-else></td>
-<!--                <td v-if="currentUser(item.id).achievements[0]">
+                <td v-if="currentUser(item.id).achievements[0]">
                     <i style="font-size:18px;"
-                       class="far fa-comment-alt text-muted pointer"
-                       @click.prevent="$modal.show('note-modal', {'method': 'post', 'noteable_type': 'App\\Achievement', 'noteable_id': currentUser(item.id).achievements[0].id})">
+                       class="far fa-sticky-note text-muted pointer"
+                       @click.prevent="$modal.show('note-modal', {'method': 'post', 'notable_type': 'App\\Achievement', 'notable_id': currentUser(item.id).achievements[0].id,'show_tabs': false}) ">
                     </i>
                 </td>
-                <td v-else></td>-->
+                <td v-else></td>
                 <td>
                     <AchievementIndicator
                         v-permission="'achievement_create'"
@@ -122,7 +122,7 @@
             </tr>
         </tbody>
     </table>
-<!--    <note-modal></note-modal>-->
+    <note-modal></note-modal>
 </div>
 
 </template>

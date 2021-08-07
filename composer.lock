@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "edab57e2ebab06a52779c57df806ff17",
+    "content-hash": "d37b9ac9a0fcd8185c18f17eaf52934c",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -70,127 +70,6 @@
                 "source": "https://github.com/aacotroneo/laravel-saml2/tree/master"
             },
             "time": "2019-10-01T23:05:14+00:00"
-        },
-        {
-            "name": "arcanedev/laravel-notes",
-            "version": "6.2.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ARCANEDEV/LaravelNotes.git",
-                "reference": "e5dd4f19796a930fe007fb2f346030fbddc405af"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ARCANEDEV/LaravelNotes/zipball/e5dd4f19796a930fe007fb2f346030fbddc405af",
-                "reference": "e5dd4f19796a930fe007fb2f346030fbddc405af",
-                "shasum": ""
-            },
-            "require": {
-                "arcanedev/support": "^5.1",
-                "php": "^7.2.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.3.1",
-                "orchestra/testbench": "^4.6",
-                "phpunit/phpunit": "^8.4|^9.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Arcanedev\\LaravelNotes\\LaravelNotesServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Arcanedev\\LaravelNotes\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "ARCANEDEV",
-                    "email": "arcanedev.maroc@gmail.com",
-                    "homepage": "https://github.com/arcanedev-maroc",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Provides the ability to add notes to your Eloquent models in Laravel.",
-            "homepage": "https://github.com/ARCANEDEV/LaravelNotes",
-            "keywords": [
-                "arcanedev",
-                "laravel",
-                "noteable",
-                "notes"
-            ],
-            "support": {
-                "issues": "https://github.com/ARCANEDEV/LaravelNotes/issues",
-                "source": "https://github.com/ARCANEDEV/LaravelNotes/tree/master"
-            },
-            "time": "2020-03-11T08:27:22+00:00"
-        },
-        {
-            "name": "arcanedev/support",
-            "version": "5.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ARCANEDEV/Support.git",
-                "reference": "1845603e86d7fc705c7159612b87a278c971789f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ARCANEDEV/Support/zipball/1845603e86d7fc705c7159612b87a278c971789f",
-                "reference": "1845603e86d7fc705c7159612b87a278c971789f",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/filesystem": "^6.0",
-                "illuminate/support": "^6.0",
-                "php": ">=7.2.0"
-            },
-            "require-dev": {
-                "orchestra/testbench": "^4.0",
-                "phpunit/phpcov": "^6.0",
-                "phpunit/phpunit": "^8.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Arcanedev\\Support\\": "src/"
-                },
-                "files": [
-                    "constants.php",
-                    "helpers.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "ARCANEDEV",
-                    "email": "arcanedev.maroc@gmail.com",
-                    "homepage": "https://github.com/arcanedev-maroc"
-                }
-            ],
-            "description": "ARCANEDEV Support Helpers",
-            "homepage": "https://github.com/ARCANEDEV/Support",
-            "keywords": [
-                "arcanedev",
-                "arcanesoft",
-                "laravel",
-                "support"
-            ],
-            "support": {
-                "issues": "https://github.com/ARCANEDEV/Support/issues",
-                "source": "https://github.com/ARCANEDEV/Support/tree/master"
-            },
-            "time": "2020-02-14T16:40:44+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -11318,5 +11197,5 @@
         "php": "^7.1.3"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.0.0"
 }

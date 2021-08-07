@@ -1142,7 +1142,37 @@ class PermissionsTableSeeder extends Seeder
                 'title'     =>'achievement_create_self_assessment',
                 'created_at'=>'2020-06-07 17:57:44',
                 'updated_at'=>'2020-06-07 17:57:44',
-            ]
+            ],
+            [
+                'id'        => '213',
+                'title'     =>'note_access',
+                'created_at'=>'2020-06-07 17:57:10',
+                'updated_at'=>'2020-06-07 17:57:10',
+            ] ,
+            [
+                'id'        => '214',
+                'title'     =>'note_create',
+                'created_at'=>'2020-06-07 17:57:19',
+                'updated_at'=>'2020-06-07 17:57:19',
+            ] ,
+            [
+                'id'        => '215',
+                'title'     =>'note_show',
+                'created_at'=>'2020-06-07 17:57:27',
+                'updated_at'=>'2020-06-07 17:57:27',
+            ] ,
+            [
+                'id'        => '216',
+                'title'     =>'note_edit',
+                'created_at'=>'2020-06-07 17:57:35',
+                'updated_at'=>'2020-06-07 17:57:35',
+            ] ,
+            [
+                'id'        => '217',
+                'title'     =>'note_delete',
+                'created_at'=>'2020-06-07 17:57:44',
+                'updated_at'=>'2020-06-07 17:57:44',
+            ],
 
 
 

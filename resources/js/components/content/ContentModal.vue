@@ -44,7 +44,6 @@
 
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;"
                  v-html="content.content">
-                {{ content.content }}
             </div>
             <div class="card-footer">
                 <span class="pull-right">

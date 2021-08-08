@@ -13,6 +13,12 @@
                   class="pl-2">{{subscriptions[currentSlide-1].content.title}}</span>
         </h3>
         <div class="card-tools">
+            <button v-can="'glossar_delete'"
+                    type="button" role="button"
+                    class="btn btn-tool text-danger"
+                    @click.prevent="deleteGlossar()">
+                <i class="fa fa-trash "></i>
+            </button>
             <button v-can="'content_create'"
                     type="button" class="btn btn-tool "
                     role="button"
@@ -90,7 +96,7 @@
         </div>
     </div>
 
-    </div>
+</div>
 </template>
 
 <script>
@@ -135,6 +141,19 @@
                     this.errors = error.response.data.errors;
                 }
                 location.reload();
+            },
+            async deleteGlossar(){
+                if (confirm(this.trans('global.areYouSure')))
+                {
+                    try {
+                        await axios.delete('/glossar/' + this.glossar.id);
+                    }
+                    catch(error) {
+                        this.errors = error.response.data.errors;
+                    }
+                    location.reload();
+                }
+
             },
         },
         beforeMount() {

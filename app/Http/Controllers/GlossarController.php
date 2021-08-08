@@ -8,15 +8,6 @@ use Illuminate\Http\Request;
 
 class GlossarController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
 
     /**
      * Show the form for creating a new resource.
@@ -40,7 +31,7 @@ class GlossarController extends Controller
 
         $new_glossar = $this->validateRequest();
 
-        $glossar = Glossar::create([
+        Glossar::create([
             'subscribable_type' => $new_glossar['subscribable_type'],
             'subscribable_id' => $new_glossar['subscribable_id'],
         ]);
@@ -67,28 +58,6 @@ class GlossarController extends Controller
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Glossar  $glossar
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Glossar $glossar)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Glossar  $glossar
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Glossar $glossar)
-    {
-        //
-    }
 
     /**
      * Remove the specified resource from storage.
@@ -98,14 +67,16 @@ class GlossarController extends Controller
      */
     public function destroy(Glossar $glossar)
     {
-        abort_unless(\Gate::allows('curriculum_delete'), 403);
+        abort_unless(\Gate::allows('glossar_delete'), 403);
         // delete contents
         foreach ($glossar->contents AS $content)
         {
-            (new ContentController)->destroy($content); // delete or unsubscribe if content is still subscribed elsewhere
+            (new ContentController)->destroy($content, 'App\Glossar', $glossar->id); // delete or unsubscribe if content is still subscribed elsewhere
         }
 
-        return $glossar->delete();
+        if (request()->wantsJson()){
+            return ['message' => $glossar->delete()];
+        }
     }
 
     protected function validateRequest()

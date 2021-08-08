@@ -1,5 +1,5 @@
 <template>
-    <div>    
+    <div>
         <div class="row">
             <div class="col-12">
                 <div class="form-group "
@@ -12,9 +12,9 @@
                         class="form-control"
                         v-model="search"
                         required
-                        @keyup.enter="getSearch()" 
+                        @keyup.enter="getSearch()"
                         />
-                    
+
                      <p class="help-block" v-if="errors.searc" v-text="errors.search[0]"></p>
                 </div>
                 <div >
@@ -22,42 +22,42 @@
                         <li v-if="searchResults !== ''">{{ searchResults }} {{ trans('global.entries') }}
                             <span class="pull-right custom-control custom-switch custom-switch-on-green">
                                 <input  :checked="allSubscribed"
-                                        type="checkbox" 
-                                        class="custom-control-input pt-1 " 
-                                        id="subscription_input_all" 
+                                        type="checkbox"
+                                        class="custom-control-input pt-1 "
+                                        id="subscription_input_all"
                                          @click="subscribeAll">
                                 <label class="custom-control-label " for="subscription_input_all" ></label>
                             </span>
                         </li>
-                        <li v-for="medium in media" 
+                        <li v-for="medium in media"
                             :id="medium.ref.id"
                             class="nav-item" >
-                            <a :href="medium.contentUrl" 
-                                class="link-muted" 
+                            <a :href="medium.contentUrl"
+                                class="link-muted"
                                 target="_blank">
-                                {{medium.name}} 
+                                {{medium.name}}
                                 <span class="pull-right custom-control custom-switch custom-switch-on-green">
                                     <input  :checked="getSubscriptionStatus(medium.ref.id)"
-                                            type="checkbox" 
-                                            class="custom-control-input pt-1 " 
-                                            :id="'subscription_input'+medium.ref.id" 
+                                            type="checkbox"
+                                            class="custom-control-input pt-1 "
+                                            :id="'subscription_input'+medium.ref.id"
                                              @click="setSubscription(medium.ref.id)">
                                     <label class="custom-control-label " :for="'subscription_input'+medium.ref.id" ></label>
                                 </span>
-                           
+
                             </a>
                         </li>
                     </ul>
                     <div v-if="media !== null" class="row pt-1" style="width:100% !important;">
                         <span class="col-6">
-                           <button type="button" 
+                           <button type="button"
                               class="btn btn-block btn-primary"
                               :class="page > 0 ? '' : 'disabled'"
                               @click="lastPage()"><i class="fa fa-arrow-left"></i></button>
                        </span>
 
                         <span class="col-6">
-                           <button type="button" 
+                           <button type="button"
                               class="btn btn-block btn-primary"
                               :class="media[0].length == maxItems ? '' : 'disabled'"
                               @click="nextPage()"><i class="fa fa-arrow-right"></i></button>
@@ -65,16 +65,14 @@
 
                     </div>
                 </div>
-                </div>
             </div>
         </div>
-
     </div>
 </template>
 
 
 <script>
-    
+
     export default {
         props: {
                 'model': {}
@@ -93,47 +91,47 @@
         methods: {
             linkMedium(id) {
                 axios.post('/repositorySubscriptions', {
-                        value: id, 
-                        subscribable_id: this.model.subscribable_id, 
-                        subscribable_type: this.model.subscribable_type, 
-                        repository: 'edusharing' 
+                        value: id,
+                        subscribable_id: this.model.subscribable_id,
+                        subscribable_type: this.model.subscribable_type,
+                        repository: 'edusharing'
                 })
-                .then(res => { 
+                .then(res => {
                    this.subscriptions.push(res.data.subscription);
                 })
                 .catch(error => { // Handle the error returned from our request
                     console.log(error.response);
-                }); 
+                });
             },
             unlinkMedium(id) {
                 axios.post('/repositorySubscriptions/destroySubscription', {
-                    value: id, 
-                    subscribable_id: this.model.subscribable_id, 
-                    subscribable_type: this.model.subscribable_type, 
-                    repository: 'edusharing' 
+                    value: id,
+                    subscribable_id: this.model.subscribable_id,
+                    subscribable_type: this.model.subscribable_type,
+                    repository: 'edusharing'
                 })
-                .then(res => { 
+                .then(res => {
                     let index = this.subscriptions.indexOf(id);
 
                     this.subscriptions.splice(index, 1);
                 })
                 .catch(error => { // Handle the error returned from our request
                       console.log(error.response);
-                }); 
+                });
             },
             getSubscriptionStatus(id){
                 return this.subscriptions.filter(subscription => subscription.value === id).length;
             },
-            setSubscription(id) { 
+            setSubscription(id) {
                 if(this.getSubscriptionStatus(id) === 0){
                     this.linkMedium(id);
                     return true;
-                } else { 
+                } else {
                     this.unlinkMedium(id);
                     return false;
                 }
             },
-            
+
             subscribeAll(){
                 var index;
                 for (index = 0; index < this.media.length; ++index) {
@@ -147,7 +145,7 @@
                     maxItems: this.maxItems,
                     repository: 'edusharing'
                 })
-                .then(res => { 
+                .then(res => {
                     this.media = res.data.nodes;
                     var index, status;
                     status = true;
@@ -161,18 +159,18 @@
                 })
                 .catch(error => { // Handle the error returned from our request
                      console.log(error.response);
-                }); 
+                });
             },
-            
+
             subscribable_type() {
                 var reference_class = 'App\\TerminalObjective';
                 if (typeof this.model.terminal_objective === 'object'){
                     reference_class = 'App\\EnablingObjective';
-                } 
+                }
                 return reference_class;
             },
-            
-            show(medium) {   
+
+            show(medium) {
                 window.open(medium.path, '_blank');
             },
             href(medium) {
@@ -183,27 +181,27 @@
                 if (this.page == -1){
                     this.page = 0;
                 } else{
-                    this.getSearch(); 
+                    this.getSearch();
                 }
-                
+
             },
             nextPage() {
                 this.page = this.page + 1;
-                this.getSearch  (); 
+                this.getSearch  ();
             },
         },
-       
+
         computed: {
             searchResults: function () {
                 return (this.media ? this.media.length : '');
              }
         },
-       
+
         mounted() {
             axios.get('/repositorySubscriptions', {
                     params: {
-                        subscribable_type: this.model.subscribable_type, 
-                        subscribable_id:   this.model.subscribable_id, 
+                        subscribable_type: this.model.subscribable_type,
+                        subscribable_id:   this.model.subscribable_id,
                         repository: 'edusharing'
                     }
                 })
@@ -214,6 +212,6 @@
                 this.errors = error.response.data.errors;
             });
         }
-   
+
     }
 </script>

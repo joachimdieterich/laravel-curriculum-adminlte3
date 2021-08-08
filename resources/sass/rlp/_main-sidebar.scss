@@ -158,12 +158,12 @@
     }
 
     &.nav-legacy {
-      .nav-treeview {      
+      .nav-treeview {
         .nav-treeview {
           padding-left: 2rem;
           margin-left: -1rem;
 
-          .text-sm & {          
+          .text-sm & {
             padding-left: 1rem;
             margin-left: -.5rem;
           }
@@ -497,7 +497,7 @@
   }
 
   &:not(.nav-child-indent) {
-    .nav-treeview {  
+    .nav-treeview {
       .nav-item {
         > .nav-link {
           > .nav-icon {
@@ -672,7 +672,7 @@
 
         > .nav-icon {
           margin-left: calc(.55rem - 3px);
-          
+
           .text-sm & {
             margin-left: calc(.75rem - 3px);
           }
@@ -743,7 +743,7 @@
       }
     }
 
-    &.nav-child-indent {   
+    &.nav-child-indent {
       .nav-treeview {
         .nav-treeview {
           padding-left: 0;

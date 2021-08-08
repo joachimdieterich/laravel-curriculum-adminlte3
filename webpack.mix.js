@@ -14,7 +14,6 @@ const mix = require('laravel-mix');
 mix.js(['resources/js/app.js', 'vendor/select2/select2/dist/js/select2.min.js'], 'public/js')
    .js('node_modules/popper.js/dist/popper.js', 'public/js').sourceMaps()
    .sass('resources/sass/app.scss', 'public/css')
-   .version();
 
 /* TinyMCE */
 mix.copyDirectory('node_modules/tinymce/plugins', 'public/node_modules/tinymce/plugins');
@@ -34,3 +33,5 @@ mix.copyDirectory('node_modules/datatables.net-buttons/js', 'public/node_modules
 mix.copyDirectory('node_modules/datatables.net-select/js', 'public/node_modules/datatables.net-select/js');
 /* moment */
 mix.copyDirectory('node_modules/moment/min', 'public/node_modules/moment/js');
+
+mix.version();

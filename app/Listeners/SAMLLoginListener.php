@@ -41,10 +41,10 @@ class SAMLLoginListener
         Auth::login($laravelUser->first());
 
         // if users current_organization_id is not set -> get first organization as default
-        if (auth()->user()->current_organization_id === NULL)
-        {
+        if (auth()->user()->current_organization_id === NULL) {
             $u = \App\User::find(auth()->user()->id);
-            $u->current_organization_id = auth()->user()->organizations()->first()->id;
+            // if provisioning is correct set current_organization_id else abort
+            $u->current_organization_id = (auth()->user()->organizations()->first() === NULL) ? abort(422) : auth()->user()->organizations()->first()->id;
             $u->save();
         }
         // if users current_period_id is not set -> if not enroled in group current_period_id == null

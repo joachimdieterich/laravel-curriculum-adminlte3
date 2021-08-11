@@ -1,6 +1,14 @@
 <?php
 
 return [
+    'code_401'                             => 'You are not authenticated or do not have the necessary permissions.',
+    'code_403'                             => 'You do not have the necessary permissions.',
+    'code_404'                             => 'Page not found.',
+    'code_419'                             => 'Page Expired',
+    'code_422'                             => 'The request cannot be processed because necessary data is missing. (Possibly the account is not correctly provisioned).',
+    'code_429'                             => 'Too Many Requests.',
+    'code_500'                             => 'Server error. Please notify the administrators if this error occurs repeatedly.',
+    'code_503'                             => 'Curriculum is temporarily unavailable. Please notify the administrators if this error occurs repeatedly and no maintenance windows are announced.',
     'add'                                  => 'Add',
     'create'                               => 'Create',
     'list'                                 => 'List',

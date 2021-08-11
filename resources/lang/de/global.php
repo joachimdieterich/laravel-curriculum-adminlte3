@@ -1,6 +1,14 @@
 <?php
 
 return [
+    'code_401'                             => 'Sie sind nicht authentifiziert oder verfügen nicht über die notwendigen Berechtigungen.',
+    'code_403'                             => 'Sie verfügen nicht über die notwendigen Berechtigungen.',
+    'code_404'                             => 'Seite nicht gefunden.',
+    'code_419'                             => 'Seite abgelaufen - bitte neu laden.',
+    'code_422'                             => 'Die Anfrage kann nicht verarbeitet werden, da notwendige Daten fehlen. (Evtl. ist der Account nicht korrekt provisioniert).',
+    'code_429'                             => 'Zu viele Anfragen.',
+    'code_500'                             => 'Serverfehler. Bitte verständigen Sie die Administratoren, falls dieser Fehler wiederholt auftritt.',
+    'code_503'                             => 'Curriculum steht vorübergehend nicht zur Verfügung. Bitte verständigen Sie die Administratoren, falls dieser Fehler wiederholt auftritt und keine Wartungsfenster angekündigt sind.',
     'add'                                  => 'hinzufügen',
     'create'                               => 'erstellen',
     'list'                                 => 'Liste',

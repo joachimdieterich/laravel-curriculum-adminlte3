@@ -365,23 +365,52 @@ class Edusharing extends RepositoryPlugin
 
     public function getSearchQueriesV2($repository, $params)
     {
-        $postFields = array (
-            'criterias' => [
-                array (
-                    'property' => $params['property'],
-                    'values' => array ( $params['value'] )
-                ),
-                /* todo: check effect of search_context for results
-                array (
-                    'property' => "ccm:search_context",
-                    'values' => array("rlp-curriculum")
-                )*/
-            ]
+        switch ($params['filter'])
+        {
+            case '3' :  $filter = "cm:creator";                             //user_files
+                        $filter_value = auth()->user()->common_name;
+                break;
+            case '2' :                                                      // shared_files
+            case '1' :                                                      // public_files
+            default :   $filter = '';
+                        $filter_value = '';
+                break;
 
-        );
+        }
+        if ($filter != '') {
+            $postFields = array (
+                'criterias' => [
+                    array (
+                        'property' => $params['property'],
+                        'values'   => array ( $params['value'] )
+                    ),
+                    array(
+                        'property' => $filter,
+                        'values'   => array(
+                            $filter_value
+                        )
+                    )
+                ]
+            );
+        } else {
+            $postFields = array (
+                'criterias' => [
+                    array (
+                        'property' => $params['property'],
+                        'values'   => array ( $params['value'] )
+                    ),
+                    /* todo: check effect of search_context for results
+                    array (
+                        'property' => "ccm:search_context",
+                        'values' => array("rlp-curriculum")
+                    )*/
+                ]
+            );
+        }
 
+        //dump(json_encode ( $postFields ));
         //dump($this->repoUrl . '/rest/search/v1/queriesV2/' . $repository.'/-default-/curriculum?'.http_build_query($params));
-        $ret =$this->call( $this->repoUrl . '/rest/search/v1/queriesV2/' . $repository.'/-default-/curriculum?'.http_build_query($params),
+       $ret =$this->call( $this->repoUrl . '/rest/search/v1/queriesV2/' . $repository.'/-default-/curriculum?'.http_build_query($params),
             'POST',
             array ( 'Content-Type: application/json' ),
             json_encode ( $postFields )
@@ -435,13 +464,15 @@ class Edusharing extends RepositoryPlugin
         $value          = isset($query['value']) ? $query['value'] : $arguments;           // e.g.11990503;
         $maxItems       = isset($query['maxItems']) ? $query['maxItems'] : 40;             // used for pagination
         $skipCount      = isset($query['skipCount']) ? $query['skipCount'] : 0;            // used for pagination
+        $propertyFilter = isset($query['propertyFilter']) ? $query['propertyFilter'] : "cm:creator";  // get creator uuid
+        $filter         = isset($query['filter']) ? $query['filter'] : '';  // set filter e.g. cm:creator
 
         //$nodes        = $this->getSearchCustom('-home-', array ('contentType' =>'FILES', 'property' => 'ccm:competence_digital2', 'value' => '11061007', 'maxItems' => 10));
 
         switch ($apiEndpoint) {
             case 'getSearchCustom': $nodes      = $this->getSearchCustom('-home-', array ('contentType' => $contentType, 'combineMode' => $combineMode, 'property' => $property, 'value' => $value, 'maxItems' => $maxItems, 'skipCount' => $skipCount));
                 break;
-            case 'getSearchQueriesV2': $nodes   = $this->getSearchQueriesV2('-home-', array ('contentType' => $contentType, 'combineMode' => $combineMode, 'property' => $property, 'value' => $value, 'maxItems' => $maxItems, 'skipCount' => $skipCount));
+            case 'getSearchQueriesV2': $nodes   = $this->getSearchQueriesV2('-home-', array ('contentType' => $contentType, 'combineMode' => $combineMode, 'property' => $property, 'value' => $value, 'maxItems' => $maxItems, 'skipCount' => $skipCount, 'propertyFilter' => $propertyFilter, 'filter' => $filter  ));
                 break;
             case 'getNodeChildren': $nodes      = $this->getChildren('-home-', $value, array ('maxItems' => $maxItems, 'skipCount' => $skipCount));
                 break;
@@ -457,7 +488,6 @@ class Edusharing extends RepositoryPlugin
             default:
                 break;
         }
-
         $collection = collect([]);
         if (!isset($nodes['nodes'])){
             return $collection; //end early if no data is given
@@ -473,13 +503,14 @@ class Edusharing extends RepositoryPlugin
             $collection->push([
                 'value'       => isset($node['ref']['id']) ? $node['ref']['id'] : $arguments, //value field in db
                 'node_id'     => isset($node['ref']['id']) ? $node['ref']['id'] : null,
-                'license'     => isset($node['licenseURL']) ? $node['licenseURL'] : null,
+                'uuid'        => isset($node['properties']['cm:creator']) ? $node['properties']['cm:creator'][0] : null,
+                'license'     => isset($node['license']) ? $node['license'] : null,
                 'title'       => $this->getReadableTitle($node), //isset($node['title']) ?  $node['title'] : $node['name'],
                 'description' => isset($node['description']) ? $node['description'] : '',
                 'thumb'       => isset($node['preview']['url']) ? $node['preview']['url'].'&ticket='.$this->accessToken : '',
+                'iconURL'     => isset($node['iconURL']) ? $node['iconURL'] : '',
                 'path'        => isset($node['ref']['id']) ? $this->repoUrl . '/components/render/' .$node['ref']['id'].'?ticket='.$this->accessToken : ''
             ]);
-
         }
 
         return $collection;
@@ -526,7 +557,6 @@ class Edusharing extends RepositoryPlugin
         {
             return ['message' => $subsciption->delete()];
         }
-
     }
 }
 

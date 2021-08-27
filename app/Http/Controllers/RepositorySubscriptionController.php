@@ -119,7 +119,7 @@ class RepositorySubscriptionController extends Controller
 
             if (!empty($model->ui))
             {
-                $result->push($repositoryPlugin->plugins[$input['repository']]->processReference('endpoint=getSearchQueriesV2&property=ccm:curriculum&value='.$model->ui.'&maxItems='.$input['maxItems'].'&skipCount='.($input['maxItems'] * $input['page']) ));
+                $result->push($repositoryPlugin->plugins[$input['repository']]->processReference('endpoint=getSearchQueriesV2&property=ccm:curriculum&value='.$model->ui.'&maxItems='.$input['maxItems'].'&skipCount='.($input['maxItems'] * $input['page']).'&filter='.$input['filter'] ));
             }
             else
             {
@@ -169,6 +169,7 @@ class RepositorySubscriptionController extends Controller
             'page'              => 'sometimes',
             'maxItems'          => 'sometimes',
             'repository'        => 'sometimes',
+            'filter'            => 'sometimes',
         ]);
     }
 

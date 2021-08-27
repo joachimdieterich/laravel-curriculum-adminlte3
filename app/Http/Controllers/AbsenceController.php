@@ -28,7 +28,7 @@ class AbsenceController extends Controller
         abort_unless(\Gate::allows('absence_create'), 403);
         $new_absence = $this->validateRequest();
 
-        foreach ($new_absence['absent_user_ids'] AS $user_id)
+        foreach ((array)$new_absence['absent_user_ids'] AS $user_id)
         {
             $absence = Absence::updateOrCreate(
                 [

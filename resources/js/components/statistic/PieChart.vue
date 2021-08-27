@@ -76,9 +76,28 @@ export default {
         loaderEvent() {
             axios.get('/statistics?chart=' + this.chart + '&date_begin=' + this.date_begin + '&date_end=' + this.date_end)
                 .then(response => {
-                    this.chart_data = response.data.message;
+                    this.chart_data = this.sumIfEqual(response.data.message);
                 }).catch(e => {
             });
+        },
+        sumIfEqual(data){
+            let obj     = data;
+            var holder  = {};
+
+            obj.forEach(function(d) {
+                if (holder.hasOwnProperty(d.value)) {
+                    holder[d.value] = parseInt(holder[d.value]) + parseInt(d.counter);
+                } else {
+                    holder[d.value] = parseInt(d.counter);
+                }
+            });
+
+            var obj2 = [];
+
+            for (var prop in holder) {
+                obj2.push({ value: prop, counter: holder[prop] });
+            }
+            return obj2;
         },
         isVisible(item){
             if (item.value === null){

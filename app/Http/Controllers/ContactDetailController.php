@@ -64,7 +64,7 @@ class ContactDetailController extends Controller
     public function show(ContactDetail $contactdetail)
     {
         abort_unless(\Gate::allows('contactdetail_show'), 403);
-        abort_unless(auth()->user()->mayAccessUser($contactdetail->owner_id), 403);
+        abort_unless(auth()->user()->mayAccessUser(User::find($contactdetail->owner_id)), 403);
 
         $user = User::find($contactdetail->owner_id);
         $organization = Organization::find(auth()->user()->current_organization_id);

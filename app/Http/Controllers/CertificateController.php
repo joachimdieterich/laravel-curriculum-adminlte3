@@ -314,7 +314,7 @@ class CertificateController extends Controller
                 .'<thead><tr><td style="border-bottom: 1px solid silver;"><strong>Ziele / Namen</strong></td>';
         foreach ((array) request()->user_ids as $id)
         {
-            abort_unless(auth()->user()->mayAccessUser($id), 403);
+            abort_unless(auth()->user()->mayAccessUser(User::find($id)), 403);
             $user = User::where('id', $id)->get()->first();
             $html .= '<td '.$td_style.'><strong>'.$user->firstname.' '.$user->lastname.'</strong></td>';
         }

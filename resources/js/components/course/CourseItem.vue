@@ -14,12 +14,13 @@
         padding: 0;
         background-size: cover;"
         v-bind:style="{ backgroundImage: 'url(\'/media/' + course.curriculum.medium_id + ') ' }">
+            <a v-can="'course_show'"
+               @click.stop.prevent="openCourse()"
+               class="btn btn-primary btn-sm pull-right  m-2">
+                <small><i class="fa fa-user-graduate"></i></small>
+            </a>
         </div>
-        <a v-can="'course_show'"
-            @click.stop.prevent="openCourse()"
-           class="btn btn-primary btn-sm pull-right  m-2">
-            <small><i class="fa fa-user-graduate"></i></small>
-        </a>
+
         <span
             class="bg-white text-center p-1 overflow-auto "
             style="position:absolute; bottom:0px; height: 150px; width:100%;">

@@ -376,7 +376,7 @@ class User extends Authenticatable
         return ($this->medium_id !== null) ? '/media/'.$this->medium_id  : (new \Laravolt\Avatar\Avatar)->create($this->fullName())->toBase64()->encoded;
     }
 
-    public function mayAccessUser($user, $context = 'organization')
+    public function mayAccessUser(User $user, $context = 'organization')
     {
         switch ($context){
             case 'organization': return $user->organizations->pluck('id')->contains($this->current_organization_id);

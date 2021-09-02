@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Progress;
 use App\Achievement;
 use App\EnablingObjective;
+use App\TerminalObjective;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -39,14 +40,13 @@ class ProgressController extends Controller
      */
     public function store(Request $request)
     {
-        //todo: check if function is used -> calculateTerminalObjectiveProgress
         switch ($request->referencable_type) {
             case 'App\TerminalObjective':
                 $input = $this->validateRequest();
 
-                $enabling_objectives = \App\EnablingObjective::where('terminal_objective_id', $input['parent_id'])->get();
+                $enabling_objectives = EnablingObjective::where('terminal_objective_id', $input['parent_id'])->get();
 
-                $total_achieved = \App\Achievement::where('referenceable_type', 'App\\EnablingObjective')
+                $total_achieved = Achievement::where('referenceable_type', 'App\\EnablingObjective')
                                         ->where('user_id', $user_id)
                                         ->whereIn('referenceable_id', $enabling_objectives->pluck('id'))
                                         ->where(DB::raw('RIGHT(status,1) = 1 OR RIGHT(status,1) = 2'))
@@ -105,7 +105,7 @@ class ProgressController extends Controller
     public function calculateTerminalObjectiveProgress($parent_model, $parent_id, $user_id)
     {
         //Parent App\TerminalObjective
-        $enabling_objectives = \App\EnablingObjective::where('terminal_objective_id', $parent_id)->get();
+        $enabling_objectives = EnablingObjective::where('terminal_objective_id', $parent_id)->get();
 
         $total_achieved = Achievement::where('referenceable_type', 'App\\EnablingObjective')
                                 ->where('user_id', $user_id)
@@ -132,7 +132,7 @@ class ProgressController extends Controller
 
     public function calculateCurriculumProgress($parent_model, $parent_id, $user_id)
     {
-        $terminal_objectives = \App\TerminalObjective::where('curriculum_id', $parent_id)->get();
+        $terminal_objectives = TerminalObjective::where('curriculum_id', $parent_id)->get();
         $terminal_objective_progresses = Progress::where('referenceable_type', 'App\\TerminalObjective')
                 ->where('associable_id', $user_id)
                 ->whereIn('referenceable_id', $terminal_objectives->pluck('id'))

@@ -180,6 +180,10 @@
                 }.bind(this))  //make onChange accessible!
                 .val(this.form.objective_type_id).trigger('change'); //set value
 
+                if (this.value == null){
+                    $("#objectiveTypes").val(1).trigger('change.select2'); //set default
+                    this.form.objective_type_id = $("#objectiveTypes").val(1).val(); //set default
+                }
             },
             beforeClose() {
                 //console.log('close')

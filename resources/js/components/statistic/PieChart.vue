@@ -6,7 +6,7 @@
             <D3PieChart
                 class="p-6"
                 :config="chart_config"
-                :datum="chart_data"
+                :datum="chart_data.slice(0, 10)"
             ></D3PieChart>
             <input type="search"
                    class="form-control form-control-sm"
@@ -97,6 +97,9 @@ export default {
             for (var prop in holder) {
                 obj2.push({ value: prop, counter: holder[prop] });
             }
+
+            obj2.sort((a,b) => (a.counter < b.counter) ? 1 : ((b.counter < a.counter) ? -1 : 0)) //sort by counter (desc)
+
             return obj2;
         },
         isVisible(item){

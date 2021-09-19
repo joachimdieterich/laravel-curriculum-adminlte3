@@ -26,6 +26,8 @@ class ContentController extends Controller
         abort_unless((\Gate::allows('content_create') OR
             \Gate::allows($input['referenceable_type'].'_content_create')), 403);
 
+        $this->permissionCheck($input['referenceable_type']); //check context permission
+
         $content = Content::Create([
             'title' => $input['title'],
             'content' => $input['content'],
@@ -210,6 +212,40 @@ class ContentController extends Controller
             'referenceable_id' => 'sometimes',
             'referenceable_type' => 'sometimes',
         ]);
+    }
+
+    /**
+     * check if user is owner of curricula if creation context is curricula
+     *
+     * @param $referenceable_type
+     * @return mixed
+     */
+    private function permissionCheck($referenceable_type)
+    {
+
+        if (in_array(
+            $referenceable_type . '_content_create',
+            [
+                "App\Curriculum_content_create",
+                "App\EnablingObjective_content_create",
+                "App\TerminalObjective_content_create",
+            ]
+        )
+        ) {
+            $model = $referenceable_type::find($referenceable_type['referenceable_id']);
+
+            switch ($referenceable_type) {
+                case "App\Curriculum":
+                    abort_unless(($model->owner_id === auth()->user()->id), 403);
+                    break;
+                case "App\EnablingObjective":
+                case "App\TerminalObjective":
+                    abort_unless(($model->curriculum->owner_id === auth()->user()->id), 403);
+                    break;
+            }
+
+        }
+        return $model;
     }
 
 }

@@ -78,9 +78,10 @@
                 </div>
             </div>
 
-
-
             <div class="card-footer">
+                <license class="pull-left pr-2"
+                         :licenseId="medium.license_id">
+                </license>
                  <span class="pull-right">
                      <button type="button" class="btn btn-info" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
                      <button
@@ -105,7 +106,7 @@
 </template>
 
 <script>
-
+import License from '../uiElements/License'
     export default {
 
         data() {
@@ -190,6 +191,9 @@
                 return '/media/'+ this.medium.id;
             },
         },
+        components: {
+            License
+        }
 
     }
 </script>

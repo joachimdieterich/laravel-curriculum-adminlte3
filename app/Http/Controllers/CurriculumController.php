@@ -136,7 +136,7 @@ class CurriculumController extends Controller
         $grades = Grade::all();
         $subjects   = Subject::all();
         $organization_types = OrganizationType::all();
-        $curriculum_types = CurriculumType::all();
+        $curriculum_types = $this->getCurriculumTypesByPermission();
 
         $countries = Country::all();
         $states = State::where('country', 'DE')->get();
@@ -161,6 +161,8 @@ class CurriculumController extends Controller
     {
         abort_unless(\Gate::allows('curriculum_create'), 403);
         $input = $this->validateRequest();
+
+        $this->checkPermissions($input['type_id']);
 
         $curriculum = Curriculum::firstOrCreate([
             'title'                 => $input['title'],
@@ -362,6 +364,7 @@ class CurriculumController extends Controller
         abort_unless(\Gate::allows('curriculum_edit'), 403);
 
         $input = $this->validateRequest();
+        $this->checkPermissions($input['type_id']);
 
         $curriculum->update([
             'title'                 => $input['title'],
@@ -544,5 +547,62 @@ class CurriculumController extends Controller
             'medium_id'             => 'sometimes',
             'owner_id'              => 'sometimes',
             ]);
+    }
+
+    /**
+     * @param $type_id
+     */
+    private function checkPermissions($type_id): void
+    {
+        $id = format_select_input($type_id);
+
+        if ($id == 4) //user
+        {
+            abort_unless(
+                (
+                    \Gate::allows('curriculum_create_for_user') OR
+                    \Gate::allows('curriculum_create_for_group') OR
+                    \Gate::allows('curriculum_create_for_organization') OR
+                    \Gate::allows('curriculum_create_global')
+                ), 403);
+        } else if ($id == 3) //group
+        {
+            abort_unless(
+                (
+                    \Gate::allows('curriculum_create_for_group') OR
+                    \Gate::allows('curriculum_create_for_organization') OR
+                    \Gate::allows('curriculum_create_global')
+                ), 403);
+
+        } else if ($id == 2) //organization
+        {
+            abort_unless(
+                (
+                    \Gate::allows('curriculum_create_for_organization') OR
+                    \Gate::allows('curriculum_create_global')
+                ), 403);
+        } else if ($id == 1) //group
+        {
+            abort_unless(\Gate::allows('curriculum_create_global'), 403);
+        }
+}
+
+    /**
+     * @return CurriculumType[]|array|\Illuminate\Database\Eloquent\Collection
+     */
+    private function getCurriculumTypesByPermission()
+    {
+        if (\Gate::allows('curriculum_create_global')) {
+            $curriculum_types = CurriculumType::all();
+        } else if (\Gate::allows('curriculum_create_for_organization')) {
+            $curriculum_types = CurriculumType::where('id', '>', 1)->get();
+        } else if (\Gate::allows('curriculum_create_for_group')) {
+            $curriculum_types = CurriculumType::where('id', '>', 2)->get();
+        } else if (\Gate::allows('curriculum_create_for_user')) {
+            $curriculum_types = CurriculumType::where('id', '>', 3)->get();
+        } else {
+            $curriculum_types = [];
+        }
+        return $curriculum_types;
     }
 }

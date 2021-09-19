@@ -1173,6 +1173,30 @@ class PermissionsTableSeeder extends Seeder
                 'created_at'=>'2020-06-07 17:57:44',
                 'updated_at'=>'2020-06-07 17:57:44',
             ],
+            [
+                'id'        => '218',
+                'title'     =>'curriculum_create_for_user',
+                'created_at'=>'2020-06-07 17:57:44',
+                'updated_at'=>'2020-06-07 17:57:44',
+            ],
+            [
+                'id'        => '219',
+                'title'     =>'curriculum_create_for_group',
+                'created_at'=>'2020-06-07 17:57:44',
+                'updated_at'=>'2020-06-07 17:57:44',
+            ],
+            [
+                'id'        => '220',
+                'title'     =>'curriculum_create_for_organization',
+                'created_at'=>'2020-06-07 17:57:44',
+                'updated_at'=>'2020-06-07 17:57:44',
+            ],
+            [
+                'id'        => '221',
+                'title'     =>'curriculum_create_global',
+                'created_at'=>'2020-06-07 17:57:44',
+                'updated_at'=>'2020-06-07 17:57:44',
+            ],
 
 
 

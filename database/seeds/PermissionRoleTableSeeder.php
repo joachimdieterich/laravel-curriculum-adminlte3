@@ -101,6 +101,7 @@ class PermissionRoleTableSeeder extends Seeder
                 'objectivetype_show',
                 'objectivetype_edit',
                 'objectivetype_delete',
+                'curriculum_create_global',
             ];
 
             return in_array($permission->title, $creator_permission_list);
@@ -118,6 +119,7 @@ class PermissionRoleTableSeeder extends Seeder
                 'logbook_entry_show',
                 'task_access',
                 'task_show',
+                'curriculum_create_for_organization',
 
             ];
 
@@ -186,6 +188,7 @@ class PermissionRoleTableSeeder extends Seeder
                 'note_show',
                 'note_edit',
                 'note_delete',
+                'curriculum_create_for_organization',
             ];
 
             return in_array($permission->title, $schooladmin_permission_list);
@@ -249,6 +252,7 @@ class PermissionRoleTableSeeder extends Seeder
                 'note_show',
                 'note_edit',
                 'note_delete',
+                'curriculum_create_for_group'
             ];
 
             return in_array($permission->title, $teacher_permission_list);
@@ -275,7 +279,8 @@ class PermissionRoleTableSeeder extends Seeder
                 'message_access',
                 'message_create',
                 'message_show',
-                'message_edit'
+                'message_edit',
+                'curriculum_create_for_user'
 
             ];
 

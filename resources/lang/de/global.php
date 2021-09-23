@@ -11,7 +11,7 @@ return [
     'code_503'                             => 'Curriculum steht vorübergehend nicht zur Verfügung. Bitte verständigen Sie die Administratoren, falls dieser Fehler wiederholt auftritt und keine Wartungsfenster angekündigt sind.',
     'my_files'                             => 'meine Medien',
     'shared_files'                         => 'freigegebene Medien',
-    'public_files'                         => 'öffentliche Medien',
+    'public_files'                         => 'alle Medien',
     'add'                                  => 'hinzufügen',
     'create'                               => 'erstellen',
     'list'                                 => 'Liste',

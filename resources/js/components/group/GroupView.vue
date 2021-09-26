@@ -21,7 +21,7 @@
                 @click="setLocalStorage('#group_'+group.id, '#group_users_'+group.id);">
                 <a class="nav-link link-muted"
                    :class="checkLocalStorage('#group_'+group.id, '#group_users_'+group.id)"
-                   id="content-nav-tab"
+                   id="user-nav-tab"
                    data-toggle="pill"
                    href="#users-tab"
                    role="tab"
@@ -36,7 +36,7 @@
                 @click="setLocalStorage('#group_'+group.id, '#group_logbooks_'+group.id);">
                 <a class="nav-link link-muted"
                    :class="checkLocalStorage('#group_'+group.id, '#group_logbooks_'+group.id)"
-                   id="content-nav-tab"
+                   id="logbook-nav-tab"
                    data-toggle="pill"
                    href="#logbook-tab"
                    role="tab"
@@ -44,6 +44,21 @@
                    aria-selected="true"
                 >
                     <i class="fas fa-book "></i>
+                </a>
+            </li>
+            <li class="nav-item "
+                v-permission="'kanban_access'"
+                @click="setLocalStorage('#group_'+group.id, '#group_kanbans_'+group.id);">
+                <a class="nav-link link-muted"
+                   :class="checkLocalStorage('#group_'+group.id, '#group_kanbans_'+group.id)"
+                   id="kanban-nav-tab"
+                   data-toggle="pill"
+                   href="#kanban-tab"
+                   role="tab"
+                   aria-controls="kanban-tab"
+                   aria-selected="true"
+                >
+                    <i class="fa fa-columns"></i>
                 </a>
             </li>
            <!-- <li class="nav-item">
@@ -136,6 +151,18 @@
                     :subscribable_id="group.id"
                 ></logbooks>
            </div>
+            <div v-permission="'kanban_access'"
+                 class="tab-pane "
+                 :class="checkLocalStorage('#group_'+group.id, '#group_kanbans_'+group.id)"
+                 id="kanban-tab"
+                 role="tab"
+                 aria-labelledby="kanban-nav-tab">
+                <kanbans
+                    ref="Kanbans"
+                    subscribable_type="App\Group"
+                    :subscribable_id="group.id"
+                ></kanbans>
+            </div>
             <!--<div class="tab-pane fade "
                  id="content-tab"
                  role="tab"
@@ -176,6 +203,7 @@
     import Contents from '../content/Contents';
     import Users from "../users/Users";
     import Logbooks from "../logbooks/Logbooks";
+    import Kanbans from "../kanban/Kanbans";
 
     export default {
         props: {
@@ -209,7 +237,8 @@
             Media,
             Glossars,
             Contents,
-            Logbooks
+            Logbooks,
+            Kanbans
         }
 
     }

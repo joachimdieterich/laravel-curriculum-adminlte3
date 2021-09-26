@@ -2,13 +2,14 @@
     @foreach(auth()->user()->organizations as $organization)
     <li class="item">
         <div >
-            <a href="/organizations/{{$organization->id}}" 
-               class="product-title">
-                {{$organization->title}}
+            <a href="/organizations/{{$organization->id}}">
+                <span class="product-title ">
+                    {{$organization->title}}
+                </span>
+                <span class="product-description text-muted">
+                    {!! $organization->description !!}
+                </span>
             </a>
-            <span class="product-description">
-                {!! $organization->description !!}
-            </span>
         </div>
     </li>
     <!-- /.item -->

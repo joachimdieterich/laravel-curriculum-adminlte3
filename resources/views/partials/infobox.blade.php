@@ -1,26 +1,30 @@
 <div class="col-12 col-sm-6 col-md-4 mb-3">
     <a  class="link-muted text-decoration-none ">
         <div class="info-box mb-0 rounded-0 rounded-top">
-            <span class="{{ $infoBoxClass }} pointer" 
+            <span class="{{ $infoBoxClass }} pointer"
                   onclick="window.location.href='{{ $infoBoxRoute }}'"
                   >
                 <i class="{{ $infoBoxIcon }}"></i>
             </span>
-            <div class="info-box-content"
-                  data-toggle="collapse" 
-                  href="#collapse{{ $infoBoxId }}" 
-                  aria-expanded="false" 
+            <div class="info-box-content pointer"
+                  data-toggle="collapse"
+                  href="#collapse{{ $infoBoxId }}"
+                  aria-expanded="false"
                   aria-controls="collapse{{ $infoBoxId }}">
                 <span class="info-box-text">{{ $infoText }}</span>
-                <span class="info-box-number">{!! $infoBoxNumber !!}</span>
+                <span class="info-box-number ">
+                     @if(isset($infoBoxNumber))
+                         {!! $infoBoxNumber !!}
+                    @endif
+                </span>
             </div>
         </div>
-        <div id="collapse{{ $infoBoxId }}" 
-            class="card pt-0 border-0 rounded-0 collapse ">
+        <div id="collapse{{ $infoBoxId }}"
+            class="card pt-0 border-0 rounded-0  ">
             @if(isset($include))
-                <div class="card-body">@include("partials.{$include}")</div>
+                <div class="card-body p-1">@include("partials.{$include}")</div>
             @endif
         </div>
-        
+
     </a>
 </div>

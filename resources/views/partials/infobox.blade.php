@@ -9,7 +9,7 @@
             <div class="info-box-content pointer"
                   data-toggle="collapse"
                   href="#collapse{{ $infoBoxId }}"
-                  aria-expanded="false"
+                  aria-expanded="true"
                   aria-controls="collapse{{ $infoBoxId }}">
                 <span class="info-box-text">{{ $infoText }}</span>
                 <span class="info-box-number ">
@@ -20,7 +20,7 @@
             </div>
         </div>
         <div id="collapse{{ $infoBoxId }}"
-            class="card pt-0 border-0 rounded-0  ">
+            class="card pt-0 border-0 rounded-0 collapse show">
             @if(isset($include))
                 <div class="card-body p-1">@include("partials.{$include}")</div>
             @endif

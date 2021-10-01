@@ -63,7 +63,7 @@
                 </div>
             </div><!-- /.container-fluid -->
         </section>
-        <div class="pl-2 pr-2">
+        <div class="pl-2 pr-2" style="padding-bottom:50px">
             @yield('content')
         </div>
         <!-- Footer -->

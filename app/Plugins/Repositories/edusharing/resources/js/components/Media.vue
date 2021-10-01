@@ -127,6 +127,7 @@
         },
         methods: {
             async loader() {
+                $("#loading").show();
                 try {
                     this.media = (await axios.post('/repositorySubscriptions/getMedia', {
                         subscribable_type: this.subscribable_type(),
@@ -140,6 +141,7 @@
 
 
                 } catch(error) {
+                    $("#loading").hide();
                     //this.errors = error.response.data.errors;
                 }
             },
@@ -204,7 +206,7 @@
         },
         watch: {
             media: function (value, oldValue) {
-                $("#loading").remove();
+                $("#loading").hide();
             }
         },
         bevorOpen() {

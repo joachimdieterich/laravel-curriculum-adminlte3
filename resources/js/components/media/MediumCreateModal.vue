@@ -331,6 +331,9 @@
                 this.progressBar = false;
             },
             beforeOpen(event) {
+                this.selectedFiles = [];
+                this.message = '';
+
                 if (event.params.referenceable_type){
                     this.form.subscribable_type = event.params.referenceable_type;
                 }

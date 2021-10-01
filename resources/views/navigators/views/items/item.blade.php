@@ -1,23 +1,19 @@
 @if(strpos($item->medium, 'image'))
 <div
     id="navigator-item-{{ $item->id }}"
-    class="box box-objective pointer {{ $item->css_class }} my-1"
-    style="height: 300px !important;
-        min-width: 200px !important;"
+    class="box box-objective nav-item-box-image pointer {{ $item->css_class }} my-1"
+    style="min-width: 200px !important;"
     onclick="{{ $onclick }}">
-    <div style="min-height: 150px !important;
-        min-width: 197px !important;
-        padding: 0;
-        border-top-left-radius: 0.2rem;
-        border-top-right-radius: 0.2rem;
+    <div class="nav-item-box-image-size"
+         style="
         background: url('{{isset($item->medium->id) ? route('media.thumb', ($item->medium->id)) : Avatar::create($item->title)->toGravatar(['d' => 'identicon', 'r' => 'pg', 's' => 100])}}') top center no-repeat;
         background-size: cover;">
     </div>
 @else
 <div
     id="navigator-item-{{ $item->id }}"
-    class="box box-objective pointer {{ $item->css_class }} my-1"
-    style="height: 300px !important;
+    class="box box-objective nav-item-box-image pointer {{ $item->css_class }} my-1"
+    style="
         min-width: 200px !important;
         padding: 0;"
     onclick="{{ $onclick }}">
@@ -33,7 +29,15 @@
     @endswitch
 
 @endif
+        <span class="bg-white text-center p-1 overflow-auto nav-item-box">
+           <h6 class="events-heading pt-1 hyphens nav-item-text">
+               {{ $item->title }}
+           </h6>
+           <p class=" text-muted small">
+               {{{ html_entity_decode(strip_tags( $item->description)) }}}
+           </p>
 
+       </span>
 
     <div class="symbol" style="position: absolute;
         padding: 6px;
@@ -83,16 +87,5 @@
         @endif
 
 
-    <span class="bg-white text-center p-1 overflow-auto "
-         style="position:absolute; bottom:0px; height: 150px; width:100%; border-bottom-left-radius: 0.2rem;
-        border-bottom-right-radius: 0.2rem;">
 
-       <h6 class="events-heading pt-1 hyphens">
-           {{ $item->title }}
-       </h6>
-       <p class=" text-muted small">
-           {{{ html_entity_decode(strip_tags( $item->description)) }}}
-       </p>
-
-   </span>
 </div>

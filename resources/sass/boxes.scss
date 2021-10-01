@@ -507,6 +507,28 @@
 
 /*styles (xs, sm) */
 @media (max-width: 990px) {
+    .nav-item-box-image {
+        height: 150px !important;
+    }
+    .nav-item-box-image-size {
+        min-height: 150px !important;
+        width: 40% !important;
+        padding: 0;
+        border-top-left-radius: 0.2rem;
+    }
+    .nav-item-box {
+        position: absolute;
+        bottom: 0px;
+        right: 0px;
+        height: 150px;
+        top: 0px;
+        width: 60%;
+        border-bottom-right-radius: 0.2rem;
+    }
+    .nav-item-text {
+        padding-top: 3rem !important;
+    }
+
     .terminal-row{
         padding-bottom: 10px;
     }
@@ -577,12 +599,31 @@
             float: none !important;
 
         }
+
     }
 }
 /* /.sm view */
 
 /*styles (md, lg) */
 @media (min-width: 991px) {
+    .nav-item-box-image {
+        height: 300px !important;
+    }
+    .nav-item-box-image-size {
+        min-height: 150px !important;
+        min-width: 197px !important;
+        padding: 0;
+        border-top-left-radius: 0.2rem;
+        border-top-right-radius: 0.2rem;
+    }
+    .nav-item-box {
+        position:absolute;
+        bottom:0px;
+        height: 150px;
+        width:100%;
+        border-bottom-left-radius: 0.2rem;
+        border-bottom-right-radius: 0.2rem;
+    }
     .box {
         &.box-objective {
         float: left;

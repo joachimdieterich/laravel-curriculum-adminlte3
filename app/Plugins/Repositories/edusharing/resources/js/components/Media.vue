@@ -138,7 +138,9 @@
                         repository: 'edusharing',
                         filter: this.currentTab
                     })).data.message;
-
+                    if (this.media == null){
+                        $("#loading").hide();
+                    }
 
                 } catch(error) {
                     $("#loading").hide();
@@ -191,7 +193,6 @@
                 } else{
                     this.loader();
                 }
-
             },
             nextPage() {
                 this.page = this.page + 1;
@@ -201,16 +202,10 @@
                 this.currentTab = id;
             },
         },
-        computed: {
-
-        },
         watch: {
             media: function (value, oldValue) {
                 $("#loading").hide();
             }
-        },
-        bevorOpen() {
-
         },
 
     }

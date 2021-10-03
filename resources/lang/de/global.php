@@ -900,8 +900,8 @@ return [
         ],
     ],
     'logbookEntry' =>[
-        'title'             => 'Logs',
-        'title_singular'    => 'Log',
+        'title'             => 'Logbucheinträge',
+        'title_singular'    => 'Logbucheintrag',
         'create'            => 'Logbucheintrag erstellen',
         'edit'              => 'Logbucheintrag bearbeiten',
         'addition'          => 'Logbucheintrag ergänzen',
@@ -923,6 +923,7 @@ return [
         'title_singular'    => 'Aufgabe',
         'create'            => 'Aufgabe erstellen',
         'edit'              => 'Aufgabe bearbeiten',
+        'subscriptions'     => 'Zuordnungen',
         'fields'            => [
             'id'            => 'ID',
             'id_helper'     => '',

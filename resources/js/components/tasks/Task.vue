@@ -20,7 +20,7 @@
 
             </div>
             <!-- /.card-header -->
-            <div class="card-body py-2">
+            <div class="card-body p-2">
                 <div class="row small">
                     <span class="col-md-6 col-sm-12 text-muted">
                         <i class="fa fa-calendar pr-1"></i>
@@ -73,7 +73,7 @@
                 <a class="nav-link link-muted"
                    href="#activity"
                    data-toggle="tab">
-                    <i class="fa fa-paperclip pr-1"></i>{{ trans('global.subscription-billing') }}
+                    <i class="fa fa-paperclip pr-1"></i>{{ trans('global.task.subscriptions') }}
                 </a>
             </li>
             <!--<li class="nav-item small"><a class="nav-link link-muted" href="#timeline" data-toggle="tab">{{ trans('global.history') }}</a></li>-->
@@ -125,7 +125,7 @@
             </div>
             <div class="tab-pane" id="activity">
                 <task-timeline
-                    class="py-2"
+                    class="p-2"
                     :task="task"></task-timeline>
             </div><!-- /.tab-pane -->
         </div><!-- /.tab-content -->

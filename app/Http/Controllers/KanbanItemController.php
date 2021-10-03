@@ -86,7 +86,7 @@ class KanbanItemController extends Controller
      */
     public function show(KanbanItem $kanbanItem)
     {
-
+        return redirect()->action('KanbanController@show', ['kanban' => $kanbanItem->kanban_id]);
     }
 
     /**

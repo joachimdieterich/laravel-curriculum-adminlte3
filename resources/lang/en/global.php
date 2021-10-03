@@ -923,6 +923,7 @@ return [
         'title_singular'    => 'Task',
         'create'            => 'Create task',
         'edit'              => 'Edit task',
+        'subscriptions'     => 'Assignments',
         'fields'            => [
             'id'            => 'ID',
             'id_helper'     => '',

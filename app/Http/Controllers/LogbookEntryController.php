@@ -73,6 +73,10 @@ class LogbookEntryController extends Controller
                 'message' => $logbookEntry
             ];
         }
+        else
+        {
+            return redirect()->action('LogbookController@show', ['logbook' => $logbookEntry->logbook_id]);
+        }
     }
 
     /**

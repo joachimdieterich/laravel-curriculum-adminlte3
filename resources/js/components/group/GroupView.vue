@@ -61,19 +61,21 @@
                     <i class="fa fa-columns"></i>
                 </a>
             </li>
-           <!-- <li class="nav-item">
+           <li class="nav-item"
+               v-permission="'task_access'"
+               @click="setLocalStorage('#group_'+group.id, '#group_tasks_'+group.id);">
                 <a class="nav-link link-muted"
-                   id="content-nav-tab"
+                   :class="checkLocalStorage('#group_'+group.id, '#group_tasks_'+group.id)"
+                   id="task-nav-tab"
                    data-toggle="pill"
-                   href="#content-tab"
+                   href="#task-tab"
                    role="tab"
-                   aria-controls="content-tab"
-                   aria-selected="true"
-                   @click="loaderEvent()">
-                    <i class="fa fa-align-justify pr-2"></i>{{trans('global.content.title')}}
+                   aria-controls="task-tab"
+                   aria-selected="true">
+                    <i class="fas fa-tasks pr-2"></i>
                 </a>
             </li>
-            <li class="nav-item ">
+            <!-- <li class="nav-item ">
                 <a class="nav-link link-muted"
                    id="medium-nav-tab"
                    data-toggle="pill"
@@ -163,24 +165,25 @@
                     :subscribable_id="group.id"
                 ></kanbans>
             </div>
-            <!--<div class="tab-pane fade "
-                 id="content-tab"
+           <div v-permission="'task_access'"
+                class="tab-pane fade "
+                 id="task-tab"
                  role="tab"
                  aria-labelledby="content-nav-tab">
-                <contents
-                 ref="Contents"
+                <tasks
+                 ref="Tasks"
                  subscribable_type="App\Group"
-                :subscribable_id="group.id"></contents>
+                :subscribable_id="group.id"></tasks>
             </div>
-            <div class="tab-pane fade "
-                 id="medium-tab"
-                 role="tab"
-                 aria-labelledby="medium-nav-tab">
-                <media subscribable_type="App\Group"
-                       :subscribable_id="group.id"
-                       format="list">
-                </media>
-            </div>-->
+            <!--<div class="tab-pane fade "
+                id="medium-tab"
+                role="tab"
+                aria-labelledby="medium-nav-tab">
+               <media subscribable_type="App\Group"
+                      :subscribable_id="group.id"
+                      format="list">
+               </media>
+           </div>-->
             <!--<div v-if="group.glossar != null"
                 class="tab-pane fade"
                  id="glossar-tab"
@@ -204,6 +207,7 @@
     import Users from "../users/Users";
     import Logbooks from "../logbooks/Logbooks";
     import Kanbans from "../kanban/Kanbans";
+    import Tasks from "../tasks/Tasks";
 
     export default {
         props: {
@@ -225,6 +229,9 @@
             },
             loadLogbooks: function() {
                 this.$refs.Logbooks.loaderEvent();
+            },
+            loadTasks: function() {
+                this.$refs.Tasks.loaderEvent();
             }
 
         },
@@ -238,7 +245,8 @@
             Glossars,
             Contents,
             Logbooks,
-            Kanbans
+            Kanbans,
+            Tasks
         }
 
     }

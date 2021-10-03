@@ -14,7 +14,21 @@ class TaskSubscriptionController extends Controller
      */
     public function index()
     {
-        //
+        abort_unless(\Gate::allows('task_access'), 403);
+        $input = $this->validateRequest();
+        if (isset($input['subscribable_type']) AND isset($input['subscribable_id']))
+        {
+            $subscriptions = TaskSubscription::where([
+                'subscribable_type' => $input['subscribable_type'],
+                'subscribable_id'   => $input['subscribable_id']
+            ]);
+
+            if (request()->wantsJson()){
+
+                return ['subscriptions' => $subscriptions->with(['task'])->get()];
+            }
+        }
+
     }
 
     /**
@@ -81,5 +95,13 @@ class TaskSubscriptionController extends Controller
     public function destroy(TaskSubscription $taskSubscription)
     {
         //
+    }
+
+    protected function validateRequest()
+    {
+        return request()->validate([
+            'subscribable_type' => 'sometimes|string',
+            'subscribable_id'   => 'sometimes|integer',
+        ]);
     }
 }

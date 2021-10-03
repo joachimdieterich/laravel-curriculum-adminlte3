@@ -223,6 +223,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::patch('tasks/{task}/complete', 'TaskController@complete')->name('tasks.complete');
     Route::get('tasks/{task}/activity', 'TaskController@activity')->name('tasks.activity');
     Route::resource('tasks', 'TaskController');
+    /* task(Subscriptions)*/
+    Route::resource('taskSubscriptions', 'TaskSubscriptionController');
     /* terminalObjectives */
     Route::get('terminalObjectives/{terminalObjective}/referenceSubscriptionSiblings', 'TerminalObjectiveController@referenceSubscriptionSiblings');
     Route::get('terminalObjectives/{terminalObjective}/quoteSubscriptions', 'TerminalObjectiveController@quoteSubscriptions');

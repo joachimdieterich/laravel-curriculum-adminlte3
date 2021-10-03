@@ -30,6 +30,7 @@ return [
     'generate'                             => 'erzeugen',
     'share'                                => 'Teilen',
     'pleaseSelect'                         => 'Bitte wählen ',
+    'waitForFile'                          => 'Datei wird erzeugt...',
     'areYouSure'                           => 'Sind Sie sicher?',
     'allRightsReserved'                    => 'Alle Rechte vorbehalten.',
     'downloadFile'                         => 'Datei herunterladen',

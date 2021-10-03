@@ -10,15 +10,15 @@ return [
     | This option contains settings for PDF generation.
     |
     | Enabled:
-    |    
+    |
     |    Whether to load PDF / Image generation.
     |
     | Binary:
-    |    
+    |
     |    The file path of the wkhtmltopdf / wkhtmltoimage executable.
     |
     | Timout:
-    |    
+    |
     |    The amount of time to wait (in seconds) before PDF / Image generation is stopped.
     |    Setting this to false disables the timeout (unlimited processing time).
     |
@@ -32,20 +32,28 @@ return [
     |    The environment variables to set while running the wkhtmltopdf process.
     |
     */
-    
+
     'pdf' => [
         'enabled' => true,
         'binary'  => env('SNAPPY_PDF_BINARY', ''),
-        'timeout' => false,
-        'options' => [],
+        'timeout' => 3600,
+        'options' => [
+            //'quiet' => true,
+            'load-error-handling' => "ignore",
+            'load-media-error-handling' => "ignore",
+        ],
         'env'     => [],
     ],
-    
+
     'image' => [
         'enabled' => true,
         'binary'  => env('SNAPPY_IMAGE_BINARY', ''),
-        'timeout' => false,
-        'options' => [],
+        'timeout' => 3600,
+        'options' => [
+            //'quiet' => true,
+            'load-error-handling' => "ignore",
+            'load-media-error-handling' => "ignore",
+        ],
         'env'     => [],
     ],
 

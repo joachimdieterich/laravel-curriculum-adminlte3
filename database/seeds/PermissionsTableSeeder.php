@@ -1197,6 +1197,12 @@ class PermissionsTableSeeder extends Seeder
                 'created_at'=>'2020-06-07 17:57:44',
                 'updated_at'=>'2020-06-07 17:57:44',
             ],
+            [
+                'id'        => '222',
+                'title'     =>'curriculum_print',
+                'created_at'=>'2020-06-07 17:57:44',
+                'updated_at'=>'2020-06-07 17:57:44',
+            ],
 
 
 

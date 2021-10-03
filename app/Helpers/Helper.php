@@ -49,20 +49,25 @@ if (!function_exists('getImmediateChildrenByTagName')) {
 if (!function_exists('relativeToAbsoutePaths')) {
     function relativeToAbsoutePaths($input) {
         return preg_replace_callback(
-                '/<img\s+[^>]*src="\/media\/(.*?)"(\s+[^>]*)[^>]*>/mi',
-                function($match)
+            '/<img\s+[^>]*(src="\/media\/(.*?)")(\s+[^>]*)?[^>]*>/mi',
+            function($match)
+            {
+                $media = App\Medium::find($match[2]);
+                //dump($media->absolutePath());
+                if (!file_exists($media->absolutePath()))
                 {
-                    $media = App\Medium::find($match[1]);
-                    if ($media !== null)
-                    {
-                        return (( "<img src=\"{$media->absolutePath()}\"{$match[2]}>"));
-                    } else {
-                        return "[Image not available]";
-                    }
+                    return '';//"<!--File does not exist-->"; //todo: remove from db?
+                }
+                if ($media !== null)
+                {
+                    return str_replace($match[1],"src=\"{$media->absolutePath()}\"", $match[0]);
+                } else {
 
-                },
-                $input
-            );
+                    return '';//"<!--Image not available-->";
+                }
+            },
+            $input
+        );
     }
 }
 

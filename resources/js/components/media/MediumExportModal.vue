@@ -1,18 +1,20 @@
 <template>
     <modal
-        id="curriculum-export-modal"
-        name="curriculum-export-modal"
+        id="medium-export-modal"
+        name="medium-export-modal"
         height="auto"
         :adaptive=true
         draggable=".draggable"
         :resizable=true
         @before-open="beforeOpen"
+        @opened="opened"
         style="z-index: 1200">
         <div class="card"
              style="margin-bottom: 0px !important">
             <div class="card-header">
-                 <h3 class="card-title">
-                    {{ trans('global.curriculum.export') }}
+                 <h3 class="card-title" v-html="this.header">
+
+<!--                    {{ trans('global.curriculum.export') }}-->
                  </h3>
 
                  <div class="card-tools">
@@ -26,12 +28,13 @@
             </div>
 
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                {{ trans('global.waitForFile') }}
             </div>
 
             <div class="card-footer">
                 <span class="pull-right">
                      <button id="btn_generate"
-                             v-if="download_url === false"
+                             v-if="download_url == null"
                              class="btn btn-primary"  >
                          <div  class="text-center text-white">
                             <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
@@ -43,7 +46,7 @@
                         class="btn btn-primary hidden"
                         :href="download_url"
                         target="_blank"
-                        @click="$modal.hide('curriculum-export-modal')">
+                        @click="$modal.hide('medium-export-modal')">
                          <i class="fa fa-download"></i>
                          {{ trans('global.downloadFile') }}
                      </a>
@@ -58,26 +61,37 @@
         data() {
             return {
                 id: Number,
-                download_url: false
+                url: String,
+                header: String,
+                download_url: null
             }
         },
         methods: {
             process() {
-                axios.get('/curricula/' + this.id + '/export')
+                this.download_url = null;
+                axios.get(this.url)
                      .then((response) => {
                          this.download_url = response.data.path;
-                         //this.$modal.hide('curriculum-export-modal');
-                     });
+                     })
+                    .catch(e => {
+
+                    });
             },
 
             beforeOpen(event) {
+                this.id = null;
                 if  (event.params.id){
                     this.id = event.params.id;
-                    this.process()
                 }
+                this.url = event.params.url;
+                this.header = event.params.header;
+
              },
+            opened() {
+                this.process()
+            },
             close(){
-                this.$modal.hide('curriculum-export-modal');
+                this.$modal.hide('medium-export-modal');
             },
         },
     }

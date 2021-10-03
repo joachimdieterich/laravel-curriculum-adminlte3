@@ -43,6 +43,7 @@ class PermissionRoleTableSeeder extends Seeder
                 'curriculum_show',
                 'curriculum_edit',
                 'curriculum_delete',
+                'curriculum_print',
                 'grade_access',
                 'grade_create',
                 'grade_show',
@@ -112,6 +113,7 @@ class PermissionRoleTableSeeder extends Seeder
         $indexer_permissions = $admin_permissions->filter(function ($permission) {
             $indexer_permission_list = [
                 'curriculum_show',
+                'curriculum_print',
                 'navigator_show',
                 'logbook_access',
                 'logbook_show',
@@ -147,6 +149,7 @@ class PermissionRoleTableSeeder extends Seeder
                 'course_edit',
                 'course_delete',
                 'curriculum_show',
+                'curriculum_print',
                 'group_access',
                 'group_create',
                 'group_show',
@@ -220,6 +223,7 @@ class PermissionRoleTableSeeder extends Seeder
                 'course_edit',
                 'course_delete',
                 'curriculum_show',
+                'curriculum_print',
                 'group_access',
                 'group_show',
                 'logbook_access',

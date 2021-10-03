@@ -30,6 +30,7 @@ return [
     'generate'                             => 'Generate',
     'share'                                => 'Share',
     'pleaseSelect'                         => 'Please select',
+    'waitForFile'                          => 'Generating file...',
     'areYouSure'                           => 'Are you sure?',
     'allRightsReserved'                    => 'All rights reserved.',
     'downloadFile'                         => 'Download file',

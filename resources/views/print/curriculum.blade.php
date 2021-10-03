@@ -3,8 +3,6 @@
 
 <head>
     <meta charset="UTF-8">
-    <link href="{{ mix('css/app.css') }}" rel="stylesheet" />
-    <link href="{{ public_path('css/custom.css') }}" rel="stylesheet" />
 </head>
 
 <body >
@@ -14,15 +12,15 @@
         <p  style="page-break-before: always">
             <strong class="lead">{{ $content->title }}</strong>
             {!! $content->content !!}
-        </p>   
+        </p>
     @endforeach
-    
+
     @foreach($curriculum->terminalObjectives as $terminalObjective)
         <span class="box" >
             {!! $terminalObjective->title !!}<hr>
             {!! $terminalObjective->description !!}
         </span>
-        
+
         @foreach($terminalObjective->enablingObjectives as $enablingObjectives)
             <span class="box">
                 {!! $enablingObjectives->title !!}<hr>

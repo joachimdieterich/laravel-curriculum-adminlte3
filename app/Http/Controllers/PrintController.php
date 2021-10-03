@@ -25,13 +25,13 @@ class PrintController extends Controller
         return $this->print($html, $content->title.'.pdf');
     }
 
-    public function curriculum(Curriculum $curriculum)
+    /*public function curriculum(Curriculum $curriculum)
     {
         $html = view('print.curriculum')
                 ->with(compact('curriculum'))
                 ->render();
         return $this->print($html, $curriculum->title.'.pdf');
-    }
+    }*/
 
     public function glossar(Glossar $glossar)
     {
@@ -74,10 +74,11 @@ class PrintController extends Controller
      * @param string $target 'download', 'save', 'inline'
      * @return type
      */
-    private function print($html, $path, $target = 'download', $orientation ='portrait') {
-        $meta = '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">';
+    static function print($html, $path, $target = 'download', $orientation ='portrait') {
+        $meta = '<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />';
 
         /* replace relative media links with absolute paths to get snappy working */
+
         $html = relativeToAbsoutePaths($html);
 
         $pdf = SnappyPdf::loadHTML($meta.$html)
@@ -88,19 +89,18 @@ class PrintController extends Controller
                    ->setOption('margin-right', 20)
                    ->setOption('margin-bottom', 20);
 
-        LogController::set(get_class($this).'@'.__FUNCTION__);
-
         switch ($target) {
             case 'inline': //open in same window
                 return $pdf->inline($path);
             break;
 
             case 'save':  //save on path
-                //todo: put file in media table
+                //if file exists return file,
                  if (file_exists(storage_path("app/users/".auth()->user()->id."/".$path))) {
-                    dd('file exists');
+                     //dump(storage_path("app/users/".auth()->user()->id."/".$path));
+                     unlink(storage_path("app/users/".auth()->user()->id."/".$path));
                 }
-
+                //else generate file
                 $pdf->save(storage_path("app/users/".auth()->user()->id."/".$path));
 
                 $basename = basename($path);
@@ -121,7 +121,7 @@ class PrintController extends Controller
                 ]);
                 $media->save();
 
-                return back();
+                return $media->path();
             break;
 
             case 'download':

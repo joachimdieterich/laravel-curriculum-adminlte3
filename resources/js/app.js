@@ -73,7 +73,6 @@ Vue.component('group-modal', require('./components/group/GroupModal.vue').defaul
 Vue.component('admin-view', require('./components/admin/AdminView.vue').default);
 Vue.component('absence-modal', require('./components/absence/AbsenceModal.vue').default);
 Vue.component('curriculum-view', require('./components/curriculum/CurriculumView.vue').default);
-Vue.component('curriculum-export-modal', require('./components/curriculum/CurriculumExportModal.vue').default);
 Vue.component('group-view', require('./components/group/GroupView.vue').default);
 Vue.component('terminal-objective-modal', require('./components/objectives/TerminalObjectiveModal.vue').default);
 Vue.component('data-table-widgets', require('./components/uiElements/DataTableWidgets.vue').default);
@@ -87,6 +86,7 @@ Vue.component('content-subscription-modal', require('./components/content/Conten
 Vue.component('reference-objective-modal', require('./components/reference/ReferenceObjectiveModal.vue').default);
 Vue.component('medium-modal', require('./components/media/MediumModal.vue').default);
 Vue.component('medium-create-modal', require('./components/media/MediumCreateModal.vue').default);
+Vue.component('medium-export-modal', require('./components/media/MediumExportModal.vue').default);
 Vue.component('note-modal', require('./components/note/NoteModal.vue').default);
 Vue.component('notes', require('./components/note/Notes.vue').default);
 Vue.component('objective-medium-modal', require('./components/objectives/ObjectiveMediumModal.vue').default);

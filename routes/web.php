@@ -64,6 +64,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('curricula/{curriculum}/editOwner', 'CurriculumController@editOwner')->name('curricula.editOwner');
     Route::patch('curricula/{curriculum}/editOwner', 'CurriculumController@storeOwner')->name('curricula.storeOwner');
     Route::patch('curricula/{curriculum}/resetOrderIds', 'CurriculumController@resetOrderIds')->name('curricula.resetOrderIds');
+    Route::get('curricula/{curriculum}/print', 'CurriculumController@print')->name('curriculum.print');
     Route::resource('curricula', 'CurriculumController');
 
     /* enablingObjectives */
@@ -194,7 +195,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('print/content/{content}', 'PrintController@content')->name('print.content');
     Route::get('print/glossar/{glossar}', 'PrintController@glossar')->name('print.glossar');
     Route::get('print/{model}/{id}', 'PrintController@model')->name('print.model');
-    Route::get('print/curriculum/{curriculum}', 'PrintController@curriculum')->name('print.curriculum');
+    /*Route::get('print/curriculum/{curriculum}', 'PrintController@curriculum')->name('print.curriculum');*/
     Route::get('print/curriculum/{curriculum}/references', 'PrintController@references')->name('print.references');
 
     Route::resource('progresses', 'ProgressController');

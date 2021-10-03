@@ -96,6 +96,15 @@
                     <i class="fa fa-certificate pr-2"></i>{{trans('global.certificate.create')}}
                 </a>
             </li>
+            <li v-can="'curriculum_print'"
+                class="nav-item">
+                <a class="nav-link link-muted"
+                   data-toggle="tooltip" :title="trans('global.curriculum.print')"
+                   @click="printCurriculum()"
+                   id="config-nav-tab">
+                    <i class="fa fa-print"></i>
+                </a>
+            </li>
             <li class="nav-item "
                 @click="setLocalStorage('#curriculum_'+curriculum.id, '#description-tab')">
                 <a class="nav-link link-muted"
@@ -182,7 +191,7 @@
             </div>
 
         </div>
-        <curriculum-export-modal v-can="'curriculum_create'"></curriculum-export-modal>
+        <medium-export-modal v-can="'curriculum_create'"></medium-export-modal>
 
     </div>
 
@@ -233,7 +242,12 @@
                 }
             },
             exportCurriculum(){
-                this.$modal.show('curriculum-export-modal', {'id': this.curriculum.id });
+                //this.$modal.show('medium-export-modal', {'id': this.curriculum.id });
+                this.$modal.show('medium-export-modal', {'url': '/curricula/' + this.curriculum.id + '/export', 'header': window.trans.global.curriculum.export });
+            },
+            printCurriculum() {
+                this.$modal.show('medium-export-modal', {'url': '/curricula/' + this.curriculum.id + '/print', 'header': window.trans.global.curriculum.print });
+
             },
             externalEvent: function(value) {
                 this.showGenerateCertificate = value;

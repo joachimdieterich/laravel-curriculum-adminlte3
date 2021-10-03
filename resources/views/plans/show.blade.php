@@ -23,10 +23,9 @@
         </div>
 @can('plan_edit')
         <div class="card-tools pr-2 no-print">
-            <a href="{{ route('print.model', ['model' => 'App\Plan', 'id' =>  $plan->id]) }}" class="link-muted pr-4">
+            <a onclick="window.print();" class="link-muted pr-4">
                 <i class="fa fa-print text-muted"></i>
             </a>
-
              <a href="{{route('plans.edit', $plan->id) }}" class="link-muted">
                 <i class="far fa-edit"></i>
             </a>

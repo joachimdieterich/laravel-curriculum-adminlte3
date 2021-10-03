@@ -1,28 +1,36 @@
-<h1>{{$model->title}}</h1>
-<small>{{ $model->type->title}} </small>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body >
+<h1>{{$plan->title}}</h1>
+<small>{{ $plan->type->title}} </small>
 
 <div class="row">
     <span class="col-12">
-         {!! $model->description !!}
+         {!! $plan->description !!}
     </span>
 </div>
 <hr>
 <div class="row">
     <span class="col-md-4 col-sm-12">
         <i class="fa fa-calendar pr-1"></i>
-        {{ $model->begin }}
+        {{ $plan->begin }}
     </span>
     <span class="col-md-4 col-sm-12">
         <i class="fa fa-calendar-check pr-1"></i>
-        {{ $model->end }}
+        {{ $plan->end }}
     </span>
     <span class="col-md-4 col-sm-12">
         <i class="fa fa-stopwatch pr-1"></i>
-        {{ $model->duration }} {{trans('global.minutes')}}
+        {{ $plan->duration }} {{trans('global.minutes')}}
     </span>
 </div>
 @php
-$period = Carbon\CarbonPeriod::create($model->begin, $model->end);
+$period = Carbon\CarbonPeriod::create($plan->begin, $plan->end);
 $today = Carbon\Carbon::today()->format('yy-m-d')
 @endphp
 
@@ -41,7 +49,7 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
             </div>
             <div class="card-body py-2">
                 @include('tasks.tasklist', [
-                    "tasks" =>  $model->tasks()->whereDate('start_date', $day->format('yy-m-d'))->get(),
+                    "tasks" =>  $plan->tasks()->whereDate('start_date', $day->format('yy-m-d'))->get(),
                     "hide_due_date"  => true
                 ])
             </div>
@@ -57,3 +65,6 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
         </div>
     @endif
 @endforeach
+</body>
+
+</html>

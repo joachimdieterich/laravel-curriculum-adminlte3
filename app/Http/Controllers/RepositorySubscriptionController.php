@@ -111,7 +111,7 @@ class RepositorySubscriptionController extends Controller
         }*/
 
         /*
-         * Get media by subscribablye identifier if (curriculum, terminal, or enabling objective)
+         * Get media by subscribable identifier if (curriculum, terminal, or enabling objective)
          */
         $allowed_models = array("App\Curriculum", "App\TerminalObjective", "App\EnablingObjective");
         if (in_array($input['subscribable_type'], $allowed_models)) {
@@ -120,6 +120,7 @@ class RepositorySubscriptionController extends Controller
             if (!empty($model->ui))
             {
                 $result->push($repositoryPlugin->plugins[$input['repository']]->processReference('endpoint=getSearchQueriesV2&property=ccm:curriculum&value='.$model->ui.'&maxItems='.$input['maxItems'].'&skipCount='.($input['maxItems'] * $input['page']).'&filter='.$input['filter'] ));
+                LogController::set(get_class($this).'@'.__FUNCTION__, $model->uuid, $result->count());
             }
             else
             {
@@ -127,7 +128,6 @@ class RepositorySubscriptionController extends Controller
                 $result = null;
             }
         }
-        LogController::set(get_class($this).'@'.__FUNCTION__, $model->uuid, $result->count());
 
         if (request()->wantsJson()){
             return ['message' => $result];

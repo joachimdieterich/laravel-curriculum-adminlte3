@@ -30,18 +30,17 @@
                      <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
                         <i class="fa fa-times"></i>
                      </button>
-
                  </div>
             </div>
 
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-
                 <div v-if="method === 'post'" class="form-group ">
                     <label for="curricula">
                         {{ trans('global.curriculum.title_singular') }}
                     </label>
                     <select name="curricula"
                             id="curricula"
+                            v-model="form.curriculum_id"
                             class="form-control select2 "
                             style="width:100%;"
                             >
@@ -67,8 +66,7 @@
                     <select name="enablingObjectives"
                             id="enablingObjectives"
                             class="form-control select2 "
-                            style="width:100%;"
-                            >
+                            style="width:100%;">
                          <option v-for="item in enablingObjectives" v-bind:value="item.id">{{ item.title }}</option>
                     </select>
                 </div>
@@ -117,6 +115,7 @@
                 enablingObjectives: {},
                 enablingObjective: {},
                 referenceRequestUrl: null,
+                requestUrl: '',
             }
         },
         methods: {
@@ -124,6 +123,7 @@
             async loadCurricula() {
                 try {
                     this.curricula = (await axios.get('/curricula')).data.curricula;
+
                 } catch(error) {
                     this.errors = error.response.data.errors;
                 }
@@ -179,6 +179,10 @@
             },
 
             beforeOpen(event) {
+                this.form.curriculum_id = null;
+                this.curricula = {};
+                this.terminalObjectives = {};
+                this.enablingObjectives = {};
                 if (event.params.id){
                     this.method = "patch";
                     this.form.id = event.params.id;
@@ -194,21 +198,17 @@
                         this.referenceRequestUrl = event.params.requestUrl;
                     }
                 }
-
              },
             beforeClose() {
             },
             opened(){
                 this.$initTinyMCE();
                 this.initSelect2();
-                this.curricula = {};
-                this.terminalObjectives = {};
-                this.enablingObjectives = {};
             },
             initSelect2(){
                 $("#curricula").select2({
                     dropdownParent: $("#curricula").parent(),
-                    allowClear: false
+                    allowClear: false,
                 }).on('select2:select', function (e) {
                     this.loadObjectives(e.params.data.id);
                     this.terminalObjectives = {};
@@ -226,11 +226,12 @@
 
                 $("#enablingObjectives").select2({
                     dropdownParent: $("#enablingObjectives").parent(),
-                    allowClear: false
+                    allowClear: true
                 }).on('select2:select', function (e) {
                     this.setEnabling(e.params.data.id);
                 }.bind(this)) //make setEnabling accessible!
                .val(this.form.enabling_objective_id).trigger('change'); //set value
+
             },
             close(){
                 this.$modal.hide('reference-objective-modal');

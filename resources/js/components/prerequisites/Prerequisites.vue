@@ -60,6 +60,7 @@
                     .setTitleDisplayTextAccessor(function(data) {
                         return data.name;
                     })
+                    .setOrientation('topToBottom')
                     .getNodeSettings()
                     .setSizingMode('nodesize')
                     .setVerticalSpacing(50)

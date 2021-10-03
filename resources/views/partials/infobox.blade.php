@@ -20,7 +20,8 @@
             </div>
         </div>
         <div id="collapse{{ $infoBoxId }}"
-            class="card pt-0 border-0 rounded-0 collapse show">
+            class="card pt-0 border-0 rounded-0 collapse show"
+             style="overflow-y: auto; max-height:400px;">
             @if(isset($include))
                 <div class="card-body p-1">@include("partials.{$include}")</div>
             @endif

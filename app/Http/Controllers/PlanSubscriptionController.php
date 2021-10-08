@@ -16,16 +16,31 @@ class PlanSubscriptionController extends Controller
     public function index()
     {
         abort_unless(\Gate::allows('plan_create'), 403);
-        if (request()->wantsJson()){
-            return [
-                'subscribers' =>
-                    [
-                    'users' =>  auth()->user()->users()->select('users.id','users.firstname','users.lastname')->get(),
-                    'groups' => auth()->user()->groups()->select('group_id','title')->get(),
-                    'organizations' => auth()->user()->organizations()->select('organization_id','title')->get(),
-                    'subscriptions' => Plan::find(request('plan_id'))->subscriptions()->with('subscribable')->get()
-                    ]
+        $input = $this->validateRequest();
+        if (isset($input['subscribable_type']) AND isset($input['subscribable_id']))
+        {
+            $subscriptions = PlanSubscription::where([
+                'subscribable_type' => $input['subscribable_type'],
+                'subscribable_id'   => $input['subscribable_id']
+            ]);
+
+
+            if (request()->wantsJson()){
+                return ['subscriptions' => $subscriptions->with(['plan'])->get()];
+            }
+        }
+        else {
+            if (request()->wantsJson()) {
+                return [
+                    'subscribers' =>
+                        [
+                            'users' => auth()->user()->users()->select('users.id', 'users.firstname', 'users.lastname')->get(),
+                            'groups' => auth()->user()->groups()->select('group_id', 'title')->get(),
+                            'organizations' => auth()->user()->organizations()->select('organization_id', 'title')->get(),
+                            'subscriptions' => Plan::find(request('plan_id'))->subscriptions()->with('subscribable')->get()
+                        ]
                 ];
+            }
         }
     }
 

@@ -72,7 +72,21 @@
                    role="tab"
                    aria-controls="task-tab"
                    aria-selected="true">
-                    <i class="fas fa-tasks pr-2"></i>
+                    <i class="fas fa-tasks"></i>
+                </a>
+            </li>
+            <li class="nav-item"
+                v-permission="'plan_access'"
+                @click="setLocalStorage('#group_'+group.id, '#group_plans_'+group.id);">
+                <a class="nav-link link-muted"
+                   :class="checkLocalStorage('#group_'+group.id, '#group_plans_'+group.id)"
+                   id="plans-nav-tab"
+                   data-toggle="pill"
+                   href="#plan-tab"
+                   role="tab"
+                   aria-controls="plan-tab"
+                   aria-selected="true">
+                    <i class="fa fa-clipboard-list"></i>
                 </a>
             </li>
             <!-- <li class="nav-item ">
@@ -175,6 +189,16 @@
                  subscribable_type="App\Group"
                 :subscribable_id="group.id"></tasks>
             </div>
+            <div v-permission="'plan_access'"
+                 class="tab-pane fade "
+                 id="plan-tab"
+                 role="tab"
+                 aria-labelledby="content-nav-tab">
+                <plans
+                    ref="Plans"
+                    subscribable_type="App\Group"
+                    :subscribable_id="group.id"></plans>
+            </div>
             <!--<div class="tab-pane fade "
                 id="medium-tab"
                 role="tab"
@@ -208,6 +232,7 @@
     import Logbooks from "../logbooks/Logbooks";
     import Kanbans from "../kanban/Kanbans";
     import Tasks from "../tasks/Tasks";
+    import Plans from "../plan/Plans";
 
     export default {
         props: {
@@ -230,6 +255,9 @@
             loadLogbooks: function() {
                 this.$refs.Logbooks.loaderEvent();
             },
+            loadPlans: function() {
+                this.$refs.Plans.loaderEvent();
+            },
             loadTasks: function() {
                 this.$refs.Tasks.loaderEvent();
             }
@@ -246,7 +274,8 @@
             Contents,
             Logbooks,
             Kanbans,
-            Tasks
+            Tasks,
+            Plans
         }
 
     }

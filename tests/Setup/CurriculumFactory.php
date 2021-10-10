@@ -7,7 +7,7 @@
  */
 
 /**
- * Description of OrganizationFactory.
+ * Description of CurriculumFactory.
  *
  * @author joachimdieterich
  */
@@ -29,7 +29,7 @@ class CurriculumFactory
 
     public function create()
     {
-        
+
         return  factory(Curriculum::class)->create();
     }
 }

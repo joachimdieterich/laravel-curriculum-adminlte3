@@ -188,8 +188,13 @@ if (!function_exists('today_online')) {
 
 if (!function_exists('is_admin')) {
     function is_admin(){
-
          return (auth()->user()->role()->id == 1);
+    }
+}
+
+if (!function_exists('is_admin')) {
+    function is_schooladmin(){
+        return (auth()->user()->role()->id == 4);
     }
 }
 
@@ -246,5 +251,32 @@ if (!function_exists('str_replace_special_chars')) {
         $string = str_replace(array_keys($replace), $replace, $string);
 
         return $string;
+    }
+
+    if (!function_exists('limiter')) {
+        /**
+         * Check for Limit based on params
+         *
+         * @param string $referenceable_type
+         * @param mixed $referenceable_id
+         * @param string $key
+         * @param string $model
+         * @param string $model_key
+         * @return boolean
+         */
+        function limiter($referenceable_type = 'App\\Role', $referenceable_id = 1, $key =  'logbook_limiter', $model = 'App\Logbook', $model_key = 'owner_id')
+        {
+            $limit = optional(App\Config::where([
+                ['referenceable_type', '=', $referenceable_type],
+                ['referenceable_id', '=', $referenceable_id],
+                ['key', '=', $key]
+            ])->get()->first())->value ?: -1;
+
+            return ($limit == -1)
+                ? true
+                : $model::where($model_key, auth()->user()->id)
+                    ->get()
+                    ->count() < $limit;
+        }
     }
 }

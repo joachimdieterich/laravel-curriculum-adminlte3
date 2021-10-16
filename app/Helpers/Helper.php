@@ -192,7 +192,7 @@ if (!function_exists('is_admin')) {
     }
 }
 
-if (!function_exists('is_admin')) {
+if (!function_exists('is_schooladmin')) {
     function is_schooladmin(){
         return (auth()->user()->role()->id == 4);
     }

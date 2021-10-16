@@ -33,6 +33,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('certificates', 'CertificateController');
 
     Route::get('configs/list', 'ConfigController@list');
+    Route::get('configs/models', 'ConfigController@models');
     Route::resource('configs', 'ConfigController');
 
      Route::resource('contactdetails', 'ContactDetailController');

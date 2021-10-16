@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Config;
+use App\Role;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -71,8 +72,24 @@ class ConfigController extends Controller
     public function store(Request $request)
     {
         abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
-        $config = Config::firstOrCreate($this->validateRequest());
-        return redirect(route('configs.index'));
+        $new_config = $this->validateRequest();
+        $config = Config::updateOrCreate([
+            "key" => $new_config['key'],
+            "referenceable_type" => $new_config['referenceable_type'],
+            "referenceable_id" => $new_config['referenceable_id'],
+            "data_type" => $new_config['data_type'],
+        ],
+            [
+                "value" => $new_config['value'],
+            ]
+        );
+
+        if (request()->wantsJson()) {
+            return ['config' => $config];
+        } else {
+            return redirect(route('configs.index'));
+        }
+
     }
 
     /**
@@ -112,7 +129,12 @@ class ConfigController extends Controller
 
         $config->update($this->validateRequest());
 
-        return redirect(route('configs.index'));
+        if (request()->wantsJson()) {
+            return ['config' => $config];
+        } else {
+            return redirect(route('configs.index'));
+        }
+
     }
 
     /**
@@ -129,14 +151,33 @@ class ConfigController extends Controller
         return back();
     }
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function models()
+    {
+        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
+        abort_unless(\Gate::allows('role_access'), 403);
+        $roles = Role::select([
+            'id',
+            'title'
+        ])->get();
+        $configs = Config::where('key', 'LIKE', '%_limiter')->get();
+        return view('configs.models')
+            ->with(compact('roles'))
+            ->with(compact('configs'));
+    }
+
     protected function validateRequest()
     {
         return request()->validate([
-            'key'                => 'sometimes|required',
-            'value'              => 'sometimes',
+            'key' => 'sometimes|required',
+            'value' => 'sometimes',
             'referenceable_type' => 'sometimes',
-            'referenceable_id'   => 'sometimes',
-            'data_type'          => 'sometimes',
+            'referenceable_id' => 'sometimes',
+            'data_type' => 'sometimes',
         ]);
     }
 }

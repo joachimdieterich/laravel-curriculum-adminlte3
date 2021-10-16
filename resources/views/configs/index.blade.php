@@ -22,15 +22,39 @@
         </div>
     </div>
 @endif
+<div class="row">
+    <div class="col-sm-6 col-12">
+        <div class="info-box">
+
+            <span class="info-box-icon bg-info">
+               <a href="/configs/models" class="link-muted">
+                   <i class="fa fa-tachometer-alt"></i>
+               </a>
+            </span>
+            <div class="info-box-content">
+                <a href="/configs/models" class="link-muted">
+                    <span class="info-box-text">{{ trans('global.config.model_limiter_title') }}</span>
+                    <small>
+                        <span class="">{{ trans('global.config.model_limiter_description')  }}</span>
+                    </small>
+                </a>
+            </div>
+
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+</div>
+
 
 <table id="configs-datatable" class="table table-hover datatable">
     <thead>
-        <tr>
-            <th></th>
-            <th>{{ trans('global.config.fields.key') }}</th>
-            <th>{{ trans('global.config.fields.value') }}</th>
-            <th>{{ trans('global.config.fields.referenceable_type') }}</th>
-            <th>{{ trans('global.config.fields.referenceable_id') }}</th>
+    <tr>
+        <th></th>
+        <th>{{ trans('global.config.fields.key') }}</th>
+        <th>{{ trans('global.config.fields.value') }}</th>
+        <th>{{ trans('global.config.fields.referenceable_type') }}</th>
+        <th>{{ trans('global.config.fields.referenceable_id') }}</th>
             <th>{{ trans('global.config.fields.data_type') }}</th>
             <th>{{ trans('global.datatables.action') }}</th>
         </tr>

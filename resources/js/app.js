@@ -80,6 +80,7 @@ Vue.component('enabling-objective-modal', require('./components/objectives/Enabl
 Vue.component('objective-view', require('./components/objectives/ObjectiveView.vue').default);
 Vue.component('objective-box', require('./components/objectives/ObjectiveBox.vue').default);
 Vue.component('dropdown-button', require('./components/uiElements/DropdownButton.vue').default);
+Vue.component('model-limiter', require('./components/config/ModelLimiter.vue').default);
 Vue.component('content-modal', require('./components/content/ContentModal.vue').default);
 Vue.component('content-create-modal', require('./components/content/ContentCreateModal.vue').default);
 Vue.component('content-subscription-modal', require('./components/content/ContentSubscriptionModal.vue').default);

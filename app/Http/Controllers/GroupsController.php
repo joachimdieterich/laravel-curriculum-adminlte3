@@ -24,7 +24,11 @@ class GroupsController extends Controller
         if (request()->wantsJson()){
             return ['groups' => json_encode(auth()->user()->groups)];
         } else {
-            $curricula =  (is_admin()) ? Curriculum::all() : Curriculum::where('type_id', 1)->get();
+            $curricula = (is_admin()) ? Curriculum::all() : Curriculum::where('type_id', 1)->get();
+            if (is_schooladmin()) //schooladmin should see all curricula of users of current organizations
+            {
+                $curricula = $curricula->merge(Curriculum::whereIn('owner_id', Organization::where('id', auth()->user()->current_organization_id)->first()->users()->pluck('id')->toArray())->get());
+            }
             return view('groups.index')
                 ->with(compact('curricula'));
         }

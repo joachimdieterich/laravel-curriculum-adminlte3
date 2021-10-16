@@ -17,17 +17,17 @@ $factory->define(Curriculum::class, function (Faker $faker) {
 
         'color'                 => $faker->rgbColor,
 
-        'grade_id'              => 1,
-        'subject_id'            => 1,
+        'grade_id' => 1,
+        'subject_id' => 1,
 
-        'state_id'              => 'DE-RP',
-        'country_id'            => 'DE',
-        'organization_type_id'  => 1,
-        'type_id'               => 1,
+        'state_id' => 'DE-RP',
+        'country_id' => 'DE',
+        'organization_type_id' => 1,
+        'type_id' => 1,
 
-        'medium_id'             => null, //define std. image
+        'medium_id' => null, //define std. image
 
-        'owner_id'              => 1,
+        'owner_id' => auth()->user()->id,
 
     ];
 });

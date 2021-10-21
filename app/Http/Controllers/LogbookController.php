@@ -37,16 +37,16 @@ class LogbookController extends Controller
         return empty($logbooks) ? '' : DataTables::of($logbooks)
             ->addColumn('action', function ($logbooks) use ($edit_gate, $delete_gate) {
                  $actions  = '';
-                    if ($edit_gate){
-                        $actions .= '<a href="'.route('logbooks.edit', $logbooks->id).'" '
-                                    . 'id="edit-logbook-'.$logbooks->id.'" '
-                                    . 'class="px-2 text-black">'
-                                    . '<i class="fa fa-pencil-alt"></i>'
-                                    . '</a>';
+                    if ($edit_gate and $logbooks->owner_id == auth()->user()->id) {
+                        $actions .= '<a href="' . route('logbooks.edit', $logbooks->id) . '" '
+                            . 'id="edit-logbook-' . $logbooks->id . '" '
+                            . 'class="px-2 text-black">'
+                            . '<i class="fa fa-pencil-alt"></i>'
+                            . '</a>';
                     }
-                    if ($delete_gate){
-                        $actions .= '<button type="button" class="btn text-danger" onclick="event.preventDefault();destroyDataTableEntry(\'logbooks\','.$logbooks->id.');"><i class="fa fa-trash"></i></button>';
-                    }
+                if ($delete_gate and $logbooks->owner_id == auth()->user()->id) {
+                    $actions .= '<button type="button" class="btn text-danger" onclick="event.preventDefault();destroyDataTableEntry(\'logbooks\',' . $logbooks->id . ');"><i class="fa fa-trash"></i></button>';
+                }
 
                 return $actions;
             })
@@ -193,7 +193,6 @@ class LogbookController extends Controller
         abort_unless(auth()->user()->id == $logbook->owner_id, 403);                // user owns logbook
         $logbook->delete();
 
-        //return back();
     }
 
     protected function validateRequest()

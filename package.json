@@ -32,7 +32,7 @@
         "@fortawesome/fontawesome-free": "^5.15.4",
         "@vue/cli": "^4.5.14",
         "admin-lte": "^3.1.0",
-        "babel-loader": "^8.2.2",
+        "babel-loader": "^8.2.3",
         "d3": "^6.7.0",
         "d3-mitch-tree": "^1.1.2",
         "datatables.net": "^1.11.3",

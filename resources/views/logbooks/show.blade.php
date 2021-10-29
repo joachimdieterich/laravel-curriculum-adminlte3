@@ -3,10 +3,16 @@
 @section('title')
     <small>{{ $logbook->title }}</small>
     @can('logbook_create')
-    <button class="btn btn-flat"
-            onclick="app.__vue__.$modal.show('subscribe-modal',  {'modelId': {{ $logbook->id }}, 'modelUrl': 'logbook' });">
-        <i class="fa fa-share-alt text-secondary"></i>
-    </button>
+        @if (Auth::user()->id ==  $logbook->owner_id)
+            <a class="btn btn-flat"
+               href="/logbooks/{{ $logbook->id }}/edit">
+                <i class="fa fa-pencil-alt text-secondary"></i>
+            </a>
+            <button class="btn btn-flat"
+                    onclick="app.__vue__.$modal.show('subscribe-modal',  {'modelId': {{ $logbook->id }}, 'modelUrl': 'logbook' });">
+                <i class="fa fa-share-alt text-secondary"></i>
+            </button>
+        @endif
     @endcan
 @endsection
 @section('breadcrumb')
@@ -35,13 +41,17 @@
         </div>
     @endcan
 
-    <logbook  :logbook="{{ $logbook }}"></logbook>
+<logbook :logbook="{{ $logbook }}"></logbook>
 
-    <medium-modal></medium-modal>
-    <medium-create-modal></medium-create-modal>
-    <logbook-entry-modal></logbook-entry-modal>
-    <subscribe-objective-modal></subscribe-objective-modal>
-    <task-modal></task-modal>
-    <absence-modal></absence-modal>
-    <subscribe-modal></subscribe-modal>
+<medium-modal></medium-modal>
+<medium-create-modal></medium-create-modal>
+<logbook-entry-modal></logbook-entry-modal>
+<subscribe-objective-modal></subscribe-objective-modal>
+<task-modal></task-modal>
+<absence-modal></absence-modal>
+@can('logbook_create')
+    @if (Auth::user()->id ==  $logbook->owner_id)
+        <subscribe-modal></subscribe-modal>
+    @endif
+@endcan
 @endsection

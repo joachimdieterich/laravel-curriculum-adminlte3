@@ -191,8 +191,14 @@ class LogbookController extends Controller
     {
         abort_unless(\Gate::allows('logbook_delete'), 403);
         abort_unless(auth()->user()->id == $logbook->owner_id, 403);                // user owns logbook
-        $logbook->delete();
 
+        foreach ($logbook->entries as $entries) {
+            (new LogbookEntryController())->destroy($entries);
+        }
+        foreach ($logbook->subscriptions as $subscription) {
+            (new LogbookSubscriptionController())->destroy($subscription);
+        }
+        $logbook->delete();
     }
 
     protected function validateRequest()

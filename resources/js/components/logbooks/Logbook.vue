@@ -1,8 +1,10 @@
 <template>
     <div class="row">
         <div class="col-md-12 pb-3">
-            <div id="logbook_filter" class="dataTables_filter">
-                <label >
+            <div id="logbook_filter"
+                 class="dataTables_filter"
+                 v-if="logbook.entries.length > 0">
+                <label>
                     <input type="search"
                            class="form-control form-control-sm"
                            placeholder="Suchbegriff"

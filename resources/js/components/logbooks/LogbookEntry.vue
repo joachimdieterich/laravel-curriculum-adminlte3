@@ -9,7 +9,10 @@
             aria-expanded="true">
 
             <span class="username ml-0">
-                <span class="pull-right " v-permission="'logbook_entry_edit'">
+                <span class="pull-right "
+                      v-permission="'logbook_entry_edit'"
+                      v-if="this.$userId == logbook.owner_id || editable === true"
+                >
 <!--                    <button
                         type="button"
                         class="btn btn-tool pt-3"
@@ -28,8 +31,6 @@
                          @click.stop="edit()">
                         <i class="fa fa-pencil-alt "></i>
                     </button>
-
-
                 </span>
                 <span >{{ entry.title }}</span>
                 <span class="description ml-0 ">{{ postDate() }}</span>
@@ -221,7 +222,8 @@
             'logbook': Object,
             'entry': Object,
             'search': '',
-            'first': false
+            'first': false,
+            'editable': false,
         },
         data() {
             return {
@@ -230,6 +232,7 @@
             };
         },
         methods: {
+
             open(modal, relationKey) {
                 if (relationKey === 'referenceable'){
                     this.$modal.show(modal, { 'referenceable_type': 'App\\LogbookEntry', 'referenceable_id': this.entry.id });
@@ -251,16 +254,49 @@
 
             postDate() {
                 var start = new Date(this.entry.begin.replace(/-/g, "/"));
-                var end   = new Date(this.entry.end.replace(/-/g, "/"));
-                var dateFormat = { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute:'2-digit'};
+                var end = new Date(this.entry.end.replace(/-/g, "/"));
+                var dateFormat = {
+                    weekday: 'short',
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                };
 
                 if (start.toDateString() === end.toDateString()) {
-                  return start.toLocaleString([], dateFormat) + " - " + end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    return start.toLocaleString([], dateFormat) + " - " + end.toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
                 } else {
-                  return start.toLocaleString([], dateFormat) + " - " + end.toLocaleString([], dateFormat);
+                    return start.toLocaleString([], dateFormat) + " - " + end.toLocaleString([], dateFormat);
                 }
             },
-            displayAbsences(){
+            isEditableForUser() {
+
+                const exists = this.logbook.subscriptions.findIndex(            // Is editable?
+                    subscription => subscription.subscribable_type === "App\\User" && subscription.subscribable_id == this.$userId && subscription.editable === 1
+                );
+                //console.log('isEditableForUser(): '+exists);
+                return (exists !== -1);
+            },
+            isEditableForGroup() {
+                const exists = this.logbook.subscriptions.findIndex(            // Is editable?
+                    subscription => subscription.subscribable_type === "App\\Group" && subscription.editable === 1
+                );
+                //console.log('isEditableForGroup(): '+exists);
+                return (exists !== -1);
+            },
+            isEditableForOrganization() {
+                const exists = this.logbook.subscriptions.findIndex(            // Is editable?
+                    subscription => subscription.subscribable_type === "App\\Organization" && subscription.editable === 1
+                );
+                //console.log('isEditableForOrganization(): '+exists);
+                return (exists !== -1);
+            },
+
+            displayAbsences() {
                 const exists = this.logbook.subscriptions.findIndex(            // Only Show absences on group and course subscriptions
                     subscription => subscription.subscribable_type === "App\\Course" || subscription.subscribable_type === "App\\Group"
                 );
@@ -268,19 +304,24 @@
                 return (exists !== -1);
             },
 
-            loaderEvent: function() {
+            loaderEvent: function () {
                 this.$refs.Contents.loaderEvent();
             },
-            loaderAbsences: function() {
+            loaderAbsences: function () {
                 this.$refs.Absences.loaderEvent();
             },
-            print(){
-                location.href = '/print/LogbookEntry/'+this.entry.id
+            print() {
+                location.href = '/print/LogbookEntry/' + this.entry.id
+            }
+        },
+        mounted() {
+            if (this.isEditableForUser() || this.isEditableForGroup() || this.isEditableForOrganization()) {
+                this.editable = true;
             }
         },
         computed: {
-            isActive: function(){
-                if (this.entry.title.toLowerCase().indexOf(this.search.toLowerCase()) === -1){
+            isActive: function () {
+                if (this.entry.title.toLowerCase().indexOf(this.search.toLowerCase()) === -1) {
                     return "display:none";
                 } else {
                     return "";

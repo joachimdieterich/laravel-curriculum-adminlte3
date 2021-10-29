@@ -23,7 +23,6 @@ class LogbookSubscriptionController extends Controller
                 'subscribable_id'   => $input['subscribable_id']
             ]);
 
-
             if (request()->wantsJson()){
                 return ['subscriptions' => $subscriptions->with(['logbook'])->get()];
             }
@@ -55,13 +54,15 @@ class LogbookSubscriptionController extends Controller
     {
         abort_unless(\Gate::allows('logbook_create'), 403);
         $input = $this->validateRequest();
+        abort_unless(auth()->user()->id == Logbook::find($input['model_id'])->owner_id, 403);                // user owns logbook_subscription
 
         $subscribe = LogbookSubscription::updateOrCreate([
-            "logbook_id"        => $input['model_id'],
+            "logbook_id" => $input['model_id'],
             "subscribable_type" => $input['subscribable_type'],
-            "subscribable_id"   => $input['subscribable_id'],
-        ],[
-            "owner_id"=> auth()->user()->id,
+            "subscribable_id" => $input['subscribable_id'],
+        ], [
+            "editable" => isset($input['editable']) ? $input['editable'] : false,
+            "owner_id" => auth()->user()->id,
         ]);
         $subscribe->save();
 
@@ -79,7 +80,19 @@ class LogbookSubscriptionController extends Controller
      */
     public function update(Request $request, LogbookSubscription $logbookSubscription)
     {
-        //
+        abort_unless(\Gate::allows('logbook_edit'), 403);
+        $input = $this->validateRequest();
+        abort_unless(auth()->user()->id == $logbookSubscription->owner_id, 403);                // user owns logbook_subscription
+
+        $logbookSubscription->update([
+            "editable" => isset($input['editable']) ? $input['editable'] : false,
+            "owner_id" => auth()->user()->id,
+        ]);
+
+        if (request()->wantsJson()) {
+            return ['editable' => $logbookSubscription->editable];
+        }
+
     }
 
     /**
@@ -91,9 +104,11 @@ class LogbookSubscriptionController extends Controller
     public function destroy(LogbookSubscription $logbookSubscription)
     {
         abort_unless(\Gate::allows('logbook_delete'), 403);
-
-        if (request()->wantsJson()){
+        abort_unless(auth()->user()->id == $logbookSubscription->owner_id, 403);                // user owns logbook_subscription
+        if (request()->wantsJson()) {
             return ['message' => $logbookSubscription->delete()];
+        } else {
+            $logbookSubscription->delete();
         }
     }
 
@@ -101,8 +116,9 @@ class LogbookSubscriptionController extends Controller
     {
         return request()->validate([
             'subscribable_type' => 'sometimes|string',
-            'subscribable_id'   => 'sometimes|integer',
-            'model_id'          => 'sometimes|integer',
+            'subscribable_id' => 'sometimes|integer',
+            'model_id' => 'sometimes|integer',
+            'editable' => 'sometimes',
         ]);
     }
 }

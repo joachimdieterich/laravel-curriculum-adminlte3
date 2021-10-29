@@ -207,7 +207,7 @@
             },
             initSelect2(){
                 $("#curricula").select2({
-                    dropdownParent: $("#curricula").parent(),
+                    dropdownParent: $(".v--modal-overlay"),
                     allowClear: false,
                 }).on('select2:select', function (e) {
                     this.loadObjectives(e.params.data.id);
@@ -217,7 +217,7 @@
                 .val(this.form.curriculum_id).trigger('change'); //set value
 
                 $("#terminalObjectives").select2({
-                    dropdownParent: $("#terminalObjectives").parent(),
+                    dropdownParent: $(".v--modal-overlay"),
                     allowClear: false
                 }).on('select2:select', function (e) {
                     this.loadEnabling(e.params.data.id);
@@ -225,7 +225,7 @@
                 .val(this.form.terminal_objective_id).trigger('change'); //set value
 
                 $("#enablingObjectives").select2({
-                    dropdownParent: $("#enablingObjectives").parent(),
+                    dropdownParent: $(".v--modal-overlay"),
                     allowClear: true
                 }).on('select2:select', function (e) {
                     this.setEnabling(e.params.data.id);

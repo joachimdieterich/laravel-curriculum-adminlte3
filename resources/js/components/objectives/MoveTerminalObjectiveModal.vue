@@ -39,9 +39,9 @@
                 </select>
             </div>
 
-            <div class="card-footer" style="margin-top: 250px">
+            <div class="card-footer">
                 <span class="pull-right">
-                     <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
+                     <button class="btn btn-primary" @click="submit()">{{ trans('global.save') }}</button>
                 </span>
             </div>
         </div>
@@ -112,7 +112,7 @@
             },
             initSelect2(){
                 $("#curricula").select2({
-                    dropdownParent: $("#curricula").parent(),
+                    dropdownParent: $(".v--modal-overlay"),
                     allowClear: false
                 }).on('select2:select', function (e) {
                     this.form.curriculum_id = e.params.data.id;

@@ -156,7 +156,7 @@
             },
             initSelect2(){
                 $("#level_id").select2({
-                    dropdownParent: $("#level_id").parent(),
+                    dropdownParent: $(".v--modal-overlay"),
                     allowClear: false
                 }).on('select2:select', function (e) {
                     this.onChange(e.params.data);

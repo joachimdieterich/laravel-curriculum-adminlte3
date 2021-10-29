@@ -169,7 +169,7 @@
             },
             initSelect2(){
                 $("#curricula").select2({
-                    dropdownParent: $("#curricula").parent(),
+                    dropdownParent: $(".v--modal-overlay"),
                     allowClear: false
                 }).on('select2:select', function (e) {
                     this.loadObjectives(e.params.data.id);
@@ -178,14 +178,14 @@
                 }.bind(this)); //make loadObjectives accessible!
 
                 $("#terminalObjectives").select2({
-                    dropdownParent: $("#terminalObjectives").parent(),
+                    dropdownParent: $(".v--modal-overlay"),
                     allowClear: false
                 }).on('select2:select', function (e) {
                     this.loadEnabling(e.params.data.id);
                 }.bind(this)); //make loadEnabling accessible!
 
                 $("#enablingObjectives").select2({
-                    dropdownParent: $("#enablingObjectives").parent(),
+                    dropdownParent: $(".v--modal-overlay"),
                     allowClear: false
                 }).on('select2:select', function (e) {
                     this.setEnabling(e.params.data.id);

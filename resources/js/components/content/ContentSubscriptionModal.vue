@@ -44,7 +44,7 @@
 
                 <div class="form-group ">
                     <label for="contents">
-                        {{ trans('global.categorie.title_singular') }}
+                        {{ trans('global.content.title_singular') }}
                     </label>
                     <select name="contents[]"
                             id="contents"
@@ -117,15 +117,14 @@
                 this.form.subscribable_id   = this.subscribable_id;
             },
             initSelect2(){
-
                 $("#curricula").select2({
-                    dropdownParent: $("#curricula").parent(),
+                    dropdownParent: $(".v--modal-overlay"),
                     allowClear: true
                 }).on('select2:select', function (e) {
                     this.getContent($("#curricula").val());
                 }.bind(this));
                 $("#contents").select2({
-                    dropdownParent: $("#contents").parent(),
+                    dropdownParent: $(".v--modal-overlay"),
                     allowClear: true
                 });
             },

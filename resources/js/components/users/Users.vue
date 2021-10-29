@@ -101,7 +101,7 @@
                     .then(response => {
                         this.myUsers = JSON.parse(response.data.users);
                         $("#users").select2({
-                            dropdownParent: $("#users").parent(),
+                            dropdownParent: $(".v--modal-overlay"),
                             allowClear: false
                         }).on('select2:select', function (e) {
                              this.enrol(e.params.data.id, this.modelId);

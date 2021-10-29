@@ -126,7 +126,7 @@
             },
             initSelect2(){
                 $("#certificates").select2({
-                    dropdownParent: $("#certificates").parent(),
+                    dropdownParent: $(".v--modal-overlay"),
                     allowClear: false
                 }).on('select2:select', function (e) {
                     this.onChange(e.params.data);

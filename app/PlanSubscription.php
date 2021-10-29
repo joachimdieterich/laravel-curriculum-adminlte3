@@ -20,7 +20,13 @@ class PlanSubscription extends Model
         return $this->morphTo();
     }
 
-    public function plan(){
+    public function plan()
+    {
         return $this->belongsTo('App\Plan', 'plan_id', 'id');
+    }
+
+    public function owner()
+    {
+        return $this->hasOne('App\User', 'id', 'owner_id');
     }
 }

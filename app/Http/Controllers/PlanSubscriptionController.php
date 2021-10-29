@@ -24,7 +24,6 @@ class PlanSubscriptionController extends Controller
                 'subscribable_id'   => $input['subscribable_id']
             ]);
 
-
             if (request()->wantsJson()){
                 return ['subscriptions' => $subscriptions->with(['plan'])->get()];
             }
@@ -54,14 +53,15 @@ class PlanSubscriptionController extends Controller
     {
         abort_unless(\Gate::allows('plan_create'), 403);
         $input = $this->validateRequest();
+        abort_unless(auth()->user()->id == Plan::find($input['model_id'])->owner_id, 403);                // user owns plan_subscription
 
         $subscribe = PlanSubscription::updateOrCreate([
-            "plan_id"           => $input['model_id'],
+            "plan_id" => $input['model_id'],
             "subscribable_type" => $input['subscribable_type'],
-            "subscribable_id"   => $input['subscribable_id'],
-        ],[
-            "editable"=> isset($input['editable']) ? $input['editable'] : false,
-            "owner_id"=> auth()->user()->id,
+            "subscribable_id" => $input['subscribable_id'],
+        ], [
+            "editable" => isset($input['editable']) ? $input['editable'] : false,
+            "owner_id" => auth()->user()->id,
         ]);
         $subscribe->save();
 
@@ -82,13 +82,14 @@ class PlanSubscriptionController extends Controller
     {
         abort_unless(\Gate::allows('plan_edit'), 403);
         $input = $this->validateRequest();
+        abort_unless(auth()->user()->id == $planSubscription->owner_id, 403);                // user owns plan_subscription
 
         $planSubscription->update([
-            "editable"=> isset($input['editable']) ? $input['editable'] : false,
-            "owner_id"=> auth()->user()->id,
+            "editable" => isset($input['editable']) ? $input['editable'] : false,
+            "owner_id" => auth()->user()->id,
         ]);
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['editable' => $planSubscription->editable];
         }
     }

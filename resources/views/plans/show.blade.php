@@ -1,19 +1,26 @@
 @extends('layouts.master')
+
 @section('title')
     {{ trans('global.plan.title_singular') }}
-    <button class="btn btn-flat"
-            onclick="app.__vue__.$modal.show('subscribe-modal',  {'modelId': {{ $plan->id }}, 'modelUrl': 'plan' });">
-        <i class="fa fa-share-alt text-secondary"></i>
-    </button>
+    @can('plan_create')
+        @if (Auth::user()->id ==  $plan->owner_id)
+            <button class="btn btn-flat"
+                    onclick="app.__vue__.$modal.show('subscribe-modal',  {'modelId': {{ $plan->id }}, 'modelUrl': 'plan' });">
+                <i class="fa fa-share-alt text-secondary"></i>
+            </button>
+        @endif
+    @endcan
 @endsection
+
 @section('breadcrumb')
     <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
     <li class="breadcrumb-item active">{{ trans('global.plan.title_singular') }}</li>
-    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i
+                class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
-<div class="card pb-3">
-    <div class="card-header">
+    <div class="card pb-3">
+        <div class="card-header">
         <div class="card-title">
             <h5 class="m-0">
                 <i class="fa fa-clipboard-list mr-1"></i>
@@ -110,6 +117,12 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
         </div>
     @endif
 @endforeach
-<subscribe-modal></subscribe-modal>
-<task-modal></task-modal>
+
+    @can('plan_create')
+        @if (Auth::user()->id ==  $plan->owner_id)
+            <subscribe-modal></subscribe-modal>
+        @endif
+    @endcan
+
+    <task-modal></task-modal>
 @endsection

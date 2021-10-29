@@ -155,7 +155,7 @@
             },
             initSelect2(){
                 $("#users").select2({
-                    dropdownParent: $("#users").parent(),
+                    dropdownParent: $(".v--modal-overlay"),
                     allowClear: true
                 });
             },

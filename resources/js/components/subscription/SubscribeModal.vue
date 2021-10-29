@@ -175,19 +175,19 @@
             },
             initSelect2(){
                 $("#users").select2({
-                    dropdownParent: $("#users").parent(),
+                    dropdownParent: $(".v--modal-overlay"),
                     allowClear: false
                 }).on('select2:select', function (e) {
                     this.subscribe('App\\User', e.params.data.id, this.modelId);
                 }.bind(this));
                 $("#groups").select2({
-                    dropdownParent: $("#groups").parent(),
+                    dropdownParent: $(".v--modal-overlay"),
                     allowClear: false
                 }).on('select2:select', function (e) {
                     this.subscribe('App\\Group', e.params.data.id, this.modelId);
                 }.bind(this));
                 $("#organizations").select2({
-                    dropdownParent: $("#organizations").parent(),
+                    dropdownParent: $(".v--modal-overlay"),
                     allowClear: false
                 }).on('select2:select', function (e) {
                     this.subscribe('App\\Organization', e.params.data.id, this.modelId);

@@ -43,14 +43,22 @@ Vue.prototype.checkLocalStorage = (key, value, class_string = "active", is_defau
         return class_string;
     }
 };
+/**
+ * make userId accessible for vue
+ * @type {string}
+ */
+Vue.prototype.$userId = document.querySelector("meta[name='user-id']").getAttribute('content');
+
 
 import VModal from 'vue-js-modal';
-Vue.use(VModal, { dynamic: true});
+
+Vue.use(VModal, {dynamic: true});
 
 import Sticky from 'vue-sticky-directive';
+
 Vue.use(Sticky);
 
-var filter = function(text, length, clamp){
+var filter = function (text, length, clamp) {
     clamp = clamp || '...';
     var node = document.createElement('div');
     node.innerHTML = text;

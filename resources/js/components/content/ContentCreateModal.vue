@@ -99,13 +99,12 @@
                         this.form.content = tinyMCE.get('content').getContent();
                         this.location = (await axios.patch('/contents/'+this.form.id, this.form)).data.message;
                         this.$parent.$emit('addContent', this.form);
-                        this.close();
                     } else {
                         this.form.content = tinyMCE.get('content').getContent();
                         this.location = (await axios.post('/contents', this.form)).data.message;
                         this.$parent.$emit('addContent', this.form);
-                        this.close();
                     }
+                    this.close();
                 } catch(error) {
                     this.form.errors = error.response.data.form.errors;
                 }

@@ -25,7 +25,7 @@
                    v-html="task.task.title"></a>
             </span>
 
-            <small class="badge badge-primary pull-right p-1 mt-1">
+            <small class="badge badge-secondary pull-right p-1 mt-1">
                 <i class="far fa-clock"></i>
                 <span v-html="task.task.due_date"></span>
             </small>

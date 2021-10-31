@@ -14,6 +14,7 @@
             </button>
         @endif
     @endcan
+    <p class="h6 pb-1">{{trans('global.owner')}}: {{ $logbook->owner->fullname() }}</p>
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item">

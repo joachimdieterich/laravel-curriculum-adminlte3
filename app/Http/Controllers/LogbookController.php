@@ -15,18 +15,32 @@ class LogbookController extends Controller
      */
     public function index()
     {
+        abort_unless(\Gate::allows('logbook_access'), 403);
         return view('logbooks.index');
     }
 
     public function list()
     {
-
         abort_unless(\Gate::allows('logbook_access'), 403);
 
         $logbooks = is_admin() ? Logbook::with('subscriptions')->get() : Logbook::with('subscriptions')
             ->whereHas('subscriptions', function ($query) {
-                $query->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id'))
-                    ->orWhere('subscribable_type', "App\Course")->whereIn('subscribable_id', auth()->user()->currentGroupEnrolments->pluck('course_id'));
+                $query->where(
+                    function ($query) {
+                        $query->where('subscribable_type', "App\\Course")->whereIn('subscribable_id', auth()->user()->currentGroupEnrolments->pluck('course_id'));
+                    })
+                    ->orWhere(
+                        function ($query) {
+                            $query->where('subscribable_type', "App\\Organization")->where('subscribable_id', auth()->user()->current_organization_id);
+                        })
+                    ->orWhere(
+                        function ($query) {
+                            $query->where('subscribable_type', "App\\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id'));
+                        })
+                    ->orWhere(
+                        function ($query) {
+                            $query->where('subscribable_type', "App\\User")->where('subscribable_id', auth()->user()->id);
+                        });
             })
             ->orWhere('owner_id', auth()->user()->id)
             ->get();
@@ -36,21 +50,20 @@ class LogbookController extends Controller
 
         return empty($logbooks) ? '' : DataTables::of($logbooks)
             ->addColumn('action', function ($logbooks) use ($edit_gate, $delete_gate) {
-                 $actions  = '';
-                    if ($edit_gate and $logbooks->owner_id == auth()->user()->id) {
-                        $actions .= '<a href="' . route('logbooks.edit', $logbooks->id) . '" '
-                            . 'id="edit-logbook-' . $logbooks->id . '" '
-                            . 'class="px-2 text-black">'
-                            . '<i class="fa fa-pencil-alt"></i>'
-                            . '</a>';
-                    }
+                $actions = '';
+                if ($edit_gate and $logbooks->owner_id == auth()->user()->id) {
+                    $actions .= '<a href="' . route('logbooks.edit', $logbooks->id) . '" '
+                        . 'id="edit-logbook-' . $logbooks->id . '" '
+                        . 'class="px-2 text-black">'
+                        . '<i class="fa fa-pencil-alt"></i>'
+                        . '</a>';
+                }
                 if ($delete_gate and $logbooks->owner_id == auth()->user()->id) {
                     $actions .= '<button type="button" class="btn text-danger" onclick="event.preventDefault();destroyDataTableEntry(\'logbooks\',' . $logbooks->id . ');"><i class="fa fa-trash"></i></button>';
                 }
 
                 return $actions;
             })
-
             ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
@@ -126,11 +139,13 @@ class LogbookController extends Controller
     {
         abort_unless((auth()->user()->logbooks->contains('id', $logbook->id) //direct subscription
             or ($logbook->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() //user is enroled in group
+            or ($logbook->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id))->isNotEmpty() //user is enroled in group
             or ($logbook->subscriptions->where('subscribable_type', "App\Course")->whereIn('subscribable_id', auth()->user()->currentGroupEnrolments->pluck('course_id')))->isNotEmpty()
             or (auth()->user()->currentRole()->first()->id == 1)    // admin
             or (auth()->user()->id == $logbook->owner_id)           // user owns logbook
         ), 403);
         $logbook = $logbook->with([
+            'owner',
             'subscriptions.subscribable',
             'entries.absences.owner', //todo: lazyload
             'entries.absences.absent_user',
@@ -140,7 +155,7 @@ class LogbookController extends Controller
                 $query->where('subscribable_id', auth()->user()->id)
                     ->where('subscribable_type', 'App\User');
             }
-            ])->where('id', $logbook->id)->get()->first();
+        ])->where('id', $logbook->id)->get()->first();
 
         return view('logbooks.show')
                 ->with(compact('logbook'));

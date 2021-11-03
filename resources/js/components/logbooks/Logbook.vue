@@ -1,5 +1,15 @@
 <template>
     <div class="row">
+
+        <div v-permission="'logbook_entry_create'"
+             class="col-md-12 pl-3 pt-0 pb-2">
+            <button id="add-logbook-entry"
+                    class="btn btn-success"
+                    @click.prevent="open('logbook-entry-modal')">
+                {{ trans('global.logbookEntry.create') }}
+            </button>
+        </div>
+
         <div class="col-md-12 pb-3">
             <div id="logbook_filter"
                  class="dataTables_filter"
@@ -16,15 +26,16 @@
 
         <div class="col-md-12">
              <LogbookEntry
-                v-for="(entry, index) in logbook.entries"
-                v-bind:key="entry.id"
-                :first=" index === 0 "
-                :entry="entry"
-                :search="search"
-                :logbook="logbook">
+                 v-for="(entry, index) in entries"
+                 v-bind:key="entry.id"
+                 :first=" index === 0 "
+                 :entry="entry"
+                 :search="search"
+                 :logbook="logbook">
             </LogbookEntry>
         </div>
         <!-- /.col -->
+        <logbook-entry-modal></logbook-entry-modal>
     </div>
 </template>
 
@@ -37,15 +48,27 @@
         },
         data () {
             return {
-                 search: ''
+                entries: [],
+                search: ''
             };
         },
 
         methods: {
+            open(modal) {
+                this.$modal.show(modal, {'logbook_id': this.logbook.id});
+            },
 
         },
         mounted() {
+            this.entries = this.logbook.entries;
+            this.$on('addLogbookEntry', function (newEntry) {
+                this.entries.push(newEntry);       // Add newly created entry
+            });
 
+            this.$on('deleteLogbookEntry', function (deletedEntry) {
+                let index = this.entries.indexOf(deletedEntry);
+                this.entries.splice(index, 1);
+            });
         },
         components: {
             LogbookEntry

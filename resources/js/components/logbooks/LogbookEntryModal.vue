@@ -97,24 +97,22 @@
         methods: {
             async submit() {
                 try {
-                    if (this.method === 'patch'){
-                        this.form.description = tinyMCE.get('description').getContent();
-                        this.form.begin = this.time[0];
-                        this.form.end = this.time[1];
-                        this.location = (await axios.patch('/logbookEntries/'+this.form.id, this.form)).data.message;
-                        location.reload(true);
+                    this.form.description = tinyMCE.get('description').getContent();
+                    this.form.begin = this.time[0];
+                    this.form.end = this.time[1];
+                    if (this.method === 'patch') {
+                        this.new_entry = (await axios.patch('/logbookEntries/' + this.form.id, this.form)).data.message;
                     } else {
-                        this.form.description = tinyMCE.get('description').getContent();
-                        this.form.begin = this.time[0];
-                        this.form.end = this.time[1];
-                        this.location = (await axios.post('/logbookEntries', this.form)).data.message;
-                        location.reload(true);
+                        this.new_entry = (await axios.post('/logbookEntries', this.form)).data.message;
                     }
+                    this.$parent.$emit('addLogbookEntry', this.new_entry);
+                    this.close();
                 } catch(error) {
                     this.form.errors = error.response.data.form.errors;
                 }
             },
             beforeOpen(event) {
+                this.form.clear();
                 if (event.params.id){
                     this.load(event.params.id);
                 }

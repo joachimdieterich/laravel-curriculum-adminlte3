@@ -245,11 +245,12 @@
             },
             async destroy(){
                 try {
-                    this.location = (await axios.delete('/logbookEntries/'+this.entry.id)).data.message;
-                } catch(error) {
+                    this.location = (await axios.delete('/logbookEntries/' + this.entry.id)).data.message;
+                } catch (error) {
                     alert(error);
                 }
-                location.reload(true);
+                this.$parent.$emit('deleteLogbookEntry', this.entry);
+                // location.reload(true);
             },
 
             postDate() {

@@ -51,7 +51,7 @@ class LogbookEntryController extends Controller
 
         // axios call?
         if (request()->wantsJson()){
-            return ['message' => $entry->path()];
+            return ['message' => $entry];
         }
 
         return back();

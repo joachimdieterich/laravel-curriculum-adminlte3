@@ -319,6 +319,10 @@
             if (this.isEditableForUser() || this.isEditableForGroup() || this.isEditableForOrganization()) {
                 this.editable = true;
             }
+            //load contents if tab is selected
+            if (this.checkLocalStorage('#logbook_' + this.entry.id, '#logbook_contents_' + this.entry.id) == 'active') {
+                this.$refs.Contents.loaderEvent();
+            }
         },
         computed: {
             isActive: function () {

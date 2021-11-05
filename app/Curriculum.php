@@ -38,8 +38,8 @@ class Curriculum extends Model
         'grade_id' => 1,
         'subject_id' => 51, //Math
         'organization_type_id' => 1,
-        'type_id' => 1,
-     ];
+        'type_id' => 4,  //= user
+    ];
 
     public function path()
     {

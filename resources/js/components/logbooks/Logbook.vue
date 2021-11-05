@@ -62,7 +62,7 @@
         mounted() {
             this.entries = this.logbook.entries;
             this.$on('addLogbookEntry', function (newEntry) {
-                this.entries.push(newEntry);       // Add newly created entry
+                this.entries.unshift(newEntry);       // Add newly created entry
             });
 
             this.$on('deleteLogbookEntry', function (deletedEntry) {

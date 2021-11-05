@@ -51,12 +51,12 @@
                      <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
                 </div>
                 <div class="form-group ">
-                    <label for="content">{{ trans('global.content.fields.content') }}</label>
+                    <label for="create_content_modal_content">{{ trans('global.content.fields.content') }}</label>
                     <textarea
-                    id="content"
-                    name="content"
-                    class="form-control description my-editor "
-                    v-model="form.content"
+                        id="create_content_modal_content"
+                        name="create_content_modal_content"
+                        class="form-control description my-editor "
+                        v-model="form.content"
                     ></textarea>
                     <p class="help-block" v-if="form.errors.content" v-text="form.errors.content[0]"></p>
                 </div>
@@ -96,11 +96,11 @@
             async submit( ) {
                 try {
                     if (this.method === 'patch'){
-                        this.form.content = tinyMCE.get('content').getContent();
-                        this.location = (await axios.patch('/contents/'+this.form.id, this.form)).data.message;
+                        this.form.content = tinyMCE.activeEditor.getContent();
+                        this.location = (await axios.patch('/contents/' + this.form.id, this.form)).data.message;
                         this.$parent.$emit('addContent', this.form);
                     } else {
-                        this.form.content = tinyMCE.get('content').getContent();
+                        this.form.content = tinyMCE.activeEditor.getContent();
                         this.location = (await axios.post('/contents', this.form)).data.message;
                         this.$parent.$emit('addContent', this.form);
                     }
@@ -113,16 +113,18 @@
                 this.form.id = '';
                 this.form.title = '';
                 this.form.content = '';
-                if (event.params.id){
-                    this.load(event.params.id);
-                }
-                if (event.params.referenceable_type){
+
+                if (event.params.referenceable_type) {
                     this.form.referenceable_type = event.params.referenceable_type;
                 }
-                if (event.params.referenceable_id){
+                if (event.params.referenceable_id) {
                     this.form.referenceable_id = event.params.referenceable_id;
                 }
                 this.method = event.params.method;
+
+                if (event.params.id) {
+                    this.load(event.params.id);
+                }
             },
             opened(){
                 this.$initTinyMCE();
@@ -132,8 +134,8 @@
             },
             async load(id) {
                 try {
-                    this.form.populate((await axios.get('/contents/'+id)).data.message);
-                    tinyMCE.get('content').setContent(this.form.content);
+                    this.form.populate((await axios.get('/contents/' + id)).data.message);
+                    tinyMCE.activeEditor.setContent(this.form.content);
                 } catch(error) {
                     //console.log('loading failed')
                 }

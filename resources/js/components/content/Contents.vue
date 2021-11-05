@@ -179,7 +179,11 @@
                 }
             },
             show(modal){
-                this.$modal.show(modal, { 'referenceable_type': this.subscribable_type, 'referenceable_id': this.subscribable_id /*, 'method': 'patch' */ });
+                this.$modal.show(modal, {
+                    'referenceable_type': this.subscribable_type,
+                    'referenceable_id': this.subscribable_id,
+                    'method': 'post'
+                });
             },
             async sortEvent(contentSubscription,amount) {
                 let subscription = {

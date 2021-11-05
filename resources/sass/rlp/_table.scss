@@ -97,23 +97,31 @@ table.dataTable > thead > tr > td {
 }
 
 table.dataTable {
-    border:0 !important;
-    margin-top: 0!important;
+    border: 0 !important;
+    margin-top: 0 !important;
 }
+
 .dataTable thead:first-child tr,
 {
-    border:1 !important;
+    border: 1 !important;
 }
+
+table.dataTable tr {
+    cursor: pointer;
+}
+
 .dataTable body:first-child tr,
 {
-    border:0 !important;
+    border: 0 !important;
 }
+
 .table {
     margin-bottom: 0 !important;
-    width:100% !important;
+    width: 100% !important;
 }
-.dataTables_scrollHeadInner{
-    width:100%;
+
+.dataTables_scrollHeadInner {
+    width: 100%;
 }
 
 .dataTables_wrapper .dataTables_paginate ul li:first-child a {

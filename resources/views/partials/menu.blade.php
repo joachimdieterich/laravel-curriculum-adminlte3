@@ -27,20 +27,25 @@
                         "allowClear" => false,
                         "value" =>  old('course_id', isset($course->id) ? $course->id : '')])
                 </li>
-<!--                <li class="nav-header pt-0">{{ strtoupper(trans('global.organization.title_singular')) }}</li>-->
-                @if (auth()->user()->organizations->count() > 1)
+            <!--                <li class="nav-header pt-0">{{ strtoupper(trans('global.organization.title_singular')) }}</li>-->
                 <li class="nav-item" style="width:100%">
-                   @include ('forms.input.select',
-                        ["model" => "organization",
-                        "field" => "current_organization_id",
-                        "options"=> auth()->user()->organizations,
-                        "option_id" => "id",
-                        "option_icon" => "fa fa-university",
-                        "placeholder" => trans('global.organization.title').'...',
-                        "onchange"=> "setCurrentOrganization(this)",
-                        "allowClear" => false,
-                        "value" => auth()->user()->current_organization_id
-                        ])
+                    @if (auth()->user()->organizations->count() > 1)
+                        @include ('forms.input.select',
+                             ["model" => "organization",
+                             "field" => "current_organization_id",
+                             "options"=> auth()->user()->organizations,
+                             "option_id" => "id",
+                             "option_icon" => "fa fa-university",
+                             "placeholder" => trans('global.organization.title').'...',
+                             "onchange"=> "setCurrentOrganization(this)",
+                             "allowClear" => false,
+                             "value" => auth()->user()->current_organization_id
+                             ])
+                    @else
+                        <span class="nav-item px-3 py-2 text-bold" style="width:100%">
+                        {{ auth()->user()->organizations->first()->title }}
+                    </span>
+                    @endif
                     @if (auth()->user()->currentPeriods()->count() > 1)
                         @include ('forms.input.select',
                            ["model" => "period",
@@ -54,18 +59,14 @@
                            ])
                     @endif
                 </li>
-                @else
-                <li class="nav-item px-3 py-2 text-bold" style="width:100%">
-                   {{ auth()->user()->organizations->first()->title }}
-                </li>
-                @endif
             </ul>
         </nav>
         <nav class="mt-0">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 @can('curriculum_access')
                     <li class="nav-item">
-                        <a href="{{ route("curricula.index") }}" class="nav-link {{ request()->is('curricula') || request()->is('curricula/*') ? 'active' : '' }}">
+                        <a href="{{ route("curricula.index") }}"
+                           class="nav-link {{ request()->is('curricula') || request()->is('curricula/*') ? 'active' : '' }}">
                             <i class="fas fa-th"></i>
                             <p>
                                 <span>{{ trans('global.curriculum.title') }}</span>

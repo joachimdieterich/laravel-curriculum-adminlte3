@@ -15,44 +15,44 @@
     <link rel="apple-touch-icon" sizes="72x72" href="/favicons/apple-icon-72x72.png">
     <link rel="apple-touch-icon" sizes="76x76" href="/favicons/apple-icon-76x76.png">
     <link rel="apple-touch-icon" sizes="114x114" href="/favicons/apple-icon-114x114.png">
-        <link rel="apple-touch-icon" sizes="120x120" href="/favicons/apple-icon-120x120.png">
-        <link rel="apple-touch-icon" sizes="144x144" href="/favicons/apple-icon-144x144.png">
-        <link rel="apple-touch-icon" sizes="152x152" href="/favicons/apple-icon-152x152.png">
-        <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-icon-180x180.png">
-        <link rel="icon" type="image/png" sizes="192x192" href="/favicons/android-icon-192x192.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96x96.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/favicons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/favicons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/favicons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
 
-        @yield('styles')
-        <script>
-            window.trans = <?php
-// copy all translations from /resources/lang/CURRENT_LOCALE/* to global JS variable
-$lang_files = File::files(resource_path() . '/lang/' . App::getLocale());
-$trans = [];
-foreach ($lang_files as $f) {
-    $filename = pathinfo($f)['filename'];
-    $trans[$filename] = trans($filename);
-}
-echo json_encode($trans);
-?>;
-            window.Laravel = <?php
-echo json_encode([
-    'csrfToken' => csrf_token(),
-    'userId' => Auth::user()->id,
-    'permissions' => Auth::user()->permissions()->pluck('title')->toArray()
-]);
-?>;
-        </script>
-    </head>
-    <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
-        <!-- Site wrapper -->
-        <div id="app" class="wrapper">
-            <!-- Navbar -->
-            <nav class="main-header navbar navbar-expand navbar-lime navbar-light">
-                <!-- Left navbar links -->
-                <ul class="navbar-nav">
-                    <li class="nav-item">
+    @yield('styles')
+    <script>
+        window.trans = <?php
+        // copy all translations from /resources/lang/CURRENT_LOCALE/* to global JS variable
+        $lang_files = File::files(resource_path() . '/lang/' . App::getLocale());
+        $trans = [];
+        foreach ($lang_files as $f) {
+            $filename = pathinfo($f)['filename'];
+            $trans[$filename] = trans($filename);
+        }
+        echo json_encode($trans);
+        ?>;
+        window.Laravel = <?php
+        echo json_encode([
+            'csrfToken' => csrf_token(),
+            'userId' => Auth::user()->id,
+            'permissions' => Auth::user()->permissions()->pluck('title')->toArray()
+        ]);
+        ?>;
+    </script>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
+<!-- Site wrapper -->
+<div id="app" class="wrapper">
+    <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand navbar-lime navbar-light">
+        <!-- Left navbar links -->
+        <ul class="navbar-nav">
+            <li class="nav-item">
                         <a class="nav-link" data-widget="pushmenu"
                            onclick="toggleMenu()"><i class="fas fa-bars"></i></a>
                     </li>
@@ -114,27 +114,26 @@ echo json_encode([
                 {{ csrf_field() }}
             </form>
 
-            <!-- Control Sidebar -->
-            <aside class="control-sidebar control-sidebar-light">
-                <!-- Control sidebar content goes here -->
-                @include('partials.sidebar')
-            </aside>
-            <!-- /.control-sidebar -->
-        </div>
-        <!-- ./wrapper -->
-        <script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script>
-        <script src="{{ asset('js/app.js') }}"></script>
-        <script src="{{ asset('node_modules/datatables.net/js/jquery.dataTables.min.js') }}"></script>
-        <script src="{{ asset('node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-        <script src="{{ asset('node_modules/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
-        <script src="{{ asset('node_modules/datatables.net-buttons/js/buttons.flash.min.js') }}"></script>
-        <script src="{{ asset('node_modules/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
-        <script src="{{ asset('node_modules/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
-        <script src="{{ asset('node_modules/datatables.net-buttons/js/buttons.colVis.min.js') }}"></script>
-        <script src="{{ asset('node_modules/datatables.net-select/js/dataTables.select.min.js') }}"></script>
-        <script src="{{ asset('node_modules/moment/js/moment.min.js') }}"></script>
-        <script src="{{ asset('node_modules/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}"></script>
-        <script src="{{ asset('js/main.js') }}"></script>
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-light">
+        <!-- Control sidebar content goes here -->
+        @include('partials.sidebar')
+    </aside>
+    <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+<script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script>
+<script src="{{ mix('js/app.js') }}"></script>
+<script src="{{ asset('node_modules/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('node_modules/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+<script src="{{ asset('node_modules/datatables.net-buttons/js/buttons.flash.min.js') }}"></script>
+<script src="{{ asset('node_modules/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
+<script src="{{ asset('node_modules/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
+<script src="{{ asset('node_modules/datatables.net-buttons/js/buttons.colVis.min.js') }}"></script>
+<script src="{{ asset('node_modules/datatables.net-select/js/dataTables.select.min.js') }}"></script>
+<script src="{{ asset('node_modules/moment/js/moment.min.js') }}"></script>
+<script src="{{ asset('node_modules/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}"></script>
 
         <script>
             $(function() {

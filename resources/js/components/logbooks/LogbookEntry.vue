@@ -3,10 +3,10 @@
          class="card col-12"
          :class="{'collapsed-card' : first === false}"
          :style="isActive">
-        <div class="user-block p-2 "
-            data-card-widget="collapse"
-            :data-target="'#logbook_body_'+entry.id"
-            aria-expanded="true">
+        <div class="user-block p-2 pointer"
+             data-card-widget="collapse"
+             :data-target="'#logbook_body_'+entry.id"
+             aria-expanded="true">
 
             <span class="username ml-0">
                 <span class="pull-right "

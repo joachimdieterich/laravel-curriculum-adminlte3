@@ -58,12 +58,15 @@
 
             <div class="form-group pt-2"
                  v-if="showAdd">
-                <select name="users"
-                        id="users"
+                <select name="users_selector"
+                        id="users_selector"
                         class="form-control select2 "
                         style="width:100%;">
                     <option></option>
-                    <option v-for="(item,index) in myUsers" v-bind:value="item.id">{{ item.firstname }} {{ item.lastname }}</option>
+                    <option v-for="(item,index) in myUsers" v-bind:value="item.id">{{ item.firstname }} {{
+                            item.lastname
+                        }}
+                    </option>
                 </select>
             </div>
         </div>
@@ -75,8 +78,8 @@
     import Avatar from "../uiElements/Avatar";
     export default {
         props: {
-                group: {},
-              },
+            group: Object,
+        },
         data() {
             return {
                 users: [],
@@ -100,11 +103,11 @@
                 axios.get('/users')
                     .then(response => {
                         this.myUsers = JSON.parse(response.data.users);
-                        $("#users").select2({
-                            dropdownParent: $("#users").parents(),
+                        $("#users_selector").select2({
+                            dropdownParent: $("#users_selector").parent(),
                             allowClear: false
                         }).on('select2:select', function (e) {
-                             this.enrol(e.params.data.id, this.modelId);
+                            this.enrol(e.params.data.id, this.modelId);
                         }.bind(this));
                     }).catch(e => {
                     this.errors = e.response.data.errors;

@@ -96,7 +96,7 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
             </div>
             <div class="card-body py-2">
                 @include('tasks.tasklist', [
-                    "tasks" =>  $plan->tasks()->whereDate('start_date', $day->format('yy-m-d'))->get(),
+                    "tasks" =>  $plan->tasks()->whereDate('start_date', $day->format('Y-m-d'))->get(),
                     "hide_due_date" => true
                 ])
                 @can('plan_edit')

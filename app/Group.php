@@ -37,13 +37,19 @@ class Group extends Model
         return $this->belongsToMany(User::class, 'group_user')->withTimestamps();
     }
 
-    public function curricula(){
+    public function curricula()
+    {
         return $this->belongsToMany(Curriculum::class, 'curriculum_group')->withTimestamps();
     }
 
     public function grade()
     {
         return $this->hasOne('App\Grade', 'id', 'grade_id');
+    }
+
+    public function glossar()
+    {
+        return $this->hasOne('App\Glossar', 'subscribable_id', 'id')->where('subscribable_type', get_class($this));
     }
 
     public function period()

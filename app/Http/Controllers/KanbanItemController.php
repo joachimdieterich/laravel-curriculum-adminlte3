@@ -34,7 +34,7 @@ class KanbanItemController extends Controller
 
         // axios call?
         if (request()->wantsJson()){
-            return ['message' => $kanbanItem];
+            return ['message' => KanbanItem::where('id', $kanbanItem->id)->with(['mediaSubscriptions', 'media', 'owner', 'taskSubscription'])->get()->first()];
         }
 
     }

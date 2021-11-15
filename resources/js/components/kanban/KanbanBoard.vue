@@ -154,10 +154,9 @@
                     this.closeForm();
                 },
                 handleItemAdded(newItem) {      // add a item to the correct column in our list
-                    const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should add the item
+                    const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should replace the item
                         status => status.id === newItem.kanban_status_id
                     );
-
                     this.statuses[statusIndex].items.push(newItem);       // Add newly created item to our column
 
                     this.closeForm();                                     // Reset and close the AddItemForm

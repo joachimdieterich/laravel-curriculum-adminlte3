@@ -23,8 +23,6 @@ class ContentController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        abort_unless((\Gate::allows('content_create') OR
-            \Gate::allows($input['referenceable_type'].'_content_create')), 403);
 
         $this->permissionCheck($input['referenceable_type'], $input['referenceable_id']); //check context permission
 
@@ -62,6 +60,7 @@ class ContentController extends Controller
      */
     public function show(Content $content)
     {
+
        if (request()->wantsJson()){
             return [
                 'message' => $content
@@ -80,14 +79,15 @@ class ContentController extends Controller
     {
         $input = $this->validateRequest();
 
-        abort_unless((\Gate::allows('content_edit') OR
-            \Gate::allows($input['referenceable_type'].'_content_edit')), 403);
+        $this->permissionCheck($input['referenceable_type'], $input['referenceable_id'], "edit"); //check context permission
+        abort_unless((\Gate::allows('content_edit') or
+            \Gate::allows($input['referenceable_type'] . '_content_edit')), 403);
         //todo: check if user is owner or has creator/admin role
 
         $content->update([
             'title' => $input['title'],
             'content' => $input['content'],
-            'owner_id'  => auth()->user()->id,
+            'owner_id' => auth()->user()->id,
         ]);
         // subscribe embedded media to content
         $this->checkForEmbeddedMedia($content);
@@ -110,13 +110,15 @@ class ContentController extends Controller
     public function destroy(Content $content, $subscribable_type = null, $subscribable_id = null )
     {
         $input = $this->validateRequest();
-        if (isset($input['referenceable_id']) AND isset($input['referenceable_type'])){
+
+        if (isset($input['referenceable_id']) and isset($input['referenceable_type'])) {
             $subscribable_type = $input['referenceable_type'];
-            $subscribable_id   = $input['referenceable_id'];
+            $subscribable_id = $input['referenceable_id'];
         }
 
-        abort_unless((\Gate::allows('content_delete') OR
-            \Gate::allows($subscribable_type.'_content_delete')), 403);
+        $this->permissionCheck($subscribable_type, $subscribable_id, "delete"); //check context permission
+        /*abort_unless((\Gate::allows('content_delete') OR
+            \Gate::allows($subscribable_type.'_content_delete')), 403);*/
 
         //todo: check if user is owner or has creator/admin role
         /**
@@ -221,32 +223,22 @@ class ContentController extends Controller
      * @param $referenceable_id
      * @return mixed
      */
-    private function permissionCheck($referenceable_type, $referenceable_id)
+    private function permissionCheck($referenceable_type, $referenceable_id, $action = "create")
     {
+        abort_unless((\Gate::allows('content_' . $action) or
+            \Gate::allows($referenceable_type . '_content_' . $action)), 403);
 
-        if (in_array(
-            $referenceable_type . '_content_create',
-            [
-                "App\Curriculum_content_create",
-                "App\EnablingObjective_content_create",
-                "App\TerminalObjective_content_create",
-                "App\LogbookEntry_content_create",
-            ]
-            )
-        ) {
-            $model = $referenceable_type::find($referenceable_id);
+        $model = $referenceable_type::find($referenceable_id);
 
-            switch ($referenceable_type) {
-                case "App\Curriculum":
-                case "App\LogbookEntry":
-                    abort_unless(($model->owner_id === auth()->user()->id), 403);
-                    break;
-                case "App\EnablingObjective":
-                case "App\TerminalObjective":
-                    abort_unless(($model->curriculum->owner_id === auth()->user()->id), 403);
-                    break;
-            }
-
+        switch ($referenceable_type) {
+            case "App\Curriculum":
+            case "App\LogbookEntry":
+                abort_unless(($model->owner_id === auth()->user()->id), 403);
+                break;
+            case "App\EnablingObjective":
+            case "App\TerminalObjective":
+                abort_unless(($model->curriculum->owner_id === auth()->user()->id), 403);
+                break;
         }
         return $model;
     }

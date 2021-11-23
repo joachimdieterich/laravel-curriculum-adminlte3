@@ -19,7 +19,8 @@ class ReferenceSubscriptionController extends Controller
      */
     public function store(Request $request)
     {
-        $new_subscription   = $this->validateRequest();
+        abort_unless(\Gate::allows('objective_create'), 403);
+        $new_subscription = $this->validateRequest();
 
         if (($new_subscription['subscribable_type'] ==  "App\TerminalObjective" AND $new_subscription['terminal_objective_id'] == $new_subscription['subscribable_id'])
             OR

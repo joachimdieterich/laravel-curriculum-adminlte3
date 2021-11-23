@@ -103,6 +103,24 @@ class PermissionRoleTableSeeder extends Seeder
                 'objectivetype_edit',
                 'objectivetype_delete',
                 'curriculum_create_global',
+                'App\Curriculum_content_create',
+                'App\Curriculum_content_edit',
+                'App\Curriculum_content_delete',
+                'App\LogbookEntry_content_create',
+                'App\LogbookEntry_content_edit',
+                'App\LogbookEntry_content_delete',
+                'App\Task_content_create',
+                'App\Task_content_edit',
+                'App\Task_content_delete',
+                'App\EnablingObjective_content_create',
+                'App\EnablingObjective_content_edit',
+                'App\EnablingObjective_content_delete',
+                'App\TerminalObjective_content_create',
+                'App\TerminalObjective_content_edit',
+                'App\TerminalObjective_content_delete',
+                'App\Glossar_content_create',
+                'App\Glossar_content_edit',
+                'App\Glossar_content_delete',
             ];
 
             return in_array($permission->title, $creator_permission_list);
@@ -121,7 +139,6 @@ class PermissionRoleTableSeeder extends Seeder
                 'logbook_entry_show',
                 'task_access',
                 'task_show',
-                'curriculum_create_for_organization',
 
             ];
 
@@ -192,6 +209,24 @@ class PermissionRoleTableSeeder extends Seeder
                 'note_edit',
                 'note_delete',
                 'curriculum_create_for_organization',
+                'App\Curriculum_content_create',
+                'App\Curriculum_content_edit',
+                'App\Curriculum_content_delete',
+                'App\LogbookEntry_content_create',
+                'App\LogbookEntry_content_edit',
+                'App\LogbookEntry_content_delete',
+                'App\Task_content_create',
+                'App\Task_content_edit',
+                'App\Task_content_delete',
+                'App\EnablingObjective_content_create',
+                'App\EnablingObjective_content_edit',
+                'App\EnablingObjective_content_delete',
+                'App\TerminalObjective_content_create',
+                'App\TerminalObjective_content_edit',
+                'App\TerminalObjective_content_delete',
+                'App\Glossar_content_create',
+                'App\Glossar_content_edit',
+                'App\Glossar_content_delete',
             ];
 
             return in_array($permission->title, $schooladmin_permission_list);
@@ -256,7 +291,25 @@ class PermissionRoleTableSeeder extends Seeder
                 'note_show',
                 'note_edit',
                 'note_delete',
-                'curriculum_create_for_group'
+                'curriculum_create_for_group',
+                'App\Curriculum_content_create',
+                'App\Curriculum_content_edit',
+                'App\Curriculum_content_delete',
+                'App\LogbookEntry_content_create',
+                'App\LogbookEntry_content_edit',
+                'App\LogbookEntry_content_delete',
+                'App\Task_content_create',
+                'App\Task_content_edit',
+                'App\Task_content_delete',
+                'App\EnablingObjective_content_create',
+                'App\EnablingObjective_content_edit',
+                'App\EnablingObjective_content_delete',
+                'App\TerminalObjective_content_create',
+                'App\TerminalObjective_content_edit',
+                'App\TerminalObjective_content_delete',
+                'App\Glossar_content_create',
+                'App\Glossar_content_edit',
+                'App\Glossar_content_delete',
             ];
 
             return in_array($permission->title, $teacher_permission_list);
@@ -286,8 +339,25 @@ class PermissionRoleTableSeeder extends Seeder
                 'message_create',
                 'message_show',
                 'message_edit',
-                'curriculum_create_for_user'
-
+                'curriculum_create_for_user',
+                'App\Curriculum_content_create',
+                'App\Curriculum_content_edit',
+                'App\Curriculum_content_delete',
+                'App\LogbookEntry_content_create',
+                'App\LogbookEntry_content_edit',
+                'App\LogbookEntry_content_delete',
+                'App\Task_content_create',
+                'App\Task_content_edit',
+                'App\Task_content_delete',
+                'App\EnablingObjective_content_create',
+                'App\EnablingObjective_content_edit',
+                'App\EnablingObjective_content_delete',
+                'App\TerminalObjective_content_create',
+                'App\TerminalObjective_content_edit',
+                'App\TerminalObjective_content_delete',
+                'App\Glossar_content_create',
+                'App\Glossar_content_edit',
+                'App\Glossar_content_delete',
             ];
 
             return in_array($permission->title, $user_permission_list);

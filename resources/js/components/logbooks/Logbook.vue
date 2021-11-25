@@ -17,9 +17,9 @@
                 <label>
                     <input type="search"
                            class="form-control form-control-sm"
-                           placeholder="Suchbegriff"
+                           :placeholder="trans('global.search')"
                            v-model="search"
-                           aria-controls="curricula-datatable">
+                           :aria-label="trans('global.search')">
                 </label>
             </div>
         </div>

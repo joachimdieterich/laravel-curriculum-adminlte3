@@ -43,17 +43,18 @@
         </div>
       </li>-->
     @can('message_access')
-    <li class="nav-item pr-4">
-        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#"
-           onclick="triggerVueMessageLoaderEvent()">
-            <i class="far fa-comments"></i>
-            <span class="badge badge-danger navbar-badge"
-            style="right:0px">{{--{{ auth()->user()->newThreadsCount() }}--}}</span>
-        </a>
-    </li>
-    @endcan
-       <!--Notifications Dropdown Menu-->
-      <li class="dropdown">
+        <li class="nav-item pr-4">
+            <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#"
+               onclick="triggerVueMessageLoaderEvent()"
+               aria-label="{{ trans('global.messages') }}">
+                <i class="far fa-comments"></i>
+                <span class="badge badge-danger navbar-badge"
+                      style="right:0px">{{--{{ auth()->user()->newThreadsCount() }}--}}</span>
+            </a>
+        </li>
+@endcan
+<!--Notifications Dropdown Menu-->
+    <li class="dropdown">
         <span class="user-menu dropdown-toggle" data-toggle="dropdown">
           <img class="img-circle color-white"
                    src="{{ (auth()->user()->medium_id !== null) ? '/media/'.auth()->user()->medium_id  : Avatar::create(auth()->user()->fullName())->toBase64() }}"

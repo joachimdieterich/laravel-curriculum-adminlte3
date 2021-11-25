@@ -5,17 +5,19 @@
 @section('breadcrumb')
     <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
     <li class="breadcrumb-item active">{{ trans('global.media.title') }}</li>
-    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"
+                                    aria-label="{{ trans('global.documentation') }}"><i
+                class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
-@can('medium_create')
-    <div style="margin-bottom: 10px;" class="row">
-        <div class="col-lg-12">
-            @include ('forms.input.file',
-            ["model" => "media",
-            "field" => "path",
-            "label" => false,
-            "value" => old('path', isset($media->path) ? $media->id : '')])
+    @can('medium_create')
+        <div style="margin-bottom: 10px;" class="row">
+            <div class="col-lg-12">
+                @include ('forms.input.file',
+                ["model" => "media",
+                "field" => "path",
+                "label" => false,
+                "value" => old('path', isset($media->path) ? $media->id : '')])
 
         </div>
     </div>

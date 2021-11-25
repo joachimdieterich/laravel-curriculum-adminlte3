@@ -1,56 +1,58 @@
 <template>
     <div class="col-12">
         <ul class="nav nav-tabs"
-            role="tablist">
+            role="tablist"
+            aria-label="Curriculum Tabs">
             <li class="nav-item"
-                @click="setLocalStorage('#curriculum_'+curriculum.id, '#content-tab')">
+                @click="setLocalStorage('#curriculum_'+curriculum.id, '#content-tab')"
+                role="tab"
+                aria-controls="content-tab"
+                aria-selected="true">
                 <a class="nav-link link-muted"
                    id="content-nav-tab"
                    data-toggle="pill"
                    href="#content-tab"
-                   role="tab"
-                   aria-controls="content-tab"
-                   aria-selected="true"
                    @click="loaderEvent()"
                 >
-                    <i class="fa fa-align-justify pr-2"></i>{{trans('global.content.index')}}
+                    <i class="fa fa-align-justify pr-2"></i>{{ trans('global.content.index') }}
                 </a>
             </li>
             <li class="nav-item"
-                @click="setLocalStorage('#curriculum_'+curriculum.id, '#curriculm-tab')">
+                @click="setLocalStorage('#curriculum_'+curriculum.id, '#curriculm-tab')"
+                role="tab"
+                aria-controls="curriculm-tab"
+                aria-selected="false">
                 <a class="nav-link link-muted"
                    id="curriculm-nav-tab"
                    data-toggle="pill"
                    href="#curriculm-tab"
-                   role="tab"
-                   aria-controls="curriculm-tab"
-                   aria-selected="false">
-                    <i class="fas fa-th pr-2"></i>{{trans('global.objective_tab')}}
+                >
+                    <i class="fas fa-th pr-2"></i>{{ trans('global.objective_tab') }}
                 </a>
             </li>
             <li class="nav-item "
-                @click="setLocalStorage('#curriculum_'+curriculum.id, '#medium-tab')">
+                @click="setLocalStorage('#curriculum_'+curriculum.id, '#medium-tab')"
+                role="tab"
+                aria-controls="medium-tab"
+                aria-selected="false">
                 <a class="nav-link link-muted"
                    id="medium-nav-tab"
                    data-toggle="pill"
-                   href="#medium-tab"
-                   role="tab"
-                   aria-controls="medium-tab"
-                   aria-selected="true">
-                    <i class="fa fa-folder-open pr-2"></i>{{trans('global.media.title')}}
+                   href="#medium-tab">
+                    <i class="fa fa-folder-open pr-2"></i>{{ trans('global.media.title') }}
                 </a>
             </li>
             <li class="nav-item "
-                @click="setLocalStorage('#curriculum_'+curriculum.id, '#glossar-tab')">
+                @click="setLocalStorage('#curriculum_'+curriculum.id, '#glossar-tab')"
+                role="tab"
+                aria-controls="glossar-tab"
+                aria-selected="false">
                 <a v-if="curriculum.glossar != null"
                    class="nav-link link-muted"
                    id="glossar-nav-tab"
                    data-toggle="pill"
-                   href="#glossar-tab"
-                   role="tab"
-                   aria-controls="glossar-tab"
-                   aria-selected="true">
-                    <i class="fa fa-book-open pr-2"></i>{{trans('global.glossar.title_singular')}}
+                   href="#glossar-tab">
+                    <i class="fa fa-book-open pr-2"></i>{{ trans('global.glossar.title_singular') }}
                 </a>
                 <a v-else
                    v-can="'glossar_create'"
@@ -62,13 +64,16 @@
                 </a>
             </li>
             <li v-if="course"
-                class="nav-item">
+                class="nav-item"
+                role="tab"
+                aria-controls="logbook-tab"
+                aria-selected="false">
                 <a v-if="logbook"
                    v-can="'logbook_access'"
                    class="nav-link link-muted"
                    :href="'/logbooks/'+ logbook.id "
                    id="logbooks-nav-tab">
-                    <i class="fas fa-book pr-2"></i>{{trans('global.logbook.title_singular')}}
+                    <i class="fas fa-book pr-2"></i>{{ trans('global.logbook.title_singular') }}
                 </a>
                 <a v-else
                    v-can="'logbook_create'"
@@ -81,11 +86,12 @@
 
             <li v-if="course && showGenerateCertificate"
                 v-permission="'certificate_access'"
-                class="nav-item ml-auto">
+                class="nav-item ml-auto"
+            >
                 <a class="nav-link link-muted"
                    @click="show('certificate-generate-modal')"
                    id="certificate-nav-tab">
-                    <i class="fa fa-certificate pr-2"></i>{{trans('global.certificate.generate')}}
+                    <i class="fa fa-certificate pr-2"></i>{{ trans('global.certificate.generate') }}
                 </a>
             </li>
             <li v-permission="'certificate_create'"
@@ -110,10 +116,7 @@
                 <a class="nav-link link-muted"
                    id="description-nav-tab"
                    data-toggle="pill"
-                   href="#description-tab"
-                   role="tab"
-                   aria-controls="description-tab"
-                   aria-selected="true">
+                   href="#description-tab">
                     <i class="fa fa-info"></i>
                 </a>
             </li>
@@ -122,7 +125,7 @@
                 <a class="nav-link link-muted"
                    data-toggle="tooltip" title="Fix order_ids"
                    @click="resetOrderIds('/curricula/'+ curriculum.id +'/resetOrderIds')"
-                   id="config-nav-tab">
+                   id="fix-order-nav-tab">
                     <i class="fa fa-wrench"></i>
                 </a>
             </li>
@@ -131,7 +134,7 @@
                 class="nav-item">
                 <a class="nav-link link-muted"
                    @click="exportCurriculum()"
-                   id="config-nav-tab">
+                   id="export-curriculum-nav-tab">
                     <i class="fas fa-cloud-download-alt"></i>
                 </a>
             </li>
@@ -139,7 +142,7 @@
                 class="nav-item">
                 <a class="nav-link link-muted"
                    :href="'/curricula/'+ curriculum.id +'/edit'"
-                   id="config-nav-tab">
+                   id="edit-curriculum-nav-tab">
                     <i class="fa fa-pencil-alt"></i>
                 </a>
             </li>

@@ -13,10 +13,10 @@
                     type="checkbox"
                     value=""
                     name="todo1"
-                    id="todoCheck1"
+                    :id="'todo_checkbox'+task.task.id"
                     @click="complete(task.task.id)"
                     v-bind:checked="isCompleted(task)">
-                <label for="todoCheck1"></label>
+                <label :for="'todo_checkbox'+task.task.id" aria-label=""></label>
             </div>
 
             <span class="text">

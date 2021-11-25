@@ -5,17 +5,19 @@
 @section('breadcrumb')
     <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
     <li class="breadcrumb-item active">{{ trans('global.grade.title') }}</li>
-    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"
+                                    aria-label="{{ trans('global.documentation') }}"><i
+                class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
-@can('grade_create')
-    <div style="margin-bottom: 10px;" class="row">
-        <div class="col-lg-12">
-            <a id="add-grade"
-                class="btn btn-success" href="{{ route("grades.create") }}">
-                {{ trans('global.grade.create') }}
-            </a>
-        </div>
+    @can('grade_create')
+        <div style="margin-bottom: 10px;" class="row">
+            <div class="col-lg-12">
+                <a id="add-grade"
+                   class="btn btn-success" href="{{ route("grades.create") }}">
+                    {{ trans('global.grade.create') }}
+                </a>
+            </div>
     </div>
 @endcan
 <table id="grades-datatable" class="table table-hover datatable">

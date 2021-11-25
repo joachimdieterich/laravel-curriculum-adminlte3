@@ -5,30 +5,32 @@
 @section('breadcrumb')
     <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
     <li class="breadcrumb-item active">{{ trans('global.grade.title_singular') }}</li>
-    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"
+                                    aria-label="{{ trans('global.documentation') }}"><i
+                class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
-<div class="row">
-    <div class="col-lg-4 col-sm-12">
-        <div class="card card-primary">
-            <div class="card-header">
-                <div class="card-title">
-                    <h5 class="m-0">
-                        <i class="fa fa-history mr-1"></i> {{ $grade->title }}
-                    </h5>
+    <div class="row">
+        <div class="col-lg-4 col-sm-12">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h5 class="m-0">
+                            <i class="fa fa-history mr-1"></i> {{ $grade->title }}
+                        </h5>
                 </div>
                 @can('grade_edit')
                 <div class="card-tools pr-2">
-                    <a href="{{ route('grades.edit', $grade->id) }}" >
-                       <i class="far fa-edit"></i>
-                    </a> 
+                    <a href="{{ route('grades.edit', $grade->id) }}">
+                        <i class="far fa-edit"></i>
+                    </a>
                 </div>
-                @endcan 
-            </div>
-            <!-- /.card-header -->
-            <div class="card-body"> 
+                    @endcan
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
 
-                <strong><i class="fa fa-calendar mr-1"></i> {{ trans('global.grade.title_singular') }}</strong>
+                    <strong><i class="fa fa-calendar mr-1"></i> {{ trans('global.grade.title_singular') }}</strong>
 
                 <p class="text-muted">
                     {{ $grade->external_begin }} - {{ $grade->external_end }}
@@ -47,25 +49,26 @@
                 <div class="float-left"></div>
                 <small class="float-right">
                     {{ $grade->updated_at }}
-                </small> 
+                </small>
+            </div>
             </div>
         </div>
-    </div>
-    
-    <div class="col-md-8">
+
+        <div class="col-md-8">
             <div class="card">
-              <div class="card-header p-2">
-                <ul class="nav nav-pills">
-                  <li class="nav-item"><a class="nav-link active show" href="#activity" data-toggle="tab">Activity</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">Timeline</a></li>
+                <div class="card-header p-2">
+                    <ul class="nav nav-pills">
+                        <li class="nav-item"><a class="nav-link active show" href="#activity"
+                                                data-toggle="tab">Activity</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">Timeline</a></li>
                   <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Settings</a></li>
                 </ul>
               </div><!-- /.card-header -->
               <div class="card-body">
                 <div class="tab-content">
                   <div class="tab-pane active show" id="activity">
-                    
-                    Activity Tab
+
+                      Activity Tab
 
                   </div>
                   <!-- /.tab-pane -->

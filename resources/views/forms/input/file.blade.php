@@ -31,7 +31,7 @@
      @if($value != '')
      src="/media/{{$value}}"
      @endif
-    style="margin-top:15px;max-height:100px;">
+     style="margin-top:15px;max-height:100px;">
 
 <medium-create-modal></medium-create-modal>
 @section('scripts')

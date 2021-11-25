@@ -25,6 +25,7 @@
             <button v-permission="'content_create, ' + subscribable_type + '_content_create'"
                     type="button" class="btn btn-tool "
                     role="button"
+                    :aria-label="trans('global.add')"
                     @click="show('content-create-modal')">
                 <i class="fa fa-plus"></i>
             </button>
@@ -32,13 +33,15 @@
                     v-if="subscribable_type === 'App\\Curriculum'"
                     type="button" class="btn btn-tool "
                     role="button"
+                    :aria-label="trans('global.paste')"
                     @click="show('content-subscription-modal')">
                 <i class="fa fa-paste"></i>
             </button>
             <button v-permission="'content_create, ' + subscribable_type + '_content_create'"
                     type="button" class="btn btn-tool "
                     role="button"
-                    data-toggle="tooltip" data-container="body" title="Reihenfolge zurücksetzen"
+                    :aria-label="trans('global.resetOrder')"
+                    data-toggle="tooltip" data-container="body" :title="trans('global.resetOrder')"
                     @click.prevent="fixOrderIds()">
                 <i class="fa fa-wrench"></i>
             </button>
@@ -47,6 +50,7 @@
                 type="button" class="btn btn-tool "
                 href="#contentCarousel" role="button"
                 data-slide="prev"
+                :aria-label="trans('pagination.previous')"
                 @click="prev()">
                 <i class="fa fa-arrow-left"></i>
             </button>
@@ -55,6 +59,7 @@
                 type="button" class="btn btn-tool "
                 href="#contentCarousel" role="button"
                 data-slide="next"
+                :aria-label="trans('pagination.next')"
                 @click="next()">
                 <i class="fa fa-arrow-right"></i>
             </button>
@@ -88,31 +93,35 @@
                                      {{item.content.title}}
                                  </span>
                                  <span v-permission="'content_delete, ' + subscribable_type + '_content_delete'"
-                                       class="pull-right">
+                                       class="pull-right"
+                                       :aria-label="trans('global.delete')">
                                      <span
                                          class="btn-tool fa fa-trash text-danger"
                                          @click.prevent="deleteSubscription(item)"
-                                         >
+                                     >
                                      </span>
                                  </span>
                                  <span v-permission="'content_edit, ' + subscribable_type + '_content_edit'"
-                                       class="pull-right">
+                                       class="pull-right"
+                                       :aria-label="trans('global.edit')">
                                      <span
                                          class="btn-tool fa fa-pencil-alt"
                                          @click.prevent="edit(item)"
-                                         >
+                                     >
                                      </span>
                                  </span>
                                  <span v-permission="'content_create, ' + subscribable_type + '_content_create'"
                                        class="pull-right"><!--Order_id: {{ item.order_id }}-->
                                      <span v-if="(item.order_id !== 0)"
                                            class="btn-tool fa fa-arrow-up"
+                                           aria-label="up"
                                            @click.prevent="sortEvent(item,-1)">
                                      </span>
 
-                                    <span  v-if="( subscriptions.length-1 !== item.order_id)"
-                                           class="btn-tool fa fa-arrow-down"
-                                           @click.prevent="sortEvent(item,1)">
+                                    <span v-if="( subscriptions.length-1 !== item.order_id)"
+                                          class="btn-tool fa fa-arrow-down"
+                                          aria-label="down"
+                                          @click.prevent="sortEvent(item,1)">
                                     </span>
                                  </span>
                                  <br>

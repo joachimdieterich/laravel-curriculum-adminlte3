@@ -30,9 +30,9 @@
 
 @endif
         <span class="bg-white text-center p-1 overflow-auto nav-item-box">
-           <h6 class="events-heading pt-1 hyphens nav-item-text">
+           <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
                {{ $item->title }}
-           </h6>
+           </h1>
            <p class=" text-muted small">
                {{{ html_entity_decode(strip_tags( $item->description)) }}}
            </p>
@@ -62,8 +62,8 @@
     </div>
         @if(!isset($readonly))
             @can('navigator_create')
-            <span class="p-1 pointer_hand"
-               accesskey="" style="position:absolute; top:0px; height: 30px; width:100%;">
+                <span class="p-1 pointer_hand"
+                      accesskey="" style="position:absolute; top:0px; height: 30px; width:100%;">
                <form action="{{route('navigatorItems.destroy', ['navigatorItem' => $item->id])}}"
                      method="POST"
                      enctype="multipart/form-data"
@@ -72,12 +72,14 @@
                    @method('DELETE')
                    <button
                        id="delete-navigator-item-{{ $item->id }}"
-                       type="submit" class="btn btn-danger btn-sm pull-right">
+                       type="submit" class="btn btn-danger btn-sm pull-right"
+                       aria-label="{{ trans('global.delete') }}">
                        <small><i class="fa fa-trash"></i></small>
                    </button>
                </form>
                <a href="{{route('navigatorItems.edit', ['navigatorItem' => $item->id, 'navigator_id'])}}"
-                  class="btn btn-primary btn-sm pull-right mr-1">
+                  class="btn btn-primary btn-sm pull-right mr-1"
+                  aria-label="{{ trans('global.edit') }}">
                    <small><i class="fa fa-edit"></i></small>
                </a>
 

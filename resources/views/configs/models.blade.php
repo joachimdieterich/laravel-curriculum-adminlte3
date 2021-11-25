@@ -7,7 +7,8 @@
     <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
     <li class="breadcrumb-item "><a href="/configs">{{ trans('global.config.title') }}</a></li>
     <li class="breadcrumb-item active">{{ trans('global.config.model_limiter_title') }}</li>
-    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"
+                                    aria-label="{{ trans('global.documentation') }}"><i
                 class="fas fa-question-circle"></i></a></li>
 @endsection
 

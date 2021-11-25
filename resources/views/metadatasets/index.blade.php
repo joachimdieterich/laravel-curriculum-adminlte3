@@ -5,17 +5,19 @@
 @section('breadcrumb')
     <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
     <li class="breadcrumb-item active">{{ trans('global.metadataset.title') }}</li>
-    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"
+                                    aria-label="{{ trans('global.documentation') }}"><i
+                class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
-@can('organization_type_create')
-    <div style="margin-bottom: 10px;" class="row">
-        <div class="col-lg-12">
-            <a class="btn btn-success" href="{{ route("metadatasets.create") }}" >
-                {{ trans('global.metadataset.create') }}
-            </a>
+    @can('organization_type_create')
+        <div style="margin-bottom: 10px;" class="row">
+            <div class="col-lg-12">
+                <a class="btn btn-success" href="{{ route("metadatasets.create") }}">
+                    {{ trans('global.metadataset.create') }}
+                </a>
+            </div>
         </div>
-    </div>
 @endcan
 <table id="metadataset_datatable" class="table table-hover datatable">
     <thead>

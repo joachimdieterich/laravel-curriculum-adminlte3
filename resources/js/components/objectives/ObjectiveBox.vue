@@ -3,23 +3,25 @@
     <div v-if="type === 'createterminal'"
          class="box box-objective"
          v-bind:style="{ 'background-color': '#fff'}">
-        <h5 style="position:absolute; top:20px; width:100%;text-align: center; ">
+        <h1 class="h5"
+            style="position:absolute; top:20px; width:100%;text-align: center;">
             {{ trans("global.terminalObjective.title_singular") }}
-        </h5>
+        </h1>
 
         <div style="text-align: center; padding: 25px; font-size:100px;"
              @click.prevent="showModal('terminal-objective-modal', )">
-             +
+            +
         </div>
     </div>
 
     <!--  v-else-if create enabling-->
-    <div  v-else-if="type === 'createenabling'"
-          class="box box-objective"
-          v-bind:style="{ 'background-color': backgroundcolor  }">
-        <h5 style="position:absolute; top:20px; width:100%;text-align: center; ">
+    <div v-else-if="type === 'createenabling'"
+         class="box box-objective"
+         v-bind:style="{ 'background-color': backgroundcolor  }">
+        <h1 class="h5"
+            style="position:absolute; top:20px; width:100%;text-align: center; ">
             {{ trans("global.enablingObjective.title_singular") }}
-        </h5>
+        </h1>
 
         <div style="text-align: center; padding: 25px; font-size:100px;"
              @click.prevent="showModal('enabling-objective-modal')">

@@ -6,6 +6,7 @@
                     style="background-color: transparent;"
                     v-bind:style="{ 'color': textcolor }"
                     data-toggle="dropdown"
+                    aria-label="Dropdown menu"
                     aria-expanded="false">
               <span class="caret"></span>
             </button>

@@ -20,8 +20,7 @@ mix.copyDirectory('node_modules/tinymce/plugins', 'public/node_modules/tinymce/p
 mix.copyDirectory('node_modules/tinymce/skins', 'public/node_modules/tinymce/skins');
 mix.copyDirectory('node_modules/tinymce/themes', 'public/node_modules/tinymce/themes');
 mix.copyDirectory('node_modules/tinymce', 'public/node_modules/tinymce');
-/* Fontawesome */
-mix.copyDirectory('node_modules/@fortawesome/fontawesome-free/webfonts', 'public/fonts/vendor/@fortawesome/fontawesome-free');
+
 /* Bootstrap colorpicker */
 mix.copyDirectory('node_modules/bootstrap-colorpicker/dist', 'public/node_modules/bootstrap-colorpicker');
 /* Bootstrap datetimepicker */

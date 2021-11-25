@@ -10,10 +10,10 @@ window._ = require('lodash');
 try {
     window.Popper = require('popper.js').default; //for tooltips
 
-    window.$ = window.jQuery = require( 'jquery' );    
+    window.$ = window.jQuery = require('jquery');
     require('bootstrap');
     require('admin-lte');
-      
+
 } catch (e) {}
 
 /**
@@ -36,7 +36,6 @@ let token = document.head.querySelector('meta[name="csrf-token"]');
 
 if (token) {
     window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
-    
 } else {
     console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }

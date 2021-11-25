@@ -8,7 +8,7 @@
 require('./bootstrap');
 
 //vue
-window.Vue = require('vue');
+window.Vue = require('vue').default;
 
 // use trans function like in blade
 import _ from 'lodash'; //needed to get

@@ -8,27 +8,32 @@
         @if (Auth::user()->id == env('GUEST_USER'))
             <a href="/navigators/{{Auth::user()->organizations()->where('organization_id', '=',  Auth::user()->current_organization_id)->first()->navigators()->first()->id}}">Home</a>
         @else
-        <a href="/"><i class="fa fa-home"></i></a>
+            <a href="/"
+               :aria-label="trans('global.home')"><i class="fa fa-home"></i></a>
         @endif
     </li>
     @if(isset($course))
         @can('achievement_access')
-            <li class="breadcrumb-item "><a href="/curricula/{{ $course->curriculum_id }}">{{ Str::limit($curriculum->title, 10) }}</a></li>
+            <li class="breadcrumb-item "><a
+                    href="/curricula/{{ $course->curriculum_id }}">{{ Str::limit($curriculum->title, 10) }}</a></li>
         @endcan
     @else
-        <li class="breadcrumb-item "><a href="/curricula/{{$curriculum->id}}">{{ Str::limit($curriculum->title, 10) }}</a></li>
+        <li class="breadcrumb-item "><a
+                href="/curricula/{{$curriculum->id}}">{{ Str::limit($curriculum->title, 10) }}</a></li>
     @endif
-    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"
+                                    aria-label="{{ trans('global.documentation') }}"><i
+                class="fas fa-question-circle"></i></a></li>
 @endsection
 
 @section('content')
 
-<div id="content_top_placeholder" ></div>
-@can('achievement_access')
-    @if(isset(json_decode($settings)->achievements))
-    <table id="users-datatable" class="table table-hover datatable">
-        <thead>
-            <tr>
+    <div id="content_top_placeholder"></div>
+    @can('achievement_access')
+        @if(isset(json_decode($settings)->achievements))
+            <table id="users-datatable" class="table table-hover datatable">
+                <thead>
+                <tr>
                 <th width="10">
                     <a onclick="togglePosition()" class="link-muted">
                         <i id="toggleIcon" class="fa fa-arrow-left"></i>

@@ -12,11 +12,13 @@
                     "placeholder" => trans('global.kanban.fields.description'),
                     "rows" => 3,
                     "value" => old('description', isset($logbook) ? $kanban->description : '')])
+
 @include ('forms.input.file',
             ["model" => "media",
-            "field" => "path",
+            "field" => "medium_id",
             "label" => false,
-            "value" => old('path', isset($media->path) ? $media->relativePath() : '')])
+            "accept" => "image/*",
+            "value" => old('medium_id', isset($kanban->medium_id) ? $kanban->medium_id : '')])
 <div class="pt-3">
     <input
         id="logbook-save"

@@ -4,9 +4,11 @@
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item "><a href="/"><i class="fa fa-home"></i></a></li>
-    <li class="breadcrumb-item"> <a href="/curricula">{{ trans('global.curriculum.title') }}</a></li>
+    <li class="breadcrumb-item"><a href="/curricula">{{ trans('global.curriculum.title') }}</a></li>
     <li class="breadcrumb-item active">{{ trans('global.curriculum.import') }}</li>
-    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"
+                                    aria-label="{{ trans('global.documentation') }}"><i
+                class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
     <div style="margin-bottom: 10px;" class="row">

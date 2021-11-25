@@ -18,17 +18,19 @@
         @endif
     </li>
     <li class="breadcrumb-item active">{{ trans('global.kanban.title_singular') }}</li>
-    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"
+                                    aria-label="{{ trans('global.documentation') }}"><i
+                class="fas fa-question-circle"></i></a></li>
 @endsection
 
 @section('content')
-<!-- {!! $kanban->description !!}-->
-<div >
-    @can('kanban_entry_create')
-        <div style="margin-bottom: 10px;" class="row">
-            <div class="col-lg-12">
-                <button id="add-kanban-entry"
-                   class="btn btn-success"
+    <!-- {!! $kanban->description !!}-->
+    <div>
+        @can('kanban_entry_create')
+            <div style="margin-bottom: 10px;" class="row">
+                <div class="col-lg-12">
+                    <button id="add-kanban-entry"
+                            class="btn btn-success"
                     onclick="app.__vue__.$modal.show('kanban-entry-modal',  {'kanban_id': {{ $kanban->id }} });">
                    {{ trans('global.kanbanEntry.create') }}
                 </button>

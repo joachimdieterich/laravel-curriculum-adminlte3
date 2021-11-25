@@ -5,22 +5,24 @@
 @section('breadcrumb')
     <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
     <li class="breadcrumb-item active">{{ trans('global.logbook.edit') }}</li>
-    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"
+                                    aria-label="{{ trans('global.documentation') }}"><i
+                class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
 
-<div class="card">
-    <div class="card-body">
-        <form action="{{ route("logbooks.update", [$logbook->id]) }}" 
-              method="POST" 
-              enctype="multipart/form-data">
-            @method('PATCH')
-            @include('logbooks.form', [
-                'logbook'     => $logbook,
-                'buttonText'    => trans('global.logbook.edit')
-            ])
-        </form>
+    <div class="card">
+        <div class="card-body">
+            <form action="{{ route("logbooks.update", [$logbook->id]) }}"
+                  method="POST"
+                  enctype="multipart/form-data">
+                @method('PATCH')
+                @include('logbooks.form', [
+                    'logbook'     => $logbook,
+                    'buttonText'    => trans('global.logbook.edit')
+                ])
+            </form>
+        </div>
     </div>
-</div>
 
 @endsection

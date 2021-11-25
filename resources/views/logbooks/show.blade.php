@@ -25,17 +25,19 @@
         @endif
     </li>
     <li class="breadcrumb-item active">{{ trans('global.logbook.title_singular') }}</li>
-    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
+    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"
+                                    aria-label="{{ trans('global.documentation') }}"><i
+                class="fas fa-question-circle"></i></a></li>
 @endsection
 
 @section('content')
-<!-- {!! $logbook->description !!}-->
+    <!-- {!! $logbook->description !!}-->
 
-<logbook :logbook="{{ $logbook }}"></logbook>
+    <logbook :logbook="{{ $logbook }}"></logbook>
 
-<medium-modal></medium-modal>
-<medium-create-modal></medium-create-modal>
-<subscribe-objective-modal></subscribe-objective-modal>
+    <medium-modal></medium-modal>
+    <medium-create-modal></medium-create-modal>
+    <subscribe-objective-modal></subscribe-objective-modal>
 <task-modal></task-modal>
 <absence-modal></absence-modal>
 @can('logbook_create')

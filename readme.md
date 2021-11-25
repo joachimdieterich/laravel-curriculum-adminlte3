@@ -12,7 +12,7 @@ curriculum is a learning platform where teachers can create topic-based learning
 ### Prerequisites
 - PHP 7.3 Extensions: xml, dom, zip, curl, mbstring, bcmath
 - ghostscript
-- Imagemagick
+- imagemagick
 - git
 - composer
 - npm

@@ -34,4 +34,5 @@ mix.copyDirectory('node_modules/datatables.net-select/js', 'public/node_modules/
 /* moment */
 mix.copyDirectory('node_modules/moment/min', 'public/node_modules/moment/js');
 
-mix.version();
+mix.version()
+mix.vue({version: 2});

@@ -16,6 +16,7 @@ class LogbookController extends Controller
     public function index()
     {
         abort_unless(\Gate::allows('logbook_access'), 403);
+
         return view('logbooks.index');
     }
 
@@ -105,6 +106,7 @@ class LogbookController extends Controller
             'logbook_limiter',
             'App\\Logbook',
             'owner_id'), 402); //is there an role limit?
+
         $new_logbook = $this->validateRequest();
 
         $logbook = Logbook::Create([
@@ -137,13 +139,8 @@ class LogbookController extends Controller
      */
     public function show(Logbook $logbook)
     {
-        abort_unless((auth()->user()->logbooks->contains('id', $logbook->id) //direct subscription
-            or ($logbook->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() //user is enroled in group
-            or ($logbook->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id))->isNotEmpty() //user is enroled in group
-            or ($logbook->subscriptions->where('subscribable_type', "App\Course")->whereIn('subscribable_id', auth()->user()->currentGroupEnrolments->pluck('course_id')))->isNotEmpty()
-            or (auth()->user()->currentRole()->first()->id == 1)    // admin
-            or (auth()->user()->id == $logbook->owner_id)           // user owns logbook
-        ), 403);
+        $this->checkPermissions($logbook, 'access');
+
         $logbook = $logbook->with([
             'owner',
             'subscriptions.subscribable',
@@ -169,8 +166,7 @@ class LogbookController extends Controller
      */
     public function edit(Logbook $logbook)
     {
-        abort_unless(\Gate::allows('logbook_edit'), 403);
-        abort_unless(auth()->user()->id == $logbook->owner_id, 403);                // user owns logbook
+        $this->checkPermissions($logbook, 'edit');
 
         return view('logbooks.edit')
             ->with(compact('logbook'));
@@ -185,8 +181,7 @@ class LogbookController extends Controller
      */
     public function update(Request $request, Logbook $logbook)
     {
-        abort_unless(\Gate::allows('logbook_edit'), 403);
-        abort_unless(auth()->user()->id == $logbook->owner_id, 403);                // user owns logbook
+        $this->checkPermissions($logbook, 'edit');
 
         $logbook->update([
             'title' => $request['title'],
@@ -204,8 +199,7 @@ class LogbookController extends Controller
      */
     public function destroy(Logbook $logbook)
     {
-        abort_unless(\Gate::allows('logbook_delete'), 403);
-        abort_unless(auth()->user()->id == $logbook->owner_id, 403);                // user owns logbook
+        $this->checkPermissions($logbook, 'delete');
 
         foreach ($logbook->entries as $entries) {
             (new LogbookEntryController())->destroy($entries);
@@ -216,14 +210,53 @@ class LogbookController extends Controller
         $logbook->delete();
     }
 
+
+    /**
+     * @param Logbook $logbook
+     */
+    private function checkPermissions(Logbook $logbook, $action = 'create'): void
+    {
+        abort_unless(\Gate::allows('logbook_' . $action), 403);
+        abort_unless((auth()->user()->logbooks->contains('id', $logbook->id) //direct subscription
+            or ($logbook->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() //user is enroled in group
+            or ($logbook->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id))->isNotEmpty() //user is enroled in group
+            or ($logbook->subscriptions->where('subscribable_type', "App\Course")->whereIn('subscribable_id', auth()->user()->currentGroupEnrolments->pluck('course_id')))->isNotEmpty()
+            or (auth()->user()->currentRole()->first()->id == 1)    // admin
+            or (auth()->user()->id == $logbook->owner_id)           // user owns logbook
+        ), 403);
+
+        /*
+         * Check for role limiter
+         */
+        if ($action === 'create') {
+            abort_unless(limiter(
+                'App\\Role',
+                auth()->user()->role()->id,
+                'logbook_limiter',
+                'App\\Logbook',
+                'owner_id'), 402);
+        }
+
+        if ($action === 'edit') {
+            abort_unless(auth()->user()->id == $logbook->owner_id, 403);                // user owns logbook
+            //todo: if user has subscription editable == true
+        }
+
+        if ($action === 'delete') {
+            abort_unless(auth()->user()->id == $logbook->owner_id, 403);                // user owns logbook
+        }
+
+    }
+
     protected function validateRequest()
     {
 
         return request()->validate([
-            'title'         => 'sometimes|required',
-            'description'   => 'sometimes',
+            'title' => 'sometimes|required',
+            'description' => 'sometimes',
             'subscribable_type' => 'sometimes',
-            'subscribable_id'   => 'sometimes',
+            'subscribable_id' => 'sometimes',
         ]);
     }
+
 }

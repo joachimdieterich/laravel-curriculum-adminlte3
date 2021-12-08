@@ -8,6 +8,22 @@
                     @click.prevent="open('logbook-entry-modal')">
                 {{ trans('global.logbookEntry.create') }}
             </button>
+            <button
+                id="print-logbook"
+                type="button"
+                class="pull-right btn btn-tool pt-3"
+                @click.p.prevent="togglePrintOptions();"
+            >
+                <i class="fa fa-print"></i>
+            </button>
+        </div>
+
+        <div class="col-md-12"
+             v-if="showPrintOptions">
+            <LogbookPrintOptions
+                :logbook="logbook"
+                :period="period">
+            </LogbookPrintOptions>
         </div>
 
         <div class="col-md-12 pb-3">
@@ -40,16 +56,19 @@
 </template>
 
 <script>
-    import LogbookEntry from '../logbooks/LogbookEntry.vue';
+import LogbookEntry from '../logbooks/LogbookEntry.vue';
+import LogbookPrintOptions from "./LogbookPrintOptions";
 
     export default {
         props: {
             'logbook': Object,
+            'period': Object
         },
         data () {
             return {
                 entries: [],
-                search: ''
+                search: '',
+                showPrintOptions: false
             };
         },
 
@@ -57,6 +76,9 @@
             open(modal) {
                 this.$modal.show(modal, {'logbook_id': this.logbook.id});
             },
+            togglePrintOptions() {
+                this.showPrintOptions = !this.showPrintOptions;
+            }
 
         },
         mounted() {
@@ -71,6 +93,7 @@
             });
         },
         components: {
+            LogbookPrintOptions,
             LogbookEntry
         }
 

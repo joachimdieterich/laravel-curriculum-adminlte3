@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Logbook;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Yajra\DataTables\DataTables;
 
 class LogbookController extends Controller
@@ -210,6 +211,35 @@ class LogbookController extends Controller
         $logbook->delete();
     }
 
+    /**
+     * Print the specified resource.
+     *
+     * @param \App\Logbook $logbook
+     * @return \Illuminate\Http\Response
+     */
+    public function print(Logbook $logbook)
+    {
+        $this->checkPermissions($logbook, 'access');
+
+        $input = request()->validate([
+            'begin' => 'required',
+            'end' => 'required',
+            'showDescription' => 'string',
+            'showContents' => 'string',
+            'showTasks' => 'string',
+            'showMedia' => 'string',
+            'showReferences' => 'string',
+            'showAbsences' => 'string'
+        ]);
+
+
+        $html = view('print.logbook')
+            ->with(compact('logbook'))
+            ->with(compact('input'))
+            ->render();
+
+        return (new PrintController)->print($html, $logbook->title . '.pdf', 'download', 'portrait');
+    }
 
     /**
      * @param Logbook $logbook
@@ -250,7 +280,6 @@ class LogbookController extends Controller
 
     protected function validateRequest()
     {
-
         return request()->validate([
             'title' => 'sometimes|required',
             'description' => 'sometimes',

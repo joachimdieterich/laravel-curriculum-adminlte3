@@ -114,6 +114,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     /* logbooks */
     Route::get('logbooks/list', 'LogbookController@list');
+    Route::get('logbooks/{logbook}/print', 'LogbookController@print')->name('logbooks.print');
     Route::resource('logbooks', 'LogbookController');
     Route::resource('logbookSubscriptions', 'LogbookSubscriptionController');
 

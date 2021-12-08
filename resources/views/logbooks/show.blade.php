@@ -33,16 +33,17 @@
 @section('content')
     <!-- {!! $logbook->description !!}-->
 
-    <logbook :logbook="{{ $logbook }}"></logbook>
+    <logbook :logbook="{{ $logbook }}"
+             :period="{{App\Period::find(auth()->user()->current_period_id)}}"></logbook>
 
     <medium-modal></medium-modal>
     <medium-create-modal></medium-create-modal>
     <subscribe-objective-modal></subscribe-objective-modal>
-<task-modal></task-modal>
-<absence-modal></absence-modal>
-@can('logbook_create')
-    @if (Auth::user()->id ==  $logbook->owner_id)
-        <subscribe-modal></subscribe-modal>
-    @endif
+    <task-modal></task-modal>
+    <absence-modal></absence-modal>
+    @can('logbook_create')
+        @if (Auth::user()->id ==  $logbook->owner_id)
+            <subscribe-modal></subscribe-modal>
+        @endif
 @endcan
 @endsection

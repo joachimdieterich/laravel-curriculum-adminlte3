@@ -10,7 +10,7 @@ curriculum is a learning platform where teachers can create topic-based learning
 ## Installation
 
 ### Prerequisites
-- PHP 7.3 Extensions: xml, dom, zip, curl, mbstring, bcmath
+- PHP 7.3 Extensions: xml, dom, zip, curl, mbstring, bcmath, gd, mysqli, PDO, json, tokenizer, openssl, fileinfo, ctype
 - ghostscript
 - imagemagick
 - git

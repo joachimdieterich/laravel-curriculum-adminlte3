@@ -33,10 +33,11 @@
                 <button
                     id="navigator-item-content-{{ $item->id }}"
                     class="btn btn-tool"
-                    data-target="#card_{{ $item->id }}"
+                    aria-label="{{ trans('global.toggle') }}"
                     data-card-widget="collapse"
-                    aria-label="{{ trans('global.toggle') }}">
-                    <i class="fas fa-plus"></i>
+                    data-expand-icon="fa-expand-alt"
+                    data-collapse-icon="fa-compress-alt">
+                    <i class="fas fa-expand-alt"></i>
                 </button>
                 @can('navigator_create')
                     <a onclick="app.__vue__.$modal.show('content-create-modal',  { 'id': {{ $item->referenceable_id }}, 'method': 'patch' });"

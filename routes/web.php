@@ -13,7 +13,7 @@ Auth::routes(['register' => false]);
 
 
 Route::group(['middleware' => 'auth'], function () {
-    LogController::setStatistics();
+    //LogController::setStatistics(); //to slow -> use queue instead
     Route::get('/home', 'HomeController@index')->name('home');
 
     Route::get('/admin', 'AdminController@index')->name('admin.index');
@@ -262,12 +262,12 @@ if (env('GUEST_USER') !== null)
 {
     Route::get('/guest', function ()
     {
-        LogController::setStatistics();
+
         if (Auth::user() == null)       //if no user is authenticated authenticate guest
         {
-            \App\Http\Controllers\LogController::set('guestLogin');
+            LogController::set('guestLogin');
+            LogController::setStatistics();
             Auth::loginUsingId((env('GUEST_USER')), true);
-
         }
         if (\App\User::find(env('GUEST_USER'))->organizations()->first()->navigators()->first() != null) //use guests default navigator
         {

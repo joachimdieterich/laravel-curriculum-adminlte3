@@ -192,7 +192,7 @@ export default {
         }
     },
     mounted() {
-        this.time = [moment().format("YYYY-MM-DD"), moment().format("YYYY-MM-DD")];
+        this.time = [moment(this.period.begin).format("YYYY-MM-DD"), moment(this.period.end).format("YYYY-MM-DD")];
     },
     components: {
         DatePicker

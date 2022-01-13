@@ -1,5 +1,5 @@
 <template >
-    <create :model="model">    
+    <create :model="model">
     </create>
 </template>
 
@@ -15,15 +15,8 @@
                 errors: {}
             }
         },
-        methods: {
-          
-        },
-        computed: {
-          
-        },
-        bevorOpen() {
-            
-        },
+        methods: {},
+        computed: {},
         components: {
             create,
         }

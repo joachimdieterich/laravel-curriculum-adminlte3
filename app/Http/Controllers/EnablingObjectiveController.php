@@ -201,6 +201,9 @@ class EnablingObjectiveController extends Controller
 
         foreach ($siblings as $sibling)
         {
+
+            //todo: trace error -> "Trying to get property 'curriculum' of non-object": possible sibling entry of deleted curriculum? -> yes.
+            //todo: add artisan command/or frontend cleaner
             $curricula_list[$sibling->referenceable->curriculum->id] = $sibling->referenceable->curriculum;
         }
         return ['siblings' => $siblings, 'curricula_list' => $curricula_list];

@@ -1,20 +1,20 @@
 <template>
-    <div class="col-12">      
-<!--        <div id="loadingEvents" class="overlay text-center" style="width:100% !important;">
-            <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-            <span class="sr-only">Loading...</span>
-        </div>-->
+    <div class="col-12">
+        <!--        <div id="loadingEvents" class="overlay text-center" style="width:100% !important;">
+                    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                    <span class="sr-only">Loading...</span>
+                </div>-->
         {{ trans('global.eventSubscription.search') }}
         <div class="row my-3">
             <span class="col-6 ">
-                {{ trans('global.eventSubscription.search_subject') }} 
+                {{ trans('global.eventSubscription.search_subject') }}
                 <button type="button" class="btn btn-block btn-secondary" @click="loader(curriculum.subject.title)">
                     {{ curriculum.subject.title }}
                 </button>
             </span>
             <span class="col-6">
                 {{ trans('global.eventSubscription.search_keyword') }}
-                
+
                 <div class="input-group my-colorpicker2 colorpicker-element" data-colorpicker-id="2">
                     <input
                         type="text" id="search"
@@ -22,25 +22,25 @@
                         class="form-control"
                         v-model="search"
                         required
-                        @keyup.enter="loader()" 
+                        @keyup.enter="loader()"
                     />
 
                     <div class="input-group-append" @click="loader()">
-                      <span class="input-group-text" ><i class="fas fa-search"></i></span>
+                      <span class="input-group-text"><i class="fas fa-search"></i></span>
                     </div>
                  </div>
-                
-            </span>
-        </div>   
 
-        
+            </span>
+        </div>
+
+
         <div v-for="event in entries" class="border-bottom card collapsed-card">
             <div class="card-header">
             <span data-target="'navigator-item-content-'+event.ARTIKEL_NR" data-card-widget="collapse">{{event.ARTIKEL}}</span>
             <div class="card-tools pull-right">
-                <button 
+                <button
                     :id="'navigator-item-content-'+event.ARTIKEL_NR"
-                    class="btn btn-tool" 
+                    class="btn btn-tool"
                     :data-target="'#navigator-item-content-'+event.ARTIKEL_NR" data-card-widget="collapse">
                     <i class="fas fa-plus"></i>
                 </button>
@@ -56,49 +56,47 @@
 
                     <div class="col-2"><strong>Veranstalter</strong></div>
                     <div class="col-10" v-html="event.MANDANT"></div>
-                   
-                
-               
-                
+
+
                     <div class="col-12 mt-2">
-                        <a :href="event.LINK_DETAIL" 
-                            class="btn bg-gray"
-                            target="_blank">
+                        <a :href="event.LINK_DETAIL"
+                           class="btn bg-gray"
+                           target="_blank">
                             <i class="fa fa-info"></i> Details
-                        </a>  
+                        </a>
 
-                        <a :href="event.LINK_DETAIL+'&print=1'" 
-                            onclick="return !window.open(this.href, 'Drucken', 'width=800,scrollbars=1')" 
-                            class="btn bg-gray-light"
-                            target="_blank">
+                        <a :href="event.LINK_DETAIL+'&print=1'"
+                           onclick="return !window.open(this.href, 'Drucken', 'width=800,scrollbars=1')"
+                           class="btn bg-gray-light"
+                           target="_blank">
                             <i class="fa fa-print"></i> Drucken
-                        </a>  
+                        </a>
 
-                        <a :href="event.LINK_ANMELDUNG" 
-                            class="btn bg-info"
-                            target="_blank">
+                        <a :href="event.LINK_ANMELDUNG"
+                           class="btn bg-info"
+                           target="_blank">
                             <i class="fa fa-sign-in"></i> Anmelden
                         </a>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <div v-if="entries !== null" class="row" >
             <span class="col-6">
-                <button type="button" 
-                   class="btn btn-block btn-primary"
-                   @click="lastPage()"><i class="fa fa-arrow-left"></i></button>
+                <button type="button"
+                        class="btn btn-block btn-primary"
+                        @click="lastPage()"><i class="fa fa-arrow-left"></i></button>
             </span>
 
             <span class="col-6">
-                <button type="button" 
-                   class="btn btn-block btn-primary"
-                   @click="nextPage()"><i class="fa fa-arrow-right"></i></button>
+                <button type="button"
+                        class="btn btn-block btn-primary"
+                        @click="nextPage()"><i class="fa fa-arrow-right"></i></button>
             </span>
 
         </div>
-        
+
     </div>
 </template>
 
@@ -122,7 +120,7 @@
             async loader(search) {
                 try {
                     this.search = (search ? search : this.search);
-                    
+
                     this.entries = (await axios.post('/eventSubscriptions/getEvents', {
                         subscribable_type: this.subscribable_type(),
                         subscribable_id: this.model.id,
@@ -130,7 +128,7 @@
                         page: this.page,
                         plugin: 'evewa'
                     })).data.message.lesePlrlpVeranstaltungen.data;
-                    
+
                 } catch(error) {
                     //this.errors = error.response.data.errors;
                 }
@@ -140,38 +138,25 @@
                 if (this.page == 0){
                     this.page = 1;
                 } else{
-                    this.loader(); 
+                    this.loader();
                 }
-                
+
             },
             nextPage() {
                 this.page = this.page + 1;
-                this.loader(); 
+                this.loader();
             },
             subscribable_type() {
                 var reference_class = 'App\\TerminalObjective';
                 if (typeof this.model.terminal_objective === 'object'){
                     reference_class = 'App\\EnablingObjective';
-                } 
+                }
 
                 return reference_class;
             },
-  
-        },
-        computed: {
-            
-        },
-//        watch: {
-//            entries: function (value, oldValue) { 
-//                $("#loadingEvents").remove();
-//            }
-//        },
-        bevorOpen() {
-            //  include the Keyword Extractor
-        
 
-        
         },
-   
+        computed: {},
+
     }
 </script>

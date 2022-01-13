@@ -32,7 +32,6 @@ class EventSubscriptionController extends Controller
 
     protected function validateRequest()
     {
-
         return request()->validate([
             'value'             => 'sometimes',
             'subscribable_type' => 'sometimes|required',

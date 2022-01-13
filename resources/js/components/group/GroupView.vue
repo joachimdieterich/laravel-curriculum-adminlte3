@@ -89,17 +89,6 @@
                     <i class="fa fa-clipboard-list"></i>
                 </a>
             </li>
-            <!-- <li class="nav-item ">
-                <a class="nav-link link-muted"
-                   id="medium-nav-tab"
-                   data-toggle="pill"
-                   href="#medium-tab"
-                   role="tab"
-                   aria-controls="medium-tab"
-                   aria-selected="true">
-                    <i class="fa fa-folder-open pr-2"></i>{{trans('global.media.title')}}
-                </a>
-            </li>
             <li class="nav-item ">
                 <a v-if="group.glossar != null"
                    class="nav-link link-muted"
@@ -109,15 +98,26 @@
                    role="tab"
                    aria-controls="glossar-tab"
                    aria-selected="true">
-                    <i class="fa fa-book-open pr-2"></i>{{trans('global.glossar.title_singular')}}
+                    <i class="fa fa-book-open pr-2"></i>{{ trans('global.glossar.title_singular') }}
                 </a>
                 <a v-else
                    v-permission="'glossar_create'"
                    class="nav-link link-muted"
                    id="glossar-nav-tab"
                    :href="'/glossar/create?subscribable_type=App\\Group&subscribable_id='+ group.id "
-                 >
-                    <i class="fa fa-book-open pr-2"></i>{{trans('global.glossar.create')}}
+                >
+                    <i class="fa fa-book-open pr-2"></i>{{ trans('global.glossar.create') }}
+                </a>
+            </li>
+            <!-- <li class="nav-item ">
+                <a class="nav-link link-muted"
+                   id="medium-nav-tab"
+                   data-toggle="pill"
+                   href="#medium-tab"
+                   role="tab"
+                   aria-controls="medium-tab"
+                   aria-selected="true">
+                    <i class="fa fa-folder-open pr-2"></i>{{trans('global.media.title')}}
                 </a>
             </li>-->
 
@@ -199,6 +199,15 @@
                     subscribable_type="App\Group"
                     :subscribable_id="group.id"></plans>
             </div>
+            <div v-if="group.glossar !== null"
+                 class="tab-pane fade"
+                 id="glossar-tab"
+                 role="tab"
+                 aria-labelledby="glossar-nav-tab">
+                <glossars
+                    :glossar="group.glossar">
+                </glossars>
+            </div>
             <!--<div class="tab-pane fade "
                 id="medium-tab"
                 role="tab"
@@ -208,15 +217,7 @@
                       format="list">
                </media>
            </div>-->
-            <!--<div v-if="group.glossar != null"
-                class="tab-pane fade"
-                 id="glossar-tab"
-                 role="tab"
-                 aria-labelledby="glossar-nav-tab">
-                <glossars
-                    :glossar="group.glossar">
-                </glossars>
-            </div>-->
+
 
 
         </div>

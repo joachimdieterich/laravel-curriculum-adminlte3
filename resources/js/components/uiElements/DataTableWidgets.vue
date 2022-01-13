@@ -21,6 +21,7 @@
                         <span  class="info-box-icon bg-info elevation-1">
                             <i v-if="modelUrl == 'logbooks'" class="fa fa-book"></i>
                             <i v-if="modelUrl == 'kanbans'" class="fa fa-columns"></i>
+<!--                            <img :src="'media/'+entry.medium_id" class="img-rounded"/>-->
                         </span>
 
 

@@ -112,6 +112,7 @@ Vue.component('subscribe-modal', require('./components/subscription/SubscribeMod
 Vue.component('sidebar', require('./components/uiElements/Sidebar.vue').default);
 Vue.component('move-terminal-objective-modal', require('./components/objectives/MoveTerminalObjectiveModal.vue').default);
 Vue.component('prerequisite-modal', require('./components/prerequisites/PrerequisiteObjectiveModal.vue').default);
+Vue.component('lms-modal', require('./../../app/Plugins/Lms/resources/js/components/Create.vue').default);
 
 Vue.prototype.$initTinyMCE = function (options) {
     tinymce.remove();

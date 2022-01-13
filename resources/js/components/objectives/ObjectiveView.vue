@@ -133,15 +133,28 @@
                        href="#events"
                        data-toggle="tab">
                         <i class="fa fa-user-graduate pr-1"></i>
-                        <span v-if="help">{{trans('global.eventSubscription.title_alt')}}</span>
+                        <span v-if="help">{{ trans('global.eventSubscription.title_alt') }}</span>
                     </a>
                 </li>
-               <!-- <li class="nav-item pull-right">
+                <li v-can="'lms_access'"
+                    class="nav-item"
+                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_lms_'+objective.id)">
+                    <a class="nav-link small link-muted"
+                       :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_lms_'+objective.id)"
+                       href="#lms"
+                       data-toggle="tab"
+                       @click="loadLmsPlugin()"
+                    >
+                        <i class="fa fa-graduation-cap pr-1"></i>
+                        <span v-if="help">{{ trans('global.lms.title_singular') }}</span>
+                    </a>
+                </li>
+                <li class="nav-item ml-auto pull-right">
                     <a class="nav-link small link-muted"
                        @click="help = !help">
                         <i class="fa fa-question pr-1"></i>
                     </a>
-                </li>-->
+                </li>
             </ul>
 
             <div class="tab-content ">
@@ -265,10 +278,20 @@
 
                 <div class="tab-pane pt-2"
                      :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_events_'+objective.id)"
-                    id="events">
+                     id="events">
                     <eventmanagement ref="eventPlugin"
-                         :model="objective"
-                         :curriculum="objective.curriculum"></eventmanagement>
+                                     :model="objective"
+                                     :curriculum="objective.curriculum"></eventmanagement>
+                </div>
+
+                <div class="tab-pane pt-2"
+                     :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_lms_'+objective.id)"
+                     id="lms">
+                    <lms ref="LmsPlugin"
+                         :subscribable_type="model"
+                         :subscribable_id="objective.id">
+                    </lms>
+                    <lms-modal></lms-modal>
                 </div>
             </div>
         </div>
@@ -280,6 +303,7 @@
     import Quotes from '../quote/Quotes';
     import Contents from '../content/Contents';
     import Eventmanagement from '../../../../app/Plugins/Eventmanagement/resources/js/components/Events';
+    import Lms from '../../../../app/Plugins/Lms/resources/js/components/Lms';
     import ObjectiveBox from './ObjectiveBox'
     import Achievements from './Achievements'
     import ObjectiveMedia from "./ObjectiveMedia";
@@ -299,7 +323,7 @@
                 quote_subscriptions: [],
                 quote_curricula_list: [],
                 categories: [],
-                help: true,
+                help: false,
                 setting: {
                     'last': null
                 },
@@ -325,11 +349,14 @@
             loadAchievements() {
                 this.$refs.Achievements.loaderEvent();
             },
-            loadPrerequisites(){
+            loadPrerequisites() {
                 this.$refs.Prerequisites.loaderEvent();
             },
-            loadMedia(){
+            loadMedia() {
                 this.$refs.Media.loaderEvent();
+            },
+            loadLmsPlugin() {
+                this.$refs.LmsPlugin.loaderEvent();
             },
 
         },
@@ -353,17 +380,20 @@
                 //this.errors = response.data.errors;
             });
 
-            axios.get('/'+this.type+'Objectives/' + this.objective.id + '/quoteSubscriptions').then(response => {
+            axios.get('/' + this.type + 'Objectives/' + this.objective.id + '/quoteSubscriptions').then(response => {
                 if (response.data.quotes_subscriptions.length !== 0) {
                     this.quote_subscriptions = response.data.quotes_subscriptions;
                     this.quote_curricula_list = response.data.curricula_list;
-                 }
+                }
             }).catch(e => {
                 console.log(e)
                 //this.errors = response.data.errors;
             });
 
-
+            //register events
+            this.$root.$on('lmsUpdate', () => {
+                this.$refs.LmsPlugin.loaderEvent();
+            });
 
         },
         computed: {
@@ -379,7 +409,8 @@
             ObjectiveBox,
             Eventmanagement,
             Contents,
-            Achievements
+            Achievements,
+            Lms
         }
 
     }

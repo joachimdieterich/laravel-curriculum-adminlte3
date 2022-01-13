@@ -1,8 +1,8 @@
 <template >
-    <events ref="eventPlugin" 
-        :model="model"
-        :curriculum="curriculum"
-            >    
+    <events ref="eventPlugin"
+            :model="model"
+            :curriculum="curriculum"
+    >
     </events>
 </template>
 
@@ -24,11 +24,9 @@
                 this.$refs.eventPlugin.loader();
             }
         },
-        computed: {
-          
-        },
+        computed: {},
         bevorOpen() {
-            
+
         },
         components: {
             events,

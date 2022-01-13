@@ -25,14 +25,14 @@ class LogController extends Controller
         }
         return Log::updateOrCreate(
             [
-                'key'        =>  $key,
-                'value'      => $value,
+                'key' => $key,
+                'value' => $value,
                 'created_at' => Carbon::today()],
             [
-                'value'     => $value ?: null,
-                'counter'   => DB::raw('counter+'.$increase),
-                ]
-        );
+                'value' => $value ?: null,
+                'counter' => DB::raw('counter+' . $increase),
+            ]
+        ); //todo very slow -> use queue
     }
 
     public static function  setDevice()

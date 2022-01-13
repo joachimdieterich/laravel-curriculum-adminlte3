@@ -168,9 +168,18 @@ class OrganizationsController extends Controller
     public function editAddress(Organization $organization)
     {
         abort_unless(\Gate::allows('organization_edit_address'), 403);
-        abort_unless((auth()->user()->organizations->contains($organization) OR is_admin()), 403);
+        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
 
         return view('organizations.editAddress')
+            ->with(compact('organization'));
+    }
+
+    public function editLmsUrl(Organization $organization)
+    {
+        abort_unless(\Gate::allows('organization_edit_address'), 403);
+        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
+
+        return view('organizations.editLmsUrl')
             ->with(compact('organization'));
     }
 
@@ -178,7 +187,7 @@ class OrganizationsController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param int                      $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */
@@ -305,16 +314,17 @@ class OrganizationsController extends Controller
 
         return request()->validate([
             'title'         => 'sometimes|required',
-            'description'   => 'sometimes',
-            'street'        => 'sometimes',
-            'postcode'      => 'sometimes',
-            'city'          => 'sometimes',
-            'state_id'      => 'sometimes',
-            'country_id'    => 'sometimes',
+            'description' => 'sometimes',
+            'street' => 'sometimes',
+            'postcode' => 'sometimes',
+            'city' => 'sometimes',
+            'state_id' => 'sometimes',
+            'country_id' => 'sometimes',
             'organization_type_id' => 'sometimes',
-            'phone'         => 'sometimes',
-            'email'         => 'sometimes',
-            'status_id'     => 'sometimes',
-            ]);
+            'phone' => 'sometimes',
+            'email' => 'sometimes',
+            'status_id' => 'sometimes',
+            'lms_url' => 'sometimes|url',
+        ]);
     }
 }

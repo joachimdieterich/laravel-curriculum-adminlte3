@@ -52,13 +52,25 @@
                 </p>
                 <hr>
 
-                <strong><i class="fa fa-file-alt mr-1"></i> {{ trans('global.organization.fields.description') }}</strong>
+                <strong><i class="fa fa-graduation-cap mr-1"></i> {{ trans('global.lms.title_singular') }}-URL</strong>
+                <a class="pull-right link-muted"
+                   href="{{ route('organizations.editLmsUrl', $organization->id) }}">
+                    <i class="fas fa-pencil-alt"></i>
+                </a>
+                <p class="text-muted">
+                    {{ $organization->lms_url }}
+                </p>
+                <hr>
+
+                <strong><i class="fa fa-file-alt mr-1"></i> {{ trans('global.organization.fields.description') }}
+                </strong>
                 <p class="text-muted">{!! $organization->description !!}</p>
             </div>
             <!-- /.card-body -->
             <div class="card-footer">
                 <div class="float-left">
-                    <span class="btn-xs btn-block btn-{{$status_definitions[$organization->status_id]->color_css_class}} pull-right">{{$status_definitions[$organization->status_id]->lang_de}}</span>
+                    <span
+                        class="btn-xs btn-block btn-{{$status_definitions[$organization->status_id]->color_css_class}} pull-right">{{$status_definitions[$organization->status_id]->lang_de}}</span>
                 </div>
                 <small class="float-right">
                     {{ $organization->updated_at }}

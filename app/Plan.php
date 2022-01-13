@@ -8,6 +8,10 @@ class Plan extends Model
 {
     protected $guarded = [];
 
+    protected $attributes = [
+        'type_id' => 1,  //= Wochenplan
+    ];
+
     public function path()
     {
         return "/plans/{$this->id}";

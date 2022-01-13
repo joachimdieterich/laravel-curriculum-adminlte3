@@ -6,27 +6,28 @@
     onclick="{{ $onclick }}">
     <div class="nav-item-box-image-size"
          style="
-        background: url('{{isset($item->medium->id) ? route('media.thumb', ($item->medium->id)) : Avatar::create($item->title)->toGravatar(['d' => 'identicon', 'r' => 'pg', 's' => 100])}}') top center no-repeat;
-        background-size: cover;">
+             background: url('{{isset($item->medium->id) ? route('media.thumb', ($item->medium->id)) : Avatar::create($item->title)->toGravatar(['d' => 'identicon', 'r' => 'pg', 's' => 100])}}') top center no-repeat;
+             background-size: cover;">
     </div>
-@else
-<div
-    id="navigator-item-{{ $item->id }}"
-    class="box box-objective nav-item-box-image pointer {{ $item->css_class }} my-1"
-    style="
+    @else
+        <div
+            id="navigator-item-{{ $item->id }}"
+            class="box box-objective nav-item-box-image pointer {{ $item->css_class }} my-1"
+            style="
         min-width: 200px !important;
         padding: 0;"
-    onclick="{{ $onclick }}">
-    @switch(true)
-        @case(strpos($item->medium, 'pdf'))
-        <i class="far fa-file-pdf text-primary text-center pt-2"
-           style="position:absolute; top: 0px; height: 150px !important; width: 100%; font-size:800%;"></i>
-        @break
-        @default
-        <i class="far fa-file text-primary text-center pt-2"
-           style="position:absolute; top: 0px; height: 150px !important; width: 100%; font-size:800%;"></i>
-        @break
-    @endswitch
+            onclick="{{ $onclick }}"
+            role="tab" aria-selected="true" tabindex="0">
+            @switch(true)
+                @case(strpos($item->medium, 'pdf'))
+                <i class="far fa-file-pdf text-primary text-center pt-2"
+                   style="position:absolute; top: 0px; height: 150px !important; width: 100%; font-size:800%;"></i>
+                @break
+                @default
+                <i class="far fa-file text-primary text-center pt-2"
+                   style="position:absolute; top: 0px; height: 150px !important; width: 100%; font-size:800%;"></i>
+                @break
+            @endswitch
 
 @endif
         <span class="bg-white text-center p-1 overflow-auto nav-item-box">

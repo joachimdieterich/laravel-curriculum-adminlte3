@@ -103,6 +103,19 @@
                        data-toggle="tab"
                        @click="loaderAbsences()">{{ trans('global.absences.title') }}</a>
                 </li>
+
+                <li v-can="'lms_access'"
+                    class="nav-item"
+                    @click="setLocalStorage('#logbook_'+entry.id, '#logbook_lms_'+entry.id)">
+                    <a class="nav-link small link-muted"
+                       :class="checkLocalStorage('#logbook_view_'+entry.id, '#logbook_lms_'+entry.id)"
+                       href="#lms"
+                       data-toggle="tab"
+                       @click="loadLmsPlugin()">
+                        <i class="fa fa-graduation-cap pr-1"></i>
+                        {{ trans('global.lms.title_singular') }}
+                    </a>
+                </li>
             </ul>
             <span class="clearfix"></span>
             <hr class="m-1">
@@ -203,6 +216,15 @@
 
                     </div>
                     <!-- /.tab-pane -->
+
+                    <div class="tab-pane pt-2"
+                         :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_lms_'+entry.id)"
+                         id="lms">
+                        <lms ref="LmsPlugin"
+                             :subscribable_type="model"
+                             :subscribable_id="entry.id">
+                        </lms>
+                    </div>
                 </div>
             </div>
         </div>
@@ -216,6 +238,7 @@
     import ObjectiveBox from '../objectives/ObjectiveBox';
     import TaskList from '../uiElements/TaskList';
     import Media from '../media/Media';
+    import Lms from '../../../../app/Plugins/Lms/resources/js/components/Lms';
 
     export default {
         props: {
@@ -228,7 +251,8 @@
         data() {
             return {
                 media: {},
-                active: true
+                active: true,
+                model: 'App\\LogbookEntry'
             };
         },
         methods: {
@@ -311,6 +335,9 @@
             loaderAbsences: function () {
                 this.$refs.Absences.loaderEvent();
             },
+            loadLmsPlugin() {
+                this.$refs.LmsPlugin.loaderEvent();
+            },
             print() {
                 location.href = '/print/LogbookEntry/' + this.entry.id
             }
@@ -323,6 +350,11 @@
             if (this.checkLocalStorage('#logbook_' + this.entry.id, '#logbook_contents_' + this.entry.id) == 'active') {
                 this.$refs.Contents.loaderEvent();
             }
+
+            //register events
+            this.$root.$on('lmsUpdate', () => {
+                this.$refs.LmsPlugin.loaderEvent();
+            });
         },
         computed: {
             isActive: function () {
@@ -339,7 +371,8 @@
             Media,
             Contents,
             ObjectiveBox,
-            TaskList
+            TaskList,
+            Lms
         }
     }
 </script>

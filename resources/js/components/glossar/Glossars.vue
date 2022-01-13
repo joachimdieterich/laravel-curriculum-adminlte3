@@ -19,7 +19,7 @@
                     @click.prevent="deleteGlossar()">
                 <i class="fa fa-trash "></i>
             </button>
-            <button v-can="'content_create'"
+            <button v-permission="'content_create, ' + subscribable_type + '_content_create'"
                     type="button" class="btn btn-tool "
                     role="button"
                     @click="show('content-create-modal')">
@@ -68,7 +68,7 @@
                                            @click="setSlide(index+1)">
                                          {{item.content.title}}
                                      </span>
-                                    <span v-can="'glossar_delete'"
+                                    <span v-permission="'content_delete, ' + subscribable_type + '_content_delete'"
                                           class="pull-right">
                                          <span
                                              class="btn-tool fa fa-trash text-danger"
@@ -95,7 +95,7 @@
             </div>
         </div>
     </div>
-
+    <content-create-modal></content-create-modal>
 </div>
 </template>
 
@@ -135,35 +135,46 @@
             },
             async deleteSubscription(contentSubscription){
                 try {
-                    await axios.post('/contents/'+contentSubscription.content_id+'/destroy',  { 'referenceable_type': contentSubscription.subscribable_type, 'referenceable_id': contentSubscription.subscribable_id } );
+                    await axios.post('/contents/' + contentSubscription.content_id + '/destroy', {
+                        'referenceable_type': contentSubscription.subscribable_type,
+                        'referenceable_id': contentSubscription.subscribable_id
+                    });
+                    let index = this.subscriptions.indexOf(contentSubscription);
+                    this.subscriptions.splice(index, 1);
                 }
                 catch(error) {
                     this.errors = error.response.data.errors;
                 }
-                location.reload();
             },
             async deleteGlossar(){
-                if (confirm(this.trans('global.areYouSure')))
-                {
+                if (confirm(this.trans('global.areYouSure'))) {
                     try {
                         await axios.delete('/glossar/' + this.glossar.id);
-                    }
-                    catch(error) {
+                    } catch (error) {
                         this.errors = error.response.data.errors;
                     }
                     location.reload();
                 }
-
+            },
+            loaderEvent() {
+                axios.get('/glossar/' + this.glossar.id)
+                    .then(response => {
+                        this.subscriptions = response.data.message;
+                    })
+                    .catch(e => {
+                        this.errors = error.response.data.errors;
+                    });
             },
         },
+
         beforeMount() {
-             axios.get('/glossar/'+this.glossar.id)
-                  .then(response => {
-                      this.subscriptions = response.data.message;
-                  })
-                 .catch(e => {
-                     this.errors = error.response.data.errors;
-                });
+            this.loaderEvent();
         },
+        mounted() {
+            this.currentSlide = 0;
+            this.$on('addContent', function (newContent) {
+                this.loaderEvent();
+            });
+        }
     }
 </script>

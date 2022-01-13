@@ -155,6 +155,7 @@ class GroupsController extends Controller
             return ['users' => json_encode($group->users)];
         }
         $courses = $group->courses()->with('curriculum')->get();
+        $group = Group::where('id', $group->id)->with('glossar')->get()->first();
         return view('groups.show')
                 ->with(compact('group'))
                 ->with(compact('courses'));

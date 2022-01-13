@@ -3,7 +3,8 @@
         <div class="card-header">
             <h1 class="h3 card-title"
                 data-target="#card_{{ $item->id }}"
-                data-card-widget="collapse">{{ $item->referenceable->title }}
+                data-card-widget="collapse"
+                role="tab" aria-selected="true" tabindex="0">{{ $item->referenceable->title }}
             </h1>
             <div class="card-tools pull-right">
 
@@ -38,6 +39,7 @@
                     data-expand-icon="fa-expand-alt"
                     data-collapse-icon="fa-compress-alt">
                     <i class="fas fa-expand-alt"></i>
+
                 </button>
                 @can('navigator_create')
                     <a onclick="app.__vue__.$modal.show('content-create-modal',  { 'id': {{ $item->referenceable_id }}, 'method': 'patch' });"

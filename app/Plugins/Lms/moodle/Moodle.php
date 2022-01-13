@@ -1,0 +1,229 @@
+<?php
+
+namespace App\Plugins\Lms\Moodle;
+
+use App\LmsSubscription;
+use App\LmsUserToken;
+use App\Organization;
+use App\Plugins\Lms\LmsPlugin;
+use App\Config;
+
+use Illuminate\Support\Facades\Auth;
+
+/**
+ * Description of plugin
+ *
+ * @author joachimdieterich
+ */
+class Moodle extends LmsPlugin
+{
+    const PLUGINNAME = 'moodle';
+
+    private $lmsUrl;
+    private $wsPath;
+    private $wsToken;
+    private $queryParams;
+
+    private $proxy = false;
+    private $proxy_port = false;
+
+    private $headerArray = array();
+
+    public function about()
+    {
+        return "moodle plugin";
+    }
+
+    public function __construct($service = 'moodle_mobile_app', $passport = '12345', $urlscheme = 'moodledownloader', $sso = true)
+    {
+        /*$this->lmsUrl          = Organization::find(auth()->user()->current_organization_id)->lms_url; //if not set --> error
+        $this->wsPath          = 'admin/tool/mobile/launch.php?';
+
+        $params = array(
+            'service' => $service,
+            'passport' => $passport, //param not used for curriculum but required
+            'urlscheme' => $urlscheme,
+        );
+
+        $this->call( $params );
+        $this->headerArray['Location'] = 'moodledownloader://token=NTU0Njg2NTcwZmQxODc5OTkyYWU2NDNlZjVlZDU4OTA6OjoyMGY2ZjM4OWU4ODY5ZWM1ZDNjNjUxMDNiZDZkM2ZjMQ==';
+
+        $token = str_replace("moodledownloader://token=", "",$this->headerArray['Location']);
+        $token_array = explode(":::", base64_decode($token));
+        $this->wsToken = $token_array[1];*/
+
+
+        //return json_decode($this->call ( $params ));
+
+        $this->lmsUrl = Organization::find(auth()->user()->current_organization_id)->lms_url;//'http://localhost/moodle/moodle/';//'https://lms.schulcampus-rlp.de/PL-0003/';//
+        $this->wsPath = 'webservice/rest/server.php?';
+        $this->wsToken = LmsUserToken::where([
+            'organization_id' => auth()->user()->current_organization_id,
+            'user_id' => auth()->user()->id
+        ])->get()->first()->token;//'1450003bf271268479630b502bf21f5b';//local '5797d76d1aa09c09362c36c4594f1352';//
+        $this->queryParams = array(
+            'wstoken' => $this->wsToken,
+            'moodlewsrestformat' => 'json'
+        );
+    }
+
+
+    public function store($query)
+    {
+        return LmsSubscription::firstOrCreate([
+            'subscribable_type' => $query['subscribable_type'],
+            'subscribable_id' => $query['subscribable_id'],
+            'repository' => self::PLUGINNAME,
+            'value' => [
+                'course_id' => $query['course_id'],
+                'course_content_id' => $query['course_content_id'],
+                'course_item' => $query['course_item'],
+            ],
+            'sharing_level_id' => isset($query['sharing_level_id']) ? $query['sharing_level_id'] : 1,
+            'visibility' => isset($query['visibility']) ? $query['visibility'] : 1,
+            'owner_id' => auth()->user()->id,
+        ]);
+
+    }
+
+    public function show($query)
+    {
+        return LmsSubscription::where([
+            'subscribable_type' => $query['subscribable_type'],
+            'subscribable_id' => $query['subscribable_id'],
+        ])->get();
+
+
+    }
+
+
+    /* public function is_token_valid()
+     {
+         $params = array_merge(
+             $this->queryParams,
+             array(
+                 'wsfunction' => 'core_course_get_courses_by_field'
+             )
+         );
+
+         return json_decode($this->call ( $params ));
+     }*/
+
+    public function core_course_get_courses_by_field()
+    {
+        $params = array_merge(
+            $this->queryParams,
+            array(
+                'wsfunction' => 'core_course_get_courses_by_field'
+            )
+        );
+
+        return json_decode($this->call($params));
+    }
+
+    public function core_course_get_courses()
+    {
+        $params = array_merge(
+            $this->queryParams,
+            array(
+                'wsfunction' => 'core_course_get_courses'
+            )
+        );
+
+        return json_decode($this->call($params));
+    }
+
+    public function core_course_get_contents($params)
+    {
+        $params = array_merge(
+            $this->queryParams,
+            array(
+                'wsfunction' => 'core_course_get_contents',
+                'courseid' => $params['course_id']
+            )
+        );
+
+        return json_decode($this->call($params));
+    }
+
+    private function call($params, $httpMethod = '', $additionalHeaders = array(), $postFields = array())
+    {
+        $url = $this->lmsUrl . $this->wsPath . http_build_query($params); //build url
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);  //timeout in seconds
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10); //timeout in seconds
+        curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+
+
+        if ($this->proxy) {
+            curl_setopt($ch, CURLOPT_PROXY, $this->proxy);
+            if ($this->proxy_port) {
+                curl_setopt($ch, CURLOPT_PROXYPORT, $this->proxy_port);
+            }
+        }
+
+        switch ($httpMethod) {
+            case 'POST' :
+                curl_setopt($ch, CURLOPT_POST, true);
+                break;
+            case 'PUT' :
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+                break;
+            case 'DELETE' :
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+                break;
+            default :
+                break;
+        }
+
+        $headers = array_merge(array(
+            'Accept: application/json'
+        ), $additionalHeaders);
+
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        if (!empty ($postFields)) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+        }
+
+        $exec = curl_exec($ch);
+
+        // Retudn headers seperatly from the Response Body
+        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $headers = substr($exec, 0, $header_size);
+        $body = substr($exec, $header_size);
+
+        if ($exec === false) {
+            error_log($url . ' ---> ' . curl_error($ch) . ' ---> Error-Code:' . curl_errno($ch)); // for debugging
+            //throw new Exception ( curl_error ( $ch ) );
+        }
+
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($httpcode != 200) {
+            //deal with it
+        }
+
+        curl_close($ch);
+
+        $this->headerArray = array();
+
+        foreach (explode("\r\n", $headers) as $value) {
+            $matches = explode(':', $value, 2);
+            if (isset($matches[1])) {
+                $this->headerArray["{$matches[0]}"] = trim($matches[1]);
+            }
+        }
+        /* if (json_decode($body)->errorcode === "invalidtoken")
+         {
+             dump($body);
+         }*/
+        return $body;
+    }
+
+
+}

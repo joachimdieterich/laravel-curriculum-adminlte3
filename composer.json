@@ -9,7 +9,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^7.1.3",
+        "php": "^7.3",
         "aacotroneo/laravel-saml2": "*",
         "barryvdh/laravel-snappy": "^0.4.6",
         "binarytorch/larecipe": "^2.2",

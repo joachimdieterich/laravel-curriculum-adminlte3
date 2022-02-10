@@ -51,7 +51,8 @@
                        :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id, 'active', true)"
                        v-bind:href="'#logbook_description_'+entry.id"
                        data-toggle="tab">
-                        {{ trans('global.logbook.fields.description') }}
+                        <i class="fa fa-info pr-1"></i>
+                        <span v-if="help">{{ trans('global.logbook.fields.description') }}</span>
                     </a>
                 </li>
                 <li v-permission="'content_access'"
@@ -61,7 +62,10 @@
                        :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_contents_'+entry.id)"
                        v-bind:href="'#logbook_contents_'+entry.id"
                        data-toggle="tab"
-                       @click="loaderEvent()">{{ trans('global.content.title') }}</a>
+                       @click="loaderEvent()">
+                        <i class="fa fa-align-justify pr-1"></i>
+                        <span v-if="help">{{ trans('global.content.title') }}</span>
+                    </a>
                 </li>
                 <li v-permission="'task_access'"
                     class="nav-item small"
@@ -70,7 +74,10 @@
                     <a class="nav-link"
                        :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_tasks_'+entry.id)"
                        v-bind:href="'#logbook_tasks_'+entry.id"
-                       data-toggle="tab">{{ trans('global.task.title') }}</a>
+                       data-toggle="tab">
+                        <i class="fa fa-tasks pr-1"></i>
+                        <span v-if="help">{{ trans('global.task.title') }}</span>
+                    </a>
                 </li>
                 <li class="nav-item small"
                     v-permission="'medium_access'"
@@ -79,7 +86,8 @@
                        :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_media_'+entry.id)"
                        v-bind:href="'#logbook_media_'+entry.id"
                        data-toggle="tab">
-                        {{ trans('global.media.title') }}
+                        <i class="fa fa-photo-video pr-1"></i>
+                        <span v-if="help">{{ trans('global.media.title') }}</span>
                     </a>
                 </li>
                 <li class="nav-item small"
@@ -89,7 +97,10 @@
                        :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_objectives_'+entry.id)"
                        v-bind:href="'#logbook_objectives_'+entry.id"
                        data-toggle="tab">
-                        {{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}
+                        <i class="fa fa-sitemap pr-1"></i>
+                        <span v-if="help">{{
+                                trans('global.terminalObjective.title')
+                            }}/{{ trans('global.enablingObjective.title') }}</span>
                     </a>
                 </li>
 
@@ -101,7 +112,10 @@
                        :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_userStatuses_'+entry.id)"
                        v-bind:href="'#logbook_userStatuses_'+entry.id"
                        data-toggle="tab"
-                       @click="loaderAbsences()">{{ trans('global.absences.title') }}</a>
+                       @click="loaderAbsences()">
+                        <i class="fa fa-users-slash pr-1"></i>
+                        <span v-if="help">{{ trans('global.absences.title') }}</span>
+                    </a>
                 </li>
 
                 <li v-can="'lms_access'"
@@ -113,7 +127,15 @@
                        data-toggle="tab"
                        @click="loadLmsPlugin()">
                         <i class="fa fa-graduation-cap pr-1"></i>
-                        {{ trans('global.lms.title_singular') }}
+                        <span v-if="help">{{ trans('global.lms.title_singular') }}</span>
+
+                    </a>
+                </li>
+
+                <li class="nav-item ml-auto pull-right">
+                    <a class="nav-link small link-muted"
+                       @click="help = !help">
+                        <i class="fa fa-question pr-1"></i>
                     </a>
                 </li>
             </ul>
@@ -217,12 +239,12 @@
                     </div>
                     <!-- /.tab-pane -->
 
-                    <div class="tab-pane pt-2"
+                    <div class="tab-pane"
                          :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_lms_'+entry.id)"
                          id="lms">
                         <lms ref="LmsPlugin"
-                             :subscribable_type="model"
-                             :subscribable_id="entry.id">
+                             :referenceable_type="model"
+                             :referenceable_id="entry.id">
                         </lms>
                     </div>
                 </div>
@@ -252,7 +274,8 @@
             return {
                 media: {},
                 active: true,
-                model: 'App\\LogbookEntry'
+                model: 'App\\LogbookEntry',
+                help: true,
             };
         },
         methods: {

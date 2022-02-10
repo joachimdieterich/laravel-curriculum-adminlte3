@@ -2,7 +2,7 @@
 
 namespace App\Plugins\Lms\Moodle;
 
-use App\LmsSubscription;
+use App\LmsReference;
 use App\LmsUserToken;
 use App\Organization;
 use App\Plugins\Lms\LmsPlugin;
@@ -36,31 +36,12 @@ class Moodle extends LmsPlugin
 
     public function __construct($service = 'moodle_mobile_app', $passport = '12345', $urlscheme = 'moodledownloader', $sso = true)
     {
-        /*$this->lmsUrl          = Organization::find(auth()->user()->current_organization_id)->lms_url; //if not set --> error
-        $this->wsPath          = 'admin/tool/mobile/launch.php?';
-
-        $params = array(
-            'service' => $service,
-            'passport' => $passport, //param not used for curriculum but required
-            'urlscheme' => $urlscheme,
-        );
-
-        $this->call( $params );
-        $this->headerArray['Location'] = 'moodledownloader://token=NTU0Njg2NTcwZmQxODc5OTkyYWU2NDNlZjVlZDU4OTA6OjoyMGY2ZjM4OWU4ODY5ZWM1ZDNjNjUxMDNiZDZkM2ZjMQ==';
-
-        $token = str_replace("moodledownloader://token=", "",$this->headerArray['Location']);
-        $token_array = explode(":::", base64_decode($token));
-        $this->wsToken = $token_array[1];*/
-
-
-        //return json_decode($this->call ( $params ));
-
-        $this->lmsUrl = Organization::find(auth()->user()->current_organization_id)->lms_url;//'http://localhost/moodle/moodle/';//'https://lms.schulcampus-rlp.de/PL-0003/';//
+        $this->lmsUrl = Organization::find(auth()->user()->current_organization_id)->lms_url;
         $this->wsPath = 'webservice/rest/server.php?';
         $this->wsToken = LmsUserToken::where([
             'organization_id' => auth()->user()->current_organization_id,
             'user_id' => auth()->user()->id
-        ])->get()->first()->token;//'1450003bf271268479630b502bf21f5b';//local '5797d76d1aa09c09362c36c4594f1352';//
+        ])->get()->first()->token;
         $this->queryParams = array(
             'wstoken' => $this->wsToken,
             'moodlewsrestformat' => 'json'
@@ -70,16 +51,16 @@ class Moodle extends LmsPlugin
 
     public function store($query)
     {
-        return LmsSubscription::firstOrCreate([
-            'subscribable_type' => $query['subscribable_type'],
-            'subscribable_id' => $query['subscribable_id'],
+        return LmsReference::firstOrCreate([
+            'referenceable_type' => $query['referenceable_type'],
+            'referenceable_id' => $query['referenceable_id'],
             'repository' => self::PLUGINNAME,
             'value' => [
                 'course_id' => $query['course_id'],
                 'course_content_id' => $query['course_content_id'],
                 'course_item' => $query['course_item'],
             ],
-            'sharing_level_id' => isset($query['sharing_level_id']) ? $query['sharing_level_id'] : 1,
+            'sharing_level_id' => isset($query['sharing_level_id']) ? $query['sharing_level_id'] : 4,
             'visibility' => isset($query['visibility']) ? $query['visibility'] : 1,
             'owner_id' => auth()->user()->id,
         ]);
@@ -88,26 +69,30 @@ class Moodle extends LmsPlugin
 
     public function show($query)
     {
-        return LmsSubscription::where([
-            'subscribable_type' => $query['subscribable_type'],
-            'subscribable_id' => $query['subscribable_id'],
-        ])->get();
 
+        return (auth()->user()->role()->id == 1)
+            ? LmsReference::where([
+                'referenceable_type' => $query['referenceable_type'],
+                'referenceable_id' => $query['referenceable_id'],
+
+            ])->get()
+            : $this->userLmsReferences();
 
     }
 
+    protected function userLmsReferences()
+    {
+        $userCanSee = auth()->user()->lmsReferences;
 
-    /* public function is_token_valid()
-     {
-         $params = array_merge(
-             $this->queryParams,
-             array(
-                 'wsfunction' => 'core_course_get_courses_by_field'
-             )
-         );
+        foreach (auth()->user()->currentGroups as $group) {
+            $userCanSee = $userCanSee->merge($group->lmsReferences);
+        }
 
-         return json_decode($this->call ( $params ));
-     }*/
+        $organization = Organization::find(auth()->user()->current_organization_id)->lmsReferences;
+        $userCanSee = $userCanSee->merge($organization);
+
+        return $userCanSee->unique();
+    }
 
     public function core_course_get_courses_by_field()
     {
@@ -218,10 +203,7 @@ class Moodle extends LmsPlugin
                 $this->headerArray["{$matches[0]}"] = trim($matches[1]);
             }
         }
-        /* if (json_decode($body)->errorcode === "invalidtoken")
-         {
-             dump($body);
-         }*/
+
         return $body;
     }
 

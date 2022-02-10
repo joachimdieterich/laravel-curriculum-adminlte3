@@ -109,6 +109,18 @@ class Organization extends Model
         )->where('subscribable_type', get_class($this));
     }
 
+    public function lmsReferences()
+    {
+        return $this->hasManyThrough(
+            'App\LmsReference',
+            'App\LmsReferenceSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'lms_reference_id'
+        )->where('subscribable_type', get_class($this));
+    }
+
     public function plans()
     {
         return $this->hasManyThrough(

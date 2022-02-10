@@ -1167,5 +1167,6 @@ return [
     'lms' => [
         'title' => 'LMS',
         'title_singular' => 'LMS',
+        'add' => 'Add LMS-Object',
     ],
 ];

@@ -1167,5 +1167,6 @@ return [
     'lms' => [
         'title' => 'Lernplattformen',
         'title_singular' => 'Lernplattform',
+        'add' => 'Lernplattform-Baustein hinzufügen',
     ],
 ];

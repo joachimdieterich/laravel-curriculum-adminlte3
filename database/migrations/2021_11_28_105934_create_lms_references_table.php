@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLmsSubscriptionsTable extends Migration
+class CreateLmsReferencesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateLmsSubscriptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('lms_subscriptions', function (Blueprint $table) {
+        Schema::create('lms_references', function (Blueprint $table) {
 
             $table->bigIncrements('id');
-            $table->string('subscribable_type');
-            $table->unsignedbigInteger('subscribable_id');
+            $table->string('referenceable_type');
+            $table->unsignedbigInteger('referenceable_id');
             $table->string('repository'); //eg 'moodle'
             $table->text('value');
             $table->unsignedbigInteger('sharing_level_id');
@@ -37,6 +37,6 @@ class CreateLmsSubscriptionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lms_subscriptions');
+        Schema::dropIfExists('lms_references');
     }
 }

@@ -121,6 +121,11 @@ class PermissionRoleTableSeeder extends Seeder
                 'App\Glossar_content_create',
                 'App\Glossar_content_edit',
                 'App\Glossar_content_delete',
+                'lms_access',
+                'lms_create',
+                'lms_show',
+                'lms_edit',
+                'lms_delete',
             ];
 
             return in_array($permission->title, $creator_permission_list);
@@ -139,7 +144,11 @@ class PermissionRoleTableSeeder extends Seeder
                 'logbook_entry_show',
                 'task_access',
                 'task_show',
-
+                'lms_access',
+                'lms_create',
+                'lms_show',
+                'lms_edit',
+                'lms_delete',
             ];
 
             return in_array($permission->title, $indexer_permission_list);

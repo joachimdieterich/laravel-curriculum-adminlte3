@@ -223,6 +223,18 @@ class User extends Authenticatable
         )->where('subscribable_type', get_class($this));
     }
 
+    public function lmsReferences()
+    {
+        return $this->hasManyThrough(
+            'App\LmsReference',
+            'App\LmsReferenceSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'lms_reference_id'
+        )->where('subscribable_type', get_class($this));
+    }
+
     public function logbookSubscription()
     {
         return $this->morphMany('App\LogbookSubscription', 'subscribable');

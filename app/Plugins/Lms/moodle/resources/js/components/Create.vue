@@ -69,6 +69,19 @@
                         <option v-for="item in course_content_items" v-bind:value="item.id">{{ item.name }}</option>
                     </select>
                 </div>
+
+                    <div v-if="method === 'post'" class="form-group ">
+                    <label for="sharing_level">
+                        Freigabe-Level
+                    </label>
+                    <select name="sharing_level"
+                            id="sharing_level"
+                            class="form-control select2 "
+                            style="width:100%;">
+                        <option></option>
+                        <option v-for="item in sharing_levels" v-bind:value="item.id">{{ item.lang_de }}</option>
+                    </select>
+                </div>
                 </span>
 
             </div>
@@ -94,33 +107,31 @@ export default {
             method: 'post',
             form: new Form({
                 'id': null,
-                'subscribable_type': null,
-                'subscribable_id': null,
+                'referenceable_type': null,
+                'referenceable_id': null,
                 'course_id': null,
                 'course_content_id': null,
                 'course_item': null,
+                'sharing_level': 2,
             }),
             token: false,
             courses: {},
             course_contents: {},
             course_content_items: {},
+            sharing_levels: {},
 
-            requestUrl: '/lmsSubscriptions',
+            requestUrl: '/lmsReferences',
         }
     },
     methods: {
         async loader() {
-            /*try {
-                this.courses = (await axios.post(this.requestUrl + '/get', {
-                    plugin: 'Moodle',
-                    ws_function: 'is_token_valid',
-                })).data.message;
-                this.token = response.data.token;
-            } catch(error) {
-                console.log(error);
-            }*/
             axios.get('/lmsUserTokens').then(response => {
                 this.token = response.data.token;
+            }).catch(e => {
+                error.log(response);
+            });
+            axios.get('/sharingLevels').then(response => {
+                this.sharing_levels = response.data.sharingLevel;
             }).catch(e => {
                 error.log(response);
             });
@@ -170,8 +181,9 @@ export default {
                         'course_id': this.form.course_id,
                         'course_content_id': this.form.course_content_id,
                         'course_item': this.form.course_item,
-                        'subscribable_type': this.form.subscribable_type,
-                        'subscribable_id': this.form.subscribable_id,
+                        'referenceable_type': this.form.referenceable_type,
+                        'referenceable_id': this.form.referenceable_id,
+                        'sharing_level': this.form.sharing_level,
                     })).data.message;
                 }
             } catch (error) {
@@ -180,6 +192,7 @@ export default {
             this.$root.$emit('lmsUpdate')
             this.$modal.hide('lms-modal');
         },
+
         initSelect2() {
             $("#courses").select2({
                 dropdownParent: $(".v--modal-overlay"),
@@ -212,6 +225,11 @@ export default {
                 this.form.course_item = this.course_content_items[index]
             }.bind(this))
                 .val(this.form.course_content_id).trigger('change'); //set value
+
+            $("#sharing_level").select2({
+                dropdownParent: $(".v--modal-overlay"),
+                allowClear: false,
+            });
         },
 
         beforeOpen(event) {
@@ -219,9 +237,9 @@ export default {
             this.courses = {};
             this.course_contents = {};
 
-            if (event.params.subscribable_type) {
-                this.form.subscribable_type = event.params.subscribable_type;
-                this.form.subscribable_id = event.params.subscribable_id;
+            if (event.params.referenceable_type) {
+                this.form.referenceable_type = event.params.referenceable_type;
+                this.form.referenceable_id = event.params.referenceable_id;
             }
             this.loadCourses();
         },

@@ -112,9 +112,10 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('levels', 'LevelController');
 
+    Route::resource('lmsReferenceSubscriptions', 'lmsReferenceSubscriptionController');
 
-    Route::post('lmsSubscriptions/get', 'LmsSubscriptionController@get');
-    Route::resource('lmsSubscriptions', 'LmsSubscriptionController');
+    Route::post('lmsReferences/get', 'LmsReferenceController@get')->name('lmsReferences.get');;
+    Route::resource('lmsReferences', 'LmsReferenceController');
 
     Route::resource('lmsUserTokens', 'LmsUserTokenController');
 

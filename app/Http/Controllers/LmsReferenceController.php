@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Plugins\Lms\LmsPlugin;
+use App\LmsReferenceSubscription;
 use Illuminate\Http\Request;
 
-class LmsSubscriptionController extends Controller
+class LmsReferenceController extends Controller
 {
     /**
      * Get data over ws
@@ -66,10 +67,10 @@ class LmsSubscriptionController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\LmsSubscription $lmsSubscription
+     * @param \App\LmsReferenceSubscription $lmsSubscription
      * @return \Illuminate\Http\Response
      */
-    public function show(LmsSubscription $lmsSubscription)
+    public function show(LmsReferenceSubscription $lmsReferenceSubscription)
     {
 
     }
@@ -77,10 +78,10 @@ class LmsSubscriptionController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param \App\LmsSubscription $lmsSubscription
+     * @param \App\LmsReferenceSubscription $lmsReferenceSubscription
      * @return \Illuminate\Http\Response
      */
-    public function edit(LmsSubscription $lmsSubscription)
+    public function edit(LmsReferenceSubscription $lmsReferenceSubscription)
     {
         //
     }
@@ -89,10 +90,10 @@ class LmsSubscriptionController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\LmsSubscription $lmsSubscription
+     * @param \App\LmsReferenceSubscription $lmsSubscription
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, LmsSubscription $lmsSubscription)
+    public function update(Request $request, LmsReferenceSubscription $lmsReferenceSubscription)
     {
         //
     }
@@ -100,12 +101,14 @@ class LmsSubscriptionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\LmsSubscription $lmsSubscription
+     * @param \App\LmsReferenceSubscription $lmsReferenceSubscription
      * @return \Illuminate\Http\Response
      */
-    public function destroy(LmsSubscription $lmsSubscription)
+    public function destroy(LmsReferenceSubscription $lmsReferenceSubscription)
     {
-        //
+        abort_unless(\Gate::allows('lms_delete'), 403);
+
+        $lmsreferenceSubscription->delete();
     }
 
     protected function validateRequest()
@@ -113,12 +116,14 @@ class LmsSubscriptionController extends Controller
 
         return request()->validate([
             'plugin' => 'required',
+            'id' => 'sometimes',
             'course_id' => 'sometimes',
             'course_content_id' => 'sometimes',
             'course_item' => 'sometimes',
             'ws_function' => 'sometimes|required',
-            'subscribable_type' => 'sometimes|required',
-            'subscribable_id' => 'sometimes|required',
+            'referenceable_type' => 'sometimes|required',
+            'referenceable_id' => 'sometimes|required',
+            'sharing_level' => 'sometimes|required',
         ]);
     }
 }

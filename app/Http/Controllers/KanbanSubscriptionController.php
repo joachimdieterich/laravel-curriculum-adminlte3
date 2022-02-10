@@ -34,10 +34,15 @@ class KanbanSubscriptionController extends Controller
                 return [
                     'subscribers' =>
                         [
-                            'users' =>  auth()->user()->users()->select('users.id','users.firstname','users.lastname')->get(),
-                            'groups' => auth()->user()->groups()->select('group_id','title')->get(),
-                            'organizations' => auth()->user()->organizations()->select('organization_id','title')->get(),
-                            'subscriptions' => Kanban::find(request('kanban_id'))->subscriptions()->with('subscribable')->get()
+                            'users' => auth()->user()->users()->select('users.id', 'users.firstname', 'users.lastname')->get(),
+                            'groups' => auth()->user()->groups()->select('group_id', 'title')->get(),
+                            'organizations' => auth()->user()->organizations()->select('organization_id', 'title')->get(),
+                            'subscriptions' =>
+                                optional(
+                                    optional(
+                                        Kanban::find(request('kanban_id'))
+                                    )->subscriptions()
+                                )->with('subscribable')->get()
                         ]
                 ];
             }

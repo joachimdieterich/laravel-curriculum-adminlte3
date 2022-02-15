@@ -102,7 +102,7 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
-        abort_unless((\Gate::allows('task_edit') and $task->owner() == auth()->user()->id), 403);
+        abort_unless((\Gate::allows('task_edit') and $task->isAccessible()), 403);
 
         $input = $this->validateRequest();
         $task->update([
@@ -126,7 +126,7 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        abort_unless((\Gate::allows('task_delete') and $task->owner() == auth()->user()->id), 403);
+        abort_unless((\Gate::allows('task_delete') and $task->isAccessible()), 403);
 
         $task->subscriptions()->delete(); //first delete subscriptions
         $task->delete();

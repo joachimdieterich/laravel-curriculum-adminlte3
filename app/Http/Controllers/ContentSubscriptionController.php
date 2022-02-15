@@ -16,7 +16,6 @@ class ContentSubscriptionController extends Controller
      */
     public function index()
     {
-        //todo: Check if user is allowed to see content.
         $input = $this->validateRequest();
 
         $this->permissionCheck($input['subscribable_type'], $input['subscribable_id'], "access");

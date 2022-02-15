@@ -199,15 +199,8 @@ class CurriculumController extends Controller
      */
     public function show(Curriculum $curriculum, $achievements = false)
     {
-        abort_unless(\Gate::allows('curriculum_show'), 403);
-        LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
-        //check if user is enrolled or admin -> else 403
-
-        abort_unless((auth()->user()->curricula()->contains('id', $curriculum->id) // user enrolled
-                  OR ($curriculum->owner_id == auth()->user()->id )                // or owner
-                  OR (auth()->user()->currentRole()->first()->id == 1)            // or admin
-                  OR ((env('GUEST_USER') != null) ? User::find(env('GUEST_USER'))->curricula()->contains('id', $curriculum->id) : false) //or allowed via guest
-                ), 403);     // or admin
+        abort_unless((\Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
+        LogController::set(get_class($this) . '@' . __FUNCTION__, $curriculum->id);
 
         $objectiveTypes = \App\ObjectiveType::all();
         $levels = \App\Level::all();

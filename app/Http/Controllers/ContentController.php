@@ -41,14 +41,10 @@ class ContentController extends Controller
             $content->subscribe($model);
         }
 
-        // not used -> see github issue: Remove category from ContentCreateModal (not used) #210
-        // $content->categories()->attach($input['categorie_ids']);
-
-        // axios call?
         if (request()->wantsJson()){
             return ['message' => $content];
         }
-        //redirect
+
         return redirect($content->path());
     }
 
@@ -79,10 +75,7 @@ class ContentController extends Controller
     {
         $input = $this->validateRequest();
 
-        $this->permissionCheck($input['referenceable_type'], $input['referenceable_id'], "edit"); //check context permission
-        abort_unless((\Gate::allows('content_edit') or
-            \Gate::allows($input['referenceable_type'] . '_content_edit')), 403);
-        //todo: check if user is owner or has creator/admin role
+        $this->permissionCheck($input['referenceable_type'], $input['referenceable_id'], "edit");
 
         $content->update([
             'title' => $input['title'],
@@ -92,13 +85,9 @@ class ContentController extends Controller
         // subscribe embedded media to content
         $this->checkForEmbeddedMedia($content);
 
-        // not used -> see github issue: Remove category from ContentCreateModal (not used) #210
-        // $content->categories()->attach($input['categorie_ids']);
-
         if (request()->wantsJson()){
             return ['message' => $content];
         }
-
     }
 
     /**
@@ -116,11 +105,8 @@ class ContentController extends Controller
             $subscribable_id = $input['referenceable_id'];
         }
 
-        $this->permissionCheck($subscribable_type, $subscribable_id, "delete"); //check context permission
-        /*abort_unless((\Gate::allows('content_delete') OR
-            \Gate::allows($subscribable_type.'_content_delete')), 403);*/
+        $this->permissionCheck($subscribable_type, $subscribable_id, "delete");
 
-        //todo: check if user is owner or has creator/admin role
         /**
          * check if content is subscribed only by deleting reference
          * - if yes -> delete content_subscription and content
@@ -149,7 +135,7 @@ class ContentController extends Controller
                 (new QuoteController)->destroy($quote); // delete and unsubscribe related objects
             }
 
-            //todo? delete unused categorie_categoie
+            //todo? delete unused categories
             $content->delete();
 
         } else {
@@ -193,16 +179,16 @@ class ContentController extends Controller
 
     private function subscribeMediaToModel($model, $medium)
     {
-            $subscribe = MediumSubscription::updateOrCreate([
-                "medium_id"         => $medium->id,
-                "subscribable_type" => get_class($model),
-                "subscribable_id"   => $model->id,
-            ],[
-                "sharing_level_id"  => 1, // has to be global = 1
-                "visibility"        => 1, // has to be public  = 1
-                "owner_id"          => auth()->user()->id,
-            ]);
-            $subscribe->save();
+        $subscribe = MediumSubscription::updateOrCreate([
+            "medium_id" => $medium->id,
+            "subscribable_type" => get_class($model),
+            "subscribable_id" => $model->id,
+        ], [
+            "sharing_level_id" => 1, // has to be global = 1
+            "visibility" => 1, // has to be public  = 1
+            "owner_id" => auth()->user()->id,
+        ]);
+        $subscribe->save();
     }
 
     protected function validateRequest()
@@ -229,6 +215,10 @@ class ContentController extends Controller
             \Gate::allows($referenceable_type . '_content_' . $action)), 403);
 
         $model = $referenceable_type::find($referenceable_id);
+
+        if (is_admin()) {        //admin can edit every model
+            return $model;
+        }
 
         switch ($referenceable_type) {
             case "App\Curriculum":

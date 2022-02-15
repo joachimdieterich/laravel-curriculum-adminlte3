@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\ContentSubscription;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -18,13 +19,15 @@ class ContentSubscriptionController extends Controller
         //todo: Check if user is allowed to see content.
         $input = $this->validateRequest();
 
+        $this->permissionCheck($input['subscribable_type'], $input['subscribable_id'], "access");
+
         $subscriptions = ContentSubscription::where([
             'subscribable_type' => $input['subscribable_type'],
-            'subscribable_id'   => $input['subscribable_id']
+            'subscribable_id' => $input['subscribable_id']
         ])->orderBy('order_id');
 
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $subscriptions->with(['content'])->get()];
         }
     }
@@ -255,12 +258,28 @@ class ContentSubscriptionController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'content_id'        => 'sometimes',
+            'content_id' => 'sometimes',
             'subscribable_type' => 'required',
-            'subscribable_id'   => 'required',
-            'sharing_level_id'  => 'sometimes',
-            'order_id'          => 'sometimes',
-            'visibility'        => 'sometimes',
+            'subscribable_id' => 'required',
+            'sharing_level_id' => 'sometimes',
+            'order_id' => 'sometimes',
+            'visibility' => 'sometimes',
         ]);
+    }
+
+    /**
+     * check if user is owner of curricula if creation context is curricula
+     *
+     * @param $referenceable_type
+     * @param $referenceable_id
+     * @return mixed
+     */
+    private function permissionCheck($referenceable_type, $referenceable_id, $action = "create")
+    {
+        abort_unless((\Gate::allows('content_' . $action) or
+            \Gate::allows($referenceable_type . '_content_' . $action)), 403);
+
+        $model = $referenceable_type::find($referenceable_id);
+        return $model->isAccessible();
     }
 }

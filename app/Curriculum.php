@@ -176,4 +176,20 @@ class Curriculum extends Model
     {
         return $this->morphMany('App\Prerequisites', 'predecessor');
     }
+
+    public function isAccessible()
+    {
+        if (
+            auth()->user()->curricula()->contains('id', $this->id) // user enrolled
+            or ($this->owner_id == auth()->user()->id)            // or owner
+            or ((env('GUEST_USER') != null) ? User::find(env('GUEST_USER'))->curricula()->contains('id', $this->id) : false) //or allowed via guest
+            or is_admin() // or admin
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
 }

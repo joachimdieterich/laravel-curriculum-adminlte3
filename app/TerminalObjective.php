@@ -125,4 +125,9 @@ class TerminalObjective extends Model
         return $this->morphMany('App\Prerequisites', 'predecessor');
     }
 
+    public function isAccessible()
+    {
+        return $this->curriculum->isAccessible();
+    }
+
 }

@@ -65,8 +65,7 @@ class LogbookEntryController extends Controller
      */
     public function show(LogbookEntry $logbookEntry)
     {
-        abort_unless(\Gate::allows('logbook_show'), 403);
-        //todo: check if user has permission to see logbookEntry
+        abort_unless((\Gate::allows('logbook_show') and $logbookEntry->isAccessible()), 403);
 
         if (request()->wantsJson()){
             return [
@@ -99,7 +98,7 @@ class LogbookEntryController extends Controller
      */
     public function update(LogbookEntry $logbookEntry)
     {
-        abort_unless(\Gate::allows('logbook_edit'), 403);
+        abort_unless((\Gate::allows('logbook_edit') and $logbookEntry->isAccessible()), 403);
 
         $logbookEntry->update($this->validateRequest());
 
@@ -120,6 +119,7 @@ class LogbookEntryController extends Controller
     public function destroy(LogbookEntry $logbookEntry)
     {
         //delete all relations
+        abort_unless((\Gate::allows('logbook_delete') and $logbookEntry->isAccessible()), 403);
 
         // delete mediaSubscriptions -> media will not be deleted
         $logbookEntry->mediaSubscriptions()

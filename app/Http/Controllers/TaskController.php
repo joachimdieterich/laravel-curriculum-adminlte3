@@ -71,15 +71,17 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        $task = $task->with(['contentSubscriptions.content.categories',
-                'terminalObjectiveSubscriptions.terminalObjective',
-                'enablingObjectiveSubscriptions.enablingObjective.terminalObjective',
-                'mediaSubscriptions.medium'])
-                ->where('id', $task->id)->get()->first();
+        abort_unless((\Gate::allows('task_show') and $task->isAccessible()), 403);
 
-        abort_unless(\Gate::allows('task_show'), 403);
+        $task = $task->with(['contentSubscriptions.content.categories',
+            'terminalObjectiveSubscriptions.terminalObjective',
+            'enablingObjectiveSubscriptions.enablingObjective.terminalObjective',
+            'mediaSubscriptions.medium'])
+            ->where('id', $task->id)->get()->first();
+
+
         // axios call?
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return [
                 'task' => $task
             ];
@@ -100,7 +102,7 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
-        abort_unless(\Gate::allows('task_edit'), 403);
+        abort_unless((\Gate::allows('task_edit') and $task->owner() == auth()->user()->id), 403);
 
         $input = $this->validateRequest();
         $task->update([
@@ -124,7 +126,7 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        abort_unless(\Gate::allows('task_delete'), 403);
+        abort_unless((\Gate::allows('task_delete') and $task->owner() == auth()->user()->id), 403);
 
         $task->subscriptions()->delete(); //first delete subscriptions
         $task->delete();

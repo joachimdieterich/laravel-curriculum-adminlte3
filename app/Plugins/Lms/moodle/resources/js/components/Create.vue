@@ -70,7 +70,7 @@
                     </select>
                 </div>
 
-                    <div v-if="method === 'post'" class="form-group ">
+<!--                <div v-if="method === 'post'" class="form-group ">
                     <label for="sharing_level">
                         Freigabe-Level
                     </label>
@@ -81,7 +81,7 @@
                         <option></option>
                         <option v-for="item in sharing_levels" v-bind:value="item.id">{{ item.lang_de }}</option>
                     </select>
-                </div>
+                </div>-->
                 </span>
 
             </div>
@@ -226,10 +226,10 @@ export default {
             }.bind(this))
                 .val(this.form.course_content_id).trigger('change'); //set value
 
-            $("#sharing_level").select2({
-                dropdownParent: $(".v--modal-overlay"),
-                allowClear: false,
-            });
+            /* $("#sharing_level").select2({
+                 dropdownParent: $(".v--modal-overlay"),
+                 allowClear: false,
+             });*/
         },
 
         beforeOpen(event) {

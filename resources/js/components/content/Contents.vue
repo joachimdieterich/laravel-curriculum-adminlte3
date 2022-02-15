@@ -221,7 +221,12 @@
                 }
             },
             edit(contentSubscription){
-                this.$modal.show('content-create-modal', { 'id': contentSubscription.content_id, 'method': 'patch' });
+                this.$modal.show('content-create-modal', {
+                    'id': contentSubscription.content_id,
+                    'method': 'patch',
+                    'referenceable_type': contentSubscription.subscribable_type,
+                    'referenceable_id': contentSubscription.subscribable_id
+                });
             },
             async deleteSubscription(contentSubscription){
                 try {

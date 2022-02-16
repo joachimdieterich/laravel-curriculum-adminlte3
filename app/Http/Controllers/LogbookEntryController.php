@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Logbook;
 use App\LogbookEntry;
 use Illuminate\Http\Request;
 
@@ -35,11 +36,12 @@ class LogbookEntryController extends Controller
      */
     public function store(Request $request)
     {
-        abort_unless(\Gate::allows('logbook_entry_create'), 403);
         $new_entry = $this->validateRequest();
+        $model = Logbook::find($new_entry['logbook_id']);
+        abort_unless((\Gate::allows('logbook_entry_create') and $model->isAccessible()), 403);
 
         $entry = LogbookEntry::firstOrCreate([
-            'logbook_id'=> $new_entry['logbook_id'],
+            'logbook_id' => $new_entry['logbook_id'],
             'title' => $new_entry['title'],
             'description' => $new_entry['description'],
             'begin' => $new_entry['begin'],
@@ -71,9 +73,7 @@ class LogbookEntryController extends Controller
             return [
                 'message' => $logbookEntry
             ];
-        }
-        else
-        {
+        } else {
             return redirect()->action('LogbookController@show', ['logbook' => $logbookEntry->logbook_id]);
         }
     }
@@ -123,39 +123,38 @@ class LogbookEntryController extends Controller
 
         // delete mediaSubscriptions -> media will not be deleted
         $logbookEntry->mediaSubscriptions()
-                ->where('subscribable_type', '=', 'App\LogbookEntry')
-                ->where('subscribable_id', '=', $logbookEntry->id)
-                ->delete();
+            ->where('subscribable_type', '=', 'App\LogbookEntry')
+            ->where('subscribable_id', '=', $logbookEntry->id)
+            ->delete();
 
         // delete terminalObjectiveSubscriptions
         $logbookEntry->terminalObjectiveSubscriptions()
-                ->where('subscribable_type', '=', 'App\LogbookEntry')
-                ->where('subscribable_id', '=', $logbookEntry->id)
-                ->delete();
+            ->where('subscribable_type', '=', 'App\LogbookEntry')
+            ->where('subscribable_id', '=', $logbookEntry->id)
+            ->delete();
 
         // delete enablingObjectiveSubscriptions
         $logbookEntry->enablingObjectiveSubscriptions()
-                ->where('subscribable_type', '=', 'App\LogbookEntry')
-                ->where('subscribable_id', '=', $logbookEntry->id)
-                ->delete();
+            ->where('subscribable_type', '=', 'App\LogbookEntry')
+            ->where('subscribable_id', '=', $logbookEntry->id)
+            ->delete();
 
         // delete contents
-        foreach ($logbookEntry->contents AS $content)
-        {
+        foreach ($logbookEntry->contents AS $content) {
             (new ContentController)->destroy($content, 'App\LogbookEntry', $logbookEntry->id); // delete or unsubscribe if content is still subscribed elsewhere
         }
 
         // delete taskSubscription
         $logbookEntry->taskSubscription()
-                ->where('subscribable_type', '=', 'App\LogbookEntry')
-                ->where('subscribable_id', '=', $logbookEntry->id)
-                ->delete();
+            ->where('subscribable_type', '=', 'App\LogbookEntry')
+            ->where('subscribable_id', '=', $logbookEntry->id)
+            ->delete();
 
         // delete absences
         $logbookEntry->absences()
-                ->where('referenceable_type', '=', 'App\LogbookEntry')
-                ->where('referenceable_id', '=', $logbookEntry->id)
-                ->delete();
+            ->where('referenceable_type', '=', 'App\LogbookEntry')
+            ->where('referenceable_id', '=', $logbookEntry->id)
+            ->delete();
         $return = $logbookEntry->delete();
 
         if (request()->wantsJson()){

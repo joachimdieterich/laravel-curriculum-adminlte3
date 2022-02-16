@@ -18,11 +18,13 @@ class PrintController extends Controller
 
     public function content(Content $content)
     {
-        $html = view('print.content')
-                ->with(compact('content'))
-                ->render();
+        $content->isAccessible();
 
-        return $this->print($html, $content->title.'.pdf');
+        $html = view('print.content')
+            ->with(compact('content'))
+            ->render();
+
+        return $this->print($html, $content->title . '.pdf');
     }
 
     /*public function curriculum(Curriculum $curriculum)
@@ -35,6 +37,7 @@ class PrintController extends Controller
 
     public function glossar(Glossar $glossar)
     {
+        $glossar->isAccessible();
         $entries = $glossar->contents;
         $html = view('print.glossar', compact('entries'))->render();
 
@@ -44,6 +47,7 @@ class PrintController extends Controller
     public function model($model, $id)
     {
         //todo: check if user has permission to see this model
+        //$model->isAccessible(); //should do the trick
         //delegate to model class?
         abort(403);
         /*
@@ -60,12 +64,13 @@ class PrintController extends Controller
 
     public function references(Curriculum $curriculum)
     {
-        //dd($curriculum->terminalObjectives->pluck('referenceSubscriptions.*.siblings.*.referenceable.curriculum.title')->flatten()->values()->unique() );
-        $html = view('print.references')
-                ->with(compact('curriculum'))
-                ->render();
+        $curriculum->isAccessible();
 
-        return $this->print($html, $curriculum->title.'_references.pdf', 'download', 'landscape' );
+        $html = view('print.references')
+            ->with(compact('curriculum'))
+            ->render();
+
+        return $this->print($html, $curriculum->title . '_references.pdf', 'download', 'landscape');
     }
     /**
      *

@@ -143,15 +143,16 @@ class GroupsController extends Controller
      */
     public function show(Group $group)
     {
-        abort_unless(\Gate::allows('group_show'), 403);
-        abort_unless((auth()->user()->groups->contains($group)
-            OR is_admin()
-            OR ($group->organization_id == auth()->user()->current_organization_id)), 403);
+        abort_unless((\Gate::allows('group_show') and $group->isAccessible()), 403);
 
-        LogController::set(get_class($this).'@'.__FUNCTION__, $group->id);
-         // axios call?
-        if (request()->wantsJson()){
-           // dump(json_encode($group->users));
+        /*  abort_unless((auth()->user()->groups->contains($group)
+              OR is_admin()
+              OR ($group->organization_id == auth()->user()->current_organization_id)), 403);*/
+
+        LogController::set(get_class($this) . '@' . __FUNCTION__, $group->id);
+        // axios call?
+        if (request()->wantsJson()) {
+            // dump(json_encode($group->users));
             return ['users' => json_encode($group->users)];
         }
         $courses = $group->courses()->with('curriculum')->get();
@@ -163,10 +164,7 @@ class GroupsController extends Controller
 
     public function edit(Group $group)
     {
-        abort_unless(\Gate::allows('group_edit'), 403);
-        abort_unless((auth()->user()->groups->contains($group)
-            OR is_admin()
-            OR ($group->organization_id == auth()->user()->current_organization_id)), 403);
+        abort_unless((\Gate::allows('group_edit') and $group->isAccessible()), 403);
 
         $grades  = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->type->grades()->get(); //Grade::all();
         $periods = Period::all();//Organization::where('id',auth()->user()->current_organization_id)->get()->first()->periods;
@@ -182,10 +180,7 @@ class GroupsController extends Controller
 
     public function update(UpdateGroupRequest $request, Group $group)
     {
-        abort_unless(\Gate::allows('group_edit'), 403);
-        abort_unless((auth()->user()->groups->contains($group)
-            OR is_admin()
-            OR ($group->organization_id == auth()->user()->current_organization_id)), 403);
+        abort_unless((\Gate::allows('group_edit') and $group->isAccessible()), 403);
 
         $group->update([
             'title' => $request['title'],
@@ -203,10 +198,7 @@ class GroupsController extends Controller
      */
     public function destroy(Group $group)
     {
-        abort_unless(\Gate::allows('group_delete'), 403);
-        abort_unless((auth()->user()->groups->contains($group)
-            OR is_admin()
-            OR ($group->organization_id == auth()->user()->current_organization_id)), 403);
+        abort_unless((\Gate::allows('group_delete') and $group->isAccessible()), 403);
 
         // first delete all relations
         $group->curricula()->detach();
@@ -223,13 +215,13 @@ class GroupsController extends Controller
     {
         abort_unless(\Gate::allows('group_delete'), 403);
 
-
-        foreach (request('ids') AS $id)
-        {
-            abort_unless((auth()->user()->groups->contains($id) OR is_admin()), 403);
-            abort_unless((auth()->user()->groups->contains($id)
-                OR is_admin()
-                OR (Group::find($id)->first()->organization_id == auth()->user()->current_organization_id)), 403);
+        foreach (request('ids') AS $id) {
+            abort_unless(
+                (
+                    auth()->user()->groups->contains($id)
+                    or is_admin()
+                    or (Group::find($id)->first()->organization_id == auth()->user()->current_organization_id)
+                ), 403);
 
             Group::where('id', $id)->delete();
         }
@@ -241,19 +233,21 @@ class GroupsController extends Controller
     {
         abort_unless(\Gate::allows('group_enrolment'), 403);
 
-        foreach ((request()->enrollment_list) AS $enrolment)
-        {
-            abort_unless((auth()->user()->groups->contains($enrolment['group_id'])
-                OR is_admin()
-                OR (Group::find($enrolment['group_id'])->first()->organization_id == auth()->user()->current_organization_id)), 403);
+        foreach ((request()->enrollment_list) AS $enrolment) {
+            abort_unless(
+                (
+                    auth()->user()->groups->contains($enrolment['group_id'])
+                    or is_admin()
+                    or (Group::find($enrolment['group_id'])->first()->organization_id == auth()->user()->current_organization_id)
+                ), 403);
 
             $group = Group::findOrFail($enrolment['group_id']);
             $user = User::findOrFail($enrolment['user_id']);
             //if user isn't enrolled to organization, enrol with student role
             OrganizationRoleUser::firstOrCreate(['user_id' => $user->id,
-                                         'organization_id' => $group->first()->organization_id],
-                                         ['role_id'        => 6]
-                                    );
+                'organization_id' => $group->first()->organization_id],
+                ['role_id' => 6]
+            );
 
             $return[] = $user->groups()->syncWithoutDetaching($enrolment['group_id']);
         }

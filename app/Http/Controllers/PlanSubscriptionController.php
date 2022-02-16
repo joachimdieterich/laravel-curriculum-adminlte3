@@ -19,12 +19,15 @@ class PlanSubscriptionController extends Controller
         $input = $this->validateRequest();
         if (isset($input['subscribable_type']) AND isset($input['subscribable_id']))
         {
+            $model = $input['subscribable_type']::find($input['subscribable_id']);
+            abort_unless($model->isAccessible(), 403);
+
             $subscriptions = PlanSubscription::where([
                 'subscribable_type' => $input['subscribable_type'],
-                'subscribable_id'   => $input['subscribable_id']
+                'subscribable_id' => $input['subscribable_id']
             ]);
 
-            if (request()->wantsJson()){
+            if (request()->wantsJson()) {
                 return ['subscriptions' => $subscriptions->with(['plan'])->get()];
             }
         }
@@ -51,9 +54,8 @@ class PlanSubscriptionController extends Controller
      */
     public function store(Request $request)
     {
-        abort_unless(\Gate::allows('plan_create'), 403);
         $input = $this->validateRequest();
-        abort_unless(auth()->user()->id == Plan::find($input['model_id'])->owner_id, 403);                // user owns plan_subscription
+        abort_unless((\Gate::allows('plan_create') and Plan::find($input['model_id'])->isAccessible()), 403);   // user owns plan_subscription
 
         $subscribe = PlanSubscription::updateOrCreate([
             "plan_id" => $input['model_id'],
@@ -80,10 +82,9 @@ class PlanSubscriptionController extends Controller
      */
     public function update(Request $request, PlanSubscription $planSubscription)
     {
-        abort_unless(\Gate::allows('plan_edit'), 403);
-        $input = $this->validateRequest();
-        abort_unless(auth()->user()->id == $planSubscription->owner_id, 403);                // user owns plan_subscription
+        abort_unless((\Gate::allows('plan_edit') and $planSubscription->isAccessible()), 403);
 
+        $input = $this->validateRequest();
         $planSubscription->update([
             "editable" => isset($input['editable']) ? $input['editable'] : false,
             "owner_id" => auth()->user()->id,
@@ -102,7 +103,7 @@ class PlanSubscriptionController extends Controller
      */
     public function destroy(PlanSubscription $planSubscription)
     {
-        abort_unless(\Gate::allows('plan_delete'), 403);
+        abort_unless((\Gate::allows('plan_delete') and $planSubscription->isAccessible()), 403);
 
         if (request()->wantsJson()){
             return ['message' => $planSubscription->delete()];

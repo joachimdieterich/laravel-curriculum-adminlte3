@@ -14,7 +14,7 @@ class AbsenceController extends Controller
      */
     public function index()
     {
-        abort(404);
+        abort(403);
     }
 
     /**
@@ -59,7 +59,7 @@ class AbsenceController extends Controller
      */
     public function show(Absence $absence)
     {
-        abort(404);
+        abort(403);
     }
 
     /**
@@ -71,7 +71,7 @@ class AbsenceController extends Controller
      */
     public function update(Request $request, Absence $absence)
     {
-        abort_unless(\Gate::allows('absence_edit'), 403);
+        abort_unless((\Gate::allows('absence_edit') and $absence->isAccessible()), 403);
 
         if (request()->wantsJson()){
             if ($absence->update($request->all())){
@@ -90,7 +90,7 @@ class AbsenceController extends Controller
      */
     public function destroy(Absence $absence)
     {
-        abort_unless(\Gate::allows('absence_delete'), 403);
+        abort_unless((\Gate::allows('absence_delete') and $absence->isAccessible()), 403);
 
         if (request()->wantsJson()){
             return ['message' => $absence->delete()];

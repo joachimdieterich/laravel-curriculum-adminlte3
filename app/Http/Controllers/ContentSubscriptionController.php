@@ -32,16 +32,6 @@ class ContentSubscriptionController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -49,16 +39,16 @@ class ContentSubscriptionController extends Controller
      */
     public function store(Request $request)
     {
-        abort_unless(\Gate::allows('content_create'), 403);
         $subscription_request = $this->validateRequest();
+        $this->permissionCheck($subscription_request['subscribable_type'], $subscription_request['subscribable_id'], "create");
+
         $order_id = $this->getMaxOrderId($subscription_request['subscribable_type'], $subscription_request['subscribable_id']);
 
-        foreach ($subscription_request['content_id'] AS $content_id)
-        {
+        foreach ($subscription_request['content_id'] as $content_id) {
             $response = [];
-            $exists = ContentSubscription::where('content_id' , $content_id)
+            $exists = ContentSubscription::where('content_id', $content_id)
                 ->where('subscribable_type', $subscription_request['subscribable_type'])
-                ->where('subscribable_id',  $subscription_request['subscribable_id'])
+                ->where('subscribable_id', $subscription_request['subscribable_id'])
                 ->first();
             if ($exists === null){
                 $response[] = ContentSubscription::create([
@@ -79,27 +69,6 @@ class ContentSubscriptionController extends Controller
         return $response;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\ContentSubscription  $contentSubscription
-     * @return \Illuminate\Http\Response
-     */
-    public function show(ContentSubscription $contentSubscription)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\ContentSubscription  $contentSubscription
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(ContentSubscription $contentSubscription)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -109,16 +78,17 @@ class ContentSubscriptionController extends Controller
      */
     public function update(Request $request)
     {
-        abort_unless(\Gate::allows('content_create'), 403);
         //first get existing data to later adjust order_id
         $subscription_request = $this->validateRequest();
+        $this->permissionCheck($subscription_request['subscribable_type'], $subscription_request['subscribable_id'], "create");
+
         $old_subscription = ContentSubscription::where('content_id', $subscription_request['content_id'])
             ->where('subscribable_type', $subscription_request['subscribable_type'])
             ->where('subscribable_id', $subscription_request['subscribable_id'])
             ->get()->first();
         // update order_id
-        if ($request->has('order_id')){
-            if ($this->toggleOrderId($old_subscription, request('order_id'))){
+        if ($request->has('order_id')) {
+            if ($this->toggleOrderId($old_subscription, request('order_id'))) {
                 $subscriptions = ContentSubscription::where([
                     'subscribable_type' => $subscription_request['subscribable_type'],
                     'subscribable_id'   => $subscription_request['subscribable_id']
@@ -139,9 +109,9 @@ class ContentSubscriptionController extends Controller
      */
     public function reset(Request $request)
     {
-        abort_unless(\Gate::allows('content_create'), 403);
         //first get existing data to later adjust order_id
         $subscription_request = $this->validateRequest();
+        $this->permissionCheck($subscription_request['subscribable_type'], $subscription_request['subscribable_id'], "create");
 
         $reset_subscriptions = (new ContentSubscription)
             ->where('subscribable_type', $subscription_request['subscribable_type'])

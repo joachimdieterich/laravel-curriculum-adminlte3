@@ -35,13 +35,18 @@ class TaskSubscription extends Model
     public function incomplete()
     {
         $this->update(['completion_date' => null]);
-        LogController::set(get_class($this).'@'.__FUNCTION__);
+        LogController::set(get_class($this) . '@' . __FUNCTION__);
         // $this->recordActivity('incompleted_task');
     }
 
     public function owner()
     {
         return $this->hasOne('App\User', 'id', 'owner_id');
+    }
+
+    public function isAccessible()
+    {
+        return $this->task->isAccessible();
     }
 
 }

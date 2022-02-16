@@ -18,17 +18,7 @@ class ProgressController extends Controller
      */
     public function index()
     {
-        /*$user_id = 1;
-        $terminal_objective  = 2;
-        $enabling_objectives = EnablingObjective::where('terminal_objective_id', $terminal_objective)->get();
-
-        $total_achieved = Achievement::where('referenceable_type', 'App\\EnablingObjective')
-                                ->where('user_id', $user_id)
-                                ->whereIn('referenceable_id', $enabling_objectives->pluck('id'))
-                                ->where(DB::raw(' RIGHT(status,1) = 1 OR RIGHT(status,1) = 2'))
-                                ->get();
-
-        $percentage = $total_achieved->count() / $enabling_objectives->count() *100;         */
+       abort(403);
     }
 
 
@@ -44,13 +34,16 @@ class ProgressController extends Controller
             case 'App\TerminalObjective':
                 $input = $this->validateRequest();
 
+                $model = TerminalObjective::find($input['parent_id']);
+                abort_unless($model->isAccessible(), 403);
+
                 $enabling_objectives = EnablingObjective::where('terminal_objective_id', $input['parent_id'])->get();
 
                 $total_achieved = Achievement::where('referenceable_type', 'App\\EnablingObjective')
-                                        ->where('user_id', $user_id)
-                                        ->whereIn('referenceable_id', $enabling_objectives->pluck('id'))
-                                        ->where(DB::raw('RIGHT(status,1) = 1 OR RIGHT(status,1) = 2'))
-                                        ->get();
+                    ->where('user_id', $user_id)
+                    ->whereIn('referenceable_id', $enabling_objectives->pluck('id'))
+                    ->where(DB::raw('RIGHT(status,1) = 1 OR RIGHT(status,1) = 2'))
+                    ->get();
                 $progress = Progress::updateOrCreate(
                     [
                         'referenceable_type' => $input['referenceable_type'],

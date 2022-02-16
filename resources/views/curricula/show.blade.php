@@ -147,6 +147,7 @@ $(document).ready( function () {
                  { data: 'progress' },
                 ],
         buttons: [],
+
     });
 
     table.on( 'select', function ( e, dt, type, indexes ) { //on select event

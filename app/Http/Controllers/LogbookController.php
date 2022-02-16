@@ -246,14 +246,7 @@ class LogbookController extends Controller
      */
     private function checkPermissions(Logbook $logbook, $action = 'create'): void
     {
-        abort_unless(\Gate::allows('logbook_' . $action), 403);
-        abort_unless((auth()->user()->logbooks->contains('id', $logbook->id) //direct subscription
-            or ($logbook->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() //user is enroled in group
-            or ($logbook->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id))->isNotEmpty() //user is enroled in group
-            or ($logbook->subscriptions->where('subscribable_type', "App\Course")->whereIn('subscribable_id', auth()->user()->currentGroupEnrolments->pluck('course_id')))->isNotEmpty()
-            or (auth()->user()->currentRole()->first()->id == 1)    // admin
-            or (auth()->user()->id == $logbook->owner_id)           // user owns logbook
-        ), 403);
+        abort_unless((\Gate::allows('logbook_' . $action) and $logbook->isAccessible()), 403);
 
         /*
          * Check for role limiter

@@ -20,7 +20,13 @@ class KanbanItemSubscription extends Model
         return $this->morphTo();
     }
 
-    public function kanbanIteem(){
+    public function kanbanItem()
+    {
         return $this->belongsTo('App\KanbanItem', 'kanban_item_id', 'id');
+    }
+
+    public function isAccessible()
+    {
+        return $this->kanbanItem->isAccessible();
     }
 }

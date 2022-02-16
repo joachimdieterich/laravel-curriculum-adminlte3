@@ -15,14 +15,17 @@ class KanbanItemSubscriptionController extends Controller
      */
     public function index()
     {
-        if (request()->wantsJson()){
+        $kanbanItem = KanbanItem::find(request('kanbanItem_id'));
+        abort_unless((\Gate::allows('kanban_access') and $kanbanItem->isAccessible()), 403);
+
+        if (request()->wantsJson()) {
             return [
                 'subscribers' =>
                     [
-                        'users' =>  auth()->user()->users()->select('users.id','users.firstname','users.lastname')->get(),
-                        'groups' => auth()->user()->groups()->select('group_id','title')->get(),
-                        'organizations' => auth()->user()->organizations()->select('organization_id','title')->get(),
-                        'subscriptions' => KanbanItem::find(request('kanbanItem_id'))->subscriptions()->with('subscribable')->get()
+                        'users' => auth()->user()->users()->select('users.id', 'users.firstname', 'users.lastname')->get(),
+                        'groups' => auth()->user()->groups()->select('group_id', 'title')->get(),
+                        'organizations' => auth()->user()->organizations()->select('organization_id', 'title')->get(),
+                        'subscriptions' => $kanbanItem->subscriptions()->with('subscribable')->get()
                     ]
             ];
         }
@@ -37,21 +40,22 @@ class KanbanItemSubscriptionController extends Controller
      */
     public function store(Request $request)
     {
-        abort_unless(\Gate::allows('kanban_create'), 403);
         $input = $this->validateRequest();
+        $kanbanItem = KanbanItem::find($input['model_id']);
+        abort_unless((\Gate::allows('kanban_create') and $kanbanItem->isAccessible), 403);
 
         $subscribe = KanbanItemSubscription::updateOrCreate([
-            "kanban_item_id"    => $input['model_id'],
+            "kanban_item_id" => $input['model_id'],
             "subscribable_type" => $input['subscribable_type'],
-            "subscribable_id"   => $input['subscribable_id'],
-        ],[
-            "editable"=> isset($input['editable']) ? $input['editable'] : false,
-            "owner_id"=> auth()->user()->id,
+            "subscribable_id" => $input['subscribable_id'],
+        ], [
+            "editable" => isset($input['editable']) ? $input['editable'] : false,
+            "owner_id" => auth()->user()->id,
         ]);
         $subscribe->save();
 
         if (request()->wantsJson()){
-            return ['subscription' => KanbanItem::find($input['model_id'])->subscriptions()->with('subscribable')->get()];
+            return ['subscription' => $kanbanItem->subscriptions()->with('subscribable')->get()];
         }
     }
 
@@ -64,7 +68,7 @@ class KanbanItemSubscriptionController extends Controller
      */
     public function update(Request $request, KanbanItemSubscription $kanbanItemSubscription)
     {
-        abort_unless(\Gate::allows('kanban_edit'), 403);
+        abort_unless((\Gate::allows('kanban_edit') and $kanbanItemSubscription->isAccessible()), 403);
         $input = $this->validateRequest();
 
         $kanbanItemSubscription->update([
@@ -85,7 +89,7 @@ class KanbanItemSubscriptionController extends Controller
      */
     public function destroy(KanbanItemSubscription $kanbanItemSubscription)
     {
-        abort_unless(\Gate::allows('kanban_delete'), 403);
+        abort_unless((\Gate::allows('kanban_delete') and $kanbanItemSubscription->isAccessible()), 403);
 
         if (request()->wantsJson()){
             return ['message' => $kanbanItemSubscription->delete()];

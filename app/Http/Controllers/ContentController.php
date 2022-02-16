@@ -56,6 +56,7 @@ class ContentController extends Controller
      */
     public function show(Content $content)
     {
+        abort_unless($content->isAccessible(), 403);
 
        if (request()->wantsJson()){
             return [
@@ -222,8 +223,10 @@ class ContentController extends Controller
 
         switch ($referenceable_type) {
             case "App\Curriculum":
-            case "App\LogbookEntry":
                 abort_unless(($model->owner_id === auth()->user()->id), 403);
+                break;
+            case "App\LogbookEntry":
+                abort_unless($model->isAccessible(), 403);
                 break;
             case "App\EnablingObjective":
             case "App\TerminalObjective":

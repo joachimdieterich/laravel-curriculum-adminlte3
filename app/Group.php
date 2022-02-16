@@ -118,4 +118,18 @@ class Group extends Model
             'logbook_id'
         )->where('subscribable_type', get_class($this));
     }
+
+    public function isAccessible()
+    {
+        if (
+            auth()->user()->groups->contains($this)
+            or ($this->organization_id == auth()->user()->current_organization_id)
+            or is_admin()
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
 }

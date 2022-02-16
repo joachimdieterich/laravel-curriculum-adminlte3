@@ -17,9 +17,8 @@ class KanbanItemController extends Controller
      */
     public function store(Request $request)
     {
-        abort_unless(\Gate::allows('kanban_create'), 403);
-
-        $input= $this->validateRequest();
+        $input = $this->validateRequest();
+        abort_unless((\Gate::allows('kanban_create') and Kanban::find($input['kanban_id'])->isAccessible()), 403);
 
         $kanbanItem = KanbanItem::firstOrCreate([
             'title'             => $input['title'],
@@ -86,6 +85,7 @@ class KanbanItemController extends Controller
      */
     public function show(KanbanItem $kanbanItem)
     {
+        abort_unless((\Gate::allows('kanban_show') and $kanbanItem->isAccessible()), 403);
         return redirect()->action('KanbanController@show', ['kanban' => $kanbanItem->kanban_id]);
     }
 
@@ -97,7 +97,7 @@ class KanbanItemController extends Controller
      */
     public function edit(KanbanItem $kanbanItem)
     {
-
+        abort_unless((\Gate::allows('kanban_edit') and $kanbanItem->isAccessible()), 403);
     }
 
     /**
@@ -109,7 +109,7 @@ class KanbanItemController extends Controller
      */
     public function update(Request $request, KanbanItem $kanbanItem)
     {
-         abort_unless(\Gate::allows('kanban_edit'), 403);
+        abort_unless((\Gate::allows('kanban_edit') and $kanbanItem->isAccessible()), 403);
 
         $input= $this->validateRequest();
 
@@ -140,9 +140,10 @@ class KanbanItemController extends Controller
      */
     public function destroy(KanbanItem $kanbanItem)
     {
-        abort_unless(\Gate::allows('kanban_delete'), 403);
+        abort_unless((\Gate::allows('kanban_delete') and $kanbanItem->isAccessible()), 403);
+
         $kanbanItem->mediaSubscriptions()->delete();
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $kanbanItem->delete()];
         }
     }

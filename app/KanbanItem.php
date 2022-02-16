@@ -80,5 +80,9 @@ class KanbanItem extends Model
         )->where('subscribable_type', get_class($this));
     }
 
+    public function isAccessible()
+    {
+        return $this->kanban->isAccessible();
+    }
 
 }

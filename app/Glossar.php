@@ -20,8 +20,16 @@ class Glossar extends Model
         )->where('subscribable_type', get_class($this));
     }
 
-    //todo: public function isAccessible()
-    //    {
-    //        return $this->[relation]->isAccessible();
-    //    }
+    /**
+     * Get the subscriber model.
+     */
+    public function subscribable()
+    {
+        return $this->morphTo();
+    }
+
+    public function isAccessible()
+    {
+        return $this->subscribable->isAccessible();
+    }
 }

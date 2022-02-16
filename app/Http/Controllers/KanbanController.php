@@ -131,12 +131,13 @@ class KanbanController extends Controller
      */
     public function show(Kanban $kanban)
     {
-        $kanban   = $kanban->with(['statuses', 'statuses.items' => function($query) use ($kanban) {
-                    $query->where('kanban_id', $kanban->id)->with(['owner', 'taskSubscription.task.subscriptions' => function($query) {
-                         $query->where('subscribable_id', auth()->user()->id)
-                               ->where('subscribable_type', 'App\User');
-                 }, 'mediaSubscriptions', 'media'])->orderBy('order_id');
-                    }, 'statuses.items.subscribable'])->where('id', $kanban->id)->get()->first();
+        abort_unless((\Gate::allows('kanban_show') and $kanban->isAccessible()), 403);
+        $kanban = $kanban->with(['statuses', 'statuses.items' => function ($query) use ($kanban) {
+            $query->where('kanban_id', $kanban->id)->with(['owner', 'taskSubscription.task.subscriptions' => function ($query) {
+                $query->where('subscribable_id', auth()->user()->id)
+                    ->where('subscribable_type', 'App\User');
+            }, 'mediaSubscriptions', 'media'])->orderBy('order_id');
+        }, 'statuses.items.subscribable'])->where('id', $kanban->id)->get()->first();
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
@@ -152,7 +153,7 @@ class KanbanController extends Controller
      */
     public function edit(Kanban $kanban)
     {
-        //
+        abort_unless((\Gate::allows('kanban_edit') and $kanban->isAccessible()), 403);
     }
 
     /**
@@ -164,7 +165,7 @@ class KanbanController extends Controller
      */
     public function update(Request $request, Kanban $kanban)
     {
-        //
+        abort_unless((\Gate::allows('kanban_edit') and $kanban->isAccessible()), 403);
     }
 
     /**
@@ -175,7 +176,7 @@ class KanbanController extends Controller
      */
     public function destroy(Kanban $kanban)
     {
-        abort_unless(\Gate::allows('kanban_delete'), 403);
+        abort_unless((\Gate::allows('kanban_delete') and $kanban->isAccessible()), 403);
 
         //delete relations
         $kanban->items()->delete();

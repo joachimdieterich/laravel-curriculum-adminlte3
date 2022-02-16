@@ -75,4 +75,17 @@ class Content extends Model
         return $this->belongsToMany('App\Categorie'); //should be without timestamp to get sync working
     }
 
+    public function isAccessible()
+    {
+        if (
+            auth()->user()->contents->contains('id', $this->id) // user enrolled
+            or is_admin() // or admin
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
 }

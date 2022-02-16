@@ -57,27 +57,29 @@
     <li class="dropdown">
         <span class="user-menu dropdown-toggle" data-toggle="dropdown">
           <img class="img-circle color-white"
-                   src="{{ (auth()->user()->medium_id !== null) ? '/media/'.auth()->user()->medium_id  : Avatar::create(auth()->user()->fullName())->toBase64() }}"
-                   alt="User profile picture"
-                   style="height: 40px;width: 40px;">
+               src="{{ (auth()->user()->medium_id !== null) ? '/media/'.auth()->user()->medium_id  : Avatar::create(auth()->user()->fullName())->toBase64() }}"
+               alt="User profile picture"
+               style="height: 40px;width: 40px;">
           <b>{{ auth()->user()->fullName() }}</b>
         </span>
         <div class="user-menu dropdown-menu bg-lime dropdown-menu-lg dropdown-menu-right">
-          <span class="dropdown-item dropdown-header text-black">{{ optional(Auth::user()->role())->title}}</span>
-          <div class="dropdown-divider"></div>
-          <a href="{{route('users.show', auth()->user()->id)}}" class="dropdown-item">
-            <i class="fas fa-id-card mr-2 fa-fw text-white"></i>{{ trans('global.myProfile') }}
-          </a>
-              @can('note_access')
+            <span class="dropdown-item dropdown-header text-black">{{ optional(Auth::user()->role())->title}}</span>
+            <div class="dropdown-divider"></div>
+            @can('user_show')
+                <a href="{{route('users.show', auth()->user()->id)}}" class="dropdown-item">
+                    <i class="fas fa-id-card mr-2 fa-fw text-white"></i>{{ trans('global.myProfile') }}
+                </a>
+            @endcan
+            @can('note_access')
                 <a href="{{ route("notes.index") }}" class="dropdown-item">
                     <i class="fa fa-sticky-note fa-fw mr-2 text-white"></i>{{ trans('global.note.title') }}
                 </a>
-              @endcan
-              @if(auth()->user()->role()->id == 1)
+            @endcan
+            @if(auth()->user()->role()->id == 1)
                 <a href="{{ route("admin.index") }}" class="dropdown-item">
                     <i class="fa fa-cogs fa-fw mr-2 text-white"></i>{{ trans('global.config.title') }}
                 </a>
-              @endif
+            @endif
           <a href="#" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
             <i class="fas fa-power-off fa-fw mr-2 text-white"></i>{{ trans('global.logout') }}
           </a>

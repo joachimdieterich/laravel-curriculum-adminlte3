@@ -59,7 +59,9 @@ class UsersController extends Controller
 
     public function list()
     {
-        $users = (auth()->user()->role()->id == 1) ? DB::table('users')->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at') : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users();
+        $users = (auth()->user()->role()->id == 1)
+            ? DB::table('users')->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')
+            : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users();
 
         $show_gate = \Gate::allows('user_show');
         $edit_gate = \Gate::allows('user_edit');
@@ -67,9 +69,9 @@ class UsersController extends Controller
 
         return DataTables::of($users)
             ->addColumn('action', function ($users) use ($show_gate, $edit_gate, $delete_gate) {
-                 $actions  = '';
-                    if ($show_gate){
-                        $actions .= '<a href="'.route('users.show', $users->id).'" '
+                $actions = '';
+                if ($show_gate) {
+                    $actions .= '<a href="' . route('users.show', $users->id) . '" '
                                     . 'id="show-user-'.$users->id.'" '
                                     . 'class="btn">'
                                     . '<i class="fa fa-list-alt"></i>'
@@ -108,15 +110,13 @@ class UsersController extends Controller
     public function store(StoreUserRequest $request)
     {
         abort_unless(\Gate::allows('user_create'), 403);
-
-        if (User::withTrashed()->where('email', request()->email)->exists())
-        {
+        //todo: users should only be created in accessible organizations/roles
+        //
+        if (User::withTrashed()->where('email', request()->email)->exists()) {
             User::withTrashed()->where('email', request()->email)->restore();
             $user = User::where('email', request()->email)->get()->first();
             $user->update($request->all());
-        }
-        else
-        {
+        } else {
             $user = User::create($request->all());
         }
 
@@ -489,7 +489,6 @@ class UsersController extends Controller
         DB::table('terminal_objective_subscriptions')
             ->where('owner_id', $user->id)
             ->update(['owner_id' => $fallback_user->id]);
-
 
         $user->forceDelete();
         return redirect()->route('users.index');

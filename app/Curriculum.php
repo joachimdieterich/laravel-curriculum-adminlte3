@@ -189,7 +189,6 @@ class Curriculum extends Model
         } else {
             return false;
         }
-
     }
 
 }

@@ -20,8 +20,9 @@ class StatisticController extends Controller
      */
     public function index()
     {
-        if (request()->wantsJson())
-        {
+        abort_unless(is_admin(), 403);
+
+        if (request()->wantsJson()) {
             switch (request('chart')) {
                 case 'login':
                 case 'ssoLogin':

@@ -18,12 +18,7 @@ class TaskController extends Controller
     {
         abort_unless(\Gate::allows('task_access'), 403);
         $tasks = auth()->user()->tasks;
-        /*    Task::with(['subscriptions' => function($query) {
-                            $query->where('subscribable_type', 'App\User')
-                                  ->where('subscribable_id', auth()->user()->id);
-                        },  'subscriptions.statuses.model', 'subscriptions.subscribable', 'subscriptions.owner'])
-                        ->get();*/
-        //dd($tasks);
+
         return view('tasks.index')
                 ->with(compact('tasks'));
     }

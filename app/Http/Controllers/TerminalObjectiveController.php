@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Config;
+use App\Curriculum;
 use App\EnablingObjective;
 use App\TerminalObjective;
 use Illuminate\Http\Request;
@@ -24,6 +25,7 @@ class TerminalObjectiveController extends Controller
      */
     public function store(StoreTerminalObjectiveRequest $request)
     {
+        abort_unless(Curriculum::find(request('curriculum_id'))->isAccessible(), 403);
 
         $order_id = $this->getMaxOrderId(request('curriculum_id'), request('objective_type_id'));
         $terminalObjective = TerminalObjective::create(array_merge($request->all(), ['order_id' => $order_id]));
@@ -44,10 +46,12 @@ class TerminalObjectiveController extends Controller
      */
     public function show(TerminalObjective $terminalObjective)
     {
+        abort_unless($terminalObjective->isAccessible(), 403);
+
         $objective = TerminalObjective::where('id', $terminalObjective->id)
             ->with(['curriculum', 'curriculum.subject',
-                    'enablingObjectives',
-                    'referenceSubscriptions.siblings.referenceable', 'quoteSubscriptions.siblings.quotable'])
+                'enablingObjectives',
+                'referenceSubscriptions.siblings.referenceable', 'quoteSubscriptions.siblings.quotable'])
             ->get()->first();
 
         $repository = Config::where('key', 'repository')->get()->first();
@@ -67,12 +71,13 @@ class TerminalObjectiveController extends Controller
      */
     public function update(UpdateTerminalObjectiveRequest $request, TerminalObjective $terminalObjective)
     {
+        abort_unless($terminalObjective->isAccessible(), 403);
+
         //first get existing data to later adjust order_id
         $old_objective = TerminalObjective::find(request('id'));
 
         // update objective type
-        if ($request->has('objective_type_id'))
-        {
+        if ($request->has('objective_type_id')) {
             $order_id = $this->getMaxOrderId(request('curriculum_id'), request('objective_type_id'));
             $request->request->add(['order_id' => $order_id]);
             // if moved to another curriculum
@@ -110,6 +115,8 @@ class TerminalObjectiveController extends Controller
      */
     public function moveToCurriculum($old_objective, $request)
     {
+        abort_unless(Curriculum::find($old_objective->curriculum_id)->isAccessible(), 403);
+
         $this->resetOrderIds($old_objective->curriculum_id, $old_objective->objective_type_id, $old_objective->order_id);
         DB::table('enabling_objectives')
             ->where('terminal_objective_id', $old_objective->id)
@@ -125,7 +132,7 @@ class TerminalObjectiveController extends Controller
     public function destroy(TerminalObjective $terminalObjective)
     {
 
-        abort_unless(\Gate::allows('objective_delete'), 403);
+        abort_unless((\Gate::allows('objective_delete') and $terminalObjective->isAccessible()), 403);
 
         //set temp vars
         $curriculum_id      = $terminalObjective->curiculum_id;
@@ -206,15 +213,15 @@ class TerminalObjectiveController extends Controller
 
     public function referenceSubscriptionSiblings(TerminalObjective $terminalObjective)
     {
+        abort_unless($terminalObjective->isAccessible(), 403);
+
         $siblings = new Collection([]);
 
-        foreach ($terminalObjective->referenceSubscriptions as $referenceSubscription)
-        {
+        foreach ($terminalObjective->referenceSubscriptions as $referenceSubscription) {
 
-             $collection = ReferenceSubscription::where('reference_id', '=', $referenceSubscription->reference_id)
-                                ->where(function($query) use ($referenceSubscription, $terminalObjective)
-                                    {
-                                        return $query->where('reference_id', '=', $referenceSubscription->reference_id)
+            $collection = ReferenceSubscription::where('reference_id', '=', $referenceSubscription->reference_id)
+                ->where(function ($query) use ($referenceSubscription, $terminalObjective) {
+                    return $query->where('reference_id', '=', $referenceSubscription->reference_id)
                                                      ->where('referenceable_id', '!=', $terminalObjective->id);
                                     })
                                 ->with(['referenceable.curriculum.organizationType'])
@@ -237,14 +244,16 @@ class TerminalObjectiveController extends Controller
 
     public function quoteSubscriptions(TerminalObjective $terminalObjective)
     {
+        abort_unless($terminalObjective->isAccessible(), 403);
+
         $collection = QuoteSubscription::where('quotable_id', '=', $terminalObjective->id)
-                                        ->where('quotable_type', '=', 'App\TerminalObjective')
-                                        ->with(['quote.content.subscriptions.subscribable'])
-                                        ->get();
+            ->where('quotable_type', '=', 'App\TerminalObjective')
+            ->with(['quote.content.subscriptions.subscribable'])
+            ->get();
 
         if (count($collection) == 0) //end early
         {
-            return ['message'=> 'no subscriptions'];
+            return ['message' => 'no subscriptions'];
         }
 
         foreach ($collection as $quote_subscriptions)
@@ -268,22 +277,26 @@ class TerminalObjectiveController extends Controller
     protected function getMaxOrderId($curriculum_id, $objective_type_id)
     {
 
-        $order_id = DB::table('terminal_objectives')
-                                ->where('curriculum_id', $curriculum_id)
-                                ->where('objective_type_id', $objective_type_id)
-                                ->max('order_id');
+        abort_unless(Curriculum::find($curriculum_id)->isAccessible(), 403);
 
-        return (is_numeric($order_id)) ? $order_id + 1 : 0 ;
+        $order_id = DB::table('terminal_objectives')
+            ->where('curriculum_id', $curriculum_id)
+            ->where('objective_type_id', $objective_type_id)
+            ->max('order_id');
+
+        return (is_numeric($order_id)) ? $order_id + 1 : 0;
     }
 
     protected function resetOrderIds($curriculum_id, $objective_type_id, $order_id, $direction = 'down')
     {
+        abort_unless(Curriculum::find($curriculum_id)->isAccessible(), 403);
+
         return (new TerminalObjective)->where('curriculum_id', $curriculum_id)
-                                      ->where('objective_type_id', $objective_type_id)
-                                      ->where('order_id', '>', $order_id)
-                                      ->update([
-                                           'order_id'=> DB::raw('order_id'. ( ($direction === 'down') ? '-1' : '+1') )
-                                      ]);
+            ->where('objective_type_id', $objective_type_id)
+            ->where('order_id', '>', $order_id)
+            ->update([
+                'order_id' => DB::raw('order_id' . (($direction === 'down') ? '-1' : '+1'))
+            ]);
     }
     /**
      *

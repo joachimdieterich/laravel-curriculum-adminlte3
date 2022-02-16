@@ -29,4 +29,9 @@ class PlanSubscription extends Model
     {
         return $this->hasOne('App\User', 'id', 'owner_id');
     }
+
+    public function isAccessible()
+    {
+        return $this->plan->isAccessible();
+    }
 }

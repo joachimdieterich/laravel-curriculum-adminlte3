@@ -38,7 +38,7 @@
                 }
 
             },
-            loaderEvent(){
+            /*loaderEvent(){
                 axios.get('/absences?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id)
                     .then(response => {
                         this.subscriptions = response.data.message;
@@ -46,7 +46,7 @@
                     .catch(e => {
                         //this.errors = e.data.errors;
                     });
-            }
+            }*/
         },
 
         mounted(){

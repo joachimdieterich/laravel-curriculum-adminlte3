@@ -67,4 +67,17 @@ class Plan extends Model
             ->where('subscribable_type', 'App\Organization');
     }
 
+    public function isAccessible()
+    {
+        if (
+            auth()->user()->plans->contains('id', $this->id) // user enrolled
+            or ($this->owner_id == auth()->user()->id)            // or owner
+            or is_admin() // or admin
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

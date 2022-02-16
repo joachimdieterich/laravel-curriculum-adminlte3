@@ -131,17 +131,16 @@ class PlanController extends Controller
      */
     public function show(Plan $plan)
     {
-        abort_unless(\Gate::allows('plan_show'), 403);
-        abort_unless(($this->userPlans()->contains($plan) OR $plan->owner_id == auth()->user()->id) , 403);
-        // axios call?
-        if (request()->wantsJson()){
+        abort_unless((\Gate::allows('plan_show') and $plan->isAccessible()), 403);
+
+        if (request()->wantsJson()) {
             return [
                 'plan' => $plan
             ];
         }
 
         return view('plans.show')
-                ->with(compact('plan'));
+            ->with(compact('plan'));
     }
 
     /**
@@ -152,8 +151,7 @@ class PlanController extends Controller
      */
     public function edit(Plan $plan)
     {
-        abort_unless(\Gate::allows('plan_edit'), 403);
-        abort_unless(($this->userPlans()->contains($plan) OR $plan->owner_id == auth()->user()->id) , 403);
+        abort_unless((\Gate::allows('plan_edit') and $plan->isAccessible()), 403);
         $types = PlanType::all();
 
         return view('plans.edit')
@@ -170,8 +168,7 @@ class PlanController extends Controller
      */
     public function update(Request $request, Plan $plan)
     {
-        abort_unless(\Gate::allows('plan_edit'), 403);
-        abort_unless(($this->userPlans()->contains($plan) OR $plan->owner_id == auth()->user()->id) , 403);
+        abort_unless((\Gate::allows('plan_edit') and $plan->isAccessible()), 403);
         $clean_data = $this->validateRequest();
         if (isset($clean_data['type_id']))
         {
@@ -191,8 +188,7 @@ class PlanController extends Controller
      */
     public function destroy(Plan $plan)
     {
-        abort_unless(\Gate::allows('plan_delete'), 403);
-        abort_unless(($this->userPlans()->contains($plan) OR $plan->owner_id == auth()->user()->id) , 403);
+        abort_unless((\Gate::allows('plan_delete') and $plan->isAccessible()), 403);
 
         $plan->subscriptions()->delete();
         $plan->delete();

@@ -35,16 +35,20 @@ class EnablingObjectiveSubscriptionsController extends Controller
      */
     public function store(Request $request)
     {
-        $new_subscription= $this->validateRequest();
+        $new_subscription = $this->validateRequest();
+
+        $model = EnablingObjective::find($new_subscription['enabling_objective_id']);
+        abort_unless($model->isAccessible(), 403);
+
         $subscription = EnablingObjectiveSubscriptions::firstOrCreate([
             'enabling_objective_id' => $new_subscription['enabling_objective_id'],
-            'subscribable_type'     => $new_subscription['subscribable_type'],
-            'subscribable_id'       => $new_subscription['subscribable_id'],
-            'sharing_level_id'      => 1,
-            'visibility'            => true,
-            'owner_id'              => auth()->user()->id,	
+            'subscribable_type' => $new_subscription['subscribable_type'],
+            'subscribable_id' => $new_subscription['subscribable_id'],
+            'sharing_level_id' => 1,
+            'visibility' => true,
+            'owner_id' => auth()->user()->id,
         ]);
-        if (request()->wantsJson()){    
+        if (request()->wantsJson()) {
             return ['message' => 'ok'];
         }
     }
@@ -93,9 +97,9 @@ class EnablingObjectiveSubscriptionsController extends Controller
     {
         //
     }
-    
+
     protected function validateRequest()
-    {   
+    {
         return request()->validate([
             "enabling_objective_id" => 'sometimes|required',
             "subscribable_type" => 'required',

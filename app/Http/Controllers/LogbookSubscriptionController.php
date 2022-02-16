@@ -16,14 +16,18 @@ class LogbookSubscriptionController extends Controller
     public function index()
     {
         $input = $this->validateRequest();
+
         if (isset($input['subscribable_type']) AND isset($input['subscribable_id']))
         {
+            $model = $input['subscribable_type']::find($input['subscribable_id']);
+            abort_unless((\Gate::allows('logbook_access') and $model->isAccessible()), 403);
+
             $subscriptions = LogbookSubscription::where([
                 'subscribable_type' => $input['subscribable_type'],
-                'subscribable_id'   => $input['subscribable_id']
+                'subscribable_id' => $input['subscribable_id']
             ]);
 
-            if (request()->wantsJson()){
+            if (request()->wantsJson()) {
                 return ['subscriptions' => $subscriptions->with(['logbook'])->get()];
             }
         }
@@ -57,9 +61,8 @@ class LogbookSubscriptionController extends Controller
      */
     public function store(Request $request)
     {
-        abort_unless(\Gate::allows('logbook_create'), 403);
         $input = $this->validateRequest();
-        abort_unless(auth()->user()->id == Logbook::find($input['model_id'])->owner_id, 403);                // user owns logbook_subscription
+        abort_unless((\Gate::allows('logbook_create') and Logbook::find($input['model_id'])->isAccessible()), 403);
 
         $subscribe = LogbookSubscription::updateOrCreate([
             "logbook_id" => $input['model_id'],
@@ -85,9 +88,8 @@ class LogbookSubscriptionController extends Controller
      */
     public function update(Request $request, LogbookSubscription $logbookSubscription)
     {
-        abort_unless(\Gate::allows('logbook_edit'), 403);
         $input = $this->validateRequest();
-        abort_unless(auth()->user()->id == $logbookSubscription->owner_id, 403);                // user owns logbook_subscription
+        abort_unless((\Gate::allows('logbook_edit') and $logbookSubscription->isAccessible()), 403);
 
         $logbookSubscription->update([
             "editable" => isset($input['editable']) ? $input['editable'] : false,
@@ -108,8 +110,8 @@ class LogbookSubscriptionController extends Controller
      */
     public function destroy(LogbookSubscription $logbookSubscription)
     {
-        abort_unless(\Gate::allows('logbook_delete'), 403);
-        abort_unless(auth()->user()->id == $logbookSubscription->owner_id, 403);                // user owns logbook_subscription
+
+        abort_unless((\Gate::allows('logbook_delete') and $logbookSubscription->isAccessible()), 403);
         if (request()->wantsJson()) {
             return ['message' => $logbookSubscription->delete()];
         } else {

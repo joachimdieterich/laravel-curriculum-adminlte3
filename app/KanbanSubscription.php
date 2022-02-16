@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class KanbanSubscription extends Model
 {
     protected $fillable = [
-        'subscribable_type', 
-        'subscribable_id', 
-        'kanban_id', 
-        'editable', 
+        'subscribable_type',
+        'subscribable_id',
+        'kanban_id',
+        'editable',
         'owner_id'];
     /**
      * Get the subscriber model.
@@ -19,8 +19,14 @@ class KanbanSubscription extends Model
     {
         return $this->morphTo();
     }
-    
-    public function kanban(){
+
+    public function kanban()
+    {
         return $this->belongsTo('App\Kanban', 'kanban_id', 'id');
+    }
+
+    public function isAccessible()
+    {
+        return $this->kanban->isAccessible();
     }
 }

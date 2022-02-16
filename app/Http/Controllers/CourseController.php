@@ -21,20 +21,17 @@ class CourseController extends Controller
 
     public function show(Course $course)
     {
-        abort_unless(\Gate::allows('curriculum_show'), 403);        //check if user is enrolled or admin -> else 403
+        abort_unless((\Gate::allows('curriculum_show') and $course->isAccessible()), 403);        //check if user is enrolled or admin -> else 403
 
-        abort_unless((auth()->user()->curricula()->contains('id', $course->curriculum_id) // user enrolled
-                  OR (auth()->user()->currentRole()->first()->id == 1)), 403);                // or admin
-
-        LogController::set(get_class($this).'@'.__FUNCTION__, $course->curriculum_id);
+        LogController::set(get_class($this) . '@' . __FUNCTION__, $course->curriculum_id);
 
         $curriculum = Curriculum::with([
             'terminalObjectives',
-                        'terminalObjectives.media',
-                        'terminalObjectives.mediaSubscriptions',
-                        'terminalObjectives.achievements' => function($query) {
-                            $query->where('user_id', auth()->user()->id);
-                        },
+            'terminalObjectives.media',
+            'terminalObjectives.mediaSubscriptions',
+            'terminalObjectives.achievements' => function ($query) {
+                $query->where('user_id', auth()->user()->id);
+            },
                         'terminalObjectives.enablingObjectives',
                         'terminalObjectives.enablingObjectives.media',
                         'terminalObjectives.enablingObjectives.mediaSubscriptions',

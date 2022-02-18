@@ -30,7 +30,6 @@
                 </td>
             </tr>
         </table>
-        <subscribe-modal></subscribe-modal>
     </div>
 </template>
 

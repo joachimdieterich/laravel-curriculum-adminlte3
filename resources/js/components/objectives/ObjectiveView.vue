@@ -284,7 +284,8 @@
                                      :curriculum="objective.curriculum"></eventmanagement>
                 </div>
 
-                <div class="tab-pane pt-0"
+                <div v-can="'lms_access'"
+                     class="tab-pane pt-0"
                      :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_lms_'+objective.id)"
                      id="lms">
                     <lms ref="LmsPlugin"
@@ -292,6 +293,7 @@
                          :referenceable_id="objective.id">
                     </lms>
                     <lms-modal></lms-modal>
+                    <subscribe-modal></subscribe-modal>
                 </div>
             </div>
         </div>

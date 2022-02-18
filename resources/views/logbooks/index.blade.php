@@ -52,27 +52,27 @@
                 columns: [
                     { data: 'check'},
                     { data: 'title' },
-                    { data: 'action' }
+                    {data: 'action'}
                 ],
                 columnDefs: [
-                    { "visible": false, "targets": 0 },
+                    {"visible": false, "targets": 0},
                     {
                         orderable: false,
                         searchable: false,
-                        targets: - 1
+                        targets: -1
                     }
                 ],
-                bStateSave: true,
+                /*bStateSave: true,
                 fnStateSave: function (oSettings, oData) {
                     localStorage.setItem( 'DataTables', JSON.stringify(oData) );
                 },
                 fnStateLoad: function (oSettings) {
                     return JSON.parse( localStorage.getItem('DataTables') );
-                },
+                },*/
                 buttons: dtButtons
             });
-            table.on( 'select', function ( e, dt, type, indexes ) { //on select event
-                window.location.href = "/logbooks/" + table.row({ selected: true }).data().id ;
+            table.on('select', function (e, dt, type, indexes) { //on select event
+                window.location.href = "/logbooks/" + table.row({selected: true}).data().id;
             });
         })
 

@@ -253,25 +253,25 @@ $( function () {
     var table = $('#users-datatable').DataTable({
         ajax: "{{ url('users/list') }}",
         columns: [
-                 { data: 'check'},
-                 { data: 'username' },
-                 { data: 'firstname' },
-                 { data: 'lastname' },
-                 { data: 'email' },
-                 { data: 'deleted_at', "defaultContent": null},
-                 { data: 'action' }
-                ],
-        bStateSave: true,
-        fnStateSave: function (oSettings, oData) {
-            localStorage.setItem( 'DataTables', JSON.stringify(oData) );
-        },
-        fnStateLoad: function (oSettings) {
-            return JSON.parse( localStorage.getItem('DataTables') );
-        },
+            {data: 'check'},
+            {data: 'username'},
+            {data: 'firstname'},
+            {data: 'lastname'},
+            {data: 'email'},
+            {data: 'deleted_at', "defaultContent": null},
+            {data: 'action'}
+        ],
+        /* bStateSave: true,
+         fnStateSave: function (oSettings, oData) {
+             localStorage.setItem( 'DataTables', JSON.stringify(oData) );
+         },
+         fnStateLoad: function (oSettings) {
+             return JSON.parse( localStorage.getItem('DataTables') );
+         },*/
         buttons: dtButtons
     });
 
- });
+});
 </script>
 
 @endsection

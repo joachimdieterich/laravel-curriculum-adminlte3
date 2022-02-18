@@ -98,29 +98,29 @@ $(document).ready( function () {
         ajax: "{{ url('groups/list') }}",
         columns:
             [
-                 { data: 'check'},
-                 { data: 'title' },
-                 { data: 'grade' },
-                 { data: 'period' },
-                 { data: 'organization' },
-                 { data: 'action' }
+                {data: 'check'},
+                {data: 'title'},
+                {data: 'grade'},
+                {data: 'period'},
+                {data: 'organization'},
+                {data: 'action'}
             ],
-            bStateSave: true,
-            fnStateSave: function (oSettings, oData) {
-                localStorage.setItem( 'DataTables', JSON.stringify(oData) );
-            },
-            fnStateLoad: function (oSettings) {
-                return JSON.parse( localStorage.getItem('DataTables') );
-            },
+        /*bStateSave: true,
+        fnStateSave: function (oSettings, oData) {
+            localStorage.setItem( 'DataTables', JSON.stringify(oData) );
+        },
+        fnStateLoad: function (oSettings) {
+            return JSON.parse( localStorage.getItem('DataTables') );
+        },*/
 
         buttons: dtButtons,
 
     });
 });
 
-function enroleToCurricula(){
+function enroleToCurricula() {
     var ids = getDatatablesIds('#groups-datatable');
-    sendRequest('POST', '/curricula/enrol', ids, { enrollment_list: generateProcessList(ids), _method: 'POST'});
+    sendRequest('POST', '/curricula/enrol', ids, {enrollment_list: generateProcessList(ids), _method: 'POST'});
 
 }
 

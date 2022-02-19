@@ -78,29 +78,31 @@
                  { data: 'external_begin' },
                  { data: 'external_end' },
                  { data: 'organization_type' },
-                 { data: 'action' }
-                ],
-        columnDefs: [
-            { "visible": false, "targets": 0 },
-            {
-                orderable: false,
-                searchable: false,
-                targets: - 1
-            }
+            {data: 'action'}
         ],
-        bStateSave: true,
-        fnStateSave: function (oSettings, oData) {
-            localStorage.setItem( 'DataTables', JSON.stringify(oData) );
-        },
-        fnStateLoad: function (oSettings) {
-            return JSON.parse( localStorage.getItem('DataTables') );
-        },
-        buttons: dtButtons
-    });
-    table.on( 'select', function ( e, dt, type, indexes ) { //on select event
-        window.location.href = "/grades/" + table.row({ selected: true }).data().id ;
-    });
-})
+     columnDefs: [
+         {"visible": false, "targets": 0},
+         {
+             orderable: false,
+             searchable: false,
+             targets: -1
+         }
+     ],
+     select: false,
+     bStateSave: true,
+     fnStateSave: function (oSettings, oData) {
+         localStorage.setItem('DataTables', JSON.stringify(oData));
+     },
+     fnStateLoad: function (oSettings) {
+         return JSON.parse(localStorage.getItem('DataTables'));
+     },
+     buttons: dtButtons
+ });
+        table.on('click', 'tr', function () {
+            window.location.href = "/grades/" + table.row(this).id()
+        });
+
+    })
 
 </script>
 @endsection

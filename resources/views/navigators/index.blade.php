@@ -42,24 +42,26 @@ $(document).ready( function () {
     var table = $('#navigators-datatable').DataTable({
         ajax: "{{ url('navigators/list') }}",
         columns: [
-                 { data: 'check'},
-                 { data: 'title' },
-                 { data: 'organization' },
-                 { data: 'action' }
-                ],
+            {data: 'check'},
+            {data: 'title'},
+            {data: 'organization'},
+            {data: 'action'}
+        ],
+        select: false,
         bStateSave: true,
         fnStateSave: function (oSettings, oData) {
-            localStorage.setItem( 'DataTables', JSON.stringify(oData) );
+            localStorage.setItem('DataTables', JSON.stringify(oData));
         },
         fnStateLoad: function (oSettings) {
-            return JSON.parse( localStorage.getItem('DataTables') );
+            return JSON.parse(localStorage.getItem('DataTables'));
         },
         buttons: dtButtons
     });
-    table.on( 'select', function ( e, dt, type, indexes ) { //on select event
-        window.location.href = "/navigators/" + table.row({ selected: true }).data().id ;
+
+    table.on('click', 'tr', function () {
+        window.location.href = "/navigators/" + table.row(this).id()
     });
- });
+});
 </script>
 
 @endsection

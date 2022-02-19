@@ -43,28 +43,29 @@
                  { data: 'external_id' },
                  { data: 'state_id' },
                  { data: 'country_id' },
-                 { data: 'action' }
-              ],
-        columnDefs: [
-            { "visible": false, "targets": 0 },
-            {
-                orderable: false,
-                searchable: false,
-                targets: - 1
-            }
+            {data: 'action'}
         ],
-        bStateSave: true,
-        fnStateSave: function (oSettings, oData) {
-           localStorage.setItem( 'DataTables', JSON.stringify(oData) );
-        },
-        fnStateLoad: function (oSettings) {
-           return JSON.parse( localStorage.getItem('DataTables') );
-        },
-        });
-        table.on( 'select', function ( e, dt, type, indexes ) { //on select event
-            window.location.href = "/organizationtypes/" + table.row({ selected: true }).data().id ;
-        });
+       columnDefs: [
+           {"visible": false, "targets": 0},
+           {
+               orderable: false,
+               searchable: false,
+               targets: -1
+           }
+       ],
+       select: false,
+       bStateSave: true,
+       fnStateSave: function (oSettings, oData) {
+           localStorage.setItem('DataTables', JSON.stringify(oData));
+       },
+       fnStateLoad: function (oSettings) {
+           return JSON.parse(localStorage.getItem('DataTables'));
+       },
+   });
+       table.on('click', 'tr', function () {
+           window.location.href = "/organizationtypes/" + table.row(this).id()
+       });
 
-     });
+   });
 </script>
 @endsection

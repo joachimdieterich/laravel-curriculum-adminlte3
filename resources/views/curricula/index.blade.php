@@ -77,7 +77,6 @@ $(document).ready( function () {
 
     });
 
-
     table.on('click', 'tr', function () {
         window.location.href = "/curricula/" + table.row(this).id()
     });

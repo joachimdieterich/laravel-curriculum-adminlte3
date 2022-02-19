@@ -38,29 +38,31 @@
             columns: [
                      { data: 'check'},
                      { data: 'title' },
-                     { data: 'action' }
-                    ],
+                {data: 'action'}
+            ],
             columnDefs: [
-                { "visible": false, "targets": 0 },
+                {"visible": false, "targets": 0},
                 {
                     orderable: false,
                     searchable: false,
-                    targets: - 1
+                    targets: -1
                 }
             ],
+            select: false,
             bStateSave: true,
             fnStateSave: function (oSettings, oData) {
-                localStorage.setItem( 'DataTables', JSON.stringify(oData) );
+                localStorage.setItem('DataTables', JSON.stringify(oData));
             },
             fnStateLoad: function (oSettings) {
-                return JSON.parse( localStorage.getItem('DataTables') );
+                return JSON.parse(localStorage.getItem('DataTables'));
             },
             buttons: dtButtons
+        });
+        table.on('click', 'tr', function () {
+            window.location.href = "/permissions/" + table.row(this).id()
+        });
+
     });
-    table.on( 'select', function ( e, dt, type, indexes ) { //on select event
-        window.location.href = "/permissions/" + table.row({ selected: true }).data().id ;
-    });
-});
 
 
 </script>

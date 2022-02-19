@@ -105,13 +105,13 @@ $(document).ready( function () {
                 {data: 'organization'},
                 {data: 'action'}
             ],
-        /*bStateSave: true,
+        bStateSave: true,
         fnStateSave: function (oSettings, oData) {
-            localStorage.setItem( 'DataTables', JSON.stringify(oData) );
+            localStorage.setItem('DataTables', JSON.stringify(oData));
         },
         fnStateLoad: function (oSettings) {
-            return JSON.parse( localStorage.getItem('DataTables') );
-        },*/
+            return JSON.parse(localStorage.getItem('DataTables'));
+        },
 
         buttons: dtButtons,
 

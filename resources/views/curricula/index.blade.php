@@ -66,17 +66,20 @@ $(document).ready( function () {
                 targets: -1
             }
         ],
-        /*bStateSave: true,
+        select: false,
+        bStateSave: true,
         fnStateSave: function (oSettings, oData) {
-            localStorage.setItem( 'DataTables', JSON.stringify(oData) );
+            localStorage.setItem('DataTables', JSON.stringify(oData));
         },
         fnStateLoad: function (oSettings) {
-            return JSON.parse( localStorage.getItem('DataTables') );
-        },*/
+            return JSON.parse(localStorage.getItem('DataTables'));
+        },
+
     });
-    //table.rows().deselect();
-    table.on('select', function (e, dt, type, indexes) { //on select event
-        window.location.href = "/curricula/" + table.row({selected: true}).data().id;
+
+
+    table.on('click', 'tr', function () {
+        window.location.href = "/curricula/" + table.row(this).id()
     });
 
 

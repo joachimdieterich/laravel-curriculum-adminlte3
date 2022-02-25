@@ -59,7 +59,7 @@ class LoginController extends Controller
         {
             LogController::set('login');
             LogController::set('activeOrg', auth()->user()->current_organization_id);
-            return redirect()->route('home');
+            return redirect()->intended('home');
         } else {
             return redirect()->route('login')
                 ->with('error','Email-Address And Password Are Wrong.');

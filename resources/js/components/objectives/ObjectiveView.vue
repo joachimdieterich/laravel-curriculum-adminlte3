@@ -325,7 +325,7 @@
                 quote_subscriptions: [],
                 quote_curricula_list: [],
                 categories: [],
-                help: false,
+                help: true,
                 setting: {
                     'last': null
                 },

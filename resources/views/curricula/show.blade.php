@@ -159,30 +159,6 @@ $(document).ready( function () {
         app.__vue__.$refs.curriculumView.externalEvent(false);
     });
 
-
-
-   /* $(window).on("scroll", function(table) {
-        if (!isElementInViewport($("#users-datatable")) && (localStorage.getItem('#users-datatable-position') === 'content')){
-            localStorage.setItem('#users-datatable-position', 'menu');
-            $("#users-datatable_wrapper").appendTo("#menu_top_placeholder");
-            $("#menu_top_placeholder").css({'background-color': '#ecf0f5',  'webkit-transform':'translate3d(0,0,0)'});
-            $("#curriculum_view_content").css({'padding-top': '100px'});
-            $('.dataTables_length').hide();
-            $('.dataTables_filter').hide();
-            $('.dataTables_info').hide();
-        } else {
-            if (isElementInViewport($("#content_top_placeholder"))){
-                localStorage.setItem('#users-datatable-position', 'content');
-                $("#users-datatable_wrapper").appendTo("#content_top_placeholder");
-                $("#menu_top_placeholder").css({'background-color': 'transparent', 'webkit-transform':'translate3d(0,0,0)'});
-                $("#curriculum_view_content").css({'padding-top': '0px'});
-                $('.dataTables_length').show();
-                $('.dataTables_filter').show();
-                $('.dataTables_info').show();
-            }
-        }
-    });*/
-
  });
 
 </script>

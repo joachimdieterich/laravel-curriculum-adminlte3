@@ -27,4 +27,9 @@ class LogbookSubscription extends Model
     {
         return $this->hasOne('App\User', 'id', 'owner_id');
     }
+
+    public function isAccessible()
+    {
+        return $this->logbook->isAccessible();
+    }
 }

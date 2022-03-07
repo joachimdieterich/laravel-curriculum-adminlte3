@@ -159,7 +159,7 @@ $sidebar-light-header-color: $gray-800 !default;
 // --------------------------------------------------------
 $sidebar-mini-width: ($nav-link-padding-x + $sidebar-padding-x + .8rem) * 2 !default;
 $sidebar-nav-icon-width: $sidebar-mini-width - (($sidebar-padding-x + $nav-link-padding-x) * 2) !default;
-$sidebar-user-image-width: $sidebar-nav-icon-width + ($nav-link-padding-x / 2) !default;
+$sidebar-user-image-width: $sidebar-nav-icon-width + ($nav-link-padding-x * 0.5) !default;
 
 // CONTROL SIDEBAR
 // --------------------------------------------------------

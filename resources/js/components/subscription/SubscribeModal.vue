@@ -29,43 +29,49 @@
 
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                 <ul class="nav nav-pills">
-                  <!-- User -->
-                  <li class="nav-item" >
-                      <a class="nav-link active show" href="#user_subscription" data-toggle="tab">
-                          <i class="fa fa-user mr-3"></i>{{ trans('global.user.title') }}
-                      </a>
-                  </li>
-                  <!-- Group -->
-                  <li class="nav-item" >
-                      <a class="nav-link" href="#group_subscription" data-toggle="tab">
-                          <i class="fa fa-users mr-3"></i>{{ trans('global.group.title') }}
-                      </a>
-                  </li>
-                  <!-- Organization -->
-                  <li class="nav-item" >
-                      <a class="nav-link" href="#organization_subscription" data-toggle="tab" >
-                          <i class="fa fa-university mr-3"></i>{{ trans('global.organization.title') }}
-                      </a>
-                  </li>
-                  <!-- Global -->
-<!--                  <li class="nav-item" >
-                      <a class="nav-link" href="#global_subscription" data-toggle="tab" >
-                          <i class="sc-icon-dd icon-curriculum text-secondary mr-3"></i>{{ trans('global.all') }}
-                      </a>
-                  </li>-->
+                    <!-- User -->
+                    <li v-if="shareWithUsers"
+                        class="nav-item">
+                        <a class="nav-link active show" href="#user_subscription" data-toggle="tab">
+                            <i class="fa fa-user mr-3"></i>{{ trans('global.user.title') }}
+                        </a>
+                    </li>
+                    <!-- Group -->
+                    <li v-if="shareWithGroups"
+                        class="nav-item">
+                        <a class="nav-link" href="#group_subscription" data-toggle="tab">
+                            <i class="fa fa-users mr-3"></i>{{ trans('global.group.title') }}
+                        </a>
+                    </li>
+                    <!-- Organization -->
+                    <li v-if="shareWithOrganizations"
+                        class="nav-item">
+                        <a class="nav-link" href="#organization_subscription" data-toggle="tab">
+                            <i class="fa fa-university mr-3"></i>{{ trans('global.organization.title') }}
+                        </a>
+                    </li>
+                    <!-- Global -->
+                    <!--                  <li class="nav-item" >
+                                          <a class="nav-link" href="#global_subscription" data-toggle="tab" >
+                                              <i class="sc-icon-dd icon-curriculum text-secondary mr-3"></i>{{ trans('global.all') }}
+                                          </a>
+                                      </li>-->
                 </ul>
 
                 <div class="tab-content pt-2">
                     <!-- User Tab -->
-                    <div class="tab-pane active show" id="user_subscription" >
-                         <div class="form-group pt-2">
+                    <div v-if="shareWithUsers"
+                         class="tab-pane active show" id="user_subscription">
+                        <div class="form-group pt-2">
                             <select name="users"
                                     id="users"
                                     class="form-control select2 "
                                     style="width:100%;"
-                                    >
-                                 <option></option>
-                                 <option v-for="(item,index) in subscribers.users" v-bind:value="item.id">{{ item.firstname }} {{ item.lastname }}</option>
+                            >
+                                <option></option>
+                                <option v-for="(item,index) in subscribers.users" v-bind:value="item.id">
+                                    {{ item.firstname }} {{ item.lastname }}
+                                </option>
                             </select>
                         </div>
                         <subscribers
@@ -78,15 +84,18 @@
 
 
                     <!-- Group Tab -->
-                    <div class="tab-pane" id="group_subscription">
-                         <div class="form-group pt-2 ">
+                    <div v-if="shareWithGroups"
+                         class="tab-pane" id="group_subscription">
+                        <div class="form-group pt-2 ">
                             <select name="groups"
                                     id="groups"
                                     class="form-control select2 "
                                     style="width:100%;"
-                                    >
-                                 <option></option>
-                                 <option v-for="(item,index) in subscribers.groups" v-bind:value="item.group_id">{{ item.title }}</option>
+                            >
+                                <option></option>
+                                <option v-for="(item,index) in subscribers.groups" v-bind:value="item.group_id">
+                                    {{ item.title }}
+                                </option>
                             </select>
                         </div>
                         <subscribers
@@ -97,15 +106,18 @@
                     </div>
 
                     <!-- Organization Tab -->
-                    <div class="tab-pane" id="organization_subscription" >
-                         <div class="form-group pt-2">
+                    <div v-if="shareWithOrganizations"
+                         class="tab-pane" id="organization_subscription">
+                        <div class="form-group pt-2">
                             <select name="organizations"
                                     id="organizations"
                                     class="form-control select2 "
                                     style="width:100%;"
-                                    >
-                                 <option></option>
-                                 <option v-for="(item,index) in subscribers.organizations" v-bind:value="item.organization_id">{{ item.title }}</option>
+                            >
+                                <option></option>
+                                <option v-for="(item,index) in subscribers.organizations"
+                                        v-bind:value="item.organization_id">{{ item.title }}
+                                </option>
                             </select>
                         </div>
                         <subscribers
@@ -147,13 +159,28 @@
 
                 subscribers: Object,
                 hover: false,
+
+                shareWithUsers: true,
+                shareWithGroups: true,
+                shareWithOrganizations: true,
+
             };
         },
         methods: {
             beforeOpen(event) {
+                this.resetComponent();
+                this.modelUrl = event.params.modelUrl;
+                this.modelId = event.params.modelId;
+                if (event.params.shareWithUsers == false) {
+                    this.shareWithUsers = event.params.shareWithUsers;
+                }
+                if (event.params.shareWithGroups == false) {
+                    this.shareWithGroups = event.params.shareWithGroups;
+                }
+                if (event.params.shareWithOrganizations == false) {
+                    this.shareWithOrganizations = event.params.shareWithOrganizations;
+                }
 
-                this.modelUrl =  event.params.modelUrl;
-                this.modelId  =  event.params.modelId;
                 this.loadSubscribers();
             },
             beforeClose() {
@@ -196,15 +223,29 @@
             async subscribe(subscribable_type, subscribable_id, model_id) {
                 try {
                     this.subscribers.subscriptions = (await axios.post('/' + this.modelUrl + 'Subscriptions', {
-                        'model_id':          model_id,
+                        'model_id': model_id,
                         'subscribable_type': subscribable_type,
-                        'subscribable_id':   subscribable_id
+                        'subscribable_id': subscribable_id
                     })).data.subscription;
 
-                } catch(error) {
+                } catch (error) {
                     //
                 }
+            },
+            resetComponent() {
+                this.modelUrl = null;
+                this.modelId = null;
+                this.subscribable_id = null;
+                this.subscribable_type = null;
+
+                this.subscribers = Object;
+                this.hover = false;
+
+                this.shareWithUsers = true;
+                this.shareWithGroups = true;
+                this.shareWithOrganizations = true;
             }
+
 
         },
         components: {

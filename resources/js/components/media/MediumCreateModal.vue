@@ -260,17 +260,21 @@
                 method: 'post',
                 requestUrl: '/mediaSubscriptions',
                 tab: 'media',
-                target:'medium_id',
+                target: 'medium_id',
+                callbackFunction: null,
+                callbackParentComponent: null,
+                callbackComponent: null,
+
                 form: new Form({
                     'path': '',
                     'subscribable_type': null,
                     'subscribable_id': null,
-                    'repository':null,
+                    'repository': null,
                     'public': 0
                 }),
-                endpoints: {},
-                endpoint:'',
-                link:'https://',
+                endpoints: {},
+                endpoint: '',
+                link: 'https://',
                 uploadError: null,
 
                 currentStatus: null,
@@ -279,7 +283,7 @@
                 file: '',
                 files: [],
                 selectedFiles: [],
-                accept:'',
+                accept: '',
                 datatable: null,
                 //pagination
                 current_page: 1,
@@ -343,17 +347,26 @@
                 if (event.params.subscribable_type){
                     this.form.subscribable_type = event.params.subscribable_type;
                 }
-                if (event.params.subscribable_id){
+                if (event.params.subscribable_id) {
                     this.form.subscribable_id = event.params.subscribable_id;
                 }
-                if (event.params.target){
+                if (event.params.target) {
                     this.form.target = event.params.target;
                 }
-                if (event.params.accept){
+                if (event.params.accept) {
                     this.accept = event.params.accept;
                 }
-                if (event.params.public){
+                if (event.params.public) {
                     this.form.public = event.params.public;
+                }
+                if (event.params.callbackComponent) {
+                    this.callbackComponent = event.params.callbackComponent;
+                }
+                if (event.params.callbackParentComponent) {
+                    this.callbackParentComponent = event.params.callbackParentComponent;
+                }
+                if (event.params.callbackFunction) {
+                    this.callbackFunction = event.params.callbackFunction;
                 }
             },
             setTab(tab){
@@ -365,8 +378,18 @@
             beforeClose() {
             },
             saveToForm() {
-                $('#'+this.target).val(this.selectedFiles);
-                $('#'+this.target).trigger("change");
+                if (this.callbackComponent) {
+                    if (this.callbackParentComponent) {
+                        app.__vue__.$refs[this.callbackParentComponent].$refs[this.callbackComponent][0].reload();
+                    } else {
+                        app.__vue__.$refs[this.callbackComponent][0][this.callbackFunction]();
+                    }
+                } else {
+                    $('#' + this.target).val(this.selectedFiles);
+                    $('#' + this.target).trigger("change");
+                }
+
+
                 this.$modal.hide('medium-create-modal');
             },
             close(){

@@ -94,7 +94,8 @@ class KanbanStatusController extends Controller
         $this->validate(request(), [
             'columns' => ['required', 'array']
         ]);
-
+        $kanban_id = $request->columns[0]['kanban_id'];
+        abort_unless((\Gate::allows('kanban_show') and Kanban::find($kanban_id)->isAccessible()), 403);
 
         foreach ($request->columns as $order_id => $status) {
             if ($status['order_id'] !== $order_id) {
@@ -108,11 +109,12 @@ class KanbanStatusController extends Controller
 
         $kanban_id = $request->columns[0]['kanban_id'];
         if (request()->wantsJson()) {
+
             return ['message' => Kanban::where('id', $kanban_id)->with(['statuses', 'statuses.items' => function ($query) use ($kanban_id) {
                 $query->where('kanban_id', $kanban_id)->with(['owner', 'taskSubscription.task.subscriptions' => function ($query) {
                     $query->where('subscribable_id', auth()->user()->id)
                         ->where('subscribable_type', 'App\User');
-                }, 'mediaSubscriptions', 'media'])->orderBy('order_id');
+                }, 'mediaSubscriptions.medium'])->orderBy('order_id');
             }, 'statuses.items.subscribable'])->get()->first()->statuses];
         }
 

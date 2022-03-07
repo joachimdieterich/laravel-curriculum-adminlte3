@@ -16,8 +16,7 @@ class KanbanItem extends Model
 
     public function kanban()
     {
-        return $this->belongsTo('App\Kanban', 'id', 'kanban_id');
-
+        return $this->belongsTo('App\Kanban', 'kanban_id', 'id');
     }
 
     public function subscribable()

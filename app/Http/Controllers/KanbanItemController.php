@@ -43,18 +43,18 @@ class KanbanItemController extends Controller
         $this->validate(request(), [
             'columns' => ['required', 'array']
         ]);
+        $kanban_id = $request->columns[0]['id'];
+        abort_unless((\Gate::allows('kanban_show') and Kanban::find($kanban_id)->isAccessible()), 403);
 
         foreach ($request->columns as $kanban_status) {
             foreach ($kanban_status['items'] as $order_id => $item) {
-                if ($item['kanban_status_id'] !== $kanban_status['id'] || $item['order_id'] !== $order_id)
-                {
-                    if ($item['kanban_status_id'] !== $kanban_status['id'])
-                    {
+                if ($item['kanban_status_id'] !== $kanban_status['id'] || $item['order_id'] !== $order_id) {
+                    if ($item['kanban_status_id'] !== $kanban_status['id']) {
                         KanbanItem::where('kanban_status_id', '=', $item['kanban_status_id'])
-                                  ->where('order_id', ">", $item['order_id'])->decrement('order_id');
+                            ->where('order_id', ">", $item['order_id'])->decrement('order_id');
                     }
                     KanbanItem::where('kanban_status_id', '=', $kanban_status['id'])
-                                  ->where('order_id', ">=", $order_id)->increment('order_id');
+                        ->where('order_id', ">=", $order_id)->increment('order_id');
 
                     //update  set order_id +1 where $kanban_status['id'] and order_id >= $order_id
                     KanbanItem::find($item['id'])
@@ -63,17 +63,16 @@ class KanbanItemController extends Controller
             }
         }
 
-        $kanban_id = $request->columns[0]['id'];
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         if (request()->wantsJson()){
             return ['message' => Kanban::with(['statuses', 'statuses.items' => function($query) use ($kanban_id) {
-                    $query->where('kanban_id', $kanban_id)->with(['owner', 'taskSubscription.task.subscriptions' => function($query) {
-                         $query->where('subscribable_id', auth()->user()->id)
-                               ->where('subscribable_type', 'App\User');
-                 }, 'mediaSubscriptions', 'media'])->orderBy('order_id');
-                 }, 'statuses.items.subscribable'])->where('id', $kanban_id)->get()->first()->statuses];
+                $query->where('kanban_id', $kanban_id)->with(['owner', 'taskSubscription.task.subscriptions' => function ($query) {
+                    $query->where('subscribable_id', auth()->user()->id)
+                        ->where('subscribable_type', 'App\User');
+                }, 'mediaSubscriptions.medium'])->orderBy('order_id');
+            }, 'statuses.items.subscribable'])->where('id', $kanban_id)->get()->first()->statuses];
         }
 
     }
@@ -86,6 +85,9 @@ class KanbanItemController extends Controller
     public function show(KanbanItem $kanbanItem)
     {
         abort_unless((\Gate::allows('kanban_show') and $kanbanItem->isAccessible()), 403);
+        if (request()->wantsJson()) {
+            return $this->getItemWithRelations($kanbanItem);
+        }
         return redirect()->action('KanbanController@show', ['kanban' => $kanbanItem->kanban_id]);
     }
 
@@ -124,11 +126,7 @@ class KanbanItemController extends Controller
 
         // axios call?
         if (request()->wantsJson()){
-            return ['message' => KanbanItem::with(
-                        ['owner', 'mediaSubscriptions', 'media', 'taskSubscription.task.subscriptions' => function($query) {
-                                $query->where('subscribable_id', auth()->user()->id)
-                                      ->where('subscribable_type', 'App\User');
-                        }])->where('id', $kanbanItem->id)->get()->first()];
+            return $this->getItemWithRelations($kanbanItem);
         }
     }
 
@@ -152,11 +150,24 @@ class KanbanItemController extends Controller
     {
 
         return request()->validate([
-            'title'             => 'sometimes|required',
-            'description'       => 'sometimes',
-            'order_id'          => 'sometimes|required|integer',
-            'kanban_id'         => 'sometimes|required|integer',
-            'kanban_status_id'  => 'sometimes|required|integer',
-            ]);
+            'title' => 'sometimes|required',
+            'description' => 'sometimes',
+            'order_id' => 'sometimes|required|integer',
+            'kanban_id' => 'sometimes|required|integer',
+            'kanban_status_id' => 'sometimes|required|integer',
+        ]);
+    }
+
+    /**
+     * @param KanbanItem $kanbanItem
+     * @return array
+     */
+    private function getItemWithRelations(KanbanItem $kanbanItem): array
+    {
+        return ['message' => $kanbanItem->with(
+            ['owner', 'mediaSubscriptions.medium', 'taskSubscription.task.subscriptions' => function ($query) {
+                $query->where('subscribable_id', auth()->user()->id)
+                    ->where('subscribable_type', 'App\User');
+            }, 'subscribable'])->where('id', $kanbanItem->id)->get()->first()];
     }
 }

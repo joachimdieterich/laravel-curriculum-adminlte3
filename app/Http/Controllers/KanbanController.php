@@ -136,8 +136,9 @@ class KanbanController extends Controller
             $query->where('kanban_id', $kanban->id)->with(['owner', 'taskSubscription.task.subscriptions' => function ($query) {
                 $query->where('subscribable_id', auth()->user()->id)
                     ->where('subscribable_type', 'App\User');
-            }, 'mediaSubscriptions', 'media'])->orderBy('order_id');
-        }, 'statuses.items.subscribable'])->where('id', $kanban->id)->get()->first();
+            }, 'mediaSubscriptions.medium'])->orderBy('order_id');
+        }, 'statuses.items.subscriptions'
+        ])->where('id', $kanban->id)->get()->first();
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
@@ -189,7 +190,6 @@ class KanbanController extends Controller
 
     protected function validateRequest()
     {
-
         return request()->validate([
             'title'         => 'sometimes|required',
             'description'   => 'sometimes',

@@ -42,7 +42,7 @@ class KanbanItemSubscriptionController extends Controller
     {
         $input = $this->validateRequest();
         $kanbanItem = KanbanItem::find($input['model_id']);
-        abort_unless((\Gate::allows('kanban_create') and $kanbanItem->isAccessible), 403);
+        abort_unless((\Gate::allows('kanban_create') and $kanbanItem->isAccessible()), 403);
 
         $subscribe = KanbanItemSubscription::updateOrCreate([
             "kanban_item_id" => $input['model_id'],

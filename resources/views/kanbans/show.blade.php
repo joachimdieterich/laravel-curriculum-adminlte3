@@ -31,36 +31,37 @@
                 <div class="col-lg-12">
                     <button id="add-kanban-entry"
                             class="btn btn-success"
-                    onclick="app.__vue__.$modal.show('kanban-entry-modal',  {'kanban_id': {{ $kanban->id }} });">
-                   {{ trans('global.kanbanEntry.create') }}
-                </button>
+                            onclick="app.__vue__.$modal.show('kanban-entry-modal',  {'kanban_id': {{ $kanban->id }} });">
+                        {{ trans('global.kanbanEntry.create') }}
+                    </button>
+                </div>
             </div>
-        </div>
     @endcan
 
     <!-- Timelime example  -->
-    <div id="kanban_board_wrapper"
-         style="position:absolute; width: calc(100vw - 270px);height: calc(100vh - 175px);overflow-x:auto;overflow-y: hidden;">
-        <kanban-board  :kanban="{{ $kanban }}"></kanban-board>
+        <div id="kanban_board_wrapper"
+             style="position:absolute; width: calc(100vw - 270px);height: calc(100vh - 175px);overflow-x:auto;overflow-y: hidden;">
+            <kanban-board
+                ref="kanbanBoard"
+                :kanban="{{ $kanban }}"></kanban-board>
+        </div>
     </div>
-</div>
-<!-- /.timeline -->
-<subscribe-modal></subscribe-modal>
-<medium-modal></medium-modal>
-<medium-create-modal></medium-create-modal>
-<task-modal></task-modal>
+    <!-- /.timeline -->
+    <subscribe-modal></subscribe-modal>
+    <medium-modal></medium-modal>
+    <medium-create-modal></medium-create-modal>
+    <task-modal></task-modal>
 @endsection
 
 @section('scripts')
-@parent
+    @parent
 
-<script>
-    $(function() {
-        if (localStorage.getItem('menu_toggle_class') === 'sidebar-collapse') {
-            $("#kanban_board_wrapper").width($("#kanban_board_wrapper").width()+170);
-        }
+    <script>
+        $(function () {
+            if (localStorage.getItem('menu_toggle_class') === 'sidebar-collapse') {
+                $("#kanban_board_wrapper").width($("#kanban_board_wrapper").width() + 170);
+            }
     });
 </script>
 
 @endsection
-

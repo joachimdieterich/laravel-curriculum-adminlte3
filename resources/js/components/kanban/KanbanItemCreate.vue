@@ -21,23 +21,14 @@
                      class="form-control description my-editor "
                      v-model.trim="form.description"
                  ></textarea>
-                 <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
+                <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
             </div>
-            <span v-if="item != null">
-                <span v-if="item.media[0] != null">
-                    <medium-renderer
-                        :medium="item.media[0]"
-                        :width="225"
-                    ></medium-renderer>
-                </span>
-            </span>
+            <mediaCarousel
+                v-if="item.media_subscriptions.length > 0"
+                :subscriptions="item.media_subscriptions"
+                :width="width"
+            ></mediaCarousel>
             <div v-if="form.title != '' && method === 'post'">
-                <button class="btn btn-block btn-outline-secondary mb-2"
-                        v-can="'medium_create'"
-                        @click.stop.prevent="open('medium-create-modal', 'referenceable');">
-                    <i class="fa fa-photo-video"></i>
-                    <span class="ml-2">{{ trans('global.media.add') }}</span>
-                </button>
                 <button class="btn btn-block btn-outline-secondary mb-2"
                         v-can="'task_create'"
                         @click.stop.prevent="open('task-modal', 'subscribable');">
@@ -51,13 +42,13 @@
                 type="reset"
                 class="btn btn-default"
               >
-                {{ trans('cancel') }}
+                {{ trans('global.cancel') }}
             </button>
             <button
                 class="btn btn-primary pull-right"
                 @click="submit"
               >
-                {{ trans('save') }}
+                {{ trans('global.save') }}
             </button>
         </div>
     </div>
@@ -66,12 +57,13 @@
 <script>
 import Form from 'form-backend-validation';
 import kanbanTask from "./KanbanTask";
-import mediumRenderer from "../media/MediaRenderer";
+import mediaCarousel from '../media/MediaCarousel';
 export default {
 
     props: {
-      status: Object,
-      item: Object
+        status: Object,
+        item: Object,
+        width: Number
     },
     data() {
         return {
@@ -151,7 +143,7 @@ export default {
 
     },
     components: {
-        mediumRenderer
+        mediaCarousel
     }
 };
 </script>

@@ -45,13 +45,14 @@
                 </div>
 
                 <KanbanItemCreate
-                        v-if="newItem === status.id"
-                        :status="status"
-                        :item="item"
-                        v-on:item-added="handleItemAdded"
-                        v-on:item-updated="handleItemUpdated"
-                        v-on:item-canceled="closeForm"
-                        style=" z-index: 2"></KanbanItemCreate>
+                    v-if="newItem === status.id"
+                    :status="status"
+                    :item="item"
+                    :width="itemWidth"
+                    v-on:item-added="handleItemAdded"
+                    v-on:item-updated="handleItemUpdated"
+                    v-on:item-canceled="closeForm"
+                    style=" z-index: 2"></KanbanItemCreate>
                 <div style="position:absolute; top:35px; bottom:0;overflow-y:scroll; z-index: 1"
                      :style="'width:' + itemWidth + 'px;'">
                     <draggable
@@ -59,7 +60,8 @@
                         v-model="status.items"
                         v-bind="itemDragOptions"
                         style="min-height:500px;"
-                        @end="handleItemMoved">
+                        @end="handleItemMoved"
+                        filter=".ignore">
                         <transition-group
                             v-for="item in status.items"
                             :key="'transition_group-'+item.id"
@@ -70,10 +72,12 @@
                             <!-- Items -->
                             <span :key="item.id">
                                  <KanbanItem
-                                    :item="item"
-                                    :width="itemWidth"
-                                    v-on:item-destroyed="handleItemDestroyed"
-                                    v-on:item-edit="handleItemEdit"/>
+
+                                     :ref="'kanbanItemId' + item.id"
+                                     :item="item"
+                                     :width="itemWidth"
+                                     v-on:item-destroyed="handleItemDestroyed"
+                                     v-on:item-edit="handleItemEdit"/>
                             </span>
                             <!--  ./Items -->
                         </transition-group>
@@ -118,7 +122,7 @@
                 statuses: this.kanban.statuses,
                 newItem: 0, // track the ID of the status we want to add to
                 newStatus: 0,
-                itemWidth: 270,
+                itemWidth: 320,
                 item: null,
             };
         },

@@ -37,41 +37,20 @@ class LmsUserTokenController extends Controller
 
         $input = $this->validateRequest();
 
-        $token = LmsUserToken::firstOrCreate([
-            'token' => $input['token'],
-            'organization_id' => auth()->user()->current_organization_id,
-            'user_id' => auth()->user()->id
-        ]);
+        $token = LmsUserToken::updateOrCreate(
+            [
+                'organization_id' => auth()->user()->current_organization_id,
+                'user_id' => auth()->user()->id
+            ],
+            [
+                'token' => $input['token']
+            ]);
 
-        // axios call?
         if (request()->wantsJson()) {
             return ['token' => $token];
         }
     }
 
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param \App\LmsUserToken $lmsUserToken
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(LmsUserToken $lmsUserToken)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\LmsUserToken $lmsUserToken
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, LmsUserToken $lmsUserToken)
-    {
-        //
-    }
 
     /**
      * Remove the specified resource from storage.
@@ -81,12 +60,11 @@ class LmsUserTokenController extends Controller
      */
     public function destroy(LmsUserToken $lmsUserToken)
     {
-        //
+        //todo: delete if user is deleted
     }
 
     protected function validateRequest()
     {
-
         return request()->validate([
             'token' => 'required',
         ]);

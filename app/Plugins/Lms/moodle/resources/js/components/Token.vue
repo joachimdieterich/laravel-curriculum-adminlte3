@@ -1,6 +1,7 @@
 <template>
     <div class="col-12 px-0">
-        Kein Nutzer-Token (Sicherheitsschlüssel) vorhanden.<br> Bitte Token für die aktuelle Organization eingeben.
+        Kein Nutzer-Token (Sicherheitsschlüssel) vorhanden/Token zurücksetzen.<br> Bitte Token für die aktuelle
+        Organization eingeben.
         (<a href="https://docs.moodle.org/39/de/Sicherheitsschl%C3%BCssel"
             target="_blank">?</a>)
         <div class="form-group "

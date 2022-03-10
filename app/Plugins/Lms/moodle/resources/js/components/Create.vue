@@ -17,6 +17,10 @@
                     {{ trans('global.lms.title_singular') }}
                 </h3>
                 <div class="card-tools">
+                    <button type="button" class="btn btn-tool draggable"
+                            @click="token = false">
+                        <i class="fa fa-user-lock"></i>
+                    </button>
                     <button type="button" class="btn btn-tool draggable">
                         <i class="fa fa-arrows-alt"></i>
                     </button>

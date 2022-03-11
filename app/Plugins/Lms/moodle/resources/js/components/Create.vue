@@ -181,7 +181,7 @@ export default {
                     this.location = (await axios.patch(this.requestUrl + '/' + this.form.id,)).data.message;
                 } else {
                     this.location = (await axios.post(this.requestUrl, {
-                        'plugin': 'Moodle',
+                        'plugin': 'moodle',
                         'course_id': this.form.course_id,
                         'course_content_id': this.form.course_content_id,
                         'course_item': this.form.course_item,

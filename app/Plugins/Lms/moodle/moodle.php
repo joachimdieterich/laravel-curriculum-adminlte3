@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Plugins\Lms\Moodle;
+namespace App\Plugins\Lms\moodle;
 
 use App\LmsReference;
 use App\LmsUserToken;
@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Auth;
  *
  * @author joachimdieterich
  */
-class Moodle extends LmsPlugin
+class moodle extends LmsPlugin
 {
     const PLUGINNAME = 'moodle';
 
@@ -190,7 +190,7 @@ class Moodle extends LmsPlugin
 
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if ($httpcode != 200) {
-            //deal with it
+
         }
 
         curl_close($ch);

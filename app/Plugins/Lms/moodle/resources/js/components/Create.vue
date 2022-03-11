@@ -148,7 +148,7 @@ export default {
         async loadCourses() {
             try {
                 this.courses = (await axios.post(this.requestUrl + '/get', {
-                    plugin: 'Moodle',
+                    plugin: 'moodle',
                     ws_function: 'core_course_get_courses_by_field', //'core_course_get_courses',
                 })).data.message;
                 this.initSelect2();
@@ -161,7 +161,7 @@ export default {
             this.form.course_id = parseInt(course_id)
             try {
                 this.course_contents = (await axios.post(this.requestUrl + '/get', {
-                    plugin: 'Moodle',
+                    plugin: 'moodle',
                     ws_function: 'core_course_get_contents',
                     course_id: course_id
                 })).data.message;

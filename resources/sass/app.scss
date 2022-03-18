@@ -104,4 +104,11 @@ textarea {
 }
 
 
+.vuehover {
+    display: none;
+}
 
+li:hover .vuehover,
+tr:hover .vuehover {
+    display: block;
+}

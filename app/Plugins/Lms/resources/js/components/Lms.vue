@@ -52,7 +52,7 @@ export default {
         async loaderEvent() {
             try {
                 this.entries = (await axios.post('/lmsReferences/get', {
-                    plugin: 'Moodle',
+                    plugin: 'moodle',
                     ws_function: 'show',
                     referenceable_type: this.referenceable_type,
                     referenceable_id: this.referenceable_id,

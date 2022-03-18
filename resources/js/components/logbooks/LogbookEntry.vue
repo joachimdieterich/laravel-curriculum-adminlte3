@@ -359,7 +359,7 @@
                 this.$refs.Absences.loaderEvent();
             },
             loadLmsPlugin() {
-               // this.$refs.LmsPlugin.loaderEvent();
+                this.$refs.LmsPlugin.loaderEvent();
             },
             print() {
                 location.href = '/print/LogbookEntry/' + this.entry.id

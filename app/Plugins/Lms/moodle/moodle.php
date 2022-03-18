@@ -36,12 +36,15 @@ class moodle extends LmsPlugin
 
     public function __construct($service = 'moodle_mobile_app', $passport = '12345', $urlscheme = 'moodledownloader', $sso = true)
     {
+
         $this->lmsUrl = Organization::find(auth()->user()->current_organization_id)->lms_url;
         $this->wsPath = 'webservice/rest/server.php?';
-        $this->wsToken = LmsUserToken::where([
-            'organization_id' => auth()->user()->current_organization_id,
-            'user_id' => auth()->user()->id
-        ])->get()->first()->token;
+        $this->wsToken = optional(
+            LmsUserToken::where([
+                'organization_id' => auth()->user()->current_organization_id,
+                'user_id' => auth()->user()->id
+            ])->get()->first()
+        )->token;
         $this->queryParams = array(
             'wstoken' => $this->wsToken,
             'moodlewsrestformat' => 'json'

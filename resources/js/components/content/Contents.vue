@@ -5,7 +5,7 @@
     >
         <h3 class="card-title"
             v-if="subscriptions.length !== 0">
-            <span data-target="#contentCarousel"
+            <span :data-target="'#contentCarousel_'+uid"
                   data-slide-to="0"
                   class="text-sm">
                 <i class="fa fa-list"></i>
@@ -48,7 +48,7 @@
             <button
                 v-if="subscriptions.length !== 0"
                 type="button" class="btn btn-tool "
-                href="#contentCarousel" role="button"
+                :href="'#contentCarousel_'+uid" role="button"
                 data-slide="prev"
                 :aria-label="trans('pagination.previous')"
                 @click="prev()">
@@ -57,7 +57,7 @@
             <button
                 v-if="subscriptions.length !== 0"
                 type="button" class="btn btn-tool "
-                href="#contentCarousel" role="button"
+                :href="'#contentCarousel_'+uid" role="button"
                 data-slide="next"
                 :aria-label="trans('pagination.next')"
                 @click="next()">
@@ -67,16 +67,16 @@
     </div>
 
     <div class="card-content"  v-if="subscriptions.length !== 0">
-        <div id="contentCarousel" class="carousel slide" data-interval="false">
+        <div :id="'contentCarousel_'+uid" class="carousel slide" data-interval="false">
             <ol class="carousel-indicators">
-                <li data-target="#contentCarousel"
+                <li :data-target="'#contentCarousel_'+uid"
                     data-slide-to="0"
                     class="active"
                     @click="setSlide(0)"></li>
                 <li v-for="(item,index) in subscriptions"
                     data-placement="top"
                     :title="item.content.title"
-                    data-target="#contentCarousel"
+                    :data-target="'#contentCarousel_'+uid"
                     :data-slide-to="index+1"
                     @click="setSlide(index+1)"
                 ></li>
@@ -87,13 +87,13 @@
                          <li v-for="(item,index) in subscriptions"
                              class="pb-2">
                              <span class="pointer">
-                                 <span data-target="#contentCarousel"
+                                 <span :data-target="'#contentCarousel_'+uid"
                                        :data-slide-to="index+1"
                                        @click="setSlide(index+1)">
-                                     {{item.content.title}}
+                                     {{ item.content.title }}
                                  </span>
                                  <span v-permission="'content_delete, ' + subscribable_type + '_content_delete'"
-                                       class="pull-right"
+                                       class="pull-right vuehover"
                                        :aria-label="trans('global.delete')">
                                      <span
                                          class="btn-tool fa fa-trash text-danger"
@@ -102,7 +102,7 @@
                                      </span>
                                  </span>
                                  <span v-permission="'content_edit, ' + subscribable_type + '_content_edit'"
-                                       class="pull-right"
+                                       class="pull-right vuehover"
                                        :aria-label="trans('global.edit')">
                                      <span
                                          class="btn-tool fa fa-pencil-alt"
@@ -111,7 +111,7 @@
                                      </span>
                                  </span>
                                  <span v-permission="'content_create, ' + subscribable_type + '_content_create'"
-                                       class="pull-right"><!--Order_id: {{ item.order_id }}-->
+                                       class="pull-right vuehover"><!--Order_id: {{ item.order_id }}-->
                                      <span v-if="(item.order_id !== 0)"
                                            class="btn-tool fa fa-arrow-up"
                                            aria-label="up"
@@ -126,7 +126,7 @@
                                  </span>
                                  <br>
                                  <small class="text-muted"
-                                        data-target="#contentCarousel"
+                                        :data-target="'#contentCarousel_'+uid"
                                         :data-slide-to="index+1"
                                         @click="setSlide(index+1)">
                                     {{item.content.content | truncate(200, '...')}}
@@ -163,6 +163,7 @@
         },
         data() {
             return {
+                uid: null,
                 subscriptions: {},
                 errors: {},
                 currentSlide: 0,
@@ -250,6 +251,7 @@
             }
         },
         mounted() {
+            this.uid = this._uid;
             this.currentSlide = 0;
             this.$on('addContent', function(newContent) {
                 this.loaderEvent();

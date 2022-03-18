@@ -82,12 +82,3 @@
 
     }
 </script>
-<style scoped>
-.vuehover {
-        display: none;
-    }
-li:hover .vuehover {
-        display: block;
-    }
-
-</style>

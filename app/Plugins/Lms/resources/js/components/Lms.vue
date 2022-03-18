@@ -1,6 +1,6 @@
 <template>
-    <div class="col-12 px-0">
-
+    <div class="col-12 px-0"
+         :id="'#lms_' + referenceable_id">
         <table
             id="sidebar_media_datatable"
             class="table table-hover datatable media_table">
@@ -11,14 +11,20 @@
                         <img :src="entry.value.course_item.modicon" height="16px">
                         {{ entry.value.course_item.name }}
                     </a>
+                    <span
+                        v-if="isOwner(entry.owner_id)">
+                        <button v-permission="'lms_delete'"
+                                class="btn btn-flat py-0 px-2 pull-right"
+                                @click.prevent="del(entry.id)">
+                            <i class="fa fa-trash text-danger vuehover"></i>
+                        </button>
+                        <button v-permission="'lms_create'"
+                                class="btn btn-flat py-0 px-2 pull-right"
+                                @click.prevent="del(entry.id)">
+                            <i class="fa fa-share-alt text-muted vuehover"></i>
+                        </button>
+                    </span>
 
-
-                    <i v-permission="'lms_delete'"
-                       @click.prevent="del(entry.id)"
-                       class="fa fa-trash px-2 text-danger pull-right pointer"></i>
-                    <i v-permission="'lms_create'"
-                       @click.prevent="share('subscribe-modal', entry.id)"
-                       class="fa fa-share-alt px-2 pull-right pointer"></i>
                 </td>
             </tr>
             <tr>
@@ -44,7 +50,6 @@ export default {
     data() {
         return {
             entries: [],
-
             errors: {}
         }
     },
@@ -62,7 +67,7 @@ export default {
             }
         },
         del(id) {
-            axios.delete('/lmsReferenceSubscriptions/' + id)
+            axios.delete('/lmsReferences/' + id)
                 .then(res => { // Tell the parent component we've added a new task and include it
                     const index = this.entries.findIndex(            // Find the index of the status where we should replace the item
                         item => item.id === id
@@ -86,6 +91,9 @@ export default {
                 'modelUrl': 'lmsReference'
             });
         },
+        isOwner(id) {
+            return (id == this.$userId) ? true : false;
+        }
 
     },
     mounted() {
@@ -95,3 +103,10 @@ export default {
 
 }
 </script>
+<style scoped>
+.media_table,
+.media_table tr:first-child,
+.media_table tr:first-child td {
+    border-top: 0px !important;
+}
+</style>

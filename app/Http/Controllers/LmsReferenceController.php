@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Plugins\Lms\LmsPlugin;
-use App\LmsReferenceSubscription;
+use App\LmsReference;
 use Illuminate\Http\Request;
 
 class LmsReferenceController extends Controller
@@ -39,16 +39,6 @@ class LmsReferenceController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
@@ -67,10 +57,10 @@ class LmsReferenceController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\LmsReferenceSubscription $lmsSubscription
+     * @param \App\LmsReference $lmsReference
      * @return \Illuminate\Http\Response
      */
-    public function show(LmsReferenceSubscription $lmsReferenceSubscription)
+    public function show(LmsReference $lmsReference)
     {
 
     }
@@ -78,10 +68,10 @@ class LmsReferenceController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param \App\LmsReferenceSubscription $lmsReferenceSubscription
+     * @param \App\LmsReference $lmsReference
      * @return \Illuminate\Http\Response
      */
-    public function edit(LmsReferenceSubscription $lmsReferenceSubscription)
+    public function edit(LmsReference $lmsReference)
     {
         //
     }
@@ -90,10 +80,10 @@ class LmsReferenceController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\LmsReferenceSubscription $lmsSubscription
+     * @param \App\LmsReference $lmsReference
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, LmsReferenceSubscription $lmsReferenceSubscription)
+    public function update(Request $request, LmsReference $lmsReference)
     {
         //
     }
@@ -101,14 +91,18 @@ class LmsReferenceController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\LmsReferenceSubscription $lmsReferenceSubscription
+     * @param \App\LmsReference $lmsReference
      * @return \Illuminate\Http\Response
      */
-    public function destroy(LmsReferenceSubscription $lmsReferenceSubscription)
+    public function destroy(LmsReference $lmsReference)
     {
-        abort_unless(\Gate::allows('lms_delete'), 403);
+        abort_unless(\Gate::allows('lms_delete') and ($lmsReference->owner_id == auth()->id()), 403);
 
-        $lmsreferenceSubscription->delete();
+        if (request()->wantsJson()) {
+            $lmsReference->subscriptions()->delete();
+            return ['message' => $lmsReference->delete()];
+        }
+
     }
 
     protected function validateRequest()

@@ -98,15 +98,15 @@ class LmsReferenceSubscriptionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\LmsReferenceSubscription $LmsReferenceSubscription
+     * @param \App\LmsReferenceSubscription $lmsReferenceSubscription
      * @return \Illuminate\Http\Response
      */
-    public function destroy(LmsReferenceSubscription $LmsReferenceSubscription)
+    public function destroy(LmsReferenceSubscription $lmsReferenceSubscription)
     {
         abort_unless(\Gate::allows('lms_delete'), 403);
 
         if (request()->wantsJson()) {
-            return ['message' => $LmsReferenceSubscription->delete()];
+            return ['message' => $lmsReferenceSubscription->delete()];
         }
     }
 

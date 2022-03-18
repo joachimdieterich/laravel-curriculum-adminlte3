@@ -118,12 +118,12 @@
                     </a>
                 </li>
 
-                <li v-can="'lms_access'"
+                <li v-permission="'lms_access'"
                     class="nav-item"
                     @click="setLocalStorage('#logbook_'+entry.id, '#logbook_lms_'+entry.id)">
                     <a class="nav-link small link-muted"
                        :class="checkLocalStorage('#logbook_view_'+entry.id, '#logbook_lms_'+entry.id)"
-                       href="#lms"
+                       v-bind:href="'#lms_'+entry.id"
                        data-toggle="tab"
                        @click="loadLmsPlugin()">
                         <i class="fa fa-graduation-cap pr-1"></i>
@@ -146,10 +146,10 @@
             <div class="pb-2 px-1">
                 <div class="tab-content">
                     <!-- tab-pane -->
-                    <div class="tab-pane"
+                    <div class="tab-pane p-2"
                          :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id, 'active', true)"
                          v-bind:id="'logbook_description_'+entry.id">
-                         <span class="" v-html="entry.description"></span>
+                        <span v-html="entry.description"></span>
                     </div>
 
                     <!-- tab-pane -->
@@ -239,9 +239,10 @@
                     </div>
                     <!-- /.tab-pane -->
 
-                    <div class="tab-pane"
+                    <div v-permission="'lms_access'"
+                         class="tab-pane"
                          :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_lms_'+entry.id)"
-                         id="lms">
+                         v-bind:id="'lms_'+entry.id">
                         <lms ref="LmsPlugin"
                              :referenceable_type="model"
                              :referenceable_id="entry.id">

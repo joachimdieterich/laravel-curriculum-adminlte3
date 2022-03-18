@@ -209,6 +209,8 @@ class LogbookController extends Controller
             (new LogbookSubscriptionController())->destroy($subscription);
         }
         $logbook->delete();
+
+        return back();
     }
 
     /**

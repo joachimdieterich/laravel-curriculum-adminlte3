@@ -5,8 +5,6 @@
                id="sidebar_media_datatable"
                class="table table-hover datatable media_table">
             <tr v-for="subscription in subscriptions">
-                <!--<td> <img v-if="subsciption.medium.mime_type =='JPG'"
-                          :src="'/media/'+subsciption.medium.id" width="30" height="30"/></td>-->
                 <td style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 100px;"
                     class="link-muted text-sm px-2 pointer"
                     @click="show('medium', subscription.medium)">

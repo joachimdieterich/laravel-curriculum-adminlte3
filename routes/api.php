@@ -41,7 +41,8 @@ Route::group([
     'prefix' => 'v1',
     'as' => 'admin.',
     'namespace' => 'Api\V1\Admin',
-    ], function () {
+    'middleware' => 'throttle:10,10' // an IP can call endpoint 10 times in 10 minutes
+], function () {
 
     Route::get('curricula/metadatasets', 'CurriculaApiController@getAllMetadatasets');
     Route::get('curricula/{curriculum}/metadataset', 'CurriculaApiController@getSingleMetadataset');

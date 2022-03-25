@@ -247,19 +247,29 @@ The initial installation has 8 Roles:
 
 The [Permission-Map](permissionmap.md) gives a quick view over the permissions of those roles.
 
-
 ### Artisan commands
+
 #### References between curricula
-To refresh curriculum references (referencing_curriculum_id on terminal- and enablingObjectives) based on reference_subscriptions and quote_subscriptions use the following command.
+
+To refresh curriculum references (referencing_curriculum_id on terminal- and enablingObjectives) based on
+reference_subscriptions and quote_subscriptions use the following command.
+
 ```bash
 php artisan objectives:refreshReferences
 ```
-#### Generate metadataset 
-To generate a metadataset for API ```/v1/curricula/metadatasets?password={password}``` of all curricula (with type_id == 1), the number at the end will be used as version number.
+
+#### Generate metadataset
+
+Metadatasets can be created via ```/metadatasets``` in the frontend. Use API-Endpoint ```/v1/curricula/metadatasets```
+to get metadataset of all curricula (with type_id == 1). If you want to secure this endpoint with a
+password ```/v1/curricula/metadatasets?password={password}``` uncomment code in CurriculaApiController.php,
+getAllMetadatasets()
+
+Alternative metadataset-creation:
+
 ```bash
 php artisan curriculum:metadataset 001
 ```
-Update: Metadatasets now can be created via ```/metadatasets``` in the frontend.
 
 ### Further information
 

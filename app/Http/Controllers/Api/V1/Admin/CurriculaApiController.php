@@ -46,7 +46,8 @@ class CurriculaApiController extends Controller
 
     public function getAllMetadatasets(Request $request)
     {
-        $config = Config::where([
+        // uncomment if you want to secure metadataset with password (/config, metadata_password)
+        /*$config = Config::where([
             ['key', '=',  'metadata_password']
         ])->get();
 
@@ -57,16 +58,15 @@ class CurriculaApiController extends Controller
                 return response()->json(['error' => 'Not authorized.'],403);
             }
             else
-            {
-                //use 'php artisan curriculum:metadataset [Versionsnumber]' to generate metadataset
+            {*/
                 $metadata =  DB::table('metadatasets')->latest('updated_at')->first();
                 return $metadata->metadataset;
-            }
-        }
-        else
-        {
-            return response()->json(['error' => 'config (metadata_password) missing'],420);
-        }
+        /*  }
+      }
+      else
+      {
+          return response()->json(['error' => 'config (metadata_password) missing'],420);
+      }*/
 
     }
 }

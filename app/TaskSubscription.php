@@ -4,13 +4,10 @@ namespace App;
 
 use App\Http\Controllers\LogController;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\ModelStatus\HasStatuses;
 
 class TaskSubscription extends Model
 {
     protected $guarded = [];
-
-    use HasStatuses;
 
 
     public function subscribable()

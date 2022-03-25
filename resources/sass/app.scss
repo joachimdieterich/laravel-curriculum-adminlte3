@@ -83,10 +83,8 @@ body {
 
 .hide-scrollbars {
     overflow: -moz-scrollbars-none;
-}
-
-.hide-scrollbars {
-    -ms-overflow-style: none;
+    -ms-overflow-style: none; /* IE */
+    scrollbar-width: none; /* Firefox */
 }
 
 .hide {

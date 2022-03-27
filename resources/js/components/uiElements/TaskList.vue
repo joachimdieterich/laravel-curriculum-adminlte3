@@ -1,49 +1,56 @@
 <template>
-    <ul class="todo-list" data-widget="todo-list">
+    <div>
+        <ul class="todo-list" data-widget="todo-list">
 
-        <li v-for="task in tasks" >
-            <!-- drag handle -->
-<!--               <span class="handle">
-                <i class="fas fa-ellipsis-v"></i>
-                <i class="fas fa-ellipsis-v"></i>
-            </span>-->
-            <!-- checkbox -->
-            <div  class="icheck-primary d-inline ml-2">
-                <input
-                    type="checkbox"
-                    value=""
-                    name="todo1"
-                    :id="'todo_checkbox'+task.task.id"
-                    @click="complete(task.task.id)"
-                    v-bind:checked="isCompleted(task)">
-                <label :for="'todo_checkbox'+task.task.id" aria-label=""></label>
-            </div>
+            <li v-for="task in tasks">
+                <!-- drag handle -->
+                <!--               <span class="handle">
+                                <i class="fas fa-ellipsis-v"></i>
+                                <i class="fas fa-ellipsis-v"></i>
+                            </span>-->
+                <!-- checkbox -->
+                <div class="icheck-primary d-inline ml-2">
+                    <input
+                        type="checkbox"
+                        value=""
+                        name="todo1"
+                        :id="'todo_checkbox'+task.task.id"
+                        @click="complete(task.task.id)"
+                        v-bind:checked="isCompleted(task)">
+                    <label :for="'todo_checkbox'+task.task.id" aria-label=""></label>
+                </div>
 
-            <span class="text">
+                <span class="text">
                 <a class="link-muted text-decoration-none"
                    :href="'/tasks/'+task.task.id"
                    v-html="task.task.title"></a>
             </span>
 
-            <small class="badge badge-secondary pull-right p-1 mt-1">
-                <i class="far fa-clock"></i>
-                <span v-html="task.task.due_date"></span>
-            </small>
-            <!-- General tools such as edit or delete-->
-            <div class="tools">
-                <a v-permission="'task_delete, ' + subscribable_type + '_task_delete'"
-                   onclick="deleteTask(task.task)" >
-                    <i class="fas fa-trash"></i>
-                </a>
-            </div>
-        </li>
-        <li v-permission="'task_create, ' + subscribable_type + '_task_create'"
-            class="pointer bg-white">
-            <a @click.prevent="open('task-modal');">
-                <i class="px-2 fa fa-plus text-muted"></i> {{ trans('global.task.create')}}
-            </a>
-        </li>
-    </ul>
+                <small class="badge badge-secondary pull-right p-1 mt-1">
+                    <i class="far fa-clock"></i>
+                    <span v-html="task.task.due_date"></span>
+                </small>
+                <!-- General tools such as edit or delete-->
+                <div class="tools">
+                    <a v-permission="'task_delete, ' + subscribable_type + '_task_delete'"
+                       onclick="deleteTask(task.task)">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </li>
+        </ul>
+        <table
+            class="table table-hover datatable media_table">
+            <tr>
+                <td
+                    class="py-2 link-muted text-sm pointer"
+                    v-permission="'lms_create'"
+                    @click.prevent="open('task-modal');">
+                    <i class="fa fa-plus px-2 "></i> {{ trans('global.task.create') }}
+                </td>
+            </tr>
+        </table>
+    </div>
 </template>
 
 <script>

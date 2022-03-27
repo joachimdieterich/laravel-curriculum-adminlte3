@@ -242,3 +242,9 @@ table.dataTable thead .sorting_asc,
 table.dataTable thead .sorting_desc {
     background-image: none;
 }
+
+.media_table,
+.media_table tr:first-child,
+.media_table tr:first-child td {
+    border-top: 0px !important;
+}

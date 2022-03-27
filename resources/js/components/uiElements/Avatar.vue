@@ -1,11 +1,17 @@
 <template>
-    <canvas
-        :id="id"
-        style="border-radius: 50%;"
-        :width="size"
-        :height="size"
-    >
-    </canvas>
+    <span>
+        <img v-if="typeof medium_id === 'number'"
+             class="direct-chat-img"
+             :style="'width:'+size+' !important;height:'+size+' !important;'"
+             :src="'/media/'+medium_id"/>
+        <canvas
+            v-else
+            :id="id"
+            style="border-radius: 50%;"
+            :width="size"
+            :height="size">
+        </canvas>
+    </span>
 </template>
 
 <script>
@@ -17,6 +23,7 @@
             size: {
                 default: 60
             },
+            medium_id: ''
         },
         data() {
             return {

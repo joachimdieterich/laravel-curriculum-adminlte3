@@ -23,11 +23,7 @@
                  ></textarea>
                 <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
             </div>
-            <mediaCarousel
-                v-if="item.media_subscriptions.length > 0"
-                :subscriptions="item.media_subscriptions"
-                :width="width"
-            ></mediaCarousel>
+
             <div v-if="form.title != '' && method === 'post'">
                 <button class="btn btn-block btn-outline-secondary mb-2"
                         v-can="'task_create'"
@@ -57,7 +53,7 @@
 <script>
 import Form from 'form-backend-validation';
 import kanbanTask from "./KanbanTask";
-import mediaCarousel from '../media/MediaCarousel';
+
 export default {
 
     props: {
@@ -142,8 +138,6 @@ export default {
         },
 
     },
-    components: {
-        mediaCarousel
-    }
+    components: {}
 };
 </script>

@@ -35,6 +35,21 @@ class TerminalObjectiveSubscriptionsController extends Controller
         }
     }
 
+    public function destroySubscription(Request $request)
+    {
+        $subscription = $this->validateRequest();
+
+        return TerminalObjectiveSubscriptions::where([
+            "terminal_objective_id" => $subscription['terminal_objective_id'],
+            "subscribable_type" => $subscription['subscribable_type'],
+            "subscribable_id" => $subscription['subscribable_id'],
+            "sharing_level_id" => $subscription['sharing_level_id'],
+            "visibility" => $subscription['visibility'],
+            //"owner_id"=> auth()->user()->id, //Todo: admin should be able to delete everything
+        ])->delete();
+
+    }
+
     protected function validateRequest()
     {
         return request()->validate([

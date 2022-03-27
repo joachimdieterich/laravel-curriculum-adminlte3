@@ -54,7 +54,7 @@ class LmsReferenceSubscriptionController extends Controller
      */
     public function store(Request $request)
     {
-        abort_unless(\Gate::allows('kanban_create'), 403);
+        abort_unless(\Gate::allows('lms_create'), 403);
         $input = $this->validateRequest();
 
         $subscribe = LmsReferenceSubscription::updateOrCreate([

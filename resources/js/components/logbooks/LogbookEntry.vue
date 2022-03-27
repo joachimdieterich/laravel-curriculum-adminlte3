@@ -9,6 +9,14 @@
              aria-expanded="true">
 
             <span class="username ml-0">
+                <avatar class="pull-right ml-2 contacts-list-img"
+                        data-toggle="tooltip"
+                        :title="entry.owner.firstname + ' ' + entry.owner.lastname"
+                        :firstname="entry.owner.firstname"
+                        :lastname="entry.owner.lastname"
+                        :medium_id="entry.owner.medium_id"
+                        :size="40"
+                ></avatar>
                 <span class="pull-right "
                       v-permission="'logbook_entry_edit'"
                       v-if="this.$userId == logbook.owner_id || editable === true"
@@ -196,28 +204,11 @@
                          :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_objectives_'+entry.id)"
                          v-bind:id="'logbook_objectives_'+entry.id">
 
-                        <objective-box
-                            v-for="terminal_subscription in entry.terminal_objective_subscriptions"
-                            v-bind:key="terminal_subscription.id"
-                            :objective="terminal_subscription.terminal_objective"
-                            type="terminal"></objective-box>
-                        <span class="clearfix"></span>
-                        <span v-for="enabling_subscription in entry.enabling_objective_subscriptions">
-                            <objective-box
-                                :objective="enabling_subscription.enabling_objective.terminal_objective"
-                                type="terminal"></objective-box>
-                            <objective-box
-                                :objective="enabling_subscription.enabling_objective"
-                                type="enabling"></objective-box>
-                            <span class="clearfix"></span>
-                        </span>
-                        <ul  v-permission="'reference_create'" class="todo-list" data-widget="todo-list">
-                            <li class="pointer bg-white">
-                                <a @click="open('subscribe-objective-modal', 'referenceable');">
-                                    <i class="px-2 fa fa-plus text-muted"></i> {{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}
-                                </a>
-                            </li>
-                        </ul>
+                        <reference-list
+                            subscribable_type="App\LogbookEntry"
+                            :subscribable_id="entry.id"
+                            :entry="entry"
+                        />
 
                     </div>
                     <!-- /.tab-pane -->
@@ -256,38 +247,39 @@
 </template>
 
 <script>
-    import Absences from '../absence/Absences';
-    import Contents from '../content/Contents';
-    import ObjectiveBox from '../objectives/ObjectiveBox';
-    import TaskList from '../uiElements/TaskList';
-    import Media from '../media/Media';
-    import Lms from '../../../../app/Plugins/Lms/resources/js/components/Lms';
+import Absences from '../absence/Absences';
+import Contents from '../content/Contents';
+import TaskList from '../uiElements/TaskList';
+import Media from '../media/Media';
+import Lms from '../../../../app/Plugins/Lms/resources/js/components/Lms';
+import ReferenceList from "../reference/ReferenceList";
+import Avatar from "../uiElements/Avatar";
 
-    export default {
-        props: {
-            'logbook': Object,
-            'entry': Object,
-            'search': '',
-            'first': false,
-            'editable': false,
-        },
-        data() {
-            return {
-                media: {},
+export default {
+    props: {
+        'logbook': Object,
+        'entry': Object,
+        'search': '',
+        'first': false,
+        'editable': false,
+    },
+    data() {
+        return {
+            media: {},
                 active: true,
                 model: 'App\\LogbookEntry',
                 help: true,
             };
         },
         methods: {
-
-            open(modal, relationKey) {
-                if (relationKey === 'referenceable'){
-                    this.$modal.show(modal, { 'referenceable_type': 'App\\LogbookEntry', 'referenceable_id': this.entry.id });
-                } else {
-                    this.$modal.show(modal, { 'subscribable_type': 'App\\LogbookEntry', 'subscribable_id': this.entry.id });
-                }
-            },
+            /*
+                        open(modal, relationKey) {
+                            if (relationKey === 'referenceable'){
+                                this.$modal.show(modal, { 'referenceable_type': 'App\\LogbookEntry', 'referenceable_id': this.entry.id });
+                            } else {
+                                this.$modal.show(modal, { 'subscribable_type': 'App\\LogbookEntry', 'subscribable_id': this.entry.id });
+                            }
+                        },*/
             edit() {
                  this.$modal.show('logbook-entry-modal', { 'id': this.entry.id, 'method': 'patch'});
             },
@@ -391,10 +383,11 @@
         },
 
         components: {
+            ReferenceList,
             Absences,
+            Avatar,
             Media,
             Contents,
-            ObjectiveBox,
             TaskList,
             Lms
         }

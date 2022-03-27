@@ -1,10 +1,10 @@
 <?php
 /**
  * @OA\Server(
- *      url="http://localhost:8000/api/",
+ *      url="http://127.0.0.1:8000/api/",
  *      description="Curriculum OpenApi Server"
  * )
- * 
+ *
  * @OA\Info(
  *      version="1.0.0",
  *      title="Curriculum OpenApi",

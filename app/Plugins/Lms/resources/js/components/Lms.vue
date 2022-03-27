@@ -19,12 +19,11 @@
                             <i class="fa fa-trash text-danger vuehover"></i>
                         </button>
                         <button v-permission="'lms_create'"
-                                class="btn btn-flat py-0 px-2 pull-right"
-                                @click.prevent="del(entry.id)">
+                                class="btn btn-flat py-0 px-3 pull-right"
+                                @click.prevent="share('subscribe-modal', entry.id)">
                             <i class="fa fa-share-alt text-muted vuehover"></i>
                         </button>
                     </span>
-
                 </td>
             </tr>
             <tr>
@@ -68,7 +67,7 @@ export default {
         },
         del(id) {
             axios.delete('/lmsReferences/' + id)
-                .then(res => { // Tell the parent component we've added a new task and include it
+                .then(res => {
                     const index = this.entries.findIndex(            // Find the index of the status where we should replace the item
                         item => item.id === id
                     );
@@ -103,10 +102,3 @@ export default {
 
 }
 </script>
-<style scoped>
-.media_table,
-.media_table tr:first-child,
-.media_table tr:first-child td {
-    border-top: 0px !important;
-}
-</style>

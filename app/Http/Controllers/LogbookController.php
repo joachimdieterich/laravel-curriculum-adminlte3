@@ -143,9 +143,16 @@ class LogbookController extends Controller
         $this->checkPermissions($logbook, 'access');
 
         $logbook = $logbook->with([
-            'owner',
+            'owner' => function ($query) {
+                $query->select('id', 'username', 'firstname', 'lastname', 'medium_id');
+            },
             'subscriptions.subscribable',
-            'entries.absences.owner', //todo: lazyload
+            'entries.owner' => function ($query) {
+                $query->select('id', 'username', 'firstname', 'lastname', 'medium_id');
+            }, //todo: lazyload
+            'entries.absences.owner' => function ($query) {
+                $query->select('id', 'username', 'firstname', 'lastname', 'medium_id');
+            }, //todo: lazyload
             'entries.absences.absent_user',
             'entries.terminalObjectiveSubscriptions.terminalObjective',
             'entries.enablingObjectiveSubscriptions.enablingObjective.terminalObjective',

@@ -42,8 +42,6 @@
     <task-modal></task-modal>
     <absence-modal></absence-modal>
     @can('logbook_create')
-        @if (Auth::user()->id ==  $logbook->owner_id)
-            <subscribe-modal></subscribe-modal>
-        @endif
-@endcan
+        <subscribe-modal></subscribe-modal>
+    @endcan
 @endsection

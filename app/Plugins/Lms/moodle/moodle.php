@@ -73,28 +73,35 @@ class moodle extends LmsPlugin
     public function show($query)
     {
 
-        return (auth()->user()->role()->id == 1)
-            ? LmsReference::where([
-                'referenceable_type' => $query['referenceable_type'],
-                'referenceable_id' => $query['referenceable_id'],
+        $userCanSee = auth()->user()->lmsReferences()->where([
+            'referenceable_type' => $query['referenceable_type'],
+            'referenceable_id' => $query['referenceable_id'],
+        ])->get();
 
-            ])->get()
-            : $this->userLmsReferences();
-
-    }
-
-    protected function userLmsReferences()
-    {
-        $userCanSee = auth()->user()->lmsReferences;
 
         foreach (auth()->user()->currentGroups as $group) {
-            $userCanSee = $userCanSee->merge($group->lmsReferences);
+            $userCanSee = $userCanSee->merge($group->lmsReferences()->where([
+                'referenceable_type' => $query['referenceable_type'],
+                'referenceable_id' => $query['referenceable_id'],
+            ])->get());
         }
 
-        $organization = Organization::find(auth()->user()->current_organization_id)->lmsReferences;
+        $organization = Organization::find(auth()->user()->current_organization_id)->lmsReferences()->where([
+            'referenceable_type' => $query['referenceable_type'],
+            'referenceable_id' => $query['referenceable_id'],
+        ])->get();
         $userCanSee = $userCanSee->merge($organization);
 
+        $ownedByUser = LmsReference::where([
+            'referenceable_type' => $query['referenceable_type'],
+            'referenceable_id' => $query['referenceable_id'],
+            'owner_id' => auth()->user()->id,
+        ])->get();
+        $userCanSee = $userCanSee->merge($ownedByUser);
+
+
         return $userCanSee->unique();
+
     }
 
     public function core_course_get_courses_by_field()

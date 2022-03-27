@@ -73,6 +73,11 @@ class LogbookEntry extends Model
         )->where('subscribable_type', get_class($this));
     }
 
+    public function owner()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function isAccessible()
     {
         return $this->logbook->isAccessible();

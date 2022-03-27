@@ -1,18 +1,24 @@
 <template>
-
-    <ul class="todo-list" data-widget="todo-list">
+    <div>
         <Absence
             v-for="absence in absences"
-             v-bind:data="absence"
+            v-bind:data="absence"
             v-bind:key="'absence_container'+absence.id"
-            :absence="absence"></Absence>
-        <li class="pointer bg-white">
-            <a @click.prevent="open('absence-modal', 'referenceable');">
-                <i class="px-2 fa fa-plus text-muted"></i> {{ trans('global.absences.create')}}
-            </a>
-        </li>
-    </ul>
+            :absence="absence">
+        </Absence>
 
+        <table
+            class="table table-hover datatable media_table">
+            <tr>
+                <td
+                    class="py-2 link-muted text-sm pointer"
+                    v-permission="'lms_create'"
+                    @click.prevent="open('absence-modal', 'referenceable');">
+                    <i class="fa fa-plus px-2 "></i> {{ trans('global.absences.create') }}
+                </td>
+            </tr>
+        </table>
+    </div>
 </template>
 
 <script>

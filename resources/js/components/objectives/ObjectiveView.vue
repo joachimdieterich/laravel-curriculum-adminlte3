@@ -160,6 +160,7 @@
             <div class="tab-content ">
                 <!-- 1 Description -->
                 <div class="tab-pane show "
+                     v-if="objective.description !== ''"
                      :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_description_'+objective.id, 'active', true)"
                      id="description"
                      >

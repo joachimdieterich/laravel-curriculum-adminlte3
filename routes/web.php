@@ -74,6 +74,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('enablingObjectives/{enablingObjective}/achievements/{group?}', 'EnablingObjectiveController@showAchievements')->name('enablingObjectives.showAchievements');
     Route::resource('enablingObjectives', 'EnablingObjectiveController');
     /* enablingObjectiveSubscriptions */
+    Route::post('enablingObjectiveSubscriptions/destroy', 'EnablingObjectiveSubscriptionsController@destroySubscription');
     Route::resource('enablingObjectiveSubscriptions', 'EnablingObjectiveSubscriptionsController');
 
     /* plugin eventmanagment */
@@ -240,6 +241,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('terminalObjectives/{terminalObjective}/quoteSubscriptions', 'TerminalObjectiveController@quoteSubscriptions');
     Route::resource('terminalObjectives', 'TerminalObjectiveController');
     /* terminalObjectiveSubscriptions */
+    Route::post('terminalObjectiveSubscriptions/destroy', 'TerminalObjectiveSubscriptionsController@destroySubscription');
     Route::resource('terminalObjectiveSubscriptions', 'TerminalObjectiveSubscriptionsController');
 
     /* reference(Subscription)  */

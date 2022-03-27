@@ -18,34 +18,35 @@
                     </h5>
                 </div>
                 @can('role_edit')
-                <div class="card-tools pr-2">
-                    <a href="{{ route('roles.edit', $role->id) }}" >
-                       <i class="far fa-edit"></i>
-                    </a> 
-                @endcan 
-                </div>
+                    <div class="card-tools pr-2">
+                        <a href="{{ route('roles.edit', $role->id) }}">
+                            <i class="fa fa-pencil-alt"></i>
+                        </a>
+                        @endcan
+                    </div>
             </div>
-              <!-- /.card-header -->
-              <div class="card-body"> 
-    
-              </div>
-              <!-- /.card-body -->
-              <div class="card-footer">
+            <!-- /.card-header -->
+            <div class="card-body">
+
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
                 <div class="float-left">
-                 
+
                 </div>
                 <small class="float-right">
                     {{ $role->updated_at }}
-                </small> 
-              </div>
+                </small>
+            </div>
         </div>
     </div>
-    
+
     <div class="col-lg-8 col-sm-12">
-            <div class="card">
-              <div class="card-header p-2">
+        <div class="card">
+            <div class="card-header p-2">
                 <ul class="nav nav-pills">
-                  <li class="nav-item"><a class="nav-link active show" href="#settings" data-toggle="tab">Settings</a></li>
+                    <li class="nav-item"><a class="nav-link active show" href="#settings" data-toggle="tab">Settings</a>
+                    </li>
                 </ul>
               </div><!-- /.card-header -->
               <div class="card-body">

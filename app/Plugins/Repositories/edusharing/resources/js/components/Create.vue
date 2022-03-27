@@ -58,13 +58,21 @@
 
                         <span class="col-6">
                            <button type="button"
-                              class="btn btn-block btn-primary"
-                              :class="media[0].length == maxItems ? '' : 'disabled'"
-                              @click="nextPage()"><i class="fa fa-arrow-right"></i></button>
+                                   class="btn btn-block btn-primary"
+                                   :class="media[0].length == maxItems ? '' : 'disabled'"
+                                   @click="nextPage()"><i class="fa fa-arrow-right"></i></button>
                        </span>
 
                     </div>
                 </div>
+            </div>
+            <div class="col-12">
+                <iframe
+                    :src="`https://cloud.schulcampus-rlp.de/edu-sharing/components/upload?reurl=IFRAME`"
+                    width="100%"
+                    height="200"
+                    frameborder="0">
+                </iframe>
             </div>
         </div>
     </div>

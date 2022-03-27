@@ -220,8 +220,8 @@
                         <div class="tab-pane"
                              id="external"
                              v-can="'external_medium_create'">
-                            <!--<repository-plugin-create
-                                :model="form"></repository-plugin-create>-->
+                            <repository-plugin-create
+                                :model="form"></repository-plugin-create>
                         </div><!-- /.tab-pane -->
 
                     </div>

@@ -78,16 +78,6 @@ class LogbookEntryController extends Controller
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\LogbookEntry  $logbookEntry
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(LogbookEntry $logbookEntry)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.

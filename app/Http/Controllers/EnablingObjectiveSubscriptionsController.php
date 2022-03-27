@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\EnablingObjectiveSubscriptions;
+use App\EnablingObjective;
 use Illuminate\Http\Request;
 
 class EnablingObjectiveSubscriptionsController extends Controller
@@ -13,16 +14,6 @@ class EnablingObjectiveSubscriptionsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
     {
         //
     }
@@ -53,49 +44,19 @@ class EnablingObjectiveSubscriptionsController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\EnablingObjectiveSubscriptions  $enablingObjectiveSubscriptions
-     * @return \Illuminate\Http\Response
-     */
-    public function show(EnablingObjectiveSubscriptions $enablingObjectiveSubscriptions)
+    public function destroySubscription(Request $request)
     {
-        //
-    }
+        $subscription = $this->validateRequest();
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\EnablingObjectiveSubscriptions  $enablingObjectiveSubscriptions
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(EnablingObjectiveSubscriptions $enablingObjectiveSubscriptions)
-    {
-        //
-    }
+        return EnablingObjectiveSubscriptions::where([
+            "enabling_objective_id" => $subscription['enabling_objective_id'],
+            "subscribable_type" => $subscription['subscribable_type'],
+            "subscribable_id" => $subscription['subscribable_id'],
+            "sharing_level_id" => $subscription['sharing_level_id'],
+            "visibility" => $subscription['visibility'],
+            //"owner_id"=> auth()->user()->id, //Todo: admin should be able to delete everything
+        ])->delete();
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\EnablingObjectiveSubscriptions  $enablingObjectiveSubscriptions
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, EnablingObjectiveSubscriptions $enablingObjectiveSubscriptions)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\EnablingObjectiveSubscriptions  $enablingObjectiveSubscriptions
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(EnablingObjectiveSubscriptions $enablingObjectiveSubscriptions)
-    {
-        //
     }
 
     protected function validateRequest()
@@ -104,6 +65,8 @@ class EnablingObjectiveSubscriptionsController extends Controller
             "enabling_objective_id" => 'sometimes|required',
             "subscribable_type" => 'required',
             "subscribable_id" => 'required',
+            "sharing_level_id" => 'sometimes',
+            "visibility" => 'sometimes',
         ]);
     }
 }

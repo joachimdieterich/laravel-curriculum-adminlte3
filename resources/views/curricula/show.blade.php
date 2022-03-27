@@ -69,8 +69,8 @@
 
 <move-terminal-objective-modal></move-terminal-objective-modal>
 {{--<content-modal></content-modal>--}}
-<objective-medium-modal></objective-medium-modal>
-<medium-modal></medium-modal>
+<!--<objective-medium-modal></objective-medium-modal>-->
+    <medium-modal></medium-modal>
 @can('medium_create')
 <medium-create-modal></medium-create-modal>
 @endcan

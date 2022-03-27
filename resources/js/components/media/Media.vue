@@ -204,11 +204,3 @@
 
     }
 </script>
-<style scoped>
-    .media_table,
-    .media_table tr:first-child,
-    .media_table tr:first-child td
-    {
-        border-top: 0px !important;
-    }
-</style>

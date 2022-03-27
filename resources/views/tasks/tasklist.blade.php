@@ -4,12 +4,12 @@
     @foreach ($tasks as $task)
     <li class="bg-light">
         <!-- drag handle -->
-               <span class="handle">
-            <i class="fas fa-ellipsis-v"></i>
-            <i class="fas fa-ellipsis-v"></i>
-        </span>
+        <!--        <span class="handle">
+                    <i class="fas fa-ellipsis-v"></i>
+                    <i class="fas fa-ellipsis-v"></i>
+                </span>-->
         <!-- checkbox -->
-        <div  class="icheck-primary d-inline ml-2">
+        <div class="icheck-primary d-inline ml-2">
             <input
                 type="checkbox"
                 value=""

@@ -75,7 +75,7 @@
                 try {
                     await axios.post('/mediumSubscriptions/destroy', this.subscription).data;
                 } catch(error) {
-                    //this.errors = error.response.data.errors;
+                    console.log(error.response.data.errors);
                 }
                 $("#medium_"+this.medium.id).hide();
             },

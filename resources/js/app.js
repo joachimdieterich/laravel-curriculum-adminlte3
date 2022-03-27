@@ -98,7 +98,7 @@ Vue.component('medium-create-modal', require('./components/media/MediumCreateMod
 Vue.component('medium-export-modal', require('./components/media/MediumExportModal.vue').default);
 Vue.component('note-modal', require('./components/note/NoteModal.vue').default);
 Vue.component('notes', require('./components/note/Notes.vue').default);
-Vue.component('objective-medium-modal', require('./components/objectives/ObjectiveMediumModal.vue').default);
+/*Vue.component('objective-medium-modal', require('./components/objectives/ObjectiveMediumModal.vue').default);*/
 Vue.component('certificate-generate-modal', require('./components/certificate/GenerateCertificateModal.vue').default);
 Vue.component('logbook', require('./components/logbooks/Logbook.vue').default);
 Vue.component('logbook-entry-modal', require('./components/logbooks/LogbookEntryModal.vue').default);

@@ -71,29 +71,29 @@
 <script src="{{ l5_swagger_asset('swagger-ui-standalone-preset.js') }}"> </script>
 <script>
 window.onload = function() {
-  // Build a system
-  const ui = SwaggerUIBundle({
-    dom_id: '#swagger-ui',
+    // Build a system
+    const ui = SwaggerUIBundle({
+        dom_id: '#swagger-ui',
 
-    url: "{!! $urlToDocs !!}",
-    operationsSorter: {!! isset($operationsSorter) ? '"' . $operationsSorter . '"' : 'null' !!},
-    configUrl: {!! isset($configUrl) ? '"' . $configUrl . '"' : 'null' !!},
-    validatorUrl: {!! isset($validatorUrl) ? '"' . $validatorUrl . '"' : 'null' !!},
-    oauth2RedirectUrl: "{{ route('l5-swagger.oauth2_callback') }}",
+        url: "{!! $urlToDocs !!}",
+        operationsSorter: {!! isset($operationsSorter) ? '"' . $operationsSorter . '"' : 'null' !!},
+        configUrl: {!! isset($configUrl) ? '"' . $configUrl . '"' : 'null' !!},
+        validatorUrl: {!! isset($validatorUrl) ? '"' . $validatorUrl . '"' : 'null' !!},
+        oauth2RedirectUrl: "{{ route('l5-swagger.oauth2_callback') }}",
 
-    requestInterceptor: function() {
-      this.headers['X-CSRF-TOKEN'] = '{{ csrf_token() }}';
-      return this;
-    },
+        requestInterceptor: function (request) {
+            request.headers['X-CSRF-TOKEN'] = '{{ csrf_token() }}';
+            return request;
+        },
 
-    presets: [
-      SwaggerUIBundle.presets.apis,
-      SwaggerUIStandalonePreset
-    ],
+        presets: [
+            SwaggerUIBundle.presets.apis,
+            SwaggerUIStandalonePreset
+        ],
 
-    plugins: [
-      SwaggerUIBundle.plugins.DownloadUrl
-    ],
+        plugins: [
+            SwaggerUIBundle.plugins.DownloadUrl
+        ],
 
     layout: "StandaloneLayout"
   })

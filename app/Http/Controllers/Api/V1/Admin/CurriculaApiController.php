@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Curriculum;
+use App\Http\Controllers\LogController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Config;
@@ -59,7 +60,8 @@ class CurriculaApiController extends Controller
             }
             else
             {*/
-                $metadata =  DB::table('metadatasets')->latest('updated_at')->first();
+        LogController::set(get_class($this) . '@' . __FUNCTION__);
+        $metadata = DB::table('metadatasets')->latest('updated_at')->first();
                 return $metadata->metadataset;
         /*  }
       }

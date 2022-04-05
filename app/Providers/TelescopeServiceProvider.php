@@ -20,6 +20,13 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 
         $this->hideSensitiveRequestDetails();
 
+        // Add Telescope tag status
+        Telescope::tag(function (IncomingEntry $entry) {
+            if ($entry->type === 'request') {
+                return [$entry->content['response_status']];
+            }
+            return [];
+        });
 //        Telescope::filter(function (IncomingEntry $entry) {
 //            if ($this->app->isLocal()) {
 //                return true;
@@ -31,8 +38,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 //                   $entry->hasMonitoredTag();
 //        });
 
-        
-        // Fix ReflectionException: Class env does not exist #347 
+        // Fix ReflectionException: Class env does not exist #347
         // see:
         // https://github.com/laravel/telescope/issues/347#issuecomment-523550515
         // Disable the filter while in local or testing environment.
@@ -80,7 +86,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
     {
         Gate::define('viewTelescope', function ($user) {
             return in_array($user->email, [
-                
+
             ]);
         });
     }

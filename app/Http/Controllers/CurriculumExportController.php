@@ -50,26 +50,27 @@ class CurriculumExportController extends Controller
                 'terminalObjectives.enablingObjectives.successors.successor',
             ])->get()->first();
 
-        $exportFolder = "export/".$curriculum->id;
-        $filename = date("Y-m-d_H-i-s")."_".$curriculum->id;
+        $exportFolder = "export/" . $curriculum->id;
+        $filename = date("Y-m-d_H-i-s") . "_" . $curriculum->id;
         Storage::deleteDirectory($exportFolder);                                // remove potential artefacts of previous export
 
-        Storage::disk('local')->put($exportFolder."/".$filename.".json", json_encode($curriculumWithRelations));
+        Storage::disk('local')->put($exportFolder . "/" . $filename . ".json", json_encode($curriculumWithRelations));
 
         $this->exportEmbeddedFiles($curriculumWithRelations->description, $exportFolder);
 
         // image of curriculum
-        if(Storage::exists($curriculumWithRelations->medium->relativePath()) AND
-            !Storage::exists($exportFolder."/media/".$curriculumWithRelations->medium->medium_name)) {
-            Storage::copy($curriculumWithRelations->medium->relativePath(), $exportFolder."/media/{$curriculumWithRelations->medium->id}/".$curriculumWithRelations->medium->medium_name);
+        if ($curriculumWithRelations->medium !== null) {
+            if (Storage::exists($curriculumWithRelations->medium->relativePath()) and
+                !Storage::exists($exportFolder . "/media/" . $curriculumWithRelations->medium->medium_name)) {
+                Storage::copy($curriculumWithRelations->medium->relativePath(), $exportFolder . "/media/{$curriculumWithRelations->medium->id}/" . $curriculumWithRelations->medium->medium_name);
+            }
         }
 
         // curricula
-        foreach($curriculumWithRelations->media AS $medium)
-        {
-            if(Storage::exists($medium->relativePath()) AND
-                !Storage::exists($exportFolder."/media/{$medium->id}/".$medium->medium_name)) {
-                Storage::copy($medium->relativePath(), $exportFolder."/media/{$medium->id}/".$medium->medium_name);
+        foreach ($curriculumWithRelations->media as $medium) {
+            if (Storage::exists($medium->relativePath()) and
+                !Storage::exists($exportFolder . "/media/{$medium->id}/" . $medium->medium_name)) {
+                Storage::copy($medium->relativePath(), $exportFolder . "/media/{$medium->id}/" . $medium->medium_name);
             }
         }
 

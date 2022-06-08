@@ -13,9 +13,10 @@ class AddProviderColumnToOauthClientsTable extends Migration
      */
     public function up()
     {
-        Schema::table('oauth_clients', function (Blueprint $table) {
+        //uncomment if update from older version
+        /*Schema::table('oauth_clients', function (Blueprint $table) {
             $table->string('provider')->after('secret')->nullable();
-        });
+        });*/
     }
 
 
@@ -27,8 +28,9 @@ class AddProviderColumnToOauthClientsTable extends Migration
      */
     public function down()
     {
-        Schema::table('oauth_clients', function (Blueprint $table) {
+        //uncomment if update from older version
+        /*Schema::table('oauth_clients', function (Blueprint $table) {
             $table->dropColumn('provider');
-        });
+        });*/
     }
 }

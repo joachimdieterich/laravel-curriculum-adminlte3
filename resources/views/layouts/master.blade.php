@@ -39,8 +39,8 @@
             </nav>
     <!-- /.navbar -->
 
-    <!-- Main Sidebar Container -->
-    @include('partials.topmenu')
+            <!-- Main Sidebar Container -->
+            @include('partials.menu')
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">

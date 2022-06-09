@@ -11,13 +11,16 @@
         <!-- Left navbar links -->
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" data-widget="pushmenu"
-                           onclick="toggleMenu()"><i class="fas fa-bars"></i></a>
-                    </li>
-<!--                    <li class="nav-item d-none d-sm-inline-block">
+                <a class="nav-link"
+                   data-widget="pushmenu"
+                   onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
+                </a>
+            </li>
+            <!--   <li class="nav-item d-none d-sm-inline-block">
                         <a href="#" class="nav-link">Contact</a>
                     </li>-->
-                </ul>
+        </ul>
 
                 <!-- SEARCH FORM -->
 <!--                <form class="form-inline ml-3">
@@ -34,43 +37,43 @@
                 <!-- Right navbar links -->
                 @include('partials.navbar')
             </nav>
-            <!-- /.navbar -->
+    <!-- /.navbar -->
 
-            <!-- Main Sidebar Container -->
-            @include('partials.menu')
+    <!-- Main Sidebar Container -->
+    @include('partials.topmenu')
 
-            <!-- Content Wrapper. Contains page content -->
-            <div class="content-wrapper">
-                <!-- Content Header (Page header) -->
-                <section class="content-header">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-sm-8 pl-0">
-                                <h1> @yield('title')</h1>
-                            </div>
-                            <div class="col-sm-4 pr-0">
-                                <ol class="breadcrumb float-sm-right">
-                                    @yield('breadcrumb')
-                                </ol>
-                            </div>
-                        </div>
-                    </div><!-- /.container-fluid -->
-                </section>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-8 pl-0">
+                        <h1> @yield('title')</h1>
+                    </div>
+                    <div class="col-sm-4 pr-0">
+                        <ol class="breadcrumb float-sm-right">
+                            @yield('breadcrumb')
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
 
-                <!-- Main content -->
-                <section class="content">
-                    @yield('content')
-                    <input id="medium_id" class="invisible">
-                </section>
-                <!-- /.content -->
-            </div>
-            <!-- /.content-wrapper -->
-            <!-- Footer -->
-            @include('partials.footer')
-            <!-- Logout Form -->
-            <form id="logoutform" action="{{ route('logout') }}" method="POST" style="display: none;">
-                {{ csrf_field() }}
-            </form>
+        <!-- Main content -->
+        <section class="content">
+            @yield('content')
+            <input id="medium_id" class="invisible">
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <!-- Footer -->
+    @include('partials.footer')
+    <!-- Logout Form -->
+    <form id="logoutform" action="{{ route('logout') }}" method="POST" style="display: none;">
+        {{ csrf_field() }}
+    </form>
 
     <!-- Control Sidebar -->
     <aside class="control-sidebar control-sidebar-light">

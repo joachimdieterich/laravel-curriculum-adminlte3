@@ -281,3 +281,23 @@ Install a little helper called 'n'
 ```sudo npm install -g n```
 Install latest stable Node.js version
 ```sudo n stable```
+
+### Update to Laravel 9 from older version
+
+If table ```oauth_clients``` exists change ```database/migrations/2022_06_06_184704_add_provider_column_to_oauth_clients_table.php``` to 
+
+```php
+public function up()
+{
+    Schema::table('oauth_clients', function (Blueprint $table) {
+        $table->string('provider')->after('secret')->nullable();
+    });
+}
+
+public function down()
+{   
+    Schema::table('oauth_clients', function (Blueprint $table) {
+        $table->dropColumn('provider');
+    });/
+}
+```

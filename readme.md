@@ -6,8 +6,11 @@ curriculum is a learning platform where teachers can create topic-based learning
 
 ## Installation
 
+### Laravel
+- laravel Ver. 9
+
 ### Prerequisites
-- PHP 7.3 Extensions: xml, dom, zip, curl, mbstring, bcmath, gd, mysqli, PDO, json, tokenizer, openssl, fileinfo, ctype
+- PHP 8.0.2 Extensions: xml, dom, zip, curl, mbstring, bcmath, gd, mysqli, PDO, json, tokenizer, openssl, fileinfo, ctype
 - ghostscript
 - imagemagick
 - git

@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="row">
-            <div class="col-12">
+<!--            <div class="col-12">
                 <div class="form-group "
                     :class="errors.title ? 'has-error' : ''"
                       >
@@ -65,12 +65,13 @@
 
                     </div>
                 </div>
-            </div>
+            </div>-->
             <div class="col-12">
                 <iframe
+                    id="eduSharingFrame"
                     :src="`https://cloud.schulcampus-rlp.de/edu-sharing/components/upload?reurl=IFRAME`"
                     width="100%"
-                    height="200"
+                    height="650"
                     frameborder="0">
                 </iframe>
             </div>
@@ -197,6 +198,15 @@
                 this.page = this.page + 1;
                 this.getSearch  ();
             },
+            receiveMessage(event) {
+                if(event.data.event !== 'CONTENT_HEIGHT') {
+                    console.log(event.data);
+                }
+                // TODO: this doesn't work atm on schulcampus
+                if(event.data.event === 'APPLY_NODE') {
+                    console.log(event.data.data); // this will look similar to an API response structure of an object
+                }
+            }
         },
 
         computed: {
@@ -219,6 +229,11 @@
                 .catch(e => {
                 this.errors = error.response.data.errors;
             });
+
+
+            var iframe = document.getElementById('eduSharingFrame');
+            iframe.contentWindow.body.addEventListener('message', receiveMessage, false);
+
         }
 
     }

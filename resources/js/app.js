@@ -85,6 +85,7 @@ Vue.component('group-view', require('./components/group/GroupView.vue').default)
 Vue.component('terminal-objective-modal', require('./components/objectives/TerminalObjectiveModal.vue').default);
 Vue.component('data-table-widgets', require('./components/uiElements/DataTableWidgets.vue').default);
 Vue.component('enabling-objective-modal', require('./components/objectives/EnablingObjectiveModal.vue').default);
+Vue.component('events', require('../../app/Plugins/Eventmanagement/eVewa/resources/js/components/embedEvents').default);
 Vue.component('objective-view', require('./components/objectives/ObjectiveView.vue').default);
 Vue.component('objective-box', require('./components/objectives/ObjectiveBox.vue').default);
 Vue.component('dropdown-button', require('./components/uiElements/DropdownButton.vue').default);

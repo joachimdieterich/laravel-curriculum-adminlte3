@@ -45,8 +45,7 @@
     @parent
     <script>
         $(function () {
-
-            let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
+            let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons);
             var table = $('#logbooks-datatable').DataTable({
                 ajax: "{{ url('logbooks/list') }}",
                 columns: [

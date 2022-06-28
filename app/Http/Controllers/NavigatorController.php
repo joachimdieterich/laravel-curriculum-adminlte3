@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Navigator;
 use App\NavigatorView;
-use App\Organization;
-use File;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -28,13 +26,12 @@ class NavigatorController extends Controller
 
     public function list()
     {
-
         abort_unless(\Gate::allows('navigator_access'), 403);
         $navigators = Navigator::select([
             'id',
             'title',
-            'organization_id'
-            ]);
+            'organization_id',
+        ]);
 
         $edit_gate = \Gate::allows('navigator_edit');
         $delete_gate = \Gate::allows('navigator_delete');
@@ -44,20 +41,20 @@ class NavigatorController extends Controller
                 return $navigators->organization()->first()->title;
             })
             ->addColumn('action', function ($navigators) use ($edit_gate, $delete_gate) {
-                 $actions  = '';
-                    if ($edit_gate){
-                        $actions .= '<a href="'.route('navigators.edit', $navigators->id).'" '
-                                    . 'id="edit-navigator-'.$navigators->id.'" '
-                                    . 'class="btn">'
-                                    . '<i class="fa fa-pencil-alt"></i>'
-                                    . '</a>';
-                    }
-                    if ($delete_gate){
-                        $actions .= '<button type="button" '
-                                . 'class="btn text-danger" '
-                                . 'onclick="destroyDataTableEntry(\'navigators\','.$navigators->id.')">'
-                                . '<i class="fa fa-trash"></i></button>';
-                    }
+                $actions = '';
+                if ($edit_gate) {
+                    $actions .= '<a href="'.route('navigators.edit', $navigators->id).'" '
+                                    .'id="edit-navigator-'.$navigators->id.'" '
+                                    .'class="btn">'
+                                    .'<i class="fa fa-pencil-alt"></i>'
+                                    .'</a>';
+                }
+                if ($delete_gate) {
+                    $actions .= '<button type="button" '
+                                .'class="btn text-danger" '
+                                .'onclick="destroyDataTableEntry(\'navigators\','.$navigators->id.')">'
+                                .'<i class="fa fa-trash"></i></button>';
+                }
 
                 return $actions;
             })
@@ -77,6 +74,7 @@ class NavigatorController extends Controller
         abort_unless(\Gate::allows('navigator_create'), 403);
 
         $organizations = auth()->user()->organizations()->get();
+
         return view('navigators.create')
                 ->with(compact('organizations'));
     }
@@ -94,11 +92,11 @@ class NavigatorController extends Controller
 
         $navigator = Navigator::firstOrCreate([
             'title' => $new_navigator['title'],
-            'organization_id' => format_select_input($new_navigator['organization_id'])
+            'organization_id' => format_select_input($new_navigator['organization_id']),
         ]);
 
         // axios call?
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $navigator->path()];
         }
 
@@ -114,7 +112,7 @@ class NavigatorController extends Controller
     public function show(Navigator $navigator)
     {
         $navigators = Navigator::where('id', $navigator->id)->get()->first();
-        $views      = NavigatorView::where('navigator_id', $navigator->id)
+        $views = NavigatorView::where('navigator_id', $navigator->id)
                                     ->with(['items'])
                                     ->get()->first();
         $breadcrumbs = $this->breadcrumbs($views);
@@ -125,7 +123,6 @@ class NavigatorController extends Controller
                 ->with(compact('navigators'))
                 ->with(compact('views'))
                 ->with(compact('breadcrumbs'));
-
     }
 
     /**
@@ -180,19 +177,18 @@ class NavigatorController extends Controller
 
     /**
      * Generate breadcrumb
-     * @param NavigatorView $view
+     *
+     * @param  NavigatorView  $view
      * @return array
      */
     protected function breadcrumbs($view)
     {
-        $entries = array();
-        if (isset($view->navigator))
-        {
+        $entries = [];
+        if (isset($view->navigator)) {
             $first_view = NavigatorView::where('navigator_id', $view->navigator->id)->get()->first();
             $entries[] = ['href' => '/navigators/'.$view->navigator->id.'/'.$view->id, 'title' => $view->title];
             $current_view = $view;
-            while ($current_view->id != $first_view->id)
-            {
+            while ($current_view->id != $first_view->id) {
                 $current_item = NavigatorItem::where('referenceable_type', 'App\NavigatorView')
                                              ->where('referenceable_id', $current_view->id)->get()->first();
                 $current_view = NavigatorView::where('id', $current_item->navigator_view_id)
@@ -207,7 +203,6 @@ class NavigatorController extends Controller
 
     protected function validateRequest()
     {
-
         return request()->validate([
             'title'             => 'sometimes|required',
             'organization_id'   => 'sometimes',

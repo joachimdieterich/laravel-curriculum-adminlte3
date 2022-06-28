@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Logbook;
 use App\Config;
+use App\Logbook;
 use Facades\Tests\Setup\LogbookFactory;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class StudentLogbookCRUDTest extends TestCase
 {
@@ -23,12 +23,12 @@ class StudentLogbookCRUDTest extends TestCase
      */
     public function a_student_see_logbooks()
     {
-        $this->get("logbooks")
+        $this->get('logbooks')
             ->assertStatus(200);
 
         /* Use Datatables */
         $logbook = Logbook::first();
-        $this->get("logbooks/list")
+        $this->get('logbooks/list')
             ->assertStatus(200)
             ->assertViewHasAll(compact($logbook));
     }
@@ -38,7 +38,7 @@ class StudentLogbookCRUDTest extends TestCase
      */
     public function a_student_create_an_Logbook()
     {
-        $this->post("logbooks", $attributes = factory('App\Logbook')->raw());
+        $this->post('logbooks', $attributes = factory('App\Logbook')->raw());
 
         $this->assertDatabaseHas('logbooks', $attributes);
     }
@@ -48,7 +48,7 @@ class StudentLogbookCRUDTest extends TestCase
      */
     public function a_student_get_create_view_for_logbooks()
     {
-        $this->get("logbooks/create")
+        $this->get('logbooks/create')
             ->assertStatus(200);
     }
 
@@ -57,7 +57,7 @@ class StudentLogbookCRUDTest extends TestCase
      */
     public function a_student_cannot_get_create_view_for_logbooks_if_limiter_is_reached()
     {
-        $this->get("logbooks/create")
+        $this->get('logbooks/create')
             ->assertStatus(200); //limit not reached
 
         $logbook = LogbookFactory::create(); //create first logbook
@@ -70,7 +70,7 @@ class StudentLogbookCRUDTest extends TestCase
             'data_type' => 'integer',
         ]); // define limit = 1
 
-        $this->get("logbooks/create")
+        $this->get('logbooks/create')
             ->assertStatus(402); // limit reached
     }
 
@@ -82,7 +82,7 @@ class StudentLogbookCRUDTest extends TestCase
         $logbook = LogbookFactory::create();
 
         $this->followingRedirects()
-            ->delete("logbooks/" . $logbook->id)
+            ->delete('logbooks/'.$logbook->id)
             ->assertStatus(403);
 
         $this->assertDatabaseHas('logbooks', $logbook->toArray());
@@ -119,11 +119,11 @@ class StudentLogbookCRUDTest extends TestCase
      */
     public function a_student_update_a_Logbook()
     {
-        $this->post("logbooks", $attributes = factory('App\Logbook')->raw());
+        $this->post('logbooks', $attributes = factory('App\Logbook')->raw());
 
         $this->assertDatabaseHas('logbooks', $attributes);
 
-        $this->patch("logbooks/" . Logbook::where('title', '=', $attributes['title'])->first()->id, $new_attributes = factory('App\Logbook')->raw());
+        $this->patch('logbooks/'.Logbook::where('title', '=', $attributes['title'])->first()->id, $new_attributes = factory('App\Logbook')->raw());
 
         $this->assertDatabaseHas('logbooks', $new_attributes);
     }
@@ -167,6 +167,4 @@ class StudentLogbookCRUDTest extends TestCase
         $this->get("logbooks/{$logbook->id}/edit")
             ->assertStatus(403);
     }
-
-
 }

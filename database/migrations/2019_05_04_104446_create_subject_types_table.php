@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateSubjectTypesTable extends Migration
 {
@@ -17,7 +17,7 @@ class CreateSubjectTypesTable extends Migration
             $table->bigIncrements('id')->unsigned();
             $table->string('title');
             $table->string('external_id');
-            
+
             $table->timestamps();
         });
     }

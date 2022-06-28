@@ -24,11 +24,10 @@ class LmsUserTokenController extends Controller
         }
     }
 
-
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -40,10 +39,10 @@ class LmsUserTokenController extends Controller
         $token = LmsUserToken::updateOrCreate(
             [
                 'organization_id' => auth()->user()->current_organization_id,
-                'user_id' => auth()->user()->id
+                'user_id' => auth()->user()->id,
             ],
             [
-                'token' => $input['token']
+                'token' => $input['token'],
             ]);
 
         if (request()->wantsJson()) {
@@ -51,11 +50,10 @@ class LmsUserTokenController extends Controller
         }
     }
 
-
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\LmsUserToken $lmsUserToken
+     * @param  \App\LmsUserToken  $lmsUserToken
      * @return \Illuminate\Http\Response
      */
     public function destroy(LmsUserToken $lmsUserToken)

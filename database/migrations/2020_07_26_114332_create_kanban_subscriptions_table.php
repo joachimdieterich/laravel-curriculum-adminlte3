@@ -26,7 +26,6 @@ class CreateKanbanSubscriptionsTable extends Migration
 
             $table->foreign('kanban_id')->references('id')->on('kanbans');
             $table->foreign('owner_id')->references('id')->on('users');
-
         });
     }
 

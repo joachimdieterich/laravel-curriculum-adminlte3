@@ -2,19 +2,16 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Medium;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-
-
+use Tests\TestCase;
 
 class MediaCRUDTest extends TestCase
 {
     use RefreshDatabase;
 
-     public function setUp(): void
+    public function setUp(): void
     {
-
         parent::setUp();
         $this->signInAdmin();
     }
@@ -24,9 +21,8 @@ class MediaCRUDTest extends TestCase
      */
     public function an_administrator_can_get_media()
     {
-
         $media = Medium::all();
-        $this->get("media")
+        $this->get('media')
              ->assertStatus(200)
              ->assertViewHasAll(compact($media));
     }

@@ -2,9 +2,9 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
 use App\Period;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class PeriodTest extends TestCase
 {
@@ -26,6 +26,5 @@ class PeriodTest extends TestCase
         $period = Period::findOrFail(1);
 
         $this->assertInstanceOf('App\Organization', $period->organization()->first());
-
     }
 }

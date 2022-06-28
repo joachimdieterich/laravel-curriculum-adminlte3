@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Progress;
 use App\Achievement;
 use App\EnablingObjective;
+use App\Progress;
 use App\TerminalObjective;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,9 +18,8 @@ class ProgressController extends Controller
      */
     public function index()
     {
-       abort(403);
+        abort(403);
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -49,10 +48,10 @@ class ProgressController extends Controller
                         'referenceable_type' => $input['referenceable_type'],
                         'referenceable_id' => $input['parent_id'],
                         'associable_type' => 'App\\User',
-                        'associable_id' => $user_id
+                        'associable_id' => $user_id,
                     ],
                     [
-                        'value' => ($total_achieved->count() / $enabling_objectives->count() *100)
+                        'value' => ($total_achieved->count() / $enabling_objectives->count() * 100),
                     ]
                 );
                 break;
@@ -60,39 +59,40 @@ class ProgressController extends Controller
             default:
                 break;
         }
-
     }
 
     protected function validateRequest()
     {
-
         return request()->validate([
             'referenceable_type'    => 'required',
             'referenceable_id'      => 'required',
             'associable_type'       => 'required',
             'associable_id'         => 'required',
-            'value'                 => 'required'
-            ]);
+            'value'                 => 'required',
+        ]);
     }
 
     /**
      * Example (new ProgressController)->calculateProgress('App\TerminalObjective', $terminal_objective_id, $user_id);
-     * @param type $parent_model
-     * @param type $parent_id
-     * @param type $user_id
+     *
+     * @param  type  $parent_model
+     * @param  type  $parent_id
+     * @param  type  $user_id
      * @return type
      */
     public function calculateProgress($parent_model, $parent_id, $user_id)
     {
         $dynamicFunction = 'calculate'.class_basename($parent_model).'Progress';
+
         return $this->$dynamicFunction($parent_model, $parent_id, $user_id);
     }
 
     /**
      * calculate users terminal objective progress based on enabling objectives achievements
-     * @param type $parent_model
-     * @param type $parent_id
-     * @param type $user_id
+     *
+     * @param  type  $parent_model
+     * @param  type  $parent_id
+     * @param  type  $user_id
      * @return type
      */
     public function calculateTerminalObjectiveProgress($parent_model, $parent_id, $user_id)
@@ -113,7 +113,7 @@ class ProgressController extends Controller
                 'associable_id' => $user_id,
             ],
             [
-                'value' => ($total_achieved->count() / $enabling_objectives->count() *100)
+                'value' => ($total_achieved->count() / $enabling_objectives->count() * 100),
             ]
 
         );
@@ -139,9 +139,8 @@ class ProgressController extends Controller
                 'associable_id' => $user_id,
             ],
             [
-                'value' => floor( $terminal_objective_progresses->sum('value') / $terminal_objectives->count() )
+                'value' => floor($terminal_objective_progresses->sum('value') / $terminal_objectives->count()),
             ]
         );
-
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateUserRequest extends FormRequest
@@ -30,7 +29,7 @@ class UpdateUserRequest extends FormRequest
             'password'   => [
                 'sometimes',
             ],
-             
+
         ];
     }
 }

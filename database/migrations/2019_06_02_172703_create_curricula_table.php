@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateCurriculaTable extends Migration
 {
@@ -14,31 +14,29 @@ class CreateCurriculaTable extends Migration
     public function up()
     {
         Schema::create('curricula', function (Blueprint $table) {
-           
             $table->bigIncrements('id');
             $table->string('title');
             $table->text('description')->nullable();
-            
+
             $table->string('author')->nullable();
             $table->string('publisher')->nullable();
             $table->string('city')->nullable();
             $table->timestamp('date')->nullable();
-            
+
             $table->char('color')->default('#3c8dbc99')->nullable();
-            
-            
+
             $table->unsignedbigInteger('grade_id');
             $table->unsignedbigInteger('subject_id');
             $table->unsignedbigInteger('organization_type_id');
             $table->char('state_id')->nullable();
             $table->char('country_id');
-            
+
             $table->unsignedbigInteger('medium_id')->nullable();
-            
+
             $table->unsignedbigInteger('owner_id');
-            
+
             $table->timestamps();
-            
+
             $table->foreign('grade_id')->references('id')->on('grades');
             $table->foreign('subject_id')->references('id')->on('subjects');
             //$table->foreign('state_id')->references('code')->on('states');

@@ -20,7 +20,7 @@ class CreateKanbanStatusesTable extends Migration
             $table->unsignedbigInteger('owner_id');
             $table->unsignedbigInteger('kanban_id');
             $table->timestamps();
-            
+
             $table->foreign('owner_id')->references('id')->on('users');
             $table->foreign('kanban_id')->references('id')->on('kanbans');
         });

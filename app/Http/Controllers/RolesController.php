@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\MassDestroyRoleRequest;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
 use App\Permission;
 use App\Role;
-use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Cache;
+use Yajra\DataTables\DataTables;
 
 class RolesController extends Controller
 {
@@ -25,8 +23,8 @@ class RolesController extends Controller
         abort_unless(\Gate::allows('role_access'), 403);
         $roles = Role::select([
             'id',
-            'title'
-            ]);
+            'title',
+        ]);
 
         $edit_gate = \Gate::allows('role_edit');
         $delete_gate = \Gate::allows('role_delete');
@@ -34,19 +32,20 @@ class RolesController extends Controller
         return DataTables::of($roles)
 
             ->addColumn('action', function ($roles) use ($edit_gate, $delete_gate) {
-                 $actions  = '';
-                    if ($edit_gate){
-                        $actions .= '<a href="'.route('roles.edit', $roles->id).'" '
-                                    . 'class="btn">'
-                                    . '<i class="fa fa-pencil-alt"></i>'
-                                    . '</a>';
-                    }
-                    if ($delete_gate){
-                        $actions .= '<button type="button" '
-                                . 'class="btn text-danger" '
-                                . 'onclick="destroyDataTableEntry(\'roles\','.$roles->id.')">'
-                                . '<i class="fa fa-trash"></i></button>';
-                    }
+                $actions = '';
+                if ($edit_gate) {
+                    $actions .= '<a href="'.route('roles.edit', $roles->id).'" '
+                                    .'class="btn">'
+                                    .'<i class="fa fa-pencil-alt"></i>'
+                                    .'</a>';
+                }
+                if ($delete_gate) {
+                    $actions .= '<button type="button" '
+                                .'class="btn text-danger" '
+                                .'onclick="destroyDataTableEntry(\'roles\','.$roles->id.')">'
+                                .'<i class="fa fa-trash"></i></button>';
+                }
+
                 return $actions;
             })
 
@@ -119,5 +118,4 @@ class RolesController extends Controller
 
         return back();
     }
-
 }

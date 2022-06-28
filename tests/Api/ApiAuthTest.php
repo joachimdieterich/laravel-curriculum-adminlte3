@@ -2,8 +2,8 @@
 
 namespace Tests\Api;
 
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class ApiAuthTest extends TestCase
 {
@@ -15,13 +15,12 @@ class ApiAuthTest extends TestCase
         $this->post('/api/v1/login',
             [
                 'email' => 'admin',
-                'password' => 'password'
+                'password' => 'password',
             ])->assertStatus(302);
 
         $this->signInApiAdmin();
         $user = $this->get('/api/v1/user');
 
-        $this->assertEquals($user->baseResponse->original->id,1);
+        $this->assertEquals($user->baseResponse->original->id, 1);
     }
-
 }

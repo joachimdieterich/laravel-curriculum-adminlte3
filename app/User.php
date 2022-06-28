@@ -3,20 +3,16 @@
 namespace App;
 
 use Carbon\Carbon;
+use Cmgmyr\Messenger\Models\Thread;
+use Cmgmyr\Messenger\Traits\Messagable;
 use Hash;
-use Illuminate\Support\Facades\Cache;
-use Laravolt\Avatar\Facade;
 use Illuminate\Auth\Notifications\ResetPassword;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Passport\HasApiTokens;
 use Illuminate\Support\Facades\DB;
-use Cmgmyr\Messenger\Traits\Messagable;
-use Cmgmyr\Messenger\Models\Thread;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Passport\HasApiTokens;
+
 /**
  *   @OA\Schema(
  *      required={"id", "username", "firstname", "lastname", "email", "password"},
@@ -36,9 +32,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *      @OA\Property( property="current_organization_id", type="integer"),
  *      @OA\Property( property="current_period_id", type="integer")
  *   ),
- *
  */
-
 class User extends Authenticatable
 {
     use HasApiTokens, SoftDeletes, Notifiable, Messagable;
@@ -125,12 +119,12 @@ class User extends Authenticatable
 
     public function getEmailVerifiedAtAttribute($value)
     {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('panel.date_format') . ' ' . config('panel.time_format')) : null;
+        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('panel.date_format').' '.config('panel.time_format')) : null;
     }
 
     public function setEmailVerifiedAtAttribute($value)
     {
-        $this->attributes['email_verified_at'] = $value ? Carbon::createFromFormat(config('panel.date_format') . ' ' . config('panel.time_format'), $value)->format('Y-m-d H:i:s') : null;
+        $this->attributes['email_verified_at'] = $value ? Carbon::createFromFormat(config('panel.date_format').' '.config('panel.time_format'), $value)->format('Y-m-d H:i:s') : null;
     }
 
     public function setPasswordAttribute($input)
@@ -275,7 +269,7 @@ class User extends Authenticatable
             ->select('periods.*', 'groups.organization_id AS organization_id')
             ->join('groups', 'groups.period_id', '=', 'periods.id')
             ->join('group_user', 'group_user.group_id', '=', 'groups.id')
-            ->where('group_user.user_id',  $this->id)
+            ->where('group_user.user_id', $this->id)
             ->distinct()
             ->get();
     }
@@ -286,8 +280,8 @@ class User extends Authenticatable
             ->select('periods.*', 'groups.organization_id AS organization_id')
             ->join('groups', 'groups.period_id', '=', 'periods.id')
             ->join('group_user', 'group_user.group_id', '=', 'groups.id')
-            ->where('group_user.user_id',  $this->id)
-            ->where('groups.organization_id',  $this->current_organization_id)
+            ->where('group_user.user_id', $this->id)
+            ->where('groups.organization_id', $this->current_organization_id)
             ->distinct()
             ->get();
     }
@@ -307,6 +301,7 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class, 'organization_role_users')
                 ->withPivot(['user_id', 'role_id', 'organization_id']);
     }
+
     /**
      * current role, based on current_organization_id organization_role_users
      */
@@ -330,8 +325,8 @@ class User extends Authenticatable
         return DB::table('permissions')
             ->join('permission_role', 'permission_role.permission_id', '=', 'permissions.id')
             ->join('organization_role_users', 'organization_role_users.role_id', '=', 'permission_role.role_id')
-            ->where('organization_role_users.organization_id',  $this->current_organization_id)
-            ->where('organization_role_users.user_id',  $this->id)
+            ->where('organization_role_users.organization_id', $this->current_organization_id)
+            ->where('organization_role_users.user_id', $this->id)
             ->get();
     }
 
@@ -354,12 +349,11 @@ class User extends Authenticatable
     }
 
     /**
-     *
      * @return OrganizationRoleUser
      */
     public function organizationRolesUsers()
     {
-      return $this->hasMany(OrganizationRoleUser::class);
+        return $this->hasMany(OrganizationRoleUser::class);
     }
 
     public function status()
@@ -367,36 +361,31 @@ class User extends Authenticatable
         return $this->hasOne('App\StatusDefinition', 'status_definition_id', 'status_id');
     }
 
-
     public function currentRole()
     {
-
         return $this->roles()
                 ->where('user_id', '=', $this->id)
                 ->where('organization_id', $this->current_organization_id)
                 ->get();
-
     }
 
     public function users()
     {
-        return (auth()->user()->role()->id == 1) ? User::select('id','username', 'firstname', 'lastname') : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->select('id','username', 'firstname', 'lastname', 'deleted_at'); //todo, get all users of all organizations not only current
+        return (auth()->user()->role()->id == 1) ? User::select('id', 'username', 'firstname', 'lastname') : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->select('id', 'username', 'firstname', 'lastname', 'deleted_at'); //todo, get all users of all organizations not only current
     }
 
     public function getAvatarAttribute()
     {
-        return ($this->medium_id !== null) ? '/media/'.$this->medium_id  : (new \Laravolt\Avatar\Avatar)->create($this->fullName())->toBase64()->encoded;
+        return ($this->medium_id !== null) ? '/media/'.$this->medium_id : (new \Laravolt\Avatar\Avatar)->create($this->fullName())->toBase64()->encoded;
     }
 
     public function mayAccessUser(User $user, $context = 'organization')
     {
-        switch ($context){
+        switch ($context) {
             case 'organization': return $user->organizations->pluck('id')->contains($this->current_organization_id);
             //Todo: check for groups
             break;
             default: return false;
         }
-
     }
-
 }

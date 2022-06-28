@@ -2,13 +2,12 @@
 
 namespace Tests\Api;
 
-use Tests\TestCase;
 use App\Period;
-
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-class ApiPeriodTest extends TestCase {
-
+class ApiPeriodTest extends TestCase
+{
     use RefreshDatabase;
 
     /** @test
@@ -51,7 +50,7 @@ class ApiPeriodTest extends TestCase {
     {
         $this->signInApiAdmin();
 
-        $this->post("/api/v1/periods" , $attributes = factory('App\Period')->raw());
+        $this->post('/api/v1/periods', $attributes = factory('App\Period')->raw());
 
         $this->assertDatabaseHas('periods', $attributes);
     }
@@ -63,9 +62,9 @@ class ApiPeriodTest extends TestCase {
     {
         $this->signInApiAdmin();
 
-        $new_period = $this->post("/api/v1/periods" , $attributes = factory('App\Period')->raw());
+        $new_period = $this->post('/api/v1/periods', $attributes = factory('App\Period')->raw());
 
-        $this->put("/api/v1/periods/{$new_period->getData()->id}" , $changed_attribute = ['title' => 'New Title']);
+        $this->put("/api/v1/periods/{$new_period->getData()->id}", $changed_attribute = ['title' => 'New Title']);
 
         $changed_attribute = array_filter($changed_attribute);
 
@@ -81,11 +80,10 @@ class ApiPeriodTest extends TestCase {
     {
         $this->signInApiAdmin();
 
-        $new_period = $this->post("/api/v1/periods" , $attributes = factory('App\Period')->raw());
+        $new_period = $this->post('/api/v1/periods', $attributes = factory('App\Period')->raw());
 
         $this->delete("/api/v1/periods/{$new_period->getData()->id}");
 
         $this->assertDatabaseMissing('periods', $attributes);
     }
-
 }

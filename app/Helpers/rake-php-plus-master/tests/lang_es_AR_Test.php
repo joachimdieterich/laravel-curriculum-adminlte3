@@ -15,11 +15,11 @@ class lang_es_AR_Test extends PHPUnit_Framework_TestCase
 
     public function testPhrases()
     {
-        $text = "Saritha está viendo una película de Bollywood con su novio Chris. " .
-            "Las películas de Bollywood son filmadas en lengua hindi por la industria " .
-            "cinematográfica con sede en Mumbai, India. La 'B' de Bollywood viene de 'Bombay', " .
-            "el antiguo nombre de Mumbai. Las películas tradicionales de Bollywood no tienen " .
-            "la intención de ser realistas.";
+        $text = 'Saritha está viendo una película de Bollywood con su novio Chris. '.
+            'Las películas de Bollywood son filmadas en lengua hindi por la industria '.
+            "cinematográfica con sede en Mumbai, India. La 'B' de Bollywood viene de 'Bombay', ".
+            'el antiguo nombre de Mumbai. Las películas tradicionales de Bollywood no tienen '.
+            'la intención de ser realistas.';
 
         $phrases = RakePlus::create($text, 'es_AR')->get();
 
@@ -48,11 +48,11 @@ class lang_es_AR_Test extends PHPUnit_Framework_TestCase
 
     public function testKeywordsMinimumLength()
     {
-        $text = "Saritha está viendo una película de Bollywood con su novio Chris. " .
-            "Las películas de Bollywood son filmadas en lengua hindi por la industria " .
-            "cinematográfica con sede en Mumbai, India. La 'B' de Bollywood viene de 'Bombay', " .
-            "el antiguo nombre de Mumbai. Las películas tradicionales de Bollywood no tienen " .
-            "la intención de ser realistas.";
+        $text = 'Saritha está viendo una película de Bollywood con su novio Chris. '.
+            'Las películas de Bollywood son filmadas en lengua hindi por la industria '.
+            "cinematográfica con sede en Mumbai, India. La 'B' de Bollywood viene de 'Bombay', ".
+            'el antiguo nombre de Mumbai. Las películas tradicionales de Bollywood no tienen '.
+            'la intención de ser realistas.';
 
         $rake = RakePlus::create($text, 'es_AR', 8, false);
         $keywords = $rake->sortByScore('desc')->keywords();
@@ -72,7 +72,7 @@ class lang_es_AR_Test extends PHPUnit_Framework_TestCase
 
     public function testKeywordsWithNumbers()
     {
-        $text = "6462 Little Crest Suite 413, Lake Carlietown, WA 12643";
+        $text = '6462 Little Crest Suite 413, Lake Carlietown, WA 12643';
         $keywords = RakePlus::create($text, 'es_AR', 0, false)->keywords();
 
         $this->assertCount(9, $keywords);
@@ -93,7 +93,7 @@ class lang_es_AR_Test extends PHPUnit_Framework_TestCase
 
     public function testNumberedKeywordLimitedLengths()
     {
-        $text = "6462 Little Crest Suite 413, Lake Carlietown, WA 12643";
+        $text = '6462 Little Crest Suite 413, Lake Carlietown, WA 12643';
         $keywords = RakePlus::create($text, 'es_AR', 3, true)->keywords();
 
         $this->assertCount(5, $keywords);

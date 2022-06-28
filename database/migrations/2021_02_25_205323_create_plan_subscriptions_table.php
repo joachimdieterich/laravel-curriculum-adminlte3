@@ -26,7 +26,6 @@ class CreatePlanSubscriptionsTable extends Migration
 
             $table->foreign('plan_id')->references('id')->on('plans');
             $table->foreign('owner_id')->references('id')->on('users');
-
         });
     }
 

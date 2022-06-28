@@ -19,7 +19,6 @@ class CreateLogsTable extends Migration
             $table->string('value')->nullable();
             $table->integer('counter')->default(0);
 
-
             $table->timestamps();
         });
     }

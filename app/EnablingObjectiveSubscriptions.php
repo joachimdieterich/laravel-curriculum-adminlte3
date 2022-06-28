@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class EnablingObjectiveSubscriptions extends Model
 {
     protected $guarded = [];
-    
+
     /**
      * Get the subscriber model.
      */
@@ -15,9 +15,9 @@ class EnablingObjectiveSubscriptions extends Model
     {
         return $this->morphTo();
     }
-    
-    public function enablingObjective(){
+
+    public function enablingObjective()
+    {
         return $this->belongsTo('App\EnablingObjective', 'enabling_objective_id', 'id');
     }
-    
 }

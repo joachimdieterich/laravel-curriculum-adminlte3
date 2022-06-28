@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Curriculum;
-use App\Course;
 use App\Certificate;
-use App\User;
-use App\TerminalObjective;
-use App\EnablingObjective;
-use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
+use App\Course;
+use App\Curriculum;
 use App\ObjectiveType;
+use App\User;
+use Yajra\DataTables\DataTables;
 
 class CourseController extends Controller
 {
@@ -23,7 +20,7 @@ class CourseController extends Controller
     {
         abort_unless((\Gate::allows('curriculum_show') and $course->isAccessible()), 403);        //check if user is enrolled or admin -> else 403
 
-        LogController::set(get_class($this) . '@' . __FUNCTION__, $course->curriculum_id);
+        LogController::set(get_class($this).'@'.__FUNCTION__, $course->curriculum_id);
 
         $curriculum = Curriculum::with([
             'terminalObjectives',
@@ -32,38 +29,38 @@ class CourseController extends Controller
             'terminalObjectives.achievements' => function ($query) {
                 $query->where('user_id', auth()->user()->id);
             },
-                        'terminalObjectives.enablingObjectives',
-                        'terminalObjectives.enablingObjectives.media',
-                        'terminalObjectives.enablingObjectives.mediaSubscriptions',
-                        'terminalObjectives.enablingObjectives.achievements' => function($query) {
-                            $query->where('user_id', auth()->user()->id);
-                        },
-                        'contentSubscriptions.content',
-                        'glossar.contents',
-                        'media'
-                        ])
+            'terminalObjectives.enablingObjectives',
+            'terminalObjectives.enablingObjectives.media',
+            'terminalObjectives.enablingObjectives.mediaSubscriptions',
+            'terminalObjectives.enablingObjectives.achievements' => function ($query) {
+                $query->where('user_id', auth()->user()->id);
+            },
+            'contentSubscriptions.content',
+            'glossar.contents',
+            'media',
+        ])
                         ->find($course->curriculum_id);
         $objectiveTypes = ObjectiveType::all();
-        $certificates   = Certificate::where([
-                            ['curriculum_id', '=', $course->curriculum_id],
-                            ['organization_id', '=', auth()->user()->current_organization_id]
-                        ])
+        $certificates = Certificate::where([
+            ['curriculum_id', '=', $course->curriculum_id],
+            ['organization_id', '=', auth()->user()->current_organization_id],
+        ])
                         ->orWhere([
                             ['curriculum_id', '=', $course->curriculum_id],
-                            ['global', '=', 1]
+                            ['global', '=', 1],
                         ])
                         ->orWhere([
                             ['type', '=', 'group'],
-                            ['global', '=', 1]
+                            ['global', '=', 1],
                         ])
                         ->get();
-        $logbook        = (null !==  $course->logbookSubscription()->get()->first()) ? $course->logbookSubscription()->get()->first()->logbook()->get()->first() : null;
+        $logbook = (null !== $course->logbookSubscription()->get()->first()) ? $course->logbookSubscription()->get()->first()->logbook()->get()->first() : null;
 
-        $settings= json_encode([
+        $settings = json_encode([
             'course' => true,
             'edit' => false,
             'achievements' => true,
-            'cross_reference_curriculum_id' => false
+            'cross_reference_curriculum_id' => false,
         ]);
 
         return view('curricula.show')
@@ -75,15 +72,14 @@ class CourseController extends Controller
                 ->with(compact('settings'));
     }
 
-
     public function list()
     {
-         abort_unless(\Gate::allows('curriculum_show'), 403);                            //check if user is enrolled or admin -> else 403
-         abort_unless((auth()->user()
-                            ->with(['groups.courses' => function($query) {               //user enrolled
-                                     $query->where('id', request()->course_id);
+        abort_unless(\Gate::allows('curriculum_show'), 403);                            //check if user is enrolled or admin -> else 403
+        abort_unless((auth()->user()
+                            ->with(['groups.courses' => function ($query) {               //user enrolled
+                                $query->where('id', request()->course_id);
                             }])
-                            OR (auth()->user()->currentRole()->first()->id == 1)), 403); // or admin
+                            or (auth()->user()->currentRole()->first()->id == 1)), 403); // or admin
 
         $course = Course::where('id', request()->course_id)->get()->first();
 
@@ -94,17 +90,17 @@ class CourseController extends Controller
             'lastname',
             'email',
             'email_verified_at',
-            'status_id'
-            ])
+            'status_id',
+        ])
             ->join('group_user', 'users.id', '=', 'group_user.user_id')
             ->join('organization_role_users', 'organization_role_users.user_id', '=', 'group_user.user_id')
             ->where('group_user.group_id', '=', $course->group_id)
             ->where('organization_role_users.organization_id', '=', auth()->user()->current_organization_id)
             ->where('organization_role_users.role_id', '=', 6)
-            ->with(['progresses' => function($query) use ($course){
-                $query->where('referenceable_type', 'App\Curriculum')
-                      ->where('referenceable_id', $course->curriculum_id);
-            }]);
+            ->with(['progresses' => function ($query) use ($course) {
+            $query->where('referenceable_type', 'App\Curriculum')
+                  ->where('referenceable_id', $course->curriculum_id);
+        }]);
 
         return empty($users) ? null : DataTables::of($users)
             ->addColumn('role', function ($users) {
@@ -112,8 +108,8 @@ class CourseController extends Controller
             })
      //    ->addColumn('progress', isset($users->progresses) ? $users->progresses->first()->value : 0)
             ->addColumn('progress',
-                    function ($users) use ($course){
-                return isset($users->progresses()
+                    function ($users) use ($course) {
+                        return isset($users->progresses()
                                     ->where('referenceable_type', 'App\Curriculum')
                                     ->where('referenceable_id', $course->curriculum_id)
                                     ->first()->value) ?
@@ -121,7 +117,7 @@ class CourseController extends Controller
                                     ->where('referenceable_type', 'App\Curriculum')
                                     ->where('referenceable_id', $course->curriculum_id)
                                     ->first()->value : 0;
-            })
+                    })
             ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);

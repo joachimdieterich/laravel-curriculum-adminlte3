@@ -11,7 +11,8 @@ class KanbanSubscription extends Model
         'subscribable_id',
         'kanban_id',
         'editable',
-        'owner_id'];
+        'owner_id', ];
+
     /**
      * Get the subscriber model.
      */

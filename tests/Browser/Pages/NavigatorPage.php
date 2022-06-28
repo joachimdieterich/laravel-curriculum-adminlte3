@@ -2,17 +2,15 @@
 
 namespace Tests\Browser\Pages;
 
-
 use Laravel\Dusk\Browser;
 
 class NavigatorPage extends Page
 {
-    
     public function setUp(): void
     {
         parent::setUp();
-        
     }
+
     /**
      * Get the URL for the page.
      *

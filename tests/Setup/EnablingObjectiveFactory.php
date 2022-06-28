@@ -18,8 +18,6 @@ use App\EnablingObjective;
 
 class EnablingObjectiveFactory
 {
-   
-
     public function create()
     {
         return factory(EnablingObjective::class)->create();

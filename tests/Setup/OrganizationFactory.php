@@ -29,7 +29,6 @@ class OrganizationFactory
 
     public function create()
     {
-        
-        return  factory(Organization::class)->create();;
+        return  factory(Organization::class)->create();
     }
 }

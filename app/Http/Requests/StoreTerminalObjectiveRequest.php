@@ -13,7 +13,6 @@ class StoreTerminalObjectiveRequest extends FormRequest
 
     public function rules()
     {
-        
         return [
             'title' => [
                 'required',
@@ -21,19 +20,19 @@ class StoreTerminalObjectiveRequest extends FormRequest
             'description' => [
                 'sometimes',
             ],
-            'color' => [ 
+            'color' => [
                 'sometimes',
             ],
             'time_approach' => [
                 'sometimes',
             ],
-            'curriculum_id' => [ 
+            'curriculum_id' => [
                 'required',
             ],
             'objective_type_id'  => [
                 'required',
             ],
-             'visibility'  => [
+            'visibility'  => [
                 'sometimes',
             ],
         ];

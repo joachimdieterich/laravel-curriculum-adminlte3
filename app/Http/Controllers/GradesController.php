@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\MassDestroyProductRequest;
-use App\Http\Requests\StoreProductRequest;
-use App\Http\Requests\UpdateProductRequest;
 use App\Grade;
 use Yajra\DataTables\DataTables;
 
@@ -27,8 +23,7 @@ class GradesController extends Controller
             'external_begin',
             'external_end',
             'organization_type_id',
-            ])->with('organizationType')->get();
-
+        ])->with('organizationType')->get();
 
         $edit_gate = \Gate::allows('grade_edit');
         $delete_gate = \Gate::allows('grade_delete');
@@ -39,20 +34,20 @@ class GradesController extends Controller
             })
 
             ->addColumn('action', function ($grades) use ($edit_gate, $delete_gate) {
-                 $actions  = '';
-                    if ($edit_gate){
-                        $actions .= '<a href="'.route('grades.edit', $grades->id).'" '
-                                    . 'id="edit-grade-'.$grades->id.'" '
-                                    . 'class="btn">'
-                                    . '<i class="fa fa-pencil-alt"></i>'
-                                    . '</a>';
-                    }
-                    if ($delete_gate){
-                        $actions .= '<button type="button" '
-                                . 'class="btn text-danger" '
-                                . 'onclick="destroyDataTableEntry(\'grades\','.$grades->id.')">'
-                                . '<i class="fa fa-trash"></i></button>';
-                    }
+                $actions = '';
+                if ($edit_gate) {
+                    $actions .= '<a href="'.route('grades.edit', $grades->id).'" '
+                                    .'id="edit-grade-'.$grades->id.'" '
+                                    .'class="btn">'
+                                    .'<i class="fa fa-pencil-alt"></i>'
+                                    .'</a>';
+                }
+                if ($delete_gate) {
+                    $actions .= '<button type="button" '
+                                .'class="btn text-danger" '
+                                .'onclick="destroyDataTableEntry(\'grades\','.$grades->id.')">'
+                                .'<i class="fa fa-trash"></i></button>';
+                }
 
                 return $actions;
             })
@@ -66,6 +61,7 @@ class GradesController extends Controller
     {
         abort_unless(\Gate::allows('grade_create'), 403);
         $organization_types = \App\OrganizationType::all();
+
         return view('grades.create')
                 ->with(compact('organization_types'));
     }
@@ -79,7 +75,7 @@ class GradesController extends Controller
             'title' => $new_grade['title'],
             'external_begin' => $new_grade['external_begin'],
             'external_end' => $new_grade['external_end'],
-            'organization_type_id' => format_select_input($new_grade['organization_type_id'])
+            'organization_type_id' => format_select_input($new_grade['organization_type_id']),
         ]);
 
         return redirect()->route('grades.index');
@@ -90,6 +86,7 @@ class GradesController extends Controller
         abort_unless(\Gate::allows('grade_edit'), 403);
 
         $organization_types = \App\OrganizationType::all();
+
         return view('grades.edit')
                 ->with(compact('grade'))
                 ->with(compact('organization_types'));
@@ -104,7 +101,7 @@ class GradesController extends Controller
             'title' => $new_grade['title'],
             'external_begin' => $new_grade['external_begin'],
             'external_end' => $new_grade['external_end'],
-            'organization_type_id' => format_select_input($new_grade['organization_type_id'])
+            'organization_type_id' => format_select_input($new_grade['organization_type_id']),
         ]);
 
         return redirect()->route('grades.index');

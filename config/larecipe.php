@@ -36,8 +36,8 @@ return [
         'default'   => '1.0.de',
         'published' => [
             '1.0.de',
-            '1.0.en-dev'
-        ]
+            '1.0.en-dev',
+        ],
     ],
 
     /*
@@ -60,7 +60,7 @@ return [
         'ga_id'      => '',
         'middleware' => [
             'web',
-        ]
+        ],
     ],
 
     /*
@@ -78,7 +78,7 @@ return [
 
     'cache'       => [
         'enabled' => false,
-        'period'  => 5
+        'period'  => 5,
     ],
 
     /*
@@ -99,13 +99,13 @@ return [
         'default'       => 'internal',
         'engines'       => [
             'internal'  => [
-                'index' => ['h2', 'h3']
+                'index' => ['h2', 'h3'],
             ],
             'algolia'   => [
                 'key'   => '',
-                'index' => ''
-            ]
-        ]
+                'index' => '',
+            ],
+        ],
     ],
 
     /*
@@ -127,10 +127,10 @@ return [
         'show_side_bar'  => true,
         'colors'         => [
             'primary'    => '#787AF6',
-            'secondary'  => '#2b9cf2'
+            'secondary'  => '#2b9cf2',
         ],
 
-        'theme_order'    => null // ['LaRecipeDarkTheme', 'customTheme']
+        'theme_order'    => null, // ['LaRecipeDarkTheme', 'customTheme']
     ],
 
     /*
@@ -155,10 +155,10 @@ return [
             'url'         => '',
             'image'       => '',
             'description' => '',
-        ]
+        ],
     ],
 
-   /*
+    /*
    |--------------------------------------------------------------------------
    | Forum
    |--------------------------------------------------------------------------
@@ -171,14 +171,14 @@ return [
    |
    */
 
-  'forum'                   => [
+    'forum'                   => [
         'enabled'           => false,
         'default'           => 'disqus',
         'services'          => [
             'disqus'        => [
                 'site_name' => '', // yoursite.disqus.com
-            ]
-        ]
+            ],
+        ],
     ],
 
     /*
@@ -195,5 +195,5 @@ return [
 
     'packages' => [
         'path' => 'larecipe-components',
-    ]
+    ],
 ];

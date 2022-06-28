@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateGradesTable extends Migration
 {
@@ -19,11 +19,10 @@ class CreateGradesTable extends Migration
             $table->integer('external_begin')->nullable();    //id of start (age)
             $table->integer('external_end')->nullable();      //id of end (age)
             $table->bigInteger('organization_type_id')->unsigned();
-            
-            $table->timestamps();
-            
-            $table->foreign('organization_type_id')->references('id')->on('organization_types');
 
+            $table->timestamps();
+
+            $table->foreign('organization_type_id')->references('id')->on('organization_types');
         });
     }
 

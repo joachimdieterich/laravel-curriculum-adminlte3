@@ -5,9 +5,9 @@ namespace Tests\Feature;
 use App\Absence;
 use App\Logbook;
 use App\LogbookEntry;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
+use Tests\TestCase;
 
 class AbsenceCRUDTest extends TestCase
 {
@@ -24,7 +24,7 @@ class AbsenceCRUDTest extends TestCase
      */
     public function users_getting_403_on_index()
     {
-        $this->get("absences")
+        $this->get('absences')
             ->assertStatus(403);
     }
 
@@ -46,16 +46,16 @@ class AbsenceCRUDTest extends TestCase
             'description' => 'First entry description',
             'begin' => '2020-09-13 16:17:14',
             'end' => '2020-09-13 19:17:14',
-            'owner_id' => auth()->user()->id
+            'owner_id' => auth()->user()->id,
         ]);
-        $response = $this->postJson("absences" , $attributes = [
+        $response = $this->postJson('absences', $attributes = [
             'referenceable_type' => 'App\LogbookEntry',
             'referenceable_id'   => $entry->id,
             'absent_user_ids'    => 6,
             'reason'             => 'vacation',
             'done'               => 0,
             'time'               => 0,
-            'owner_id'           => auth()->user()->id
+            'owner_id'           => auth()->user()->id,
         ]);
         $absence = Absence::where('reason', 'vacation')->first();
         $response
@@ -79,7 +79,7 @@ class AbsenceCRUDTest extends TestCase
             'reason' => 'vacation',
             'done' => 0,
             'time' => 0,
-            'owner_id' => auth()->user()->id
+            'owner_id' => auth()->user()->id,
         ]);
         $this->get(route('absences.show', $absence->id))
             ->assertStatus(403);
@@ -145,5 +145,4 @@ class AbsenceCRUDTest extends TestCase
 
         $this->assertDatabaseMissing('absences', $absence->toArray());*/
     }
-
 }

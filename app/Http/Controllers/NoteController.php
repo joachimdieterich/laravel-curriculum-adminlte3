@@ -15,7 +15,7 @@ class NoteController extends Controller
     public function index()
     {
         //abort_unless(\Gate::allows('note_access'), 403);
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return Note::where($this->validateRequest())
                 ->where('user_id', auth()->id())
                 ->with(['notable'])
@@ -35,15 +35,15 @@ class NoteController extends Controller
     {
         $new_note = $this->validateRequest();
         $note = Note::create([
-                "title" => $new_note['title'],
-                "content" => $new_note['content'],
-                "notable_id" => $new_note['notable_id'],
-                "notable_type" => $new_note['notable_type'],
-                "user_id" => auth()->id()
-            ]);
+            'title' => $new_note['title'],
+            'content' => $new_note['content'],
+            'notable_id' => $new_note['notable_id'],
+            'notable_type' => $new_note['notable_type'],
+            'user_id' => auth()->id(),
+        ]);
+
         return $note->load('notable');
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -57,8 +57,8 @@ class NoteController extends Controller
         abort_unless($note->user_id == auth()->user()->id, 403);
 
         $note->update($this->validateRequest());
-        return $note->load('notable');
 
+        return $note->load('notable');
     }
 
     /**
@@ -71,10 +71,9 @@ class NoteController extends Controller
     {
         abort_unless($note->user_id == auth()->user()->id, 403);
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $note->delete()];
         }
-
     }
 
     protected function validateRequest()

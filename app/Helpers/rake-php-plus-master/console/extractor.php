@@ -37,7 +37,7 @@
  */
 
 /**
- * @param int $arg_count
+ * @param  int  $arg_count
  */
 function check_args($arg_count)
 {
@@ -67,10 +67,9 @@ function check_args($arg_count)
 }
 
 /**
- * @param array $args
- * @param int   $arg_no
- * @param mixed $default
- *
+ * @param  array  $args
+ * @param  int  $arg_no
+ * @param  mixed  $default
  * @return mixed
  */
 function get_arg_by_index($args, $arg_no, $default = null)
@@ -83,10 +82,9 @@ function get_arg_by_index($args, $arg_no, $default = null)
 }
 
 /**
- * @param array $args
- * @param string $name
- * @param mixed $default
- *
+ * @param  array  $args
+ * @param  string  $name
+ * @param  mixed  $default
  * @return mixed
  */
 function get_arg_by_name($args, $name, $default = null)
@@ -107,7 +105,6 @@ function get_arg_by_name($args, $name, $default = null)
  *
  * @param $args
  * @param $name
- *
  * @return mixed
  */
 function has_arg($args, $name)
@@ -122,8 +119,7 @@ function has_arg($args, $name)
 }
 
 /**
- * @param string $stopwords_file
- *
+ * @param  string  $stopwords_file
  * @return array
  */
 function load_stopwords($stopwords_file)
@@ -131,7 +127,7 @@ function load_stopwords($stopwords_file)
     $stopwords = [];
 
     $ext = pathinfo($stopwords_file, PATHINFO_EXTENSION);
-    if (!file_exists($stopwords_file)) {
+    if (! file_exists($stopwords_file)) {
         echo "\n";
         echo "Error: Stopwords file \"{$stopwords_file}\" not found.\n";
         echo "\n";
@@ -142,7 +138,7 @@ function load_stopwords($stopwords_file)
         if ($h = @fopen($stopwords_file, 'r')) {
             while (($line = fgets($h)) !== false) {
                 $line = preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $line);
-                if (!empty($line) && $line[0] != '#') {
+                if (! empty($line) && $line[0] != '#') {
                     $stopwords[$line] = true;
                 }
             }
@@ -158,12 +154,14 @@ function load_stopwords($stopwords_file)
 
     if ($ext === 'json') {
         $stopwords = json_decode(file_get_contents($stopwords_file), true);
+
         return array_keys(array_fill_keys($stopwords, true));
     }
 
     if ($ext === 'php') {
         /** @noinspection PhpIncludeInspection */
         $stopwords = require $stopwords_file;
+
         return array_keys(array_fill_keys($stopwords, true));
     }
 
@@ -171,7 +169,7 @@ function load_stopwords($stopwords_file)
 }
 
 /**
- * @param array $stopwords
+ * @param  array  $stopwords
  *
  * @throws Exception
  */
@@ -189,13 +187,13 @@ function render_php_output(array $stopwords)
     echo " * Extracted using extractor.php @ {$timestamp} \n";
     echo " */\n";
     echo "\n";
-    echo 'return [' . "\n";
+    echo 'return ['."\n";
 
     for ($i = 0; $i < $stopword_count; $i++) {
         if ($i == ($stopword_count - 1)) {
-            echo "    '" . str_replace("'", "\\'", $stopwords[$i]) . "'\n";
+            echo "    '".str_replace("'", "\\'", $stopwords[$i])."'\n";
         } else {
-            echo "    '" . str_replace("'", "\\'", $stopwords[$i]) . "',\n";
+            echo "    '".str_replace("'", "\\'", $stopwords[$i])."',\n";
         }
     }
 
@@ -204,7 +202,7 @@ function render_php_output(array $stopwords)
 }
 
 /**
- * @param array $stopwords
+ * @param  array  $stopwords
  */
 function render_pattern_output(array $stopwords)
 {
@@ -217,28 +215,28 @@ function render_pattern_output(array $stopwords)
             // missing. A possible workaround is to set the pattern as:
             // '\b(?!-)' . $word . '(?!(-|\'))\b'
             // but then two character words such as WA will also be stripped out.
-            $regex[] = '\b' . $word . '(?!(-|\'))\b';
-            // $regex[] = '\b(?!-)' . $word . '(?!(-|\'))\b';
+            $regex[] = '\b'.$word.'(?!(-|\'))\b';
+        // $regex[] = '\b(?!-)' . $word . '(?!(-|\'))\b';
         } else {
-            $regex[] = '\b' . $word . '\b';
+            $regex[] = '\b'.$word.'\b';
         }
     }
 
-    echo "\xEF\xBB\xBF".'/' . implode('|', $regex) . '/i' . "\n";
+    echo "\xEF\xBB\xBF".'/'.implode('|', $regex).'/i'."\n";
 }
 
 /**
- * @param array $stopwords
+ * @param  array  $stopwords
  */
 function render_json_output(array $stopwords)
 {
-    echo json_encode($stopwords, JSON_PRETTY_PRINT) . "\n";
+    echo json_encode($stopwords, JSON_PRETTY_PRINT)."\n";
 }
 
 /**
- * @param array  $stopwords
- * @param string $stopwords_file
- * @param string $output
+ * @param  array  $stopwords
+ * @param  string  $stopwords_file
+ * @param  string  $output
  *
  * @throws Exception
  */
@@ -247,12 +245,11 @@ function render_output(array $stopwords, $stopwords_file, $output = 'php')
     if (count($stopwords) > 0) {
         if ($output == 'pattern') {
             render_pattern_output($stopwords);
-        } else if ($output == 'php') {
+        } elseif ($output == 'php') {
             render_php_output($stopwords);
-        } else if ($output == 'json') {
+        } elseif ($output == 'json') {
             render_json_output($stopwords);
         }
-
     } else {
         echo "\n";
         echo "Error: No stopwords found in file \"{$stopwords_file}\".\n";
@@ -271,9 +268,9 @@ if ($locale === null) {
     echo "Please specify the locale, e.g. --locale=en_US\n";
 }
 
-if (!has_arg($argv, '--nosort')) {
-    $result = setlocale(LC_COLLATE, $locale . '.utf8');
-    if (!has_arg($argv, '--ascending')) {
+if (! has_arg($argv, '--nosort')) {
+    $result = setlocale(LC_COLLATE, $locale.'.utf8');
+    if (! has_arg($argv, '--ascending')) {
         usort($stopwords, function ($a, $b) {
             return strcoll($b, $a);
         });
@@ -294,11 +291,10 @@ if (!has_arg($argv, '--nosort')) {
 
 $OUTPUT_TYPES = ['pattern', 'php', 'json'];
 $output = get_arg_by_name($argv, '--output');
-if (!in_array($output, $OUTPUT_TYPES)) {
+if (! in_array($output, $OUTPUT_TYPES)) {
     echo "Please specify the output format, e.g. --output=pattern, --output=php or --output=json\n";
     exit(1);
 }
 
 /** @noinspection PhpUnhandledExceptionInspection */
 render_output($stopwords, $stopwords_file, $output);
-

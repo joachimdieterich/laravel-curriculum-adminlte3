@@ -2,15 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\MassDestroyProductRequest;
-use App\Http\Requests\StoreProductRequest;
-use App\Http\Requests\UpdateProductRequest;
-use App\OrganizationType;
 use App\Country;
+use App\OrganizationType;
 use App\State;
-use Illuminate\Http\Request;
-use Redirect,Response,DB,Config;
 use Yajra\DataTables\DataTables;
 
 class OrganizationTypesController extends Controller
@@ -33,27 +27,27 @@ class OrganizationTypesController extends Controller
             'title',
             'external_id',
             'state_id',
-            'country_id']);
+            'country_id', ]);
 
         $edit_gate = \Gate::allows('organization_type_edit');
         $delete_gate = \Gate::allows('organization_type_delete');
 
         return DataTables::of($organization_types)
-            ->addColumn('action', function ($organization_types) use ($edit_gate, $delete_gate){
-                 $actions  = '';
-                    if ($edit_gate){
-                        $actions .= '<a href="'.route('organizationtypes.edit', $organization_types->id).'" '
-                                    . 'id="edit-organization-type-'.$organization_types->id.'" '
-                                    . 'class="btn">'
-                                    . '<i class="fa fa-pencil-alt"></i>'
-                                    . '</a>';
-                    }
-                    if ($delete_gate){
-                        $actions .= '<button type="button" '
-                                . 'class="btn text-danger" '
-                                . 'onclick="destroyDataTableEntry(\'organizationtypes\','.$organization_types->id.')">'
-                                . '<i class="fa fa-trash"></i></button>';
-                    }
+            ->addColumn('action', function ($organization_types) use ($edit_gate, $delete_gate) {
+                $actions = '';
+                if ($edit_gate) {
+                    $actions .= '<a href="'.route('organizationtypes.edit', $organization_types->id).'" '
+                                    .'id="edit-organization-type-'.$organization_types->id.'" '
+                                    .'class="btn">'
+                                    .'<i class="fa fa-pencil-alt"></i>'
+                                    .'</a>';
+                }
+                if ($delete_gate) {
+                    $actions .= '<button type="button" '
+                                .'class="btn text-danger" '
+                                .'onclick="destroyDataTableEntry(\'organizationtypes\','.$organization_types->id.')">'
+                                .'<i class="fa fa-trash"></i></button>';
+                }
 
                 return $actions;
             })
@@ -72,6 +66,7 @@ class OrganizationTypesController extends Controller
         $countries = Country::all();
 
         $states = State::all()->sortBy('country');
+
         return view('organizationtypes.create')
                     ->with(compact('countries'))
                     ->with(compact('states'));
@@ -99,6 +94,7 @@ class OrganizationTypesController extends Controller
         abort_unless(\Gate::allows('organization_type_edit'), 403);
         $countries = Country::all();
         $states = State::all();
+
         return view('organizationtypes.edit')
                     ->with(compact('organizationtype'))
                     ->with(compact('countries'))
@@ -125,6 +121,7 @@ class OrganizationTypesController extends Controller
         abort_unless(\Gate::allows('organization_type_show'), 403);
         $countries = Country::all();
         $states = State::all();
+
         return view('organizationtypes.show')
                     ->with(compact('organizationtype'))
                     ->with(compact('countries'))
@@ -140,7 +137,6 @@ class OrganizationTypesController extends Controller
         return back();
     }
 
-
     protected function validateRequest()
     {
         return request()->validate([
@@ -150,6 +146,6 @@ class OrganizationTypesController extends Controller
             'country_id'    => 'sometimes',
             'created_at'    => 'sometimes',
             'updated_at'    => 'sometimes',
-            ]);
+        ]);
     }
 }

@@ -21,12 +21,12 @@ class KanbanController extends Controller
 
         return view('kanbans.index');
     }
+
     protected function userKanbans()
     {
         $userCanSee = auth()->user()->kanbans;
 
-        foreach(auth()->user()->currentGroups AS $group)
-        {
+        foreach (auth()->user()->currentGroups as $group) {
             $userCanSee = $userCanSee->merge($group->kanbans);
         }
 
@@ -35,29 +35,28 @@ class KanbanController extends Controller
 
         return $userCanSee->unique();
     }
+
     public function list()
     {
-
         abort_unless(\Gate::allows('kanban_access'), 403);
         $kanbans = (auth()->user()->role()->id == 1) ? Kanban::all() : $this->userKanbans();
 
         $edit_gate = \Gate::allows('kanban_edit');
         $delete_gate = \Gate::allows('kanban_delete');
 
-
         return empty($kanbans) ? '' : DataTables::of($kanbans)
             ->addColumn('action', function ($kanbans) use ($edit_gate, $delete_gate) {
-                 $actions  = '';
-                    if ($edit_gate){
-                        $actions .= '<a href="'.route('kanbans.edit', $kanbans->id).'" '
-                                    . 'id="edit-kanban-'.$kanbans->id.'" '
-                                    . 'class="px-2 text-black">'
-                                    . '<i class="fa fa-pencil-alt"></i>'
-                                    . '</a>';
-                    }
-                    if ($delete_gate){
-                        $actions .= '<button type="button" class="btn text-danger" onclick="event.preventDefault();destroyDataTableEntry(\'kanbans\','.$kanbans->id.');"><i class="fa fa-trash"></i></button>';
-                    }
+                $actions = '';
+                if ($edit_gate) {
+                    $actions .= '<a href="'.route('kanbans.edit', $kanbans->id).'" '
+                                    .'id="edit-kanban-'.$kanbans->id.'" '
+                                    .'class="px-2 text-black">'
+                                    .'<i class="fa fa-pencil-alt"></i>'
+                                    .'</a>';
+                }
+                if ($delete_gate) {
+                    $actions .= '<button type="button" class="btn text-danger" onclick="event.preventDefault();destroyDataTableEntry(\'kanbans\','.$kanbans->id.');"><i class="fa fa-trash"></i></button>';
+                }
 
                 return $actions;
             })
@@ -99,7 +98,7 @@ class KanbanController extends Controller
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
         // axios call?
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $kanban->path()];
         }
 
@@ -108,17 +107,17 @@ class KanbanController extends Controller
 
     /**
      * If $input['filepath'] is set and medium exists, id is return, else return is null
-     * @param array $input
+     *
+     * @param  array  $input
      * @return mixed
      */
-    public function getMediumIdByInputFilepath($input){
-        if (isset($input['filepath']))
-        {
+    public function getMediumIdByInputFilepath($input)
+    {
+        if (isset($input['filepath'])) {
             $medium = new Medium();
+
             return (null !== $medium->getByFilemanagerPath($input['filepath'])) ? $medium->getByFilemanagerPath($input['filepath'])->id : null;
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
@@ -137,7 +136,7 @@ class KanbanController extends Controller
                 $query->where('subscribable_id', auth()->user()->id)
                     ->where('subscribable_type', 'App\User');
             }, 'mediaSubscriptions.medium'])->orderBy('order_id');
-        }, 'statuses.items.subscriptions'
+        }, 'statuses.items.subscriptions',
         ])->where('id', $kanban->id)->get()->first();
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
@@ -185,7 +184,6 @@ class KanbanController extends Controller
         $kanban->subscriptions()->delete();
 
         $kanban->delete();
-
     }
 
     protected function validateRequest()

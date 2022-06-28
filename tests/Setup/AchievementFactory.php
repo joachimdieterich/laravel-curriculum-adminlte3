@@ -14,8 +14,6 @@
 
 namespace Tests\Setup;
 
-use App\Archievement;
-
 class AchievementFactory
 {
     protected $user;
@@ -29,10 +27,9 @@ class AchievementFactory
 
     public function create()
     {
-        
         return  factory(Achievement::class)->create([
             'user_id' => auth()->user()->id,
             'owner_id' => auth()->user()->id,
-            ]);
+        ]);
     }
 }

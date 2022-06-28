@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateContentsTable extends Migration
 {
@@ -17,11 +17,11 @@ class CreateContentsTable extends Migration
             $table->bigIncrements('id')->unsigned();
             $table->string('title')->nullable();
             $table->text('content');
-            
+
             $table->unsignedbigInteger('owner_id');
-            
+
             $table->timestamps();
-            
+
             $table->foreign('owner_id')->references('id')->on('users');
         });
     }

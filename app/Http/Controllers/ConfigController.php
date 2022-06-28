@@ -18,6 +18,7 @@ class ConfigController extends Controller
     {
         abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
         $configs = Config::all();
+
         return view('configs.index')->with(compact('configs'));
     }
 
@@ -25,22 +26,23 @@ class ConfigController extends Controller
     {
         $users_current_role = auth()->user()->role()->id;
         abort_unless($users_current_role == 1, 403);
-        $configs = Config::all() ;
+        $configs = Config::all();
 
         return DataTables::of($configs)
-            ->addColumn('action', function ($configs) use ($users_current_role){
-                 $actions  = '';
-                    if ($users_current_role == 1){
-                        $actions .= '<a href="'.route('configs.edit', $configs->id).'"'
-                                    . 'id="edit-config-'.$configs->id.'" '
-                                    . 'class="btn p-1">'
-                                    . '<i class="fa fa-pencil-alt"></i>'
-                                    . '</a>'
-                                . '<button type="button" '
-                                . 'class="btn text-danger" '
-                                . 'onclick="destroyDataTableEntry(\'configs\','.$configs->id.')">'
-                                . '<i class="fa fa-trash"></i></button>';
-                    }
+            ->addColumn('action', function ($configs) use ($users_current_role) {
+                $actions = '';
+                if ($users_current_role == 1) {
+                    $actions .= '<a href="'.route('configs.edit', $configs->id).'"'
+                                    .'id="edit-config-'.$configs->id.'" '
+                                    .'class="btn p-1">'
+                                    .'<i class="fa fa-pencil-alt"></i>'
+                                    .'</a>'
+                                .'<button type="button" '
+                                .'class="btn text-danger" '
+                                .'onclick="destroyDataTableEntry(\'configs\','.$configs->id.')">'
+                                .'<i class="fa fa-trash"></i></button>';
+                }
+
                 return $actions;
             })
 
@@ -60,6 +62,7 @@ class ConfigController extends Controller
     public function create()
     {
         abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
+
         return view('configs.create');
     }
 
@@ -74,13 +77,13 @@ class ConfigController extends Controller
         abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
         $new_config = $this->validateRequest();
         $config = Config::updateOrCreate([
-            "key" => $new_config['key'],
-            "referenceable_type" => $new_config['referenceable_type'],
-            "referenceable_id" => $new_config['referenceable_id'],
-            "data_type" => $new_config['data_type'],
+            'key' => $new_config['key'],
+            'referenceable_type' => $new_config['referenceable_type'],
+            'referenceable_id' => $new_config['referenceable_id'],
+            'data_type' => $new_config['data_type'],
         ],
             [
-                "value" => $new_config['value'],
+                'value' => $new_config['value'],
             ]
         );
 
@@ -89,7 +92,6 @@ class ConfigController extends Controller
         } else {
             return redirect(route('configs.index'));
         }
-
     }
 
     /**
@@ -134,7 +136,6 @@ class ConfigController extends Controller
         } else {
             return redirect(route('configs.index'));
         }
-
     }
 
     /**
@@ -162,9 +163,10 @@ class ConfigController extends Controller
         abort_unless(\Gate::allows('role_access'), 403);
         $roles = Role::select([
             'id',
-            'title'
+            'title',
         ])->get();
         $configs = Config::where('key', 'LIKE', '%_limiter')->get();
+
         return view('configs.models')
             ->with(compact('roles'))
             ->with(compact('configs'));

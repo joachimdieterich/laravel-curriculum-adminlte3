@@ -13,15 +13,14 @@ $factory->define(Organization::class, function (Faker $faker) {
         'street'      => $faker->streetAddress,
         'postcode'    => $faker->postcode,
         'city'        => $faker->city,
-        
+
         'state_id'    => 'DE-RP',
         'country_id'  => 'DE',
         'organization_type_id' => 1,
-        
+
         'phone'       => $faker->phoneNumber,
         'email'       => $faker->email,
 
         'status_id'      => 1,
     ];
 });
-

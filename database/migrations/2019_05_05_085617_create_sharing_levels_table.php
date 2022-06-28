@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateSharingLevelsTable extends Migration
 {
@@ -17,7 +17,7 @@ class CreateSharingLevelsTable extends Migration
             $table->bigIncrements('id')->unsigned();
             $table->string('lang_en');
             $table->string('lang_de');
-            
+
             $table->timestamps();
         });
     }

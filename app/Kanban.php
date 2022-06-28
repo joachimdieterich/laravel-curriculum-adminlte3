@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Kanban extends Model
 {
-
     protected $guarded = [];
 
     public function path()

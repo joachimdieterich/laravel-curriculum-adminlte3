@@ -2,11 +2,10 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use App\Listeners\UploadListener;
+use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -20,11 +19,11 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         'Aacotroneo\Saml2\Events\Saml2LoginEvent' => [
-			'App\Listeners\SAMLLoginListener'
-	    ],
+            'App\Listeners\SAMLLoginListener',
+        ],
         'Aacotroneo\Saml2\Events\Saml2LogoutEvent' => [
-			'App\Listeners\SAMLLogoutListener'
-	    ],
+            'App\Listeners\SAMLLogoutListener',
+        ],
     ];
 
     protected $subscribe = [

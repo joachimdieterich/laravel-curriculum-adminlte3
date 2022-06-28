@@ -14,7 +14,7 @@ class LevelController extends Controller
      */
     public function index()
     {
-      return Level::all()->toJson();
+        return Level::all()->toJson();
     }
 
     /**

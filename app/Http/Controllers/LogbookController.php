@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Logbook;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Yajra\DataTables\DataTables;
 
 class LogbookController extends Controller
@@ -29,19 +28,19 @@ class LogbookController extends Controller
             ->whereHas('subscriptions', function ($query) {
                 $query->where(
                     function ($query) {
-                        $query->where('subscribable_type', "App\\Course")->whereIn('subscribable_id', auth()->user()->currentGroupEnrolments->pluck('course_id'));
+                        $query->where('subscribable_type', 'App\\Course')->whereIn('subscribable_id', auth()->user()->currentGroupEnrolments->pluck('course_id'));
                     })
                     ->orWhere(
                         function ($query) {
-                            $query->where('subscribable_type', "App\\Organization")->where('subscribable_id', auth()->user()->current_organization_id);
+                            $query->where('subscribable_type', 'App\\Organization')->where('subscribable_id', auth()->user()->current_organization_id);
                         })
                     ->orWhere(
                         function ($query) {
-                            $query->where('subscribable_type', "App\\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id'));
+                            $query->where('subscribable_type', 'App\\Group')->whereIn('subscribable_id', auth()->user()->groups->pluck('id'));
                         })
                     ->orWhere(
                         function ($query) {
-                            $query->where('subscribable_type', "App\\User")->where('subscribable_id', auth()->user()->id);
+                            $query->where('subscribable_type', 'App\\User')->where('subscribable_id', auth()->user()->id);
                         });
             })
             ->orWhere('owner_id', auth()->user()->id)
@@ -54,14 +53,14 @@ class LogbookController extends Controller
             ->addColumn('action', function ($logbooks) use ($edit_gate, $delete_gate) {
                 $actions = '';
                 if ($edit_gate and $logbooks->owner_id == auth()->user()->id) {
-                    $actions .= '<a href="' . route('logbooks.edit', $logbooks->id) . '" '
-                        . 'id="edit-logbook-' . $logbooks->id . '" '
-                        . 'class="px-2 text-black">'
-                        . '<i class="fa fa-pencil-alt"></i>'
-                        . '</a>';
+                    $actions .= '<a href="'.route('logbooks.edit', $logbooks->id).'" '
+                        .'id="edit-logbook-'.$logbooks->id.'" '
+                        .'class="px-2 text-black">'
+                        .'<i class="fa fa-pencil-alt"></i>'
+                        .'</a>';
                 }
                 if ($delete_gate and $logbooks->owner_id == auth()->user()->id) {
-                    $actions .= '<button type="button" class="btn text-danger" onclick="event.preventDefault();destroyDataTableEntry(\'logbooks\',' . $logbooks->id . ');"><i class="fa fa-trash"></i></button>';
+                    $actions .= '<button type="button" class="btn text-danger" onclick="event.preventDefault();destroyDataTableEntry(\'logbooks\','.$logbooks->id.');"><i class="fa fa-trash"></i></button>';
                 }
 
                 return $actions;
@@ -87,10 +86,10 @@ class LogbookController extends Controller
             'owner_id'), 402); //is there an role limit?
 
         $logbooks = Logbook::all();
+
         return view('logbooks.create')
             ->with(compact('logbooks'));
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -125,7 +124,7 @@ class LogbookController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         // axios call?
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $logbook->path()];
         }
 
@@ -159,7 +158,7 @@ class LogbookController extends Controller
             'entries.taskSubscription.task.subscriptions' => function ($query) {
                 $query->where('subscribable_id', auth()->user()->id)
                     ->where('subscribable_type', 'App\User');
-            }
+            },
         ])->where('id', $logbook->id)->get()->first();
 
         return view('logbooks.show')
@@ -223,7 +222,7 @@ class LogbookController extends Controller
     /**
      * Print the specified resource.
      *
-     * @param \App\Logbook $logbook
+     * @param  \App\Logbook  $logbook
      * @return \Illuminate\Http\Response
      */
     public function print(Logbook $logbook)
@@ -238,24 +237,23 @@ class LogbookController extends Controller
             'showTasks' => 'string',
             'showMedia' => 'string',
             'showReferences' => 'string',
-            'showAbsences' => 'string'
+            'showAbsences' => 'string',
         ]);
-
 
         $html = view('print.logbook')
             ->with(compact('logbook'))
             ->with(compact('input'))
             ->render();
 
-        return (new PrintController)->print($html, $logbook->title . '.pdf', 'download', 'portrait');
+        return (new PrintController)->print($html, $logbook->title.'.pdf', 'download', 'portrait');
     }
 
     /**
-     * @param Logbook $logbook
+     * @param  Logbook  $logbook
      */
     private function checkPermissions(Logbook $logbook, $action = 'create'): void
     {
-        abort_unless((\Gate::allows('logbook_' . $action) and $logbook->isAccessible()), 403);
+        abort_unless((\Gate::allows('logbook_'.$action) and $logbook->isAccessible()), 403);
 
         /*
          * Check for role limiter
@@ -277,7 +275,6 @@ class LogbookController extends Controller
         if ($action === 'delete') {
             abort_unless(auth()->user()->id == $logbook->owner_id, 403);                // user owns logbook
         }
-
     }
 
     protected function validateRequest()
@@ -289,5 +286,4 @@ class LogbookController extends Controller
             'subscribable_id' => 'sometimes',
         ]);
     }
-
 }

@@ -7,11 +7,10 @@
  * Usage:
  *
  * php ./arr_to_regex.php '../lang/en_US.php'
- *
  */
 
 /**
- * @param int $arg_count
+ * @param  int  $arg_count
  */
 function check_args($arg_count)
 {
@@ -26,10 +25,9 @@ function check_args($arg_count)
 }
 
 /**
- * @param array $args
- * @param int   $arg_no
- * @param mixed $default
- *
+ * @param  array  $args
+ * @param  int  $arg_no
+ * @param  mixed  $default
  * @return mixed
  */
 function get_arg($args, $arg_no, $default = null)
@@ -42,15 +40,14 @@ function get_arg($args, $arg_no, $default = null)
 }
 
 /**
- * @param string $php_file
- *
+ * @param  string  $php_file
  * @return array
  */
 function load_stopwords($php_file)
 {
     try {
         /** @noinspection PhpIncludeInspection */
-        return require($php_file);
+        return require $php_file;
     } catch (Exception $e) {
         echo "\n";
         echo "Error: Could not read file \"{$php_file}\".\n";
@@ -60,7 +57,7 @@ function load_stopwords($php_file)
 }
 
 /**
- * @param array $stopwords
+ * @param  array  $stopwords
  */
 function render_pattern_output(array $stopwords)
 {
@@ -69,15 +66,15 @@ function render_pattern_output(array $stopwords)
     $regex = [];
 
     foreach ($stopwords as $word) {
-        $regex[] = '\b' . $word . '\b';
+        $regex[] = '\b'.$word.'\b';
     }
 
-    echo '/' . implode('|', $regex) . '/iu' . "\n";
+    echo '/'.implode('|', $regex).'/iu'."\n";
 }
 
 /**
- * @param array $stopwords
- * @param string $php_file
+ * @param  array  $stopwords
+ * @param  string  $php_file
  */
 function render_output(array $stopwords, $php_file)
 {

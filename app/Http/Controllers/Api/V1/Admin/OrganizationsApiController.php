@@ -7,8 +7,8 @@ use App\Organization;
 use App\OrganizationRoleUser;
 use App\User;
 
-class OrganizationsApiController extends Controller {
-
+class OrganizationsApiController extends Controller
+{
     public function index()
     {
         $organizations = Organization::all();
@@ -23,8 +23,7 @@ class OrganizationsApiController extends Controller {
 
     public function update(Organization $organization)
     {
-        if ($organization->update($this->filteredRequest()))
-        {
+        if ($organization->update($this->filteredRequest())) {
             return $organization->fresh();
         }
     }
@@ -45,36 +44,35 @@ class OrganizationsApiController extends Controller {
     {
         return OrganizationRoleUser::updateOrCreate(
                 [
-                        'user_id'         => request('user_id'),
-                        'organization_id' => request('organization_id')
-                    ],
+                    'user_id'         => request('user_id'),
+                    'organization_id' => request('organization_id'),
+                ],
                     [
-                        'role_id'         => request('role_id')
+                        'role_id'         => request('role_id'),
                     ]
                 );
     }
 
     public function expel()
     {
-        if (OrganizationRoleUser::where(request()->all())->delete())
-        {
+        if (OrganizationRoleUser::where(request()->all())->delete()) {
             //reset current org id to prevent error based "on current_organization_id"
             $user = User::where('id', request('user_id'))->get()->first();
-            $user->current_organization_id = NULL;
-            $user->current_period_id = NULL;
+            $user->current_organization_id = null;
+            $user->current_period_id = null;
             $user->save();
 
             return ['message' => 'Successful expelled'];
-
         }
     }
 
-    public function members(Organization $organization) {
+    public function members(Organization $organization)
+    {
         return $organization->users;
     }
 
-    protected function filteredRequest() {
+    protected function filteredRequest()
+    {
         return array_filter(request()->all()); //filter to ignore fields with null values
     }
-
 }

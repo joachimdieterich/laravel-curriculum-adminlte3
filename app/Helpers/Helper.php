@@ -8,7 +8,7 @@ require 'rake-php-plus-master/src/StopwordsPatternFile.php';
 require 'rake-php-plus-master/src/StopwordsPHP.php';
 require 'rake-php-plus-master/src/RakePlus.php';
 
-if (!function_exists('format_select_input')) {
+if (! function_exists('format_select_input')) {
 
     /**
      * helper function for selects
@@ -17,7 +17,8 @@ if (!function_exists('format_select_input')) {
      *
      * returns integer
      */
-    function format_select_input($input) {
+    function format_select_input($input)
+    {
         if (is_array($input)) {
             return Arr::first($input);
         } else {
@@ -25,45 +26,44 @@ if (!function_exists('format_select_input')) {
         }
     }
 }
-if (!function_exists('getImmediateChildrenByTagName')) {
+if (! function_exists('getImmediateChildrenByTagName')) {
     /**
-    * Traverse an elements children and collect those nodes that
-    * have the tagname specified in $tagName. Non-recursive
-    * Source: http://stackoverflow.com/questions/3049648/php-domelementgetelementsbytagname-anyway-to-get-just-the-immediate-matching
-    *
-    * @param DOMElement $element
-    * @param string $tagName
-    * @return array
-    */
-   function getImmediateChildrenByTagName(DOMElement $element, $tagName) {
-       $result = array();
-       foreach ($element->childNodes as $child) {
-           if ($child instanceof DOMElement && $child->tagName == $tagName) {
-               $result[] = $child;
-           }
-       }
-       return $result;
-   }
+     * Traverse an elements children and collect those nodes that
+     * have the tagname specified in $tagName. Non-recursive
+     * Source: http://stackoverflow.com/questions/3049648/php-domelementgetelementsbytagname-anyway-to-get-just-the-immediate-matching
+     *
+     * @param  DOMElement  $element
+     * @param  string  $tagName
+     * @return array
+     */
+    function getImmediateChildrenByTagName(DOMElement $element, $tagName)
+    {
+        $result = [];
+        foreach ($element->childNodes as $child) {
+            if ($child instanceof DOMElement && $child->tagName == $tagName) {
+                $result[] = $child;
+            }
+        }
+
+        return $result;
+    }
 }
 
-if (!function_exists('relativeToAbsoutePaths')) {
-    function relativeToAbsoutePaths($input) {
+if (! function_exists('relativeToAbsoutePaths')) {
+    function relativeToAbsoutePaths($input)
+    {
         return preg_replace_callback(
             '/<img\s+[^>]*(src="\/media\/(.*?)")(\s+[^>]*)?[^>]*>/mi',
-            function($match)
-            {
+            function ($match) {
                 $media = App\Medium::find($match[2]);
                 //dump($media->absolutePath());
-                if (!file_exists($media->absolutePath()))
-                {
-                    return '';//"<!--File does not exist-->"; //todo: remove from db?
+                if (! file_exists($media->absolutePath())) {
+                    return ''; //"<!--File does not exist-->"; //todo: remove from db?
                 }
-                if ($media !== null)
-                {
-                    return str_replace($match[1],"src=\"{$media->absolutePath()}\"", $match[0]);
+                if ($media !== null) {
+                    return str_replace($match[1], "src=\"{$media->absolutePath()}\"", $match[0]);
                 } else {
-
-                    return '';//"<!--Image not available-->";
+                    return ''; //"<!--Image not available-->";
                 }
             },
             $input
@@ -71,135 +71,152 @@ if (!function_exists('relativeToAbsoutePaths')) {
     }
 }
 
-if (!function_exists('str_singular')) {
+if (! function_exists('str_singular')) {
 
     /**
      * helper function str_singular() translator to Str::singular
      */
-    function str_singular($param) {
-            return Str::singular($param);
+    function str_singular($param)
+    {
+        return Str::singular($param);
     }
 }
 
-if (!function_exists('starts_with')) {
+if (! function_exists('starts_with')) {
 
     /**
      * helper function starts_with() translator to Str::startsWith()
      */
-    function starts_with($param1, $param2) {
-            return Str::startsWith($param1, $param2);
+    function starts_with($param1, $param2)
+    {
+        return Str::startsWith($param1, $param2);
     }
 }
 
-if (!function_exists('ends_with')) {
+if (! function_exists('ends_with')) {
 
     /**
      * helper function starts_with() translator to Str::endsWith()
      */
-    function ends_with($param1, $param2) {
-            return Str::endsWith($param1, $param2);
+    function ends_with($param1, $param2)
+    {
+        return Str::endsWith($param1, $param2);
     }
 }
 
-if (!function_exists('camel_case')) {
+if (! function_exists('camel_case')) {
 
     /**
      * helper function camel_case() translator to Str::camel()
      */
-    function camel_case($param) {
-            return Str::camel($param);
+    function camel_case($param)
+    {
+        return Str::camel($param);
     }
 }
 
-if (!function_exists('str_limit')) {
+if (! function_exists('str_limit')) {
 
     /**
      * helper function str_limit() translator to Str::limit()
      */
-    function  str_limit($param1, $param2) {
-            return Str::limit($param1, $param2);
+    function str_limit($param1, $param2)
+    {
+        return Str::limit($param1, $param2);
     }
 }
 
-if (!function_exists('str_contains')) {
+if (! function_exists('str_contains')) {
 
     /**
      * helper function str_contains() translator to Str::contains()
      */
-    function  str_contains($param1, $param2) {
-            return Str::contains($param1, $param2);
+    function str_contains($param1, $param2)
+    {
+        return Str::contains($param1, $param2);
     }
 }
 
-if (!function_exists('is_dir_empty')) {
-    function is_dir_empty($dir) {
-        if (!is_readable($dir)) return NULL;
-        return (count(scandir($dir)) == 2);
+if (! function_exists('is_dir_empty')) {
+    function is_dir_empty($dir)
+    {
+        if (! is_readable($dir)) {
+            return null;
+        }
+
+        return count(scandir($dir)) == 2;
     }
 }
 
-if (!function_exists('find_all_files')) {
-
+if (! function_exists('find_all_files')) {
     function find_all_files($dir)
     {
-        $result = array();
+        $result = [];
         $root = scandir($dir);
-        foreach($root as $value)
-        {
-            if($value === '.' || $value === '..') {continue;}
-            if(is_file("$dir/$value")) {$result[]="$dir/$value";continue;}
-            foreach(find_all_files("$dir/$value") as $value)
-            {
-                $result[]=$value;
+        foreach ($root as $value) {
+            if ($value === '.' || $value === '..') {
+                continue;
+            }
+            if (is_file("$dir/$value")) {
+                $result[] = "$dir/$value";
+                continue;
+            }
+            foreach (find_all_files("$dir/$value") as $value) {
+                $result[] = $value;
             }
         }
+
         return $result;
     }
 }
 
-if (!function_exists('now_online')) {
-    function now_online(){
+if (! function_exists('now_online')) {
+    function now_online()
+    {
 
          // Get time session life time from config.
-         $time =  time() - (config('session.lifetime')*60);
+        $time = time() - (config('session.lifetime') * 60);
 
-         // Total login users (user can be log on 2 devices will show once.)
-         $totalActiveUsers = DB::table('sessions')
-                 ->where('last_activity','>=', $time)->
+        // Total login users (user can be log on 2 devices will show once.)
+        $totalActiveUsers = DB::table('sessions')
+                 ->where('last_activity', '>=', $time)->
          count(DB::raw('DISTINCT user_id'));
 
-         return $totalActiveUsers;
+        return $totalActiveUsers;
     }
 }
 
-if (!function_exists('today_online')) {
-    function today_online(){
+if (! function_exists('today_online')) {
+    function today_online()
+    {
+        $time = time() - (24 * 60 * 60); // 24 Hours
 
-         $time =  time() - (24 * 60 * 60); // 24 Hours
-
-         // Total login users (user can be log on 2 devices will show once.)
-         $totalActiveUsers = DB::table('sessions')
-                 ->where('last_activity','>=', $time)->
+        // Total login users (user can be log on 2 devices will show once.)
+        $totalActiveUsers = DB::table('sessions')
+                 ->where('last_activity', '>=', $time)->
          count(DB::raw('DISTINCT user_id'));
 
-         return $totalActiveUsers;
+        return $totalActiveUsers;
     }
 }
 
-if (!function_exists('is_admin')) {
-    function is_admin(){
-         return (auth()->user()->role()->id == 1);
+if (! function_exists('is_admin')) {
+    function is_admin()
+    {
+        return auth()->user()->role()->id == 1;
     }
 }
 
-if (!function_exists('is_schooladmin')) {
-    function is_schooladmin(){
-        return (auth()->user()->role()->id == 4);
+if (! function_exists('is_schooladmin')) {
+    function is_schooladmin()
+    {
+        return auth()->user()->role()->id == 4;
     }
 }
 
-if (!function_exists('str_replace_special_chars')) {
-    function str_replace_special_chars($string) {
+if (! function_exists('str_replace_special_chars')) {
+    function str_replace_special_chars($string)
+    {
         $replace = [
             '&lt;' => '', '&gt;' => '', '&#039;' => '', '&amp;' => '',
             '&quot;' => '', 'À' => 'A', 'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'Ae',
@@ -245,7 +262,7 @@ if (!function_exists('str_replace_special_chars')) {
             'м' => 'm', 'н' => 'n', 'о' => 'o', 'п' => 'p', 'р' => 'r', 'с' => 's',
             'т' => 't', 'у' => 'u', 'ф' => 'f', 'х' => 'h', 'ц' => 'c', 'ч' => 'ch',
             'ш' => 'sh', 'щ' => 'sch', 'ъ' => '', 'ы' => 'y', 'ь' => '', 'э' => 'e',
-            'ю' => 'yu', 'я' => 'ya'
+            'ю' => 'yu', 'я' => 'ya',
         ];
 
         $string = str_replace(array_keys($replace), $replace, $string);
@@ -253,23 +270,23 @@ if (!function_exists('str_replace_special_chars')) {
         return $string;
     }
 
-    if (!function_exists('limiter')) {
+    if (! function_exists('limiter')) {
         /**
          * Check for Limit based on params
          *
-         * @param string $referenceable_type
-         * @param mixed $referenceable_id
-         * @param string $key
-         * @param string $model
-         * @param string $model_key
-         * @return boolean
+         * @param  string  $referenceable_type
+         * @param  mixed  $referenceable_id
+         * @param  string  $key
+         * @param  string  $model
+         * @param  string  $model_key
+         * @return bool
          */
-        function limiter($referenceable_type = 'App\\Role', $referenceable_id = 1, $key =  'logbook_limiter', $model = 'App\Logbook', $model_key = 'owner_id')
+        function limiter($referenceable_type = 'App\\Role', $referenceable_id = 1, $key = 'logbook_limiter', $model = 'App\Logbook', $model_key = 'owner_id')
         {
             $limit = optional(App\Config::where([
                 ['referenceable_type', '=', $referenceable_type],
                 ['referenceable_id', '=', $referenceable_id],
-                ['key', '=', $key]
+                ['key', '=', $key],
             ])->get()->first())->value ?: -1;
 
             return ($limit == -1)

@@ -13,8 +13,7 @@ abstract class AbstractStopwordProvider
      * Builds a string containing a big regular expression with all the
      * stopwords in it.
      *
-     * @param array $stopwords
-     *
+     * @param  array  $stopwords
      * @return string
      */
     protected function buildPatternFromArray(array $stopwords)
@@ -24,16 +23,16 @@ abstract class AbstractStopwordProvider
         foreach ($stopwords as $word) {
             if (mb_strlen($word) === 1) {
                 // This pattern allows for words such as a-class and j'aimerais
-                $pattern[] = '\b' . $word . '(?!(-|\'))\b';
+                $pattern[] = '\b'.$word.'(?!(-|\'))\b';
             } else {
-                $pattern[] = '\b' . $word . '\b';
+                $pattern[] = '\b'.$word.'\b';
             }
         }
 
         if (extension_loaded('mbstring')) {
             return implode('|', $pattern);
         } else {
-            return '/' . implode('|', $pattern) . '/i';
+            return '/'.implode('|', $pattern).'/i';
         }
     }
 }

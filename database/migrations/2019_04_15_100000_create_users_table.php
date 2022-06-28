@@ -18,9 +18,9 @@ class CreateUsersTable extends Migration
             $table->datetime('email_verified_at')->nullable();
             $table->string('password');
             $table->string('remember_token')->nullable();
-            
+
             $table->unsignedbigInteger('status_id')->default(1); // newer version of confirmed // 1 == active
-            
+
             $table->timestamps();
             $table->softDeletes();
         });

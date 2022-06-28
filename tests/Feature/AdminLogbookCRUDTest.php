@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Logbook;
 use Facades\Tests\Setup\LogbookFactory;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class AdminLogbookCRUDTest extends TestCase
 {
@@ -22,12 +22,12 @@ class AdminLogbookCRUDTest extends TestCase
      */
     public function an_administrator_see_logbooks()
     {
-        $this->get("logbooks")
+        $this->get('logbooks')
             ->assertStatus(200);
 
         /* Use Datatables */
         $Logbook = Logbook::first();
-        $this->get("logbooks/list")
+        $this->get('logbooks/list')
             ->assertStatus(200)
             ->assertViewHasAll(compact($Logbook));
     }
@@ -37,7 +37,7 @@ class AdminLogbookCRUDTest extends TestCase
      */
     public function an_administrator_create_an_Logbook()
     {
-        $this->post("logbooks", $attributes = factory('App\Logbook')->raw());
+        $this->post('logbooks', $attributes = factory('App\Logbook')->raw());
 
         $this->assertDatabaseHas('logbooks', $attributes);
     }
@@ -47,7 +47,7 @@ class AdminLogbookCRUDTest extends TestCase
      */
     public function an_administrator_get_create_view_for_logbooks()
     {
-        $this->get("logbooks/create")
+        $this->get('logbooks/create')
             ->assertStatus(200);
     }
 
@@ -59,7 +59,7 @@ class AdminLogbookCRUDTest extends TestCase
         $Logbook = LogbookFactory::create();
 
         $this->followingRedirects()
-            ->delete("logbooks/" . $Logbook->id)
+            ->delete('logbooks/'.$Logbook->id)
             ->assertStatus(200);
 
         $this->assertDatabaseMissing('logbooks', $Logbook->toArray());
@@ -85,11 +85,11 @@ class AdminLogbookCRUDTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $this->post("logbooks", $attributes = factory('App\Logbook')->raw());
+        $this->post('logbooks', $attributes = factory('App\Logbook')->raw());
 
         $this->assertDatabaseHas('logbooks', $attributes);
 
-        $this->patch("logbooks/" . Logbook::where('title', '=', $attributes['title'])->first()->id, $new_attributes = factory('App\Logbook')->raw());
+        $this->patch('logbooks/'.Logbook::where('title', '=', $attributes['title'])->first()->id, $new_attributes = factory('App\Logbook')->raw());
 
         $this->assertDatabaseHas('logbooks', $new_attributes);
     }
@@ -105,5 +105,4 @@ class AdminLogbookCRUDTest extends TestCase
             ->assertStatus(200)
             ->assertSessionHasAll(compact($Logbook));
     }
-
 }

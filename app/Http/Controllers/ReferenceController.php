@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 class ReferenceController extends Controller
 {
-
     /**
      * Store a newly created resource in storage.
      *
@@ -17,8 +16,9 @@ class ReferenceController extends Controller
      */
     public function store(Request $request)
     {
-         abort_unless(\Gate::allows('objective_create'), 403);
-         return Reference::create($request->all());
+        abort_unless(\Gate::allows('objective_create'), 403);
+
+        return Reference::create($request->all());
     }
 
     /**
@@ -29,9 +29,9 @@ class ReferenceController extends Controller
      */
     public function show(Reference $reference)
     {
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return [
-                'reference' => $reference
+                'reference' => $reference,
             ];
         }
     }
@@ -46,7 +46,7 @@ class ReferenceController extends Controller
     public function update(Request $request, Reference $reference)
     {
         abort_unless(\Gate::allows('objective_edit'), 403);
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $reference->update($request->all())];
         }
     }
@@ -61,10 +61,10 @@ class ReferenceController extends Controller
     {
         abort_unless(\Gate::allows('objective_delete'), 403);
         DB::table('reference_subscriptions')
-            ->where('reference_id',  $reference->id)
+            ->where('reference_id', $reference->id)
             ->delete(); //delete individual subscriptions
         $reference->delete();
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' =>'deleted'];
         }
     }
@@ -76,6 +76,6 @@ class ReferenceController extends Controller
             'description'       => 'sometimes',
             'grade_id'          => 'sometimes',
             'owner_id'          => 'sometimes',
-            ]);
+        ]);
     }
 }

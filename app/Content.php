@@ -2,9 +2,6 @@
 
 namespace App;
 
-use App\ContentSubscription;
-use App\Quote;
-use App\Categorie;
 use Illuminate\Database\Eloquent\Model;
 
 class Content extends Model
@@ -16,7 +13,8 @@ class Content extends Model
         return "/contents/{$this->id}";
     }
 
-    public function owner(){
+    public function owner()
+    {
         return $this->belongsTo(User::class);
     }
 
@@ -28,17 +26,17 @@ class Content extends Model
     public function subscribe($model, $sharing_level_id = 1, $visibility = true)
     {
         $order_id = ContentSubscription::where([
-            "subscribable_type" => get_class($model),
-            "subscribable_id" => $model->id])->max('order_id');
+            'subscribable_type' => get_class($model),
+            'subscribable_id' => $model->id, ])->max('order_id');
 
         $subscribe = new ContentSubscription([
-            "content_id" => $this->id,
-            "subscribable_type" => get_class($model),
-            "subscribable_id" => $model->id,
-            "sharing_level_id" => $sharing_level_id,
-            "visibility" => $visibility,
-            "owner_id" => auth()->user()->id,
-            "order_id" => is_int($order_id) ? $order_id + 1 : 0
+            'content_id' => $this->id,
+            'subscribable_type' => get_class($model),
+            'subscribable_id' => $model->id,
+            'sharing_level_id' => $sharing_level_id,
+            'visibility' => $visibility,
+            'owner_id' => auth()->user()->id,
+            'order_id' => is_int($order_id) ? $order_id + 1 : 0,
         ]);
         $subscribe->save();
     }
@@ -85,7 +83,5 @@ class Content extends Model
         } else {
             return false;
         }
-
     }
-
 }

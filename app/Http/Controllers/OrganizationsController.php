@@ -3,17 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Country;
-use App\Http\Controllers\Controller;
-
+use App\Http\Requests\MassDestroyOrganizationRequest;
 use App\Organization;
+use App\OrganizationRoleUser;
 use App\OrganizationType;
 use App\State;
-use App\User;
-use App\Http\Requests\MassDestroyOrganizationRequest;
 use App\StatusDefinition;
-use App\OrganizationRoleUser;
+use App\User;
 use Yajra\DataTables\DataTables;
-
 
 class OrganizationsController extends Controller
 {
@@ -41,21 +38,21 @@ class OrganizationsController extends Controller
             ->addColumn('status', function ($organizations) {
                 return $organizations->status->lang_de;
             })
-            ->addColumn('action', function ($organizations) use ($edit_gate, $delete_gate){
-                 $actions  = '';
-                    if ($edit_gate){
-                        $actions .= '<a href="'.route('organizations.edit', $organizations->id).'"'
-                                    . 'id="edit-organization-'.$organizations->id.'" '
-                                    . 'class="btn p-1">'
-                                    . '<i class="fa fa-pencil-alt"></i>'
-                                    . '</a>';
-                    }
-                    if ($delete_gate){
-                        $actions .= '<button type="button" '
-                                . 'class="btn text-danger" '
-                                . 'onclick="destroyDataTableEntry(\'organizations\','.$organizations->id.')">'
-                                . '<i class="fa fa-trash"></i></button>';
-                    }
+            ->addColumn('action', function ($organizations) use ($edit_gate, $delete_gate) {
+                $actions = '';
+                if ($edit_gate) {
+                    $actions .= '<a href="'.route('organizations.edit', $organizations->id).'"'
+                                    .'id="edit-organization-'.$organizations->id.'" '
+                                    .'class="btn p-1">'
+                                    .'<i class="fa fa-pencil-alt"></i>'
+                                    .'</a>';
+                }
+                if ($delete_gate) {
+                    $actions .= '<button type="button" '
+                                .'class="btn text-danger" '
+                                .'onclick="destroyDataTableEntry(\'organizations\','.$organizations->id.')">'
+                                .'<i class="fa fa-trash"></i></button>';
+                }
 
                 return $actions;
             })
@@ -67,6 +64,7 @@ class OrganizationsController extends Controller
             ])
             ->make(true);
     }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -90,8 +88,7 @@ class OrganizationsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store()
@@ -104,13 +101,13 @@ class OrganizationsController extends Controller
                 [
                     'organization_type_id' => format_select_input($new_organization['organization_type_id']),
                     'state_id' => format_select_input($new_organization['state_id']),
-                    'country_id' => format_select_input($new_organization['country_id'])
+                    'country_id' => format_select_input($new_organization['country_id']),
                 ]
             )
         );
 
         // axios call?
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $organization->path()];
         }
         //dd($organization->path());
@@ -120,18 +117,17 @@ class OrganizationsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
-     *
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show(Organization $organization)
     {
         abort_unless(\Gate::allows('organization_show'), 403);
-        abort_unless((auth()->user()->organizations->contains($organization) OR is_admin()), 403);
+        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return [
-                'message' => $organization
+                'message' => $organization,
             ];
         }
         $status_definitions = StatusDefinition::all();
@@ -144,14 +140,13 @@ class OrganizationsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param int $id
-     *
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function edit(Organization $organization)
     {
         abort_unless(\Gate::allows('organization_edit'), 403);
-        abort_unless((auth()->user()->organizations->contains($organization) OR is_admin()), 403);
+        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
         $status_definitions = StatusDefinition::all();
         $organization_types = OrganizationType::all();
         $countries = Country::all();
@@ -186,24 +181,22 @@ class OrganizationsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Organization $organization)
     {
         abort_unless(\Gate::allows('organization_edit'), 403);
-        abort_unless((auth()->user()->organizations->contains($organization) OR is_admin()), 403);
+        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
 
         $clean_data = $this->validateRequest();
-        $clean_data['state_id'] =  format_select_input($clean_data['state_id']);
-        $clean_data['country_id'] =  format_select_input($clean_data['country_id']);
-        $clean_data['organization_type_id'] =  format_select_input($clean_data['organization_type_id']);
+        $clean_data['state_id'] = format_select_input($clean_data['state_id']);
+        $clean_data['country_id'] = format_select_input($clean_data['country_id']);
+        $clean_data['organization_type_id'] = format_select_input($clean_data['organization_type_id']);
 
-        if (isset(request()->status_id[0]))
-        {
-            $clean_data['status_id'] =  request()->status_id[0];  //hack to prevent array to string conversion
+        if (isset(request()->status_id[0])) {
+            $clean_data['status_id'] = request()->status_id[0];  //hack to prevent array to string conversion
         }
 
         $organization->update($clean_data);
@@ -214,7 +207,7 @@ class OrganizationsController extends Controller
     public function updateAddress(Organization $organization)
     {
         abort_unless(\Gate::allows('organization_edit_address'), 403);
-        abort_unless((auth()->user()->organizations->contains($organization) OR is_admin()), 403);
+        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
 
         $clean_data = $this->validateRequest();
         $organization->update($clean_data);
@@ -225,14 +218,13 @@ class OrganizationsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
-     *
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy(Organization $organization)
     {
         abort_unless(\Gate::allows('organization_delete'), 403);
-        abort_unless((auth()->user()->organizations->contains($organization) OR is_admin()), 403);
+        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
 
         $organization->delete();
 
@@ -251,34 +243,26 @@ class OrganizationsController extends Controller
     {
         abort_unless(\Gate::allows('organization_enrolment'), 403);
 
-        foreach ((request()->enrollment_list) AS $enrolment)
-        {
-
+        foreach ((request()->enrollment_list) as $enrolment) {
             if (auth()->user()->id == $enrolment['user_id']
-                AND auth()->user()->role()->id == 1
-                AND auth()->user()->current_organization_id == $enrolment['organization_id'])
-            {
+                and auth()->user()->role()->id == 1
+                and auth()->user()->current_organization_id == $enrolment['organization_id']) {
                 // do nothing -> admin should not degrade itself
-            }
-            else
-            {
+            } else {
                 //current admin should not be edited
-                if ( auth()->user()->role()->id <=  $enrolment['role_id'])  //only allow roles below or equal
-                {
-                    abort_unless((auth()->user()->organizations->contains($enrolment['organization_id']) OR is_admin()), 403);
+                if (auth()->user()->role()->id <= $enrolment['role_id']) {  //only allow roles below or equal
+                    abort_unless((auth()->user()->organizations->contains($enrolment['organization_id']) or is_admin()), 403);
                     $return[] = OrganizationRoleUser::updateOrCreate(
                         [
                             'user_id'         => $enrolment['user_id'],
-                            'organization_id' => $enrolment['organization_id']
+                            'organization_id' => $enrolment['organization_id'],
                         ],
                         [
-                            'role_id'         => $enrolment['role_id']
+                            'role_id'         => $enrolment['role_id'],
                         ]
                     );
                 }
-
             }
-
         }
 
         return $return;
@@ -288,9 +272,8 @@ class OrganizationsController extends Controller
     {
         abort_unless(\Gate::allows('organization_enrolment'), 403);
 
-        foreach ((request()->expel_list) AS $expel)
-        {
-            abort_unless((auth()->user()->organizations->contains($expel['organization_id']) OR is_admin()), 403);
+        foreach ((request()->expel_list) as $expel) {
+            abort_unless((auth()->user()->organizations->contains($expel['organization_id']) or is_admin()), 403);
             $return[] = OrganizationRoleUser::where([
                 'user_id'         => $expel['user_id'],
                 'organization_id' => $expel['organization_id'],
@@ -299,8 +282,7 @@ class OrganizationsController extends Controller
             // if users current_organization_id is equal to expelled organization reset current_organization_id
             $u = User::find($expel['user_id']);
 
-            if ($u->current_organization_id == $expel['organization_id'])
-            {
+            if ($u->current_organization_id == $expel['organization_id']) {
                 $u->current_organization_id = $u->organizations()->first()->id;
                 $u->save();
             }
@@ -311,7 +293,6 @@ class OrganizationsController extends Controller
 
     protected function validateRequest()
     {
-
         return request()->validate([
             'title'         => 'sometimes|required',
             'description' => 'sometimes',

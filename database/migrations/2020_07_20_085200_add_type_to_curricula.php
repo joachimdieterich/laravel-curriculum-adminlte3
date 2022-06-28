@@ -15,7 +15,7 @@ class AddTypeToCurricula extends Migration
     {
         Schema::table('curricula', function (Blueprint $table) {
             $table->unsignedBigInteger('type_id')->default(1);
-            
+
             $table->foreign('type_id')->references('id')->on('curriculum_types');
         });
     }

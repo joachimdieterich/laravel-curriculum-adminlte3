@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 class AdminController extends Controller
 {
     /**
@@ -15,6 +13,6 @@ class AdminController extends Controller
     {
         abort_unless(is_admin(), 403);
 
-        return view('admin.show');//
+        return view('admin.show'); //
     }
 }

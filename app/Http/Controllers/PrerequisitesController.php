@@ -16,13 +16,12 @@ class PrerequisitesController extends Controller
     {
         $request = $this->validateRequest();
         $data = $this->generateD3Data($request);
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return [
                 'prerequisites' => $data,
             ];
         }
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -40,7 +39,7 @@ class PrerequisitesController extends Controller
             'predecessor_id'    => $this->getModelId($new_prerequisite),
             'successor_type'    => $new_prerequisite['successor_type'],
             'successor_id'      => $new_prerequisite['successor_id'],
-        ],[
+        ], [
             'owner_id'          => auth()->user()->id,
         ]);
         $subscribe->save();
@@ -48,26 +47,21 @@ class PrerequisitesController extends Controller
 
     protected function getModelType($validated_request)
     {
-        if ($validated_request['enabling_objective_id'] != null)
-        {
+        if ($validated_request['enabling_objective_id'] != null) {
             return "App\EnablingObjective";
         } else {
             return ($validated_request['terminal_objective_id'] != null) ? "App\TerminalObjective" : "App\Curriculum";
         }
-
     }
 
     protected function getModelId($validated_request)
     {
-        if ($validated_request['enabling_objective_id'] != null)
-        {
+        if ($validated_request['enabling_objective_id'] != null) {
             return $validated_request['enabling_objective_id'];
         } else {
             return ($validated_request['terminal_objective_id'] != null) ? $validated_request['terminal_objective_id'] : $validated_request['curriculum_id'];
         }
-
     }
-
 
     /**
      * Remove the specified resource from storage.
@@ -80,24 +74,23 @@ class PrerequisitesController extends Controller
         abort_unless(\Gate::allows('prerequisite_delete'), 403);
         $entry = $prerequisites->get()->first();
         $entry->delete();
-
     }
 
     protected function generateD3Data($request)
     {
         $successor = app()->make($request['successor_type'])::find($request['successor_id']);
 
-      /*  $prerequisites = Prerequisites::where([
-            'successor_type' => $request['successor_type'],
-            'successor_id'   => $request['successor_id'],
-        ])->with(['predecessor'])->get();*/
+        /*  $prerequisites = Prerequisites::where([
+              'successor_type' => $request['successor_type'],
+              'successor_id'   => $request['successor_id'],
+          ])->with(['predecessor'])->get();*/
 
         $data = [
-            "id"    => $successor->id,
-            "name"  => $this->resolveType($request['successor_type'], $successor),
-            "type"  => "Root",
-            "description" => strip_tags($successor->title),
-            "children"    => $this->predecessor($successor->predecessors)
+            'id'    => $successor->id,
+            'name'  => $this->resolveType($request['successor_type'], $successor),
+            'type'  => 'Root',
+            'description' => strip_tags($successor->title),
+            'children'    => $this->predecessor($successor->predecessors),
         ];
 
         return $data;
@@ -105,21 +98,19 @@ class PrerequisitesController extends Controller
 
     protected function predecessor($predecessors, $level = 0, $max_iterations = 5)
     {
-        $data = array();
+        $data = [];
 
-        foreach($predecessors as $predecessor)
-        {
-
+        foreach ($predecessors as $predecessor) {
             $data[] = [
-                "id"    => $predecessor->predecessor_id,
-                "name"  => $this->resolveType($predecessor->predecessor_type, $predecessor->predecessor),
-                "type"  => "Level ".$level,
-                "prerequisite_id"  => $predecessor->id,
-                "description"   => strip_tags($predecessor->predecessor->title),
-                "children"      => $this->predecessor($predecessor->predecessor->predecessors, $level+1)
+                'id'    => $predecessor->predecessor_id,
+                'name'  => $this->resolveType($predecessor->predecessor_type, $predecessor->predecessor),
+                'type'  => 'Level '.$level,
+                'prerequisite_id'  => $predecessor->id,
+                'description'   => strip_tags($predecessor->predecessor->title),
+                'children'      => $this->predecessor($predecessor->predecessor->predecessors, $level + 1),
             ];
-
         }
+
         return $data;
     }
 
@@ -139,6 +130,7 @@ class PrerequisitesController extends Controller
                 $typeName = $model->curriculum->title;
                 break;
         }
+
         return $typeName;
     }
 
@@ -146,9 +138,9 @@ class PrerequisitesController extends Controller
     {
         return request()->validate([
             'id'                    => 'sometimes',
-            "curriculum_id"         => 'sometimes',
-            "terminal_objective_id" => 'sometimes',
-            "enabling_objective_id" => 'sometimes',
+            'curriculum_id'         => 'sometimes',
+            'terminal_objective_id' => 'sometimes',
+            'enabling_objective_id' => 'sometimes',
             'successor_type'        => 'sometimes',
             'successor_id'          => 'sometimes',
             'owner_id'              => 'sometimes',

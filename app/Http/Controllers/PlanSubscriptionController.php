@@ -17,30 +17,27 @@ class PlanSubscriptionController extends Controller
     {
         abort_unless(\Gate::allows('plan_create'), 403);
         $input = $this->validateRequest();
-        if (isset($input['subscribable_type']) AND isset($input['subscribable_id']))
-        {
+        if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
             $model = $input['subscribable_type']::find($input['subscribable_id']);
             abort_unless($model->isAccessible(), 403);
 
             $subscriptions = PlanSubscription::where([
                 'subscribable_type' => $input['subscribable_type'],
-                'subscribable_id' => $input['subscribable_id']
+                'subscribable_id' => $input['subscribable_id'],
             ]);
 
             if (request()->wantsJson()) {
                 return ['subscriptions' => $subscriptions->with(['plan'])->get()];
             }
-        }
-        else {
+        } else {
             if (request()->wantsJson()) {
                 return [
-                    'subscribers' =>
-                        [
-                            'users' => auth()->user()->users()->select('users.id', 'users.firstname', 'users.lastname')->get(),
-                            'groups' => auth()->user()->groups()->select('group_id', 'title')->get(),
-                            'organizations' => auth()->user()->organizations()->select('organization_id', 'title')->get(),
-                            'subscriptions' => Plan::find(request('plan_id'))->subscriptions()->with('subscribable')->get()
-                        ]
+                    'subscribers' => [
+                        'users' => auth()->user()->users()->select('users.id', 'users.firstname', 'users.lastname')->get(),
+                        'groups' => auth()->user()->groups()->select('group_id', 'title')->get(),
+                        'organizations' => auth()->user()->organizations()->select('organization_id', 'title')->get(),
+                        'subscriptions' => Plan::find(request('plan_id'))->subscriptions()->with('subscribable')->get(),
+                    ],
                 ];
             }
         }
@@ -58,20 +55,19 @@ class PlanSubscriptionController extends Controller
         abort_unless((\Gate::allows('plan_create') and Plan::find($input['model_id'])->isAccessible()), 403);   // user owns plan_subscription
 
         $subscribe = PlanSubscription::updateOrCreate([
-            "plan_id" => $input['model_id'],
-            "subscribable_type" => $input['subscribable_type'],
-            "subscribable_id" => $input['subscribable_id'],
+            'plan_id' => $input['model_id'],
+            'subscribable_type' => $input['subscribable_type'],
+            'subscribable_id' => $input['subscribable_id'],
         ], [
-            "editable" => isset($input['editable']) ? $input['editable'] : false,
-            "owner_id" => auth()->user()->id,
+            'editable' => isset($input['editable']) ? $input['editable'] : false,
+            'owner_id' => auth()->user()->id,
         ]);
         $subscribe->save();
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['subscription' => Plan::find($input['model_id'])->subscriptions()->with('subscribable')->get()];
         }
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -86,8 +82,8 @@ class PlanSubscriptionController extends Controller
 
         $input = $this->validateRequest();
         $planSubscription->update([
-            "editable" => isset($input['editable']) ? $input['editable'] : false,
-            "owner_id" => auth()->user()->id,
+            'editable' => isset($input['editable']) ? $input['editable'] : false,
+            'owner_id' => auth()->user()->id,
         ]);
 
         if (request()->wantsJson()) {
@@ -105,7 +101,7 @@ class PlanSubscriptionController extends Controller
     {
         abort_unless((\Gate::allows('plan_delete') and $planSubscription->isAccessible()), 403);
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $planSubscription->delete()];
         }
     }

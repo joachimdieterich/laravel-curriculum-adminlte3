@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Content;
 
 class OpenController extends Controller
@@ -14,7 +13,6 @@ class OpenController extends Controller
      */
     public function __construct()
     {
-
     }
 
     public function features()

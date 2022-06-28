@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Task;
 use App\StatusDefinition;
-use App\TaskSubscription;
+use App\Task;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -39,11 +38,11 @@ class TaskController extends Controller
             'description'       => $input['description'],
             'start_date'        => $input['start_date'],
             'due_date'          => $input['due_date'],
-            'owner_id'          => auth()->user()->id
+            'owner_id'          => auth()->user()->id,
         ]);
 
         //subscribe to model
-        if (isset($input['subscribable_type']) AND isset($input['subscribable_id'])){
+        if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
             $model = $input['subscribable_type']::find($input['subscribable_id']);
             $task->subscribe($model);
         }
@@ -51,7 +50,7 @@ class TaskController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         // axios call?
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $task->path()];
         }
 
@@ -71,14 +70,13 @@ class TaskController extends Controller
         $task = $task->with(['contentSubscriptions.content.categories',
             'terminalObjectiveSubscriptions.terminalObjective',
             'enablingObjectiveSubscriptions.enablingObjective.terminalObjective',
-            'mediaSubscriptions.medium'])
+            'mediaSubscriptions.medium', ])
             ->where('id', $task->id)->get()->first();
-
 
         // axios call?
         if (request()->wantsJson()) {
             return [
-                'task' => $task
+                'task' => $task,
             ];
         }
         $status_definitions = StatusDefinition::all();
@@ -107,9 +105,10 @@ class TaskController extends Controller
             'due_date'          => $input['due_date'],
         ]);
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $task->path()];
         }
+
         return redirect($task->path());
     }
 
@@ -126,9 +125,10 @@ class TaskController extends Controller
         $task->subscriptions()->delete(); //first delete subscriptions
         $task->delete();
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => '/tasks'];
         }
+
         return back();
     }
 
@@ -140,9 +140,10 @@ class TaskController extends Controller
         $subscription = $task->subscribe(auth()->user());
         ($subscription->completion_date == null) ? $subscription->complete() : $subscription->incomplete();
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['status' => $task->path()];
         }
+
         return redirect($task->path());
     }
 
@@ -152,15 +153,15 @@ class TaskController extends Controller
 
         $activity = Task::with(['subscriptions.statuses.model', 'subscriptions.subscribable', 'subscriptions.owner'])
                 ->where('id', $task->id)->get()->first();
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['activity' => $activity];
         }
+
         return redirect($activity);
     }
 
     protected function validateRequest()
     {
-
         return request()->validate([
             'id'                => 'sometimes',
             'title'             => 'sometimes|required',
@@ -170,6 +171,6 @@ class TaskController extends Controller
             'owner_id'          => 'sometimes',
             'subscribable_type' => 'sometimes',
             'subscribable_id'   => 'sometimes',
-            ]);
+        ]);
     }
 }

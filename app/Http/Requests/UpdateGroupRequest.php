@@ -16,7 +16,7 @@ class UpdateGroupRequest extends FormRequest
         return [
             'title'    => [
                 'sometimes',
-            ]
+            ],
         ];
     }
 }

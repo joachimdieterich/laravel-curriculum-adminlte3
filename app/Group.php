@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Model;
  *      @OA\Property( property="created_at", type="string"),
  *      @OA\Property( property="updated_at", type="string")
  *   ),
- *
  */
 class Group extends Model
 {
@@ -33,7 +32,8 @@ class Group extends Model
         return $this->users()->attach($user);
     }
 
-    public function users(){
+    public function users()
+    {
         return $this->belongsToMany(User::class, 'group_user')->withTimestamps();
     }
 
@@ -62,7 +62,8 @@ class Group extends Model
         return $this->hasOne('App\Organization', 'id', 'organization_id');
     }
 
-    public function courses(){
+    public function courses()
+    {
         return $this->hasMany('App\Course', 'group_id', 'id');
     }
 
@@ -130,6 +131,5 @@ class Group extends Model
         } else {
             return false;
         }
-
     }
 }

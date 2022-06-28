@@ -19,10 +19,10 @@ class CreateTaskSubscriptionsTable extends Migration
             $table->string('subscribable_type');
             $table->unsignedbigInteger('subscribable_id');
             $table->timestamp('completion_date')->nullable();
-            
+
             $table->unsignedbigInteger('owner_id');
             $table->timestamps();
-            
+
             $table->foreign('task_id')->references('id')->on('tasks');
             $table->foreign('owner_id')->references('id')->on('users');
         });

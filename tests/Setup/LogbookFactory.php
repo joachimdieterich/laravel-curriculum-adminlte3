@@ -23,7 +23,6 @@ class LogbookFactory
 
     public function create()
     {
-
         return factory(Logbook::class)->create();
     }
 }

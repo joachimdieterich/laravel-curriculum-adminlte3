@@ -2,8 +2,8 @@
 
 namespace App;
 
-use App\OrganizationRoleUser;
 use Illuminate\Database\Eloquent\Model;
+
 /**
  *   @OA\Schema(
  *      required={"id", "title", "state_id", "country_id", "organization_type_id", "status_id"},
@@ -26,7 +26,6 @@ use Illuminate\Database\Eloquent\Model;
  *      @OA\Property( property="created_at", type="string"),
  *      @OA\Property( property="updated_at", type="string")
  *   ),
- *
  */
 class Organization extends Model
 {
@@ -39,7 +38,6 @@ class Organization extends Model
         'status_id' => 1,
     ];
 
-
     public function path()
     {
         return "/organizations/{$this->id}";
@@ -47,14 +45,14 @@ class Organization extends Model
 
     public function roles()
     {
-         return $this->belongsToMany(Role::class, 'organization_role_users')
+        return $this->belongsToMany(Role::class, 'organization_role_users')
                 ->withPivot(['user_id', 'role_id', 'organization_id']);
     }
 
     // and for all 3 Organization, User, Role this relation:
     public function organizationRolesUsers()
     {
-      return $this->hasMany(OrganizationRoleUser::class)
+        return $this->hasMany(OrganizationRoleUser::class)
               ->role('Admin');
     }
 
@@ -132,5 +130,4 @@ class Organization extends Model
             'plan_id'
         )->where('subscribable_type', get_class($this));
     }
-
 }

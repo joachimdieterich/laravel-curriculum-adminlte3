@@ -11,7 +11,7 @@ class LogbookSubscription extends Model
         'subscribable_id',
         'logbook_id',
         'editable',
-        'owner_id'];
+        'owner_id', ];
 
     public function subscribable()
     {

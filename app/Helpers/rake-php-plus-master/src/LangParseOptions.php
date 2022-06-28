@@ -22,7 +22,7 @@ class LangParseOptions implements ILangParseOptions
     /**
      * LangParseOptions constructor.
      *
-     * @param string $language
+     * @param  string  $language
      */
     public function __construct($language = 'en_US')
     {
@@ -44,13 +44,12 @@ class LangParseOptions implements ILangParseOptions
     /**
      * Instantiates a language parse options instance.
      *
-     * @param string $language
-     *
+     * @param  string  $language
      * @return $this
      */
     public static function create($language = 'en_US')
     {
-        return (new self($language));
+        return new self($language);
     }
 
     /**
@@ -66,14 +65,14 @@ class LangParseOptions implements ILangParseOptions
     /**
      * Set the text parsing options.
      *
-     * @param string $sentence_regex The regular expression to use when
+     * @param  string  $sentence_regex The regular expression to use when
      *                               splitting sentences.
-     *
      * @return $this
      */
     public function setSentenceRegEx($sentence_regex)
     {
         $this->sentence_regex = $sentence_regex;
+
         return $this;
     }
 
@@ -100,13 +99,13 @@ class LangParseOptions implements ILangParseOptions
     /**
      * Sets the line terminator that is typically used in the source text.
      *
-     * @param string $line_terminator
-     *
+     * @param  string  $line_terminator
      * @return $this
      */
     public function setLineTerminator($line_terminator)
     {
         $this->line_terminator = $line_terminator;
+
         return $this;
     }
 }

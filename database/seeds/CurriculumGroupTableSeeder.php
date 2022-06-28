@@ -12,6 +12,6 @@ class CurriculumGroupTableSeeder extends Seeder
      */
     public function run()
     {
-         Curriculum::findOrFail(1)->groups()->sync(1);
+        Curriculum::findOrFail(1)->groups()->sync(1);
     }
 }

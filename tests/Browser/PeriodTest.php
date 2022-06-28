@@ -2,23 +2,20 @@
 
 namespace Tests\Browser;
 
-use Tests\DuskTestCase;
-use Laravel\Dusk\Browser;
-use Laravel\Dusk\Chrome;
 use App\Period;
 use App\User;
+use Laravel\Dusk\Browser;
+use Tests\DuskTestCase;
 
 class PeriodTest extends DuskTestCase
 {
-    
     /**
      * Add period
      *
      * @return void
      */
     public function testAddPeriod()
-    {   
-        
+    {
         $this->browse(function (Browser $browser) {
             $period = Period::first();
             $new_period = factory('App\Period')->raw();
@@ -34,22 +31,21 @@ class PeriodTest extends DuskTestCase
                     ->click('#period-save')
                     ->waitForText($new_period['title'])
                     //->screenshot('see-periodal-details')
-                    ;
-        });     
+;
+        });
     }
-    
+
     /**
      * Edit period
      *
      * @return void
      */
     public function testShowPeriod()
-    {   
+    {
         $this->browse(function (Browser $admin) {
-            
-        $period = Period::find(1)->get()->first();
+            $period = Period::find(1)->get()->first();
 //       dd($period);
-        $admin->loginAs(User::find(1))
+            $admin->loginAs(User::find(1))
                 ->visit(new Pages\PeriodPage)
                 ->waitForText($period->title)
                 ->click('#show-period-'.$period->id)
@@ -58,16 +54,17 @@ class PeriodTest extends DuskTestCase
                 ->assertSee($period->begin)
                 ->assertSee($period->end)
                 //->screenshot('see-periodal-details')
-                ;
-        });     
+;
+        });
     }
+
     /**
      * Edit period
      *
      * @return void
      */
     public function testEditPeriod()
-    {   
+    {
         $this->browse(function (Browser $admin) {
             $new_period = factory('App\Period')->raw();
             $period = Period::create($new_period);
@@ -75,22 +72,22 @@ class PeriodTest extends DuskTestCase
                     ->visit(new Pages\PeriodPage)
                     ->waitForText($period->title)
                     ->click('#edit-period-'.$period->id)
-                    ->waitForText( trans('global.edit').' '. trans('global.period.title_singular') )
+                    ->waitForText(trans('global.edit').' '.trans('global.period.title_singular'))
                     ->type('title', $period->title.' changed')
                     ->click('#period-save')
                     ->waitForText($period->title.' changed')
                     //->screenshot('see-period')
-                    ;
-        });     
+;
+        });
     }
-    
+
     /**
      * Delete period
      *
      * @return void
      */
     public function testDeletePeriod()
-    {   
+    {
         $this->browse(function (Browser $admin) {
             $new_period = factory('App\Period')->raw();
             $period = Period::create($new_period);
@@ -98,11 +95,10 @@ class PeriodTest extends DuskTestCase
                     ->visit(new Pages\PeriodPage)
                     ->waitForText($period->title)
                     ->click('#delete-period-'.$period->id)
-                    ->waitForText('curriculumonline') //proof that datatable is loaded, curriculumonline is the seeded demo period 
+                    ->waitForText('curriculumonline') //proof that datatable is loaded, curriculumonline is the seeded demo period
                     ->assertDontSee($period->title)
                    // ->screenshot('see-period')
-                    ;
-        });     
+;
+        });
     }
-   
 }

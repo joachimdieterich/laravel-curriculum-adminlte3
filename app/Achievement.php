@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
+
 class Achievement extends Model
 {
     protected $guarded = [''];
@@ -24,5 +24,4 @@ class Achievement extends Model
     {
         return $this->hasOne('App\User', 'id', 'owner_id');
     }
-
 }

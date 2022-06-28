@@ -6,7 +6,6 @@ use Laravel\Dusk\Browser;
 
 class HomePage extends Page
 {
-
     /**
      * Get the URL for the page.
      *

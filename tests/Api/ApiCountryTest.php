@@ -2,12 +2,12 @@
 
 namespace Tests\Api;
 
-use Tests\TestCase;
 use App\Country;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-class ApiCountryTest extends TestCase {
-
+class ApiCountryTest extends TestCase
+{
     use RefreshDatabase;
 
     /** @test */
@@ -40,5 +40,4 @@ class ApiCountryTest extends TestCase {
                 ->assertStatus(200)
                 ->assertJson(Country::find('DE')->toArray());
     }
-
 }

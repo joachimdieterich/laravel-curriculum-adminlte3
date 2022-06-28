@@ -28,8 +28,7 @@ class AbsenceController extends Controller
         abort_unless(\Gate::allows('absence_create'), 403);
         $new_absence = $this->validateRequest();
 
-        foreach ((array)$new_absence['absent_user_ids'] AS $user_id)
-        {
+        foreach ((array) $new_absence['absent_user_ids'] as $user_id) {
             $absence = Absence::updateOrCreate(
                 [
                     'referenceable_type' => $new_absence['referenceable_type'],
@@ -40,12 +39,12 @@ class AbsenceController extends Controller
                     'reason'             => $new_absence['reason'],
                     'done'               => isset($new_absence['done']) ? $new_absence['done'] : 0,
                     'time'               => isset($new_absence['time']) ? $new_absence['time'] : 0,
-                    'owner_id'           => auth()->user()->id
+                    'owner_id'           => auth()->user()->id,
                 ]
             );
         }
         // axios call?
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $absence];
         }
         abort(404);
@@ -73,11 +72,10 @@ class AbsenceController extends Controller
     {
         abort_unless((\Gate::allows('absence_edit') and $absence->isAccessible()), 403);
 
-        if (request()->wantsJson()){
-            if ($absence->update($request->all())){
+        if (request()->wantsJson()) {
+            if ($absence->update($request->all())) {
                 return ['done' => $absence->done];
             }
-
         }
         abort(404);
     }
@@ -92,7 +90,7 @@ class AbsenceController extends Controller
     {
         abort_unless((\Gate::allows('absence_delete') and $absence->isAccessible()), 403);
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $absence->delete()];
         }
         abort(404);
@@ -100,7 +98,6 @@ class AbsenceController extends Controller
 
     protected function validateRequest()
     {
-
         return request()->validate([
             'id'                 => 'sometimes',
             'reason'             => 'sometimes|required',
@@ -112,5 +109,4 @@ class AbsenceController extends Controller
             'referenceable_id'   => 'sometimes',
         ]);
     }
-
 }

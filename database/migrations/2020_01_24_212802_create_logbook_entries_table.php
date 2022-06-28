@@ -22,7 +22,7 @@ class CreateLogbookEntriesTable extends Migration
             $table->timestamp('end')->nullable();
             $table->unsignedbigInteger('owner_id')->nullable();
             $table->timestamps();
-            
+
             $table->foreign('logbook_id')->references('id')->on('logbooks');
             $table->foreign('owner_id')->references('id')->on('users');
         });

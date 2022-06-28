@@ -14,10 +14,9 @@ if ($argc < 2) {
 }
 
 $keywords = RakePlus::create($argv[1])->keywords();
-print "The keywords for {$argv[1]} is:\n";
+echo "The keywords for {$argv[1]} is:\n";
 print_r($keywords);
 
 $phrases = RakePlus::create($argv[1])->get();
-print "The phrases for {$argv[1]} is:\n";
+echo "The phrases for {$argv[1]} is:\n";
 print_r($phrases);
-

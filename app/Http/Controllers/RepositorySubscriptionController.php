@@ -21,6 +21,7 @@ class RepositorySubscriptionController extends Controller
                 ->where('subscribable_type', $input['subscribable_type'])
                 ->where('subscribable_id', $input['subscribable_id'])
                 ->where('repository', $input['repository'])->get();
+
         return ['subscriptions' => $subscriptions];
     }
 
@@ -45,7 +46,7 @@ class RepositorySubscriptionController extends Controller
         $input = $this->validateRequest();
 
         $repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['subscription' => $repositoryPlugin->plugins[$input['repository']]->store($request)];
         }
     }
@@ -58,7 +59,6 @@ class RepositorySubscriptionController extends Controller
      */
     public function show(RepositorySubscription $repositorySubscription)
     {
-
     }
 
     /**
@@ -92,7 +92,6 @@ class RepositorySubscriptionController extends Controller
      */
     public function destroy()
     {
-
     }
 
     public function getMedia(Request $request)
@@ -113,39 +112,37 @@ class RepositorySubscriptionController extends Controller
         /*
          * Get media by subscribable identifier if (curriculum, terminal, or enabling objective)
          */
-        $allowed_models = array("App\Curriculum", "App\TerminalObjective", "App\EnablingObjective");
+        $allowed_models = ["App\Curriculum", "App\TerminalObjective", "App\EnablingObjective"];
         if (in_array($input['subscribable_type'], $allowed_models)) {
             $model = $input['subscribable_type']::find($input['subscribable_id']);
 
-            if (!empty($model->ui))
-            {
-                $result->push($repositoryPlugin->plugins[$input['repository']]->processReference('endpoint=getSearchQueriesV2&property=ccm:curriculum&value='.$model->ui.'&maxItems='.$input['maxItems'].'&skipCount='.($input['maxItems'] * $input['page']).'&filter='.$input['filter'] ));
+            if (! empty($model->ui)) {
+                $result->push($repositoryPlugin->plugins[$input['repository']]->processReference('endpoint=getSearchQueriesV2&property=ccm:curriculum&value='.$model->ui.'&maxItems='.$input['maxItems'].'&skipCount='.($input['maxItems'] * $input['page']).'&filter='.$input['filter']));
                 LogController::set(get_class($this).'@'.__FUNCTION__, $model->uuid, $result->count());
-            }
-            else
-            {
+            } else {
                 //dump('ui: '.$model->ui);
                 $result = null;
             }
         }
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $result];
         }
     }
-
 
     public function searchRepository(Request $request)
     {
         $input = $this->validateRequest();
 
         $repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
+
         return $repositoryPlugin->plugins[$input['repository']]->searchRepository($request);
     }
 
     protected function callPlugin($plugin, $value)
     {
         $repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
+
         return $repositoryPlugin->plugins[$plugin]->processReference($value);
     }
 
@@ -154,13 +151,12 @@ class RepositorySubscriptionController extends Controller
         $input = $this->validateRequest();
 
         $repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
+
         return $repositoryPlugin->plugins[$input['repository']]->destroy($request);
     }
 
-
     protected function validateRequest()
     {
-
         return request()->validate([
             'value'             => 'sometimes',
             'subscribable_type' => 'sometimes|required',
@@ -172,5 +168,4 @@ class RepositorySubscriptionController extends Controller
             'filter'            => 'sometimes',
         ]);
     }
-
 }

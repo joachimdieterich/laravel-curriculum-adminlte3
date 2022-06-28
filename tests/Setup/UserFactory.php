@@ -18,8 +18,6 @@ use App\User;
 
 class UserFactory
 {
-   
-
     public function create()
     {
         $user = factory(User::class)->create();

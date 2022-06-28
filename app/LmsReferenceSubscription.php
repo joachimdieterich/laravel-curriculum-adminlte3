@@ -11,7 +11,7 @@ class LmsReferenceSubscription extends Model
         'subscribable_id',
         'lms_reference_id',
         'editable',
-        'owner_id'];
+        'owner_id', ];
 
     /**
      * Get the subscriber model.

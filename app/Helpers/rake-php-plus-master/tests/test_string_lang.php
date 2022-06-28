@@ -1,3 +1,3 @@
 <?php
 
-return "string";
+return 'string';

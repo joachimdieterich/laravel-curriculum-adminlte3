@@ -14,9 +14,9 @@ class AddLevelIdToEnablingObjectivesTable extends Migration
     public function up()
     {
         Schema::table('enabling_objectives', function (Blueprint $table) {
-             $table->unsignedbigInteger('level_id')->nullable();
-             
-             $table->foreign('level_id')->references('id')->on('levels');
+            $table->unsignedbigInteger('level_id')->nullable();
+
+            $table->foreign('level_id')->references('id')->on('levels');
         });
     }
 
@@ -29,7 +29,7 @@ class AddLevelIdToEnablingObjectivesTable extends Migration
     {
         Schema::table('enabling_objectives', function (Blueprint $table) {
             $table->dropForeign('level_id');
-            $table->dropColumn('level_id');//
+            $table->dropColumn('level_id'); //
         });
     }
 }

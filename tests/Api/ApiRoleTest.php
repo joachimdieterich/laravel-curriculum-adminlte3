@@ -2,12 +2,12 @@
 
 namespace Tests\Api;
 
-use Tests\TestCase;
 use App\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-class ApiRoleTest extends TestCase {
-
+class ApiRoleTest extends TestCase
+{
     use RefreshDatabase;
 
     /** @test */
@@ -40,5 +40,4 @@ class ApiRoleTest extends TestCase {
                 ->assertStatus(200)
                 ->assertJson(Role::find(1)->toArray());
     }
-
 }

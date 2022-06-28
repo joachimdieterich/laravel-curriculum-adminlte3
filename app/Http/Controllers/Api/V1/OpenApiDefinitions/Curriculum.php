@@ -17,7 +17,6 @@
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
 * )
-*
 */
 
 /**
@@ -45,16 +44,15 @@
 *          @OA\JsonContent(ref="#/components/schemas/Curriculum"),
 *       ),
 *       @OA\Response(
-*          response=400, 
-*          description="Bad request", 
+*          response=400,
+*          description="Bad request",
 *       ),
 *       @OA\Response(
-*          response=404, 
-*          description="Bad request", 
+*          response=404,
+*          description="Bad request",
 *         @OA\JsonContent(),
 *       ),
 * )
-*
 */
 
 /**
@@ -90,16 +88,15 @@
 *          description="successful operation",
 *       ),
 *       @OA\Response(
-*          response=400, 
-*          description="Bad request", 
+*          response=400,
+*          description="Bad request",
 *       ),
 *       @OA\Response(
-*          response=404, 
-*          description="Bad request", 
+*          response=404,
+*          description="Bad request",
 *         @OA\JsonContent(),
 *       ),
 * )
-*
 */
 
 /**
@@ -126,14 +123,13 @@
 *          description="successful operation",
 *       ),
 *       @OA\Response(
-*          response=400, 
-*          description="Bad request", 
+*          response=400,
+*          description="Bad request",
 *       ),
 *       @OA\Response(
-*          response=404, 
-*          description="Bad request", 
+*          response=404,
+*          description="Bad request",
 *         @OA\JsonContent(),
 *       ),
 * )
-*
 */

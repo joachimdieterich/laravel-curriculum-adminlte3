@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Country;
+use App\Http\Controllers\Controller;
 
 class CountriesApiController extends Controller
 {
@@ -14,11 +14,8 @@ class CountriesApiController extends Controller
         return $countries;
     }
 
-
     public function show(Country $country)
     {
-
         return $country;
-
     }
 }

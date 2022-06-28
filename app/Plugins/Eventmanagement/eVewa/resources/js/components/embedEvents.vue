@@ -1,39 +1,10 @@
 <template>
     <div class="col-12">
-        {{ trans('global.eventSubscription.search') }}
-        <div class="row my-3">
-            <span class="col-6 ">
-                {{ trans('global.eventSubscription.search_subject') }}
-                <button type="button" class="btn btn-block btn-secondary" @click="loader(curriculum.subject.title)">
-                    {{ curriculum.subject.title }}
-                </button>
-            </span>
-            <span class="col-6">
-                {{ trans('global.eventSubscription.search_keyword') }}
-
-                <div class="input-group my-colorpicker2 colorpicker-element" data-colorpicker-id="2">
-                    <input
-                        type="text" id="search"
-                        name="eventId"
-                        class="form-control"
-                        v-model="search"
-                        required
-                        @keyup.enter="loader()"
-                    />
-
-                    <div class="input-group-append" @click="loader()">
-                      <span class="input-group-text"><i class="fas fa-search"></i></span>
-                    </div>
-                 </div>
-
-            </span>
-        </div>
-
-
         <div v-for="event in entries" class="border-bottom card collapsed-card">
             <div class="card-header">
-            <span data-target="'navigator-item-content-'+event.ARTIKEL_NR" data-card-widget="collapse">{{event.ARTIKEL}}</span>
+            <span data-target="'navigator-item-content-'+event.ARTIKEL_NR" data-card-widget="collapse">{{event.ARTIKEL}} </span>
             <div class="card-tools pull-right">
+                {{ dateforHumans(event.B_DAT, event.E_DAT) }}
                 <button
                     :id="'navigator-item-content-'+event.ARTIKEL_NR"
                     class="btn btn-tool"
@@ -44,15 +15,28 @@
             </div>
             <div :id="'navigator-item-content-'+event.ARTIKEL_NR" class="card-body collapse">
                 <div class="row">
-                    <div class="col-2"><strong>VA-Nummer</strong></div>
-                    <div class="col-10" v-html="event.ARTIKEL_NR"></div>
-
                     <div class="col-2"><strong>Beschreibung</strong></div>
                     <div class="col-10" v-html="event.BEMERKUNG"></div>
 
-                    <div class="col-2"><strong>Veranstalter</strong></div>
-                    <div class="col-10" v-html="event.MANDANT"></div>
+                    <div class="col-2"><strong>Termine</strong></div>
+                    <div class="col-10">
+                        <div v-for="termin in event.termine" class="row m--padding-bottom-5">
+                            <div class="col-2 m-badge m-badge--info m-badge--wide m-badge--rounded">{{ dateforHumans(termin.DATUM) }}</div>
+                            <div class="col-10 text-left">
+                                <i class="fa fa-clock-o"></i> {{ termin.BEGINN }} - {{ termin.ENDE }}
+                                <span v-if="termin.ARTIKEL !== event.ARTIKEL">
+                                    {{ termin.ARTIKEL }}
+                                </span>
 
+                                <span class="pull-right">
+                                    {{ termin.VO_ORT }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-2 pt-2"><strong>VA-Nummer</strong></div>
+                    <div class="col-10 pt-2" v-html="event.ARTIKEL_NR"></div>
 
                     <div class="col-12 mt-2">
                         <a :href="event.LINK_DETAIL"
@@ -78,10 +62,10 @@
             </div>
         </div>
 
-<!--        <div id="loading-events" class="overlay text-center" style="width:100% !important;">
+        <div id="loading-events" class="overlay text-center" style="width:100% !important;">
             <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
             <span class="sr-only">Loading...</span>
-        </div>-->
+        </div>
 
         <div v-if="Object.keys(entries).length > 0"
              class="row" >
@@ -102,9 +86,9 @@
                 </button>
                 </span>
 
-            <span
-                v-if="Object.keys(entries).length > 9"
-                class="col-6">
+                <span
+                    v-if="Object.keys(entries).length > 9"
+                    class="col-6">
                     <button type="button"
                             class="btn btn-block btn-secondary"
                             @click="nextPage()">
@@ -118,35 +102,29 @@
 
 
 <script>
+import moment from 'moment';
 
     export default {
         props: {
-                'model': {},
-                'curriculum': {},
-              },
+            'search': {}
+        },
         data() {
             return {
                 entries: [],
-                search:  '',//this.model.title.replace(/(<([^>]+)>)/ig,""),
                 page:    1,
                 errors:  {}
             }
         },
         methods: {
-            async loader(search) {
-
+            async loader() {
+                $("#loading-events").show();
                 try {
-                    this.search = (search ? search : this.search);
-
                     this.entries = (await axios.post('/eventSubscriptions/getEvents', {
-                        subscribable_type: this.subscribable_type(),
-                        subscribable_id: this.model.id,
-                        search: (search ? search : this.search),
+                        search: this.search,
                         page: this.page,
                         plugin: 'evewa'
                     })).data.message.lesePlrlpVeranstaltungen.data;
                     $("#loading-events").hide();
-
                 } catch(error) {
                     //this.errors = error.response.data.errors;
                 }
@@ -164,15 +142,17 @@
                 this.page = this.page + 1;
                 this.loader();
             },
-            subscribable_type() {
-                var reference_class = 'App\\TerminalObjective';
-                if (typeof this.model.terminal_objective === 'object'){
-                    reference_class = 'App\\EnablingObjective';
+            dateforHumans(begin, end = null) {
+                if (end === begin || end === null){
+                    return moment(begin).locale('de').format('LL');
+                } else {
+                    return moment(begin).locale('de').format('LL') + " - " + moment(end).locale('de').format('LL');
                 }
-
-                return reference_class;
             },
 
+        },
+        mounted() {
+            this.loader();
         },
         computed: {},
 

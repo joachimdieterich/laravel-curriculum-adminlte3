@@ -1,9 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateAchievementsTable extends Migration
 {
@@ -18,12 +17,12 @@ class CreateAchievementsTable extends Migration
             $table->bigIncrements('id')->unsigned();
             $table->morphs('referenceable');
             //$table->primary(['referenceable_type', 'referenceable_id']);
-            
+
             $table->char('status', 2);
             $table->unsignedbigInteger('user_id');
             $table->unsignedbigInteger('owner_id');
             $table->timestamps();
-            
+
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('owner_id')->references('id')->on('users');
         });

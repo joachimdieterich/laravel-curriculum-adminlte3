@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreUserRequest extends FormRequest
@@ -23,7 +22,7 @@ class StoreUserRequest extends FormRequest
             ],
             'password' => [
                 'required',
-            ]
+            ],
         ];
     }
 }

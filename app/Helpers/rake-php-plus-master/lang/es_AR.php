@@ -728,5 +728,5 @@ return [
     'adelante',
     'acuerdo',
     'actualmente',
-    'a'
+    'a',
 ];

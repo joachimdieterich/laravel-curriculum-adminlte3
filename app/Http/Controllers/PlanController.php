@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Plan;
-use App\Group;
 use App\Organization;
+use App\Plan;
 use App\PlanType;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
-
 
 class PlanController extends Controller
 {
@@ -28,8 +26,7 @@ class PlanController extends Controller
     {
         $userCanSee = auth()->user()->plans;
 
-        foreach(auth()->user()->currentGroups AS $group)
-        {
+        foreach (auth()->user()->currentGroups as $group) {
             $userCanSee = $userCanSee->merge($group->plans);
         }
 
@@ -48,21 +45,21 @@ class PlanController extends Controller
         $delete_gate = \Gate::allows('plan_delete');
 
         return DataTables::of($plans)
-            ->addColumn('action', function ($plans) use ($edit_gate, $delete_gate){
-                 $actions  = '';
-                    if ($edit_gate){
-                        $actions .= '<a href="'.route('plans.edit', $plans->id).'"'
-                                    . 'id="edit-plan-'.$plans->id.'" '
-                                    . 'class="btn p-1">'
-                                    . '<i class="fa fa-pencil-alt"></i>'
-                                    . '</a>';
-                    }
-                    if ($delete_gate){
-                        $actions .= '<button type="button" '
-                                . 'class="btn text-danger" '
-                                . 'onclick="destroyDataTableEntry(\'plans\','.$plans->id.')">'
-                                . '<i class="fa fa-trash"></i></button>';
-                    }
+            ->addColumn('action', function ($plans) use ($edit_gate, $delete_gate) {
+                $actions = '';
+                if ($edit_gate) {
+                    $actions .= '<a href="'.route('plans.edit', $plans->id).'"'
+                                    .'id="edit-plan-'.$plans->id.'" '
+                                    .'class="btn p-1">'
+                                    .'<i class="fa fa-pencil-alt"></i>'
+                                    .'</a>';
+                }
+                if ($delete_gate) {
+                    $actions .= '<button type="button" '
+                                .'class="btn text-danger" '
+                                .'onclick="destroyDataTableEntry(\'plans\','.$plans->id.')">'
+                                .'<i class="fa fa-trash"></i></button>';
+                }
 
                 return $actions;
             })
@@ -84,7 +81,7 @@ class PlanController extends Controller
     {
         abort_unless(\Gate::allows('plan_create'), 403);
 
-        $plan  = new Plan();
+        $plan = new Plan();
         //$types = PlanType::all()
         $types = PlanType::where('id', 1)->get();
 
@@ -101,7 +98,7 @@ class PlanController extends Controller
      */
     public function store(Request $request)
     {
-       abort_unless(\Gate::allows('plan_create'), 403);
+        abort_unless(\Gate::allows('plan_create'), 403);
 
         $input = $this->validateRequest();
         $plan = Plan::firstOrCreate([
@@ -111,12 +108,12 @@ class PlanController extends Controller
             'end'               => $input['end'],
             'duration'          => $input['duration'],
             'type_id'           => format_select_input($input['type_id']),
-            'owner_id'          => auth()->user()->id
+            'owner_id'          => auth()->user()->id,
         ]);
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
-         // axios call?
-        if (request()->wantsJson()){
+        // axios call?
+        if (request()->wantsJson()) {
             return ['message' => $plan->path()];
         }
 
@@ -135,7 +132,7 @@ class PlanController extends Controller
 
         if (request()->wantsJson()) {
             return [
-                'plan' => $plan
+                'plan' => $plan,
             ];
         }
 
@@ -170,9 +167,8 @@ class PlanController extends Controller
     {
         abort_unless((\Gate::allows('plan_edit') and $plan->isAccessible()), 403);
         $clean_data = $this->validateRequest();
-        if (isset($clean_data['type_id']))
-        {
-            $clean_data['type_id'] =  format_select_input($clean_data['type_id']);  //hack to prevent array to string conversion
+        if (isset($clean_data['type_id'])) {
+            $clean_data['type_id'] = format_select_input($clean_data['type_id']);  //hack to prevent array to string conversion
         }
 
         $plan->update($clean_data);
@@ -204,7 +200,7 @@ class PlanController extends Controller
             'begin'         => 'sometimes',
             'end'           => 'sometimes',
             'duration'      => 'sometimes',
-            'type_id'       => 'sometimes'
-            ]);
+            'type_id'       => 'sometimes',
+        ]);
     }
 }

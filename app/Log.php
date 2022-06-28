@@ -2,7 +2,6 @@
 
 namespace App;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Log extends Model
@@ -15,6 +14,4 @@ class Log extends Model
         'updated_at',
         'deleted_at',
     ];
-
-
 }

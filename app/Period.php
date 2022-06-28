@@ -3,11 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+
 /**
- *   @OA\Schema(  
+ *   @OA\Schema(
  *      required={"id", "title", "begin", "end", "organization_type_id", "owner_id"},
  *      @OA\Xml(name="Period"),
- *      
+ *
  *      @OA\Property( property="id", type="integer"),
  *      @OA\Property( property="title", type="string"),
  *      @OA\Property( property="begin", type="string"),
@@ -21,7 +22,7 @@ use Illuminate\Database\Eloquent\Model;
 class Period extends Model
 {
     protected $guarded = [];
-    
+
     public function path()
     {
         return route('periods.show', $this->id);
@@ -33,7 +34,7 @@ class Period extends Model
             ->withPivot(['period_id', 'organization_id']);
         //return $this->hasMany('App\Period', 'organization_id', 'id');
     }
-    
+
     public function owner()
     {
         return $this->hasOne('App\User', 'id', 'owner_id');

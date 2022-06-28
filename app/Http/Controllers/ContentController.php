@@ -4,16 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Content;
 use App\ContentSubscription;
-
 use App\Medium;
 use App\MediumSubscription;
 use Illuminate\Http\Request;
-use \Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Support\Facades\DB;
 
 class ContentController extends Controller
 {
-
     /**
      * Store a newly created resource in storage.
      *
@@ -35,13 +32,12 @@ class ContentController extends Controller
         $this->checkForEmbeddedMedia($content);
 
         //subscribe to model
-        if (isset($input['referenceable_type']) and isset($input['referenceable_id']))
-        {
+        if (isset($input['referenceable_type']) and isset($input['referenceable_id'])) {
             $model = $input['referenceable_type']::find($input['referenceable_id']);
             $content->subscribe($model);
         }
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $content];
         }
 
@@ -58,9 +54,9 @@ class ContentController extends Controller
     {
         abort_unless($content->isAccessible(), 403);
 
-       if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return [
-                'message' => $content
+                'message' => $content,
             ];
         }
     }
@@ -76,7 +72,7 @@ class ContentController extends Controller
     {
         $input = $this->validateRequest();
 
-        $this->permissionCheck($input['referenceable_type'], $input['referenceable_id'], "edit");
+        $this->permissionCheck($input['referenceable_type'], $input['referenceable_id'], 'edit');
 
         $content->update([
             'title' => $input['title'],
@@ -86,7 +82,7 @@ class ContentController extends Controller
         // subscribe embedded media to content
         $this->checkForEmbeddedMedia($content);
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $content];
         }
     }
@@ -97,7 +93,7 @@ class ContentController extends Controller
      * @param  \App\Content  $content
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Content $content, $subscribable_type = null, $subscribable_id = null )
+    public function destroy(Content $content, $subscribable_type = null, $subscribable_id = null)
     {
         $input = $this->validateRequest();
 
@@ -106,7 +102,7 @@ class ContentController extends Controller
             $subscribable_id = $input['referenceable_id'];
         }
 
-        $this->permissionCheck($subscribable_type, $subscribable_id, "delete");
+        $this->permissionCheck($subscribable_type, $subscribable_id, 'delete');
 
         /**
          * check if content is subscribed only by deleting reference
@@ -122,8 +118,7 @@ class ContentController extends Controller
             ->where('subscribable_id', '=', $content->id)
             ->delete();
 
-        if ($content->subscriptions()->count() <= 1){
-
+        if ($content->subscriptions()->count() <= 1) {
             ContentSubscription::where('subscribable_type',
                     (isset(request('subscribable')['content_subscriptions'][0]['subscribable_type'])) ? request('subscribable')['content_subscriptions'][0]['subscribable_type'] : $subscribable_type)
                 ->where('subscribable_id', (isset(request('subscribable')['id'])) ? request('subscribable')['id'] : $subscribable_id)
@@ -131,21 +126,19 @@ class ContentController extends Controller
                 ->delete();
 
             // delete contents
-            foreach ($content->quotes AS $quote)
-            {
+            foreach ($content->quotes as $quote) {
                 (new QuoteController)->destroy($quote); // delete and unsubscribe related objects
             }
 
             //todo? delete unused categories
             $content->delete();
-
         } else {
             $subscription = ContentSubscription::where('subscribable_type', $subscribable_type)
                 ->where('subscribable_id', $subscribable_id)
                 ->where('content_id', $content->id)->get()->first(); //load subscription to get order_id for reordering
             ContentSubscription::where('subscribable_type',
                 (isset(request('subscribable')['content_subscriptions'][0]['subscribable_type'])) ? request('subscribable')['content_subscriptions'][0]['subscribable_type'] : $subscribable_type)
-                ->where('subscribable_id',(isset(request('subscribable')['id'])) ? request('subscribable')['id'] : $subscribable_id)
+                ->where('subscribable_id', (isset(request('subscribable')['id'])) ? request('subscribable')['id'] : $subscribable_id)
                 ->where('content_id', $content->id)
                 ->delete();
             //reset order_ids
@@ -154,17 +147,16 @@ class ContentController extends Controller
                 ->where('subscribable_id', $subscribable_id)
                 ->where('order_id', '>', $subscription->order_id)
                 ->update([
-                    'order_id'=> DB::raw('order_id -1')
+                    'order_id'=> DB::raw('order_id -1'),
                 ]);
         }
 
         //delete unused media
-        foreach ($media AS $medium)
-        {
+        foreach ($media as $medium) {
             Medium::where('id', $medium->id)->delete();
         }
         // axios call?
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => true];
         }
     }
@@ -172,22 +164,21 @@ class ContentController extends Controller
     protected function checkForEmbeddedMedia($content)
     {
         preg_match_all('/src="\\/media\\/(.+?)"/s', $content->content, $matches, PREG_SET_ORDER, 0);
-        foreach ($matches as $match)
-        {
-            $this->subscribeMediaToModel($content,  Medium::find($match[1]));
+        foreach ($matches as $match) {
+            $this->subscribeMediaToModel($content, Medium::find($match[1]));
         }
     }
 
     private function subscribeMediaToModel($model, $medium)
     {
         $subscribe = MediumSubscription::updateOrCreate([
-            "medium_id" => $medium->id,
-            "subscribable_type" => get_class($model),
-            "subscribable_id" => $model->id,
+            'medium_id' => $medium->id,
+            'subscribable_type' => get_class($model),
+            'subscribable_id' => $model->id,
         ], [
-            "sharing_level_id" => 1, // has to be global = 1
-            "visibility" => 1, // has to be public  = 1
-            "owner_id" => auth()->user()->id,
+            'sharing_level_id' => 1, // has to be global = 1
+            'visibility' => 1, // has to be public  = 1
+            'owner_id' => auth()->user()->id,
         ]);
         $subscribe->save();
     }
@@ -210,10 +201,10 @@ class ContentController extends Controller
      * @param $referenceable_id
      * @return mixed
      */
-    private function permissionCheck($referenceable_type, $referenceable_id, $action = "create")
+    private function permissionCheck($referenceable_type, $referenceable_id, $action = 'create')
     {
-        abort_unless((\Gate::allows('content_' . $action) or
-            \Gate::allows($referenceable_type . '_content_' . $action)), 403);
+        abort_unless((\Gate::allows('content_'.$action) or
+            \Gate::allows($referenceable_type.'_content_'.$action)), 403);
 
         $model = $referenceable_type::find($referenceable_id);
 
@@ -233,7 +224,7 @@ class ContentController extends Controller
                 abort_unless(($model->curriculum->owner_id === auth()->user()->id), 403);
                 break;
         }
+
         return $model;
     }
-
 }

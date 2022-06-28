@@ -6,21 +6,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class TerminalObjective extends Model
 {
-    protected $fillable = [ 'title',
-                            'description',
-                            'order_id',
-                            'color',
-                            'time_approach',
-                            'curriculum_id',
-                            'objective_type_id',
-                            'visibility',
-                          ];
-    protected $casts = [
-        'visibility' => 'boolean',
-        'referencing_curriculum_id' => 'object'
+    protected $fillable = ['title',
+        'description',
+        'order_id',
+        'color',
+        'time_approach',
+        'curriculum_id',
+        'objective_type_id',
+        'visibility',
     ];
 
-    public function path(){
+    protected $casts = [
+        'visibility' => 'boolean',
+        'referencing_curriculum_id' => 'object',
+    ];
+
+    public function path()
+    {
         return "/curricula/{$this->curriculum_id}";
     }
 
@@ -129,5 +131,4 @@ class TerminalObjective extends Model
     {
         return $this->curriculum->isAccessible();
     }
-
 }

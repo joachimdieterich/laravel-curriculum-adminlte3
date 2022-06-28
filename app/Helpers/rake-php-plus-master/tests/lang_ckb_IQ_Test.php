@@ -15,7 +15,7 @@ class lang_ckb_IQ_Test extends PHPUnit_Framework_TestCase
 
     public function testGeneralKurdishPhrase()
     {
-        $text = "كوردێكی دانیشتوی فینلاند، تابلۆیه‌كی به‌ ناوی \"ڤایرۆسی كۆرۆنا\" كێشا، ئێسته‌ له‌ یه‌كێك له‌ به‌ناوبانگترین ماڵپه‌ڕه‌كانی فرۆشتنی تابلۆی ئۆنلاین، خستویه‌تییه‌ڕو بۆ فرۆشتن.";
+        $text = 'كوردێكی دانیشتوی فینلاند، تابلۆیه‌كی به‌ ناوی "ڤایرۆسی كۆرۆنا" كێشا، ئێسته‌ له‌ یه‌كێك له‌ به‌ناوبانگترین ماڵپه‌ڕه‌كانی فرۆشتنی تابلۆی ئۆنلاین، خستویه‌تییه‌ڕو بۆ فرۆشتن.';
         $phrases = RakePlus::create($text, 'ckb_IQ', 0, false)->get();
 
         $this->assertCount(7, $phrases);
@@ -30,7 +30,7 @@ class lang_ckb_IQ_Test extends PHPUnit_Framework_TestCase
 
     public function testGeneralKurdishKeywords()
     {
-        $text = "كوردێكی دانیشتوی فینلاند، تابلۆیه‌كی به‌ ناوی \"ڤایرۆسی كۆرۆنا\" كێشا، ئێسته‌ له‌ یه‌كێك له‌ به‌ناوبانگترین ماڵپه‌ڕه‌كانی فرۆشتنی تابلۆی ئۆنلاین، خستویه‌تییه‌ڕو بۆ فرۆشتن.";
+        $text = 'كوردێكی دانیشتوی فینلاند، تابلۆیه‌كی به‌ ناوی "ڤایرۆسی كۆرۆنا" كێشا، ئێسته‌ له‌ یه‌كێك له‌ به‌ناوبانگترین ماڵپه‌ڕه‌كانی فرۆشتنی تابلۆی ئۆنلاین، خستویه‌تییه‌ڕو بۆ فرۆشتن.';
         $keywords = RakePlus::create($text, 'ckb_IQ', 0, false)->keywords();
 
         $this->assertCount(19, $keywords);

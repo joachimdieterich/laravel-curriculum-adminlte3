@@ -14,7 +14,6 @@ class PermissionFactory
 {
     protected $user;
 
-
     public function create()
     {
         $role = factory(Permission::class)->create();

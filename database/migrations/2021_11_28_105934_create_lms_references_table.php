@@ -14,7 +14,6 @@ class CreateLmsReferencesTable extends Migration
     public function up()
     {
         Schema::create('lms_references', function (Blueprint $table) {
-
             $table->bigIncrements('id');
             $table->string('referenceable_type');
             $table->unsignedbigInteger('referenceable_id');

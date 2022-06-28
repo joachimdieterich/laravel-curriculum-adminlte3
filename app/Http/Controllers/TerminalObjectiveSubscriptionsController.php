@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class TerminalObjectiveSubscriptionsController extends Controller
 {
-
     /**
      * Store a newly created resource in storage.
      *
@@ -40,22 +39,21 @@ class TerminalObjectiveSubscriptionsController extends Controller
         $subscription = $this->validateRequest();
 
         return TerminalObjectiveSubscriptions::where([
-            "terminal_objective_id" => $subscription['terminal_objective_id'],
-            "subscribable_type" => $subscription['subscribable_type'],
-            "subscribable_id" => $subscription['subscribable_id'],
-            "sharing_level_id" => $subscription['sharing_level_id'],
-            "visibility" => $subscription['visibility'],
+            'terminal_objective_id' => $subscription['terminal_objective_id'],
+            'subscribable_type' => $subscription['subscribable_type'],
+            'subscribable_id' => $subscription['subscribable_id'],
+            'sharing_level_id' => $subscription['sharing_level_id'],
+            'visibility' => $subscription['visibility'],
             //"owner_id"=> auth()->user()->id, //Todo: admin should be able to delete everything
         ])->delete();
-
     }
 
     protected function validateRequest()
     {
         return request()->validate([
-            "terminal_objective_id" => 'sometimes|required',
-            "subscribable_type" => 'required',
-            "subscribable_id" => 'required',
+            'terminal_objective_id' => 'sometimes|required',
+            'subscribable_type' => 'required',
+            'subscribable_id' => 'required',
         ]);
     }
 }

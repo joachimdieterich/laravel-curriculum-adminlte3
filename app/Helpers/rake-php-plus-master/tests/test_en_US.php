@@ -676,5 +676,5 @@ return [
     'above',
     'about',
     'able',
-    'a'
+    'a',
 ];

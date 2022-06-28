@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class LmsReference extends Model
 {
     protected $guarded = [];
-    protected $casts = ['value' => 'array'];
 
+    protected $casts = ['value' => 'array'];
 
     public function subscriptions()
     {

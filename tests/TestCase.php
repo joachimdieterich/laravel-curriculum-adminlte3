@@ -2,8 +2,8 @@
 
 namespace Tests;
 
-use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use DatabaseSeeder;
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Laravel\Passport\Passport;
 
 abstract class TestCase extends BaseTestCase
@@ -15,7 +15,6 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
         //$this->withoutExceptionHandling();
         (new DatabaseSeeder())->call(DatabaseSeeder::class);
-
     }
 
     protected function signIn($user = null) //student
@@ -34,7 +33,7 @@ abstract class TestCase extends BaseTestCase
     protected function signInRole($role = 'student') //student
     {
         $credentials = [
-            'email' => $role . '@curriculumonline.de',
+            'email' => $role.'@curriculumonline.de',
             'password' => 'password',
         ];
         $this->followingRedirects()->post('login', $credentials)->assertStatus(200);
@@ -77,6 +76,5 @@ abstract class TestCase extends BaseTestCase
         $this->followingRedirects()->post('login', $credentials)->assertStatus(200);
 
         return Passport::actingAsClient(auth()->user());
-
     }
 }

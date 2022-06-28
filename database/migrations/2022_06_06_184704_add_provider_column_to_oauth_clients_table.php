@@ -19,8 +19,6 @@ class AddProviderColumnToOauthClientsTable extends Migration
         });*/
     }
 
-
-
     /**
      * Reverse the migrations.
      *

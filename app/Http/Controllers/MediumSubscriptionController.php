@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\MediumSubscription;
 use App\Medium;
+use App\MediumSubscription;
 use Illuminate\Http\Request;
 
 class MediumSubscriptionController extends Controller
@@ -19,11 +19,11 @@ class MediumSubscriptionController extends Controller
         //dump($input);
         $subscriptions = MediumSubscription::where([
             'subscribable_type' => $input['subscribable_type'],
-            'subscribable_id'   => $input['subscribable_id']
+            'subscribable_id'   => $input['subscribable_id'],
         ]);
         //dump($subscriptions->get());
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $subscriptions->with(['medium'])->get()];
         }
     }
@@ -49,13 +49,12 @@ class MediumSubscriptionController extends Controller
         $new_subscription = $this->validateRequest();
 
         $sharing_level_id = isset($new_subscription['sharing_level_id']) ? $new_subscription['sharing_level_id'] : 1;
-        $visibility       = isset($new_subscription['visibility'])       ? $new_subscription['visibility']       : true;
+        $visibility = isset($new_subscription['visibility']) ? $new_subscription['visibility'] : true;
 
         $controller = new MediumController();
-        $medium     = $controller->getMediumByEventPath($new_subscription['path']);
+        $medium = $controller->getMediumByEventPath($new_subscription['path']);
 
-        if ($medium == null) //link
-        {
+        if ($medium == null) { //link
             $medium = Medium::create([
                 'path' => $new_subscription['path'],
                 'medium_name' => '',
@@ -69,21 +68,18 @@ class MediumSubscriptionController extends Controller
                 'mime_type' => 'url',
                 'size' => 0,
                 'owner_id' => auth()->user()->id,
-                ]);
+            ]);
         }
 
         $subscribe = MediumSubscription::firstOrCreate([
-            "medium_id" =>  $medium->id,
-            "subscribable_type"=> $new_subscription['subscribable_type'],
-            "subscribable_id"=> $new_subscription['subscribable_id'],
-            "sharing_level_id"=> $sharing_level_id,
-            "visibility"=> $visibility,
-            "owner_id"=> auth()->user()->id,
+            'medium_id' =>  $medium->id,
+            'subscribable_type'=> $new_subscription['subscribable_type'],
+            'subscribable_id'=> $new_subscription['subscribable_id'],
+            'sharing_level_id'=> $sharing_level_id,
+            'visibility'=> $visibility,
+            'owner_id'=> auth()->user()->id,
         ]);
         $subscribe->save();
-
-
-
     }
 
     /**
@@ -94,7 +90,6 @@ class MediumSubscriptionController extends Controller
      */
     public function show(MediumSubscription $mediumSubscription)
     {
-
     }
 
     /**
@@ -128,22 +123,20 @@ class MediumSubscriptionController extends Controller
      */
     public function destroy(MediumSubscription $mediumSubscription)
     {
-
     }
 
-     public function destroySubscription(Request $request)
+    public function destroySubscription(Request $request)
     {
         $subscription = $this->validateRequest();
 
         return MediumSubscription::where([
-            "medium_id" =>  $subscription['medium_id'],
-            "subscribable_type"=> $subscription['subscribable_type'],
-            "subscribable_id"=> $subscription['subscribable_id'],
-            "sharing_level_id"=>$subscription['sharing_level_id'],
-            "visibility"=> $subscription['visibility'],
+            'medium_id' =>  $subscription['medium_id'],
+            'subscribable_type'=> $subscription['subscribable_type'],
+            'subscribable_id'=> $subscription['subscribable_id'],
+            'sharing_level_id'=>$subscription['sharing_level_id'],
+            'visibility'=> $subscription['visibility'],
             //"owner_id"=> auth()->user()->id, //Todo: admin should be able to delete everything
         ])->delete();
-
     }
 
     protected function validateRequest()

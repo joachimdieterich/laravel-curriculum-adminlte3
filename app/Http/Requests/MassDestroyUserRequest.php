@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\User;
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 

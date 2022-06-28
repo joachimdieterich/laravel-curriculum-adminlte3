@@ -2,13 +2,11 @@
 
 namespace App;
 
-use App\MediumSubscription;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class Medium extends Model
 {
-
     protected $guarded = [];
 
     public function path()
@@ -18,12 +16,9 @@ class Medium extends Model
 
     public function absolutePath()
     {
-        if ($this->mime_type !== 'url')
-        {
-            return Storage::disk('local')->path(ltrim($this->path . $this->medium_name, '/'));
-        }
-        else
-        {
+        if ($this->mime_type !== 'url') {
+            return Storage::disk('local')->path(ltrim($this->path.$this->medium_name, '/'));
+        } else {
             return $this->path;
         }
     }
@@ -46,13 +41,13 @@ class Medium extends Model
     public function subscribe($model, $sharing_level_id = 1, $visibility = true)
     {
         $subscribe = new MediumSubscription([
-			"medium_id" =>  $this->id,
-			"subscribable_type"=> get_class($model),
-			"subscribable_id"=> $model->id,
-			"sharing_level_id"=> $sharing_level_id,
-			"visibility"=> $visibility,
-			"owner_id"=> auth()->user()->id,
-	    ]);
+            'medium_id' =>  $this->id,
+            'subscribable_type'=> get_class($model),
+            'subscribable_id'=> $model->id,
+            'sharing_level_id'=> $sharing_level_id,
+            'visibility'=> $visibility,
+            'owner_id'=> auth()->user()->id,
+        ]);
         $subscribe->save();
     }
 
@@ -65,22 +60,18 @@ class Medium extends Model
     }
 
     /**
-     *
-     * @param type $eventPath
-     * @param type $cutBasename if true basename is cut off
-     * @param type $basePath
+     * @param  type  $eventPath
+     * @param  type  $cutBasename if true basename is cut off
+     * @param  type  $basePath
      * @return type
      */
-    public function convertFilemanagerEventPathToMediumPath($eventPath, $cutBasename = true, $basePath = "app")
+    public function convertFilemanagerEventPathToMediumPath($eventPath, $cutBasename = true, $basePath = 'app')
     {
-        $filePath = str_replace(public_path(), "", $eventPath);
-        if ($cutBasename)
-        {
-            return str_replace(basename($filePath), "", str_replace(storage_path()."/{$basePath}", "", $eventPath));
-        }
-        else
-        {
-            return str_replace(storage_path()."/{$basePath}", "", $eventPath);
+        $filePath = str_replace(public_path(), '', $eventPath);
+        if ($cutBasename) {
+            return str_replace(basename($filePath), '', str_replace(storage_path()."/{$basePath}", '', $eventPath));
+        } else {
+            return str_replace(storage_path()."/{$basePath}", '', $eventPath);
         }
     }
 }

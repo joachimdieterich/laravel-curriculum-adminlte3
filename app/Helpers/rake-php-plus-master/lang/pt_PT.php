@@ -4,7 +4,7 @@
  * Stopwords list for the use in the PHP package rake-php-plus.
  * See: https://github.com/Donatello-za/rake-php-plus
  *
- * Extracted using extractor.php @ 2020-04-19T13:33:23+00:00 
+ * Extracted using extractor.php @ 2020-04-19T13:33:23+00:00
  */
 
 return [
@@ -567,6 +567,5 @@ return [
     'agora',
     'adeus',
     'acerca',
-    'a'
+    'a',
 ];
-

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Level extends Model
 {
-    public function objectives() 
+    public function objectives()
     {
         $this->belongsToMany('App\EnablingObjective');
     }

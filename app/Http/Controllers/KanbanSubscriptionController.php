@@ -15,42 +15,35 @@ class KanbanSubscriptionController extends Controller
      */
     public function index()
     {
-
         $input = $this->validateRequest();
-        if (isset($input['subscribable_type']) AND isset($input['subscribable_id']))
-        {
+        if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
             $model = $input['subscribable_type']::find($input['subscribable_id']);
             abort_unless((\Gate::allows('kanban_access') and $model->isAccessible()), 403);
 
             $subscriptions = KanbanSubscription::where([
                 'subscribable_type' => $input['subscribable_type'],
-                'subscribable_id' => $input['subscribable_id']
+                'subscribable_id' => $input['subscribable_id'],
             ]);
 
             if (request()->wantsJson()) {
                 return ['subscriptions' => $subscriptions->with(['kanban'])->get()];
             }
-        }
-        else
-        {
-            if (request()->wantsJson()){
+        } else {
+            if (request()->wantsJson()) {
                 return [
-                    'subscribers' =>
-                        [
-                            'users' => auth()->user()->users()->select('users.id', 'users.firstname', 'users.lastname')->get(),
-                            'groups' => auth()->user()->groups()->select('group_id', 'title')->get(),
-                            'organizations' => auth()->user()->organizations()->select('organization_id', 'title')->get(),
-                            'subscriptions' =>
+                    'subscribers' => [
+                        'users' => auth()->user()->users()->select('users.id', 'users.firstname', 'users.lastname')->get(),
+                        'groups' => auth()->user()->groups()->select('group_id', 'title')->get(),
+                        'organizations' => auth()->user()->organizations()->select('organization_id', 'title')->get(),
+                        'subscriptions' => optional(
                                 optional(
-                                    optional(
-                                        Kanban::find(request('kanban_id'))
-                                    )->subscriptions()
-                                )->with('subscribable')->get()
-                        ]
+                                    Kanban::find(request('kanban_id'))
+                                )->subscriptions()
+                            )->with('subscribable')->get(),
+                    ],
                 ];
             }
         }
-
     }
 
     /**
@@ -66,16 +59,16 @@ class KanbanSubscriptionController extends Controller
         abort_unless((\Gate::allows('kanban_create') and $model->isAccessible()), 403);
 
         $subscribe = KanbanSubscription::updateOrCreate([
-            "kanban_id" => $input['model_id'],
-            "subscribable_type" => $input['subscribable_type'],
-            "subscribable_id" => $input['subscribable_id'],
+            'kanban_id' => $input['model_id'],
+            'subscribable_type' => $input['subscribable_type'],
+            'subscribable_id' => $input['subscribable_id'],
         ], [
-            "editable" => isset($input['editable']) ? $input['editable'] : false,
-            "owner_id" => auth()->user()->id,
+            'editable' => isset($input['editable']) ? $input['editable'] : false,
+            'owner_id' => auth()->user()->id,
         ]);
         $subscribe->save();
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['subscription' => Kanban::find($input['model_id'])->subscriptions()->with('subscribable')->get()];
         }
     }
@@ -93,11 +86,11 @@ class KanbanSubscriptionController extends Controller
         $input = $this->validateRequest();
 
         $kanbanSubscription->update([
-            "editable"=> isset($input['editable']) ? $input['editable'] : false,
-            "owner_id"=> auth()->user()->id,
+            'editable'=> isset($input['editable']) ? $input['editable'] : false,
+            'owner_id'=> auth()->user()->id,
         ]);
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['editable' => $kanbanSubscription->editable];
         }
     }
@@ -112,10 +105,9 @@ class KanbanSubscriptionController extends Controller
     {
         abort_unless((\Gate::allows('kanban_delete') and $kanbanSubscription->isAccessible()), 403);
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $kanbanSubscription->delete()];
         }
-
     }
 
     protected function validateRequest()

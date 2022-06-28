@@ -1,8 +1,9 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use DonatelloZa\RakePlus\RakePlus;
+use Illuminate\Http\Request;
 
 class ArticleController extends Controller
 {
@@ -10,7 +11,6 @@ class ArticleController extends Controller
      * Store a new article post.
      *
      * @param  Request  $request
-     *
      * @return Response
      */
     public function store(Request $request)

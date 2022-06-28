@@ -81,6 +81,7 @@ class QuoteSubscriptionController extends Controller
     public function destroy(QuoteSubscription $quoteSubscription)
     {
         abort_unless(\Gate::allows('curriculum_delete'), 403);
+
         return $quoteSubscription->delete();
     }
 }

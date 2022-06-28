@@ -2,22 +2,24 @@
 
 namespace Tests\Browser\UseCases\Guest;
 
-use Tests\DuskTestCase;
-use App\Navigator;
-use App\NavigatorView;
-use App\NavigatorItem;
 use App\Curriculum;
+use App\Navigator;
+use App\NavigatorItem;
+use App\NavigatorView;
+use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
-use Laravel\Dusk\Chrome;
-use App\User;
+use Tests\DuskTestCase;
 
 class GuestNavigatorTest extends DuskTestCase
 {
     use DatabaseMigrations;
-    var $navigator;
-    var $navigator_view;
-    var $navigator_item;
+
+    public $navigator;
+
+    public $navigator_view;
+
+    public $navigator_item;
 
     /**
      * Setup Navigator, add view and all available items
@@ -28,29 +30,28 @@ class GuestNavigatorTest extends DuskTestCase
     {
         parent::setUp();
         $this->navigator = Navigator::create([
-                'title'             => 'DuskNavigator',
-                'organization_id'   => 1
-            ]);
+            'title'             => 'DuskNavigator',
+            'organization_id'   => 1,
+        ]);
         $this->navigatorView = NavigatorView::create([
-                'title'             => 'First View',
-                'description'       => 'First View Description',
-                'navigator_id'      => $this->navigator->id
-            ]);
+            'title'             => 'First View',
+            'description'       => 'First View Description',
+            'navigator_id'      => $this->navigator->id,
+        ]);
         $curriculum = Curriculum::find(1);
         $this->navigator_item['view'] = ['title' => 'Second View', 'description' =>'Second View description'];
         $this->navigator_item['curriculum'] = ['title' => $curriculum->title];
         $this->navigator_item['content'] = ['title' => 'Navigator text title', 'description' => 'Navigator text description'];
         $this->navigator_item['medium'] = ['title' => 'Medium medium', 'description' => 'Medium medium description'];
 
-// generate item view
-        $this->browse(function (Browser $admin)
-        {
+        // generate item view
+        $this->browse(function (Browser $admin) {
             $admin->loginAs(User::find(1)) //login as admin to generate navigator
                 ->visit('navigators/'.$this->navigator->id) //shows first view of navigator.
                 ->waitForText($this->navigator->title)
                 ->assertSee($this->navigatorView->title)
                 ->click('#add-navigator-items')
-                ->waitForText(trans('global.create').' '. trans('global.navigator_item.title_singular'))
+                ->waitForText(trans('global.create').' '.trans('global.navigator_item.title_singular'))
                 ->select2('#referenceable_type', trans('global.referenceable_types.navigator_view'))
                 ->type('title', $this->navigator_item['view']['title'])
                 ->type('description', $this->navigator_item['view']['description'])
@@ -65,7 +66,7 @@ class GuestNavigatorTest extends DuskTestCase
                 ->waitForText($this->navigator->title)
                 ->assertSee($this->navigatorView->title)
                 ->click('#add-navigator-items')
-                ->waitForText(trans('global.create').' '. trans('global.navigator_item.title_singular'))
+                ->waitForText(trans('global.create').' '.trans('global.navigator_item.title_singular'))
                 ->select2('#referenceable_type', trans('global.referenceable_types.curriculum'))
                 ->select2('#referenceable_id', $this->navigator_item['curriculum']['title'])
                 ->select2('#position', trans('global.content'))
@@ -79,7 +80,7 @@ class GuestNavigatorTest extends DuskTestCase
                 ->waitForText($this->navigator->title)
                 ->assertSee($this->navigatorView->title)
                 ->click('#add-navigator-items')
-                ->waitForText(trans('global.create').' '. trans('global.navigator_item.title_singular'))
+                ->waitForText(trans('global.create').' '.trans('global.navigator_item.title_singular'))
                 ->select2('#referenceable_type', trans('global.referenceable_types.content'))
                 ->type('title', $this->navigator_item['content']['title'])
                 ->type('description', $this->navigator_item['content']['description'])
@@ -94,7 +95,7 @@ class GuestNavigatorTest extends DuskTestCase
                 ->waitForText($this->navigator->title)
                 ->assertSee($this->navigatorView->title)
                 ->click('#add-navigator-items')
-                ->waitForText(trans('global.create').' '. trans('global.navigator_item.title_singular'))
+                ->waitForText(trans('global.create').' '.trans('global.navigator_item.title_singular'))
                 ->select2('#referenceable_type', trans('global.referenceable_types.medium'))
                 ->type('title', $this->navigator_item['medium']['title'])
                 ->type('description', $this->navigator_item['medium']['description'])
@@ -106,6 +107,7 @@ class GuestNavigatorTest extends DuskTestCase
                 ->waitForText($this->navigator_item['medium']['title']);
         });
     }
+
     /**
      * How Navigator
      *
@@ -113,8 +115,7 @@ class GuestNavigatorTest extends DuskTestCase
      */
     public function testShowNavigator()
     {
-        $this->browse(function (Browser $guest)
-        {
+        $this->browse(function (Browser $guest) {
             $guest->loginAs(User::find(8))
                 ->visit("navigators/{$this->navigator->id}")
                 ->waitForText($this->navigator->title)
@@ -139,5 +140,4 @@ class GuestNavigatorTest extends DuskTestCase
                 ->screenshot('usecases/guest/navigator_curriculum_item');
         });
     }
-
 }

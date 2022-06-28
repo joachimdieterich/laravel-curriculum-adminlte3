@@ -15,7 +15,7 @@ class lang_ar_AE_Test extends PHPUnit_Framework_TestCase
 
     public function testCommaInArabicPhrase()
     {
-        $text = "يا أمجد، افتح الباب.";
+        $text = 'يا أمجد، افتح الباب.';
         $phrases = RakePlus::create($text, 'ar_AE', 0, false)->get();
 
         $this->assertCount(2, $phrases);
@@ -25,7 +25,7 @@ class lang_ar_AE_Test extends PHPUnit_Framework_TestCase
 
     public function testFullStopInArabicPhrase()
     {
-        $text = ".ذهب الفتى إلى الحديقة ليلعب مع أصدقائه";
+        $text = '.ذهب الفتى إلى الحديقة ليلعب مع أصدقائه';
         $phrases = RakePlus::create($text, 'ar_AE', 0, false)->get();
 
         $this->assertCount(2, $phrases);
@@ -37,7 +37,7 @@ class lang_ar_AE_Test extends PHPUnit_Framework_TestCase
     {
         // Note that this test uses mixed (") marks, i.e. a quotation that starts
         // with Unicode character %U201C and ends with a standard ASCII (")
-        $text = "“.قال عماد لأخيه : \"لا تنس أنني سأكون دائمًا معك، فلا داعي للقلق";
+        $text = '“.قال عماد لأخيه : "لا تنس أنني سأكون دائمًا معك، فلا داعي للقلق';
         $phrases = RakePlus::create($text, 'ar_AE', 0, false)->get();
 
         $this->assertCount(3, $phrases);
@@ -47,7 +47,7 @@ class lang_ar_AE_Test extends PHPUnit_Framework_TestCase
 
     public function testRoundBracketsInArabicPhrase()
     {
-        $text = ".الظروف الطبيعية القاسية (البرد الشديد ثم الجفاف) أفسدت موسم الفواكه هذا العام";
+        $text = '.الظروف الطبيعية القاسية (البرد الشديد ثم الجفاف) أفسدت موسم الفواكه هذا العام';
         $phrases = RakePlus::create($text, 'ar_AE', 0, false)->get();
 
         $this->assertCount(5, $phrases);
@@ -60,7 +60,7 @@ class lang_ar_AE_Test extends PHPUnit_Framework_TestCase
 
     public function testColonInArabicPhrase()
     {
-        $text = "“.قال عماد لأخيه : \"لا تنس أنني سأكون دائمًا معك، فلا داعي للقلق";
+        $text = '“.قال عماد لأخيه : "لا تنس أنني سأكون دائمًا معك، فلا داعي للقلق';
         $phrases = RakePlus::create($text, 'ar_AE', 0, false)->get();
 
         $this->assertCount(3, $phrases);
@@ -71,11 +71,11 @@ class lang_ar_AE_Test extends PHPUnit_Framework_TestCase
 
     public function testDashesAndQuestionMarkInArabicPhrase()
     {
-        $text = "هل أعدت لندى ساعتها التي نسيتها؟-
+        $text = 'هل أعدت لندى ساعتها التي نسيتها؟-
 
 بالطبع، أعدتها لها بالأمس-
 
-ممتاز-";
+ممتاز-';
 
         $phrases = RakePlus::create($text, 'ar_AE', 0, false)->get();
 
@@ -91,7 +91,7 @@ class lang_ar_AE_Test extends PHPUnit_Framework_TestCase
 
     public function testExclamationMarkInArabicPhrase()
     {
-        $text = "“.قال عماد لأخيه : \"لا تنس أنني سأكون دائمًا معك، فلا داعي للقلق";
+        $text = '“.قال عماد لأخيه : "لا تنس أنني سأكون دائمًا معك، فلا داعي للقلق';
         $phrases = RakePlus::create($text, 'ar_AE', 0, false)->get();
 
         $this->assertCount(3, $phrases);
@@ -102,7 +102,7 @@ class lang_ar_AE_Test extends PHPUnit_Framework_TestCase
 
     public function testSemicolonInArabicPhrase()
     {
-        $text = "اجتهد الطالب في مذاكرته، فكان الأول على رفاقه.";
+        $text = 'اجتهد الطالب في مذاكرته، فكان الأول على رفاقه.';
         $phrases = RakePlus::create($text, 'ar_AE', 0, false)->get();
 
         $this->assertCount(4, $phrases);

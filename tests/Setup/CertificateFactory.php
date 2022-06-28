@@ -29,7 +29,6 @@ class CertificateFactory
 
     public function create()
     {
-        
         return  factory(Certificate::class)->create();
     }
 }

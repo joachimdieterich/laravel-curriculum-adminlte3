@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreatePeriodsTable extends Migration
 {
@@ -18,14 +18,14 @@ class CreatePeriodsTable extends Migration
             $table->string('title');
             $table->timestamp('begin');
             $table->timestamp('end')->nullable();
-            
+
             //$table->unsignedbigInteger('organization_id')->nullable();
-            
+
             $table->unsignedbigInteger('owner_id')->nullable();
-            
+
             $table->timestamps();
-            
-           // $table->foreign('organization_id')->references('id')->on('organizations'); //will be dropped
+
+            // $table->foreign('organization_id')->references('id')->on('organizations'); //will be dropped
             $table->foreign('owner_id')->references('id')->on('users');
         });
     }

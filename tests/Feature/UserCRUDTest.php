@@ -2,18 +2,17 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Facades\Tests\Setup\UserFactory;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class UserCRUDTest extends TestCase
 {
     use RefreshDatabase;
 
-     public function setUp(): void
+    public function setUp(): void
     {
-
         parent::setUp();
         $this->signInAdmin();
     }
@@ -23,13 +22,12 @@ class UserCRUDTest extends TestCase
      */
     public function an_administrator_see_users()
     {
-
-        $this->get("users")
+        $this->get('users')
              ->assertStatus(200);
 
         /* Use Datatables */
         $users = User::all();
-        $this->get("users/list")
+        $this->get('users/list')
              ->assertStatus(200)
              ->assertViewHasAll(compact($users));
     }
@@ -40,14 +38,14 @@ class UserCRUDTest extends TestCase
     public function an_administrator_create_an_user()
     {
         $this->withoutExceptionHandling();
-        $this->followingRedirects()->post("users" , $attributes = factory('App\User')->raw())
+        $this->followingRedirects()->post('users', $attributes = factory('App\User')->raw())
                 ->assertStatus(200);
 
         $this->assertDatabaseHas('users', [
             'username' => $attributes['username'],
             'firstname' => $attributes['firstname'],
             'lastname' => $attributes['lastname'],
-            'email' => $attributes['email']
+            'email' => $attributes['email'],
         ]);
     }
 
@@ -56,27 +54,25 @@ class UserCRUDTest extends TestCase
      */
     public function an_administrator_get_create_view_for_users()
     {
-
-        $this->get("users/create")
+        $this->get('users/create')
              ->assertStatus(200);
     }
 
     /** @test
      * Use Route: DELETE, users/massDestroy users.massDestroy
      */
-        public function an_admin_can_mass_delete_users()
+    public function an_admin_can_mass_delete_users()
     {
-
         $users = factory(User::class, 50)->create();
         $ids = $users->pluck('id')->toArray();
 
-        $this->delete("/users/massDestroy" , $attributes = [
-                    'ids' =>  $ids,
-                ])->assertStatus(204);
+        $this->delete('/users/massDestroy', $attributes = [
+            'ids' =>  $ids,
+        ])->assertStatus(204);
 
-        foreach($ids AS $id){
+        foreach ($ids as $id) {
             $this->assertDatabaseMissing('users', [
-                'id' => $id
+                'id' => $id,
             ]);
         }
     }
@@ -90,7 +86,7 @@ class UserCRUDTest extends TestCase
         $user = UserFactory::create();
 
         $this->followingRedirects()
-                ->delete("users/". $user->id )
+                ->delete('users/'.$user->id)
                 ->assertStatus(200);
     }
 
@@ -99,7 +95,6 @@ class UserCRUDTest extends TestCase
      */
     public function an_administrator_see_details_of_an_user()
     {
-
         $user = UserFactory::create();
 
         $this->get("users/{$user->id}")
@@ -112,12 +107,12 @@ class UserCRUDTest extends TestCase
      */
     public function an_administrator_update_an_user()
     {
-        $this->post("users" , $attributes = factory('App\User')->raw());
+        $this->post('users', $attributes = factory('App\User')->raw());
         $user = User::where('username', $attributes['username'])->first()->toArray();
 
         $this->assertDatabaseHas('users', $user);
 
-        $this->patch("users/". $user['id'] , $new_attributes = factory('App\User')->raw());
+        $this->patch('users/'.$user['id'], $new_attributes = factory('App\User')->raw());
 
         $user_edit = User::where('username', $new_attributes['username'])->first()->toArray();
         $this->assertDatabaseHas('users', $user_edit);
@@ -128,7 +123,7 @@ class UserCRUDTest extends TestCase
      */
     public function an_administrator_get_edit_view_for_users()
     {
-        $this->post("users" , $attributes = factory('App\User')->raw());
+        $this->post('users', $attributes = factory('App\User')->raw());
         $user = User::where('username', $attributes['username'])->first();
 
         $this->get("users/{$user->id}/edit")

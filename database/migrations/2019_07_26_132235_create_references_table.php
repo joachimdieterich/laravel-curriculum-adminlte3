@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateReferencesTable extends Migration
 {
@@ -18,9 +18,9 @@ class CreateReferencesTable extends Migration
             $table->text('description')->nullable();
             $table->unsignedbigInteger('grade_id');
             $table->unsignedbigInteger('owner_id');
-            
+
             $table->timestamps();
-            
+
             $table->foreign('grade_id')->references('id')->on('grades');
             $table->foreign('owner_id')->references('id')->on('users');
         });

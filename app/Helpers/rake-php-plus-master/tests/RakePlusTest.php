@@ -18,7 +18,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testInstanceOf()
     {
-        $rake = RakePlus::create("Hello World");
+        $rake = RakePlus::create('Hello World');
         $this->assertInstanceOf(RakePlus::class, $rake, 'RakePlus::create() returned invalid instance');
     }
 
@@ -27,7 +27,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
      */
     public function testEmptyLanguage()
     {
-        RakePlus::create("Hello World", "");
+        RakePlus::create('Hello World', '');
     }
 
     /**
@@ -35,7 +35,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
      */
     public function testInvalidLanguage()
     {
-        RakePlus::create("Hello World", "blah");
+        RakePlus::create('Hello World', 'blah');
     }
 
     /**
@@ -43,7 +43,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
      */
     public function testNullLanguage()
     {
-        RakePlus::create("Hello World", null);
+        RakePlus::create('Hello World', null);
     }
 
     /**
@@ -51,7 +51,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
      */
     public function testInvalidLangReturnStringFile()
     {
-        RakePlus::create("Hello World", __DIR__ . '/test_string_lang.php');
+        RakePlus::create('Hello World', __DIR__.'/test_string_lang.php');
     }
 
     /**
@@ -59,7 +59,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
      */
     public function testInvalidLangReturnEmptyArrayFile()
     {
-        RakePlus::create("Hello World", __DIR__ . '/test_empty_array_lang.php');
+        RakePlus::create('Hello World', __DIR__.'/test_empty_array_lang.php');
     }
 
     /**
@@ -67,7 +67,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
      */
     public function testEmptyLanguageArray()
     {
-        RakePlus::create("Hello World", []);
+        RakePlus::create('Hello World', []);
     }
 
     /**
@@ -75,7 +75,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
      */
     public function testNonExistingPatternFile()
     {
-        RakePlus::create("Hello World", 'file_does_not_exist.pattern');
+        RakePlus::create('Hello World', 'file_does_not_exist.pattern');
     }
 
     public function testCreateWithNoText()
@@ -83,60 +83,60 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
         $rake = new RakePlus();
 
         $phrases = $rake->get();
-        $this->assertEmpty($phrases, "Phrases is supposed to be an empty array.");
+        $this->assertEmpty($phrases, 'Phrases is supposed to be an empty array.');
 
         $scores = $rake->scores();
-        $this->assertEmpty($scores, "Scores is supposed to be an empty array.");
+        $this->assertEmpty($scores, 'Scores is supposed to be an empty array.');
 
         $sorted_phrases = $rake->sort()->get();
-        $this->assertEmpty($sorted_phrases, "Sorted phrases is supposed to be an empty array.");
+        $this->assertEmpty($sorted_phrases, 'Sorted phrases is supposed to be an empty array.');
 
         $sorted_scores = $rake->sortByScore()->scores();
-        $this->assertEmpty($sorted_scores, "Sorted scores is supposed to be an empty array.");
+        $this->assertEmpty($sorted_scores, 'Sorted scores is supposed to be an empty array.');
     }
 
     public function testSortInstance()
     {
-        $rake = RakePlus::create("Hello World")->sort();
+        $rake = RakePlus::create('Hello World')->sort();
         $this->assertInstanceOf(RakePlus::class, $rake, 'RakePlus::create()->sort() returned invalid instance');
     }
 
     public function testSortByScoreInstance()
     {
-        $rake = RakePlus::create("Hello World")->sortByScore();
+        $rake = RakePlus::create('Hello World')->sortByScore();
         $this->assertInstanceOf(RakePlus::class, $rake, 'RakePlus::create()->sortByScore() returned invalid instance');
     }
 
     public function testPhrasesGetType()
     {
-        $phrases = RakePlus::create("Hello World")->get();
+        $phrases = RakePlus::create('Hello World')->get();
         $this->assertInternalType('array', $phrases, 'RakePlus::create()->get() array expected');
     }
 
     public function testScoresGetType()
     {
-        $scores = RakePlus::create("Hello World")->scores();
+        $scores = RakePlus::create('Hello World')->scores();
         $this->assertInternalType('array', $scores, 'RakePlus::create()->scores() array expected');
     }
 
     public function testLanguage()
     {
-        $language = RakePlus::create("Hello World")->language();
-        $this->assertEquals("en_US", $language);
+        $language = RakePlus::create('Hello World')->language();
+        $this->assertEquals('en_US', $language);
     }
 
     public function testLanguageFile()
     {
-        $language_file = RakePlus::create("Hello World")->languageFile();
-        $this->assertContains("/lang/en_US.pattern", $language_file);
+        $language_file = RakePlus::create('Hello World')->languageFile();
+        $this->assertContains('/lang/en_US.pattern', $language_file);
     }
 
     public function testArrayProvider()
     {
-        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
-            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
-            "for components of a minimal set of solutions and algorithms of construction " .
-            "of minimal generating sets of solutions for all types of systems are given.";
+        $text = 'Criteria of compatibility of a system of linear Diophantine equations, '.
+            'strict inequations, and nonstrict inequations are considered. Upper bounds '.
+            'for components of a minimal set of solutions and algorithms of construction '.
+            'of minimal generating sets of solutions for all types of systems are given.';
 
         $stopwords = StopwordArray::create(['of', 'a', 'and', 'set', 'are', 'for']);
         RakePlus::create($text, $stopwords);
@@ -146,17 +146,17 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
     {
         self::$mb_support = false;
 
-        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
-            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
-            "for components of a minimal set of solutions and algorithms of construction " .
-            "of minimal generating sets of solutions for all types of systems are given.";
+        $text = 'Criteria of compatibility of a system of linear Diophantine equations, '.
+            'strict inequations, and nonstrict inequations are considered. Upper bounds '.
+            'for components of a minimal set of solutions and algorithms of construction '.
+            'of minimal generating sets of solutions for all types of systems are given.';
 
         RakePlus::create($text)->get();
     }
 
     public function testGetMinLength()
     {
-        $rake = RakePlus::create("Hello World")->setMinLength(20);
+        $rake = RakePlus::create('Hello World')->setMinLength(20);
         $this->assertEquals(20, $rake->getMinLength());
     }
 
@@ -165,15 +165,15 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
      */
     public function testSetInvalidMinLength()
     {
-        RakePlus::create("Hello World")->setMinLength(-1);
+        RakePlus::create('Hello World')->setMinLength(-1);
     }
 
     public function testPhrasesExtract()
     {
-        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
-            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
-            "for components of a minimal set of solutions and algorithms of construction " .
-            "of minimal generating sets of solutions for all types of systems are given.";
+        $text = 'Criteria of compatibility of a system of linear Diophantine equations, '.
+            'strict inequations, and nonstrict inequations are considered. Upper bounds '.
+            'for components of a minimal set of solutions and algorithms of construction '.
+            'of minimal generating sets of solutions for all types of systems are given.';
 
         $phrases = RakePlus::create($text)->get();
 
@@ -197,10 +197,10 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testPhrasesExtractAltPatternFile()
     {
-        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
-            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
-            "for components of a minimal set of solutions and algorithms of construction " .
-            "of minimal generating sets of solutions for all types of systems are given.";
+        $text = 'Criteria of compatibility of a system of linear Diophantine equations, '.
+            'strict inequations, and nonstrict inequations are considered. Upper bounds '.
+            'for components of a minimal set of solutions and algorithms of construction '.
+            'of minimal generating sets of solutions for all types of systems are given.';
 
         $stopwords = StopwordsPatternFile::create('./tests/lang/en_US.ereg.pattern');
         $phrases = RakePlus::create($text, $stopwords)->get();
@@ -225,10 +225,10 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testLoadStopwordLangPatternFile()
     {
-        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
-            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
-            "for components of a minimal set of solutions and algorithms of construction " .
-            "of minimal generating sets of solutions for all types of systems are given.";
+        $text = 'Criteria of compatibility of a system of linear Diophantine equations, '.
+            'strict inequations, and nonstrict inequations are considered. Upper bounds '.
+            'for components of a minimal set of solutions and algorithms of construction '.
+            'of minimal generating sets of solutions for all types of systems are given.';
 
         $stopwords = StopwordsPatternFile::create('./tests/lang/en_US.non_ereg.pattern');
         $phrases = RakePlus::create($text, $stopwords)->get();
@@ -253,10 +253,10 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testPhrasesSortedKeys()
     {
-        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
-            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
-            "for components of a minimal set of solutions and algorithms of construction " .
-            "of minimal generating sets of solutions for all types of systems are given.";
+        $text = 'Criteria of compatibility of a system of linear Diophantine equations, '.
+            'strict inequations, and nonstrict inequations are considered. Upper bounds '.
+            'for components of a minimal set of solutions and algorithms of construction '.
+            'of minimal generating sets of solutions for all types of systems are given.';
 
         $phrases = RakePlus::create($text)->sort()->get();
 
@@ -269,10 +269,10 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testPhrasesSortedValuesAsc()
     {
-        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
-            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
-            "for components of a minimal set of solutions and algorithms of construction " .
-            "of minimal generating sets of solutions for all types of systems are given.";
+        $text = 'Criteria of compatibility of a system of linear Diophantine equations, '.
+            'strict inequations, and nonstrict inequations are considered. Upper bounds '.
+            'for components of a minimal set of solutions and algorithms of construction '.
+            'of minimal generating sets of solutions for all types of systems are given.';
 
         $phrases = RakePlus::create($text)->sort()->get();
 
@@ -298,10 +298,10 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testPhrasesSortedValuesDesc()
     {
-        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
-            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
-            "for components of a minimal set of solutions and algorithms of construction " .
-            "of minimal generating sets of solutions for all types of systems are given.";
+        $text = 'Criteria of compatibility of a system of linear Diophantine equations, '.
+            'strict inequations, and nonstrict inequations are considered. Upper bounds '.
+            'for components of a minimal set of solutions and algorithms of construction '.
+            'of minimal generating sets of solutions for all types of systems are given.';
 
         $phrases = RakePlus::create($text)->sort('desc')->get();
 
@@ -327,10 +327,10 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testScores()
     {
-        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
-            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
-            "for components of a minimal set of solutions and algorithms of construction " .
-            "of minimal generating sets of solutions for all types of systems are given.";
+        $text = 'Criteria of compatibility of a system of linear Diophantine equations, '.
+            'strict inequations, and nonstrict inequations are considered. Upper bounds '.
+            'for components of a minimal set of solutions and algorithms of construction '.
+            'of minimal generating sets of solutions for all types of systems are given.';
 
         $scores = RakePlus::create($text)->scores();
 
@@ -356,10 +356,10 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testScoreValuesAsc()
     {
-        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
-            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
-            "for components of a minimal set of solutions and algorithms of construction " .
-            "of minimal generating sets of solutions for all types of systems are given.";
+        $text = 'Criteria of compatibility of a system of linear Diophantine equations, '.
+            'strict inequations, and nonstrict inequations are considered. Upper bounds '.
+            'for components of a minimal set of solutions and algorithms of construction '.
+            'of minimal generating sets of solutions for all types of systems are given.';
 
         $scores = RakePlus::create($text)->sortByScore()->scores();
 
@@ -385,10 +385,10 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testScoreValuesDesc()
     {
-        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
-            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
-            "for components of a minimal set of solutions and algorithms of construction " .
-            "of minimal generating sets of solutions for all types of systems are given.";
+        $text = 'Criteria of compatibility of a system of linear Diophantine equations, '.
+            'strict inequations, and nonstrict inequations are considered. Upper bounds '.
+            'for components of a minimal set of solutions and algorithms of construction '.
+            'of minimal generating sets of solutions for all types of systems are given.';
 
         $scores = RakePlus::create($text)->sortByScore('desc')->scores();
 
@@ -414,10 +414,10 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testArrayStopwords()
     {
-        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
-            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
-            "for components of a minimal set of solutions and algorithms of construction " .
-            "of minimal generating sets of solutions for all types of systems are given.";
+        $text = 'Criteria of compatibility of a system of linear Diophantine equations, '.
+            'strict inequations, and nonstrict inequations are considered. Upper bounds '.
+            'for components of a minimal set of solutions and algorithms of construction '.
+            'of minimal generating sets of solutions for all types of systems are given.';
 
         $scores = RakePlus::create($text, ['of', 'a', 'and', 'set', 'are', 'for'])->sortByScore()->scores();
 
@@ -444,10 +444,10 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
     {
         self::$mb_support = false;
 
-        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
-            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
-            "for components of a minimal set of solutions and algorithms of construction " .
-            "of minimal generating sets of solutions for all types of systems are given.";
+        $text = 'Criteria of compatibility of a system of linear Diophantine equations, '.
+            'strict inequations, and nonstrict inequations are considered. Upper bounds '.
+            'for components of a minimal set of solutions and algorithms of construction '.
+            'of minimal generating sets of solutions for all types of systems are given.';
 
         $stopwords = StopwordArray::create(['of', 'a', 'and', 'set', 'are', 'for']);
         $scores = RakePlus::create($text, $stopwords)->sortByScore()->scores();
@@ -475,12 +475,12 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testPHPStopwords()
     {
-        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
-            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
-            "for components of a minimal set of solutions and algorithms of construction " .
-            "of minimal generating sets of solutions for all types of systems are given.";
+        $text = 'Criteria of compatibility of a system of linear Diophantine equations, '.
+            'strict inequations, and nonstrict inequations are considered. Upper bounds '.
+            'for components of a minimal set of solutions and algorithms of construction '.
+            'of minimal generating sets of solutions for all types of systems are given.';
 
-        $scores = RakePlus::create($text, __DIR__ . '/test_en_US.php')->sortByScore()->scores();
+        $scores = RakePlus::create($text, __DIR__.'/test_en_US.php')->sortByScore()->scores();
 
         $this->assertEquals($scores['criteria'], 1);
         $this->assertEquals($scores['compatibility'], 1);
@@ -502,10 +502,10 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testStopWordArrayInstance()
     {
-        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
-            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
-            "for components of a minimal set of solutions and algorithms of construction " .
-            "of minimal generating sets of solutions for all types of systems are given.";
+        $text = 'Criteria of compatibility of a system of linear Diophantine equations, '.
+            'strict inequations, and nonstrict inequations are considered. Upper bounds '.
+            'for components of a minimal set of solutions and algorithms of construction '.
+            'of minimal generating sets of solutions for all types of systems are given.';
 
         $stopwords = StopwordArray::create(['of', 'a', 'and', 'set', 'are', 'for']);
         $scores = RakePlus::create($text, $stopwords)->sortByScore()->scores();
@@ -533,15 +533,15 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testStopWordPHPInstance()
     {
-        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
-            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
-            "for components of a minimal set of solutions and algorithms of construction " .
-            "of minimal generating sets of solutions for all types of systems are given.";
+        $text = 'Criteria of compatibility of a system of linear Diophantine equations, '.
+            'strict inequations, and nonstrict inequations are considered. Upper bounds '.
+            'for components of a minimal set of solutions and algorithms of construction '.
+            'of minimal generating sets of solutions for all types of systems are given.';
 
         $stopwords = StopwordsPHP::createFromLanguage('en_US');
         $scores = RakePlus::create($text, $stopwords)->sortByScore()->scores();
 
-        $this->assertContains("/lang/en_US.php", $stopwords->filename());
+        $this->assertContains('/lang/en_US.php', $stopwords->filename());
 
         $this->assertEquals($scores['criteria'], 1);
         $this->assertEquals($scores['compatibility'], 1);
@@ -566,15 +566,15 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testStopWordPatternFileInstance()
     {
-        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
-            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
-            "for components of a minimal set of solutions and algorithms of construction " .
-            "of minimal generating sets of solutions for all types of systems are given.";
+        $text = 'Criteria of compatibility of a system of linear Diophantine equations, '.
+            'strict inequations, and nonstrict inequations are considered. Upper bounds '.
+            'for components of a minimal set of solutions and algorithms of construction '.
+            'of minimal generating sets of solutions for all types of systems are given.';
 
         $stopwords = StopwordsPatternFile::createFromLanguage('en_US');
         $scores = RakePlus::create($text, $stopwords)->sortByScore()->scores();
 
-        $this->assertContains("/lang/en_US.pattern", $stopwords->filename());
+        $this->assertContains('/lang/en_US.pattern', $stopwords->filename());
 
         $this->assertEquals($scores['criteria'], 1);
         $this->assertEquals($scores['compatibility'], 1);
@@ -596,7 +596,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testFilterNumerics()
     {
-        $text = "6462 Little Crest Suite 413 Lake Carlietown, WA 12643";
+        $text = '6462 Little Crest Suite 413 Lake Carlietown, WA 12643';
 
         $rake = RakePlus::create($text, 'en_US', 0, false);
         $scores = $rake->scores();
@@ -611,7 +611,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testDonNotFilterNumerics()
     {
-        $text = "6462 Little Crest Suite 413 Lake Carlietown, WA 12643";
+        $text = '6462 Little Crest Suite 413 Lake Carlietown, WA 12643';
         $scores = RakePlus::create($text, 'en_US', 0, true)->scores();
 
         $this->assertCount(2, $scores);
@@ -622,10 +622,10 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testMinLengthScores()
     {
-        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
-            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
-            "for components of a minimal set of solutions and algorithms of construction " .
-            "of minimal generating sets of solutions for all types of systems are given.";
+        $text = 'Criteria of compatibility of a system of linear Diophantine equations, '.
+            'strict inequations, and nonstrict inequations are considered. Upper bounds '.
+            'for components of a minimal set of solutions and algorithms of construction '.
+            'of minimal generating sets of solutions for all types of systems are given.';
 
         $scores = RakePlus::create($text, 'en_US', 10)->sortByScore()->scores();
 
@@ -646,10 +646,10 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testKeywords()
     {
-        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
-            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
-            "for components of a minimal set of solutions and algorithms of construction " .
-            "of minimal generating sets of solutions for all types of systems are given.";
+        $text = 'Criteria of compatibility of a system of linear Diophantine equations, '.
+            'strict inequations, and nonstrict inequations are considered. Upper bounds '.
+            'for components of a minimal set of solutions and algorithms of construction '.
+            'of minimal generating sets of solutions for all types of systems are given.';
 
         $keywords = RakePlus::create($text)->keywords();
 
@@ -681,7 +681,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testKeywordsWithNumbers()
     {
-        $text = "6462 Little Crest Suite 413, Lake Carlietown, WA 12643";
+        $text = '6462 Little Crest Suite 413, Lake Carlietown, WA 12643';
         $keywords = RakePlus::create($text, 'en_US', 0, false)->keywords();
 
         $this->assertCount(8, $keywords);
@@ -701,8 +701,8 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testKeywordsWithHyphens()
     {
-        $text = "Because of the dominance of the Linux kernel-based Android OS on smartphones, Linux has the " .
-            "largest installed base of all general-purpose operating systems.";
+        $text = 'Because of the dominance of the Linux kernel-based Android OS on smartphones, Linux has the '.
+            'largest installed base of all general-purpose operating systems.';
         $keywords = RakePlus::create($text, 'en_US', 0, false)->keywords();
 
         $this->assertCount(12, $keywords);
@@ -722,9 +722,9 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testPhrasesWithHyphens()
     {
-        $text = "Because of the dominance of the Linux kernel-based Android OS on smartphones, Linux has the " .
-            "largest installed base of all general-purpose operating systems. More C-class articles can be read ".
-            "on Wikipedia.";
+        $text = 'Because of the dominance of the Linux kernel-based Android OS on smartphones, Linux has the '.
+            'largest installed base of all general-purpose operating systems. More C-class articles can be read '.
+            'on Wikipedia.';
         $phrases = RakePlus::create($text, 'en_US', 0, false)->get();
 
         $this->assertCount(9, $phrases);
@@ -742,7 +742,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testPhrasesWithContractions()
     {
-        $text = "It's of great importance that you're testing this properly. We'll make sure that there's no " .
+        $text = "It's of great importance that you're testing this properly. We'll make sure that there's no ".
             "could've, would've, should've situations this time around.";
         $phrases = RakePlus::create($text, 'en_US', 0, false)->get();
 
@@ -758,7 +758,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testWithOwnParseOptions()
     {
-        $text = "It's of great importance that you're testing this properly. We'll make sure that there's no " .
+        $text = "It's of great importance that you're testing this properly. We'll make sure that there's no ".
             "could've, would've, should've situations this time around.";
         $phrases = RakePlus::create($text, 'en_US', 0, false, LangParseOptions::create())->get();
 
@@ -777,7 +777,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
      */
     public function testWithInvalidParseOptions()
     {
-        $text = "It's of great importance that you're testing this properly. We'll make sure that there's no " .
+        $text = "It's of great importance that you're testing this properly. We'll make sure that there's no ".
             "could've, would've, should've situations this time around.";
         RakePlus::create($text, 'en_US', 0, false, new stdClass())->get();
     }

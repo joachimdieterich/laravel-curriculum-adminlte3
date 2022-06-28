@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateNavigatorViewsTable extends Migration
 {
@@ -17,11 +17,11 @@ class CreateNavigatorViewsTable extends Migration
             $table->bigIncrements('id')->unsigned();
             $table->string('title');
             $table->text('description')->nullable();
-            
+
             $table->unsignedbigInteger('navigator_id');
-            
+
             $table->timestamps();
-                    
+
             $table->foreign('navigator_id')->references('id')->on('navigators');
         });
     }

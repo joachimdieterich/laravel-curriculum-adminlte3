@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\KanbanItemSubscription;
 
 class KanbanItem extends Model
 {
@@ -23,6 +22,7 @@ class KanbanItem extends Model
     {
         return $this->morphTo();
     }
+
     public function subscriptions()
     {
         return $this->hasMany(KanbanItemSubscription::class);
@@ -49,7 +49,6 @@ class KanbanItem extends Model
     public function status()
     {
         return $this->hasOne('App\KanbanStatus', 'id', 'kanban_status_id');
-
     }
 
     public function owner()
@@ -83,5 +82,4 @@ class KanbanItem extends Model
     {
         return $this->kanban->isAccessible();
     }
-
 }

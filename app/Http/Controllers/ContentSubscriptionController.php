@@ -18,13 +18,12 @@ class ContentSubscriptionController extends Controller
     {
         $input = $this->validateRequest();
 
-        $this->permissionCheck($input['subscribable_type'], $input['subscribable_id'], "access");
+        $this->permissionCheck($input['subscribable_type'], $input['subscribable_id'], 'access');
 
         $subscriptions = ContentSubscription::where([
             'subscribable_type' => $input['subscribable_type'],
-            'subscribable_id' => $input['subscribable_id']
+            'subscribable_id' => $input['subscribable_id'],
         ])->orderBy('order_id');
-
 
         if (request()->wantsJson()) {
             return ['message' => $subscriptions->with(['content'])->get()];
@@ -40,7 +39,7 @@ class ContentSubscriptionController extends Controller
     public function store(Request $request)
     {
         $subscription_request = $this->validateRequest();
-        $this->permissionCheck($subscription_request['subscribable_type'], $subscription_request['subscribable_id'], "create");
+        $this->permissionCheck($subscription_request['subscribable_type'], $subscription_request['subscribable_id'], 'create');
 
         $order_id = $this->getMaxOrderId($subscription_request['subscribable_type'], $subscription_request['subscribable_id']);
 
@@ -50,15 +49,15 @@ class ContentSubscriptionController extends Controller
                 ->where('subscribable_type', $subscription_request['subscribable_type'])
                 ->where('subscribable_id', $subscription_request['subscribable_id'])
                 ->first();
-            if ($exists === null){
+            if ($exists === null) {
                 $response[] = ContentSubscription::create([
-                        'content_id'        => $content_id,
-                        'subscribable_type' => $subscription_request['subscribable_type'],
-                        'subscribable_id'   => $subscription_request['subscribable_id'],
-                        'sharing_level_id'  => 1, //todo: should be dynamic
-                        'order_id'          => $order_id,
-                        'visibility'        => 1,
-                        'owner_id'          => auth()->user()->id
+                    'content_id'        => $content_id,
+                    'subscribable_type' => $subscription_request['subscribable_type'],
+                    'subscribable_id'   => $subscription_request['subscribable_id'],
+                    'sharing_level_id'  => 1, //todo: should be dynamic
+                    'order_id'          => $order_id,
+                    'visibility'        => 1,
+                    'owner_id'          => auth()->user()->id,
                 ]
                 );
             }
@@ -68,7 +67,6 @@ class ContentSubscriptionController extends Controller
 
         return $response;
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -80,7 +78,7 @@ class ContentSubscriptionController extends Controller
     {
         //first get existing data to later adjust order_id
         $subscription_request = $this->validateRequest();
-        $this->permissionCheck($subscription_request['subscribable_type'], $subscription_request['subscribable_id'], "create");
+        $this->permissionCheck($subscription_request['subscribable_type'], $subscription_request['subscribable_id'], 'create');
 
         $old_subscription = ContentSubscription::where('content_id', $subscription_request['content_id'])
             ->where('subscribable_type', $subscription_request['subscribable_type'])
@@ -91,16 +89,16 @@ class ContentSubscriptionController extends Controller
             if ($this->toggleOrderId($old_subscription, request('order_id'))) {
                 $subscriptions = ContentSubscription::where([
                     'subscribable_type' => $subscription_request['subscribable_type'],
-                    'subscribable_id'   => $subscription_request['subscribable_id']
+                    'subscribable_id'   => $subscription_request['subscribable_id'],
                 ])->orderBy('order_id');
 
-
-                if (request()->wantsJson()){
+                if (request()->wantsJson()) {
                     return ['message' => $subscriptions->with(['content'])->get()];
                 }
             }
         }
     }
+
     /**
      * Reset order_ids
      *
@@ -111,7 +109,7 @@ class ContentSubscriptionController extends Controller
     {
         //first get existing data to later adjust order_id
         $subscription_request = $this->validateRequest();
-        $this->permissionCheck($subscription_request['subscribable_type'], $subscription_request['subscribable_id'], "create");
+        $this->permissionCheck($subscription_request['subscribable_type'], $subscription_request['subscribable_id'], 'create');
 
         $reset_subscriptions = (new ContentSubscription)
             ->where('subscribable_type', $subscription_request['subscribable_type'])
@@ -119,11 +117,9 @@ class ContentSubscriptionController extends Controller
             ->orderBy('created_at', 'ASC')
             ->get();
 
-        if ($reset_subscriptions->count() > 1)
-        {
+        if ($reset_subscriptions->count() > 1) {
             $i = 0;
-            foreach ($reset_subscriptions AS $subscription)
-            {
+            foreach ($reset_subscriptions as $subscription) {
                 DB::table('content_subscriptions')
                     ->where('content_id', $subscription->content_id)
                     ->where('subscribable_type', $subscription->subscribable_type)
@@ -136,13 +132,12 @@ class ContentSubscriptionController extends Controller
 
         $subscriptions = ContentSubscription::where([
             'subscribable_type' => $subscription_request['subscribable_type'],
-            'subscribable_id'   => $subscription_request['subscribable_id']
+            'subscribable_id'   => $subscription_request['subscribable_id'],
         ])->orderBy('order_id');
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $subscriptions->with(['content'])->get()];
         }
-
     }
 
     /**
@@ -158,25 +153,24 @@ class ContentSubscriptionController extends Controller
 
     protected function getMaxOrderId($subscribable_type, $subscribable_id)
     {
-
         $order_id = DB::table('content_subscriptions')
             ->where('subscribable_type', $subscribable_type)
             ->where('subscribable_id', $subscribable_id)
             ->max('order_id');
 
-        return (is_numeric($order_id)) ? $order_id + 1 : 0 ;
+        return (is_numeric($order_id)) ? $order_id + 1 : 0;
     }
 
-   /* protected function resetOrderIds( $subscribable_type, $subscribable_id, $order_id, $direction = 'down') //see  contentController@destroy
-    {
-        return (new ContentSubscription)
-            ->where('subscribable_type', $subscribable_type)
-            ->where('subscribable_id', $subscribable_id)
-            ->where('order_id', '>', $order_id)
-            ->update([
-                'order_id'=> DB::raw('order_id'. ( ($direction === 'down') ? '-1' : '+1') )
-            ]);
-    }*/
+    /* protected function resetOrderIds( $subscribable_type, $subscribable_id, $order_id, $direction = 'down') //see  contentController@destroy
+     {
+         return (new ContentSubscription)
+             ->where('subscribable_type', $subscribable_type)
+             ->where('subscribable_id', $subscribable_id)
+             ->where('order_id', '>', $order_id)
+             ->update([
+                 'order_id'=> DB::raw('order_id'. ( ($direction === 'down') ? '-1' : '+1') )
+             ]);
+     }*/
 
     protected function toggleOrderId($old_subscription, $new_order_id)
     {
@@ -186,12 +180,9 @@ class ContentSubscriptionController extends Controller
             ->where('subscribable_id', $old_subscription->subscribable_id)
             ->where('order_id', '=', 0)->get();
 
-
-        if ($check_subscriptions->count() > 1)
-        {
+        if ($check_subscriptions->count() > 1) {
             $i = 0;
-            foreach ($check_subscriptions AS $subscription)
-            {
+            foreach ($check_subscriptions as $subscription) {
                 DB::table('content_subscriptions')
                 ->where('content_id', $subscription->content_id)
                 ->where('subscribable_type', $subscription->subscribable_type)
@@ -207,21 +198,19 @@ class ContentSubscriptionController extends Controller
             ->where('subscribable_type', $old_subscription->subscribable_type)
             ->where('subscribable_id', $old_subscription->subscribable_id)
             ->where('order_id', '=', $new_order_id)
-            ->update([ 'order_id' => $old_subscription->order_id ]);
+            ->update(['order_id' => $old_subscription->order_id]);
 
         $responseB = (new ContentSubscription)
             ->where('content_id', $old_subscription->content_id)
             ->where('subscribable_type', $old_subscription->subscribable_type)
             ->where('subscribable_id', $old_subscription->subscribable_id)
-            ->update([ 'order_id'=> $new_order_id]);
+            ->update(['order_id'=> $new_order_id]);
 
-        if (($responseA == true) AND ($responseB == true))
-        {
-            if (request()->wantsJson()){
+        if (($responseA == true) and ($responseB == true)) {
+            if (request()->wantsJson()) {
                 return ['message' => true];
             }
         }
-
     }
 
     protected function validateRequest()
@@ -243,12 +232,13 @@ class ContentSubscriptionController extends Controller
      * @param $referenceable_id
      * @return mixed
      */
-    private function permissionCheck($referenceable_type, $referenceable_id, $action = "create")
+    private function permissionCheck($referenceable_type, $referenceable_id, $action = 'create')
     {
-        abort_unless((\Gate::allows('content_' . $action) or
-            \Gate::allows($referenceable_type . '_content_' . $action)), 403);
+        abort_unless((\Gate::allows('content_'.$action) or
+            \Gate::allows($referenceable_type.'_content_'.$action)), 403);
 
         $model = $referenceable_type::find($referenceable_id);
+
         return $model->isAccessible();
     }
 }

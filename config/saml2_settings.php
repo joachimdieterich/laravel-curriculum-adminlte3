@@ -1,6 +1,6 @@
 <?php
 
-return $settings = array(
+return $settings = [
 
     /**
      * Array of IDP prefixes to be configured e.g. 'idpNames' => ['test1', 'test2', 'test3'],
@@ -68,4 +68,4 @@ return $settings = array(
      * it used in the routes definition.
      */
     'saml2_controller' => 'Aacotroneo\Saml2\Http\Controllers\Saml2Controller',
-);
+];

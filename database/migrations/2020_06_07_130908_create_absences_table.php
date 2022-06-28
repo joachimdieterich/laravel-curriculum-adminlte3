@@ -18,14 +18,14 @@ class CreateAbsencesTable extends Migration
             $table->string('reason', 2048);
             $table->unsignedbigInteger('absent_user_id');
             $table->boolean('done')->default(0);
-           
+
             $table->unsignedbigInteger('owner_id');
-            
+
             $table->string('referenceable_type');
             $table->unsignedbigInteger('referenceable_id');
-            
+
             $table->timestamps();
-            
+
             $table->foreign('absent_user_id')->references('id')->on('users');
             $table->foreign('owner_id')->references('id')->on('users');
         });

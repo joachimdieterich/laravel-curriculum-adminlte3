@@ -13,7 +13,8 @@ class LogbookEntry extends Model
         return "/logbookEntries/{$this->id}";
     }
 
-    public function logbook(){
+    public function logbook()
+    {
         return $this->belongsTo('App\Logbook');
         //return $this->belongsTo('App\Logbook')->withTimestamps(); --> has to be without timestamps to get isAccessible working
     }
@@ -22,7 +23,6 @@ class LogbookEntry extends Model
     {
         return $this->morphMany('App\Absence', 'referenceable');
     }
-
 
     public function contents()
     {

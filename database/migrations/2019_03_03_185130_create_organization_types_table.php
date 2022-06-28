@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateOrganizationTypesTable extends Migration
 {
@@ -17,15 +17,14 @@ class CreateOrganizationTypesTable extends Migration
             $table->bigIncrements('id')->unsigned();
             $table->string('title');
             $table->integer('external_id')->unsigned();
-            
+
             $table->char('state_id')->nullable();
             $table->char('country_id');
-            
+
             $table->timestamp('created_at')->nullable();
-            
+
             //$table->foreign('state_id')->references('code')->on('states');
-            $table->foreign('country_id')->references('alpha2')->on('countries');     
-             
+            $table->foreign('country_id')->references('alpha2')->on('countries');
         });
     }
 
@@ -36,6 +35,6 @@ class CreateOrganizationTypesTable extends Migration
      */
     public function down()
     {
-         Schema::dropIfExists('organization_types');
+        Schema::dropIfExists('organization_types');
     }
 }

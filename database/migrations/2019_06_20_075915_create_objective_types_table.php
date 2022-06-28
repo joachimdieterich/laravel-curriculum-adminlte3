@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateObjectiveTypesTable extends Migration
 {
@@ -15,7 +15,7 @@ class CreateObjectiveTypesTable extends Migration
     {
         Schema::create('objective_types', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('title'); 
+            $table->string('title');
             $table->timestamps();
         });
     }

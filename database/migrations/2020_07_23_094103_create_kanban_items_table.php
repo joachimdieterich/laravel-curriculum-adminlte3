@@ -18,13 +18,13 @@ class CreateKanbanItemsTable extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->smallInteger('order_id')->default(0);
-            
+
             $table->unsignedbigInteger('kanban_id');
             $table->unsignedbigInteger('kanban_status_id');
 
             $table->unsignedbigInteger('owner_id');
             $table->timestamps();
-            
+
             $table->foreign('kanban_id')->references('id')->on('kanbans');
             $table->foreign('kanban_status_id')->references('id')->on('kanban_statuses');
             $table->foreign('owner_id')->references('id')->on('users');

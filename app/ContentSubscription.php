@@ -2,7 +2,6 @@
 
 namespace App;
 
-
 use Illuminate\Database\Eloquent\Model;
 
 class ContentSubscription extends Model
@@ -31,5 +30,4 @@ class ContentSubscription extends Model
     {
         return $this->subscribable->isAccessible();
     }
-
 }

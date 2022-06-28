@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class TerminalObjectiveSubscriptions extends Model
 {
     protected $guarded = [];
-    
+
     /**
      * Get the subscriber model.
      */
@@ -15,9 +15,9 @@ class TerminalObjectiveSubscriptions extends Model
     {
         return $this->morphTo();
     }
-    
-    public function terminalObjective(){
+
+    public function terminalObjective()
+    {
         return $this->belongsTo('App\TerminalObjective', 'terminal_objective_id', 'id');
     }
-
 }

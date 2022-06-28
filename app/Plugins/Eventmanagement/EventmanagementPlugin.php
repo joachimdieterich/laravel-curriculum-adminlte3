@@ -1,23 +1,20 @@
 <?php
+
 namespace App\Plugins\Eventmanagement;
 
 /**
- *
  * @author joachimdieterich
  */
-class EventmanagementPlugin {
-    public $plugins = array();
+class EventmanagementPlugin
+{
+    public $plugins = [];
 
     public function __construct()
     {
-        $plugin = env('EVENTMANAGEMENTPLUGIN', NULL);
-        if ($plugin != NULL)
-        {
+        $plugin = env('EVENTMANAGEMENTPLUGIN', null);
+        if ($plugin != null) {
             $class = '\\App\\Plugins\\Eventmanagement\\'.$plugin.'\\'.$plugin;
-        $this->plugins[$plugin] = new $class();
+            $this->plugins[$plugin] = new $class();
         }
-
     }
-
 }
-

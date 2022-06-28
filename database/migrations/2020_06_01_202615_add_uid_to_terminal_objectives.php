@@ -26,7 +26,7 @@ class AddUidToTerminalObjectives extends Migration
     public function down()
     {
         Schema::table('terminal_objectives', function (Blueprint $table) {
-            $table->dropColumn('ui');//
+            $table->dropColumn('ui'); //
         });
     }
 }

@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class GlossarController extends Controller
 {
-
     /**
      * Show the form for creating a new resource.
      *
@@ -35,8 +34,8 @@ class GlossarController extends Controller
             'subscribable_type' => $new_glossar['subscribable_type'],
             'subscribable_id' => $new_glossar['subscribable_id'],
         ]);
-        return back();
 
+        return back();
     }
 
     /**
@@ -49,15 +48,13 @@ class GlossarController extends Controller
     {
         $subscriptions = ContentSubscription::where([
             'subscribable_type' => "App\Glossar",
-            'subscribable_id'   => $glossar->id
+            'subscribable_id'   => $glossar->id,
         ])->with(['content'])->get(); //todo: sort by content
 
-
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $subscriptions];
         }
     }
-
 
     /**
      * Remove the specified resource from storage.
@@ -69,12 +66,11 @@ class GlossarController extends Controller
     {
         abort_unless(\Gate::allows('glossar_delete'), 403);
         // delete contents
-        foreach ($glossar->contents AS $content)
-        {
+        foreach ($glossar->contents as $content) {
             (new ContentController)->destroy($content, 'App\Glossar', $glossar->id); // delete or unsubscribe if content is still subscribed elsewhere
         }
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $glossar->delete()];
         }
     }
@@ -83,7 +79,7 @@ class GlossarController extends Controller
     {
         return request()->validate([
             'subscribable_type'       => 'required',
-            'subscribable_id'         => 'required'
+            'subscribable_id'         => 'required',
         ]);
     }
 }

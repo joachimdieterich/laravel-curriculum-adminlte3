@@ -18,7 +18,7 @@ $factory->define(Medium::class, function (Faker $faker) {
         'city' => $faker->city,
         'date' => $faker->dateTime,
 
-        'size' => $faker->numberBetween(1, 3000000) . 'kb',
+        'size' => $faker->numberBetween(1, 3000000).'kb',
         'mime_type' => $faker->mimeType,
 
         'license_id' => 1,

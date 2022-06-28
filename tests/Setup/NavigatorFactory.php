@@ -18,10 +18,8 @@ use App\Navigator;
 
 class NavigatorFactory
 {
-    
     public function create()
     {
         return factory(Navigator::class)->create();
     }
-    
 }

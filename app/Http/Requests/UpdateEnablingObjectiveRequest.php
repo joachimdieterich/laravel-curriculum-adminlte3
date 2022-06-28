@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateEnablingObjectiveRequest extends FormRequest
@@ -24,7 +23,7 @@ class UpdateEnablingObjectiveRequest extends FormRequest
             'time_approach' => [
                 'sometimes',
             ],
-            'curriculum_id' => [ 
+            'curriculum_id' => [
                 'sometimes',
             ],
             'terminal_objective_id'  => [
@@ -33,11 +32,10 @@ class UpdateEnablingObjectiveRequest extends FormRequest
             'order_id'  => [
                 'sometimes',
             ],
-             'visibility'  => [
+            'visibility'  => [
                 'sometimes',
             ],
-          
+
         ];
-    } 
-      
+    }
 }

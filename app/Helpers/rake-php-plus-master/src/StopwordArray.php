@@ -8,12 +8,12 @@ class StopwordArray extends AbstractStopwordProvider
     protected $stopwords = [];
 
     /** @var string */
-    protected $pattern = "";
+    protected $pattern = '';
 
     /**
      * StopwordArray constructor.
      *
-     * @param array $stopwords
+     * @param  array  $stopwords
      */
     public function __construct(array $stopwords)
     {
@@ -28,13 +28,12 @@ class StopwordArray extends AbstractStopwordProvider
     /**
      * Constructs a new instance of the StopwordArray class.
      *
-     * @param array $stopwords
-     *
+     * @param  array  $stopwords
      * @return StopwordArray
      */
     public static function create(array $stopwords)
     {
-        return (new self($stopwords));
+        return new self($stopwords);
     }
 
     /**

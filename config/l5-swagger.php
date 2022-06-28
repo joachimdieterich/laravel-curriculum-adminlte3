@@ -51,7 +51,7 @@ return [
                 \Illuminate\Routing\Middleware\SubstituteBindings::class,
                 \Laravel\Passport\Http\Middleware\CreateFreshApiToken::class,
                 'auth',
-            ],  
+            ],
             'asset' => [],
             'docs' => [],
             'oauth2_callback' => [],
@@ -152,17 +152,17 @@ return [
             'type' => 'oauth2', // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
             'description' => 'Laravel passport oauth2 security.',
             'in' => 'header',
-//          'scheme' => 'https',
+            //          'scheme' => 'https',
             'flows' => [
-                "clientCredentials" => [
-//                  "authorizationUrl" => config('app.url') . '/oauth/authorize',
-                    "tokenUrl" => config('app.url') . '/oauth/token',
-                    "refreshUrl" => config('app.url') . '/token/refresh',
-                    "scopes" => []
+                'clientCredentials' => [
+                    //                  "authorizationUrl" => config('app.url') . '/oauth/authorize',
+                    'tokenUrl' => config('app.url').'/oauth/token',
+                    'refreshUrl' => config('app.url').'/token/refresh',
+                    'scopes' => [],
                 ],
             ],
         ],
-       
+
     ],
 
     /*

@@ -1,7 +1,7 @@
 <template>
     <div class="col-12">
         <div v-for="event in entries" class="border-bottom card collapsed-card">
-            <div class="card-header">
+            <div class="card-header pointer">
             <span data-target="'navigator-item-content-'+event.ARTIKEL_NR" data-card-widget="collapse">{{event.ARTIKEL}} </span>
             <div class="card-tools pull-right">
                 {{ dateforHumans(event.B_DAT, event.E_DAT) }}

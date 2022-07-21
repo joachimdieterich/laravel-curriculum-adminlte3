@@ -1,4 +1,5 @@
 <?php
+namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 
 /**
 * @OA\Get(
@@ -133,3 +134,7 @@
 *       ),
 * )
 */
+
+class Curriculum
+{
+}

@@ -1,4 +1,6 @@
 <?php
+namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
+
 /**
  * @OA\Server(
  *      url="http://127.0.0.1:8000/api/",
@@ -18,3 +20,8 @@
  *     )
  * )
  */
+
+class Setup
+{
+}
+

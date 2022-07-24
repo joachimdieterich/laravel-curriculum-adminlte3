@@ -127,9 +127,17 @@ Vue.prototype.$initTinyMCE = function (options) {
             "insertdatetime media nonbreaking save table directionality",
             "emoticons template paste textpattern example"
         ],
-        toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media example",
+        external_plugins: {'mathjax': '/node_modules/@dimakorotkov/tinymce-mathjax/plugin.min.js'},
+        toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | mathjax link image media example ",
         relative_urls: false,
         entity_encoding : "raw",
+
+        mathjax: {
+            lib: '/node_modules/mathjax/es5/tex-mml-chtml.js', // path to mathjax
+            //symbols: {start: '\\(', end: '\\)'}, //optional: mathjax symbols
+            //className: "math-tex", //optional: mathjax element class
+            //configUrl: '/your-path-to-plugin/@dimakorotkov/tinymce-mathjax/config.js' //optional: mathjax config js
+        },
 
         file_browser_callback : function(field_name, url, type, win) {
             var x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;

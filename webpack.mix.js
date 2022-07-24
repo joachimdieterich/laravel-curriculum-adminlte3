@@ -32,6 +32,9 @@ mix.copyDirectory('node_modules/datatables.net-buttons/js', 'public/node_modules
 mix.copyDirectory('node_modules/datatables.net-select/js', 'public/node_modules/datatables.net-select/js');
 /* moment */
 mix.copyDirectory('node_modules/moment/min', 'public/node_modules/moment/js');
+/* mathjax */
+mix.copyDirectory('node_modules/mathjax/es5', 'public/node_modules/mathjax/es5');
+mix.copyDirectory('node_modules/@dimakorotkov/tinymce-mathjax', 'public/node_modules/@dimakorotkov/tinymce-mathjax');
 
-mix.version()
+mix.version();
 mix.vue({version: 2});

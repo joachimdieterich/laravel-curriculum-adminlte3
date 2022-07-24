@@ -15,7 +15,7 @@
         "binarytorch/larecipe": "^2.2",
         "bugsnag/bugsnag-laravel": "^2.15",
         "cmgmyr/messenger": "^2.20",
-        "darkaonline/l5-swagger": "^8.0",
+        "darkaonline/l5-swagger": "^8.3",
         "doctrine/dbal": "^2.9",
         "h4cc/wkhtmltoimage-amd64": "0.12.x",
         "h4cc/wkhtmltopdf-amd64": "0.12.x",

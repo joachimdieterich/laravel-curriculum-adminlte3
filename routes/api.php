@@ -4,8 +4,8 @@ Route::group([
     'prefix' => 'v1',
     'namespace' => 'Api\V1',
 ], function () {
-        Route::get('about', 'AboutApiController@index');
-    });
+    Route::get('about', 'AboutApiController@index');
+});
 /**
  * Auth Routes
  */
@@ -14,16 +14,16 @@ Route::group([
     'as' => 'auth.',
     'namespace' => 'Api\V1\Auth',
 ], function () {
-        Route::post('login', 'AuthController@login');
-        Route::post('signup', 'AuthController@signup');
+    Route::post('login', 'AuthController@login');
+    Route::post('signup', 'AuthController@signup');
 
-        Route::group([
-            'middleware' => 'client_credentials',
-        ], function () {
-        Route::get('logout', 'AuthController@logout');
-        Route::get('user', 'AuthController@user');
-    });
-    });
+    Route::group([
+        'middleware' => 'client_credentials',
+    ], function () {
+            Route::get('logout', 'AuthController@logout');
+            Route::get('user', 'AuthController@user');
+        });
+});
 
 /**
  * metadatasets Get Parameter 'password' is required, 'metadata_password' has to be in configs table.
@@ -49,36 +49,36 @@ Route::group([
 
 //    Route::get('curricula/metadatasets', 'CurriculaApiController@getAllMetadatasets');
 //    Route::get('curricula/{curriculum}/metadataset', 'CurriculaApiController@getSingleMetadataset');
-        Route::apiResource('curricula', 'CurriculaApiController');
-        Route::apiResource('permissions', 'PermissionsApiController');
+    Route::apiResource('curricula', 'CurriculaApiController');
+    Route::apiResource('permissions', 'PermissionsApiController');
 
-        Route::apiResource('roles', 'RolesApiController');
+    Route::apiResource('roles', 'RolesApiController');
 
-        Route::get('users/{user}/dashboard', 'UsersApiController@dashboard');
-        Route::get('users/{user}/groups', 'UsersApiController@withGroups');
-        Route::get('users/{user}/organizations', 'UsersApiController@withOrganizations');
-        Route::get('users/{user}/roles', 'UsersApiController@withRoles');
-        Route::delete('users/{user}/force', 'UsersApiController@forceDestroy');
-        Route::apiResource('users', 'UsersApiController');
+    Route::get('users/{user}/dashboard', 'UsersApiController@dashboard');
+    Route::get('users/{user}/groups', 'UsersApiController@withGroups');
+    Route::get('users/{user}/organizations', 'UsersApiController@withOrganizations');
+    Route::get('users/{user}/roles', 'UsersApiController@withRoles');
+    Route::delete('users/{user}/force', 'UsersApiController@forceDestroy');
+    Route::apiResource('users', 'UsersApiController');
 
-        Route::put('organizations/enrol', 'OrganizationsApiController@enrol');
-        Route::delete('organizations/expel', 'OrganizationsApiController@expel');
-        Route::get('organizations/{organization}/members', 'OrganizationsApiController@members');
-        Route::apiResource('organizations', 'OrganizationsApiController');
+    Route::put('organizations/enrol', 'OrganizationsApiController@enrol');
+    Route::delete('organizations/expel', 'OrganizationsApiController@expel');
+    Route::get('organizations/{organization}/members', 'OrganizationsApiController@members');
+    Route::apiResource('organizations', 'OrganizationsApiController');
 
-        Route::apiResource('organizationtypes', 'OrganizationTypesApiController');
+    Route::apiResource('organizationtypes', 'OrganizationTypesApiController');
 
-        Route::apiResource('grades', 'GradesApiController');
+    Route::apiResource('grades', 'GradesApiController');
 
-        Route::apiResource('periods', 'PeriodsApiController');
+    Route::apiResource('periods', 'PeriodsApiController');
 
-        Route::apiResource('subjects', 'SubjectsApiController');
+    Route::apiResource('subjects', 'SubjectsApiController');
 
-        Route::put('groups/enrol', 'GroupsApiController@enrol');
-        Route::delete('groups/expel', 'GroupsApiController@expel');
-        Route::get('groups/{group}/members', 'GroupsApiController@members');
-        Route::apiResource('groups', 'GroupsApiController');
+    Route::put('groups/enrol', 'GroupsApiController@enrol');
+    Route::delete('groups/expel', 'GroupsApiController@expel');
+    Route::get('groups/{group}/members', 'GroupsApiController@members');
+    Route::apiResource('groups', 'GroupsApiController');
 
-        Route::apiResource('countries', 'CountriesApiController');
-        Route::apiResource('states', 'StatesApiController');
-    });
+    Route::apiResource('countries', 'CountriesApiController');
+    Route::apiResource('states', 'StatesApiController');
+});

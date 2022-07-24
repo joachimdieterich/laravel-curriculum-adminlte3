@@ -3,7 +3,6 @@
 namespace App\Plugins\Eventmanagement\eVewa;
 
 use App\Plugins\Eventmanagement\EventmanagementPlugin;
-use DonatelloZa\RakePlus\RakePlus;
 
 /**
  * Description of plugin
@@ -52,13 +51,8 @@ class eVewa extends EventmanagementPlugin
      */
     public function lesePlrlpVeranstaltungen($params)
     {
-        if (isset($params['propose'])) {
-            $rake = RakePlus::create(strip_tags($params['search']), 'de_DE', 3);
-            $phrase_scores = $rake->sort('asc')->get();
-            $search = explode(' ', trim($phrase_scores[0]))[0];
-        } else {
-            $search = $params['search'];
-        }
+
+        $search = $params['search'];
 
 //            $params = array(
 //                'method'=> 'lesePlrlpVeranstaltungen',

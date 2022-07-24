@@ -3,7 +3,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 
 /**
  * @OA\Server(
- *      url="http://127.0.0.1:8000/api/",
+ *      url=L5_SWAGGER_CONST_HOST,
  *      description="Curriculum OpenApi Server"
  * )
  *

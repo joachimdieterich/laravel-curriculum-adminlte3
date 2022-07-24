@@ -1,13 +1,5 @@
 <?php
 
-require 'rake-php-plus-master/src/AbstractStopwordProvider.php';
-require 'rake-php-plus-master/src/ILangParseOptions.php';
-require 'rake-php-plus-master/src/LangParseOptions.php';
-require 'rake-php-plus-master/src/StopwordArray.php';
-require 'rake-php-plus-master/src/StopwordsPatternFile.php';
-require 'rake-php-plus-master/src/StopwordsPHP.php';
-require 'rake-php-plus-master/src/RakePlus.php';
-
 if (! function_exists('format_select_input')) {
 
     /**

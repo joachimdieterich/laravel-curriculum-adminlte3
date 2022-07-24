@@ -81,4 +81,11 @@ Route::group([
 
     Route::apiResource('countries', 'CountriesApiController');
     Route::apiResource('states', 'StatesApiController');
+
+    Route::get('moodle/getModelTypes', 'MoodleApiController@getModelTypes');
+    Route::get('moodle/curricula', 'MoodleApiController@getCurricula');
+    Route::get('moodle/curricula/{curriculum}/terminalObjectives', 'MoodleApiController@getTerminalObjectives');
+    Route::get('moodle/curricula/{curriculum}/enablingObjectives', 'MoodleApiController@getEnablingObjectives');
+    Route::get('moodle/logbooks', 'MoodleApiController@getLogbooks');
+    Route::get('moodle/kanbans', 'MoodleApiController@getKanbans');
 });

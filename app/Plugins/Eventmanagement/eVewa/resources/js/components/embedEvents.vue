@@ -128,7 +128,7 @@
                 <a
                    :href="eventlinkurl"
                     type="button"
-                    class="btn btn-block btn-secondary col-6 col-centered">
+                    class="btn btn-block btn-default col-6 col-centered">
                     {{ eventlinktitle }}
                 </a>
             </div>

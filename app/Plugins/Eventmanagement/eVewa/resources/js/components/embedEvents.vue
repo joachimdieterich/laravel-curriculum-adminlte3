@@ -1,5 +1,31 @@
 <template>
     <div class="col-12">
+
+
+        <h3>{{title}}</h3>
+        <div class="input-group col-2 mr-0 pr-0 mb-4 float-right" >
+            <input
+                type="text" id="search"
+                name="eventId"
+                class="form-control"
+                v-model="search"
+                required
+                @keyup.enter="loader()"
+            />
+
+            <div class="input-group-append" @click="loader()">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+            </div>
+        </div>
+        <button v-for="(value, id) in tags"
+            type="button"
+            class="btn btn-default mr-4 mb-4"
+            @click="loader(id)">
+            {{ value }}
+        </button>
+
+<hr style="clear:both">
+
         <div v-for="event in entries" class="border-bottom card collapsed-card">
             <div class="card-header pointer">
             <span data-target="'navigator-item-content-'+event.ARTIKEL_NR" data-card-widget="collapse">{{event.ARTIKEL}} </span>
@@ -40,20 +66,20 @@
 
                     <div class="col-12 mt-2">
                         <a :href="event.LINK_DETAIL"
-                           class="btn bg-gray"
+                           class="btn btn-default"
                            target="_blank">
                             <i class="fa fa-info"></i> Details
                         </a>
 
                         <a :href="event.LINK_DETAIL+'&print=1'"
                            onclick="return !window.open(this.href, 'Drucken', 'width=800,scrollbars=1')"
-                           class="btn bg-gray-light"
+                           class="btn btn-default"
                            target="_blank">
                             <i class="fa fa-print"></i> Drucken
                         </a>
 
                         <a :href="event.LINK_ANMELDUNG"
-                           class="btn bg-info"
+                           class="btn btn-secondary"
                            target="_blank">
                             <i class="fa fa-sign-in"></i> Anmelden
                         </a>
@@ -69,26 +95,23 @@
 
         <div v-if="Object.keys(entries).length > 0"
              class="row" >
+            <span
+                class="col-8">
+            </span>
                 <span
                     v-if="Object.keys(entries).length > 0"
-                    class="col-6">
-                    <button v-if="page === 1"
-                            type="button"
-                            class="btn btn-block btn-secondary disabled"
-                            @click="lastPage()">
-                        <i class="fa fa-arrow-left"></i>
-                    </button>
-                    <button v-else
+                    class="col-2 pr-0">
+                    <button v-if="page > 1"
                             type="button"
                             class="btn btn-block btn-secondary"
                             @click="lastPage()">
-                    <i class="fa fa-arrow-left"></i>
-                </button>
+                        <i class="fa fa-arrow-left"></i>
+                    </button>
                 </span>
 
                 <span
                     v-if="Object.keys(entries).length > 9"
-                    class="col-6">
+                    class="col-2">
                     <button type="button"
                             class="btn btn-block btn-secondary"
                             @click="nextPage()">
@@ -96,6 +119,21 @@
                     </button>
                 </span>
         </div>
+        <div class="row" >
+            <div class="col-12 col-centered"
+                 style="text-align: center; padding-top:50px"
+                >
+                {{ eventlinkdescription }}
+
+                <a
+                   :href="eventlinkurl"
+                    type="button"
+                    class="btn btn-block btn-secondary col-6 col-centered">
+                    {{ eventlinktitle }}
+                </a>
+            </div>
+        </div>
+
 
     </div>
 </template>
@@ -106,21 +144,27 @@ import moment from 'moment';
 
     export default {
         props: {
-            'search': {}
+            'search': {},
+            'eventlinktitle': String,
+            'eventlinkdescription': String,
+            'eventlinkurl': String,
+            'eventsearchtag': String,
+            'title': String
         },
         data() {
             return {
                 entries: [],
                 page:    1,
+                tags: {},
                 errors:  {}
             }
         },
         methods: {
-            async loader() {
+            async loader(id = this.search) {
                 $("#loading-events").show();
                 try {
                     this.entries = (await axios.post('/eventSubscriptions/getEvents', {
-                        search: this.search,
+                        search: id,
                         page: this.page,
                         plugin: 'evewa'
                     })).data.message.lesePlrlpVeranstaltungen.data;
@@ -128,6 +172,7 @@ import moment from 'moment';
                 } catch(error) {
                     //this.errors = error.response.data.errors;
                 }
+                this.tags = JSON.parse(this.eventsearchtag);
             },
             lastPage() {
                 this.page = this.page - 1

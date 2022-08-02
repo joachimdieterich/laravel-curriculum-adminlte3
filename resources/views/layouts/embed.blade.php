@@ -9,7 +9,6 @@
             </div>
         </div>
 
-        <script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script>
         <script src="{{ mix('js/app.js') }}"></script>
 
         @yield('scripts')

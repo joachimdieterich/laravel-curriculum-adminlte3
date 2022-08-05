@@ -18,9 +18,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
 * )
-*/
-
-/**
+*
 * @OA\Post(
 *      path="/v1/groups",
 *      operationId="createGroup",
@@ -74,9 +72,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       @OA\Response(response=400, description="Bad request"),
 *
 * )
-*/
-
-/**
+*
 * @OA\Put(
 *      path="/v1/groups/{group}",
 *      operationId="updateGroupById",
@@ -138,9 +134,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       @OA\Response(response=400, description="Bad request"),
 *
 * )
-*/
-
-/**
+*
 * @OA\Get(
 *      path="/v1/groups/{group}",
 *      operationId="getGroup",
@@ -166,9 +160,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
 * )
-*/
-
-/**
+*
 * @OA\Get(
 *      path="/v1/groups/{group}/members",
 *      operationId="getGroupMembers",
@@ -194,9 +186,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
 * )
-*/
-
-/**
+*
 * @OA\Delete(
 *      path="/v1/groups/{group}",
 *      operationId="deleteGroup",
@@ -223,9 +213,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       @OA\Response(response=400, description="Bad request"),
 *
 * )
-*/
-
-/**
+*
 * @OA\Put(
 *      path="/v1/groups/enrol",
 *      operationId="enrolToGroup",
@@ -263,9 +251,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       @OA\Response(response=400, description="Bad request"),
 *
 * )
-*/
-
-/**
+*
 * @OA\Delete(
 *      path="/v1/groups/expel",
 *      operationId="expelFromGroup",

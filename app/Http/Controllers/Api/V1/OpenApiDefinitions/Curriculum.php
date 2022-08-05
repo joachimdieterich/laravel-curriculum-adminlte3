@@ -18,9 +18,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
 * )
-*/
-
-/**
+*
 * @OA\Get(
 *      path="/v1/curricula/{curriculum}",
 *      operationId="getCurriculum",
@@ -54,9 +52,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *         @OA\JsonContent(),
 *       ),
 * )
-*/
-
-/**
+*
 * @OA\Get(
 *      path="/v1/curricula/{curriculum}/metadataset?password={password}",
 *      operationId="getSingleMetadataset",
@@ -98,9 +94,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *         @OA\JsonContent(),
 *       ),
 * )
-*/
-
-/**
+*
 * @OA\Get(
 *      path="/v1/curricula/metadatasets?password={password}",
 *      operationId="getAllMetadatasets",

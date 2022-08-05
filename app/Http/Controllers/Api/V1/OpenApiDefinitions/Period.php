@@ -18,9 +18,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
 * )
-*/
-
-/**
+*
 * @OA\Get(
 *      path="/v1/periods/{period}",
 *      operationId="getPeriod",
@@ -54,9 +52,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *         @OA\JsonContent(),
 *       ),
 * )
-*/
-
-/**
+*
 * @OA\Post(
 *      path="/v1/periods",
 *      operationId="createPeriod",
@@ -110,9 +106,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       @OA\Response(response=400, description="Bad request"),
 *
 * )
-*/
-
-/**
+*
 * @OA\Put(
 *      path="/v1/periods/{period}",
 *      operationId="updatePeriodById",
@@ -174,9 +168,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       @OA\Response(response=400, description="Bad request"),
 *
 * )
-*/
-
-/**
+*
 * @OA\Delete(
 *      path="/v1/periods/{period}",
 *      operationId="deletePeriod",

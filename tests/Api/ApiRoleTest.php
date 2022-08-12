@@ -14,7 +14,7 @@ class ApiRoleTest extends TestCase
     public function an_authenticated_client_can_not_get_roles()
     {
         $this->get('/api/v1/roles')->assertStatus(302);
-        $this->contains('login');
+        $this->stringContains('login');
     }
 
     /** @test

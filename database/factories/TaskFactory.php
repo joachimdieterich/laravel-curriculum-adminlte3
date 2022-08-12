@@ -1,23 +1,40 @@
 <?php
 
-/* @var $factory \Illuminate\Database\Eloquent\Factory */
+
+namespace Database\Factories;
 
 use App\Task;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Task::class, function (Faker $faker) {
-    $start_date = $faker->dateTimeThisYear();
-    $start_date_clone = clone $start_date;
-    $end_date = $faker->dateTimeBetween($start_date, $start_date_clone->modify('+1 year'));
+class TaskFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Task::class;
 
-    $start_date_string = $start_date->format('Y-m-d H:i:s');
-    $end_date_string = $end_date->format('Y-m-d H:i:s');
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        $start_date = $this->faker->dateTimeThisYear();
+        $start_date_clone = clone $start_date;
+        $end_date = $this->faker->dateTimeBetween($start_date, $start_date_clone->modify('+1 year'));
 
-    return [
-        'title'       => $faker->company,
-        'description' => $faker->sentence,
-        'start_date'  => $start_date_string,
-        'due_date'    => $end_date_string,
-        'owner'       => auth()->user()->id,
-    ];
-});
+        $start_date_string = $start_date->format('Y-m-d H:i:s');
+        $end_date_string = $end_date->format('Y-m-d H:i:s');
+
+        return [
+            'title' => $this->faker->company,
+            'description' => $this->faker->sentence,
+            'start_date' => $start_date_string,
+            'due_date' => $end_date_string,
+            'owner_id' => auth()->user()->id,
+        ];
+    }
+}

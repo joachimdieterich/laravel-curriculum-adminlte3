@@ -34,8 +34,8 @@
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",
+        "fakerphp/faker": "^1.20",
         "filp/whoops": "^2.0",
-        "fzaninotto/faker": "^1.9.1",
         "laravel/dusk": "^6.0",
         "laravel/pint": "^0.2.1",
         "mockery/mockery": "^1.0",
@@ -59,10 +59,12 @@
             "app/Helpers/Helper.php"
         ],
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
         },
         "classmap": [
-            "database/seeds",
+          "database/seeders",
             "database/factories"
         ]
     },

@@ -1,26 +1,43 @@
 <?php
 
-/* @var $factory \Illuminate\Database\Eloquent\Factory */
+namespace Database\Factories;
 
 use App\Organization;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Organization::class, function (Faker $faker) {
-    return [
-        'title'       => $faker->company,
-        'description' => $faker->sentence,
+class OrganizationFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Organization::class;
 
-        'street'      => $faker->streetAddress,
-        'postcode'    => $faker->postcode,
-        'city'        => $faker->city,
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'title' => $this->faker->company,
+            'description' => $this->faker->sentence,
 
-        'state_id'    => 'DE-RP',
-        'country_id'  => 'DE',
-        'organization_type_id' => 1,
+            'street' => $this->faker->streetAddress,
+            'postcode' => $this->faker->postcode,
+            'city' => $this->faker->city,
 
-        'phone'       => $faker->phoneNumber,
-        'email'       => $faker->email,
+            'state_id' => 'DE-RP',
+            'country_id' => 'DE',
+            'organization_type_id' => 1,
 
-        'status_id'      => 1,
-    ];
-});
+            'phone' => $this->faker->phoneNumber,
+            'email' => $this->faker->email,
+
+            'status_id' => 1,
+        ];
+    }
+
+}

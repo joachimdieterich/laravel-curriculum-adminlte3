@@ -1,15 +1,33 @@
 <?php
+namespace Database\Factories;
 
-/* @var $factory \Illuminate\Database\Eloquent\Factory */
 use App\TerminalObjective;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(TerminalObjective::class, function (Faker $faker) {
-    return [
-        'title' => $faker->text,
+class TerminalObjectiveFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = TerminalObjective::class;
 
-        'description' => $faker->sentence,
-        'curriculum_id' => 1,
-        'objective_type_id' => 1,
-    ];
-});
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'title' => $this->faker->text,
+
+            'description' => $this->faker->sentence,
+            'curriculum_id' => 1,
+            'objective_type_id' => 1,
+        ];
+    }
+
+}

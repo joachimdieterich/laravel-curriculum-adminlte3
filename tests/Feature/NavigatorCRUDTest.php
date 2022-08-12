@@ -25,10 +25,16 @@ class NavigatorCRUDTest extends TestCase
              ->assertStatus(200);
 
         /* Use Datatables */
-        $navigators = Navigator::first();
-        $this->get('navigators/list')
-             ->assertStatus(200)
-             ->assertViewHasAll(compact($navigators));
+        $navigators = Navigator::select('id', 'title')->get();
+        $list = $this->get('navigators/list')
+            ->assertStatus(200);
+        $i = 0;
+        foreach ($navigators as $navigator)
+        {
+            if ($i === 49) { break; } //test max 50 entries (default page limit on datatables
+            $list->assertJsonFragment($navigator->toArray());
+            $i++;
+        }
     }
 
     /** @test
@@ -36,10 +42,9 @@ class NavigatorCRUDTest extends TestCase
      */
     public function an_administrator_create_a_navigator()
     {
-        $attributes = factory('App\Navigator')->raw();
-
-        $this->post('navigators', $attributes)
-                ->assertStatus(302);
+        $this->followingRedirects()
+            ->post('navigators', $attributes = Navigator::factory()->raw())
+            ->assertStatus(200);
 
         $this->assertDatabaseHas('navigators', $attributes);
     }
@@ -58,14 +63,13 @@ class NavigatorCRUDTest extends TestCase
      */
     public function an_administrator_delete_a_navigator()
     {
-        $this->post('navigators', $navigator = factory('App\Navigator')->raw());
-        $id = Navigator::where('title', $navigator['title'])->first()->id;
+        $navigator = Navigator::factory()->create();
 
         $this->followingRedirects()
-                ->delete('navigators/'.$id)
-                ->assertStatus(200);
+            ->delete('navigators/'.$navigator->id)
+            ->assertStatus(200);
 
-        $this->assertDatabaseMissing('navigators', $navigator);
+        $this->assertDatabaseMissing('navigators', $navigator->toArray());
     }
 
     /** @test
@@ -73,13 +77,13 @@ class NavigatorCRUDTest extends TestCase
      */
     public function an_administrator_see_details_of_an_navigator()
     {
-        $this->post('navigators', $navigator = factory('App\Navigator')->raw());
-
-        $navigator = Navigator::where('title', $navigator['title'])->first();
+        $navigator = Navigator::factory()->create();
 
         $this->get("navigators/{$navigator->id}")
-             ->assertStatus(200)
-             ->assertViewHasAll(compact($navigator));
+            ->assertStatus(200)
+            ->assertSee([
+                $navigator->title
+            ]);
     }
 
     /** @test
@@ -87,15 +91,14 @@ class NavigatorCRUDTest extends TestCase
      */
     public function an_administrator_update_a_navigator()
     {
-        $this->withoutExceptionHandling();
-        $this->post('navigators', $navigator = factory('App\Navigator')->raw());
-        $navigator = Navigator::where('title', $navigator['title'])->first()->toArray();
+        $this->post('navigators', $attributes = Navigator::factory()->raw());
+        $navigator = Navigator::where('title', $attributes['title'])->first()->toArray();
 
         $this->assertDatabaseHas('navigators', $navigator);
 
-        $this->patch('navigators/'.$navigator['id'], $new_attributes = factory('App\Navigator')->raw());
-        $navigator_edit = Navigator::where('title', $new_attributes['title'])->first()->toArray();
+        $this->patch('navigators/'.$navigator['id'], $new_attributes = Navigator::factory()->raw());
 
+        $navigator_edit = Navigator::where('title', $new_attributes['title'])->first()->toArray();
         $this->assertDatabaseHas('navigators', $navigator_edit);
     }
 
@@ -104,11 +107,13 @@ class NavigatorCRUDTest extends TestCase
      */
     public function an_administrator_get_edit_view_for_a_navigator()
     {
-        $this->post('navigators', $navigator = factory('App\Navigator')->raw());
-        $navigator = Navigator::where('title', $navigator['title'])->first();
-        $this->withoutExceptionHandling();
+        $this->post('navigators', $attributes = Navigator::factory()->raw());
+        $navigator = Navigator::where('title', $attributes['title'])->first();
+
         $this->get("navigators/{$navigator->id}/edit")
-             ->assertStatus(200)
-             ->assertSessionHasAll(compact($navigator));
+            ->assertStatus(200)
+            ->assertSee([
+                'title' => $navigator->title,
+            ]);
     }
 }

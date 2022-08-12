@@ -256,6 +256,7 @@
             this.$on('addContent', function(newContent) {
                 this.loaderEvent();
             });
+            MathJax.startup.defaultReady();
         }
 
     }

@@ -1,16 +1,31 @@
 <?php
 
-/* @var $factory \Illuminate\Database\Eloquent\Factory */
+namespace Database\Factories;
 
 use App\Logbook;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Logbook::class, function (Faker $faker) {
-    return [
-        'title' => $faker->word,
-        'description' => $faker->paragraph,
+class LogbookFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Logbook::class;
 
-        'owner_id' => auth()->user()->id,
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'title' => $this->faker->word,
+            'description' => $this->faker->paragraph,
 
-    ];
-});
+            'owner_id' => auth()->user()->id,
+        ];
+    }
+}

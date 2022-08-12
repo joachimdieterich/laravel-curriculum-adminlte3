@@ -16,7 +16,7 @@ class ApiPeriodTest extends TestCase
     public function an_authenticated_client_can_not_get_periods()
     {
         $this->get('/api/v1/periods')->assertStatus(302);
-        $this->contains('login');
+        $this->stringContains('login');
     }
 
     /** @test
@@ -50,7 +50,7 @@ class ApiPeriodTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $this->post('/api/v1/periods', $attributes = factory('App\Period')->raw());
+        $this->post('/api/v1/periods', $attributes = Period::factory()->raw());
 
         $this->assertDatabaseHas('periods', $attributes);
     }
@@ -62,7 +62,7 @@ class ApiPeriodTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $new_period = $this->post('/api/v1/periods', $attributes = factory('App\Period')->raw());
+        $new_period = $this->post('/api/v1/periods', $attributes = Period::factory()->raw());
 
         $this->put("/api/v1/periods/{$new_period->getData()->id}", $changed_attribute = ['title' => 'New Title']);
 
@@ -80,7 +80,7 @@ class ApiPeriodTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $new_period = $this->post('/api/v1/periods', $attributes = factory('App\Period')->raw());
+        $new_period = $this->post('/api/v1/periods', $attributes = Period::factory()->raw());
 
         $this->delete("/api/v1/periods/{$new_period->getData()->id}");
 

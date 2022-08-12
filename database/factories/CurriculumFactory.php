@@ -1,33 +1,49 @@
 <?php
 
-/* @var $factory \Illuminate\Database\Eloquent\Factory */
+namespace Database\Factories;
 
 use App\Curriculum;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Curriculum::class, function (Faker $faker) {
-    return [
-        'title'                 => $faker->company,
-        'description'           => $faker->paragraph,
+class CurriculumFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Curriculum::class;
 
-        'author'                => $faker->userName,
-        'publisher'             => $faker->company,
-        'city'                  => $faker->city,
-        'date'                  => $faker->dateTimeThisMonth()->format('Y-m-d H:i:s'),
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'title'                 => $this->faker->company,
+            'description'           => $this->faker->paragraph,
 
-        'color'                 => $faker->rgbColor,
+            'author'                => $this->faker->userName,
+            'publisher'             => $this->faker->company,
+            'city'                  => $this->faker->city,
+            'date'                  => $this->faker->dateTimeThisMonth()->format('Y-m-d H:i:s'),
 
-        'grade_id' => 1,
-        'subject_id' => 1,
+            'color'                 => $this->faker->rgbColor,
 
-        'state_id' => 'DE-RP',
-        'country_id' => 'DE',
-        'organization_type_id' => 1,
-        'type_id' => 1,
+            'grade_id' => 1,
+            'subject_id' => 1,
 
-        'medium_id' => null, //define std. image
+            'state_id' => 'DE-RP',
+            'country_id' => 'DE',
+            'organization_type_id' => 1,
+            'type_id' => 1,
 
-        'owner_id' => auth()->user()->id,
+            'medium_id' => null, //define std. image
 
-    ];
-});
+            'owner_id' => auth()->user()->id,
+
+        ];
+    }
+}

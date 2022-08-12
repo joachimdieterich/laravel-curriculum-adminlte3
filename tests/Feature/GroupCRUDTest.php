@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Curriculum;
 use App\Group;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -22,14 +21,21 @@ class GroupCRUDTest extends TestCase
      */
     public function an_administrator_see_groups()
     {
+
         $this->get('groups')
-             ->assertStatus(200);
+            ->assertStatus(200);
 
         /* Use Datatables */
-        $groups = Group::first();
-        $this->get('groups/list')
-             ->assertStatus(200)
-             ->assertViewHasAll(compact($groups));
+        $groups = Group::select('id', 'title')->get();
+        $list = $this->get('groups/list')
+            ->assertStatus(200);
+        $i = 0;
+        foreach ($groups as $group)
+        {
+            if ($i === 49) { break; } //test max 50 entries (default page limit on datatables
+            $list->assertJsonFragment($group->toArray());
+            $i++;
+        }
     }
 
     /** @test
@@ -37,10 +43,9 @@ class GroupCRUDTest extends TestCase
      */
     public function an_administrator_create_a_group()
     {
-        $attributes = factory('App\Group')->raw();
-
-        $this->post('groups', $attributes)
-                ->assertStatus(302);
+        $this->followingRedirects()
+            ->post('groups', $attributes = Group::factory()->raw())
+            ->assertStatus(200);
 
         $this->assertDatabaseHas('groups', $attributes);
     }
@@ -59,11 +64,8 @@ class GroupCRUDTest extends TestCase
      */
     public function an_administrator_can_mass_delete_groups()
     {
-        $this->post('groups', $group1 = factory('App\Group')->raw());
-        $ids[] = Group::where('title', $group1['title'])->first()->id;
-
-        $this->post('groups', $group2 = factory('App\Group')->raw());
-        $ids[] = Group::where('title', $group2['title'])->first()->id;
+        $groups = Group::factory(50)->create();
+        $ids = $groups->pluck('id')->toArray();
 
         $this->delete('/groups/massDestroy', $attributes = [
             'ids' =>  $ids,
@@ -81,12 +83,13 @@ class GroupCRUDTest extends TestCase
      */
     public function an_administrator_delete_a_group()
     {
-        $this->post('groups', $group = factory('App\Group')->raw());
-        $id = Group::where('title', $group['title'])->first()->id;
+        $group = Group::factory()->create();
 
         $this->followingRedirects()
-                ->delete('groups/'.$id)
-                ->assertStatus(200);
+            ->delete('groups/'.$group->id)
+            ->assertStatus(200);
+
+        $this->assertDatabaseMissing('groups', $group->toArray());
     }
 
     /** @test
@@ -94,18 +97,11 @@ class GroupCRUDTest extends TestCase
      */
     public function an_administrator_see_details_of_an_group()
     {
-        $this->post('groups', $group = factory('App\Group')->raw());
-
-        $curriculum = factory(Curriculum::class)->create();
-
-        $group = Group::where('title', $group['title'])->first();
-        Group::findOrFail($group->id)->curricula()->syncWithoutDetaching([$curriculum->id]);
-
-        $group = Group::where('title', $group['title'])->with('curricula')->first();
+        $group = Group::factory()->create();
 
         $this->get("groups/{$group->id}")
-             ->assertStatus(200)
-             ->assertViewHasAll(compact($group));
+            ->assertStatus(200)
+            ->assertSee($group->toArray());
     }
 
     /** @test
@@ -113,14 +109,14 @@ class GroupCRUDTest extends TestCase
      */
     public function an_administrator_update_a_group()
     {
-        $this->withoutExceptionHandling();
-        $this->post('groups', $group = factory('App\Group')->raw());
-        $group = Group::where('title', $group['title'])->first()->toArray();
+        $this->post('groups', $attributes = Group::factory()->raw());
+        $group = Group::where('title', $attributes['title'])->first()->toArray();
 
         $this->assertDatabaseHas('groups', $group);
-        $this->patch('groups/'.$group['id'], $new_attributes = factory('App\Group')->raw());
-        $group_edit = Group::where('title', $new_attributes['title'])->first()->toArray();
 
+        $this->patch('groups/'.$group['id'], $new_attributes = Group::factory()->raw());
+
+        $group_edit = Group::where('title', $new_attributes['title'])->first()->toArray();
         $this->assertDatabaseHas('groups', $group_edit);
     }
 
@@ -129,11 +125,13 @@ class GroupCRUDTest extends TestCase
      */
     public function an_administrator_get_edit_view_for_a_group()
     {
-        $this->post('groups', $group = factory('App\Group')->raw());
-        $group = Group::where('title', $group['title'])->first();
-        $this->withoutExceptionHandling();
+        $this->post('groups', $attributes = Group::factory()->raw());
+        $group = Group::where('title', $attributes['title'])->first();
+
         $this->get("groups/{$group->id}/edit")
-             ->assertStatus(200)
-             ->assertSessionHasAll(compact($group));
+            ->assertStatus(200)
+            ->assertSee([
+                'title' => $group->title,
+            ]);
     }
 }

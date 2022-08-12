@@ -15,7 +15,7 @@ class ApiStateTest extends TestCase
     {
         $this->get('/api/v1/states')
              ->assertStatus(302);
-        $this->contains('login');
+        $this->stringContains('login');
     }
 
     /** @test

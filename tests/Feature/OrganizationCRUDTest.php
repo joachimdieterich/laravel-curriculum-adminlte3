@@ -26,10 +26,16 @@ class OrganizationCRUDTest extends TestCase
              ->assertStatus(200);
 
         /* Use Datatables */
-        $organization = Organization::first();
-        $this->get('organizations/list')
-             ->assertStatus(200)
-             ->assertViewHasAll(compact($organization));
+        $organizations = Organization::select('title', 'street', 'postcode', 'city')->get();
+        $list = $this->get('organizations/list')
+            ->assertStatus(200);
+        $i = 0;
+        foreach ($organizations as $organization)
+        {
+            if ($i === 49) { break; } //test max 50 user (default page limit on datatables
+            $list->assertJsonFragment($organization->toArray());
+            $i++;
+        }
     }
 
     /** @test
@@ -37,7 +43,8 @@ class OrganizationCRUDTest extends TestCase
      */
     public function an_administrator_create_an_organization()
     {
-        $this->post('organizations', $attributes = factory('App\Organization')->raw());
+        $this->followingRedirects()->post('organizations', $attributes = Organization::factory()->raw())
+            ->assertStatus(200);
 
         $this->assertDatabaseHas('organizations', $attributes);
     }
@@ -56,7 +63,7 @@ class OrganizationCRUDTest extends TestCase
      */
     public function an_administrator_can_mass_delete_organizations()
     {
-        $orgs = factory(Organization::class, 50)->create();
+        $orgs = Organization::factory(50)->create();
         $ids = $orgs->pluck('id')->toArray();
 
         $this->delete('/organizations/massDestroy', $attributes = [
@@ -77,7 +84,7 @@ class OrganizationCRUDTest extends TestCase
     {
 
         /* add new organization */
-        $org = OrganizationFactory::create();
+        $org = Organization::factory()->create();
 
         $this->followingRedirects()
                 ->delete('organizations/'.$org->id)
@@ -89,11 +96,18 @@ class OrganizationCRUDTest extends TestCase
      */
     public function an_administrator_see_details_of_an_organizations()
     {
-        $org = OrganizationFactory::create();
-        $this->withoutExceptionHandling();
+        $org = Organization::factory()->create();
+        //dump($org);
         $this->get("organizations/{$org->id}")
              ->assertStatus(200)
-             ->assertViewHasAll(compact($org));
+             ->assertSee([
+                 'title' => $org->title,
+                 'street' => $org->street,
+                 'postcode' => $org->postcode,
+                 'city' => $org->city,
+                 'phone' => $org->phone,
+                 'email' => $org->email,
+             ]);
     }
 
     /** @test
@@ -101,12 +115,14 @@ class OrganizationCRUDTest extends TestCase
      */
     public function an_administrator_update_an_organization()
     {
-        $this->post('organizations', $attributes = factory('App\Organization')->raw());
+        $this->post('organizations', $attributes = Organization::factory()->raw());
+        $attributes = Organization::where('title', $attributes['title'])->first()->toArray();
 
         $this->assertDatabaseHas('organizations', $attributes);
         /* edit organization*/
-        $this->patch('organizations/'.Organization::where('title', '=', $attributes['title'])->first()->id, $new_attributes = factory('App\Organization')->raw());
+        $this->patch('organizations/'.Organization::where('title', '=', $attributes['title'])->first()->id, $new_attributes = Organization::factory()->raw());
 
+        $user_edit = Organization::where('title', $new_attributes['title'])->first()->toArray();
         $this->assertDatabaseHas('organizations', $new_attributes);
     }
 
@@ -115,10 +131,18 @@ class OrganizationCRUDTest extends TestCase
      */
     public function an_administrator_get_edit_view_for_organization()
     {
-        $org = OrganizationFactory::create();
+        $this->post('organizations', $attributes = Organization::factory()->raw());
+        $org = Organization::where('title', $attributes['title'])->first();
 
         $this->get("organizations/{$org->id}/edit")
              ->assertStatus(200)
-             ->assertSessionHasAll(compact($org));
+             ->assertSee([
+                'title' => $org->title,
+                'street' => $org->street,
+                'postcode' => $org->postcode,
+                'city' => $org->city,
+                'phone' => $org->phone,
+                'email' => $org->email,
+             ]);
     }
 }

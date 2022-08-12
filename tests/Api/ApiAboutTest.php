@@ -13,6 +13,6 @@ class ApiAboutTest extends TestCase
     public function any_user_can_call_about()
     {
         $this->get('/api/v1/about')->assertStatus(200);
-        $this->contains('Curriculum API V1');
+        $this->stringContains('Curriculum API V1');
     }
 }

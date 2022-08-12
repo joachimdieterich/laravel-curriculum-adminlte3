@@ -18,9 +18,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
 * )
-*/
-
-/**
+*
 * @OA\Post(
 *      path="/v1/organizations",
 *      operationId="createOrganization",
@@ -110,9 +108,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       @OA\Response(response=400, description="Bad request"),
 *
 * )
-*/
-
-/**
+*
 * @OA\Put(
 *      path="/v1/organizations/{organization}",
 *      operationId="updateOrganization",
@@ -210,9 +206,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       @OA\Response(response=400, description="Bad request"),
 *
 * )
-*/
-
-/**
+*
 * @OA\Get(
 *      path="/v1/organizations/{organization}",
 *      operationId="getOrganization",
@@ -241,9 +235,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       @OA\Response(response=400, description="Bad request"),
 *
 * )
-*/
-
-/**
+*
 * @OA\Get(
 *      path="/v1/organizations/{organization}/members",
 *      operationId="getOrganizationMembers",
@@ -272,9 +264,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       @OA\Response(response=400, description="Bad request"),
 *
 * )
-*/
-
-/**
+*
 * @OA\Delete(
 *      path="/v1/organizations/{organization}",
 *      operationId="deleteOrganization",
@@ -301,9 +291,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       @OA\Response(response=400, description="Bad request"),
 *
 * )
-*/
-
-/**
+*
 * @OA\Put(
 *      path="/v1/organizations/enrol",
 *      operationId="enrolToOrganization",
@@ -346,9 +334,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       @OA\Response(response=400, description="Bad request"),
 *
 * )
-*/
-
-/**
+*
 * @OA\Delete(
 *      path="/v1/organizations/expel",
 *      operationId="expelFromOrganization",

@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use Facades\Tests\Setup\OrganizationFactory;
-use Facades\Tests\Setup\UserFactory;
+use App\Organization;
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -23,10 +23,10 @@ class OrganizationEnrollmentTest extends TestCase
      */
     public function an_administrator_can_enrol_multiple_users_to_existing_organizations_with_an_existing_role()
     {
-        $organization1 = OrganizationFactory::create();
-        $organization2 = OrganizationFactory::create();
-        $user1 = UserFactory::create();
-        $user2 = UserFactory::create();
+        $organization1 = Organization::factory()->create();
+        $organization2 = Organization::factory()->create();
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
 
         $enrollment_list = [
             ['user_id' => $user1->id,
@@ -63,10 +63,10 @@ class OrganizationEnrollmentTest extends TestCase
     /** @test */
     public function an_administrator_can_expel_multiple_users_from_existing_organizations()
     {
-        $organization1 = OrganizationFactory::create();
-        $organization2 = OrganizationFactory::create();
-        $user1 = UserFactory::create();
-        $user2 = UserFactory::create();
+        $organization1 = Organization::factory()->create();
+        $organization2 = Organization::factory()->create();
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
 
         $enrollment_list = [
             ['user_id' => $user1->id,

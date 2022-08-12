@@ -25,10 +25,16 @@ class PeriodCRUDTest extends TestCase
              ->assertStatus(200);
 
         /* Use Datatables */
-        $periods = Period::first();
-        $this->get('periods/list')
-             ->assertStatus(200)
-             ->assertViewHasAll(compact($periods));
+        $periods = Period::select('title', 'begin', 'end')->get();
+        $list = $this->get('periods/list')
+            ->assertStatus(200);
+        $i = 0;
+        foreach ($periods as $period)
+        {
+            if ($i === 49) { break; } //test max 50 user (default page limit on datatables
+            $list->assertJsonFragment($period->toArray());
+            $i++;
+        }
     }
 
     /** @test
@@ -45,13 +51,12 @@ class PeriodCRUDTest extends TestCase
      */
     public function an_administrator_create_a_period()
     {
-        $attributes = factory('App\Period')->raw();
 
-        $this->post('periods', $attributes)
-                ->assertStatus(302);
+        $this->followingRedirects()
+            ->post('periods', $attributes = Period::factory()->raw())
+            ->assertStatus(200);
 
-        $group = Period::where('title', $attributes['title'])->first();
-        $this->assertDatabaseHas('periods', $group->toArray());
+        $this->assertDatabaseHas('periods', $attributes);
     }
 
     /** @test
@@ -59,12 +64,10 @@ class PeriodCRUDTest extends TestCase
      */
     public function an_administrator_delete_a_period()
     {
-        $this->post('periods', $period = factory('App\Period')->raw());
-        $id = Period::where('title', $period['title'])->first()->id;
-
+        $period = Period::factory()->create();
         $this->followingRedirects()
-                ->delete('periods/'.$id)
-                ->assertStatus(200);
+            ->delete('periods/'.$period->id)
+            ->assertStatus(200);
     }
 
     /** @test
@@ -72,12 +75,11 @@ class PeriodCRUDTest extends TestCase
      */
     public function an_administrator_see_details_of_an_period()
     {
-        $this->post('periods', $attributes = factory('App\Period')->raw());
-        $period = Period::where('title', $attributes['title'])->get()->first();
+        $period = Period::factory()->create();
 
-        $this->get(route('periods.show', $period->id))
+        $this->get("periods/{$period->id}")
              ->assertStatus(200)
-             ->assertViewHasAll(compact($period));
+             ->assertSee($period->toArray());
     }
 
     /** @test
@@ -85,14 +87,14 @@ class PeriodCRUDTest extends TestCase
      */
     public function an_administrator_update_a_period()
     {
-        $this->post('periods', $attributes = factory('App\Period')->raw());
+        $this->post('periods', $attributes = Period::factory()->raw());
         $period = Period::where('title', $attributes['title'])->first()->toArray();
 
         $this->assertDatabaseHas('periods', $period);
 
-        $this->patch('periods/'.$period['id'], $new_attributes = factory('App\Period')->raw());
-        $period_edit = Period::where('title', $new_attributes['title'])->first()->toArray();
+        $this->patch('periods/'.$period['id'], $new_attributes = Period::factory()->raw());
 
+        $period_edit = Period::where('title', $new_attributes['title'])->first()->toArray();
         $this->assertDatabaseHas('periods', $period_edit);
     }
 
@@ -101,11 +103,15 @@ class PeriodCRUDTest extends TestCase
      */
     public function an_administrator_get_edit_view_for_a_period()
     {
-        $this->post('periods', $period = factory('App\Period')->raw());
-        $period = Period::where('title', $period['title'])->first();
+        $this->post('periods', $attributes = Period::factory()->raw());
+        $period = Period::where('title', $attributes['title'])->first();
 
         $this->get("periods/{$period->id}/edit")
-             ->assertStatus(200)
-             ->assertSessionHasAll(compact($period));
+            ->assertStatus(200)
+            ->assertSee([
+                'title' => $period->title,
+                'begin' => $period->begin,
+                'end' => $period->end,
+            ]);
     }
 }

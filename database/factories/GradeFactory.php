@@ -1,18 +1,34 @@
 <?php
 
-/* @var $factory \Illuminate\Database\Eloquent\Factory */
+namespace Database\Factories;
 
 use App\Grade;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Grade::class, function (Faker $faker) {
-    $begin = $faker->numberBetween(1, 13);
-    $end = $faker->numberBetween($begin, 13);
+class GradeFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Grade::class;
 
-    return [
-        'title'                 => "Grade {$begin}/{$end}",
-        'external_begin'        => $begin,
-        'external_end'          => $end,
-        'organization_type_id'  => $faker->numberBetween(1, 10), //get random organization_type_id of seeded types
-    ];
-});
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        $begin = $this->faker->numberBetween(1, 13);
+        $end = $this->faker->numberBetween($begin, 13);
+
+        return [
+            'title' => "Grade {$begin}/{$end}",
+            'external_begin' => $begin,
+            'external_end' => $end,
+            'organization_type_id' => $this->faker->numberBetween(1, 10), //get random organization_type_id of seeded types
+        ];
+    }
+}

@@ -17,7 +17,7 @@ class UserTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $user = User::first();
-            $new_user = factory('App\User')->raw();
+            $new_user = User::factory()->raw();
             $browser->loginAs(User::find(1))
                     ->visit(new Pages\UserPage)
                     ->waitForText($user->username)
@@ -65,7 +65,7 @@ class UserTest extends DuskTestCase
     public function testEditUser()
     {
         $this->browse(function (Browser $admin) {
-            $new_user = factory('App\User')->raw();
+            $new_user = User::factory()->raw();
             $user = User::find(1)->get()->first();
             $admin->loginAs(User::find(1))
                     ->visit(new Pages\UserPage)
@@ -88,7 +88,7 @@ class UserTest extends DuskTestCase
     public function testDeleteUser()
     {
         $this->browse(function (Browser $admin) {
-            $new_user = factory('App\User')->raw();
+            $new_user = User::factory()->raw();
             $user = User::create($new_user);
 
             $admin->loginAs(User::find(1))

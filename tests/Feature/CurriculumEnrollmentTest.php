@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use Facades\Tests\Setup\CurriculumFactory;
-use Facades\Tests\Setup\GroupFactory;
+use App\Curriculum;
+use App\Group;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -23,10 +23,10 @@ class CurriculumEnrollmentTest extends TestCase
      */
     public function an_administrator_can_enrol_multiple_groups_to_existing_curricula()
     {
-        $group1 = GroupFactory::create();
-        $group2 = GroupFactory::create();
-        $curriculum1 = CurriculumFactory::create();
-        $curriculum2 = CurriculumFactory::create();
+        $group1 = Group::factory()->create();
+        $group2 = Group::factory()->create();
+        $curriculum1 = Curriculum::factory()->create();
+        $curriculum2 = Curriculum::factory()->create();
 
         $enrollment_list = [
             ['curriculum_id' => $curriculum1->id,
@@ -58,10 +58,10 @@ class CurriculumEnrollmentTest extends TestCase
     /** @test */
     public function an_administrator_can_expel_multiple_groups_to_existing_curricula()
     {
-        $group1 = GroupFactory::create();
-        $group2 = GroupFactory::create();
-        $curriculum1 = CurriculumFactory::create();
-        $curriculum2 = CurriculumFactory::create();
+        $group1 = Group::factory()->create();
+        $group2 = Group::factory()->create();
+        $curriculum1 = Curriculum::factory()->create();
+        $curriculum2 = Curriculum::factory()->create();
 
         $enrollment_list = [
             ['curriculum_id' => $curriculum1->id,

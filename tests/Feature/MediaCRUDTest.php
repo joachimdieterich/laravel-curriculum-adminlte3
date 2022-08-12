@@ -24,7 +24,7 @@ class MediaCRUDTest extends TestCase
         $media = Medium::all();
         $this->get('media')
              ->assertStatus(200)
-             ->assertViewHasAll(compact($media));
+             ->assertSee($media->toArray());
     }
 
     /** @test

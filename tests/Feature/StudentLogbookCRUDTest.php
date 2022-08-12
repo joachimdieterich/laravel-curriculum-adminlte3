@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Config;
 use App\Logbook;
-use Facades\Tests\Setup\LogbookFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -27,10 +26,16 @@ class StudentLogbookCRUDTest extends TestCase
             ->assertStatus(200);
 
         /* Use Datatables */
-        $logbook = Logbook::first();
-        $this->get('logbooks/list')
-            ->assertStatus(200)
-            ->assertViewHasAll(compact($logbook));
+        $logbooks = Logbook::select('id', 'title')->get();
+        $list = $this->get('logbooks/list')
+            ->assertStatus(200);
+        $i = 0;
+        foreach ($logbooks as $logbook)
+        {
+            if ($i === 49) { break; } //test max 50 entries (default page limit on datatables
+            $list->assertJsonFragment($logbook->toArray());
+            $i++;
+        }
     }
 
     /** @test
@@ -38,7 +43,8 @@ class StudentLogbookCRUDTest extends TestCase
      */
     public function a_student_create_an_Logbook()
     {
-        $this->post('logbooks', $attributes = factory('App\Logbook')->raw());
+        $this->followingRedirects()->post('logbooks', $attributes = Logbook::factory()->raw())
+            ->assertStatus(200);
 
         $this->assertDatabaseHas('logbooks', $attributes);
     }
@@ -60,7 +66,7 @@ class StudentLogbookCRUDTest extends TestCase
         $this->get('logbooks/create')
             ->assertStatus(200); //limit not reached
 
-        $logbook = LogbookFactory::create(); //create first logbook
+        $logbook = Logbook::factory()->create();
 
         Config::create([
             'key' => 'logbook_limiter',
@@ -79,7 +85,7 @@ class StudentLogbookCRUDTest extends TestCase
      */
     public function a_student_cannot_delete_a_Logbook()
     {
-        $logbook = LogbookFactory::create();
+        $logbook = Logbook::factory()->create();
 
         $this->followingRedirects()
             ->delete('logbooks/'.$logbook->id)
@@ -93,12 +99,12 @@ class StudentLogbookCRUDTest extends TestCase
      */
     public function a_student_see_details_of_a_Logbook()
     {
-        $logbook = LogbookFactory::create();
+        $logbook = Logbook::factory()->create();
 
         //dd($logbook->id);
         $this->get("logbooks/{$logbook->id}")
             ->assertStatus(200)
-            ->assertViewHasAll(compact($logbook));
+            ->assertSee($logbook->toArray());
     }
 
     /** @test
@@ -106,7 +112,7 @@ class StudentLogbookCRUDTest extends TestCase
      */
     public function a_student_cannot_see_details_of_a_foreign_Logbook()
     {
-        $logbook = LogbookFactory::create();
+        $logbook = Logbook::factory()->create();
 
         $logbook->owner_id = 1;
         $logbook->save();
@@ -119,11 +125,11 @@ class StudentLogbookCRUDTest extends TestCase
      */
     public function a_student_update_a_Logbook()
     {
-        $this->post('logbooks', $attributes = factory('App\Logbook')->raw());
+        $this->post('logbooks', $attributes = Logbook::factory()->raw());
 
         $this->assertDatabaseHas('logbooks', $attributes);
 
-        $this->patch('logbooks/'.Logbook::where('title', '=', $attributes['title'])->first()->id, $new_attributes = factory('App\Logbook')->raw());
+        $this->patch('logbooks/'.Logbook::where('title', '=', $attributes['title'])->first()->id, $new_attributes = Logbook::factory()->raw());
 
         $this->assertDatabaseHas('logbooks', $new_attributes);
     }
@@ -133,12 +139,12 @@ class StudentLogbookCRUDTest extends TestCase
      */
     public function a_student_cannot_update_a_foreign_Logbook()
     {
-        $logbook = LogbookFactory::create();
+        $logbook = Logbook::factory()->create();
 
         $logbook->owner_id = 1;
         $logbook->save();
 
-        $this->patch("logbooks/{$logbook->id}", $new_attributes = factory('App\Logbook')->raw())
+        $this->patch("logbooks/{$logbook->id}", Logbook::factory()->raw())
             ->assertStatus(403);
     }
 
@@ -147,11 +153,11 @@ class StudentLogbookCRUDTest extends TestCase
      */
     public function a_student_get_edit_view_for_a_Logbook()
     {
-        $logbook = LogbookFactory::create();
+        $logbook = Logbook::factory()->create();
 
         $this->get("logbooks/{$logbook->id}/edit")
             ->assertStatus(200)
-            ->assertSessionHasAll(compact($logbook));
+            ->assertSee($logbook->toArray());
     }
 
     /** @test
@@ -159,7 +165,7 @@ class StudentLogbookCRUDTest extends TestCase
      */
     public function a_student_cannot_get_edit_view_for_a_foreign_Logbook()
     {
-        $logbook = LogbookFactory::create();
+        $logbook = Logbook::factory()->create();
 
         $logbook->owner_id = 1;
         $logbook->save();

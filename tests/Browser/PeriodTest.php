@@ -18,7 +18,7 @@ class PeriodTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $period = Period::first();
-            $new_period = factory('App\Period')->raw();
+            $new_period = Period::factory()->raw();
             $browser->loginAs(User::find(1))
                     ->visit(new Pages\PeriodPage)
                     ->waitForText($period->title)
@@ -66,7 +66,7 @@ class PeriodTest extends DuskTestCase
     public function testEditPeriod()
     {
         $this->browse(function (Browser $admin) {
-            $new_period = factory('App\Period')->raw();
+            $new_period = Period::factory()->raw();
             $period = Period::create($new_period);
             $admin->loginAs(User::find(1))
                     ->visit(new Pages\PeriodPage)
@@ -89,7 +89,7 @@ class PeriodTest extends DuskTestCase
     public function testDeletePeriod()
     {
         $this->browse(function (Browser $admin) {
-            $new_period = factory('App\Period')->raw();
+            $new_period = Period::factory()->raw();
             $period = Period::create($new_period);
             $admin->loginAs(User::find(1))
                     ->visit(new Pages\PeriodPage)

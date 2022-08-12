@@ -5,8 +5,8 @@ namespace Tests\Feature;
 use App\OrganizationRoleUser;
 use App\Role;
 use App\User;
-use Facades\Tests\Setup\OrganizationFactory;
-use Facades\Tests\Setup\PeriodFactory;
+use App\Organization;
+use App\Period;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -27,8 +27,8 @@ class ManageUserTest extends TestCase
     {
         $role_admin_id = 1;
         $role_creator_id = 2;
-        $org1 = OrganizationFactory::create();
-        $org2 = OrganizationFactory::create();
+        $org1 = Organization::factory()->create();
+        $org2 = Organization::factory()->create();
 
         $this->post('/organizations/enrol', ['enrollment_list' => [
             ['user_id' => auth()->user()->id,
@@ -74,12 +74,12 @@ class ManageUserTest extends TestCase
     /** @test */
     public function every_user_has_a_role()
     {
-        $this->post('/roles', $role = factory('App\Role')->raw());
+        $this->post('/roles', $role = Role::factory()->raw());
         $role_id = Role::where('title', $role['title'])->first()->id;
 
-        $organization = OrganizationFactory::create();
+        $organization = Organization::factory()->create();
 
-        $user_to_enrol = factory('App\User')->create();
+        $user_to_enrol = User::factory()->create();
         OrganizationRoleUser::firstOrCreate([
             'organization_id' => $organization->id,
             'user_id'         => $user_to_enrol->id,
@@ -98,12 +98,12 @@ class ManageUserTest extends TestCase
     public function a_user_can_be_expelled_from_an_organization_by_the_admin()
     {
         $this->withoutExceptionHandling();
-        $this->post('/roles', $role = factory('App\Role')->raw());
+        $this->post('/roles', $role = Role::factory()->raw());
         $role_id = Role::where('title', $role['title'])->first()->id;
 
-        $organization = OrganizationFactory::create();
+        $organization = Organization::factory()->create();
 
-        $user_expel = factory(User::class)->create();
+        $user_expel = User::factory()->create();
         OrganizationRoleUser::firstOrCreate([
             'organization_id' => $organization->id,
             'user_id'         => $user_expel->id,
@@ -130,7 +130,7 @@ class ManageUserTest extends TestCase
     /** @test */
     public function an_admin_can_mass_update_user_passwords()
     {
-        $users = factory(User::class, 50)->create();
+        $users = User::factory(50)->create();
         $ids = $users->pluck('id')->toArray();
 
         $new_password = Hash::make('new_password');
@@ -147,7 +147,7 @@ class ManageUserTest extends TestCase
     /** @test */
     public function an_admin_can_mass_update_user_status()
     {
-        $users = factory(User::class, 50)->create();
+        $users = User::factory(50)->create();
         $ids = $users->pluck('id')->toArray();
 
         $this->patch('/users/massUpdate', $attributes = [
@@ -163,8 +163,8 @@ class ManageUserTest extends TestCase
     /** @test */
     public function a_user_can_update_its_current_organization_id()
     {
-        $org1 = OrganizationFactory::create();
-        $period = PeriodFactory::create();
+        $org1 = Organization::factory()->create();
+        $period = Period::factory()->create();
 
         $this->patch('users/setCurrentOrganization',
                 [
@@ -182,8 +182,8 @@ class ManageUserTest extends TestCase
     /** @test */
     public function a_user_can_update_its_current_period_id()
     {
-        $org1 = OrganizationFactory::create();
-        $period = PeriodFactory::create();
+        $org1 = Organization::factory()->create();
+        $period = Period::factory()->create();
 
         $this->patch('users/setCurrentPeriod',
                 [

@@ -16,7 +16,7 @@ class ApiCurriculumTest extends TestCase
     public function an_unauthenticated_client_can_not_get_curricula()
     {
         $this->get('/api/v1/curricula')->assertStatus(302);
-        $this->contains('login');
+        $this->stringContains('login');
     }
 
     /** @test
@@ -68,18 +68,7 @@ class ApiCurriculumTest extends TestCase
         ]);
         $this->get("/api/v1/curricula/1/metadataset?password={$config->value}")
             ->assertStatus(200);
-        $this->contains('deactivated: please use /v1/curricula/metadatasets?password={password}');
-    }
-
-    /** @test
-     * Use Route: GET, /api/v1/curricula/metadatasets?password={password}
-     */
-    public function an_authenticated_client_can_not_get_metadatasets_of_all_curricula_without_password()
-    {
-        $this->signInApiAdmin();
-
-        $this->get('/api/v1/curricula/metadatasets?password=wrongPassword')
-            ->assertStatus(420);
+        $this->stringContains('deactivated: please use /v1/curricula/metadatasets?password={password}');
     }
 
     /** @test
@@ -97,7 +86,7 @@ class ApiCurriculumTest extends TestCase
             'data_type' => 'string',
         ]);
         $this->get("/api/v1/curricula/metadatasets?password={$config->value}")
-            ->assertSee(Metadataset::find(1)->metadataset)
+            ->assertSee(json_decode(htmlspecialchars(Metadataset::find(1)->metadataset)))
             ->assertStatus(200);
     }
 }

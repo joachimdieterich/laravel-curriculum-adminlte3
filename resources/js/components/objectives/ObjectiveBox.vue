@@ -218,7 +218,9 @@
                 this.sortEvent()
             })
         },
-
+        mounted() {
+            MathJax.startup.defaultReady();
+        },
         beforeDestroy: function () {
             this.$root.$off('eventDelete');
             this.$root.$off('eventSort')

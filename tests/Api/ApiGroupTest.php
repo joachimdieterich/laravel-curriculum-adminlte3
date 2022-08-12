@@ -3,8 +3,7 @@
 namespace Tests\Api;
 
 use App\Group;
-use Facades\Tests\Setup\GroupFactory;
-use Facades\Tests\Setup\UserFactory;
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,7 +17,7 @@ class ApiGroupTest extends TestCase
     public function an_authenticated_client_can_not_get_groups()
     {
         $response = $this->get('/api/v1/groups')->assertStatus(302);
-        $this->contains('login');
+        $this->stringContains('login');
     }
 
     /** @test
@@ -39,8 +38,7 @@ class ApiGroupTest extends TestCase
     public function an_authenticated_client_can_create_a_group()
     {
         $this->signInApiAdmin();
-        //$this->withoutExceptionHandling();
-        $this->post('/api/v1/groups', $attributes = factory('App\Group')->raw());
+        $this->post('/api/v1/groups', $attributes = Group::factory()->raw());
 
         $this->assertDatabaseHas('groups', $attributes);
     }
@@ -64,7 +62,7 @@ class ApiGroupTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $new_group = $this->post('/api/v1/groups', $attributes = factory('App\Group')->raw());
+        $new_group = $this->post('/api/v1/groups', $attributes = Group::factory()->raw());
 
         $this->put("/api/v1/groups/{$new_group->getData()->id}",
                 $changed_attribute = ['title' => 'New Title']);
@@ -83,7 +81,7 @@ class ApiGroupTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $new_group = $this->post('/api/v1/groups', $attributes = factory('App\Group')->raw());
+        $new_group = $this->post('/api/v1/groups', $attributes = Group::factory()->raw());
 
         $this->delete("/api/v1/groups/{$new_group->getData()->id}");
 
@@ -97,10 +95,10 @@ class ApiGroupTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $group1 = GroupFactory::create();
-        $group2 = GroupFactory::create();
-        $user1 = UserFactory::create();
-        $user2 = UserFactory::create();
+        $group1 = Group::factory()->create();
+        $group2 = Group::factory()->create();
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
 
         $this->put('/api/v1/groups/enrol', $enrolment_1 = ['user_id' => $user1->id,
             'group_id' => $group1->id,
@@ -119,11 +117,11 @@ class ApiGroupTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $group1 = GroupFactory::create();
-        $user1 = UserFactory::create();
-        $user2 = UserFactory::create();
-        $user3 = UserFactory::create();
-        $user4 = UserFactory::create();
+        $group1 = Group::factory()->create();
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+        $user3 = User::factory()->create();
+        $user4 = User::factory()->create();
 
         $this->put('/api/v1/groups/enrol', $enrolment_1 = ['user_id' => $user1->id, 'group_id' => $group1->id]);
         $this->put('/api/v1/groups/enrol', $enrolment_2 = ['user_id' => $user2->id, 'group_id' => $group1->id]);
@@ -143,10 +141,10 @@ class ApiGroupTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $group1 = GroupFactory::create();
-        $group2 = GroupFactory::create();
-        $user1 = UserFactory::create();
-        $user2 = UserFactory::create();
+        $group1 = Group::factory()->create();
+        $group2 = Group::factory()->create();
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
 
         $this->put('/api/v1/groups/enrol', $enrolment_1 = ['user_id' => $user1->id, 'group_id' => $group1->id]);
         $this->assertDatabaseHas('group_user', $enrolment_1);

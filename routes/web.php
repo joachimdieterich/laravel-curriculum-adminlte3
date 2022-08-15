@@ -68,6 +68,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::patch('curricula/{curriculum}/editOwner', 'CurriculumController@storeOwner')->name('curricula.storeOwner');
     Route::patch('curricula/{curriculum}/resetOrderIds', 'CurriculumController@resetOrderIds')->name('curricula.resetOrderIds');
     Route::get('curricula/{curriculum}/print', 'CurriculumController@print')->name('curricula.print');
+    Route::put('curricula/{curriculum}/syncObjectiveTypesOrder', 'CurriculumController@syncObjectiveTypesOrder')->name('curricula.syncObjectiveTypesOrder');
     Route::resource('curricula', 'CurriculumController');
 
     /* enablingObjectives */

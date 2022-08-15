@@ -522,6 +522,19 @@ class CurriculumController extends Controller
         //  return app('App\Http\Controllers\PrintController')->print($html, $curriculum->title.'.pdf', 'save');
     }
 
+    public function syncObjectiveTypesOrder(Curriculum $curriculum)
+    {
+        abort_unless(auth()->user()->id === $curriculum->owner_id, 403);
+
+        $input = $this->validateRequest();
+
+        $curriculum->update([
+            'objective_type_order'                 => $input['objective_type_order']
+        ]);
+
+        return ['objective_type_order' => $curriculum->objective_type_order];
+    }
+
     protected function validateRequest()
     {
         return request()->validate([
@@ -540,6 +553,7 @@ class CurriculumController extends Controller
             'country_id'            => 'sometimes',
             'medium_id'             => 'sometimes',
             'owner_id'              => 'sometimes',
+            'objective_type_order'  => 'sometimes'
         ]);
     }
 

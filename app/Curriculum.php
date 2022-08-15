@@ -35,6 +35,10 @@ class Curriculum extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'objective_type_order' => 'array'
+    ];
+
     protected $dates = [
         'updated_at',
         'created_at',

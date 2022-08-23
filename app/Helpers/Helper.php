@@ -1,5 +1,44 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
+
+if (! function_exists('select2index'))
+{
+    function select2index($model, $field = 'title')
+    {
+        $input = request()->validate([
+            'page' => 'required|integer',
+            'term' => 'sometimes|string|max:255|nullable',
+        ]);
+        $page = $input['page'];
+        $resultCount = 25;
+
+        $offset = ($page - 1) * $resultCount;
+
+        $organizations = $model::where($field, 'LIKE',  '%' . $input['term']. '%')
+            ->orderBy($field)
+            ->skip($offset)
+            ->take($resultCount)
+            ->get(['id', DB::raw($field . ' as text')]);
+
+        $count = Count($model::where($field, 'LIKE',  '%' . $input['term']. '%')
+            ->orderBy($field)
+            ->get(['id', DB::raw($field . ' as text')]));
+        $endCount = $offset + $resultCount;
+        $morePages = $count > $endCount;
+
+        $results = array(
+            "results" => $organizations,
+            "pagination" => array(
+                "more" => $morePages
+            )
+        );
+
+        return response()->json($results);
+    }
+}
+
+
 if (! function_exists('format_select_input')) {
 
     /**

@@ -4,6 +4,13 @@ use Illuminate\Support\Facades\DB;
 
 if (! function_exists('select2index'))
 {
+    /**
+     *
+     * helper function to paginate on select2 fields
+     * @param $model
+     * @param string $field
+     * @return \Illuminate\Http\JsonResponse
+     */
     function select2index($model, $field = 'title')
     {
         $input = request()->validate([

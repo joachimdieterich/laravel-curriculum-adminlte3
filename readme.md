@@ -2,7 +2,7 @@
 [![Build Status](https://api.travis-ci.com/joachimdieterich/laravel-curriculum-adminlte3.svg?branch=master)](https://travis-ci.org/joachimdieterich/laravel-curriculum-adminlte3)
 [![StyleCI](https://github.styleci.io/repos/184726557/shield?branch=master)](https://github.styleci.io/repos/184726557)
  
-curriculum is a learning platform where teachers can create topic-based learning objectives. The resulting curricula can be linked with learning groups and be viewed by learning group members. This will give students, teachers (and parents) a good overview of the objectives to be achieved. Not yet reached objectives are shown in red - if a objective is achieved, it will be shown in green or orange (if achieved with help). So curriculum provides a good overview of the current learning status. More information at http://www.curriculumonline.de 
+curriculum is a learning platform where teachers can create topic-based learning objectives. The resulting curricula can be linked with learning groups and be viewed by learning group members. This will give students, teachers (and parents) a good overview of the objectives to be achieved. Not yet reached objectives are shown in red - if a objective is achieved, it will be shown in green or orange (if achieved with help). So curriculum provides a good overview of the current learning status. More information at https://rlp.curriculumonline.de/features 
 
 ## Installation
 

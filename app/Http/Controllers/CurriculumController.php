@@ -14,6 +14,7 @@ use App\State;
 use App\Subject;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\DataTables;
 
@@ -26,6 +27,10 @@ class CurriculumController extends Controller
      */
     public function index()
     {
+        if (request()->wantsJson() AND request()->has(['term', 'page'])) {
+            return $this->getEntriesForSelect2();
+        }
+        //todo: check if used anymore
         if (request()->wantsJson()) {
             return ['curricula' => auth()->user()->curricula(['curricula.*'])]; //no gate! every user should get his enrolled curricula
         }
@@ -608,5 +613,35 @@ class CurriculumController extends Controller
         }
 
         return $curriculum_types;
+    }
+
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    private function getEntriesForSelect2(): \Illuminate\Http\JsonResponse
+    {
+        if (is_admin())
+        {
+            return getEntriesForSelect2ByModel("App\Curriculum");
+        }
+        else if (is_schooladmin())
+        {
+            return getEntriesForSelect2ByCollection(
+                Curriculum::whereIn('owner_id', Organization::where('id', auth()->user()->current_organization_id)->first()->users()->pluck('id')->toArray())
+                ->orWhere('type_id', 1));
+        }
+        else
+        {
+            return getEntriesForSelect2ByCollection(
+                DB::table('curricula')
+                    ->distinct()
+                    ->select('curricula.id, curricula.title')
+                    ->leftjoin('curriculum_group', 'curricula.id', '=', 'curriculum_group.curriculum_id')
+                    ->leftjoin('group_user', 'group_user.group_id', '=', 'curriculum_group.group_id')
+                    ->where('group_user.user_id', auth()->user()->id)
+                    ->orWhere('curricula.owner_id', auth()->user()->id), //user should also see curricula which he/she owns
+                "curricula."
+            );
+        }
     }
 }

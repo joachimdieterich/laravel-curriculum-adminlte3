@@ -2,16 +2,16 @@
 
 use Illuminate\Support\Facades\DB;
 
-if (! function_exists('select2index'))
-{
+if (! function_exists('getEntriesForSelect2ByModel')) {
     /**
-     *
      * helper function to paginate on select2 fields
      * @param $model
-     * @param string $field
+     * @param string|array $field one or multiple fields to search term
+     * @param string $oderby
+     * @param string $text
      * @return \Illuminate\Http\JsonResponse
      */
-    function select2index($model, $field = 'title')
+    function getEntriesForSelect2ByModel($model, $field = 'title', $oderby = 'title', $text = 'title', $id = 'id')
     {
         $input = request()->validate([
             'page' => 'required|integer',
@@ -22,20 +22,83 @@ if (! function_exists('select2index'))
 
         $offset = ($page - 1) * $resultCount;
 
-        $organizations = $model::where($field, 'LIKE',  '%' . $input['term']. '%')
-            ->orderBy($field)
+        $term = $input['term'];
+
+        $entries = $model::where(
+            function ($query) use ($field, $term) {
+                foreach ((array)$field as $f) {
+                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                }
+            })
+            ->orderBy($oderby)
             ->skip($offset)
             ->take($resultCount)
-            ->get(['id', DB::raw($field . ' as text')]);
+            ->get([$id, DB::raw($text . ' as text')]);
 
-        $count = Count($model::where($field, 'LIKE',  '%' . $input['term']. '%')
-            ->orderBy($field)
-            ->get(['id', DB::raw($field . ' as text')]));
+        $count = Count($model::where(
+            function ($query) use ($field, $term) {
+                foreach ((array)$field as $f) {
+                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                }
+            })
+            ->orderBy($oderby)
+            ->get([$id, DB::raw($text . ' as text')]));
+        $endCount = $offset + $resultCount;
+        $morePages = $count > $endCount;
+        //dump($resultCount.' '.$count);
+        $results = array(
+            "results" => $entries,
+            "pagination" => array(
+                "more" => $morePages
+            )
+        );
+
+        return response()->json($results);
+    }
+}
+if (! function_exists('getEntriesForSelect2ByCollection'))
+{
+    function getEntriesForSelect2ByCollection($collection, $table = '', $field = 'title', $oderby = 'title', $text = 'title', $id = 'id' )
+    {
+        $input = request()->validate([
+            'page' => 'required|integer',
+            'term' => 'sometimes|string|max:255|nullable',
+        ]);
+        $page = $input['page'];
+        $resultCount = 25;
+
+        $offset = ($page - 1) * $resultCount;
+
+        $term = $input['term'];
+
+        $entries = $collection->where(
+            function($query) use ($field, $term)
+            {
+                foreach ((array) $field as $f) {
+                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                }
+            })
+            ->orderBy($oderby)
+            ->skip($offset)
+            ->take($resultCount)
+            ->select([$table.$id, DB::raw($text . ' as text')])
+            ->get();
+
+        $count = Count($collection->where(
+            function($query) use ($field, $term)
+            {
+                foreach ((array) $field as $f) {
+                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                }
+            })
+            ->orderBy($oderby)
+            ->select([$table.$id, DB::raw($text . ' as text')])
+            ->get());
         $endCount = $offset + $resultCount;
         $morePages = $count > $endCount;
 
         $results = array(
-            "results" => $organizations,
+            "results" => $entries,
             "pagination" => array(
                 "more" => $morePages
             )

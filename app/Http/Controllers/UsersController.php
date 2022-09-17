@@ -27,30 +27,25 @@ class UsersController extends Controller
     {
         abort_unless(\Gate::allows('user_access'), 403);
 
-        if (auth()->user()->role()->id == 1) {
-            if (request()->wantsJson()) {
+        if (request()->wantsJson() AND request()->has(['term', 'page'])) {
+            return  getEntriesForSelect2ByCollection(
+                Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users(),
+                'users.',
+                ['username', 'firstname', 'lastname'],
+                'lastname',
+                "CONCAT(firstname, ' ' ,lastname)",
+            );
+        }
+        // todo check: is the following condition used anymore
+        if (request()->wantsJson()) {
+            if (auth()->user()->role()->id == 1) {
                 return ['users' => json_encode(DB::table('users')->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get())];
-            }
-            $organizations = Organization::all();
-            $roles = Role::all();
-            $groups = Group::orderBy('organization_id', 'desc')->get();
-        } else {
-            if (request()->wantsJson()) {
+            } else {
                 return ['users' => json_encode(Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->get())];
             }
-
-            $organizations = auth()->user()->organizations()->get();
-            $roles = Role::where('id', '>', auth()->user()->role()->id)->get();
-            $groups = (auth()->user()->role()->id == 4) ? Group::where('organization_id', auth()->user()->current_organization_id)->get() : auth()->user()->groups()->orderBy('organization_id', 'desc')->get();
         }
-        $status_definitions = StatusDefinition::all();
 
-        return view('users.index')
-          //>with(compact('users'))
-          ->with(compact('organizations'))
-          ->with(compact('status_definitions'))
-          ->with(compact('groups'))
-          ->with(compact('roles'));
+        return view('users.index');
     }
 
     public function list()

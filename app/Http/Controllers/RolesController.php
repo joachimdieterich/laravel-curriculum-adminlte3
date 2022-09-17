@@ -15,6 +15,19 @@ class RolesController extends Controller
     {
         abort_unless(\Gate::allows('role_access'), 403);
 
+        if (request()->wantsJson() AND request()->has(['term', 'page'])) {
+            if (is_admin())
+            {
+                return  getEntriesForSelect2ByModel("App\Role");
+            }
+            else
+            {
+                return  getEntriesForSelect2ByCollection(
+                    Role::where('id', '>', auth()->user()->role()->id)
+                );
+            }
+
+        }
         return view('roles.index');
     }
 

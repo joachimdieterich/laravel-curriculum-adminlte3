@@ -150,4 +150,9 @@ class Organization extends Model
             'plan_id'
         )->where('subscribable_type', get_class($this));
     }
+
+    public function groups()
+    {
+        return $this->hasMany('App\Group');
+    }
 }

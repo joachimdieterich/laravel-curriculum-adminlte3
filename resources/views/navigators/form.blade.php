@@ -1,22 +1,23 @@
 @csrf
-@include ('forms.input.text', 
-                    ["model" => "navigator", 
-                    "field" => "title", 
-                    "placeholder" => "Title",  
-                    "required" => true, 
+@include ('forms.input.text',
+                    ["model" => "navigator",
+                    "field" => "title",
+                    "placeholder" => trans('global.navigator.fields.title'),
+                    "required" => true,
                     "value" => old('title', isset($navigator) ? $navigator->title : '')])
-                                                               
-@include ('forms.input.select', 
+
+@include ('forms.input.select',
                       ["model" => "organization",
+                      "url" => "/organizations",
+                      "placeholder" => trans('global.pleaseSelect'),
                       "show_label" => true,
-                      "field" => "organization_id",  
-                      "options"=> $organizations, 
-                      "value" => old('organization_id', isset($navigator->organization_id) ? $navigator->organization_id : '') ])                                                          
+                      "field" => "organization_id",
+                      "value" => old('organization_id', isset($navigator->organization_id) ? $navigator->organization_id : '') ])
 
 <div>
-    <input 
+    <input
         id="navigator-save"
-        class="btn btn-info" 
-        type="submit" 
+        class="btn btn-info"
+        type="submit"
         value="{{ $buttonText }}">
 </div>

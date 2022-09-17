@@ -176,6 +176,7 @@ import moment from 'moment';
                     //this.errors = error.response.data.errors;
                 }
                 this.tags = JSON.parse(this.eventsearchtag);
+                this.search = ''; //empty search field
             },
             lastPage() {
                 this.page = this.page - 1

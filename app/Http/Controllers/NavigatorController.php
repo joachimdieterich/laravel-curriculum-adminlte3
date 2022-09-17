@@ -18,10 +18,8 @@ class NavigatorController extends Controller
     {
         abort_unless(\Gate::allows('navigator_access'), 403);
 
-        $navigators = Navigator::all();
 
-        return view('navigators.index')
-          ->with(compact('navigators'));
+        return view('navigators.index');
     }
 
     public function list()
@@ -73,10 +71,7 @@ class NavigatorController extends Controller
     {
         abort_unless(\Gate::allows('navigator_create'), 403);
 
-        $organizations = auth()->user()->organizations()->get();
-
-        return view('navigators.create')
-                ->with(compact('organizations'));
+        return view('navigators.create');
     }
 
     /**
@@ -134,7 +129,7 @@ class NavigatorController extends Controller
     public function edit(Navigator $navigator)
     {
         abort_unless(\Gate::allows('navigator_edit'), 403);
-        $organizations = auth()->user()->organizations()->get();
+        $organizations = \App\Organization::where('id', $navigator->organization_id)->first()->get();
 
         return view('navigators.edit')
                 ->with(compact('navigator'))

@@ -21,8 +21,26 @@ class OrganizationsController extends Controller
      */
     public function index()
     {
-        abort_unless(\Gate::allows('organization_access'), 403);
 
+
+        // select2 request
+        if (request()->wantsJson() AND request()->has(['term', 'page'])) {
+            if (is_admin())
+            {
+                abort_unless(\Gate::allows('organization_access'), 403);
+                return  getEntriesForSelect2ByModel(
+                    "App\Organization"
+                );
+            }
+            else
+            {
+                return  getEntriesForSelect2ByCollection(
+                    auth()->user()->organizations(),
+                    'organizations.'
+                );
+            }
+        }
+        abort_unless(\Gate::allows('organization_access'), 403);
         return view('organizations.index');
     }
 

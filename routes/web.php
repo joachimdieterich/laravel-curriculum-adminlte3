@@ -40,7 +40,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('contactdetails', 'ContactDetailController');
 
-    Route::post('contents/{content}/destroy', 'ContentController@destroy')->name('contents.destroy'); //has to be post (has parameters)
+    Route::post('contents/{content}/destroy', 'ContentController@destroy'); //has to be post (has parameters)
     Route::resource('contents', 'ContentController');
     Route::patch('contentSubscriptions', 'ContentSubscriptionController@update');
     Route::patch('contentSubscriptions/reset', 'ContentSubscriptionController@reset');
@@ -165,7 +165,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('mediumSubscriptions', 'MediumSubscriptionController');
     Route::delete('media/massDestroy', 'MediumController@massDestroy')->name('media.massDestroy');
     Route::get('media/list', 'MediumController@list')->name('media.list');
-    Route::post('media/{medium}/destroy', 'MediumController@destroy')->name('media.destroy'); //has to be post (has parameters)
+    Route::post('media/{medium}/destroy', 'MediumController@destroy'); //has to be post (has parameters)
     Route::get('media/{medium}/thumb', 'MediumController@thumb')->name('media.thumb');
     Route::resource('media', 'MediumController');
 

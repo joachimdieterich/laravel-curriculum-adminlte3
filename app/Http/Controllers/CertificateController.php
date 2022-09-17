@@ -24,10 +24,7 @@ class CertificateController extends Controller
     {
         abort_unless(\Gate::allows('certificate_access'), 403);
 
-        //$certificates = Certificate::where('owner_id', auth()->user()->id)->get();
-
         return view('certificates.index');
-        //->with(compact('certificates'));
     }
 
     public function list()

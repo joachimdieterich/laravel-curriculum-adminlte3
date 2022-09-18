@@ -31,7 +31,9 @@ class UsersController extends Controller
         if (auth()->user()->role()->id == 1)
         {
             if (request()->wantsJson()){
-                return ['users' => json_encode(DB::table('users')->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get())];
+                return ['users' => json_encode(DB::table('users')
+                    ->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')
+                    ->get())];
             }
             $organizations = Organization::all();
             $roles = Role::all();

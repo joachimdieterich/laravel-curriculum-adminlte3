@@ -15,8 +15,8 @@ class UsersImport implements OnEachRow, WithHeadingRow
 
     public function onRow(Row $row)
     {
-
         $new_user =  new User([
+            'common_name' => $row['common_name'] ?? '',
             'username'  => $row['username'],
             'firstname' => $row['firstname'],
             'lastname'  => $row['lastname'],
@@ -40,7 +40,7 @@ class UsersImport implements OnEachRow, WithHeadingRow
         // enrol to group
         if (isset($row['group_id']))
         {
-            $new_user = $this->enrolToGroup($row['group_id'], $new_user->id, isset($row['role_id']) ? $row['role_id'] : 6);
+            $new_user = $this->enrolToGroup($row['group_id'], $new_user, isset($row['role_id']) ? $row['role_id'] : 6);
         }
 
         return $new_user;

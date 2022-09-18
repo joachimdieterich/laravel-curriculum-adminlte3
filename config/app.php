@@ -220,6 +220,8 @@ return [
          */
         Intervention\Image\ImageServiceProvider::class,
 
+        JamesDordoy\LaravelVueDatatable\Providers\LaravelVueDatatableServiceProvider::class,
+
     ],
 
     /*

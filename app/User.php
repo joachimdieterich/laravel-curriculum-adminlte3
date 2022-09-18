@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Domains\Exams\Models\Exam;
 use Carbon\Carbon;
 use Hash;
 use Illuminate\Support\Facades\Cache;
@@ -375,7 +376,6 @@ class User extends Authenticatable
                 ->where('user_id', '=', $this->id)
                 ->where('organization_id', $this->current_organization_id)
                 ->get();
-
     }
 
     public function users()
@@ -397,6 +397,16 @@ class User extends Authenticatable
             default: return false;
         }
 
+    }
+
+    public function exams()
+    {
+        return $this->belongsToMany(
+            Exam::class,
+            'exam_user',
+            'user_id',
+            'exam_id')
+            ->withPivot(['login_data', 'exam_completed_at']);
     }
 
 }

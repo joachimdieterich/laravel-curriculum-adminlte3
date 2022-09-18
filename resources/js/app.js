@@ -97,6 +97,7 @@ Vue.component('reference-objective-modal', require('./components/reference/Refer
 Vue.component('medium-modal', require('./components/media/MediumModal.vue').default);
 Vue.component('medium-create-modal', require('./components/media/MediumCreateModal.vue').default);
 Vue.component('medium-export-modal', require('./components/media/MediumExportModal.vue').default);
+Vue.component('meeting', require('./components/meeting/Meeting.vue').default);
 Vue.component('note-modal', require('./components/note/NoteModal.vue').default);
 Vue.component('notes', require('./components/note/Notes.vue').default);
 /*Vue.component('objective-medium-modal', require('./components/objectives/ObjectiveMediumModal.vue').default);*/

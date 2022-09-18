@@ -169,6 +169,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('media/{medium}/thumb', 'MediumController@thumb')->name('media.thumb');
     Route::resource('media', 'MediumController');
 
+    Route::get('meetings/list', 'MeetingController@list')->name('meetings.list');
+    Route::resource('meetings', 'MeetingController');
+
     /* objectiveTypes */
     Route::get('objectiveTypes/list', 'ObjectiveTypeController@list')->name('objectiveTypes.list');
     Route::resource('objectiveTypes', 'ObjectiveTypeController');

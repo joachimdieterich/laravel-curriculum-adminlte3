@@ -27,9 +27,12 @@ class UsersController extends Controller
     {
         abort_unless(\Gate::allows('user_access'), 403);
 
-        if (auth()->user()->role()->id == 1) {
-            if (request()->wantsJson()) {
-                return ['users' => json_encode(DB::table('users')->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get())];
+        if (auth()->user()->role()->id == 1)
+        {
+            if (request()->wantsJson()){
+                return ['users' => json_encode(DB::table('users')
+                    ->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')
+                    ->get())];
             }
             $organizations = Organization::all();
             $roles = Role::all();

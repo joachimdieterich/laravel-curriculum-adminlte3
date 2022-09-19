@@ -54,9 +54,22 @@ import VModal from 'vue-js-modal';
 
 Vue.use(VModal, {dynamic: true});
 
+import DataTable from 'laravel-vue-datatable';
+Vue.use(DataTable);
+
 import Sticky from 'vue-sticky-directive';
 
 Vue.use(Sticky);
+
+import Toast from 'vue-toastification';
+
+import 'vue-toastification/dist/index.css';
+
+Vue.use(Toast, {
+    transition: "Vue-Toastification__bounce",
+    maxToasts: 20,
+    newestOnTop: true
+});
 
 var filter = function (text, length, clamp) {
     clamp = clamp || '...';
@@ -114,6 +127,9 @@ Vue.component('sidebar', require('./components/uiElements/Sidebar.vue').default)
 Vue.component('move-terminal-objective-modal', require('./components/objectives/MoveTerminalObjectiveModal.vue').default);
 Vue.component('prerequisite-modal', require('./components/prerequisites/PrerequisiteObjectiveModal.vue').default);
 Vue.component('lms-modal', require('./../../app/Plugins/Lms/resources/js/components/Create.vue').default);
+
+
+Vue.component('tests-table', require('./components/tests/TestsTable.vue').default);
 
 Vue.prototype.$initTinyMCE = function (options) {
     tinymce.remove();

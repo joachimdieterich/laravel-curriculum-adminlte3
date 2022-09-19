@@ -265,6 +265,21 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('users/{user}/avatar', 'UsersController@getAvatar');
     Route::delete('users/{user}/forceDestroy', 'UsersController@forceDestroy')->name('users.forceDestroy');
     Route::resource('users', 'UsersController');
+
+    /* Tests */
+    Route::get('tests', 'Tests\TestController@index');
+    /* Exams */
+    Route::get('exams_subscribed', 'Tests\ExamController@authUserIndexExams')->name('exams.index');
+    Route::get('exams', 'Tests\ExamController@index');
+    Route::post('exams', 'Tests\ExamController@create');
+    Route::delete('exams/{exam}', 'Tests\ExamController@delete')->middleware('can:test_delete');
+    Route::get('exam/{exam}/edit', 'Tests\ExamController@show');
+    Route::get('exam/{exam}/list', 'Tests\ExamController@listExamUsers');
+    Route::get('exam/{exam}/users/list', 'Tests\ExamController@listAllUsers');
+    Route::post('exam/{exam}/status', 'Tests\ExamController@getExamStatus');
+    Route::post('exam/{exam}/users/enrol', 'Tests\ExamController@addUsers');
+    Route::delete('exam/{exam}/users/expel', 'Tests\ExamController@removeUsers');
+    Route::post('exam/{exam}/report', 'Tests\ExamController@getReport');
 });
 
 //if ((env('APP_ENV') == 'local')){

@@ -102,6 +102,7 @@
 <script>
     export default {
         props: {
+            subscribable_type: String,
             subscription: {},
             glossar: {},
         },

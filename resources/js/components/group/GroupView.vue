@@ -89,6 +89,21 @@
                     <i class="fa fa-clipboard-list"></i>
                 </a>
             </li>
+            <li v-permission="'test_access'"
+                class="nav-item"
+                @click="setLocalStorage('#group_'+group.id, '#group_tests_'+group.id);">
+                <a class="nav-link link-muted"
+                   :class="checkLocalStorage('#group_'+group.id, '#group_tests_'+group.id)"
+                   id="test-nav-tab"
+                   data-toggle="pill"
+                   href="#tests-tab"
+                   role="tab"
+                   aria-controls="tests-tab"
+                   aria-selected="true"
+                >
+                    <i class="fa-solid fa-ranking-star"></i>
+                </a>
+            </li>
             <li class="nav-item ">
                 <a v-if="group.glossar != null"
                    class="nav-link link-muted"
@@ -189,6 +204,16 @@
                  subscribable_type="App\Group"
                 :subscribable_id="group.id"></tasks>
             </div>
+            <div v-permission="'test_access'"
+                 class="tab-pane "
+                 :class="checkLocalStorage('#group_'+group.id, '#group_tests_'+group.id)"
+                 id="tests-tab"
+                 role="tab"
+                 aria-labelledby="tests-nav-tab">
+                <tests
+                    ref="Tests"
+                    :group_id="group.id"></tests>
+            </div>
             <div v-permission="'plan_access'"
                  class="tab-pane fade "
                  id="plan-tab"
@@ -234,10 +259,11 @@
     import Kanbans from "../kanban/Kanbans";
     import Tasks from "../tasks/Tasks";
     import Plans from "../plan/Plans";
+    import Tests from "../tests/Tests_Exams_View";
 
     export default {
         props: {
-            'group': Array,
+            'group': Object,
             'courses': Array,
         },
         data () {
@@ -276,7 +302,8 @@
             Logbooks,
             Kanbans,
             Tasks,
-            Plans
+            Plans,
+            Tests
         }
 
     }

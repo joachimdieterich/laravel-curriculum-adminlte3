@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Domains\Exams\Models\Exam;
 use Carbon\Carbon;
 use Cmgmyr\Messenger\Models\Thread;
 use Cmgmyr\Messenger\Traits\Messagable;
@@ -402,4 +403,15 @@ class User extends Authenticatable
             default: return false;
         }
     }
+
+    public function exams()
+    {
+        return $this->belongsToMany(
+            Exam::class,
+            'exam_user',
+            'user_id',
+            'exam_id')
+            ->withPivot(['login_data', 'exam_completed_at']);
+    }
+
 }

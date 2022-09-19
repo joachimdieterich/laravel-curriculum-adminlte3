@@ -318,18 +318,17 @@
                         <!-- /.timeline-label -->
                         <!-- timeline item -->
                         <div>
-                            <i class="fas fa-message bg-blue"></i>
+                            <i class="fa fa-user-graduate bg-orange"></i>
                             <div class="timeline-item">
-                                <span class="time"><i class="fas fa-clock"></i> 10:00</span>
-                                <h3 class="timeline-header"><a href="#">Datum 2</a></h3>
-
-                                <div class="timeline-body">
-                                    Test
+                                <span class="time"><i class="fas fa-clock"></i> 5 mins ago</span>
+                                <h3 class="timeline-header no-border">
+                                    <a href="#">Support(-strukturen und -kulturen) | Gestaltung des "Maschienenraums" der Schule</a>
+                                    <br>
+                                    Dr. Mandy Schiefner-Rohs
+                                </h3>
+                                <div class="timeline-footer">
+                                    <a class="btn btn-primary btn-sm">Read more</a>
                                 </div>
-                                <!--                        <div class="timeline-footer">
-                                                            <a class="btn btn-primary btn-sm">Read more</a>
-                                                            <a class="btn btn-danger btn-sm">Delete</a>
-                                                        </div>-->
                             </div>
                         </div>
                         <!-- END timeline item -->
@@ -344,7 +343,7 @@
                         <!-- /.timeline-label -->
                         <!-- timeline item -->
                         <div>
-                            <i class="fas fa-message bg-blue"></i>
+                            <i class="fas fa-comment bg-green"></i>
                             <div class="timeline-item">
                                 <span class="time"><i class="fas fa-clock"></i> 10:00</span>
                                 <h3 class="timeline-header"><a href="#">Raum 1</a></h3>
@@ -370,7 +369,7 @@
                         <!-- /.timeline-label -->
                         <!-- timeline item -->
                         <div>
-                            <i class="fas fa-message bg-blue"></i>
+                            <i class="fas fa-user bg-orange"></i>
                             <div class="timeline-item">
                                 <span class="time"><i class="fas fa-clock"></i> 10:00</span>
                                 <h3 class="timeline-header"><a href="#">Raum 2</a></h3>

@@ -1,7 +1,7 @@
 @extends((Auth::user()->id == env('GUEST_USER')) ? 'layouts.contentonly' : 'layouts.master')
 
 @section('title')
-    <small>{{ $kanban->title }} </small>
+    <color-picker-component id="{{ $kanban->id }}"></color-picker-component> <small>{{ $kanban->title }} </small>
     @can('kanban_create')
     <button class="btn btn-flat"
             onclick="app.__vue__.$modal.show('subscribe-modal',  {'modelId': {{ $kanban->id }}, 'modelUrl': 'kanban' });">
@@ -17,6 +17,7 @@
             <a href="/">{{ trans('global.home') }}</a>
         @endif
     </li>
+    <li class="breadcrumb-item"><a href="{{ route("kanbans.index") }}">{{ trans('global.kanban.title') }}</a></li>
     <li class="breadcrumb-item active">{{ trans('global.kanban.title_singular') }}</li>
     <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"
                                     aria-label="{{ trans('global.documentation') }}"><i
@@ -40,7 +41,7 @@
 
     <!-- Timelime example  -->
         <div id="kanban_board_wrapper"
-             style="position:absolute; width: calc(100vw - 270px);height: calc(100vh - 175px);overflow-x:auto;overflow-y: hidden;">
+             style="position:absolute; width: calc(100vw - 270px - 2rem);height: calc(100vh - 175px - 2rem);overflow-x:auto;overflow-y: hidden; padding: 2rem; background-color: {{ $kanban->background }}">
             <kanban-board
                 ref="kanbanBoard"
                 :kanban="{{ $kanban }}"></kanban-board>

@@ -12,7 +12,7 @@
                 :key="'header_'+status.id"
                 class=" no-border pr-2"
                 :style="'float:left;width:' + itemWidth + 'px;'">
-                <div class="card-header border-bottom-0 p-0"
+                <div class="card-header border-bottom-0 p-0 kanban-header"
                      :key="status.id">
                     <strong>{{ status.title }}</strong>
                     <div class="btn btn-flat py-0 pl-0 pull-left"
@@ -53,7 +53,7 @@
                     v-on:item-updated="handleItemUpdated"
                     v-on:item-canceled="closeForm"
                     style=" z-index: 2"></KanbanItemCreate>
-                <div style="position:absolute; top:35px; bottom:0;overflow-y:scroll; z-index: 1"
+                <div style="margin-top:15px; bottom:0;overflow-y:scroll; z-index: 1"
                      :style="'width:' + itemWidth + 'px;'">
                     <draggable
                         class="flex-1 overflow-hidden"
@@ -63,14 +63,14 @@
                         @end="handleItemMoved"
                         filter=".ignore">
                         <transition-group
-                            v-for="item in status.items"
-                            :key="'transition_group-'+item.id"
                             style="min-height:50px; display:flex;flex-direction: column;"
                             :style="'width:' + itemWidth + 'px;'"
                             class="pr-3"
                             tag="span">
                             <!-- Items -->
-                            <span :key="item.id">
+                            <span
+                                v-for="item in status.items"
+                                :key="'transition_group-'+item.id">
                                  <KanbanItem
 
                                      :ref="'kanbanItemId' + item.id"
@@ -87,7 +87,7 @@
             <div class=" no-border  pr-2"
                  style="float:left;"
                  :style="'width:' + itemWidth + 'px;'">
-                    <div class="card-header border-bottom-0 p-0">
+                    <div class="card-header kanban-header border-bottom-0 p-0">
                         <strong class="text-secondary btn px-1 py-0"  @click="openForm('status')">
                             <i class="fa fa-plus"></i> {{ trans('global.kanbanStatus.create') }}
                         </strong>

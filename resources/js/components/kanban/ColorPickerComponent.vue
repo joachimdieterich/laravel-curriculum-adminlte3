@@ -32,7 +32,7 @@ export default {
         },
         updateColor(value) {
             let that = this;
-            axios.post('/update_kanbans_color/', {
+            axios.post('/update_kanbans_color', {
                 'id': this.id,
                 'color': value
             }).then(

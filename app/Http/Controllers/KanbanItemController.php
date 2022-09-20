@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Kanban;
 use App\KanbanItem;
 use Illuminate\Http\Request;
+use Symfony\Component\VarDumper\VarDumper;
 
 class KanbanItemController extends Controller
 {
@@ -41,7 +42,7 @@ class KanbanItemController extends Controller
         $this->validate(request(), [
             'columns' => ['required', 'array'],
         ]);
-        $kanban_id = $request->columns[0]['id'];
+        $kanban_id = $request->columns[0]['kanban_id'];
         abort_unless((\Gate::allows('kanban_show') and Kanban::find($kanban_id)->isAccessible()), 403);
 
         foreach ($request->columns as $kanban_status) {

@@ -1,4 +1,5 @@
 @csrf
+<color-picker-input></color-picker-input>
 @include ('forms.input.text',
                     ["model" => "kanban",
                     "field" => "title",

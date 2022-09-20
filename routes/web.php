@@ -110,6 +110,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::put('kanbanStatuses/sync', 'KanbanStatusController@sync')->name('kanbanStatuses.sync');
     Route::resource('kanbanStatuses', 'KanbanStatusController');
 
+    Route::get('get_kanbans_color/{id}', 'KanbanController@getKanbansColor');
+    Route::post('update_kanbans_color', 'KanbanController@updateKanbansColor');
+
     Route::resource('kanbanSubscriptions', 'KanbanSubscriptionController');
 
     Route::resource('kanbanItemSubscriptions', 'KanbanItemSubscriptionController');

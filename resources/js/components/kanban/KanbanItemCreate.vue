@@ -1,6 +1,7 @@
 <template>
     <div class="card mr-2">
         <div class="card-body px-3 py-2">
+            <color-picker-input></color-picker-input>
             <div class="form-group">
                 <input
                     type="text"
@@ -118,7 +119,7 @@ export default {
             var method = this.method.toLowerCase();
             if (method === 'patch') {
                     axios.patch(this.requestUrl += '/' + this.form.id, this.form)
-                     .then(res => { // Tell the parent component we've added a new task and include it
+                     .then(res => { // Tell the parent component we've updated a task
                              this.$emit("item-updated", res.data.message);
 
                         })

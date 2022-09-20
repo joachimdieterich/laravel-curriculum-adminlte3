@@ -1,5 +1,15 @@
 {
-    "/js/app.js": "/js/app.js?id=125e0a780bd41f462bab",
-    "/css/app.css": "/css/app.css?id=711872ca88bb918525b9",
-    "/js/popper.js": "/js/popper.js?id=6078840110da48123bd6"
+    "/js/app.js": "/js/app.js?id=fbf6161ec7891081e3896e080a36905e",
+    "/js/popper.js": "/js/popper.js?id=9d5b3b5302032ddd30d6c90ab0e743c8",
+    "/css/app.css": "/css/app.css?id=6033078bfdeb6c1707dcb2282491a2d3",
+    "/js/datatables.net-buttons/buttons.colVis.js": "/js/datatables.net-buttons/buttons.colVis.js?id=efddbda2eb6fed3cf5c26894023413e1",
+    "/js/datatables.net-buttons/buttons.colVis.min.js": "/js/datatables.net-buttons/buttons.colVis.min.js?id=c35d2b4396cfa4998d1f2860fbe1320f",
+    "/js/datatables.net-buttons/buttons.flash.js": "/js/datatables.net-buttons/buttons.flash.js?id=70a2e86e64be743e07cc4d4729d69a6b",
+    "/js/datatables.net-buttons/buttons.flash.min.js": "/js/datatables.net-buttons/buttons.flash.min.js?id=973500681562794716c56abd5cd939d2",
+    "/js/datatables.net-buttons/buttons.html5.js": "/js/datatables.net-buttons/buttons.html5.js?id=f65bf5a5abff786e0b1d6646c0ee8222",
+    "/js/datatables.net-buttons/buttons.html5.min.js": "/js/datatables.net-buttons/buttons.html5.min.js?id=f38cad6acba67fe008700a1d113a3e3d",
+    "/js/datatables.net-buttons/buttons.print.js": "/js/datatables.net-buttons/buttons.print.js?id=dfae6fbd65fb4d363938fa028332336c",
+    "/js/datatables.net-buttons/buttons.print.min.js": "/js/datatables.net-buttons/buttons.print.min.js?id=4dd21c3a5392a5ff6d633e2f911d098a",
+    "/js/datatables.net-buttons/dataTables.buttons.js": "/js/datatables.net-buttons/dataTables.buttons.js?id=0b17bcf2203b5af95190bba62a27d7e6",
+    "/js/datatables.net-buttons/dataTables.buttons.min.js": "/js/datatables.net-buttons/dataTables.buttons.min.js?id=0cf038428421145fd5f0415a20e92cc0"
 }

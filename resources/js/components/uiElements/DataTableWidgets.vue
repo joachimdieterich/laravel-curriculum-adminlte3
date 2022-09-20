@@ -17,17 +17,17 @@
             <span v-else>
                 <a :href="modelUrl+'/'+entry.id"
                     class="text-decoration-none text-black">
-                    <div class="info-box elevation-1">
+                    <div class="info-box elevation-1" :style="'border-bottom: 5px solid ' + entry.color">
                         <span  class="info-box-icon bg-info elevation-1">
                             <i v-if="modelUrl == 'logbooks'" class="fa fa-book"></i>
                             <i v-if="modelUrl == 'kanbans'" class="fa fa-columns"></i>
-<!--                            <img :src="'media/'+entry.medium_id" class="img-rounded"/>-->
+    <!--                            <img :src="'media/'+entry.medium_id" class="img-rounded"/>-->
                         </span>
 
 
                         <div class="info-box-content">
                             <span class="pull-right" v-html="entry.action"></span>
-                            <span class="info-box-text"><strong>{{ entry.title }}</strong></span>
+                            <span class="info-box-text"><strong v-html="entry.title"></strong></span>
                             <span class="pt-2 " v-html="decodeHtml(entry.description)"></span>
                         </div>
                     </div>

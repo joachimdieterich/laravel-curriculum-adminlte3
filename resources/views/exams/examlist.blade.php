@@ -3,7 +3,7 @@
     data-widget="todo-list"
     style="display: flex;flex-direction: column;">
     @foreach ($exams as $exam)
-    <li class="bg-light" style="display: flex;column-gap: 5px;height: 94px; align-items: center;">
+    <li class="bg-light mb-5" style="display: flex;column-gap: 5px;align-items: center;">
         <!-- drag handle -->
         <!--        <span class="handle">
                     <i class="fas fa-ellipsis-v"></i>

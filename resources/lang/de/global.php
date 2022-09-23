@@ -959,8 +959,8 @@ return [
         ],
     ],
     'exam' => [
-        'title' => 'Prüfungen',
-        'title_singular' => 'Prüfung',
+        'title' => 'Lernstandsanalysen',
+        'title_singular' => 'Lernstandsanalyse',
         'create' => 'Prüfung erstellen',
         'edit' => 'Prüfung bearbeiten',
         'login_key' => 'Anmeldeschlüssel',

@@ -80,7 +80,7 @@ class ExamController extends Controller
 
         return DataTables::of($users)
             ->addColumn('check', '')
-            ->setRowId('id')
+            ->setRowId('user_id') // changed from id to user_id
             ->make(true);
     }
 

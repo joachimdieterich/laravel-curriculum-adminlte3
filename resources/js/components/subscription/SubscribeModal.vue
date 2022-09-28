@@ -9,7 +9,8 @@
         @before-open="beforeOpen"
         @opened="opened"
         @before-close="beforeClose"
-        style="z-index: 1100">
+        style="z-index: 1100"
+    >
         <div class="card"
              style="margin-bottom: 0px !important">
             <div class="card-header">
@@ -134,10 +135,10 @@
                     </div>
 
                     <!-- Token Tab -->
-                    <div v-if="shareWithOrganizations"
+                    <div v-if="shareWithToken"
                          class="tab-pane" id="token_subscription">
                         <div class="form-group pt-2">
-                            <input class="form-control mb-2" style="width: 100%;" placeholder="Name">
+                            <input v-model="nameToken" class="form-control mb-2" style="width: 100%;" placeholder="Name">
                             <date-picker v-model="endDateToken" style="width:100%;"
                                          placeholder="Ablaufdatum"></date-picker>
                         </div>
@@ -151,8 +152,7 @@
                             <label class="custom-control-label " for="canEditToken"></label>
                         </span>
                         <div>
-
-                        <button type="button"  class="btn btn-sm btn-outline-success pull-right mt-3">
+                        <button type="button" @click="createUserToken()" :disabled="endDateToken == null || nameToken == ''"  class="btn btn-sm btn-outline-success pull-right mt-3">
                             Speichern
                         </button>
                         </div>
@@ -199,7 +199,7 @@ export default {
             shareWithGroups: true,
             shareWithOrganizations: true,
             shareWithToken: true,
-
+            nameToken:''
         };
     },
     methods: {
@@ -209,7 +209,7 @@ export default {
             this.modelId = event.params.modelId;
             if (event.params.shareWithUsers == false) {
                 this.shareWithUsers = event.params.shareWithUsers;
-            }
+            }   /* CAN SOMEONE PLEASE EXPLAIN TO ME HOW CAN 'shareWithUsers','shareWithGroups' AND 'shareWithOrganizations' BE FALSE AND WHAT'S THE POINT OF THIS CODE HERE? */
             if (event.params.shareWithGroups == false) {
                 this.shareWithGroups = event.params.shareWithGroups;
             }
@@ -280,6 +280,14 @@ export default {
             this.shareWithUsers = true;
             this.shareWithGroups = true;
             this.shareWithOrganizations = true;
+        },
+        createUserToken(){
+            axios.post('/create_user_token',{
+                'kanban_id' : this.modelId,
+                'name': this.nameToken,
+                'date': this.endDateToken,
+                'can_change': this.canEditToken
+            })
         }
     },
     components: {

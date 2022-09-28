@@ -172,6 +172,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('meetings/list', 'MeetingController@list')->name('meetings.list');
     Route::resource('meetings', 'MeetingController');
 
+    Route::resource('meetingDates', 'MeetingDateController');
+
     /* objectiveTypes */
     Route::get('objectiveTypes/list', 'ObjectiveTypeController@list')->name('objectiveTypes.list');
     Route::resource('objectiveTypes', 'ObjectiveTypeController');

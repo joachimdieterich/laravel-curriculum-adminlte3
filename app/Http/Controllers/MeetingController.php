@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Meeting;
+use App\MeetingDate;
 use App\Plugins\Eventmanagement\EventmanagementPlugin;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use Carbon\Carbon;
 
 class MeetingController extends Controller
 {
@@ -84,9 +86,10 @@ class MeetingController extends Controller
         $events = $vm->plugins[env('EVENTMANAGEMENTPLUGIN')]->lesePlrlpVeranstaltungen(['search'=> $new_meeting['uid']]);
 
         $event = $events->lesePlrlpVeranstaltungen->data->key_0;
+         dump($event);
         $meeting = Meeting::Create([
             'uid' => $event->ARTIKEL_NR ?: $new_meeting['uid'],
-            'accesstoken' => '',
+            'access_token' => '',
             'title' => $event->ARTIKEL,
             'subtitle' => '',
             'description' => $event->BEMERKUNG,
@@ -101,8 +104,24 @@ class MeetingController extends Controller
 
             'owner_id' => auth()->user()->id,
         ]);
+
+        foreach ( (array) $event->termine as $index => $termin) {
+         /*   dump($termin);
+            dump($termin->DATUM.' '.$termin->BEGINN);*/
+            MeetingDate::Create([
+                'meeting_id' => $meeting->id,
+                'uid' => $termin->ARTIKEL_NR ?: $new_meeting['uid'],
+                'access_token' => '',
+                'title' => Carbon::createFromFormat('Y-m-d H:i:s', $termin->DATUM.' '.$termin->BEGINN.':00')->format('d.m.y').' '. $termin->ARTIKEL,
+                'address' => $termin->VO_ADRESSE,
+                'begin' => Carbon::createFromFormat('Y-m-d H:i:s', $termin->DATUM.' '.$termin->BEGINN.':00'),
+                'end' => Carbon::createFromFormat('Y-m-d H:i:s', $termin->DATUM.' '.$termin->ENDE.':00'),
+                'type' => $termin->VO_ORT,
+
+                'owner_id' => auth()->user()->id,
+            ]);
+        }
         return view('meetings.index');
-      //  dump($events);
 
     }
 

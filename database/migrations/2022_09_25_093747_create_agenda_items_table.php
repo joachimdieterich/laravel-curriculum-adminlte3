@@ -13,31 +13,33 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('meetings', function (Blueprint $table) {
+        Schema::create('agenda_items', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('uid');
-            $table->string('access_token')->nullable();
-            $table->string('title');
+            $table->unsignedbigInteger('agenda_id');
+            $table->unsignedbigInteger('agenda_item_type_id');
             $table->string('subtitle')->nullable();
             $table->text('description')->nullable();
-            $table->text('speakers')->nullable();
-            $table->text('info')->nullable();
+
+            $table->unsignedbigInteger('medium_id')->nullable();
+            $table->unsignedbigInteger('slide_id')->nullable();
+
+            $table->unsignedbigInteger('host_id');
+            $table->json('co_hosts')->nullable();
 
             $table->timestamp('begin')->nullable();
             $table->timestamp('end')->nullable();
-            $table->string('status')->nullable();
-            $table->string('category')->nullable();
-            $table->json('target_group')->nullable();
-            $table->string('url')->nullable();
-            $table->string('provider')->nullable();
-            $table->unsignedbigInteger('medium_id')->nullable();
+
+            $table->smallInteger('order_id')->default(0);
             $table->unsignedbigInteger('owner_id');
 
             $table->timestamps();
 
+            $table->foreign('agenda_id')->references('id')->on('agendas');
+            $table->foreign('agenda_item_type_id')->references('id')->on('agenda_item_types');
             $table->foreign('medium_id')->references('id')->on('media');
+            $table->foreign('slide_id')->references('id')->on('media');
+            $table->foreign('host_id')->references('id')->on('users');
             $table->foreign('owner_id')->references('id')->on('users');
-
         });
     }
 
@@ -48,6 +50,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('meetings');
+        Schema::dropIfExists('agenda_items');
     }
 };

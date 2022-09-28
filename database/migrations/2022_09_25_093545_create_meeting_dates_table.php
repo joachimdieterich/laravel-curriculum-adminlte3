@@ -13,31 +13,26 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('meetings', function (Blueprint $table) {
+        Schema::create('meeting_dates', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('uid');
+            $table->unsignedbigInteger('meeting_id');
             $table->string('access_token')->nullable();
             $table->string('title');
-            $table->string('subtitle')->nullable();
             $table->text('description')->nullable();
-            $table->text('speakers')->nullable();
-            $table->text('info')->nullable();
+            $table->string('address');
 
             $table->timestamp('begin')->nullable();
             $table->timestamp('end')->nullable();
-            $table->string('status')->nullable();
-            $table->string('category')->nullable();
-            $table->json('target_group')->nullable();
-            $table->string('url')->nullable();
-            $table->string('provider')->nullable();
-            $table->unsignedbigInteger('medium_id')->nullable();
+
+            $table->string('type');
+
             $table->unsignedbigInteger('owner_id');
 
             $table->timestamps();
 
-            $table->foreign('medium_id')->references('id')->on('media');
+            $table->foreign('meeting_id')->references('id')->on('meetings');
             $table->foreign('owner_id')->references('id')->on('users');
-
         });
     }
 
@@ -48,6 +43,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('meetings');
+        Schema::dropIfExists('meeting_dates');
     }
 };

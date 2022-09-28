@@ -6,7 +6,7 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Meeting extends Model
+class MeetingDate extends Model
 {
     use HasFactory;
 
@@ -30,16 +30,7 @@ class Meeting extends Model
 
     public function path()
     {
-        return "/meetings/{$this->id}";
-    }
-
-    public function medium()
-    {
-        return $this->hasOne('App\Medium', 'id', 'medium_id');
-    }
-    public function dates()
-    {
-          return $this->hasMany(MeetingDate::class, 'meeting_id');
+        return "/meetingDates/{$this->id}";
     }
 
     public function owner()

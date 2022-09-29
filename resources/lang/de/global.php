@@ -961,8 +961,8 @@ return [
     'exam' => [
         'title' => 'Lernstandsanalysen',
         'title_singular' => 'Lernstandsanalyse',
-        'create' => 'Prüfung erstellen',
-        'edit' => 'Prüfung bearbeiten',
+        'create' => 'Testung erstellen',
+        'edit' => 'Testung bearbeiten',
         'login_key' => 'Anmeldeschlüssel',
         'select_tests' => 'Tests auswählen',
         'fields' => [
@@ -977,7 +977,7 @@ return [
             'action' => 'Aktion'
         ],
         'add_remove_users' => [
-            'students_exam_title' => 'Studenten in der Prüfung',
+            'students_exam_title' => 'Studenten in der Testung',
             'users_group_title' => 'Benutzer in der Gruppe'
         ],
         'status_options' => [
@@ -986,15 +986,15 @@ return [
             'completed' => 'Fertiggestellt'
         ],
         'confirm_messages' => [
-            'confirm_delete' => 'Sind Sie sicher, dass Sie diese Prüfung löschen wollen?'
+            'confirm_delete' => 'Sind Sie sicher, dass Sie diese Testung löschen wollen?'
         ],
         'success_messages' => [
-            'exam_created' => 'Erfolgreich erstellte Prüfung',
-            'exam_removed' => 'Erfolgreich entfernte Prüfung'
+            'exam_created' => 'Erfolgreich erstellte Testung',
+            'exam_removed' => 'Erfolgreich entfernte Testung'
         ],
         'error_messages' => [
-            'remove_users' => 'Schüler mit Prüfung status Bearbeitet oder Fertiggestellt, können nicht entfernt werden.',
-            'remove_exam' => 'Diese Prüfung wurde von einem oder mehreren Schülern begonnen und kann nicht entfernt werden'
+            'remove_users' => 'Schüler mit Testung status Bearbeitet oder Fertiggestellt, können nicht entfernt werden.',
+            'remove_exam' => 'Diese Testung wurde von einem oder mehreren Schülern begonnen und kann nicht entfernt werden'
         ]
     ],
     'absences' => [

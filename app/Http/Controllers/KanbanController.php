@@ -29,7 +29,6 @@ class KanbanController extends Controller
         foreach (auth()->user()->currentGroups as $group) {
             $userCanSee = $userCanSee->merge($group->kanbans);
         }
-
         $organization = Organization::find(auth()->user()->current_organization_id)->kanbans;
         $userCanSee = $userCanSee->merge($organization);
 

@@ -993,7 +993,7 @@ return [
             'exam_removed' => 'Erfolgreich entfernte Testung'
         ],
         'error_messages' => [
-            'remove_users' => 'Schüler mit Testung status Bearbeitet oder Fertiggestellt, können nicht entfernt werden.',
+            'remove_users' => 'Schüler mit Status bearbeitet oder fertiggestellt, können nicht entfernt werden.',
             'remove_exam' => 'Diese Testung wurde von einem oder mehreren Schülern begonnen und kann nicht entfernt werden'
         ]
     ],

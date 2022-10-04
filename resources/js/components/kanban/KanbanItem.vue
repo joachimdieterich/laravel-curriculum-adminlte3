@@ -35,7 +35,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="pb-1">{{ item.title }}</div>
 
         </div>

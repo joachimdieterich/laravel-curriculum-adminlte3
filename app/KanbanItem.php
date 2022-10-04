@@ -18,6 +18,11 @@ class KanbanItem extends Model
         return $this->belongsTo('App\Kanban', 'kanban_id', 'id');
     }
 
+    public function comments()
+    {
+        return $this->hasMany(KanbanItemComment::class);
+    }
+
     public function subscribable()
     {
         return $this->morphTo();

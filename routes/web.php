@@ -20,6 +20,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/admin', 'AdminController@index')->name('admin.index');
 
+    Route::resource('kanbanItemComment', 'KanbanItemCommentController');
+
     Route::resource('absences', 'AbsenceController');
 
     Route::post('achievements', 'AchievementController@store');

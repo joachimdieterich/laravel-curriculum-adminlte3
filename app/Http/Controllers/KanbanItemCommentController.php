@@ -20,11 +20,9 @@ class KanbanItemCommentController extends Controller
         $comment->save();
     }
 
-    public function destroy($id)
+    public function destroy(KanbanItemComment $comment)
     {
         abort_unless(\Gate::allows('kanban_delete'), 403);
-
-        $comment = KanbanItemComment::where('id', $id)->first();
         $comment->delete();
     }
 

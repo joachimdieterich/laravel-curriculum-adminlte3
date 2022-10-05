@@ -249,7 +249,7 @@ class KanbanController extends Controller
         $kanbanStatus = KanbanStatus::where('kanban_id', $id)->with('kanban')->orderBy('order_id', 'ASC')->get();
 
         foreach ($kanbanStatus as $status) {
-            $kanbanItems = KanbanItem::where('kanban_status_id', $status->id)->with('owner')->orderBy('order_id')->get();
+            $kanbanItems = KanbanItem::where('kanban_status_id', $status->id)->with('owner')->orderBy('order_id', 'ASC')->get();
             foreach ($kanbanItems as $kanban) {
                 fputcsv($fp, [$kanban->title, $kanban->description, $status->title, $kanban->created_at, $kanban->owner->username]);
             }

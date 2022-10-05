@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Kanban;
+use App\KanbanItem;
+use App\KanbanStatus;
 use App\Medium;
 use App\Organization;
 use Illuminate\Http\Request;
@@ -226,6 +228,39 @@ class KanbanController extends Controller
             'hex' => '#DDE6E8',
             'rgba' => $this->transformHexColorToRgba('#F4F4F4')
         ];
+    }
+
+    public function exportKanbanCsv($id)
+    {
+
+        $h[] = [
+            'title',
+            'description',
+            'status',
+            'created at',
+            'owner'
+        ];
+        $fp = fopen('file.csv', 'w');
+
+        foreach ($h as $field) {
+            fputcsv($fp, $field);
+        }
+
+        $kanbanStatus = KanbanStatus::where('kanban_id', $id)->with('kanban')->orderBy('order_id', 'ASC')->get();
+
+        foreach ($kanbanStatus as $status) {
+            $kanbanItems = KanbanItem::where('kanban_status_id', $status->id)->with('owner')->orderBy('order_id')->get();
+            foreach ($kanbanItems as $kanban) {
+                fputcsv($fp, [$kanban->title, $kanban->description, $status->title, $kanban->created_at, $kanban->owner->username]);
+            }
+        }
+
+        fclose($fp);
+
+        $headers = array(
+            'Content-Type: text/csv',
+        );
+        return response()->download('file.csv', $kanbanStatus[0]->kanban->title . '.csv', $headers);
     }
 
     private function transformHexColorToRgba($color)

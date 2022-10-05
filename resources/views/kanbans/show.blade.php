@@ -8,6 +8,9 @@
         <i class="fa fa-share-alt text-secondary"></i>
     </button>
     @endcan
+        <a href="/export_csv/{{$kanban->id}}" class="btn p-0">
+            <i class="fa fa-file-csv"></i>
+        </a>
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item">

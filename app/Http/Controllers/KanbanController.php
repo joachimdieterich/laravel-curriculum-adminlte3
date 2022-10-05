@@ -260,7 +260,7 @@ class KanbanController extends Controller
         $headers = array(
             'Content-Type: text/csv',
         );
-        return response()->download('file.csv', $kanbanStatus[0]->kanban->title . '.csv', $headers);
+        return response()->download('file.csv', $kanbanStatus[0]->kanban->title . '.csv', $headers)->deleteFileAfterSend(true);
     }
 
     private function transformHexColorToRgba($color)

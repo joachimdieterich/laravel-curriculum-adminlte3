@@ -9,6 +9,12 @@ class KanbanItemComment extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'created_at' => 'datetime:d.m.Y H:i',
+    ];
+
+    protected $guarded = [];
+
     public function kanbanItem()
     {
         return $this->belongsTo(KanbanItem::class);

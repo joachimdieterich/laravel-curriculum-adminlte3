@@ -41,7 +41,7 @@
 
     <!-- Timelime example  -->
         <div id="kanban_board_wrapper"
-             style="position:absolute; width: calc(100vw - 270px - 2rem);height: calc(100vh - 175px - 2rem);overflow-x:auto;overflow-y: hidden; padding: 2rem; background-color: {{ $kanban->background }}">
+             style="position:absolute; width: calc(100vw - 270px - 2rem);height: calc(100vh - 175px - 2rem);overflow:auto; padding: 2rem; background-color: {{ $kanban->background }}">
             <kanban-board
                 ref="kanbanBoard"
                 :kanban="{{ $kanban }}"></kanban-board>

@@ -8,6 +8,10 @@ class KanbanItem extends Model
 {
     protected $guarded = [];
 
+    protected $casts = [
+        'created_at' => 'datetime:d.m.Y H:i',
+    ];
+
     public function path()
     {
         return route('kanban.show', $this->id);

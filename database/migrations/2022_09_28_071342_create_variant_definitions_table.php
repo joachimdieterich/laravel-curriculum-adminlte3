@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('variant_definitions', function (Blueprint $table) {
-            $table->unsignedBigInteger('id');
+            $table->bigIncrements('id');
             $table->string('title');
             $table->text('description')->nullable();
 

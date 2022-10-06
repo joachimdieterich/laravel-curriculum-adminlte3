@@ -51,7 +51,7 @@ class EnablingObjectiveController extends Controller
         abort_unless($enablingObjective->isAccessible(), 403);
 
         $objective = EnablingObjective::where('id', $enablingObjective->id)
-            ->with(['curriculum', 'curriculum.subject', 'terminalObjective.type',
+            ->with(['curriculum', 'curriculum.subject', 'terminalObjective.type', 'variants', 'variants.definition',
                 'referenceSubscriptions.siblings.referenceable', 'quoteSubscriptions.siblings.quotable',
                 'achievements' => function ($query) {
                     $query->where('user_id', auth()->user()->id)->with(['owner', 'user']);

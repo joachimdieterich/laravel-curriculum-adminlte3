@@ -13,6 +13,7 @@ use App\OrganizationType;
 use App\State;
 use App\Subject;
 use App\User;
+use App\VariantDefinition;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -538,6 +539,37 @@ class CurriculumController extends Controller
         ]);
 
         return ['objective_type_order' => $curriculum->objective_type_order];
+    }
+
+    function getVariantDefinitions(Curriculum $curriculum)
+    {
+        $definition = array();
+        foreach($curriculum->variants['order'] AS $variant_definitition)
+        {
+
+            if ($variant_definitition == 0)
+            {
+                $definition[] = array(
+                    'id'            => 0,
+                    'title'         => $curriculum->variants['title'] ?? '',
+                    'description'   => $curriculum->variants['description'] ?? '',
+                    'color'         => $curriculum->variants['color'] ?? $curriculum->color,
+                    'css_icon'      => $curriculum->variants['css_icon'] ?? '',
+                    'owner_id'      => $curriculum->variants['owner_id'] ?? $curriculum->owner_id,
+                    'created_at'    => $curriculum->variants['created_at'] ?? $curriculum->created_at,
+                    'updated_at'    => $curriculum->variants['updated_at'] ?? $curriculum->updated_at,
+                );
+            }
+            else
+            {
+                $definition[] = VariantDefinition::find($variant_definitition);
+            }
+
+        }
+        if (request()->wantsJson()) {
+            return ['definitions' => $definition];
+        }
+
     }
 
     protected function validateRequest()

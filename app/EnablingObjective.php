@@ -149,6 +149,11 @@ class EnablingObjective extends Model
         return $this->morphMany('App\Prerequisites', 'predecessor');
     }
 
+    public function variants()
+    {
+        return $this->morphMany('App\Variant', 'referenceable');
+    }
+
     public function isAccessible()
     {
         return $this->curriculum->isAccessible();

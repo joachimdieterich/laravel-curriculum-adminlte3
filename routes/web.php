@@ -54,6 +54,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('countries/{country}/states', 'CountryController@getStates')->name('countries.states');
 
     /* curricula */
+    Route::get('curricula/{curriculum}/variantDefinitions', 'CurriculumController@getVariantDefinitions');
     Route::post('curricula/enrol', 'CurriculumController@enrol')->name('curricula.enrol');
     Route::delete('curricula/expel', 'CurriculumController@expel')->name('curricula.expel');
     Route::get('curricula/list', 'CurriculumController@list');
@@ -265,6 +266,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('users/{user}/avatar', 'UsersController@getAvatar');
     Route::delete('users/{user}/forceDestroy', 'UsersController@forceDestroy')->name('users.forceDestroy');
     Route::resource('users', 'UsersController');
+
+    Route::resource('variantDefinitions', 'VariantDefinitionController');
+    Route::resource('variants', 'VariantController');
 
     /* Tests */
     Route::get('tests', 'Tests\TestController@index');

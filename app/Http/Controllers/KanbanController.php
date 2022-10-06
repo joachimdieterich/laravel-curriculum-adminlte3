@@ -230,9 +230,8 @@ class KanbanController extends Controller
         ];
     }
 
-    public function exportKanbanCsv($id)
+    public function exportKanbanCsv(Kanban $kanban)
     {
-
         $h[] = [
             'title',
             'description',
@@ -246,12 +245,9 @@ class KanbanController extends Controller
             fputcsv($fp, $field);
         }
 
-        $kanbanStatus = KanbanStatus::where('kanban_id', $id)->with('kanban')->orderBy('order_id', 'ASC')->get();
-
-        foreach ($kanbanStatus as $status) {
-            $kanbanItems = KanbanItem::where('kanban_status_id', $status->id)->with('owner')->orderBy('order_id', 'ASC')->get();
-            foreach ($kanbanItems as $kanban) {
-                fputcsv($fp, [$kanban->title, $kanban->description, $status->title, $kanban->created_at, $kanban->owner->username]);
+        foreach ($kanban->statuses as $status) {
+            foreach ($status->items as $k) {
+                fputcsv($fp, [$k->title, $k->description, $status->title, $k->created_at, $k->owner->username]);
             }
         }
 
@@ -260,7 +256,7 @@ class KanbanController extends Controller
         $headers = array(
             'Content-Type: text/csv',
         );
-        return response()->download('file.csv', $kanbanStatus[0]->kanban->title . '.csv', $headers)->deleteFileAfterSend(true);
+        return response()->download('file.csv', $kanban->title . '.csv', $headers)->deleteFileAfterSend(true);
     }
 
     private function transformHexColorToRgba($color)

@@ -104,7 +104,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('groups', 'GroupsController');
 
     Route::get('kanbans/list', 'KanbanController@list');
-    Route::get('export_csv/{id}', 'KanbanController@exportKanbanCsv');
+    Route::get('export_csv/{kanban}', 'KanbanController@exportKanbanCsv');
     Route::resource('kanbans', 'KanbanController');
     Route::put('kanbanItems/sync', 'KanbanItemController@sync')->name('kanbanItems.sync');
     Route::resource('kanbanItems', 'KanbanItemController');

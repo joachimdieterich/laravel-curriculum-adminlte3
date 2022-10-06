@@ -259,6 +259,11 @@ class KanbanController extends Controller
         return response()->download($filename, $kanban->title . '.csv', $headers)->deleteFileAfterSend(true);
     }
 
+    public function exportKanbanPdf(Kanban $kanban){
+        $pdf = PDF::loadView('exports.kanban.pdf', ['kanban' => $kanban])->setPaper('a4', 'landscape');
+        return $pdf->download($kanban->title . '.pdf');
+    }
+
     private function transformHexColorToRgba($color)
     {
         list($r, $g, $b) = sscanf($color, "#%02x%02x%02x");

@@ -238,7 +238,8 @@ class KanbanController extends Controller
             'created at',
             'owner'
         ];
-        $fp = fopen('file.csv', 'w');
+        $filename = uniqid() . ".csv";
+        $fp = fopen($filename, 'w');
 
         foreach ($h as $field) {
             fputcsv($fp, $field);
@@ -255,12 +256,7 @@ class KanbanController extends Controller
         $headers = array(
             'Content-Type: text/csv',
         );
-        return response()->download('file.csv', $kanban->title . '.csv', $headers)->deleteFileAfterSend(true);
-    }
-
-    public function exportKanbanPdf(Kanban $kanban){
-        $pdf = PDF::loadView('exports.kanban.pdf', ['kanban' => $kanban])->setPaper('a4', 'landscape');
-        return $pdf->download($kanban->title . '.pdf');
+        return response()->download($filename, $kanban->title . '.csv', $headers)->deleteFileAfterSend(true);
     }
 
     private function transformHexColorToRgba($color)

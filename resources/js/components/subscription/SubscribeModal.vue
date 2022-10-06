@@ -137,24 +137,34 @@
                     <!-- Token Tab -->
                     <div v-if="shareWithToken"
                          class="tab-pane" id="token_subscription">
-                        <div class="form-group pt-2">
-                            <input v-model="nameToken" class="form-control mb-2" style="width: 100%;" placeholder="Name">
-                            <date-picker v-model="endDateToken" style="width:100%;"
-                                         placeholder="Ablaufdatum"></date-picker>
+                        <div class="form">
+                            <div class="form-group pt-2">
+                                <input v-model="nameToken" class="form-control mb-2" style="width: 100%;"
+                                       placeholder="Name">
+                                <date-picker v-model="endDateToken" style="width:100%;"
+                                             placeholder="Ablaufdatum"></date-picker>
+                            </div>
+                            <small>darf bearbeiten</small>
+                            <span class="pull-right custom-control custom-switch custom-switch-on-green">
+                                <input v-model="canEditToken"
+                                       type="checkbox"
+                                       id="canEditToken"
+                                       class="custom-control-input pt-1 "
+                                       @click="changeCanEditTokenValue(canEditToken)">
+                                <label class="custom-control-label " for="canEditToken"></label>
+                            </span>
+                            <div>
+                                <button type="button" @click="createUserToken()" :disabled="nameToken == ''"
+                                        class="btn btn-sm btn-outline-success pull-right mt-3">
+                                    Speichern
+                                </button>
+                            </div>
                         </div>
-                        <small>darf bearbeiten</small>
-                        <span class="pull-right custom-control custom-switch custom-switch-on-green">
-                <input v-model="canEditToken"
-                       type="checkbox"
-                       id="canEditToken"
-                       class="custom-control-input pt-1 "
-                       @click="changeCanEditTokenValue(canEditToken)">
-                            <label class="custom-control-label " for="canEditToken"></label>
-                        </span>
                         <div>
-                        <button type="button" @click="createUserToken()" :disabled="endDateToken == null || nameToken == ''"  class="btn btn-sm btn-outline-success pull-right mt-3">
-                            Speichern
-                        </button>
+                        <tokens
+                            v-if="typeof subscribers.subscriptions != 'undefined'"
+                            :modelUrl="modelUrl"
+                            :subscriptions="subscribers.tokens"/>
                         </div>
 
                     </div>
@@ -181,6 +191,7 @@
 
 <script>
 import subscribers from "./Subscribers";
+import tokens from "./Tokens";
 import DatePicker from 'vue2-datepicker';
 import 'vue2-datepicker/index.css';
 
@@ -198,8 +209,8 @@ export default {
             shareWithUsers: true,
             shareWithGroups: true,
             shareWithOrganizations: true,
-            shareWithToken: true,
-            nameToken:''
+            shareWithToken: false,
+            nameToken: ''
         };
     },
     methods: {
@@ -209,12 +220,15 @@ export default {
             this.modelId = event.params.modelId;
             if (event.params.shareWithUsers == false) {
                 this.shareWithUsers = event.params.shareWithUsers;
-            }   /* CAN SOMEONE PLEASE EXPLAIN TO ME HOW CAN 'shareWithUsers','shareWithGroups' AND 'shareWithOrganizations' BE FALSE AND WHAT'S THE POINT OF THIS CODE HERE? */
+            }
             if (event.params.shareWithGroups == false) {
                 this.shareWithGroups = event.params.shareWithGroups;
             }
             if (event.params.shareWithOrganizations == false) {
                 this.shareWithOrganizations = event.params.shareWithOrganizations;
+            }
+            if (event.params.shareWithToken == true) {
+                this.shareWithToken = event.params.shareWithToken;
             }
             this.loadSubscribers();
         },
@@ -281,17 +295,18 @@ export default {
             this.shareWithGroups = true;
             this.shareWithOrganizations = true;
         },
-        createUserToken(){
-            axios.post('/create_user_token',{
-                'kanban_id' : this.modelId,
+        createUserToken() {
+            axios.post('/' + this.modelUrl + '/token', {
+                'model_id': this.modelId,
                 'name': this.nameToken,
                 'date': this.endDateToken,
                 'can_change': this.canEditToken
-            })
+            }).then( () => this.loadSubscribers())
         }
     },
     components: {
         subscribers,
+        tokens,
         DatePicker
     }
 }

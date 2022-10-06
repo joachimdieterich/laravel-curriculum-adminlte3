@@ -29,7 +29,7 @@
     </div>
 @endcan
 
-<data-table-widgets model-url="kanbans"></data-table-widgets>
+<kanbans model-url="kanbans"></kanbans>
 @endsection
 @section('scripts')
 @parent

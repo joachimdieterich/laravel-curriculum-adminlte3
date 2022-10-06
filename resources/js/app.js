@@ -7,6 +7,7 @@
 
 require('./bootstrap');
 require('tinymce/tinymce');
+
 require('mathjax/es5/tex-chtml');
 
 require('datatables.net-select');
@@ -120,6 +121,7 @@ Vue.component('objective-progress-subscription-modal', require('./components/obj
 Vue.component('task-modal', require('./components/tasks/TaskModal.vue').default);
 Vue.component('task', require('./components/tasks/Task.vue').default);
 Vue.component('task-timeline', require('./components/tasks/Timeline.vue').default);
+Vue.component('kanbans', require('./components/kanban/Kanbans.vue').default);
 Vue.component('kanban-board', require('./components/kanban/KanbanBoard.vue').default);
 Vue.component('subscribe-modal', require('./components/subscription/SubscribeModal.vue').default);
 Vue.component('sidebar', require('./components/uiElements/Sidebar.vue').default);

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Kanban;
+use App\KanbanSubscription;
 use App\Medium;
 use App\Organization;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
 class KanbanController extends Controller
@@ -138,10 +140,13 @@ class KanbanController extends Controller
         }, 'statuses.items.subscriptions',
         ])->where('id', $kanban->id)->get()->first();
 
+        $may_edit = $kanban->isEditable();
+        $is_shared = Auth::user()->sharing_token !== null;
+
         LogController::set(get_class($this) . '@' . __FUNCTION__);
 
         return view('kanbans.show')
-            ->with(compact('kanban'));
+            ->with(compact('kanban','may_edit', 'is_shared'));
     }
 
     /**

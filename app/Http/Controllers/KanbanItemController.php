@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Kanban;
 use App\KanbanItem;
 use Illuminate\Http\Request;
-use Symfony\Component\VarDumper\VarDumper;
 
 class KanbanItemController extends Controller
 {
@@ -26,6 +25,7 @@ class KanbanItemController extends Controller
             'order_id'          => $input['order_id'],
             'kanban_id'         => $input['kanban_id'],
             'kanban_status_id'  => $input['kanban_status_id'],
+            'color'             => $input['color'],
             'owner_id'          => auth()->user()->id,
         ]);
 
@@ -120,6 +120,7 @@ class KanbanItemController extends Controller
             'order_id'          => $input['order_id'],
             'kanban_id'         => $input['kanban_id'],
             'kanban_status_id'  => $input['kanban_status_id'],
+            'color'             => $input['color'],
             'owner_id'          => auth()->user()->id,
         ]);
 
@@ -153,6 +154,7 @@ class KanbanItemController extends Controller
             'order_id' => 'sometimes|required|integer',
             'kanban_id' => 'sometimes|required|integer',
             'kanban_status_id' => 'sometimes|required|integer',
+            'color' => 'sometimes'
         ]);
     }
 

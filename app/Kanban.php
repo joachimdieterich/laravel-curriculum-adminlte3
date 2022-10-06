@@ -71,6 +71,19 @@ class Kanban extends Model
         }
     }
 
+    public function isEditable(){
+        $subscribtion = optional($this->userSubscriptions()->where('subscribable_id', auth()->user()->id)->first());
+        if (
+            $subscribtion->editable // user enrolled
+            or ($this->owner_id == auth()->user()->id)            // or owner
+            or is_admin() // or admin
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private function transformHexColorToRgba($color, $opacity = .7)
     {
         list($r, $g, $b) = sscanf($color, "#%02x%02x%02x");

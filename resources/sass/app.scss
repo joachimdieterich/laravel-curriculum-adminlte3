@@ -26,6 +26,7 @@
 @import 'text.scss';
 // Fonts - Open Sans
 @import "~open-sans-all/scss/open-sans";
+
 body {
     font-family: 'Open Sans', Arial, sans-serif !important;
     color: #333;
@@ -116,3 +117,4 @@ tr:hover .vuehover {
     padding: 0.8rem !important;
     border-radius: 6px !important;
 }
+

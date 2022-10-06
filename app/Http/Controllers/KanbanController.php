@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Kanban;
-use App\KanbanItem;
-use App\KanbanStatus;
 use App\Medium;
 use App\Organization;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -257,6 +256,11 @@ class KanbanController extends Controller
             'Content-Type: text/csv',
         );
         return response()->download('file.csv', $kanban->title . '.csv', $headers)->deleteFileAfterSend(true);
+    }
+
+    public function exportKanbanPdf(Kanban $kanban){
+        $pdf = PDF::loadView('exports.kanban.pdf', ['kanban' => $kanban])->setPaper('a4', 'landscape');
+        return $pdf->download($kanban->title . '.pdf');
     }
 
     private function transformHexColorToRgba($color)

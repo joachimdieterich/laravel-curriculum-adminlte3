@@ -3,14 +3,18 @@
 @section('title')
     <color-picker-component id="{{ $kanban->id }}"></color-picker-component> <small>{{ $kanban->title }} </small>
     @can('kanban_create')
-    <button class="btn btn-flat"
-            onclick="app.__vue__.$modal.show('subscribe-modal',  {'modelId': {{ $kanban->id }}, 'modelUrl': 'kanban' });">
-        <i class="fa fa-share-alt text-secondary"></i>
-    </button>
+        <button class="btn btn-flat"
+                onclick="app.__vue__.$modal.show('subscribe-modal',  {'modelId': {{ $kanban->id }}, 'modelUrl': 'kanban' });">
+            <i class="fa fa-share-alt text-secondary"></i>
+        </button>
     @endcan
-        <a href="/export_csv/{{$kanban->id}}" class="btn p-0">
-            <i class="fa fa-file-csv"></i>
-        </a>
+    <a href="/export_csv/{{$kanban->id}}" class="btn p-0">
+        <i class="fa fa-file-csv"></i>
+    </a>
+
+    <a href="/export_pdf/{{$kanban->id}}" class="btn p-0">
+        <i class="fa fa-file-pdf"></i>
+    </a>
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item">
@@ -40,9 +44,9 @@
                     </button>
                 </div>
             </div>
-    @endcan
+        @endcan
 
-    <!-- Timelime example  -->
+        <!-- Timelime example  -->
         <div id="kanban_board_wrapper"
              style="position:absolute; width: calc(100vw - 270px - 2rem);height: calc(100vh - 175px - 2rem);overflow-x:auto;overflow-y: hidden; padding: 2rem; background-color: {{ $kanban->background }}">
             <kanban-board
@@ -65,7 +69,7 @@
             if (localStorage.getItem('menu_toggle_class') === 'sidebar-collapse') {
                 $("#kanban_board_wrapper").width($("#kanban_board_wrapper").width() + 170);
             }
-    });
-</script>
+        });
+    </script>
 
 @endsection

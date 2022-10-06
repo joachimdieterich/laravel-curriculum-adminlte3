@@ -39750,6 +39750,10 @@ a.text-muted:hover {
  * Component: Box
  * --------------
  */
+.card {
+  border-width: 0;
+}
+
 .box-group .box {
   margin-bottom: 0px;
 }

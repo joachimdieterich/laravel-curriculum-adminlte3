@@ -1,13 +1,13 @@
 <template>
     <div class="card">
-        <div class="card-header px-3 py-2">
+        <div class="card-header px-3 py-2" :style="{ backgroundColor: item.color, color: textColor }">
             <div class="card-tools">
 
-                <div class="btn btn-flat py-0 px-2 "
+                <div v-if="editable" class="btn btn-flat py-0 px-2 "
                      style="background-color: transparent;"
                      data-toggle="dropdown"
                      aria-expanded="false">
-                    <i class="text-muted fas fa-ellipsis-v"></i>
+                    <i class="fas fa-ellipsis-v"></i>
                     <div class="dropdown-menu" x-placement="top-start">
                       <button class="dropdown-item text-secondary  py-1"
                               @click="edit()">
@@ -122,7 +122,8 @@ import avatar from "../uiElements/Avatar";
 export default {
   props: {
     'item': Object,
-    'width': Number
+    'width': Number,
+      'editable': true
   },
   data() {
     return {
@@ -132,6 +133,18 @@ export default {
         new_comment:''
     };
   },
+    computed:{
+        textColor: function(){
+          if(this.item.color == "") return
+          let hex = this.item.color.substring(1, 7);
+          let r = parseInt(hex.slice(0, 2), 16),
+              g = parseInt(hex.slice(2, 4), 16),
+              b = parseInt(hex.slice(4, 6), 16);
+
+          // Return light or dark class based on contrast calculation
+          return ((r * 0.299 + g * 0.587 + b * 0.114) > 186) ? '#333333' : '#FFFFFF';
+      }
+    },
   methods: {
     deleteItem() {
       axios.delete("/kanbanItems/" + this.item.id)

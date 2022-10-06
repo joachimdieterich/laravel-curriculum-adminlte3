@@ -1,23 +1,23 @@
 <div id="{{ $field }}_form_group" class="form-group {{ $errors->has( $field ) ? 'has-error' : '' }}">
     <label for="{{ $field }}">
         {{ trans('global.'.$model.'.fields.'.$field) }}
-        @if(isset($required)) 
-            * 
+        @if(isset($required))
+            *
         @endif
     </label>
     <textarea
-        id="{{ $field }}" 
-        name="{{ $field }}" 
+        id="{{ $field }}"
+        name="{{ $field }}"
         class="form-control description my-editor "
         rows="{{ $rows }}"
-        placeholder="{{ __( $placeholder ?? '') }}" 
-        @if(isset($required)) 
-         required 
+        placeholder="{{ __( $placeholder ?? '') }}"
+        @if(isset($required))
+         required
         @endif
         >
         {{ $value }}
     </textarea>
-    
+
     @if($errors->has($field))
         <p class="help-block">
             {{ $errors->first($field) }}
@@ -30,7 +30,7 @@
 
 @section('styles')
 @parent
-    <script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script>
+    <!--script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script-->
 @endsection
 @section('scripts')
 @parent

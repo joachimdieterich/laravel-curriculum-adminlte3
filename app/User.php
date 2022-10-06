@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Scopes\NoSharingUsers;
 use Carbon\Carbon;
 use Cmgmyr\Messenger\Models\Thread;
 use Cmgmyr\Messenger\Traits\Messagable;
@@ -66,6 +67,11 @@ class User extends Authenticatable
         'current_organization_id',
         'current_period_id',
     ];
+
+    protected static function booted()
+    {
+        //static::addGlobalScope(new NoSharingUsers());
+    }
 
     public function path()
     {
@@ -208,6 +214,11 @@ class User extends Authenticatable
             ->where('organization_id', $this->current_organization_id)
             ->orderBy('groups.id')
             ->withTimestamps();
+    }
+
+    public function kanbanSubscription()
+    {
+        return $this->morphMany('App\KanbanSubscription', 'subscribable');
     }
 
     public function kanbans()
@@ -392,5 +403,9 @@ class User extends Authenticatable
             break;
             default: return false;
         }
+    }
+
+    public function scopeNoSharing($query){
+        $query->whereNull('sharing_token');
     }
 }

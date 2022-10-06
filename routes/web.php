@@ -9,6 +9,8 @@ Route::get('/impressum', 'OpenController@impressum')->name('impressum');
 
 Route::get('/terms', 'OpenController@terms')->name('terms');
 
+Route::get('kanban/share/{token}', 'ShareTokenController@auth');
+
 Auth::routes(['register' => false]);
 
 //embeddable routes
@@ -111,6 +113,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('kanbanItems', 'KanbanItemController');
     Route::put('kanbanStatuses/sync', 'KanbanStatusController@sync')->name('kanbanStatuses.sync');
     Route::resource('kanbanStatuses', 'KanbanStatusController');
+    Route::post('kanban/token', 'ShareTokenController@create' );
 
     Route::get('get_kanbans_color/{id}', 'KanbanController@getKanbansColor');
     Route::post('update_kanbans_color', 'KanbanController@updateKanbansColor');

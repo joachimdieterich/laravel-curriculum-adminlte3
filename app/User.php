@@ -83,6 +83,11 @@ class User extends Authenticatable
         return "{$this->firstname} {$this->lastname}";
     }
 
+    public function comments()
+    {
+        return $this->hasMany(KanbanItemComment::class);
+    }
+
     public function absences()
     {
         return $this->hasMany('App\Absence', 'absent_user_id');

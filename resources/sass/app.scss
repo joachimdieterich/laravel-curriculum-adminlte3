@@ -118,3 +118,17 @@ tr:hover .vuehover {
     border-radius: 6px !important;
 }
 
+.comment-count{
+    position: absolute;
+    font-size: 8px !important;
+    border-radius: 100%;
+    height: 15px;
+    width: 15px;
+    text-align: center;
+    font-weight: bold;
+    background-color: red;
+    line-height: 15px;
+    color: white;
+    top: -5px;
+    left: 10px;
+}

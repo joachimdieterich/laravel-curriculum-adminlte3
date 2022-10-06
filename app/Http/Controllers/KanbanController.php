@@ -137,7 +137,7 @@ class KanbanController extends Controller
                 $query->where('subscribable_id', auth()->user()->id)
                     ->where('subscribable_type', 'App\User');
             }, 'mediaSubscriptions.medium'])->orderBy('order_id');
-        }, 'statuses.items.subscriptions',
+        }, 'statuses.items.subscriptions', 'statuses.items.comments','statuses.items.comments.user'
         ])->where('id', $kanban->id)->get()->first();
 
         $may_edit = $kanban->isEditable();

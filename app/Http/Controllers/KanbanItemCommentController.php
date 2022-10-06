@@ -9,7 +9,7 @@ class KanbanItemCommentController extends Controller
 {
     public function store(Request $request)
     {
-        abort_unless(\Gate::allows('kanban_create'), 403);
+        abort_unless(\Gate::allows('kanban_show'), 403);
 
         $new_comment = $this->validateRequest();
 

@@ -33,7 +33,7 @@ class KanbanItemController extends Controller
 
         // axios call?
         if (request()->wantsJson()) {
-            return ['message' => KanbanItem::where('id', $kanbanItem->id)->with(['mediaSubscriptions', 'media', 'owner', 'taskSubscription'])->get()->first()];
+            return ['message' => KanbanItem::where('id', $kanbanItem->id)->with(['mediaSubscriptions', 'media', 'owner', 'taskSubscription','comments'])->get()->first()];
         }
     }
 
@@ -70,7 +70,7 @@ class KanbanItemController extends Controller
                     $query->where('subscribable_id', auth()->user()->id)
                         ->where('subscribable_type', 'App\User');
                 }, 'mediaSubscriptions.medium'])->orderBy('order_id');
-            }, 'statuses.items.subscribable'])->where('id', $kanban_id)->get()->first()->statuses];
+            }, 'statuses.items.subscribable','statuses.items.comments','statuses.items.comments.user'])->where('id', $kanban_id)->get()->first()->statuses];
         }
     }
 

@@ -37,7 +37,7 @@
             </div>
             <div class="pb-1" style="line-height: 1">
                 {{ item.title }}<br/>
-                <span class="text-muted" style="font-size: .5rem">
+                <span class="" style="font-size: .5rem">
                     {{ item.created_at }}
                 </span>
             </div>
@@ -66,6 +66,7 @@
               <avatar class="pull-left contacts-list-img flex-fill"
                       data-toggle="tooltip"
                       :title="item.owner.firstname + ' ' + item.owner.lastname"
+                      :username="item.owner.username"
                       :firstname="item.owner.firstname"
                       :lastname="item.owner.lastname"
                       :size="25"
@@ -86,9 +87,10 @@
                              style="font-size: .5rem">
                             <avatar class="mr-2"
                                     data-toggle="tooltip"
-                                    :title="item.owner.username"
-                                    :firstname="item.owner.firstname"
-                                    :lastname="item.owner.lastname"
+                                    :title="comment.user.username"
+                                    :username="comment.user.username"
+                                    :firstname="comment.user.firstname"
+                                    :lastname="comment.user.lastname"
                                     :size="20"
                             ></avatar>
                         </div>

@@ -120,6 +120,14 @@
             'editable': true,
             'search': ''
         },
+        watch: {
+            statuses:{
+                deep: true,
+                handler(){
+                    console.log('The list of colours has changed!');
+                }
+            }
+        },
         data() {
             return {
                 statuses: this.kanban.statuses,

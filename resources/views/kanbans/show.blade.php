@@ -1,12 +1,19 @@
 @extends((Auth::user()->id == env('GUEST_USER')) || $is_shared ? 'layouts.contentonly' : 'layouts.master')
 
 @section('title')
-    <color-picker-component id="{{ $kanban->id }}"></color-picker-component> <small>{{ $kanban->title }} </small>
     @can('kanban_create')
-    <button class="btn btn-flat"
-            onclick="app.__vue__.$modal.show('subscribe-modal',  {'modelId': {{ $kanban->id }}, 'modelUrl': 'kanban','shareWithToken': true });">
-        <i class="fa fa-share-alt text-secondary"></i>
-    </button>
+        @if(!$is_shared)
+            <color-picker-component id="{{ $kanban->id }}"></color-picker-component>
+        @endif
+    @endcan
+    <small>{{ $kanban->title }} </small>
+    @can('kanban_create')
+        @if(!$is_shared)
+            <button class="btn btn-flat"
+                    onclick="app.__vue__.$modal.show('subscribe-modal',  {'modelId': {{ $kanban->id }}, 'modelUrl': 'kanban','shareWithToken': true });">
+                <i class="fa fa-share-alt text-secondary"></i>
+            </button>
+        @endif
     @endcan
 @endsection
 @section('breadcrumb')

@@ -411,7 +411,8 @@ class PermissionRoleTableSeeder extends Seeder
             $token_permission_list = [
                 'curriculum_show',
                 'kanban_show',
-                'kanban_access'
+                'kanban_access',
+                'kanban_create'
             ];
 
             return in_array($permission->title, $token_permission_list);

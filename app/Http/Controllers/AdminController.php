@@ -15,6 +15,7 @@ class AdminController extends Controller
     {
         abort_unless(is_admin(), 403);
 
+        //Todo: put exam stats in log-table
         $data =
             ['exam' => [
                 'all' => DB::table('exam_user')

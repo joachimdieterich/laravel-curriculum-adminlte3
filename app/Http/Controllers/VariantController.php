@@ -35,7 +35,23 @@ class VariantController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        abort_unless((\Gate::allows('objective_create') /*AND $this->parent->isAccessible()*/), 403);
+        $input = $this->validateRequest();
+        $variant = Variant::updateOrCreate([
+            'referenceable_type' => $input['referenceable_type'],
+            'referenceable_id' => $input['referenceable_id'],
+            'variant_definition_id' => $input['variant_definition_id'],
+
+        ], [
+            'title' => $input['title'],
+            'description' => $input['description'],
+            'owner_id' => auth()->user()->id,
+        ]);
+        $variant->save();
+
+        if (request()->wantsJson()) {
+            return ['variant' => $variant];
+        }
     }
 
     /**
@@ -57,7 +73,23 @@ class VariantController extends Controller
      */
     public function edit(Variant $variant)
     {
-        //
+        abort_unless((\Gate::allows('objective_create') /*AND $this->parent->isAccessible()*/), 403);
+        $input = $this->validateRequest();
+        $variant = Variant::updateOrCreate([
+            'referenceable_type' => $input['referenceable_type'],
+            'referenceable_id' => $input['referenceable_id'],
+            'variant_definition_id' => $input['variant_definition_id'],
+
+        ], [
+            'title' => $input['title'],
+            'description' => $input['description'],
+            'owner_id' => auth()->user()->id,
+        ]);
+        $variant->save();
+
+        if (request()->wantsJson()) {
+            return ['variant' => $variant];
+        }
     }
 
     /**
@@ -69,7 +101,25 @@ class VariantController extends Controller
      */
     public function update(Request $request, Variant $variant)
     {
-        //
+        abort_unless((\Gate::allows('objective_edit') /*AND $this->parent->isAccessible()*/), 403);
+
+        $input = $this->validateRequest();
+        $variant = Variant::updateOrCreate([
+            'id' => $input['id'],
+            'referenceable_type' => $input['referenceable_type'],
+            'referenceable_id' => $input['referenceable_id'],
+            'variant_definition_id' => $input['variant_definition_id'],
+
+        ], [
+            'title' => $input['title'],
+            'description' => $input['description'],
+            'owner_id' => auth()->user()->id,
+        ]);
+        $variant->save();
+
+        if (request()->wantsJson()) {
+            return ['variant' => $variant];
+        }
     }
 
     /**
@@ -81,5 +131,17 @@ class VariantController extends Controller
     public function destroy(Variant $variant)
     {
         //
+    }
+
+    protected function validateRequest()
+    {
+        return request()->validate([
+            'id' => 'sometimes',
+            'title' => 'sometimes|required',
+            'description' => 'sometimes',
+            'referenceable_type' => 'required',
+            'referenceable_id' => 'required',
+            'variant_definition_id' => 'required',
+        ]);
     }
 }

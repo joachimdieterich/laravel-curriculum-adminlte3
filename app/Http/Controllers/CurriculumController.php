@@ -182,6 +182,7 @@ class CurriculumController extends Controller
             'state_id'              => format_select_input($input['state_id']),
             'country_id'            => format_select_input($input['country_id']),
             'medium_id'             => $input['medium_id'],
+            'variants'             => $this->formatVariantsField($input['variants'], $input['variant_default_title'],$input['variant_default_title']),
             'owner_id'              => auth()->user()->id,
         ]);
 
@@ -379,6 +380,7 @@ class CurriculumController extends Controller
             'state_id'              => isset($input['state_id']) ? format_select_input($input['state_id']) : null,
             'country_id'            => format_select_input($input['country_id']),
             'medium_id'             => $input['medium_id'],
+            'variants'             => $this->formatVariantsField($input['variants'], $input['variant_default_title'],$input['variant_default_title']),
             'owner_id'              => auth()->user()->id,
         ]);
 
@@ -541,7 +543,7 @@ class CurriculumController extends Controller
         return ['objective_type_order' => $curriculum->objective_type_order];
     }
 
-    function getVariantDefinitions(Curriculum $curriculum)
+    public function getVariantDefinitions(Curriculum $curriculum)
     {
         $definition = array();
         foreach($curriculum->variants['order'] AS $variant_definitition)
@@ -569,7 +571,14 @@ class CurriculumController extends Controller
         if (request()->wantsJson()) {
             return ['definitions' => $definition];
         }
+    }
 
+    public function setVariantDefinitions(Curriculum $curriculum)
+    {
+        $input = $this->validateRequest();
+        DB::table('curricula')
+            ->where('id', $curriculum->id)
+            ->update(['variants->order' => $input['variants']]);
     }
 
     protected function validateRequest()
@@ -590,7 +599,10 @@ class CurriculumController extends Controller
             'country_id'            => 'sometimes',
             'medium_id'             => 'sometimes',
             'owner_id'              => 'sometimes',
-            'objective_type_order'  => 'sometimes'
+            'objective_type_order'  => 'sometimes',
+            'variants'  => 'sometimes',
+            'variant_default_title'  => 'sometimes',
+            'variant_default_description'  => 'sometimes',
         ]);
     }
 
@@ -675,5 +687,22 @@ class CurriculumController extends Controller
                 "curricula."
             );
         }
+    }
+
+    private function formatVariantsField($variant_definition_ids, $variant_default_title, $variant_default_description ){
+        if (isset ($variant_definition_ids))
+        {
+            array_unshift($variant_definition_ids, 0); // add default
+            return [
+                "order" => $variant_definition_ids,
+                "title" => $variant_default_title,
+                "description" => $variant_default_description,
+            ];
+        }
+        else
+        {
+            return null;
+        }
+
     }
 }

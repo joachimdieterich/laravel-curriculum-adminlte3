@@ -18,6 +18,8 @@
                     <span class="col-12">
                          <variants
                              :model="objective"
+                             :referenceable_type="model"
+                             :referenceable_id="objective.id"
                              :variant_order="variant_order"
                              field="title"
                          />
@@ -175,6 +177,7 @@
                         <variants
                             :model="objective"
                             :variant_order="variant_order"
+                            :showTitle=false
                             field="description"
                             css_size="col-12"
                             css_form=""

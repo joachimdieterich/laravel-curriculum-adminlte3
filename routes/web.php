@@ -55,6 +55,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     /* curricula */
     Route::get('curricula/{curriculum}/variantDefinitions', 'CurriculumController@getVariantDefinitions');
+    Route::put('curricula/{curriculum}/variantDefinitions', 'CurriculumController@setVariantDefinitions');
     Route::post('curricula/enrol', 'CurriculumController@enrol')->name('curricula.enrol');
     Route::delete('curricula/expel', 'CurriculumController@expel')->name('curricula.expel');
     Route::get('curricula/list', 'CurriculumController@list');

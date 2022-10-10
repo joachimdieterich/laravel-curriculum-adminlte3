@@ -1208,4 +1208,20 @@ return [
         'title_singular' => 'LMS',
         'add' => 'Add LMS-Object',
     ],
+    'variantDefinitions' => [
+        'title' => 'Variant Definitions',
+        'title_singular' => 'Variant Definition',
+        'create' => 'Create variant definition',
+        'edit' => 'Edit variant definition',
+        'delete' => 'Delete variant definition',
+        'delete_helper' => 'Should the variant definition be deleted?',
+        'fields' => [
+            'id' => 'ID',
+            'id_helper' => '',
+            'title' => 'Title',
+            'title_helper' => '',
+            'description' => 'Description',
+            'description_helper' => '',
+        ],
+    ],
 ];

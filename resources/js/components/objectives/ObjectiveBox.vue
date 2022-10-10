@@ -219,7 +219,10 @@
             })
         },
         mounted() {
-            MathJax.startup.defaultReady();
+            this.$nextTick(() => {
+                window.MathJax.startup.defaultReady();
+            })
+
         },
         beforeDestroy: function () {
             this.$root.$off('eventDelete');

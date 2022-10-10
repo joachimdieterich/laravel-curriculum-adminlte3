@@ -678,6 +678,10 @@ return [
             'date_helper' => '',
             'color' => 'Farbe',
             'color_helper' => '',
+            'variant_default_title' => 'Titel (Standard Variante)',
+            'variant_default_title_helper' => '',
+            'variant_default_description' => 'Beschreibung (Standard Variante)',
+            'variant_default_description_helper' => '',
         ],
     ],
     'curriculumtype' => [
@@ -1207,5 +1211,21 @@ return [
         'title' => 'Lernplattformen',
         'title_singular' => 'Lernplattform',
         'add' => 'Lernplattform-Baustein hinzufügen',
+    ],
+    'variantDefinitions' => [
+        'title' => 'Varianten (Definitionen)',
+        'title_singular' => 'Varianten (Definitionen)',
+        'create' => 'Variant Definition erstellen',
+        'edit' => 'Variant Definition bearbeiten',
+        'delete' => 'Variant Definition löschen',
+        'delete_helper' => 'Soll die Variant Definition gelöscht werden?',
+        'fields' => [
+            'id' => 'ID',
+            'id_helper' => '',
+            'title' => 'Titel',
+            'title_helper' => '',
+            'description' => 'Beschreibung',
+            'description_helper' => '',
+        ],
     ],
 ];

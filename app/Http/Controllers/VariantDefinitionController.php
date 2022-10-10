@@ -14,7 +14,12 @@ class VariantDefinitionController extends Controller
      */
     public function index()
     {
-        //
+        if (request()->wantsJson() AND request()->has(['term', 'page'])) {
+            return getEntriesForSelect2ByModel("App\VariantDefinition");
+        }
+        if (request()->wantsJson()) {
+            return ['definitions' => VariantDefinition::all()];
+        }//
     }
 
     /**
@@ -82,4 +87,6 @@ class VariantDefinitionController extends Controller
     {
         //
     }
+
+
 }

@@ -56,10 +56,16 @@
                             @endif
 
                             <option
-                                value="{{ $v->$o_id }}" {{ ( $v->$o_id == $value ) ? 'selected' : '' }}
-                            @if (isset($option_icon))
-                            data-icon="{{ $option_icon }}"
+                                value="{{ $v->$o_id }}"
+                                @if (isset($option_icon))
+                                    data-icon="{{ $option_icon }}"
                                 @endif
+                                @if(isset($multiple))
+                                    {{ in_array($v->$o_id, $value) ? 'selected' : '' }}
+                                @else
+                                    {{ ( $v->$o_id == $value ) ? 'selected' : '' }}
+                                @endif
+
                             >
                                 {{ (isset($option_label)) ? $v->$option_label :$v->title }}
                                 @if (isset($combine_labels) ? $combine_labels : false)
@@ -107,12 +113,24 @@
                             page: params.page || 1
                         }
                     },
-                    cache: true
+                    /*processResults: function(data) {
+                        let results = data.results;
+                        let options = {{json_encode($value)}}
+                        for (var i = 0; i < results.length; i++) {
+                            if (options.includes(results[i].id )) {
+                                results[i]["selected"] = "true";
+                            }
+                        }
+
+                        data.results = results;
+                        console.log(data);
+                        return { results: data.results  };
+                    },*/
+                    cache: true,
                 },
                 templateSelection: formatText,
                 templateResult: formatText,
             });
-
         });
     </script>
 @endsection

@@ -3,14 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Navigator;
-use App\NavigatorView;
 use App\NavigatorItem;
+use App\NavigatorView;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class NavigatorViewController extends Controller
 {
-
     /**
      * Show the form for creating a new resource.
      *
@@ -34,13 +33,13 @@ class NavigatorViewController extends Controller
         abort_unless(\Gate::allows('navigator_create'), 403);
         $new_navigator_item = $this->validateRequest();
 
-        $navigator_view= NavigatorView::Create([
+        $navigator_view = NavigatorView::Create([
             'title'         => $new_navigator_item['title'],
             'description'   => $new_navigator_item['description'],
-            'navigator_id'  => $new_navigator_item['navigator_id']
+            'navigator_id'  => $new_navigator_item['navigator_id'],
         ]);
 
-        return redirect()->route("navigator.view", ['navigator' => $new_navigator_item['navigator_id'], 'navigator_view' => $navigator_view->id]);
+        return redirect()->route('navigator.view', ['navigator' => $new_navigator_item['navigator_id'], 'navigator_view' => $navigator_view->id]);
     }
 
     /**
@@ -51,9 +50,8 @@ class NavigatorViewController extends Controller
      */
     public function show(Navigator $navigator, NavigatorView $navigator_view)
     {
-
         $navigators = Navigator::where('id', $navigator->id)->get()->first();
-        $views      = NavigatorView::where('id', $navigator_view->id)
+        $views = NavigatorView::where('id', $navigator_view->id)
                                     ->where('navigator_id', $navigator->id)
                                     ->with(['items'])
                                     ->get()->first();
@@ -76,6 +74,7 @@ class NavigatorViewController extends Controller
     public function edit(NavigatorView $navigatorView)
     {
         abort_unless(\Gate::allows('navigator_edit'), 403);
+
         return view('navigators.views.edit')
                     ->with(compact('navigatorView'));
     }
@@ -93,7 +92,7 @@ class NavigatorViewController extends Controller
 
         $navigatorView->update([
             'title' => $request['title'],
-            'description' => $request['description']
+            'description' => $request['description'],
         ]);
 
         return redirect($navigatorView->path());
@@ -110,8 +109,7 @@ class NavigatorViewController extends Controller
         abort_unless(\Gate::allows('navigator_delete'), 403);
         $navigatorItem = NavigatorItem::where('referenceable_type', 'App\NavigatorView')
                                       ->where('referenceable_id', $navigatorView->id)->first();
-        if ($navigatorItem != null)
-        {
+        if ($navigatorItem != null) {
             $navigatorItem->delete();
         }
         $navigator_id = $navigatorView->navigator_id;
@@ -122,18 +120,18 @@ class NavigatorViewController extends Controller
 
     /**
      * Generate breadcrumb
-     * @param NavigatorView $view
+     *
+     * @param  NavigatorView  $view
      * @return array
      */
     protected function breadcrumbs($view)
     {
-        $entries = array();
+        $entries = [];
 
         $first_view = NavigatorView::where('navigator_id', $view->navigator->id)->get()->first();
         $entries[] = ['href' => '/navigators/'.$view->navigator->id.'/'.$view->id, 'title' => $view->title];
         $current_view = $view;
-        while ($current_view->id != $first_view->id)
-        {
+        while ($current_view->id != $first_view->id) {
             $current_item = NavigatorItem::where('referenceable_type', 'App\NavigatorView')
                                          ->where('referenceable_id', $current_view->id)->get()->first();
             $current_view = NavigatorView::where('id', $current_item->navigator_view_id)
@@ -150,7 +148,7 @@ class NavigatorViewController extends Controller
         return request()->validate([
             'title'             => 'sometimes',
             'description'       => 'sometimes',
-            'navigator_id'      => 'sometimes'
+            'navigator_id'      => 'sometimes',
 
         ]);
     }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Subject;
 use Yajra\DataTables\DataTables;
 
@@ -21,7 +20,7 @@ class SubjectController extends Controller
         $subject = Subject::select([
             'id',
             'title',
-            'title_short'
+            'title_short',
         ])->get();
 
         $edit_gate = \Gate::allows('subject_edit');
@@ -29,19 +28,19 @@ class SubjectController extends Controller
 
         return DataTables::of($subject)
             ->addColumn('action', function ($subject) use ($edit_gate, $delete_gate) {
-                $actions  = '';
-                if ($edit_gate){
+                $actions = '';
+                if ($edit_gate) {
                     $actions .= '<a href="'.route('subjects.edit', $subject->id).'" '
-                        . 'id="edit-subject-'.$subject->id.'" '
-                        . 'class="btn">'
-                        . '<i class="fa fa-pencil-alt"></i>'
-                        . '</a>';
+                        .'id="edit-subject-'.$subject->id.'" '
+                        .'class="btn">'
+                        .'<i class="fa fa-pencil-alt"></i>'
+                        .'</a>';
                 }
-                if ($delete_gate){
+                if ($delete_gate) {
                     $actions .= '<button type="button" '
-                        . 'class="btn text-danger" '
-                        . 'onclick="destroyDataTableEntry(\'subjects\','.$subject->id.')">'
-                        . '<i class="fa fa-trash"></i></button>';
+                        .'class="btn text-danger" '
+                        .'onclick="destroyDataTableEntry(\'subjects\','.$subject->id.')">'
+                        .'<i class="fa fa-trash"></i></button>';
                 }
 
                 return $actions;
@@ -68,7 +67,7 @@ class SubjectController extends Controller
             'title'         => $new_subject['title'],
             'title_short'   => $new_subject['title_short'],
             'external_id'   => isset($new_subject['external_id']) ? $new_subject['external_id'] : 1,
-            'organization_type_id' => 1 // todo: is this used?
+            'organization_type_id' => 1, // todo: is this used?
 
         ]);
 
@@ -92,7 +91,7 @@ class SubjectController extends Controller
             'title'         => $new_subject['title'],
             'title_short'   => $new_subject['title_short'],
             'external_id'   => isset($new_subject['external_id']) ? $new_subject['external_id'] : 1,
-            'organization_type_id' => 1 // todo: is this used?
+            'organization_type_id' => 1, // todo: is this used?
         ]);
 
         return redirect()->route('subjects.index');
@@ -124,5 +123,4 @@ class SubjectController extends Controller
 
         ]);
     }
-
 }

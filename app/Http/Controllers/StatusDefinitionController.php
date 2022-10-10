@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\StatusDefinition;
-use Illuminate\Http\Request;
 
 class StatusDefinitionController extends Controller
 {
@@ -16,12 +15,12 @@ class StatusDefinitionController extends Controller
     {
         $status_definitions = StatusDefinition::all();
         // axios call?
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return [
-                'message' => $status_definitions
+                'message' => $status_definitions,
             ];
         }
+
         return $status_definitions;
     }
-
 }

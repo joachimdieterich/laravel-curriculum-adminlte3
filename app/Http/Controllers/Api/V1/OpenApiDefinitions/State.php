@@ -1,4 +1,5 @@
 <?php
+namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 
 /**
 * @OA\Get(
@@ -17,7 +18,6 @@
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
 * )
-*
 */
 
 /**
@@ -45,14 +45,13 @@
 *          @OA\JsonContent(ref="#/components/schemas/State"),
 *       ),
 *       @OA\Response(
-*          response=400, 
-*          description="Bad request", 
+*          response=400,
+*          description="Bad request",
 *       ),
 *       @OA\Response(
-*          response=404, 
-*          description="Bad request", 
+*          response=404,
+*          description="Bad request",
 *         @OA\JsonContent(),
 *       ),
 * )
-*
 */

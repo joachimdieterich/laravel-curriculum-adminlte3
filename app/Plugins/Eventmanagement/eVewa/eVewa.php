@@ -1,7 +1,6 @@
 <?php
-namespace App\Plugins\Eventmanagement\eVewa;
 
-use DonatelloZa\RakePlus\RakePlus;
+namespace App\Plugins\Eventmanagement\eVewa;
 
 use App\Plugins\Eventmanagement\EventmanagementPlugin;
 
@@ -13,50 +12,47 @@ use App\Plugins\Eventmanagement\EventmanagementPlugin;
 class eVewa extends EventmanagementPlugin
 {
     const PLUGINNAME = 'eVewa';
+
     private $user;
+
     private $password;
+
     private $url;
+
     private $sessionId;
 
     private $proxy = false;
+
     private $proxy_port = false;
 
     public function about()
     {
-        return "eVewa plugin";
+        return 'eVewa plugin';
     }
 
     public function __construct()
     {
-        $this->user      = env('EVEWA_API_USER', '');
-        $this->password  = env('EVEWA_API_PASSWORD', '');
-        $this->url       = env('EVEWA_API_URL', '');
+        $this->user = env('EVEWA_API_USER', '');
+        $this->password = env('EVEWA_API_PASSWORD', '');
+        $this->url = env('EVEWA_API_URL', '');
 
         $this->getSessionId();
 
-        $this->proxy     = env('EVEWA_PROXY', false);
-        $this->proxy     = env('EVEWA_PROXY_PORT', false);
-
+        $this->proxy = env('EVEWA_PROXY', false);
+        $this->proxy = env('EVEWA_PROXY_PORT', false);
     }
+
     /**
      * Gibt eine Liste an Veranstaltungen aus. Die Beschreibung der Parameter kann dem "definition"-Tag entnommen werden.
      * Dort befinden sich ebenfalls alle Lookup-Daten.
-     * @param array $params
+     *
+     * @param  array  $params
      * @return object
      */
     public function lesePlrlpVeranstaltungen($params)
     {
-       if (isset($params['propose']))
-       {
-            $rake = RakePlus::create(strip_tags($params['search']), 'de_DE', 3);
-            $phrase_scores = $rake->sort('asc')->get();
-            $search = explode(' ',trim($phrase_scores[0]))[0];
-       }
-       else
-       {
-          $search = $params['search'];
-       }
 
+        $search = $params['search'];
 
 //            $params = array(
 //                'method'=> 'lesePlrlpVeranstaltungen',
@@ -77,103 +73,106 @@ class eVewa extends EventmanagementPlugin
 //            );
         //dump($params) ;
 
-
-
         $params = array_replace_recursive( //replace defaults with given params
-             array(
-                'method'=> 'lesePlrlpVeranstaltungen',
-                'session_id' => (string) $this->sessionId,
-                'mandant'=> '',
-                'page'=> '',
-                'limit'=> '',
-                'order'=> '',
-                'search'=> '',
-                'abgeschlossene'=> '',
-                'gs_ort'=> '',
-                'gs_plz'=> '',
-                'veranstalter'=> '',
-                'von'=> '',
-                'bis'=> '',
-                'schulartentag'=> '',
-                'zielgruppentag'=> '',
-            ), $params);
+             [
+                 'method'=> 'lesePlrlpVeranstaltungen',
+                 'session_id' => (string) $this->sessionId,
+                 'mandant'=> '',
+                 'page'=> '',
+                 'limit'=> '',
+                 'order'=> '',
+                 'search'=> '',
+                 'abgeschlossene'=> '',
+                 'gs_ort'=> '',
+                 'gs_plz'=> '',
+                 'veranstalter'=> '',
+                 'von'=> '',
+                 'bis'=> '',
+                 'schulartentag'=> '',
+                 'zielgruppentag'=> '',
+             ], $params);
 //
 
-        $raw = $this->call ( $this->url, 'GET', http_build_query($params) );
+        $raw = $this->call($this->url, 'GET', http_build_query($params));
+
         return simplexml_load_string($raw);
     }
+
     /**
      * Gibt detailierte Daten einer Veranstaltung aus.
-     * @param type $params
+     *
+     * @param  type  $params
      * @return object
      */
     public function lesePlrlpVeranstaltungDetail($params)
     {
         $params = array_replace_recursive( //replace defaults with given params
-             array(
-                'method'=> 'lesePlrlpVeranstaltungDetail',
-                'session_id' => (string) $this->sessionId,
-                'mandant'=> '',
-                'artikelnr'=> '',
-            ), $params);
+             [
+                 'method'=> 'lesePlrlpVeranstaltungDetail',
+                 'session_id' => (string) $this->sessionId,
+                 'mandant'=> '',
+                 'artikelnr'=> '',
+             ], $params);
 
-        $raw = $this->call ( $this->url, 'GET', http_build_query($params) );
+        $raw = $this->call($this->url, 'GET', http_build_query($params));
+
         return simplexml_load_string($raw);
     }
 
-
     private function isLoggedIn()
     {
-        $postFields = 'method=isloggedin&session_id=' . $this->sessionId;
-        $raw        = $this->call ( $this->url, 'GET', $postFields );
+        $postFields = 'method=isloggedin&session_id='.$this->sessionId;
+        $raw = $this->call($this->url, 'GET', $postFields);
+
         return (simplexml_load_string($raw)->isloggedin->code == 200) ? true : false;
     }
 
     private function getSessionId()
     {
-        $postFields      = 'method=login&user=' . $this->user . '&pw=' . $this->password;
-        $raw             = $this->call ( $this->url, 'GET', $postFields );
-        $this->sessionId =  isset(simplexml_load_string($raw)->login)? simplexml_load_string($raw)->login->session_id : false;
-
+        $postFields = 'method=login&user='.$this->user.'&pw='.$this->password;
+        $raw = $this->call($this->url, 'GET', $postFields);
+        $this->sessionId = isset(simplexml_load_string($raw)->login) ? simplexml_load_string($raw)->login->session_id : false;
     }
 
-    private function call($url, $httpMethod = '', $postFields = array()) {
-        $ch = curl_init ();
-        curl_setopt ( $ch, CURLOPT_URL, $url );
-        curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1 );
-        curl_setopt ( $ch, CURLOPT_CONNECTTIMEOUT, 5);  //timeout in seconds
-        curl_setopt ( $ch, CURLOPT_TIMEOUT, 10); //timeout in seconds
+    private function call($url, $httpMethod = '', $postFields = [])
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);  //timeout in seconds
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10); //timeout in seconds
 
-        if ($this->proxy){
-            curl_setopt ( $ch, CURLOPT_PROXY, $this->proxy);
-            if ($this->proxy_port){
-                curl_setopt ( $ch, CURLOPT_PROXYPORT, $this->proxy_port);
+        if ($this->proxy) {
+            curl_setopt($ch, CURLOPT_PROXY, $this->proxy);
+            if ($this->proxy_port) {
+                curl_setopt($ch, CURLOPT_PROXYPORT, $this->proxy_port);
             }
         }
 
         switch ($httpMethod) {
-            case 'POST' :
-                    curl_setopt ( $ch, CURLOPT_POST, true );
+            case 'POST':
+                    curl_setopt($ch, CURLOPT_POST, true);
                     break;
-            default : break;
+            default: break;
         }
 
-        if (! empty ( $postFields )) {
-                curl_setopt ( $ch, CURLOPT_POSTFIELDS, $postFields );
+        if (! empty($postFields)) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
         }
 
-        $exec = curl_exec ( $ch );
+        $exec = curl_exec($ch);
 
         if ($exec === false) {
-                 error_log($url . ' ---> ' .  curl_error ( $ch ) .' ---> Error-Code:' .curl_errno($ch)); // for debugging
+            error_log($url.' ---> '.curl_error($ch).' ---> Error-Code:'.curl_errno($ch)); // for debugging
                 //throw new Exception ( curl_error ( $ch ) );
         }
 
-        $httpcode = curl_getinfo ( $ch, CURLINFO_HTTP_CODE );
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if ($httpcode != 200) {
-                //deal with it
+            //deal with it
         }
-        curl_close ( $ch );
+        curl_close($ch);
+
         return $exec;
     }
 }

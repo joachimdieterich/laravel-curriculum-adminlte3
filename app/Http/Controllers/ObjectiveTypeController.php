@@ -15,12 +15,12 @@ class ObjectiveTypeController extends Controller
      */
     public function index()
     {
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ObjectiveType::all()->toJson();
         }
         abort_unless(\Gate::allows('objectivetype_access'), 403);
-        return view('objectivetypes.index');
 
+        return view('objectivetypes.index');
     }
 
     public function list()
@@ -31,25 +31,24 @@ class ObjectiveTypeController extends Controller
             'title',
         ])->get();
 
-
         $edit_gate = \Gate::allows('objectivetype_edit');
         $delete_gate = \Gate::allows('objectivetype_delete');
 
         return DataTables::of($objectivetype)
             ->addColumn('action', function ($objectivetype) use ($edit_gate, $delete_gate) {
-                $actions  = '';
-                if ($edit_gate){
+                $actions = '';
+                if ($edit_gate) {
                     $actions .= '<a href="'.route('objectiveTypes.edit', $objectivetype->id).'" '
-                        . 'id="edit-objectivetype-'.$objectivetype->id.'" '
-                        . 'class="btn">'
-                        . '<i class="fa fa-pencil-alt"></i>'
-                        . '</a>';
+                        .'id="edit-objectivetype-'.$objectivetype->id.'" '
+                        .'class="btn">'
+                        .'<i class="fa fa-pencil-alt"></i>'
+                        .'</a>';
                 }
-                if ($delete_gate){
+                if ($delete_gate) {
                     $actions .= '<button type="button" '
-                        . 'class="btn text-danger" '
-                        . 'onclick="destroyDataTableEntry(\'objectiveTypes\','.$objectivetype->id.')">'
-                        . '<i class="fa fa-trash"></i></button>';
+                        .'class="btn text-danger" '
+                        .'onclick="destroyDataTableEntry(\'objectiveTypes\','.$objectivetype->id.')">'
+                        .'<i class="fa fa-trash"></i></button>';
                 }
 
                 return $actions;
@@ -84,7 +83,7 @@ class ObjectiveTypeController extends Controller
         $new_type = $this->validateRequest();
 
         ObjectiveType::create([
-            'title'         => $new_type['title']
+            'title'         => $new_type['title'],
         ]);
 
         return redirect()->route('objectiveTypes.index');

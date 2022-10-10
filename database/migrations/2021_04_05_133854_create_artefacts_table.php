@@ -14,7 +14,6 @@ class CreateArtefactsTable extends Migration
     public function up()
     {
         Schema::create('artefacts', function (Blueprint $table) {
-
             $table->unsignedbigInteger('medium_id');
             $table->string('subscribable_type');
             $table->unsignedbigInteger('subscribable_id');

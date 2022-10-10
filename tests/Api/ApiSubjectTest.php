@@ -2,12 +2,12 @@
 
 namespace Tests\Api;
 
-use Tests\TestCase;
 use App\Subject;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-class ApiSubjectTest extends TestCase {
-
+class ApiSubjectTest extends TestCase
+{
     use RefreshDatabase;
 
     /** @test */
@@ -22,7 +22,6 @@ class ApiSubjectTest extends TestCase {
      */
     public function an_authenticated_client_can_get_all_subjects()
     {
-
         $this->signInApiAdmin();
 
         $this->get('/api/v1/subjects')
@@ -41,5 +40,4 @@ class ApiSubjectTest extends TestCase {
                 ->assertStatus(200)
                 ->assertJson(Subject::find(59)->toArray());
     }
-
 }

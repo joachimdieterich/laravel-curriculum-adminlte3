@@ -18,7 +18,7 @@ class CreateRepositorySubscriptionsTable extends Migration
             $table->string('subscribable_type');
             $table->unsignedbigInteger('subscribable_id');
             $table->string('repository'); //eg 'edu-sharing'
-            $table->string('value',500); //eg 'edu-sharing'
+            $table->string('value', 500); //eg 'edu-sharing'
             $table->unsignedbigInteger('sharing_level_id');
             $table->boolean('visibility');
             $table->unsignedbigInteger('owner_id');

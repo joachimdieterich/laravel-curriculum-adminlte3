@@ -26,7 +26,7 @@ class AddUidToEnablingObjectives extends Migration
     public function down()
     {
         Schema::table('enabling_objectives', function (Blueprint $table) {
-            $table->dropColumn('ui');//
+            $table->dropColumn('ui'); //
         });
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddCurrentOrganizationToUsers extends Migration
 {
@@ -15,7 +15,7 @@ class AddCurrentOrganizationToUsers extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->unsignedbigInteger('current_organization_id')->nullable();
-            
+
             $table->foreign('current_organization_id')->references('id')->on('organizations');
         });
     }

@@ -15,15 +15,15 @@ class CreateConfigsTable extends Migration
     {
         Schema::create('configs', function (Blueprint $table) {
             $table->bigIncrements('id');
-            
+
             $table->string('key');
             $table->text('value');
-            
+
             $table->string('referenceable_type')->nullable();
             $table->unsignedbigInteger('referenceable_id')->nullable();
-            
+
             $table->string('data_type');
-            
+
             $table->timestamps();
         });
     }

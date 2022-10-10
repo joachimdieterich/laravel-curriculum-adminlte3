@@ -12,7 +12,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 
-
 class NavigatorItemController extends Controller
 {
     /**
@@ -35,9 +34,9 @@ class NavigatorItemController extends Controller
         abort_unless(\Gate::allows('navigator_create'), 403);
 
         $referenceable_types = $this->getReferenceableTypes();
-        $position            = $this->getPositions();
-        $css_classes         = $this->getCssClasses();
-        $visibility          = $this->getVisibility();
+        $position = $this->getPositions();
+        $css_classes = $this->getCssClasses();
+        $visibility = $this->getVisibility();
 
         $curricula = Curriculum::all();
         $navigator_id = request()->navigator_id;
@@ -70,39 +69,38 @@ class NavigatorItemController extends Controller
         $medium = new Medium();
         switch (format_select_input($new_navigator_item['referenceable_type'])) {
             case 'App\Content':         $content = new Content([
-                                                                'title' => $new_navigator_item['title'],
-                                                                'content' => $new_navigator_item['description'],
-                                                                'owner_id' => auth()->user()->id
-                                                             ]);
+                'title' => $new_navigator_item['title'],
+                'content' => $new_navigator_item['description'],
+                'owner_id' => auth()->user()->id,
+            ]);
                                         $content->save();
-                                        $title            = $new_navigator_item['title'];
-                                        $description      = Str::limit($new_navigator_item['description'], 200);
+                                        $title = $new_navigator_item['title'];
+                                        $description = Str::limit($new_navigator_item['description'], 200);
                                         $referenceable_id = $content->id;
                 break;
 
             case 'App\Curriculum':      $referenceable_id = format_select_input($new_navigator_item['referenceable_id']);
 
                                         $curriculum = Curriculum::find($referenceable_id);
-                                        $title            = $curriculum->title;
-                                        $description      = $curriculum->description;
+                                        $title = $curriculum->title;
+                                        $description = $curriculum->description;
                                         $new_navigator_item['medium_id'] = $curriculum->medium_id;  //todo how to update medium_id if curriculum->medium_id is changed
                 break;
             case 'App\NavigatorView':   $navigator_view = new NavigatorView([
-                                                                'title' => $new_navigator_item['title'],
-                                                                'description' => $new_navigator_item['description'],
-                                                                'navigator_id' => $navigator_id
-                                                             ]);
+                'title' => $new_navigator_item['title'],
+                'description' => $new_navigator_item['description'],
+                'navigator_id' => $navigator_id,
+            ]);
                                         $navigator_view->save();
 
-                                        $title            = $new_navigator_item['title'];
-                                        $description      = $new_navigator_item['description'];
+                                        $title = $new_navigator_item['title'];
+                                        $description = $new_navigator_item['description'];
                                         $referenceable_id = $navigator_view->id;
                 break;
-            case 'App\Medium':          $title            = $new_navigator_item['title'];
-                                        $description      = $new_navigator_item['description'];
-                                        $referenceable_id = $new_navigator_item['medium_id'] ;//$medium->getByFilemanagerPath($new_navigator_item['filepath'])->id;
+            case 'App\Medium':          $title = $new_navigator_item['title'];
+                                        $description = $new_navigator_item['description'];
+                                        $referenceable_id = $new_navigator_item['medium_id']; //$medium->getByFilemanagerPath($new_navigator_item['filepath'])->id;
                 break;
-
 
             default:
                 break;
@@ -116,14 +114,13 @@ class NavigatorItemController extends Controller
             'referenceable_id'   => $referenceable_id,
             'position'           => format_select_input($new_navigator_item['position']),
             'css_class'          => format_select_input($new_navigator_item['css_class']),
-            'visibility'         => format_select_input($new_navigator_item['visibility'])
+            'visibility'         => format_select_input($new_navigator_item['visibility']),
         ]);
 
         /* subscribe image */
         if (format_select_input($new_navigator_item['referenceable_type']) != 'App\Content'
-            AND
-            $new_navigator_item['medium_id'] != null)
-        {
+            and
+            $new_navigator_item['medium_id'] != null) {
             $medium = Medium::find(format_select_input($new_navigator_item['medium_id']));
             $medium->public = 1; //navigator items should be visible for all users
             $medium->save();
@@ -131,14 +128,12 @@ class NavigatorItemController extends Controller
         }
 
         // axios call?
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $navigator_item->path()];
         }
 
-        return redirect()->route("navigator.view", ['navigator' => $navigator_id, 'navigator_view' => $view_id]);
+        return redirect()->route('navigator.view', ['navigator' => $navigator_id, 'navigator_view' => $view_id]);
     }
-
-
 
     /**
      * Show the form for editing the specified resource.
@@ -150,14 +145,14 @@ class NavigatorItemController extends Controller
     {
         abort_unless(\Gate::allows('navigator_edit'), 403);
         $referenceable_types = $this->getReferenceableTypes();
-        $position            = $this->getPositions();
-        $css_classes         = $this->getCssClasses();
-        $visibility          = $this->getVisibility();
+        $position = $this->getPositions();
+        $css_classes = $this->getCssClasses();
+        $visibility = $this->getVisibility();
 
-        $curricula           = Curriculum::all();
-        $navigator           = $navigatorItem->navigatorView->navigator;
-        $navigatorView       = $navigatorItem->navigatorView;
-        $medium              = $navigatorItem->medium;
+        $curricula = Curriculum::all();
+        $navigator = $navigatorItem->navigatorView->navigator;
+        $navigatorView = $navigatorItem->navigatorView;
+        $medium = $navigatorItem->medium;
 
         //dd($navigatorItem);
         return view('navigators.views.items.edit')
@@ -188,24 +183,22 @@ class NavigatorItemController extends Controller
             'description' => Str::limit($request['description'], 200),
             'position'    => format_select_input($request['position']),
             'css_class'   => format_select_input($request['css_class']),
-            'visibility'  => format_select_input($request['visibility'])
+            'visibility'  => format_select_input($request['visibility']),
         ]);
 
-        if ($request['medium_id'] != null)
-        {
+        if ($request['medium_id'] != null) {
             //first delete old subscriptions
             MediumSubscription::where([
-                "subscribable_type"=> get_class($navigatorItem),
-                "subscribable_id"=> $navigatorItem->id,
+                'subscribable_type'=> get_class($navigatorItem),
+                'subscribable_id'=> $navigatorItem->id,
             ])->delete();
             $medium = Medium::find(format_select_input($request['medium_id']));
             $medium->public = 1; //navigator items should be visible for all users
             $medium->save();
             $medium->subscribe($navigatorItem);
-
         }
 
-        return redirect()->route("navigator.view", ['navigator' => request()->navigator_id, 'navigator_view' => request()->view_id]);
+        return redirect()->route('navigator.view', ['navigator' => request()->navigator_id, 'navigator_view' => request()->view_id]);
     }
 
     /**
@@ -224,7 +217,6 @@ class NavigatorItemController extends Controller
 
     protected function validateRequest()
     {
-
         return request()->validate([
             'id'                => 'sometimes',
             'title'             => 'sometimes',
@@ -272,5 +264,4 @@ class NavigatorItemController extends Controller
             (object) ['id' => '0', 'label' => trans('global.navigator_item.fields.visibility_hide')],
         ];
     }
-
 }

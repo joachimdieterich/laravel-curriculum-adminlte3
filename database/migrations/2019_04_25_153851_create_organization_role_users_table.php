@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateOrganizationRoleUsersTable extends Migration
 {
@@ -20,10 +20,10 @@ class CreateOrganizationRoleUsersTable extends Migration
             $table->unsignedbigInteger('role_id')->index();
             $table->unique(['organization_id', 'user_id']);
             $table->timestamps();
-          
+
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('organization_id')->references('id')->on('organizations');
-            $table->foreign('role_id')->references('id')->on('roles');  
+            $table->foreign('role_id')->references('id')->on('roles');
         });
     }
 

@@ -637,7 +637,7 @@ return [
             'title_helper'      => '',
             'content'           => 'Inhalt',
             'content_helper'    => '',
-        ]
+        ],
     ],
     'categorie' =>[
         'title'          => 'Kategorien',
@@ -649,7 +649,7 @@ return [
             'id_helper'     => '',
             'title'         => 'Titel',
             'title_helper'  => '',
-        ]
+        ],
     ],
     'curriculum' =>[
         'title'          => 'Curricula',
@@ -804,7 +804,7 @@ return [
             'title_helper'      => '',
             'description'       => 'Beschreibung',
             'description_helper'=> '',
-        ]
+        ],
     ],
     'navigator_item' =>[
         'title'          => 'Navigator-Blöcke',
@@ -827,8 +827,8 @@ return [
             'css_class'                 => 'css_class',
             'css_class_helper'          => '',
             'visibility_show'           => 'anzeigen',
-            'visibility_hide'           => 'ausblenden'
-        ]
+            'visibility_hide'           => 'ausblenden',
+        ],
     ],
     'referenceable_types' =>[
         'objective'         => 'Querverweise',
@@ -839,8 +839,8 @@ return [
         'medium'            => 'Medium (file, url) verknüpfen',
     ],
     'course' =>[
-       'title'          => 'Kurse',
-       'title_singular' => 'Kurs',
+        'title'          => 'Kurse',
+        'title_singular' => 'Kurs',
     ],
     'achievement' =>[
         'title'          => 'Leistungen',
@@ -858,7 +858,7 @@ return [
             'user_id_helper'            => '',
             'owner_id'                  => 'Eigentümer Id',
             'owner_id_helper'           => '',
-        ]
+        ],
     ],
     'progress' =>[
         'title'          => 'Fortschritte',
@@ -876,7 +876,7 @@ return [
             'associable_id_helper'      => '',
             'value'                     => 'Wert',
             'value_helper'              => '',
-        ]
+        ],
     ],
     'certificate' =>[
         'title'          => 'Zertifkate',
@@ -899,7 +899,7 @@ return [
             'organization_id_helper'=> '',
             'owner_id'              => 'Eigentümer Id',
             'owner_id_helper'       => '',
-        ]
+        ],
     ],
     'logbook' => [
         'title' => 'Logbücher',
@@ -956,7 +956,7 @@ return [
             'due_date_helper'  => '',
             'priority_id'         => 'Priorität (ID)',
             'priority_id_helper'  => '',
-       ],
+        ],
     ],
     'absences' =>[
         'title'             => 'Abwesenheit-Einträge',
@@ -972,7 +972,7 @@ return [
             'done_helper'   => '',
             'time'          => 'versäumte Zeit (Minuten)',
             'time_helper'   => '',
-       ],
+        ],
     ],
     'externalRepositorySubscription' =>[
         'title'             => 'Externe Ressourcen',
@@ -984,7 +984,7 @@ return [
             'id'            => 'ID',
             'id_helper'     => '',
 
-       ],
+        ],
     ],
     'eventSubscription' =>[
         'title'             => 'Veranstaltungen',
@@ -999,7 +999,7 @@ return [
             'id'            => 'ID',
             'id_helper'     => '',
 
-       ],
+        ],
     ],
     'message' =>[
         'title'             => 'Nachrichten',
@@ -1024,7 +1024,7 @@ return [
             'subject_helper'     => '',
             'message'       => 'Nachricht',
             'message_helper'     => '',
-       ],
+        ],
     ],
     'plan' =>[
         'title'             => 'Lern-/Arbeitspläne',
@@ -1047,7 +1047,7 @@ return [
             'end_helper'   => '',
             'duration'          => 'Zeitansatz',
             'duration_helper'   => 'Geben Sie an, wie viel Zeit (in Minuten) zur Erledigung des Lern-/Arbeitsplans eingeplant werden soll.',
-       ],
+        ],
     ],
     'planItem' =>[
         'title'             => 'Aufgaben',
@@ -1065,7 +1065,7 @@ return [
             'description'         => 'Beschreibung',
             'description_helper'  => '',
 
-       ],
+        ],
     ],
     'contactdetail' =>[
         'title'             => 'Kontaktdaten',
@@ -1084,7 +1084,7 @@ return [
             'notes'         => 'Notizen/Sprechzeiten',
             'notes_helper'  => '',
 
-       ],
+        ],
     ],
     'kanban' =>[
         'title'             => 'Kanban-Boards',
@@ -1098,7 +1098,7 @@ return [
             'title_helper'  => '',
             'description'         => 'Beschreibung',
             'description_helper'  => '',
-       ],
+        ],
     ],
     'kanbanItem' =>[
         'title'             => 'Items',
@@ -1116,7 +1116,7 @@ return [
             'order_id_helper'       => '',
             'kanban_status_id'      => 'Status ID',
             'kanban_status_helper'  => '',
-       ],
+        ],
     ],
     'kanbanStatus' =>[
         'title'             => 'Status',
@@ -1169,4 +1169,5 @@ return [
         'title_singular' => 'Lernplattform',
         'add' => 'Lernplattform-Baustein hinzufügen',
     ],
+    'token' => 'Token'
 ];

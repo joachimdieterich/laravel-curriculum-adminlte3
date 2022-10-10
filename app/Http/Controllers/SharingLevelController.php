@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\SharingLevel;
-use Illuminate\Http\Request;
 
 class SharingLevelController extends Controller
 {
@@ -18,5 +17,4 @@ class SharingLevelController extends Controller
 
         return compact('sharingLevel');
     }
-
 }

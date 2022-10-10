@@ -79,5 +79,4 @@ class Plan extends Model
             return false;
         }
     }
-
 }

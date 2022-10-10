@@ -6,14 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Prerequisites extends Model
 {
-
     protected $guarded = [];
 
-    public function predecessor() {
+    public function predecessor()
+    {
         return $this->morphTo();
     }
 
-    public function successor() {
+    public function successor()
+    {
         return $this->morphTo();
     }
 

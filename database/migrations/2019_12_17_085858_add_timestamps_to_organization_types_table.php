@@ -14,7 +14,7 @@ class AddTimestampsToOrganizationTypesTable extends Migration
     public function up()
     {
         Schema::table('organization_types', function (Blueprint $table) {
-            $table->timestamp('updated_at')->nullable();//
+            $table->timestamp('updated_at')->nullable(); //
         });
     }
 

@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateMediaTable extends Migration
 {
@@ -15,7 +15,7 @@ class CreateMediaTable extends Migration
     {
         Schema::create('media', function (Blueprint $table) {
             $table->bigIncrements('id');
-            
+
             $table->string('path', 500);
             $table->string('medium_name', 500);
             $table->string('title', 500);
@@ -26,12 +26,12 @@ class CreateMediaTable extends Migration
             $table->string('date');
             $table->integer('size');
             $table->string('mime_type');
-            
+
             $table->unsignedbigInteger('license_id');
             $table->unsignedbigInteger('owner_id');
-            
+
             $table->timestamps();
-            
+
             $table->foreign('license_id')->references('id')->on('licenses');
             $table->foreign('owner_id')->references('id')->on('users');
         });

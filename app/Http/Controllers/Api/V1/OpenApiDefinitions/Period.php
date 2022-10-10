@@ -1,4 +1,5 @@
 <?php
+namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 
 /**
 * @OA\Get(
@@ -17,7 +18,6 @@
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
 * )
-*
 */
 
 /**
@@ -45,16 +45,15 @@
 *          @OA\JsonContent(ref="#/components/schemas/Period"),
 *       ),
 *       @OA\Response(
-*          response=400, 
-*          description="Bad request", 
+*          response=400,
+*          description="Bad request",
 *       ),
 *       @OA\Response(
-*          response=404, 
-*          description="Bad request", 
+*          response=404,
+*          description="Bad request",
 *         @OA\JsonContent(),
 *       ),
 * )
-*
 */
 
 /**
@@ -102,14 +101,14 @@
 *           )
 *       )
 *   ),
-*      
+*
 *      @OA\Response(
 *          response=200,
 *          description="successful operation",
 *          @OA\JsonContent(ref="#/components/schemas/Period"),
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*      
+*
 * )
 */
 
@@ -166,16 +165,15 @@
 *           )
 *       )
 *   ),
-*      
+*
 *       @OA\Response(
 *          response=200,
 *          description="successful operation",
-*          @OA\JsonContent(ref="#/components/schemas/Period")   
+*          @OA\JsonContent(ref="#/components/schemas/Period")
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*      
+*
 * )
-* 
 */
 
 /**
@@ -197,13 +195,16 @@
 *              type="integer"
 *          )
 *      ),
-*      
+*
 *      @OA\Response(
 *          response=200,
-*          description="successful operation",   
+*          description="successful operation",
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*      
+*
 * )
-* 
 */
+
+class Period
+{
+}

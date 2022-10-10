@@ -637,7 +637,7 @@ return [
             'title_helper'  => '',
             'content'    => 'Content',
             'content_helper'  => '',
-        ]
+        ],
     ],
     'categorie' =>[
         'title'          => 'Categories',
@@ -649,7 +649,7 @@ return [
             'id_helper'  => '',
             'title'      => 'Title',
             'title_helper'  => '',
-        ]
+        ],
     ],
     'curriculum' =>[
         'title'            => 'Curricula',
@@ -804,7 +804,7 @@ return [
             'title_helper'  => '',
             'description'    => 'Description',
             'description_helper'  => '',
-        ]
+        ],
     ],
     'navigator_item' =>[
         'title'          => 'Navigator Items',
@@ -827,8 +827,8 @@ return [
             'css_class' => 'css_class',
             'css_class_helper' => '',
             'visibility_show' => 'show',
-            'visibility_hide' => 'hide'
-        ]
+            'visibility_hide' => 'hide',
+        ],
     ],
     'referenceable_types' =>[
         'objective'       => 'Link terminal/enabling objective',
@@ -839,8 +839,8 @@ return [
         'medium' => 'Link a medium (file, url)',
     ],
     'course' =>[
-       'title'          => 'Courses',
-       'title_singular' => 'Course',
+        'title'          => 'Courses',
+        'title_singular' => 'Course',
     ],
     'achievement' =>[
         'title'          => 'Achievements',
@@ -858,7 +858,7 @@ return [
             'user_id_helper' => '',
             'owner_id' => 'Owner Id',
             'owner_id_helper' => '',
-        ]
+        ],
     ],
     'progress' =>[
         'title'          => 'Progresses',
@@ -876,7 +876,7 @@ return [
             'associable_id_helper' => '',
             'value' => 'Value',
             'value_helper' => '',
-        ]
+        ],
     ],
     'certificate' =>[
         'title'          => 'Certificates',
@@ -899,23 +899,23 @@ return [
             'organization_id_helper'  => '',
             'owner_id' => 'Owner Id',
             'owner_id_helper' => '',
-        ]
+        ],
     ],
-     'logbook' => [
-         'title' => 'Logbooks',
-         'title_singular' => 'Logbook',
-         'create' => 'Create Logbook',
-         'edit' => 'Edit Logbook',
-         'print' => 'Print Logbook',
-         'fields' => [
-             'id' => 'ID',
-             'id_helper' => '',
-             'title' => 'Title',
-             'title_helper' => '',
-             'description' => 'Description',
-             'description_helper' => '',
-         ],
-     ],
+    'logbook' => [
+        'title' => 'Logbooks',
+        'title_singular' => 'Logbook',
+        'create' => 'Create Logbook',
+        'edit' => 'Edit Logbook',
+        'print' => 'Print Logbook',
+        'fields' => [
+            'id' => 'ID',
+            'id_helper' => '',
+            'title' => 'Title',
+            'title_helper' => '',
+            'description' => 'Description',
+            'description_helper' => '',
+        ],
+    ],
     'logbookEntry' =>[
         'title'             => 'Logs',
         'title_singular'    => 'Log',
@@ -956,7 +956,7 @@ return [
             'due_date_helper'  => '',
             'priority_id'         => 'Priority (ID)',
             'priority_id_helper'  => '',
-       ],
+        ],
     ],
     'absences' =>[
         'title'             => 'Absences',
@@ -972,9 +972,9 @@ return [
             'done_helper'   => '',
             'time'          => 'absence time (minutes)',
             'time_helper'   => '',
-       ],
+        ],
     ],
-     'externalRepositorySubscription' =>[
+    'externalRepositorySubscription' =>[
         'title'             => 'External resources',
         'title_singular'    => 'External resource',
         'create'            => 'Add external resource',
@@ -984,7 +984,7 @@ return [
             'id'            => 'ID',
             'id_helper'     => '',
 
-       ],
+        ],
     ],
     'eventSubscription' =>[
         'title'             => 'Events',
@@ -999,7 +999,7 @@ return [
             'id'            => 'ID',
             'id_helper'     => '',
 
-       ],
+        ],
     ],
     'message' =>[
         'title'             => 'Messages',
@@ -1024,7 +1024,7 @@ return [
             'subject_helper'     => '',
             'message'       => 'Message',
             'message_helper'     => '',
-       ],
+        ],
     ],
     'plan' =>[
         'title'             => 'Plans',
@@ -1047,7 +1047,7 @@ return [
             'end_helper'   => '',
             'duration'          => 'Duration',
             'duration_helper'   => 'Specify how much time (in minutes) should be scheduled to complete the learning/work schedule.',
-       ],
+        ],
     ],
     'planItem' =>[
         'title'             => 'Aufgaben',
@@ -1065,7 +1065,7 @@ return [
             'description'         => 'Beschreibung',
             'description_helper'  => '',
 
-       ],
+        ],
     ],
     'contactdetail' =>[
         'title'             => 'Contact',
@@ -1084,7 +1084,7 @@ return [
             'notes'         => 'Notes/Office Hours',
             'notes_helper'  => '',
 
-       ],
+        ],
     ],
     'kanban' =>[
         'title'             => 'Kanban-Boards',
@@ -1098,7 +1098,7 @@ return [
             'title_helper'  => '',
             'description'         => 'Description',
             'description_helper'  => '',
-       ],
+        ],
     ],
     'kanbanItem' =>[
         'title'             => 'Items',
@@ -1116,7 +1116,7 @@ return [
             'order_id_helper'       => '',
             'kanban_status_id'      => 'Status ID',
             'kanban_status_helper'  => '',
-       ],
+        ],
     ],
     'kanbanStatus' =>[
         'title'             => 'Statuses',
@@ -1134,7 +1134,7 @@ return [
             'order_id_helper'       => '',
             'kanban_id'      => 'Kanban ID',
             'kanban_helper'  => '',
-       ],
+        ],
     ],
     'prerequisite' =>[
         'title'             => 'Prerequisites',

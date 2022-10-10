@@ -6,9 +6,6 @@ use App\LmsReference;
 use App\LmsUserToken;
 use App\Organization;
 use App\Plugins\Lms\LmsPlugin;
-use App\Config;
-
-use Illuminate\Support\Facades\Auth;
 
 /**
  * Description of plugin
@@ -20,37 +17,39 @@ class moodle extends LmsPlugin
     const PLUGINNAME = 'moodle';
 
     private $lmsUrl;
+
     private $wsPath;
+
     private $wsToken;
+
     private $queryParams;
 
     private $proxy = false;
+
     private $proxy_port = false;
 
-    private $headerArray = array();
+    private $headerArray = [];
 
     public function about()
     {
-        return "moodle plugin";
+        return 'moodle plugin';
     }
 
     public function __construct($service = 'moodle_mobile_app', $passport = '12345', $urlscheme = 'moodledownloader', $sso = true)
     {
-
         $this->lmsUrl = Organization::find(auth()->user()->current_organization_id)->lms_url;
         $this->wsPath = 'webservice/rest/server.php?';
         $this->wsToken = optional(
             LmsUserToken::where([
                 'organization_id' => auth()->user()->current_organization_id,
-                'user_id' => auth()->user()->id
+                'user_id' => auth()->user()->id,
             ])->get()->first()
         )->token;
-        $this->queryParams = array(
+        $this->queryParams = [
             'wstoken' => $this->wsToken,
-            'moodlewsrestformat' => 'json'
-        );
+            'moodlewsrestformat' => 'json',
+        ];
     }
-
 
     public function store($query)
     {
@@ -67,17 +66,14 @@ class moodle extends LmsPlugin
             'visibility' => isset($query['visibility']) ? $query['visibility'] : 1,
             'owner_id' => auth()->user()->id,
         ]);
-
     }
 
     public function show($query)
     {
-
         $userCanSee = auth()->user()->lmsReferences()->where([
             'referenceable_type' => $query['referenceable_type'],
             'referenceable_id' => $query['referenceable_id'],
         ])->get();
-
 
         foreach (auth()->user()->currentGroups as $group) {
             $userCanSee = $userCanSee->merge($group->lmsReferences()->where([
@@ -99,18 +95,16 @@ class moodle extends LmsPlugin
         ])->get();
         $userCanSee = $userCanSee->merge($ownedByUser);
 
-
         return $userCanSee->unique();
-
     }
 
     public function core_course_get_courses_by_field()
     {
         $params = array_merge(
             $this->queryParams,
-            array(
-                'wsfunction' => 'core_course_get_courses_by_field'
-            )
+            [
+                'wsfunction' => 'core_course_get_courses_by_field',
+            ]
         );
 
         return json_decode($this->call($params));
@@ -120,9 +114,9 @@ class moodle extends LmsPlugin
     {
         $params = array_merge(
             $this->queryParams,
-            array(
-                'wsfunction' => 'core_course_get_courses'
-            )
+            [
+                'wsfunction' => 'core_course_get_courses',
+            ]
         );
 
         return json_decode($this->call($params));
@@ -132,18 +126,18 @@ class moodle extends LmsPlugin
     {
         $params = array_merge(
             $this->queryParams,
-            array(
+            [
                 'wsfunction' => 'core_course_get_contents',
-                'courseid' => $params['course_id']
-            )
+                'courseid' => $params['course_id'],
+            ]
         );
 
         return json_decode($this->call($params));
     }
 
-    private function call($params, $httpMethod = '', $additionalHeaders = array(), $postFields = array())
+    private function call($params, $httpMethod = '', $additionalHeaders = [], $postFields = [])
     {
-        $url = $this->lmsUrl . $this->wsPath . http_build_query($params); //build url
+        $url = $this->lmsUrl.$this->wsPath.http_build_query($params); //build url
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -153,7 +147,6 @@ class moodle extends LmsPlugin
         curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
-
         if ($this->proxy) {
             curl_setopt($ch, CURLOPT_PROXY, $this->proxy);
             if ($this->proxy_port) {
@@ -162,27 +155,26 @@ class moodle extends LmsPlugin
         }
 
         switch ($httpMethod) {
-            case 'POST' :
+            case 'POST':
                 curl_setopt($ch, CURLOPT_POST, true);
                 break;
-            case 'PUT' :
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+            case 'PUT':
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
                 break;
-            case 'DELETE' :
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+            case 'DELETE':
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
                 break;
-            default :
+            default:
                 break;
         }
 
-        $headers = array_merge(array(
-            'Accept: application/json'
-        ), $additionalHeaders);
-
+        $headers = array_merge([
+            'Accept: application/json',
+        ], $additionalHeaders);
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
-        if (!empty ($postFields)) {
+        if (! empty($postFields)) {
             curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
         }
 
@@ -194,18 +186,17 @@ class moodle extends LmsPlugin
         $body = substr($exec, $header_size);
 
         if ($exec === false) {
-            error_log($url . ' ---> ' . curl_error($ch) . ' ---> Error-Code:' . curl_errno($ch)); // for debugging
+            error_log($url.' ---> '.curl_error($ch).' ---> Error-Code:'.curl_errno($ch)); // for debugging
             //throw new Exception ( curl_error ( $ch ) );
         }
 
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if ($httpcode != 200) {
-
         }
 
         curl_close($ch);
 
-        $this->headerArray = array();
+        $this->headerArray = [];
 
         foreach (explode("\r\n", $headers) as $value) {
             $matches = explode(':', $value, 2);
@@ -216,6 +207,4 @@ class moodle extends LmsPlugin
 
         return $body;
     }
-
-
 }

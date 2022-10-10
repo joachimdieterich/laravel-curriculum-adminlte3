@@ -2,15 +2,11 @@
 
 namespace Tests\Browser;
 
-use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
-use Laravel\Dusk\Chrome;
-use App\User;
-
+use Tests\DuskTestCase;
 
 class LoginTest extends DuskTestCase
 {
-
     /**
      * A basic browser test example.
      *
@@ -18,8 +14,7 @@ class LoginTest extends DuskTestCase
      */
     public function testOrganization()
     {
-        $this->browse(function (Browser $browser)
-        {
+        $this->browse(function (Browser $browser) {
             $browser->visit('/')
                     ->type('email', 'admin@curriculumonline.de')
                     ->type('password', 'password') // Enter plain password

@@ -8,9 +8,8 @@ use File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
-use Laravolt\Avatar\Avatar;
-use Yajra\DataTables\DataTables;
 use Intervention\Image\Facades\Image;
+use Yajra\DataTables\DataTables;
 
 class MediumController extends Controller
 {
@@ -23,10 +22,9 @@ class MediumController extends Controller
     {
         abort_unless(\Gate::allows('medium_access'), 403);
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return Medium::where('owner_id', auth()->user()->id)->orderBy('created_at', 'DESC')->paginate($request->input('per_page'));
         }
-
 
         return view('media.index');
     }
@@ -39,13 +37,13 @@ class MediumController extends Controller
         $delete_gate = \Gate::allows('medium_delete');
 
         return DataTables::of($media)
-            ->addColumn('action', function ($media) use ($delete_gate){
-                $actions  = '';
-                if ($delete_gate){
+            ->addColumn('action', function ($media) use ($delete_gate) {
+                $actions = '';
+                if ($delete_gate) {
                     $actions .= '<button type="button" '
-                            . 'class="btn text-danger" '
-                            . 'onclick="destroyDataTableEntry(\'media\','.$media->id.')">'
-                            . '<i class="fa fa-trash"></i></button>';
+                            .'class="btn text-danger" '
+                            .'onclick="destroyDataTableEntry(\'media\','.$media->id.')">'
+                            .'<i class="fa fa-trash"></i></button>';
                 }
 
                 return $actions;
@@ -78,68 +76,65 @@ class MediumController extends Controller
     public function store(Request $request)
     {
         if ($request->hasFile('file')) {
-
             $input = $this->validateRequest();
 
             $files = $request->file('file');
             $uploaded = new Collection();
             $pathPrefix = '/users/'.auth()->user()->id.'/';
-            foreach ($files AS $file)
-            {
-                $filename = time() .   '_' . pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . '.' . $file->getClientOriginalExtension(); //todo: filename should be editable
+            foreach ($files as $file) {
+                $filename = time().'_'.pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME).'.'.$file->getClientOriginalExtension(); //todo: filename should be editable
 
-                if ($file->storeAs($pathPrefix.$input['path'], $filename, config('filesystems.default')))
-                {
+                if ($file->storeAs($pathPrefix.$input['path'], $filename, config('filesystems.default'))) {
                     $uploaded->push($this->onStore($file, $filename, $input));
-                    if (($input['subscribable_type'] !== 'null') AND ($input['subscribable_id'] !== 'null'))
-                    {
+                    if (($input['subscribable_type'] !== 'null') and ($input['subscribable_id'] !== 'null')) {
                         $this->subscribe($uploaded->last(), $input['subscribable_type'], $input['subscribable_id']);
                     }
                 }
             }
 
             LogController::set(get_class($this).'@'.__FUNCTION__, null, (is_array($files)) ? count($files) : 1);
+
             return response()->json($uploaded->all());
         }
-
     }
 
     public function onStore($file, $filename, $input)
     {
         $pathPrefix = '/users/'.auth()->user()->id.'/';
+
         return Medium::create([
-            'path'          => $pathPrefix.(($input['path'] == '') ?'' :$input['path'].'/'),
+            'path'          => $pathPrefix.(($input['path'] == '') ? '' : $input['path'].'/'),
             'medium_name'   => $filename,
             'title'         => (isset($input['title']) ? $input['title'] : $file->getClientOriginalName()),
             'description'   => (isset($input['description']) ? $input['description'] : ''),
             'author'        => auth()->user()->username,
             'publisher'     => (isset($input['publisher']) ? $input['publisher'] : ''),
             'city'          => (isset($input['city']) ? $input['city'] : ''),
-            'date'          => date("Y-m-d_H-i-s"),
+            'date'          => date('Y-m-d_H-i-s'),
             'size'          => $file->getSize(),
             'mime_type'     => $file->getMimeType(),
             'license_id'    => (isset($input['license_id']) ? $input['license_id'] : 2),
             'public'        => (isset($input['public']) ? $input['public'] : 0),   //default not public
 
-            'owner_id'      => auth()->user()->id
+            'owner_id'      => auth()->user()->id,
         ]);
-
     }
+
     public function subscribe($medium, $subscribable_type, $subscribable_id, $sharing_level_id = 1, $visibility = 1)
     {
         $subscribe = MediumSubscription::updateOrCreate([
-            "medium_id"         => $medium->id,
-            "subscribable_type" => $subscribable_type,
-            "subscribable_id"   => $subscribable_id,
-        ],[
-            "sharing_level_id"  => $sharing_level_id,
-            "visibility"        => $visibility,
-            "owner_id"          => auth()->user()->id,
+            'medium_id'         => $medium->id,
+            'subscribable_type' => $subscribable_type,
+            'subscribable_id'   => $subscribable_id,
+        ], [
+            'sharing_level_id'  => $sharing_level_id,
+            'visibility'        => $visibility,
+            'owner_id'          => auth()->user()->id,
         ]);
         $subscribe->save();
+
         return $subscribe;
     }
-
 
     /**
      * Display the specified resource.
@@ -150,10 +145,10 @@ class MediumController extends Controller
     public function show(Medium $medium)
     {
         /* id link */
-        if (($medium->mime_type != 'url') ){
+        if (($medium->mime_type != 'url')) {
             $path = storage_path('app'.$medium->path.$medium->medium_name);
             //dd($path);
-            if (!file_exists($path)) {
+            if (! file_exists($path)) {
                 abort(404);
             }
         }
@@ -161,18 +156,14 @@ class MediumController extends Controller
         /*
          * Medium is public (sharing_level_id == 1) or user is owner
          */
-        if (($medium->public == true) OR ($medium->owner_id == auth()->user()->id))
-        {
+        if (($medium->public == true) or ($medium->owner_id == auth()->user()->id)) {
             return ($medium->mime_type != 'url') ? response()->file($path, ['Content-Disposition' => 'filename="'.$medium->medium_name.'"']) : redirect($medium->path); //return file or url
         }
 
         /* checkIfUserHasSubscription and visibility*/
-        if ($medium->subscriptions())
-        {
-            foreach ($medium->subscriptions AS $subscription)
-            {
-                if ($this->checkIfUserHasSubscription($subscription))
-                {
+        if ($medium->subscriptions()) {
+            foreach ($medium->subscriptions as $subscription) {
+                if ($this->checkIfUserHasSubscription($subscription)) {
                     return ($medium->mime_type != 'url') ? response()->file($path) : redirect($medium->path); //return file or url
                 }
             }
@@ -186,14 +177,14 @@ class MediumController extends Controller
     public function thumb(Medium $medium, $size = 200) //todo: return smaller images/files/thumbs
     {
         /* id link */
-        if (($medium->mime_type != 'url') ){
-            $path       = storage_path('app'.$medium->path.$medium->medium_name);
+        if (($medium->mime_type != 'url')) {
+            $path = storage_path('app'.$medium->path.$medium->medium_name);
             $thumb_path = storage_path('app'.$medium->path.'th_'.$size.'_'.$medium->medium_name);
 
-            if (!file_exists($path)) {
+            if (! file_exists($path)) {
                 abort(404);
             }
-            if (!file_exists($thumb_path)) {
+            if (! file_exists($thumb_path)) {
                 $img = Image::make($path)->resize($size, null, function ($constraint) {
                     $constraint->aspectRatio();
                 });
@@ -206,24 +197,19 @@ class MediumController extends Controller
         /*
          * Medium is public (sharing_level_id == 1) or user is owner
          */
-        if (($medium->public == true) OR ($medium->owner_id == auth()->user()->id))
-        {
-            return ($medium->mime_type != 'url') ?  $img->response('jpg') : redirect($medium->path); //return file or url
+        if (($medium->public == true) or ($medium->owner_id == auth()->user()->id)) {
+            return ($medium->mime_type != 'url') ? $img->response('jpg') : redirect($medium->path); //return file or url
         }
 
         /* checkIfUserHasSubscription and visibility*/
-        if ($medium->subscriptions())
-        {
-            foreach ($medium->subscriptions AS $subscription)
-            {
-                if ($this->checkIfUserHasSubscription($subscription))
-                {
+        if ($medium->subscriptions()) {
+            foreach ($medium->subscriptions as $subscription) {
+                if ($this->checkIfUserHasSubscription($subscription)) {
                     return ($medium->mime_type != 'url') ? $img->response('jpg') : redirect($medium->path); //return file or url
                 }
             }
         }
         /* end checkIfUserHasSubscription and visibility */
-
 
         /* user has permission to access this file ! */
         abort(403);
@@ -251,14 +237,11 @@ class MediumController extends Controller
     {
         abort_unless(\Gate::allows('medium_edit'), 403);
 
-        if ($medium->owner_id === auth()->user()->id)
-        {
+        if ($medium->owner_id === auth()->user()->id) {
             $medium->update($this->validateRequest());
 
             return response()->json(['message' => $medium]);
-        }
-        else
-        {
+        } else {
             return response()->json(['errors' => 'Only file-owner can edit'], 403);
         }
     }
@@ -269,7 +252,7 @@ class MediumController extends Controller
      * @param  \App\Medium  $medium
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Medium $medium, $subscribable_type = null, $subscribable_id = null )
+    public function destroy(Medium $medium, $subscribable_type = null, $subscribable_id = null)
     {
         abort_unless(\Gate::allows('medium_delete'), 403);
         /**
@@ -277,29 +260,26 @@ class MediumController extends Controller
          * - if yes -> delete medium_subscription and medium
          * - if not -> delete only medium_subscription
          */
-
         $input = $this->validateRequest();
-        if (isset($input['subscribable_type']) AND isset($input['subscribable_id'])){
+        if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
             $subscribable_type = $input['subscribable_type'];
-            $subscribable_id   = $input['subscribable_id'];
+            $subscribable_id = $input['subscribable_id'];
 
             MediumSubscription::where([
                 ['subscribable_type', $subscribable_type],
-                ['subscribable_id',$subscribable_id],
-                ['medium_id', $medium->id ]
+                ['subscribable_id', $subscribable_id],
+                ['medium_id', $medium->id],
             ])
             ->delete();
         }
 
         if ($medium->subscriptions()->count() <= 1) {
-            Storage::disk(config('filesystems.default'))->delete($medium->path . $medium->medium_name);
+            Storage::disk(config('filesystems.default'))->delete($medium->path.$medium->medium_name);
 
             $medium->delete();
-
-
         }
         // axios call?
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => true];
         }
     }
@@ -312,6 +292,7 @@ class MediumController extends Controller
     public function getMediumByEventPath($path)
     {
         $m = new Medium();
+
         return Medium::where('path', $m->convertFilemanagerEventPathToMediumPath($path))
                         ->where('medium_name', basename($path))
                         ->get()->first();
@@ -319,28 +300,24 @@ class MediumController extends Controller
 
     public function checkIfUserHasSubscription($subscription)
     {
-
         switch ($subscription->subscribable_type) {
             case "App\Organization":
                 if (in_array($subscription->subscribable_id, auth()->user()->organizations()->pluck('organization_id')->toArray())
-                    AND ($subscription->visibility == 1))
-                {
+                    and ($subscription->visibility == 1)) {
                     return true;
                 }
 
                 break;
             case "App\Group":
                 if (in_array($subscription->subscribable_id, auth()->user()->groups()->pluck('groups.id')->toArray())
-                    AND ($subscription->visibility == 1))
-                {
+                    and ($subscription->visibility == 1)) {
                     return true;
                 }
                 break;
             case "App\User":
 
-                if ($subscription->subscribable_id ==  auth()->user()->id
-                     AND ($subscription->visibility == 1))
-                {
+                if ($subscription->subscribable_id == auth()->user()->id
+                     and ($subscription->visibility == 1)) {
                     return true;
                 }
                 break;
@@ -350,7 +327,8 @@ class MediumController extends Controller
         }
     }
 
-    protected function validateRequest(){
+    protected function validateRequest()
+    {
         return request()->validate([
             'path' => 'sometimes',
             'subscribable_type' => 'sometimes',

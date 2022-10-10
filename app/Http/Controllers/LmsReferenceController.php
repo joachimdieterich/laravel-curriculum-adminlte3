@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Plugins\Lms\LmsPlugin;
 use App\LmsReference;
+use App\Plugins\Lms\LmsPlugin;
 use Illuminate\Http\Request;
 
 class LmsReferenceController extends Controller
@@ -41,7 +41,7 @@ class LmsReferenceController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -57,18 +57,17 @@ class LmsReferenceController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\LmsReference $lmsReference
+     * @param  \App\LmsReference  $lmsReference
      * @return \Illuminate\Http\Response
      */
     public function show(LmsReference $lmsReference)
     {
-
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param \App\LmsReference $lmsReference
+     * @param  \App\LmsReference  $lmsReference
      * @return \Illuminate\Http\Response
      */
     public function edit(LmsReference $lmsReference)
@@ -79,8 +78,8 @@ class LmsReferenceController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\LmsReference $lmsReference
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\LmsReference  $lmsReference
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, LmsReference $lmsReference)
@@ -91,7 +90,7 @@ class LmsReferenceController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\LmsReference $lmsReference
+     * @param  \App\LmsReference  $lmsReference
      * @return \Illuminate\Http\Response
      */
     public function destroy(LmsReference $lmsReference)
@@ -100,14 +99,13 @@ class LmsReferenceController extends Controller
 
         if (request()->wantsJson()) {
             $lmsReference->subscriptions()->delete();
+
             return ['message' => $lmsReference->delete()];
         }
-
     }
 
     protected function validateRequest()
     {
-
         return request()->validate([
             'plugin' => 'required',
             'id' => 'sometimes',

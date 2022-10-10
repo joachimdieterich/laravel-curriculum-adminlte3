@@ -9,7 +9,8 @@
         @before-open="beforeOpen"
         @opened="opened"
         @before-close="beforeClose"
-        style="z-index: 1100">
+        style="z-index: 1100"
+    >
         <div class="card"
              style="margin-bottom: 0px !important">
             <div class="card-header">
@@ -18,7 +19,7 @@
                 </h3>
 
                 <div class="card-tools">
-                    <button type="button" class="btn btn-tool draggable" >
+                    <button type="button" class="btn btn-tool draggable">
                         <i class="fa fa-arrows-alt"></i>
                     </button>
                     <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
@@ -48,6 +49,12 @@
                         class="nav-item">
                         <a class="nav-link" href="#organization_subscription" data-toggle="tab">
                             <i class="fa fa-university mr-3"></i>{{ trans('global.organization.title') }}
+                        </a>
+                    </li>
+                    <li v-if="shareWithToken"
+                        class="nav-item">
+                        <a class="nav-link" href="#token_subscription" data-toggle="tab">
+                            <i class="fa fa-key mr-3"></i>{{ trans('global.token') }}
                         </a>
                     </li>
                     <!-- Global -->
@@ -127,19 +134,55 @@
                             :subscribing_model="'App\\Organization'"/>
                     </div>
 
-                    <!-- Global Tab -->
-<!--                    <div class="tab-pane" id="global_subscription" >
-                         <div class="form-group pt-2">
-                            select global
+                    <!-- Token Tab -->
+                    <div v-if="shareWithToken"
+                         class="tab-pane" id="token_subscription">
+                        <div class="form">
+                            <div class="form-group pt-2">
+                                <input v-model="nameToken" class="form-control mb-2" style="width: 100%;"
+                                       placeholder="Name">
+                                <date-picker v-model="endDateToken" style="width:100%;"
+                                             placeholder="Ablaufdatum"></date-picker>
+                            </div>
+                            <small>darf bearbeiten</small>
+                            <span class="pull-right custom-control custom-switch custom-switch-on-green">
+                                <input v-model="canEditToken"
+                                       type="checkbox"
+                                       id="canEditToken"
+                                       class="custom-control-input pt-1 "
+                                       @click="changeCanEditTokenValue(canEditToken)">
+                                <label class="custom-control-label " for="canEditToken"></label>
+                            </span>
+                            <div>
+                                <button type="button" @click="createUserToken()" :disabled="nameToken == ''"
+                                        class="btn btn-sm btn-outline-success pull-right mt-3">
+                                    Speichern
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                        <tokens
+                            v-if="typeof subscribers.subscriptions != 'undefined'"
+                            :modelUrl="modelUrl"
+                            :subscriptions="subscribers.tokens"/>
                         </div>
 
-                    </div>-->
+                    </div>
+
+                    <!-- Global Tab -->
+                    <!--                    <div class="tab-pane" id="global_subscription" >
+                                             <div class="form-group pt-2">
+                                                select global
+                                            </div>
+
+                                        </div>-->
                 </div>
 
             </div>
             <div class="card-footer">
                 <span class="pull-right">
-                    <button type="button" class="btn btn-default" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
+                    <button type="button" class="btn btn-default" data-widget="remove"
+                            @click="close()">{{ trans('global.close') }}</button>
                 </span>
             </div>
         </div>
@@ -147,110 +190,124 @@
 </template>
 
 <script>
-    import subscribers from "./Subscribers";
-    export default {
+import subscribers from "./Subscribers";
+import tokens from "./Tokens";
+import DatePicker from 'vue2-datepicker';
+import 'vue2-datepicker/index.css';
 
-        data() {
-            return {
-                modelUrl: null,
-                modelId: null,
-                subscribable_id: null,
-                subscribable_type: null,
-
-                subscribers: Object,
-                hover: false,
-
-                shareWithUsers: true,
-                shareWithGroups: true,
-                shareWithOrganizations: true,
-
-            };
-        },
-        methods: {
-            beforeOpen(event) {
-                this.resetComponent();
-                this.modelUrl = event.params.modelUrl;
-                this.modelId = event.params.modelId;
-                if (event.params.shareWithUsers == false) {
-                    this.shareWithUsers = event.params.shareWithUsers;
-                }
-                if (event.params.shareWithGroups == false) {
-                    this.shareWithGroups = event.params.shareWithGroups;
-                }
-                if (event.params.shareWithOrganizations == false) {
-                    this.shareWithOrganizations = event.params.shareWithOrganizations;
-                }
-
-                this.loadSubscribers();
-            },
-            beforeClose() {
-            },
-
-            opened(){
-                this.initSelect2();
-            },
-
-            close(){
-                this.$modal.hide('subscribe-modal');
-            },
-            async loadSubscribers() {
-                try {
-                    this.subscribers = (await axios.get('/' + this.modelUrl + 'Subscriptions?' + this.modelUrl + '_id='+this.modelId)).data.subscribers;
-                } catch(error) {
-                    this.errors = error.response.data.errors;
-                }
-            },
-            initSelect2(){
-                $("#users").select2({
-                    dropdownParent: $(".v--modal-overlay"),
-                    allowClear: false
-                }).on('select2:select', function (e) {
-                    this.subscribe('App\\User', e.params.data.id, this.modelId);
-                }.bind(this));
-                $("#groups").select2({
-                    dropdownParent: $(".v--modal-overlay"),
-                    allowClear: false
-                }).on('select2:select', function (e) {
-                    this.subscribe('App\\Group', e.params.data.id, this.modelId);
-                }.bind(this));
-                $("#organizations").select2({
-                    dropdownParent: $(".v--modal-overlay"),
-                    allowClear: false
-                }).on('select2:select', function (e) {
-                    this.subscribe('App\\Organization', e.params.data.id, this.modelId);
-                }.bind(this));
-            },
-            async subscribe(subscribable_type, subscribable_id, model_id) {
-                try {
-                    this.subscribers.subscriptions = (await axios.post('/' + this.modelUrl + 'Subscriptions', {
-                        'model_id': model_id,
-                        'subscribable_type': subscribable_type,
-                        'subscribable_id': subscribable_id
-                    })).data.subscription;
-
-                } catch (error) {
-                    //
-                }
-            },
-            resetComponent() {
-                this.modelUrl = null;
-                this.modelId = null;
-                this.subscribable_id = null;
-                this.subscribable_type = null;
-
-                this.subscribers = Object;
-                this.hover = false;
-
-                this.shareWithUsers = true;
-                this.shareWithGroups = true;
-                this.shareWithOrganizations = true;
+export default {
+    data() {
+        return {
+            modelUrl: null,
+            modelId: null,
+            subscribable_id: null,
+            subscribable_type: null,
+            endDateToken: null,
+            subscribers: Object,
+            hover: false,
+            canEditToken: false,
+            shareWithUsers: true,
+            shareWithGroups: true,
+            shareWithOrganizations: true,
+            shareWithToken: false,
+            nameToken: ''
+        };
+    },
+    methods: {
+        beforeOpen(event) {
+            this.resetComponent();
+            this.modelUrl = event.params.modelUrl;
+            this.modelId = event.params.modelId;
+            if (event.params.shareWithUsers == false) {
+                this.shareWithUsers = event.params.shareWithUsers;
             }
-
-
+            if (event.params.shareWithGroups == false) {
+                this.shareWithGroups = event.params.shareWithGroups;
+            }
+            if (event.params.shareWithOrganizations == false) {
+                this.shareWithOrganizations = event.params.shareWithOrganizations;
+            }
+            if (event.params.shareWithToken == true) {
+                this.shareWithToken = event.params.shareWithToken;
+            }
+            this.loadSubscribers();
         },
-        components: {
-            subscribers,
-        }
+        beforeClose() {
+        },
+        opened() {
+            this.initSelect2();
+        },
+        changeCanEditTokenValue(value) {
+            this.canEditToken = !value;
+        },
+        close() {
+            this.$modal.hide('subscribe-modal');
+        },
+        async loadSubscribers() {
+            try {
+                this.subscribers = (await axios.get('/' + this.modelUrl + 'Subscriptions?' + this.modelUrl + '_id=' + this.modelId)).data.subscribers;
+            } catch (error) {
+                this.errors = error.response.data.errors;
+            }
+        },
+        initSelect2() {
+            $("#users").select2({
+                dropdownParent: $(".v--modal-overlay"),
+                allowClear: false
+            }).on('select2:select', function (e) {
+                this.subscribe('App\\User', e.params.data.id, this.modelId);
+            }.bind(this));
+            $("#groups").select2({
+                dropdownParent: $(".v--modal-overlay"),
+                allowClear: false
+            }).on('select2:select', function (e) {
+                this.subscribe('App\\Group', e.params.data.id, this.modelId);
+            }.bind(this));
+            $("#organizations").select2({
+                dropdownParent: $(".v--modal-overlay"),
+                allowClear: false
+            }).on('select2:select', function (e) {
+                this.subscribe('App\\Organization', e.params.data.id, this.modelId);
+            }.bind(this));
+        },
+        async subscribe(subscribable_type, subscribable_id, model_id) {
+            try {
+                this.subscribers.subscriptions = (await axios.post('/' + this.modelUrl + 'Subscriptions', {
+                    'model_id': model_id,
+                    'subscribable_type': subscribable_type,
+                    'subscribable_id': subscribable_id
+                })).data.subscription;
 
+            } catch (error) {
+                //
+            }
+        },
+        resetComponent() {
+            this.modelUrl = null;
+            this.modelId = null;
+            this.subscribable_id = null;
+            this.subscribable_type = null;
+
+            this.subscribers = Object;
+            this.hover = false;
+
+            this.shareWithUsers = true;
+            this.shareWithGroups = true;
+            this.shareWithOrganizations = true;
+        },
+        createUserToken() {
+            axios.post('/' + this.modelUrl + '/token', {
+                'model_id': this.modelId,
+                'name': this.nameToken,
+                'date': this.endDateToken,
+                'can_change': this.canEditToken
+            }).then( () => this.loadSubscribers())
+        }
+    },
+    components: {
+        subscribers,
+        tokens,
+        DatePicker
     }
+}
 </script>

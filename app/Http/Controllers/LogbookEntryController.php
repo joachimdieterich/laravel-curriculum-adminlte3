@@ -46,13 +46,13 @@ class LogbookEntryController extends Controller
             'description' => $new_entry['description'],
             'begin' => $new_entry['begin'],
             'end' => $new_entry['end'],
-            'owner_id' => auth()->user()->id
+            'owner_id' => auth()->user()->id,
         ]);
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         // axios call?
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $entry];
         }
 
@@ -69,15 +69,14 @@ class LogbookEntryController extends Controller
     {
         abort_unless((\Gate::allows('logbook_show') and $logbookEntry->isAccessible()), 403);
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return [
-                'message' => $logbookEntry
+                'message' => $logbookEntry,
             ];
         } else {
             return redirect()->action('LogbookController@show', ['logbook' => $logbookEntry->logbook_id]);
         }
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -93,11 +92,10 @@ class LogbookEntryController extends Controller
         $logbookEntry->update($this->validateRequest());
 
         // axios call?
-        if (request()->wantsJson()){
-            return ['message' => '/logbooks' . $logbookEntry->logbook_id];
-
+        if (request()->wantsJson()) {
+            return ['message' => '/logbooks'.$logbookEntry->logbook_id];
         }
-        return ;
+
     }
 
     /**
@@ -130,7 +128,7 @@ class LogbookEntryController extends Controller
             ->delete();
 
         // delete contents
-        foreach ($logbookEntry->contents AS $content) {
+        foreach ($logbookEntry->contents as $content) {
             (new ContentController)->destroy($content, 'App\LogbookEntry', $logbookEntry->id); // delete or unsubscribe if content is still subscribed elsewhere
         }
 
@@ -147,10 +145,9 @@ class LogbookEntryController extends Controller
             ->delete();
         $return = $logbookEntry->delete();
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $return];
         }
-
     }
 
     protected function validateRequest()
@@ -164,5 +161,4 @@ class LogbookEntryController extends Controller
             'owner_id'          => 'sometimes',
         ]);
     }
-
 }

@@ -3,11 +3,10 @@
 namespace Tests\Api;
 
 use App\Config;
-use App\Metadataset;
-use Tests\TestCase;
 use App\Curriculum;
+use App\Metadataset;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-
+use Tests\TestCase;
 
 class ApiCurriculumTest extends TestCase
 {
@@ -16,17 +15,15 @@ class ApiCurriculumTest extends TestCase
     /** @test */
     public function an_unauthenticated_client_can_not_get_curricula()
     {
-
         $this->get('/api/v1/curricula')->assertStatus(302);
         $this->contains('login');
     }
 
-     /** @test
+    /** @test
      * Use Route: GET, /api/v1/groups
      */
-        public function an_authenticated_client_can_get_all_curricula()
+    public function an_authenticated_client_can_get_all_curricula()
     {
-
         $this->signInApiAdmin();
 
         $this->get('/api/v1/curricula')
@@ -41,11 +38,10 @@ class ApiCurriculumTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $this->get("/api/v1/curricula/1")
+        $this->get('/api/v1/curricula/1')
              ->assertStatus(200)
              ->assertJson(Curriculum::find(1)->toArray());
     }
-
 
     /** @test
      * Use Route: GET, /api/v1/curricula/1/metadataset?password={password}
@@ -54,7 +50,7 @@ class ApiCurriculumTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $this->get("/api/v1/curricula/1/metadataset?password=wrongPassword")
+        $this->get('/api/v1/curricula/1/metadataset?password=wrongPassword')
             ->assertStatus(420);
     }
 
@@ -68,8 +64,8 @@ class ApiCurriculumTest extends TestCase
         $config = Config::create([
             'key' =>  'metadata_password',
             'value' =>  'password',
-            'data_type' => 'string'
-            ]);
+            'data_type' => 'string',
+        ]);
         $this->get("/api/v1/curricula/1/metadataset?password={$config->value}")
             ->assertStatus(200);
         $this->contains('deactivated: please use /v1/curricula/metadatasets?password={password}');
@@ -82,7 +78,7 @@ class ApiCurriculumTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $this->get("/api/v1/curricula/metadatasets?password=wrongPassword")
+        $this->get('/api/v1/curricula/metadatasets?password=wrongPassword')
             ->assertStatus(420);
     }
 
@@ -93,16 +89,15 @@ class ApiCurriculumTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $this->post("/metadatasets" , $attributes = ['version' => 1]);
+        $this->post('/metadatasets', $attributes = ['version' => 1]);
 
         $config = Config::create([
             'key' =>  'metadata_password',
             'value' =>  'password',
-            'data_type' => 'string'
+            'data_type' => 'string',
         ]);
         $this->get("/api/v1/curricula/metadatasets?password={$config->value}")
             ->assertSee(Metadataset::find(1)->metadataset)
             ->assertStatus(200);
     }
-
 }

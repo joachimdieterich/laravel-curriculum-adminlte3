@@ -18,10 +18,8 @@ use App\OrganizationType;
 
 class OrganizationTypeFactory
 {
-   
     public function create()
     {
-        
-        return  factory(OrganizationType::class)->create();;
+        return  factory(OrganizationType::class)->create();
     }
 }

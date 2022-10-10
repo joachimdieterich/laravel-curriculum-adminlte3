@@ -6,23 +6,25 @@ use Illuminate\Database\Eloquent\Model;
 
 class EnablingObjective extends Model
 {
-    protected $fillable = [ 'title',
-                            'description',
-                            'order_id',
-                            'time_approach',
-                            'curriculum_id',
-                            'terminal_objective_id',
-                            'level_id',
-                            'visibility',
-                          ];
+    protected $fillable = ['title',
+        'description',
+        'order_id',
+        'time_approach',
+        'curriculum_id',
+        'terminal_objective_id',
+        'level_id',
+        'visibility',
+    ];
+
     protected $casts = [
         'visibility' => 'boolean',
-        'referencing_curriculum_id' => 'object'
+        'referencing_curriculum_id' => 'object',
     ];
 
     protected $with = ['terminalObjective', 'level'];
 
-    public function path(){
+    public function path()
+    {
         return "/curricula/{$this->curriculum_id}";
     }
 

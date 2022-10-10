@@ -11,7 +11,8 @@ class PlanSubscription extends Model
         'subscribable_id',
         'plan_id',
         'editable',
-        'owner_id'];
+        'owner_id', ];
+
     /**
      * Get the subscriber model.
      */

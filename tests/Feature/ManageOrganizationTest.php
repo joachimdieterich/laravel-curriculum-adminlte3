@@ -2,27 +2,26 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Organization;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class ManageOrganizationTest extends TestCase
 {
-     use RefreshDatabase;
+    use RefreshDatabase;
 
-     public function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
         $this->signInAdmin();
     }
-
 
     /** @test */
     public function an_administrator_update_the_status_of_an_organization()
     {
 
         /* add new organization */
-        $this->post("/organizations" , $attributes = factory('App\Organization')->raw());
+        $this->post('/organizations', $attributes = factory('App\Organization')->raw());
 
         $this->assertDatabaseHas('organizations', $attributes);
 
@@ -31,19 +30,15 @@ class ManageOrganizationTest extends TestCase
         $attributes['state_id'] = 'DE-RP';
         $attributes['country_id'] = 'DE';
 
-        $this->patch("/organizations/". (Organization::where(
-                        'title', '=', $attributes['title'])->first()->id) ,
+        $this->patch('/organizations/'.(Organization::where(
+                        'title', '=', $attributes['title'])->first()->id),
                         [
                             'status_id' => 2,
                             'state_id' => 'DE-RP',
                             'country_id' => 'DE',
-                            'organization_type_id' => $attributes['organization_type_id']
-                        ] );
+                            'organization_type_id' => $attributes['organization_type_id'],
+                        ]);
 
         $this->assertDatabaseHas('organizations', $attributes);
     }
-
-
-
-
 }

@@ -1,9 +1,5 @@
 <template>
     <div class="col-12">
-        <!--        <div id="loadingEvents" class="overlay text-center" style="width:100% !important;">
-                    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-                    <span class="sr-only">Loading...</span>
-                </div>-->
         {{ trans('global.eventSubscription.search') }}
         <div class="row my-3">
             <span class="col-6 ">
@@ -35,7 +31,7 @@
 
 
         <div v-for="event in entries" class="border-bottom card collapsed-card">
-            <div class="card-header">
+            <div class="card-header pointer">
             <span data-target="'navigator-item-content-'+event.ARTIKEL_NR" data-card-widget="collapse">{{event.ARTIKEL}}</span>
             <div class="card-tools pull-right">
                 <button
@@ -82,19 +78,39 @@
             </div>
         </div>
 
-        <div v-if="entries !== null" class="row" >
-            <span class="col-6">
-                <button type="button"
-                        class="btn btn-block btn-primary"
-                        @click="lastPage()"><i class="fa fa-arrow-left"></i></button>
-            </span>
+<!--        <div id="loading-events" class="overlay text-center" style="width:100% !important;">
+            <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+            <span class="sr-only">Loading...</span>
+        </div>-->
 
-            <span class="col-6">
-                <button type="button"
-                        class="btn btn-block btn-primary"
-                        @click="nextPage()"><i class="fa fa-arrow-right"></i></button>
-            </span>
+        <div v-if="Object.keys(entries).length > 0"
+             class="row" >
+                <span
+                    v-if="Object.keys(entries).length > 0"
+                    class="col-6">
+                    <button v-if="page === 1"
+                            type="button"
+                            class="btn btn-block btn-secondary disabled"
+                            @click="lastPage()">
+                        <i class="fa fa-arrow-left"></i>
+                    </button>
+                    <button v-else
+                            type="button"
+                            class="btn btn-block btn-secondary"
+                            @click="lastPage()">
+                    <i class="fa fa-arrow-left"></i>
+                </button>
+                </span>
 
+            <span
+                v-if="Object.keys(entries).length > 9"
+                class="col-6">
+                    <button type="button"
+                            class="btn btn-block btn-secondary"
+                            @click="nextPage()">
+                        <i class="fa fa-arrow-right"></i>
+                    </button>
+                </span>
         </div>
 
     </div>
@@ -110,7 +126,7 @@
               },
         data() {
             return {
-                entries: null,
+                entries: [],
                 search:  '',//this.model.title.replace(/(<([^>]+)>)/ig,""),
                 page:    1,
                 errors:  {}
@@ -118,6 +134,7 @@
         },
         methods: {
             async loader(search) {
+
                 try {
                     this.search = (search ? search : this.search);
 
@@ -128,6 +145,7 @@
                         page: this.page,
                         plugin: 'evewa'
                     })).data.message.lesePlrlpVeranstaltungen.data;
+                    $("#loading-events").hide();
 
                 } catch(error) {
                     //this.errors = error.response.data.errors;

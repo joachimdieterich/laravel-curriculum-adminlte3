@@ -15,7 +15,7 @@
         "binarytorch/larecipe": "^2.2",
         "bugsnag/bugsnag-laravel": "^2.15",
         "cmgmyr/messenger": "^2.20",
-        "darkaonline/l5-swagger": "^8.0",
+        "darkaonline/l5-swagger": "^8.3",
         "doctrine/dbal": "^2.9",
         "h4cc/wkhtmltoimage-amd64": "0.12.x",
         "h4cc/wkhtmltopdf-amd64": "0.12.x",
@@ -30,13 +30,15 @@
         "maatwebsite/excel": "^3.1",
         "profburial/wkhtmltopdf-binaries-osx": "0.12.1",
         "select2/select2": "^4.0",
-        "yajra/laravel-datatables-oracle": "~9.0"
+        "yajra/laravel-datatables-oracle": "~10.0"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",
         "filp/whoops": "^2.0",
         "fzaninotto/faker": "^1.9.1",
         "laravel/dusk": "^6.0",
+        "laravel/pint": "^0.2.1",
+        "laravel/sail": "^1.16",
         "mockery/mockery": "^1.0",
         "nunomaduro/collision": "^6.1",
         "phpunit/phpunit": "^9.0",

@@ -12,34 +12,31 @@ use App\User;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
 
-
-
 class NavigatorViewStudentTest extends DuskTestCase
 {
-    
     /**
      * Edit navigator
      *
      * @return void
      */
     public function testShowNavigatorViewForStudentRole()
-    {   
+    {
         $this->browse(function (Browser $admin) {
             $navigator = Navigator::create([
                 'title'             => 'DuskNavigator',
-                'organization_id'   => 1
+                'organization_id'   => 1,
             ]);
             $navigatorView = NavigatorView::create([
                 'title'             => 'First View',
                 'description'       => 'First View Description',
-                'navigator_id'      => $navigator->id
+                'navigator_id'      => $navigator->id,
             ]);
-            
+
             // Item: view
             $navigatorView2 = NavigatorView::create([
                 'title'             => 'First View',
                 'description'       => 'First View Description',
-                'navigator_id'      => $navigator->id
+                'navigator_id'      => $navigator->id,
             ]);
             $navigator_item_view = NavigatorItem::firstOrCreate([
                 'title'              => 'View Item',
@@ -49,9 +46,9 @@ class NavigatorViewStudentTest extends DuskTestCase
                 'referenceable_id'   => $navigatorView2->id,
                 'position'           => 'content',
                 'css_class'          => 'col-xs-12',
-                'visibility'         => 1
+                'visibility'         => 1,
             ]);
-            
+
             //Item: curriculum
             $curriculum = Curriculum::find(1);
             $navigator_item_curriculum = NavigatorItem::firstOrCreate([
@@ -62,20 +59,19 @@ class NavigatorViewStudentTest extends DuskTestCase
                 'referenceable_id'   => $curriculum->id,
                 'position'           => 'content',
                 'css_class'          => 'col-xs-12',
-                'visibility'         => 1
+                'visibility'         => 1,
             ]);
-            if ($curriculum->medium_id != null)
-            {
-                $medium = Medium::find($curriculum->medium_id); 
+            if ($curriculum->medium_id != null) {
+                $medium = Medium::find($curriculum->medium_id);
                 $medium->subscribe($navigator_item_curriculum);
             }
-            
+
             //Item:content
             $content = Content::firstOrCreate([
-                                    'title' => 'Navigator content title',
-                                    'content' => 'Navigator content description',
-                                    'owner_id' => 1
-                                 ]);
+                'title' => 'Navigator content title',
+                'content' => 'Navigator content description',
+                'owner_id' => 1,
+            ]);
             $navigator_item_content = NavigatorItem::firstOrCreate([
                 'title'              => $content->title,
                 'description'        => $content->content,
@@ -84,9 +80,9 @@ class NavigatorViewStudentTest extends DuskTestCase
                 'referenceable_id'   => $content->id,
                 'position'           => 'header',
                 'css_class'          => 'col-12',
-                'visibility'         => 1
+                'visibility'         => 1,
             ]);
-            
+
             //Item: medium
             $navigator_item_medium = NavigatorItem::firstOrCreate([
                 'title'              => 'Navigator Medium Item Title',
@@ -96,16 +92,14 @@ class NavigatorViewStudentTest extends DuskTestCase
                 'referenceable_id'   => 1,
                 'position'           => 'content',
                 'css_class'          => 'col-xs-12',
-                'visibility'         => 1
+                'visibility'         => 1,
             ]);
-            
-            
+
             $admin->loginAs(User::find(2))
                 ->visit('/navigators/'.$navigator->id.'/'.$navigatorView->id)
                 ->waitForText($navigatorView->title)
                 ->assertSee($navigatorView->description)
-                ->screenshot('/student/see-navigatoral-details')
-                ;
-        });     
+                ->screenshot('/student/see-navigatoral-details');
+        });
     }
 }

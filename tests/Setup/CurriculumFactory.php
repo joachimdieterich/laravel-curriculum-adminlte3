@@ -29,7 +29,6 @@ class CurriculumFactory
 
     public function create()
     {
-
         return  factory(Curriculum::class)->create();
     }
 }

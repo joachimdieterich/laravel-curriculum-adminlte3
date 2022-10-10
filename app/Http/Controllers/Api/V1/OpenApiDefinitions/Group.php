@@ -1,4 +1,5 @@
 <?php
+namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 
 /**
 * @OA\Get(
@@ -17,7 +18,6 @@
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
 * )
-*
 */
 
 /**
@@ -75,7 +75,6 @@
 *
 * )
 */
-
 
 /**
 * @OA\Put(
@@ -139,7 +138,6 @@
 *       @OA\Response(response=400, description="Bad request"),
 *
 * )
-*
 */
 
 /**
@@ -168,7 +166,6 @@
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
 * )
-*
 */
 
 /**
@@ -197,7 +194,6 @@
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
 * )
-*
 */
 
 /**
@@ -227,7 +223,6 @@
 *       @OA\Response(response=400, description="Bad request"),
 *
 * )
-*
 */
 
 /**
@@ -268,7 +263,6 @@
 *       @OA\Response(response=400, description="Bad request"),
 *
 * )
-*
 */
 
 /**
@@ -308,5 +302,8 @@
 *       @OA\Response(response=400, description="Bad request"),
 *
 * )
-*
 */
+
+class Group
+{
+}

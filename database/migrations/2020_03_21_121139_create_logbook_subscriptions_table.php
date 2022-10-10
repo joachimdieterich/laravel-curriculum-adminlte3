@@ -18,10 +18,10 @@ class CreateLogbookSubscriptionsTable extends Migration
             $table->unsignedbigInteger('logbook_id');
             $table->string('subscribable_type');
             $table->unsignedbigInteger('subscribable_id');
-            
+
             $table->unsignedbigInteger('owner_id');
             $table->timestamps();
-            
+
             $table->foreign('logbook_id')->references('id')->on('logbooks');
             $table->foreign('owner_id')->references('id')->on('users');
         });

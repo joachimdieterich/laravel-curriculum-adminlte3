@@ -17,12 +17,12 @@ class CreateKanbansTable extends Migration
             $table->bigIncrements('id');
             $table->string('title');
             $table->text('description')->nullable();
-            
+
             $table->unsignedbigInteger('medium_id')->nullable();
-            
+
             $table->unsignedbigInteger('owner_id');
             $table->timestamps();
-            
+
             $table->foreign('owner_id')->references('id')->on('users');
         });
     }

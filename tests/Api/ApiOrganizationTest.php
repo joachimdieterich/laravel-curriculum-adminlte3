@@ -2,11 +2,11 @@
 
 namespace Tests\Api;
 
-use Tests\TestCase;
 use App\Organization;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Facades\Tests\Setup\OrganizationFactory;
 use Facades\Tests\Setup\UserFactory;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class ApiOrganizationTest extends TestCase
 {
@@ -21,12 +21,11 @@ class ApiOrganizationTest extends TestCase
         $this->contains('login');
     }
 
-     /** @test
+    /** @test
      * Use Route: GET, /api/v1/organizations
      */
     public function an_authenticated_client_can_get_all_organizations()
     {
-
         $this->signInApiAdmin();
 
         $this->get('/api/v1/organizations')
@@ -53,7 +52,7 @@ class ApiOrganizationTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $this->post("/api/v1/organizations" , $attributes = factory('App\Organization')->raw());
+        $this->post('/api/v1/organizations', $attributes = factory('App\Organization')->raw());
 
         $this->assertDatabaseHas('organizations', $attributes);
     }
@@ -65,10 +64,10 @@ class ApiOrganizationTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $new_organization = $this->post("/api/v1/organizations" , $attributes = factory('App\Organization')->raw());
+        $new_organization = $this->post('/api/v1/organizations', $attributes = factory('App\Organization')->raw());
 
-        $this->put("/api/v1/organizations/{$new_organization->getData()->id}" , $changed_attribute = ['title' => 'New Title',
-                                                                     'status_id' => null]);
+        $this->put("/api/v1/organizations/{$new_organization->getData()->id}", $changed_attribute = ['title' => 'New Title',
+            'status_id' => null, ]);
 
         $changed_attribute = array_filter($changed_attribute);
 
@@ -84,9 +83,9 @@ class ApiOrganizationTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $this->post("/api/v1/organizations" , $attributes = factory('App\Organization')->raw()); //create new organization with ID 2, ID 1 exists seeded
+        $this->post('/api/v1/organizations', $attributes = factory('App\Organization')->raw()); //create new organization with ID 2, ID 1 exists seeded
 
-        $this->delete("/api/v1/organizations/2");
+        $this->delete('/api/v1/organizations/2');
 
         $this->assertDatabaseMissing('organizations', $attributes);
     }
@@ -103,18 +102,17 @@ class ApiOrganizationTest extends TestCase
         $user1 = UserFactory::create();
         $user2 = UserFactory::create();
 
-        $this->put("/api/v1/organizations/enrol", $enrolment_1 = ['user_id' => $user1->id,
-                                                    'organization_id' => $organization1->id,
-                                                    'role_id' => 1                             // 1 == Admin
-                                                   ]);
+        $this->put('/api/v1/organizations/enrol', $enrolment_1 = ['user_id' => $user1->id,
+            'organization_id' => $organization1->id,
+            'role_id' => 1,                             // 1 == Admin
+        ]);
         $this->assertDatabaseHas('organization_role_users', $enrolment_1);
 
-        $this->put("/api/v1/organizations/enrol", $enrolment_2 =['user_id' => $user2->id,
-                             'organization_id' => $organization1->id,
-                             'role_id' => 4                             // 4 == Schooladmin
-                            ]);
+        $this->put('/api/v1/organizations/enrol', $enrolment_2 = ['user_id' => $user2->id,
+            'organization_id' => $organization1->id,
+            'role_id' => 4,                             // 4 == Schooladmin
+        ]);
         $this->assertDatabaseHas('organization_role_users', $enrolment_2);
-
     }
 
     /** @test
@@ -131,31 +129,30 @@ class ApiOrganizationTest extends TestCase
         $user3 = UserFactory::create();
         $user4 = UserFactory::create();
 
-
-        $this->put("/api/v1/organizations/enrol",
+        $this->put('/api/v1/organizations/enrol',
                 [
                     'user_id' => $user1->id,
                     'organization_id' => $organization1->id,
-                    'role_id' => 1                             // 1 == Admin
+                    'role_id' => 1,                             // 1 == Admin
                 ]);
 
-        $this->put("/api/v1/organizations/enrol",
+        $this->put('/api/v1/organizations/enrol',
                 [
                     'user_id' => $user2->id,
                     'organization_id' => $organization1->id,
-                    'role_id' => 2                             // 2 == Creator
-                 ]);
-        $this->put("/api/v1/organizations/enrol",
+                    'role_id' => 2,                             // 2 == Creator
+                ]);
+        $this->put('/api/v1/organizations/enrol',
                 [
                     'user_id' => $user3->id,
                     'organization_id' => $organization1->id,
-                    'role_id' => 3                             // 3 == Indexer
+                    'role_id' => 3,                             // 3 == Indexer
                 ]);
-        $this->put("/api/v1/organizations/enrol",
+        $this->put('/api/v1/organizations/enrol',
                 [
                     'user_id' => $user4->id,
                     'organization_id' => $organization1->id,
-                    'role_id' => 4                             // 4 == Schooladmin
+                    'role_id' => 4,                             // 4 == Schooladmin
                 ]);
         $members = $organization1->users->toArray();
         $this->get('/api/v1/organizations/'.$organization1->id.'/members')
@@ -175,29 +172,26 @@ class ApiOrganizationTest extends TestCase
         $user1 = UserFactory::create();
         $user2 = UserFactory::create();
 
-
-        $this->put("/api/v1/organizations/enrol", $enrolment_1 = ['user_id' => $user1->id,
-                                                    'organization_id' => $organization1->id,
-                                                    'role_id' => 1                             // 1 == Admin
-                                                   ]);
+        $this->put('/api/v1/organizations/enrol', $enrolment_1 = ['user_id' => $user1->id,
+            'organization_id' => $organization1->id,
+            'role_id' => 1,                             // 1 == Admin
+        ]);
         $this->assertDatabaseHas('organization_role_users', $enrolment_1);
 
-        $this->put("/api/v1/organizations/enrol", $enrolment_2 =['user_id' => $user2->id,
-                             'organization_id' => $organization1->id,
-                             'role_id' => 4                             // 4 == Schooladmin
-                            ]);
+        $this->put('/api/v1/organizations/enrol', $enrolment_2 = ['user_id' => $user2->id,
+            'organization_id' => $organization1->id,
+            'role_id' => 4,                             // 4 == Schooladmin
+        ]);
         $this->assertDatabaseHas('organization_role_users', $enrolment_2);
 
-        $this->delete("/api/v1/organizations/expel", ['user_id' => $user1->id,
-                                                    'organization_id' => $organization1->id,
-                                                   ]);
+        $this->delete('/api/v1/organizations/expel', ['user_id' => $user1->id,
+            'organization_id' => $organization1->id,
+        ]);
         $this->assertDatabaseMissing('organization_role_users', $enrolment_1);
 
-        $this->delete("/api/v1/organizations/expel", ['user_id' => $user2->id,
-                                                    'organization_id' => $organization1->id,
-                                                   ]);
+        $this->delete('/api/v1/organizations/expel', ['user_id' => $user2->id,
+            'organization_id' => $organization1->id,
+        ]);
         $this->assertDatabaseMissing('organization_role_users', $enrolment_2);
-
-
     }
 }

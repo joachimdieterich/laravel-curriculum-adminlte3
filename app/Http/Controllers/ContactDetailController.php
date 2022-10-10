@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\ContactDetail;
-use App\User;
 use App\Organization;
+use App\User;
 use Illuminate\Http\Request;
 
 class ContactDetailController extends Controller
@@ -47,8 +47,8 @@ class ContactDetailController extends Controller
             'notes' => $input['notes'],
             'owner_id' => auth()->user()->id,
         ]);
-         // axios call?
-        if (request()->wantsJson()){
+        // axios call?
+        if (request()->wantsJson()) {
             return ['message' => $contactdetail->path()];
         }
 
@@ -58,7 +58,7 @@ class ContactDetailController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\ContactDetail $contactDetail
+     * @param  \App\ContactDetail  $contactDetail
      * @return \Illuminate\Http\Response
      */
     public function show(ContactDetail $contactdetail)
@@ -69,9 +69,9 @@ class ContactDetailController extends Controller
         $user = User::find($contactdetail->owner_id);
         $organization = Organization::find(auth()->user()->current_organization_id);
         // axios call?
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return [
-                'contactdetail' => $contactdetail
+                'contactdetail' => $contactdetail,
             ];
         }
 
@@ -84,14 +84,13 @@ class ContactDetailController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\ContactDetail $contactDetail
+     * @param  \App\ContactDetail  $contactDetail
      * @return \Illuminate\Http\Response
      */
     public function edit(ContactDetail $contactdetail)
     {
         abort_unless(\Gate::allows('contactdetail_edit'), 403);
         abort_unless(($contactdetail->owner_id == auth()->user()->id), 403);
-
 
         return view('contactdetails.edit')
                 ->with(compact('contactdetail'));
@@ -101,7 +100,7 @@ class ContactDetailController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\ContactDetail $contactDetail
+     * @param  \App\ContactDetail  $contactDetail
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, ContactDetail $contactdetail)
@@ -117,7 +116,7 @@ class ContactDetailController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\ContactDetail $contactDetail
+     * @param  \App\ContactDetail  $contactDetail
      * @return \Illuminate\Http\Response
      */
     public function destroy(ContactDetail $contactdetail)
@@ -126,12 +125,13 @@ class ContactDetailController extends Controller
         abort_unless(($contactdetail->owner_id == auth()->user()->id), 403);
     }
 
-     protected function validateRequest(){
+    protected function validateRequest()
+    {
         return request()->validate([
             'email'  => 'sometimes|email',
             'phone'  => 'sometimes',
             'mobile' => 'sometimes',
-            'notes'  => 'sometimes'
-            ]);
+            'notes'  => 'sometimes',
+        ]);
     }
 }

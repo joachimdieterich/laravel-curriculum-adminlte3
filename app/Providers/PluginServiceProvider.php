@@ -5,10 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Plugins\Repositories\RepositoryPlugin;
 
-
 class PluginServiceProvider extends ServiceProvider
 {
-
     /**
      * All of the container singletons that should be registered.
      *
@@ -17,5 +15,4 @@ class PluginServiceProvider extends ServiceProvider
     public $singletons = [
         RepositoryPlugin::class => RepositoryPlugin::class,
     ];
-
 }

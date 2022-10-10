@@ -1,4 +1,5 @@
 <?php
+namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 
 /**
 * @OA\Get(
@@ -17,7 +18,6 @@
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
 * )
-*
 */
 
 /**
@@ -87,7 +87,7 @@
 *                   description="City",
 *                   type="string"
 *               ),
-*              
+*
 *               @OA\Property(
 *                   property="phone",
 *                   description="Phone",
@@ -101,14 +101,14 @@
 *           )
 *       )
 *   ),
-*      
+*
 *      @OA\Response(
 *          response=200,
 *          description="successful operation",
-*          @OA\JsonContent(ref="#/components/schemas/Organization")   
+*          @OA\JsonContent(ref="#/components/schemas/Organization")
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*      
+*
 * )
 */
 
@@ -182,7 +182,7 @@
 *                   description="City",
 *                   type="string"
 *               ),
-*              
+*
 *               @OA\Property(
 *                   property="phone",
 *                   description="Phone",
@@ -201,16 +201,15 @@
 *           )
 *       )
 *   ),
-*      
+*
 *       @OA\Response(
 *          response=200,
 *          description="successful operation",
-*          @OA\JsonContent(ref="#/components/schemas/Organization")   
+*          @OA\JsonContent(ref="#/components/schemas/Organization")
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*      
+*
 * )
-* 
 */
 
 /**
@@ -232,17 +231,16 @@
 *              type="integer"
 *          )
 *      ),
-*      
+*
 *      @OA\Response(
 *          response=200,
-*          description="successful operation",   
-*            @OA\JsonContent(ref="#/components/schemas/Organization")   
+*          description="successful operation",
+*            @OA\JsonContent(ref="#/components/schemas/Organization")
 *         ),
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*      
+*
 * )
-* 
 */
 
 /**
@@ -264,17 +262,16 @@
 *              type="integer"
 *          )
 *      ),
-*      
+*
 *      @OA\Response(
 *          response=200,
-*          description="successful operation",   
-*            @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/User")   
+*          description="successful operation",
+*            @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/User")
 *         ),
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*      
+*
 * )
-* 
 */
 
 /**
@@ -296,15 +293,14 @@
 *              type="integer"
 *          )
 *      ),
-*      
+*
 *      @OA\Response(
 *          response=200,
-*          description="successful operation",   
+*          description="successful operation",
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*      
+*
 * )
-* 
 */
 
 /**
@@ -341,16 +337,15 @@
 *           )
 *       )
 *   ),
-*      
+*
 *       @OA\Response(
 *          response=201,
 *          description="Created enrolment",
-*          @OA\JsonContent(ref="#/components/schemas/OrganizationRoleUser")   
+*          @OA\JsonContent(ref="#/components/schemas/OrganizationRoleUser")
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*      
+*
 * )
-* 
 */
 
 /**
@@ -382,15 +377,16 @@
 *           )
 *       )
 *   ),
-*      
+*
 *       @OA\Response(
 *          response=200,
 *          description="successful operation",
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
-*      
+*
 * )
-* 
 */
 
-
+class Organization
+{
+}

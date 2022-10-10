@@ -73,6 +73,7 @@ class Curriculum extends Model
     {
         return $this->hasOne('App\Grade', 'id', 'grade_id');
     }
+
     public function organizationType()
     {
         return $this->hasOne('App\OrganizationType', 'id', 'organization_type_id');
@@ -131,7 +132,8 @@ class Curriculum extends Model
         return $this->hasMany('App\Certificate', 'curriculum_id', 'id');
     }
 
-    public function courses(){
+    public function courses()
+    {
         return $this->hasMany('App\Course', 'curriculum_id', 'id');
     }
 
@@ -190,5 +192,4 @@ class Curriculum extends Model
             return false;
         }
     }
-
 }

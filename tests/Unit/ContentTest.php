@@ -2,11 +2,11 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
+use App\Content;
+use App\ContentSubscription;
 use Facades\Tests\Setup\ContentFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\ContentSubscription;
-use App\Content;
+use Tests\TestCase;
 
 class ContentTest extends TestCase
 {
@@ -46,10 +46,8 @@ class ContentTest extends TestCase
             'owner_id' => 1,
         ]);
 
-
         $c = Content::findOrFail($content->id);
 
         $this->assertInstanceOf('App\ContentSubscription', $c->subscriptions()->first());
     }
-
 }

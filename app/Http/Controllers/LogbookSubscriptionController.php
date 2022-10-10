@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\LogbookSubscription;
 use App\Logbook;
+use App\LogbookSubscription;
 use Illuminate\Http\Request;
 
 class LogbookSubscriptionController extends Controller
@@ -17,40 +17,34 @@ class LogbookSubscriptionController extends Controller
     {
         $input = $this->validateRequest();
 
-        if (isset($input['subscribable_type']) AND isset($input['subscribable_id']))
-        {
+        if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
             $model = $input['subscribable_type']::find($input['subscribable_id']);
             abort_unless((\Gate::allows('logbook_access') and $model->isAccessible()), 403);
 
             $subscriptions = LogbookSubscription::where([
                 'subscribable_type' => $input['subscribable_type'],
-                'subscribable_id' => $input['subscribable_id']
+                'subscribable_id' => $input['subscribable_id'],
             ]);
 
             if (request()->wantsJson()) {
                 return ['subscriptions' => $subscriptions->with(['logbook'])->get()];
             }
-        }
-        else
-        {
-            if (request()->wantsJson()){
+        } else {
+            if (request()->wantsJson()) {
                 return [
-                    'subscribers' =>
-                        [
-                            'users' => auth()->user()->users()->select('users.id', 'users.firstname', 'users.lastname')->get(),
-                            'groups' => auth()->user()->groups()->select('group_id', 'title')->get(),
-                            'organizations' => auth()->user()->organizations()->select('organization_id', 'title')->get(),
-                            'subscriptions' =>
+                    'subscribers' => [
+                        'users' => auth()->user()->users()->select('users.id', 'users.firstname', 'users.lastname')->get(),
+                        'groups' => auth()->user()->groups()->select('group_id', 'title')->get(),
+                        'organizations' => auth()->user()->organizations()->select('organization_id', 'title')->get(),
+                        'subscriptions' => optional(
                                 optional(
-                                    optional(
-                                        Logbook::find(request('logbook_id'))
-                                    )->subscriptions()
-                                )->with('subscribable')->get()
-                        ]
+                                    Logbook::find(request('logbook_id'))
+                                )->subscriptions()
+                            )->with('subscribable')->get(),
+                    ],
                 ];
             }
         }
-
     }
 
     /**
@@ -65,16 +59,16 @@ class LogbookSubscriptionController extends Controller
         abort_unless((\Gate::allows('logbook_create') and Logbook::find($input['model_id'])->isAccessible()), 403);
 
         $subscribe = LogbookSubscription::updateOrCreate([
-            "logbook_id" => $input['model_id'],
-            "subscribable_type" => $input['subscribable_type'],
-            "subscribable_id" => $input['subscribable_id'],
+            'logbook_id' => $input['model_id'],
+            'subscribable_type' => $input['subscribable_type'],
+            'subscribable_id' => $input['subscribable_id'],
         ], [
-            "editable" => isset($input['editable']) ? $input['editable'] : false,
-            "owner_id" => auth()->user()->id,
+            'editable' => isset($input['editable']) ? $input['editable'] : false,
+            'owner_id' => auth()->user()->id,
         ]);
         $subscribe->save();
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['subscription' => Logbook::find($input['model_id'])->subscriptions()->with('subscribable')->get()];
         }
     }
@@ -92,14 +86,13 @@ class LogbookSubscriptionController extends Controller
         abort_unless((\Gate::allows('logbook_edit') and $logbookSubscription->isAccessible()), 403);
 
         $logbookSubscription->update([
-            "editable" => isset($input['editable']) ? $input['editable'] : false,
-            "owner_id" => auth()->user()->id,
+            'editable' => isset($input['editable']) ? $input['editable'] : false,
+            'owner_id' => auth()->user()->id,
         ]);
 
         if (request()->wantsJson()) {
             return ['editable' => $logbookSubscription->editable];
         }
-
     }
 
     /**
@@ -110,7 +103,6 @@ class LogbookSubscriptionController extends Controller
      */
     public function destroy(LogbookSubscription $logbookSubscription)
     {
-
         abort_unless((\Gate::allows('logbook_delete') and $logbookSubscription->isAccessible()), 403);
         if (request()->wantsJson()) {
             return ['message' => $logbookSubscription->delete()];

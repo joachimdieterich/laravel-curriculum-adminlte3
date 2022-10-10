@@ -9,21 +9,21 @@ class TaskSubscription extends Model
 {
     protected $guarded = [];
 
-
     public function subscribable()
     {
         return $this->morphTo();
     }
 
-    public function task(){
+    public function task()
+    {
         return $this->belongsTo('App\Task', 'task_id', 'id');
     }
 
     public function complete()
     {
-        $this->update(['completion_date' => date("Y-m-d H:i:s")]);
+        $this->update(['completion_date' => date('Y-m-d H:i:s')]);
         LogController::set(get_class($this).'@'.__FUNCTION__);
-       // $this->recordActivity('completed_task');
+        // $this->recordActivity('completed_task');
     }
 
     /**
@@ -32,7 +32,7 @@ class TaskSubscription extends Model
     public function incomplete()
     {
         $this->update(['completion_date' => null]);
-        LogController::set(get_class($this) . '@' . __FUNCTION__);
+        LogController::set(get_class($this).'@'.__FUNCTION__);
         // $this->recordActivity('incompleted_task');
     }
 
@@ -45,5 +45,4 @@ class TaskSubscription extends Model
     {
         return $this->task->isAccessible();
     }
-
 }

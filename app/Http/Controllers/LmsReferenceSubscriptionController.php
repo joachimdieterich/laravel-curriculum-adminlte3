@@ -19,7 +19,7 @@ class LmsReferenceSubscriptionController extends Controller
         if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
             $subscriptions = LmsReferenceSubscription::where([
                 'subscribable_type' => $input['subscribable_type'],
-                'subscribable_id' => $input['subscribable_id']
+                'subscribable_id' => $input['subscribable_id'],
             ]);
 
             if (request()->wantsJson()) {
@@ -28,28 +28,25 @@ class LmsReferenceSubscriptionController extends Controller
         } else {
             if (request()->wantsJson()) {
                 return [
-                    'subscribers' =>
-                        [
-                            'users' => auth()->user()->users()->select('users.id', 'users.firstname', 'users.lastname')->get(),
-                            'groups' => auth()->user()->groups()->select('group_id', 'title')->get(),
-                            'organizations' => auth()->user()->organizations()->select('organization_id', 'title')->get(),
-                            'subscriptions' =>
+                    'subscribers' => [
+                        'users' => auth()->user()->users()->select('users.id', 'users.firstname', 'users.lastname')->get(),
+                        'groups' => auth()->user()->groups()->select('group_id', 'title')->get(),
+                        'organizations' => auth()->user()->organizations()->select('organization_id', 'title')->get(),
+                        'subscriptions' => optional(
                                 optional(
-                                    optional(
-                                        LmsReference::find(request('lmsReference_id'))
-                                    )->subscriptions()
-                                )->with('subscribable')->get()
-                        ]
+                                    LmsReference::find(request('lmsReference_id'))
+                                )->subscriptions()
+                            )->with('subscribable')->get(),
+                    ],
                 ];
             }
         }
     }
 
-
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -58,12 +55,12 @@ class LmsReferenceSubscriptionController extends Controller
         $input = $this->validateRequest();
 
         $subscribe = LmsReferenceSubscription::updateOrCreate([
-            "lms_reference_id" => $input['model_id'],
-            "subscribable_type" => $input['subscribable_type'],
-            "subscribable_id" => $input['subscribable_id'],
+            'lms_reference_id' => $input['model_id'],
+            'subscribable_type' => $input['subscribable_type'],
+            'subscribable_id' => $input['subscribable_id'],
         ], [
-            "editable" => isset($input['editable']) ? $input['editable'] : false,
-            "owner_id" => auth()->user()->id,
+            'editable' => isset($input['editable']) ? $input['editable'] : false,
+            'owner_id' => auth()->user()->id,
         ]);
         $subscribe->save();
 
@@ -72,12 +69,11 @@ class LmsReferenceSubscriptionController extends Controller
         }
     }
 
-
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\LmsReferenceSubscription $LmsReferenceSubscription
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\LmsReferenceSubscription  $LmsReferenceSubscription
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, LmsReferenceSubscription $LmsReferenceSubscription)
@@ -86,8 +82,8 @@ class LmsReferenceSubscriptionController extends Controller
         $input = $this->validateRequest();
 
         $LmsReferenceSubscription->update([
-            "editable" => isset($input['editable']) ? $input['editable'] : false,
-            "owner_id" => auth()->user()->id,
+            'editable' => isset($input['editable']) ? $input['editable'] : false,
+            'owner_id' => auth()->user()->id,
         ]);
 
         if (request()->wantsJson()) {
@@ -98,7 +94,7 @@ class LmsReferenceSubscriptionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\LmsReferenceSubscription $lmsReferenceSubscription
+     * @param  \App\LmsReferenceSubscription  $lmsReferenceSubscription
      * @return \Illuminate\Http\Response
      */
     public function destroy(LmsReferenceSubscription $lmsReferenceSubscription)

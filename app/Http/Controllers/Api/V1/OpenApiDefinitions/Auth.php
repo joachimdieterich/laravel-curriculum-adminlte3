@@ -1,4 +1,6 @@
 <?php
+namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
+
 /**
 * @OA\Post(
 *      path="/v1/login",
@@ -60,3 +62,7 @@
 *
 * Returns user object
 */
+
+class Auth
+{
+}

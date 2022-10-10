@@ -19,10 +19,10 @@ class CreateContactDetailsTable extends Migration
             $table->string('phone')->nullable();
             $table->string('mobile')->nullable();
             $table->text('notes')->nullable();
-            
+
             $table->unsignedbigInteger('owner_id');
             $table->timestamps();
-            
+
             $table->foreign('owner_id')->references('id')->on('users');
         });
     }

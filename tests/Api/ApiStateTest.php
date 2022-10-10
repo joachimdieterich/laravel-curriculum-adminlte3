@@ -2,12 +2,12 @@
 
 namespace Tests\Api;
 
-use Tests\TestCase;
 use App\State;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-class ApiStateTest extends TestCase {
-
+class ApiStateTest extends TestCase
+{
     use RefreshDatabase;
 
     /** @test */
@@ -23,7 +23,6 @@ class ApiStateTest extends TestCase {
      */
     public function an_authenticated_client_can_get_all_states()
     {
-
         $this->signInApiAdmin();
 
         $this->get('/api/v1/states')

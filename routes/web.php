@@ -9,14 +9,20 @@ Route::get('/impressum', 'OpenController@impressum')->name('impressum');
 
 Route::get('/terms', 'OpenController@terms')->name('terms');
 
+Route::get('kanban/share/{token}', 'ShareTokenController@auth');
+
 Auth::routes(['register' => false]);
 
+//embeddable routes
+Route::get('eventSubscriptions/embed', 'EventSubscriptionController@embed')->name('eventSubscriptions.embed');
 
 Route::group(['middleware' => 'auth'], function () {
     //LogController::setStatistics(); //to slow -> use queue instead
     Route::get('/home', 'HomeController@index')->name('home');
 
     Route::get('/admin', 'AdminController@index')->name('admin.index');
+
+    Route::resource('kanbanItemComment', 'KanbanItemCommentController');
 
     Route::resource('absences', 'AbsenceController');
 
@@ -36,7 +42,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('configs/models', 'ConfigController@models');
     Route::resource('configs', 'ConfigController');
 
-     Route::resource('contactdetails', 'ContactDetailController');
+    Route::resource('contactdetails', 'ContactDetailController');
 
     Route::post('contents/{content}/destroy', 'ContentController@destroy')->name('contents.destroy'); //has to be post (has parameters)
     Route::resource('contents', 'ContentController');
@@ -81,6 +87,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('eventSubscriptions/destroySubscription', 'EventSubscriptionController@destroySubscription')->name('eventSubscriptions.destroySubscription');
     Route::post('eventSubscriptions/search', 'EventSubscriptionController@search')->name('eventSubscriptions.search');
     Route::post('eventSubscriptions/getEvents', 'EventSubscriptionController@getEvents')->name('eventSubscriptions.getEvents');
+
     Route::resource('eventSubscriptions', 'EventSubscriptionController');
 
     Route::resource('glossar', 'GlossarController');
@@ -106,6 +113,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('kanbanItems', 'KanbanItemController');
     Route::put('kanbanStatuses/sync', 'KanbanStatusController@sync')->name('kanbanStatuses.sync');
     Route::resource('kanbanStatuses', 'KanbanStatusController');
+    Route::post('kanban/token', 'ShareTokenController@create' );
+
+    Route::get('get_kanbans_color/{id}', 'KanbanController@getKanbansColor');
+    Route::post('update_kanbans_color', 'KanbanController@updateKanbansColor');
 
     Route::resource('kanbanSubscriptions', 'KanbanSubscriptionController');
 
@@ -115,7 +126,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('lmsReferenceSubscriptions', 'LmsReferenceSubscriptionController');
 
-    Route::post('lmsReferences/get', 'LmsReferenceController@get')->name('lmsReferences.get');;
+    Route::post('lmsReferences/get', 'LmsReferenceController@get')->name('lmsReferences.get');
     Route::resource('lmsReferences', 'LmsReferenceController');
 
     Route::resource('lmsUserTokens', 'LmsUserTokenController');
@@ -164,7 +175,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('media/{medium}/destroy', 'MediumController@destroy')->name('media.destroy'); //has to be post (has parameters)
     Route::get('media/{medium}/thumb', 'MediumController@thumb')->name('media.thumb');
     Route::resource('media', 'MediumController');
-
 
     /* objectiveTypes */
     Route::get('objectiveTypes/list', 'ObjectiveTypeController@list')->name('objectiveTypes.list');
@@ -268,23 +278,16 @@ Route::group(['middleware' => 'auth'], function () {
 //    Route::get('/phpinfo', function (){phpinfo();})->middleware('admin'); //available in local env and admin only
 //}
 
-if (env('GUEST_USER') !== null)
-{
-    Route::get('/guest', function ()
-    {
-
-        if (Auth::user() == null)       //if no user is authenticated authenticate guest
-        {
+if (env('GUEST_USER') !== null) {
+    Route::get('/guest', function () {
+        if (Auth::user() == null) {       //if no user is authenticated authenticate guest
             LogController::set('guestLogin');
             LogController::setStatistics();
             Auth::loginUsingId((env('GUEST_USER')), true);
         }
-        if (\App\User::find(env('GUEST_USER'))->organizations()->first()->navigators()->first() != null) //use guests default navigator
-        {
+        if (\App\User::find(env('GUEST_USER'))->organizations()->first()->navigators()->first() != null) { //use guests default navigator
             return redirect('/navigators/'.\App\User::find(env('GUEST_USER'))->organizations()->first()->navigators()->first()->id);
-        }
-        else
-        {
+        } else {
             return redirect('/');
         }
     });

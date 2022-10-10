@@ -6,23 +6,21 @@ use App\Group;
 use App\OrganizationRoleUser;
 use App\User;
 use Illuminate\Support\Facades\Hash;
-use Maatwebsite\Excel\Row;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Row;
 
 class UsersImport implements OnEachRow, WithHeadingRow
 {
-
     public function onRow(Row $row)
     {
-
-        $new_user =  new User([
+        $new_user = new User([
             'username'  => $row['username'],
             'firstname' => $row['firstname'],
             'lastname'  => $row['lastname'],
             'email'     => $row['email'],
-            'password'  => Hash::make($row['password' ]),
-            'current_organization_id' => $row['organization_id']
+            'password'  => Hash::make($row['password']),
+            'current_organization_id' => $row['organization_id'],
         ]);
         $new_user->save();
 
@@ -30,16 +28,15 @@ class UsersImport implements OnEachRow, WithHeadingRow
         OrganizationRoleUser::firstOrCreate(
             [
                 'user_id'         => $new_user->id,
-                'organization_id' => $row['organization_id']
+                'organization_id' => $row['organization_id'],
             ],
             [
-                'role_id'         => isset($row['role_id']) ? $row['role_id'] : 6 //student
+                'role_id'         => isset($row['role_id']) ? $row['role_id'] : 6, //student
             ]
         );
 
         // enrol to group
-        if (isset($row['group_id']))
-        {
+        if (isset($row['group_id'])) {
             $new_user = $this->enrolToGroup($row['group_id'], $new_user->id, isset($row['role_id']) ? $row['role_id'] : 6);
         }
 
@@ -54,10 +51,10 @@ class UsersImport implements OnEachRow, WithHeadingRow
         OrganizationRoleUser::firstOrCreate(
             [
                 'user_id'           => $user->id,
-                'organization_id'   => $group->first()->organization_id
+                'organization_id'   => $group->first()->organization_id,
             ],
             [
-                'role_id'           => $role_id
+                'role_id'           => $role_id,
             ]
         );
 

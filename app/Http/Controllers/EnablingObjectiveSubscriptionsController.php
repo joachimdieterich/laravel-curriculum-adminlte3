@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\EnablingObjectiveSubscriptions;
 use App\EnablingObjective;
+use App\EnablingObjectiveSubscriptions;
 use Illuminate\Http\Request;
 
 class EnablingObjectiveSubscriptionsController extends Controller
@@ -49,24 +49,23 @@ class EnablingObjectiveSubscriptionsController extends Controller
         $subscription = $this->validateRequest();
 
         return EnablingObjectiveSubscriptions::where([
-            "enabling_objective_id" => $subscription['enabling_objective_id'],
-            "subscribable_type" => $subscription['subscribable_type'],
-            "subscribable_id" => $subscription['subscribable_id'],
-            "sharing_level_id" => $subscription['sharing_level_id'],
-            "visibility" => $subscription['visibility'],
+            'enabling_objective_id' => $subscription['enabling_objective_id'],
+            'subscribable_type' => $subscription['subscribable_type'],
+            'subscribable_id' => $subscription['subscribable_id'],
+            'sharing_level_id' => $subscription['sharing_level_id'],
+            'visibility' => $subscription['visibility'],
             //"owner_id"=> auth()->user()->id, //Todo: admin should be able to delete everything
         ])->delete();
-
     }
 
     protected function validateRequest()
     {
         return request()->validate([
-            "enabling_objective_id" => 'sometimes|required',
-            "subscribable_type" => 'required',
-            "subscribable_id" => 'required',
-            "sharing_level_id" => 'sometimes',
-            "visibility" => 'sometimes',
+            'enabling_objective_id' => 'sometimes|required',
+            'subscribable_type' => 'required',
+            'subscribable_id' => 'required',
+            'sharing_level_id' => 'sometimes',
+            'visibility' => 'sometimes',
         ]);
     }
 }

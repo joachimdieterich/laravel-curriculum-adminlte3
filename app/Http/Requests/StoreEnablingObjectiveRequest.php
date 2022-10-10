@@ -13,7 +13,6 @@ class StoreEnablingObjectiveRequest extends FormRequest
 
     public function rules()
     {
-        
         return [
             'title' => [
                 'required',
@@ -24,7 +23,7 @@ class StoreEnablingObjectiveRequest extends FormRequest
             'time_approach' => [
                 'sometimes',
             ],
-            'curriculum_id' => [ 
+            'curriculum_id' => [
                 'required',
             ],
             'terminal_objective_id'  => [

@@ -6,9 +6,20 @@
  */
 
 require('./bootstrap');
+require('tinymce/tinymce');
+
+require('mathjax/es5/tex-chtml');
+
+require('datatables.net-select');
+import 'datatables.net-buttons';
+require('datatables.net-bs4');
+require('moment');
+require('@activix/bootstrap-datetimepicker');
 
 //vue
 window.Vue = require('vue').default;
+
+window.moment = require('moment');
 
 // use trans function like in blade
 import _ from 'lodash'; //needed to get
@@ -16,6 +27,8 @@ import _ from 'lodash'; //needed to get
 Vue.prototype.trans = (key) => {
     return _.get(window.trans, key, key);
 };
+
+import "vue-swatches/dist/vue-swatches.css";
 
 /**
  * Store current ab in browser storage
@@ -85,6 +98,7 @@ Vue.component('group-view', require('./components/group/GroupView.vue').default)
 Vue.component('terminal-objective-modal', require('./components/objectives/TerminalObjectiveModal.vue').default);
 Vue.component('data-table-widgets', require('./components/uiElements/DataTableWidgets.vue').default);
 Vue.component('enabling-objective-modal', require('./components/objectives/EnablingObjectiveModal.vue').default);
+Vue.component('events', require('../../app/Plugins/Eventmanagement/eVewa/resources/js/components/embedEvents').default);
 Vue.component('objective-view', require('./components/objectives/ObjectiveView.vue').default);
 Vue.component('objective-box', require('./components/objectives/ObjectiveBox.vue').default);
 Vue.component('dropdown-button', require('./components/uiElements/DropdownButton.vue').default);
@@ -107,12 +121,15 @@ Vue.component('objective-progress-subscription-modal', require('./components/obj
 Vue.component('task-modal', require('./components/tasks/TaskModal.vue').default);
 Vue.component('task', require('./components/tasks/Task.vue').default);
 Vue.component('task-timeline', require('./components/tasks/Timeline.vue').default);
+Vue.component('kanbans', require('./components/kanban/Kanbans.vue').default);
 Vue.component('kanban-board', require('./components/kanban/KanbanBoard.vue').default);
 Vue.component('subscribe-modal', require('./components/subscription/SubscribeModal.vue').default);
 Vue.component('sidebar', require('./components/uiElements/Sidebar.vue').default);
 Vue.component('move-terminal-objective-modal', require('./components/objectives/MoveTerminalObjectiveModal.vue').default);
 Vue.component('prerequisite-modal', require('./components/prerequisites/PrerequisiteObjectiveModal.vue').default);
 Vue.component('lms-modal', require('./../../app/Plugins/Lms/resources/js/components/Create.vue').default);
+Vue.component('color-picker-component', require('./components/kanban/ColorPickerComponent.vue').default);
+Vue.component('color-picker-input', require('./components/kanban/ColorPickerInput.vue').default);
 
 Vue.prototype.$initTinyMCE = function (options) {
     tinymce.remove();
@@ -126,9 +143,17 @@ Vue.prototype.$initTinyMCE = function (options) {
             "insertdatetime media nonbreaking save table directionality",
             "emoticons template paste textpattern example"
         ],
-        toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media example",
+        external_plugins: {'mathjax': '/node_modules/@dimakorotkov/tinymce-mathjax/plugin.min.js'},
+        toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | mathjax link image media example ",
         relative_urls: false,
         entity_encoding : "raw",
+
+        mathjax: {
+            lib: '/node_modules/mathjax/es5/tex-mml-chtml.js', // path to mathjax
+            //symbols: {start: '\\(', end: '\\)'}, //optional: mathjax symbols
+            //className: "math-tex", //optional: mathjax element class
+            //configUrl: '/your-path-to-plugin/@dimakorotkov/tinymce-mathjax/config.js' //optional: mathjax config js
+        },
 
         file_browser_callback : function(field_name, url, type, win) {
             var x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
@@ -246,8 +271,7 @@ Vue.directive('permission', function (el, binding, vnode) {
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 var app = new Vue({
-    el: '#app',
-
+    el: '#app'
 });
 
 $(document).ready(function () {

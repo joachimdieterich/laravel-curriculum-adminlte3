@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Content;
-use App\Medium;
 use App\Curriculum;
-use Illuminate\Http\Request;
+use App\Medium;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -50,27 +49,27 @@ class CurriculumExportController extends Controller
                 'terminalObjectives.enablingObjectives.successors.successor',
             ])->get()->first();
 
-        $exportFolder = "export/" . $curriculum->id;
-        $filename = date("Y-m-d_H-i-s") . "_" . $curriculum->id;
+        $exportFolder = 'export/'.$curriculum->id;
+        $filename = date('Y-m-d_H-i-s').'_'.$curriculum->id;
         Storage::deleteDirectory($exportFolder);                                // remove potential artefacts of previous export
 
-        Storage::disk('local')->put($exportFolder . "/" . $filename . ".json", json_encode($curriculumWithRelations));
+        Storage::disk('local')->put($exportFolder.'/'.$filename.'.json', json_encode($curriculumWithRelations));
 
         $this->exportEmbeddedFiles($curriculumWithRelations->description, $exportFolder);
 
         // image of curriculum
         if ($curriculumWithRelations->medium !== null) {
             if (Storage::exists($curriculumWithRelations->medium->relativePath()) and
-                !Storage::exists($exportFolder . "/media/" . $curriculumWithRelations->medium->medium_name)) {
-                Storage::copy($curriculumWithRelations->medium->relativePath(), $exportFolder . "/media/{$curriculumWithRelations->medium->id}/" . $curriculumWithRelations->medium->medium_name);
+                ! Storage::exists($exportFolder.'/media/'.$curriculumWithRelations->medium->medium_name)) {
+                Storage::copy($curriculumWithRelations->medium->relativePath(), $exportFolder."/media/{$curriculumWithRelations->medium->id}/".$curriculumWithRelations->medium->medium_name);
             }
         }
 
         // curricula
         foreach ($curriculumWithRelations->media as $medium) {
             if (Storage::exists($medium->relativePath()) and
-                !Storage::exists($exportFolder . "/media/{$medium->id}/" . $medium->medium_name)) {
-                Storage::copy($medium->relativePath(), $exportFolder . "/media/{$medium->id}/" . $medium->medium_name);
+                ! Storage::exists($exportFolder."/media/{$medium->id}/".$medium->medium_name)) {
+                Storage::copy($medium->relativePath(), $exportFolder."/media/{$medium->id}/".$medium->medium_name);
             }
         }
 
@@ -78,9 +77,8 @@ class CurriculumExportController extends Controller
         if (isset($curriculumWithRelations->contents)) {
             $this->checkMediaLinksInContent($curriculumWithRelations->contents, $exportFolder);
         }
-        if (isset($curriculumWithRelations->glossar->contents))
-        {
-            $this->checkMediaLinksInContent($curriculumWithRelations->glossar->contents,  $exportFolder);
+        if (isset($curriculumWithRelations->glossar->contents)) {
+            $this->checkMediaLinksInContent($curriculumWithRelations->glossar->contents, $exportFolder);
         }
 
         //terminal objectives with enabling objectives
@@ -93,29 +91,26 @@ class CurriculumExportController extends Controller
         $this->zipFiles($filename, $exportFolder);
         Storage::deleteDirectory($exportFolder);                                // clean up
 
-        if (request()->wantsJson()){
-            return ['path' => $this->addFileToDb($filename.".cur")];
+        if (request()->wantsJson()) {
+            return ['path' => $this->addFileToDb($filename.'.cur')];
         }
     }
 
     private function checkMediaLinksInContent($array, $exportFolder)
     {
-        foreach ($array AS $content)
-        {
+        foreach ($array as $content) {
             $this->exportEmbeddedFiles($content->content, $exportFolder);
         }
     }
-
 
     private function exportEmbeddedFiles($entry, $exportFolder)
     {
         preg_match_all('/<img[^\>]*src="\/media\/(.+?)"[^\>]*>/s', $entry, $matches, PREG_SET_ORDER, 0);
         //dump($matches);
-        foreach ($matches as $match)
-        {
+        foreach ($matches as $match) {
             $medium = Medium::find($match[1]);
-            if(Storage::exists($medium->relativePath()) AND
-                !Storage::exists($exportFolder."/media/embedded/{$medium->id}/{$medium->medium_name}")) {
+            if (Storage::exists($medium->relativePath()) and
+                ! Storage::exists($exportFolder."/media/embedded/{$medium->id}/{$medium->medium_name}")) {
                 Storage::copy($medium->relativePath(), $exportFolder."/media/embedded/{$medium->id}/{$medium->medium_name}"); //use id as foldername to get link between filename and relative path link in content
             }
         }
@@ -123,7 +118,7 @@ class CurriculumExportController extends Controller
 
     /**
      * @param $curriculumWithRelations
-     * @param string $exportFolder
+     * @param  string  $exportFolder
      */
     private function exportTerminalObjectives($curriculumWithRelations, string $exportFolder): void
     {
@@ -132,7 +127,7 @@ class CurriculumExportController extends Controller
 
             foreach ($terminalObjective->media as $medium) {
                 //todo: check if file exist , e.g. check all media before export starts.
-                Storage::copy($medium->relativePath(), $exportFolder . "/media/objectives/{$terminalObjective->id}/{$medium->id}/" . $medium->medium_name);
+                Storage::copy($medium->relativePath(), $exportFolder."/media/objectives/{$terminalObjective->id}/{$medium->id}/".$medium->medium_name);
             }
 
             $this->checkMediaLinksInContent($terminalObjective->contents, $exportFolder);
@@ -143,7 +138,7 @@ class CurriculumExportController extends Controller
 
     /**
      * @param $terminalObjective
-     * @param string $exportFolder
+     * @param  string  $exportFolder
      */
     private function exportEnablingObjectives($terminalObjective, string $exportFolder): void
     {
@@ -152,7 +147,7 @@ class CurriculumExportController extends Controller
 
             foreach ($enablingObjective->media as $medium) {
                 //todo: check if file exist , e.g. check all media before export starts.
-                Storage::copy($medium->relativePath(), $exportFolder . "/media/objectives/{$terminalObjective->id}/{$enablingObjective->id}/{$medium->id}/" . $medium->medium_name);
+                Storage::copy($medium->relativePath(), $exportFolder."/media/objectives/{$terminalObjective->id}/{$enablingObjective->id}/{$medium->id}/".$medium->medium_name);
             }
             $this->checkMediaLinksInContent($enablingObjective->contents, $exportFolder);
         }
@@ -165,24 +160,22 @@ class CurriculumExportController extends Controller
         }
     }
 
-
-
     /**
-     * @param string $filename
-     * @param string $exportFolder
+     * @param  string  $filename
+     * @param  string  $exportFolder
      */
     private function zipFiles(string $filename, string $exportFolder): void
     {
-        $zip_file = storage_path("app/export/" . $filename . ".cur");
+        $zip_file = storage_path('app/export/'.$filename.'.cur');
 
         $zip = new \ZipArchive();
         $zip->open($zip_file, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
-        $path = storage_path("app/" . $exportFolder);
+        $path = storage_path('app/'.$exportFolder);
         $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
         foreach ($files as $name => $file) {
             // We're skipping all subfolders
-            if (!$file->isDir()) {
+            if (! $file->isDir()) {
                 $filePath = $file->getRealPath();
 
                 // extracting filename with substr/strlen
@@ -197,16 +190,16 @@ class CurriculumExportController extends Controller
     protected function addFileToDb($filename)
     {
         $media = new Medium([
-            'path'          => "/export/",
+            'path'          => '/export/',
             'title'         => $filename,
             'medium_name'   => $filename,
             'description'   => '',
             'author'        => auth()->user()->fullName(),
             'publisher'     => '',
             'city'          => '',
-            'date'          => date("Y-m-d_H-i-s"),
-            'size'          => File::size(Storage::disk('local')->path("export/".$filename)),
-            'mime_type'     => File::mimeType(Storage::disk('local')->path("export/".$filename)),
+            'date'          => date('Y-m-d_H-i-s'),
+            'size'          => File::size(Storage::disk('local')->path('export/'.$filename)),
+            'mime_type'     => File::mimeType(Storage::disk('local')->path('export/'.$filename)),
             'license_id'    => 2,
             'public'        => 0,           //certificates can not be accessed without owership/subscription
             'owner_id'      => auth()->user()->id,
@@ -220,5 +213,4 @@ class CurriculumExportController extends Controller
 
         return  $media->path();
     }
-
 }

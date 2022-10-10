@@ -2,12 +2,12 @@
 
 namespace Tests\Api;
 
-use Tests\TestCase;
 use App\OrganizationType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-class ApiOrganizationTypeTest extends TestCase {
-
+class ApiOrganizationTypeTest extends TestCase
+{
     use RefreshDatabase;
 
     /** @test
@@ -42,5 +42,4 @@ class ApiOrganizationTypeTest extends TestCase {
                 ->assertStatus(200)
                 ->assertJson(OrganizationType::find(2)->toArray());
     }
-
 }

@@ -19,10 +19,10 @@ class CreateTasksTable extends Migration
             $table->text('description')->nullable();
             $table->timestamp('start_date')->nullable();
             $table->timestamp('due_date')->nullable();
-            
-            $table->unsignedbigInteger('owner_id');            
+
+            $table->unsignedbigInteger('owner_id');
             $table->timestamps();
-            
+
             $table->foreign('owner_id')->references('id')->on('users');
         });
     }

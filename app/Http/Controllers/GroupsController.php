@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Group;
-use App\User;
-use App\OrganizationRoleUser;
-use App\Grade;
-use App\Period;
 use App\Curriculum;
-use App\Organization;
+use App\Grade;
+use App\Group;
 use App\Http\Requests\MassDestroyGroupRequest;
 use App\Http\Requests\UpdateGroupRequest;
+use App\Organization;
+use App\OrganizationRoleUser;
+use App\Period;
+use App\User;
 use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\DB;
 
 class GroupsController extends Controller
 {
@@ -21,14 +19,14 @@ class GroupsController extends Controller
     {
         abort_unless(\Gate::allows('group_access'), 403);
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['groups' => json_encode(auth()->user()->groups)];
         } else {
             $curricula = (is_admin()) ? Curriculum::all() : Curriculum::where('type_id', 1)->get();
-            if (is_schooladmin()) //schooladmin should see all curricula of users of current organizations
-            {
+            if (is_schooladmin()) { //schooladmin should see all curricula of users of current organizations
                 $curricula = $curricula->merge(Curriculum::whereIn('owner_id', Organization::where('id', auth()->user()->current_organization_id)->first()->users()->pluck('id')->toArray())->get());
             }
+
             return view('groups.index')
                 ->with(compact('curricula'));
         }
@@ -64,27 +62,27 @@ class GroupsController extends Controller
                 return $groups->organization->title;
             })
             ->addColumn('action', function ($groups) use ($show_gate, $edit_gate, $delete_gate) {
-                 $actions  = '';
-                    if ($show_gate){
-                        $actions .= '<a href="'.route('groups.show', $groups->id).'" '
-                                    . 'id="show-group-'.$groups->id.'" '
-                                    . 'class="btn p-1">'
-                                    . '<i class="fa fa-list-alt"></i>'
-                                    . '</a>';
-                    }
-                    if ($edit_gate){
-                        $actions .= '<a href="'.route('groups.edit', $groups->id).'" '
-                                    . 'id="edit-group-'.$groups->id.'" '
-                                    . 'class="btn p-1">'
-                                    . '<i class="fa fa-pencil-alt"></i> '
-                                    . '</a>';
-                    }
-                    if ($delete_gate){
-                        $actions .= '<button type="button" '
-                                . 'class="btn text-danger" '
-                                . 'onclick="destroyDataTableEntry(\'groups\','.$groups->id.')">'
-                                . '<i class="fa fa-trash"></i></button>';
-                    }
+                $actions = '';
+                if ($show_gate) {
+                    $actions .= '<a href="'.route('groups.show', $groups->id).'" '
+                                    .'id="show-group-'.$groups->id.'" '
+                                    .'class="btn p-1">'
+                                    .'<i class="fa fa-list-alt"></i>'
+                                    .'</a>';
+                }
+                if ($edit_gate) {
+                    $actions .= '<a href="'.route('groups.edit', $groups->id).'" '
+                                    .'id="edit-group-'.$groups->id.'" '
+                                    .'class="btn p-1">'
+                                    .'<i class="fa fa-pencil-alt"></i> '
+                                    .'</a>';
+                }
+                if ($delete_gate) {
+                    $actions .= '<button type="button" '
+                                .'class="btn text-danger" '
+                                .'onclick="destroyDataTableEntry(\'groups\','.$groups->id.')">'
+                                .'<i class="fa fa-trash"></i></button>';
+                }
 
                 return $actions;
             })
@@ -93,7 +91,6 @@ class GroupsController extends Controller
             ->setRowId('id')
             ->make(true);
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -104,8 +101,8 @@ class GroupsController extends Controller
     {
         abort_unless(\Gate::allows('group_create'), 403);
 
-        $grades  = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->type->grades()->get(); //Grade::all();
-        $periods = Period::all();//Organization::where('id',auth()->user()->current_organization_id)->get()->first()->periods;
+        $grades = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->type->grades()->get(); //Grade::all();
+        $periods = Period::all(); //Organization::where('id',auth()->user()->current_organization_id)->get()->first()->periods;
         $organizations = (auth()->user()->role()->id == 1) ? Organization::all() : auth()->user()->organizations()->get();
 
         return view('groups.create')
@@ -123,11 +120,11 @@ class GroupsController extends Controller
             'title' => $new_group['title'],
             'grade_id' => format_select_input($new_group['grade_id']),
             'period_id' => format_select_input($new_group['period_id']),
-            'organization_id' => format_select_input($new_group['organization_id'])
+            'organization_id' => format_select_input($new_group['organization_id']),
         ]);
 
         // axios call?
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => $group->path()];
         }
 
@@ -137,8 +134,7 @@ class GroupsController extends Controller
     /**
      * Display the specified group.
      *
-     * @param int $id
-     *
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show(Group $group)
@@ -149,7 +145,7 @@ class GroupsController extends Controller
               OR is_admin()
               OR ($group->organization_id == auth()->user()->current_organization_id)), 403);*/
 
-        LogController::set(get_class($this) . '@' . __FUNCTION__, $group->id);
+        LogController::set(get_class($this).'@'.__FUNCTION__, $group->id);
         // axios call?
         if (request()->wantsJson()) {
             // dump(json_encode($group->users));
@@ -157,6 +153,7 @@ class GroupsController extends Controller
         }
         $courses = $group->courses()->with('curriculum')->get();
         $group = Group::where('id', $group->id)->with('glossar')->get()->first();
+
         return view('groups.show')
                 ->with(compact('group'))
                 ->with(compact('courses'));
@@ -166,8 +163,8 @@ class GroupsController extends Controller
     {
         abort_unless((\Gate::allows('group_edit') and $group->isAccessible()), 403);
 
-        $grades  = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->type->grades()->get(); //Grade::all();
-        $periods = Period::all();//Organization::where('id',auth()->user()->current_organization_id)->get()->first()->periods;
+        $grades = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->type->grades()->get(); //Grade::all();
+        $periods = Period::all(); //Organization::where('id',auth()->user()->current_organization_id)->get()->first()->periods;
         $organizations = (auth()->user()->role()->id == 1) ? Organization::all() : auth()->user()->organizations()->get();
 
         return view('groups.edit')
@@ -176,7 +173,6 @@ class GroupsController extends Controller
                 ->with(compact('periods'))
                 ->with(compact('organizations'));
     }
-
 
     public function update(UpdateGroupRequest $request, Group $group)
     {
@@ -191,6 +187,7 @@ class GroupsController extends Controller
 
         return redirect()->route('groups.index');
     }
+
     /**
      * Remove the specified group from storage.
      *
@@ -215,7 +212,7 @@ class GroupsController extends Controller
     {
         abort_unless(\Gate::allows('group_delete'), 403);
 
-        foreach (request('ids') AS $id) {
+        foreach (request('ids') as $id) {
             abort_unless(
                 (
                     auth()->user()->groups->contains($id)
@@ -233,7 +230,7 @@ class GroupsController extends Controller
     {
         abort_unless(\Gate::allows('group_enrolment'), 403);
 
-        foreach ((request()->enrollment_list) AS $enrolment) {
+        foreach ((request()->enrollment_list) as $enrolment) {
             abort_unless(
                 (
                     auth()->user()->groups->contains($enrolment['group_id'])
@@ -245,36 +242,34 @@ class GroupsController extends Controller
             $user = User::findOrFail($enrolment['user_id']);
             //if user isn't enrolled to organization, enrol with student role
             OrganizationRoleUser::firstOrCreate(['user_id' => $user->id,
-                'organization_id' => $group->first()->organization_id],
+                'organization_id' => $group->first()->organization_id, ],
                 ['role_id' => 6]
             );
 
             $return[] = $user->groups()->syncWithoutDetaching($enrolment['group_id']);
         }
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['users' => $group->users];
         } else {
             return $return;
         }
-
     }
 
     public function expel()
     {
         abort_unless(\Gate::allows('group_enrolment'), 403);
 
-        foreach ((request()->expel_list) AS $expel)
-        {
+        foreach ((request()->expel_list) as $expel) {
             abort_unless((auth()->user()->groups->contains($expel['group_id'])
-                OR is_admin()
-                OR (Group::find($expel['group_id'])->first()->organization_id == auth()->user()->current_organization_id)), 403);
+                or is_admin()
+                or (Group::find($expel['group_id'])->first()->organization_id == auth()->user()->current_organization_id)), 403);
 
             $user = User::find($expel['user_id']);
             $return[] = $user->groups()->detach($expel['group_id']);
         }
 
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['users' => Group::findOrFail($expel['group_id'])->users];
         } else {
             return $return;
@@ -283,7 +278,6 @@ class GroupsController extends Controller
 
     protected function validateRequest()
     {
-
         return request()->validate([
             'title'             => 'sometimes|required',
             'grade_id'          => 'sometimes',

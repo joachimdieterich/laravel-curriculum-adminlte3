@@ -3,11 +3,14 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\KanbanItemSubscription;
 
 class KanbanItem extends Model
 {
     protected $guarded = [];
+
+    protected $casts = [
+        'created_at' => 'datetime:d.m.Y H:i',
+    ];
 
     public function path()
     {
@@ -19,10 +22,16 @@ class KanbanItem extends Model
         return $this->belongsTo('App\Kanban', 'kanban_id', 'id');
     }
 
+    public function comments()
+    {
+        return $this->hasMany(KanbanItemComment::class);
+    }
+
     public function subscribable()
     {
         return $this->morphTo();
     }
+
     public function subscriptions()
     {
         return $this->hasMany(KanbanItemSubscription::class);
@@ -49,7 +58,6 @@ class KanbanItem extends Model
     public function status()
     {
         return $this->hasOne('App\KanbanStatus', 'id', 'kanban_status_id');
-
     }
 
     public function owner()
@@ -83,5 +91,4 @@ class KanbanItem extends Model
     {
         return $this->kanban->isAccessible();
     }
-
 }

@@ -13,4 +13,3 @@ $factory->define(OrganizationType::class, function (Faker $faker) {
         'country_id'  => 'DE',
     ];
 });
-

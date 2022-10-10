@@ -2,44 +2,40 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Curriculum;
-use Facades\Tests\Setup\CurriculumFactory;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class TerminalObjectiveCRUDTest extends TestCase
 {
-     use RefreshDatabase;
-     
-     public function setUp(): void
+    use RefreshDatabase;
+
+    public function setUp(): void
     {
         parent::setUp();
         $this->signInAdmin();
         /* add curriculum needed by tests*/
-        $this->post("curricula" , $attributes = factory('App\Curriculum')->raw());
-        
+        $this->post('curricula', $attributes = factory('App\Curriculum')->raw());
     }
-    
-    /** @test 
+
+    /** @test
      * Use Route: GET|HEAD, terminalObjectives, terminalObjectives.index
      */
-    public function a_user_can_retrive_terminalObjectives() 
-    { 
+    public function a_user_can_retrive_terminalObjectives()
+    {
 
         //dd(\App\TerminalObjective::All());
     }
 
-    /** @test 
-    * Use Route: POST, terminalObjectives, terminalObjectives.store
-    */     
+    /** @test
+     * Use Route: POST, terminalObjectives, terminalObjectives.store
+     */
     public function an_administrator_create_an_terminal_objective()
-    { 
-        
+    {
         $attributes = factory('App\TerminalObjective')->raw();
-        
-        $this->post("terminalObjectives" , $attributes);
-        
+
+        $this->post('terminalObjectives', $attributes);
+
         $this->assertDatabaseHas('terminal_objectives', $attributes);
     }
-   
 }

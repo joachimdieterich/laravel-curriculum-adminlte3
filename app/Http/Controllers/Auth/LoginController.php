@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\LogController;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Aacotroneo\Saml2\Saml2Auth;
 use Illuminate\Http\Request;
+
 class LoginController extends Controller
 {
     /*
@@ -41,8 +41,10 @@ class LoginController extends Controller
 
     /**
      * Enable Login with email or username
-     * @param Request $request
+     *
+     * @param  Request  $request
      * @return \Illuminate\Http\RedirectResponse
+     *
      * @throws \Illuminate\Validation\ValidationException
      */
     public function login(Request $request)
@@ -55,28 +57,27 @@ class LoginController extends Controller
         ]);
 
         $fieldType = filter_var($request->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
-        if(auth()->attempt(array($fieldType => $input['email'], 'password' => $input['password'])))
-        {
+        if (auth()->attempt([$fieldType => $input['email'], 'password' => $input['password']])) {
             LogController::set('login');
             LogController::set('activeOrg', auth()->user()->current_organization_id);
+
             return redirect()->intended('home');
         } else {
             return redirect()->route('login')
-                ->with('error','Email-Address And Password Are Wrong.');
+                ->with('error', 'Email-Address And Password Are Wrong.');
         }
-
     }
 
     /**
      * Overwrite Logout
      * If SSO is set add sessionIndex and nameId to request
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function logout(Request $request)
     {
-        if (( env('SAML2_RLP_IDP_SSO_URL') !== null ) AND ( !empty(env('SAML2_RLP_IDP_SSO_URL')) ) )
-        {
+        if ((env('SAML2_RLP_IDP_SSO_URL') !== null) and (! empty(env('SAML2_RLP_IDP_SSO_URL')))) {
             return redirect()->action("\Aacotroneo\Saml2\Http\Controllers\Saml2Controller@logout",
                 [
                     'idpName'       => 'rlp', //todo: add use dynamic value (env?)
@@ -84,9 +85,7 @@ class LoginController extends Controller
                     'sessionIndex'  => $request->session()->get('sessionIndex'),
                     'nameId'        => $request->session()->get('nameId'),
                 ]);
-        }
-        else
-        {
+        } else {
             $this->guard()->logout();
 
             $request->session()->invalidate();
@@ -95,6 +94,5 @@ class LoginController extends Controller
 
             return $this->loggedOut($request) ?: redirect('/');
         }
-
     }
 }

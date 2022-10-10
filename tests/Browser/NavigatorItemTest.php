@@ -2,18 +2,16 @@
 
 namespace Tests\Browser;
 
-use Tests\DuskTestCase;
-use Laravel\Dusk\Browser;
-use Laravel\Dusk\Chrome;
-use App\User;
-use App\Navigator;
-use App\NavigatorView;
-use App\NavigatorItem;
 use App\Curriculum;
+use App\Navigator;
+use App\NavigatorItem;
+use App\NavigatorView;
+use App\User;
+use Laravel\Dusk\Browser;
+use Tests\DuskTestCase;
 
 class NavigatorItemTest extends DuskTestCase
 {
-    
     /**
      * Add navigator view as navigator item
      * - show new view
@@ -22,25 +20,25 @@ class NavigatorItemTest extends DuskTestCase
      * @return void
      */
     public function testAddNavigatorViewAsNavigatorItemAndShowNewViewThenDeleteView()
-    {   
+    {
         $this->browse(function (Browser $admin) {
             $navigator = Navigator::create([
                 'title'             => 'DuskNavigator',
-                'organization_id'   => 1
+                'organization_id'   => 1,
             ]);
             $navigatorView = NavigatorView::create([
                 'title'             => 'First View',
                 'description'       => 'First View Description',
-                'navigator_id'      => $navigator->id
+                'navigator_id'      => $navigator->id,
             ]);
             $title = 'Second View';
             $description = 'Second View description';
             $admin->loginAs(User::find(1))
-                    ->visit('navigators/'.$navigator->id) //shows first view of navigator. 
+                    ->visit('navigators/'.$navigator->id) //shows first view of navigator.
                     ->waitForText($navigator->title)
                     ->assertSee($navigatorView->title)
                     ->click('#add-navigator-items')
-                    ->waitForText(trans('global.create').' '. trans('global.navigator_item.title_singular'))
+                    ->waitForText(trans('global.create').' '.trans('global.navigator_item.title_singular'))
                     ->select2('#referenceable_type', trans('global.referenceable_types.navigator_view'))
                     ->type('title', $title)
                     ->type('description', $description)
@@ -51,9 +49,9 @@ class NavigatorItemTest extends DuskTestCase
                     ->click('#navigator-item-save')
                     ->waitForText($title)
                     ->assertSee($description);
-                    //Show new navigator view
+            //Show new navigator view
             $navigator_item = NavigatorItem::where('title', $title)->first();
-            $admin  ->click('#navigator-item-'.$navigator_item->id)
+            $admin->click('#navigator-item-'.$navigator_item->id)
                     ->waitForText($navigator_item->title)
                     ->assertSee($navigator_item->description)
                     //Delete navigator view
@@ -61,33 +59,33 @@ class NavigatorItemTest extends DuskTestCase
                     ->waitForText($navigator->title)
                     ->assertDontSee($title)
                     ->assertDontSee($description);
-        });     
+        });
     }
-    
+
     /**
      * Add curriculum as navigator item
      *
      * @return void
      */
     public function testAddCurriculumAsNavigatorItem()
-    {   
+    {
         $this->browse(function (Browser $admin) {
             $navigator = Navigator::create([
                 'title'             => 'DuskNavigator',
-                'organization_id'   => 1
+                'organization_id'   => 1,
             ]);
             $navigatorView = NavigatorView::create([
                 'title'             => 'First View',
                 'description'       => 'First View Description',
-                'navigator_id'      => $navigator->id
+                'navigator_id'      => $navigator->id,
             ]);
             $curriculum = Curriculum::find(1);
             $admin->loginAs(User::find(1))
-                    ->visit('navigators/'.$navigator->id) //shows first view of navigator. 
+                    ->visit('navigators/'.$navigator->id) //shows first view of navigator.
                     ->waitForText($navigator->title)
                     ->assertSee($navigatorView->title)
                     ->click('#add-navigator-items')
-                    ->waitForText(trans('global.create').' '. trans('global.navigator_item.title_singular'))
+                    ->waitForText(trans('global.create').' '.trans('global.navigator_item.title_singular'))
                     ->select2('#referenceable_type', trans('global.referenceable_types.curriculum'))
                     ->select2('#referenceable_id', $curriculum->title)
                     ->select2('#position', trans('global.content'))
@@ -96,45 +94,44 @@ class NavigatorItemTest extends DuskTestCase
                     ->click('#navigator-item-save')
                     ->waitForText($curriculum->title)
                     ->assertSee($curriculum->description);
-                    //Show new navigator item
+            //Show new navigator item
             $navigator_item = NavigatorItem::where('title', $curriculum->title)->first();
-            $admin  ->click('#navigator-item-'.$navigator_item->id)
+            $admin->click('#navigator-item-'.$navigator_item->id)
                     ->waitForText($curriculum->title)
-                    ->visit('navigators/'.$navigator->id) //shows first view of navigator. 
+                    ->visit('navigators/'.$navigator->id) //shows first view of navigator.
                     ->waitForText($curriculum->title)
                     //Delete navigator item
                     ->click('#delete-navigator-item-'.$navigator_item->id)
                     ->waitForText($navigator->title)
-                    ->assertDontSee($curriculum->title)
-                    ;
-        });     
+                    ->assertDontSee($curriculum->title);
+        });
     }
-    
+
     /**
      * Add text as navigator item
      *
      * @return void
      */
     public function testAddTextAsNavigatorItem()
-    {   
+    {
         $this->browse(function (Browser $admin) {
             $navigator = Navigator::create([
                 'title'             => 'DuskNavigator',
-                'organization_id'   => 1
+                'organization_id'   => 1,
             ]);
             $navigatorView = NavigatorView::create([
                 'title'             => 'First View',
                 'description'       => 'First View Description',
-                'navigator_id'      => $navigator->id
+                'navigator_id'      => $navigator->id,
             ]);
             $title = 'Navigator text title';
             $description = 'Navigator text description';
             $admin->loginAs(User::find(1))
-                    ->visit('navigators/'.$navigator->id) //shows first view of navigator. 
+                    ->visit('navigators/'.$navigator->id) //shows first view of navigator.
                     ->waitForText($navigator->title)
                     ->assertSee($navigatorView->title)
                     ->click('#add-navigator-items')
-                    ->waitForText(trans('global.create').' '. trans('global.navigator_item.title_singular'))
+                    ->waitForText(trans('global.create').' '.trans('global.navigator_item.title_singular'))
                     ->select2('#referenceable_type', trans('global.referenceable_types.content'))
                     ->type('title', $title)
                     ->type('description', $description)
@@ -145,41 +142,40 @@ class NavigatorItemTest extends DuskTestCase
                     ->waitForText($title)
                     ->click('.box-title') //expand item
                     ->assertSee($description);
-                    //Show new navigator item
+            //Show new navigator item
             $navigator_item = NavigatorItem::where('title', $title)->first();
-                    //Delete navigator item
-              $admin->click('#delete-navigator-content-'.$navigator_item->id)
+            //Delete navigator item
+            $admin->click('#delete-navigator-content-'.$navigator_item->id)
                     ->waitForText($navigator->title)
-                    ->assertDontSee($title)
-                    ;
-        });     
+                    ->assertDontSee($title);
+        });
     }
-    
+
     /**
      * Add medium as navigator item
      *
      * @return void
      */
     public function testAddMediumAsNavigatorItem()
-    {   
+    {
         $this->browse(function (Browser $admin) {
             $navigator = Navigator::create([
                 'title'             => 'DuskNavigator',
-                'organization_id'   => 1
+                'organization_id'   => 1,
             ]);
             $navigatorView = NavigatorView::create([
                 'title'             => 'First View',
                 'description'       => 'First View Description',
-                'navigator_id'      => $navigator->id
+                'navigator_id'      => $navigator->id,
             ]);
             $title = 'Medium title';
             $description = 'Medium description';
             $admin->loginAs(User::find(1))
-                    ->visit('navigators/'.$navigator->id) //shows first view of navigator. 
+                    ->visit('navigators/'.$navigator->id) //shows first view of navigator.
                     ->waitForText($navigator->title)
                     ->assertSee($navigatorView->title)
                     ->click('#add-navigator-items')
-                    ->waitForText(trans('global.create').' '. trans('global.navigator_item.title_singular'))
+                    ->waitForText(trans('global.create').' '.trans('global.navigator_item.title_singular'))
                     ->select2('#referenceable_type', trans('global.referenceable_types.medium'))
                     ->type('title', $title)
                     ->type('description', $description)
@@ -190,15 +186,13 @@ class NavigatorItemTest extends DuskTestCase
                     ->click('#navigator-item-save')
                     ->waitForText($title)
                     ->assertSee($description);
-                    //Show new navigator item
+            //Show new navigator item
             $navigator_item = NavigatorItem::where('title', $title)->first();
-            
-                    //Delete navigator item
-            $admin  ->click('#delete-navigator-item-'.$navigator_item->id)
+
+            //Delete navigator item
+            $admin->click('#delete-navigator-item-'.$navigator_item->id)
                     ->waitForText($navigator->title)
-                    ->assertDontSee($title)
-                    ;
-        });     
+                    ->assertDontSee($title);
+        });
     }
-   
 }

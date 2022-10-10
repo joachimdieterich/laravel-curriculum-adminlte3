@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
+use Tests\TestCase;
 
 class AchievementCRUDTest extends TestCase
 {
@@ -15,9 +15,9 @@ class AchievementCRUDTest extends TestCase
         parent::setUp();
         $this->signIn();
         //$this->signInAdmin();
-        $this->post("curricula" , $attributes = factory('App\Curriculum')->raw());
-        $this->post("terminalObjectives" , factory('App\TerminalObjective')->raw());
-        $this->post("enablingObjectives" , factory('App\EnablingObjective')->raw());
+        $this->post('curricula', $attributes = factory('App\Curriculum')->raw());
+        $this->post('terminalObjectives', factory('App\TerminalObjective')->raw());
+        $this->post('enablingObjectives', factory('App\EnablingObjective')->raw());
     }
 
     /** @test
@@ -46,9 +46,8 @@ class AchievementCRUDTest extends TestCase
         $attributes['owner_id'] = auth()->user()->id;
         $attributes['user_id'] = 2; //set achievement for student (id 2)
 
-        $this->post("achievements" , $attributes);
-        $attributes['status'] = "01";
+        $this->post('achievements', $attributes);
+        $attributes['status'] = '01';
         $this->assertDatabaseHas('achievements', $attributes);
     }
-
 }

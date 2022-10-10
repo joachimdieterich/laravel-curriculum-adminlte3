@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class KanbanItemController extends Controller
 {
-
     /**
      * Store a newly created resource in storage.
      *
@@ -26,24 +25,24 @@ class KanbanItemController extends Controller
             'order_id'          => $input['order_id'],
             'kanban_id'         => $input['kanban_id'],
             'kanban_status_id'  => $input['kanban_status_id'],
-            'owner_id'          => auth()->user()->id
+            'color'             => $input['color'],
+            'owner_id'          => auth()->user()->id,
         ]);
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         // axios call?
-        if (request()->wantsJson()){
-            return ['message' => KanbanItem::where('id', $kanbanItem->id)->with(['mediaSubscriptions', 'media', 'owner', 'taskSubscription'])->get()->first()];
+        if (request()->wantsJson()) {
+            return ['message' => KanbanItem::where('id', $kanbanItem->id)->with(['mediaSubscriptions', 'media', 'owner', 'taskSubscription','comments'])->get()->first()];
         }
-
     }
 
     public function sync(Request $request)
     {
         $this->validate(request(), [
-            'columns' => ['required', 'array']
+            'columns' => ['required', 'array'],
         ]);
-        $kanban_id = $request->columns[0]['id'];
+        $kanban_id = $request->columns[0]['kanban_id'];
         abort_unless((\Gate::allows('kanban_show') and Kanban::find($kanban_id)->isAccessible()), 403);
 
         foreach ($request->columns as $kanban_status) {
@@ -51,10 +50,10 @@ class KanbanItemController extends Controller
                 if ($item['kanban_status_id'] !== $kanban_status['id'] || $item['order_id'] !== $order_id) {
                     if ($item['kanban_status_id'] !== $kanban_status['id']) {
                         KanbanItem::where('kanban_status_id', '=', $item['kanban_status_id'])
-                            ->where('order_id', ">", $item['order_id'])->decrement('order_id');
+                            ->where('order_id', '>', $item['order_id'])->decrement('order_id');
                     }
                     KanbanItem::where('kanban_status_id', '=', $kanban_status['id'])
-                        ->where('order_id', ">=", $order_id)->increment('order_id');
+                        ->where('order_id', '>=', $order_id)->increment('order_id');
 
                     //update  set order_id +1 where $kanban_status['id'] and order_id >= $order_id
                     KanbanItem::find($item['id'])
@@ -63,19 +62,18 @@ class KanbanItemController extends Controller
             }
         }
 
-
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
-        if (request()->wantsJson()){
-            return ['message' => Kanban::with(['statuses', 'statuses.items' => function($query) use ($kanban_id) {
+        if (request()->wantsJson()) {
+            return ['message' => Kanban::with(['statuses', 'statuses.items' => function ($query) use ($kanban_id) {
                 $query->where('kanban_id', $kanban_id)->with(['owner', 'taskSubscription.task.subscriptions' => function ($query) {
                     $query->where('subscribable_id', auth()->user()->id)
                         ->where('subscribable_type', 'App\User');
                 }, 'mediaSubscriptions.medium'])->orderBy('order_id');
-            }, 'statuses.items.subscribable'])->where('id', $kanban_id)->get()->first()->statuses];
+            }, 'statuses.items.subscribable','statuses.items.comments','statuses.items.comments.user'])->where('id', $kanban_id)->get()->first()->statuses];
         }
-
     }
+
     /**
      * Display the specified resource.
      *
@@ -88,6 +86,7 @@ class KanbanItemController extends Controller
         if (request()->wantsJson()) {
             return $this->getItemWithRelations($kanbanItem);
         }
+
         return redirect()->action('KanbanController@show', ['kanban' => $kanbanItem->kanban_id]);
     }
 
@@ -113,7 +112,7 @@ class KanbanItemController extends Controller
     {
         abort_unless((\Gate::allows('kanban_edit') and $kanbanItem->isAccessible()), 403);
 
-        $input= $this->validateRequest();
+        $input = $this->validateRequest();
 
         $kanbanItem->update([
             'title'             => $input['title'],
@@ -121,11 +120,12 @@ class KanbanItemController extends Controller
             'order_id'          => $input['order_id'],
             'kanban_id'         => $input['kanban_id'],
             'kanban_status_id'  => $input['kanban_status_id'],
-            'owner_id'          => auth()->user()->id
+            'color'             => $input['color'],
+            'owner_id'          => auth()->user()->id,
         ]);
 
         // axios call?
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return $this->getItemWithRelations($kanbanItem);
         }
     }
@@ -148,18 +148,18 @@ class KanbanItemController extends Controller
 
     protected function validateRequest()
     {
-
         return request()->validate([
             'title' => 'sometimes|required',
             'description' => 'sometimes',
             'order_id' => 'sometimes|required|integer',
             'kanban_id' => 'sometimes|required|integer',
             'kanban_status_id' => 'sometimes|required|integer',
+            'color' => 'sometimes'
         ]);
     }
 
     /**
-     * @param KanbanItem $kanbanItem
+     * @param  KanbanItem  $kanbanItem
      * @return array
      */
     private function getItemWithRelations(KanbanItem $kanbanItem): array

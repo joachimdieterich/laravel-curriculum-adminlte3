@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\ReferenceSubscription;
-use App\Reference;
 use App\Curriculum;
+use App\Reference;
+use App\ReferenceSubscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class ReferenceSubscriptionController extends Controller
 {
-
     /**
      * Store a newly created resource in storage.
      *
@@ -22,11 +21,10 @@ class ReferenceSubscriptionController extends Controller
         abort_unless(\Gate::allows('objective_create'), 403);
         $new_subscription = $this->validateRequest();
 
-        if (($new_subscription['subscribable_type'] ==  "App\TerminalObjective" AND $new_subscription['terminal_objective_id'] == $new_subscription['subscribable_id'])
-            OR
-            ($new_subscription['subscribable_type'] ==  "App\EnablingObjective" AND $new_subscription['enabling_objective_id'] == $new_subscription['subscribable_id'])
-           )
-        {
+        if (($new_subscription['subscribable_type'] == "App\TerminalObjective" and $new_subscription['terminal_objective_id'] == $new_subscription['subscribable_id'])
+            or
+            ($new_subscription['subscribable_type'] == "App\EnablingObjective" and $new_subscription['enabling_objective_id'] == $new_subscription['subscribable_id'])
+           ) {
             return false;
         }
 
@@ -45,11 +43,11 @@ class ReferenceSubscriptionController extends Controller
             'owner_id'           => auth()->user()->id,
         ]);
 
-        if ($subscription){ //generate sibling
+        if ($subscription) { //generate sibling
             $sibling = ReferenceSubscription::Create([
                 'reference_id'       => $reference->id,
                 'referenceable_type' => ($new_subscription['enabling_objective_id'] != null) ? "App\EnablingObjective" : "App\TerminalObjective",
-                'referenceable_id'   => ($new_subscription['enabling_objective_id'] != null)  ? $new_subscription['enabling_objective_id'] : $new_subscription['terminal_objective_id'],
+                'referenceable_id'   => ($new_subscription['enabling_objective_id'] != null) ? $new_subscription['enabling_objective_id'] : $new_subscription['terminal_objective_id'],
                 'sharing_level_id'   => isset($new_subscription['sharing_level_id']) ? $new_subscription['sharing_level_id'] : 1,
                 'visibility'         => isset($new_subscription['visibility']) ? $new_subscription['visibility'] : true,
                 'owner_id'           => auth()->user()->id,
@@ -58,8 +56,7 @@ class ReferenceSubscriptionController extends Controller
         //adding to $subscription->referenceable models referencing_curriculum_id
         $model = $subscription->referenceable;
         $curricula_ids = (array) $model->referencing_curriculum_id;
-        if (!in_array($new_subscription['curriculum_id'], $curricula_ids))
-        {
+        if (! in_array($new_subscription['curriculum_id'], $curricula_ids)) {
             array_push($curricula_ids, $new_subscription['curriculum_id']);
         }
 
@@ -71,16 +68,14 @@ class ReferenceSubscriptionController extends Controller
 
         $model2 = $sibling->referenceable;
         $curricula_ids = (array) $model2->referencing_curriculum_id;
-        if (!in_array($curriculum_id, $curricula_ids))
-        {
+        if (! in_array($curriculum_id, $curricula_ids)) {
             array_push($curricula_ids, $curriculum_id);
         }
 
         $model2->referencing_curriculum_id = $curricula_ids;
         $model2->save();
 
-
-        if (request()->wantsJson()){
+        if (request()->wantsJson()) {
             return ['message' => 'ok'];
         }
     }
@@ -95,17 +90,16 @@ class ReferenceSubscriptionController extends Controller
     {
         abort_unless(auth()->user()->role()->id == 1, 403); //only admins for debug purposes
         $reference_subscription = ReferenceSubscription::where('reference_id', $referenceSubscription->reference_id)
-                        ->with(['siblings' => function($query) use ($referenceSubscription) {
-                                $query->where('reference_id', $referenceSubscription->reference_id)
+                        ->with(['siblings' => function ($query) use ($referenceSubscription) {
+                            $query->where('reference_id', $referenceSubscription->reference_id)
                                 ->where('referenceable_id', '!=', $referenceSubscription->referenceable_id)
                                 ->where('referenceable_type', '=', $referenceSubscription->referenceable_type);
-                            }])->get();
+                        }])->get();
 
         dd($reference_subscription);
     }
 
-
-   /**
+    /**
      * Display the specified resource.
      *
      * @param  \App\ReferenceSubscription  $referenceSubscription
@@ -114,24 +108,23 @@ class ReferenceSubscriptionController extends Controller
     public function siblings(ReferenceSubscription $referenceSubscription)
     {
         return ReferenceSubscription::where('reference_id', $referenceSubscription->reference_id)
-                        ->with(['siblings' => function($query) use ($referenceSubscription) {
-                                $query->where('reference_id', $referenceSubscription->reference_id)
+                        ->with(['siblings' => function ($query) use ($referenceSubscription) {
+                            $query->where('reference_id', $referenceSubscription->reference_id)
                                 ->where('referenceable_id', '!=', $referenceSubscription->referenceable_id)
                                 ->where('referenceable_type', '=', $referenceSubscription->referenceable_type);
-                            }])->get();
-
+                        }])->get();
     }
 
     protected function validateRequest()
     {
         return request()->validate([
-            "curriculum_id" => 'sometimes|required',
-            "grade_id" => 'sometimes',
-            "terminal_objective_id" => 'sometimes|required',
-            "enabling_objective_id" => 'sometimes',
-            "subscribable_type" => 'required',
-            "subscribable_id" => 'required',
-            "description" => 'sometimes',
+            'curriculum_id' => 'sometimes|required',
+            'grade_id' => 'sometimes',
+            'terminal_objective_id' => 'sometimes|required',
+            'enabling_objective_id' => 'sometimes',
+            'subscribable_type' => 'required',
+            'subscribable_id' => 'required',
+            'description' => 'sometimes',
         ]);
     }
 }

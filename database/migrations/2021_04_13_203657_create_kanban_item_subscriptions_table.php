@@ -27,7 +27,6 @@ class CreateKanbanItemSubscriptionsTable extends Migration
             $table->foreign('kanban_item_id')->references('id')->on('kanban_items');
             $table->foreign('owner_id')->references('id')->on('users');
         });
-
     }
 
     /**

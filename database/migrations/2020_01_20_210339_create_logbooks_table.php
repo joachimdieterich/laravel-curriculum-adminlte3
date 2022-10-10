@@ -18,9 +18,9 @@ class CreateLogbooksTable extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->unsignedbigInteger('owner_id');
-            
+
             $table->timestamps();
-            
+
             $table->foreign('owner_id')->references('id')->on('users');
         });
     }

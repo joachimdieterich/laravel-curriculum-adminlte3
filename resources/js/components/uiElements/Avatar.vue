@@ -20,6 +20,7 @@
         props: {
             firstname: '',
             lastname: '',
+            username: '',
             size: {
                 default: 60
             },
@@ -39,7 +40,14 @@
         mounted() {
             this.id = 'user-avatar' + this._uid;
 
-            let initials = this.firstname[0].charAt(0).toUpperCase() + this.lastname[0].charAt(0).toUpperCase();
+            let initials = "";
+            if(this.firstname){
+                initials = this.firstname[0].charAt(0).toUpperCase() + this.lastname[0].charAt(0).toUpperCase();
+            }
+            else if(this.username){
+                initials = this.username[0].charAt(0).toUpperCase();
+            }
+
 
             let charIndex = initials.charCodeAt(0) - 65;
             let colourIndex = charIndex % 19;

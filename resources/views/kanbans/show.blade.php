@@ -1,12 +1,19 @@
-@extends((Auth::user()->id == env('GUEST_USER')) ? 'layouts.contentonly' : 'layouts.master')
+@extends((Auth::user()->id == env('GUEST_USER')) || $is_shared ? 'layouts.contentonly' : 'layouts.master')
 
 @section('title')
+    @can('kanban_create')
+        @if(!$is_shared)
+            <color-picker-component id="{{ $kanban->id }}"></color-picker-component>
+        @endif
+    @endcan
     <small>{{ $kanban->title }} </small>
     @can('kanban_create')
-    <button class="btn btn-flat"
-            onclick="app.__vue__.$modal.show('subscribe-modal',  {'modelId': {{ $kanban->id }}, 'modelUrl': 'kanban' });">
-        <i class="fa fa-share-alt text-secondary"></i>
-    </button>
+        @if(!$is_shared)
+            <button class="btn btn-flat"
+                    onclick="app.__vue__.$modal.show('subscribe-modal',  {'modelId': {{ $kanban->id }}, 'modelUrl': 'kanban','shareWithToken': true });">
+                <i class="fa fa-share-alt text-secondary"></i>
+            </button>
+        @endif
     @endcan
 @endsection
 @section('breadcrumb')
@@ -17,6 +24,7 @@
             <a href="/">{{ trans('global.home') }}</a>
         @endif
     </li>
+    <li class="breadcrumb-item"><a href="{{ route("kanbans.index") }}">{{ trans('global.kanban.title') }}</a></li>
     <li class="breadcrumb-item active">{{ trans('global.kanban.title_singular') }}</li>
     <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"
                                     aria-label="{{ trans('global.documentation') }}"><i
@@ -40,8 +48,10 @@
 
     <!-- Timelime example  -->
         <div id="kanban_board_wrapper"
-             style="position:absolute; width: calc(100vw - 270px);height: calc(100vh - 175px);overflow-x:auto;overflow-y: hidden;">
+             style="position:absolute; width: calc(100vw {{ ( $is_shared ? '' : '- 270px') }} - 2rem);height: calc(100vh - 175px - 2rem);overflow:auto; padding: 2rem; background-color: {{ $kanban->background }}">
+
             <kanban-board
+                :editable="{{ $may_edit ? "1":"0" }}"
                 ref="kanbanBoard"
                 :kanban="{{ $kanban }}"></kanban-board>
         </div>

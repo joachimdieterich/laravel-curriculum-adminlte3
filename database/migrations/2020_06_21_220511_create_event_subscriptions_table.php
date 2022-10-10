@@ -18,7 +18,7 @@ class CreateEventSubscriptionsTable extends Migration
             $table->string('subscribable_type');
             $table->unsignedbigInteger('subscribable_id');
             $table->string('plugin_name'); //eg 'evewa'
-            $table->string('value',500); 
+            $table->string('value', 500);
             $table->unsignedbigInteger('sharing_level_id');
             $table->boolean('visibility');
             $table->unsignedbigInteger('owner_id');

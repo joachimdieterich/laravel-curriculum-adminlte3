@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Curriculum;
-use App\Http\Controllers\LogController;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
 use App\Config;
+use App\Curriculum;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\LogController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CurriculaApiController extends Controller
 {
@@ -18,7 +18,6 @@ class CurriculaApiController extends Controller
         return $curricula;
     }
 
-
     public function show(Curriculum $curriculum)
     {
         return $curriculum;
@@ -27,22 +26,18 @@ class CurriculaApiController extends Controller
     public function getSingleMetadataset(Curriculum $curriculum, Request $request)
     {
         $config = Config::where([
-            ['key', '=',  'metadata_password']
+            ['key', '=',  'metadata_password'],
         ])->get();
 
-        if ($config->first() !== null)
-        {
-            if ($config->first()->value != $request->query('password'))
-            {
-                return response()->json(['error' => 'Not authorized.'],403);
+        if ($config->first() !== null) {
+            if ($config->first()->value != $request->query('password')) {
+                return response()->json(['error' => 'Not authorized.'], 403);
             }
-        }
-        else
-        {
-            return response()->json(['error' => 'config (metadata_password) missing'],420);
+        } else {
+            return response()->json(['error' => 'config (metadata_password) missing'], 420);
         }
 
-        return 'deactivated: please use /v1/curricula/metadatasets?password={password}';//$this->generateMetadataset($curriculum);
+        return 'deactivated: please use /v1/curricula/metadatasets?password={password}'; //$this->generateMetadataset($curriculum);
     }
 
     public function getAllMetadatasets(Request $request)
@@ -60,15 +55,15 @@ class CurriculaApiController extends Controller
             }
             else
             {*/
-        LogController::set(get_class($this) . '@' . __FUNCTION__);
+        LogController::set(get_class($this).'@'.__FUNCTION__);
         $metadata = DB::table('metadatasets')->latest('updated_at')->first();
-                return $metadata->metadataset;
+
+        return $metadata->metadataset;
         /*  }
       }
       else
       {
           return response()->json(['error' => 'config (metadata_password) missing'],420);
       }*/
-
     }
 }

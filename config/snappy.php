@@ -39,8 +39,8 @@ return [
         'timeout' => 3600,
         'options' => [
             //'quiet' => true,
-            'load-error-handling' => "ignore",
-            'load-media-error-handling' => "ignore",
+            'load-error-handling' => 'ignore',
+            'load-media-error-handling' => 'ignore',
         ],
         'env'     => [],
     ],
@@ -51,8 +51,8 @@ return [
         'timeout' => 3600,
         'options' => [
             //'quiet' => true,
-            'load-error-handling' => "ignore",
-            'load-media-error-handling' => "ignore",
+            'load-error-handling' => 'ignore',
+            'load-media-error-handling' => 'ignore',
         ],
         'env'     => [],
     ],

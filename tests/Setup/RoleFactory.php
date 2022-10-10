@@ -20,7 +20,6 @@ class RoleFactory
 {
     protected $user;
 
-
     public function create()
     {
         $role = factory(Role::class)->create();

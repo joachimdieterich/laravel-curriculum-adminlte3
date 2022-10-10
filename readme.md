@@ -135,7 +135,7 @@ php artisan l5-swagger:generate
 ```
 
 localhost:[port]/api/documentation
-Info: If you want to use another url edit `@OA\Server` in `/app/Http/Controllers/Api/V1/OpenApiDefinitions/Setup.php` 
+Info: If you want to use another host change L5_SWAGGER_CONST_HOST in `.env`
 
 
 To use the following metadata endpoints, you have to set `password=[pw]` has to be set.

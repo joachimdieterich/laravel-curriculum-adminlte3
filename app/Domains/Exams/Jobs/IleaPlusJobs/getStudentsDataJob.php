@@ -14,7 +14,7 @@ class getStudentsDataJob
 
         $data = [];
         foreach ($students as $student) {
-            $login_data = json_decode($student->exams->first()->pivot->login_data);
+            $login_data = json_decode($student->exams->where('id', '=', $examId)->first()->pivot->login_data);
 
             $data[] = [
                 'id' => $login_data->ilea_id,

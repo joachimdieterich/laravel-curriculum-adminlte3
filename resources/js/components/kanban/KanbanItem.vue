@@ -71,8 +71,8 @@
                       :lastname="item.owner.lastname"
                       :size="25"
               ></avatar>
-              <div class="position-relative flex-grow-0">
-                  <i @click="openComments" class="fa fa-comment pointer"></i>
+              <div @click="openComments" class="position-relative flex-grow-0">
+                  <i  class="fa fa-comment pointer"></i>
                   <span class="comment-count mt-1 small" v-if="comments.length > 0">{{ comments.length }}</span>
               </div>
           </div>

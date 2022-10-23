@@ -174,7 +174,7 @@ table.dataTable tr {
 table.dataTable tbody td.select-checkbox,
 table.dataTable tbody th.select-checkbox {
   position: relative;
-  font-family: "Font Awesome 5 Free";
+  font-family: "Font Awesome 6 Free";
   font-weight: 900;
   font-size: 20px;
 }
@@ -184,7 +184,7 @@ table.dataTable tbody th.select-checkbox:before,
 table.dataTable tbody th.select-checkbox:after {
   top: 0 !important;
   border:0 !important;
-  padding-top:5px;
+  padding-top:7px;
 }
 table.dataTable tbody td.select-checkbox:before,
 table.dataTable tbody th.select-checkbox:before {

@@ -219,6 +219,9 @@
             })
         },
         mounted() {
+            this.$nextTick(() => {
+                window.MathJax.startup.defaultReady();
+            })
 
         },
         beforeDestroy: function () {

@@ -13,6 +13,7 @@ use App\OrganizationType;
 use App\State;
 use App\Subject;
 use App\User;
+use App\VariantDefinition;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -181,6 +182,7 @@ class CurriculumController extends Controller
             'state_id'              => format_select_input($input['state_id']),
             'country_id'            => format_select_input($input['country_id']),
             'medium_id'             => $input['medium_id'],
+            'variants'             => $this->formatVariantsField($input['variants'], $input['variant_default_title'],$input['variant_default_title']),
             'owner_id'              => auth()->user()->id,
         ]);
 
@@ -378,6 +380,7 @@ class CurriculumController extends Controller
             'state_id'              => isset($input['state_id']) ? format_select_input($input['state_id']) : null,
             'country_id'            => format_select_input($input['country_id']),
             'medium_id'             => $input['medium_id'],
+            'variants'             => $this->formatVariantsField($input['variants'], $input['variant_default_title'],$input['variant_default_title']),
             'owner_id'              => auth()->user()->id,
         ]);
 
@@ -540,6 +543,44 @@ class CurriculumController extends Controller
         return ['objective_type_order' => $curriculum->objective_type_order];
     }
 
+    public function getVariantDefinitions(Curriculum $curriculum)
+    {
+        $definition = array();
+        foreach($curriculum->variants['order'] AS $variant_definitition)
+        {
+
+            if ($variant_definitition == 0)
+            {
+                $definition[] = array(
+                    'id'            => 0,
+                    'title'         => $curriculum->variants['title'] ?? '',
+                    'description'   => $curriculum->variants['description'] ?? '',
+                    'color'         => $curriculum->variants['color'] ?? $curriculum->color,
+                    'css_icon'      => $curriculum->variants['css_icon'] ?? '',
+                    'owner_id'      => $curriculum->variants['owner_id'] ?? $curriculum->owner_id,
+                    'created_at'    => $curriculum->variants['created_at'] ?? $curriculum->created_at,
+                    'updated_at'    => $curriculum->variants['updated_at'] ?? $curriculum->updated_at,
+                );
+            }
+            else
+            {
+                $definition[] = VariantDefinition::find($variant_definitition);
+            }
+
+        }
+        if (request()->wantsJson()) {
+            return ['definitions' => $definition];
+        }
+    }
+
+    public function setVariantDefinitions(Curriculum $curriculum)
+    {
+        $input = $this->validateRequest();
+        DB::table('curricula')
+            ->where('id', $curriculum->id)
+            ->update(['variants->order' => $input['variants']]);
+    }
+
     protected function validateRequest()
     {
         return request()->validate([
@@ -558,7 +599,10 @@ class CurriculumController extends Controller
             'country_id'            => 'sometimes',
             'medium_id'             => 'sometimes',
             'owner_id'              => 'sometimes',
-            'objective_type_order'  => 'sometimes'
+            'objective_type_order'  => 'sometimes',
+            'variants'  => 'sometimes',
+            'variant_default_title'  => 'sometimes',
+            'variant_default_description'  => 'sometimes',
         ]);
     }
 
@@ -643,5 +687,22 @@ class CurriculumController extends Controller
                 "curricula."
             );
         }
+    }
+
+    private function formatVariantsField($variant_definition_ids, $variant_default_title, $variant_default_description ){
+        if (isset ($variant_definition_ids))
+        {
+            array_unshift($variant_definition_ids, 0); // add default
+            return [
+                "order" => $variant_definition_ids,
+                "title" => $variant_default_title,
+                "description" => $variant_default_description,
+            ];
+        }
+        else
+        {
+            return null;
+        }
+
     }
 }

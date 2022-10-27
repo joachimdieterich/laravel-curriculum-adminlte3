@@ -131,6 +131,7 @@
                 templateSelection: formatText,
                 templateResult: formatText,
             });
+
         });
     </script>
 @endsection

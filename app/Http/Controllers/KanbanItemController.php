@@ -25,6 +25,7 @@ class KanbanItemController extends Controller
             'order_id'          => $input['order_id'],
             'kanban_id'         => $input['kanban_id'],
             'kanban_status_id'  => $input['kanban_status_id'],
+            'color'             => $input['color'],
             'owner_id'          => auth()->user()->id,
         ]);
 
@@ -32,7 +33,7 @@ class KanbanItemController extends Controller
 
         // axios call?
         if (request()->wantsJson()) {
-            return ['message' => KanbanItem::where('id', $kanbanItem->id)->with(['mediaSubscriptions', 'media', 'owner', 'taskSubscription'])->get()->first()];
+            return ['message' => KanbanItem::where('id', $kanbanItem->id)->with(['mediaSubscriptions', 'media', 'owner', 'taskSubscription','comments'])->get()->first()];
         }
     }
 
@@ -41,7 +42,7 @@ class KanbanItemController extends Controller
         $this->validate(request(), [
             'columns' => ['required', 'array'],
         ]);
-        $kanban_id = $request->columns[0]['id'];
+        $kanban_id = $request->columns[0]['kanban_id'];
         abort_unless((\Gate::allows('kanban_show') and Kanban::find($kanban_id)->isAccessible()), 403);
 
         foreach ($request->columns as $kanban_status) {
@@ -69,7 +70,7 @@ class KanbanItemController extends Controller
                     $query->where('subscribable_id', auth()->user()->id)
                         ->where('subscribable_type', 'App\User');
                 }, 'mediaSubscriptions.medium'])->orderBy('order_id');
-            }, 'statuses.items.subscribable'])->where('id', $kanban_id)->get()->first()->statuses];
+            }, 'statuses.items.subscribable','statuses.items.comments','statuses.items.comments.user'])->where('id', $kanban_id)->get()->first()->statuses];
         }
     }
 
@@ -119,6 +120,7 @@ class KanbanItemController extends Controller
             'order_id'          => $input['order_id'],
             'kanban_id'         => $input['kanban_id'],
             'kanban_status_id'  => $input['kanban_status_id'],
+            'color'             => $input['color'],
             'owner_id'          => auth()->user()->id,
         ]);
 
@@ -152,6 +154,7 @@ class KanbanItemController extends Controller
             'order_id' => 'sometimes|required|integer',
             'kanban_id' => 'sometimes|required|integer',
             'kanban_status_id' => 'sometimes|required|integer',
+            'color' => 'sometimes'
         ]);
     }
 

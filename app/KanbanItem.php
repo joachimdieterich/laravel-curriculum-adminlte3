@@ -8,6 +8,10 @@ class KanbanItem extends Model
 {
     protected $guarded = [];
 
+    protected $casts = [
+        'created_at' => 'datetime:d.m.Y H:i',
+    ];
+
     public function path()
     {
         return route('kanban.show', $this->id);
@@ -16,6 +20,11 @@ class KanbanItem extends Model
     public function kanban()
     {
         return $this->belongsTo('App\Kanban', 'kanban_id', 'id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(KanbanItemComment::class);
     }
 
     public function subscribable()

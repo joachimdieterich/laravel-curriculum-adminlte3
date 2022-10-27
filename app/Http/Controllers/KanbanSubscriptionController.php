@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Kanban;
 use App\KanbanSubscription;
+use App\Scopes\NoSharingUsers;
+use App\User;
 use Illuminate\Http\Request;
 
 class KanbanSubscriptionController extends Controller
@@ -30,13 +32,33 @@ class KanbanSubscriptionController extends Controller
             }
         } else {
             if (request()->wantsJson()) {
+                $tokens = Kanban::find(request('kanban_id'))
+                    ->subscriptions()
+                    ->with(
+                        'subscribable'
+                    )
+                    ->whereHasMorph('subscribable', [User::class], function($q,$type){
+                        if($type == 'App\\User'){
+                            $q->whereNotNull('sharing_token');
+                        }
+                    }
+                    )->get();
                 return [
                     'subscribers' => [
+                        'users' => auth()->user()->users()->noSharing()->select('users.id', 'users.firstname', 'users.lastname')->get(),
+                        'groups' => auth()->user()->groups()->select('group_id', 'title')->get(),
+                        'organizations' => auth()->user()->organizations()->select('organization_id', 'title')->get(),
+                        'tokens' => $tokens,
                         'subscriptions' => optional(
                                 optional(
                                     Kanban::find(request('kanban_id'))
                                 )->subscriptions()
-                            )->with('subscribable')->get(),
+                            )->with('subscribable')
+                            ->whereHasMorph('subscribable', '*', function($q, $type){
+                                if($type == 'App\\User'){
+                                    $q->whereNull('sharing_token');
+                                }
+                            })->get(),
                     ],
                 ];
             }
@@ -66,7 +88,15 @@ class KanbanSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return ['subscription' => Kanban::find($input['model_id'])->subscriptions()->with('subscribable')->get()];
+            return [
+                'subscription' => Kanban::find($input['model_id'])
+                    ->subscriptions()
+                    ->with('subscribable')
+                    ->whereHasMorph('subscribable', [User::class], function($q){
+                        $q->whereNull('sharing_token');
+                    })
+                    ->get()
+            ];
         }
     }
 
@@ -102,8 +132,16 @@ class KanbanSubscriptionController extends Controller
     {
         abort_unless((\Gate::allows('kanban_delete') and $kanbanSubscription->isAccessible()), 403);
 
+        /** @var User $subscriber */
+        $subscriber = $kanbanSubscription->subscribable;
+        $is_user = get_class($subscriber) == User::class;
+        if($is_user && $subscriber->sharing_token != null){
+            $subscriber->delete();
+        }
+        $result = $kanbanSubscription->delete();
+
         if (request()->wantsJson()) {
-            return ['message' => $kanbanSubscription->delete()];
+            return ['message' => $result];
         }
     }
 

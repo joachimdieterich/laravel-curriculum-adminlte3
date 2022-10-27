@@ -12,6 +12,7 @@ use App\Medium;
 use App\Organization;
 use App\OrganizationRoleUser;
 use App\Role;
+use App\Scopes\NoSharingUsers;
 use App\StatusDefinition;
 use App\User;
 use Illuminate\Support\Facades\DB;
@@ -39,9 +40,10 @@ class UsersController extends Controller
         // todo check: is the following condition used anymore
         if (request()->wantsJson()) {
             if (auth()->user()->role()->id == 1) {
-                return ['users' => json_encode(DB::table('users')->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get())];
+                $users = User::addGlobalScope(NoSharingUsers::class)->withTrashed()->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get();
+                return ['users' => $users];
             } else {
-                return ['users' => json_encode(Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->get())];
+                return ['users' => json_encode(Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->addGlobalScope(NoSharingUsers::class)->get())];
             }
         }
 
@@ -51,7 +53,7 @@ class UsersController extends Controller
     public function list()
     {
         $users = (auth()->user()->role()->id == 1)
-            ? DB::table('users')->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')
+            ? User::withTrashed()->noSharing()->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get()
             : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users();
 
         $show_gate = \Gate::allows('user_show');

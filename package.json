@@ -15,7 +15,7 @@
         "@fortawesome/fontawesome-free-regular": "^5.0.13",
         "@fortawesome/fontawesome-free-solid": "^5.0.13",
         "axios": "^0.21.4",
-        "bootstrap": "^5.2.2",
+        "bootstrap": "^4.6.1",
         "cross-env": "^7.0.3",
         "jquery": "^3.6.1",
         "laravel-mix": "^6.0.49",

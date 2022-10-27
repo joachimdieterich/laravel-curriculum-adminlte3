@@ -1208,4 +1208,5 @@ return [
         'title_singular' => 'Lernplattform',
         'add' => 'Lernplattform-Baustein hinzufügen',
     ],
+    'token' => 'Token'
 ];

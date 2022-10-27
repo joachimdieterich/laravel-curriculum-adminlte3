@@ -8,7 +8,7 @@
 require('./bootstrap');
 require('tinymce/tinymce');
 
-require('mathjax/es5/tex-chtml');
+/*require('mathjax/es5/tex-chtml');*/
 
 require('datatables.net-select');
 import 'datatables.net-buttons';

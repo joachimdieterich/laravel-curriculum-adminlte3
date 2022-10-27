@@ -67,7 +67,7 @@
                         <transition-group
                             style="min-height:50px; display:flex;flex-direction: column;"
                             :style="'width:' + itemWidth + 'px;'"
-                            class="pr-3"
+                            class="pr-2"
                             tag="span">
                             <!-- Items -->
                             <span

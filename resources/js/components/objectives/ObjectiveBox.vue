@@ -220,7 +220,7 @@
         },
         mounted() {
             this.$nextTick(() => {
-                window.MathJax.startup.defaultReady();
+                MathJax.startup.defaultReady();
             })
 
         },

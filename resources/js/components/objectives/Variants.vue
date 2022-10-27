@@ -138,7 +138,7 @@ export default {
           axios.get('/curricula/' + this.model.curriculum.id + '/variantDefinitions')
               .then(response => {
               this.definitions = response.data.definitions;
-
+                  MathJax.startup.defaultReady();
           }).catch(e => {
               console.log(e);
           });
@@ -209,13 +209,6 @@ export default {
     mounted() {
         this.loadVariantDefinitions();
         this.variants = this.model.variants;
-        try {
-            Mathjax.startup.defaultReady();
-        } catch (e) {
-            console.log(e);
-        }
-
-
     },
     computed: {
         enableDraggable(){

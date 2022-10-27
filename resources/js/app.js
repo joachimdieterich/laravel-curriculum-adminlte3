@@ -8,12 +8,6 @@
 require('./bootstrap');
 require('tinymce/tinymce');
 
-/*require('mathjax/es5/tex-chtml');*/
-
-require('datatables.net-select');
-require('datatables.net-buttons');
-require('datatables.net-bs4');
-require('moment');
 require('@activix/bootstrap-datetimepicker');
 
 //vue

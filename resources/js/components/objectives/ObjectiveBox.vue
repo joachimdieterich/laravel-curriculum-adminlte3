@@ -64,8 +64,8 @@
 
 
 <script>
-    import Header from './Header'
-    import Footer from './Footer'
+    import Header from './Header';
+    import Footer from './Footer';
 
     export default {
         props: {
@@ -219,7 +219,7 @@
             })
         },
         mounted() {
-            MathJax.startup.defaultReady();
+
         },
         beforeDestroy: function () {
             this.$root.$off('eventDelete');

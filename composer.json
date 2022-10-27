@@ -58,7 +58,7 @@
         }
     },
     "autoload": {
-        "files": [
+        "fileguzzles": [
             "app/Helpers/Helper.php"
         ],
         "psr-4": {

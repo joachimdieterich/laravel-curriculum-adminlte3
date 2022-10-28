@@ -43,17 +43,17 @@
             "multiple" => true,
             "field" => "variants",
             "option_label" => "title",
-            "value" =>  old('variants', isset($curriculum) ? $curriculum->variants['order'] : '')])
+            "value" =>  old('variants', isset($curriculum) ? '' : '')])
     @include ('forms.input.text',
                 ["model" => "curriculum",
                 "field" => "variant_default_title",
                 "placeholder" => "",
-                "value" => old('variant_default_title', isset($curriculum) ? $curriculum->variants['title'] : '')])
+                "value" => old('variant_default_title', isset($curriculum) ? '' : '')])
     @include ('forms.input.text',
                 ["model" => "curriculum",
                 "field" => "variant_default_description",
                 "placeholder" => "",
-                "value" => old('variant_default_description', isset($curriculum) ? $curriculum->variants['description'] : '')])
+                "value" => old('variant_default_description', isset($curriculum) ? '' : '')])
 
 </div>
 

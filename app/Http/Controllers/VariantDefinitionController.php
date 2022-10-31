@@ -98,7 +98,7 @@ class VariantDefinitionController extends Controller
 
         ]);
 
-        return redirect()->route('variantdefinitions.index');
+        return redirect()->route('variantDefinitions.index');
     }
 
     /**
@@ -148,7 +148,7 @@ class VariantDefinitionController extends Controller
             'owner_id'      => auth()->user()->id,
         ]);
 
-        return redirect()->route('variantdefinitions.index');
+        return redirect()->route('variantDefinitions.index');
     }
 
     /**

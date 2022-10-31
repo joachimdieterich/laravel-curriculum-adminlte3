@@ -26,6 +26,7 @@ return new class extends Migration
 
             $table->timestamps();
 
+            $table->foreign('variant_definition_id')->references('id')->on('variant_definitions');
             $table->foreign('owner_id')->references('id')->on('users');
         });
     }

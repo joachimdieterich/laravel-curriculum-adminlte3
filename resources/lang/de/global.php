@@ -1227,6 +1227,10 @@ return [
             'title_helper' => '',
             'description' => 'Beschreibung',
             'description_helper' => '',
+            'color' => 'Farbe',
+            'color_helper' => '',
+            'css_icon' => 'CSS Icon',
+            'css_icon_helper' => '',
         ],
     ],
 ];

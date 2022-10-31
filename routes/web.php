@@ -276,6 +276,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('users/{user}/forceDestroy', 'UsersController@forceDestroy')->name('users.forceDestroy');
     Route::resource('users', 'UsersController');
 
+    Route::get('variantDefinitions/list', 'VariantDefinitionController@list');
     Route::resource('variantDefinitions', 'VariantDefinitionController');
     Route::resource('variants', 'VariantController');
 

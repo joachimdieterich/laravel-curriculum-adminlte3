@@ -25,7 +25,7 @@ class VariantDefinitionController extends Controller
 
         abort_unless(\Gate::allows('curriculum_access'), 403);
 
-        return view('variantDefinitions.index');
+        return view('variantdefinitions.index');
     }
 
     public function list()
@@ -75,7 +75,7 @@ class VariantDefinitionController extends Controller
     {
         abort_unless(\Gate::allows('curriculum_create'), 403);
 
-        return view('variantDefinitions.create');
+        return view('variantdefinitions.create');
     }
 
     /**
@@ -98,7 +98,7 @@ class VariantDefinitionController extends Controller
 
         ]);
 
-        return redirect()->route('variantDefinitions.index');
+        return redirect()->route('variantdefinitions.index');
     }
 
     /**
@@ -111,7 +111,7 @@ class VariantDefinitionController extends Controller
     {
         abort_unless(\Gate::allows('curriculum_show'), 403);
 
-        return view('variantDefinitions.show', compact('variantDefinition'));
+        return view('variantdefinitions.show', compact('variantDefinition'));
     }
 
     /**
@@ -124,7 +124,7 @@ class VariantDefinitionController extends Controller
     {
         abort_unless(\Gate::allows('curriculum_edit'), 403);
 
-        return view('variantDefinitions.edit')
+        return view('variantdefinitions.edit')
             ->with(compact('variantDefinition'));
     }
 
@@ -148,7 +148,7 @@ class VariantDefinitionController extends Controller
             'owner_id'      => auth()->user()->id,
         ]);
 
-        return redirect()->route('variantDefinitions.index');
+        return redirect()->route('variantdefinitions.index');
     }
 
     /**

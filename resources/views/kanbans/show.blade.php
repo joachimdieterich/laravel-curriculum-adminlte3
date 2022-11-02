@@ -15,6 +15,13 @@
             </button>
         @endif
     @endcan
+    <a href="/export_csv/{{$kanban->id}}" class="btn p-0">
+        <i class="fa fa-file-csv"></i>
+    </a>
+
+    <a href="/export_pdf/{{$kanban->id}}" class="btn p-0">
+        <i class="fa fa-file-pdf"></i>
+    </a>
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item">
@@ -44,9 +51,9 @@
                     </button>
                 </div>
             </div>
-    @endcan
+        @endcan
 
-    <!-- Timelime example  -->
+        <!-- Timelime example  -->
         <div id="kanban_board_wrapper"
              style="position:absolute; width: calc(100vw {{ ( $is_shared ? '' : '- 270px') }} - 2rem);height: calc(100vh - 175px - 2rem);overflow:auto; padding: 2rem; background-color: {{ $kanban->background }}">
 
@@ -71,7 +78,7 @@
             if (localStorage.getItem('menu_toggle_class') === 'sidebar-collapse') {
                 $("#kanban_board_wrapper").width($("#kanban_board_wrapper").width() + 170);
             }
-    });
-</script>
+        });
+    </script>
 
 @endsection

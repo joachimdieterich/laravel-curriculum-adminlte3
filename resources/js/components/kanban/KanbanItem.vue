@@ -137,7 +137,6 @@ export default {
   },
     computed:{
         textColor: function(){
-          if(this.item.color != null) return;
           if(this.item.color == "" ) return;
           let hex = this.item.color.substring(1, 7);
           let r = parseInt(hex.slice(0, 2), 16),

@@ -16,11 +16,11 @@
         @endif
     @endcan
     <a href="/export_csv/{{$kanban->id}}" class="btn p-0">
-        <i class="fa fa-file-csv"></i>
+        <i class="fa fa-file-csv text-secondary"></i>
     </a>
 
     <a href="/export_pdf/{{$kanban->id}}" class="btn p-0">
-        <i class="fa fa-file-pdf"></i>
+        <i class="fa fa-file-pdf text-secondary"></i>
     </a>
 @endsection
 @section('breadcrumb')

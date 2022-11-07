@@ -265,6 +265,7 @@ class KanbanController extends Controller
 
     public function exportKanbanPdf(Kanban $kanban){
         $pdf = PDF::loadView('exports.kanban.pdf', ['kanban' => $kanban])->setPaper('a4', 'landscape');
+        //return view('exports.kanban.pdf', ['kanban' => $kanban]);
         return $pdf->download($kanban->title . '.pdf');
     }
 

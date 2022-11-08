@@ -165,7 +165,7 @@ export default {
       },
 
       sendComment(){
-          axios.post("/kanbanItemComment/", {
+          axios.post("/kanbanItemComment", {
               'comment': this.new_comment,
               'kanban_item_id': this.item.id
           })

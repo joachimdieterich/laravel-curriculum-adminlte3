@@ -10,9 +10,17 @@ class UsersApiController extends Controller
 {
     public function index()
     {
-        $users = User::all();
+        if (request()->common_name)
+        {
+            return  User::withTrashed()->where('common_name', request()->common_name)->get()->first();
+        }
+        else
+        {
+            $users = User::all();
 
-        return $users;
+            return $users;
+        }
+
     }
 
     public function store()

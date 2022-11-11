@@ -12,7 +12,7 @@ class UsersApiController extends Controller
     {
         if (request()->common_name)
         {
-            return  User::withTrashed()->where('common_name', request()->common_name)->get()->first();
+            return  User::where('common_name', request()->common_name)->get();
         }
         else
         {

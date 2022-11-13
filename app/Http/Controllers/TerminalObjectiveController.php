@@ -46,7 +46,7 @@ class TerminalObjectiveController extends Controller
         abort_unless($terminalObjective->isAccessible(), 403);
 
         $objective = TerminalObjective::where('id', $terminalObjective->id)
-            ->with(['curriculum', 'curriculum.subject',
+            ->with(['curriculum', 'curriculum.subject', 'variants',
                 'enablingObjectives',
                 'referenceSubscriptions.siblings.referenceable', 'quoteSubscriptions.siblings.quotable', ])
             ->get()->first();

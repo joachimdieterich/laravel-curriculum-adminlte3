@@ -182,7 +182,11 @@ class CurriculumController extends Controller
             'state_id'              => format_select_input($input['state_id']),
             'country_id'            => format_select_input($input['country_id']),
             'medium_id'             => $input['medium_id'],
-            'variants'             => $this->formatVariantsField($input['variants'], $input['variant_default_title'],$input['variant_default_title']),
+            'variants'              => $this->formatVariantsField(
+                        $input['variants'] ?? NULL,
+                        $input['variant_default_title'] ?? NULL,
+                        $input['variant_default_description'] ?? NULL
+                                        ),
             'owner_id'              => auth()->user()->id,
         ]);
 
@@ -380,7 +384,11 @@ class CurriculumController extends Controller
             'state_id'              => isset($input['state_id']) ? format_select_input($input['state_id']) : null,
             'country_id'            => format_select_input($input['country_id']),
             'medium_id'             => $input['medium_id'],
-            'variants'             => $this->formatVariantsField($input['variants'], $input['variant_default_title'],$input['variant_default_title']),
+            'variants'              => $this->formatVariantsField(
+                                        $input['variants'] ?? NULL,
+                                        $input['variant_default_title'] ?? NULL,
+                                        $input['variant_default_description'] ?? NULL
+                                       ),
             'owner_id'              => auth()->user()->id,
         ]);
 
@@ -690,6 +698,7 @@ class CurriculumController extends Controller
     }
 
     private function formatVariantsField($variant_definition_ids, $variant_default_title, $variant_default_description ){
+
         if (isset ($variant_definition_ids))
         {
             array_unshift($variant_definition_ids, 0); // add default

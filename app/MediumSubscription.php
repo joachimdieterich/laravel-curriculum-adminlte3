@@ -12,4 +12,9 @@ class MediumSubscription extends Model
     {
         return $this->hasOne('App\Medium', 'id', 'medium_id');
     }
+
+    public function subscribable()
+    {
+        return $this->morphTo();
+    }
 }

@@ -119,12 +119,29 @@ export default {
             },
             chartOptions: {
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                borderRadius: 10,
+            },
+            legend: {
+                onHover: this.handleHover,
+                onLeave: this.handleLeave
             },
             chart_data: [],
         }
     },
     methods: {
+        handleHover(evt, item, legend) {
+            legend.chart.data.datasets[0].backgroundColor.forEach((color, index, colors) => {
+                colors[index] = index === item.index || color.length === 9 ? color : color + '4D';
+            });
+            legend.chart.update();
+        },
+        handleLeave(evt, item, legend) {
+            legend.chart.data.datasets[0].backgroundColor.forEach((color, index, colors) => {
+                colors[index] = color.length === 9 ? color.slice(0, -2) : color;
+            });
+            legend.chart.update();
+        },
         loaderEvent() {
             axios.get('/statistics?chart=' + this.chart + '&date_begin=' + this.date_begin + '&date_end=' + this.date_end)
                 .then(response => {

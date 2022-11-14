@@ -79,6 +79,42 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *       @OA\Response(response=400, description="Bad request"),
  * )
  *
+ *
+ * @OA\Get(
+ *      path="/v1/moodle/curricula/terminalObjectives/{terminalObjective}/enablingObjectives",
+ *      operationId="getEnablingObjectivesByTerminalObjectiveId",
+ *      tags={"Moodle v1"},
+ *      summary="Get enabling_objectives by terminal_objective_id and common_name",
+ *      description="Returns a collection of available enablingObjectives of one curriculum",
+ *      security={
+ *           {"passport": {"*"}},
+ *      },
+ *     @OA\Parameter(
+ *          name="terminalObjective",
+ *          description="terminalObjectiveid",
+ *          required=true,
+ *          in="path",
+ *          @OA\Schema(
+ *              type="integer"
+ *          )
+ *      ),
+ *      @OA\Parameter(
+ *          name="common_name",
+ *          description="users common_name",
+ *          required=true,
+ *          in="query",
+ *          @OA\Schema(
+ *              type="string"
+ *          )
+ *      ),
+ *      @OA\Response(
+ *          response=200,
+ *          description="successful operation",
+ *          @OA\Schema(ref="#/components/schemas/SelectList"),
+ *       ),
+ *       @OA\Response(response=400, description="Bad request"),
+ * )
+ *
  * @OA\Get(
  *      path="/v1/moodle/curricula/{curriculum}/enablingObjectives",
  *      operationId="getEnablingObjectives",

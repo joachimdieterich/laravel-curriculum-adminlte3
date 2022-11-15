@@ -672,6 +672,10 @@ class CurriculumController extends Controller
      */
     private function getEntriesForSelect2(): \Illuminate\Http\JsonResponse
     {
+        $input = request()->validate([
+            'page' => 'required|integer',
+            'term' => 'sometimes|string|max:255|nullable',
+        ]);
         if (is_admin())
         {
             return getEntriesForSelect2ByModel("App\Curriculum");
@@ -679,8 +683,16 @@ class CurriculumController extends Controller
         else if (is_schooladmin())
         {
             return getEntriesForSelect2ByCollection(
-                Curriculum::whereIn('owner_id', Organization::where('id', auth()->user()->current_organization_id)->first()->users()->pluck('id')->toArray())
-                ->orWhere('type_id', 1));
+                Curriculum::whereIn('owner_id', Organization::where('id', auth()->user()->current_organization_id)
+                    ->first()->users()->pluck('id')->toArray())->where(
+                    function($query) use ($input)
+                    {
+                        $query->orWhere('type_id', 1)
+                        ->orWhere('title', 'LIKE', '%' . $input['term'] . '%');
+                    })
+                );
+
+
         }
         else
         {

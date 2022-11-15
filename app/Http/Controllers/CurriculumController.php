@@ -141,7 +141,7 @@ class CurriculumController extends Controller
         $subjects = Subject::all();
         $organization_types = OrganizationType::all();
         $curriculum_types = $this->getCurriculumTypesByPermission();
-
+        $variant_definitions = VariantDefinition::all();
         $countries = Country::all();
         $states = State::where('country', 'DE')->get();
 
@@ -151,6 +151,7 @@ class CurriculumController extends Controller
                 ->with(compact('countries'))
                 ->with(compact('states'))
                 ->with(compact('organization_types'))
+                ->with(compact('variant_definitions'))
                 ->with(compact('curriculum_types'));
     }
 
@@ -308,7 +309,7 @@ class CurriculumController extends Controller
         $subjects = Subject::all();
         $organization_types = OrganizationType::all();
         $curriculum_types = CurriculumType::all();
-
+        $variant_definitions = VariantDefinition::all();
         $countries = Country::all();
         $states = State::all();
 
@@ -319,6 +320,7 @@ class CurriculumController extends Controller
                 ->with(compact('curriculum_types'))
                 ->with(compact('countries'))
                 ->with(compact('states'))
+                ->with(compact('variant_definitions'))
                 ->with(compact('curriculum'));
     }
 

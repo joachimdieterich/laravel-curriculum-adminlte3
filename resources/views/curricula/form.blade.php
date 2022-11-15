@@ -37,23 +37,23 @@
 <div class="callout">
     @include ('forms.input.select',
             ["model" => "variantDefinitions",
-            "url" => "/variantDefinitions",
             "placeholder" => trans('global.pleaseSelect'),
             "show_label" => true,
             "multiple" => true,
+             "options"=> $variant_definitions,
             "field" => "variants",
             "option_label" => "title",
-            "value" =>  old('variants', isset($curriculum) ? '' : '')])
+            "value" =>  old('variants', $curriculum->variants['order'] ?? '')])
     @include ('forms.input.text',
                 ["model" => "curriculum",
                 "field" => "variant_default_title",
                 "placeholder" => "",
-                "value" => old('variant_default_title', isset($curriculum) ? '' : '')])
+                "value" => old('variant_default_title', $curriculum->variants['title'] ?? '')])
     @include ('forms.input.text',
                 ["model" => "curriculum",
                 "field" => "variant_default_description",
                 "placeholder" => "",
-                "value" => old('variant_default_description', isset($curriculum) ? '' : '')])
+                "value" => old('variant_default_description', $curriculum->variants['description'] ?? '')])
 
 </div>
 

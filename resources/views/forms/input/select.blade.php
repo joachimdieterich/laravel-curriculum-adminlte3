@@ -61,7 +61,7 @@
                                     data-icon="{{ $option_icon }}"
                                 @endif
                                 @if(isset($multiple))
-                                    {{ in_array($v->$o_id, $value) ? 'selected' : '' }}
+                                    {{ in_array($v->$o_id, (array)$value) ? 'selected' : '' }}
                                 @else
                                     {{ ( $v->$o_id == $value ) ? 'selected' : '' }}
                                 @endif

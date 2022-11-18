@@ -42,6 +42,13 @@
                             {{  $exam['completed'] }}</span>
                         </span>
                         </li>
+                        <li class="nav-item">
+                        <span  class="nav-link">
+                            {{ trans('global.organization.title') }}
+                            <span class="float-right">
+                            {{  $exam['organizations'] }}</span>
+                        </span>
+                        </li>
                     </ul>
                 </div>
             </div>

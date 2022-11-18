@@ -18,6 +18,9 @@ class AdminController extends Controller
         //Todo: put exam stats in log-table
         $data =
             ['exam' => [
+                'organizations' => DB::table('exams')
+                        ->distinct('school_key')
+                        ->count('school_key'),
                 'all' => DB::table('exam_user')
                         ->select(DB::raw('count(*) as count'))
                         ->first()->count,

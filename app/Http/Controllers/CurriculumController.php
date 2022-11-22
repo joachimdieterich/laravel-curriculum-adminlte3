@@ -556,28 +556,32 @@ class CurriculumController extends Controller
     public function getVariantDefinitions(Curriculum $curriculum)
     {
         $definition = array();
-        foreach($curriculum->variants['order'] AS $variant_definitition)
+        if (isset($curriculum->variants['order']))
         {
-
-            if ($variant_definitition == 0)
+            foreach($curriculum->variants['order'] AS $variant_definitition)
             {
-                $definition[] = array(
-                    'id'            => 0,
-                    'title'         => $curriculum->variants['title'] ?? '',
-                    'description'   => $curriculum->variants['description'] ?? '',
-                    'color'         => $curriculum->variants['color'] ?? $curriculum->color,
-                    'css_icon'      => $curriculum->variants['css_icon'] ?? '',
-                    'owner_id'      => $curriculum->variants['owner_id'] ?? $curriculum->owner_id,
-                    'created_at'    => $curriculum->variants['created_at'] ?? $curriculum->created_at,
-                    'updated_at'    => $curriculum->variants['updated_at'] ?? $curriculum->updated_at,
-                );
-            }
-            else
-            {
-                $definition[] = VariantDefinition::find($variant_definitition);
-            }
 
+                if ($variant_definitition == 0)
+                {
+                    $definition[] = array(
+                        'id'            => 0,
+                        'title'         => $curriculum->variants['title'] ?? '',
+                        'description'   => $curriculum->variants['description'] ?? '',
+                        'color'         => $curriculum->variants['color'] ?? $curriculum->color,
+                        'css_icon'      => $curriculum->variants['css_icon'] ?? '',
+                        'owner_id'      => $curriculum->variants['owner_id'] ?? $curriculum->owner_id,
+                        'created_at'    => $curriculum->variants['created_at'] ?? $curriculum->created_at,
+                        'updated_at'    => $curriculum->variants['updated_at'] ?? $curriculum->updated_at,
+                    );
+                }
+                else
+                {
+                    $definition[] = VariantDefinition::find($variant_definitition);
+                }
+            }
         }
+
+
         if (request()->wantsJson()) {
             return ['definitions' => $definition];
         }

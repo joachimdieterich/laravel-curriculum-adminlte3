@@ -45,9 +45,9 @@ class KanbanSubscriptionController extends Controller
                     )->get();
                 return [
                     'subscribers' => [
-                        'users' => auth()->user()->users()->noSharing()->select('users.id', 'users.firstname', 'users.lastname')->get(),
+                       /* 'users' => auth()->user()->users()≈->select('users.id', 'users.firstname', 'users.lastname')->get(),
                         'groups' => auth()->user()->groups()->select('group_id', 'title')->get(),
-                        'organizations' => auth()->user()->organizations()->select('organization_id', 'title')->get(),
+                        'organizations' => auth()->user()->organizations()->select('organization_id', 'title')->get(),*/
                         'tokens' => $tokens,
                         'subscriptions' => optional(
                                 optional(

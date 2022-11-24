@@ -62,6 +62,7 @@
                          <textarea
                              style="width:100%"
                              v-model="medium.description"/>
+                    <input type="checkbox"/>
                 </div>
                 <div v-else-if="medium.description != ''"
                     v-html="medium.description"

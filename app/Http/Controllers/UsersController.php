@@ -30,7 +30,7 @@ class UsersController extends Controller
 
         if (request()->wantsJson() AND request()->has(['term', 'page'])) {
             return  getEntriesForSelect2ByCollection(
-                Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users(),
+                Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->noSharing(),
                 'users.',
                 ['username', 'firstname', 'lastname'],
                 'lastname',
@@ -53,8 +53,8 @@ class UsersController extends Controller
     public function list()
     {
         $users = (auth()->user()->role()->id == 1)
-            ? User::withTrashed()->noSharing()->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get()
-            : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users();
+            ? User::noSharing()->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get()
+            : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->noSharing();
 
         $show_gate = \Gate::allows('user_show');
         $edit_gate = \Gate::allows('user_edit');

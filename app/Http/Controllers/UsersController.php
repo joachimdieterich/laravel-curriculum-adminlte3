@@ -40,10 +40,12 @@ class UsersController extends Controller
         // todo check: is the following condition used anymore
         if (request()->wantsJson()) {
             if (auth()->user()->role()->id == 1) {
-                $users = User::addGlobalScope(NoSharingUsers::class)->withTrashed()->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get();
+                $users = User::addGlobalScope(NoSharingUsers::class)->withTrashed()
+                    ->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get();
                 return ['users' => $users];
             } else {
-                return ['users' => json_encode(Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->addGlobalScope(NoSharingUsers::class)->get())];
+                return ['users' => json_encode(Organization::where('id', auth()->user()->current_organization_id)
+                    ->get()->first()->users()->addGlobalScope(NoSharingUsers::class)->get())];
             }
         }
 
@@ -53,7 +55,7 @@ class UsersController extends Controller
     public function list()
     {
         $users = (auth()->user()->role()->id == 1)
-            ? User::noSharing()->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get()
+            ? User::noSharing()->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')
             : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->noSharing();
 
         $show_gate = \Gate::allows('user_show');

@@ -14,8 +14,16 @@
                         </a>
                     </div>
                 </div>
-                <div class="card-body"
-                     v-html="objective.title">
+                <div class="card-body row">
+                    <span class="col-12">
+                         <variants
+                             :model="objective"
+                             :referenceable_type="model"
+                             :referenceable_id="objective.id"
+                             :variant_order="variant_order"
+                             field="title"
+                         />
+                    </span>
                 </div>
                 <div class="card-footer">
                     <div class="float-left">
@@ -159,12 +167,21 @@
 
             <div class="tab-content ">
                 <!-- 1 Description -->
-                <div class="tab-pane show "
+                <div class="tab-pane show p-2"
                      v-if="objective.description !== ''"
                      :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_description_'+objective.id, 'active', true)"
                      id="description"
                      >
-                    <div class="card-body" v-html="objective.description"></div>
+<!--                    <div class="card-body" v-html="objective.description"></div>-->
+
+                        <variants
+                            :model="objective"
+                            :variant_order="variant_order"
+                            :showTitle=false
+                            field="description"
+                            css_size="col-12"
+                            css_form=""
+                        />
                 </div>
                 <!-- /.tab-pane -->
                 <div class="tab-pane pt-2"
@@ -302,17 +319,18 @@
 </template>
 
 <script>
-    import References from '../reference/References';
-    import Quotes from '../quote/Quotes';
-    import Contents from '../content/Contents';
-    import Eventmanagement from '../../../../app/Plugins/Eventmanagement/resources/js/components/Events';
-    import Lms from '../../../../app/Plugins/Lms/resources/js/components/Lms';
-    import ObjectiveBox from './ObjectiveBox'
-    import Achievements from './Achievements'
-    import ObjectiveMedia from "./ObjectiveMedia";
-    import Prerequisites from "../prerequisites/Prerequisites";
+import References from '../reference/References';
+import Quotes from '../quote/Quotes';
+import Contents from '../content/Contents';
+import Eventmanagement from '../../../../app/Plugins/Eventmanagement/resources/js/components/Events';
+import Lms from '../../../../app/Plugins/Lms/resources/js/components/Lms';
+import ObjectiveBox from './ObjectiveBox'
+import Achievements from './Achievements'
+import ObjectiveMedia from "./ObjectiveMedia";
+import Prerequisites from "../prerequisites/Prerequisites";
+import Variants from "./Variants";
 
-    export default {
+export default {
         props: {
             'objective': Object,
             'repository': Object
@@ -327,6 +345,8 @@
                 quote_curricula_list: [],
                 categories: [],
                 help: true,
+                variant_order: {},
+                variant: {},
                 setting: {
                     'last': null
                 },
@@ -376,7 +396,6 @@
                 if (response.data.siblings.length !== 0) {
                     this.reference_subscriptions = response.data.siblings;
                     this.curricula_list = response.data.curricula_list;
-
                 }
             }).catch(e => {
                 console.log(e)
@@ -384,19 +403,20 @@
             });
 
             axios.get('/' + this.type + 'Objectives/' + this.objective.id + '/quoteSubscriptions').then(response => {
-                if (response.data.quotes_subscriptions.length !== 0) {
+                if (typeof (response.data.quotes_subscriptions)  !== 'undefined') {
                     this.quote_subscriptions = response.data.quotes_subscriptions;
                     this.quote_curricula_list = response.data.curricula_list;
                 }
             }).catch(e => {
                 console.log(e)
-                //this.errors = response.data.errors;
             });
 
             //register events
             this.$root.$on('lmsUpdate', () => {
                 this.$refs.LmsPlugin.loaderEvent();
             });
+
+            this.variant_order = this.objective.curriculum.variants['order'];
 
         },
         computed: {
@@ -405,6 +425,7 @@
             },
         },
         components: {
+            Variants,
             Prerequisites,
             ObjectiveMedia,
             References,

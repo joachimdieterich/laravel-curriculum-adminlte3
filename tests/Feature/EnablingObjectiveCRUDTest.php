@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
-use Facades\Tests\Setup\EnablingObjectiveFactory;
+use App\EnablingObjective;
+use App\Curriculum;
+use App\TerminalObjective;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,8 +17,8 @@ class EnablingObjectiveCRUDTest extends TestCase
         parent::setUp();
         $this->signInAdmin();
         /* add curriculum needed by tests*/
-        $this->post('curricula', $attributes = factory('App\Curriculum')->raw());
-        $this->post('terminalObjectives', factory('App\TerminalObjective')->raw());
+        $this->post('curricula', $attributes = Curriculum::factory()->raw());
+        $this->post('terminalObjectives', TerminalObjective::factory()->raw());
     }
 
     /** @test
@@ -24,7 +26,7 @@ class EnablingObjectiveCRUDTest extends TestCase
      */
     public function an_administrator_create_an_enabling_objective()
     {
-        $attributes = factory('App\EnablingObjective')->raw();
+        $attributes = EnablingObjective::factory()->raw();
 
         $this->post('enablingObjectives', $attributes);
 
@@ -36,9 +38,9 @@ class EnablingObjectiveCRUDTest extends TestCase
      */
     public function an_administrator_see_details_of_an_enablingObjective()
     {
-        $enablingObjective = EnablingObjectiveFactory::create();
+        $enablingObjective = EnablingObjective::factory()->create();
         $this->get("enablingObjectives/{$enablingObjective->id}")
              ->assertStatus(200)
-             ->assertViewHasAll(compact($enablingObjective));
+             ->assertSee($enablingObjective->toArray());
     }
 }

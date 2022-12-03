@@ -16,7 +16,7 @@ class ApiOrganizationTypeTest extends TestCase
     public function an_authenticated_client_can_not_get_organization_types()
     {
         $this->get('/api/v1/organizationtypes')->assertStatus(302);
-        $this->contains('login');
+        $this->stringContains('login');
     }
 
     /** @test

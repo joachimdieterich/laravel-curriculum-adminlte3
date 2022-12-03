@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\User;
-use Facades\Tests\Setup\UserFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -26,10 +25,17 @@ class UserCRUDTest extends TestCase
              ->assertStatus(200);
 
         /* Use Datatables */
-        $users = User::all();
-        $this->get('users/list')
-             ->assertStatus(200)
-             ->assertViewHasAll(compact($users));
+        $users = User::select('firstname', 'lastname', 'email')->get();
+        $list = $this->get('users/list')
+             ->assertStatus(200);
+        $i = 0;
+        foreach ($users as $user)
+        {
+            if ($i === 49) { break; } //test max 50 user (default page limit on datatables
+            $list->assertJsonFragment($user->toArray());
+            $i++;
+        }
+
     }
 
     /** @test
@@ -37,16 +43,12 @@ class UserCRUDTest extends TestCase
      */
     public function an_administrator_create_an_user()
     {
-        $this->withoutExceptionHandling();
-        $this->followingRedirects()->post('users', $attributes = factory('App\User')->raw())
-                ->assertStatus(200);
+        $this->followingRedirects()
+            ->post('users', $attributes = User::factory()->raw())
+            ->assertStatus(200);
 
-        $this->assertDatabaseHas('users', [
-            'username' => $attributes['username'],
-            'firstname' => $attributes['firstname'],
-            'lastname' => $attributes['lastname'],
-            'email' => $attributes['email'],
-        ]);
+        $user = User::where('username', $attributes['username'])->first();
+        $this->assertDatabaseHas('users', $user->toArray());
     }
 
     /** @test
@@ -63,7 +65,7 @@ class UserCRUDTest extends TestCase
      */
     public function an_admin_can_mass_delete_users()
     {
-        $users = factory(User::class, 50)->create();
+        $users = User::factory(50)->create();
         $ids = $users->pluck('id')->toArray();
 
         $this->delete('/users/massDestroy', $attributes = [
@@ -82,8 +84,7 @@ class UserCRUDTest extends TestCase
      */
     public function an_administrator_delete_a_role()
     {
-        $this->withoutExceptionHandling();
-        $user = UserFactory::create();
+        $user = User::factory()->create();
 
         $this->followingRedirects()
                 ->delete('users/'.$user->id)
@@ -95,11 +96,12 @@ class UserCRUDTest extends TestCase
      */
     public function an_administrator_see_details_of_an_user()
     {
-        $user = UserFactory::create();
+
+        $user = User::factory()->create();
 
         $this->get("users/{$user->id}")
              ->assertStatus(200)
-             ->assertViewHasAll(compact($user));
+             ->assertSee($user->toArray());
     }
 
     /** @test
@@ -107,12 +109,12 @@ class UserCRUDTest extends TestCase
      */
     public function an_administrator_update_an_user()
     {
-        $this->post('users', $attributes = factory('App\User')->raw());
+        $this->post('users', $attributes = User::factory()->raw());
         $user = User::where('username', $attributes['username'])->first()->toArray();
 
         $this->assertDatabaseHas('users', $user);
 
-        $this->patch('users/'.$user['id'], $new_attributes = factory('App\User')->raw());
+        $this->patch('users/'.$user['id'], $new_attributes = User::factory()->raw());
 
         $user_edit = User::where('username', $new_attributes['username'])->first()->toArray();
         $this->assertDatabaseHas('users', $user_edit);
@@ -123,11 +125,16 @@ class UserCRUDTest extends TestCase
      */
     public function an_administrator_get_edit_view_for_users()
     {
-        $this->post('users', $attributes = factory('App\User')->raw());
+        $this->post('users', $attributes = User::factory()->raw());
         $user = User::where('username', $attributes['username'])->first();
 
         $this->get("users/{$user->id}/edit")
              ->assertStatus(200)
-             ->assertSessionHasAll(compact($user));
+             ->assertSee([
+                 'username' => $user->username,
+                 'firstname' => $user->firstname,
+                 'lastname' => $user->lastname,
+                 'email' => $user->email,
+             ]);
     }
 }

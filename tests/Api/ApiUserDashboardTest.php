@@ -14,7 +14,7 @@ class ApiUserDashboardTest extends TestCase
     public function an_authenticated_client_can_not_get_users_dashboard_data()
     {
         $this->get('/api/v1/users/1/dashboard')->assertStatus(302);
-        $this->contains('login');
+        $this->stringContains('login');
     }
 
     /** @test
@@ -34,10 +34,10 @@ class ApiUserDashboardTest extends TestCase
 
         $this->get('/api/v1/users/1/dashboard')
                 ->assertStatus(200)
-                ->assertSee(json_encode([
-                    'enrollments' => User::find(1)->groups()->with(['curricula'])->get(),
+                ->assertSee(json_decode(htmlspecialchars(json_encode([
+                    "enrollments" => User::find(1)->currentGroups()->with(['curricula'])->get(),
                     'notifications' => User::find(1)->notifications,
                     'events' => [/*$event*/],
-                ]));
+                ]))));
     }
 }

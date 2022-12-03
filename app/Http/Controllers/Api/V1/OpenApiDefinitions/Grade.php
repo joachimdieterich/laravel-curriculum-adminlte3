@@ -18,9 +18,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
 * )
-*/
-
-/**
+*
 * @OA\Get(
 *      path="/v1/grades/{grade}",
 *      operationId="getGrade",

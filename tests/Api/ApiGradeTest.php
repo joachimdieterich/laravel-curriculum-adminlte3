@@ -14,7 +14,7 @@ class ApiGradeTest extends TestCase
     public function an_authenticated_client_can_not_get_grades()
     {
         $this->get('/api/v1/grades')->assertStatus(302);
-        $this->contains('login');
+        $this->stringContains('login');
     }
 
     /** @test

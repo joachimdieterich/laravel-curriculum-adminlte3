@@ -3,7 +3,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 
 /**
 * @OA\Get(
-*      path="/v1/users",
+*      path="/v1/users?common_name={common_name}",
 *      operationId="getAllUsers",
 *      tags={"User v1"},
 *      summary="Get all users",
@@ -11,6 +11,15 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *      security={
 *           {"passport": {"*"}},
 *      },
+ *     @OA\Parameter(
+ *          name="common_name",
+ *          description="common_name",
+ *          required=false,
+ *          in="path",
+ *          @OA\Schema(
+ *              type="string"
+ *          )
+ *      ),
 *      @OA\Response(
 *          response=200,
 *          description="successful operation",
@@ -18,9 +27,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
 * )
-*/
-
-/**
+*
 * @OA\Post(
 *      path="/v1/users",
 *      operationId="createUser",
@@ -99,9 +106,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       @OA\Response(response=400, description="Bad request"),
 *
 * )
-*/
-
-/**
+*
 * @OA\Put(
 *      path="/v1/users/{user}",
 *      operationId="updateUser",
@@ -188,9 +193,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       @OA\Response(response=400, description="Bad request"),
 *
 * )
-*/
-
-/**
+*
 * @OA\Get(
 *      path="/v1/users/{user}",
 *      operationId="getUser",
@@ -216,9 +219,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
 * )
-*/
-
-/**
+*
 * @OA\Delete(
 *      path="/v1/users/{user}",
 *      operationId="deleteUser",
@@ -245,9 +246,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       @OA\Response(response=400, description="Bad request"),
 *
 * )
-*/
-
-/**
+*
  * @OA\Delete(
  *      path="/v1/users/{user}/force",
  *      operationId="forceDeleteUser",
@@ -274,9 +273,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *       @OA\Response(response=400, description="Bad request"),
  *
  * )
- */
-
-/**
+*
 * @OA\Get(
 *      path="/v1/users/{user}/dashboard",
 *      operationId="getUsersDashboard",
@@ -301,9 +298,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
 * )
-*/
-
-/**
+*
 * @OA\Get(
 *      path="/v1/users/{user}/groups",
 *      operationId="getUsersWithGroups",
@@ -328,9 +323,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
 * )
-*/
-
-/**
+*
 * @OA\Get(
 *      path="/v1/users/{user}/organizations",
 *      operationId="getUsersWithOrganizations",
@@ -355,9 +348,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *       ),
 *       @OA\Response(response=400, description="Bad request"),
 * )
-*/
-
-/**
+*
 * @OA\Get(
 *      path="/v1/users/{user}/roles",
 *      operationId="getUsersWithRoles",

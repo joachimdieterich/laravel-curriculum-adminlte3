@@ -1,7 +1,10 @@
 <?php
 
 namespace Tests\Feature;
-
+use App\Achievement;
+use App\Curriculum;
+use App\TerminalObjective;
+use App\EnablingObjective;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
@@ -15,9 +18,9 @@ class AchievementCRUDTest extends TestCase
         parent::setUp();
         $this->signIn();
         //$this->signInAdmin();
-        $this->post('curricula', $attributes = factory('App\Curriculum')->raw());
-        $this->post('terminalObjectives', factory('App\TerminalObjective')->raw());
-        $this->post('enablingObjectives', factory('App\EnablingObjective')->raw());
+        $this->post('curricula', Curriculum::factory()->raw());
+        $this->post('terminalObjectives', TerminalObjective::factory()->raw());
+        $this->post('enablingObjectives', EnablingObjective::factory()->raw());
     }
 
     /** @test
@@ -26,7 +29,7 @@ class AchievementCRUDTest extends TestCase
     public function an_user_can_set_the_achievement_status_for_an_enabling_objective()
     {
         //todo: check test, it fails after new  permission check
-       /* $attributes = factory('App\Achievement')->raw();
+       /* $attributes = Achievement::factory()->raw();
         $attributes['owner_id'] = auth()->user()->id;
         $attributes['user_id'] = auth()->user()->id;
 
@@ -42,7 +45,7 @@ class AchievementCRUDTest extends TestCase
     {
         Auth::logout(); //logout student
         $this->signInAdmin();
-        $attributes = factory('App\Achievement')->raw();
+        $attributes = Achievement::factory()->raw();
         $attributes['owner_id'] = auth()->user()->id;
         $attributes['user_id'] = 2; //set achievement for student (id 2)
 

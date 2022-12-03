@@ -44,10 +44,12 @@
 
             @include ('forms.input.select',
                 ["model" => "curriculum",
+                "url" => "curricula",
+                "placeholder" => trans('global.pleaseSelect'),
                 "show_label" => true,
                 "multiple" => true,
                 "field" => "group_curricula",
-                "options"=> $curricula,
+                /*"options"=> $curricula,*/
                 "option_label" => "title",
                 "value" =>  old('group_id', isset($user->current_group_id) ? $user->current_group_id : '')])
 

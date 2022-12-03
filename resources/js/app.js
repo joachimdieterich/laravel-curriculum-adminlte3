@@ -8,12 +8,6 @@
 require('./bootstrap');
 require('tinymce/tinymce');
 
-require('mathjax/es5/tex-chtml');
-
-require('datatables.net-select');
-import 'datatables.net-buttons';
-require('datatables.net-bs4');
-require('moment');
 require('@activix/bootstrap-datetimepicker');
 
 //vue
@@ -67,9 +61,22 @@ import VModal from 'vue-js-modal';
 
 Vue.use(VModal, {dynamic: true});
 
+import DataTable from 'laravel-vue-datatable';
+Vue.use(DataTable);
+
 import Sticky from 'vue-sticky-directive';
 
 Vue.use(Sticky);
+
+import Toast from 'vue-toastification';
+
+import 'vue-toastification/dist/index.css';
+
+Vue.use(Toast, {
+    transition: "Vue-Toastification__bounce",
+    maxToasts: 20,
+    newestOnTop: true
+});
 
 var filter = function (text, length, clamp) {
     clamp = clamp || '...';
@@ -131,18 +138,24 @@ Vue.component('lms-modal', require('./../../app/Plugins/Lms/resources/js/compone
 Vue.component('color-picker-component', require('./components/kanban/ColorPickerComponent.vue').default);
 Vue.component('color-picker-input', require('./components/kanban/ColorPickerInput.vue').default);
 
-Vue.prototype.$initTinyMCE = function (options) {
+
+Vue.component('tests-table', require('./components/tests/TestsTable.vue').default);
+
+let tinyMcePlugins = [
+    "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+    "searchreplace wordcount visualblocks visualchars code fullscreen",
+    "insertdatetime media nonbreaking save table directionality",
+    "emoticons template paste textpattern example"
+];
+
+Vue.prototype.$initTinyMCE = function (tinyMcePlugins) {
+
     tinymce.remove();
     tinymce.init({
         path_absolute : "/",
         selector: "textarea.my-editor",
         branding:false,
-        plugins: [
-            "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-            "searchreplace wordcount visualblocks visualchars code fullscreen",
-            "insertdatetime media nonbreaking save table directionality",
-            "emoticons template paste textpattern example"
-        ],
+        plugins: tinyMcePlugins,
         external_plugins: {'mathjax': '/node_modules/@dimakorotkov/tinymce-mathjax/plugin.min.js'},
         toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | mathjax link image media example ",
         relative_urls: false,

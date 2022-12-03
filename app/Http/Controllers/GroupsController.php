@@ -12,24 +12,23 @@ use App\OrganizationRoleUser;
 use App\Period;
 use App\User;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\DB;
 
 class GroupsController extends Controller
 {
     public function index()
     {
         abort_unless(\Gate::allows('group_access'), 403);
+        // select2 request
+        if (request()->wantsJson() AND request()->has(['term', 'page'])) {
+            return $this->getEntriesForSelect2();
+        }
 
         if (request()->wantsJson()) {
             return ['groups' => json_encode(auth()->user()->groups)];
-        } else {
-            $curricula = (is_admin()) ? Curriculum::all() : Curriculum::where('type_id', 1)->get();
-            if (is_schooladmin()) { //schooladmin should see all curricula of users of current organizations
-                $curricula = $curricula->merge(Curriculum::whereIn('owner_id', Organization::where('id', auth()->user()->current_organization_id)->first()->users()->pluck('id')->toArray())->get());
-            }
-
-            return view('groups.index')
-                ->with(compact('curricula'));
         }
+
+        return view('groups.index');
     }
 
     public function list()
@@ -276,6 +275,72 @@ class GroupsController extends Controller
         }
     }
 
+    protected function select2RequestWithOptGroup($collection, $field = 'title' )
+    {
+        $input = request()->validate([
+            'page' => 'required|integer',
+            'term' => 'sometimes|string|max:255|nullable',
+        ]);
+        $page = $input['page'];
+        $resultCount = 25;
+
+        $offset = ($page - 1) * $resultCount;
+
+        $term = $input['term'];
+
+        $count = Count($collection->has('groups')->where(
+            function($query) use ($field, $term)
+            {
+                foreach ((array) $field as $f) {
+                    $query->whereHas('groups', function ($query) use ($term) {
+                        $query->where('title', 'like', $term.'%'); }
+                    );
+                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                }
+            })
+            ->orderBy('title')
+            ->select(['id', DB::raw('title as text')])
+            ->get());
+
+
+        $entries = $collection->has('groups')->where(
+            function($query) use ($field, $term)
+            {
+                foreach ((array) $field as $f) {
+                    $query->whereHas('groups', function ($query) use ($term) {
+                        $query->where('title', 'like', $term.'%'); }
+                    );
+                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                }
+            })
+            ->orderBy('title')
+            ->skip($offset)
+            ->take($resultCount)
+            ->select(['id', DB::raw('title as text')])
+            ->get();
+
+        $endCount = $offset + $resultCount;
+        $morePages = $count > $endCount;
+
+        $select2entries = array();
+        foreach($entries as $entry){
+            $select2entries[] = array(
+                "text" => $entry['text'],
+                "children" => Group::where('organization_id', $entry['id'])
+                    ->select(['id', DB::raw('title as text')])
+                    ->get()
+            );
+        }
+        $results = array(
+            "results" => $select2entries,
+            "pagination" => array(
+                "more" => $morePages
+            )
+        );
+
+        return response()->json($results);
+    }
+
     protected function validateRequest()
     {
         return request()->validate([
@@ -284,5 +349,26 @@ class GroupsController extends Controller
             'period_id'         => 'sometimes',
             'organization_id'   => 'sometimes',
         ]);
+    }
+
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    private function getEntriesForSelect2(): \Illuminate\Http\JsonResponse
+    {
+        if (is_admin()) {
+            return $this->select2RequestWithOptGroup(
+                Organization::select(['id', 'title'])
+            );
+        } elseif (is_schooladmin()) {
+            return $this->select2RequestWithOptGroup(
+                Organization::where('id', auth()->user()->current_organization_id)->select(['id', 'title'])
+            );
+        } else {
+            return getEntriesForSelect2ByCollection(
+                auth()->user()->groups()->orderBy('organization_id', 'desc'),
+                'groups.'
+            );
+        }
     }
 }

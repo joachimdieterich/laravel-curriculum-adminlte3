@@ -15,6 +15,7 @@ class UsersImport implements OnEachRow, WithHeadingRow
     public function onRow(Row $row)
     {
         $new_user = new User([
+            'common_name' => $row['common_name'] ?? '',
             'username'  => $row['username'],
             'firstname' => $row['firstname'],
             'lastname'  => $row['lastname'],

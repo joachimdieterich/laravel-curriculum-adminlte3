@@ -2,7 +2,9 @@
 
 namespace App;
 
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  *   @OA\Schema(
@@ -29,7 +31,19 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Curriculum extends Model
 {
+    use HasFactory;
+
     protected $guarded = [];
+
+    protected $casts = [
+        'objective_type_order' => 'array',
+        'variants' => 'array'
+    ];
+
+    protected $dates = [
+        'updated_at',
+        'created_at',
+    ];
 
     protected $attributes = [
         'state_id' => 'DE-RP',
@@ -40,6 +54,17 @@ class Curriculum extends Model
         'organization_type_id' => 1,
         'type_id' => 4,  //= user
     ];
+
+    /**
+     * Prepare a date for array / JSON serialization.
+     *
+     * @param  \DateTimeInterface  $date
+     * @return string
+     */
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
+    }
 
     public function path()
     {

@@ -2,7 +2,7 @@
     <div class="col-12">
 
 
-        <h3>{{title}}</h3>
+        <h3 class="pb-2">{{title}}</h3>
         <div class="input-group col-2 mr-0 pr-0 mb-4 float-right" >
             <input
                 type="text" id="search"
@@ -123,12 +123,15 @@
             <div class="col-12 col-centered"
                  style="text-align: center; padding-top:50px"
                 >
-                {{ eventlinkdescription }}
+                <span >
+                    {{ eventlinkdescription }}
+                </span>
+
 
                 <a
                    :href="eventlinkurl"
                     type="button"
-                    class="btn btn-block btn-default col-6 col-centered">
+                    class="btn btn-block btn-default col-6 col-centered mt-2">
                     {{ eventlinktitle }}
                 </a>
             </div>
@@ -173,6 +176,7 @@ import moment from 'moment';
                     //this.errors = error.response.data.errors;
                 }
                 this.tags = JSON.parse(this.eventsearchtag);
+                this.search = ''; //empty search field
             },
             lastPage() {
                 this.page = this.page - 1

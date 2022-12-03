@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use DatabaseSeeder;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Laravel\Passport\Passport;
 
@@ -14,7 +13,7 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
         //$this->withoutExceptionHandling();
-        (new DatabaseSeeder())->call(DatabaseSeeder::class);
+        $this->seed();
     }
 
     protected function signIn($user = null) //student

@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\OrganizationType;
-use Facades\Tests\Setup\OrganizationTypeFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -26,10 +25,16 @@ class OrganizationTypeCRUDTest extends TestCase
              ->assertStatus(200);
 
         /* Use Datatables */
-        $organizationTypes = OrganizationType::first();
-        $this->get('organizationtypes/list')
-             ->assertStatus(200)
-             ->assertViewHasAll(compact($organizationTypes));
+        $organizationTypes = OrganizationType::select('id', 'title')->get();
+        $list = $this->get('organizationtypes/list')
+            ->assertStatus(200);
+        $i = 0;
+        foreach ($organizationTypes as $organizationType)
+        {
+            if ($i === 49) { break; } //test max 50 entries (default page limit on datatables
+            $list->assertJsonFragment($organizationType->toArray());
+            $i++;
+        }
     }
 
     /** @test
@@ -37,15 +42,15 @@ class OrganizationTypeCRUDTest extends TestCase
      */
     public function an_administrator_create_an_organization_type()
     {
-        $attributes = factory('App\OrganizationType')->raw();
+        $this->followingRedirects()
+            ->post('organizationtypes', $attributes = OrganizationType::factory()->raw())
+            ->assertStatus(200);
 
-        $this->post('organizationtypes', $attributes);
-
-        $this->assertDatabaseHas('organization_types', OrganizationType::where('title', $attributes['title'])->get()->first()->toArray());
+        $this->assertDatabaseHas('organization_types', $attributes);
     }
 
     /** @test
-     * Use Route: POST, organizationtypes, organizationtypes.create
+     * Use Route: POST, organizationtypes, organizationTypes.create
      */
     public function an_administrator_get_create_view_for_organization()
     {
@@ -54,17 +59,18 @@ class OrganizationTypeCRUDTest extends TestCase
     }
 
     /** @test
-     * Use Route: DELETE, organizationtypes/{organizationtype}, organizationtypes.destroy
+     * Use Route: DELETE, organizationtypes/{organizationType}, organizationtypes.destroy
      */
     public function an_administrator_delete_an_organization_type()
     {
 
-        /* add new organization */
-        $org_type = OrganizationTypeFactory::create();
+        $org_type = OrganizationType::factory()->create();
 
         $this->followingRedirects()
                 ->delete('organizationtypes/'.$org_type->id)
                 ->assertStatus(200);
+
+        $this->assertDatabaseMissing('organization_types', $org_type->toArray());
     }
 
     /** @test
@@ -72,11 +78,11 @@ class OrganizationTypeCRUDTest extends TestCase
      */
     public function an_administrator_see_details_of_an_organization_types()
     {
-        $org_type = OrganizationTypeFactory::create();
+        $org_type = OrganizationType::factory()->create();
 
         $this->get("organizationtypes/{$org_type->id}")
              ->assertStatus(200)
-             ->assertViewHasAll(compact($org_type));
+             ->assertSee($org_type->toArray());
     }
 
     /** @test
@@ -84,24 +90,29 @@ class OrganizationTypeCRUDTest extends TestCase
      */
     public function an_administrator_update_an_organization_types()
     {
-        $this->post('organizationtypes', $attributes = factory('App\OrganizationType')->raw());
+        $this->post('organizationtypes', $attributes = OrganizationType::factory()->raw());
+        $organizationType = OrganizationType::where('title', $attributes['title'])->first()->toArray();
 
-        $this->assertDatabaseHas('organization_types', $attributes);
-        /* edit organization*/
-        $this->patch('organizationtypes/'.OrganizationType::where('title', '=', $attributes['title'])->first()->id, $new_attributes = factory('App\OrganizationType')->raw());
+        $this->assertDatabaseHas('organization_types', $organizationType);
 
-        $this->assertDatabaseHas('organization_types', $new_attributes);
+        $this->patch('organizationtypes/'.$organizationType['id'], $new_attributes = OrganizationType::factory()->raw());
+
+        $organizationType_edit = OrganizationType::where('title', $new_attributes['title'])->first()->toArray();
+        $this->assertDatabaseHas('organization_types', $organizationType_edit);
     }
 
     /** @test
-     * Use Route: GET|HEAD, organizationtypes/{organizationtype}/edit, organizations.edit
+     * Use Route: GET|HEAD, organizationtypes/{organizationtype}/edit, organizationtypes.edit
      */
     public function an_administrator_get_edit_view_for_organization_type()
     {
-        $org_type = OrganizationTypeFactory::create();
+        $this->post('organizationtypes', $attributes = OrganizationType::factory()->raw());
+        $organizationType = OrganizationType::where('title', $attributes['title'])->first();
 
-        $this->get("organizationtypes/{$org_type->id}/edit")
-             ->assertStatus(200)
-             ->assertSessionHasAll(compact($org_type));
+        $this->get("organizationtypes/{$organizationType->id}/edit")
+            ->assertStatus(200)
+            ->assertSee([
+                'title' => $organizationType->title,
+            ]);
     }
 }

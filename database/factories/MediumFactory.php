@@ -1,27 +1,43 @@
 <?php
 
-/* @var $factory \Illuminate\Database\Eloquent\Factory */
+namespace Database\Factories;
 
 use App\Medium;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Medium::class, function (Faker $faker) {
-    return [
+class MediumFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Medium::class;
 
-        'path'          => $faker->file('/tmp', '/tmp/'),
-        'medium_name'    => $faker->word.$faker->fileExtension,
-        'title'         => $faker->word,
-        'description'   => $faker->sentence,
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
 
-        'author' => $faker->name,
-        'publisher' => $faker->company,
-        'city' => $faker->city,
-        'date' => $faker->dateTime,
+            'path' => $this->faker->file('/tmp', '/tmp/'),
+            'medium_name' => $this->faker->word . $this->faker->fileExtension,
+            'title' => $this->faker->word,
+            'description' => $this->faker->sentence,
 
-        'size' => $faker->numberBetween(1, 3000000).'kb',
-        'mime_type' => $faker->mimeType,
+            'author' => $this->faker->name,
+            'publisher' => $this->faker->company,
+            'city' => $this->faker->city,
+            'date' => $this->faker->dateTime,
 
-        'license_id' => 1,
-        'owner_id' => auth()->user()->id,
-    ];
-});
+            'size' => $this->faker->numberBetween(1, 3000000) . 'kb',
+            'mime_type' => $this->faker->mimeType,
+
+            'license_id' => 1,
+            'owner_id' => auth()->user()->id,
+        ];
+    }
+}

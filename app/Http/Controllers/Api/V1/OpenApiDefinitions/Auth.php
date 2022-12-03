@@ -43,9 +43,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *     )
 *
 * Returns strings: access_token, token_type, expires at
-*/
-
-/**
+*
 * @OA\Get(
 *      path="/v1/user",
 *      operationId="user",

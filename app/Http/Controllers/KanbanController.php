@@ -90,7 +90,7 @@ class KanbanController extends Controller
         abort_unless(\Gate::allows('kanban_create'), 403);
         $new_kanban = $this->validateRequest();
 
-        $kanban = Kanban::Create([
+        $kanban = Kanban::create([
             'title' => $new_kanban['title'],
             'description' => $new_kanban['description'],
             'color' => $new_kanban['color'],

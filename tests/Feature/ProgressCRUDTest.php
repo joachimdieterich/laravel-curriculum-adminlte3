@@ -2,8 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Curriculum;
+use App\TerminalObjective;
+use App\EnablingObjective;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Auth;
+
 use Tests\TestCase;
 
 class ProgressCRUDTest extends TestCase
@@ -13,21 +16,21 @@ class ProgressCRUDTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        //$this->signIn();
+
         $this->signInAdmin();
-        $this->post('curricula', $attributes = factory('App\Curriculum')->raw());
-        $this->post('terminalObjectives', factory('App\TerminalObjective')->raw());
+        $this->post('curricula', $attributes = Curriculum::factory()->raw());
+        $this->post('terminalObjectives', TerminalObjective::factory()->raw());
         //generate some objectives ID 1-10
-        $this->post('enablingObjectives', factory('App\EnablingObjective')->raw());
-        $this->post('enablingObjectives', factory('App\EnablingObjective')->raw());
-        $this->post('enablingObjectives', factory('App\EnablingObjective')->raw());
-        $this->post('enablingObjectives', factory('App\EnablingObjective')->raw());
-        $this->post('enablingObjectives', factory('App\EnablingObjective')->raw());
-        $this->post('enablingObjectives', factory('App\EnablingObjective')->raw());
-        $this->post('enablingObjectives', factory('App\EnablingObjective')->raw());
-        $this->post('enablingObjectives', factory('App\EnablingObjective')->raw());
-        $this->post('enablingObjectives', factory('App\EnablingObjective')->raw());
-        $this->post('enablingObjectives', factory('App\EnablingObjective')->raw());
+        $this->post('enablingObjectives', EnablingObjective::factory()->raw());
+        $this->post('enablingObjectives', EnablingObjective::factory()->raw());
+        $this->post('enablingObjectives', EnablingObjective::factory()->raw());
+        $this->post('enablingObjectives', EnablingObjective::factory()->raw());
+        $this->post('enablingObjectives', EnablingObjective::factory()->raw());
+        $this->post('enablingObjectives', EnablingObjective::factory()->raw());
+        $this->post('enablingObjectives', EnablingObjective::factory()->raw());
+        $this->post('enablingObjectives', EnablingObjective::factory()->raw());
+        $this->post('enablingObjectives', EnablingObjective::factory()->raw());
+        $this->post('enablingObjectives', EnablingObjective::factory()->raw());
     }
 
     /** @test
@@ -36,7 +39,7 @@ class ProgressCRUDTest extends TestCase
     public function the_progress_value_can_be_calculated_for_an_terminalObjective()
     {
         //$this->withoutExceptionHandling();
-//        $attributes = factory('App\Achievement')->raw();
+//        $attributes = Achievement::factory()->raw();
 //        $attributes['owner_id'] = auth()->user()->id;
 //        $attributes['user_id'] = 2; //set achievement for studend (id 2)
 //

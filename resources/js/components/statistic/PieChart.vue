@@ -3,11 +3,17 @@
     <div class="card">
         <div class="w-full flex-1 p-2">
             {{ this.title }}
-            <D3PieChart
-                class="p-6"
-                :config="chart_config"
-                :datum="chart_data.slice(0, 10)"
-            ></D3PieChart>
+            <Doughnut
+                :chart-options="chartOptions"
+                :chart-data="chartData"
+                :chart-id="chartId"
+                :dataset-id-key="datasetIdKey"
+                :plugins="plugins"
+                :css-classes="cssClasses"
+                :styles="styles"
+                :width="width"
+                :height="height"
+            />
             <input type="search"
                    class="form-control form-control-sm"
                    style="border:0;"
@@ -42,11 +48,26 @@
     </div>
 </template>
 <script>
-import { D3PieChart } from 'vue-d3-charts'; //documentation https://saigesp.github.io/vue-d3-charts/#/piechart
+import { Doughnut } from 'vue-chartjs/legacy'
+
+import {
+    Chart as ChartJS,
+    Title,
+    Tooltip,
+    Legend,
+    ArcElement,
+    CategoryScale
+} from 'chart.js'
+
+ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 
 export default {
-    components: {
+    /*components: {
         D3PieChart
+    },*/
+    name: 'DoughnutChart',
+    components: {
+        Doughnut
     },
     props: {
         'id' : String,
@@ -54,28 +75,85 @@ export default {
         'chart': String,
         'date_begin': String,
         'date_end': String,
+        chartId: {
+            type: String,
+            default: 'doughnut-chart'
+        },
+        datasetIdKey: {
+            type: String,
+            default: 'label'
+        },
+        width: {
+            type: Number,
+            default: 400
+        },
+        height: {
+            type: Number,
+            default: 400
+        },
+        cssClasses: {
+            default: '',
+            type: String
+        },
+        styles: {
+            type: Object,
+            default: () => {}
+        },
+        plugins: {
+            type: Array,
+            default: () => []
+        }
     },
+
     data() {
         return {
             search: '',
-            chart_data: [],
-            chart_config: {
-                key: 'value',
-                value: 'counter',
-                color: {scheme: 'schemeSet2'},
-                radius: {
-                    inner: 60,
-                    padding: 0.05,
-                    round: 4
-                }
+            chartData: {
+                labels: [],
+                datasets: [
+                    {
+                        backgroundColor: ["#001219","#005f73","#0a9396","#94d2bd","#e9d8a6","#ee9b00","#ca6702","#bb3e03","#ae2012","#9b2226", "#ff5400","#ff6d00","#ff8500","#ff9100","#ff9e00","#00b4d8","#0096c7","#0077b6","#023e8a","#03045e"],
+                        data: []
+                    }
+                ]
             },
-            count: 1
+            chartOptions: {
+                responsive: true,
+                maintainAspectRatio: false,
+                borderRadius: 10,
+            },
+            legend: {
+                onHover: this.handleHover,
+                onLeave: this.handleLeave
+            },
+            chart_data: [],
         }
     },
     methods: {
+        handleHover(evt, item, legend) {
+            legend.chart.data.datasets[0].backgroundColor.forEach((color, index, colors) => {
+                colors[index] = index === item.index || color.length === 9 ? color : color + '4D';
+            });
+            legend.chart.update();
+        },
+        handleLeave(evt, item, legend) {
+            legend.chart.data.datasets[0].backgroundColor.forEach((color, index, colors) => {
+                colors[index] = color.length === 9 ? color.slice(0, -2) : color;
+            });
+            legend.chart.update();
+        },
         loaderEvent() {
             axios.get('/statistics?chart=' + this.chart + '&date_begin=' + this.date_begin + '&date_end=' + this.date_end)
                 .then(response => {
+
+                    this.chartData = {
+                        labels: response.data.message.map(m => m.value), //['VueJs', 'EmberJs', 'ReactJs', 'AngularJs'],
+                        datasets: [
+                            {
+                                data: response.data.message.map(m => m.counter)
+                            }
+                        ]
+                    },
                     this.chart_data = this.sumIfEqual(response.data.message);
                 }).catch(e => {
             });

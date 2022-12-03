@@ -2,7 +2,9 @@
 
 namespace App;
 
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  *   @OA\Schema(
@@ -29,7 +31,14 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Organization extends Model
 {
+    use HasFactory;
+
     protected $guarded = [];
+
+    protected $dates = [
+        'updated_at',
+        'created_at',
+    ];
 
     protected $attributes = [
         'state_id' => 'DE-RP',
@@ -37,6 +46,17 @@ class Organization extends Model
         'organization_type_id' => 1,
         'status_id' => 1,
     ];
+
+    /**
+     * Prepare a date for array / JSON serialization.
+     *
+     * @param  \DateTimeInterface  $date
+     * @return string
+     */
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
+    }
 
     public function path()
     {
@@ -129,5 +149,10 @@ class Organization extends Model
             'id',
             'plan_id'
         )->where('subscribable_type', get_class($this));
+    }
+
+    public function groups()
+    {
+        return $this->hasMany('App\Group');
     }
 }

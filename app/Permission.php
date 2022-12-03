@@ -2,12 +2,14 @@
 
 namespace App;
 
+use DateTimeInterface;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Permission extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasFactory;
 
     protected $dates = [
         'created_at',
@@ -21,4 +23,15 @@ class Permission extends Model
         'updated_at',
         'deleted_at',
     ];
+
+    /**
+     * Prepare a date for array / JSON serialization.
+     *
+     * @param  \DateTimeInterface  $date
+     * @return string
+     */
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
+    }
 }

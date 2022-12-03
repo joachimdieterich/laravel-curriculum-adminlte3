@@ -53,7 +53,7 @@
                 targets: - 1
             }
         ],
-        bStateSave: true,
+        bStateSave: false,
         fnStateSave: function (oSettings, oData) {
             localStorage.setItem( 'DataTables', JSON.stringify(oData) );
         },

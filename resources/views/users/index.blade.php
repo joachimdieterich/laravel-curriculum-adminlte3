@@ -87,12 +87,14 @@
 
                                 @include ('forms.input.select',
                                     ["model" => "group",
+                                    "url" => "groups",
+                                    "placeholder" => trans('global.pleaseSelect'),
                                     "show_label" => true,
                                     "multiple" => true,
                                     "field" => "user_organization_group_id",
-                                    "options"=> $groups,
+                                  /*  "options"=> $groups,*/
                                     "option_label" => "title",
-                                    "optgroup" => $organizations,
+                                   /* "optgroup" => $organizations,*/
                                     "optgroup_reference_field" => "organization_id",
                                     "value" =>  old('group_id', isset($user->current_group_id) ? $user->current_group_id : '')])
 
@@ -109,16 +111,18 @@
                                 @include ('forms.input.info', ["value" => "Beim Zuweisen einer Rolle werden die markierten Nutzer automatisch in die aktuelle/ausgewählte Institution eingeschrieben bzw. die Daten aktualisiert."])
                                 @include ('forms.input.select',
                                     ["model" => "organization",
+                                    "url" => "organizations",
                                     "show_label" => true,
+                                    "placeholder" => trans('global.pleaseSelect'),
                                     "field" => "role_organization_id",
-                                    "options"=> $organizations,
                                     "option_label" => "title",
                                     "value" =>  old('organization_id', isset($user->current_organization_id) ? $user->current_organization_id : '')])
                                  @include ('forms.input.select',
                                     ["model" => "role",
+                                    "url" => "roles",
+                                    "placeholder" => trans('global.pleaseSelect'),
                                     "show_label" => true,
                                     "field" => "role_id",
-                                    "options"=> $roles,
                                     "option_label" => "title",
                                     "value" =>  old('role_id', isset($user->current_role_id) ? $user->current_role_id : '')])
                                 <div class="btn-group pull-right" role="group" aria-label="...">
@@ -132,9 +136,10 @@
                             <div class="form-horizontal col-xs-12  px-4">
                                  @include ('forms.input.select',
                                 ["model" => "statusdefinition",
+                                "url" => "statusdefinitions",
+                                "placeholder" => trans('global.pleaseSelect'),
                                 "show_label" => true,
                                 "field" => "status_definition_id",
-                                "options"=> $status_definitions,
                                 "option_id" => "status_definition_id",
                                 "option_label" => "lang_de",
                                 "value" => old('status_definition_id', isset($user->status_definition_id) ? $user->status_definition_id : '') ])

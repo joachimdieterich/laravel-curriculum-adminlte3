@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Curriculum;
+use App\TerminalObjective;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,8 +15,8 @@ class TerminalObjectiveCRUDTest extends TestCase
     {
         parent::setUp();
         $this->signInAdmin();
-        /* add curriculum needed by tests*/
-        $this->post('curricula', $attributes = factory('App\Curriculum')->raw());
+
+        $this->post('curricula', $attributes = Curriculum::factory()->raw());
     }
 
     /** @test
@@ -32,9 +33,8 @@ class TerminalObjectiveCRUDTest extends TestCase
      */
     public function an_administrator_create_an_terminal_objective()
     {
-        $attributes = factory('App\TerminalObjective')->raw();
 
-        $this->post('terminalObjectives', $attributes);
+        $this->post('terminalObjectives', $attributes = TerminalObjective::factory()->raw());
 
         $this->assertDatabaseHas('terminal_objectives', $attributes);
     }

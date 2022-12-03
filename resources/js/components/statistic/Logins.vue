@@ -1,92 +1,133 @@
 <template>
     <div class="card">
+
         <div class="w-full flex-1 p-2">
-            Registered Users (local)
-            <D3LineChart :config="chart_config" :datum="chart_data_login"></D3LineChart>
-            Registered Users (sso)
-            <D3LineChart :config="chart_config" :datum="chart_data_ssoLogin"></D3LineChart>
-            Guests
-            <D3LineChart :config="chart_config" :datum="chart_data_guestLogin"></D3LineChart>
+            <LineChartGenerator
+                :chart-options="chartOptions"
+                :chart-data="chartDataLogin"
+                :chart-id="chartId"
+                :dataset-id-key="datasetIdKey"
+                :plugins="plugins"
+                :css-classes="cssClasses"
+                :styles="styles"
+                :width="width"
+                :height="height"
+            />
+            <LineChartGenerator
+                :chart-options="chartOptions"
+                :chart-data="chartDataSso"
+                :chart-id="chartId"
+                :dataset-id-key="datasetIdKey"
+                :plugins="plugins"
+                :css-classes="cssClasses"
+                :styles="styles"
+                :width="width"
+                :height="height"
+            />
+            <LineChartGenerator
+                :chart-options="chartOptions"
+                :chart-data="chartDataGuest"
+                :chart-id="chartId"
+                :dataset-id-key="datasetIdKey"
+                :plugins="plugins"
+                :css-classes="cssClasses"
+                :styles="styles"
+                :width="width"
+                :height="height"
+            />
         </div>
     </div>
 </template>
 <script>
-import { D3LineChart } from 'vue-d3-charts'; // documentation https://saigesp.github.io/vue-d3-charts/#/linechart
+import { Line as LineChartGenerator } from 'vue-chartjs/legacy'
+import {
+    Chart as ChartJS,
+    Title,
+    Tooltip,
+    Legend,
+    LineElement,
+    LinearScale,
+    CategoryScale,
+    PointElement
+} from 'chart.js'
+
+ChartJS.register(
+    Title,
+    Tooltip,
+    Legend,
+    LineElement,
+    LinearScale,
+    CategoryScale,
+    PointElement
+)
 
 export default {
-    components: {
-        D3LineChart,
-    },
+    name: 'LineChart',
+
     props: {
-        'date': String,
+        chartId: {
+            type: String,
+            default: 'line-chart'
+        },
+        datasetIdKey: {
+            type: String,
+            default: 'label'
+        },
+        width: {
+            type: Number,
+            default: 400
+        },
+        height: {
+            type: Number,
+            default: 400
+        },
+        cssClasses: {
+            default: '',
+            type: String
+        },
+        styles: {
+            type: Object,
+            default: () => {}
+        },
+        plugins: {
+            type: Array,
+            default: () => []
+        }
     },
     data() {
         return {
-            chart_data_login: [],
-            chart_data_ssoLogin: [],
-            chart_data_guestLogin: [],
-           /* chart_data: [
-                {hours: 238, production: 134, date: 2000},
-                {hours: 938, production: 478, date: 2001},
-
-            ],*/
-            chart_config: {
-                date: {
-                    key: 'created_at',
-                    inputFormat: "%Y-%m-%d",
-                    outputFormat: "%d-%m-%Y",
-                },
-                values: ["counter"],
-                axis: {
-                    yTitle: "Logins",
-                    xTitle: "Datum",
-                    yFormat: ".0f",
-                    xFormat: "%Y-%m-%d",
-                    yTicks: 5,
-                    xTicks: 3
-                },
-                color: {
-                    key: false,
-                    keys: false,
-                    scheme: [ '#7D5BA6','#ACFCD9', '#DDDDDD', '#FC6471','#55D6BE'],
-                    current: "#1f77b4",
-                    default: "#AAA",
-                    axis: "#000",
-                },
-                margin: {
-                    top: 20,
-                    right: 20,
-                    bottom: 20,
-                    left: 40
-                },
-                points: {
-                    visibleSize: 3,
-                    hoverSize: 6,
-                },
-                tooltip: {
-                    labels: ['counter']
-                },
-                transition: {
-                    duration: 350,
-                    ease: "easeLinear",
-                },
-                curve: "curveMonotoneX" //options: http://bl.ocks.org/d3indepth/b6d4845973089bc1012dec1674d3aff8
-            },
-            count: 2010,
-        }
+            chartDataSso: {},
+            chartDataLogin: {},
+            chartDataGuest: {},
+            chartOptions: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        };
     },
     methods: {
         loaderEvent(chart) {
             axios.get('/statistics?chart='+chart)
                 .then(response => {
+                    let result = [];
+                    result = {
+                        labels: response.data.message.labels,
+                        datasets: [
+                            {
+                                label: response.data.message.datasets.label,
+                                backgroundColor: response.data.message.datasets.backgroundColor,
+                                data: response.data.message.datasets.data
+                            }
+                        ]
+                    }
                     if (chart === 'login'){
-                        this.chart_data_login = response.data.message;
+                        this.chartDataLogin = result;
                     }
                     if (chart === 'ssoLogin'){
-                        this.chart_data_ssoLogin = response.data.message;
+                        this.chartDataSso = result;
                     }
                     if (chart === 'guestLogin'){
-                        this.chart_data_guestLogin = response.data.message;
+                        this.chartDataGuest = result;
                     }
 
                 }).catch(e => {
@@ -104,13 +145,16 @@ export default {
             handler: function(){
                 this.loaderEvent();
             }
-        }
+        },
     },
     mounted() {
         this.loaderEvent('login');
         this.loaderEvent('guestLogin');
         this.loaderEvent('ssoLogin');
-    }
-}
-</script>
+    },
+    components: {
+        LineChartGenerator
+    },
 
+};
+</script>

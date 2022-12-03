@@ -35,53 +35,111 @@
         @if(!isset($multiple))
             <option></option>
         @endif
-        @foreach($options as $v)
-            <?php $o_id = isset($option_id) ? $option_id : 'id'; ?>
+        @if(isset($options))
+                @foreach($options as $v)
+                    <?php $o_id = isset($option_id) ? $option_id : 'id'; ?>
 
-            @if (isset($optgroup[0]) && ($current_optgroup_id != $v->$optgroup_reference_field ))
-                <?php $optgroup_label = ((isset($optgroup_label)) ? $optgroup_label : 'title');
-                $opt_label = $optgroup->where((isset($optgroup_id)) ? $optgroup_id : 'id', $v->$optgroup_reference_field)->first()->$optgroup_label
-                ?>
-                <optgroup
-                    id="{{ $v->$optgroup_reference_field }}"
-                    label="{{ $opt_label }}"
-                    @if (isset($optgroup_class))
-                    data-class="{{ $optgroup_class }}"
+                    @if (isset($optgroup[0]) && ($current_optgroup_id != $v->$optgroup_reference_field ))
+                        <?php $optgroup_label = ((isset($optgroup_label)) ? $optgroup_label : 'title');
+                        $opt_label = $optgroup->where((isset($optgroup_id)) ? $optgroup_id : 'id', $v->$optgroup_reference_field)->first()->$optgroup_label
+                        ?>
+                        <optgroup
+                            id="{{ $v->$optgroup_reference_field }}"
+                            label="{{ $opt_label }}"
+                            @if (isset($optgroup_class))
+                            data-class="{{ $optgroup_class }}"
+                            @endif
+                            @if (isset($optgroup_icon))
+                            data-icon="{{ $optgroup_icon }}"
+                            @endif
+                        >
+                            @endif
+
+                            <option
+                                value="{{ $v->$o_id }}"
+                                @if (isset($option_icon))
+                                    data-icon="{{ $option_icon }}"
+                                @endif
+                                @if(isset($multiple))
+                                    {{ in_array($v->$o_id, (array)$value) ? 'selected' : '' }}
+                                @else
+                                    {{ ( $v->$o_id == $value ) ? 'selected' : '' }}
+                                @endif
+
+                            >
+                                {{ (isset($option_label)) ? $v->$option_label :$v->title }}
+                                @if (isset($combine_labels) ? $combine_labels : false)
+                                    | {{ $opt_label }}
+                                @endif
+                            </option>
+
+                            @if (isset($optgroup[0]))
+                                @if ($current_optgroup_id != $v->$optgroup_reference_field )
+                        </optgroup>
                     @endif
-                    @if (isset($optgroup_icon))
-                    data-icon="{{ $optgroup_icon }}"
-                    @endif
-                >
+                    <?php $current_optgroup_id = $v->$optgroup_reference_field ?>
                     @endif
 
-                    <option
-                        value="{{ $v->$o_id }}" {{ ( $v->$o_id == $value ) ? 'selected' : '' }}
-                    @if (isset($option_icon))
-                    data-icon="{{ $option_icon }}"
-                        @endif
-                    >
-                        {{ (isset($option_label)) ? $v->$option_label :$v->title }}
-                        @if (isset($combine_labels) ? $combine_labels : false)
-                            | {{ $opt_label }}
-                        @endif
-                    </option>
+                @endforeach
+        @endif
 
-                    @if (isset($optgroup[0]))
-                        @if ($current_optgroup_id != $v->$optgroup_reference_field )
-                </optgroup>
-            @endif
-            <?php $current_optgroup_id = $v->$optgroup_reference_field ?>
-            @endif
-
-        @endforeach
     </select>
     @if ($errors->has( $field ))
         <span id="{{ $field }}-error" class="error text-danger"
               for="input-{{ $field }}">{{ $errors->first( $field ) }}</span>
     @endif
 </div>
-@if (isset($placeholder))
+@if (isset($url))
 @section('scripts')
+    @parent
+    <!--hack to get select2 working-->
+    <script>
+        $(document).ready(function () {
+            function formatText(icon) {
+                return $('<span class="' + $(icon.element).data('class') + '"><i class="fas ' + $(icon.element).data('icon') + '"></i> ' + icon.text + '</span>');
+            }
+            <!--hack to get select2 working z-index-->
+            var $select = $("#{{ $field }}").select2({
+                placeholder: "{{ $placeholder }}",
+                dropdownParent: $("#{{ $field }}").parent(),
+                allowClear: "{{ $allowClear ?? true }}",
+                ajax: {
+                    delay: 250,
+                    url: "{{ $url }}",
+                    dataType: 'json',
+                    data: function(params) {
+                        return {
+                            term: params.term || '',
+                            page: params.page || 1
+                        }
+                    },
+                    /*processResults: function(data) {
+                        let results = data.results;
+                        let options = {{json_encode($value)}}
+                        for (var i = 0; i < results.length; i++) {
+                            if (options.includes(results[i].id )) {
+                                results[i]["selected"] = "true";
+                            }
+                        }
+
+                        data.results = results;
+                        console.log(data);
+                        return { results: data.results  };
+                    },*/
+                    cache: true,
+                },
+                templateSelection: formatText,
+                templateResult: formatText,
+            });
+
+        });
+    </script>
+@endsection
+@endif
+
+
+@if (isset($placeholder))
+    @section('scripts')
     @parent
     <!--hack to get select2 working-->
     <script>
@@ -101,3 +159,5 @@
     </script>
     @endsection
 @endif
+
+

@@ -1,5 +1,5 @@
 <template>
-    <div class="card mr-2">
+    <div class="card">
         <div class="card-body px-3 py-2">
             <color-picker-input v-model="form.color"></color-picker-input>
             <div class="form-group">
@@ -96,6 +96,9 @@ export default {
             this.form.kanban_status_id = this.status.id;
             this.form.order_id = this.status.items.length;
         }
+        this.$initTinyMCE([
+            "autolink link example"
+        ], );
     },
     methods: {
         open(modal, relationKey) {
@@ -123,6 +126,7 @@ export default {
         },
         submit() {
             var method = this.method.toLowerCase();
+            this.form.description = tinyMCE.get('description').getContent();
             if (method === 'patch') {
                     axios.patch(this.requestUrl += '/' + this.form.id, this.form)
                      .then(res => { // Tell the parent component we've updated a task

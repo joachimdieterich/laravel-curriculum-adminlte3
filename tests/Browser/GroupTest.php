@@ -18,7 +18,7 @@ class GroupTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $group = Group::first();
-            $new_group = factory('App\Group')->raw();
+            $new_group = Group::factory()->raw();
             $browser->loginAs(User::find(1))
                     ->visit(new Pages\GroupPage)
                     ->waitForText($group->title)
@@ -66,7 +66,7 @@ class GroupTest extends DuskTestCase
     public function testEditGroup()
     {
         $this->browse(function (Browser $admin) {
-            $new_group = factory('App\Group')->raw();
+            $new_group = Group::factory()->raw();
             $group = Group::find(1)->get()->first();
             $admin->loginAs(User::find(1))
                     ->visit(new Pages\GroupPage)
@@ -89,7 +89,7 @@ class GroupTest extends DuskTestCase
     public function testDeleteGroup()
     {
         $this->browse(function (Browser $admin) {
-            $new_group = factory('App\Group')->raw();
+            $new_group = Group::factory()->raw();
             $group = Group::create($new_group);
 
             $admin->loginAs(User::find(1))

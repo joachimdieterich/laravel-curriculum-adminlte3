@@ -3,8 +3,8 @@
 namespace Tests\Unit;
 
 use App\Content;
+use App\Curriculum;
 use App\ContentSubscription;
-use Facades\Tests\Setup\ContentFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -21,7 +21,7 @@ class ContentTest extends TestCase
     /** @test */
     public function it_has_a_owner()
     {
-        $content = ContentFactory::create();
+        $content = Content::factory()->create();
 
         $this->assertInstanceOf('App\User', $content->owner);
     }
@@ -31,9 +31,9 @@ class ContentTest extends TestCase
     {
         ///$this->withoutExceptionHandling();
 
-        $content = ContentFactory::create();
+        $content = Content::factory()->create();
 
-        $curriculum = new \App\Curriculum;
+        $curriculum = new Curriculum;
 
         $subscription = ContentSubscription::create($attributes = [
             'content_id' => $content->id,

@@ -64,8 +64,8 @@
 
 
 <script>
-    import Header from './Header'
-    import Footer from './Footer'
+    import Header from './Header';
+    import Footer from './Footer';
 
     export default {
         props: {
@@ -218,7 +218,12 @@
                 this.sortEvent()
             })
         },
+        mounted() {
+            this.$nextTick(() => {
+                MathJax.startup.defaultReady();
+            })
 
+        },
         beforeDestroy: function () {
             this.$root.$off('eventDelete');
             this.$root.$off('eventSort')

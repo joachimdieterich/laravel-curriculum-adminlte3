@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Logbook;
-use Facades\Tests\Setup\LogbookFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -26,10 +25,16 @@ class AdminLogbookCRUDTest extends TestCase
             ->assertStatus(200);
 
         /* Use Datatables */
-        $Logbook = Logbook::first();
-        $this->get('logbooks/list')
-            ->assertStatus(200)
-            ->assertViewHasAll(compact($Logbook));
+        $logbooks = Logbook::select('id', 'title')->get();
+        $list = $this->get('logbooks/list')
+            ->assertStatus(200);
+        $i = 0;
+        foreach ($logbooks as $logbook)
+        {
+            if ($i === 49) { break; } //test max 50 entries (default page limit on datatables
+            $list->assertJsonFragment($logbook->toArray());
+            $i++;
+        }
     }
 
     /** @test
@@ -37,7 +42,8 @@ class AdminLogbookCRUDTest extends TestCase
      */
     public function an_administrator_create_an_Logbook()
     {
-        $this->post('logbooks', $attributes = factory('App\Logbook')->raw());
+        $this->followingRedirects()->post('logbooks', $attributes = Logbook::factory()->raw())
+            ->assertStatus(200);
 
         $this->assertDatabaseHas('logbooks', $attributes);
     }
@@ -56,13 +62,13 @@ class AdminLogbookCRUDTest extends TestCase
      */
     public function an_administrator_delete_a_Logbook()
     {
-        $Logbook = LogbookFactory::create();
+        $logbook = Logbook::factory()->create();
 
         $this->followingRedirects()
-            ->delete('logbooks/'.$Logbook->id)
+            ->delete('logbooks/'.$logbook->id)
             ->assertStatus(200);
 
-        $this->assertDatabaseMissing('logbooks', $Logbook->toArray());
+        $this->assertDatabaseMissing('logbooks', $logbook->toArray());
     }
 
     /** @test
@@ -70,12 +76,11 @@ class AdminLogbookCRUDTest extends TestCase
      */
     public function an_administrator_see_details_of_a_Logbook()
     {
-        $Logbook = LogbookFactory::create();
+        $logbook = Logbook::factory()->create();
 
-        //dd($Logbook->id);
-        $this->get("logbooks/{$Logbook->id}")
+        $this->get("logbooks/{$logbook->id}")
             ->assertStatus(200)
-            ->assertViewHasAll(compact($Logbook));
+            ->assertsee($logbook->toArray());
     }
 
     /** @test
@@ -83,13 +88,11 @@ class AdminLogbookCRUDTest extends TestCase
      */
     public function an_administrator_update_a_Logbook()
     {
-        $this->withoutExceptionHandling();
-
-        $this->post('logbooks', $attributes = factory('App\Logbook')->raw());
+        $this->post('logbooks', $attributes = Logbook::factory()->raw());
 
         $this->assertDatabaseHas('logbooks', $attributes);
 
-        $this->patch('logbooks/'.Logbook::where('title', '=', $attributes['title'])->first()->id, $new_attributes = factory('App\Logbook')->raw());
+        $this->patch('logbooks/'.Logbook::where('title', '=', $attributes['title'])->first()->id, $new_attributes = Logbook::factory()->raw());
 
         $this->assertDatabaseHas('logbooks', $new_attributes);
     }
@@ -99,10 +102,10 @@ class AdminLogbookCRUDTest extends TestCase
      */
     public function an_administrator_get_edit_view_for_a_Logbook()
     {
-        $Logbook = LogbookFactory::create();
+        $logbook = Logbook::factory()->create();
 
-        $this->get("logbooks/{$Logbook->id}/edit")
+        $this->get("logbooks/{$logbook->id}/edit")
             ->assertStatus(200)
-            ->assertSessionHasAll(compact($Logbook));
+            ->assertSee($logbook->toArray());
     }
 }

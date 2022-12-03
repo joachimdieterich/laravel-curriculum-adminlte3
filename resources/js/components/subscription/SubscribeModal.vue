@@ -74,12 +74,7 @@
                                     id="users"
                                     class="form-control select2 "
                                     style="width:100%;"
-                            >
-                                <option></option>
-                                <option v-for="(item,index) in subscribers.users" v-bind:value="item.id">
-                                    {{ item.firstname }} {{ item.lastname }}
-                                </option>
-                            </select>
+                            ></select>
                         </div>
                         <subscribers
                             v-if="typeof subscribers.subscriptions != 'undefined'"
@@ -88,7 +83,6 @@
                             :subscribing_model="'App\\User'"/>
 
                     </div>
-
 
                     <!-- Group Tab -->
                     <div v-if="shareWithGroups"
@@ -99,10 +93,6 @@
                                     class="form-control select2 "
                                     style="width:100%;"
                             >
-                                <option></option>
-                                <option v-for="(item,index) in subscribers.groups" v-bind:value="item.group_id">
-                                    {{ item.title }}
-                                </option>
                             </select>
                         </div>
                         <subscribers
@@ -121,10 +111,6 @@
                                     class="form-control select2 "
                                     style="width:100%;"
                             >
-                                <option></option>
-                                <option v-for="(item,index) in subscribers.organizations"
-                                        v-bind:value="item.organization_id">{{ item.title }}
-                                </option>
                             </select>
                         </div>
                         <subscribers
@@ -253,33 +239,65 @@ export default {
         initSelect2() {
             $("#users").select2({
                 dropdownParent: $(".v--modal-overlay"),
-                allowClear: false
-            }).on('select2:select', function (e) {
-                this.subscribe('App\\User', e.params.data.id, this.modelId);
-            }.bind(this));
-            $("#groups").select2({
-                dropdownParent: $(".v--modal-overlay"),
-                allowClear: false
-            }).on('select2:select', function (e) {
-                this.subscribe('App\\Group', e.params.data.id, this.modelId);
-            }.bind(this));
-            $("#organizations").select2({
-                dropdownParent: $(".v--modal-overlay"),
-                allowClear: false
-            }).on('select2:select', function (e) {
-                this.subscribe('App\\Organization', e.params.data.id, this.modelId);
-            }.bind(this));
-        },
-        async subscribe(subscribable_type, subscribable_id, model_id) {
-            try {
-                this.subscribers.subscriptions = (await axios.post('/' + this.modelUrl + 'Subscriptions', {
-                    'model_id': model_id,
-                    'subscribable_type': subscribable_type,
-                    'subscribable_id': subscribable_id
-                })).data.subscription;
-
-            } catch (error) {
-                //
+                allowClear: false,
+                    ajax: {
+                        url: "/users",
+                        dataType: 'json',
+                        data: function(params) {
+                            return {
+                                term: params.term || '',
+                                page: params.page || 1
+                            }
+                        },
+                        cache: true
+                    },
+                }).on('select2:select', function (e) {
+                    this.subscribe('App\\User', e.params.data.id, this.modelId);
+                }.bind(this));
+                $("#groups").select2({
+                    dropdownParent: $(".v--modal-overlay"),
+                    allowClear: false,
+                    ajax: {
+                        url: "/groups",
+                        dataType: 'json',
+                        data: function(params) {
+                            return {
+                                term: params.term || '',
+                                page: params.page || 1
+                            }
+                        },
+                        cache: true
+                    },
+                }).on('select2:select', function (e) {
+                    this.subscribe('App\\Group', e.params.data.id, this.modelId);
+                }.bind(this));
+                $("#organizations").select2({
+                    dropdownParent: $(".v--modal-overlay"),
+                    allowClear: false,
+                    ajax: {
+                        url: "/organizations",
+                        dataType: 'json',
+                        data: function(params) {
+                            return {
+                                term: params.term || '',
+                                page: params.page || 1
+                            }
+                        },
+                        cache: true
+                    },
+                }).on('select2:select', function (e) {
+                    this.subscribe('App\\Organization', e.params.data.id, this.modelId);
+                }.bind(this));
+            },
+            async subscribe(subscribable_type, subscribable_id, model_id) {
+                try {
+                    this.subscribers.subscriptions = (await axios.post('/' + this.modelUrl + 'Subscriptions', {
+                        'model_id': model_id,
+                        'subscribable_type': subscribable_type,
+                        'subscribable_id': subscribable_id
+                    })).data.subscription;
+                } catch (error) {
+                    console.log(error);
             }
         },
         resetComponent() {

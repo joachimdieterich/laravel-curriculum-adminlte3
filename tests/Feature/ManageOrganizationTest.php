@@ -21,7 +21,7 @@ class ManageOrganizationTest extends TestCase
     {
 
         /* add new organization */
-        $this->post('/organizations', $attributes = factory('App\Organization')->raw());
+        $this->post('/organizations', $attributes = Organization::factory()->raw());
 
         $this->assertDatabaseHas('organizations', $attributes);
 

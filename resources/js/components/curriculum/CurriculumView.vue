@@ -173,6 +173,7 @@
                  aria-labelledby="medium-nav-tab">
                 <media subscribable_type="App\Curriculum"
                        :subscribable_id="curriculum.id"
+                       :public="1"
                        format="list">
                 </media>
             </div>

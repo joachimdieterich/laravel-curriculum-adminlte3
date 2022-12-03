@@ -3,8 +3,7 @@
 namespace Tests\Api;
 
 use App\Organization;
-use Facades\Tests\Setup\OrganizationFactory;
-use Facades\Tests\Setup\UserFactory;
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,7 +17,7 @@ class ApiOrganizationTest extends TestCase
     public function an_authenticated_client_can_not_get_organizations()
     {
         $this->get('/api/v1/organizations')->assertStatus(302);
-        $this->contains('login');
+        $this->stringContains('login');
     }
 
     /** @test
@@ -52,7 +51,7 @@ class ApiOrganizationTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $this->post('/api/v1/organizations', $attributes = factory('App\Organization')->raw());
+        $this->post('/api/v1/organizations', $attributes = Organization::factory()->raw());
 
         $this->assertDatabaseHas('organizations', $attributes);
     }
@@ -64,7 +63,7 @@ class ApiOrganizationTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $new_organization = $this->post('/api/v1/organizations', $attributes = factory('App\Organization')->raw());
+        $new_organization = $this->post('/api/v1/organizations', $attributes = Organization::factory()->raw());
 
         $this->put("/api/v1/organizations/{$new_organization->getData()->id}", $changed_attribute = ['title' => 'New Title',
             'status_id' => null, ]);
@@ -83,7 +82,7 @@ class ApiOrganizationTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $this->post('/api/v1/organizations', $attributes = factory('App\Organization')->raw()); //create new organization with ID 2, ID 1 exists seeded
+        $this->post('/api/v1/organizations', $attributes = Organization::factory()->raw()); //create new organization with ID 2, ID 1 exists seeded
 
         $this->delete('/api/v1/organizations/2');
 
@@ -97,10 +96,10 @@ class ApiOrganizationTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $organization1 = OrganizationFactory::create();
+        $organization1 = Organization::factory()->create();
 
-        $user1 = UserFactory::create();
-        $user2 = UserFactory::create();
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
 
         $this->put('/api/v1/organizations/enrol', $enrolment_1 = ['user_id' => $user1->id,
             'organization_id' => $organization1->id,
@@ -122,12 +121,12 @@ class ApiOrganizationTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $organization1 = OrganizationFactory::create();
+        $organization1 = Organization::factory()->create();
 
-        $user1 = UserFactory::create();
-        $user2 = UserFactory::create();
-        $user3 = UserFactory::create();
-        $user4 = UserFactory::create();
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+        $user3 = User::factory()->create();
+        $user4 = User::factory()->create();
 
         $this->put('/api/v1/organizations/enrol',
                 [
@@ -167,10 +166,10 @@ class ApiOrganizationTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $organization1 = OrganizationFactory::create();
+        $organization1 = Organization::factory()->create();
 
-        $user1 = UserFactory::create();
-        $user2 = UserFactory::create();
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
 
         $this->put('/api/v1/organizations/enrol', $enrolment_1 = ['user_id' => $user1->id,
             'organization_id' => $organization1->id,

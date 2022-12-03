@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-swatches v-model="content" @input="handleInput"></v-swatches>
+        <v-swatches v-model="content" @input="handleInput" ></v-swatches>
         <input type="hidden" name="color" :value="content"/>
     </div>
 </template>
@@ -38,6 +38,7 @@ export default {
 .vue-swatches__trigger {
     width: 19px !important;
     height: 19px !important;
+    ;
 }
 
 </style>

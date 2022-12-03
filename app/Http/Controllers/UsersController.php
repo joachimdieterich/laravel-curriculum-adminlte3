@@ -28,38 +28,35 @@ class UsersController extends Controller
     {
         abort_unless(\Gate::allows('user_access'), 403);
 
-        if (auth()->user()->role()->id == 1) {
-            if (request()->wantsJson()) {
-                $users = User::addGlobalScope(NoSharingUsers::class)->withTrashed()->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get();
-                return ['users' => $users];
-            }
-            $organizations = Organization::all();
-            $roles = Role::all();
-            $groups = Group::orderBy('organization_id', 'desc')->get();
-        } else {
-            if (request()->wantsJson()) {
-                return ['users' => json_encode(Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->addGlobalScope(NoSharingUsers::class)->get())];
-            }
-
-            $organizations = auth()->user()->organizations()->get();
-            $roles = Role::where('id', '>', auth()->user()->role()->id)->get();
-            $groups = (auth()->user()->role()->id == 4) ? Group::where('organization_id', auth()->user()->current_organization_id)->get() : auth()->user()->groups()->orderBy('organization_id', 'desc')->get();
+        if (request()->wantsJson() AND request()->has(['term', 'page'])) {
+            return  getEntriesForSelect2ByCollection(
+                Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->noSharing(),
+                'users.',
+                ['username', 'firstname', 'lastname'],
+                'lastname',
+                "CONCAT(firstname, ' ' ,lastname)",
+            );
         }
-        $status_definitions = StatusDefinition::all();
+        // todo check: is the following condition used anymore
+        if (request()->wantsJson()) {
+            if (auth()->user()->role()->id == 1) {
+                $users = User::addGlobalScope(NoSharingUsers::class)->withTrashed()
+                    ->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get();
+                return ['users' => $users];
+            } else {
+                return ['users' => json_encode(Organization::where('id', auth()->user()->current_organization_id)
+                    ->get()->first()->users()->addGlobalScope(NoSharingUsers::class)->get())];
+            }
+        }
 
-        return view('users.index')
-          //>with(compact('users'))
-          ->with(compact('organizations'))
-          ->with(compact('status_definitions'))
-          ->with(compact('groups'))
-          ->with(compact('roles'));
+        return view('users.index');
     }
 
     public function list()
     {
         $users = (auth()->user()->role()->id == 1)
-            ? User::withTrashed()->noSharing()->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get()
-            : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users();
+            ? User::noSharing()->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')
+            : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->noSharing();
 
         $show_gate = \Gate::allows('user_show');
         $edit_gate = \Gate::allows('user_edit');

@@ -2,7 +2,24 @@
     <div>
         <ul class="nav nav-pills"
             id="terminalObjectivesTopNav">
-            <li v-for="typetab in typetabs"
+            <draggable
+                class="nav nav-pills"
+                v-can="'curriculum_edit'"
+                v-model="typetabs"
+                @start="drag=true"
+                @end="handleTypeMoved">
+                <li v-for="typetab in typetabs"
+                    class="nav-item pl-0 pr-2 pb-2 pt-2">
+                    <a class="nav-link " :href="'#tab_' + typetab"
+                       :class="(activetab == typetab) ? 'active' : ''"
+                       @click="setActiveTab(typetab)"
+                       data-toggle="tab">
+                        {{ getTypeTitle(typetab)[0]['title'] }}
+                    </a>
+                </li>
+            </draggable>
+            <li v-hide-if-permission="'curriculum_edit'"
+                v-for="typetab in typetabs"
                 class="nav-item pl-0 pr-2 pb-2 pt-2">
                 <a class="nav-link " :href="'#tab_' + typetab"
                    :class="(activetab == typetab) ? 'active' : ''"
@@ -11,6 +28,7 @@
                     {{ getTypeTitle(typetab)[0]['title'] }}
                 </a>
             </li>
+
             <li class="form-group pt-2 ml-auto">
                 <select
                     name="currentCurriculaEnrolmentSelector"
@@ -76,6 +94,7 @@
 <script>
     import ObjectiveBox from './ObjectiveBox'
     import EnablingObjectives from './EnablingObjectives'
+    import draggable from "vuedraggable"; // import the vuedraggable
 
     export default {
         props: {
@@ -119,7 +138,13 @@
                         this.terminal_objectives = response.data.curriculum.terminal_objectives;
                         if (this.terminal_objectives.length !== 0){
                             this.settings.last = this.terminal_objectives[this.terminal_objectives.length-1].id;
-                            this.typetabs  = [ ... new Set(this.terminal_objectives.map(t => t.objective_type_id))];
+                            this.typetabs = [ ... new Set(this.terminal_objectives.map(t => t.objective_type_id))];
+                            if (!!this.curriculum.objective_type_order){
+                                if (this.curriculum.objective_type_order.length ===  this.typetabs.length){
+                                    this.typetabs = this.curriculum.objective_type_order;
+                                }
+                            }
+
                             if (objective_type_id === 0){
                                 this.activetab = this.typetabs[0];
                             }
@@ -147,7 +172,15 @@
                 } else {
                     $("#currentCurriculaEnrolmentSelector").val(null).trigger('change');
                 }
-            }
+            },
+            handleTypeMoved() {
+                // Send the entire list of statuses to the server
+                axios.put("/curricula/"+this.curriculum.id+"/syncObjectiveTypesOrder", {objective_type_order: this.typetabs})
+                    .catch(err => {
+                        console.log(err.response);
+                        alert(err.response.statusText);
+                    });
+            },
         },
         mounted() {
             this.settings = this.$attrs.settings;
@@ -189,7 +222,8 @@
 
         components: {
             ObjectiveBox,
-            EnablingObjectives
+            EnablingObjectives,
+            draggable
         }
     }
 </script>

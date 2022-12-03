@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use Facades\Tests\Setup\GroupFactory;
-use Facades\Tests\Setup\UserFactory;
+use App\Group;
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -24,10 +24,10 @@ class GroupEnrollmentTest extends TestCase
     public function an_administrator_can_enrol_multiple_users_to_existing_groups()
     {
         $this->withoutExceptionHandling();
-        $group1 = GroupFactory::create();
-        $group2 = GroupFactory::create();
-        $user1 = UserFactory::create();
-        $user2 = UserFactory::create();
+        $group1 = Group::factory()->create();
+        $group2 = Group::factory()->create();
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
 
         $enrollment_list = [
             ['user_id' => $user1->id,
@@ -59,10 +59,10 @@ class GroupEnrollmentTest extends TestCase
     /** @test */
     public function an_administrator_can_expel_multiple_users_from_existing_groups()
     {
-        $group1 = GroupFactory::create();
-        $group2 = GroupFactory::create();
-        $user1 = UserFactory::create();
-        $user2 = UserFactory::create();
+        $group1 = Group::factory()->create();
+        $group2 = Group::factory()->create();
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
 
         $enrollment_list = [
             ['user_id' => $user1->id,

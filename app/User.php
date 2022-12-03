@@ -2,10 +2,12 @@
 
 namespace App;
 
+use App\Domains\Exams\Models\Exam;
 use App\Scopes\NoSharingUsers;
 use Carbon\Carbon;
 use Cmgmyr\Messenger\Models\Thread;
 use Cmgmyr\Messenger\Traits\Messagable;
+use DateTimeInterface;
 use Hash;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,6 +15,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  *   @OA\Schema(
@@ -36,7 +39,7 @@ use Laravel\Passport\HasApiTokens;
  */
 class User extends Authenticatable
 {
-    use HasApiTokens, SoftDeletes, Notifiable, Messagable;
+    use HasApiTokens, SoftDeletes, Notifiable, Messagable, HasFactory;
 
     protected $hidden = [
         'password',
@@ -71,6 +74,18 @@ class User extends Authenticatable
     protected static function booted()
     {
         //static::addGlobalScope(new NoSharingUsers());
+    }
+
+
+    /**
+     * Prepare a date for array / JSON serialization.
+     *
+     * @param  \DateTimeInterface  $date
+     * @return string
+     */
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
     }
 
     public function path()
@@ -408,4 +423,15 @@ class User extends Authenticatable
     public function scopeNoSharing($query){
         $query->whereNull('sharing_token');
     }
+
+    public function exams()
+    {
+        return $this->belongsToMany(
+            Exam::class,
+            'exam_user',
+            'user_id',
+            'exam_id')
+            ->withPivot(['login_data', 'exam_completed_at']);
+    }
+
 }

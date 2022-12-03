@@ -64,10 +64,37 @@ class StatisticController extends Controller
 
     protected function getLogins($key = 'login')
     {
-        return Log::select('created_at', 'counter')->where('key', $key)
+        switch (request('chart')) {
+            case 'login': $background = "#7eab51"; break;
+            case 'ssoLogin':  $background = "#325e04"; break;
+            case 'guestLogin': $background = "#0e1b01"; break;
+            default: break;
+        }
+        $labels =  Log::select('created_at', 'counter')->where('key', $key)
+            ->get()->map(function ($item) {
+                return Carbon::parse($item['created_at'])->format('Y-m-d');
+            });
+
+        return [
+            "labels" => $labels,
+            "datasets" => [
+                    "label" => $key,
+                    "backgroundColor" => $background,
+                    "data" => Log::select('created_at', 'counter')
+                        ->where('key', $key)
+                        ->get()
+                        ->map(
+                            function ($item) {
+                                return  $item['counter'];
+                            }
+                        )
+            ]
+        ];
+        /*return Log::select('created_at', 'counter')->where('key', $key)
             ->get()->map(function ($item) {
                 return ['created_at' => Carbon::parse($item['created_at'])->format('Y-m-d'), 'counter' => $item['counter']];
-            });
+            });*/
+
     }
 
     protected function getEntriesByKey($key, $date_begin, $date_end)

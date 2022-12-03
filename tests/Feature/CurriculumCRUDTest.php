@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Curriculum;
-use Facades\Tests\Setup\CurriculumFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -26,10 +25,16 @@ class CurriculumCRUDTest extends TestCase
              ->assertStatus(200);
 
         /* Use Datatables */
-        $curriculum = Curriculum::first();
-        $this->get('curricula/list')
-             ->assertStatus(200)
-             ->assertViewHasAll(compact($curriculum));
+        $curricula = Curriculum::select('id', 'title')->get();
+        $list = $this->get('curricula/list')
+            ->assertStatus(200);
+        $i = 0;
+        foreach ($curricula as $curriculum)
+        {
+            if ($i === 49) { break; } //test max 50 entries (default page limit on datatables
+            $list->assertJsonFragment($curriculum->toArray());
+            $i++;
+        }
     }
 
     /** @test
@@ -37,7 +42,8 @@ class CurriculumCRUDTest extends TestCase
      */
     public function an_administrator_create_an_curriculum()
     {
-        $this->post('curricula', $attributes = factory('App\Curriculum')->raw());
+        $this->followingRedirects()->post('curricula', $attributes = Curriculum::factory()->raw())
+            ->assertStatus(200);
 
         $this->assertDatabaseHas('curricula', $attributes);
     }
@@ -56,7 +62,7 @@ class CurriculumCRUDTest extends TestCase
      */
     public function an_administrator_delete_a_curriculum()
     {
-        $curriculum = CurriculumFactory::create();
+        $curriculum = Curriculum::factory()->create();
 
         $this->followingRedirects()
                 ->delete('curricula/'.$curriculum->id)
@@ -70,12 +76,11 @@ class CurriculumCRUDTest extends TestCase
      */
     public function an_administrator_see_details_of_a_curriculum()
     {
-        $curriculum = CurriculumFactory::create();
+        $curriculum = Curriculum::factory()->create();
 
-        //dd($curriculum->id);
         $this->get("curricula/{$curriculum->id}")
              ->assertStatus(200)
-             ->assertViewHasAll(compact($curriculum));
+             ->assertSee($curriculum->toArray());
     }
 
     /** @test
@@ -83,15 +88,15 @@ class CurriculumCRUDTest extends TestCase
      */
     public function an_administrator_update_a_curriculum()
     {
-        $this->withoutExceptionHandling();
+        $this->post('curricula', $attributes = Curriculum::factory()->raw());
+        $curriculum = Curriculum::where('title', $attributes['title'])->first()->toArray();
 
-        $this->post('curricula', $attributes = factory('App\Curriculum')->raw());
+        $this->assertDatabaseHas('curricula', $curriculum);
 
-        $this->assertDatabaseHas('curricula', $attributes);
+        $this->patch('curricula/'.$curriculum['id'], $new_attributes = Curriculum::factory()->raw());
 
-        $this->patch('curricula/'.Curriculum::where('title', '=', $attributes['title'])->first()->id, $new_attributes = factory('App\Curriculum')->raw());
-
-        $this->assertDatabaseHas('curricula', $new_attributes);
+        $curriculum_edit = Curriculum::where('title', $new_attributes['title'])->first()->toArray();
+        $this->assertDatabaseHas('curricula', $curriculum_edit);
     }
 
     /** @test
@@ -99,10 +104,13 @@ class CurriculumCRUDTest extends TestCase
      */
     public function an_administrator_get_edit_view_for_a_curriculum()
     {
-        $curriculum = CurriculumFactory::create();
+        $this->post('curricula', $attributes = Curriculum::factory()->raw());
+        $curriculum = Curriculum::where('title', $attributes['title'])->first();
 
         $this->get("curricula/{$curriculum->id}/edit")
-             ->assertStatus(200)
-             ->assertSessionHasAll(compact($curriculum));
+            ->assertStatus(200)
+            ->assertSee([
+                'title' => $curriculum->title,
+            ]);
     }
 }

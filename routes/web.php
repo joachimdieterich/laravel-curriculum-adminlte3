@@ -44,7 +44,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('contactdetails', 'ContactDetailController');
 
-    Route::post('contents/{content}/destroy', 'ContentController@destroy')->name('contents.destroy'); //has to be post (has parameters)
+    Route::post('contents/{content}/destroy', 'ContentController@destroy'); //has to be post (has parameters)
     Route::resource('contents', 'ContentController');
     Route::patch('contentSubscriptions', 'ContentSubscriptionController@update');
     Route::patch('contentSubscriptions/reset', 'ContentSubscriptionController@reset');
@@ -58,6 +58,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('countries/{country}/states', 'CountryController@getStates')->name('countries.states');
 
     /* curricula */
+    Route::get('curricula/{curriculum}/variantDefinitions', 'CurriculumController@getVariantDefinitions');
+    Route::put('curricula/{curriculum}/variantDefinitions', 'CurriculumController@setVariantDefinitions');
     Route::post('curricula/enrol', 'CurriculumController@enrol')->name('curricula.enrol');
     Route::delete('curricula/expel', 'CurriculumController@expel')->name('curricula.expel');
     Route::get('curricula/list', 'CurriculumController@list');
@@ -72,6 +74,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::patch('curricula/{curriculum}/editOwner', 'CurriculumController@storeOwner')->name('curricula.storeOwner');
     Route::patch('curricula/{curriculum}/resetOrderIds', 'CurriculumController@resetOrderIds')->name('curricula.resetOrderIds');
     Route::get('curricula/{curriculum}/print', 'CurriculumController@print')->name('curricula.print');
+    Route::put('curricula/{curriculum}/syncObjectiveTypesOrder', 'CurriculumController@syncObjectiveTypesOrder')->name('curricula.syncObjectiveTypesOrder');
     Route::resource('curricula', 'CurriculumController');
 
     /* enablingObjectives */
@@ -174,7 +177,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('mediumSubscriptions', 'MediumSubscriptionController');
     Route::delete('media/massDestroy', 'MediumController@massDestroy')->name('media.massDestroy');
     Route::get('media/list', 'MediumController@list')->name('media.list');
-    Route::post('media/{medium}/destroy', 'MediumController@destroy')->name('media.destroy'); //has to be post (has parameters)
+    Route::post('media/{medium}/destroy', 'MediumController@destroy'); //has to be post (has parameters)
     Route::get('media/{medium}/thumb', 'MediumController@thumb')->name('media.thumb');
     Route::resource('media', 'MediumController');
 
@@ -274,6 +277,25 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('users/{user}/avatar', 'UsersController@getAvatar');
     Route::delete('users/{user}/forceDestroy', 'UsersController@forceDestroy')->name('users.forceDestroy');
     Route::resource('users', 'UsersController');
+
+    Route::get('variantDefinitions/list', 'VariantDefinitionController@list');
+    Route::resource('variantDefinitions', 'VariantDefinitionController');
+    Route::resource('variants', 'VariantController');
+
+    /* Tests */
+    Route::get('tests', 'Tests\TestController@index');
+    /* Exams */
+    Route::get('exams_subscribed', 'Tests\ExamController@authUserIndexExams')->name('exams.index');
+    Route::get('exams', 'Tests\ExamController@index');
+    Route::post('exams', 'Tests\ExamController@create');
+    Route::delete('exams/{exam}', 'Tests\ExamController@delete')->middleware('can:test_delete');
+    Route::get('exam/{exam}/edit', 'Tests\ExamController@show');
+    Route::get('exam/{exam}/list', 'Tests\ExamController@listExamUsers');
+    Route::get('exam/{exam}/users/list', 'Tests\ExamController@listAllUsers');
+    Route::post('exam/{exam}/status', 'Tests\ExamController@getExamStatus');
+    Route::post('exam/{exam}/users/enrol', 'Tests\ExamController@addUsers');
+    Route::delete('exam/{exam}/users/expel', 'Tests\ExamController@removeUsers');
+    Route::post('exam/{exam}/report', 'Tests\ExamController@getReport');
 });
 
 //if ((env('APP_ENV') == 'local')){

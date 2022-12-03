@@ -1,5 +1,118 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
+
+if (! function_exists('getEntriesForSelect2ByModel')) {
+    /**
+     * helper function to paginate on select2 fields
+     * @param $model
+     * @param string|array $field one or multiple fields to search term
+     * @param string $oderby
+     * @param string $text
+     * @return \Illuminate\Http\JsonResponse
+     */
+    function getEntriesForSelect2ByModel($model, $field = 'title', $oderby = 'title', $text = 'title', $id = 'id')
+    {
+        $input = request()->validate([
+            'page' => 'required|integer',
+            'term' => 'sometimes|string|max:255|nullable',
+        ]);
+        $page = $input['page'];
+        $resultCount = 25;
+
+        $offset = ($page - 1) * $resultCount;
+
+        $term = $input['term'];
+
+        $entries = $model::where(
+            function ($query) use ($field, $term) {
+                foreach ((array)$field as $f) {
+                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                }
+            })
+            ->orderBy($oderby)
+            ->skip($offset)
+            ->take($resultCount)
+            ->get([$id, DB::raw($text . ' as text')]);
+
+        $count = $entries->count();
+       /* $count = Count($model::where(
+            function ($query) use ($field, $term) {
+                foreach ((array)$field as $f) {
+                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                }
+            })
+            ->orderBy($oderby)
+            ->get([$id, DB::raw($text . ' as text')]));*/
+
+        $endCount = $offset + $resultCount;
+        $morePages = $count > $endCount;
+        //dump($resultCount.' '.$count);
+        $results = array(
+            "results" => $entries,
+            "pagination" => array(
+                "more" => $morePages
+            )
+        );
+
+        return response()->json($results);
+    }
+}
+if (! function_exists('getEntriesForSelect2ByCollection'))
+{
+    function getEntriesForSelect2ByCollection($collection, $table = '', $field = 'title', $oderby = 'title', $text = 'title', $id = 'id' )
+    {
+        $input = request()->validate([
+            'page' => 'required|integer',
+            'term' => 'sometimes|string|max:255|nullable',
+        ]);
+        $page = $input['page'];
+        $resultCount = 25;
+
+        $offset = ($page - 1) * $resultCount;
+
+        $term = $input['term'];
+
+        $entries = $collection->where(
+            function($query) use ($field, $term)
+            {
+                foreach ((array) $field as $f) {
+                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                }
+            })
+            ->orderBy($oderby)
+            ->skip($offset)
+            ->take($resultCount)
+            ->select([$table.$id, DB::raw($text . ' as text')])
+            ->get();
+
+        $count = $entries->count();
+        /*$count = Count($collection->where(
+            function($query) use ($field, $term)
+            {
+                foreach ((array) $field as $f) {
+                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                }
+            })
+            ->orderBy($oderby)
+            ->select([$table.$id, DB::raw($text . ' as text')])
+            ->get());*/
+
+        $endCount = $offset + $resultCount;
+        $morePages = $count > $endCount;
+
+        $results = array(
+            "results" => $entries,
+            "pagination" => array(
+                "more" => $morePages
+            )
+        );
+
+        return response()->json($results);
+    }
+}
+
+
 if (! function_exists('format_select_input')) {
 
     /**

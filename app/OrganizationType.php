@@ -2,6 +2,8 @@
 
 namespace App;
 
+use DateTimeInterface;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -18,7 +20,25 @@ use Illuminate\Database\Eloquent\Model;
  */
 class OrganizationType extends Model
 {
+    use HasFactory;
+
     protected $fillable = ['title', 'external_id', 'state_id', 'country_id', 'created_at', 'updated_at'];
+
+    protected $dates = [
+        'updated_at',
+        'created_at',
+    ];
+
+    /**
+     * Prepare a date for array / JSON serialization.
+     *
+     * @param  \DateTimeInterface  $date
+     * @return string
+     */
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
+    }
 
     public function state()
     {

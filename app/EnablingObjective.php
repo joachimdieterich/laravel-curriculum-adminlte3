@@ -2,10 +2,14 @@
 
 namespace App;
 
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class EnablingObjective extends Model
 {
+    use HasFactory;
+
     protected $fillable = ['title',
         'description',
         'order_id',
@@ -21,7 +25,23 @@ class EnablingObjective extends Model
         'referencing_curriculum_id' => 'object',
     ];
 
+    protected $dates = [
+        'updated_at',
+        'created_at',
+    ];
+
     protected $with = ['terminalObjective', 'level'];
+
+    /**
+     * Prepare a date for array / JSON serialization.
+     *
+     * @param  \DateTimeInterface  $date
+     * @return string
+     */
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
+    }
 
     public function path()
     {
@@ -127,6 +147,11 @@ class EnablingObjective extends Model
     public function successors()
     {
         return $this->morphMany('App\Prerequisites', 'predecessor');
+    }
+
+    public function variants()
+    {
+        return $this->morphMany('App\Variant', 'referenceable');
     }
 
     public function isAccessible()

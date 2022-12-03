@@ -14,7 +14,7 @@ class ApiUserTest extends TestCase
     public function an_authenticated_client_can_not_get_users()
     {
         $this->get('/api/v1/users')->assertStatus(302);
-        $this->contains('login');
+        $this->stringContains('login');
     }
 
     /** @test
@@ -74,7 +74,7 @@ class ApiUserTest extends TestCase
     public function an_authenticated_client_can_update_an_user()
     {
         $this->signInApiAdmin();
-        $this->withoutExceptionHandling();
+
         $date = date('Y-m-d H:i:s');
         $new_user = $this->post('/api/v1/users', $attributes = [
             'username' => 'username',
@@ -161,7 +161,7 @@ class ApiUserTest extends TestCase
 
         $this->get('/api/v1/users/1/groups')
              ->assertStatus(200)
-             ->assertSee(User::where('id', 1)->with('groups')->get());
+             ->assertSee(json_decode(htmlspecialchars(User::where('id', 1)->with('groups')->get())));
     }
 
     /** @test
@@ -173,7 +173,7 @@ class ApiUserTest extends TestCase
 
         $this->get('/api/v1/users/1/organizations')
             ->assertStatus(200)
-            ->assertSee(User::where('id', 1)->with('organizations')->get());
+            ->assertSee(json_decode(htmlspecialchars(User::where('id', 1)->with('organizations')->get())));
     }
 
     /** @test
@@ -185,6 +185,6 @@ class ApiUserTest extends TestCase
 
         $this->get('/api/v1/users/1/roles')
             ->assertStatus(200)
-            ->assertSee(User::where('id', 1)->with('roles')->get());
+            ->assertSee(json_decode(htmlspecialchars(User::where('id', 1)->with('roles')->get())));
     }
 }

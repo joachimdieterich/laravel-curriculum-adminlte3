@@ -25,10 +25,16 @@ class RoleCRUDTest extends TestCase
              ->assertStatus(200);
 
         /* Use Datatables */
-        $roles = Role::all();
-        $this->get('roles/list')
-             ->assertStatus(200)
-             ->assertViewHasAll(compact($roles));
+        $roles = Role::select('id', 'title')->get();
+        $list = $this->get('roles/list')
+            ->assertStatus(200);
+        $i = 0;
+        foreach ($roles as $role)
+        {
+            if ($i === 49) { break; } //test max 50 entries (default page limit on datatables
+            $list->assertJsonFragment($role->toArray());
+            $i++;
+        }
     }
 
     /** @test
@@ -36,10 +42,14 @@ class RoleCRUDTest extends TestCase
      */
     public function an_administrator_create_a_role()
     {
-        $this->post('roles', $attributes = factory('App\Role')->raw())
-             ->assertStatus(302);
 
-        $this->assertDatabaseHas('roles', ['title' => $attributes['title']]);
+        $this->followingRedirects()
+            ->post('roles', $attributes = Role::factory()->raw())
+            ->assertStatus(200);
+
+        $this->assertDatabaseHas('roles', [
+                'title' => $attributes['title']
+            ]);
     }
 
     /** @test
@@ -56,12 +66,18 @@ class RoleCRUDTest extends TestCase
      */
     public function an_administrator_delete_a_role()
     {
-        $this->post('roles', $role1 = factory('App\Role')->raw());
-        $id = Role::where('title', $role1['title'])->first()->id;
 
         $this->followingRedirects()
-                ->delete('roles/'.$id)
-                ->assertStatus(200);
+            ->post('roles', $attributes = Role::factory()->raw())
+            ->assertStatus(200);
+
+        $role = Role::where('title', $attributes['title'])->first();
+
+        $this->followingRedirects()
+            ->delete('roles/'.$role['id'])
+            ->assertStatus(200);
+
+        $this->assertDatabaseMissing('roles',$role->toArray());
     }
 
     /** @test
@@ -69,12 +85,15 @@ class RoleCRUDTest extends TestCase
      */
     public function an_administrator_see_details_of_a_role()
     {
-        $this->post('roles', $role1 = factory('App\Role')->raw());
-        $role = Role::where('title', $role1['title'])->first();
+        $this->followingRedirects()
+            ->post('roles', $attributes = Role::factory()->raw())
+            ->assertStatus(200);
 
-        $this->get("roles/{$role->id}")
-             ->assertStatus(200)
-             ->assertViewHasAll(compact($role));
+        $role = Role::where('title', $attributes['title'])->first();
+
+        $this->get("roles/{$role['id']}")
+            ->assertStatus(200)
+            ->assertSee(['title' => $role['title']]);
     }
 
     /** @test
@@ -82,14 +101,14 @@ class RoleCRUDTest extends TestCase
      */
     public function an_administrator_update_a_role()
     {
-        $this->post('roles', $role1 = factory('App\Role')->raw());
-        $role = Role::where('title', $role1['title'])->first()->toArray();
+        $this->post('roles', $attributes = Role::factory()->raw());
+        $group = Role::where('title', $attributes['title'])->first()->toArray();
 
-        $this->assertDatabaseHas('roles', $role);
+        $this->assertDatabaseHas('roles', $group);
 
-        $this->patch('roles/'.$role['id'], $new_attributes = factory('App\Role')->raw());
+        $this->patch('roles/'.$group['id'], $new_attributes = Role::factory()->raw());
+
         $role_edit = Role::where('title', $new_attributes['title'])->first()->toArray();
-
         $this->assertDatabaseHas('roles', $role_edit);
     }
 
@@ -98,11 +117,13 @@ class RoleCRUDTest extends TestCase
      */
     public function an_administrator_get_edit_view_for_roles()
     {
-        $this->post('roles', $role1 = factory('App\Role')->raw());
-        $role = Role::where('title', $role1['title'])->first();
+        $this->post('roles', $attributes = Role::factory()->raw());
+        $role = Role::where('title', $attributes['title'])->first();
 
         $this->get("roles/{$role->id}/edit")
-             ->assertStatus(200)
-             ->assertSessionHasAll(compact($role));
+            ->assertStatus(200)
+            ->assertSee([
+                'title' => $role->title,
+            ]);
     }
 }

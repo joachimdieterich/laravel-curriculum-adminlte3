@@ -105,6 +105,7 @@
             subscription: {},
             subscribable_type: '',
             subscribable_id: '',
+            public: 0,
             medium: {},
             format: '',
             url: {
@@ -131,7 +132,8 @@
                 this.$modal.show(model.toLowerCase() + '-modal', {
                     'content': entry,
                     'subscribable_type': this.subscribable_type,
-                    'subscribable_id': this.subscribable_id
+                    'subscribable_id': this.subscribable_id,
+                    'public': this.public
                 });
             },
             async unlinkMedium(subscription) { //id of external reference and value in db

@@ -12,6 +12,7 @@ use App\Medium;
 use App\Organization;
 use App\OrganizationRoleUser;
 use App\Role;
+use App\Scopes\NoSharingUsers;
 use App\StatusDefinition;
 use App\User;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +30,7 @@ class UsersController extends Controller
 
         if (request()->wantsJson() AND request()->has(['term', 'page'])) {
             return  getEntriesForSelect2ByCollection(
-                Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users(),
+                Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->noSharing(),
                 'users.',
                 ['username', 'firstname', 'lastname'],
                 'lastname',
@@ -39,9 +40,12 @@ class UsersController extends Controller
         // todo check: is the following condition used anymore
         if (request()->wantsJson()) {
             if (auth()->user()->role()->id == 1) {
-                return ['users' => json_encode(DB::table('users')->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get())];
+                $users = User::addGlobalScope(NoSharingUsers::class)->withTrashed()
+                    ->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get();
+                return ['users' => $users];
             } else {
-                return ['users' => json_encode(Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->get())];
+                return ['users' => json_encode(Organization::where('id', auth()->user()->current_organization_id)
+                    ->get()->first()->users()->addGlobalScope(NoSharingUsers::class)->get())];
             }
         }
 
@@ -51,8 +55,8 @@ class UsersController extends Controller
     public function list()
     {
         $users = (auth()->user()->role()->id == 1)
-            ? DB::table('users')->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')
-            : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users();
+            ? User::noSharing()->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')
+            : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->noSharing();
 
         $show_gate = \Gate::allows('user_show');
         $edit_gate = \Gate::allows('user_edit');

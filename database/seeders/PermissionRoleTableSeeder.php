@@ -403,6 +403,22 @@ class PermissionRoleTableSeeder extends Seeder
 
             return in_array($permission->title, $guest_permission_list);
         });
+
         Role::findOrFail(8)->permissions()->sync($guest_permissions);
+
+        //set token permission
+        $token_permission = $admin_permissions->filter(function ($permission) {
+            $token_permission_list = [
+                'curriculum_show',
+                'kanban_show',
+                'kanban_access',
+                'kanban_create'
+            ];
+
+            return in_array($permission->title, $token_permission_list);
+        });
+
+        Role::findOrFail(9)->permissions()->sync($token_permission);
+
     }
 }

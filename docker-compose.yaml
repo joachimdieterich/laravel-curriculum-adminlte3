@@ -1,0 +1,47 @@
+version: '3.7'
+services:
+    #DATABASE
+    database:
+        image: mysql:8.0
+        container_name: curriculum_database
+        volumes:
+            - ./.docker/mysql:/docker-entrypoint-initdb.d
+        ports:
+            - "3307:3306"
+        environment:
+            MYSQL_HOST: ${DB_HOST}
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_ROOT_PASSWORD: rootp
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+    #PHPMYADMIN
+    phpmyadmin:
+        image: phpmyadmin
+        container_name: curriculum_phpmyadmin
+        links:
+            - database
+        environment:
+            PMA_HOST: database
+        ports:
+            - "82:80"
+        depends_on:
+            - database
+
+    app:
+        container_name: curriculum
+        build:
+            context: .
+            dockerfile: .docker/apache2/dockerfile
+            args:
+                username: ${UID}
+                uid: ${UID}
+        working_dir: /var/www/html
+        environment:
+            - APACHE_RUN_USER=#${UID}
+            - APACHE_RUN_GROUP=#${UID}
+        ports:
+            - "10.10.0.170:8400:80"
+        volumes:
+            - .:/var/www/html:cached
+        depends_on:
+            - database

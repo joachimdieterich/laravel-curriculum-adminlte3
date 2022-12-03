@@ -9,6 +9,8 @@ Route::get('/impressum', 'OpenController@impressum')->name('impressum');
 
 Route::get('/terms', 'OpenController@terms')->name('terms');
 
+Route::get('kanban/share/{token}', 'ShareTokenController@auth');
+
 Auth::routes(['register' => false]);
 
 //embeddable routes
@@ -19,6 +21,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', 'HomeController@index')->name('home');
 
     Route::get('/admin', 'AdminController@index')->name('admin.index');
+
+    Route::resource('kanbanItemComment', 'KanbanItemCommentController');
 
     Route::resource('absences', 'AbsenceController');
 
@@ -54,6 +58,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('countries/{country}/states', 'CountryController@getStates')->name('countries.states');
 
     /* curricula */
+    Route::get('curricula/{curriculum}/variantDefinitions', 'CurriculumController@getVariantDefinitions');
+    Route::put('curricula/{curriculum}/variantDefinitions', 'CurriculumController@setVariantDefinitions');
     Route::post('curricula/enrol', 'CurriculumController@enrol')->name('curricula.enrol');
     Route::delete('curricula/expel', 'CurriculumController@expel')->name('curricula.expel');
     Route::get('curricula/list', 'CurriculumController@list');
@@ -105,11 +111,17 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('groups', 'GroupsController');
 
     Route::get('kanbans/list', 'KanbanController@list');
+    Route::get('export_csv/{kanban}', 'KanbanController@exportKanbanCsv');
+    Route::get('export_pdf/{kanban}', 'KanbanController@exportKanbanPdf');
     Route::resource('kanbans', 'KanbanController');
     Route::put('kanbanItems/sync', 'KanbanItemController@sync')->name('kanbanItems.sync');
     Route::resource('kanbanItems', 'KanbanItemController');
     Route::put('kanbanStatuses/sync', 'KanbanStatusController@sync')->name('kanbanStatuses.sync');
     Route::resource('kanbanStatuses', 'KanbanStatusController');
+    Route::post('kanban/token', 'ShareTokenController@create' );
+
+    Route::get('get_kanbans_color/{id}', 'KanbanController@getKanbansColor');
+    Route::post('update_kanbans_color', 'KanbanController@updateKanbansColor');
 
     Route::resource('kanbanSubscriptions', 'KanbanSubscriptionController');
 
@@ -270,6 +282,25 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('users/{user}/avatar', 'UsersController@getAvatar');
     Route::delete('users/{user}/forceDestroy', 'UsersController@forceDestroy')->name('users.forceDestroy');
     Route::resource('users', 'UsersController');
+
+    Route::get('variantDefinitions/list', 'VariantDefinitionController@list');
+    Route::resource('variantDefinitions', 'VariantDefinitionController');
+    Route::resource('variants', 'VariantController');
+
+    /* Tests */
+    Route::get('tests', 'Tests\TestController@index');
+    /* Exams */
+    Route::get('exams_subscribed', 'Tests\ExamController@authUserIndexExams')->name('exams.index');
+    Route::get('exams', 'Tests\ExamController@index');
+    Route::post('exams', 'Tests\ExamController@create');
+    Route::delete('exams/{exam}', 'Tests\ExamController@delete')->middleware('can:test_delete');
+    Route::get('exam/{exam}/edit', 'Tests\ExamController@show');
+    Route::get('exam/{exam}/list', 'Tests\ExamController@listExamUsers');
+    Route::get('exam/{exam}/users/list', 'Tests\ExamController@listAllUsers');
+    Route::post('exam/{exam}/status', 'Tests\ExamController@getExamStatus');
+    Route::post('exam/{exam}/users/enrol', 'Tests\ExamController@addUsers');
+    Route::delete('exam/{exam}/users/expel', 'Tests\ExamController@removeUsers');
+    Route::post('exam/{exam}/report', 'Tests\ExamController@getReport');
 });
 
 //if ((env('APP_ENV') == 'local')){

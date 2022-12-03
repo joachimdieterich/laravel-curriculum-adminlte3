@@ -6,16 +6,17 @@
         <draggable
             v-model="statuses"
             v-bind="columnDragOptions"
+            :options="{disabled: !editable}"
             @end="handleStatusMoved">
             <div
                 v-for="status in statuses"
                 :key="'header_'+status.id"
                 class=" no-border pr-2"
                 :style="'float:left;width:' + itemWidth + 'px;'">
-                <div class="card-header border-bottom-0 p-0"
+                <div class="card-header border-bottom-0 p-0 kanban-header"
                      :key="status.id">
                     <strong>{{ status.title }}</strong>
-                    <div class="btn btn-flat py-0 pl-0 pull-left"
+                    <div class="btn btn-flat py-0 pl-0 pull-left" v-if="editable"
                          data-toggle="dropdown"
                          aria-expanded="false">
                         <i class="text-muted fas fa-bars"></i>
@@ -37,58 +38,64 @@
                             </span>
                         </div>
                     </div>
-                     <div v-show="newItem !== status.id"
-                         class="btn btn-flat py-0 mr-2 pull-right"
-                         @click="openForm('item', status.id)">
-                         <i class="text-muted fa fa-plus-circle"></i>
-                     </div>
                 </div>
 
-                <KanbanItemCreate
-                    v-if="newItem === status.id"
-                    :status="status"
-                    :item="item"
-                    :width="itemWidth"
-                    v-on:item-added="handleItemAdded"
-                    v-on:item-updated="handleItemUpdated"
-                    v-on:item-canceled="closeForm"
-                    style=" z-index: 2"></KanbanItemCreate>
-                <div style="position:absolute; top:35px; bottom:0;overflow-y:scroll; z-index: 1"
+                <div style="margin-top:15px; bottom:0;overflow-y:scroll; z-index: 1"
                      :style="'width:' + itemWidth + 'px;'">
                     <draggable
                         class="flex-1 overflow-hidden"
                         v-model="status.items"
                         v-bind="itemDragOptions"
-                        style="min-height:500px;"
                         @end="handleItemMoved"
+                        :options="{disabled: !editable}"
                         filter=".ignore">
                         <transition-group
-                            v-for="item in status.items"
-                            :key="'transition_group-'+item.id"
-                            style="min-height:50px; display:flex;flex-direction: column;"
+                            style="display:flex;flex-direction: column;"
                             :style="'width:' + itemWidth + 'px;'"
-                            class="pr-3"
+                            class="pr-2"
                             tag="span">
                             <!-- Items -->
-                            <span :key="item.id">
+                            <span
+                                v-for="item in status.items"
+                                :key="'transition_group-'+item.id">
                                  <KanbanItem
-
+                                    :editable="editable"
                                      :ref="'kanbanItemId' + item.id"
                                      :item="item"
                                      :width="itemWidth"
                                      v-on:item-destroyed="handleItemDestroyed"
+                                     v-on:item-updated="handleItemUpdated"
                                      v-on:item-edit="handleItemEdit"/>
                             </span>
                             <!--  ./Items -->
                         </transition-group>
+
                     </draggable>
+                    <KanbanItemCreate
+                        class="mr-2"
+                        v-if="newItem === status.id"
+                        :status="status"
+                        :item="item"
+                        :width="itemWidth"
+                        v-on:item-added="handleItemAdded"
+                        v-on:item-updated="handleItemUpdated"
+                        v-on:item-canceled="closeForm"
+                        style=" z-index: 2">
+                    </KanbanItemCreate>
+                    <div v-show="newItem !== status.id" v-if="editable"
+                         class="btn btn-flat py-0 mr-2 w-100"
+                         @click="openForm('item', status.id)">
+                        <i class="text-white fa fa-2x fa-plus-circle"></i>
+                    </div>
+
+
                 </div>
             </div>
-            <div class=" no-border  pr-2"
+            <div class=" no-border  pr-2" v-if="editable"
                  style="float:left;"
                  :style="'width:' + itemWidth + 'px;'">
-                    <div class="card-header border-bottom-0 p-0">
-                        <strong class="text-secondary btn px-1 py-0"  @click="openForm('status')">
+                    <div class="card-header kanban-header border-bottom-0 p-0">
+                        <strong class="text-secondary btn px-1 py-0"  @click="openForm('status')" >
                             <i class="fa fa-plus"></i> {{ trans('global.kanbanStatus.create') }}
                         </strong>
                     </div>
@@ -110,12 +117,19 @@
     import KanbanItemCreate from "./KanbanItemCreate";
     import KanbanStatusCreate from "./KanbanStatusCreate";
 
-
     export default {
-
         props: {
             'kanban': Object,
+            'editable': true,
             'search': ''
+        },
+        watch: {
+            statuses:{
+                deep: true,
+                handler(){
+                    console.log('The list of colours has changed!');
+                }
+            }
         },
         data() {
             return {
@@ -198,7 +212,6 @@
                     );
 
                     this.statuses[statusIndex].items[itemIndex] = updatedItem;       // Add updated item to our column
-
                     this.closeForm();                                     // Reset and close the AddItemForm
                     this.item =  null; //re
                 },

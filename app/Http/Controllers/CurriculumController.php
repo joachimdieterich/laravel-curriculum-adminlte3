@@ -13,6 +13,7 @@ use App\OrganizationType;
 use App\State;
 use App\Subject;
 use App\User;
+use App\VariantDefinition;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -140,7 +141,7 @@ class CurriculumController extends Controller
         $subjects = Subject::all();
         $organization_types = OrganizationType::all();
         $curriculum_types = $this->getCurriculumTypesByPermission();
-
+        $variant_definitions = VariantDefinition::all();
         $countries = Country::all();
         $states = State::where('country', 'DE')->get();
 
@@ -150,6 +151,7 @@ class CurriculumController extends Controller
                 ->with(compact('countries'))
                 ->with(compact('states'))
                 ->with(compact('organization_types'))
+                ->with(compact('variant_definitions'))
                 ->with(compact('curriculum_types'));
     }
 
@@ -181,6 +183,11 @@ class CurriculumController extends Controller
             'state_id'              => format_select_input($input['state_id']),
             'country_id'            => format_select_input($input['country_id']),
             'medium_id'             => $input['medium_id'],
+            'variants'              => $this->formatVariantsField(
+                        $input['variants'] ?? NULL,
+                        $input['variant_default_title'] ?? NULL,
+                        $input['variant_default_description'] ?? NULL
+                                        ),
             'owner_id'              => auth()->user()->id,
         ]);
 
@@ -302,7 +309,7 @@ class CurriculumController extends Controller
         $subjects = Subject::all();
         $organization_types = OrganizationType::all();
         $curriculum_types = CurriculumType::all();
-
+        $variant_definitions = VariantDefinition::all();
         $countries = Country::all();
         $states = State::all();
 
@@ -313,6 +320,7 @@ class CurriculumController extends Controller
                 ->with(compact('curriculum_types'))
                 ->with(compact('countries'))
                 ->with(compact('states'))
+                ->with(compact('variant_definitions'))
                 ->with(compact('curriculum'));
     }
 
@@ -378,6 +386,11 @@ class CurriculumController extends Controller
             'state_id'              => isset($input['state_id']) ? format_select_input($input['state_id']) : null,
             'country_id'            => format_select_input($input['country_id']),
             'medium_id'             => $input['medium_id'],
+            'variants'              => $this->formatVariantsField(
+                                        $input['variants'] ?? NULL,
+                                        $input['variant_default_title'] ?? NULL,
+                                        $input['variant_default_description'] ?? NULL
+                                       ),
             'owner_id'              => auth()->user()->id,
         ]);
 
@@ -540,6 +553,48 @@ class CurriculumController extends Controller
         return ['objective_type_order' => $curriculum->objective_type_order];
     }
 
+    public function getVariantDefinitions(Curriculum $curriculum)
+    {
+        $definition = array();
+        if (isset($curriculum->variants['order']))
+        {
+            foreach($curriculum->variants['order'] AS $variant_definitition)
+            {
+
+                if ($variant_definitition == 0)
+                {
+                    $definition[] = array(
+                        'id'            => 0,
+                        'title'         => $curriculum->variants['title'] ?? '',
+                        'description'   => $curriculum->variants['description'] ?? '',
+                        'color'         => $curriculum->variants['color'] ?? $curriculum->color,
+                        'css_icon'      => $curriculum->variants['css_icon'] ?? '',
+                        'owner_id'      => $curriculum->variants['owner_id'] ?? $curriculum->owner_id,
+                        'created_at'    => $curriculum->variants['created_at'] ?? $curriculum->created_at,
+                        'updated_at'    => $curriculum->variants['updated_at'] ?? $curriculum->updated_at,
+                    );
+                }
+                else
+                {
+                    $definition[] = VariantDefinition::find($variant_definitition);
+                }
+            }
+        }
+
+
+        if (request()->wantsJson()) {
+            return ['definitions' => $definition];
+        }
+    }
+
+    public function setVariantDefinitions(Curriculum $curriculum)
+    {
+        $input = $this->validateRequest();
+        DB::table('curricula')
+            ->where('id', $curriculum->id)
+            ->update(['variants->order' => $input['variants']]);
+    }
+
     protected function validateRequest()
     {
         return request()->validate([
@@ -558,7 +613,10 @@ class CurriculumController extends Controller
             'country_id'            => 'sometimes',
             'medium_id'             => 'sometimes',
             'owner_id'              => 'sometimes',
-            'objective_type_order'  => 'sometimes'
+            'objective_type_order'  => 'sometimes',
+            'variants'  => 'sometimes',
+            'variant_default_title'  => 'sometimes',
+            'variant_default_description'  => 'sometimes',
         ]);
     }
 
@@ -620,6 +678,10 @@ class CurriculumController extends Controller
      */
     private function getEntriesForSelect2(): \Illuminate\Http\JsonResponse
     {
+        $input = request()->validate([
+            'page' => 'required|integer',
+            'term' => 'sometimes|string|max:255|nullable',
+        ]);
         if (is_admin())
         {
             return getEntriesForSelect2ByModel("App\Curriculum");
@@ -627,8 +689,16 @@ class CurriculumController extends Controller
         else if (is_schooladmin())
         {
             return getEntriesForSelect2ByCollection(
-                Curriculum::whereIn('owner_id', Organization::where('id', auth()->user()->current_organization_id)->first()->users()->pluck('id')->toArray())
-                ->orWhere('type_id', 1));
+                Curriculum::whereIn('owner_id', Organization::where('id', auth()->user()->current_organization_id)
+                    ->first()->users()->pluck('id')->toArray())->where(
+                    function($query) use ($input)
+                    {
+                        $query->orWhere('type_id', 1)
+                        ->orWhere('title', 'LIKE', '%' . $input['term'] . '%');
+                    })
+                );
+
+
         }
         else
         {
@@ -643,5 +713,23 @@ class CurriculumController extends Controller
                 "curricula."
             );
         }
+    }
+
+    private function formatVariantsField($variant_definition_ids, $variant_default_title, $variant_default_description ){
+
+        if (isset ($variant_definition_ids))
+        {
+            array_unshift($variant_definition_ids, 0); // add default
+            return [
+                "order" => $variant_definition_ids,
+                "title" => $variant_default_title,
+                "description" => $variant_default_description,
+            ];
+        }
+        else
+        {
+            return null;
+        }
+
     }
 }

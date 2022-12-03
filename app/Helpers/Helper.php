@@ -35,14 +35,16 @@ if (! function_exists('getEntriesForSelect2ByModel')) {
             ->take($resultCount)
             ->get([$id, DB::raw($text . ' as text')]);
 
-        $count = Count($model::where(
+        $count = $entries->count();
+       /* $count = Count($model::where(
             function ($query) use ($field, $term) {
                 foreach ((array)$field as $f) {
                     $query->orWhere($f, 'LIKE', '%' . $term . '%');
                 }
             })
             ->orderBy($oderby)
-            ->get([$id, DB::raw($text . ' as text')]));
+            ->get([$id, DB::raw($text . ' as text')]));*/
+
         $endCount = $offset + $resultCount;
         $morePages = $count > $endCount;
         //dump($resultCount.' '.$count);
@@ -84,7 +86,8 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
             ->select([$table.$id, DB::raw($text . ' as text')])
             ->get();
 
-        $count = Count($collection->where(
+        $count = $entries->count();
+        /*$count = Count($collection->where(
             function($query) use ($field, $term)
             {
                 foreach ((array) $field as $f) {
@@ -93,7 +96,8 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
             })
             ->orderBy($oderby)
             ->select([$table.$id, DB::raw($text . ' as text')])
-            ->get());
+            ->get());*/
+
         $endCount = $offset + $resultCount;
         $morePages = $count > $endCount;
 

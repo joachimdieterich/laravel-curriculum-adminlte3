@@ -9,6 +9,7 @@ class OrganizationsTableSeeder extends Seeder
     {
         $organizations = [[
             'id'             => 1,
+            'common_name'    => 'CUR',
             'title'          => 'curriculumonline',
             'description'    => 'Admins Institution',
             'street'         => 'Demostreet 1',

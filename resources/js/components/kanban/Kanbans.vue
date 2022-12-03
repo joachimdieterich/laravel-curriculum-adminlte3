@@ -12,22 +12,25 @@
         </div>
 
         <div style="clear:right;"
-             v-for="(item,index) in subscriptions"
-             v-if="(item.kanban.title.toLowerCase().indexOf(search.toLowerCase()) !== -1)
+             v-for="(kanban,index) in kanbans"
+             v-if="(kanban.title.toLowerCase().indexOf(search.toLowerCase()) !== -1)
                 || search.length < 3"
-             :id="item.kanban.id"
-             v-bind:value="item.kanban.id"
-             class="col-md-6">
-            <div class="card mb-2">
-                <div class="card-header p-1">
-                    <a class="link-muted" :href="'/kanbans/' + item.kanban.id">
-                        <h3 class="card-title p-2">
-                            <i class="fa fa-columns pr-2 text-muted"></i>
-                            {{ item.kanban.title }}
-                        </h3>
-                    </a>
+             :id="kanban.id"
+             v-bind:value="kanban.id"
+             class="col-md-4">
+            <a :href="'kanbans/'+kanban.id"
+               class="text-decoration-none text-black">
+                <div class="info-box elevation-1" :style="'border-bottom: 5px solid ' + kanban.color">
+                        <span  class="info-box-icon bg-info elevation-1" :style="{backgroundColor: kanban.color + ' !important'}">
+                            <i class="fa fa-columns"></i>
+                        </span>
+                    <div class="info-box-content">
+                        <span class="pull-right" v-html="kanban.action"></span>
+                        <span class="info-box-text"><strong v-html="kanban.title"></strong></span>
+                        <span class="pt-2 " v-html="decodeHtml(kanban.description)"></span>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
 
     </div>
@@ -50,13 +53,18 @@
         },
         methods: {
             loaderEvent(){
-                axios.get('/kanbanSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id)
+                axios.get('kanbans/list')//'/kanbanSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id)
                     .then(response => {
-                        this.subscriptions = response.data.subscriptions;
+                        this.kanbans = response.data.data;
                     })
                     .catch(e => {
                         this.errors = e.data.errors;
                     });
+            },
+            decodeHtml(html) {
+                let txt = document.createElement("textarea");
+                txt.innerHTML = html;
+                return txt.value.replace(/<[^>]+>/g, '');
             },
         },
 

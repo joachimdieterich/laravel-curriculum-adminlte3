@@ -61,7 +61,20 @@ class MoodleApiController extends Controller
         Auth::loginUsingId($user->first()->id);
         $curriculum->isAccessible();
 
-        return $curriculum->terminalObjectives->map->only('id', 'title');
+        return $curriculum->terminalObjectives()
+            ->with('enablingObjectives')
+            ->get();
+        //return $curriculum->terminalObjectives->map->only('id', 'title');
+    }
+
+    public function getEnablingObjectivesByTerminalObjectiveId(\App\TerminalObjective $terminalObjective, Request $request)
+    {
+        $this->validateRequest();
+        $user = User::where('common_name', request()->input('common_name'));
+        Auth::loginUsingId($user->first()->id);
+        $terminalObjective->curriculum->isAccessible();
+
+        return $terminalObjective->enablingObjectives->map->only('id', 'title');
     }
 
     public function getEnablingObjectives(\App\Curriculum $curriculum, Request $request)

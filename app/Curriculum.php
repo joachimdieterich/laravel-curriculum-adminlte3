@@ -36,7 +36,8 @@ class Curriculum extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'objective_type_order' => 'array'
+        'objective_type_order' => 'array',
+        'variants' => 'array'
     ];
 
     protected $dates = [

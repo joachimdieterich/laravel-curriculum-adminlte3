@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Domains\Exams\Models\Exam;
+use App\Scopes\NoSharingUsers;
 use Carbon\Carbon;
 use Cmgmyr\Messenger\Models\Thread;
 use Cmgmyr\Messenger\Traits\Messagable;
@@ -69,6 +71,11 @@ class User extends Authenticatable
         'current_period_id',
     ];
 
+    protected static function booted()
+    {
+        //static::addGlobalScope(new NoSharingUsers());
+    }
+
 
     /**
      * Prepare a date for array / JSON serialization.
@@ -89,6 +96,11 @@ class User extends Authenticatable
     public function fullName()
     {
         return "{$this->firstname} {$this->lastname}";
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(KanbanItemComment::class);
     }
 
     public function absences()
@@ -217,6 +229,11 @@ class User extends Authenticatable
             ->where('organization_id', $this->current_organization_id)
             ->orderBy('groups.id')
             ->withTimestamps();
+    }
+
+    public function kanbanSubscription()
+    {
+        return $this->morphMany('App\KanbanSubscription', 'subscribable');
     }
 
     public function kanbans()
@@ -402,4 +419,19 @@ class User extends Authenticatable
             default: return false;
         }
     }
+
+    public function scopeNoSharing($query){
+        $query->whereNull('sharing_token');
+    }
+
+    public function exams()
+    {
+        return $this->belongsToMany(
+            Exam::class,
+            'exam_user',
+            'user_id',
+            'exam_id')
+            ->withPivot(['login_data', 'exam_completed_at']);
+    }
+
 }

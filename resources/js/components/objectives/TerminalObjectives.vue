@@ -138,10 +138,11 @@
                         this.terminal_objectives = response.data.curriculum.terminal_objectives;
                         if (this.terminal_objectives.length !== 0){
                             this.settings.last = this.terminal_objectives[this.terminal_objectives.length-1].id;
+                            this.typetabs = [ ... new Set(this.terminal_objectives.map(t => t.objective_type_id))];
                             if (!!this.curriculum.objective_type_order){
-                                this.typetabs = this.curriculum.objective_type_order;
-                            } else {
-                                this.typetabs = [ ... new Set(this.terminal_objectives.map(t => t.objective_type_id))];
+                                if (this.curriculum.objective_type_order.length ===  this.typetabs.length){
+                                    this.typetabs = this.curriculum.objective_type_order;
+                                }
                             }
 
                             if (objective_type_id === 0){

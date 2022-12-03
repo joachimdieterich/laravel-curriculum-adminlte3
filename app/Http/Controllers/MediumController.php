@@ -315,9 +315,13 @@ class MediumController extends Controller
                 }
                 break;
             case "App\User":
-
                 if ($subscription->subscribable_id == auth()->user()->id
                      and ($subscription->visibility == 1)) {
+                    return true;
+                }
+                break;
+            case "App\KanbanItem":
+                if ($subscription->subscribable->kanban->isAccessible()) {
                     return true;
                 }
                 break;

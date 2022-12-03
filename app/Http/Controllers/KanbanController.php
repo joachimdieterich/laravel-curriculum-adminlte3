@@ -6,6 +6,7 @@ use App\Kanban;
 use App\KanbanSubscription;
 use App\Medium;
 use App\Organization;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
@@ -230,6 +231,42 @@ class KanbanController extends Controller
             'hex' => '#DDE6E8',
             'rgba' => $this->transformHexColorToRgba('#F4F4F4')
         ];
+    }
+
+    public function exportKanbanCsv(Kanban $kanban)
+    {
+        $h[] = [
+            'title',
+            'description',
+            'status',
+            'created at',
+            'owner'
+        ];
+        $filename = uniqid() . ".csv";
+        $fp = fopen($filename, 'w');
+
+        foreach ($h as $field) {
+            fputcsv($fp, $field);
+        }
+
+        foreach ($kanban->statuses as $status) {
+            foreach ($status->items as $k) {
+                fputcsv($fp, [$k->title, $k->description, $status->title, $k->created_at, $k->owner->username]);
+            }
+        }
+
+        fclose($fp);
+
+        $headers = array(
+            'Content-Type: text/csv',
+        );
+        return response()->download($filename, $kanban->title . '.csv', $headers)->deleteFileAfterSend(true);
+    }
+
+    public function exportKanbanPdf(Kanban $kanban){
+        $pdf = PDF::loadView('exports.kanban.pdf', ['kanban' => $kanban])->setPaper('a4', 'landscape');
+        //return view('exports.kanban.pdf', ['kanban' => $kanban]);
+        return $pdf->download($kanban->title . '.pdf');
     }
 
     private function transformHexColorToRgba($color)

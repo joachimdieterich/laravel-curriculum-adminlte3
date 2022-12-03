@@ -35,7 +35,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="pb-1" style="line-height: 1">
                     <span v-if="editor !== false">
                         <span   class="pull-left"

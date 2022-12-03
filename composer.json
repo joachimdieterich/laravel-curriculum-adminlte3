@@ -11,6 +11,7 @@
     "require": {
         "php": "^8.0.2",
         "aacotroneo/laravel-saml2": "*",
+        "barryvdh/laravel-dompdf": "^2.0",
         "barryvdh/laravel-snappy": "^1.0.0",
         "binarytorch/larecipe": "^2.2",
         "bugsnag/bugsnag-laravel": "^2.15",

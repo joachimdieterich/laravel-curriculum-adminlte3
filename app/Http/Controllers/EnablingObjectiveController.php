@@ -59,7 +59,7 @@ class EnablingObjectiveController extends Controller
             ])
             ->get()->first();
 
-        $repository = Config::where('key', 'repository')->get()->first();
+        $repository = Config::where('key', 'repository')->get()->first() ?? 'false';
 
         return view('objectives.show')
             ->with(compact('objective'))

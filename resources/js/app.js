@@ -141,18 +141,21 @@ Vue.component('color-picker-input', require('./components/kanban/ColorPickerInpu
 
 Vue.component('tests-table', require('./components/tests/TestsTable.vue').default);
 
-Vue.prototype.$initTinyMCE = function (options) {
+let tinyMcePlugins = [
+    "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+    "searchreplace wordcount visualblocks visualchars code fullscreen",
+    "insertdatetime media nonbreaking save table directionality",
+    "emoticons template paste textpattern example"
+];
+
+Vue.prototype.$initTinyMCE = function (tinyMcePlugins) {
+
     tinymce.remove();
     tinymce.init({
         path_absolute : "/",
         selector: "textarea.my-editor",
         branding:false,
-        plugins: [
-            "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-            "searchreplace wordcount visualblocks visualchars code fullscreen",
-            "insertdatetime media nonbreaking save table directionality",
-            "emoticons template paste textpattern example"
-        ],
+        plugins: tinyMcePlugins,
         external_plugins: {'mathjax': '/node_modules/@dimakorotkov/tinymce-mathjax/plugin.min.js'},
         toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | mathjax link image media example ",
         relative_urls: false,

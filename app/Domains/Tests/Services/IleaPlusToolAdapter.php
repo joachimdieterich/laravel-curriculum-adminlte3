@@ -14,7 +14,6 @@ use App\Domains\Exams\Models\Exam;
 use App\Domains\Tests\Interfaces\TestToolkitInterface;
 use App\Group;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\HttpFoundation\Response;
 
 class IleaPlusToolAdapter implements TestToolkitInterface
@@ -51,7 +50,7 @@ class IleaPlusToolAdapter implements TestToolkitInterface
     {
         try {
             $students = json_decode($this->ileaPlusClient()->get('exams/' . $exam->exam_id . '/status')->getBody());
-        } catch (RequestException $e) {
+        } catch (\Exception $e) {
             logger()->error($e->getMessage());
             return new Response($e->getMessage(), $e->getCode());
         }
@@ -69,7 +68,7 @@ class IleaPlusToolAdapter implements TestToolkitInterface
     {
         try {
             $tests = json_decode($this->ileaPlusClient()->get('tests')->getBody());
-        } catch (RequestException $e) {
+        } catch (\Exception $e) {
             logger()->error($e->getMessage());
             return new Response($e->getMessage(), $e->getCode());
         }
@@ -97,7 +96,7 @@ class IleaPlusToolAdapter implements TestToolkitInterface
                 ]
             ])->getBody(), true);
 
-        } catch (RequestException $e) {
+        } catch (\Exception $e) {
             logger()->error($e->getMessage());
             return new Response($e->getMessage(), $e->getCode());
         }
@@ -122,7 +121,7 @@ class IleaPlusToolAdapter implements TestToolkitInterface
     {
         try {
             $this->ileaPlusClient()->delete('exams/' . $exam->exam_id);
-        } catch (RequestException $e) {
+        } catch (\Exception $e) {
             logger()->error($e->getMessage());
             return new Response($e->getMessage(), $e->getCode());
         }
@@ -140,7 +139,7 @@ class IleaPlusToolAdapter implements TestToolkitInterface
                     'students' => $user_ids,
                 ]
             ])->getBody(), true);
-        } catch (RequestException $e) {
+        } catch (\Exception $e) {
             logger()->error($e->getMessage());
             return new Response($e->getMessage(), $e->getCode());
         }
@@ -170,7 +169,7 @@ class IleaPlusToolAdapter implements TestToolkitInterface
                     'students' => $students_data['login_data'],
                 ]
             ]);
-        } catch (RequestException $e) {
+        } catch (\Exception $e) {
             logger()->error($e->getMessage());
             return new Response($e->getMessage(), $e->getCode());
         }
@@ -192,7 +191,7 @@ class IleaPlusToolAdapter implements TestToolkitInterface
                 '/ileaplus/pdf/' . $exam->exam_id, [
                 'json' => $studentsData
             ]);
-        } catch (RequestException $e) {
+        } catch (\Exception $e) {
             logger()->error($e->getMessage());
             return new Response($e->getMessage(), $e->getCode());
         }

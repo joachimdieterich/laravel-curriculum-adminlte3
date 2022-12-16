@@ -1,6 +1,6 @@
 <template>
     <div>
-        <label class="typo__label">{{  trans('global.exam.select_tests') }}</label>
+        <label class="typo__label">{{ trans('global.exam.select_tests') }}</label>
         <multiselect
             ref="value"
             v-model="value"
@@ -16,10 +16,10 @@
             <div class="col-lg-12">
                 <button
                     id="add-exam"
-                   class="btn btn-success"
+                    class="btn btn-success"
                     @click="this.CreateExam"
                 >
-                    {{  trans('global.exam.create') }}
+                    {{ trans('global.exam.create') }}
                 </button>
             </div>
         </div>
@@ -37,7 +37,7 @@ export default {
     components: {
         multiselect
     },
-    data () {
+    data() {
         return {
             value: [],
             options: []
@@ -47,7 +47,7 @@ export default {
         this.getData(this.url);
     },
     methods: {
-        clearSelect(){
+        clearSelect() {
             this.value = [];
             this.$refs.value.deactivate();
         },
@@ -57,17 +57,19 @@ export default {
                     this.options = response.data
                 })
                 .catch(errors => {
-                    this.$emit('failedNotification', errors)
+                    if (errors.response.status !== 403) {
+                        this.$emit('failedNotification', Vue.prototype.trans('global.exam.error_messages.get_tests'))
+                    }
                 })
         },
-         CreateExam () {
-             this.value.map(test => {
-               this.SendCreateExamRequest(test.tool, test.id, test.nameLong, this.group_id)
-           })
+        CreateExam() {
+            this.value.map(test => {
+                this.SendCreateExamRequest(test.tool, test.id, test.nameLong, this.group_id)
+            })
         },
         async SendCreateExamRequest(tool, test_id, test_name, group_id) {
             this.clearSelect()
-            await axios.post('/exams', { 'tool': tool, 'test_id': test_id, 'test_name': test_name, 'group_id': group_id})
+            await axios.post('/exams', {'tool': tool, 'test_id': test_id, 'test_name': test_name, 'group_id': group_id})
                 .then(response => {
                     this.$emit('addExam', response.data)
                 })
@@ -78,5 +80,3 @@ export default {
     },
 }
 </script>
-
-

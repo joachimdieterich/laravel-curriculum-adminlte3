@@ -25,9 +25,12 @@ class ExamController extends Controller
         }
 
         $exams = auth()->user()->fresh()->exams;
+
         foreach($exams as $exam){
             $exam->login_url = config('test_tools.tools')[$exam->tool]['adapter']->getExamLoginUrl($exam);
         }
+
+        $exams = $exams->groupBy('group.title');
 
         return view('exams.index')
             ->with(compact('exams'));

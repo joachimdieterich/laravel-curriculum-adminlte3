@@ -997,6 +997,7 @@ return [
             'exam_removed' => 'Erfolgreich entfernte Testung'
         ],
         'error_messages' => [
+            'get_tests' => 'Testliste konnte nicht abgerufen werden',
             'remove_users' => 'Schüler mit Status bearbeitet oder fertiggestellt, können nicht entfernt werden.',
             'remove_exam' => 'Diese Testung wurde von einem oder mehreren Schülern begonnen und kann nicht entfernt werden'
         ]

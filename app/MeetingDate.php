@@ -33,6 +33,11 @@ class MeetingDate extends Model
         return "/meetingDates/{$this->id}";
     }
 
+    public function agendas()
+    {
+        return $this->hasMany(Agenda::class);
+    }
+
     public function owner()
     {
         return $this->belongsTo(User::class);

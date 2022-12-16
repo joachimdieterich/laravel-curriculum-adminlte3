@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\MeetingDate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class MeetingDateController extends Controller
 {
@@ -21,7 +22,7 @@ class MeetingDateController extends Controller
         ]);
 
         if (request()->wantsJson()) {
-            return ['dates' => $dates->get()];
+            return ['dates' => $dates->with('agendas')->get()];
         }
     }
 

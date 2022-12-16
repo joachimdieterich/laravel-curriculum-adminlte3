@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Agenda;
+use App\AgendaItem;
 use Illuminate\Http\Request;
 
 class AgendaController extends Controller
@@ -46,7 +47,16 @@ class AgendaController extends Controller
      */
     public function show(Agenda $agenda)
     {
-        //
+        //return $agenda->with('items')->get();
+        if (request()->wantsJson()) {
+            $items = AgendaItem::where([
+                'agenda_id' => $agenda->id,
+            ])->with(['type', 'subscriptions'  => function ($query)  {
+                $query->where('subscribable_id', auth()->user()->id);
+                $query->where('subscribable_Type', "App\\User");
+            },])->get();
+            return ['items' => $items];
+        }
     }
 
     /**

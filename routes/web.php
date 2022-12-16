@@ -24,6 +24,10 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('kanbanItemComment', 'KanbanItemCommentController');
 
+    Route::resource('agendas', 'AgendaController');
+    Route::resource('agendaItemSubscriptions', 'AgendaItemSubscriptionController');
+
+
     Route::resource('absences', 'AbsenceController');
 
     Route::post('achievements', 'AchievementController@store');

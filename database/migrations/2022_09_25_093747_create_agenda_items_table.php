@@ -17,6 +17,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->unsignedbigInteger('agenda_id');
             $table->unsignedbigInteger('agenda_item_type_id');
+            $table->string('title');
             $table->string('subtitle')->nullable();
             $table->text('description')->nullable();
 

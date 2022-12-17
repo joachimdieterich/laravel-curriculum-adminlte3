@@ -38,7 +38,7 @@ class CertificateController extends Controller
             'curriculum_id',
             'organization_id',
             'owner_id',
-        ])->with(['organization', 'curriculum', 'owner'])->where('owner_id', auth()->user()->id)->get();
+        ])->with(['organization', 'curriculum', 'owner'])->where('owner_id', auth()->user()->id);
 
         return DataTables::of($certificates)
             ->addColumn('organization', function ($certificates) {

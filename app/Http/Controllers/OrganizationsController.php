@@ -47,7 +47,7 @@ class OrganizationsController extends Controller
     public function list()
     {
         abort_unless(\Gate::allows('organization_access'), 403);
-        $organizations = (auth()->user()->role()->id == 1) ? Organization::with(['status'])->get() : User::where('id', auth()->user()->id)->get()->first()->organizations()->with(['status'])->get();
+        $organizations = (auth()->user()->role()->id == 1) ? Organization::with(['status']) : auth()->user()->organizations()->with(['status']);
 
         $edit_gate = \Gate::allows('organization_edit');
         $delete_gate = \Gate::allows('organization_delete');

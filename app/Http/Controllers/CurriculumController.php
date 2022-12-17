@@ -58,7 +58,7 @@ class CurriculumController extends Controller
                 'owner_id',
             ])->with(['state', 'country', 'grade',
                 'subject', 'organizationType',
-                'type', 'owner', ])->get();
+                'type', 'owner', ]);
         } else {
             $curricula = Curriculum::select([
                 'id',

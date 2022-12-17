@@ -36,15 +36,14 @@ class GroupsController extends Controller
         abort_unless(\Gate::allows('group_access'), 403);
 
         switch (auth()->user()->role()->id) {
-            case 1:  $groups = Group::with(['grade', 'period', 'organization'])->get();
+            case 1:  $groups = Group::with(['grade', 'period', 'organization']);
                 break;
-            case 4:  $groups = Group::where('organization_id', auth()->user()->current_organization_id)->with(['grade', 'period', 'organization'])->get();
+            case 4:  $groups = Group::where('organization_id', auth()->user()->current_organization_id)->with(['grade', 'period', 'organization']);
                 break;
 
-            default: $groups = auth()->user()->groups()->with(['grade', 'period', 'organization'])->get();
+            default: $groups = auth()->user()->groups()->with(['grade', 'period', 'organization']);
                 break;
         }
-        //$groups = (auth()->user()->role()->id == 1) ? Group::all() : auth()->user()->groups()->get();
 
         $show_gate = \Gate::allows('group_show');
         $edit_gate = \Gate::allows('group_edit');

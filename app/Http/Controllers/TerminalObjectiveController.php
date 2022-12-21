@@ -51,7 +51,7 @@ class TerminalObjectiveController extends Controller
                 'referenceSubscriptions.siblings.referenceable', 'quoteSubscriptions.siblings.quotable', ])
             ->get()->first();
 
-        $repository = Config::where('key', 'repository')->get()->first();
+        $repository = Config::where('key', 'repository')->get()->first() ?? 'false';
 
         return view('objectives.show')
             ->with(compact('objective'))

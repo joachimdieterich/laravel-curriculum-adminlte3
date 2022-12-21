@@ -270,7 +270,7 @@ export default {
                 'path': '',
                 'subscribable_type': null,
                 'subscribable_id': null,
-                'repository': null,
+                'repository': 'local',
                 'public': 0
             }),
             endpoints: {},

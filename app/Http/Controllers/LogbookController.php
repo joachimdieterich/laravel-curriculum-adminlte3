@@ -24,7 +24,7 @@ class LogbookController extends Controller
     {
         abort_unless(\Gate::allows('logbook_access'), 403);
 
-        $logbooks = is_admin() ? Logbook::with('subscriptions')->get() : Logbook::with('subscriptions')
+        $logbooks = is_admin() ? Logbook::with('subscriptions') : Logbook::with('subscriptions')
             ->whereHas('subscriptions', function ($query) {
                 $query->where(
                     function ($query) {
@@ -43,8 +43,7 @@ class LogbookController extends Controller
                             $query->where('subscribable_type', 'App\\User')->where('subscribable_id', auth()->user()->id);
                         });
             })
-            ->orWhere('owner_id', auth()->user()->id)
-            ->get();
+            ->orWhere('owner_id', auth()->user()->id);
 
         $edit_gate = \Gate::allows('logbook_edit');
         $delete_gate = \Gate::allows('logbook_delete');

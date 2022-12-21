@@ -986,13 +986,14 @@ return [
             'completed' => 'Completed'
         ],
         'confirm_messages' => [
-          'confirm_delete' => 'Are you sure you want to delete this Exam?'
+            'confirm_delete' => 'Are you sure you want to delete this Exam?'
         ],
         'success_messages' => [
-          'exam_created' => 'Successfully Created Exam',
-          'exam_removed' => 'Successfully removed Exam'
+            'exam_created' => 'Successfully Created Exam',
+            'exam_removed' => 'Successfully removed Exam'
         ],
         'error_messages' => [
+            'get_tests' => 'Test list could not be retrieved',
             'remove_users' => 'Students who have already started or completed this exam cannot be removed',
             'remove_exam' => 'This Exam has been started by one or more Student(s) and cannot be removed'
         ]
@@ -1086,7 +1087,7 @@ return [
             'end_helper'   => '',
             'duration'          => 'Duration',
             'duration_helper'   => 'Specify how much time (in minutes) should be scheduled to complete the learning/work schedule.',
-       ],
+        ],
     ],
     'planItem' => [
         'title' => 'Aufgaben',

@@ -40,7 +40,7 @@ services:
             - APACHE_RUN_USER=#${UID}
             - APACHE_RUN_GROUP=#${UID}
         ports:
-            - "10.10.0.170:8400:80"
+            - "${MY_LOCAL_IP}:8400:80"
         volumes:
             - .:/var/www/html:cached
         depends_on:

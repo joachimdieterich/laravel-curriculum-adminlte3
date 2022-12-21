@@ -58,7 +58,7 @@ class CurriculumController extends Controller
                 'owner_id',
             ])->with(['state', 'country', 'grade',
                 'subject', 'organizationType',
-                'type', 'owner', ])->get();
+                'type', 'owner', ]);
         } else {
             $curricula = Curriculum::select([
                 'id',
@@ -689,16 +689,21 @@ class CurriculumController extends Controller
         else if (is_schooladmin())
         {
             return getEntriesForSelect2ByCollection(
-                Curriculum::whereIn('owner_id', Organization::where('id', auth()->user()->current_organization_id)
-                    ->first()->users()->pluck('id')->toArray())->where(
-                    function($query) use ($input)
-                    {
-                        $query->orWhere('type_id', 1)
-                        ->orWhere('title', 'LIKE', '%' . $input['term'] . '%');
-                    })
-                );
-
-
+                Curriculum::where(
+                        function($query) use ($input)
+                        {
+                            $query->whereIn('owner_id', Organization::where('id', auth()->user()->current_organization_id)
+                                ->first()->users()->pluck('id')->toArray())
+                                ->where('title', 'LIKE', '%' . $input['term'] . '%')
+                                ->where('type_id', 1);
+                        })
+                    ->orwhere(
+                        function($query) use ($input)
+                        {
+                            $query->where('title', 'LIKE', '%' . $input['term'] . '%')
+                                  ->where('type_id', 1);
+                        })
+            );
         }
         else
         {

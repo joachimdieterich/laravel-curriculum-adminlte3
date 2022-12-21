@@ -46,7 +46,8 @@ class MediumSubscriptionController extends Controller
      */
     public function store(Request $request)
     {
-        $new_subscription = $this->validateRequest();
+        //not used?
+       /* $new_subscription = $this->validateRequest();
 
         $sharing_level_id = isset($new_subscription['sharing_level_id']) ? $new_subscription['sharing_level_id'] : 1;
         $visibility = isset($new_subscription['visibility']) ? $new_subscription['visibility'] : true;
@@ -79,7 +80,7 @@ class MediumSubscriptionController extends Controller
             'visibility'=> $visibility,
             'owner_id'=> auth()->user()->id,
         ]);
-        $subscribe->save();
+        $subscribe->save();*/
     }
 
     /**

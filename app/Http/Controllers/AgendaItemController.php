@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Agenda;
 use App\AgendaItem;
+use DB;
 use Illuminate\Http\Request;
 
 class AgendaItemController extends Controller
@@ -35,7 +37,25 @@ class AgendaItemController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        abort_unless(\Gate::allows('meeting_create'), 403);
+        $new_agenda_item = $this->validateRequest();
+        $order_id = $this->getMaxOrderId($new_agenda_item['agenda_item_type_id']);
+        $agenda_item = AgendaItem::create([
+            'agenda_id' => $new_agenda_item['agenda_id'],
+            'agenda_item_type_id' => $new_agenda_item['agenda_item_type_id'],
+            'title'         => $new_agenda_item['title'],
+            'subtitle'      => $new_agenda_item['subtitle'],
+            'description'   => $new_agenda_item['description'],
+            'medium_id'     => $new_agenda_item['medium_id'] ?? null,
+            'begin'         => $new_agenda_item['begin'],
+            'end'           => $new_agenda_item['end'],
+            'order_id'      => $new_agenda_item['order_id'] ?? 0,
+            'owner_id'      => auth()->user()->id
+        ]);
+
+        if (request()->wantsJson()) {
+            return ['agendaItem' => $agenda_item];
+        }
     }
 
     /**
@@ -69,7 +89,24 @@ class AgendaItemController extends Controller
      */
     public function update(Request $request, AgendaItem $agendaItem)
     {
-        //
+        abort_unless(\Gate::allows('meeting_edit'), 403);
+        $input = $this->validateRequest();
+
+        $agendaItem->update([
+            'agenda_id' => $input['agenda_id'],
+            'agenda_item_type_id' => $input['agenda_item_type_id'],
+            'title'         => $input['title'],
+            'subtitle'      => $input['subtitle'],
+            'description'   => $input['description'],
+            'medium_id'     => $input['medium_id'] ?? null,
+            'begin'         => $input['begin'],
+            'end'           => $input['end'],
+            'order_id'      => $input['order_id'] ?? 0,
+        ]);
+
+        if (request()->wantsJson()) {
+            return ['agenda' => $agendaItem];
+        }
     }
 
     /**
@@ -80,6 +117,34 @@ class AgendaItemController extends Controller
      */
     public function destroy(AgendaItem $agendaItem)
     {
-        //
+        if (request()->wantsJson()) {
+            return ['message' => $agendaItem->delete()];
+        }
+    }
+
+    protected function getMaxOrderId($agenda_id)
+    {
+        $order_id = DB::table('agenda_items')
+            ->where('agenda_id', $agenda_id)
+            ->max('order_id');
+
+        return (is_numeric($order_id)) ? $order_id + 1 : 0;
+    }
+
+    protected function validateRequest()
+    {
+        return request()->validate([
+            'id'  => 'sometimes',
+            'agenda_id' => 'sometimes|integer',
+            'agenda_item_type_id' => 'sometimes|integer',
+            'title' => 'sometimes|string',
+            'subtitle'=> 'sometimes',
+            'description'=> 'sometimes',
+            'medium_id' => 'sometimes|integer|nullable',
+            'begin' => 'sometimes',
+            'end' => 'sometimes',
+            'order_id' => 'sometimes|required|integer',
+            'owner_id' => 'sometimes|integer|nullable',
+        ]);
     }
 }

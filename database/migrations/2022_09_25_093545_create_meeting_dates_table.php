@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('access_token')->nullable();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->string('address');
+            $table->string('address')->nullable();
 
             $table->timestamp('begin')->nullable();
             $table->timestamp('end')->nullable();

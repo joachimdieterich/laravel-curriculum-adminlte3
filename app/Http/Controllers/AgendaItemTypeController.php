@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\AgendaItem;
 use App\AgendaItemType;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,9 @@ class AgendaItemTypeController extends Controller
      */
     public function index()
     {
-        //
+        if (request()->wantsJson() AND request()->has(['term', 'page'])) {
+            return $this->getEntriesForSelect2();
+        }
     }
 
     /**
@@ -81,5 +84,13 @@ class AgendaItemTypeController extends Controller
     public function destroy(AgendaItemType $agendaItemType)
     {
         //
+    }
+
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    private function getEntriesForSelect2(): \Illuminate\Http\JsonResponse
+    {
+        return getEntriesForSelect2ByCollection(AgendaItemType::select(['id', 'title']));
     }
 }

@@ -9,6 +9,14 @@ class Agenda extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'id',
+        'meeting_date_id',
+        'title',
+        'description',
+        'owner_id',
+    ];
+
     public function path()
     {
         return "/agendas/{$this->id}";
@@ -28,4 +36,17 @@ class Agenda extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function isAccessible()
+    {
+        if (
+            //Todo: add conditions
+            is_admin() // or admin
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

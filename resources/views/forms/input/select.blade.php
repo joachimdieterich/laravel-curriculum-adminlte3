@@ -94,45 +94,7 @@
     @parent
     <!--hack to get select2 working-->
     <script>
-        $(document).ready(function () {
-            function formatText(icon) {
-                return $('<span class="' + $(icon.element).data('class') + '"><i class="fas ' + $(icon.element).data('icon') + '"></i> ' + icon.text + '</span>');
-            }
-            <!--hack to get select2 working z-index-->
-            var $select = $("#{{ $field }}").select2({
-                placeholder: "{{ $placeholder }}",
-                dropdownParent: $("#{{ $field }}").parent(),
-                allowClear: "{{ $allowClear ?? true }}",
-                ajax: {
-                    delay: 250,
-                    url: "{{ $url }}",
-                    dataType: 'json',
-                    data: function(params) {
-                        return {
-                            term: params.term || '',
-                            page: params.page || 1
-                        }
-                    },
-                    /*processResults: function(data) {
-                        let results = data.results;
-                        let options = {{json_encode($value)}}
-                        for (var i = 0; i < results.length; i++) {
-                            if (options.includes(results[i].id )) {
-                                results[i]["selected"] = "true";
-                            }
-                        }
 
-                        data.results = results;
-                        console.log(data);
-                        return { results: data.results  };
-                    },*/
-                    cache: true,
-                },
-                templateSelection: formatText,
-                templateResult: formatText,
-            });
-
-        });
     </script>
 @endsection
 @endif

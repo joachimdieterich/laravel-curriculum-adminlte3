@@ -181,6 +181,10 @@ class UsersController extends Controller
         abort_unless(\Gate::allows('user_show'), 403);
         abort_unless(((auth()->user()->role()->id == 1) or (auth()->user()->mayAccessUser($user))), 403);
 
+        if (request()->wantsJson()) {
+            return ['user' => $user];
+        }
+
         $status_definitions = StatusDefinition::all();
         $user->load('roles');
         $user->load('organizations');

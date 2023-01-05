@@ -265,6 +265,8 @@ export default {
             callbackFunction: null,
             callbackParentComponent: null,
             callbackComponent: null,
+            eventHubCallbackFunctioneventHubCallbackFunction: null,
+            eventHubCallbackFunctionParams: null,
 
             form: new Form({
                 'path': '',
@@ -369,6 +371,12 @@ export default {
             if (event.params.callbackFunction) {
                 this.callbackFunction = event.params.callbackFunction;
             }
+            if (event.params.eventHubCallbackFunction) {
+                this.eventHubCallbackFunction = event.params.eventHubCallbackFunction;
+            }
+            if (event.params.eventHubCallbackFunctionParams) {
+                this.eventHubCallbackFunctionParams = event.params.eventHubCallbackFunctionParams;
+            }
         },
         setTab(tab){
             this.tab = tab;
@@ -379,7 +387,9 @@ export default {
         beforeClose() {
         },
         saveToForm() {
-            if (this.callbackComponent) {
+            if (this.eventHubCallbackFunction) {
+                this.$eventHub.$emit(this.eventHubCallbackFunction, {'id': this.eventHubCallbackFunctionParams, 'selectedMediumId': this.selectedFiles});
+            } else if (this.callbackComponent) {
                 if (this.callbackParentComponent) {
                     app.__vue__.$refs[this.callbackParentComponent].$refs[this.callbackComponent][0].reload();
                 } else {

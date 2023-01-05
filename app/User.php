@@ -434,4 +434,16 @@ class User extends Authenticatable
             ->withPivot(['login_data', 'exam_completed_at']);
     }
 
+    public function videoconferences()
+    {
+        return $this->hasManyThrough(
+            'App\Videoconference',
+            'App\VideoconferenceSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'videoconference_id'
+        )->where('subscribable_type', get_class($this));
+    }
+
 }

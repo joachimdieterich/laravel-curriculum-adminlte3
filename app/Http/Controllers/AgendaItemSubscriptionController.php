@@ -24,12 +24,12 @@ class AgendaItemSubscriptionController extends Controller
                     ->with(['type', 'subscriptions'  => function ($query)  {
                         $query->where('subscribable_id', auth()->user()->id);
                         $query->where('subscribable_Type', "App\\User");
-                    },])->get();
+                    }, 'speakers.user', 'medium', 'media', 'videoconferences'])->get();
             }
             else if (request('meeting_date_id'))
             {
                 $items = AgendaItem::whereIn('agenda_id', Agenda::where('meeting_date_id', request('meeting_date_id'))->get()->pluck('id')->toArray())
-                    ->with(['type', 'subscriptions'])
+                    ->with(['type', 'subscriptions', 'speakers.user', 'medium', 'media', 'videoconferences'])
                     ->whereHas("subscriptions", function ($query)  {
                         $query->where('subscribable_id', auth()->user()->id);
                         $query->where('subscribable_Type', "App\\User");
@@ -52,12 +52,12 @@ class AgendaItemSubscriptionController extends Controller
     {
         $input = $this->validateRequest();
         $agendaItem = AgendaItem::find($input['agenda_item_id']);
-        abort_unless((\Gate::allows('agenda_create') and $agendaItem->isAccessible()), 403);
+        abort_unless((\Gate::allows('agenda_subscription_create') and $agendaItem->isAccessible()), 403);
 
         $subscribe = AgendaItemSubscription::updateOrCreate([
             'agenda_item_id' => $input['agenda_item_id'],
-            'subscribable_type' => $input['subscribable_type'],
-            'subscribable_id' => $input['subscribable_id'],
+            'subscribable_type' => $input['subscribable_type'] ?? 'App\User',
+            'subscribable_id' => $input['subscribable_id'] ?? auth()->user()->id,
         ], [
             'editable' => isset($input['editable']) ? $input['editable'] : false,
             'owner_id' => auth()->user()->id,
@@ -65,7 +65,15 @@ class AgendaItemSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return ['subscription' => $agendaItem->subscriptions()->with('subscribable')->get()];
+
+            return ['item' =>
+                $agendaItem->with([
+                    'type', 'subscriptions'  => function ($query)  {
+                        $query->where('subscribable_id', auth()->user()->id);
+                        $query->where('subscribable_Type', "App\\User");
+                    }
+                ])->get()->first()
+            ];
         }
     }
 
@@ -79,7 +87,7 @@ class AgendaItemSubscriptionController extends Controller
      */
     public function update(Request $request, AgendaItemSubscription $agendaItemSubscription)
     {
-        abort_unless((\Gate::allows('agenda_edit') and $agendaItemSubscription->isAccessible()), 403);
+        abort_unless((\Gate::allows('agenda_subscription_edit') and $agendaItemSubscription->isAccessible()), 403);
         $input = $this->validateRequest();
 
         $agendaItemSubscription->update([
@@ -100,10 +108,22 @@ class AgendaItemSubscriptionController extends Controller
      */
     public function destroy(AgendaItemSubscription $agendaItemSubscription)
     {
-        abort_unless((\Gate::allows('agenda_delete') and $agendaItemSubscription->isAccessible()), 403);
+        abort_unless((\Gate::allows('agenda_subscription_delete') and $agendaItemSubscription->isAccessible()), 403);
+
+        $agendaItemId = $agendaItemSubscription->agenda_item_id;
 
         if (request()->wantsJson()) {
-            return ['message' => $agendaItemSubscription->delete()];
+            $agendaItemSubscription->delete();
+
+            return ['item' =>
+                AgendaItem::where('id', $agendaItemId)
+                    ->with([
+                    'type', 'subscriptions'  => function ($query)  {
+                        $query->where('subscribable_id', auth()->user()->id);
+                        $query->where('subscribable_Type', "App\\User");
+                    }
+                ])->get()->first()
+            ];
         }
     }
 
@@ -112,7 +132,7 @@ class AgendaItemSubscriptionController extends Controller
         return request()->validate([
             'subscribable_type' => 'sometimes|string',
             'subscribable_id'   => 'sometimes|integer',
-            'agenda_item_id'          => 'sometimes|integer',
+            'agenda_item_id'    => 'sometimes|integer',
             'editable'          => 'sometimes',
         ]);
     }

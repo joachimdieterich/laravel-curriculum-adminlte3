@@ -1,44 +1,60 @@
 <template>
-  <div class="timeline">
-    <div  v-for="item in items">
-         <i :class="item.type.icon_css + ' ' + item.type.color"></i>
-
-          <div class="timeline-item">
-                <span class="time">
-                    <i class="fas fa-clock"></i>
-                    {{ postDate(item.begin, item.end) }}
-                </span>
-                <h3 class="timeline-header text-bold">
-                    <i v-if="item.subscriptions.length > 0 "
-                       class="fas fa-star text-primary"></i>
-                    <i v-else
-                       class="far fa-star text-gray"></i>
-                    <a href="#" v-html="item.title"></a>
-                </h3>
-
-                <div class="timeline-body"
-                     v-html="item.description">
-                </div>
-                <div class="timeline-footer">
-                    <a class="btn btn-primary btn-sm">Read more</a>
-                    <a class="btn btn-danger btn-sm">Delete</a>
-                    <i class="pull-right fa-solid fa-up-right-from-square text-primary pointer"></i>
-                </div>
+  <div>
+      <span v-if="!personal_agenda">
+          <MeetingAgendaForm
+              v-if="edit"
+              :agenda="agenda"
+              :meeting_date_id="meeting_date_id"
+              @close="toggleEdit()"/>
+          <div v-else
+               class="px-4">
+              <i class="fa fa-pencil-alt text-muted pull-right"
+                 @click="toggleEdit()"></i>
+              <span v-html="agenda.description"></span>
+              <hr>
           </div>
-    </div>
-    <!-- END timeline item -->
+      </span>
 
-    <div>
-      <i class="fas fa-plus bg-gray"></i>
-    </div>
+
+      <div class="timeline">
+
+          <AgendaItem
+              v-if="personal_agenda"
+              v-for="item in items"
+              :personal_agenda="personal_agenda"
+              :key="'personal_agenda_item_' +  item.id + '_' + uid"
+              :item="item"/>
+          <AgendaItem
+              v-if="!personal_agenda"
+              v-for="item in items"
+              :key="'agenda_item_' + agenda.id + '_' + item.id  + '_' + uid"
+              :agenda_id="agenda.id"
+              :item="item"/>
+
+            <div v-if="!personal_agenda">
+                <i class="fas fa-plus bg-gray"
+                   @click="toggleEdit('newItem')"></i>
+                <AgendaItemForm v-if="this.newItem"
+                    :agenda_id="agenda.id"
+                    @add-agenda-item="toggleEdit('newItem')"/>
+            </div>
+      </div>
   </div>
 </template>
 <script>
+
+import MeetingAgendaForm from "./MeetingAgendaForm";
+import Form from "form-backend-validation";
+import AgendaItemForm from "./AgendaItemForm";
+import AgendaItem from "./AgendaItem";
+
 export default {
     name: 'Agenda',
     props: {
-        agenda: {},
-        subscribed:  {
+        agenda: {
+            default: 0
+        },
+        personal_agenda:  {
             type: Boolean,
             default: false
         },
@@ -49,49 +65,69 @@ export default {
     },
     data () {
         return {
+            uid: '',
             items: {},
+            edit: false,
+            newItem: false,
+            time: null,
+            form: new Form({
+                'id':'',
+                'agenda_id':'',
+                'agenda_item_type_id': '',
+                'title': '',
+                'subtitle': '',
+                'description': '',
+                'medium_id': '',
+                'host_id': '',
+                'co_hosts': '',
+                'begin': '',
+                'end': '',
+                'order_id': '',
+                'owner_id': '',
+            }),
         };
     },
     methods:{
-        postDate(begin_date, end_date) {
-            var start = new Date(begin_date.replace(/-/g, "/"));
-            var end = new Date(end_date.replace(/-/g, "/"));
-            var dateFormat = {
-               /* weekday: 'short',
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',*/
-                hour: '2-digit',
-                minute: '2-digit'
-            };
-
-            if (start.toDateString() === end.toDateString()) {
-                return start.toLocaleString([], dateFormat) + " - " + end.toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
+        loadItems() {
+            let param = ''
+            if (this.personal_agenda === true){
+                param = 'meeting_date_id=' + this.meeting_date_id
+                // console.log('personalAgenda');
             } else {
-                return start.toLocaleString([], dateFormat) + " - " + end.toLocaleString([], dateFormat);
+                param = 'agenda_id=' + this.agenda.id;
             }
+            axios.get('/agendaItemSubscriptions/?' + param)
+                .then(response => {
+                    this.items = response.data.items;
+                })
+                .catch(e => {
+                    console.log(e.data.errors);
+                });
+        },
+        toggleEdit(field = 'edit') {
+            if (field == 'edit') {
+                this.edit = !this.edit;
+            } else {
+                this.newItem = !this.newItem;
+            }
+            this.loadItems();
         },
     },
     mounted() {
-        let param = ''
-        if (this.subscribed === true){
-            param = 'meeting_date_id=' + this.meeting_date_id
-            console.log('subscribed');
-        } else {
-            param = 'agenda_id=' + this.agenda.id;
-        }
-        axios.get('/agendaItemSubscriptions/?' + param)
-            .then(response => {
-                this.items = response.data.items;
-            })
-            .catch(e => {
-                console.log(e.data.errors);
-
-            });
-
+        this.uid = this._uid;
+        this.loadItems();
     },
+    created() {
+        this.$eventHub.$on('reload_agenda', (e) => {
+            if (this.agenda.id == e.id) {
+                this.loadItems();
+            }
+        });
+    },
+    components: {
+        AgendaItem,
+        AgendaItemForm,
+        MeetingAgendaForm,
+    }
 }
 </script>

@@ -33,7 +33,7 @@ class MeetingDateController extends Controller
      */
     public function create()
     {
-        //
+
     }
 
     /**
@@ -44,7 +44,26 @@ class MeetingDateController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        abort_unless(\Gate::allows('meeting_create'), 403);
+        $new_meeting = $this->validateRequest();
+
+        $meetingDate = MeetingDate::create([
+            'uid'           => $new_meeting['uid'],
+            'meeting_id'    => $new_meeting['meeting_id'],
+            'access_token'  => $new_meeting['access_token'],
+            'title'         => $new_meeting['title'],
+            'description'   => $new_meeting['description'],
+            'address'       => $new_meeting['address'],
+            'begin'         => $new_meeting['begin'],
+            'end'           => $new_meeting['end'],
+            'type'          => $new_meeting['type'],
+
+            'owner_id' => auth()->user()->id,
+        ]);
+
+        if (request()->wantsJson()) {
+            return ['meetingDate' => $meetingDate];
+        }
     }
 
     /**
@@ -89,13 +108,23 @@ class MeetingDateController extends Controller
      */
     public function destroy(MeetingDate $meetingDate)
     {
-        //
+        $meetingDate->delete();
     }
 
     protected function validateRequest()
     {
         return request()->validate([
-            'meeting_id'        => 'sometimes',
+            'id' => 'sometimes',
+            'uid' => 'sometimes',
+            'meeting_id' => 'sometimes',
+            'access_token' => 'sometimes',
+            'title' => 'sometimes|required',
+            'description' => 'sometimes',
+            'address' => 'sometimes',
+            'begin' => 'sometimes',
+            'end' => 'sometimes',
+            'owner_id' => 'sometimes',
+            'type' => 'sometimes',
         ]);
     }
 }

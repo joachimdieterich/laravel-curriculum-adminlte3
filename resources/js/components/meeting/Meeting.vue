@@ -70,35 +70,37 @@
         </div>
 
         <!--Agenda-->
-        <div class="col-9">
+        <div class="col-12">
             <meeting-dates
-            :meeting="this.meeting"></meeting-dates>
+                :meeting="this.meeting"
+                ref="meetingDates"
+            ></meeting-dates>
         </div>
 
         <!-- Chat-->
-        <div class="col-3 pl-0">
+<!--        <div class="col-3 pl-0">
             <h6>Veranstaltungschat</h6>
             <div class="direct-chat-messages px-0" style="height: 500px !important;">
                 <div class="direct-chat-msg"><div class="direct-chat-infos clearfix"><span class="direct-chat-name  float-left">
                             Schüler Role
                         </span> <span class="direct-chat-timestamp float-right">
                             2020-12-20 17:18:34
-                        </span></div> <span class="direct-chat-img"><img src="/media/2975" alt="User profile picture" class="direct-chat-img"></span> <div class="direct-chat-text"><!---->
+                        </span></div> <span class="direct-chat-img"><img src="/media/2975" alt="User profile picture" class="direct-chat-img"></span> <div class="direct-chat-text">&lt;!&ndash;&ndash;&gt;
                 Hallo aus Mainz
             </div></div><div class="direct-chat-msg right"><div class="direct-chat-infos clearfix"><span class="direct-chat-name  float-right">
                             Joachim Dieterich
                         </span> <span class="direct-chat-timestamp float-left">
                             2020-12-20 17:16:45
-                        </span></div> <img src="/media/2973" alt="User profile picture" class="direct-chat-img"> <div class="direct-chat-text"><!---->
+                        </span></div> <img src="/media/2973" alt="User profile picture" class="direct-chat-img"> <div class="direct-chat-text">&lt;!&ndash;&ndash;&gt;
                 Die Veranstaltung startet um 10 Uhr
             </div></div><div class="direct-chat-msg right"><div class="direct-chat-infos clearfix"><span class="direct-chat-name  float-right">
                             Joachim Dieterich
                         </span> <span class="direct-chat-timestamp float-left">
                             2020-12-20 15:53:53
-                        </span></div> <img src="/media/2973" alt="User profile picture" class="direct-chat-img"> <div class="direct-chat-text"><!---->
+                        </span></div> <img src="/media/2973" alt="User profile picture" class="direct-chat-img"> <div class="direct-chat-text">&lt;!&ndash;&ndash;&gt;
                 Herzlich Willkommen
             </div></div></div>
-        </div>
+        </div>-->
 
     </div>
 </template>

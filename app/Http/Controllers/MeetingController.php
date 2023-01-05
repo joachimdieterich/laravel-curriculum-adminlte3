@@ -185,7 +185,7 @@ class MeetingController extends Controller
     {
         return request()->validate([
             'uid' => 'sometimes|required',
-            'accesstoken' => 'sometimes',
+            'access_token' => 'sometimes',
             'title' => 'sometimes|required',
             'subtitle' => 'sometimes|required',
             'description' => 'sometimes',

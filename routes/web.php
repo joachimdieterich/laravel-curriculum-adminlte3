@@ -25,8 +25,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('kanbanItemComment', 'KanbanItemCommentController');
 
     Route::resource('agendas', 'AgendaController');
+    Route::resource('agendaItems', 'AgendaItemController');
+    Route::resource('agendaItemTypes', 'AgendaItemTypeController');
     Route::resource('agendaItemSubscriptions', 'AgendaItemSubscriptionController');
-
+    Route::resource('agendaItemSpeakers', 'AgendaItemSpeakerController');
 
     Route::resource('absences', 'AbsenceController');
 
@@ -290,6 +292,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('variantDefinitions/list', 'VariantDefinitionController@list');
     Route::resource('variantDefinitions', 'VariantDefinitionController');
     Route::resource('variants', 'VariantController');
+
+    Route::resource('videoconferences', 'VideoconferenceController');
 
     /* Tests */
     Route::get('tests', 'Tests\TestController@index');

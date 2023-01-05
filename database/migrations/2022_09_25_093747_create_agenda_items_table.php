@@ -22,10 +22,6 @@ return new class extends Migration
             $table->text('description')->nullable();
 
             $table->unsignedbigInteger('medium_id')->nullable();
-            $table->unsignedbigInteger('slide_id')->nullable();
-
-            $table->unsignedbigInteger('host_id');
-            $table->json('co_hosts')->nullable();
 
             $table->timestamp('begin')->nullable();
             $table->timestamp('end')->nullable();
@@ -38,8 +34,6 @@ return new class extends Migration
             $table->foreign('agenda_id')->references('id')->on('agendas');
             $table->foreign('agenda_item_type_id')->references('id')->on('agenda_item_types');
             $table->foreign('medium_id')->references('id')->on('media');
-            $table->foreign('slide_id')->references('id')->on('media');
-            $table->foreign('host_id')->references('id')->on('users');
             $table->foreign('owner_id')->references('id')->on('users');
         });
     }

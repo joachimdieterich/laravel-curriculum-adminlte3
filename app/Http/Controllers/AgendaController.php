@@ -36,7 +36,20 @@ class AgendaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        abort_unless(\Gate::allows('meeting_create'), 403);
+        $new_agenda = $this->validateRequest();
+
+        $agenda = Agenda::create([
+            'meeting_date_id' => $new_agenda['meeting_date_id'],
+            'title'           => $new_agenda['title'],
+            'description'     => $new_agenda['description'],
+
+            'owner_id'        => auth()->user()->id,
+        ]);
+
+        if (request()->wantsJson()) {
+            return ['agenda' => $agenda];
+        }
     }
 
     /**
@@ -79,7 +92,18 @@ class AgendaController extends Controller
      */
     public function update(Request $request, Agenda $agenda)
     {
-        //
+        abort_unless(\Gate::allows('meeting_edit'), 403);
+        $input = $this->validateRequest();
+
+        $agenda->update([
+            'meeting_date_id' => $input['meeting_date_id'],
+            'title'           => $input['title'],
+            'description'     => $input['description'],
+        ]);
+
+        if (request()->wantsJson()) {
+            return ['agenda' => $agenda];
+        }
     }
 
     /**
@@ -90,6 +114,17 @@ class AgendaController extends Controller
      */
     public function destroy(Agenda $agenda)
     {
-        //
+        $agenda->delete();
+    }
+
+    protected function validateRequest()
+    {
+        return request()->validate([
+            'id'              => 'sometimes',
+            'meeting_date_id' => 'sometimes',
+            'title'           => 'sometimes|required',
+            'description'     => 'sometimes',
+            'owner_id'        => 'sometimes',
+        ]);
     }
 }

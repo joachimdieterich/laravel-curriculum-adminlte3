@@ -11,5 +11,7 @@
                 class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
-    <meeting :meeting="{{ $meeting }}"></meeting>
+    <meeting :meeting="{{ $meeting }}" ref="meetings"></meeting>
+    <medium-modal></medium-modal>
+    <medium-create-modal></medium-create-modal>
 @endsection

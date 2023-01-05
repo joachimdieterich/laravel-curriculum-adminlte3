@@ -359,11 +359,11 @@ class GroupsController extends Controller
             return $this->select2RequestWithOptGroup(
                 Organization::select(['id', 'title'])
             );
-        } elseif (is_schooladmin()) {
+        } /*elseif (is_schooladmin()) {
             return $this->select2RequestWithOptGroup(
                 Organization::where('id', auth()->user()->current_organization_id)->select(['id', 'title'])
-            );
-        } else {
+            ); //todo: search/filter not working for schooladmins
+        }*/ else {
             return getEntriesForSelect2ByCollection(
                 auth()->user()->groups()->orderBy('organization_id', 'desc'),
                 'groups.'

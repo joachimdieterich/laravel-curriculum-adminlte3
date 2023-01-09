@@ -272,14 +272,6 @@ export default {
             };
         },
         methods: {
-            /*
-                        open(modal, relationKey) {
-                            if (relationKey === 'referenceable'){
-                                this.$modal.show(modal, { 'referenceable_type': 'App\\LogbookEntry', 'referenceable_id': this.entry.id });
-                            } else {
-                                this.$modal.show(modal, { 'subscribable_type': 'App\\LogbookEntry', 'subscribable_id': this.entry.id });
-                            }
-                        },*/
             edit() {
                  this.$modal.show('logbook-entry-modal', { 'id': this.entry.id, 'method': 'patch'});
             },

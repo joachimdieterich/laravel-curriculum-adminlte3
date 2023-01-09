@@ -102,10 +102,12 @@
                     this.form.end = this.time[1];
                     if (this.method === 'patch') {
                         this.new_entry = (await axios.patch('/logbookEntries/' + this.form.id, this.form)).data.message;
+                        this.$eventHub.$emit('updateLogbookEntry', this.new_entry);
                     } else {
                         this.new_entry = (await axios.post('/logbookEntries', this.form)).data.message;
+                        this.$eventHub.$emit('addLogbookEntry', this.new_entry);
                     }
-                    this.$parent.$emit('addLogbookEntry', this.new_entry);
+
                     this.close();
                 } catch(error) {
                     this.form.errors = error.response.data.form.errors;

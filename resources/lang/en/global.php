@@ -1205,7 +1205,7 @@ return [
             'id' => 'ID',
             'id_helper' => '',
             'content' => 'Inhalt',
-            'content' => '',
+            'content_helper' => '',
         ],
     ],
     'lms' => [
@@ -1238,6 +1238,8 @@ return [
             'category'         => 'Category',
             'target_group'     => 'Targetgroup',
             'provider'         => 'Provider',
+            'livestream'       => 'Livestream',
+            'livestream_helper'=> ''
         ],
     ],
     'meetingDate'              => [

@@ -64,18 +64,21 @@
               </span>
               <div v-if="!edit"
                    class="timeline-footer">
-                  <VideoConference
-                      modus="link"
-                      :videoConference="item.videoconferences[0]"/>
-                  |
-                  <VideoConference
-                    :meetingID="'agenda_item'+item.id"
-                    :meetingName="item.title"
-                    :endCallbackUrl="'/agendaItems/'+item.id"
-                    subscribable_type="App\AgendaItem"
-                    :subscribable_id="item.id"/>
 
+                  <VideoConference
+                      v-if="item.videoconferences.length == 0"
+                      modus="add"
+                      :meetingID="'agenda_item'+item.id"
+                      :meetingName="item.title"
+                      :endCallbackUrl="'/agendaItems/'+item.id"
+                      subscribable_type="App\AgendaItem"
+                      :subscribable_id="item.id"/>
+                  <VideoConference
+                      v-else
+                      modus="link"
+                      :videoConference="item.videoconferences"/>
               </div>
+
           </div>
 
     </div>

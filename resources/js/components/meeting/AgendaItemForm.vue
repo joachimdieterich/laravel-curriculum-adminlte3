@@ -62,7 +62,7 @@
                     class="btn btn-info py-2"
                     @click="addMedia()">
                     {{ trans('global.media.add') }}
-                </button>-
+                </button>
             </div>
         </div>
 
@@ -129,7 +129,7 @@ export default {
 
               this.form.begin = this.time[0];
               this.form.end   = this.time[1];
-              if (this.id !== '') {
+              if (typeof this.form.id !== '') {
                   this.agendaItem = (await axios.patch('/agendaItems/' + this.form.id, this.form)).data.agendaItem;
               } else {
                   this.agendaItem = (await axios.post('/agendaItems', this.form)).data.agendaItem;

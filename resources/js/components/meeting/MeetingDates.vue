@@ -3,25 +3,34 @@
         <ul class="nav nav-pills"
             id="meetingDatesNav">
             <li v-for="date in this.dates"
-                class="nav-item pl-0 pr-2 pb-2 pt-2">
-                <a class="nav-link " :href="'#meetingDates_' + date.id"
-                   :class="(activetab == date.id) ? 'active' : ''"
-                   @click="setActiveTab(date.id)"
+                class="nav-item pl-0 pr-2 pb-2 pt-2"
+                @click="setLocalStorage('#meeting_' + meeting.id, '#meetingDates_' + date.id)">
+                <a class="nav-link "
+                   :href="'#meetingDates_' + date.id"
+                   :class="checkLocalStorage('#meeting_' + meeting.id, '#meetingDates_' + date.id, 'active')"
+                   @click="setActiveDate(date)"
                    data-toggle="tab">
                     {{ date.title | truncate(10, '&nbsp;') }}
-                    <span
-                        class="pl-2"
-                        @click.stop="editMeetingDate(date)">
-                        <i class="fa fa-pencil-alt"></i>
-                    </span>
                 </a>
 
             </li>
 
-            <li class="nav-item pl-0 pr-2 pb-2 pt-2">
+
+            <li class="nav-item pl-0 pr-2 pb-2 pt-2"
+                @click="setLocalStorage('#meeting_' + meeting.id, 'new_meeting_date_tab')">
                 <a class="nav-link text-sm"
-                   :class="(activetab == 0) ? 'active' : ''"
-                   @click="setActiveTab(0, 'reset');"
+                   :class="checkLocalStorage('#meeting_' + meeting.id, 'new_meeting_date_tab', 'active')"
+                   href="#new_meeting_date_tab"
+                   data-toggle="tab"
+                   @click="editMeetingDate();">
+                    <i class="fa fa-pencil-alt"></i>
+                </a>
+            </li>
+
+            <li class="nav-item ml-auto pull-right pl-0 pr-2 pb-2 pt-2"
+                @click="setLocalStorage('#meeting_' + meeting.id, 'new_meeting_date_tab')">
+                <a class="nav-link text-sm"
+                   :class="checkLocalStorage('#meeting_' + meeting.id, 'new_meeting_date_tab', 'active')"
                    href="#new_meeting_date_tab"
                    data-toggle="tab">
                     <i class="fas fa-plus"></i>
@@ -31,30 +40,38 @@
 
         <div class="tab-content">
             <div v-for="date in this.dates"
-                 class="tab-pane" :id="'meetingDates_' + date.id"
-                 :class="(activetab == date.id) ? 'active' : ''">
+                 :id="'meetingDates_' + date.id"
+                 class="tab-pane"
+                 :class="checkLocalStorage('#meeting_' + meeting.id, '#meetingDates_' + date.id, 'active')"
+                 >
                 <ul class="nav nav-pills"
                     id="AgendaNav">
-                    <li class="nav-item pl-0 pr-2 pb-2 pt-2">
+                    <li class="nav-item pl-0 pr-2 pb-2 pt-2"
+                        @click="setLocalStorage('#meeting_date_' + date.id, '#subscribed_agenda_'+ date.id)"
+                    >
                         <a class="nav-link text-sm"
-                           href="#subscribed_agenda"
-                           @click="setActiveSubTab(0)"
+                           :href="'#subscribed_agenda_' + date.id"
+                           :class="checkLocalStorage('#meeting_date_' + date.id, '#subscribed_agenda_'+ date.id, 'active', true)"
                            data-toggle="tab">
                             Persönliche Agenda
                         </a>
                     </li>
                     <li  v-for="agenda in date.agendas"
-                         class="nav-item pl-0 pr-2 pb-2 pt-2">
+                         class="nav-item pl-0 pr-2 pb-2 pt-2"
+                         @click="setLocalStorage('#meeting_date_' + date.id, '#agenda_' + agenda.id)">
                         <a class="nav-link text-sm"
                            :href="'#agenda_' + agenda.id"
                            data-toggle="tab"
-                           @click="setActiveSubTab(agenda.id)">
+                           :class="checkLocalStorage('#meeting_date_' + date.id, '#agenda_' + agenda.id, 'active')"
+                           >
                             {{ agenda.title }}
                         </a>
                     </li>
-                    <li class="nav-item pl-0 pr-2 pb-2 pt-2">
+                    <li class="nav-item pl-0 pr-2 pb-2 pt-2"
+                        @click="setLocalStorage('#meeting_date_' + date.id, '#new_meeting_agenda_tab_' + date.id)"
+                    >
                         <a class="nav-link text-sm"
-                           @click="setActiveSubTab('new_meeting_agenda_tab_' + date.id, 'reset');"
+                           :class="checkLocalStorage('#meeting_date_' + date.id, '#new_meeting_agenda_tab_' + date.id, 'active')"
                            :href="'#new_meeting_agenda_tab_' + date.id"
                            data-toggle="tab">
                             <i class="fas fa-plus"></i>
@@ -63,23 +80,23 @@
                 </ul>
                 <div class="tab-content">
                     <Agenda
-                        id="agenda_0"
+                        :id="'subscribed_agenda_' + date.id"
                         ref="agenda"
                         :meeting_date_id="date.id"
                         :personal_agenda=true
                         class="tab-pane"
-                        :class="(activesubtab == '0') ? 'active' : ''"/>
+                        :class="checkLocalStorage('#meeting_date_' + date.id, '#subscribed_agenda_'+ date.id, 'active', true)"/>
                     <div v-for="agenda in date.agendas"
                          class="tab-pane"
                          :id="'agenda_' + agenda.id"
-                         :class="(activesubtab == agenda.id) ? 'active' : ''">
+                         :class="checkLocalStorage('#meeting_date_' + date.id, '#agenda_' + agenda.id, 'active')">
                         <Agenda :agenda="agenda"
                                 :ref="'agenda_' + agenda.id"
                                 ref="agenda"/>
                     </div>
                     <div
                         class="tab-pane"
-                        :class="(activesubtab == 'new_meeting_agenda_tab_' + date.id) ? 'active' : ''"
+                        :class="checkLocalStorage('#meeting_date_' + date.id, '#new_meeting_agenda_tab_' + date.id, 'active')"
                         :id="'new_meeting_agenda_tab_' + date.id">
                         <MeetingAgendaForm
                             :meeting_date_id="date.id"
@@ -90,7 +107,7 @@
 
             <div
                 class="tab-pane"
-                :class="(activetab == 0) ? 'active' : ''"
+                :class="checkLocalStorage('#meeting_' + meeting.id, 'new_meeting_date_tab', 'active')"
                 id="new_meeting_date_tab">
                 <MeetingDateForm
                     :meeting="meeting"
@@ -117,8 +134,7 @@ export default {
             dates: {},
             search: '',
             showPrintOptions: false,
-            activetab: null,
-            activesubtab: null,
+            activeDate: null,
             agenda_ids: [],
         };
     },
@@ -145,24 +161,13 @@ export default {
                 return start.toLocaleString([], dateFormat) + " - " + end.toLocaleString([], dateFormat);
             }
         },
-        setActiveTab(tab, reset = ''){
-            if (reset == 'reset'){
-                this.$refs.new_meeting_date_tab.setData(reset);
-            }
-            this.activetab = tab;
+        setActiveDate(date){
+            this.activeDate = date;
         },
-        setActiveSubTab(tab, reset = ''){
-            this.activesubtab = tab;
+        editMeetingDate(){
+            this.setLocalStorage('#meeting_' + this.activeDate.meeting_id, 'new_meeting_date_tab');
+            this.$refs.new_meeting_date_tab.setData(this.activeDate);
         },
-        editMeetingDate(date){
-            this.setActiveTab(0);
-            this.$refs.new_meeting_date_tab.setData(date);
-        },
-
-       /* generateSubscribedItems(){
-            this.dates.forEach(d => d.agendas.forEach(a => this.agenda_ids.push(a.id)));
-            //console.log(this.agenda_ids);
-        }*/
 
     },
     mounted() {

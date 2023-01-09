@@ -49,7 +49,7 @@ class MeetingController extends Controller
                 if ($delete_gate) {
                     $actions .= '<button type="button" '
                         .'class="btn text-danger" '
-                        .'onclick="destroyDataTableEntry(\'meetings\','.$meetings->id.')">'
+                        .'onclick="event.preventDefault();destroyDataTableEntry(\'meetings\','.$meetings->id.');">'
                         .'<i class="fa fa-trash"></i></button>';
                 }
 
@@ -84,15 +84,15 @@ class MeetingController extends Controller
         $new_meeting = $this->validateRequest();
         $vm = new EventmanagementPlugin();
         $events = $vm->plugins[env('EVENTMANAGEMENTPLUGIN')]->lesePlrlpVeranstaltungen(['search'=> $new_meeting['uid']]);
-
+        //dump($events);
         $event = $events->lesePlrlpVeranstaltungen->data->key_0;
-         dump($event);
+        // dump($event);
         $meeting = Meeting::Create([
             'uid' => $event->ARTIKEL_NR ?: $new_meeting['uid'],
             'access_token' => '',
             'title' => $event->ARTIKEL,
             'subtitle' => '',
-            'description' => $event->BEMERKUNG,
+            'description' => nl2br($event->BEMERKUNG),
             'begin' => $event->B_DAT,
             'end' => $event->E_DAT,
             'status' => $event->PLAN_STAT,
@@ -165,6 +165,7 @@ class MeetingController extends Controller
             'description' => $new_meeting['description'],
             'info' => $new_meeting['info'],
             'speakers' => $new_meeting['speakers'],
+            'livestream' => $new_meeting['livestream'],
         ]);
 
         return redirect($meeting->path());
@@ -178,7 +179,11 @@ class MeetingController extends Controller
      */
     public function destroy(Meeting $meeting)
     {
-        //
+        $meeting->dates()->delete();
+        $return = $meeting->delete();
+        if (request()->wantsJson()) {
+            return ['message' => $return];
+        }
     }
 
     protected function validateRequest()
@@ -200,6 +205,7 @@ class MeetingController extends Controller
             'provider' => 'sometimes',
             'medium_id' => 'sometimes',
             'owner_id' => 'sometimes',
+            'livestream' => 'sometimes',
         ]);
     }
 }

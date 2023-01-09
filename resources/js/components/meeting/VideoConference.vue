@@ -1,17 +1,17 @@
 <template>
-    <span v-if="modus == 'Button'">
-            <a class="pull-right btn btn-primary btn-sm "
-               @click="submit()"
-            > +</a>
-    </span>
-    <span v-else>
-          <a class="pull-right btn btn-primary btn-sm "
-             :href="'/videoconferences/' + videoConference.id"
-             target="_blank"
-          >
+        <a v-if="modus === 'add'"
+           class=" btn btn-primary btn-sm "
+           @click="submit()">
+            <i class="fa-solid fa-plus"></i>
+            Videokonferenz anlegen
+        </a>
+        <a v-else-if="modus === 'link' "
+         class="btn btn-primary btn-sm "
+         :href="'/videoconferences/' + this.videoConference[0].id"
+         target="_blank">
             <i class="fa-solid fa-up-right-from-square"></i>
-            Link zum Konferenzraum</a><span class="clearfix"></span>
-    </span>
+            Link zum Konferenzraum
+        </a>
 </template>
 <script>
 import Form from "form-backend-validation";
@@ -19,10 +19,12 @@ import Form from "form-backend-validation";
 export default {
     name: 'VideoConference',
     props: {
-        videoConference: {},
+        videoConference:  {
+            type: Array
+        },
         modus: {
             type: String,
-            default: 'Button'
+            default: 'add'
         },
         subscribable_type: {
             type: String,
@@ -61,7 +63,7 @@ export default {
             edit: false,
             conference: '',
             form: new Form({
-                'id':'',
+                'id': '',
                 'meetingID': this.meetingID,
                 'meetingName': this.meetingName,
                 'attendeePW': this.attendeePW,

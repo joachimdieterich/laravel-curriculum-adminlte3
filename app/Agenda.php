@@ -49,4 +49,12 @@ class Agenda extends Model
         }
     }
 
+    public static function boot() {
+        parent::boot();
+
+        static::deleting(function($items) {
+            $items->delete(); //delete dates
+        });
+    }
+
 }

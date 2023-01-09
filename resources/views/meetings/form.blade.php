@@ -29,6 +29,12 @@
                     "placeholder" => "speakers",
                     "rows" => 3,
                     "value" => old('speakers', isset($meeting) ? $meeting->speakers : '')])
+@include ('forms.input.textarea',
+                    ["model" => "meeting",
+                    "field" => "livestream",
+                    "placeholder" => "livestream",
+                    "rows" => 3,
+                    "value" => old('livestream', isset($meeting) ? $meeting->livestream : '')])
 
 <div>
     <input

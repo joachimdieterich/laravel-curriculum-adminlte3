@@ -96,7 +96,7 @@
                                     "option_label" => "title",
                                    /* "optgroup" => $organizations,*/
                                     "optgroup_reference_field" => "organization_id",
-                                    "value" =>  old('group_id', isset($user->current_group_id) ? $user->current_group_id : '')])
+                                    "value" =>  old('group_id', isset($user->current_group_id) ?? '')])
 
                                 <div class="btn-group pull-right" role="group" aria-label="...">
                                     @include ('forms.input.button', ["onclick" => "enroleToGroup()", "field" => "enroleToGroup", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-plus", "label" => "In Gruppe einschreiben"])

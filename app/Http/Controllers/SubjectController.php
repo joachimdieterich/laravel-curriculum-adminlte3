@@ -39,7 +39,7 @@ class SubjectController extends Controller
                 if ($delete_gate) {
                     $actions .= '<button type="button" '
                         .'class="btn text-danger" '
-                        .'onclick="destroyDataTableEntry(\'subjects\','.$subject->id.')">'
+                        .'onclick="destroyDataTableEntry(\'subjects\','.$subject->id.');">'
                         .'<i class="fa fa-trash"></i></button>';
                 }
 

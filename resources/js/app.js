@@ -19,7 +19,7 @@ window.moment = require('moment');
 import _ from 'lodash'; //needed to get
 
 Vue.prototype.trans = (key) => {
-    return _.get(window.trans, key, key);
+    return _.get(window.trans, key, _.get(window.trans, 'global.' + key.split(".").splice(-1), key) );
 };
 
 import "vue-swatches/dist/vue-swatches.css";
@@ -278,6 +278,8 @@ Vue.directive('permission', function (el, binding, vnode) {
 
 });
 
+//global eventHub
+Vue.prototype.$eventHub = new Vue();
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

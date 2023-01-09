@@ -2,6 +2,9 @@
 
 @section('title')
     {{ trans('global.meeting.title_singular') }}
+    <a class="text-secondary text-lg" href="/meetings/{{$meeting->id}}/edit">
+        <i class="fa fa-pencil-alt"></i>
+    </a>
 @endsection
 
 @section('breadcrumb')

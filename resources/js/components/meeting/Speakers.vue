@@ -91,7 +91,6 @@ export default {
                 'agenda_item_id': this.item.id,
                 'title':'',
                 'user_id': '',
-
             }),
 
         };

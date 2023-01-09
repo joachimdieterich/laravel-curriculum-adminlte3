@@ -3,7 +3,12 @@
 
         <div class="col-md-12 col-lg-6">
             <div class="card mb-2 bg-gradient-dark">
-                <img class="card-img-top" :src="'/media/'+this.meeting.medium_id" alt="Dist Photo 1">
+                <img v-if ="this.meeting.medium_id"
+                     class="card-img-top"
+                     :src="'/media/'+this.meeting.medium_id"
+                     alt="image"
+                >
+                <div style="height:140px"></div>
 
                 <div class="card-img-overlay d-flex flex-column justify-content-end"
                      style="padding:0 !important;">
@@ -18,16 +23,8 @@
         </div>
 
         <div class="col-md-12 col-lg-6">
-            <div class="card mb-2 bg-gradient-dark">
-                <img class="card-img-top" :src="'/media/'+this.meeting.medium_id" alt="Dist Photo 1">
-
-                <div class="card-img-overlay d-flex flex-column justify-content-end"
-                     style="padding:0 !important;">
-                    <span class="p-3" style="background-color: rgba(0,0,0,0.5); ">
-                        <h5 class="card-title text-white" >Livestream</h5>
-                    </span>
-                </div>
-            </div>
+            <Livestream
+            :meeting="meeting"/>
         </div>
 <!--        Details-->
         <div class="col-12 pt-2">
@@ -39,12 +36,15 @@
                                data-toggle="pill" href="#custom-tabs-four-home" role="tab" aria-controls="custom-tabs-four-home"
                                aria-selected="true">Veranstaltungsbeschreibung</a>
                         </li>
-                        <li class="nav-item">
+                        <li v-if="meeting.info"
+                            class="nav-item" >
                             <a class="nav-link" id="custom-tabs-four-profile-tab"
                                data-toggle="pill" href="#custom-tabs-four-profile" role="tab"
                                aria-controls="custom-tabs-four-profile" aria-selected="false">Organisatorisches</a>
                         </li>
-                        <li class="nav-item">
+                        <li
+                            v-if="meeting.speakers"
+                            class="nav-item">
                             <a class="nav-link" id="custom-tabs-four-messages-tab"
                                data-toggle="pill" href="#custom-tabs-four-messages"
                                role="tab" aria-controls="custom-tabs-four-messages" aria-selected="false">Referent:innen</a>
@@ -107,6 +107,8 @@
 
 <script>
 import MeetingDates from "./MeetingDates";
+import Livestream from "./Livestream";
+
 export default {
     props: {
         'meeting': Object,
@@ -146,8 +148,8 @@ export default {
 
     },
     components: {
+        Livestream,
         MeetingDates
-
     }
 
 }

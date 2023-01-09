@@ -26,10 +26,10 @@ return [
     'edit' => 'editieren',
     'delete' => 'löschen',
     'forceDelete' => 'Datensatz endgültig löschen.',
-    'save' => 'speichern',
-    'open' => 'öffnen',
+    'save' => 'Speichern',
+    'open' => 'Öffnen',
     'cancel' => 'Abbrechen',
-    'close' => 'schließen',
+    'close' => 'Schließen',
     'generate' => 'erzeugen',
     'share' => 'Teilen',
     'pleaseSelect' => 'Bitte wählen ',
@@ -1205,7 +1205,7 @@ return [
             'id' => 'ID',
             'id_helper' => '',
             'content' => 'Inhalt',
-            'content' => '',
+            'content_helper' => '',
         ],
     ],
     'lms' => [
@@ -1238,6 +1238,8 @@ return [
             'category'         => 'Kategorie',
             'target_group'     => 'Zielgruppe',
             'provider'         => 'Anbieter',
+            'livestream'       => 'Livestream',
+            'livestream_helper'=> ''
         ],
     ],
     'meetingDate'              => [

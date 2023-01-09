@@ -10,7 +10,26 @@ class Meeting extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'id',
+        'uid',
+        'access_token',
+        'title',
+        'subtitle',
+        'description',
+        'info',
+        'speakers',
+        'begin',
+        'end',
+        'status',
+        'category',
+        'target_group',
+        'url',
+        'provider',
+        'medium_id',
+        'owner_id',
+        'livestream',
+    ];
 
     protected $dates = [
         'updated_at',
@@ -46,4 +65,5 @@ class Meeting extends Model
     {
         return $this->belongsTo(User::class);
     }
+
 }

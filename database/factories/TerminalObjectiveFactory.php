@@ -27,6 +27,7 @@ class TerminalObjectiveFactory extends Factory
             'description' => $this->faker->sentence,
             'curriculum_id' => 1,
             'objective_type_id' => 1,
+            'order_id' => 0,
         ];
     }
 

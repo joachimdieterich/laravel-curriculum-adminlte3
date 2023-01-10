@@ -7,6 +7,7 @@ use App\TerminalObjective;
 use App\EnablingObjective;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class AchievementCRUDTest extends TestCase
@@ -21,6 +22,7 @@ class AchievementCRUDTest extends TestCase
         $this->post('curricula', Curriculum::factory()->raw());
         $this->post('terminalObjectives', TerminalObjective::factory()->raw());
         $this->post('enablingObjectives', EnablingObjective::factory()->raw());
+
     }
 
     /** @test

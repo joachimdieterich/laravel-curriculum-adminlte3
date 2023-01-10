@@ -82,9 +82,9 @@ class ApiOrganizationTest extends TestCase
     {
         $this->signInApiAdmin();
 
-        $this->post('/api/v1/organizations', $attributes = Organization::factory()->raw()); //create new organization with ID 2, ID 1 exists seeded
+        $result = $this->post('/api/v1/organizations', $attributes = Organization::factory()->raw()); //create new organization with ID 2, ID 1 exists seeded
 
-        $this->delete('/api/v1/organizations/2');
+        $this->delete('/api/v1/organizations/'.$result['id']);
 
         $this->assertDatabaseMissing('organizations', $attributes);
     }

@@ -32,7 +32,7 @@ class CurriculumSyncObjectiveTypesOrderTest extends TestCase
 
         $this->assertDatabaseHas('curricula', [
             'id' => $curriculum->id,
-            'objective_type_order' => "[3,2,1]",
+            'objective_type_order' => $this->castAsJson([3, 2, 1]),
         ]);
     }
 

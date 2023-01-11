@@ -268,6 +268,8 @@ export default {
 
             form: new Form({
                 'path': '',
+                'thumb_path': '',
+                'external_id': '',
                 'subscribable_type': null,
                 'subscribable_id': null,
                 'repository': 'local',
@@ -412,21 +414,20 @@ export default {
 
             axios.get(path, { params: { per_page: this.per_page } })
                 .then((response)=>{
-                    this.files = response.data.data;
-                    this.current_page = response.data.current_page;
+                    this.files          = response.data.data;
+                    this.current_page   = response.data.current_page;
                     this.first_page_url = response.data.first_page_url;
-                    this.from = response.data.from;
-                    this.last_page = response.data.last_page;
-                    this.last_page_url = response.data.last_page_url;
-                    this.next_page_url = response.data.next_page_url;
-                    this.path = response.data.path;
-                    this.per_page = response.data.per_page;
-                    this.prev_page_url = response.data.prev_page_url;
-                    this.to = response.data.to;
-                    this.total = response.data.total;
+                    this.from           = response.data.from;
+                    this.last_page      = response.data.last_page;
+                    this.last_page_url  = response.data.last_page_url;
+                    this.next_page_url  = response.data.next_page_url;
+                    this.path           = response.data.path;
+                    this.per_page       = response.data.per_page;
+                    this.prev_page_url  = response.data.prev_page_url;
+                    this.to             = response.data.to;
+                    this.total          = response.data.total;
                 });
         },
-
     },
     computed: {
         isInitial() {
@@ -445,6 +446,15 @@ export default {
     mounted() {
         this.reset();
         this.getFiles();
+
+        this.$eventHub.$on('external_add', (form) => {
+            console.log(form);
+            this.form = form;
+            axios.post('/media?repository=' + this.form.repository, this.form)
+                 .then((response) => {
+                    this.saveToForm()
+                 });
+        });
     },
     components: {
         RepositoryPluginCreate

@@ -290,6 +290,9 @@ class LocalMediaAdapter implements MediaInterface
     {
         return request()->validate([
             'path' => 'sometimes',
+            'thumb_path' => 'sometimes',
+            'external_id' => 'sometimes',
+            'adapter' => 'sometimes',
             'subscribable_type' => 'sometimes',
             'subscribable_id' => 'sometimes',
             'repository' => 'sometimes',

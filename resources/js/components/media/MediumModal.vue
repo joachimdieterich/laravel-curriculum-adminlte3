@@ -96,7 +96,7 @@
                          class="btn btn-primary"
                          data-widget="remove"
                          @click="close();window.open(medium.path, '_blank');">
-                         <a :href="scr" class="text-white text-decoration-none" target="_blank">{{ trans('global.downloadFile') }}</a>
+                         <a :href="scr + '?download=true'" class="text-white text-decoration-none" target="_blank">{{ trans('global.downloadFile') }}</a>
                      </button>
                 </span>
             </div>
@@ -146,6 +146,7 @@ import License from '../uiElements/License'
                     case 'image/tiff':
                     case 'image/ico':
                     case 'image/svg':
+                    case 'edusharing':
                         return 'img';
                         break;
                     // default use <embed>
@@ -188,7 +189,7 @@ import License from '../uiElements/License'
         },
         computed: {
             scr: function () {
-                return '/media/'+ this.medium.id;
+                return '/media/' + this.medium.id ;
             },
         },
         components: {

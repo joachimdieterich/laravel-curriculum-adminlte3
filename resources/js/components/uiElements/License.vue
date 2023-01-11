@@ -8,7 +8,7 @@
         <i v-if="licenseId > 3 && licenseId < 10 " class="fab fa-creative-commons-by"></i>
         <i v-if="licenseId === 5 || licenseId === 6" class="fab fa-creative-commons-nd"></i>
         <i v-if="licenseId === 6 || licenseId === 7 || licenseId === 8" class="fab fa-creative-commons-nc-eu"></i>
-        <i v-if="licenseId === 7 || licenseId === 9" class="fab fa-creative-commons-sa"></i>
+        <i v-if="licenseId === 8 || licenseId === 9" class="fab fa-creative-commons-sa"></i>
 
     </span>
 

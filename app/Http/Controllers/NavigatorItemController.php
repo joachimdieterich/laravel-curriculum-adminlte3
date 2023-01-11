@@ -99,7 +99,7 @@ class NavigatorItemController extends Controller
                 break;
             case 'App\Medium':          $title = $new_navigator_item['title'];
                                         $description = $new_navigator_item['description'];
-                                        $referenceable_id = $new_navigator_item['medium_id']; //$medium->getByFilemanagerPath($new_navigator_item['filepath'])->id;
+                                        $referenceable_id = $new_navigator_item['medium_id'];
                 break;
 
             default:

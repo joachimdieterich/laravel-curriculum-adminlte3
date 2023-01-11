@@ -21,9 +21,9 @@ class MediumController extends Controller
         $this->repository = $request->filled('repository') ? $request->input('repository') : config('medium.repositories.default');
     }
 
-    protected function adapter()
+    protected function adapter(String $adapter = null )
     {
-        return config('medium.repositories.' .  $this->repository . '.adapter');
+        return config('medium.repositories.' .  $adapter . '.adapter') ?? config('medium.repositories.' .  $this->repository . '.adapter');
     }
 
     /**
@@ -72,7 +72,7 @@ class MediumController extends Controller
      */
     public function show(Medium $medium)
     {
-        return $this->adapter()->show($medium);
+        return $this->adapter($medium->adapter)->show($medium);
     }
 
     public function thumb(Medium $medium, $size = 200)
@@ -118,15 +118,6 @@ class MediumController extends Controller
     {
         abort(404);
     }
-
-    /*public function getMediumByEventPath($path)
-    {
-        $m = new Medium();
-
-        return Medium::where('path', $m->convertFilemanagerEventPathToMediumPath($path))
-                        ->where('medium_name', basename($path))
-                        ->get()->first();
-    }*/
 
     public function checkIfUserHasSubscription($subscription)
     {

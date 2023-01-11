@@ -1,19 +1,10 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace App\Plugins\Repositories\edusharing;
 
 use App\Config;
 use App\Plugins\Repositories\RepositoryPlugin;
 use App\RepositorySubscription;
 use Illuminate\Support\Facades\Auth;
-use SoapClient;
-use SOAPHeader;
 
 /**
  * Description of plugin
@@ -24,7 +15,7 @@ class Edusharing extends RepositoryPlugin
 {
     const PLUGINNAME = 'edusharing';
 
-    private $accessToken = null;
+    public $accessToken = null;
 
     private $grant_type;
 
@@ -56,11 +47,12 @@ class Edusharing extends RepositoryPlugin
         $this->repoUser = env('EDUSHARING_REPO_USER', '');
         $this->repoPwd = env('EDUSHARING_REPO_PWD', '');
         $this->proxy = env('EDUSHARING_REPO_PROXY', false);
-        $this->proxy = env('EDUSHARING_REPO_PROXY_PORT', false);
+        $this->proxy_port = env('EDUSHARING_REPO_PROXY_PORT', false);
 
         if (isset(auth()->user()->id)) {
             $this->setTokens(); //do not set token here to prevent blankpage if edusharing is offline
         }
+
     }
 
     private function getPersonalToken()
@@ -77,10 +69,15 @@ class Edusharing extends RepositoryPlugin
         $paramstrusted = ['applicationId'  => $appId,
             'ticket'  => session_id(), 'ssoData'  => edusharing_get_auth_data(), ];
 
-        $client = new mod_edusharing_sig_soap_client($wsdl);
+        try {
+            $client = new EdusharingSoapClient($wsdl);
 
-        $return = $client->authenticateByTrustedApp($paramstrusted);
-        $this->accessToken = $return->authenticateByTrustedAppReturn->ticket;
+            $return = $client->authenticateByTrustedApp($paramstrusted);
+            $this->accessToken = $return->authenticateByTrustedAppReturn->ticket;
+        } catch (Exception $e) {
+            trigger_error( $e, E_USER_WARNING);
+        }
+
     }
 
     private function setTokens()
@@ -579,55 +576,4 @@ function edusharing_get_auth_data()
         ['key'  => 'affiliation', 'value'  => ''],
         ['key'  => 'affiliationname', 'value' => ''],
     ];
-}
-
-// SOAP-Client
-class mod_edusharing_sig_soap_client extends SoapClient
-{
-    /**
-     * Set app properties and soap headers
-     *
-     * @param  string  $wsdl
-     * @param  array  $options
-     */
-    public function __construct($wsdl, $options = [])
-    {
-        ini_set('default_socket_timeout', 15);
-        parent::__construct($wsdl, $options);
-        $this->edusharing_set_soap_headers();
-    }
-
-    /**
-     * Set soap headers
-     *
-     * @throws Exception
-     */
-    private function edusharing_set_soap_headers()
-    {
-        $appId = Config::where([
-            ['referenceable_type', '=', 'App\Edusharing'],
-            ['key', '=',  'appId'],
-        ])->get()->first()->value;
-        $privkey = Config::where([
-            ['referenceable_type', '=', 'App\Edusharing'],
-            ['key', '=',  'privateKey'],
-        ])->get()->first()->value;
-
-        try {
-            $timestamp = round(microtime(true) * 1000);
-            $signdata = $appId.$timestamp;
-            $pkeyid = openssl_get_privatekey($privkey);
-            openssl_sign($signdata, $signature, $pkeyid);
-            $signature = base64_encode($signature);
-            openssl_free_key($pkeyid);
-            $headers = [];
-            $headers[] = new SOAPHeader('http://webservices.edu_sharing.org', 'appId', $appId);
-            $headers[] = new SOAPHeader('http://webservices.edu_sharing.org', 'timestamp', $timestamp);
-            $headers[] = new SOAPHeader('http://webservices.edu_sharing.org', 'signature', $signature);
-            $headers[] = new SOAPHeader('http://webservices.edu_sharing.org', 'signed', $signdata);
-            parent::__setSoapHeaders($headers);
-        } catch (Exception $e) {
-            throw new Exception(get_string('error_set_soap_headers', 'edusharing').$e->getMessage());
-        }
-    }
 }

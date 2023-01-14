@@ -13,7 +13,6 @@
                        v-bind:class="[iconCss(subscription.medium.mime_type)]"></i>
                     {{ subscription.medium.title }}
 
-
                     <i class="pull-right fa fa-graduation-cap text-muted"
                        v-if="subscription.visibility && currentUser.id === subscription.owner_id"
                        v-permission="'artefact_create'"

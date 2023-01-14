@@ -7,23 +7,23 @@ use Illuminate\Http\Request;
 
 interface MediaInterface
 {
-    public function index (Request $request);
+    public function index(Request $request);
 
-    public function list ();
+    public function list();
 
     public function create();
 
-    public function store (Request $request);
+    public function store(Request $request);
 
-    public function show (Medium $medium);
+    public function show(Medium $medium);
 
-    public function thumb (Medium $medium,  Integer $size);
+    public function thumb(Medium $medium, Integer $size);
 
-    public function edit (Medium $medium);
+    public function edit(Medium $medium);
 
-    public function update (Request $request, Medium $medium);
+    public function update(Request $request, Medium $medium);
 
-    public function destroy (Medium $medium, Mixed $subscribable_type , Mixed $subscribable_id);
+    public function destroy(Medium $medium, mixed $subscribable_type, mixed $subscribable_id);
 
     public function checkIfUserHasSubscription($subscription);
 }

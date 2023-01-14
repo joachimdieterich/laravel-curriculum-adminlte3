@@ -23,13 +23,13 @@ class NavigatorItemTest extends DuskTestCase
     {
         $this->browse(function (Browser $admin) {
             $navigator = Navigator::create([
-                'title'             => 'DuskNavigator',
-                'organization_id'   => 1,
+                'title' => 'DuskNavigator',
+                'organization_id' => 1,
             ]);
             $navigatorView = NavigatorView::create([
-                'title'             => 'First View',
-                'description'       => 'First View Description',
-                'navigator_id'      => $navigator->id,
+                'title' => 'First View',
+                'description' => 'First View Description',
+                'navigator_id' => $navigator->id,
             ]);
             $title = 'Second View';
             $description = 'Second View description';
@@ -71,13 +71,13 @@ class NavigatorItemTest extends DuskTestCase
     {
         $this->browse(function (Browser $admin) {
             $navigator = Navigator::create([
-                'title'             => 'DuskNavigator',
-                'organization_id'   => 1,
+                'title' => 'DuskNavigator',
+                'organization_id' => 1,
             ]);
             $navigatorView = NavigatorView::create([
-                'title'             => 'First View',
-                'description'       => 'First View Description',
-                'navigator_id'      => $navigator->id,
+                'title' => 'First View',
+                'description' => 'First View Description',
+                'navigator_id' => $navigator->id,
             ]);
             $curriculum = Curriculum::find(1);
             $admin->loginAs(User::find(1))
@@ -116,13 +116,13 @@ class NavigatorItemTest extends DuskTestCase
     {
         $this->browse(function (Browser $admin) {
             $navigator = Navigator::create([
-                'title'             => 'DuskNavigator',
-                'organization_id'   => 1,
+                'title' => 'DuskNavigator',
+                'organization_id' => 1,
             ]);
             $navigatorView = NavigatorView::create([
-                'title'             => 'First View',
-                'description'       => 'First View Description',
-                'navigator_id'      => $navigator->id,
+                'title' => 'First View',
+                'description' => 'First View Description',
+                'navigator_id' => $navigator->id,
             ]);
             $title = 'Navigator text title';
             $description = 'Navigator text description';
@@ -160,13 +160,13 @@ class NavigatorItemTest extends DuskTestCase
     {
         $this->browse(function (Browser $admin) {
             $navigator = Navigator::create([
-                'title'             => 'DuskNavigator',
-                'organization_id'   => 1,
+                'title' => 'DuskNavigator',
+                'organization_id' => 1,
             ]);
             $navigatorView = NavigatorView::create([
-                'title'             => 'First View',
-                'description'       => 'First View Description',
-                'navigator_id'      => $navigator->id,
+                'title' => 'First View',
+                'description' => 'First View Description',
+                'navigator_id' => $navigator->id,
             ]);
             $title = 'Medium title';
             $description = 'Medium description';

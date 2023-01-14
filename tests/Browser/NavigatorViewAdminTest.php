@@ -19,8 +19,8 @@ class NavigatorViewAdminTest extends DuskTestCase
     {
         $this->browse(function (Browser $admin) {
             $navigator = Navigator::create([
-                'title'             => 'DuskNavigator',
-                'organization_id'   => 1,
+                'title' => 'DuskNavigator',
+                'organization_id' => 1,
             ]);
             $admin->loginAs(User::find(1))
                     ->visit(new Pages\NavigatorPage)
@@ -45,13 +45,13 @@ class NavigatorViewAdminTest extends DuskTestCase
     {
         $this->browse(function (Browser $admin) {
             $navigator = Navigator::create([
-                'title'             => 'DuskNavigator',
-                'organization_id'   => 1,
+                'title' => 'DuskNavigator',
+                'organization_id' => 1,
             ]);
             $navigatorView = NavigatorView::create([
-                'title'             => 'First View',
-                'description'       => 'First View Description',
-                'navigator_id'      => $navigator->id,
+                'title' => 'First View',
+                'description' => 'First View Description',
+                'navigator_id' => $navigator->id,
             ]);
 
             $admin->loginAs(User::find(1))
@@ -72,13 +72,13 @@ class NavigatorViewAdminTest extends DuskTestCase
     {
         $this->browse(function (Browser $admin) {
             $navigator = Navigator::create([
-                'title'             => 'DuskNavigator',
-                'organization_id'   => 1,
+                'title' => 'DuskNavigator',
+                'organization_id' => 1,
             ]);
             $navigatorView = NavigatorView::create([
-                'title'             => 'First View',
-                'description'       => 'First View Description',
-                'navigator_id'      => $navigator->id,
+                'title' => 'First View',
+                'description' => 'First View Description',
+                'navigator_id' => $navigator->id,
             ]);
 
             $admin->loginAs(User::find(1))
@@ -105,13 +105,13 @@ class NavigatorViewAdminTest extends DuskTestCase
     {
         $this->browse(function (Browser $admin) {
             $navigator = Navigator::create([
-                'title'             => 'DuskNavigator',
-                'organization_id'   => 1,
+                'title' => 'DuskNavigator',
+                'organization_id' => 1,
             ]);
             $navigatorView = NavigatorView::create([
-                'title'             => 'First View',
-                'description'       => 'First View Description',
-                'navigator_id'      => $navigator->id,
+                'title' => 'First View',
+                'description' => 'First View Description',
+                'navigator_id' => $navigator->id,
             ]);
 
             $admin->loginAs(User::find(1))

@@ -35,26 +35,26 @@ return [
 
     'pdf' => [
         'enabled' => true,
-        'binary'  => env('SNAPPY_PDF_BINARY', ''),
+        'binary' => env('SNAPPY_PDF_BINARY', ''),
         'timeout' => 3600,
         'options' => [
             //'quiet' => true,
             'load-error-handling' => 'ignore',
             'load-media-error-handling' => 'ignore',
         ],
-        'env'     => [],
+        'env' => [],
     ],
 
     'image' => [
         'enabled' => true,
-        'binary'  => env('SNAPPY_IMAGE_BINARY', ''),
+        'binary' => env('SNAPPY_IMAGE_BINARY', ''),
         'timeout' => 3600,
         'options' => [
             //'quiet' => true,
             'load-error-handling' => 'ignore',
             'load-media-error-handling' => 'ignore',
         ],
-        'env'     => [],
+        'env' => [],
     ],
 
 ];

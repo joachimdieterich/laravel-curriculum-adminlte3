@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Database\Factories;
 
 use App\Task;
@@ -31,7 +30,7 @@ class TaskFactory extends Factory
 
         return [
             'title' => $this->faker->company,
-            'description' => $this->faker->sentence,
+            'description' => $this->faker->word,
             'start_date' => $start_date_string,
             'due_date' => $end_date_string,
             'owner_id' => auth()->user()->id,

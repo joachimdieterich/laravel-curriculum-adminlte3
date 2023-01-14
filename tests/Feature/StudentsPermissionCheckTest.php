@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Course;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -34,8 +35,10 @@ class StudentsPermissionCheckTest extends TestCase
     /** @test */
     public function can_access_a_curriculum_where_its_group_is_enroled()
     {
+        $course = Course::all()->last();
+
         $this->followingRedirects()
-            ->get('/courses/1')
+            ->get('/courses/'.$course->id)
             ->assertStatus(200); //curriculum was created by seeder
     }
 

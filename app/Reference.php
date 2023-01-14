@@ -15,12 +15,12 @@ class Reference extends Model
     public function subscribe($model, $sharing_level_id = 1, $visibility = true)
     {
         $subscribe = ReferenceSubscription::firstOrCreate([
-            'reference_id' =>  $this->id,
-            'referenceable_type'=> get_class($model),
-            'referenceable_id'=> $model->id,
-            'sharing_level_id'=> $sharing_level_id,
-            'visibility'=> $visibility,
-            'owner_id'=> auth()->user()->id,
+            'reference_id' => $this->id,
+            'referenceable_type' => get_class($model),
+            'referenceable_id' => $model->id,
+            'sharing_level_id' => $sharing_level_id,
+            'visibility' => $visibility,
+            'owner_id' => auth()->user()->id,
         ]);
     }
 

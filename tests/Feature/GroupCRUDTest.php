@@ -21,7 +21,6 @@ class GroupCRUDTest extends TestCase
      */
     public function an_administrator_see_groups()
     {
-
         $this->get('groups')
             ->assertStatus(200);
 
@@ -30,9 +29,10 @@ class GroupCRUDTest extends TestCase
         $list = $this->get('groups/list')
             ->assertStatus(200);
         $i = 0;
-        foreach ($groups as $group)
-        {
-            if ($i === 49) { break; } //test max 50 entries (default page limit on datatables
+        foreach ($groups as $group) {
+            if ($i === 49) {
+                break;
+            } //test max 50 entries (default page limit on datatables
             $list->assertJsonFragment($group->toArray());
             $i++;
         }
@@ -68,7 +68,7 @@ class GroupCRUDTest extends TestCase
         $ids = $groups->pluck('id')->toArray();
 
         $this->delete('/groups/massDestroy', $attributes = [
-            'ids' =>  $ids,
+            'ids' => $ids,
         ])->assertStatus(204);
 
         foreach ($ids as $id) {

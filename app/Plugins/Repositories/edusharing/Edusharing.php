@@ -1,19 +1,11 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace App\Plugins\Repositories\edusharing;
 
 use App\Config;
 use App\Plugins\Repositories\RepositoryPlugin;
 use App\RepositorySubscription;
 use Illuminate\Support\Facades\Auth;
-use SoapClient;
-use SOAPHeader;
 
 /**
  * Description of plugin
@@ -24,7 +16,7 @@ class Edusharing extends RepositoryPlugin
 {
     const PLUGINNAME = 'edusharing';
 
-    private $accessToken = null;
+    public $accessToken = null;
 
     private $grant_type;
 
@@ -56,7 +48,7 @@ class Edusharing extends RepositoryPlugin
         $this->repoUser = env('EDUSHARING_REPO_USER', '');
         $this->repoPwd = env('EDUSHARING_REPO_PWD', '');
         $this->proxy = env('EDUSHARING_REPO_PROXY', false);
-        $this->proxy = env('EDUSHARING_REPO_PROXY_PORT', false);
+        $this->proxy_port = env('EDUSHARING_REPO_PROXY_PORT', false);
 
         if (isset(auth()->user()->id)) {
             $this->setTokens(); //do not set token here to prevent blankpage if edusharing is offline
@@ -74,13 +66,17 @@ class Edusharing extends RepositoryPlugin
             ['referenceable_type', '=', 'App\Edusharing'],
             ['key', '=',  'wsdl'],
         ])->get()->first()->value;
-        $paramstrusted = ['applicationId'  => $appId,
-            'ticket'  => session_id(), 'ssoData'  => edusharing_get_auth_data(), ];
+        $paramstrusted = ['applicationId' => $appId,
+            'ticket' => session_id(), 'ssoData' => edusharing_get_auth_data(), ];
 
-        $client = new mod_edusharing_sig_soap_client($wsdl);
+        try {
+            $client = new EdusharingSoapClient($wsdl);
 
-        $return = $client->authenticateByTrustedApp($paramstrusted);
-        $this->accessToken = $return->authenticateByTrustedAppReturn->ticket;
+            $return = $client->authenticateByTrustedApp($paramstrusted);
+            $this->accessToken = $return->authenticateByTrustedAppReturn->ticket;
+        } catch (Exception $e) {
+            trigger_error($e, E_USER_WARNING);
+        }
     }
 
     private function setTokens()
@@ -159,7 +155,7 @@ class Edusharing extends RepositoryPlugin
                 [
                     'userName' => $userName,
                     'password' => $password,
-                    'scope'    => $scope,
+                    'scope' => $scope,
                 ]
             )
         );
@@ -237,7 +233,7 @@ class Edusharing extends RepositoryPlugin
             $this->repoUrl.'/rest/organization/v1/organizations/-home-/'.$organization.'?folder='.$folderId,
             'PUT',
             [],
-            json_encode(['organization'=>$organization, 'folder' => $folderId])
+            json_encode(['organization' => $organization, 'folder' => $folderId])
         );
     }
 
@@ -393,11 +389,11 @@ class Edusharing extends RepositoryPlugin
                 'criterias' => [
                     [
                         'property' => $params['property'],
-                        'values'   => [$params['value']],
+                        'values' => [$params['value']],
                     ],
                     [
                         'property' => $filter,
-                        'values'   => [
+                        'values' => [
                             $filter_value,
                         ],
                     ],
@@ -408,7 +404,7 @@ class Edusharing extends RepositoryPlugin
                 'criterias' => [
                     [
                         'property' => $params['property'],
-                        'values'   => [$params['value']],
+                        'values' => [$params['value']],
                     ],
                     /* todo: check effect of search_context for results
                     array (
@@ -449,7 +445,7 @@ class Edusharing extends RepositoryPlugin
         $maxItems = isset($query['maxItems']) ? $query['maxItems'] : 100;             // used for pagination
         $skipCount = isset($query['skipCount']) ? $query['skipCount'] : ($query['page'] * $maxItems);            // used for pagination
 
-        return $this->getSearchCustom($repo, ['contentType' =>$contentType, 'property' => $property, 'value' => $value, 'maxItems' => $maxItems, 'skipCount' => $skipCount]);
+        return $this->getSearchCustom($repo, ['contentType' => $contentType, 'property' => $property, 'value' => $value, 'maxItems' => $maxItems, 'skipCount' => $skipCount]);
     }
 
 //    public function getExternalsubscriptions ($model, $id, $files)
@@ -511,15 +507,15 @@ class Edusharing extends RepositoryPlugin
             }
 
             $collection->push([
-                'value'       => isset($node['ref']['id']) ? $node['ref']['id'] : $arguments, //value field in db
-                'node_id'     => isset($node['ref']['id']) ? $node['ref']['id'] : null,
-                'uuid'        => isset($node['properties']['cm:creator']) ? $node['properties']['cm:creator'][0] : null,
-                'license'     => isset($node['license']) ? $node['license'] : null,
-                'title'       => $this->getReadableTitle($node), //isset($node['title']) ?  $node['title'] : $node['name'],
+                'value' => isset($node['ref']['id']) ? $node['ref']['id'] : $arguments, //value field in db
+                'node_id' => isset($node['ref']['id']) ? $node['ref']['id'] : null,
+                'uuid' => isset($node['properties']['cm:creator']) ? $node['properties']['cm:creator'][0] : null,
+                'license' => isset($node['license']) ? $node['license'] : null,
+                'title' => $this->getReadableTitle($node), //isset($node['title']) ?  $node['title'] : $node['name'],
                 'description' => isset($node['description']) ? $node['description'] : '',
-                'thumb'       => isset($node['preview']['url']) ? $node['preview']['url'].'&ticket='.$this->accessToken : '',
-                'iconURL'     => isset($node['iconURL']) ? $node['iconURL'] : '',
-                'path'        => isset($node['ref']['id']) ? $this->repoUrl.'/components/render/'.$node['ref']['id'].'?ticket='.$this->accessToken : '',
+                'thumb' => isset($node['preview']['url']) ? $node['preview']['url'].'&ticket='.$this->accessToken : '',
+                'iconURL' => isset($node['iconURL']) ? $node['iconURL'] : '',
+                'path' => isset($node['ref']['id']) ? $this->repoUrl.'/components/render/'.$node['ref']['id'].'?ticket='.$this->accessToken : '',
             ]);
         }
 
@@ -572,62 +568,11 @@ class Edusharing extends RepositoryPlugin
 function edusharing_get_auth_data()
 {
     return [
-        ['key'  => 'userid', 'value'  => auth()->user()->common_name],
-        ['key'  => 'lastname', 'value'  => auth()->user()->firstname],
-        ['key'  => 'firstname', 'value'  => auth()->user()->lastname],
-        ['key'  => 'email', 'value'  => auth()->user()->email],
-        ['key'  => 'affiliation', 'value'  => ''],
-        ['key'  => 'affiliationname', 'value' => ''],
+        ['key' => 'userid', 'value' => auth()->user()->common_name],
+        ['key' => 'lastname', 'value' => auth()->user()->firstname],
+        ['key' => 'firstname', 'value' => auth()->user()->lastname],
+        ['key' => 'email', 'value' => auth()->user()->email],
+        ['key' => 'affiliation', 'value' => ''],
+        ['key' => 'affiliationname', 'value' => ''],
     ];
-}
-
-// SOAP-Client
-class mod_edusharing_sig_soap_client extends SoapClient
-{
-    /**
-     * Set app properties and soap headers
-     *
-     * @param  string  $wsdl
-     * @param  array  $options
-     */
-    public function __construct($wsdl, $options = [])
-    {
-        ini_set('default_socket_timeout', 15);
-        parent::__construct($wsdl, $options);
-        $this->edusharing_set_soap_headers();
-    }
-
-    /**
-     * Set soap headers
-     *
-     * @throws Exception
-     */
-    private function edusharing_set_soap_headers()
-    {
-        $appId = Config::where([
-            ['referenceable_type', '=', 'App\Edusharing'],
-            ['key', '=',  'appId'],
-        ])->get()->first()->value;
-        $privkey = Config::where([
-            ['referenceable_type', '=', 'App\Edusharing'],
-            ['key', '=',  'privateKey'],
-        ])->get()->first()->value;
-
-        try {
-            $timestamp = round(microtime(true) * 1000);
-            $signdata = $appId.$timestamp;
-            $pkeyid = openssl_get_privatekey($privkey);
-            openssl_sign($signdata, $signature, $pkeyid);
-            $signature = base64_encode($signature);
-            openssl_free_key($pkeyid);
-            $headers = [];
-            $headers[] = new SOAPHeader('http://webservices.edu_sharing.org', 'appId', $appId);
-            $headers[] = new SOAPHeader('http://webservices.edu_sharing.org', 'timestamp', $timestamp);
-            $headers[] = new SOAPHeader('http://webservices.edu_sharing.org', 'signature', $signature);
-            $headers[] = new SOAPHeader('http://webservices.edu_sharing.org', 'signed', $signdata);
-            parent::__setSoapHeaders($headers);
-        } catch (Exception $e) {
-            throw new Exception(get_string('error_set_soap_headers', 'edusharing').$e->getMessage());
-        }
-    }
 }

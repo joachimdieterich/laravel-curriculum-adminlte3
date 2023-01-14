@@ -637,7 +637,7 @@ return [
             'title_helper' => '',
             'content' => 'Content',
             'content_helper' => '',
-        ]
+        ],
     ],
     'categorie' => [
         'title' => 'Categories',
@@ -649,7 +649,7 @@ return [
             'id_helper' => '',
             'title' => 'Title',
             'title_helper' => '',
-        ]
+        ],
     ],
     'curriculum' => [
         'title' => 'Curricula',
@@ -796,19 +796,19 @@ return [
             'title_helper' => '',
         ],
     ],
-    'navigator_view' =>[
-        'title'          => 'Navigator Views',
+    'navigator_view' => [
+        'title' => 'Navigator Views',
         'title_singular' => 'Navigator View',
-        'create'         => 'Create Navigator-View',
-        'edit'           => 'Edit Navigator-View',
-        'fields'         => [
-            'id'         => 'ID',
-            'id_helper'  => '',
-            'title'      => 'Title',
-            'title_helper'  => '',
-            'description'    => 'Description',
-            'description_helper'  => '',
-        ]
+        'create' => 'Create Navigator-View',
+        'edit' => 'Edit Navigator-View',
+        'fields' => [
+            'id' => 'ID',
+            'id_helper' => '',
+            'title' => 'Title',
+            'title_helper' => '',
+            'description' => 'Description',
+            'description_helper' => '',
+        ],
     ],
     'navigator_item' => [
         'title' => 'Navigator Items',
@@ -831,8 +831,8 @@ return [
             'css_class' => 'css_class',
             'css_class_helper' => '',
             'visibility_show' => 'show',
-            'visibility_hide' => 'hide'
-        ]
+            'visibility_hide' => 'hide',
+        ],
     ],
     'referenceable_types' => [
         'objective' => 'Link terminal/enabling objective',
@@ -978,29 +978,29 @@ return [
             'status' => 'Status',
             'completed_at' => 'Completed At',
             'created_at' => 'Created At',
-            'action' => 'Action'
+            'action' => 'Action',
         ],
         'add_remove_users' => [
             'students_exam_title' => 'Students in Exam',
-            'users_group_title' => 'Users in Group '
+            'users_group_title' => 'Users in Group ',
         ],
         'status_options' => [
             'not_started' => 'Not Started',
             'started' => 'Started',
-            'completed' => 'Completed'
+            'completed' => 'Completed',
         ],
         'confirm_messages' => [
-            'confirm_delete' => 'Are you sure you want to delete this Exam?'
+            'confirm_delete' => 'Are you sure you want to delete this Exam?',
         ],
         'success_messages' => [
             'exam_created' => 'Successfully Created Exam',
-            'exam_removed' => 'Successfully removed Exam'
+            'exam_removed' => 'Successfully removed Exam',
         ],
         'error_messages' => [
             'get_tests' => 'Test list could not be retrieved',
             'remove_users' => 'Students who have already started or completed this exam cannot be removed',
-            'remove_exam' => 'This Exam has been started by one or more Student(s) and cannot be removed'
-        ]
+            'remove_exam' => 'This Exam has been started by one or more Student(s) and cannot be removed',
+        ],
     ],
     'absences' => [
         'title' => 'Absences',
@@ -1087,10 +1087,10 @@ return [
             'description_helper' => '',
             'begin' => 'Start date',
             'begin_helper' => '',
-            'end'          => 'Due date',
-            'end_helper'   => '',
-            'duration'          => 'Duration',
-            'duration_helper'   => 'Specify how much time (in minutes) should be scheduled to complete the learning/work schedule.',
+            'end' => 'Due date',
+            'end_helper' => '',
+            'duration' => 'Duration',
+            'duration_helper' => 'Specify how much time (in minutes) should be scheduled to complete the learning/work schedule.',
         ],
     ],
     'planItem' => [

@@ -38,7 +38,7 @@ class DatabaseSeeder extends Seeder
             LevelsTableSeeder::class,
             CategoriesTableSeeder::class,
             ExtendPermissionTableSeeder::class,
-            ExtendPermissionRoleTableSeeder::class
+            ExtendPermissionRoleTableSeeder::class,
         ]);
     }
 }

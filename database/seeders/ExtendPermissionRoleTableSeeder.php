@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use App\Permission;
@@ -26,7 +27,7 @@ class ExtendPermissionRoleTableSeeder extends Seeder
                 'user_create',
                 'user_edit',
                 'user_show',
-                'user_delete'
+                'user_delete',
             ];
 
             return in_array($permission->title, $schoolAdmin_permissions_titles);
@@ -42,8 +43,9 @@ class ExtendPermissionRoleTableSeeder extends Seeder
                 'assignment_delete',
                 'test_access',
                 'test_show',
-                'user_show'
+                'user_show',
             ];
+
             return in_array($permission->title, $teacher_permissions_titles);
         });
 
@@ -54,6 +56,7 @@ class ExtendPermissionRoleTableSeeder extends Seeder
                 'assignment_show',
                 'test_show',
             ];
+
             return in_array($permission->title, $teacher_permissions_titles);
         });
 

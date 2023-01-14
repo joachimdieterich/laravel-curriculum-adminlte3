@@ -33,7 +33,6 @@ class TerminalObjectiveCRUDTest extends TestCase
      */
     public function an_administrator_create_an_terminal_objective()
     {
-
         $this->post('terminalObjectives', $attributes = TerminalObjective::factory()->raw());
 
         $this->assertDatabaseHas('terminal_objectives', $attributes);

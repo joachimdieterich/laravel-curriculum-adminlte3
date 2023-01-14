@@ -27,9 +27,9 @@ class ContactDetail extends Model
     public function subscribe($model)
     {
         $subscription = ContactDetailSubscription::firstOrNew([
-            'contactdetail_id' =>  $this->id,
-            'subscribable_type'=> get_class($model),
-            'subscribable_id'=> $model->id,
+            'contactdetail_id' => $this->id,
+            'subscribable_type' => get_class($model),
+            'subscribable_id' => $model->id,
         ]);
         $subscription->save();
 

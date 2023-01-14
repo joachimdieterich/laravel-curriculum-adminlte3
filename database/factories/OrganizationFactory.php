@@ -39,5 +39,4 @@ class OrganizationFactory extends Factory
             'status_id' => 1,
         ];
     }
-
 }

@@ -9,27 +9,33 @@
             :options="{disabled: !editable}"
             @end="handleStatusMoved">
             <div
-                v-for="status in statuses"
+                v-for="(status, index) in statuses"
                 :key="'header_'+status.id"
                 class=" no-border pr-2"
                 :style="'float:left;width:' + itemWidth + 'px;'">
                 <div class="card-header border-bottom-0 p-0 kanban-header"
                      :key="status.id">
                     <strong>{{ status.title }}</strong>
-                    <div class="btn btn-flat py-0 pl-0 pull-left" v-if="editable"
+                    <div v-if="editable"
+                         :id="'kanbanStatusDropdown_'+index"
+                         class="btn btn-flat py-0 pl-0 pull-left"
                          data-toggle="dropdown"
                          aria-expanded="false">
                         <i class="text-muted fas fa-bars"></i>
                         <div class="dropdown-menu"
                              x-placement="top-start">
                             <span>
-                                <button class="dropdown-item py-1" @click="">
+                                <button
+                                    name="kanbanStatusEdit"
+                                    class="dropdown-item py-1"
+                                    @click="">
                                     <i class="fa fa-pencil-alt mr-4"></i>
                                     {{ trans('global.kanbanStatus.edit') }}
                                 </button>
                                 <hr class="my-1">
                                 <button
                                     v-can="'kanban_delete'"
+                                    name="kanbanStatusDelete"
                                     class="dropdown-item py-1 text-red"
                                     @click="deleteStatus(status)">
                                     <i class="fa fa-trash mr-4"></i>
@@ -56,11 +62,12 @@
                             tag="span">
                             <!-- Items -->
                             <span
-                                v-for="item in status.items"
+                                v-for="(item, itemIndex) in status.items"
                                 :key="'transition_group-'+item.id">
                                  <KanbanItem
                                     :editable="editable"
                                      :ref="'kanbanItemId' + item.id"
+                                     :index="index + '_' + itemIndex"
                                      :item="item"
                                      :width="itemWidth"
                                      v-on:item-destroyed="handleItemDestroyed"
@@ -72,8 +79,9 @@
 
                     </draggable>
                     <KanbanItemCreate
-                        class="mr-2"
                         v-if="newItem === status.id"
+                        :id="'kanbanItemCreate_' + index"
+                        class="mr-2"
                         :status="status"
                         :item="item"
                         :width="itemWidth"
@@ -83,6 +91,7 @@
                         style=" z-index: 2">
                     </KanbanItemCreate>
                     <div v-show="newItem !== status.id" v-if="editable"
+                         :id="'kanbanItemCreateButton_' + index"
                          class="btn btn-flat py-0 mr-2 w-100"
                          @click="openForm('item', status.id)">
                         <i class="text-white fa fa-2x fa-plus-circle"></i>
@@ -91,11 +100,16 @@
 
                 </div>
             </div>
-            <div class=" no-border  pr-2" v-if="editable"
+            <div v-if="editable"
+                 class=" no-border  pr-2"
                  style="float:left;"
                  :style="'width:' + itemWidth + 'px;'">
-                    <div class="card-header kanban-header border-bottom-0 p-0">
-                        <strong class="text-secondary btn px-1 py-0"  @click="openForm('status')" >
+                    <div class="card-header kanban-header border-bottom-0 p-0"
+                         id="kanbanStatusCreate"
+                         @click="openForm('status')"
+                    >
+                        <strong
+                            class="text-secondary btn px-1 py-0">
                             <i class="fa fa-plus"></i> {{ trans('global.kanbanStatus.create') }}
                         </strong>
                     </div>

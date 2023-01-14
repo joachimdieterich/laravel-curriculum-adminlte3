@@ -76,8 +76,8 @@ class MetadatasetController extends Controller
         $new_metadataset = $this->validateRequest();
 
         Metadataset::create([
-            'version'       => $new_metadataset['version'],
-            'metadataset'   => json_encode($metadata),
+            'version' => $new_metadataset['version'],
+            'metadataset' => json_encode($metadata),
 
         ]);
 
@@ -107,8 +107,8 @@ class MetadatasetController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'id'       => 'sometimes|required',
-            'version'  => 'sometimes|required',
+            'id' => 'sometimes|required',
+            'version' => 'sometimes|required',
         ]);
     }
 
@@ -126,8 +126,8 @@ class MetadatasetController extends Controller
         ];*/
         //hack for rlp until new edusharing-version is active
         $metadata[] = [
-            'id'        => ($curriculum->ui != null) ? $curriculum->ui : $curriculum->uuid,
-            'title'     => $curriculum->title,
+            'id' => ($curriculum->ui != null) ? $curriculum->ui : $curriculum->uuid,
+            'title' => $curriculum->title,
             'parent_id' => null,
         ];
 
@@ -148,7 +148,7 @@ class MetadatasetController extends Controller
                  ];*/
                 $metadata[] = [
                     'id' => $curriculum->uuid.$current_objectiveType->uuid, //concat curriculum->uuid and objectiveType->uuid to get it unique for every curriculum
-                    'old_id'    => 'null',
+                    'old_id' => 'null',
                     'title' => $this->format_data(ObjectiveType::where('id', $terminalObjective->objective_type_id)->get()->first()->title),
                     'parent_id' => ($curriculum->ui != null) ? $curriculum->ui : $curriculum->uuid,
                 ];
@@ -164,8 +164,8 @@ class MetadatasetController extends Controller
             ];*/
             //hack for rlp until new edusharing-version is active
             $metadata[] = [
-                'id'        => ($terminalObjective->ui != null) ? $terminalObjective->ui : $terminalObjective->uuid,
-                'title'     => $this->format_data($terminalObjective->title),
+                'id' => ($terminalObjective->ui != null) ? $terminalObjective->ui : $terminalObjective->uuid,
+                'title' => $this->format_data($terminalObjective->title),
                 'parent_id' => $curriculum->uuid.$current_objectiveType->uuid, // combined uuids
             ];
 
@@ -180,8 +180,8 @@ class MetadatasetController extends Controller
                  ];*/
                 //hack for rlp until new edusharing-version is active
                 $metadata[] = [
-                    'id'        => ($enablingObjective->ui != null) ? $enablingObjective->ui : $enablingObjective->uuid,
-                    'title'     => $this->format_data($enablingObjective->title),
+                    'id' => ($enablingObjective->ui != null) ? $enablingObjective->ui : $enablingObjective->uuid,
+                    'title' => $this->format_data($enablingObjective->title),
                     'parent_id' => ($terminalObjective->ui != null) ? $terminalObjective->ui : $terminalObjective->uuid,
                 ];
             }

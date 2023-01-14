@@ -29,13 +29,13 @@ class UpdateTerminalObjectiveRequest extends FormRequest
             'curriculum_id' => [
                 'sometimes',
             ],
-            'objective_type_id'  => [
+            'objective_type_id' => [
                 'sometimes',
             ],
-            'order_id'  => [
+            'order_id' => [
                 'sometimes',
             ],
-            'visibility'  => [
+            'visibility' => [
                 'sometimes',
             ],
 

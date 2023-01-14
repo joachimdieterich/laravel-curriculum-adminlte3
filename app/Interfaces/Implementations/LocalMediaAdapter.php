@@ -3,8 +3,8 @@
 namespace App\Interfaces\Implementations;
 
 use App\Http\Controllers\LogController;
-use App\Medium;
 use App\Interfaces\MediaInterface;
+use App\Medium;
 use App\MediumSubscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -123,7 +123,7 @@ class LocalMediaAdapter implements MediaInterface
         abort(403);
     }
 
-    public function thumb(Medium $medium,  $size) //todo: return smaller images/files/thumbs
+    public function thumb(Medium $medium, $size) //todo: return smaller images/files/thumbs
     {
 
         /* id link */
@@ -165,7 +165,7 @@ class LocalMediaAdapter implements MediaInterface
         abort(403);
     }
 
-   public function edit(Medium $medium)
+    public function edit(Medium $medium)
     {
         abort(404);
     }
@@ -183,7 +183,7 @@ class LocalMediaAdapter implements MediaInterface
         }
     }
 
-    public function destroy(Medium $medium, Mixed $subscribable_type, Mixed $subscribable_id)
+    public function destroy(Medium $medium, mixed $subscribable_type, mixed $subscribable_id)
     {
         abort_unless(\Gate::allows('medium_delete'), 403);
         /**
@@ -251,13 +251,13 @@ class LocalMediaAdapter implements MediaInterface
     public function subscribe($medium, $subscribable_type, $subscribable_id, $sharing_level_id = 1, $visibility = 1)
     {
         $subscribe = MediumSubscription::updateOrCreate([
-            'medium_id'         => $medium->id,
+            'medium_id' => $medium->id,
             'subscribable_type' => $subscribable_type,
-            'subscribable_id'   => $subscribable_id,
+            'subscribable_id' => $subscribable_id,
         ], [
-            'sharing_level_id'  => $sharing_level_id,
-            'visibility'        => $visibility,
-            'owner_id'          => auth()->user()->id,
+            'sharing_level_id' => $sharing_level_id,
+            'visibility' => $visibility,
+            'owner_id' => auth()->user()->id,
         ]);
         $subscribe->save();
 
@@ -282,7 +282,7 @@ class LocalMediaAdapter implements MediaInterface
             'license_id'    => $input['license_id']     ?? 2,
             'public'        => $input['public']         ?? 0,   //default not public
 
-            'owner_id'      => auth()->user()->id,
+            'owner_id' => auth()->user()->id,
         ]);
     }
 
@@ -290,6 +290,9 @@ class LocalMediaAdapter implements MediaInterface
     {
         return request()->validate([
             'path' => 'sometimes',
+            'thumb_path' => 'sometimes',
+            'external_id' => 'sometimes',
+            'adapter' => 'sometimes',
             'subscribable_type' => 'sometimes',
             'subscribable_id' => 'sometimes',
             'repository' => 'sometimes',

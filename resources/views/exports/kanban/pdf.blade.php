@@ -89,7 +89,7 @@
                 </div>
                 @if($k->description != null)
                 <div class="card-body">
-                    {{ Str::limit( $k->description, 100, "...") }}
+                    {!! $k->description !!}
                 </div>
                 @endif
                 <!--div class="card-footer px-3 py-2 border-top-0">

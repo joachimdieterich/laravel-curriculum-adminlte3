@@ -21,12 +21,10 @@ class AchievementFactory extends Factory
      */
     public function definition()
     {
-
         return [
             'referenceable_type' => 'App\EnablingObjective',
             'referenceable_id' => 1,
             'status' => '1',
         ];
-
     }
 }

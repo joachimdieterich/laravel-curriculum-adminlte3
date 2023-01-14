@@ -26,13 +26,13 @@ class UpdateEnablingObjectiveRequest extends FormRequest
             'curriculum_id' => [
                 'sometimes',
             ],
-            'terminal_objective_id'  => [
+            'terminal_objective_id' => [
                 'sometimes',
             ],
-            'order_id'  => [
+            'order_id' => [
                 'sometimes',
             ],
-            'visibility'  => [
+            'visibility' => [
                 'sometimes',
             ],
 

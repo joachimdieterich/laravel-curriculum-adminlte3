@@ -237,9 +237,11 @@
                              @click="close()">
                          {{ trans('global.close') }}
                      </button>
-                    <button type="button"
-                            class="btn btn-primary pull-right"
-                            @click="saveToForm()" >
+                    <button
+                        name="medium-create-modal-submit"
+                        type="button"
+                        class="btn btn-primary pull-right"
+                        @click="saveToForm()" >
                         {{ trans('global.save') }}
                     </button>
                 </span>
@@ -270,6 +272,8 @@ export default {
 
             form: new Form({
                 'path': '',
+                'thumb_path': '',
+                'external_id': '',
                 'subscribable_type': null,
                 'subscribable_id': null,
                 'repository': 'local',
@@ -302,9 +306,7 @@ export default {
             total: null
         }
     },
-    created() {
 
-    },
     methods: {
         uploadSubmit(formData) {
             this.currentStatus = STATUS_SAVING;
@@ -422,21 +424,23 @@ export default {
 
             axios.get(path, { params: { per_page: this.per_page } })
                 .then((response)=>{
-                    this.files = response.data.data;
-                    this.current_page = response.data.current_page;
+                    this.files          = response.data.data;
+                    this.current_page   = response.data.current_page;
                     this.first_page_url = response.data.first_page_url;
-                    this.from = response.data.from;
-                    this.last_page = response.data.last_page;
-                    this.last_page_url = response.data.last_page_url;
-                    this.next_page_url = response.data.next_page_url;
-                    this.path = response.data.path;
-                    this.per_page = response.data.per_page;
-                    this.prev_page_url = response.data.prev_page_url;
-                    this.to = response.data.to;
-                    this.total = response.data.total;
+                    this.from           = response.data.from;
+                    this.last_page      = response.data.last_page;
+                    this.last_page_url  = response.data.last_page_url;
+                    this.next_page_url  = response.data.next_page_url;
+                    this.path           = response.data.path;
+                    this.per_page       = response.data.per_page;
+                    this.prev_page_url  = response.data.prev_page_url;
+                    this.to             = response.data.to;
+                    this.total          = response.data.total;
+                })
+                .catch((e) => {
+                    console.log(e);
                 });
         },
-
     },
     computed: {
         isInitial() {
@@ -454,7 +458,17 @@ export default {
     },
     mounted() {
         this.reset();
+
         this.getFiles();
+
+        this.$eventHub.$on('external_add', (form) => {
+            console.log(form);
+            this.form = form;
+            axios.post('/media?repository=' + this.form.repository, this.form)
+                 .then((response) => {
+                    this.saveToForm()
+                 });
+        });
     },
     components: {
         RepositoryPluginCreate

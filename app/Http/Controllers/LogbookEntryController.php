@@ -51,7 +51,22 @@ class LogbookEntryController extends Controller
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
-        // axios call?
+        $entry = $entry->with([
+            'owner' => function ($query) {
+                $query->select('id', 'username', 'firstname', 'lastname', 'medium_id');
+            },
+            'absences.owner' => function ($query) {
+                $query->select('id', 'username', 'firstname', 'lastname', 'medium_id');
+            }, //todo: lazyload
+            'absences.absent_user',
+            'terminalObjectiveSubscriptions.terminalObjective',
+            'enablingObjectiveSubscriptions.enablingObjective.terminalObjective',
+            'taskSubscription.task.subscriptions' => function ($query) {
+                $query->where('subscribable_id', auth()->user()->id)
+                    ->where('subscribable_type', 'App\User');
+            },
+        ])->where('id', $entry->id)->get()->first();
+
         if (request()->wantsJson()) {
             return ['message' => $entry];
         }
@@ -91,11 +106,9 @@ class LogbookEntryController extends Controller
 
         $logbookEntry->update($this->validateRequest());
 
-        // axios call?
         if (request()->wantsJson()) {
-            return ['message' => '/logbooks'.$logbookEntry->logbook_id];
+            return ['message' => $logbookEntry];
         }
-
     }
 
     /**

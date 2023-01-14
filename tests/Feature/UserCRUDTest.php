@@ -29,13 +29,13 @@ class UserCRUDTest extends TestCase
         $list = $this->get('users/list')
              ->assertStatus(200);
         $i = 0;
-        foreach ($users as $user)
-        {
-            if ($i === 49) { break; } //test max 50 user (default page limit on datatables
+        foreach ($users as $user) {
+            if ($i === 49) {
+                break;
+            } //test max 50 user (default page limit on datatables
             $list->assertJsonFragment($user->toArray());
             $i++;
         }
-
     }
 
     /** @test
@@ -69,7 +69,7 @@ class UserCRUDTest extends TestCase
         $ids = $users->pluck('id')->toArray();
 
         $this->delete('/users/massDestroy', $attributes = [
-            'ids' =>  $ids,
+            'ids' => $ids,
         ])->assertStatus(204);
 
         foreach ($ids as $id) {
@@ -96,7 +96,6 @@ class UserCRUDTest extends TestCase
      */
     public function an_administrator_see_details_of_an_user()
     {
-
         $user = User::factory()->create();
 
         $this->get("users/{$user->id}")

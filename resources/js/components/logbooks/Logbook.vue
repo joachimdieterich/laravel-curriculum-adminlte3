@@ -84,8 +84,18 @@ import LogbookPrintOptions from "./LogbookPrintOptions";
         },
         mounted() {
             this.entries = this.logbook.entries;
-            this.$on('addLogbookEntry', function (newEntry) {
+
+            this.$eventHub.$on('addLogbookEntry', (newEntry) => {
                 this.entries.unshift(newEntry);       // Add newly created entry
+            });
+            this.$eventHub.$on('updateLogbookEntry', (updatedEntry) => {
+                const index = this.entries.findIndex(            // Find the index of the status where we should replace the item
+                    entry => entry.id === updatedEntry.id
+                );
+                // only update entry, do not manipulate relations.
+                this.entries[index].title = updatedEntry.title;
+                this.entries[index].description = updatedEntry.description;
+                this.entries[index].updated_at = updatedEntry.updated_at;
             });
 
             this.$on('deleteLogbookEntry', function (deletedEntry) {

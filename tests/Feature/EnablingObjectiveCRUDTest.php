@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\EnablingObjective;
 use App\Curriculum;
+use App\EnablingObjective;
 use App\TerminalObjective;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -29,7 +29,6 @@ class EnablingObjectiveCRUDTest extends TestCase
         $attributes = EnablingObjective::factory()->raw();
 
         $this->post('enablingObjectives', $attributes);
-
         $this->assertDatabaseHas('enabling_objectives', $attributes);
     }
 
@@ -39,6 +38,7 @@ class EnablingObjectiveCRUDTest extends TestCase
     public function an_administrator_see_details_of_an_enablingObjective()
     {
         $enablingObjective = EnablingObjective::factory()->create();
+
         $this->get("enablingObjectives/{$enablingObjective->id}")
              ->assertStatus(200)
              ->assertSee($enablingObjective->toArray());

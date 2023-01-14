@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
 class Group extends Model
 {
     use HasFactory;
+
     protected $guarded = [];
 
     /**
@@ -31,11 +32,11 @@ class Group extends Model
      * @param  \DateTimeInterface  $date
      * @return string
      */
-
     protected $dates = [
         'updated_at',
         'created_at',
     ];
+
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');

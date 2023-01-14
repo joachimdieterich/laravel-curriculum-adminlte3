@@ -2,8 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\QuoteSubscription;
-use App\ReferenceSubscription;
 use Illuminate\Console\Command;
 
 class ClearAll extends Command

@@ -26,7 +26,6 @@ class KanbanItemCommentController extends Controller
 
     public function destroy(KanbanItemComment $kanbanItemComment)
     {
-
         abort_unless(\Gate::allows('kanban_delete'), 403);
         $kanban_item_id = $kanbanItemComment->kanban_item_id;
         $kanbanItemComment->delete();
@@ -36,7 +35,8 @@ class KanbanItemCommentController extends Controller
         return response()->json(['data' => $comments]);
     }
 
-    private function getComments($id){
+    private function getComments($id)
+    {
         return KanbanItemComment::where('kanban_item_id', $id)->with('user')->get();
     }
 

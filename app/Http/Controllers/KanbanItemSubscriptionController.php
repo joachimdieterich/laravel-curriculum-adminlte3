@@ -67,8 +67,8 @@ class KanbanItemSubscriptionController extends Controller
         $input = $this->validateRequest();
 
         $kanbanItemSubscription->update([
-            'editable'=> isset($input['editable']) ? $input['editable'] : false,
-            'owner_id'=> auth()->user()->id,
+            'editable' => isset($input['editable']) ? $input['editable'] : false,
+            'owner_id' => auth()->user()->id,
         ]);
 
         if (request()->wantsJson()) {

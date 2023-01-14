@@ -20,9 +20,8 @@ return new class extends Migration
             $table->unsignedbigInteger('user_id');
             $table->timestamps();
 
-            $table->foreign('kanban_item_id')->references('id')->on('kanban_items')->onDelete('cascade');;
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');;
-
+            $table->foreign('kanban_item_id')->references('id')->on('kanban_items')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

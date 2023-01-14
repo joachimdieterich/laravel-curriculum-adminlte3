@@ -21,13 +21,13 @@ class AppServiceProvider extends ServiceProvider
             $this->app->register(DuskServiceProvider::class);
         }
 
-        $this->app->singleton(TestToolkitInterface::class,  function  ($app)  {
-                $request = app(TestToolRequest::class);
-                switch  ($request->input('tool')) {
-                    case  'ilea_plus' :
-                        return $app->make( 'config' )->get( 'test_tools.tools.ilea_plus.adapter' );
-                    default :
-                        throw  new  \RuntimeException( "Unknown Tool Service" );
+        $this->app->singleton(TestToolkitInterface::class, function ($app) {
+            $request = app(TestToolRequest::class);
+            switch ($request->input('tool')) {
+                    case  'ilea_plus':
+                        return $app->make('config')->get('test_tools.tools.ilea_plus.adapter');
+                    default:
+                        throw  new  \RuntimeException('Unknown Tool Service');
                 }
         });
     }
@@ -42,6 +42,5 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
         $this->app->alias('bugsnag.logger', \Illuminate\Contracts\Logging\Log::class);
         $this->app->alias('bugsnag.logger', \Psr\Log\LoggerInterface::class);
-
     }
 }

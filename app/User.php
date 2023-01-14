@@ -10,12 +10,12 @@ use Cmgmyr\Messenger\Traits\Messagable;
 use DateTimeInterface;
 use Hash;
 use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  *   @OA\Schema(
@@ -75,7 +75,6 @@ class User extends Authenticatable
     {
         //static::addGlobalScope(new NoSharingUsers());
     }
-
 
     /**
      * Prepare a date for array / JSON serialization.
@@ -420,7 +419,8 @@ class User extends Authenticatable
         }
     }
 
-    public function scopeNoSharing($query){
+    public function scopeNoSharing($query)
+    {
         $query->whereNull('sharing_token');
     }
 
@@ -433,5 +433,4 @@ class User extends Authenticatable
             'exam_id')
             ->withPivot(['login_data', 'exam_completed_at']);
     }
-
 }

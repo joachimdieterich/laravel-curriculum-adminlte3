@@ -30,9 +30,9 @@ class Note extends Model
     ];*/
 
     protected $casts = [
-        'id'          => 'integer',
+        'id' => 'integer',
         'notable_id' => 'integer',
-        'user_id'     => 'integer',
+        'user_id' => 'integer',
     ];
 
     public function notable()

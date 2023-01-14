@@ -19,5 +19,4 @@ class NoSharingUsers implements Scope
     {
         $builder->whereNull('sharing_token');
     }
-
 }

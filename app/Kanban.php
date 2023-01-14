@@ -51,10 +51,12 @@ class Kanban extends Model
         return $this->hasOne('App\User', 'id', 'owner_id');
     }
 
-    public function getBackgroundAttribute(){
+    public function getBackgroundAttribute()
+    {
         if ($this->color != null && $this->color != '#F4F4F4') {
             return $this->transformHexColorToRgba($this->color);
         }
+
         return $this->transformHexColorToRgba('#F4F4F4');
     }
 
@@ -71,7 +73,8 @@ class Kanban extends Model
         }
     }
 
-    public function isEditable(){
+    public function isEditable()
+    {
         $subscribtion = optional($this->userSubscriptions()->where('subscribable_id', auth()->user()->id)->first());
         if (
             $subscribtion->editable // user enrolled
@@ -86,7 +89,8 @@ class Kanban extends Model
 
     private function transformHexColorToRgba($color, $opacity = .7)
     {
-        list($r, $g, $b) = sscanf($color, "#%02x%02x%02x");
-        return 'rgba(' . $r . ', ' . $g . ', ' . $b . ', ' . $opacity . ')';
+        [$r, $g, $b] = sscanf($color, '#%02x%02x%02x');
+
+        return 'rgba('.$r.', '.$g.', '.$b.', '.$opacity.')';
     }
 }

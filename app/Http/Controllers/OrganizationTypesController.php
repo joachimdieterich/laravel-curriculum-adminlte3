@@ -107,10 +107,10 @@ class OrganizationTypesController extends Controller
         $input = $this->validateRequest();
         $input_state = State::where('code', format_select_input($input['state_id']))->get()->first();
         $organizationtype->update([
-            'title'         => $input['title'],
-            'external_id'   => $input['external_id'],
-            'state_id'      => $input_state->code,
-            'country_id'    =>  $input_state->country,
+            'title' => $input['title'],
+            'external_id' => $input['external_id'],
+            'state_id' => $input_state->code,
+            'country_id' => $input_state->country,
         ]);
 
         return redirect()->route('organizationtypes.index');

@@ -29,28 +29,28 @@ class ReferenceSubscriptionController extends Controller
         }
 
         $reference = Reference::Create([
-            'id'          => (string) Str::uuid(),
+            'id' => (string) Str::uuid(),
             'description' => $new_subscription['description'],
-            'grade_id'    => isset($new_subscription['grade_id']) ? $new_subscription['grade_id'] : Curriculum::find($new_subscription['curriculum_id'])->grade_id,
-            'owner_id'    => auth()->user()->id,
+            'grade_id' => isset($new_subscription['grade_id']) ? $new_subscription['grade_id'] : Curriculum::find($new_subscription['curriculum_id'])->grade_id,
+            'owner_id' => auth()->user()->id,
         ]);
         $subscription = ReferenceSubscription::Create([
-            'reference_id'       => $reference->id,
+            'reference_id' => $reference->id,
             'referenceable_type' => $new_subscription['subscribable_type'],
-            'referenceable_id'   => $new_subscription['subscribable_id'],
-            'sharing_level_id'   => isset($new_subscription['sharing_level_id']) ? $new_subscription['sharing_level_id'] : 1,
-            'visibility'         => isset($new_subscription['visibility']) ? $new_subscription['visibility'] : true,
-            'owner_id'           => auth()->user()->id,
+            'referenceable_id' => $new_subscription['subscribable_id'],
+            'sharing_level_id' => isset($new_subscription['sharing_level_id']) ? $new_subscription['sharing_level_id'] : 1,
+            'visibility' => isset($new_subscription['visibility']) ? $new_subscription['visibility'] : true,
+            'owner_id' => auth()->user()->id,
         ]);
 
         if ($subscription) { //generate sibling
             $sibling = ReferenceSubscription::Create([
-                'reference_id'       => $reference->id,
+                'reference_id' => $reference->id,
                 'referenceable_type' => ($new_subscription['enabling_objective_id'] != null) ? "App\EnablingObjective" : "App\TerminalObjective",
-                'referenceable_id'   => ($new_subscription['enabling_objective_id'] != null) ? $new_subscription['enabling_objective_id'] : $new_subscription['terminal_objective_id'],
-                'sharing_level_id'   => isset($new_subscription['sharing_level_id']) ? $new_subscription['sharing_level_id'] : 1,
-                'visibility'         => isset($new_subscription['visibility']) ? $new_subscription['visibility'] : true,
-                'owner_id'           => auth()->user()->id,
+                'referenceable_id' => ($new_subscription['enabling_objective_id'] != null) ? $new_subscription['enabling_objective_id'] : $new_subscription['terminal_objective_id'],
+                'sharing_level_id' => isset($new_subscription['sharing_level_id']) ? $new_subscription['sharing_level_id'] : 1,
+                'visibility' => isset($new_subscription['visibility']) ? $new_subscription['visibility'] : true,
+                'owner_id' => auth()->user()->id,
             ]);
         }
         //adding to $subscription->referenceable models referencing_curriculum_id

@@ -2,15 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Interfaces\Implementations\LocalMedia;
 use App\Medium;
-use App\MediumSubscription;
-use File;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
-use Yajra\DataTables\DataTables;
 
 class MediumController extends Controller
 {
@@ -21,9 +15,9 @@ class MediumController extends Controller
         $this->repository = $request->filled('repository') ? $request->input('repository') : config('medium.repositories.default');
     }
 
-    protected function adapter(String $adapter = null )
+    protected function adapter(string $adapter = null)
     {
-        return config('medium.repositories.' .  $adapter . '.adapter') ?? config('medium.repositories.' .  $this->repository . '.adapter');
+        return config('medium.repositories.'.$adapter.'.adapter') ?? config('medium.repositories.'.$this->repository.'.adapter');
     }
 
     /**
@@ -123,5 +117,4 @@ class MediumController extends Controller
     {
         return $this->adapter()->checkIfUserHasSubscription($subscription);
     }
-
 }

@@ -118,7 +118,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('kanbanItems', 'KanbanItemController');
     Route::put('kanbanStatuses/sync', 'KanbanStatusController@sync')->name('kanbanStatuses.sync');
     Route::resource('kanbanStatuses', 'KanbanStatusController');
-    Route::post('kanban/token', 'ShareTokenController@create' );
+    Route::post('kanban/token', 'ShareTokenController@create');
 
     Route::get('get_kanbans_color/{id}', 'KanbanController@getKanbansColor');
     Route::post('update_kanbans_color', 'KanbanController@updateKanbansColor');

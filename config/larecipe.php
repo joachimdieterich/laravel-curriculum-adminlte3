@@ -13,9 +13,9 @@ return [
     |
     */
 
-    'docs'        => [
-        'route'   => '/documentation',
-        'path'    => '/resources/docs',
+    'docs' => [
+        'route' => '/documentation',
+        'path' => '/resources/docs',
         'landing' => 'overview',
         'middleware' => ['web'],
     ],
@@ -32,8 +32,8 @@ return [
     |
     */
 
-    'versions'      => [
-        'default'   => '1.0.de',
+    'versions' => [
+        'default' => '1.0.de',
         'published' => [
             '1.0.de',
             '1.0.en-dev',
@@ -55,9 +55,9 @@ return [
     |
     */
 
-    'settings'       => [
-        'auth'       => false,
-        'ga_id'      => '',
+    'settings' => [
+        'auth' => false,
+        'ga_id' => '',
         'middleware' => [
             'web',
         ],
@@ -76,9 +76,9 @@ return [
     |
     */
 
-    'cache'       => [
+    'cache' => [
         'enabled' => false,
-        'period'  => 5,
+        'period' => 5,
     ],
 
     /*
@@ -94,15 +94,15 @@ return [
     |
     */
 
-    'search'            => [
-        'enabled'       => true,
-        'default'       => 'internal',
-        'engines'       => [
-            'internal'  => [
+    'search' => [
+        'enabled' => true,
+        'default' => 'internal',
+        'engines' => [
+            'internal' => [
                 'index' => ['h2', 'h3'],
             ],
-            'algolia'   => [
-                'key'   => '',
+            'algolia' => [
+                'key' => '',
                 'index' => '',
             ],
         ],
@@ -120,17 +120,17 @@ return [
     |
     */
 
-    'ui'                 => [
-        'code_theme'     => 'dark', // or: light
-        'fav'            => '',     // eg: fav.png
-        'fa_v4_shims'    => true, // Add FontAwesome v4 shims prevent BC break
-        'show_side_bar'  => true,
-        'colors'         => [
-            'primary'    => '#787AF6',
-            'secondary'  => '#2b9cf2',
+    'ui' => [
+        'code_theme' => 'dark', // or: light
+        'fav' => '',     // eg: fav.png
+        'fa_v4_shims' => true, // Add FontAwesome v4 shims prevent BC break
+        'show_side_bar' => true,
+        'colors' => [
+            'primary' => '#787AF6',
+            'secondary' => '#2b9cf2',
         ],
 
-        'theme_order'    => null, // ['LaRecipeDarkTheme', 'customTheme']
+        'theme_order' => null, // ['LaRecipeDarkTheme', 'customTheme']
     ],
 
     /*
@@ -145,15 +145,15 @@ return [
     |
     */
 
-    'seo'                 => [
-        'author'          => 'Joachim Dieterich',
-        'description'     => '',
-        'keywords'        => '',
-        'og'              => [
-            'title'       => '',
-            'type'        => 'article',
-            'url'         => '',
-            'image'       => '',
+    'seo' => [
+        'author' => 'Joachim Dieterich',
+        'description' => '',
+        'keywords' => '',
+        'og' => [
+            'title' => '',
+            'type' => 'article',
+            'url' => '',
+            'image' => '',
             'description' => '',
         ],
     ],
@@ -171,11 +171,11 @@ return [
    |
    */
 
-    'forum'                   => [
-        'enabled'           => false,
-        'default'           => 'disqus',
-        'services'          => [
-            'disqus'        => [
+    'forum' => [
+        'enabled' => false,
+        'default' => 'disqus',
+        'services' => [
+            'disqus' => [
                 'site_name' => '', // yoursite.disqus.com
             ],
         ],

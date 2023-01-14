@@ -2,9 +2,9 @@
 
 return [
     'models' => [
-        "alias" => "as",
-        "search_term" => "searchable",
-        "order_term" => "orderable",
+        'alias' => 'as',
+        'search_term' => 'searchable',
+        'order_term' => 'orderable',
     ],
-    "default_order_by" => "id",
+    'default_order_by' => 'id',
 ];

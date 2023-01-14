@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Plugins\Repositories\edusharing;
 
 use App\Config;
@@ -52,7 +53,6 @@ class Edusharing extends RepositoryPlugin
         if (isset(auth()->user()->id)) {
             $this->setTokens(); //do not set token here to prevent blankpage if edusharing is offline
         }
-
     }
 
     private function getPersonalToken()
@@ -66,8 +66,8 @@ class Edusharing extends RepositoryPlugin
             ['referenceable_type', '=', 'App\Edusharing'],
             ['key', '=',  'wsdl'],
         ])->get()->first()->value;
-        $paramstrusted = ['applicationId'  => $appId,
-            'ticket'  => session_id(), 'ssoData'  => edusharing_get_auth_data(), ];
+        $paramstrusted = ['applicationId' => $appId,
+            'ticket' => session_id(), 'ssoData' => edusharing_get_auth_data(), ];
 
         try {
             $client = new EdusharingSoapClient($wsdl);
@@ -75,9 +75,8 @@ class Edusharing extends RepositoryPlugin
             $return = $client->authenticateByTrustedApp($paramstrusted);
             $this->accessToken = $return->authenticateByTrustedAppReturn->ticket;
         } catch (Exception $e) {
-            trigger_error( $e, E_USER_WARNING);
+            trigger_error($e, E_USER_WARNING);
         }
-
     }
 
     private function setTokens()
@@ -156,7 +155,7 @@ class Edusharing extends RepositoryPlugin
                 [
                     'userName' => $userName,
                     'password' => $password,
-                    'scope'    => $scope,
+                    'scope' => $scope,
                 ]
             )
         );
@@ -234,7 +233,7 @@ class Edusharing extends RepositoryPlugin
             $this->repoUrl.'/rest/organization/v1/organizations/-home-/'.$organization.'?folder='.$folderId,
             'PUT',
             [],
-            json_encode(['organization'=>$organization, 'folder' => $folderId])
+            json_encode(['organization' => $organization, 'folder' => $folderId])
         );
     }
 
@@ -390,11 +389,11 @@ class Edusharing extends RepositoryPlugin
                 'criterias' => [
                     [
                         'property' => $params['property'],
-                        'values'   => [$params['value']],
+                        'values' => [$params['value']],
                     ],
                     [
                         'property' => $filter,
-                        'values'   => [
+                        'values' => [
                             $filter_value,
                         ],
                     ],
@@ -405,7 +404,7 @@ class Edusharing extends RepositoryPlugin
                 'criterias' => [
                     [
                         'property' => $params['property'],
-                        'values'   => [$params['value']],
+                        'values' => [$params['value']],
                     ],
                     /* todo: check effect of search_context for results
                     array (
@@ -446,7 +445,7 @@ class Edusharing extends RepositoryPlugin
         $maxItems = isset($query['maxItems']) ? $query['maxItems'] : 100;             // used for pagination
         $skipCount = isset($query['skipCount']) ? $query['skipCount'] : ($query['page'] * $maxItems);            // used for pagination
 
-        return $this->getSearchCustom($repo, ['contentType' =>$contentType, 'property' => $property, 'value' => $value, 'maxItems' => $maxItems, 'skipCount' => $skipCount]);
+        return $this->getSearchCustom($repo, ['contentType' => $contentType, 'property' => $property, 'value' => $value, 'maxItems' => $maxItems, 'skipCount' => $skipCount]);
     }
 
 //    public function getExternalsubscriptions ($model, $id, $files)
@@ -508,15 +507,15 @@ class Edusharing extends RepositoryPlugin
             }
 
             $collection->push([
-                'value'       => isset($node['ref']['id']) ? $node['ref']['id'] : $arguments, //value field in db
-                'node_id'     => isset($node['ref']['id']) ? $node['ref']['id'] : null,
-                'uuid'        => isset($node['properties']['cm:creator']) ? $node['properties']['cm:creator'][0] : null,
-                'license'     => isset($node['license']) ? $node['license'] : null,
-                'title'       => $this->getReadableTitle($node), //isset($node['title']) ?  $node['title'] : $node['name'],
+                'value' => isset($node['ref']['id']) ? $node['ref']['id'] : $arguments, //value field in db
+                'node_id' => isset($node['ref']['id']) ? $node['ref']['id'] : null,
+                'uuid' => isset($node['properties']['cm:creator']) ? $node['properties']['cm:creator'][0] : null,
+                'license' => isset($node['license']) ? $node['license'] : null,
+                'title' => $this->getReadableTitle($node), //isset($node['title']) ?  $node['title'] : $node['name'],
                 'description' => isset($node['description']) ? $node['description'] : '',
-                'thumb'       => isset($node['preview']['url']) ? $node['preview']['url'].'&ticket='.$this->accessToken : '',
-                'iconURL'     => isset($node['iconURL']) ? $node['iconURL'] : '',
-                'path'        => isset($node['ref']['id']) ? $this->repoUrl.'/components/render/'.$node['ref']['id'].'?ticket='.$this->accessToken : '',
+                'thumb' => isset($node['preview']['url']) ? $node['preview']['url'].'&ticket='.$this->accessToken : '',
+                'iconURL' => isset($node['iconURL']) ? $node['iconURL'] : '',
+                'path' => isset($node['ref']['id']) ? $this->repoUrl.'/components/render/'.$node['ref']['id'].'?ticket='.$this->accessToken : '',
             ]);
         }
 
@@ -569,11 +568,11 @@ class Edusharing extends RepositoryPlugin
 function edusharing_get_auth_data()
 {
     return [
-        ['key'  => 'userid', 'value'  => auth()->user()->common_name],
-        ['key'  => 'lastname', 'value'  => auth()->user()->firstname],
-        ['key'  => 'firstname', 'value'  => auth()->user()->lastname],
-        ['key'  => 'email', 'value'  => auth()->user()->email],
-        ['key'  => 'affiliation', 'value'  => ''],
-        ['key'  => 'affiliationname', 'value' => ''],
+        ['key' => 'userid', 'value' => auth()->user()->common_name],
+        ['key' => 'lastname', 'value' => auth()->user()->firstname],
+        ['key' => 'firstname', 'value' => auth()->user()->lastname],
+        ['key' => 'email', 'value' => auth()->user()->email],
+        ['key' => 'affiliation', 'value' => ''],
+        ['key' => 'affiliationname', 'value' => ''],
     ];
 }

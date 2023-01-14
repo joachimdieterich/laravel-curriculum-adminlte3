@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use App\Permission;
@@ -34,10 +35,10 @@ class ExtendPermissionTableSeeder extends Seeder
         foreach ($titles as $title) {
             $id += 1;
             $permission = [
-              'id' => $id,
-              'title' => $title,
-              'created_at' => $now,
-              'updated_at' => $now
+                'id' => $id,
+                'title' => $title,
+                'created_at' => $now,
+                'updated_at' => $now,
 
             ];
 

@@ -20,9 +20,9 @@ Route::group([
     Route::group([
         'middleware' => 'client_credentials',
     ], function () {
-            Route::get('logout', 'AuthController@logout');
-            Route::get('user', 'AuthController@user');
-        });
+        Route::get('logout', 'AuthController@logout');
+        Route::get('user', 'AuthController@user');
+    });
 });
 
 /**

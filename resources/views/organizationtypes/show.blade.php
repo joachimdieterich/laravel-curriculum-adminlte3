@@ -3,7 +3,7 @@
     {{ trans('global.organizationtype.title_singular') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
+    <li class="breadcrumb-item "><a href="/"><i class="fa fa-home"></i></a></li>
     <li class="breadcrumb-item active">{{ trans('global.organizationtype.title_singular') }}</li>
     <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
@@ -21,9 +21,9 @@
                 <div class="card-tools pr-2">
                     <a href="{{ route('organizationtypes.edit', $organizationtype->id) }}" >
                         <i class="far fa-edit"></i>
-                    </a> 
+                    </a>
                 </div>
-                @endcan 
+                @endcan
             </div>
             <!-- /.card-header -->
             <div class="card-body">
@@ -31,7 +31,7 @@
                 <p class="text-muted">
                     {{ $organizationtype->external_id }}
                 </p>
-                
+
                 <hr>
 
                 <strong><i class="fa fa-map-marker mr-1"></i> {{ trans('global.region') }}</strong>
@@ -44,7 +44,7 @@
                 <div class="float-left"></div>
                 <small class="float-right">
                     {{ $organizationtype->updated_at }}
-                </small> 
+                </small>
             </div>
         </div>
     </div>

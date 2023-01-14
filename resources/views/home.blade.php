@@ -3,7 +3,7 @@
     {{ trans('global.home') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item active"><a href="/">{{ trans('global.home') }}</a></li>
+    <li class="breadcrumb-item active"><a href="/"><i class="fa fa-home"></i></a></li>
     <li class="breadcrumb-item ">
         <a href="/documentation"
            class="text-black-50"

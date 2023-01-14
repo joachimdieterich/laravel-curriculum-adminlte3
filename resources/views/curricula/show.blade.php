@@ -21,8 +21,7 @@
         <li class="breadcrumb-item "><a
                 href="/curricula/{{$curriculum->id}}">{{ Str::limit($curriculum->title, 10) }}</a></li>
     @endif
-    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"
-                                    aria-label="{{ trans('global.documentation') }}"><i
+    <li class="breadcrumb-item "><a href="{{ env('DOCUMENTATION', '/documentation') }}" class="text-black-50"                                    aria-label="{{ trans('global.documentation') }}"><i
                 class="fas fa-question-circle"></i></a></li>
 @endsection
 

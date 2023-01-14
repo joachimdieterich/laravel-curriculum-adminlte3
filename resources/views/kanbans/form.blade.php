@@ -13,16 +13,17 @@
                     "placeholder" => trans('global.kanban.fields.description'),
                     "rows" => 3,
                     "value" => old('description', isset($logbook) ? $kanban->description : '')])
-
-@include ('forms.input.file',
-            ["model" => "media",
-            "field" => "medium_id",
-            "label" => false,
-            "accept" => "image/*",
-            "value" => old('medium_id', isset($kanban->medium_id) ? $kanban->medium_id : '')])
+@can('medium_create')
+    @include ('forms.input.file',
+                ["model" => "media",
+                "field" => "medium_id",
+                "label" => false,
+                "accept" => "image/*",
+                "value" => old('medium_id', isset($kanban->medium_id) ? $kanban->medium_id : '')])
+@endcan
 <div class="pt-3">
     <input
-        id="logbook-save"
+        id="kanban-save"
         class="btn btn-info"
         type="submit"
         value="{{ $buttonText }}">

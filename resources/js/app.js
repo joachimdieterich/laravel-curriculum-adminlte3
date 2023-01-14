@@ -54,7 +54,10 @@ Vue.prototype.checkLocalStorage = (key, value, class_string = "active", is_defau
  * make userId accessible for vue
  * @type {string}
  */
-Vue.prototype.$userId = document.querySelector("meta[name='user-id']").getAttribute('content');
+if (document.querySelector("meta[name='user-id']")){
+    Vue.prototype.$userId = document.querySelector("meta[name='user-id']").getAttribute('content');
+}
+
 
 
 import VModal from 'vue-js-modal';

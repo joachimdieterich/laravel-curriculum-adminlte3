@@ -14,6 +14,7 @@
              </div>
 
             <button
+                name="kanbanStatusCancel"
                 @click="$emit('status-canceled')"
                 type="reset"
                 class="btn btn-default"
@@ -21,20 +22,21 @@
                 {{ trans('cancel') }}
             </button>
             <button
+                name="kanbanStatusSave"
                 type="submit"
                 class="btn btn-primary pull-right"
                 @click="submit"
               >
                 {{ trans('save') }}
             </button>
-        </div> 
+        </div>
     </div>
 </template>
 
 <script>
 import Form from 'form-backend-validation';
 export default {
-    
+
     props: {
       kanban_id: Number,
       order_id: Number
@@ -43,7 +45,7 @@ export default {
         return {
             form: new Form({
                     'title':'',
-                    'kanban_id': '', 
+                    'kanban_id': '',
                     'order_id': 0
                 }),
         };
@@ -60,9 +62,9 @@ export default {
                 })
                 .catch(error => { // Handle the error returned from our request
                      this.form.errors = error.response.data.errors;
-                }); 
-        },           
-      
+                });
+        },
+
     }
 };
 </script>

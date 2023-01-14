@@ -237,9 +237,11 @@
                              @click="close()">
                          {{ trans('global.close') }}
                      </button>
-                    <button type="button"
-                            class="btn btn-primary pull-right"
-                            @click="saveToForm()" >
+                    <button
+                        name="medium-create-modal-submit"
+                        type="button"
+                        class="btn btn-primary pull-right"
+                        @click="saveToForm()" >
                         {{ trans('global.save') }}
                     </button>
                 </span>
@@ -302,9 +304,7 @@ export default {
             total: null
         }
     },
-    created() {
 
-    },
     methods: {
         uploadSubmit(formData) {
             this.currentStatus = STATUS_SAVING;
@@ -426,6 +426,9 @@ export default {
                     this.prev_page_url  = response.data.prev_page_url;
                     this.to             = response.data.to;
                     this.total          = response.data.total;
+                })
+                .catch((e) => {
+                    console.log(e);
                 });
         },
     },
@@ -445,6 +448,7 @@ export default {
     },
     mounted() {
         this.reset();
+
         this.getFiles();
 
         this.$eventHub.$on('external_add', (form) => {

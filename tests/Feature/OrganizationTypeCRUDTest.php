@@ -29,9 +29,10 @@ class OrganizationTypeCRUDTest extends TestCase
         $list = $this->get('organizationtypes/list')
             ->assertStatus(200);
         $i = 0;
-        foreach ($organizationTypes as $organizationType)
-        {
-            if ($i === 49) { break; } //test max 50 entries (default page limit on datatables
+        foreach ($organizationTypes as $organizationType) {
+            if ($i === 49) {
+                break;
+            } //test max 50 entries (default page limit on datatables
             $list->assertJsonFragment($organizationType->toArray());
             $i++;
         }
@@ -63,7 +64,6 @@ class OrganizationTypeCRUDTest extends TestCase
      */
     public function an_administrator_delete_an_organization_type()
     {
-
         $org_type = OrganizationType::factory()->create();
 
         $this->followingRedirects()

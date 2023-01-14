@@ -119,6 +119,7 @@ export default {
                 'sharing_level': 2,
             }),
             token: false,
+            lms_url: '',
             courses: {},
             course_contents: {},
             course_content_items: {},
@@ -129,16 +130,44 @@ export default {
     },
     methods: {
         async loader() {
-            axios.get('/lmsUserTokens').then(response => {
-                this.token = response.data.token;
+            axios.get('/lmsUserTokens')
+                .then(response => {
+                    this.token      = response.data.token;
+                    this.lms_url    = response.data.lms_url;
+                    if (this.lms_url !== ''){
+                        this.getTokenFromLms(this.lms_url + 'mod/curriculum/get_token.php');
+                    }
             }).catch(e => {
                 error.log(response);
             });
+
             axios.get('/sharingLevels').then(response => {
                 this.sharing_levels = response.data.sharingLevel;
             }).catch(e => {
-                error.log(response);
+                console.log(e);
             });
+        },
+        async getTokenFromLms(url) {
+            axios.get(url)
+                .then(response => {
+                    this.token = response.data.privatetoken ;
+                    this.setUserToken();
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        },
+        async setUserToken() {
+            try {
+                const token = (await axios.post('/lmsUserTokens',
+                    {
+                        'token': this.form.token,
+                    })).data.token;
+                this.$emit('newToken', token)
+
+            } catch (error) {
+                console.log(error);
+            }
         },
         onNewToken(token) {
             this.token = token;

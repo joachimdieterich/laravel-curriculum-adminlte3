@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\EnablingObjective;
 use App\Curriculum;
+use App\EnablingObjective;
 use App\TerminalObjective;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

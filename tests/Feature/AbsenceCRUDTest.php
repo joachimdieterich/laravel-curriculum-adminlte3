@@ -36,12 +36,12 @@ class AbsenceCRUDTest extends TestCase
         $this->assertTrue(Gate::allows('absence_create'));
 
         $logbook = Logbook::Create([
-            'title'         => 'Test-Logbook',
-            'description'   => 'My test-Logbook',
-            'owner_id'      => auth()->user()->id,
+            'title' => 'Test-Logbook',
+            'description' => 'My test-Logbook',
+            'owner_id' => auth()->user()->id,
         ]);
         $entry = LogbookEntry::firstOrCreate([
-            'logbook_id'=> $logbook->id,
+            'logbook_id' => $logbook->id,
             'title' => 'First entry',
             'description' => 'First entry description',
             'begin' => '2020-09-13 16:17:14',
@@ -50,12 +50,12 @@ class AbsenceCRUDTest extends TestCase
         ]);
         $response = $this->postJson('absences', $attributes = [
             'referenceable_type' => 'App\LogbookEntry',
-            'referenceable_id'   => $entry->id,
-            'absent_user_ids'    => 6,
-            'reason'             => 'vacation',
-            'done'               => 0,
-            'time'               => 0,
-            'owner_id'           => auth()->user()->id,
+            'referenceable_id' => $entry->id,
+            'absent_user_ids' => 6,
+            'reason' => 'vacation',
+            'done' => 0,
+            'time' => 0,
+            'owner_id' => auth()->user()->id,
         ]);
         $absence = Absence::where('reason', 'vacation')->first();
         $response

@@ -35,7 +35,7 @@ class ApiUserDashboardTest extends TestCase
         $this->get('/api/v1/users/1/dashboard')
                 ->assertStatus(200)
                 ->assertSee(json_decode(htmlspecialchars(json_encode([
-                    "enrollments" => User::find(1)->currentGroups()->with(['curricula'])->get(),
+                    'enrollments' => User::find(1)->currentGroups()->with(['curricula'])->get(),
                     'notifications' => User::find(1)->notifications,
                     'events' => [/*$event*/],
                 ]))));

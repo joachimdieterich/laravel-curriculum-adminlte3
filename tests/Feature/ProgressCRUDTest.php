@@ -3,10 +3,9 @@
 namespace Tests\Feature;
 
 use App\Curriculum;
-use App\TerminalObjective;
 use App\EnablingObjective;
+use App\TerminalObjective;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-
 use Tests\TestCase;
 
 class ProgressCRUDTest extends TestCase

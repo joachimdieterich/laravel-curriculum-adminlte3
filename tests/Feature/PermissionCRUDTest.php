@@ -29,9 +29,10 @@ class PermissionCRUDTest extends TestCase
         $list = $this->get('permissions/list')
             ->assertStatus(200);
         $i = 0;
-        foreach ($permissions as $permission)
-        {
-            if ($i === 49) { break; } //test max 50 entries (default page limit on datatables
+        foreach ($permissions as $permission) {
+            if ($i === 49) {
+                break;
+            } //test max 50 entries (default page limit on datatables
             $list->assertJsonFragment($permission->toArray());
             $i++;
         }

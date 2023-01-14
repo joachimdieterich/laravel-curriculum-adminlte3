@@ -29,9 +29,10 @@ class CurriculumCRUDTest extends TestCase
         $list = $this->get('curricula/list')
             ->assertStatus(200);
         $i = 0;
-        foreach ($curricula as $curriculum)
-        {
-            if ($i === 49) { break; } //test max 50 entries (default page limit on datatables
+        foreach ($curricula as $curriculum) {
+            if ($i === 49) {
+                break;
+            } //test max 50 entries (default page limit on datatables
             $list->assertJsonFragment($curriculum->toArray());
             $i++;
         }
@@ -80,7 +81,7 @@ class CurriculumCRUDTest extends TestCase
 
         $this->get("curricula/{$curriculum->id}")
              ->assertStatus(200);
-             //->assertSee($curriculum);
+        //->assertSee($curriculum);
     }
 
     /** @test

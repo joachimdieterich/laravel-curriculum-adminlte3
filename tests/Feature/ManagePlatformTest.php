@@ -12,7 +12,6 @@ class ManagePlatformTest extends TestCase
     /** @test */
     public function an_admin_can_see_the_impressum()
     {
-
         $user = $this->signInAdmin();
 
         $this->get('impressum/')->assertStatus(200);

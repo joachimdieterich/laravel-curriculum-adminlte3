@@ -14,7 +14,7 @@ class UpdateGroupRequest extends FormRequest
     public function rules()
     {
         return [
-            'title'    => [
+            'title' => [
                 'sometimes',
             ],
         ];

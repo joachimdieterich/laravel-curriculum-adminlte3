@@ -29,10 +29,10 @@ class StoreTerminalObjectiveRequest extends FormRequest
             'curriculum_id' => [
                 'required',
             ],
-            'objective_type_id'  => [
+            'objective_type_id' => [
                 'required',
             ],
-            'visibility'  => [
+            'visibility' => [
                 'sometimes',
             ],
         ];

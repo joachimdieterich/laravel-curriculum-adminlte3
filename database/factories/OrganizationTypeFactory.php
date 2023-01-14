@@ -22,10 +22,10 @@ class OrganizationTypeFactory extends Factory
     public function definition()
     {
         return [
-            'title'       => $this->faker->company,
+            'title' => $this->faker->company,
             'external_id' => $this->faker->numberBetween(1, 100),
-            'state_id'    => 'DE-RP',
-            'country_id'  => 'DE',
+            'state_id' => 'DE-RP',
+            'country_id' => 'DE',
         ];
     }
 }

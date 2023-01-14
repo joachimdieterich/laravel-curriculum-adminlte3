@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Factories;
 
 use App\TerminalObjective;
@@ -12,7 +13,6 @@ class TerminalObjectiveFactory extends Factory
      * @var string
      */
     protected $model = TerminalObjective::class;
-
 
     /**
      * Define the model's default state.
@@ -30,5 +30,4 @@ class TerminalObjectiveFactory extends Factory
             'order_id' => 0,
         ];
     }
-
 }

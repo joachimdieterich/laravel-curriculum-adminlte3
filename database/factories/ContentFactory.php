@@ -27,5 +27,4 @@ class ContentFactory extends Factory
             'owner_id' => auth()->user()->id,
         ];
     }
-
 }

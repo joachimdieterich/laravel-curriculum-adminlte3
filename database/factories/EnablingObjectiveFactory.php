@@ -28,7 +28,7 @@ class EnablingObjectiveFactory extends Factory
             'description' => $this->faker->sentence,
             'time_approach' => null,
             'curriculum_id' => 1,
-            'terminal_objective_id' => TerminalObjective::factory()->create()->id,//DB::table('terminal_objectives')->latest()->first()->id,
+            'terminal_objective_id' => TerminalObjective::factory()->create()->id, //DB::table('terminal_objectives')->latest()->first()->id,
             'order_id' => 0,
             'level_id' => null,
         ];

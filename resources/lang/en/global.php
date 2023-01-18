@@ -637,7 +637,7 @@ return [
             'title_helper' => '',
             'content' => 'Content',
             'content_helper' => '',
-        ]
+        ],
     ],
     'categorie' => [
         'title' => 'Categories',
@@ -649,7 +649,7 @@ return [
             'id_helper' => '',
             'title' => 'Title',
             'title_helper' => '',
-        ]
+        ],
     ],
     'curriculum' => [
         'title' => 'Curricula',
@@ -678,6 +678,10 @@ return [
             'date_helper' => '',
             'color' => 'Color',
             'color_helper' => '',
+            'variant_default_title' => 'Title (Standard Variant)',
+            'variant_default_title_helper' => '',
+            'variant_default_description' => 'Description (Standard Variant)',
+            'variant_default_description_helper' => '',
         ],
     ],
     'curriculumType' => [
@@ -792,19 +796,19 @@ return [
             'title_helper' => '',
         ],
     ],
-    'navigator_view' =>[
-        'title'          => 'Navigator Views',
+    'navigator_view' => [
+        'title' => 'Navigator Views',
         'title_singular' => 'Navigator View',
-        'create'         => 'Create Navigator-View',
-        'edit'           => 'Edit Navigator-View',
-        'fields'         => [
-            'id'         => 'ID',
-            'id_helper'  => '',
-            'title'      => 'Title',
-            'title_helper'  => '',
-            'description'    => 'Description',
-            'description_helper'  => '',
-        ]
+        'create' => 'Create Navigator-View',
+        'edit' => 'Edit Navigator-View',
+        'fields' => [
+            'id' => 'ID',
+            'id_helper' => '',
+            'title' => 'Title',
+            'title_helper' => '',
+            'description' => 'Description',
+            'description_helper' => '',
+        ],
     ],
     'navigator_item' => [
         'title' => 'Navigator Items',
@@ -827,8 +831,8 @@ return [
             'css_class' => 'css_class',
             'css_class_helper' => '',
             'visibility_show' => 'show',
-            'visibility_hide' => 'hide'
-        ]
+            'visibility_hide' => 'hide',
+        ],
     ],
     'referenceable_types' => [
         'objective' => 'Link terminal/enabling objective',
@@ -974,29 +978,29 @@ return [
             'status' => 'Status',
             'completed_at' => 'Completed At',
             'created_at' => 'Created At',
-            'action' => 'Action'
+            'action' => 'Action',
         ],
         'add_remove_users' => [
             'students_exam_title' => 'Students in Exam',
-            'users_group_title' => 'Users in Group '
+            'users_group_title' => 'Users in Group ',
         ],
         'status_options' => [
             'not_started' => 'Not Started',
             'started' => 'Started',
-            'completed' => 'Completed'
+            'completed' => 'Completed',
         ],
         'confirm_messages' => [
-            'confirm_delete' => 'Are you sure you want to delete this Exam?'
+            'confirm_delete' => 'Are you sure you want to delete this Exam?',
         ],
         'success_messages' => [
             'exam_created' => 'Successfully Created Exam',
-            'exam_removed' => 'Successfully removed Exam'
+            'exam_removed' => 'Successfully removed Exam',
         ],
         'error_messages' => [
             'get_tests' => 'Test list could not be retrieved',
             'remove_users' => 'Students who have already started or completed this exam cannot be removed',
-            'remove_exam' => 'This Exam has been started by one or more Student(s) and cannot be removed'
-        ]
+            'remove_exam' => 'This Exam has been started by one or more Student(s) and cannot be removed',
+        ],
     ],
     'absences' => [
         'title' => 'Absences',
@@ -1083,10 +1087,10 @@ return [
             'description_helper' => '',
             'begin' => 'Start date',
             'begin_helper' => '',
-            'end'          => 'Due date',
-            'end_helper'   => '',
-            'duration'          => 'Duration',
-            'duration_helper'   => 'Specify how much time (in minutes) should be scheduled to complete the learning/work schedule.',
+            'end' => 'Due date',
+            'end_helper' => '',
+            'duration' => 'Duration',
+            'duration_helper' => 'Specify how much time (in minutes) should be scheduled to complete the learning/work schedule.',
         ],
     ],
     'planItem' => [
@@ -1201,7 +1205,7 @@ return [
             'id' => 'ID',
             'id_helper' => '',
             'content' => 'Inhalt',
-            'content' => '',
+            'content_helper' => '',
         ],
     ],
     'lms' => [
@@ -1209,6 +1213,71 @@ return [
         'title_singular' => 'LMS',
         'add' => 'Add LMS-Object',
     ],
+    'meeting'              => [
+        'title'          => 'Meetings',
+        'title_singular' => 'Meeting',
+        'create'         => 'Meeting erstellen',
+        'edit'           => 'Meeting bearbeiten',
+        'fields'         => [
+            'id'               => 'ID',
+            'id_helper'        => '',
+            'uid'              => 'UID',
+            'uid_helper'       => '',
+            'title'            => 'Meeting-Title',
+            'title_helper'      => '',
+            'subtitle'         => 'Subtitle',
+            'info'             => 'Info',
+            'info_helper'      => '',
+            'speakers'         => 'Speakers',
+            'speakers_helper'  => '',
+            'description'      => 'description',
+            'description_helper'       => '',
+            'begin'            => 'Begin',
+            'end'              => 'End',
+            'status'           => 'Status',
+            'category'         => 'Category',
+            'target_group'     => 'Targetgroup',
+            'provider'         => 'Provider',
+            'livestream'       => 'Livestream',
+            'livestream_helper'=> ''
+        ],
+    ],
+    'meetingDate'              => [
+        'title'          => 'Meetingdatetitel',
+        'title_singular' => 'Meetingdatetitel',
+        'create'         => 'Create meetingdatetitel ',
+        'edit'           => 'Edit meetingdatetitel ',
+        'fields'         => [
+            'id'               => 'ID',
+            'id_helper'        => '',
+            'uid'              => 'UID',
+            'uid_helper'       => '',
+            'access_token'        => 'Access Token',
+            'access_token_helper' => '',
+            'title'            => 'Title',
+            'title_helper'     => '',
+            'description'      => 'Description',
+            'description_helper'       => '',
+            'address'          => 'Address',
+            'address_helper'   => '',
+            'begin'            => 'Begin',
+            'end'              => 'End',
+            'type'             => 'Type',
+            'type_helper'       => '',
+        ],
+    ],
+    'subtitle' => 'Untertitel',
+    'agendaItemType' => [
+        'title' => 'Typ',
+        'title_singular' => 'Typ',
+        'fields' => [
+            'id' => 'ID',
+            'id_helper' => '',
+            'title' => 'Title',
+            'title_helper' => '',
+        ],
+    ],
+    'token' => 'Token',
     'variantDefinitions' => [
         'title' => 'Variant Definitions',
         'title_singular' => 'Variant Definition',

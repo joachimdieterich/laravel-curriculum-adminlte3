@@ -26,10 +26,10 @@ return [
     'edit' => 'editieren',
     'delete' => 'löschen',
     'forceDelete' => 'Datensatz endgültig löschen.',
-    'save' => 'speichern',
-    'open' => 'öffnen',
+    'save' => 'Speichern',
+    'open' => 'Öffnen',
     'cancel' => 'Abbrechen',
-    'close' => 'schließen',
+    'close' => 'Schließen',
     'generate' => 'erzeugen',
     'share' => 'Teilen',
     'pleaseSelect' => 'Bitte wählen ',
@@ -637,7 +637,7 @@ return [
             'title_helper' => '',
             'content' => 'Inhalt',
             'content_helper' => '',
-        ]
+        ],
     ],
     'categorie' => [
         'title' => 'Kategorien',
@@ -649,7 +649,7 @@ return [
             'id_helper' => '',
             'title' => 'Titel',
             'title_helper' => '',
-        ]
+        ],
     ],
     'curriculum' => [
         'title' => 'Curricula',
@@ -808,7 +808,7 @@ return [
             'title_helper' => '',
             'description' => 'Beschreibung',
             'description_helper' => '',
-        ]
+        ],
     ],
     'navigator_item' => [
         'title' => 'Navigator-Blöcke',
@@ -831,8 +831,8 @@ return [
             'css_class' => 'css_class',
             'css_class_helper' => '',
             'visibility_show' => 'anzeigen',
-            'visibility_hide' => 'ausblenden'
-        ]
+            'visibility_hide' => 'ausblenden',
+        ],
     ],
     'referenceable_types' => [
         'objective' => 'Querverweise',
@@ -862,7 +862,7 @@ return [
             'user_id_helper' => '',
             'owner_id' => 'Eigentümer Id',
             'owner_id_helper' => '',
-        ]
+        ],
     ],
     'progress' => [
         'title' => 'Fortschritte',
@@ -880,7 +880,7 @@ return [
             'associable_id_helper' => '',
             'value' => 'Wert',
             'value_helper' => '',
-        ]
+        ],
     ],
     'certificate' => [
         'title' => 'Zertifkate',
@@ -903,7 +903,7 @@ return [
             'organization_id_helper' => '',
             'owner_id' => 'Eigentümer Id',
             'owner_id_helper' => '',
-        ]
+        ],
     ],
     'logbook' => [
         'title' => 'Logbücher',
@@ -978,29 +978,29 @@ return [
             'status' => 'Status',
             'completed_at' => 'Abgeschlossen Am',
             'created_at' => 'Erstellt Am',
-            'action' => 'Aktion'
+            'action' => 'Aktion',
         ],
         'add_remove_users' => [
             'students_exam_title' => 'Studenten in der Testung',
-            'users_group_title' => 'Benutzer in der Gruppe'
+            'users_group_title' => 'Benutzer in der Gruppe',
         ],
         'status_options' => [
             'not_started' => 'Nicht begonnen',
             'started' => 'Bearbeitet',
-            'completed' => 'Fertiggestellt'
+            'completed' => 'Fertiggestellt',
         ],
         'confirm_messages' => [
-            'confirm_delete' => 'Sind Sie sicher, dass Sie diese Testung löschen wollen?'
+            'confirm_delete' => 'Sind Sie sicher, dass Sie diese Testung löschen wollen?',
         ],
         'success_messages' => [
             'exam_created' => 'Erfolgreich erstellte Testung',
-            'exam_removed' => 'Erfolgreich entfernte Testung'
+            'exam_removed' => 'Erfolgreich entfernte Testung',
         ],
         'error_messages' => [
             'get_tests' => 'Testliste konnte nicht abgerufen werden',
             'remove_users' => 'Schüler mit Status bearbeitet oder fertiggestellt, können nicht entfernt werden.',
-            'remove_exam' => 'Diese Testung wurde von einem oder mehreren Schülern begonnen und kann nicht entfernt werden'
-        ]
+            'remove_exam' => 'Diese Testung wurde von einem oder mehreren Schülern begonnen und kann nicht entfernt werden',
+        ],
     ],
     'absences' => [
         'title' => 'Abwesenheit-Einträge',
@@ -1205,13 +1205,77 @@ return [
             'id' => 'ID',
             'id_helper' => '',
             'content' => 'Inhalt',
-            'content' => '',
+            'content_helper' => '',
         ],
     ],
     'lms' => [
         'title' => 'Lernplattformen',
         'title_singular' => 'Lernplattform',
         'add' => 'Lernplattform-Baustein hinzufügen',
+    ],
+    'meeting'              => [
+        'title'          => 'Veranstaltungen',
+        'title_singular' => 'Veranstaltung',
+        'create'         => 'Veranstaltung erstellen',
+        'edit'           => 'Veranstaltung bearbeiten',
+        'fields'         => [
+            'id'               => 'ID',
+            'id_helper'        => '',
+            'uid'              => 'Veranstaltungsnummer',
+            'uid_helper'       => '',
+            'title'            => 'Veranstaltungstitel',
+            'title_helper'      => '',
+            'subtitle'         => 'Untertitel',
+            'info'             => 'Informationen',
+            'info_helper'      => '',
+            'speakers'         => 'Referenten',
+            'speakers_helper'  => '',
+            'description'      => 'Beschreibung',
+            'description_helper'       => '',
+            'begin'            => 'Beginn',
+            'end'              => 'Ende',
+            'status'           => 'Status',
+            'category'         => 'Kategorie',
+            'target_group'     => 'Zielgruppe',
+            'provider'         => 'Anbieter',
+            'livestream'       => 'Livestream',
+            'livestream_helper'=> ''
+        ],
+    ],
+    'meetingDate'              => [
+        'title'          => 'Veranstaltungstermine',
+        'title_singular' => 'Veranstaltungstermin',
+        'create'         => 'Veranstaltungstermin erstellen',
+        'edit'           => 'Veranstaltungstermin bearbeiten',
+        'fields'         => [
+            'id'               => 'ID',
+            'id_helper'        => '',
+            'uid'              => 'Veranstaltungs(termin)nummer',
+            'uid_helper'       => '',
+            'access_token'        => 'Zugriffstoken',
+            'access_token_helper' => '',
+            'title'            => 'Titel',
+            'title_helper'     => '',
+            'description'      => 'Beschreibung',
+            'description_helper'       => '',
+            'address'          => 'Adresse',
+            'address_helper'   => '',
+            'begin'            => 'Beginn',
+            'end'              => 'Ende',
+            'type'             => 'Typ',
+            'type_helper'       => '',
+        ],
+    ],
+    'subtitle' => 'Untertitel',
+    'agendaItemType' => [
+        'title' => 'Typ',
+        'title_singular' => 'Typ',
+        'fields' => [
+            'id' => 'ID',
+            'id_helper' => '',
+            'title' => 'Title',
+            'title_helper' => '',
+        ],
     ],
     'token' => 'Token',
     'variantDefinitions' => [

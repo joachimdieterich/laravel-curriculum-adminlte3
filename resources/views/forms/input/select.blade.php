@@ -99,7 +99,7 @@
                 return $('<span class="' + $(icon.element).data('class') + '"><i class="fas ' + $(icon.element).data('icon') + '"></i> ' + icon.text + '</span>');
             }
             <!--hack to get select2 working z-index-->
-            var $select = $("#{{ $field }}").select2({
+             $("#{{ $field }}").select2({
                 placeholder: "{{ $placeholder }}",
                 dropdownParent: $("#{{ $field }}").parent(),
                 allowClear: "{{ $allowClear ?? true }}",

@@ -38,7 +38,7 @@ class StudentsPermissionCheckTest extends TestCase
         $course = Course::all()->last();
 
         $this->followingRedirects()
-            ->get('/courses/' . $course->id)
+            ->get('/courses/'.$course->id)
             ->assertStatus(200); //curriculum was created by seeder
     }
 

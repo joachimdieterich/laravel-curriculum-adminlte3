@@ -3,30 +3,35 @@
         <div class="card-header px-3 py-2" :style="{ backgroundColor: item.color, color: textColor }">
             <div class="card-tools">
                 <div v-if="editable && editor === false" class="btn btn-flat py-0 px-2 "
+                     :id="'kanbanItemDropdown_'+index"
                      style="background-color: transparent;"
                      data-toggle="dropdown"
                      aria-expanded="false">
                     <i class="fas fa-ellipsis-v"
                        :style="{ 'text-color': textColor }"></i>
                     <div class="dropdown-menu" x-placement="top-start">
-                      <button class="dropdown-item text-secondary  py-1"
+                      <button :name="'kanbanItemEdit_'+index"
+                              class="dropdown-item text-secondary  py-1"
                               @click="edit()">
                         <i class="fa fa-pencil-alt mr-4"></i>
                         {{ trans('global.kanbanItem.edit') }}
                       </button>
-                      <button class="dropdown-item text-secondary  py-1"
+                      <button :name="'kanbanItemAddMedia_'+index"
+                              class="dropdown-item text-secondary  py-1"
                               @click="addMedia()">
                         <i class="fa fa-folder-open mr-4"></i>
                         {{ trans('global.media.title_singular') }}
                       </button>
-                      <button class="dropdown-item text-secondary  py-1"
+<!--                      <button :name="'kanbanItemShare_'+index"
+                              class="dropdown-item text-secondary  py-1"
                               @click="open('subscribe-modal')">
                         <i class="fa fa-share-alt mr-4"></i>
                         {{ trans('global.share') }}
-                      </button>
+                      </button>-->
                       <hr class="my-1">
                       <button
                           v-can="'kanban_delete'"
+                          :name="'kanbanItemDelete_'+index"
                           class="dropdown-item py-1 text-red"
                             @click="deleteItem()">
                             <i class="fa fa-trash mr-4"></i>
@@ -40,11 +45,13 @@
                         <span   class="pull-left"
                                 style="background-color: rgb(244, 244, 244); border-radius: 20px; padding: 2px 2px 0px 2px;">
                             <color-picker-input
+                                :id="'colorPicker_'+index"
                                 v-if="editor !== false"
                                 v-model="form.color">
                             </color-picker-input>
                         </span>
                         <input
+                            :id="'title_'+index"
                              type="text"
                              v-model="form.title"
                              class="w-100"
@@ -66,7 +73,7 @@
             <textarea
                 v-if="editor !== false"
                 :id="'description_'+item.id"
-                name="description"
+                :name="'description_'+index"
                 placeholder="Beschreibung"
                 class="form-control description my-editor "
                 v-model.trim="form.description"
@@ -76,6 +83,7 @@
                  v-html="form.description">
             </div>
             <button v-if="editor !== false"
+                    :name="'kanbanItemSave_'+index"
                     class="btn btn-primary p-2 m-2"
                     @click="submit()">
                 {{ trans('global.save') }}
@@ -157,6 +165,7 @@ import Form from "form-backend-validation";
 export default {
   props: {
     'item': Object,
+    'index': Number,
     'width': Number,
       'editable': true
   },

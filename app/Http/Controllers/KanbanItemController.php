@@ -33,7 +33,7 @@ class KanbanItemController extends Controller
 
         // axios call?
         if (request()->wantsJson()) {
-            return ['message' => KanbanItem::where('id', $kanbanItem->id)->with(['mediaSubscriptions', 'media', 'owner', 'taskSubscription','comments'])->get()->first()];
+            return ['message' => KanbanItem::where('id', $kanbanItem->id)->with(['mediaSubscriptions', 'media', 'owner', 'taskSubscription', 'comments'])->get()->first()];
         }
     }
 
@@ -70,7 +70,7 @@ class KanbanItemController extends Controller
                     $query->where('subscribable_id', auth()->user()->id)
                         ->where('subscribable_type', 'App\User');
                 }, 'mediaSubscriptions.medium'])->orderBy('order_id');
-            }, 'statuses.items.subscribable','statuses.items.comments','statuses.items.comments.user'])->where('id', $kanban_id)->get()->first()->statuses];
+            }, 'statuses.items.subscribable', 'statuses.items.comments', 'statuses.items.comments.user'])->where('id', $kanban_id)->get()->first()->statuses];
         }
     }
 
@@ -115,13 +115,13 @@ class KanbanItemController extends Controller
         $input = $this->validateRequest();
 
         $kanbanItem->update([
-            'title'             => $input['title'],
-            'description'       => $input['description'],
-            'order_id'          => $input['order_id'],
-            'kanban_id'         => $input['kanban_id'],
-            'kanban_status_id'  => $input['kanban_status_id'],
-            'color'             => $input['color'],
-            'owner_id'          => auth()->user()->id,
+            'title' => $input['title'],
+            'description' => $input['description'],
+            'order_id' => $input['order_id'],
+            'kanban_id' => $input['kanban_id'],
+            'kanban_status_id' => $input['kanban_status_id'],
+            'color' => $input['color'],
+            'owner_id' => auth()->user()->id,
         ]);
 
         // axios call?
@@ -141,6 +141,8 @@ class KanbanItemController extends Controller
         abort_unless((\Gate::allows('kanban_delete') and $kanbanItem->isAccessible()), 403);
 
         $kanbanItem->mediaSubscriptions()->delete();
+        $kanbanItem->subscriptions()->delete();
+
         if (request()->wantsJson()) {
             return ['message' => $kanbanItem->delete()];
         }
@@ -154,7 +156,7 @@ class KanbanItemController extends Controller
             'order_id' => 'sometimes|required|integer',
             'kanban_id' => 'sometimes|required|integer',
             'kanban_status_id' => 'sometimes|required|integer',
-            'color' => 'sometimes'
+            'color' => 'sometimes',
         ]);
     }
 

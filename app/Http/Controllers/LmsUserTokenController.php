@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\LmsUserToken;
+use App\Organization;
 use Illuminate\Http\Request;
 
 class LmsUserTokenController extends Controller
@@ -20,7 +21,19 @@ class LmsUserTokenController extends Controller
             ->first();
 
         if (request()->wantsJson()) {
-            return ['token' => is_null($token) ? false : true];
+            if (! is_null($token)) {
+                $current_organization = Organization::where('id', auth()->user()->current_organization_id)->get()->first();
+
+                return [
+                    'lms_url' => $current_organization->lms_url,
+                    'token' => false,
+                ];
+            } else {
+                return [
+                    'lms_url' => '',
+                    'token' => is_null($token) ? false : true,
+                ];
+            }
         }
     }
 

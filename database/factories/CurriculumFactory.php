@@ -22,15 +22,15 @@ class CurriculumFactory extends Factory
     public function definition()
     {
         return [
-            'title'                 => $this->faker->company,
-            'description'           => $this->faker->paragraph,
+            'title' => $this->faker->company,
+            'description' => $this->faker->paragraph,
 
-            'author'                => $this->faker->userName,
-            'publisher'             => $this->faker->company,
-            'city'                  => $this->faker->city,
-            'date'                  => $this->faker->dateTimeThisMonth()->format('Y-m-d H:i:s'),
+            'author' => $this->faker->userName,
+            'publisher' => $this->faker->company,
+            'city' => $this->faker->city,
+            'date' => $this->faker->dateTimeThisMonth()->format('Y-m-d H:i:s'),
 
-            'color'                 => $this->faker->rgbColor,
+            'color' => $this->faker->rgbColor,
 
             'grade_id' => 1,
             'subject_id' => 1,

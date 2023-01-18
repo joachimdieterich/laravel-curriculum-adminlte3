@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Factories;
 
 use App\User;
@@ -22,6 +23,7 @@ class UserFactory extends Factory
     public function definition()
     {
         $name = $this->faker->name();
+
         return [
             'username' => $name,
             'common_name' => 'cn_'.$name,

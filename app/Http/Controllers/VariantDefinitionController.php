@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\VariantDefinition;
-use Yajra\DataTables\DataTables;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\DataTables;
 
 class VariantDefinitionController extends Controller
 {
@@ -16,7 +16,7 @@ class VariantDefinitionController extends Controller
      */
     public function index()
     {
-        if (request()->wantsJson() AND request()->has(['term', 'page'])) {
+        if (request()->wantsJson() and request()->has(['term', 'page'])) {
             return getEntriesForSelect2ByModel("App\VariantDefinition");
         }
         if (request()->wantsJson()) {
@@ -90,11 +90,11 @@ class VariantDefinitionController extends Controller
         $new_variant_definition = $this->validateRequest();
 
         VariantDefinition::create([
-            'title'         => $new_variant_definition['title'],
-            'description'   => $new_variant_definition['description'],
-            'color'         => $new_variant_definition['color'],
-            'css_icon'      => $new_variant_definition['css_icon'],
-            'owner_id'      => auth()->user()->id,
+            'title' => $new_variant_definition['title'],
+            'description' => $new_variant_definition['description'],
+            'color' => $new_variant_definition['color'],
+            'css_icon' => $new_variant_definition['css_icon'],
+            'owner_id' => auth()->user()->id,
 
         ]);
 
@@ -141,11 +141,11 @@ class VariantDefinitionController extends Controller
         $new_variant_definition = $this->validateRequest();
 
         $variantDefinition->update([
-            'title'         => $new_variant_definition['title'],
-            'description'   => $new_variant_definition['description'],
-            'color'         => $new_variant_definition['color'],
-            'css_icon'      => $new_variant_definition['css_icon'],
-            'owner_id'      => auth()->user()->id,
+            'title' => $new_variant_definition['title'],
+            'description' => $new_variant_definition['description'],
+            'color' => $new_variant_definition['color'],
+            'css_icon' => $new_variant_definition['css_icon'],
+            'owner_id' => auth()->user()->id,
         ]);
 
         return redirect()->route('variantDefinitions.index');
@@ -164,11 +164,9 @@ class VariantDefinitionController extends Controller
         if (
             DB::table('curricula')
             ->whereIn('variants->order', (array) $variantDefinition->id)
-            ->get()->count() === 0)
-        {
+            ->get()->count() === 0) {
             $variantDefinition->delete();
         }
-
 
         return back();
     }
@@ -176,10 +174,10 @@ class VariantDefinitionController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'title'         => 'sometimes|required',
-            'description'   => 'sometimes|required',
-            'color'         => 'sometimes',
-            'css_icon'      => 'sometimes',
+            'title' => 'sometimes|required',
+            'description' => 'sometimes|required',
+            'color' => 'sometimes',
+            'css_icon' => 'sometimes',
         ]);
     }
 }

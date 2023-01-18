@@ -10,12 +10,12 @@ use Cmgmyr\Messenger\Traits\Messagable;
 use DateTimeInterface;
 use Hash;
 use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  *   @OA\Schema(
@@ -420,7 +420,8 @@ class User extends Authenticatable
         }
     }
 
-    public function scopeNoSharing($query){
+    public function scopeNoSharing($query)
+    {
         $query->whereNull('sharing_token');
     }
 
@@ -432,6 +433,18 @@ class User extends Authenticatable
             'user_id',
             'exam_id')
             ->withPivot(['login_data', 'exam_completed_at']);
+    }
+
+    public function videoconferences()
+    {
+        return $this->hasManyThrough(
+            'App\Videoconference',
+            'App\VideoconferenceSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'videoconference_id'
+        )->where('subscribable_type', get_class($this));
     }
 
 }

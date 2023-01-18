@@ -18,7 +18,6 @@ class NavigatorController extends Controller
     {
         abort_unless(\Gate::allows('navigator_access'), 403);
 
-
         return view('navigators.index');
     }
 
@@ -199,8 +198,8 @@ class NavigatorController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'title'             => 'sometimes|required',
-            'organization_id'   => 'sometimes',
+            'title' => 'sometimes|required',
+            'organization_id' => 'sometimes',
         ]);
     }
 }

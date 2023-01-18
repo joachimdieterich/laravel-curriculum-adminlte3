@@ -26,10 +26,10 @@ class StoreEnablingObjectiveRequest extends FormRequest
             'curriculum_id' => [
                 'required',
             ],
-            'terminal_objective_id'  => [
+            'terminal_objective_id' => [
                 'required',
             ],
-            'visibility'  => [
+            'visibility' => [
                 'sometimes',
             ],
         ];

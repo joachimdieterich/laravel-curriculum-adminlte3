@@ -15,7 +15,7 @@ class MassUpdateUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'ids'   => 'required|array',
+            'ids' => 'required|array',
             'ids.*' => 'exists:users,id',
             'password' => 'sometimes|string|min:8',
             'status_id' => 'sometimes',

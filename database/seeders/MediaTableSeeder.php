@@ -1,5 +1,7 @@
 <?php
+
 namespace Database\Seeders;
+
 use App\Medium;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
@@ -17,18 +19,18 @@ class MediaTableSeeder extends Seeder
             $files = File::allFiles(storage_path('app/subjects'));
             foreach ($files as $file) {
                 $media = new Medium([
-                    'path'          => '/subjects/',
-                    'title'         => $file->getFilename(),
-                    'medium_name'   => $file->getFilename(),
-                    'description'   => '',
-                    'author'        => 'admin',
-                    'publisher'     => 'admin',
-                    'city'          => '',
-                    'date'          => '2019-09-19 17:52:32',
-                    'size'          => $file->getSize(),
-                    'mime_type'     => $file->getType(),
-                    'license_id'    => 3,
-                    'owner_id'      => 1,
+                    'path' => '/subjects/',
+                    'title' => $file->getFilename(),
+                    'medium_name' => $file->getFilename(),
+                    'description' => '',
+                    'author' => 'admin',
+                    'publisher' => 'admin',
+                    'city' => '',
+                    'date' => '2019-09-19 17:52:32',
+                    'size' => $file->getSize(),
+                    'mime_type' => $file->getType(),
+                    'license_id' => 3,
+                    'owner_id' => 1,
 
                 ]);
                 $media->save();

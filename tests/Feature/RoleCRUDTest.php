@@ -29,9 +29,10 @@ class RoleCRUDTest extends TestCase
         $list = $this->get('roles/list')
             ->assertStatus(200);
         $i = 0;
-        foreach ($roles as $role)
-        {
-            if ($i === 49) { break; } //test max 50 entries (default page limit on datatables
+        foreach ($roles as $role) {
+            if ($i === 49) {
+                break;
+            } //test max 50 entries (default page limit on datatables
             $list->assertJsonFragment($role->toArray());
             $i++;
         }
@@ -42,14 +43,13 @@ class RoleCRUDTest extends TestCase
      */
     public function an_administrator_create_a_role()
     {
-
         $this->followingRedirects()
             ->post('roles', $attributes = Role::factory()->raw())
             ->assertStatus(200);
 
         $this->assertDatabaseHas('roles', [
-                'title' => $attributes['title']
-            ]);
+            'title' => $attributes['title'],
+        ]);
     }
 
     /** @test
@@ -66,7 +66,6 @@ class RoleCRUDTest extends TestCase
      */
     public function an_administrator_delete_a_role()
     {
-
         $this->followingRedirects()
             ->post('roles', $attributes = Role::factory()->raw())
             ->assertStatus(200);
@@ -77,7 +76,7 @@ class RoleCRUDTest extends TestCase
             ->delete('roles/'.$role['id'])
             ->assertStatus(200);
 
-        $this->assertDatabaseMissing('roles',$role->toArray());
+        $this->assertDatabaseMissing('roles', $role->toArray());
     }
 
     /** @test

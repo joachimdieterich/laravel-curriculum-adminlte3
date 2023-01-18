@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Certificate;
 use Illuminate\Database\Eloquent\Factories\Factory;
+
 class CertificateFactory extends Factory
 {
     /**
@@ -29,5 +30,4 @@ class CertificateFactory extends Factory
             'owner_id' => auth()->user()->id,
         ];
     }
-
 }

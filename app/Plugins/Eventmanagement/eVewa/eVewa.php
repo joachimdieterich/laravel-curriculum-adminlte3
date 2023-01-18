@@ -75,21 +75,21 @@ class eVewa extends EventmanagementPlugin
 
         $params = array_replace_recursive( //replace defaults with given params
              [
-                 'method'=> 'lesePlrlpVeranstaltungen',
+                 'method' => 'lesePlrlpVeranstaltungen',
                  'session_id' => (string) $this->sessionId,
-                 'mandant'=> '',
-                 'page'=> '',
-                 'limit'=> '',
-                 'order'=> '',
-                 'search'=> '',
-                 'abgeschlossene'=> '',
-                 'gs_ort'=> '',
-                 'gs_plz'=> '',
-                 'veranstalter'=> '',
-                 'von'=> '',
-                 'bis'=> '',
-                 'schulartentag'=> '',
-                 'zielgruppentag'=> '',
+                 'mandant' => '',
+                 'page' => '',
+                 'limit' => '',
+                 'order' => '',
+                 'search' => '',
+                 'abgeschlossene' => '',
+                 'gs_ort' => '',
+                 'gs_plz' => '',
+                 'veranstalter' => '',
+                 'von' => '',
+                 'bis' => '',
+                 'schulartentag' => '',
+                 'zielgruppentag' => '',
              ], $params);
 //
 
@@ -108,10 +108,10 @@ class eVewa extends EventmanagementPlugin
     {
         $params = array_replace_recursive( //replace defaults with given params
              [
-                 'method'=> 'lesePlrlpVeranstaltungDetail',
+                 'method' => 'lesePlrlpVeranstaltungDetail',
                  'session_id' => (string) $this->sessionId,
-                 'mandant'=> '',
-                 'artikelnr'=> '',
+                 'mandant' => '',
+                 'artikelnr' => '',
              ], $params);
 
         $raw = $this->call($this->url, 'GET', http_build_query($params));

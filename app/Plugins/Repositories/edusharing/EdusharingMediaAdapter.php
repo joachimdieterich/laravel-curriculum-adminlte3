@@ -3,14 +3,13 @@
 namespace App\Plugins\Repositories\edusharing;
 
 use App\Http\Controllers\LogController;
-use App\Medium;
 use App\Interfaces\MediaInterface;
+use App\Medium;
 use App\MediumSubscription;
 use Illuminate\Http\Request;
 
 class EdusharingMediaAdapter implements MediaInterface
 {
-
     /**
      * Display a listing of the resource.
      *
@@ -33,11 +32,10 @@ class EdusharingMediaAdapter implements MediaInterface
      */
     public function create()
     {
-
         if (request()->wantsJson()) {
             return [
                 'uploadIframeUrl' => config('medium.repositories.edusharing.upload_iframe_url'),
-                'cloudIframeUrl'  => config('medium.repositories.edusharing.cloud_iframe_url'). '&ticket=' . (new Edusharing())->accessToken,
+                'cloudIframeUrl' => config('medium.repositories.edusharing.cloud_iframe_url').'&ticket='.(new Edusharing())->accessToken,
             ];
         }
         abort(404);
@@ -45,7 +43,6 @@ class EdusharingMediaAdapter implements MediaInterface
 
     public function store(Request $request)
     {
-
         $input = $this->validateRequest();
 
         $medium = Medium::create([
@@ -65,11 +62,10 @@ class EdusharingMediaAdapter implements MediaInterface
             'license_id'    => $input['license_id']     ?? 1,
             'public'        => $input['public']         ?? 1,   //default is public --> permission check over edusharing
 
-            'owner_id'      => auth()->user()->id,
+            'owner_id' => auth()->user()->id,
         ]);
 
-        if (($input['subscribable_type'] !== 'null') and ($input['subscribable_id'] !== 'null'))
-        {
+        if (($input['subscribable_type'] !== 'null') and ($input['subscribable_id'] !== 'null')) {
             $subscribe = MediumSubscription::updateOrCreate([
                 'medium_id'         => $medium->id,
                 'subscribable_type' => $input['subscribable_type'],
@@ -82,7 +78,7 @@ class EdusharingMediaAdapter implements MediaInterface
             $subscribe->save();
         }
 
-        LogController::set(get_class($this).'@'.__FUNCTION__, null,  1);
+        LogController::set(get_class($this).'@'.__FUNCTION__, null, 1);
 
         return response()->json($medium);
     }
@@ -91,18 +87,14 @@ class EdusharingMediaAdapter implements MediaInterface
     {
 
         // Medium is public (sharing_level_id == 1) or user is owner
-        if (($medium->public == true) or ($medium->owner_id == auth()->user()->id))
-        {
+        if (($medium->public == true) or ($medium->owner_id == auth()->user()->id)) {
             return request('download') ? redirect($medium->path) : redirect($medium->thumb_path);
         }
 
         /* checkIfUserHasSubscription and visibility*/
-        if ($medium->subscriptions())
-        {
-            foreach ($medium->subscriptions as $subscription)
-            {
-                if ($this->checkIfUserHasSubscription($subscription))
-                {
+        if ($medium->subscriptions()) {
+            foreach ($medium->subscriptions as $subscription) {
+                if ($this->checkIfUserHasSubscription($subscription)) {
                     return request('download') ? redirect($medium->path) : redirect($medium->thumb_path);
                 }
             }
@@ -113,7 +105,7 @@ class EdusharingMediaAdapter implements MediaInterface
         abort(403);
     }
 
-    public function thumb(Medium $medium,  $size) //todo: return smaller images/files/thumbs
+    public function thumb(Medium $medium, $size) //todo: return smaller images/files/thumbs
     {
 
         // Medium is public (sharing_level_id == 1) or user is owner
@@ -122,12 +114,9 @@ class EdusharingMediaAdapter implements MediaInterface
         }
 
         /* checkIfUserHasSubscription and visibility*/
-        if ($medium->subscriptions())
-        {
-            foreach ($medium->subscriptions as $subscription)
-            {
-                if ($this->checkIfUserHasSubscription($subscription))
-                {
+        if ($medium->subscriptions()) {
+            foreach ($medium->subscriptions as $subscription) {
+                if ($this->checkIfUserHasSubscription($subscription)) {
                     return redirect($medium->thumb_path); //return file or url
                 }
             }
@@ -138,7 +127,7 @@ class EdusharingMediaAdapter implements MediaInterface
         abort(403);
     }
 
-   public function edit(Medium $medium)
+    public function edit(Medium $medium)
     {
         abort(404);
     }
@@ -156,7 +145,7 @@ class EdusharingMediaAdapter implements MediaInterface
         }
     }
 
-    public function destroy(Medium $medium, Mixed $subscribable_type, Mixed $subscribable_id)
+    public function destroy(Medium $medium, mixed $subscribable_type, mixed $subscribable_id)
     {
         abort_unless(\Gate::allows('medium_delete'), 403);
         /**

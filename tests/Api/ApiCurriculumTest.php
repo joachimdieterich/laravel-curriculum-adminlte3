@@ -62,8 +62,8 @@ class ApiCurriculumTest extends TestCase
         $this->signInApiAdmin();
 
         $config = Config::create([
-            'key' =>  'metadata_password',
-            'value' =>  'password',
+            'key' => 'metadata_password',
+            'value' => 'password',
             'data_type' => 'string',
         ]);
         $this->get("/api/v1/curricula/1/metadataset?password={$config->value}")
@@ -81,8 +81,8 @@ class ApiCurriculumTest extends TestCase
         $this->post('/metadatasets', $attributes = ['version' => 1]);
 
         $config = Config::create([
-            'key' =>  'metadata_password',
-            'value' =>  'password',
+            'key' => 'metadata_password',
+            'value' => 'password',
             'data_type' => 'string',
         ]);
         $this->get("/api/v1/curricula/metadatasets?password={$config->value}")

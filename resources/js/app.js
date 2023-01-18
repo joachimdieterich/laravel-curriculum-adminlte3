@@ -19,7 +19,7 @@ window.moment = require('moment');
 import _ from 'lodash'; //needed to get
 
 Vue.prototype.trans = (key) => {
-    return _.get(window.trans, key, key);
+    return _.get(window.trans, key, _.get(window.trans, 'global.' + key.split(".").splice(-1), key) );
 };
 
 import "vue-swatches/dist/vue-swatches.css";
@@ -54,7 +54,10 @@ Vue.prototype.checkLocalStorage = (key, value, class_string = "active", is_defau
  * make userId accessible for vue
  * @type {string}
  */
-Vue.prototype.$userId = document.querySelector("meta[name='user-id']").getAttribute('content');
+if (document.querySelector("meta[name='user-id']")){
+    Vue.prototype.$userId = document.querySelector("meta[name='user-id']").getAttribute('content');
+}
+
 
 
 import VModal from 'vue-js-modal';
@@ -117,6 +120,7 @@ Vue.component('reference-objective-modal', require('./components/reference/Refer
 Vue.component('medium-modal', require('./components/media/MediumModal.vue').default);
 Vue.component('medium-create-modal', require('./components/media/MediumCreateModal.vue').default);
 Vue.component('medium-export-modal', require('./components/media/MediumExportModal.vue').default);
+Vue.component('meeting', require('./components/meeting/Meeting.vue').default);
 Vue.component('note-modal', require('./components/note/NoteModal.vue').default);
 Vue.component('notes', require('./components/note/Notes.vue').default);
 /*Vue.component('objective-medium-modal', require('./components/objectives/ObjectiveMediumModal.vue').default);*/
@@ -277,6 +281,8 @@ Vue.directive('permission', function (el, binding, vnode) {
 
 });
 
+//global eventHub
+Vue.prototype.$eventHub = new Vue();
 
 //global eventHub
 Vue.prototype.$eventHub = new Vue();

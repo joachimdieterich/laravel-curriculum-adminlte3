@@ -24,6 +24,12 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('kanbanItemComment', 'KanbanItemCommentController');
 
+    Route::resource('agendas', 'AgendaController');
+    Route::resource('agendaItems', 'AgendaItemController');
+    Route::resource('agendaItemTypes', 'AgendaItemTypeController');
+    Route::resource('agendaItemSubscriptions', 'AgendaItemSubscriptionController');
+    Route::resource('agendaItemSpeakers', 'AgendaItemSpeakerController');
+
     Route::resource('absences', 'AbsenceController');
 
     Route::post('achievements', 'AchievementController@store');
@@ -118,7 +124,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('kanbanItems', 'KanbanItemController');
     Route::put('kanbanStatuses/sync', 'KanbanStatusController@sync')->name('kanbanStatuses.sync');
     Route::resource('kanbanStatuses', 'KanbanStatusController');
-    Route::post('kanban/token', 'ShareTokenController@create' );
+    Route::post('kanban/token', 'ShareTokenController@create');
 
     Route::get('get_kanbans_color/{id}', 'KanbanController@getKanbansColor');
     Route::post('update_kanbans_color', 'KanbanController@updateKanbansColor');
@@ -180,6 +186,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('media/{medium}/destroy', 'MediumController@destroy'); //has to be post (has parameters)
     Route::get('media/{medium}/thumb', 'MediumController@thumb')->name('media.thumb');
     Route::resource('media', 'MediumController');
+
+    Route::get('meetings/list', 'MeetingController@list')->name('meetings.list');
+    Route::resource('meetings', 'MeetingController');
+
+    Route::resource('meetingDates', 'MeetingDateController');
 
     /* objectiveTypes */
     Route::get('objectiveTypes/list', 'ObjectiveTypeController@list')->name('objectiveTypes.list');
@@ -281,6 +292,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('variantDefinitions/list', 'VariantDefinitionController@list');
     Route::resource('variantDefinitions', 'VariantDefinitionController');
     Route::resource('variants', 'VariantController');
+
+    Route::resource('videoconferences', 'VideoconferenceController');
 
     /* Tests */
     Route::get('tests', 'Tests\TestController@index');

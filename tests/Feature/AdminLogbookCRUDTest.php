@@ -29,9 +29,10 @@ class AdminLogbookCRUDTest extends TestCase
         $list = $this->get('logbooks/list')
             ->assertStatus(200);
         $i = 0;
-        foreach ($logbooks as $logbook)
-        {
-            if ($i === 49) { break; } //test max 50 entries (default page limit on datatables
+        foreach ($logbooks as $logbook) {
+            if ($i === 49) {
+                break;
+            } //test max 50 entries (default page limit on datatables
             $list->assertJsonFragment($logbook->toArray());
             $i++;
         }

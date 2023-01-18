@@ -237,9 +237,11 @@
                              @click="close()">
                          {{ trans('global.close') }}
                      </button>
-                    <button type="button"
-                            class="btn btn-primary pull-right"
-                            @click="saveToForm()" >
+                    <button
+                        name="medium-create-modal-submit"
+                        type="button"
+                        class="btn btn-primary pull-right"
+                        @click="saveToForm()" >
                         {{ trans('global.save') }}
                     </button>
                 </span>
@@ -265,6 +267,8 @@ export default {
             callbackFunction: null,
             callbackParentComponent: null,
             callbackComponent: null,
+            eventHubCallbackFunctioneventHubCallbackFunction: null,
+            eventHubCallbackFunctionParams: null,
 
             form: new Form({
                 'path': '',
@@ -302,9 +306,7 @@ export default {
             total: null
         }
     },
-    created() {
 
-    },
     methods: {
         uploadSubmit(formData) {
             this.currentStatus = STATUS_SAVING;
@@ -371,6 +373,12 @@ export default {
             if (event.params.callbackFunction) {
                 this.callbackFunction = event.params.callbackFunction;
             }
+            if (event.params.eventHubCallbackFunction) {
+                this.eventHubCallbackFunction = event.params.eventHubCallbackFunction;
+            }
+            if (event.params.eventHubCallbackFunctionParams) {
+                this.eventHubCallbackFunctionParams = event.params.eventHubCallbackFunctionParams;
+            }
         },
         setTab(tab){
             this.tab = tab;
@@ -381,7 +389,9 @@ export default {
         beforeClose() {
         },
         saveToForm() {
-            if (this.callbackComponent) {
+            if (this.eventHubCallbackFunction) {
+                this.$eventHub.$emit(this.eventHubCallbackFunction, {'id': this.eventHubCallbackFunctionParams, 'selectedMediumId': this.selectedFiles});
+            } else if (this.callbackComponent) {
                 if (this.callbackParentComponent) {
                     app.__vue__.$refs[this.callbackParentComponent].$refs[this.callbackComponent][0].reload();
                 } else {
@@ -426,6 +436,9 @@ export default {
                     this.prev_page_url  = response.data.prev_page_url;
                     this.to             = response.data.to;
                     this.total          = response.data.total;
+                })
+                .catch((e) => {
+                    console.log(e);
                 });
         },
     },
@@ -445,6 +458,7 @@ export default {
     },
     mounted() {
         this.reset();
+
         this.getFiles();
 
         this.$eventHub.$on('external_add', (form) => {

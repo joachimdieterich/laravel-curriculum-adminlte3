@@ -25,16 +25,17 @@
                 <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
             </div>
 
-            <div v-if="form.title != '' && method === 'post'">
+<!--            <div v-if="form.title != '' && method === 'post'">
                 <button class="btn btn-block btn-outline-secondary mb-2"
                         v-can="'task_create'"
                         @click.stop.prevent="open('task-modal', 'subscribable');">
                     <i class="fas fa-tasks"></i>
                     <span class="ml-2">{{ trans('global.task.create') }}</span>
                 </button>
-            </div>
+            </div>-->
 
             <button
+                name="kanbanItemCancel"
                 @click="$emit('item-canceled')"
                 type="reset"
                 class="btn btn-default"
@@ -42,6 +43,7 @@
                 {{ trans('global.cancel') }}
             </button>
             <button
+                name="kanbanItemSave"
                 class="btn btn-primary pull-right"
                 @click="submit"
               >

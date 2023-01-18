@@ -29,9 +29,10 @@ class NavigatorCRUDTest extends TestCase
         $list = $this->get('navigators/list')
             ->assertStatus(200);
         $i = 0;
-        foreach ($navigators as $navigator)
-        {
-            if ($i === 49) { break; } //test max 50 entries (default page limit on datatables
+        foreach ($navigators as $navigator) {
+            if ($i === 49) {
+                break;
+            } //test max 50 entries (default page limit on datatables
             $list->assertJsonFragment($navigator->toArray());
             $i++;
         }
@@ -82,7 +83,7 @@ class NavigatorCRUDTest extends TestCase
         $this->get("navigators/{$navigator->id}")
             ->assertStatus(200)
             ->assertSee([
-                $navigator->title
+                $navigator->title,
             ]);
     }
 

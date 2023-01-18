@@ -107,19 +107,19 @@ class PrintController extends Controller
 
                 $basename = basename($path);
                 $media = new Medium([
-                    'path'          => dirname('/users/'.auth()->user()->id.'/'.$path).'/',
-                    'title'         => $basename,
-                    'medium_name'   => $basename,
-                    'description'   => 'printed',
-                    'author'        => auth()->user()->fullName(),
-                    'publisher'     => '',
-                    'city'          => '',
-                    'date'          => date('Y-m-d_H-i-s'),
-                    'size'          => File::size(Storage::disk('local')->path('users/'.auth()->user()->id.'/'.$path)),
-                    'mime_type'     => File::mimeType(Storage::disk('local')->path('users/'.auth()->user()->id.'/'.$path)),
-                    'license_id'    => 2, //$media_node->getAttribute('license'), //hack fix false entries in import files
+                    'path' => dirname('/users/'.auth()->user()->id.'/'.$path).'/',
+                    'title' => $basename,
+                    'medium_name' => $basename,
+                    'description' => 'printed',
+                    'author' => auth()->user()->fullName(),
+                    'publisher' => '',
+                    'city' => '',
+                    'date' => date('Y-m-d_H-i-s'),
+                    'size' => File::size(Storage::disk('local')->path('users/'.auth()->user()->id.'/'.$path)),
+                    'mime_type' => File::mimeType(Storage::disk('local')->path('users/'.auth()->user()->id.'/'.$path)),
+                    'license_id' => 2, //$media_node->getAttribute('license'), //hack fix false entries in import files
 
-                    'owner_id'      => auth()->user()->id,
+                    'owner_id' => auth()->user()->id,
                 ]);
                 $media->save();
 

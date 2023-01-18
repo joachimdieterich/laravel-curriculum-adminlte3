@@ -86,11 +86,11 @@ class PrerequisitesController extends Controller
           ])->with(['predecessor'])->get();*/
 
         $data = [
-            'id'    => $successor->id,
-            'name'  => $this->resolveType($request['successor_type'], $successor),
-            'type'  => 'Root',
+            'id' => $successor->id,
+            'name' => $this->resolveType($request['successor_type'], $successor),
+            'type' => 'Root',
             'description' => strip_tags($successor->title),
-            'children'    => $this->predecessor($successor->predecessors),
+            'children' => $this->predecessor($successor->predecessors),
         ];
 
         return $data;
@@ -102,12 +102,12 @@ class PrerequisitesController extends Controller
 
         foreach ($predecessors as $predecessor) {
             $data[] = [
-                'id'    => $predecessor->predecessor_id,
-                'name'  => $this->resolveType($predecessor->predecessor_type, $predecessor->predecessor),
-                'type'  => 'Level '.$level,
-                'prerequisite_id'  => $predecessor->id,
-                'description'   => strip_tags($predecessor->predecessor->title),
-                'children'      => $this->predecessor($predecessor->predecessor->predecessors, $level + 1),
+                'id' => $predecessor->predecessor_id,
+                'name' => $this->resolveType($predecessor->predecessor_type, $predecessor->predecessor),
+                'type' => 'Level '.$level,
+                'prerequisite_id' => $predecessor->id,
+                'description' => strip_tags($predecessor->predecessor->title),
+                'children' => $this->predecessor($predecessor->predecessor->predecessors, $level + 1),
             ];
         }
 

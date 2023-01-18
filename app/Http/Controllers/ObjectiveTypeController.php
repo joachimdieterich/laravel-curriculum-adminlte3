@@ -83,7 +83,7 @@ class ObjectiveTypeController extends Controller
         $new_type = $this->validateRequest();
 
         ObjectiveType::create([
-            'title'         => $new_type['title'],
+            'title' => $new_type['title'],
         ]);
 
         return redirect()->route('objectiveTypes.index');
@@ -129,7 +129,7 @@ class ObjectiveTypeController extends Controller
 
         $new_type = $this->validateRequest();
         $objectiveType->update([
-            'title'         => $new_type['title'],
+            'title' => $new_type['title'],
         ]);
 
         return redirect()->route('objectiveTypes.index');
@@ -153,7 +153,7 @@ class ObjectiveTypeController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'title'                => 'sometimes|required',
+            'title' => 'sometimes|required',
         ]);
     }
 }

@@ -107,7 +107,7 @@ class LogbookEntryController extends Controller
         $logbookEntry->update($this->validateRequest());
 
         if (request()->wantsJson()) {
-            return ['message' =>$logbookEntry];
+            return ['message' => $logbookEntry];
         }
     }
 

@@ -22,18 +22,15 @@ class OrganizationsController extends Controller
     public function index()
     {
 
-
         // select2 request
-        if (request()->wantsJson() AND request()->has(['term', 'page'])) {
-            if (is_admin())
-            {
+        if (request()->wantsJson() and request()->has(['term', 'page'])) {
+            if (is_admin()) {
                 abort_unless(\Gate::allows('organization_access'), 403);
+
                 return  getEntriesForSelect2ByModel(
                     "App\Organization"
                 );
-            }
-            else
-            {
+            } else {
                 return  getEntriesForSelect2ByCollection(
                     auth()->user()->organizations(),
                     'organizations.'
@@ -41,6 +38,7 @@ class OrganizationsController extends Controller
             }
         }
         abort_unless(\Gate::allows('organization_access'), 403);
+
         return view('organizations.index');
     }
 
@@ -272,11 +270,11 @@ class OrganizationsController extends Controller
                     abort_unless((auth()->user()->organizations->contains($enrolment['organization_id']) or is_admin()), 403);
                     $return[] = OrganizationRoleUser::updateOrCreate(
                         [
-                            'user_id'         => $enrolment['user_id'],
+                            'user_id' => $enrolment['user_id'],
                             'organization_id' => $enrolment['organization_id'],
                         ],
                         [
-                            'role_id'         => $enrolment['role_id'],
+                            'role_id' => $enrolment['role_id'],
                         ]
                     );
                 }
@@ -293,7 +291,7 @@ class OrganizationsController extends Controller
         foreach ((request()->expel_list) as $expel) {
             abort_unless((auth()->user()->organizations->contains($expel['organization_id']) or is_admin()), 403);
             $return[] = OrganizationRoleUser::where([
-                'user_id'         => $expel['user_id'],
+                'user_id' => $expel['user_id'],
                 'organization_id' => $expel['organization_id'],
             ])->delete();
 
@@ -312,7 +310,7 @@ class OrganizationsController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'title'         => 'sometimes|required',
+            'title' => 'sometimes|required',
             'description' => 'sometimes',
             'street' => 'sometimes',
             'postcode' => 'sometimes',

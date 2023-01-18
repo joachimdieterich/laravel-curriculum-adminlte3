@@ -39,7 +39,7 @@ class SubjectController extends Controller
                 if ($delete_gate) {
                     $actions .= '<button type="button" '
                         .'class="btn text-danger" '
-                        .'onclick="destroyDataTableEntry(\'subjects\','.$subject->id.')">'
+                        .'onclick="destroyDataTableEntry(\'subjects\','.$subject->id.');">'
                         .'<i class="fa fa-trash"></i></button>';
                 }
 
@@ -64,9 +64,9 @@ class SubjectController extends Controller
         $new_subject = $this->validateRequest();
 
         Subject::create([
-            'title'         => $new_subject['title'],
-            'title_short'   => $new_subject['title_short'],
-            'external_id'   => isset($new_subject['external_id']) ? $new_subject['external_id'] : 1,
+            'title' => $new_subject['title'],
+            'title_short' => $new_subject['title_short'],
+            'external_id' => isset($new_subject['external_id']) ? $new_subject['external_id'] : 1,
             'organization_type_id' => 1, // todo: is this used?
 
         ]);
@@ -88,9 +88,9 @@ class SubjectController extends Controller
 
         $new_subject = $this->validateRequest();
         $subject->update([
-            'title'         => $new_subject['title'],
-            'title_short'   => $new_subject['title_short'],
-            'external_id'   => isset($new_subject['external_id']) ? $new_subject['external_id'] : 1,
+            'title' => $new_subject['title'],
+            'title_short' => $new_subject['title_short'],
+            'external_id' => isset($new_subject['external_id']) ? $new_subject['external_id'] : 1,
             'organization_type_id' => 1, // todo: is this used?
         ]);
 
@@ -116,9 +116,9 @@ class SubjectController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'title'                => 'sometimes|required',
-            'title_short'          => 'sometimes|required',
-            'external_id'          => 'sometimes',
+            'title' => 'sometimes|required',
+            'title_short' => 'sometimes|required',
+            'external_id' => 'sometimes',
             'organization_type_id' => 'sometimes',
 
         ]);

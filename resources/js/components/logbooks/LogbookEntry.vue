@@ -279,10 +279,9 @@ export default {
                 try {
                     this.location = (await axios.delete('/logbookEntries/' + this.entry.id)).data.message;
                 } catch (error) {
-                    alert(error);
+                    console.log(error);
                 }
                 this.$parent.$emit('deleteLogbookEntry', this.entry);
-                // location.reload(true);
             },
 
             postDate() {

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Group;
 use App\Http\Requests\MassDestroyUserRequest;
 use App\Http\Requests\MassUpdateUserRequest;
 use App\Http\Requests\StoreUserRequest;
@@ -28,7 +27,7 @@ class UsersController extends Controller
     {
         abort_unless(\Gate::allows('user_access'), 403);
 
-        if (request()->wantsJson() AND request()->has(['term', 'page'])) {
+        if (request()->wantsJson() and request()->has(['term', 'page'])) {
             return  getEntriesForSelect2ByCollection(
                 Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->noSharing(),
                 'users.',
@@ -42,6 +41,7 @@ class UsersController extends Controller
             if (auth()->user()->role()->id == 1) {
                 $users = User::addGlobalScope(NoSharingUsers::class)->withTrashed()
                     ->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get();
+
                 return ['users' => $users];
             } else {
                 return ['users' => json_encode(Organization::where('id', auth()->user()->current_organization_id)
@@ -119,11 +119,11 @@ class UsersController extends Controller
          */
         OrganizationRoleUser::firstOrCreate(
             [
-                'user_id'         => $user->id,
+                'user_id' => $user->id,
                 'organization_id' => auth()->user()->current_organization_id,
             ],
             [
-                'role_id'         => 6, //student
+                'role_id' => 6, //student
             ]
         );
         $user->current_organization_id = auth()->user()->current_organization_id; //set default org
@@ -180,6 +180,10 @@ class UsersController extends Controller
     {
         abort_unless(\Gate::allows('user_show'), 403);
         abort_unless(((auth()->user()->role()->id == 1) or (auth()->user()->mayAccessUser($user))), 403);
+
+        if (request()->wantsJson()) {
+            return ['user' => $user];
+        }
 
         $status_definitions = StatusDefinition::all();
         $user->load('roles');
@@ -313,7 +317,7 @@ class UsersController extends Controller
     {
         return request()->validate(
             [
-                'medium_id'            => 'required',
+                'medium_id' => 'required',
             ]
         );
     }
@@ -326,7 +330,7 @@ class UsersController extends Controller
         }
 
         $fallback_user = User::firstOrCreate(
-            ['common_name' =>  'deleted_user'],
+            ['common_name' => 'deleted_user'],
             [
                 'username' => env('APP_FALLBACK_USER_USERNAME', 'Deleted User'),
                 'firstname' => env('APP_FALLBACK_USER_FIRSTNAME', 'Deleted'),

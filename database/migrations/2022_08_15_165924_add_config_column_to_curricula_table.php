@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('curricula', function (Blueprint $table) {
-            $table->json('objective_type_order')->nullable();//
+            $table->json('objective_type_order')->nullable(); //
         });
     }
 
@@ -26,7 +26,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('curricula', function (Blueprint $table) {
-            $table->dropColumn('objective_type_order');//
+            $table->dropColumn('objective_type_order'); //
         });
     }
 };

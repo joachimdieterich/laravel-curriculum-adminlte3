@@ -3,7 +3,7 @@
     {{ trans('global.user.title') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
+    <li class="breadcrumb-item "><a href="/"><i class="fa fa-home"></i></a></li>
     <li class="breadcrumb-item active">{{ trans('global.user.title') }}</li>
     <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
@@ -96,7 +96,7 @@
                                     "option_label" => "title",
                                    /* "optgroup" => $organizations,*/
                                     "optgroup_reference_field" => "organization_id",
-                                    "value" =>  old('group_id', isset($user->current_group_id) ? $user->current_group_id : '')])
+                                    "value" =>  old('group_id', isset($user->current_group_id) ?? '')])
 
                                 <div class="btn-group pull-right" role="group" aria-label="...">
                                     @include ('forms.input.button', ["onclick" => "enroleToGroup()", "field" => "enroleToGroup", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-plus", "label" => "In Gruppe einschreiben"])

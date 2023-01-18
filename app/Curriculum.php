@@ -3,8 +3,8 @@
 namespace App;
 
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  *   @OA\Schema(
@@ -37,7 +37,7 @@ class Curriculum extends Model
 
     protected $casts = [
         'objective_type_order' => 'array',
-        'variants' => 'array'
+        'variants' => 'array',
     ];
 
     protected $dates = [

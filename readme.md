@@ -233,6 +233,17 @@ Run browser tests
 php artisan dusk
 ```
 
+### Browser Tests (Cypress)
+add `.env.cypress` to use alternative config (eg. DB)
+
+
+Run browser tests (see package.json)
+```
+npm run test:cypress
+```
+
+
+
 ### Documentation
 Curriculum uses [saleem-hadad/larecipe](https://github.com/saleem-hadad/larecipe) to provide integrated project documentation. 
 The documentation can be found at the following URL `localhost:[port]/documentation`

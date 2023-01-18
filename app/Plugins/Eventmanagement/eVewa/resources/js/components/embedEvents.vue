@@ -42,7 +42,7 @@
             <div :id="'navigator-item-content-'+event.ARTIKEL_NR" class="card-body collapse">
                 <div class="row">
                     <div class="col-2"><strong>Beschreibung</strong></div>
-                    <div class="col-10" v-html="event.BEMERKUNG"></div>
+                    <div class="col-10 pre-formatted" v-html="event.BEMERKUNG"></div>
 
                     <div class="col-2"><strong>Termine</strong></div>
                     <div class="col-10">
@@ -68,7 +68,7 @@
                         <a :href="event.LINK_DETAIL"
                            class="btn btn-default"
                            target="_blank">
-                            <i class="fa fa-info"></i> Details
+                            <i class="fa fa-info"></i> Details/Anmeldung
                         </a>
 
                         <a :href="event.LINK_DETAIL+'&print=1'"
@@ -78,11 +78,11 @@
                             <i class="fa fa-print"></i> Drucken
                         </a>
 
-                        <a :href="event.LINK_ANMELDUNG"
+<!--                        <a :href="event.LINK_ANMELDUNG"
                            class="btn btn-secondary"
                            target="_blank">
                             <i class="fa fa-sign-in"></i> Anmelden
-                        </a>
+                        </a>-->
                     </div>
                 </div>
             </div>
@@ -207,3 +207,8 @@ import moment from 'moment';
 
     }
 </script>
+<style>
+.pre-formatted {
+    white-space: pre-wrap;
+}
+</style>

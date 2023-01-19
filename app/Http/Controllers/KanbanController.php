@@ -43,7 +43,7 @@ class KanbanController extends Controller
     public function list()
     {
         abort_unless(\Gate::allows('kanban_access'), 403);
-        $kanbans = (auth()->user()->role()->id == 1) ? Kanban::all() : $this->userKanbans();
+        $kanbans = $this->userKanbans();
 
         $edit_gate = \Gate::allows('kanban_edit');
         $delete_gate = \Gate::allows('kanban_delete');
@@ -134,7 +134,7 @@ class KanbanController extends Controller
      */
     public function show(Kanban $kanban)
     {
-        abort_unless((\Gate::allows('kanban_show') and $kanban->isAccessible()), 403);
+        abort_unless((\Gate::allows('kanban_show') and $this->userKanbans()->contains($kanban->id)), 403);
         $kanban = $kanban->with(['statuses', 'statuses.items' => function ($query) use ($kanban) {
             $query->where('kanban_id', $kanban->id)->with(['owner', 'taskSubscription.task.subscriptions' => function ($query) {
                 $query->where('subscribable_id', auth()->user()->id)
@@ -205,7 +205,9 @@ class KanbanController extends Controller
         $kanban->statuses()->delete();
         $kanban->subscriptions()->delete();
 
-        $kanban->delete();
+        if ($kanban->delete()) {
+            return $this->list();
+        }
     }
 
     public function updateKanbansColor(Request $request)

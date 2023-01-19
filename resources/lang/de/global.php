@@ -1131,10 +1131,10 @@ return [
         ],
     ],
     'kanban' => [
-        'title' => 'Kanban-Boards',
-        'title_singular' => 'Kanban-Board',
-        'create' => 'Kanban-Board erstellen',
-        'edit' => 'Kanban-Board bearbeiten',
+        'title' => 'Pinnwände',
+        'title_singular' => 'Pinnwand',
+        'create' => 'Pinnwand erstellen',
+        'edit' => 'Pinnwand bearbeiten',
         'fields' => [
             'id' => 'ID',
             'id_helper' => '',
@@ -1145,10 +1145,10 @@ return [
         ],
     ],
     'kanbanItem' => [
-        'title' => 'Items',
-        'title_singular' => 'Items',
-        'create' => 'Item erstellen',
-        'edit' => 'Item bearbeiten',
+        'title' => 'Karten',
+        'title_singular' => 'Karte',
+        'create' => 'Karte erstellen',
+        'edit' => 'Karte bearbeiten',
         'fields' => [
             'id' => 'ID',
             'id_helper' => '',

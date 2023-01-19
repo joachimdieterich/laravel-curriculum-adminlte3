@@ -281,10 +281,21 @@ Vue.directive('permission', function (el, binding, vnode) {
 
 });
 
-//global eventHub
-Vue.prototype.$eventHub = new Vue();
-
-//global eventHub
+/**
+ *
+ * global eventHub
+ *
+ * How to add a receiver:
+ * created() {
+ *     this.$eventHub.$on('reload_agenda', (params) => {
+ *         // do something
+ *     });
+ * },
+ *
+ * how to add a sender
+ * this.$eventHub.$emit('reload_agenda', params);
+ * @type {Vue}
+ */
 Vue.prototype.$eventHub = new Vue();
 
 /**

@@ -17,7 +17,7 @@ class BbbVideoconferenceAdapter implements VideoconferenceInterface
      */
     public function create(array $input)
     {
-        //abort_unless(\Gate::allows('videoconference_create'), 403);
+        abort_unless(\Gate::allows('videoconference_create'), 403);
 
         return \Bigbluebutton::create([
             'meetingID'     => $input['meetingID'],

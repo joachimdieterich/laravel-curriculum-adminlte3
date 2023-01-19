@@ -30,7 +30,7 @@ class VideoconferenceController extends Controller
     public function list()
     {
         abort_unless(\Gate::allows('videoconference_access'), 403);
-        $videoconferences = (auth()->user()->role()->id == 1) ? \Bigbluebutton::all() : auth()->user()->videoconferences()->get();
+        $videoconferences = (auth()->user()->role()->id == 1) ? Videoconference::all() : auth()->user()->videoconferences()->get();
 
         $delete_gate = \Gate::allows('videoconference_delete');
 
@@ -74,6 +74,8 @@ class VideoconferenceController extends Controller
      */
     public function store(Request $request)
     {
+        abort_unless(\Gate::allows('videoconference_create'), 403);
+
         $input = $this->validateRequest();
 
         $conference =  (new $this->adapter())->create([
@@ -121,6 +123,8 @@ class VideoconferenceController extends Controller
      */
     public function show(Videoconference $videoconference)
     {
+        abort_unless(\Gate::allows('videoconference_show'), 403);
+
         return (new $this->adapter())->start([
             'meetingID'     => $videoconference->meetingID,
             'meetingName'   => $videoconference->meetingName,
@@ -161,7 +165,15 @@ class VideoconferenceController extends Controller
      */
     public function destroy(Videoconference $videoconference)
     {
-        //
+        abort_unless(\Gate::allows('videoconference_delete'), 403);
+
+        $videoconference->subscriptions()->delete();
+
+        if (request()->wantsJson()) {
+            return ['message' => $videoconference->delete()];
+        }
+
+        return $videoconference->delete();
     }
 
     protected function validateRequest()

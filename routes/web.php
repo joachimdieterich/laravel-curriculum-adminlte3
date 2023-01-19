@@ -293,6 +293,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('variantDefinitions', 'VariantDefinitionController');
     Route::resource('variants', 'VariantController');
 
+    Route::get('videoconferences/list', 'VideoconferenceController@list');
     Route::resource('videoconferences', 'VideoconferenceController');
 
     /* Tests */

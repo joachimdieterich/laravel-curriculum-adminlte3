@@ -1,4 +1,4 @@
-<template :id="{{ this.id }}"
+<template :id="this.id "
           class="p-2">
     <div class="card">
         <div class="w-full flex-1 p-2">
@@ -62,9 +62,6 @@ import {
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 
 export default {
-    /*components: {
-        D3PieChart
-    },*/
     name: 'DoughnutChart',
     components: {
         Doughnut
@@ -153,10 +150,12 @@ export default {
                                 data: response.data.message.map(m => m.counter)
                             }
                         ]
-                    },
+                    };
                     this.chart_data = this.sumIfEqual(response.data.message);
+
                 }).catch(e => {
-            });
+                    console.log(e);
+                });
         },
         sumIfEqual(data){
             let obj     = data;

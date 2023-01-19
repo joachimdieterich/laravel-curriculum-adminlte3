@@ -1,4 +1,4 @@
-<template>
+<template :id="this.id">
     <div class="card">
 
         <div class="w-full flex-1 p-2">
@@ -65,6 +65,8 @@ export default {
     name: 'LineChart',
 
     props: {
+        'date_begin': String,
+        'date_end': String,
         chartId: {
             type: String,
             default: 'line-chart'
@@ -106,8 +108,13 @@ export default {
         };
     },
     methods: {
+        loadAll(){
+            this.loaderEvent('login');
+            this.loaderEvent('guestLogin');
+            this.loaderEvent('ssoLogin');
+        },
         loaderEvent(chart) {
-            axios.get('/statistics?chart='+chart)
+            axios.get('/statistics?chart=' + chart + '&date_begin=' + this.date_begin + '&date_end=' + this.date_end)
                 .then(response => {
                     let result = [];
                     result = {
@@ -131,26 +138,24 @@ export default {
                     }
 
                 }).catch(e => {
-
+                    console.log(e);
             });
         }
     },
     watch: {
         date_begin: {
             handler: function(){
-                this.loaderEvent();
+                this.loadAll();
             }
         },
         date_end: {
             handler: function(){
-                this.loaderEvent();
+                this.loadAll();
             }
-        },
+        }
     },
     mounted() {
-        this.loaderEvent('login');
-        this.loaderEvent('guestLogin');
-        this.loaderEvent('ssoLogin');
+        this.loadAll();
     },
     components: {
         LineChartGenerator

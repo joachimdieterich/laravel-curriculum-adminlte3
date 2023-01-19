@@ -136,7 +136,9 @@
                         </pie-chart>
                     </span>
                     <span class="col-12 mt-1">
-                        <logins :date_begin="date_begin" :date_end="date_end"></logins>
+                        <logins id="login_chart"
+                                :date_begin="date_begin"
+                                :date_end="date_end"></logins>
                     </span>
 
                 </div>

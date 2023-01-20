@@ -132,3 +132,26 @@ tr:hover .vuehover {
     top: -5px;
     left: 10px;
 }
+
+.kanban_board_wrapper {
+    height: calc(100vh - 175px - 2rem);
+    width: calc(100vw - 270px - 1rem);
+    position:absolute;
+    overflow:auto;
+    padding: 2rem;
+}
+
+.content-only .kanban_board_wrapper {
+    height: calc(100vh - 175px - 2rem);
+    width: calc(100vw - 1rem);
+    position:absolute;
+    overflow:auto;
+    padding: 2rem;
+}
+
+.sidebar-collapse .kanban_board_wrapper {
+    height: calc(100vh - 175px - 2rem);
+    width: calc(100vw - 100px) !important;
+    position:absolute;
+    overflow:auto;
+}

@@ -7,13 +7,20 @@
         @endif
     @endcan
     <small>{{ $kanban->title }} </small>
+
     @if(Auth::user()->id == $kanban->owner_id)
+        <a class="btn btn-flat"
+           href="/kanbans/{{ $kanban->id }}/edit">
+            <i class="fa fa-pencil-alt text-secondary"></i>
+        </a>
         @can('kanban_create')
             @if(!$is_shared)
                 <button class="btn btn-flat"
                         onclick="app.__vue__.$modal.show('subscribe-modal',  {'modelId': {{ $kanban->id }}, 'modelUrl': 'kanban','shareWithToken': true });">
                     <i class="fa fa-share-alt text-secondary"></i>
                 </button>
+
+
             @endif
         @endcan
         <a href="/export_csv/{{$kanban->id}}" class="btn p-0">
@@ -57,7 +64,8 @@
 
         <!-- Timelime example  -->
         <div id="kanban_board_wrapper"
-             style="position:absolute; width: calc(100vw {{ ( $is_shared ? '' : '- 270px') }} - 2rem);height: calc(100vh - 175px - 2rem);overflow:auto; padding: 2rem; background-color: {{ $kanban->background }}">
+             class="kanban_board_wrapper"
+             style="background-color: {{ $kanban->background }}">
 
             <kanban-board
                 :editable="{{ $may_edit ? "1":"0" }}"

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Kanban;
 use App\KanbanItem;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class KanbanItemController extends Controller
@@ -19,10 +20,15 @@ class KanbanItemController extends Controller
         $input = $this->validateRequest();
         abort_unless((\Gate::allows('kanban_create') and Kanban::find($input['kanban_id'])->isAccessible()), 403);
 
+        $order_id = DB::table('kanban_items')
+            ->where('kanban_id', $input['kanban_id'])
+            ->where('kanban_status_id', $input['kanban_status_id'])
+            ->max('order_id');
+
         $kanbanItem = KanbanItem::firstOrCreate([
             'title'             => $input['title'],
             'description'       => $input['description'],
-            'order_id'          => $input['order_id'],
+            'order_id'          => $order_id ?? 0,
             'kanban_id'         => $input['kanban_id'],
             'kanban_status_id'  => $input['kanban_status_id'],
             'color'             => $input['color'],
@@ -33,7 +39,9 @@ class KanbanItemController extends Controller
 
         // axios call?
         if (request()->wantsJson()) {
-            return ['message' => KanbanItem::where('id', $kanbanItem->id)->with(['mediaSubscriptions', 'media', 'owner', 'taskSubscription', 'comments'])->get()->first()];
+            return ['message' => KanbanItem::where('id', $kanbanItem->id)
+                ->with(['mediaSubscriptions', 'media', 'owner', /*'taskSubscription',*/ 'comments'])
+                ->get()->first()];
         }
     }
 
@@ -65,12 +73,7 @@ class KanbanItemController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         if (request()->wantsJson()) {
-            return ['message' => Kanban::with(['statuses', 'statuses.items' => function ($query) use ($kanban_id) {
-                $query->where('kanban_id', $kanban_id)->with(['owner', 'taskSubscription.task.subscriptions' => function ($query) {
-                    $query->where('subscribable_id', auth()->user()->id)
-                        ->where('subscribable_type', 'App\User');
-                }, 'mediaSubscriptions.medium'])->orderBy('order_id');
-            }, 'statuses.items.subscribable', 'statuses.items.comments', 'statuses.items.comments.user'])->where('id', $kanban_id)->get()->first()->statuses];
+            return ['message' =>  (new KanbanController)->getKanbanWithRelations(Kanban::find($kanban_id))];
         }
     }
 
@@ -84,21 +87,12 @@ class KanbanItemController extends Controller
     {
         abort_unless((\Gate::allows('kanban_show') and $kanbanItem->isAccessible()), 403);
         if (request()->wantsJson()) {
+            Kanban::find($kanbanItem->kanban_id)->touch('updated_at'); //To get Sync after media upload working
+
             return $this->getItemWithRelations($kanbanItem);
         }
 
         return redirect()->action('KanbanController@show', ['kanban' => $kanbanItem->kanban_id]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\KanbanItem  $kanbanItem
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(KanbanItem $kanbanItem)
-    {
-        abort_unless((\Gate::allows('kanban_edit') and $kanbanItem->isAccessible()), 403);
     }
 
     /**
@@ -167,9 +161,12 @@ class KanbanItemController extends Controller
     private function getItemWithRelations(KanbanItem $kanbanItem): array
     {
         return ['message' => $kanbanItem->with(
-            ['owner', 'mediaSubscriptions.medium', 'taskSubscription.task.subscriptions' => function ($query) {
-                $query->where('subscribable_id', auth()->user()->id)
-                    ->where('subscribable_type', 'App\User');
-            }, 'subscribable'])->where('id', $kanbanItem->id)->get()->first()];
+            ['owner', 'mediaSubscriptions.medium',
+                /*'taskSubscription.task.subscriptions' => function ($query) {
+                    $query->where('subscribable_id', auth()->user()->id)
+                        ->where('subscribable_type', 'App\User');
+                }, */
+                'subscribable'])->where('id', $kanbanItem->id)->get()->first()];
     }
+
 }

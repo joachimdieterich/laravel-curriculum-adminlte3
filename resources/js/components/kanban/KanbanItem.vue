@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+    <div class="card ">
         <div class="card-header px-3 py-2" :style="{ backgroundColor: item.color, color: textColor }">
             <div class="card-tools">
                 <div v-if="editable && editor === false" class="btn btn-flat py-0 px-2 "
@@ -33,7 +33,7 @@
                           v-can="'kanban_delete'"
                           :name="'kanbanItemDelete_'+index"
                           class="dropdown-item py-1 text-red"
-                            @click="deleteItem()">
+                            @click="confirmItemDelete()">
                             <i class="fa fa-trash mr-4"></i>
                             {{ trans('global.delete') }}
                         </button>
@@ -43,7 +43,7 @@
             <div class="pb-1" style="line-height: 1">
                     <span v-if="editor !== false">
                         <span   class="pull-left"
-                                style="background-color: rgb(244, 244, 244); border-radius: 20px; padding: 2px 2px 0px 2px;">
+                                style="background-color: rgb(244, 244, 244); border-radius: 20px; padding: 2px 2px 0 2px;">
                             <color-picker-input
                                 :id="'colorPicker_'+index"
                                 v-if="editor !== false"
@@ -72,9 +72,9 @@
         <div class="card-body p-0">
             <textarea
                 v-if="editor !== false"
-                :id="'description_'+item.id"
-                :name="'description_'+index"
-                placeholder="Beschreibung"
+                :id="'description_' + item.id"
+                :name="'description_' + index"
+                :placeholder="trans('global.kanbanItem.fields.description')"
                 class="form-control description my-editor "
                 v-model.trim="form.description"
             ></textarea>
@@ -83,16 +83,16 @@
                  v-html="form.description">
             </div>
             <button v-if="editor !== false"
-                    :name="'kanbanItemSave_'+index"
+                    :name="'kanbanItemSave_' + index"
                     class="btn btn-primary p-2 m-2"
                     @click="submit()">
                 {{ trans('global.save') }}
             </button>
 
-          <kanbanTask
+<!--          <kanbanTask
               class="mx-3 "
               :tasks="item.task_subscription">
-          </kanbanTask>
+          </kanbanTask>-->
 
           <mediaCarousel
               v-if="item.media_subscriptions.length > 0"
@@ -111,7 +111,8 @@
                       :lastname="item.owner.lastname"
                       :size="25"
               ></avatar>
-              <div @click="openComments" class="position-relative flex-grow-0">
+              <div v-if="commentable"
+                  @click="openComments" class="position-relative flex-grow-0">
                   <i  class="fa fa-comment pointer"></i>
                   <span class="comment-count mt-1 small" v-if="comments.length > 0">{{ comments.length }}</span>
               </div>
@@ -148,26 +149,41 @@
                 </div>
             </div>
             <div class="d-flex text-sm">
-                <input type="text" v-model="new_comment" class="form-control text-sm mr-1" placeholder="Kommentar">
-                <span @click="sendComment" class="btn btn-success" :disabled="new_comment != ''">Senden</span>
+                <input type="text"
+                       v-model="new_comment"
+                       class="form-control text-sm mr-1"
+                       :placeholder="trans('global.comment')"
+                />
+                <span @click="sendComment"
+                      class="btn btn-success"
+                      :disabled="new_comment != ''">{{ trans('global.send') }}</span>
             </div>
         </div>
-
+        <Modal
+            :id="'itemModal_' + index"
+            css="danger"
+            :title="trans('global.kanbanItem.delete')"
+            :text="trans('global.kanbanItem.delete_helper')"
+            :ok_label="trans('global.kanbanItem.delete')"
+            v-on:ok="deleteItem"
+        />
     </div>
 </template>
 
 <script>
-import kanbanTask from './KanbanTask';
+/*import kanbanTask from './KanbanTask';*/
 import mediaCarousel from '../media/MediaCarousel';
 import avatar from "../uiElements/Avatar";
 import Form from "form-backend-validation";
+import Modal from "./../uiElements/Modal";
 
 export default {
   props: {
     'item': Object,
-    'index': Number,
+    'index': String,
     'width': Number,
-      'editable': true
+    'commentable': false,
+    'editable': true
   },
   data() {
     return {
@@ -186,7 +202,7 @@ export default {
             'color': '#F4F4F4'
         }),
     };
-  },
+    },
     computed:{
         textColor: function(){
           if(this.item.color == "" || this.item.color == null ) return;
@@ -200,6 +216,9 @@ export default {
       }
     },
   methods: {
+      confirmItemDelete(){
+          $('#itemModal_'+ this.index).modal('show');
+      },
         deleteItem() {
           axios.delete("/kanbanItems/" + this.item.id)
               .then(res => { // Tell the parent component we've added a new task and include it
@@ -232,7 +251,7 @@ export default {
               axios.patch('/kanbanItems/' + form.id, form)
                   .then(res => { // Tell the parent component we've updated an item
                       tinymce.remove();
-                      this.form = res.data.message; //selfupdate
+                      this.form = res.data.message; //selfUpdate
                       this.$emit("item-updated", res.data.message);
                   })
                   .catch(error => { // Handle the error returned from our request
@@ -286,7 +305,7 @@ export default {
                 'callbackFunction': 'reload',
               });
         },
-        reload() {
+        reload() { //after media upload
           axios.get("/kanbanItems/" + this.item.id)
               .then(res => {
                 this.item = res.data.message;
@@ -301,9 +320,10 @@ export default {
         },
 
         components: {
-          kanbanTask,
+          /*kanbanTask,*/
           mediaCarousel,
-          avatar
+          avatar,
+          Modal
         }
     }
 </script>

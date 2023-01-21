@@ -372,6 +372,7 @@ return [
     'recipient' => 'Recipient',
     'message_subject' => 'Subject',
     'message' => 'Message',
+    'comment' => 'Comment',
     'send' => 'Send',
     'reply' => 'Reply',
     'calendar_sources' => 'Calendar sources',
@@ -1146,9 +1147,11 @@ return [
     ],
     'kanbanItem' => [
         'title' => 'Items',
-        'title_singular' => 'Items',
-        'create' => 'CreateItems ',
-        'edit' => 'Edit Items',
+        'title_singular' => 'Item',
+        'create' => 'Create items',
+        'edit' => 'Edit items',
+        'delete' => 'Delete items',
+        'delete_helper' => 'Should item be deleted?',
         'fields' => [
             'id' => 'ID',
             'id_helper' => '',

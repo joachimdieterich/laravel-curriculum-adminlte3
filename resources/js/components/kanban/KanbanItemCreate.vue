@@ -1,6 +1,6 @@
 <template>
-    <div class="card">
-        <div class="card-body px-3 py-2">
+    <div class="card mr-3 ">
+        <div class="card-body">
             <color-picker-input v-model="form.color"></color-picker-input>
             <div class="form-group">
                 <input
@@ -9,7 +9,7 @@
                     name="title"
                     class="form-control"
                     v-model.trim="form.title"
-                    placeholder="Titel"
+                    :placeholder="trans('global.kanbanItem.fields.title')"
                     required
                     />
                 <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
@@ -18,7 +18,7 @@
                  <textarea
                      id="description"
                      name="description"
-                     placeholder="Beschreibung"
+                     :placeholder="trans('global.kanbanItem.fields.description')"
                      class="form-control description my-editor "
                      v-model.trim="form.description"
                  ></textarea>
@@ -55,7 +55,7 @@
 
 <script>
 import Form from 'form-backend-validation';
-import kanbanTask from "./KanbanTask";
+/*import kanbanTask from "./KanbanTask";*/
 
 export default {
 
@@ -127,7 +127,7 @@ export default {
             }
         },
         submit() {
-            var method = this.method.toLowerCase();
+            let method = this.method.toLowerCase();
             this.form.description = tinyMCE.get('description').getContent();
             if (method === 'patch') {
                     axios.patch(this.requestUrl += '/' + this.form.id, this.form)

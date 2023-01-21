@@ -30,6 +30,40 @@
         <a href="/export_pdf/{{$kanban->id}}" class="btn p-0">
             <i class="fa fa-file-pdf text-secondary"></i>
         </a>
+
+        <a  class="btn p-0"
+            data-toggle="tooltip" title="{{trans('global.update')}}">
+
+                <form class="custom-switch custom-switch-on-green"
+                      action="{{ route("kanbans.update", ['kanban' => $kanban->id]) }}"
+                      method="POST"
+                      enctype="multipart/form-data">
+                    @method('PUT')
+                    @csrf
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        style="display:none;"
+                        value="{{ $kanban->title }}"/>
+                    <input
+                        type="checkbox"
+                        id="commentable"
+                        name="commentable"
+                        class="invisible"
+                        {{  ($kanban->commentable == 1 ? ' checked' : '') }}
+                    /> <!--element is invisible-->
+                    <input
+                        type="checkbox"
+                        id="auto_refresh"
+                        name="auto_refresh"
+                        class="custom-control-input"
+                        {{  ($kanban->auto_refresh == 1 ? ' checked' : '') }}
+                        onclick="submit()"
+                    />
+                    <label class="custom-control-label " for="auto_refresh" ><small>automatisch aktualisieren</small> </label>
+                </form>
+        </a>
     @endif
 @endsection
 @section('breadcrumb')

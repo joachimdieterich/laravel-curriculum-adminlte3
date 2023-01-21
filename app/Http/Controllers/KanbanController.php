@@ -45,26 +45,7 @@ class KanbanController extends Controller
         abort_unless(\Gate::allows('kanban_access'), 403);
         $kanbans = $this->userKanbans();
 
-        $edit_gate = \Gate::allows('kanban_edit');
-        $delete_gate = \Gate::allows('kanban_delete');
-
         return empty($kanbans) ? '' : DataTables::of($kanbans)
-            ->addColumn('action', function ($kanbans) use ($edit_gate, $delete_gate) {
-                $actions = '';
-                if ($edit_gate) {
-                    $actions .= '<a href="'.route('kanbans.edit', $kanbans->id).'" '
-                        .'id="edit-kanban-'.$kanbans->id.'" '
-                        .'class="px-2 text-black">'
-                        .'<i class="fa fa-pencil-alt"></i>'
-                        .'</a>';
-                }
-                if ($delete_gate) {
-                    $actions .= '<button type="button" id="delete-kanban-'.$kanbans->id.'" class="btn text-danger" onclick="event.preventDefault();destroyDataTableEntry(\'kanbans\','.$kanbans->id.');"><i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
-            })
-            ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
     }
@@ -97,6 +78,8 @@ class KanbanController extends Controller
             'description' => $new_kanban['description'],
             'color' => $new_kanban['color'],
             'medium_id' => $this->getMediumIdByInputFilepath($new_kanban),
+            'commentable' => ($new_kanban['commentable'] == 'on') ? 1 : 0 ,
+            'auto_refresh' => ($new_kanban['commentable'] == 'on') ? 1 : 0 ,
             'owner_id' => auth()->user()->id,
         ]);
 
@@ -135,13 +118,7 @@ class KanbanController extends Controller
     public function show(Kanban $kanban)
     {
         abort_unless((\Gate::allows('kanban_show') and $this->userKanbans()->contains($kanban->id)), 403);
-        $kanban = $kanban->with(['statuses', 'statuses.items' => function ($query) use ($kanban) {
-            $query->where('kanban_id', $kanban->id)->with(['owner', 'taskSubscription.task.subscriptions' => function ($query) {
-                $query->where('subscribable_id', auth()->user()->id)
-                    ->where('subscribable_type', 'App\User');
-            }, 'mediaSubscriptions.medium'])->orderBy('order_id');
-        }, 'statuses.items.subscriptions', 'statuses.items.comments', 'statuses.items.comments.user',
-        ])->where('id', $kanban->id)->get()->first();
+        $kanban = $this->getKanbanWithRelations($kanban);
 
         $may_edit = $kanban->isEditable();
         $is_shared = Auth::user()->sharing_token !== null;
@@ -161,13 +138,8 @@ class KanbanController extends Controller
     public function edit(Kanban $kanban)
     {
         abort_unless((\Gate::allows('kanban_edit') and $kanban->isAccessible()), 403);
-        $kanban = $kanban->with(['statuses', 'statuses.items' => function ($query) use ($kanban) {
-            $query->where('kanban_id', $kanban->id)->with(['owner', 'taskSubscription.task.subscriptions' => function ($query) {
-                $query->where('subscribable_id', auth()->user()->id)
-                    ->where('subscribable_type', 'App\User');
-            }, 'mediaSubscriptions.medium'])->orderBy('order_id');
-        }, 'statuses.items.subscriptions',
-        ])->where('id', $kanban->id)->get()->first();
+
+        $kanban = $this->getKanbanWithRelations($kanban);
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
@@ -185,7 +157,16 @@ class KanbanController extends Controller
     public function update(Request $request, Kanban $kanban)
     {
         abort_unless((\Gate::allows('kanban_edit') and $kanban->isAccessible()), 403);
-        $kanban->update($request->all());
+        $input = $this->validateRequest();
+        $kanban->update([
+            'title' => $input['title'] ?? $kanban->title ,
+            'description' => $input['description'] ?? $kanban->title,
+            'color' => $input['color'] ?? $kanban->color,
+            'medium_id' => $this->getMediumIdByInputFilepath($input) ?? $kanban->medium_id,
+            'commentable' => isset($input['commentable']) ? 1 : '0',
+            'auto_refresh' => isset($input['auto_refresh']) ? 1 : '0',
+            'owner_id' => auth()->user()->id,
+        ]);
 
         return redirect(route('kanbans.show', ['kanban' => $kanban]));
     }
@@ -284,12 +265,30 @@ class KanbanController extends Controller
         return 'rgba('.$r.', '.$g.', '.$b.', .7)';
     }
 
+    public function getKanbanWithRelations(Kanban $kanban)
+    {
+        return $kanban->with([
+            'statuses', 'statuses.items' => function ($query) use ($kanban) {
+                $query->where('kanban_id', $kanban->id)
+                    ->with(['owner',
+                        /*'taskSubscription.task.subscriptions' => function ($query) {
+                            $query->where('subscribable_id', auth()->user()->id)
+                                ->where('subscribable_type', 'App\User');
+                        },*/
+                        'mediaSubscriptions.medium'])
+                    ->orderBy('order_id');
+            }, 'statuses.items.subscriptions', 'statuses.items.comments', 'statuses.items.comments.user',
+        ])->where('id', $kanban->id)->get()->first();
+    }
+
     protected function validateRequest()
     {
         return request()->validate([
             'title' => 'sometimes|required',
             'description' => 'sometimes',
             'filepath' => 'sometimes',
+            'commentable' => 'sometimes',
+            'auto_refresh' => 'sometimes',
             'color' => 'sometimes',
         ]);
     }

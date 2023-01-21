@@ -372,6 +372,7 @@ return [
     'recipient' => 'Empfänger',
     'message_subject' => 'Betreff',
     'message' => 'Nachricht',
+    'comment' => 'Kommentar',
     'send' => 'Senden',
     'reply' => 'Antwort',
     'calendar_sources' => 'Kalenderquellen',
@@ -1149,6 +1150,8 @@ return [
         'title_singular' => 'Karte',
         'create' => 'Karte erstellen',
         'edit' => 'Karte bearbeiten',
+        'delete' => 'Karte löschen',
+        'delete_helper' => 'Soll die Karte sowie die zugehörigen Daten gelöscht werden?',
         'fields' => [
             'id' => 'ID',
             'id_helper' => '',
@@ -1168,7 +1171,7 @@ return [
         'create' => 'Status erstellen',
         'edit' => 'Status bearbeiten',
         'delete' => 'Status löschen',
-        'delete_helper' => 'Soll der Status sowie die zugehörigen Items gelöscht werden?',
+        'delete_helper' => 'Soll der Status sowie die zugehörigen Karten gelöscht werden?',
         'fields' => [
             'id' => 'ID',
             'id_helper' => '',

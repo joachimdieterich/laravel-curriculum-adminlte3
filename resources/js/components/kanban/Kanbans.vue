@@ -46,7 +46,7 @@
                    class="text-decoration-none text-black">
                     <div v-if="kanban.medium_id"
                          class="nav-item-box-image-size"
-                         :style="{'background': 'url(/media/' + kanban.medium_id+ ') top center no-repeat', 'background-size': 'cover'  }">
+                         :style="{'background': 'url(/media/' + kanban.medium_id + '?model=Kanban&model_id=' + kanban.id +') top center no-repeat', 'background-size': 'cover'  }">
                     </div>
                     <div v-else
                          class="nav-item-box-image-size text-center"

@@ -5,29 +5,12 @@ namespace App\Http\Controllers;
 use App\Kanban;
 use App\KanbanItem;
 use App\KanbanStatus;
+use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class KanbanStatusController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -40,9 +23,13 @@ class KanbanStatusController extends Controller
         $input = $this->validateRequest();
         abort_unless((\Gate::allows('kanban_create') and Kanban::find($input['kanban_id'])->isAccessible()), 403);
 
+        $order_id = DB::table('kanban_statuses')
+            ->where('kanban_id', $input['kanban_id'])
+            ->max('order_id');
+
         $kanban = KanbanStatus::firstOrCreate([
             'title' => $input['title'],
-            'order_id' => $input['order_id'],
+            'order_id' => $order_id,
             'kanban_id' => $input['kanban_id'],
 
             'owner_id' => auth()->user()->id,
@@ -55,28 +42,6 @@ class KanbanStatusController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\KanbanStatus  $kanbanStatus
-     * @return \Illuminate\Http\Response
-     */
-    public function show(KanbanStatus $kanbanStatus)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\KanbanStatus  $kanbanStatus
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(KanbanStatus $kanbanStatus)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -85,7 +50,43 @@ class KanbanStatusController extends Controller
      */
     public function update(Request $request, KanbanStatus $kanbanStatus)
     {
-        //
+        abort_unless((\Gate::allows('kanban_edit') and  Kanban::find($kanbanStatus->kanban_id)->isAccessible()), 403);
+
+        $input = $this->validateRequest();
+
+        $kanbanStatus->update([
+            'title' => $input['title'],
+        ]);
+
+        // axios call?
+        if (request()->wantsJson()) {
+            return  $this->getStatusWithRelations($kanbanStatus);
+        }
+    }
+
+    public function checkSync(Kanban $kanban){
+        $date = new DateTime;
+        $date->modify('-10 seconds');
+        $formatted_date = $date->format('Y-m-d H:i:s');
+
+        $update_kanban = Kanban::where('id', $kanban->id)
+            ->where('updated_at','>=',$formatted_date)->get();
+        $new_statuses = KanbanStatus::where('kanban_id', $kanban->id)
+            ->where('created_at','>=',$formatted_date)
+            ->orWhere('updated_at','>=',$formatted_date)->get();
+        $new_items = KanbanItem::where('kanban_id', $kanban->id)
+            ->where('created_at','>=',$formatted_date)
+            ->orWhere('updated_at','>=',$formatted_date)->get();
+
+
+        if (request()->wantsJson()) {
+            if ($update_kanban->count() !== 0 OR $new_statuses->count() !== 0 OR $new_items->count() !== 0) {
+                return ['message' => (new KanbanController)->getKanbanWithRelations($kanban)];
+                //return $this->getStatusWithRelations($kanban);
+            } else {
+                return ['message' => 'uptodate'];
+            }
+        }
     }
 
     public function sync(Request $request)
@@ -107,12 +108,8 @@ class KanbanStatusController extends Controller
 
         $kanban_id = $request->columns[0]['kanban_id'];
         if (request()->wantsJson()) {
-            return ['message' => Kanban::where('id', $kanban_id)->with(['statuses', 'statuses.items' => function ($query) use ($kanban_id) {
-                $query->where('kanban_id', $kanban_id)->with(['owner', 'taskSubscription.task.subscriptions' => function ($query) {
-                    $query->where('subscribable_id', auth()->user()->id)
-                        ->where('subscribable_type', 'App\User');
-                }, 'mediaSubscriptions.medium'])->orderBy('order_id');
-            }, 'statuses.items.subscribable'])->get()->first()->statuses];
+            return ['message' =>  (new KanbanController)->getKanbanWithRelations(Kanban::find($kanban_id))];
+            //return $this->getStatusWithRelations(Kanban::find($kanban_id));
         }
     }
 
@@ -126,9 +123,8 @@ class KanbanStatusController extends Controller
     {
         abort_unless((\Gate::allows('kanban_delete') and $kanbanStatus->isAccessible()), 403);
 
-        if ($kanbanStatus->items()->count() <= 1) {
-            KanbanItem::where('kanban_status_id', $kanbanStatus->id)->delete();
-        }
+        $kanbanStatus->items()->delete();
+        Kanban::find($kanbanStatus->kanban_id)->touch('updated_at'); //To get Sync working
 
         if (request()->wantsJson()) {
             return ['message' => $kanbanStatus->delete()];
@@ -140,7 +136,20 @@ class KanbanStatusController extends Controller
         return request()->validate([
             'title' => 'sometimes|required',
             'kanban_id' => 'sometimes|required|integer',
-            'order_id' => 'sometimes|required|integer',
+            'order_id' => 'sometimes|integer',
         ]);
+    }
+
+
+    private function getStatusWithRelations(KanbanStatus $kanbanStatus): array
+    {
+        return ['message' =>  $kanbanStatus
+            ->with(['items' => function ($query) use ($kanbanStatus) {
+                $query->where('kanban_id', $kanbanStatus->kanban_id)
+                    ->with(['owner', 'mediaSubscriptions.medium'])
+                    ->orderBy('order_id');
+            }, 'items.subscriptions', 'items.comments', 'items.comments.user',
+            ])->where('id', $kanbanStatus->id)->get()->first()
+        ];
     }
 }

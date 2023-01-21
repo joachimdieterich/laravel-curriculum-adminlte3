@@ -85,15 +85,16 @@ class KanbanSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return [
-                'subscription' => Kanban::find($input['model_id'])
+            return ['subscription' => Kanban::find($input['model_id'])
                     ->subscriptions()
-                    ->with('subscribable')
-                    ->whereHasMorph('subscribable', [User::class], function ($q) {
+                ->with('subscribable')
+                ->whereHasMorph('subscribable', '*', function ($q, $type) {
+                    if ($type == 'App\\User') {
                         $q->whereNull('sharing_token');
-                    })
-                    ->get(),
+                    }
+                })->get(),
             ];
+
         }
     }
 

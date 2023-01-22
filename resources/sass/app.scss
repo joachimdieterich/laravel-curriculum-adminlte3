@@ -134,7 +134,7 @@ tr:hover .vuehover {
 }
 
 .kanban_board_wrapper {
-    height: calc(100vh - 175px - 2rem);
+    height: calc(100vh - 155px - 2rem);
     width: calc(100vw - 270px - 1rem);
     position:absolute;
     overflow:auto;
@@ -142,7 +142,7 @@ tr:hover .vuehover {
 }
 
 .content-only .kanban_board_wrapper {
-    height: calc(100vh - 175px - 2rem);
+    height: calc(100vh - 155px - 2rem);
     width: calc(100vw - 1rem);
     position:absolute;
     overflow:auto;
@@ -150,7 +150,7 @@ tr:hover .vuehover {
 }
 
 .sidebar-collapse .kanban_board_wrapper {
-    height: calc(100vh - 175px - 2rem);
+    height: calc(100vh - 155px - 2rem);
     width: calc(100vw - 100px) !important;
     position:absolute;
     overflow:auto;

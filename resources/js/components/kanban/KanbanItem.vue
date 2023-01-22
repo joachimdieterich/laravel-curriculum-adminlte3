@@ -308,7 +308,7 @@ export default {
         reload() { //after media upload
           axios.get("/kanbanItems/" + this.item.id)
               .then(res => {
-                this.item = res.data.message;
+                //this.item = res.data.message;
               })
               .catch(err => {
                 console.log(err.response);

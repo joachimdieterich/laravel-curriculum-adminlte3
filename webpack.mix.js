@@ -15,7 +15,13 @@ mix.js(['resources/js/app.js', 'vendor/select2/select2/dist/js/select2.min.js'],
    .js('node_modules/popper.js/dist/popper.js', 'public/js').sourceMaps()
    .sass('resources/sass/app.scss', 'public/css')
 
-
+/* broadcasting */
+mix.options({
+    hmrOptions: {
+    host: 'localhost',
+    port:8080,
+    }
+});
 
 /* TinyMCE */
 mix.copyDirectory('node_modules/tinymce/plugins', 'public/js/plugins');
@@ -40,6 +46,7 @@ mix.copyDirectory('node_modules/moment/min', 'public/node_modules/moment/js');
 /* mathjax */
 mix.copyDirectory('node_modules/mathjax/es5', 'public/node_modules/mathjax/es5');
 mix.copyDirectory('node_modules/@dimakorotkov/tinymce-mathjax', 'public/node_modules/@dimakorotkov/tinymce-mathjax');
+
 
 mix.version();
 mix.vue({version: 2});

@@ -60,7 +60,7 @@ import Form from 'form-backend-validation';
 export default {
 
     props: {
-        status: Object,
+        status,
         item: Object,
         width: Number
     },

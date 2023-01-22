@@ -39,6 +39,9 @@ class KanbanItemController extends Controller
 
         // axios call?
         if (request()->wantsJson()) {
+
+            event(new \App\Events\KanbanItemAddedEvent($kanbanItem));
+
             return ['message' => KanbanItem::where('id', $kanbanItem->id)
                 ->with(['mediaSubscriptions', 'media', 'owner', /*'taskSubscription',*/ 'comments'])
                 ->get()->first()];
@@ -73,6 +76,8 @@ class KanbanItemController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         if (request()->wantsJson()) {
+            event(new \App\Events\KanbanItemMovedEvent($request->columns));
+
             return ['message' =>  (new KanbanController)->getKanbanWithRelations(Kanban::find($kanban_id))];
         }
     }
@@ -88,6 +93,8 @@ class KanbanItemController extends Controller
         abort_unless((\Gate::allows('kanban_show') and $kanbanItem->isAccessible()), 403);
         if (request()->wantsJson()) {
             Kanban::find($kanbanItem->kanban_id)->touch('updated_at'); //To get Sync after media upload working
+
+            event(new \App\Events\KanbanItemReloadEvent($kanbanItem));
 
             return $this->getItemWithRelations($kanbanItem);
         }
@@ -120,6 +127,8 @@ class KanbanItemController extends Controller
 
         // axios call?
         if (request()->wantsJson()) {
+            event(new \App\Events\KanbanItemUpdatedEvent($kanbanItem));
+
             return $this->getItemWithRelations($kanbanItem);
         }
     }
@@ -134,10 +143,14 @@ class KanbanItemController extends Controller
     {
         abort_unless((\Gate::allows('kanban_delete') and $kanbanItem->isAccessible()), 403);
 
+        $kanbanItemForEvent = $kanbanItem;
+
         $kanbanItem->mediaSubscriptions()->delete();
         $kanbanItem->subscriptions()->delete();
 
         if (request()->wantsJson()) {
+            event(new \App\Events\KanbanItemDeletedEvent($kanbanItemForEvent));
+
             return ['message' => $kanbanItem->delete()];
         }
     }

@@ -1,12 +1,13 @@
 <template>
-    <div :style="kanbanWidth"
+    <div
+        :style="kanbanWidth"
         class="m-0">
         <!-- Columns (Statuses) -->
         <draggable
             v-model="statuses"
             v-bind="columnDragOptions"
             :options="{disabled: !editable}"
-            @end="handleStatusMoved">
+            @end="syncStatusMoved">
             <div
                 v-for="(status, index) in statuses"
                 :key="'header_'+status.id"
@@ -16,7 +17,7 @@
                      :kanban_id="status.kanban_id"
                      :status="status"
                      :editable="editable"
-                     v-on:status-destroyed="handleStatusDestroyed"/>
+                     v-on:status-destroyed=""/>
                 <div style="margin-top:15px; bottom:0;overflow-y:scroll; z-index: 1"
                      :style="'width:' + itemWidth + 'px;'"
                       class="hide-scrollbars">
@@ -24,7 +25,7 @@
                         class="flex-1 overflow-hidden hide-scrollbars"
                         v-model="status.items"
                         v-bind="itemDragOptions"
-                        @end="handleItemMoved"
+                        @end="syncItemMoved"
                         :options="{disabled: !editable}"
                         filter=".ignore">
                         <transition-group
@@ -43,9 +44,9 @@
                                      :index="index + '_' + itemIndex"
                                      :item="item"
                                      :width="itemWidth"
-                                     v-on:item-destroyed="handleItemDestroyed"
-                                     v-on:item-updated="handleItemUpdated"
-                                     v-on:item-edit="handleItemEdit"/>
+                                     v-on:item-destroyed=""
+                                     v-on:item-updated=""
+                                     v-on:item-edit=""/>
                             </span>
                             <!--  ./Items -->
                         </transition-group>
@@ -56,8 +57,8 @@
                         :status="status"
                         :item="item"
                         :width="itemWidth"
-                        v-on:item-added="handleItemAdded"
-                        v-on:item-updated="handleItemUpdated"
+                        v-on:item-added=""
+                        v-on:item-updated=""
                         v-on:item-canceled="closeForm"
                         style="z-index: 2">
                     </KanbanItemCreate>
@@ -81,6 +82,11 @@
             </div>
         </draggable>
         <!-- ./Columns -->
+        <div class="card p-2"
+             style="position: absolute;right: 5px;bottom: 0;">
+
+            <span class="pull-left"><i class="fa fa-user"></i> {{ this.usersOnline.length }}</span>
+        </div>
     </div>
 </template>
 
@@ -113,11 +119,12 @@ export default {
                 item: null,
                 autoRefresh: false,
                 refreshRate: 5000,
+                usersOnline:[]
             };
         },
         methods: {
 
-            sync(){
+           /* sync(){
                 axios.get("/kanbanStatuses/" + this.kanban.id + "/checkSync")
                     .then(res => {
                         if (res.data.message !== 'uptodate'){
@@ -139,17 +146,32 @@ export default {
                         this.timer()
                     }
                 }, this.refreshRate)
-            },
-            handleStatusMoved() {
+            },*/
+            syncStatusMoved() {
                 this.sendChange("/kanbanStatuses/sync");
              },
-            handleItemMoved() {
+            syncItemMoved() {
                 this.sendChange("/kanbanItems/sync")
             },
             sendChange(url) {
-                axios.put(url, {columns: this.statuses})
+                const cols = this.statuses
+                    .map((status) => {      //only send required data
+                        return {
+                            'id': status.id,
+                            'kanban_id': status.kanban_id,
+                            'order_id': status.order_id,
+                            'items': status.items.map((item) => {
+                                return {
+                                    'id': item.id,
+                                    'kanban_status_id': item.kanban_status_id,
+                                    'order_id': item.order_id,
+                                }
+                            })
+                        }
+                    });
+                axios.put(url, {columns: cols})
                     .then(res => { // Tell the parent component we've added a new task and include it
-                        this.statuses = res.data.message.statuses;
+                        this.handleStatusMoved(res.data.message.statuses);
                     })
                     .catch(err => {
                         console.log(err.response);
@@ -174,6 +196,26 @@ export default {
                 this.statuses.push(newStatus);
                 this.closeForm();
             },
+            handleStatusUpdated(newStatus){
+                const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should replace the item
+                    status => status.id === newStatus.id
+                );
+
+                for (const [key, value] of Object.entries(newStatus)) {
+                    this.statuses[statusIndex][key] = value;
+                }
+            },
+            handleStatusMoved(newStatusOrder) {
+                let newStatusesOrderTemp = [];
+
+                newStatusOrder.forEach((status) => {
+                    let statusIndex = this.statuses.findIndex(
+                        s => s.id === status.id
+                    );
+                    newStatusesOrderTemp.push(this.statuses[statusIndex]);
+                });
+                this.statuses = newStatusesOrderTemp;
+            },
             handleItemAdded(newItem) {      // add an item to the correct column in our list
                 const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should replace the item
                     status => status.id === newItem.kanban_status_id
@@ -182,20 +224,55 @@ export default {
 
                 this.closeForm();                                     // Reset and close the AddItemForm
             },
+            handleItemMoved(columns) {
+                let newStatusOrder = [];
+
+                columns.forEach((status) => {
+                    let statusIndex = this.statuses.findIndex(
+                        s => s.id === status.id
+                    );
+
+                    let newItemsOrder = [];
+                    status.items.forEach((item) => {
+                        newItemsOrder.push(this.findItem(item));
+                    });
+
+                    let tempStatus = [];
+                    for (const [key, value] of Object.entries(this.statuses[statusIndex])) {
+                        if (key !== 'items'){
+                            tempStatus[key] = value;
+                        } else {
+                            tempStatus['items'] = newItemsOrder;
+                        }
+                    }
+                    newStatusOrder.push(tempStatus);
+                })
+                this.statuses = newStatusOrder;
+            },
+            findItem(item){
+                 let foundItem = []
+                 this.statuses.forEach((status) => {
+                     status.items.forEach((i) => {
+                        if (i.id === item.id){
+                            foundItem = i;
+                            return; //break early;
+                        }
+                    })
+                });
+                 return foundItem;
+            },
             handleItemDestroyed(item){
                 const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should add the item
                     status => status.id === item.kanban_status_id
                 );
 
-                let index = this.statuses[statusIndex].items.indexOf(item);
-
+                let index = this.statuses[statusIndex].items.findIndex(
+                    i => i.id === item.id
+                );
                 this.statuses[statusIndex].items.splice(index, 1);
             },
-            handleItemEdit(item){
-                this.newItem = item.kanban_status_id;
-                this.item = item;
-            },
             handleItemUpdated(updatedItem){
+                console.log(updatedItem);
                 const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should replace the item
                     status => status.id === updatedItem.kanban_status_id
                 );
@@ -203,21 +280,63 @@ export default {
                     item => item.id === updatedItem.id
                 );
 
-                this.statuses[statusIndex].items[itemIndex] = updatedItem;       // Add updated item to our column
-                this.closeForm();                                     // Reset and close the AddItemForm
-                this.item =  null; //re
+                for (const [key, value] of Object.entries(updatedItem)) {
+                    this.statuses[statusIndex].items[itemIndex][key] = value;       // Add updated item to our column
+                }
             },
             handleStatusDestroyed(status){
                 let index = this.statuses.indexOf(status);
                 this.statuses.splice(index, 1);
             },
         },
+        mounted() {
+            // Listen for the 'Kanban' event in the 'Presence.App.Kanban' presence channel
+            this.$echo.join('Presence.App.Kanban.' + this.kanban.id)
+                .here((users) =>{
+                    this.usersOnline = [...users];
+                })
+                .listen('.kanbanStatusAdded', (payload) => {
+                    this.handleStatusAdded(payload.message);
+                })
+                .listen('.kanbanStatusUpdated', (payload) => {
+                    this.handleStatusUpdated(payload.message);
+                })
+                .listen('.kanbanStatusMoved', (payload) => {
+                    this.handleStatusMoved(payload.message.statuses);
+                })
+                .listen('.kanbanStatusDeleted', (payload) => {
+                    this.handleStatusDestroyed(payload.message);
+                })
+                .listen('.kanbanItemAdded', (payload) => {
+                    this.handleItemAdded(payload.message);
+                })
+                .listen('.kanbanItemUpdated', (payload) => {
+                    this.handleItemUpdated(payload.message);
+                })
+                .listen('.kanbanItemMoved', (payload) => {
+                    this.handleItemMoved(payload.message);
+                })
+                .listen('.kanbanItemReload', (payload) => {
+                    this.handleItemUpdated(payload.message);
+                })
+                .listen('.kanbanItemDeleted', (payload) => {
+                    this.handleItemDestroyed(payload.message);
+                })
+                .joining((user)=> {
+                    this.usersOnline.push(user);
+                    console.log({user}, 'joined');
+                })
+                .leaving((user)=> {
+                    console.log({user}, 'leaving');
+                    this.usersOnline.filter((userOnline) => userOnline.id !== user.id);
+                });
+        },
         created () {
             this.statuses = this.kanban.statuses;
 
             if (this.kanban.auto_refresh === 1){
                 this.autoRefresh = true;
-                this.timer();
+                //this.timer();
             } else {
                 this.autoRefresh = false;
             }

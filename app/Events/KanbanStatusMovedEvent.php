@@ -28,6 +28,12 @@ class KanbanStatusMovedEvent implements ShouldBroadcast
         $this->kanban = $kanban;
     }
 
+    public function broadcastWhen()
+    {
+        return env('PUSHER_APP_ACTIVE', false);
+    }
+
+
     /**
      * Get the channels the event should broadcast on.
      *

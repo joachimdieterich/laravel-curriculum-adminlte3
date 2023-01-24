@@ -28,6 +28,12 @@ class KanbanItemAddedEvent implements  ShouldBroadcast
         $this->kanbanItem = $kanbanItem;
     }
 
+    public function broadcastWhen()
+    {
+        return env('PUSHER_APP_ACTIVE', false);
+    }
+
+
     /**
      * Get the channels the event should broadcast on.
      *
@@ -41,6 +47,7 @@ class KanbanItemAddedEvent implements  ShouldBroadcast
     public function broadcastAs(){
         return 'kanbanItemAdded';
     }
+
 
     /**
      * Get the channels the event should broadcast on.

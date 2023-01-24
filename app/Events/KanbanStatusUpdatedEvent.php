@@ -27,6 +27,12 @@ class KanbanStatusUpdatedEvent implements ShouldBroadcast
         $this->kanbanStatus = $kanbanStatus;
     }
 
+    public function broadcastWhen()
+    {
+        return env('PUSHER_APP_ACTIVE', false);
+    }
+
+
     /**
      * Get the channels the event should broadcast on.
      *

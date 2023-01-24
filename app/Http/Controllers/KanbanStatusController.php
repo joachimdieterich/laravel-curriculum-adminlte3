@@ -37,7 +37,7 @@ class KanbanStatusController extends Controller
 
         // axios call?
         if (request()->wantsJson()) {
-            event(new \App\Events\KanbanStatusAddedEvent($kanbanStatus, auth()->user()));
+            pusher_event(new \App\Events\KanbanStatusAddedEvent($kanbanStatus, auth()->user()));
 
             return ['message' => $kanbanStatus];
         }
@@ -62,7 +62,7 @@ class KanbanStatusController extends Controller
 
         // axios call?
         if (request()->wantsJson()) {
-            event(new \App\Events\KanbanStatusUpdatedEvent($kanbanStatus));
+            pusher_event(new \App\Events\KanbanStatusUpdatedEvent($kanbanStatus));
 
             return  $this->getStatusWithRelations($kanbanStatus);
         }
@@ -113,7 +113,7 @@ class KanbanStatusController extends Controller
         $kanban_id = $request->columns[0]['kanban_id'];
         if (request()->wantsJson()) {
             $kanban = Kanban::find($kanban_id);
-            event(new \App\Events\KanbanStatusMovedEvent($kanban));
+            pusher_event(new \App\Events\KanbanStatusMovedEvent($kanban));
 
             return ['message' =>  $kanban->with(['statuses'])->get()->first()];
 
@@ -136,7 +136,7 @@ class KanbanStatusController extends Controller
         Kanban::find($kanbanStatus->kanban_id)->touch('updated_at'); //To get Sync working
 
         if (request()->wantsJson()) {
-            event(new \App\Events\KanbanStatusDeletedEvent($kanbanStatusForEvent));
+            pusher_event(new \App\Events\KanbanStatusDeletedEvent($kanbanStatusForEvent));
 
             return ['message' => $kanbanStatus->delete()];
         }

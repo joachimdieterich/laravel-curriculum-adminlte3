@@ -78,7 +78,7 @@
                     :kanban_id="kanban.id"
                     :editable="editable"
                     :newStatus=true
-                    v-on:status-added="handleStatusAdded"/>
+                    v-on:status-added=""/>
             </div>
         </draggable>
         <!-- ./Columns -->
@@ -100,6 +100,7 @@ export default {
         props: {
             'kanban': Object,
             'editable': true,
+            'pusher': false,
             'search': ''
         },
         watch: {
@@ -288,48 +289,54 @@ export default {
                 let index = this.statuses.indexOf(status);
                 this.statuses.splice(index, 1);
             },
+
+            startPusher(){
+                if (this.pusher == 1){
+                    this.$echo.join('Presence.App.Kanban.' + this.kanban.id)
+                        .here((users) =>{
+                            this.usersOnline = [...users];
+                        })
+                        .listen('.kanbanStatusAdded', (payload) => {
+                            this.handleStatusAdded(payload.message);
+                        })
+                        .listen('.kanbanStatusUpdated', (payload) => {
+                            this.handleStatusUpdated(payload.message);
+                        })
+                        .listen('.kanbanStatusMoved', (payload) => {
+                            this.handleStatusMoved(payload.message.statuses);
+                        })
+                        .listen('.kanbanStatusDeleted', (payload) => {
+                            this.handleStatusDestroyed(payload.message);
+                        })
+                        .listen('.kanbanItemAdded', (payload) => {
+                            this.handleItemAdded(payload.message);
+                        })
+                        .listen('.kanbanItemUpdated', (payload) => {
+                            this.handleItemUpdated(payload.message);
+                        })
+                        .listen('.kanbanItemMoved', (payload) => {
+                            this.handleItemMoved(payload.message);
+                        })
+                        .listen('.kanbanItemReload', (payload) => {
+                            this.handleItemUpdated(payload.message);
+                        })
+                        .listen('.kanbanItemDeleted', (payload) => {
+                            this.handleItemDestroyed(payload.message);
+                        })
+                        .joining((user)=> {
+                            this.usersOnline.push(user);
+                            //console.log({user}, 'joined');
+                        })
+                        .leaving((user)=> {
+                            //console.log({user}, 'leaving');
+                            this.usersOnline.filter((userOnline) => userOnline.id !== user.id);
+                        });
+                }
+            }
         },
         mounted() {
             // Listen for the 'Kanban' event in the 'Presence.App.Kanban' presence channel
-            this.$echo.join('Presence.App.Kanban.' + this.kanban.id)
-                .here((users) =>{
-                    this.usersOnline = [...users];
-                })
-                .listen('.kanbanStatusAdded', (payload) => {
-                    this.handleStatusAdded(payload.message);
-                })
-                .listen('.kanbanStatusUpdated', (payload) => {
-                    this.handleStatusUpdated(payload.message);
-                })
-                .listen('.kanbanStatusMoved', (payload) => {
-                    this.handleStatusMoved(payload.message.statuses);
-                })
-                .listen('.kanbanStatusDeleted', (payload) => {
-                    this.handleStatusDestroyed(payload.message);
-                })
-                .listen('.kanbanItemAdded', (payload) => {
-                    this.handleItemAdded(payload.message);
-                })
-                .listen('.kanbanItemUpdated', (payload) => {
-                    this.handleItemUpdated(payload.message);
-                })
-                .listen('.kanbanItemMoved', (payload) => {
-                    this.handleItemMoved(payload.message);
-                })
-                .listen('.kanbanItemReload', (payload) => {
-                    this.handleItemUpdated(payload.message);
-                })
-                .listen('.kanbanItemDeleted', (payload) => {
-                    this.handleItemDestroyed(payload.message);
-                })
-                .joining((user)=> {
-                    this.usersOnline.push(user);
-                    console.log({user}, 'joined');
-                })
-                .leaving((user)=> {
-                    console.log({user}, 'leaving');
-                    this.usersOnline.filter((userOnline) => userOnline.id !== user.id);
-                });
+            this.startPusher();
         },
         created () {
             this.statuses = this.kanban.statuses;

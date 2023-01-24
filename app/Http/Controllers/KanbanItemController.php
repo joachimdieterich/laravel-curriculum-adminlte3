@@ -40,7 +40,7 @@ class KanbanItemController extends Controller
         // axios call?
         if (request()->wantsJson()) {
 
-            event(new \App\Events\KanbanItemAddedEvent($kanbanItem));
+            pusher_event(new \App\Events\KanbanItemAddedEvent($kanbanItem));
 
             return ['message' => KanbanItem::where('id', $kanbanItem->id)
                 ->with(['mediaSubscriptions', 'media', 'owner', /*'taskSubscription',*/ 'comments'])
@@ -76,7 +76,7 @@ class KanbanItemController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         if (request()->wantsJson()) {
-            event(new \App\Events\KanbanItemMovedEvent($request->columns));
+            pusher_event(new \App\Events\KanbanItemMovedEvent($request->columns));
 
             return ['message' =>  (new KanbanController)->getKanbanWithRelations(Kanban::find($kanban_id))];
         }
@@ -94,7 +94,7 @@ class KanbanItemController extends Controller
         if (request()->wantsJson()) {
             Kanban::find($kanbanItem->kanban_id)->touch('updated_at'); //To get Sync after media upload working
 
-            event(new \App\Events\KanbanItemReloadEvent($kanbanItem));
+            pusher_event(new \App\Events\KanbanItemReloadEvent($kanbanItem));
 
             return $this->getItemWithRelations($kanbanItem);
         }
@@ -127,7 +127,7 @@ class KanbanItemController extends Controller
 
         // axios call?
         if (request()->wantsJson()) {
-            event(new \App\Events\KanbanItemUpdatedEvent($kanbanItem));
+            pusher_event(new \App\Events\KanbanItemUpdatedEvent($kanbanItem));
 
             return $this->getItemWithRelations($kanbanItem);
         }
@@ -149,7 +149,7 @@ class KanbanItemController extends Controller
         $kanbanItem->subscriptions()->delete();
 
         if (request()->wantsJson()) {
-            event(new \App\Events\KanbanItemDeletedEvent($kanbanItemForEvent));
+            pusher_event(new \App\Events\KanbanItemDeletedEvent($kanbanItemForEvent));
 
             return ['message' => $kanbanItem->delete()];
         }

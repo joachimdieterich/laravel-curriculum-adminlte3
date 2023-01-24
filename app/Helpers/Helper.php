@@ -374,31 +374,42 @@ if (! function_exists('str_replace_special_chars')) {
 
         return $string;
     }
+}
+if (! function_exists('limiter')) {
+    /**
+     * Check for Limit based on params
+     *
+     * @param  string  $referenceable_type
+     * @param  mixed  $referenceable_id
+     * @param  string  $key
+     * @param  string  $model
+     * @param  string  $model_key
+     * @return bool
+     */
+    function limiter($referenceable_type = 'App\\Role', $referenceable_id = 1, $key = 'logbook_limiter', $model = 'App\Logbook', $model_key = 'owner_id')
+    {
+        $limit = optional(App\Config::where([
+            ['referenceable_type', '=', $referenceable_type],
+            ['referenceable_id', '=', $referenceable_id],
+            ['key', '=', $key],
+        ])->get()->first())->value ?: -1;
 
-    if (! function_exists('limiter')) {
-        /**
-         * Check for Limit based on params
-         *
-         * @param  string  $referenceable_type
-         * @param  mixed  $referenceable_id
-         * @param  string  $key
-         * @param  string  $model
-         * @param  string  $model_key
-         * @return bool
-         */
-        function limiter($referenceable_type = 'App\\Role', $referenceable_id = 1, $key = 'logbook_limiter', $model = 'App\Logbook', $model_key = 'owner_id')
+        return ($limit == -1)
+            ? true
+            : $model::where($model_key, auth()->user()->id)
+                ->get()
+                ->count() < $limit;
+    }
+}
+
+if (! function_exists('pusher_event')) {
+    function pusher_event($event)
+    {
+        if (method_exists($event, 'broadcastWhen') && ! $event->broadcastWhen())
         {
-            $limit = optional(App\Config::where([
-                ['referenceable_type', '=', $referenceable_type],
-                ['referenceable_id', '=', $referenceable_id],
-                ['key', '=', $key],
-            ])->get()->first())->value ?: -1;
-
-            return ($limit == -1)
-                ? true
-                : $model::where($model_key, auth()->user()->id)
-                    ->get()
-                    ->count() < $limit;
+            return;
         }
+
+        event($event);
     }
 }

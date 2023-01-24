@@ -93,6 +93,7 @@
 
             <kanban-board
                 :editable="{{ $may_edit ? "1":"0" }}"
+                :pusher="{{ $is_pusher_active ? "1":"0" }}"
                 ref="kanbanBoard"
                 :kanban="{{ $kanban }}"></kanban-board>
         </div>

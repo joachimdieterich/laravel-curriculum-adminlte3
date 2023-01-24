@@ -15,38 +15,21 @@ window.Vue = require('vue').default;
 
 window.moment = require('moment');
 
-
 //broadcasting
-
-//const channel = Echo.channel('public.playground.1');
-/*const channel = Echo.join('Presence.App.KanbanItem.1');
-
-channel.here((users) =>{
-        console.log({users});
-        console.log('subsribed!');
-    })
-    .joining((user)=> {
-        console.log({user}, 'joined');
-    })
-    .leaving((user)=> {
-        console.log({user}, 'leaving');
-    })
-    .listen('.playground', (e)=> {
-        console.log(e);
-    });*/
 import VueEcho from 'vue-echo';
 
 Vue.use(VueEcho, {
     broadcaster: 'pusher',
     key: process.env.MIX_PUSHER_APP_KEY,
     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-    forceTLS: false,
-    encrypted: false,
+    forceTLS: process.env.MIX_PUSHER_APP_FORCE_TLS,
+    encrypted: process.env.MIX_PUSHER_APP_ENCRYPTED,
     wsHost: window.location.hostname,
-    wsPort: 6001,
+    wssHost: window.location.hostname,
+    wsPort: process.env.MIX_PUSHER_APP_WSPORT,
+    wssPort: process.env.MIX_PUSHER_APP_WSSPORT,
     enableTransports: ['ws', 'wss'],
 });
-
 
 // use trans function like in blade
 import _ from 'lodash'; //needed to get

@@ -17,7 +17,8 @@ class MediumController extends Controller
 
     protected function adapter(string $adapter = null)
     {
-        return config('medium.repositories.'.$adapter.'.adapter') ?? config('medium.repositories.'.$this->repository.'.adapter');
+        $adapter = config('medium.repositories.'.$adapter.'.adapter') ?? config('medium.repositories.'.$this->repository.'.adapter');
+        return new $adapter();
     }
 
     /**

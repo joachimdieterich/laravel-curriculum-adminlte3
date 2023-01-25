@@ -272,13 +272,6 @@ class Edusharing extends RepositoryPlugin
         return json_decode($ret, true);
     }
 
-    public function getOrganizations()
-    {
-        $ret = $this->call($this->repoUrl.'/rest/organization/v1/organizations/-home-');
-
-        return json_decode($ret, true);
-    }
-
 
     /**
      * creates a usage for a given node

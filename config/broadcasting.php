@@ -37,10 +37,10 @@ return [
             'app_id' => env('PUSHER_APP_ID'),
             'options' => [
                 'cluster' => env('PUSHER_APP_CLUSTER'),
-                'encrypted' =>  env('MIX_PUSHER_APP_ENCRYPTED', true),
+                'encrypted' =>  env('PUSHER_APP_ENCRYPTED', true),
                 'host' => env('PUSHER_APP_HOST', '127.0.0.1' ),
-                'port' => env('MIX_PUSHER_APP_WSSPORT', env('MIX_PUSHER_APP_WSPORT', '6001')),
-                'scheme' => env('MIX_PUSHER_APP_SCHEME', 'http' ),
+                'port' => env('PUSHER_APP_WSSPORT', env('MIX_PUSHER_APP_WSPORT', '6001')),
+                'scheme' => env('PUSHER_APP_SCHEME', 'http' ),
                 'curl_options' => [
                     CURLOPT_SSL_VERIFYHOST => 0,
                     CURLOPT_SSL_VERIFYPEER => 0,

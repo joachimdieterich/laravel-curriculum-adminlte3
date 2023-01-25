@@ -107,7 +107,7 @@ class EdusharingMediaAdapter implements MediaInterface
         if ($medium->subscriptions()) {
             foreach ($medium->subscriptions as $subscription) {
                 if ($this->checkIfUserHasSubscription($subscription)) {
-                    return $this->getNodeByUsage([$medium->external_id, $subscription->type,  $subscription->id,  null);
+                    return $this->getNodeByUsage([$medium->external_id, $subscription->type,  $subscription->id,  null]);
                     //return request('download') ? redirect($medium->path) : redirect($medium->thumb_path);
                 }
             }

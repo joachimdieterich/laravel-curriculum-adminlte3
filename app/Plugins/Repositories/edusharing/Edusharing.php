@@ -319,9 +319,23 @@ class Edusharing extends RepositoryPlugin
             ['Content-Type: application/json'],
             json_encode($postFields)
         );
-        //$return = json_decode($node);
 
-        return json_decode($node);
+        $data = json_decode($node->content, true);
+
+        if ($node->error === 0 && $node->info["http_code"] === 200) {
+            $result = new Usage(
+                $data['parentNodeId'],
+                $nodeVersion,
+                $subscribable_type,
+                $subscribable_id,
+                $data['nodeId']
+            );
+        } else {
+            throw new Exception('creating usage failed ' .
+                $node->info["http_code"] . ': ' . $data['error'] . ' ' . $data['message']);
+        }
+
+        return json_encode($result);
     }
 
     private function call($url, $httpMethod = '', $additionalHeaders = [], $postFields = [])

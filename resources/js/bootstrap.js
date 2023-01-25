@@ -52,19 +52,17 @@ if (token) {
 
 import Echo from 'laravel-echo';
 
-//if (process.env.MIX_PUSHER_APP_ACTIVE == true) { //activat if pusher is active
-   window.Pusher = require('pusher-js');
+window.Pusher = require('pusher-js');
 
-   window.Echo = new Echo({
-       broadcaster: 'pusher',
-       key: process.env.MIX_PUSHER_APP_KEY,
-       cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-       forceTLS: process.env.MIX_PUSHER_APP_FORCE_TLS,
-       encrypted: process.env.MIX_PUSHER_APP_ENCRYPTED,
-       wsHost: window.location.hostname,
-       wssHost: window.location.hostname,
-       wsPort: process.env.MIX_PUSHER_APP_WSPORT,
-       wssPort: process.env.MIX_PUSHER_APP_WSSPORT,
-       enableTransports: ['ws', 'wss'],
-   });
-//}
+window.Echo = new Echo({
+   broadcaster: 'pusher',
+   key: process.env.MIX_PUSHER_APP_KEY,
+   cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+   forceTLS: process.env.MIX_PUSHER_APP_FORCE_TLS,
+   encrypted: process.env.MIX_PUSHER_APP_ENCRYPTED,
+   wsHost: window.location.hostname,
+   wssHost: window.location.hostname,
+   wsPort: process.env.MIX_PUSHER_APP_WSPORT,
+   wssPort: process.env.MIX_PUSHER_APP_WSSPORT,
+   enableTransports: ['ws', 'wss'],
+});

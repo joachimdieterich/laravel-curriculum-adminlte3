@@ -67,7 +67,7 @@ class EdusharingMediaAdapter implements MediaInterface
 
         if (($input['subscribable_type'] !== 'null') and ($input['subscribable_id'] !== 'null')) {
             //create usage
-            $repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
+            /*$repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
 
             $result = $repositoryPlugin->plugins[$input['repository']]
                 ->createUsage(
@@ -75,7 +75,7 @@ class EdusharingMediaAdapter implements MediaInterface
                     $input['subscribable_id'],
                     $input['external_id'],
                 );
-            dump($result);
+            dump($result);*/
 
             //subscribe
             $subscribe = MediumSubscription::updateOrCreate([
@@ -107,8 +107,8 @@ class EdusharingMediaAdapter implements MediaInterface
         if ($medium->subscriptions()) {
             foreach ($medium->subscriptions as $subscription) {
                 if ($this->checkIfUserHasSubscription($subscription)) {
-                    return $this->getNodeByUsage([$medium->external_id, $subscription->type,  $subscription->id,  null]);
-                    //return request('download') ? redirect($medium->path) : redirect($medium->thumb_path);
+                    //return $this->getNodeByUsage([$medium->external_id, $subscription->type,  $subscription->id,  null);
+                    return request('download') ? redirect($medium->path) : redirect($medium->thumb_path);
                 }
             }
         }

@@ -272,7 +272,6 @@ class Edusharing extends RepositoryPlugin
         return json_decode($ret, true);
     }
 
-
     /**
      * creates a usage for a given node
      * The given usage can later be used to fetch this node REGARDLESS of the actual user

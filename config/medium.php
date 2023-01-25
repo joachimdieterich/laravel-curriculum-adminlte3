@@ -1,5 +1,8 @@
 <?php
 
+use App\Interfaces\Implementations\LocalMediaAdapter;
+use App\Plugins\Repositories\edusharing\EdusharingMediaAdapter;
+
 return [
 
     /*
@@ -16,11 +19,11 @@ return [
         'default' => env('MEDIA_ADAPTER', 'local'),
 
         'local' => [
-            'adapter' => 'LocalMediaAdapter',
+            'adapter' => new LocalMediaAdapter(),
         ],
 
         'edusharing' => [
-            'adapter' => 'EdusharingMediaAdapter',
+            'adapter' => new EdusharingMediaAdapter(),
             'upload_iframe_url' => env('EDUSHARING_UPLOAD_IFRAME_URL', ''),
             'cloud_iframe_url' => env('EDUSHARING_CLOUD_IFRAME_URL', ''),
         ],

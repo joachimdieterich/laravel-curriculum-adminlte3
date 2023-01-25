@@ -462,7 +462,7 @@ export default {
         this.getFiles();
 
         this.$eventHub.$on('external_add', (form) => {
-            console.log(form);
+            //console.log(form);
             this.form = form;
             axios.post('/media?repository=' + this.form.repository, this.form)
                  .then((response) => {

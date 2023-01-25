@@ -272,6 +272,66 @@ class Edusharing extends RepositoryPlugin
         return json_decode($ret, true);
     }
 
+    public function getOrganizations()
+    {
+        $ret = $this->call($this->repoUrl.'/rest/organization/v1/organizations/-home-');
+
+        return json_decode($ret, true);
+    }
+
+
+    /**
+     * creates a usage for a given node
+     * The given usage can later be used to fetch this node REGARDLESS of the actual user
+     * The usage gives permanent access to this node and acts similar to a license
+     * In order to be able to create an usage for a node, the current user (provided via the ticket)
+     * MUST have CC_PUBLISH permissions on the given node id
+     * @param string $ticket
+     * A ticket with the user session who is creating this usage
+     * @param string $containerId
+     * A unique page / course id this usage refers to inside your system (e.g. a database id of the page you include the usage)
+     * @param string $resourceId
+     * The individual resource id on the current page or course this object refers to
+     * (you may enumerate or use unique UUID's)
+     * @param string $nodeId
+     * The edu-sharing node id the usage shall be created for
+     * @param string|null $nodeVersion
+     * Optional: The fixed version this usage should refer to
+     * If you leave it empty, the usage will always refer to the latest version of the node
+     * @return Usage
+     * An usage element you can use with @getNodeByUsage
+     * Keep all data of this object stored inside your system!
+     */
+    public function createUsage(
+        string $subscribable_type,
+        string $subscribable_id,
+        string $nodeId,
+        string $nodeVersion = null
+    ) {
+
+        $postFields = [
+            [
+                'appId' => Config::where([
+                                ['referenceable_type', '=', 'App\Edusharing'],
+                                ['key', '=',  'appId'],
+                            ])->get()->first()->value,
+                'courseId' => $subscribable_type,
+                'resourceId' => $subscribable_id,
+                'nodeId' => $nodeId,
+                'nodeVersion' => $nodeVersion,
+            ],
+        ];
+        $node = $this->call(
+            $this->repoUrl.'/rest/usage/v1/usages/repository/-home-',
+            'POST',
+            ['Content-Type: application/json'],
+            json_encode($postFields)
+        );
+        //$return = json_decode($node);
+
+        return json_decode($node);
+    }
+
     private function call($url, $httpMethod = '', $additionalHeaders = [], $postFields = [])
     {
         $ch = curl_init();

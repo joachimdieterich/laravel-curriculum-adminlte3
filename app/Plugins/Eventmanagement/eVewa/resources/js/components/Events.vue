@@ -58,7 +58,7 @@
                         <a :href="event.LINK_DETAIL"
                            class="btn bg-gray"
                            target="_blank">
-                            <i class="fa fa-info"></i> Details
+                            <i class="fa fa-info"></i> Details/Anmelden
                         </a>
 
                         <a :href="event.LINK_DETAIL+'&print=1'"
@@ -68,11 +68,11 @@
                             <i class="fa fa-print"></i> Drucken
                         </a>
 
-                        <a :href="event.LINK_ANMELDUNG"
+<!--                        <a :href="event.LINK_ANMELDUNG"
                            class="btn bg-info"
                            target="_blank">
                             <i class="fa fa-sign-in"></i> Anmelden
-                        </a>
+                        </a>-->
                     </div>
                 </div>
             </div>

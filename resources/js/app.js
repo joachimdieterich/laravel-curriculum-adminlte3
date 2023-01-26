@@ -17,19 +17,20 @@ window.moment = require('moment');
 
 //broadcasting
 import VueEcho from 'vue-echo';
-
-Vue.use(VueEcho, {
-    broadcaster: 'pusher',
-    key: process.env.MIX_PUSHER_APP_KEY,
-    cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-    forceTLS: process.env.MIX_PUSHER_APP_FORCE_TLS === 'true',
-    encrypted: process.env.MIX_PUSHER_APP_ENCRYPTED === 'true',
-    wsHost: window.location.hostname,
-    wssHost: window.location.hostname,
-    wsPort: process.env.MIX_PUSHER_APP_WSPORT,
-    wssPort: process.env.MIX_PUSHER_APP_WSSPORT,
-    enableTransports: ['ws', 'wss'],
-});
+if (process.env.MIX_PUSHER_APP_ACTIVE == 'true') {
+    Vue.use(VueEcho, {
+        broadcaster: 'pusher',
+        key: process.env.MIX_PUSHER_APP_KEY,
+        cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+        forceTLS: process.env.MIX_PUSHER_APP_FORCE_TLS === 'true',
+        encrypted: process.env.MIX_PUSHER_APP_ENCRYPTED === 'true',
+        wsHost: window.location.hostname,
+        wssHost: window.location.hostname,
+        wsPort: process.env.MIX_PUSHER_APP_WSPORT,
+        wssPort: process.env.MIX_PUSHER_APP_WSSPORT,
+        enableTransports: ['ws', 'wss'],
+    });
+}
 
 // use trans function like in blade
 import _ from 'lodash'; //needed to get

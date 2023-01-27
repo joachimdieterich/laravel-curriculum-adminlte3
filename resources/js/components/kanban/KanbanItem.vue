@@ -42,8 +42,10 @@
             </div>
             <div class="pb-1" style="line-height: 1">
                     <span v-if="editor !== false">
-                        <span   class="pull-left"
-                                style="background-color: rgb(244, 244, 244); border-radius: 20px; padding: 2px 2px 0 2px;">
+                        <span
+                            class="pull-left"
+                            style="border-style:  solid; border-width: 1px; border-radius: 20px; padding: 2px 2px 0 2px;"
+                            :style="{borderColor: textColor, }">
                             <color-picker-input
                                 :id="'colorPicker_'+index"
                                 v-if="editor !== false"

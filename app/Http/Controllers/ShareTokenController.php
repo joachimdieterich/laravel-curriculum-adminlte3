@@ -52,6 +52,7 @@ class ShareTokenController extends Controller
         $subscription->subscribable_type = "App\User";
         $subscription->subscribable_id = $user->id;
         $subscription->due_date = $date;
+        $subscription->editable = isset($input['editable']) ? $input['editable'] : false;
         $subscription->save();
 
         OrganizationRoleUser::firstOrCreate(

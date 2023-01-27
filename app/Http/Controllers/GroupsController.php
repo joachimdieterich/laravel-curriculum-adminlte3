@@ -35,6 +35,8 @@ class GroupsController extends Controller
     {
         abort_unless(\Gate::allows('group_access'), 403);
 
+        $group_id_field = 'id'; // if auth()->user()->groups() is used query uses group_user table therefore group_id_field = group_id
+
         switch (auth()->user()->role()->id) {
             case 1:  $groups = Group::with(['grade', 'period', 'organization']);
                 break;
@@ -42,6 +44,7 @@ class GroupsController extends Controller
                 break;
 
             default: $groups = auth()->user()->groups()->with(['grade', 'period', 'organization']);
+                $group_id_field = 'group_id';
                 break;
         }
 
@@ -59,34 +62,34 @@ class GroupsController extends Controller
             ->addColumn('organization', function ($groups) {
                 return $groups->organization->title;
             })
-            ->addColumn('action', function ($groups) use ($show_gate, $edit_gate, $delete_gate) {
+            ->addColumn('action', function ($groups) use ($show_gate, $edit_gate, $delete_gate, $group_id_field) {
                 $actions = '';
                 if ($show_gate) {
-                    $actions .= '<a href="'.route('groups.show', $groups->id).'" '
-                                    .'id="show-group-'.$groups->id.'" '
-                                    .'class="btn p-1">'
-                                    .'<i class="fa fa-list-alt"></i>'
-                                    .'</a>';
+                    $actions .= '<a href="'.route('groups.show', $groups->$group_id_field).'" '
+                        .'id="show-group-'.$groups->$group_id_field.'" '
+                        .'class="btn p-1">'
+                        .'<i class="fa fa-list-alt"></i>'
+                        .'</a>';
                 }
                 if ($edit_gate) {
-                    $actions .= '<a href="'.route('groups.edit', $groups->id).'" '
-                                    .'id="edit-group-'.$groups->id.'" '
-                                    .'class="btn p-1">'
-                                    .'<i class="fa fa-pencil-alt"></i> '
-                                    .'</a>';
+                    $actions .= '<a href="'.route('groups.edit', $groups->$group_id_field).'" '
+                        .'id="edit-group-'.$groups->$group_id_field.'" '
+                        .'class="btn p-1">'
+                        .'<i class="fa fa-pencil-alt"></i> '
+                        .'</a>';
                 }
                 if ($delete_gate) {
                     $actions .= '<button type="button" '
-                                .'class="btn text-danger" '
-                                .'onclick="destroyDataTableEntry(\'groups\','.$groups->id.')">'
-                                .'<i class="fa fa-trash"></i></button>';
+                        .'class="btn text-danger" '
+                        .'onclick="destroyDataTableEntry(\'groups\','.$groups->$group_id_field.')">'
+                        .'<i class="fa fa-trash"></i></button>';
                 }
 
                 return $actions;
             })
 
             ->addColumn('check', '')
-            ->setRowId('id')
+            ->setRowId($group_id_field)
             ->make(true);
     }
 

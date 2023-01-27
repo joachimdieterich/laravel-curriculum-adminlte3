@@ -2,7 +2,9 @@
 
     <ul class="products-list product-list-in-card pl-2 pr-2">
         <li v-if="subscriptions.length != 0">&nbsp;
-            <span class="btn btn-flat pull-right py-0"><small>{{ trans('global.can_edit') }}</small></span>
+            <span class="pull-right">
+                <small>{{ trans('global.can_edit') }}</small>
+            </span>
         </li>
         <li style="clear:right;"
             v-for="(item,index) in subscriptions"
@@ -12,7 +14,10 @@
             <div class="d-flex flex-column">
                 <div>
                     <span>
-                        {{ item.subscribable.username }}
+                        {{ item.subscribable.username }} |
+                        <small>
+                            {{ trans('global.valid_to') }} {{ diffForHumans(item.due_date) }}
+                        </small>
                     </span>
                     <span class="pull-right custom-control custom-switch custom-switch-on-green">
                         <input  v-model="item.editable"
@@ -39,6 +44,7 @@
 
 
 <script>
+import moment from 'moment';
 
 export default {
     props: {
@@ -73,7 +79,10 @@ export default {
             } catch(error) {
                 //this.errors = error.response.data.errors;
             }
-        }
+        },
+        diffForHumans : function (date) {
+            return moment(date).locale('de').fromNow();
+        },
     }
 }
 </script>

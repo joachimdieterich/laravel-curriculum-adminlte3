@@ -123,34 +123,36 @@
                     <!-- Token Tab -->
                     <div v-if="shareWithToken"
                          class="tab-pane" id="token_subscription">
-                        <div class="form">
-                            <div class="form-group pt-2">
-                                <input v-model="nameToken" class="form-control mb-2" style="width: 100%;"
-                                       placeholder="Name">
-                                <date-picker v-model="endDateToken" style="width:100%;"
-                                             placeholder="Ablaufdatum"></date-picker>
-                            </div>
-                            <small>darf bearbeiten</small>
-                            <span class="pull-right custom-control custom-switch custom-switch-on-green">
-                                <input v-model="canEditToken"
-                                       type="checkbox"
-                                       id="canEditToken"
-                                       class="custom-control-input pt-1 "
-                                       @click="changeCanEditTokenValue(canEditToken)">
-                                <label class="custom-control-label " for="canEditToken"></label>
-                            </span>
-                            <div>
-                                <button type="button" @click="createUserToken()" :disabled="nameToken == ''"
-                                        class="btn btn-sm btn-outline-success pull-right mt-3">
-                                    Speichern
-                                </button>
-                            </div>
+
+                        <div class="form-group pt-2">
+                            <input v-model="nameToken" class="form-control mb-2" style="width: 100%;"
+                                   placeholder="Name">
+                            <date-picker v-model="endDateToken" style="width:100%;"
+                                         placeholder="Ablaufdatum"></date-picker>
                         </div>
+                        <small>darf bearbeiten</small>
+                        <span class="pull-right custom-control custom-switch custom-switch-on-green">
+                            <input v-model="canEditToken"
+                                   type="checkbox"
+                                   id="canEditToken"
+                                   class="custom-control-input pt-1 "
+                                   @click="changeCanEditTokenValue(canEditToken)">
+                            <label class="custom-control-label " for="canEditToken"></label>
+                        </span>
                         <div>
-                        <tokens
-                            v-if="typeof subscribers.subscriptions != 'undefined'"
-                            :modelUrl="modelUrl"
-                            :subscriptions="subscribers.tokens"/>
+                            <button type="button" @click="createUserToken()" :disabled="nameToken == ''"
+                                    class="btn btn-sm btn-outline-success pull-right my-2">
+                                Speichern
+                            </button>
+                        </div>
+
+                        <hr class="pt-1 clearfix">
+
+                        <div>
+                            <tokens
+                                v-if="typeof subscribers.subscriptions != 'undefined'"
+                                :modelUrl="modelUrl"
+                                :subscriptions="subscribers.tokens"/>
                         </div>
 
                     </div>
@@ -318,7 +320,7 @@ export default {
                 'model_id': this.modelId,
                 'name': this.nameToken,
                 'date': this.endDateToken,
-                'can_change': this.canEditToken
+                'editable': this.canEditToken
             }).then( () => this.loadSubscribers())
         }
     },

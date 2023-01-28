@@ -42,7 +42,7 @@
                  class="box box-objective nav-item-box-image pointer my-1"
                  style="min-width: 200px !important;"
                  :style="'border-bottom: 5px solid ' + kanban.color">
-                <a :href="'kanbans/'+kanban.id"
+                <a :href="'/kanbans/'+kanban.id"
                    class="text-decoration-none text-black">
                     <div v-if="kanban.medium_id"
                          class="nav-item-box-image-size"
@@ -114,17 +114,27 @@
                 kanbans: [],
                 subscriptions: {},
                 search: '',
+                url: 'kanbans/list',
                 errors: {}
             }
         },
         methods: {
             loaderEvent(){
-                axios.get('kanbans/list')//'/kanbanSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id)
+
+                if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
+                    this.url = '/kanbanSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
+                }
+                axios.get(this.url)
                     .then(response => {
-                        this.kanbans = response.data.data;
+                            if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
+                                this.kanbans = response.data.data;
+                            } else {
+                                this.kanbans = response.data.data;
+                            }
+
                     })
                     .catch(e => {
-                        this.errors = e.data.errors;
+                        console.log(e.data.errors);
                     });
             },
             decodeHtml(html) {

@@ -1,29 +1,28 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\Kanbans;
 
-use App\Kanban;
-use App\User;
-use Illuminate\Broadcasting\Channel;
+use App\KanbanStatus;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class KanbanItemMovedEvent implements ShouldBroadcast
+class KanbanStatusUpdatedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    private Array $columns;
+    private KanbanStatus $kanbanStatus;
 
     /**
-     * @param  $colums
+     * Create a new event instance.
+     *
+     * @return void
      */
-    public function __construct(Array $columns)
+    public function __construct(KanbanStatus $kanbanStatus)
     {
-        $this->columns = $columns;
+        $this->kanbanStatus = $kanbanStatus;
     }
 
     public function broadcastWhen()
@@ -39,11 +38,11 @@ class KanbanItemMovedEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PresenceChannel('Presence.App.Kanban.' . $this->columns[0]['kanban_id']);
+        return new PresenceChannel('Presence.App.Kanban.' . $this->kanbanStatus->kanban_id);
     }
 
     public function broadcastAs(){
-        return 'kanbanItemMoved';
+        return 'kanbanStatusUpdated';
     }
 
     /**
@@ -54,7 +53,8 @@ class KanbanItemMovedEvent implements ShouldBroadcast
     public function broadcastWith(){
 
         return [
-            'message' => $this->columns
+            'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
+            'message' =>  $this->kanbanStatus
         ];
     }
 }

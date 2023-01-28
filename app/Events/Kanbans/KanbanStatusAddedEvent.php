@@ -1,17 +1,15 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\Kanbans;
 
 use App\KanbanStatus;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class KanbanStatusUpdatedEvent implements ShouldBroadcast
+class KanbanStatusAddedEvent implements  ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -44,7 +42,7 @@ class KanbanStatusUpdatedEvent implements ShouldBroadcast
     }
 
     public function broadcastAs(){
-        return 'kanbanStatusUpdated';
+        return 'kanbanStatusAdded';
     }
 
     /**

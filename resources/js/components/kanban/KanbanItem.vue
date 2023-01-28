@@ -1,5 +1,5 @@
 <template>
-    <div class="card ">
+    <div class="card">
         <div class="card-header px-3 py-2" :style="{ backgroundColor: item.color, color: textColor }">
             <div class="card-tools">
                 <div v-if="editable && editor === false" class="btn btn-flat py-0 px-2 "
@@ -99,7 +99,7 @@
           <mediaCarousel
               v-if="item.media_subscriptions.length > 0"
               :subscriptions="item.media_subscriptions"
-              :width="width"
+              :width="width -16"
           ></mediaCarousel>
         </div>
 

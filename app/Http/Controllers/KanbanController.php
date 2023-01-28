@@ -43,6 +43,8 @@ class KanbanController extends Controller
     public function list()
     {
         abort_unless(\Gate::allows('kanban_access'), 403);
+
+
         $kanbans = $this->userKanbans();
 
         return empty($kanbans) ? '' : DataTables::of($kanbans)

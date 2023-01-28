@@ -1,29 +1,28 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\Kanbans;
 
-use App\KanbanItem;
-use Illuminate\Broadcasting\Channel;
+use App\KanbanStatus;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class KanbanItemReloadEvent implements ShouldBroadcast
+class KanbanStatusDeletedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    private KanbanItem $kanbanItem;
+    private KanbanStatus $kanbanStatus;
+
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(KanbanItem $kanbanItem)
+    public function __construct(KanbanStatus $kanbanStatus)
     {
-        $this->kanbanItem = $kanbanItem;
+        $this->kanbanStatus = $kanbanStatus;
     }
 
     public function broadcastWhen()
@@ -39,11 +38,11 @@ class KanbanItemReloadEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PresenceChannel('Presence.App.Kanban.' . $this->kanbanItem->kanban_id);
+        return new PresenceChannel('Presence.App.Kanban.' . $this->kanbanStatus->kanban_id);
     }
 
     public function broadcastAs(){
-        return 'kanbanItemReload';
+        return 'kanbanStatusDeleted';
     }
 
     /**
@@ -55,16 +54,7 @@ class KanbanItemReloadEvent implements ShouldBroadcast
 
         return [
             'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
-            'message' =>  $this->kanbanItem
-                ->where('id', $this->kanbanItem->id)
-                ->with(['owner', 'mediaSubscriptions.medium',
-                    /*'taskSubscription.task.subscriptions' => function ($query) {
-                        $query->where('subscribable_id', auth()->user()->id)
-                            ->where('subscribable_type', 'App\User');
-                    }, */
-                    'subscribable'])
-                ->get()->first()
+            'message' =>  $this->kanbanStatus
         ];
     }
 }
-

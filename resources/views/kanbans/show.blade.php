@@ -53,7 +53,7 @@
                         name="commentable"
                         class="invisible"
                         {{  ($kanban->commentable == 1 ? ' checked' : '') }}
-                    /> &lt;!&ndash;element is invisible&ndash;&gt;
+                    /> &lt;!&ndash; element is invisible &ndash;&gt;
                     <input
                         type="checkbox"
                         id="auto_refresh"

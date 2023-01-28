@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Kanban;
 use App\KanbanItem;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class KanbanItemController extends Controller
 {
@@ -40,7 +40,7 @@ class KanbanItemController extends Controller
         // axios call?
         if (request()->wantsJson()) {
 
-            pusher_event(new \App\Events\KanbanItemAddedEvent($kanbanItem));
+            pusher_event(new \App\Events\Kanbans\KanbanItemAddedEvent($kanbanItem));
 
             return ['message' => KanbanItem::where('id', $kanbanItem->id)
                 ->with(['mediaSubscriptions', 'media', 'owner', /*'taskSubscription',*/ 'comments'])
@@ -76,7 +76,7 @@ class KanbanItemController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         if (request()->wantsJson()) {
-            pusher_event(new \App\Events\KanbanItemMovedEvent($request->columns));
+            pusher_event(new \App\Events\Kanbans\KanbanItemMovedEvent($request->columns));
 
             return ['message' =>  (new KanbanController)->getKanbanWithRelations(Kanban::find($kanban_id))];
         }
@@ -94,7 +94,7 @@ class KanbanItemController extends Controller
         if (request()->wantsJson()) {
             Kanban::find($kanbanItem->kanban_id)->touch('updated_at'); //To get Sync after media upload working
 
-            pusher_event(new \App\Events\KanbanItemReloadEvent($kanbanItem));
+            pusher_event(new \App\Events\Kanbans\KanbanItemReloadEvent($kanbanItem));
 
             return $this->getItemWithRelations($kanbanItem);
         }
@@ -127,7 +127,7 @@ class KanbanItemController extends Controller
 
         // axios call?
         if (request()->wantsJson()) {
-            pusher_event(new \App\Events\KanbanItemUpdatedEvent($kanbanItem));
+            pusher_event(new \App\Events\Kanbans\KanbanItemUpdatedEvent($kanbanItem));
 
             return $this->getItemWithRelations($kanbanItem);
         }
@@ -149,7 +149,7 @@ class KanbanItemController extends Controller
         $kanbanItem->subscriptions()->delete();
 
         if (request()->wantsJson()) {
-            pusher_event(new \App\Events\KanbanItemDeletedEvent($kanbanItemForEvent));
+            pusher_event(new \App\Events\Kanbans\KanbanItemDeletedEvent($kanbanItemForEvent));
 
             return ['message' => $kanbanItem->delete()];
         }

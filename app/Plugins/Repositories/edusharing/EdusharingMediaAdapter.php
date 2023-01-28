@@ -67,15 +67,16 @@ class EdusharingMediaAdapter implements MediaInterface
 
         if (($input['subscribable_type'] !== 'null') and ($input['subscribable_id'] !== 'null')) {
             //create usage
-            /*$repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
 
-            $result = $repositoryPlugin->plugins[$input['repository']]
+            $repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
+
+            $usage = $repositoryPlugin->plugins[$input['repository']]
                 ->createUsage(
                     $input['subscribable_type'],
                     $input['subscribable_id'],
                     $input['external_id'],
                 );
-            dump($result);*/
+            //dump($result);
 
             //subscribe
             $subscribe = MediumSubscription::updateOrCreate([
@@ -85,6 +86,7 @@ class EdusharingMediaAdapter implements MediaInterface
             ], [
                 'sharing_level_id'  => 1,
                 'visibility'        => 1,
+                'data'              => $usage,
                 'owner_id'          => auth()->user()->id,
             ]);
             $subscribe->save();
@@ -97,17 +99,27 @@ class EdusharingMediaAdapter implements MediaInterface
 
     public function show(Medium $medium)
     {
-
         // Medium is public (sharing_level_id == 1) or user is owner
-        if (($medium->public == true) or ($medium->owner_id == auth()->user()->id)) {
+        /*if (($medium->public == true) or ($medium->owner_id == auth()->user()->id)) {
             return request('download') ? redirect($medium->path) : redirect($medium->thumb_path);
-        }
+        }*/
 
         /* checkIfUserHasSubscription and visibility*/
         if ($medium->subscriptions()) {
             foreach ($medium->subscriptions as $subscription) {
                 if ($this->checkIfUserHasSubscription($subscription)) {
-                    //return $this->getNodeByUsage([$medium->external_id, $subscription->type,  $subscription->id,  null);
+                    if (!is_null($medium->additional_data))
+                    {
+                        $repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
+
+                        $node = $repositoryPlugin->plugins[$medium->adapter]
+                            ->getNodeByUsage($medium->additional_data);
+
+                        dump($node);
+
+                        return $node;
+                    }
+
                     return request('download') ? redirect($medium->path) : redirect($medium->thumb_path);
                 }
             }
@@ -138,59 +150,6 @@ class EdusharingMediaAdapter implements MediaInterface
 
         /* user has permission to access this file ! */
         abort(403);
-    }
-
-    /**
-     * Loads the edu-sharing node refered by a given usage
-     * @param Usage $usage
-     * The usage, as previously returned by @createUsage
-     * @param string $displayMode
-     * The displayMode
-     * This will ONLY change the content representation inside the "detailsSnippet" return value
-     * @param array $renderingParams
-     * @return mixed
-     * Returns an object containing a "detailsSnippet" repesentation
-     * as well as the full node as provided by the REST API
-     * Please refer to the edu-sharing REST documentation for more details
-     * @throws Exception
-     */
-    public function getNodeByUsage(
-        Usage $usage,
-              $displayMode = DisplayMode::Inline,
-        array $renderingParams = null
-    )
-    {
-        $url = $this->base->baseUrl . '/rest/rendering/v1/details/-home-/' . rawurlencode($usage->nodeId);
-        $url .= '?displayMode=' . rawurlencode($displayMode);
-        if($usage->nodeVersion) {
-            $url .= '&version=' . rawurlencode($usage->nodeVersion);
-        }
-
-        $headers = $this->getSignatureHeaders($usage->usageId);
-        $headers[] = 'X-Edu-Usage-Node-Id: ' . $usage->nodeId;
-        $headers[] = 'X-Edu-Usage-Course-Id: ' . $usage->containerId;
-        $headers[] = 'X-Edu-Usage-Resource-Id: ' . $usage->resourceId;
-
-        $curl = $this->base->handleCurlRequest($url, [
-            CURLOPT_FAILONERROR => false,
-            CURLOPT_POST => 1,
-            CURLOPT_POSTFIELDS => json_encode($renderingParams),
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_HTTPHEADER => $headers
-        ]);
-
-        $data = json_decode($curl->content, true);
-        if ($curl->error === 0 && $curl->info["http_code"] === 200) {
-            return $data;
-        } else if ($curl->info["http_code"] === 403) {
-            throw new UsageDeletedException('the given usage is deleted and the requested node is not public');
-        } else if ($curl->info["http_code"] === 404){
-            throw new NodeDeletedException('the given node is already deleted ' .
-                $curl->info["http_code"] . ': ' . $data['error'] . ' ' . $data['message']);
-        } else {
-            throw new Exception('fetching node by usage failed ' .
-                $curl->info["http_code"] . ': ' . $data['error'] . ' ' . $data['message']);
-        }
     }
 
     public function edit(Medium $medium)

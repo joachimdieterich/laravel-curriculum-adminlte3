@@ -116,6 +116,7 @@ class MediumSubscriptionController extends Controller
             'subscribable_id' => 'required',
             'sharing_level_id' => 'sometimes',
             'visibility' => 'sometimes',
+            'additional_data' => 'sometimes',
         ]);
     }
 }

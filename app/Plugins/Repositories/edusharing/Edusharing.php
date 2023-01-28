@@ -300,7 +300,6 @@ class Edusharing extends RepositoryPlugin
         string $nodeId,
         string $nodeVersion = null
     ) {
-
         $postFields = [
             [
                 'appId' => Config::where([
@@ -313,6 +312,7 @@ class Edusharing extends RepositoryPlugin
                 'nodeVersion' => $nodeVersion,
             ],
         ];
+
         $node = $this->call(
             $this->repoUrl.'/rest/usage/v1/usages/repository/-home-',
             'POST',
@@ -337,6 +337,47 @@ class Edusharing extends RepositoryPlugin
 
         return json_encode($result);
     }
+
+    /**
+     * Loads the edu-sharing node refered by a given usage
+     * @param Usage $usage
+     * The usage, as previously returned by @createUsage
+     * @param string $displayMode
+     * The displayMode
+     * This will ONLY change the content representation inside the "detailsSnippet" return value
+     * @param array $renderingParams
+     * @return mixed
+     * Returns an object containing a "detailsSnippet" repesentation
+     * as well as the full node as provided by the REST API
+     * Please refer to the edu-sharing REST documentation for more details
+     * @throws Exception
+     */
+    public function getNodeByUsage(
+        Usage $usage,
+        $displayMode = DisplayMode::Inline,
+        array $renderingParams = null
+    )
+    {
+        $url =  rawurlencode($usage->nodeId);
+        $url .= '?displayMode=' . rawurlencode($displayMode);
+        if($usage->nodeVersion) {
+            $url .= '&version=' . rawurlencode($usage->nodeVersion);
+        }
+        $headers = $this->getSignatureHeaders($usage->usageId);
+        $headers[] = 'X-Edu-Usage-Node-Id: ' . $usage->nodeId;
+        $headers[] = 'X-Edu-Usage-Course-Id: ' . $usage->containerId;
+        $headers[] = 'X-Edu-Usage-Resource-Id: ' . $usage->resourceId;
+
+        $ret = $this->call(
+            $this->repoUrl . '/rest/rendering/v1/details/-home-/' . $url,
+            'POST',
+            $headers,
+            $renderingParams
+        );
+
+        return json_decode($ret->content, true);
+    }
+
 
     private function call($url, $httpMethod = '', $additionalHeaders = [], $postFields = [])
     {

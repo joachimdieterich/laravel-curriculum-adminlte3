@@ -45,7 +45,6 @@
                 const render = await fetchAPI(usage)
                 document.querySelector('#render').innerHTML = render.detailsSnippet;
             }
-
         }
         async function createUsage(nodeId) {
             return await fetchAPI({

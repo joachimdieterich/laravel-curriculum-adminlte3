@@ -155,3 +155,25 @@ tr:hover .vuehover {
     position:absolute;
     overflow:auto;
 }
+
+@media (max-width: 991px) {
+    .sidebar-collapse .kanban_board_wrapper {
+        height: calc(100vh - 155px - 2rem);
+        width: calc(100vw - 30px) !important;
+        position: absolute;
+        overflow: auto;
+    }
+}
+@media (max-width: 767.98px) {
+    .sidebar-collapse
+    .kanban_board_wrapper,
+    .content-only
+    .kanban_board_wrapper,
+    .kanban_board_wrapper
+    {
+        height: calc(100vh - 155px - 2rem);
+        width: 100vw !important;
+        position: absolute;
+        overflow: auto;
+    }
+}

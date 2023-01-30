@@ -17,7 +17,9 @@
                      :kanban_id="status.kanban_id"
                      :status="status"
                      :editable="editable"
-                     v-on:status-destroyed=""/>
+                     v-on:status-updated="handleStatusUpdatedWithoutWebsocket"
+                     v-on:status-destroyed="handleStatusDestroyedWithoutWebsocket"
+                 />
                 <div style="margin-top:15px; bottom:0;overflow-y:scroll; z-index: 1"
                      :style="'width:' + itemWidth + 'px;'"
                       class="hide-scrollbars">
@@ -44,8 +46,8 @@
                                      :index="index + '_' + itemIndex"
                                      :item="item"
                                      :width="itemWidth"
-                                     v-on:item-destroyed=""
-                                     v-on:item-updated=""
+                                     v-on:item-destroyed="handleItemDestroyedWithoutWebsocket"
+                                     v-on:item-updated="handleItemUpdatedWithoutWebsocket"
                                      v-on:item-edit=""/>
                             </span>
                             <!--  ./Items -->
@@ -57,7 +59,7 @@
                         :status="status"
                         :item="item"
                         :width="itemWidth"
-                        v-on:item-added=""
+                        v-on:item-added="handleItemAddedWithoutWebsocket"
                         v-on:item-updated=""
                         v-on:item-canceled="closeForm"
                         style="z-index: 2">
@@ -78,14 +80,18 @@
                     :kanban_id="kanban.id"
                     :editable="editable"
                     :newStatus=true
-                    v-on:status-added=""/>
+                    v-on:status-added="handleStatusAddedWithoutWebsocket"
+                    />
             </div>
         </draggable>
         <!-- ./Columns -->
-        <div class="card p-2"
-             style="position: absolute;right: 5px;bottom: 0;">
+        <div v-if="pusher == 1"
+             class="card p-2"
+             style="position: fixed;right: 15px;bottom: 30px;">
 
-            <span class="pull-left"><i class="fa fa-user"></i> {{ this.usersOnline.length }}</span>
+            <span class="pull-left">
+                <i class="fa fa-user"></i> {{ this.usersOnline.length }}
+            </span>
         </div>
     </div>
 </template>
@@ -124,8 +130,7 @@ export default {
             };
         },
         methods: {
-
-           /* sync(){
+            sync(){
                 axios.get("/kanbanStatuses/" + this.kanban.id + "/checkSync")
                     .then(res => {
                         if (res.data.message !== 'uptodate'){
@@ -147,7 +152,7 @@ export default {
                         this.timer()
                     }
                 }, this.refreshRate)
-            },*/
+            },
             syncStatusMoved() {
                 this.sendChange("/kanbanStatuses/sync");
              },
@@ -172,7 +177,13 @@ export default {
                     });
                 axios.put(url, {columns: cols})
                     .then(res => { // Tell the parent component we've added a new task and include it
-                        this.handleStatusMoved(res.data.message.statuses);
+                        if (this.pusher == 0){
+                            if (url == '/kanbanStatuses/sync'){
+                                this.handleStatusMoved(res.data.message.statuses);
+                            } else {
+                                this.handleItemMoved(res.data.message.statuses);
+                            }
+                        }
                     })
                     .catch(err => {
                         console.log(err.response);
@@ -192,10 +203,20 @@ export default {
               this.newStatus = 0;
               this.newItem = 0;
             },
+            handleStatusAddedWithoutWebsocket(newStatus){
+                if (this.pusher == 0){
+                    this.handleStatusAdded(newStatus);
+                }
+            },
             handleStatusAdded(newStatus){
                 newStatus['items'] = [];            //add items to prevent error if item is created without reloading page
                 this.statuses.push(newStatus);
                 this.closeForm();
+            },
+            handleStatusUpdatedWithoutWebsocket(newStatus){
+                if (this.pusher == 0){
+                    this.handleStatusUpdated(newStatus);
+                }
             },
             handleStatusUpdated(newStatus){
                 const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should replace the item
@@ -205,6 +226,15 @@ export default {
                 for (const [key, value] of Object.entries(newStatus)) {
                     this.statuses[statusIndex][key] = value;
                 }
+            },
+            handleStatusDestroyedWithoutWebsocket(status){
+                if (this.pusher == 0){
+                    this.handleStatusDestroyed(status);
+                }
+            },
+            handleStatusDestroyed(status){
+                let index = this.statuses.indexOf(status);
+                this.statuses.splice(index, 1);
             },
             handleStatusMoved(newStatusOrder) {
                 let newStatusesOrderTemp = [];
@@ -216,6 +246,11 @@ export default {
                     newStatusesOrderTemp.push(this.statuses[statusIndex]);
                 });
                 this.statuses = newStatusesOrderTemp;
+            },
+            handleItemAddedWithoutWebsocket(newItem){
+                if (this.pusher == 0){
+                    this.handleItemAdded(newItem);
+                }
             },
             handleItemAdded(newItem) {      // add an item to the correct column in our list
                 const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should replace the item
@@ -262,6 +297,11 @@ export default {
                 });
                  return foundItem;
             },
+            handleItemDestroyedWithoutWebsocket(item){
+                if (this.pusher == 0){
+                    this.handleItemDestroyed(item);
+                }
+            },
             handleItemDestroyed(item){
                 const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should add the item
                     status => status.id === item.kanban_status_id
@@ -272,8 +312,13 @@ export default {
                 );
                 this.statuses[statusIndex].items.splice(index, 1);
             },
+            handleItemUpdatedWithoutWebsocket(updatedItem){
+                if (this.pusher == 0){
+                    this.handleItemUpdated(updatedItem);
+                }
+            },
             handleItemUpdated(updatedItem){
-                console.log(updatedItem);
+                //console.log(updatedItem);
                 const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should replace the item
                     status => status.id === updatedItem.kanban_status_id
                 );
@@ -285,10 +330,7 @@ export default {
                     this.statuses[statusIndex].items[itemIndex][key] = value;       // Add updated item to our column
                 }
             },
-            handleStatusDestroyed(status){
-                let index = this.statuses.indexOf(status);
-                this.statuses.splice(index, 1);
-            },
+
 
             startPusher(){
                 if (this.pusher == 1){
@@ -332,7 +374,7 @@ export default {
                             this.usersOnline.filter((userOnline) => userOnline.id !== user.id);
                         });
                 }
-            }
+            },
         },
         mounted() {
             // Listen for the 'Kanban' event in the 'Presence.App.Kanban' presence channel
@@ -343,7 +385,7 @@ export default {
 
             if (this.kanban.auto_refresh === 1){
                 this.autoRefresh = true;
-                //this.timer();
+                this.timer();
             } else {
                 this.autoRefresh = false;
             }

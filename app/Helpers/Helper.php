@@ -407,9 +407,9 @@ if (! function_exists('pusher_event')) {
     {
         if (method_exists($event, 'broadcastWhen') && ! $event->broadcastWhen())
         {
-            return;
+            return false;
+        } else {
+            event($event);
         }
-
-        event($event);
     }
 }

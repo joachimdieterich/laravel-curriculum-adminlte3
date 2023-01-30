@@ -44,8 +44,8 @@
                     <span v-if="editor !== false">
                         <span
                             class="pull-left"
-                            style="border-style:  solid; border-width: 1px; border-radius: 20px; padding: 2px 2px 0 2px;"
-                            :style="{borderColor: textColor, }">
+                            style="border-style: solid; border-width: 1px; border-radius: 20px; padding: 2px 2px 0 2px;"
+                            :style="{borderColor: textColor }">
                             <color-picker-input
                                 :id="'colorPicker_'+index"
                                 v-if="editor !== false"
@@ -232,6 +232,7 @@ export default {
         },
         edit() {
             this.editor = true;
+            this.form = this.item;
             this.$nextTick(() => {
                 this.$initTinyMCE([
                     "autolink link example"

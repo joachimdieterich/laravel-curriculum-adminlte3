@@ -34,7 +34,7 @@
     </span>
 </div>
 
-<!--<div id="kanban_auto_refresh_form_group" class="form-group pt-3">
+<div id="kanban_auto_refresh_form_group" class="form-group pt-3">
     <span class="custom-control custom-switch custom-switch-on-green">
         <input
             type="checkbox"
@@ -44,7 +44,7 @@
             {{ ($kanban->auto_refresh) ? "checked" : "" }}>
         <label class="custom-control-label " for="auto_refresh" > Automatisches aktualisieren</label>
     </span>
-</div>-->
+</div>
 
 <div class="pt-3">
     <input

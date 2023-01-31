@@ -29,7 +29,7 @@ class KanbanStatusController extends Controller
 
         $kanbanStatus = KanbanStatus::firstOrCreate([
             'title' => $input['title'],
-            'order_id' => $order_id,
+            'order_id' => $order_id ?? 1,
             'kanban_id' => $input['kanban_id'],
 
             'owner_id' => auth()->user()->id,

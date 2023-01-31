@@ -78,10 +78,10 @@ class KanbanController extends Controller
         $kanban = Kanban::create([
             'title' => $new_kanban['title'],
             'description' => $new_kanban['description'],
-            'color' => $new_kanban['color'],
+            'color' => $new_kanban['color'] ?? '#2980B9',
             'medium_id' => $this->getMediumIdByInputFilepath($new_kanban),
-            'commentable' => ($new_kanban['commentable'] == 'on') ? 1 : 0 ,
-            'auto_refresh' => ($new_kanban['commentable'] == 'on') ? 1 : 0 ,
+            'commentable' => isset($input['commentable']) ? 1 : '0',
+            'auto_refresh' => isset($input['auto_refresh']) ? 1 : '0',
             'owner_id' => auth()->user()->id,
         ]);
 

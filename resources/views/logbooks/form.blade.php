@@ -2,14 +2,14 @@
 @include ('forms.input.text',
                     ["model" => "logbook",
                     "field" => "title",
-                    //"placeholder" => "Title",
+                    "placeholder" => trans('global.logbook.fields.title'),
                     "required" => true,
                     "value" => old('title', isset($logbook) ? $logbook->title : '')])
 
 @include ('forms.input.textarea',
                     ["model" => "logbook",
                     "field" => "description",
-                    //"placeholder" => "Description",
+                    "placeholder" => trans('global.logbook.fields.description'),
                     "rows" => 3,
                     "value" => old('description', isset($logbook) ? $logbook->description : '')])
 

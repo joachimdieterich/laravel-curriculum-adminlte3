@@ -17,11 +17,14 @@ if (! function_exists('trans')) {
             return app('translator');
 
         } else  if (app('translator')->get($key, $replace, $locale) == $key) {
+            if (strrpos($key, '.'))
+            {
+                return app('translator')
+                    ->get('global.'. substr($key, strrpos($key, '.') + 1), $replace, $locale);
+            }
 
-            return app('translator')
-                ->get('global.'. substr($key, strrpos($key, '.') + 1), $replace, $locale);
         }
-
         return app('translator')->get($key, $replace, $locale);
+
     }
 }

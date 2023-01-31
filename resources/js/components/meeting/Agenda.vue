@@ -118,11 +118,19 @@ export default {
         this.loadItems();
     },
     created() {
+        if (this.personal_agenda == true) {
+            this.$eventHub.$on('reload_subscribed_agenda', (e) => {
+                if (this.meeting_date_id == e.id) {
+                    this.loadItems();
+                }
+            });
+        }
         this.$eventHub.$on('reload_agenda', (e) => {
             if (this.agenda.id == e.id) {
                 this.loadItems();
             }
         });
+
     },
     components: {
         AgendaItem,

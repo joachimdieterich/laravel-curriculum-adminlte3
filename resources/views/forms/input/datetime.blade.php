@@ -19,7 +19,7 @@
             class="form-control {{ $errors->has($field) ? ' is-invalid' : '' }}"
             value="{{ $value }}"
             @if(isset($placeholder))
-                placeholder="{{ __($placeholder) }}"
+                placeholder="{{ trans($placeholder) }}"
             @endif
             @if(isset($readonly))
                 readonly

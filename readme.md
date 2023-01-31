@@ -233,6 +233,54 @@ Run browser tests
 php artisan dusk
 ```
 
+### Browser Tests (Cypress)
+add `.env.cypress` to use alternative config (eg. DB)
+
+
+Run browser tests (see package.json)
+```
+npm run test:cypress
+```
+
+### Websockets
+Add/Edit the following lines to .env
+
+```
+BROADCAST_DRIVER=pusher
+
+PUSHER_APP_ID=curriculumlive
+PUSHER_APP_KEY=curriculumlive_key
+PUSHER_APP_SECRET=curriculumlive_secret
+PUSHER_APP_CLUSTER=eu
+
+#LARAVEL_WEBSOCKETS_SSL_LOCAL_CERT="[path_to]/certificate.pem"
+#LARAVEL_WEBSOCKETS_SSL_LOCAL_PK="[path_to]/privateKey.pem"
+
+PUSHER_APP_ACTIVE=true
+PUSHER_APP_HOST=localhost
+PUSHER_APP_SCHEME=http
+PUSHER_APP_FORCE_TLS=false
+PUSHER_APP_ENCRYPTED=true
+PUSHER_APP_DISABLE_STATS=true
+PUSHER_APP_WSPORT=6001
+PUSHER_APP_WSSPORT=6001
+
+MIX_PUSHER_APP_ACTIVE="${PUSHER_APP_ACTIVE}"
+MIX_PUSHER_APP_HOST="${PUSHER_APP_HOST}"
+MIX_PUSHER_APP_SCHEME="${PUSHER_APP_SCHEME}"
+MIX_PUSHER_APP_KEY="${PUSHER_APP_KEY}"
+MIX_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
+MIX_PUSHER_APP_FORCE_TLS="${PUSHER_APP_FORCE_TLS}"
+MIX_PUSHER_APP_ENCRYPTED="${PUSHER_APP_ENCRYPTED}"
+MIX_PUSHER_APP_DISABLE_STATS="${PUSHER_APP_DISABLE_STATS}"
+MIX_PUSHER_APP_WSPORT="${PUSHER_APP_WSPORT}"
+MIX_PUSHER_APP_WSSPORT="${PUSHER_APP_WSSPORT}"
+```
+
+Start Websocket with `php artisan websocket:serve`
+
+Further information [laravel-websockets](https://beyondco.de/docs/laravel-websockets/getting-started/introduction)
+
 ### Documentation
 Curriculum uses [saleem-hadad/larecipe](https://github.com/saleem-hadad/larecipe) to provide integrated project documentation. 
 The documentation can be found at the following URL `localhost:[port]/documentation`
@@ -303,4 +351,22 @@ public function down()
         $table->dropColumn('provider');
     });/
 }
+```
+
+### json-fields in MariaDB
+
+If migrations failing with the following message: 
+
+
+```
+SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'json null' at ...
+```
+Then change all ```json-fields``` in migrations to ```text``` 
+
+```php
+$table->json('variants')->nullable(); // e.g. in 2022_10_01_154624_add_variant_column_to_curricula_table.php 
+
+to 
+
+$table->text('variants')->nullable(); 
 ```

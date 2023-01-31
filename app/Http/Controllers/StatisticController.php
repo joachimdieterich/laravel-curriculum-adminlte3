@@ -24,7 +24,7 @@ class StatisticController extends Controller
                 case 'login':
                 case 'ssoLogin':
                 case 'guestLogin':
-                    return ['message' => $this->getLogins(request('chart'))];
+                    return ['message' => $this->getLogins(request('chart'), request('date_begin'), request('date_end'))];
                     break;
                 case 'browsers':
                     return ['message' => $this->getEntriesByKey('browser', request('date_begin'), request('date_end'))];
@@ -56,21 +56,32 @@ class StatisticController extends Controller
                 case 'certificates':
                     return ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\CertificateController@generate', 'certificates', request('date_begin'), request('date_end'))];
                     break;
+                case 'kanbans':
+                    return ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\KanbanController@show', 'kanbans', request('date_begin'), request('date_end'))];
+                    break;
                 default:
                    break;
             }
         }
     }
 
-    protected function getLogins($key = 'login')
+    protected function getLogins($key, $date_begin, $date_end )
     {
         switch (request('chart')) {
-            case 'login': $background = '#7eab51'; break;
+
             case 'ssoLogin':  $background = '#325e04'; break;
             case 'guestLogin': $background = '#0e1b01'; break;
-            default: break;
+            default: //case 'login':
+                $key = 'login';
+                $background = '#7eab51';
+                break;
         }
-        $labels = Log::select('created_at', 'counter')->where('key', $key)
+        $labels = Log::select('created_at', 'counter')
+            ->where('key', $key)
+            ->whereBetween('created_at', [
+                Carbon::createFromDate($date_begin)->startOfDay()->format('Y-m-d H:i:s'),
+                Carbon::createFromDate($date_end)->endOfDay()->format('Y-m-d H:i:s'),
+            ])
             ->get()->map(function ($item) {
                 return Carbon::parse($item['created_at'])->format('Y-m-d');
             });

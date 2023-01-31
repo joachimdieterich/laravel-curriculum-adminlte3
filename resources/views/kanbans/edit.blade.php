@@ -16,6 +16,7 @@
                   method="POST"
                   enctype="multipart/form-data">
                 @method('PUT')
+
                 @include ('kanbans.form', [
                     'kanban' => $kanban,
                     'buttonText' => trans('global.kanban.edit')

@@ -1182,6 +1182,346 @@
       "DELETE"
     ]
   },
+  "agendas.index": {
+    "name": "agendas.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaController@index",
+    "uri": "agendas",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "agendas.create": {
+    "name": "agendas.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaController@create",
+    "uri": "agendas/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "agendas.store": {
+    "name": "agendas.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaController@store",
+    "uri": "agendas",
+    "method": [
+      "POST"
+    ]
+  },
+  "agendas.show": {
+    "name": "agendas.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaController@show",
+    "uri": "agendas/{agenda}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "agendas.edit": {
+    "name": "agendas.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaController@edit",
+    "uri": "agendas/{agenda}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "agendas.update": {
+    "name": "agendas.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaController@update",
+    "uri": "agendas/{agenda}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "agendas.destroy": {
+    "name": "agendas.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaController@destroy",
+    "uri": "agendas/{agenda}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "agendaItems.index": {
+    "name": "agendaItems.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemController@index",
+    "uri": "agendaItems",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "agendaItems.create": {
+    "name": "agendaItems.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemController@create",
+    "uri": "agendaItems/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "agendaItems.store": {
+    "name": "agendaItems.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemController@store",
+    "uri": "agendaItems",
+    "method": [
+      "POST"
+    ]
+  },
+  "agendaItems.show": {
+    "name": "agendaItems.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemController@show",
+    "uri": "agendaItems/{agendaItem}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "agendaItems.edit": {
+    "name": "agendaItems.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemController@edit",
+    "uri": "agendaItems/{agendaItem}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "agendaItems.update": {
+    "name": "agendaItems.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemController@update",
+    "uri": "agendaItems/{agendaItem}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "agendaItems.destroy": {
+    "name": "agendaItems.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemController@destroy",
+    "uri": "agendaItems/{agendaItem}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "agendaItemTypes.index": {
+    "name": "agendaItemTypes.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemTypeController@index",
+    "uri": "agendaItemTypes",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "agendaItemTypes.create": {
+    "name": "agendaItemTypes.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemTypeController@create",
+    "uri": "agendaItemTypes/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "agendaItemTypes.store": {
+    "name": "agendaItemTypes.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemTypeController@store",
+    "uri": "agendaItemTypes",
+    "method": [
+      "POST"
+    ]
+  },
+  "agendaItemTypes.show": {
+    "name": "agendaItemTypes.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemTypeController@show",
+    "uri": "agendaItemTypes/{agendaItemType}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "agendaItemTypes.edit": {
+    "name": "agendaItemTypes.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemTypeController@edit",
+    "uri": "agendaItemTypes/{agendaItemType}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "agendaItemTypes.update": {
+    "name": "agendaItemTypes.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemTypeController@update",
+    "uri": "agendaItemTypes/{agendaItemType}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "agendaItemTypes.destroy": {
+    "name": "agendaItemTypes.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemTypeController@destroy",
+    "uri": "agendaItemTypes/{agendaItemType}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "agendaItemSubscriptions.index": {
+    "name": "agendaItemSubscriptions.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemSubscriptionController@index",
+    "uri": "agendaItemSubscriptions",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "agendaItemSubscriptions.create": {
+    "name": "agendaItemSubscriptions.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemSubscriptionController@create",
+    "uri": "agendaItemSubscriptions/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "agendaItemSubscriptions.store": {
+    "name": "agendaItemSubscriptions.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemSubscriptionController@store",
+    "uri": "agendaItemSubscriptions",
+    "method": [
+      "POST"
+    ]
+  },
+  "agendaItemSubscriptions.show": {
+    "name": "agendaItemSubscriptions.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemSubscriptionController@show",
+    "uri": "agendaItemSubscriptions/{agendaItemSubscription}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "agendaItemSubscriptions.edit": {
+    "name": "agendaItemSubscriptions.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemSubscriptionController@edit",
+    "uri": "agendaItemSubscriptions/{agendaItemSubscription}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "agendaItemSubscriptions.update": {
+    "name": "agendaItemSubscriptions.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemSubscriptionController@update",
+    "uri": "agendaItemSubscriptions/{agendaItemSubscription}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "agendaItemSubscriptions.destroy": {
+    "name": "agendaItemSubscriptions.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemSubscriptionController@destroy",
+    "uri": "agendaItemSubscriptions/{agendaItemSubscription}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "agendaItemSpeakers.index": {
+    "name": "agendaItemSpeakers.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemSpeakerController@index",
+    "uri": "agendaItemSpeakers",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "agendaItemSpeakers.create": {
+    "name": "agendaItemSpeakers.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemSpeakerController@create",
+    "uri": "agendaItemSpeakers/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "agendaItemSpeakers.store": {
+    "name": "agendaItemSpeakers.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemSpeakerController@store",
+    "uri": "agendaItemSpeakers",
+    "method": [
+      "POST"
+    ]
+  },
+  "agendaItemSpeakers.show": {
+    "name": "agendaItemSpeakers.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemSpeakerController@show",
+    "uri": "agendaItemSpeakers/{agendaItemSpeaker}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "agendaItemSpeakers.edit": {
+    "name": "agendaItemSpeakers.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemSpeakerController@edit",
+    "uri": "agendaItemSpeakers/{agendaItemSpeaker}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "agendaItemSpeakers.update": {
+    "name": "agendaItemSpeakers.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemSpeakerController@update",
+    "uri": "agendaItemSpeakers/{agendaItemSpeaker}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "agendaItemSpeakers.destroy": {
+    "name": "agendaItemSpeakers.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AgendaItemSpeakerController@destroy",
+    "uri": "agendaItemSpeakers/{agendaItemSpeaker}",
+    "method": [
+      "DELETE"
+    ]
+  },
   "absences.index": {
     "name": "absences.index",
     "domain": null,
@@ -3911,6 +4251,152 @@
       "DELETE"
     ]
   },
+  "meetings.list": {
+    "name": "meetings.list",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MeetingController@list",
+    "uri": "meetings/list",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "meetings.index": {
+    "name": "meetings.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MeetingController@index",
+    "uri": "meetings",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "meetings.create": {
+    "name": "meetings.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MeetingController@create",
+    "uri": "meetings/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "meetings.store": {
+    "name": "meetings.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MeetingController@store",
+    "uri": "meetings",
+    "method": [
+      "POST"
+    ]
+  },
+  "meetings.show": {
+    "name": "meetings.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MeetingController@show",
+    "uri": "meetings/{meeting}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "meetings.edit": {
+    "name": "meetings.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MeetingController@edit",
+    "uri": "meetings/{meeting}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "meetings.update": {
+    "name": "meetings.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MeetingController@update",
+    "uri": "meetings/{meeting}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "meetings.destroy": {
+    "name": "meetings.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MeetingController@destroy",
+    "uri": "meetings/{meeting}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "meetingDates.index": {
+    "name": "meetingDates.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MeetingDateController@index",
+    "uri": "meetingDates",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "meetingDates.create": {
+    "name": "meetingDates.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MeetingDateController@create",
+    "uri": "meetingDates/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "meetingDates.store": {
+    "name": "meetingDates.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MeetingDateController@store",
+    "uri": "meetingDates",
+    "method": [
+      "POST"
+    ]
+  },
+  "meetingDates.show": {
+    "name": "meetingDates.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MeetingDateController@show",
+    "uri": "meetingDates/{meetingDate}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "meetingDates.edit": {
+    "name": "meetingDates.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MeetingDateController@edit",
+    "uri": "meetingDates/{meetingDate}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "meetingDates.update": {
+    "name": "meetingDates.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MeetingDateController@update",
+    "uri": "meetingDates/{meetingDate}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "meetingDates.destroy": {
+    "name": "meetingDates.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MeetingDateController@destroy",
+    "uri": "meetingDates/{meetingDate}",
+    "method": [
+      "DELETE"
+    ]
+  },
   "objectiveTypes.list": {
     "name": "objectiveTypes.list",
     "domain": null,
@@ -5871,6 +6357,74 @@
     "domain": null,
     "action": "App\\Http\\Controllers\\VariantController@destroy",
     "uri": "variants/{variant}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "videoconferences.index": {
+    "name": "videoconferences.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\VideoconferenceController@index",
+    "uri": "videoconferences",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "videoconferences.create": {
+    "name": "videoconferences.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\VideoconferenceController@create",
+    "uri": "videoconferences/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "videoconferences.store": {
+    "name": "videoconferences.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\VideoconferenceController@store",
+    "uri": "videoconferences",
+    "method": [
+      "POST"
+    ]
+  },
+  "videoconferences.show": {
+    "name": "videoconferences.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\VideoconferenceController@show",
+    "uri": "videoconferences/{videoconference}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "videoconferences.edit": {
+    "name": "videoconferences.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\VideoconferenceController@edit",
+    "uri": "videoconferences/{videoconference}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "videoconferences.update": {
+    "name": "videoconferences.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\VideoconferenceController@update",
+    "uri": "videoconferences/{videoconference}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "videoconferences.destroy": {
+    "name": "videoconferences.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\VideoconferenceController@destroy",
+    "uri": "videoconferences/{videoconference}",
     "method": [
       "DELETE"
     ]

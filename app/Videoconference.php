@@ -21,6 +21,12 @@ class Videoconference extends Model
         'subscribable_id',
     ];
 
+
+    public function subscriptions()
+    {
+        return $this->hasMany(VideoconferenceSubscription::class);
+    }
+
     public function isAccessible()
     {
         if (

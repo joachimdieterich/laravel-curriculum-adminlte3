@@ -1,0 +1,13 @@
+version: "3.0"
+services:
+  apache-example:
+    image: php:8.1-apache
+    environment:
+      - BASE_URL_INTERNAL=http://host.docker.internal:8100/edu-sharing
+      - BASE_URL_EXTERNAL=http://repository.127.0.0.1.nip.io:8100/edu-sharing
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ../:/var/www/html
+    ports:
+      - "8080:80"

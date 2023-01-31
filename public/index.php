@@ -20,7 +20,7 @@ define('LARAVEL_START', microtime(true));
 | loading any of our classes later on. It feels great to relax.
 |
 */
-
+require __DIR__.'/../app/Helpers/CustomCoreHelperReplacements.php';
 require __DIR__.'/../vendor/autoload.php';
 
 /*

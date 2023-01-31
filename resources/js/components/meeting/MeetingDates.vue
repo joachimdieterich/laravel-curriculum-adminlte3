@@ -47,7 +47,7 @@
                 <ul class="nav nav-pills"
                     id="AgendaNav">
                     <li class="nav-item pl-0 pr-2 pb-2 pt-2"
-                        @click="setLocalStorage('#meeting_date_' + date.id, '#subscribed_agenda_'+ date.id)"
+                        @click="setLocalStorage('#meeting_date_' + date.id, '#subscribed_agenda_'+ date.id); $eventHub.$emit('reload_subscribed_agenda', date);"
                     >
                         <a class="nav-link text-sm"
                            :href="'#subscribed_agenda_' + date.id"
@@ -80,8 +80,7 @@
                 </ul>
                 <div class="tab-content">
                     <Agenda
-                        :id="'subscribed_agenda_' + date.id"
-                        ref="agenda"
+                        :id="'subscribed_agenda_'+ date.id"
                         :meeting_date_id="date.id"
                         :personal_agenda=true
                         class="tab-pane"

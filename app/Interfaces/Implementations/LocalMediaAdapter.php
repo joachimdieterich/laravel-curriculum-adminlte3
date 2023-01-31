@@ -119,6 +119,23 @@ class LocalMediaAdapter implements MediaInterface
         }
         /* end checkIfUserHasSubscription and visibility */
 
+        /* check if User has access to model->medium_id*/
+        $params = $this->validateRequest();
+        if ($params['model']) {
+            switch ($params['model']){
+                case 'Kanban':
+                    $class = 'App\\'.$params['model'];
+                    $model = (new $class)::where('id',$params['model_id'] )->get()->first();
+
+                    if ($model->isAccessible()){
+                        return ($medium->mime_type != 'url') ? response()->file($path) : redirect($medium->path); //return file or url
+                    }
+                break;
+                default:
+                    break;
+            }
+        }
+
         /* user has permission to access this file ! */
         abort(403);
     }
@@ -223,7 +240,6 @@ class LocalMediaAdapter implements MediaInterface
                     and ($subscription->visibility == 1)) {
                     return true;
                 }
-
                 break;
             case "App\Group":
                 if (in_array($subscription->subscribable_id, auth()->user()->groups()->pluck('groups.id')->toArray())
@@ -298,6 +314,8 @@ class LocalMediaAdapter implements MediaInterface
             'repository' => 'sometimes',
             'artefact' => 'sometimes',
             'file.*' => 'sometimes|mimes:jpg,jpeg,png,gif,bmp,tiff,tif,ico,svg,mov,mp4,m4v,mpeg,mpg,mp3,m4a,m4b,wav,mid,avi,ppt,pps,pptx,doc,docx,pdf,xls,xlsx,xps,odt,odp,ods,odg,odc,odb,odf,key,numbers,pages,csv,txt,rtx,rtf,zip,psd,xcf',
+            'model' => 'sometimes',
+            'model_id' => 'sometimes',
 
             'title' => 'sometimes',
             'description' => 'sometimes',

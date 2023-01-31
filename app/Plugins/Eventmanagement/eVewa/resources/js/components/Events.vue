@@ -48,7 +48,7 @@
                     <div class="col-10" v-html="event.ARTIKEL_NR"></div>
 
                     <div class="col-2"><strong>Beschreibung</strong></div>
-                    <div class="col-10" v-html="event.BEMERKUNG"></div>
+                    <div class="col-10 pre-formatted" v-html="event.BEMERKUNG"></div>
 
                     <div class="col-2"><strong>Veranstalter</strong></div>
                     <div class="col-10" v-html="event.MANDANT"></div>
@@ -178,3 +178,8 @@
 
     }
 </script>
+<style>
+.pre-formatted {
+    white-space: pre-wrap;
+}
+</style>

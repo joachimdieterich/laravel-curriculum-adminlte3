@@ -66,6 +66,19 @@ class EdusharingMediaAdapter implements MediaInterface
         ]);
 
         if (($input['subscribable_type'] !== 'null') and ($input['subscribable_id'] !== 'null')) {
+            //create usage
+
+            $repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
+
+            /*$usage = $repositoryPlugin->plugins[$input['repository']]
+                ->createUsage(
+                    $input['subscribable_type'],
+                    $input['subscribable_id'],
+                    $input['external_id'],
+                );*/
+            //dump($result);
+
+            //subscribe
             $subscribe = MediumSubscription::updateOrCreate([
                 'medium_id'         => $medium->id,
                 'subscribable_type' => $input['subscribable_type'],
@@ -73,6 +86,7 @@ class EdusharingMediaAdapter implements MediaInterface
             ], [
                 'sharing_level_id'  => 1,
                 'visibility'        => 1,
+                'additional_data'   => $usage ?? '',
                 'owner_id'          => auth()->user()->id,
             ]);
             $subscribe->save();
@@ -85,16 +99,27 @@ class EdusharingMediaAdapter implements MediaInterface
 
     public function show(Medium $medium)
     {
-
         // Medium is public (sharing_level_id == 1) or user is owner
-        if (($medium->public == true) or ($medium->owner_id == auth()->user()->id)) {
+        /*if (($medium->public == true) or ($medium->owner_id == auth()->user()->id)) {
             return request('download') ? redirect($medium->path) : redirect($medium->thumb_path);
-        }
+        }*/
 
         /* checkIfUserHasSubscription and visibility*/
         if ($medium->subscriptions()) {
             foreach ($medium->subscriptions as $subscription) {
                 if ($this->checkIfUserHasSubscription($subscription)) {
+                    if (!is_null($medium->additional_data))
+                    {
+                        $repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
+
+                        $node = $repositoryPlugin->plugins[$medium->adapter]
+                            ->getNodeByUsage($medium->additional_data);
+
+                        dump($node);
+
+                        return $node;
+                    }
+
                     return request('download') ? redirect($medium->path) : redirect($medium->thumb_path);
                 }
             }
@@ -167,6 +192,8 @@ class EdusharingMediaAdapter implements MediaInterface
         }
 
         if ($medium->subscriptions()->count() <= 1) {
+            // todo delete usages in edusharing
+
             $medium->delete();
         }
 

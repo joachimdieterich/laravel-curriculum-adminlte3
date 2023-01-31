@@ -64,6 +64,8 @@ class Kanban extends Model
     {
         if (
             auth()->user()->kanbans->contains('id', $this->id) // user enrolled
+            or ($this->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() //user is enroled in group
+            or ($this->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id))->isNotEmpty() //user is enroled in group
             or ($this->owner_id == auth()->user()->id)            // or owner
             or is_admin() // or admin
         ) {

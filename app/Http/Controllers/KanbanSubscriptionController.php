@@ -6,6 +6,7 @@ use App\Kanban;
 use App\KanbanSubscription;
 use App\User;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class KanbanSubscriptionController extends Controller
 {
@@ -18,17 +19,22 @@ class KanbanSubscriptionController extends Controller
     {
         $input = $this->validateRequest();
         if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
+            //used by grous.view
             $model = $input['subscribable_type']::find($input['subscribable_id']);
             abort_unless((\Gate::allows('kanban_access') and $model->isAccessible()), 403);
+            $kanbans = $model->kanbans;
 
-            $subscriptions = KanbanSubscription::where([
+            return empty($kanbans) ? '' : DataTables::of($kanbans)
+                ->setRowId('id')
+                ->make(true);
+            /*$subscriptions = KanbanSubscription::where([
                 'subscribable_type' => $input['subscribable_type'],
                 'subscribable_id' => $input['subscribable_id'],
             ]);
 
             if (request()->wantsJson()) {
                 return ['subscriptions' => $subscriptions->with(['kanban'])->get()];
-            }
+            }*/
         } else {
             if (request()->wantsJson()) {
                 $tokens = Kanban::find(request('kanban_id'))
@@ -85,15 +91,16 @@ class KanbanSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return [
-                'subscription' => Kanban::find($input['model_id'])
+            return ['subscription' => Kanban::find($input['model_id'])
                     ->subscriptions()
-                    ->with('subscribable')
-                    ->whereHasMorph('subscribable', [User::class], function ($q) {
+                ->with('subscribable')
+                ->whereHasMorph('subscribable', '*', function ($q, $type) {
+                    if ($type == 'App\\User') {
                         $q->whereNull('sharing_token');
-                    })
-                    ->get(),
+                    }
+                })->get(),
             ];
+
         }
     }
 

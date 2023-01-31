@@ -3,7 +3,7 @@
 
 @include('layouts.partials.head')
 
-<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed" >
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed content-only" >
     <div id="app" class="wrapper">
         <!-- Navbar -->
         <nav class="main-header navbar navbar-expand navbar-lime navbar-light">

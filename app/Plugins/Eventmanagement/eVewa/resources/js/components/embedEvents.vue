@@ -20,7 +20,7 @@
         <button v-for="(value, id) in tags"
             type="button"
             class="btn btn-default mr-4 mb-4"
-            @click="loader(id)">
+            @click="loader(id, true)">
             {{ value }}
         </button>
 
@@ -42,7 +42,7 @@
             <div :id="'navigator-item-content-'+event.ARTIKEL_NR" class="card-body collapse">
                 <div class="row">
                     <div class="col-2"><strong>Beschreibung</strong></div>
-                    <div class="col-10" v-html="event.BEMERKUNG"></div>
+                    <div class="col-10 pre-formatted" v-html="event.BEMERKUNG"></div>
 
                     <div class="col-2"><strong>Termine</strong></div>
                     <div class="col-10">
@@ -68,7 +68,7 @@
                         <a :href="event.LINK_DETAIL"
                            class="btn btn-default"
                            target="_blank">
-                            <i class="fa fa-info"></i> Details
+                            <i class="fa fa-info"></i> Details/Anmeldung
                         </a>
 
                         <a :href="event.LINK_DETAIL+'&print=1'"
@@ -78,11 +78,11 @@
                             <i class="fa fa-print"></i> Drucken
                         </a>
 
-                        <a :href="event.LINK_ANMELDUNG"
+<!--                        <a :href="event.LINK_ANMELDUNG"
                            class="btn btn-secondary"
                            target="_blank">
                             <i class="fa fa-sign-in"></i> Anmelden
-                        </a>
+                        </a>-->
                     </div>
                 </div>
             </div>
@@ -159,11 +159,19 @@ import moment from 'moment';
                 entries: [],
                 page:    1,
                 tags: {},
-                errors:  {}
+                errors:  {},
+                currentSearch: ''
             }
         },
         methods: {
-            async loader(id = this.search) {
+            async loader(id = this.search, reset = false) {
+                if (reset){
+                    this.page = 1;
+                }
+                if (id == ''){
+                    id = this.currentSearch;
+                }
+
                 $("#loading-events").show();
                 try {
                     this.entries = (await axios.post('/eventSubscriptions/getEvents', {
@@ -176,6 +184,7 @@ import moment from 'moment';
                     //this.errors = error.response.data.errors;
                 }
                 this.tags = JSON.parse(this.eventsearchtag);
+                this.currentSearch = id;
                 this.search = ''; //empty search field
             },
             lastPage() {
@@ -207,3 +216,8 @@ import moment from 'moment';
 
     }
 </script>
+<style>
+.pre-formatted {
+    white-space: pre-wrap;
+}
+</style>

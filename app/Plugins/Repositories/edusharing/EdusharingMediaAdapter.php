@@ -70,12 +70,12 @@ class EdusharingMediaAdapter implements MediaInterface
 
             $repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
 
-            $usage = $repositoryPlugin->plugins[$input['repository']]
+            /*$usage = $repositoryPlugin->plugins[$input['repository']]
                 ->createUsage(
                     $input['subscribable_type'],
                     $input['subscribable_id'],
                     $input['external_id'],
-                );
+                );*/
             //dump($result);
 
             //subscribe
@@ -86,7 +86,7 @@ class EdusharingMediaAdapter implements MediaInterface
             ], [
                 'sharing_level_id'  => 1,
                 'visibility'        => 1,
-                'data'              => $usage,
+                'data'              => $usage ?? '',
                 'owner_id'          => auth()->user()->id,
             ]);
             $subscribe->save();

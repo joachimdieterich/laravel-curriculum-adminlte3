@@ -246,6 +246,8 @@ npm run test:cypress
 Add/Edit the following lines to .env
 
 ```
+BROADCAST_DRIVER=pusher
+
 PUSHER_APP_ID=curriculumlive
 PUSHER_APP_KEY=curriculumlive_key
 PUSHER_APP_SECRET=curriculumlive_secret

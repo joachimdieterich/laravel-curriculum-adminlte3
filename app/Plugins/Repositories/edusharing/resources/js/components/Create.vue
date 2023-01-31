@@ -63,8 +63,8 @@ export default {
             let data = event.data.data;
 
             if(event.data.event === 'APPLY_NODE') {
-                let usage = this.createUsage(event.data.data.nodeId);
-                console.log(data);
+                //let usage = this.createUsage(event.data.data.nodeId);
+                //console.log(data);
                 this.$eventHub.$emit('external_add', {
                     repository:     'edusharing',
                     external_id:    data.ref.id, //= event.data.data.nodeId ?

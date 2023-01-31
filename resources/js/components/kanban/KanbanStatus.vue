@@ -91,6 +91,7 @@ export default {
           }),
           url: '',
           method: 'patch',
+          event: ''
       }
     },
     methods: {
@@ -109,13 +110,15 @@ export default {
                 this.url = '/kanbanStatuses';
                 this.method = 'post';
                 this.form.kanban_id = this.kanban_id;
+                this.event = 'status-added';
             } else {
                 this.url = '/kanbanStatuses/' + this.form.id;
                 this.method = 'patch';
+                this.event = 'status-updated';
             }
             axios[this.method](this.url, this.form)
                 .then(res => {
-                    this.$emit("status-added", res.data.message);
+                    this.$emit(this.event, res.data.message);
                     this.form = res.data.message; //selfupdate
                 })
                 .catch(error => { // Handle the error returned from our request

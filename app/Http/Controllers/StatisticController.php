@@ -56,6 +56,9 @@ class StatisticController extends Controller
                 case 'certificates':
                     return ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\CertificateController@generate', 'certificates', request('date_begin'), request('date_end'))];
                     break;
+                case 'kanbans':
+                    return ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\KanbanController@show', 'kanbans', request('date_begin'), request('date_end'))];
+                    break;
                 default:
                    break;
             }

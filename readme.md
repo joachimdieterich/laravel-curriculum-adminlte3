@@ -352,3 +352,21 @@ public function down()
     });/
 }
 ```
+
+### json-fields in MariaDB
+
+If migrations failing with the following message: 
+
+
+```
+SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'json null' at ...
+```
+Then change all ```json-fields``` in migrations to ```text``` 
+
+```php
+$table->json('variants')->nullable(); // e.g. in 2022_10_01_154624_add_variant_column_to_curricula_table.php 
+
+to 
+
+$table->text('variants')->nullable(); 
+```

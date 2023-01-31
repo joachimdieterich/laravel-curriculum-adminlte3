@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Kanban;
 use App\KanbanItem;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class KanbanItemController extends Controller
 {
@@ -36,12 +36,19 @@ class KanbanItemController extends Controller
         ]);
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
+        Kanban::find($input['kanban_id'])->touch('updated_at'); //To get Sync after media upload working
 
-        // axios call?
+
         if (request()->wantsJson()) {
-            return ['message' => KanbanItem::where('id', $kanbanItem->id)
-                ->with(['mediaSubscriptions', 'media', 'owner', /*'taskSubscription',*/ 'comments'])
-                ->get()->first()];
+
+            if (!pusher_event(new \App\Events\Kanbans\KanbanItemAddedEvent($kanbanItem)))
+            {
+                return [
+                    'message' =>  KanbanItem::where('id', $kanbanItem->id)
+                        ->with(['mediaSubscriptions', 'media', 'owner', /*'taskSubscription',*/ 'comments'])
+                        ->get()->first()
+                ];
+            }
         }
     }
 
@@ -73,7 +80,12 @@ class KanbanItemController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         if (request()->wantsJson()) {
-            return ['message' =>  (new KanbanController)->getKanbanWithRelations(Kanban::find($kanban_id))];
+            if (!pusher_event(new \App\Events\Kanbans\KanbanItemMovedEvent($request->columns)))
+            {
+                return [
+                    'message' => $this->columns
+                ];
+            }
         }
     }
 
@@ -86,10 +98,18 @@ class KanbanItemController extends Controller
     public function show(KanbanItem $kanbanItem)
     {
         abort_unless((\Gate::allows('kanban_show') and $kanbanItem->isAccessible()), 403);
-        if (request()->wantsJson()) {
-            Kanban::find($kanbanItem->kanban_id)->touch('updated_at'); //To get Sync after media upload working
 
-            return $this->getItemWithRelations($kanbanItem);
+        if (request()->wantsJson()) {
+            if (!pusher_event(new \App\Events\Kanbans\KanbanItemReloadEvent($kanbanItem)))
+            {
+                return [
+                    'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
+                    'message' =>  $kanbanItem
+                        ->where('id', $kanbanItem->id)
+                        ->with(['owner', 'mediaSubscriptions.medium', 'subscribable'])
+                        ->get()->first()
+                ];
+            }
         }
 
         return redirect()->action('KanbanController@show', ['kanban' => $kanbanItem->kanban_id]);
@@ -118,9 +138,14 @@ class KanbanItemController extends Controller
             'owner_id' => auth()->user()->id,
         ]);
 
-        // axios call?
         if (request()->wantsJson()) {
-            return $this->getItemWithRelations($kanbanItem);
+            if (!pusher_event(new \App\Events\Kanbans\KanbanItemUpdatedEvent($kanbanItem)))
+            {
+                return [
+                    'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
+                    'message' =>  $kanbanItem
+                ];
+            }
         }
     }
 
@@ -134,11 +159,21 @@ class KanbanItemController extends Controller
     {
         abort_unless((\Gate::allows('kanban_delete') and $kanbanItem->isAccessible()), 403);
 
+        Kanban::find($kanbanItem->kanban_id)->touch('updated_at'); //To get Sync after media upload working
+
+        $kanbanItemForEvent = $kanbanItem;
+
         $kanbanItem->mediaSubscriptions()->delete();
         $kanbanItem->subscriptions()->delete();
 
         if (request()->wantsJson()) {
-            return ['message' => $kanbanItem->delete()];
+            if (!pusher_event(new \App\Events\Kanbans\KanbanItemDeletedEvent($kanbanItemForEvent)))
+            {
+                return [
+                    'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
+                    'message' =>  $kanbanItemForEvent
+                ];
+            }
         }
     }
 
@@ -152,21 +187,6 @@ class KanbanItemController extends Controller
             'kanban_status_id' => 'sometimes|required|integer',
             'color' => 'sometimes',
         ]);
-    }
-
-    /**
-     * @param  KanbanItem  $kanbanItem
-     * @return array
-     */
-    private function getItemWithRelations(KanbanItem $kanbanItem): array
-    {
-        return ['message' => $kanbanItem->with(
-            ['owner', 'mediaSubscriptions.medium',
-                /*'taskSubscription.task.subscriptions' => function ($query) {
-                    $query->where('subscribable_id', auth()->user()->id)
-                        ->where('subscribable_type', 'App\User');
-                }, */
-                'subscribable'])->where('id', $kanbanItem->id)->get()->first()];
     }
 
 }

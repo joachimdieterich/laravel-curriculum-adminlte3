@@ -96,7 +96,7 @@
                          class="btn btn-primary"
                          data-widget="remove"
                          @click="close();window.open(medium.path, '_blank');">
-                         <a :href="scr + '?download=true'" class="text-white text-decoration-none" target="_blank">{{ trans('global.downloadFile') }}</a>
+                         <a :href="scr + '?download=true'" class="text-white text-decoration-none" target="_blank">{{ trans('global.downloadFile') }}/{{ trans('global.open') }}</a>
                      </button>
                 </span>
             </div>

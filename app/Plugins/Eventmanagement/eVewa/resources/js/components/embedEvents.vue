@@ -20,7 +20,7 @@
         <button v-for="(value, id) in tags"
             type="button"
             class="btn btn-default mr-4 mb-4"
-            @click="loader(id)">
+            @click="loader(id, true)">
             {{ value }}
         </button>
 
@@ -159,11 +159,19 @@ import moment from 'moment';
                 entries: [],
                 page:    1,
                 tags: {},
-                errors:  {}
+                errors:  {},
+                currentSearch: ''
             }
         },
         methods: {
-            async loader(id = this.search) {
+            async loader(id = this.search, reset = false) {
+                if (reset){
+                    this.page = 1;
+                }
+                if (id == ''){
+                    id = this.currentSearch;
+                }
+
                 $("#loading-events").show();
                 try {
                     this.entries = (await axios.post('/eventSubscriptions/getEvents', {
@@ -176,6 +184,7 @@ import moment from 'moment';
                     //this.errors = error.response.data.errors;
                 }
                 this.tags = JSON.parse(this.eventsearchtag);
+                this.currentSearch = id;
                 this.search = ''; //empty search field
             },
             lastPage() {

@@ -8,6 +8,7 @@
     @endcan
     <small>{{ $kanban->title }} </small>
 
+    <span></span>
     @if(Auth::user()->id == $kanban->owner_id)
         <a class="btn btn-flat"
            href="/kanbans/{{ $kanban->id }}/edit">
@@ -31,7 +32,7 @@
             <i class="fa fa-file-pdf text-secondary"></i>
         </a>
 
-        <a  class="btn p-0"
+<!--        <a  class="btn p-0"
             data-toggle="tooltip" title="{{trans('global.update')}}">
 
                 <form class="custom-switch custom-switch-on-green"
@@ -52,7 +53,7 @@
                         name="commentable"
                         class="invisible"
                         {{  ($kanban->commentable == 1 ? ' checked' : '') }}
-                    /> <!--element is invisible-->
+                    /> &lt;!&ndash; element is invisible &ndash;&gt;
                     <input
                         type="checkbox"
                         id="auto_refresh"
@@ -63,7 +64,7 @@
                     />
                     <label class="custom-control-label " for="auto_refresh" ><small>automatisch aktualisieren</small> </label>
                 </form>
-        </a>
+        </a>-->
     @endif
 @endsection
 @section('breadcrumb')
@@ -84,17 +85,6 @@
 @section('content')
     <!-- {!! $kanban->description !!}-->
     <div>
-        {{--@can('kanban_entry_create')
-            <div style="margin-bottom: 10px;" class="row">
-                <div class="col-lg-12">
-                    <button id="add-kanban-entry"
-                            class="btn btn-success"
-                            onclick="app.__vue__.$modal.show('kanban-entry-modal',  {'kanban_id': {{ $kanban->id }} });">
-                        {{ trans('global.kanbanEntry.create') }}
-                    </button>
-                </div>
-            </div>
-        @endcan--}}
 
         <!-- Timelime example  -->
         <div id="kanban_board_wrapper"
@@ -103,6 +93,7 @@
 
             <kanban-board
                 :editable="{{ $may_edit ? "1":"0" }}"
+                :pusher="{{ $is_pusher_active ? "1":"0" }}"
                 ref="kanbanBoard"
                 :kanban="{{ $kanban }}"></kanban-board>
         </div>

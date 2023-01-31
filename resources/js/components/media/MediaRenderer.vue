@@ -8,10 +8,17 @@
                 :width="width"
                 frameborder="0"></iframe>
         </span>
+        <span v-else-if="mime(medium.mime_type) === 'external'">
+            <img
+                :src="this.medium.thumb_path"
+                :width="width"
+                @click="show()"/>
+        </span>
         <span v-else-if="mime(medium.mime_type) === 'img'">
             <img
                 :src="scr"
-                :width="width" />
+                :width="width"
+                @click="show()"/>
         </span>
         <span v-else>
             - Please download file -
@@ -59,11 +66,19 @@
                     case 'image/svg':
                         return 'img';
                         break;
+                    case 'edusharing':
+                        return 'external';
+                        break;
                     // default use <embed>
                     default:
                         return 'embed';
                         break;
                 }
+            },
+            show() {
+                this.$modal.show('medium-modal', {
+                    'content': this.medium,
+                });
             },
         },
         computed: {

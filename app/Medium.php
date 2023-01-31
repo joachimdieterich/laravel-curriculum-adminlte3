@@ -13,6 +13,10 @@ class Medium extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'additional_data' => 'array',
+    ];
+
     protected $dates = [
         'updated_at',
         'created_at',

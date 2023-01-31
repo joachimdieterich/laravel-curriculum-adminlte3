@@ -104,6 +104,14 @@
                         </pie-chart>
                     </span>
                     <span class="col-6 mt-1">
+                        <pie-chart id="kanbans_chart"
+                                   :title=" trans('global.kanban.title')"
+                                   chart="kanbans"
+                                   :date_begin="date_begin"
+                                   :date_end="date_end">
+                        </pie-chart>
+                    </span>
+                    <span class="col-6 mt-1">
                         <pie-chart id="curricula_chart"
                                    :title="trans('global.active')+ ' ' + trans('global.curriculum.title')"
                                    chart="curricula"

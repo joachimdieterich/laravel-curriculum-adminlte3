@@ -1,5 +1,5 @@
 <template>
-    <div class="card ">
+    <div class="card">
         <div class="card-header px-3 py-2" :style="{ backgroundColor: item.color, color: textColor }">
             <div class="card-tools">
                 <div v-if="editable && editor === false" class="btn btn-flat py-0 px-2 "
@@ -44,8 +44,8 @@
                     <span v-if="editor !== false">
                         <span
                             class="pull-left"
-                            style="border-style:  solid; border-width: 1px; border-radius: 20px; padding: 2px 2px 0 2px;"
-                            :style="{borderColor: textColor, }">
+                            style="border-style: solid; border-width: 1px; border-radius: 20px; padding: 2px 2px 0 2px;"
+                            :style="{borderColor: textColor }">
                             <color-picker-input
                                 :id="'colorPicker_'+index"
                                 v-if="editor !== false"
@@ -99,7 +99,7 @@
           <mediaCarousel
               v-if="item.media_subscriptions.length > 0"
               :subscriptions="item.media_subscriptions"
-              :width="width"
+              :width="width -16"
           ></mediaCarousel>
         </div>
 
@@ -232,6 +232,7 @@ export default {
         },
         edit() {
             this.editor = true;
+            this.form = this.item;
             this.$nextTick(() => {
                 this.$initTinyMCE([
                     "autolink link example"
@@ -310,7 +311,7 @@ export default {
         reload() { //after media upload
           axios.get("/kanbanItems/" + this.item.id)
               .then(res => {
-                this.item = res.data.message;
+                //this.item = res.data.message;
               })
               .catch(err => {
                 console.log(err.response);

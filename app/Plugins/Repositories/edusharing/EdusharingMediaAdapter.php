@@ -86,7 +86,7 @@ class EdusharingMediaAdapter implements MediaInterface
             ], [
                 'sharing_level_id'  => 1,
                 'visibility'        => 1,
-                'data'              => $usage ?? '',
+                'additional_data'   => $usage ?? '',
                 'owner_id'          => auth()->user()->id,
             ]);
             $subscribe->save();

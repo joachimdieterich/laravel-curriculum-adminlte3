@@ -504,14 +504,14 @@ class CurriculumImportController extends Controller
 
     private function importMediumV2($medium_id, $folder, $subfolder = '')
     {
-        $pathPrefix = '/users/'.auth()->user()->id.'/';
+        $pathPrefix = 'users/'.auth()->user()->id.'/';
 
         if (File::exists(storage_path("app/{$folder}/media/{$subfolder}{$medium_id}"))) {
             $file = File::files(storage_path("app/{$folder}/media/{$subfolder}{$medium_id}"));   // always only one file!
             File::copy($file[0]->getRealPath(), storage_path('app/'.$pathPrefix.$file[0]->getBasename()));
 
             return Medium::create([
-                'path'          => $pathPrefix,
+                'path'          => '/'.$pathPrefix,
                 'medium_name'   => $file[0]->getBasename(),
                 'title'         => $file[0]->getBasename(),
                 'description'   => '',

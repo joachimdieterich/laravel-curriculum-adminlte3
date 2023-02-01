@@ -45,7 +45,14 @@ class OrganizationsController extends Controller
     public function list()
     {
         abort_unless(\Gate::allows('organization_access'), 403);
-        $organizations = (auth()->user()->role()->id == 1) ? Organization::with(['status']) : auth()->user()->organizations()->with(['status']);
+        $organization_id_field = 'id'; // if auth()->user()->organizations() is used query uses organization_role_user table therefore organization_id field = organization_id
+
+        if (auth()->user()->role()->id == 1) {
+            $organizations = Organization::with(['status']);
+        } else  {
+            $organizations = auth()->user()->organizations()->with(['status']);
+            $organization_id_field = 'organization_id';
+        }
 
         $edit_gate = \Gate::allows('organization_edit');
         $delete_gate = \Gate::allows('organization_delete');
@@ -54,11 +61,11 @@ class OrganizationsController extends Controller
             ->addColumn('status', function ($organizations) {
                 return $organizations->status->lang_de;
             })
-            ->addColumn('action', function ($organizations) use ($edit_gate, $delete_gate) {
+            ->addColumn('action', function ($organizations) use ($edit_gate, $delete_gate, $organization_id_field) {
                 $actions = '';
                 if ($edit_gate) {
                     $actions .= '<a href="'.route('organizations.edit', $organizations->id).'"'
-                                    .'id="edit-organization-'.$organizations->id.'" '
+                                    .'id="edit-organization-'.$organizations->$organization_id_field.'" '
                                     .'class="btn p-1">'
                                     .'<i class="fa fa-pencil-alt"></i>'
                                     .'</a>';
@@ -66,7 +73,7 @@ class OrganizationsController extends Controller
                 if ($delete_gate) {
                     $actions .= '<button type="button" '
                                 .'class="btn text-danger" '
-                                .'onclick="destroyDataTableEntry(\'organizations\','.$organizations->id.')">'
+                                .'onclick="destroyDataTableEntry(\'organizations\','.$organizations->$organization_id_field.')">'
                                 .'<i class="fa fa-trash"></i></button>';
                 }
 
@@ -74,7 +81,7 @@ class OrganizationsController extends Controller
             })
 
             ->addColumn('check', '')
-            ->setRowId('id')
+            ->setRowId($organization_id_field)
             ->setRowAttr([
                 'color' => 'primary',
             ])

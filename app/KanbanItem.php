@@ -2,6 +2,7 @@
 
 namespace App;
 
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 
 class KanbanItem extends Model
@@ -11,6 +12,22 @@ class KanbanItem extends Model
     protected $casts = [
         'created_at' => 'datetime:d.m.Y H:i',
     ];
+
+    protected $dates = [
+        'updated_at',
+        'created_at',
+    ];
+
+    /**
+     * Prepare a date for array / JSON serialization.
+     *
+     * @param  \DateTimeInterface  $date
+     * @return string
+     */
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
+    }
 
     public function path()
     {

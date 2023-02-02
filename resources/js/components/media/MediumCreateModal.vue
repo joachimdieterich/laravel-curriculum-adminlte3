@@ -39,7 +39,7 @@
                 <div class="card-pane-left p-0">
                     <ul class="nav flex-column">
                         <li class="nav-link text-sm" v-can="'medium_create'">
-                            <a class="active show link-muted"
+                            <a class="link-muted"
                                href="#upload"
                                data-toggle="tab"
                                @click="setTab('upload')">
@@ -63,7 +63,7 @@
                             </a>
                         </li>
                         <li class="nav-link text-sm" v-can="'external_medium_create'">
-                            <a class="link-muted"
+                            <a class="link-muted active show"
                                href="#external"
                                data-toggle="tab"
                                @click="setTab('external')">
@@ -76,7 +76,7 @@
                 <div class="p-1 flex-fill border-left"
                      style="min-height: 350px">
                     <div class="tab-content p-2">
-                        <div class="tab-pane active show"
+                        <div class="tab-pane"
                              id="upload"
                              v-can="'medium_create'">
 
@@ -205,7 +205,7 @@
                             </div>
                         </div><!-- /.tab-pane -->
 
-                        <div class="tab-pane" id="link" v-can="'link_create'">
+                        <div class="tab-pane  " id="link" v-can="'link_create'">
                             <div class="form-group " >
                                 <input
                                     type="text" id="link"
@@ -217,7 +217,7 @@
                             </div>
                         </div><!-- /.tab-pane -->
 
-                        <div class="tab-pane"
+                        <div class="tab-pane active show"
                              id="external"
                              v-can="'external_medium_create'">
                             <repository-plugin-create
@@ -262,7 +262,7 @@ export default {
         return {
             method: 'post',
             requestUrl: '/mediaSubscriptions',
-            tab: 'media',
+            tab: 'external',
             target: 'medium_id',
             callbackFunction: null,
             callbackParentComponent: null,

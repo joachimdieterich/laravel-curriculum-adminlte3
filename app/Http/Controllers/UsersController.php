@@ -25,8 +25,10 @@ class UsersController extends Controller
 {
     public function index()
     {
-        abort_unless(\Gate::allows('user_access'), 403);
-
+        if (auth()->user()->role()->id > 6) {   //todo check: should students see all other user of current org?
+            abort(403);
+        }
+        //every user should share with users of current org.
         if (request()->wantsJson() and request()->has(['term', 'page'])) {
             return  getEntriesForSelect2ByCollection(
                 Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->noSharing(),
@@ -36,6 +38,8 @@ class UsersController extends Controller
                 "CONCAT(firstname, ' ' ,lastname)",
             );
         }
+
+        abort_unless(\Gate::allows('user_access'), 403);
         // todo check: is the following condition used anymore
         if (request()->wantsJson()) {
             if (auth()->user()->role()->id == 1) {

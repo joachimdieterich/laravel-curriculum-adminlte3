@@ -21,6 +21,7 @@ class ShareTokenController extends Controller
         $date = $input['date'];
         if (! empty($date)) {
             $date = Carbon::parse($date);
+            $date = $date->addDays(1); //fix date bug
         }
 
         // Create random hash token

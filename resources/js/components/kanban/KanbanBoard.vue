@@ -205,13 +205,17 @@ export default {
             },
             handleStatusAddedWithoutWebsocket(newStatus){
                 if (this.pusher == 0){
-                    this.handleStatusAdded(newStatus);
+                    this.sync();
+                    //this.handleStatusAdded(newStatus);
                 }
             },
             handleStatusAdded(newStatus){
+                /*if (this.statuses.findIndex(s => s.title = newStatus.title) != -1){
+                    this.infoNotification('Status existiert.');
+                }*/
                 newStatus['items'] = [];            //add items to prevent error if item is created without reloading page
                 this.statuses.push(newStatus);
-                this.closeForm();
+                //this.closeForm();
             },
             handleStatusUpdatedWithoutWebsocket(newStatus){
                 if (this.pusher == 0){
@@ -374,6 +378,38 @@ export default {
                             this.usersOnline.filter((userOnline) => userOnline.id !== user.id);
                         });
                 }
+            },
+            successNotification(message) {
+                this.$toast.success(message, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                });
+            },
+            infoNotification(message) {
+                this.$toast.info(message, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                });
             },
         },
         mounted() {

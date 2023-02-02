@@ -85,7 +85,7 @@ export default {
       return {
           editor: false,
           form: new Form({
-              'id': 0,
+              'id': '',
               'title': '',
               'kanban_id': '',
           }),

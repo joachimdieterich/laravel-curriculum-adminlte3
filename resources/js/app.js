@@ -180,6 +180,7 @@ Vue.prototype.$initTinyMCE = function (tinyMcePlugins) {
         toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | mathjax link image media example ",
         relative_urls: false,
         entity_encoding : "raw",
+        language: 'de',
 
         mathjax: {
             lib: '/node_modules/mathjax/es5/tex-mml-chtml.js', // path to mathjax

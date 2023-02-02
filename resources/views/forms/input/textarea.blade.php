@@ -41,6 +41,7 @@
     path_absolute : "/",
     selector: "textarea.my-editor",
     branding:false,
+    language: 'de',
     plugins: [
       "advlist autolink lists link image charmap print preview hr anchor pagebreak",
       "searchreplace wordcount visualblocks visualchars code fullscreen",

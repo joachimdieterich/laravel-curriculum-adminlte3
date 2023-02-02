@@ -30,6 +30,7 @@ mix.copyDirectory('node_modules/tinymce/skins', 'public/js/skins');
 mix.copyDirectory('node_modules/tinymce/themes', 'public/js/themes');
 mix.copyDirectory('node_modules/tinymce/icons', 'public/js/icons');
 mix.copyDirectory('node_modules/tinymce', 'public/node_modules/tinymce');
+mix.copyDirectory('resources/js/langs', 'public/node_modules/tinymce/langs');
 
 /* Bootstrap colorpicker */
 mix.copyDirectory('node_modules/bootstrap-colorpicker/dist', 'public/node_modules/bootstrap-colorpicker');

@@ -758,8 +758,8 @@ return [
         ],
     ],
     'externalRepositorySubscription' => [
-        'title' => 'Externe Ressourcen',
-        'title_singular' => 'Externe Ressource',
+        'title' => 'Mediathek/Cloud',
+        'title_singular' => 'Mediathek/Cloud',
         'create' => 'Externe Ressource erstellen',
         'search' => 'Externe Ressource suchen',
         'edit' => 'Externe Ressource bearbeiten',
@@ -953,7 +953,7 @@ return [
         'title' => 'Typ',
         'title_singular' => 'Typ',
     ],
-    'token' => 'Token',
+    'token' => 'Freigabelink',
     'variantDefinitions' => [
         'title' => 'Varianten (Definitionen)',
         'title_singular' => 'Varianten (Definitionen)',

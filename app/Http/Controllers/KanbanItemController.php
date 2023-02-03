@@ -165,6 +165,7 @@ class KanbanItemController extends Controller
 
         $kanbanItem->mediaSubscriptions()->delete();
         $kanbanItem->subscriptions()->delete();
+        $kanbanItem->delete();
 
         if (request()->wantsJson()) {
             if (!pusher_event(new \App\Events\Kanbans\KanbanItemDeletedEvent($kanbanItemForEvent)))

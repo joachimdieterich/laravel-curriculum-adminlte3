@@ -86,6 +86,12 @@
     <!-- {!! $kanban->description !!}-->
     <div>
 
+        @if(is_integer($kanban->medium_id))
+        <img class="kanban_board_wrapper p-0"
+             src="{{ '/media/'. $kanban->medium_id}}"
+             style="object-fit: cover;
+             position:absolute;"/>
+        @endif
         <!-- Timelime example  -->
         <div id="kanban_board_wrapper"
              class="kanban_board_wrapper"

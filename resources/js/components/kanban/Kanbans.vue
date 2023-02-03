@@ -43,10 +43,15 @@
                  style="min-width: 200px !important;"
                  :style="'border-bottom: 5px solid ' + kanban.color">
                 <a :href="'/kanbans/'+kanban.id"
-                   class="text-decoration-none text-black">
+                   class="text-decoration-none text-black"
+                   >
                     <div v-if="kanban.medium_id"
                          class="nav-item-box-image-size"
-                         :style="{'background': 'url(/media/' + kanban.medium_id + '?model=Kanban&model_id=' + kanban.id +') top center no-repeat', 'background-size': 'cover'  }">
+                         :style="{'background': 'url(/media/' + kanban.medium_id + '?model=Kanban&model_id=' + kanban.id +') top center no-repeat', 'background-size': 'cover', }">
+                         <div class="nav-item-box-image-size"
+                              style="width: 100% !important;"
+                              :style="{backgroundColor: kanban.color + ' !important',  'opacity': '0.5'}">
+                         </div>
                     </div>
                     <div v-else
                          class="nav-item-box-image-size text-center"

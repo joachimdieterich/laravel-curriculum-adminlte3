@@ -79,7 +79,7 @@ class KanbanController extends Controller
             'title' => $new_kanban['title'],
             'description' => $new_kanban['description'],
             'color' => $new_kanban['color'] ?? '#2980B9',
-            'medium_id' => $this->getMediumIdByInputFilepath($new_kanban),
+            'medium_id' => $new_kanban['medium_id'], //$this->getMediumIdByInputFilepath($new_kanban),
             'commentable' => isset($input['commentable']) ? 1 : '0',
             'auto_refresh' => isset($input['auto_refresh']) ? 1 : '0',
             'owner_id' => auth()->user()->id,
@@ -100,7 +100,7 @@ class KanbanController extends Controller
      * @param  array  $input
      * @return mixed
      */
-    public function getMediumIdByInputFilepath($input)
+    /*public function getMediumIdByInputFilepath($input)
     {
         if (isset($input['filepath'])) {
             $medium = new Medium();
@@ -109,7 +109,7 @@ class KanbanController extends Controller
         } else {
             return null;
         }
-    }
+    }*/
 
     /**
      * Display the specified resource.
@@ -165,7 +165,7 @@ class KanbanController extends Controller
             'title' => $input['title'] ?? $kanban->title ,
             'description' => $input['description'] ?? $kanban->title,
             'color' => $input['color'] ?? $kanban->color,
-            'medium_id' => $this->getMediumIdByInputFilepath($input) ?? $kanban->medium_id,
+            'medium_id' => $input['medium_id'] ?? $kanban->medium_id,
             'commentable' => isset($input['commentable']) ? 1 : '0',
             'auto_refresh' => isset($input['auto_refresh']) ? 1 : '0',
             'owner_id' => auth()->user()->id,
@@ -289,7 +289,7 @@ class KanbanController extends Controller
         return request()->validate([
             'title' => 'sometimes|required',
             'description' => 'sometimes',
-            'filepath' => 'sometimes',
+            'medium_id' => 'sometimes',
             'commentable' => 'sometimes',
             'auto_refresh' => 'sometimes',
             'color' => 'sometimes',

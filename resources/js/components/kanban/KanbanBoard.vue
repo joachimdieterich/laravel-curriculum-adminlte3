@@ -1,7 +1,8 @@
 <template>
     <div
-        :style="kanbanWidth"
-        class="m-0">
+        :style="kanbanWidth "
+        class="m-0"
+        >
         <!-- Columns (Statuses) -->
         <draggable
             v-model="statuses"
@@ -442,7 +443,7 @@ export default {
                 };
             },
             kanbanWidth() {
-                return "width: "+ ((this.statuses.length) * this.itemWidth +this.itemWidth) +"px;";
+                return "width: "+ ((this.statuses.length) * this.itemWidth +this.itemWidth) +"px";
             },
         },
         components: {

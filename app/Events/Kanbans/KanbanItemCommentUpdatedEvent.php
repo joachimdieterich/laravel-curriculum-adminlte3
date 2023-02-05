@@ -9,12 +9,11 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class KanbanItemAddedEvent implements ShouldBroadcast
+class KanbanItemCommentUpdatedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     private KanbanItem $kanbanItem;
-
     /**
      * Create a new event instance.
      *
@@ -42,9 +41,8 @@ class KanbanItemAddedEvent implements ShouldBroadcast
     }
 
     public function broadcastAs(){
-        return 'kanbanItemAdded';
+        return 'kanbanItemCommentUpdated';
     }
-
 
     /**
      * Get the channels the event should broadcast on.
@@ -55,15 +53,8 @@ class KanbanItemAddedEvent implements ShouldBroadcast
 
         return [
             'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
-            'message' =>  KanbanItem::where('id', $this->kanbanItem->id)
-                ->with([
-                    'comments',
-                    'comments.user',
-                    'likes',
-                    'mediaSubscriptions.medium',
-                    'owner',
-                ])
-                ->get()->first()
+            'message' => KanbanItem::where('id', $this->kanbanItem->id)
+                ->with(['comments', 'comments.user'])->get()->first(),
         ];
     }
 }

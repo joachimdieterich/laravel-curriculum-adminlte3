@@ -120,8 +120,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('export_csv/{kanban}', 'KanbanController@exportKanbanCsv');
     Route::get('export_pdf/{kanban}', 'KanbanController@exportKanbanPdf');
     Route::resource('kanbans', 'KanbanController');
+
+    Route::post('kanbanItems/{kanbanItem}/react', 'KanbanItemController@reaction')->name('kanbanItems.react');
     Route::put('kanbanItems/sync', 'KanbanItemController@sync')->name('kanbanItems.sync');
     Route::resource('kanbanItems', 'KanbanItemController');
+
     Route::get('kanbanStatuses/{kanban}/checkSync', 'KanbanStatusController@checkSync');
     Route::put('kanbanStatuses/sync', 'KanbanStatusController@sync')->name('kanbanStatuses.sync');
     Route::resource('kanbanStatuses', 'KanbanStatusController');

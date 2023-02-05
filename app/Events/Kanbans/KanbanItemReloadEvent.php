@@ -55,12 +55,13 @@ class KanbanItemReloadEvent implements ShouldBroadcast
             'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
             'message' =>  $this->kanbanItem
                 ->where('id', $this->kanbanItem->id)
-                ->with(['owner', 'mediaSubscriptions.medium',
-                    /*'taskSubscription.task.subscriptions' => function ($query) {
-                        $query->where('subscribable_id', auth()->user()->id)
-                            ->where('subscribable_type', 'App\User');
-                    }, */
-                    'subscribable'])
+                ->with([
+                    'comments',
+                    'comments.user',
+                    'likes',
+                    'mediaSubscriptions.medium',
+                    'owner',
+                ])
                 ->get()->first()
         ];
     }

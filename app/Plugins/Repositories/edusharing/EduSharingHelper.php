@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Plugins\Repositories\edusharing;
-require_once 'Curl.php';
+require_once 'DefaultCurlHandler.php';
 
 class EduSharingHelper {
     /**

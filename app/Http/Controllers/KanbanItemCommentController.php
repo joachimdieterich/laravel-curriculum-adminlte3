@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\KanbanItem;
 use App\KanbanItemComment;
 use Illuminate\Http\Request;
 
@@ -15,13 +16,24 @@ class KanbanItemCommentController extends Controller
 
         $comment = new KanbanItemComment();
         $comment->comment = $new_comment['comment'];
-        $comment->kanban_item_id = $request['kanban_item_id'];
+        $comment->kanban_item_id = $request['model_id'];
         $comment->user_id = Auth()->user()->id;
         $comment->save();
 
-        $comments = $this->getComments($request['kanban_item_id']);
+        $comments = $this->getComments($request['model_id']);
 
-        return response()->json(['data' => $comments]);
+        $kanbanItem = KanbanItem::where('id', $request['model_id'])->get()->first();
+        if (request()->wantsJson()) {
+            if (!pusher_event(new \App\Events\Kanbans\KanbanItemCommentUpdatedEvent($kanbanItem)))
+            {
+                return [
+                    'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
+                    'message' => KanbanItem::where('id', $request['model_id'])
+                        ->with(['comments', 'comments.user'])->get()->first(),
+                ];
+            }
+        }
+        //return response()->json(['data' => $comments]);
     }
 
     public function destroy(KanbanItemComment $kanbanItemComment)
@@ -44,7 +56,7 @@ class KanbanItemCommentController extends Controller
     {
         return request()->validate([
             'comment' => 'required',
-            'kanban_item_id' => 'required',
+            'model_id' => 'required',
         ]);
     }
 }

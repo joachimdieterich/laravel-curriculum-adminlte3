@@ -1,29 +1,6 @@
 <?php
 namespace App\Plugins\Repositories\edusharing;
 
-class DisplayMode {
-    const Inline = 'inline';
-    const Embed = 'embed';
-    const Dynamic = 'dynamic';
-}
-
-class Usage {
-    public $nodeId;
-    public $nodeVersion;
-    public $containerId;
-    public $resourceId;
-    public $usageId;
-
-    public function __construct($nodeId, $nodeVersion, $containerId, $resourceId, $usageId)
-    {
-        $this->nodeId = $nodeId;
-        $this->nodeVersion = $nodeVersion;
-        $this->containerId = $containerId;
-        $this->resourceId = $resourceId;
-        $this->usageId = $usageId;
-    }
-
-}
 class EduSharingNodeHelper extends EduSharingHelperAbstract  {
     /**
      * creates a usage for a given node

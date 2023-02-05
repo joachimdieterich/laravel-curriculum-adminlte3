@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Kanban;
 use App\KanbanItem;
+use Maize\Markable\Models\Like;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -173,6 +174,37 @@ class KanbanItemController extends Controller
                 return [
                     'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
                     'message' =>  $kanbanItemForEvent
+                ];
+            }
+        }
+    }
+
+    /**
+     * React to kanbanItem the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\KanbanItem  $kanbanItem
+     * @return \Illuminate\Http\Response
+     */
+    public function reaction(Request $request, KanbanItem $kanbanItem)
+    {
+        abort_unless( $kanbanItem->isAccessible(), 403);
+
+        $input = $this->validateRequest();
+        //todo: use reaction_type 'like'...
+        if (Like::has($kanbanItem, auth()->user())){
+            Like::remove($kanbanItem, auth()->user()); // unmarks the $kanbanItem liked for the given user
+        } else {
+            Like::add($kanbanItem, auth()->user()); // marks the $kanbanItem liked for the given user
+        }
+
+        if (request()->wantsJson()) {
+            if (!pusher_event(new \App\Events\Kanbans\KanbanItemUpdatedEvent($kanbanItem)))
+            {
+                return [
+                    'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
+                    'message' => KanbanItem::where('id', $kanbanItem->id)
+                        ->with(['likes', 'comments', 'comments.user'])->get()->first(),
                 ];
             }
         }

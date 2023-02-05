@@ -33,6 +33,7 @@
         "laravel/ui": "^3.0",
         "laravolt/avatar": "^4.1.7",
         "maatwebsite/excel": "^3.1",
+        "maize-tech/laravel-markable": "^1.0",
         "profburial/wkhtmltopdf-binaries-osx": "0.12.1",
         "pusher/pusher-php-server": "^7.2",
         "select2/select2": "^4.0",

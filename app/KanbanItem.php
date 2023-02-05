@@ -3,10 +3,14 @@
 namespace App;
 
 use DateTimeInterface;
+use Maize\Markable\Markable;
+use Maize\Markable\Models\Like;
 use Illuminate\Database\Eloquent\Model;
 
 class KanbanItem extends Model
 {
+    use Markable;
+
     protected $guarded = [];
 
     protected $casts = [
@@ -16,6 +20,10 @@ class KanbanItem extends Model
     protected $dates = [
         'updated_at',
         'created_at',
+    ];
+
+    protected static $marks = [
+        Like::class,
     ];
 
     /**

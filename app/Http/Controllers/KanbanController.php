@@ -8,6 +8,7 @@ use App\Organization;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maize\Markable\Models\Like;
 use Yajra\DataTables\DataTables;
 
 class KanbanController extends Controller
@@ -271,16 +272,18 @@ class KanbanController extends Controller
     public function getKanbanWithRelations(Kanban $kanban)
     {
         return $kanban->with([
-            'statuses', 'statuses.items' => function ($query) use ($kanban) {
+            'statuses',
+            'statuses.items' => function ($query) use ($kanban) {
                 $query->where('kanban_id', $kanban->id)
-                    ->with(['owner',
-                        /*'taskSubscription.task.subscriptions' => function ($query) {
-                            $query->where('subscribable_id', auth()->user()->id)
-                                ->where('subscribable_type', 'App\User');
-                        },*/
-                        'mediaSubscriptions.medium'])
+                    ->with([
+                        'comments',
+                        'comments.user',
+                        'likes',
+                        'mediaSubscriptions.medium',
+                        'owner',
+                    ])
                     ->orderBy('order_id');
-            }, 'statuses.items.subscriptions', 'statuses.items.comments', 'statuses.items.comments.user',
+            },
         ])->where('id', $kanban->id)->get()->first();
     }
 

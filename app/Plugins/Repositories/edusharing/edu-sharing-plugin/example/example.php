@@ -8,10 +8,10 @@
 
 define('APP_ID', 'sample-app');
 define('USERNAME', 'tester');
-require_once "../edu-sharing-helper.php";
-require_once "../edu-sharing-helper-base.php";
-require_once "../edu-sharing-auth-helper.php";
-require_once "../edu-sharing-node-helper.php";
+require_once "../EduSharingHelper.php";
+require_once "../EduSharingHelperBase.php";
+require_once "../EduSharingAuthHelper.php";
+require_once "../EduSharingNodeHelper.php";
 
 $privatekey = @file_get_contents('private.key');
 if(!$privatekey) {

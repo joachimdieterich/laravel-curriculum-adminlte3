@@ -7,7 +7,6 @@
         <draggable
             v-model="statuses"
             v-bind="columnDragOptions"
-            :options="{disabled: !editable}"
             @end="syncStatusMoved">
             <div
                 v-for="(status, index) in statuses"
@@ -29,7 +28,6 @@
                         v-model="status.items"
                         v-bind="itemDragOptions"
                         @end="syncItemMoved"
-                        :options="{disabled: !editable}"
                         filter=".ignore">
                         <transition-group
                             style="display:flex; flex-direction: column;"
@@ -139,7 +137,6 @@ export default {
                             this.statuses = res.data.message.statuses;
                         } else {
                             this.refreshRate +=1000; //slow down refreshing, if nothing happens
-                            //console.log(res.data.message +', set refresh to ' + this.refreshRate * 0.001 + ' seconds');
                         }
                     })
                     .catch(err => {
@@ -323,7 +320,6 @@ export default {
                 }
             },
             handleItemUpdated(updatedItem){
-                //console.log(updatedItem);
                 const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should replace the item
                     status => status.id === updatedItem.kanban_status_id
                 );
@@ -334,6 +330,16 @@ export default {
                 for (const [key, value] of Object.entries(updatedItem)) {
                     this.statuses[statusIndex].items[itemIndex][key] = value;       // Add updated item to our column
                 }
+            },
+            handleItemCommentUpdated(updatedItem){
+                const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should replace the item
+                    status => status.id === updatedItem.kanban_status_id
+                );
+                const itemIndex = this.statuses[statusIndex].items.findIndex(   // Find the index of the item where we should replace the item
+                    item => item.id === updatedItem.id
+                );
+
+                this.statuses[statusIndex].items[itemIndex]['comments'] = updatedItem.comments;       // Add updated item to our column
             },
 
 
@@ -359,6 +365,7 @@ export default {
                             this.handleItemAdded(payload.message);
                         })
                         .listen('.kanbanItemUpdated', (payload) => {
+                            //console.log('kanbanItemUpdated');
                             this.handleItemUpdated(payload.message);
                         })
                         .listen('.kanbanItemMoved', (payload) => {
@@ -369,6 +376,10 @@ export default {
                         })
                         .listen('.kanbanItemDeleted', (payload) => {
                             this.handleItemDestroyed(payload.message);
+                        })
+                        .listen('.kanbanItemCommentUpdated', (payload) => {
+                            //console.log('kanbanItemCommentUpdated');
+                            this.handleItemCommentUpdated(payload.message);
                         })
                         .joining((user)=> {
                             this.usersOnline.push(user);
@@ -432,14 +443,16 @@ export default {
                 return {
                   animation: 200,
                   group: "column-list",
-                  dragClass: "status-drag"
+                  dragClass: "status-drag",
+                  disabled: !this.editable
                 };
             },
             itemDragOptions() {
                 return {
                   animation: 200,
                   group: "item-list",
-                  dragClass: "status-drag"
+                  dragClass: "status-drag",
+                  disabled: !this.editable
                 };
             },
             kanbanWidth() {

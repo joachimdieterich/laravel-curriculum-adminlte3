@@ -12,7 +12,7 @@
                     "field" => "description",
                     "placeholder" => trans('global.kanban.fields.description'),
                     "rows" => 3,
-                    "value" => old('description', isset($logbook) ? $kanban->description : '')])
+                    "value" => old('description', isset($kanban->description) ? $kanban->description : '')])
 @can('medium_create')
     @include ('forms.input.file',
                 ["model" => "media",

@@ -846,6 +846,8 @@ return [
         'title_singular' => 'Pinnwand',
         'create' => 'Pinnwand erstellen',
         'edit' => 'Pinnwand bearbeiten',
+        'delete' => 'Pinnwand löschen',
+        'delete_helper' => 'Soll die Pinnwand sowie die zugehörigen Daten gelöscht werden?',
     ],
     'kanbanItem' => [
         'title' => 'Karten',

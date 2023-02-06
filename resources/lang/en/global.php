@@ -843,6 +843,8 @@ return [
         'title_singular' => 'Kanban-Board',
         'create' => 'Create Kanban-Board',
         'edit' => 'Edit Kanban-Board',
+        'delete' => 'Delete Kanban-Board',
+        'delete_helper' => 'Should Kanban-Board be deleted?',
     ],
     'kanbanItem' => [
         'title' => 'Items',

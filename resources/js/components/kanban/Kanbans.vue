@@ -67,7 +67,7 @@
                        <button
                            :id="'delete-kanban-'+kanban.id"
                            type="submit" class="btn btn-danger btn-sm pull-right"
-                           @click.prevent="destroy(kanban.id)">
+                           @click.prevent="confirmItemDelete(kanban.id)">
                            <small><i class="fa fa-trash"></i></small>
                        </button>
 
@@ -80,11 +80,20 @@
 
             </div>
         </div>
+        <Modal
+            :id="'kanbanModal'"
+            css="danger"
+            :title="trans('global.kanban.delete')"
+            :text="trans('global.kanban.delete_helper')"
+            :ok_label="trans('global.kanban.delete')"
+            v-on:ok="destroy()"
+        />
 
     </div>
 </template>
 
 <script>
+import Modal from "./../uiElements/Modal";
 
     export default {
         props: {
@@ -97,10 +106,15 @@
                 subscriptions: {},
                 search: '',
                 url: 'kanbans/list',
-                errors: {}
+                errors: {},
+                tempId: Number
             }
         },
         methods: {
+            confirmItemDelete(kanbanId){
+                $('#kanbanModal').modal('show');
+                this.tempId = kanbanId;
+            },
             loaderEvent(){
 
                 if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
@@ -124,9 +138,9 @@
                 txt.innerHTML = html;
                 return txt.value.replace(/<[^>]+>/g, '');
             },
-            async destroy(id) {
+            async destroy() {
                 try {
-                    this.kanbans = (await axios.delete('/kanbans/' + id)).data.data;
+                    this.kanbans = (await axios.delete('/kanbans/' + this.tempId)).data.data;
                 } catch (error) {
                     console.log(error);
                 }
@@ -137,7 +151,7 @@
             this.loaderEvent();
         },
         components: {
-
+            Modal
         },
     }
 </script>

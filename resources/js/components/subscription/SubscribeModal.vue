@@ -190,7 +190,7 @@ export default {
             modelId: null,
             subscribable_id: null,
             subscribable_type: null,
-            endDateToken: null,
+            endDateToken: new Date(),
             subscribers: Object,
             hover: false,
             canEditToken: false,
@@ -323,6 +323,9 @@ export default {
                 'editable': this.canEditToken
             }).then( () => this.loadSubscribers())
         }
+    },
+    mounted() {
+        this.endDateToken.setMonth(this.endDateToken.getMonth() + 1)
     },
     components: {
         subscribers,

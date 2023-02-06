@@ -951,6 +951,7 @@ return [
         'title_singular' => 'Typ',
     ],
     'token' => 'Token',
+    'token_copied' => 'Token copied to clipboard!',
     'variantDefinitions' => [
         'title' => 'Variant Definitions',
         'title_singular' => 'Variant Definition',

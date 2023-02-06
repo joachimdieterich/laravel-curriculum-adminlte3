@@ -954,6 +954,7 @@ return [
         'title_singular' => 'Typ',
     ],
     'token' => 'Freigabelink',
+    'token_copied' => 'Freigabelink wurde in die Zwischenablage gespeichert!',
     'variantDefinitions' => [
         'title' => 'Varianten (Definitionen)',
         'title_singular' => 'Varianten (Definitionen)',

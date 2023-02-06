@@ -64,6 +64,7 @@ export default {
         copyToClipboard(event){
             console.log(event.target.innerText);
             navigator.clipboard.writeText(event.target.innerText);
+            this.successNotification(window.trans.global.token_copied);
         },
         async unsubscribe(id) { //id of external reference and value in db
             try {
@@ -82,6 +83,22 @@ export default {
         },
         diffForHumans : function (date) {
             return moment(date).locale('de').fromNow();
+        },
+        successNotification(message) {
+            this.$toast.success(message, {
+                position: "top-right",
+                timeout: 3000,
+                closeOnClick: true,
+                pauseOnFocusLoss: true,
+                pauseOnHover: true,
+                draggable: true,
+                draggablePercent: 0.6,
+                showCloseButtonOnHover: false,
+                hideProgressBar: true,
+                closeButton: "button",
+                icon: true,
+                rtl: false
+            });
         },
     }
 }

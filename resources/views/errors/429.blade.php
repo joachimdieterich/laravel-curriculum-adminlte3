@@ -2,4 +2,4 @@
 
 @section('title', __('Too Many Requests'))
 @section('code', '429')
-@section('message', __('global.code_429'))
+@section('message', trans('global.code_429'))

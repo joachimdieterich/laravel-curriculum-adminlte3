@@ -36,4 +36,3 @@
         type="submit"
         value="{{ $buttonText }}"
     >
-</div>

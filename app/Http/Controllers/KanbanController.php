@@ -25,7 +25,7 @@ class KanbanController extends Controller
         return view('kanbans.index');
     }
 
-    protected function userKanbans()
+    protected function userKanbans($withOwned = true)
     {
         $userCanSee = auth()->user()->kanbans;
 
@@ -35,18 +35,31 @@ class KanbanController extends Controller
         $organization = Organization::find(auth()->user()->current_organization_id)->kanbans;
         $userCanSee = $userCanSee->merge($organization);
 
-        $owned = Kanban::where('owner_id', auth()->user()->id)->get();
-        $userCanSee = $userCanSee->merge($owned);
+        if ($withOwned)
+        {
+            $owned = Kanban::where('owner_id', auth()->user()->id)->get();
+            $userCanSee = $userCanSee->merge($owned);
+
+        }
 
         return $userCanSee->unique();
     }
 
-    public function list()
+    public function list(Request $request)
     {
         abort_unless(\Gate::allows('kanban_access'), 403);
 
-
-        $kanbans = $this->userKanbans();
+        switch ($request->filter) {
+            case 'owner':           $kanbans = Kanban::where('owner_id', auth()->user()->id)->get();
+                break;
+            case 'shared_with_me':   $kanbans = $this->userKanbans(false);
+                break;
+            case 'shared_by_me':     $kanbans = Kanban::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
+                break;
+            case 'all':
+            default:                $kanbans = $this->userKanbans();
+                break;
+        }
 
         return empty($kanbans) ? '' : DataTables::of($kanbans)
             ->setRowId('id')
@@ -307,6 +320,7 @@ class KanbanController extends Controller
             'commentable' => 'sometimes',
             'auto_refresh' => 'sometimes',
             'color' => 'sometimes',
+            'filter' => 'sometimes'
         ]);
     }
 }

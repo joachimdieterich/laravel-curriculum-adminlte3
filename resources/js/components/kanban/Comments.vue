@@ -57,13 +57,13 @@
             <input type="text"
                    name="message"
                    v-model="form.comment"
-                   :placeholder="trans('global.message.fields.message')+'...'"
+                   :placeholder="trans('global.comment')+'...'"
                    class="form-control">
             <span class="input-group-append">
                   <button class="btn btn-primary "
                           @keyup.enter="sendComment()"
                           @click.prevent="sendComment()">
-                        {{ trans('global.message.send') }}
+                      <i class="far fa-paper-plane"></i>
                   </button>
                 </span>
         </div>

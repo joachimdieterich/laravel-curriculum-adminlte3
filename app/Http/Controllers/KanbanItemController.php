@@ -107,7 +107,13 @@ class KanbanItemController extends Controller
                     'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
                     'message' =>  $kanbanItem
                         ->where('id', $kanbanItem->id)
-                        ->with(['owner', 'mediaSubscriptions.medium', 'subscribable'])
+                        ->with([
+                            'comments',
+                            'comments.user',
+                            'likes',
+                            'mediaSubscriptions.medium',
+                            'owner',
+                            ])
                         ->get()->first()
                 ];
             }

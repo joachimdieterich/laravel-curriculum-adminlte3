@@ -85,26 +85,13 @@
 @section('content')
     <!-- {!! $kanban->description !!}-->
     <div>
-
-        @if(is_integer($kanban->medium_id))
-        <img class="kanban_board_wrapper p-0"
-             src="{{ '/media/'. $kanban->medium_id .'?model=Kanban&model_id='.$kanban->id }}"
-             style="object-fit: cover;
-             position:absolute;"/>
-        @endif
-        <!-- Timelime example  -->
-        <div id="kanban_board_wrapper"
-             class="kanban_board_wrapper"
-             style="background-color: {{ $kanban->background }}">
-
-            <kanban-board
-                :editable="{{ $may_edit ? "1":"0" }}"
-                :pusher="{{ $is_pusher_active ? "1":"0" }}"
-                ref="kanbanBoard"
-                :kanban="{{ $kanban }}"></kanban-board>
-        </div>
+        <kanban-board
+            :editable="{{ $may_edit ? "1":"0" }}"
+            :pusher="{{ $is_pusher_active ? "1":"0" }}"
+            ref="kanbanBoard"
+            :kanban="{{ $kanban }}"></kanban-board>
     </div>
-    <!-- /.timeline -->
+
     <subscribe-modal></subscribe-modal>
     <medium-modal></medium-modal>
     <medium-create-modal></medium-create-modal>

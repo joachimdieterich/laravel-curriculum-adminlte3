@@ -198,6 +198,8 @@ class KanbanController extends Controller
     public function updateKanbansColor(Request $request)
     {
         $kanban = Kanban::where('id', $request->id)->first();
+        abort_unless((\Gate::allows('kanban_create') and $kanban->isAccessible()), 403);
+
         if (! $kanban) {
             return;
         }
@@ -206,6 +208,15 @@ class KanbanController extends Controller
             $kanban->color = '#F4F4F4';
         }
         $kanban->save();
+
+        if (request()->wantsJson()) {
+            if (!pusher_event(new \App\Events\Kanbans\KanbanColorUpdatedEvent($kanban)))
+            {
+                return [
+                    'message' => $kanban->color
+                ];
+            }
+        }
     }
 
     public function getKanbansColor($id)

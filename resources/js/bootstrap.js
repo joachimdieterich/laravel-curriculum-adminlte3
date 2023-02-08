@@ -63,6 +63,6 @@ if (process.env.MIX_PUSHER_APP_ACTIVE == 'true') {
         wssHost: window.location.hostname,
         wsPort: process.env.MIX_PUSHER_APP_WSPORT,
         wssPort: process.env.MIX_PUSHER_APP_WSSPORT,
-        enableTransports: ['ws', 'wss'],
+        enableTransports: ['ws', 'wss']
     });
 }

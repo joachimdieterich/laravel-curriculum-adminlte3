@@ -1,46 +1,55 @@
 <template>
-    <div
-        :style="kanbanWidth "
-        class="m-0"
-        >
-        <!-- Columns (Statuses) -->
-        <draggable
-            v-model="statuses"
-            v-bind="columnDragOptions"
-            @end="syncStatusMoved">
+    <div>
+        <img v-if="!isNaN(kanban.medium_id)"
+            class="kanban_board_wrapper p-0"
+             :src="'/media/'+ kanban.medium_id + '?model=Kanban&model_id=' + kanban.id"
+             style="object-fit: cover;
+             position:absolute;"/>
+        <div id="kanban_board_wrapper"
+             class="kanban_board_wrapper"
+             :style="'background-color:' + kanbanColor">
             <div
-                v-for="(status, index) in statuses"
-                :key="'header_'+status.id"
-                class=" no-border pr-3"
-                :style="'float:left; width:' + itemWidth + 'px;'">
-                 <KanbanStatus
-                     :kanban_id="status.kanban_id"
-                     :status="status"
-                     :editable="editable"
-                     v-on:status-updated="handleStatusUpdatedWithoutWebsocket"
-                     v-on:status-destroyed="handleStatusDestroyedWithoutWebsocket"
-                 />
-                <div style="margin-top:15px; bottom:0;overflow-y:scroll; z-index: 1"
-                     :style="'width:' + itemWidth + 'px;'"
-                      class="hide-scrollbars">
-                    <draggable
-                        class="flex-1 overflow-hidden hide-scrollbars"
-                        v-model="status.items"
-                        v-bind="itemDragOptions"
-                        @end="syncItemMoved"
-                        filter=".ignore">
-                        <transition-group
-                            style="display:flex; flex-direction: column;"
-                            :style="'width:' + itemWidth + 'px;'"
-                            class="pr-3"
-                            tag="span">
-                            <!-- Items -->
-                            <span
-                                v-for="(item, itemIndex) in status.items"
-                                :key="'transition_group-'+item.id">
+            :style="kanbanWidth "
+            class="m-0"
+        >
+            <!-- Columns (Statuses) -->
+            <draggable
+                v-model="statuses"
+                v-bind="columnDragOptions"
+                @end="syncStatusMoved">
+                <div
+                    v-for="(status, index) in statuses"
+                    :key="'header_'+status.id"
+                    class=" no-border pr-3"
+                    :style="'float:left; width:' + itemWidth + 'px;'">
+                    <KanbanStatus
+                        :kanban_id="status.kanban_id"
+                        :status="status"
+                        :editable="editable"
+                        v-on:status-updated="handleStatusUpdatedWithoutWebsocket"
+                        v-on:status-destroyed="handleStatusDestroyedWithoutWebsocket"
+                    />
+                    <div style="margin-top:15px; bottom:0;overflow-y:scroll; z-index: 1"
+                         :style="'width:' + itemWidth + 'px;'"
+                         class="hide-scrollbars">
+                        <draggable
+                            class="flex-1 overflow-hidden hide-scrollbars"
+                            v-model="status.items"
+                            v-bind="itemDragOptions"
+                            @end="syncItemMoved"
+                            filter=".ignore">
+                            <transition-group
+                                style="display:flex; flex-direction: column;"
+                                :style="'width:' + itemWidth + 'px;'"
+                                class="pr-3"
+                                tag="span">
+                                <!-- Items -->
+                                <span
+                                    v-for="(item, itemIndex) in status.items"
+                                    :key="'transition_group-'+item.id">
                                  <KanbanItem
-                                    :editable="editable"
-                                    :commentable="kanban.commentable"
+                                     :editable="editable"
+                                     :commentable="kanban.commentable"
                                      :ref="'kanbanItemId' + item.id"
                                      :index="index + '_' + itemIndex"
                                      :item="item"
@@ -49,50 +58,53 @@
                                      v-on:item-updated="handleItemUpdatedWithoutWebsocket"
                                      v-on:item-edit=""/>
                             </span>
-                            <!--  ./Items -->
-                        </transition-group>
-                    </draggable>
-                    <KanbanItemCreate
-                        v-if="newItem === status.id"
-                        :id="'kanbanItemCreate_' + index"
-                        :status="status"
-                        :item="item"
-                        :width="itemWidth"
-                        v-on:item-added="handleItemAddedWithoutWebsocket"
-                        v-on:item-updated=""
-                        v-on:item-canceled="closeForm"
-                        style="z-index: 2">
-                    </KanbanItemCreate>
-                    <div v-show="newItem !== status.id" v-if="editable"
-                         :id="'kanbanItemCreateButton_' + index"
-                         class="btn btn-flat py-0 w-100"
-                         @click="openForm('item', status.id)">
-                        <i class="text-white fa fa-2x fa-plus-circle"></i>
+                                <!--  ./Items -->
+                            </transition-group>
+                        </draggable>
+                        <KanbanItemCreate
+                            v-if="newItem === status.id"
+                            :id="'kanbanItemCreate_' + index"
+                            :status="status"
+                            :item="item"
+                            :width="itemWidth"
+                            v-on:item-added="handleItemAddedWithoutWebsocket"
+                            v-on:item-updated=""
+                            v-on:item-canceled="closeForm"
+                            style="z-index: 2">
+                        </KanbanItemCreate>
+                        <div v-show="newItem !== status.id" v-if="editable"
+                             :id="'kanbanItemCreateButton_' + index"
+                             class="btn btn-flat py-0 w-100"
+                             @click="openForm('item', status.id)">
+                            <i class="text-white fa fa-2x fa-plus-circle"></i>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div v-if="editable"
-                 class=" no-border  pr-2"
-                 style="float:left;"
-                 :style="'width:' + itemWidth + 'px;'">
-                <KanbanStatus
-                    :kanban_id="kanban.id"
-                    :editable="editable"
-                    :newStatus=true
-                    v-on:status-added="handleStatusAddedWithoutWebsocket"
+                <div v-if="editable"
+                     class=" no-border  pr-2"
+                     style="float:left;"
+                     :style="'width:' + itemWidth + 'px;'">
+                    <KanbanStatus
+                        :kanban_id="kanban.id"
+                        :editable="editable"
+                        :newStatus=true
+                        v-on:status-added="handleStatusAddedWithoutWebsocket"
                     />
-            </div>
-        </draggable>
-        <!-- ./Columns -->
-        <div v-if="pusher == 1"
-             class="card p-2"
-             style="position: fixed;right: 15px;bottom: 30px;">
+                </div>
+            </draggable>
+            <!-- ./Columns -->
+            <div v-if="pusher == 1"
+                 class="card p-2"
+                 style="position: fixed;right: 15px;bottom: 30px;">
 
             <span class="pull-left">
                 <i class="fa fa-user"></i> {{ this.usersOnline.length }}
             </span>
+            </div>
+        </div>
         </div>
     </div>
+
 </template>
 
 <script>
@@ -118,6 +130,7 @@ export default {
         },
         data() {
             return {
+                kanbanColor: '',
                 statuses: [],
                 newItem: 0, // track the ID of the status we want to add to
                 newStatus: 0,
@@ -341,6 +354,9 @@ export default {
 
                 this.statuses[statusIndex].items[itemIndex]['comments'] = updatedItem.comments;       // Add updated item to our column
             },
+            handleKanbanColorUpdated(color){
+                this.kanbanColor = color;
+            },
 
 
             startPusher(){
@@ -376,6 +392,9 @@ export default {
                         })
                         .listen('.kanbanItemDeleted', (payload) => {
                             this.handleItemDestroyed(payload.message);
+                        })
+                        .listen('.kanbanColorUpdated', (payload) => {
+                            this.handleKanbanColorUpdated(payload.message);
                         })
                         .listen('.kanbanItemCommentUpdated', (payload) => {
                             //console.log('kanbanItemCommentUpdated');
@@ -430,6 +449,7 @@ export default {
         },
         created () {
             this.statuses = this.kanban.statuses;
+            this.kanbanColor = this.kanban.color;
 
             if (this.kanban.auto_refresh === 1){
                 this.autoRefresh = true;

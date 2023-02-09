@@ -210,7 +210,9 @@ class KanbanItemController extends Controller
                 return [
                     'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
                     'message' => KanbanItem::where('id', $kanbanItem->id)
-                        ->with(['likes', 'comments', 'comments.user'])->get()->first(),
+                        ->with([
+                            'likes',
+                        ])->get()->first(),
                 ];
             }
         }

@@ -381,7 +381,6 @@ export default {
                             this.handleItemAdded(payload.message);
                         })
                         .listen('.kanbanItemUpdated', (payload) => {
-                            //console.log('kanbanItemUpdated');
                             this.handleItemUpdated(payload.message);
                         })
                         .listen('.kanbanItemMoved', (payload) => {

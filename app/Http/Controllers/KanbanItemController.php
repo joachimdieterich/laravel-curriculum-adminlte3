@@ -84,7 +84,7 @@ class KanbanItemController extends Controller
             if (!pusher_event(new \App\Events\Kanbans\KanbanItemMovedEvent($request->columns)))
             {
                 return [
-                    'message' => $this->columns
+                    'message' => $request->columns
                 ];
             }
         }

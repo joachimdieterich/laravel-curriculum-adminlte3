@@ -1,5 +1,5 @@
 # Make sure that your system is up-to-date
-apt-get update
+# sudo apt-get update
 
 # Clone repo from git
 git clone https://github.com/joachimdieterich/laravel-curriculum-adminlte3.git

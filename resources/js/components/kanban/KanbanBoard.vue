@@ -1,6 +1,6 @@
 <template>
     <div>
-        <img v-if="!isNaN(kanban.medium_id)"
+        <img v-if="kanban.medium_id !== null"
             class="kanban_board_wrapper p-0"
              :src="'/media/'+ kanban.medium_id + '?model=Kanban&model_id=' + kanban.id"
              style="object-fit: cover;

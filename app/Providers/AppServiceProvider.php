@@ -6,7 +6,7 @@ use App\Domains\Tests\Interfaces\TestToolkitInterface;
 use App\Domains\Tests\Requests\TestToolRequest;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Dusk\DuskServiceProvider;
+//use Laravel\Dusk\DuskServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -17,9 +17,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if ($this->app->environment('local', 'testing')) {
+        /*if ($this->app->environment('local', 'testing')) {
             $this->app->register(DuskServiceProvider::class);
-        }
+        }*/
 
         $this->app->singleton(TestToolkitInterface::class, function ($app) {
             $request = app(TestToolRequest::class);

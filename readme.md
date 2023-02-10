@@ -355,7 +355,7 @@ public function down()
 
 ### json-fields in MariaDB
 
-If migrations failing with the following message: 
+If migrations failing with the following message (MariaDB Version < 10.2.7): 
 
 
 ```

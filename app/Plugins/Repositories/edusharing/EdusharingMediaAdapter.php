@@ -112,7 +112,7 @@ class EdusharingMediaAdapter implements MediaInterface
         if ($medium->subscriptions()) {
             foreach ($medium->subscriptions as $subscription) {
                 if ($this->checkIfUserHasSubscription($subscription)) {
-                    i/*f (!is_null($medium->additional_data))
+                    /*if (!is_null($medium->additional_data))
                     {
                         $repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
 

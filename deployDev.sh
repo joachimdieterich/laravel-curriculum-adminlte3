@@ -11,7 +11,8 @@ cp .env laravel-curriculum-adminlte3/.env
 cd laravel-curriculum-adminlte3
 
 # Install/update composer dependecies
-composer install --no-dev
+rm composer.lock
+composer install
 
 # Build assets using Laravel Mix
 #cp .env.example .env

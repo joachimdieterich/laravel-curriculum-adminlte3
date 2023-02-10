@@ -7,7 +7,8 @@ php artisan down || true
 git pull
 
 # Install/update composer dependecies
-composer install --no-dev
+#composer install --no-dev
+composer update
 
 # Run database migrations
 php artisan migrate --force

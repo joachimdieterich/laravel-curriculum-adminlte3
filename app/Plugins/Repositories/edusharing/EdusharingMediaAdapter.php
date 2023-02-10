@@ -112,7 +112,7 @@ class EdusharingMediaAdapter implements MediaInterface
         if ($medium->subscriptions()) {
             foreach ($medium->subscriptions as $subscription) {
                 if ($this->checkIfUserHasSubscription($subscription)) {
-                    if (!is_null($medium->additional_data))
+                    i/*f (!is_null($medium->additional_data))
                     {
                         $repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
 
@@ -122,7 +122,7 @@ class EdusharingMediaAdapter implements MediaInterface
                         dump($node);
 
                         return $node;
-                    }
+                    }*/
 
                     return request('download') ? redirect($medium->path) : redirect($medium->thumb_path);
                 }

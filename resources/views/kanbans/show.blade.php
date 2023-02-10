@@ -2,9 +2,10 @@
 
 @section('title')
     @can('kanban_create')
-        @if(!$is_shared)
-            <color-picker-component id="{{ $kanban->id }}"></color-picker-component>
-        @endif
+            <color-picker-component
+                id="{{ $kanban->id }}"
+                class="@if(!$may_edit) d-none @endif"
+            ></color-picker-component>
     @endcan
     <small>{{ $kanban->title }} </small>
 

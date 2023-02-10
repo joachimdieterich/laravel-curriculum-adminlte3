@@ -27,7 +27,13 @@ class KanbanController extends Controller
 
     protected function userKanbans($withOwned = true)
     {
+
         $userCanSee = auth()->user()->kanbans;
+
+        if (auth()->user()->sharing_token !== null)  //tokenuser? only return subscriptions
+        {
+            return $userCanSee;
+        }
 
         foreach (auth()->user()->currentGroups as $group) {
             $userCanSee = $userCanSee->merge($group->kanbans);
@@ -49,8 +55,9 @@ class KanbanController extends Controller
     {
         abort_unless(\Gate::allows('kanban_access'), 403);
 
-        switch ($request->filter) {
-            case 'owner':           $kanbans = Kanban::where('owner_id', auth()->user()->id)->get();
+        switch ($request->filter)
+        {
+            case 'owner':            $kanbans = Kanban::where('owner_id', auth()->user()->id)->get();
                 break;
             case 'shared_with_me':   $kanbans = $this->userKanbans(false);
                 break;

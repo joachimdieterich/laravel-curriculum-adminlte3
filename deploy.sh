@@ -38,4 +38,4 @@ php artisan passport:install
 # Generate openAPI documentation
 php artisan l5-swagger:generate
 
-php artisan websocket:serve
+sudo php artisan websocket:serve

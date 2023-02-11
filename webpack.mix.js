@@ -13,7 +13,7 @@ const mix = require('laravel-mix');
 
 mix.js(['resources/js/app.js', 'vendor/select2/select2/dist/js/select2.min.js'], 'public/js')
    .js('node_modules/popper.js/dist/popper.js', 'public/js').sourceMaps()
-   .sass('resources/sass/app.scss', 'public/css')
+   .sass('resources/sass/app.scss', 'public/css');
 
 /* broadcasting */
 mix.options({

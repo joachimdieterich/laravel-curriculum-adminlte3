@@ -41,10 +41,10 @@ return [
                 'host' => env('PUSHER_APP_HOST', '127.0.0.1' ),
                 'port' => env('PUSHER_APP_WSSPORT', env('MIX_PUSHER_APP_WSPORT', '6001')),
                 'scheme' => env('PUSHER_APP_SCHEME', 'http' ),
-                /*'curl_options' => [
+                'curl_options' => [
                     CURLOPT_SSL_VERIFYHOST => 0,
                     CURLOPT_SSL_VERIFYPEER => 0,
-                ]*/
+                ]
             ],
         ],
 

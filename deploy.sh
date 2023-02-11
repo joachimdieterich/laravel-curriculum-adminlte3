@@ -11,6 +11,7 @@ cp .env laravel-curriculum-adminlte3/.env
 cd laravel-curriculum-adminlte3
 
 # Install/update composer dependecies
+rm composer.lock
 composer install --no-dev
 
 # Build assets using Laravel Mix
@@ -25,8 +26,9 @@ php artisan migrate --seed --force
 # Clear caches/config/routes/views
 php artisan clear:all
 
-npm ci
-
+# Install/update npm dependecies
+rm package-lock.json
+npm install
 # Build assets using Laravel Mix
 npm run production --silent
 

@@ -231,7 +231,7 @@ export default {
 
               axios.patch('/kanbanItems/' + form.id, form)
                   .then(res => { // Tell the parent component we've updated an item
-                      tinymce.remove();
+                      tinymce.get('description_'+this.item.id).remove();
                       this.form = res.data.message; //selfUpdate
                       this.$emit("item-updated", res.data.message);
                   })

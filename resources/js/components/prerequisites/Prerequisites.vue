@@ -51,7 +51,7 @@
                 this.prerequisites = response.data.prerequisites;
             },
             removeHtmlTags(string){
-               return string.replace(/<[^>]+>/g, '');
+               return string.replace(/(<([^>]+)>)/ig,"");
             }
         },
         mounted() {

@@ -68,7 +68,7 @@ class EdusharingMediaAdapter implements MediaInterface
         if (($input['subscribable_type'] !== 'null') and ($input['subscribable_id'] !== 'null')) {
             //create usage
 
-            /*try {
+          /*  try {
                 $edusharing = new Edusharing;
 
                 $usage = $edusharing
@@ -83,16 +83,18 @@ class EdusharingMediaAdapter implements MediaInterface
 
 
             //subscribe
-            $subscribe = MediumSubscription::updateOrCreate([
-                'medium_id'         => $medium->id,
-                'subscribable_type' => $input['subscribable_type'],
-                'subscribable_id'   => $input['subscribable_id'],
-            ], [
-                'sharing_level_id'  => 1,
-                'visibility'        => 1,
-                'additional_data'   => $usage ?? '',
-                'owner_id'          => auth()->user()->id,
-            ]);
+            $subscribe = MediumSubscription::updateOrCreate(
+                [
+                    'medium_id'         => $medium->id,
+                    'subscribable_type' => $input['subscribable_type'],
+                    'subscribable_id'   => $input['subscribable_id'],
+                ],
+                [
+                    'sharing_level_id'  => 1,
+                    'visibility'        => 1,
+                    'additional_data'   => $usage ?? '',
+                    'owner_id'          => auth()->user()->id,
+                ]);
             $subscribe->save();
         }
 

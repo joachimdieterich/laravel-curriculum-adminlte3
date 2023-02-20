@@ -186,7 +186,7 @@ import Modal from "./../uiElements/Modal";
             decodeHtml(html) {
                 let txt = document.createElement("textarea");
                 txt.innerHTML = html;
-                return txt.value.replace(/<[^>]+>/g, '');
+                return txt.value.replace(/(<([^>]+)>)/ig,"");
             },
             async destroy() {
                 try {

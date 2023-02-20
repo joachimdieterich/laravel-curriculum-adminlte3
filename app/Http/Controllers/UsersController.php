@@ -329,7 +329,7 @@ class UsersController extends Controller
     public function forceDestroy(User $user, $permission = false)
     {
         if ($permission == false) {
-            abort_unless(\Gate::allows('user_delete'), 403); //if permission != true (for API) check via Gate
+            abort_unless(\Gate::allows('user_delete'), 403); //if permission != true (for API ) check via Gate
             abort_unless(auth()->user()->role()->id == 1, 403); //only admins!
         }
 

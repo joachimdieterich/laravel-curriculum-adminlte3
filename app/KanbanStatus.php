@@ -14,6 +14,9 @@ class KanbanStatus extends Model
         'created_at',
     ];
 
+    protected $casts = [
+        'editable' => 'boolean',
+    ];
     /**
      * Prepare a date for array / JSON serialization.
      *

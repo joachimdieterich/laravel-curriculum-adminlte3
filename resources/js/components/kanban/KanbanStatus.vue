@@ -1,7 +1,8 @@
 <template>
     <div class="card-header border-bottom-0 p-0 kanban-header"
          :key="form.id">
-        <span v-if="editor !== false">
+        <span v-if="editor !== false"
+              filter=".ignore">
             <input
                 :id="'title_'+ form.id"
                 ref="newStatus"
@@ -10,6 +11,18 @@
                 class="w-100"
                 style="font-size: 1.1rem; font-weight: 400; border: 0; border-bottom: 1px; border-style:solid; margin: 0;"
             />
+             <div class="form-group ">
+                    <div class="form-check">
+                        <input type="checkbox"
+                               class="form-check-input"
+                               :id="'locked_'+ form.id"
+                               v-model="form.locked" >
+                        <label class="form-check-label"
+                               for="editable">{{ trans('global.locked') }}</label>
+                    </div>
+                </div>
+
+
              <button :name="'kanbanStatusSave_'+form.id"
                      class="btn btn-primary p-2 m-2"
                      @click="submit()">
@@ -26,7 +39,7 @@
         </span>
         <span v-else>
             <strong>{{ form.title }}</strong>
-            <div v-if="editable"
+            <div v-if="(editable == 1 && form.locked !== 1 && kanban.onlyEditOwnedItems !== 1) || ($userId == status.owner_id )"
                  :id="'kanbanStatusDropdown_'+form.id"
                  class="btn btn-flat py-0 pl-0 pull-left"
                  data-toggle="dropdown"
@@ -73,10 +86,7 @@ import Modal from "./../uiElements/Modal";
 export default {
     name: 'KanbanStatus',
     props: {
-        kanban_id: {
-            type: Number,
-            default: 0
-        },
+        kanban: {},
         status: {},
         'editable': true,
         'newStatus': false,
@@ -88,6 +98,7 @@ export default {
               'id': '',
               'title': '',
               'kanban_id': '',
+              'locked': false,
           }),
           url: '',
           method: 'patch',
@@ -109,7 +120,7 @@ export default {
             if (this.form.id === 0){
                 this.url = '/kanbanStatuses';
                 this.method = 'post';
-                this.form.kanban_id = this.kanban_id;
+                this.form.kanban_id = this.kanban.id;
                 this.event = 'status-added';
             } else {
                 this.url = '/kanbanStatuses/' + this.form.id;
@@ -130,7 +141,7 @@ export default {
             $('#statusModal_'+ this.form.id).modal('show');
         },
         deleteStatus(){
-            axios.delete("/kanbanStatuses/"+this.status.id)
+            axios.delete("/kanbanStatuses/"+this.form.id)
                 .then(res => {
                     this.$emit("status-destroyed", this.status);
                 })

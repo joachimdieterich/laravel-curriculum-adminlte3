@@ -110,6 +110,7 @@ class KanbanItemController extends Controller
                         ->with([
                             'comments',
                             'comments.user',
+                            'comments.likes',
                             'likes',
                             'mediaSubscriptions.medium',
                             'owner',

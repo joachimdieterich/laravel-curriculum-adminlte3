@@ -37,18 +37,9 @@ class KanbanSubscriptionController extends Controller
             }*/
         } else {
             if (request()->wantsJson()) {
-                $tokens = Kanban::find(request('kanban_id'))
-                    ->subscriptions()
-                    ->with(
-                        'subscribable'
-                    )
-                    ->whereHasMorph('subscribable', [User::class], function ($q, $type) {
-                        if ($type == 'App\\User') {
-                            $q->whereNotNull('sharing_token');
-                        }
-                    }
-                    )->get();
-
+                $tokens = KanbanSubscription::where('kanban_id', request('kanban_id'))
+                    ->where('sharing_token', "!=", null)
+                    ->get();
                 return [
                     'subscribers' => [
                         'tokens' => $tokens,
@@ -59,7 +50,7 @@ class KanbanSubscriptionController extends Controller
                             )->with('subscribable')
                             ->whereHasMorph('subscribable', '*', function ($q, $type) {
                                 if ($type == 'App\\User') {
-                                    $q->whereNull('sharing_token');
+                                    $q->whereNot('id', env('GUEST_USER'));
                                 }
                             })->get(),
                     ],

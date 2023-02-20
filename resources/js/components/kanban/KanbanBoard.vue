@@ -16,6 +16,7 @@
             <draggable
                 v-model="statuses"
                 v-bind="columnDragOptions"
+                :move="isLocked"
                 @end="syncStatusMoved">
                 <div
                     v-for="(status, index) in statuses"
@@ -23,7 +24,7 @@
                     class=" no-border pr-3"
                     :style="'float:left; width:' + itemWidth + 'px;'">
                     <KanbanStatus
-                        :kanban_id="status.kanban_id"
+                        :kanban="kanban"
                         :status="status"
                         :editable="editable"
                         v-on:status-updated="handleStatusUpdatedWithoutWebsocket"
@@ -50,6 +51,7 @@
                                  <KanbanItem
                                      :editable="editable"
                                      :commentable="kanban.commentable"
+                                     :onlyEditOwnedItems="kanban.only_edit_owned_items"
                                      :ref="'kanbanItemId' + item.id"
                                      :index="index + '_' + itemIndex"
                                      :item="item"
@@ -85,7 +87,7 @@
                      style="float:left;"
                      :style="'width:' + itemWidth + 'px;'">
                     <KanbanStatus
-                        :kanban_id="kanban.id"
+                        :kanban="kanban"
                         :editable="editable"
                         :newStatus=true
                         v-on:status-added="handleStatusAddedWithoutWebsocket"
@@ -441,6 +443,12 @@ export default {
                     rtl: false
                 });
             },
+            isLocked(value){
+                if (value.draggedContext.element.locked == true && this.$userId != value.draggedContext.element.owner_id) { //locked and not owner
+                    return false;
+                }
+                return true;
+            }
         },
         mounted() {
             // Listen for the 'Kanban' event in the 'Presence.App.Kanban' presence channel

@@ -1,15 +1,16 @@
 @extends((Auth::user()->id == env('GUEST_USER')) || $is_shared ? 'layouts.contentonly' : 'layouts.master')
 
 @section('title')
-    @can('kanban_create')
+
+    @if(Auth::user()->id == $kanban->owner_id)
+        @can('kanban_create')
             <color-picker-component
                 id="{{ $kanban->id }}"
                 class="@if(!$may_edit) d-none @endif"
             ></color-picker-component>
-    @endcan
+        @endcan
+    @endif
     <small>{{ $kanban->title }} </small>
-
-    <span></span>
     @if(Auth::user()->id == $kanban->owner_id)
         <a class="btn btn-flat"
            href="/kanbans/{{ $kanban->id }}/edit">
@@ -21,8 +22,6 @@
                         onclick="app.__vue__.$modal.show('subscribe-modal',  {'modelId': {{ $kanban->id }}, 'modelUrl': 'kanban','shareWithToken': true });">
                     <i class="fa fa-share-alt text-secondary"></i>
                 </button>
-
-
             @endif
         @endcan
         <a href="/export_csv/{{$kanban->id}}" class="btn p-0">
@@ -33,6 +32,7 @@
             <i class="fa fa-file-pdf text-secondary"></i>
         </a>
     @endif
+    <p class="h6 pb-1">{{trans('global.owner')}}: {{ $kanban->owner->fullname() }}</p>
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item">
@@ -40,9 +40,9 @@
             <a href="/navigators/{{Auth::user()->organizations()->where('organization_id', '=',  Auth::user()->current_organization_id)->first()->navigators()->first()->id}}">Home</a>
         @else
             <a href="/"><i class="fa fa-home"></i></a>
+            <li class="breadcrumb-item"><a href="{{ route("kanbans.index") }}">{{ trans('global.kanban.title') }}</a></li>
         @endif
     </li>
-    <li class="breadcrumb-item"><a href="{{ route("kanbans.index") }}">{{ trans('global.kanban.title') }}</a></li>
     <li class="breadcrumb-item active">{{ Str::limit($kanban->title, 10) }}</li>
     <li class="breadcrumb-item "><a href="{{ env('DOCUMENTATION', '/documentation') }}" class="text-black-50"
                                     aria-label="{{ trans('global.documentation') }}"><i

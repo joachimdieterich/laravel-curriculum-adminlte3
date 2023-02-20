@@ -279,9 +279,9 @@ MIX_PUSHER_APP_WSPORT="${PUSHER_APP_WSPORT}"
 MIX_PUSHER_APP_WSSPORT="${PUSHER_APP_WSSPORT}"
 ```
 
-If SSL certificate path `LARAVEL_WEBSOCKETS_SSL_LOCAL_CERT` and `LARAVEL_WEBSOCKETS_SSL_LOCAL_PK` are only readable by root run `sudo npm run production`.   
+If SSL certificate path `LARAVEL_WEBSOCKETS_SSL_LOCAL_CERT` and `LARAVEL_WEBSOCKETS_SSL_LOCAL_PK` are only readable by root start websocket with sudo.
 
-Start Websocket with `php artisan websocket:serve`
+Start Websocket with `sudo php artisan websocket:serve`
 
 Further information [laravel-websockets](https://beyondco.de/docs/laravel-websockets/getting-started/introduction)
 

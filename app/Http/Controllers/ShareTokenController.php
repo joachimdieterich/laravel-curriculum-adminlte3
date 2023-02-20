@@ -16,8 +16,6 @@ class ShareTokenController extends Controller
     public function create(Request $request)
     {
         $input = $this->validateRequest();
-        $model_id = $input['model_id'];
-        $name = $input['name'];
         $date = $input['date'];
         if (! empty($date)) {
             $date = Carbon::parse($date);
@@ -25,56 +23,64 @@ class ShareTokenController extends Controller
         }
 
         // Create random hash token
-        do {
-            $token_key = Str::uuid();
-        } while (User::where('sharing_token', '=', $token_key)->first() instanceof User);
+        $token = Str::uuid();
 
-        // Check if token name is already taken and if so add a suffix
-        if (User::withTrashed()->where('username', '=', $name)->first() instanceof User) {
-            $suffix = 0;
-            do {
-                $suffix++;
-                $name = $input['name'].'_'.$suffix;
-            } while (User::withTrashed()->where('username', '=', $name)->first() instanceof User);
+        $user = User::find(env('GUEST_USER'));
+
+        $subscribe = KanbanSubscription::where(
+            [
+                'kanban_id' => $input['model_id'],
+                'subscribable_type' => "App\User",
+                'subscribable_id' => $user->id,
+            ])->get()->first();
+
+        if ($subscribe->sharing_token !== null)
+        {
+            $token = $subscribe->sharing_token;
+
+            $subscribe = KanbanSubscription::updateOrCreate([
+                'kanban_id' => $input['model_id'],
+                'subscribable_type' => "App\User",
+                'subscribable_id' => $user->id,
+            ], [
+                'due_date' => $date,
+                'title' => isset($input['title']) ? $input['title'] : false,
+                'editable' => isset($input['editable']) ? $input['editable'] : false,
+                'owner_id' => auth()->user()->id,
+                'sharing_token' => $token,
+            ]);
+            $subscribe->save();
+        }
+        else
+        {
+            $subscribe = KanbanSubscription::updateOrCreate([
+                'kanban_id' => $input['model_id'],
+                'subscribable_type' => "App\User",
+                'subscribable_id' => $user->id,
+                'sharing_token' => $token,
+            ], [
+                'due_date' => $date,
+                'title' => isset($input['title']) ? $input['title'] : false,
+                'editable' => isset($input['editable']) ? $input['editable'] : false,
+                'owner_id' => auth()->user()->id,
+            ]);
+            $subscribe->save();
         }
 
-        $user = new User();
-        $user->username = $name;
-        $user->firstname = $user->lastname = '';
-        $user->email = $token_key.'@curriculumonline.de';
-        $user->password = '-';
-        $user->sharing_token = $token_key;
-        $user->current_organization_id = Auth::user()->current_organization_id;
-        $user->save();
 
-        $subscription = new KanbanSubscription();
-        $subscription->kanban_id = $model_id;
-        $subscription->owner_id = Auth::id();
-        $subscription->subscribable_type = "App\User";
-        $subscription->subscribable_id = $user->id;
-        $subscription->due_date = $date;
-        $subscription->editable = isset($input['editable']) ? $input['editable'] : false;
-        $subscription->save();
 
-        OrganizationRoleUser::firstOrCreate(
-            [
-                'user_id' => $user->id,
-                'organization_id' => Auth::user()->current_organization_id,
-            ],
-            [
-                'role_id' => 9, // TOKEN
-            ]
-        );
-
-        return response()->json(['url' => '/kanban/share/'.$token_key]);
+        return response()->json(['url' => '/kanban/share/'.$token]);
     }
 
     public function auth($token)
     {
-        $user = User::where('sharing_token', $token)->first();
-        Auth::login($user, true);
+        if (Auth::user() == null) {       //if no user is authenticated authenticate guest
+            LogController::set('guestLogin');
+            LogController::setStatistics();
+            Auth::loginUsingId((env('GUEST_USER')), true);
+        }
 
-        $subscription = $user->kanbanSubscription->first();
+        $subscription = KanbanSubscription::where('sharing_token',$token)->get()->first();
         if ($subscription->due_date) {
             $now = Carbon::now();
             $due_date = Carbon::parse($subscription->due_date);
@@ -83,16 +89,12 @@ class ShareTokenController extends Controller
             }
         }
 
-        // Get subscription
-        $kanban = $user->kanbans->first();
-
-        return redirect('/kanbans/'.$kanban->id);
+        return redirect('/kanbans/'.$subscription->kanban_id);
     }
-
     protected function validateRequest()
     {
         return request()->validate([
-            'name' => 'string',
+            'title' => 'string',
             'date' => 'nullable|date',
             'model_id' => 'integer',
             'editable' => 'sometimes',

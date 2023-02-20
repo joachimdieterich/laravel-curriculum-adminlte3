@@ -84,6 +84,7 @@ class Kanban extends Model
             or ($this->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() //user is enroled in group
             or ($this->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id))->isNotEmpty() //user is enroled in group
             or ($this->owner_id == auth()->user()->id)            // or owner
+            or ((env('GUEST_USER') != null) ? User::find(env('GUEST_USER'))->kanbans->contains('id', $this->id) : false) //or allowed via guest
             or is_admin() // or admin
         ) {
             return true;
@@ -92,12 +93,17 @@ class Kanban extends Model
         }
     }
 
-    public function isEditable()
+    public function isEditable($user_id = null)
     {
-        $subscribtion = optional($this->userSubscriptions()->where('subscribable_id', auth()->user()->id)->first());
+        if ($user_id == null)
+        {
+            $user_id = auth()->user()->id;
+        }
+
+        $subscribtion = optional($this->userSubscriptions()->where('subscribable_id', $user_id)->first());
         if (
             $subscribtion->editable // user enrolled
-            or ($this->owner_id == auth()->user()->id)            // or owner
+            or ($this->owner_id == $user_id)            // or owner
             or is_admin() // or admin
         ) {
             return true;

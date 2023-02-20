@@ -9,7 +9,7 @@ Route::get('/impressum', 'OpenController@impressum')->name('impressum');
 
 Route::get('/terms', 'OpenController@terms')->name('terms');
 
-Route::get('kanban/share/{token}', 'ShareTokenController@auth');
+//Route::get('kanban/share/{token}', 'ShareTokenController@auth');
 
 Auth::routes(['register' => false]);
 
@@ -22,6 +22,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/admin', 'AdminController@index')->name('admin.index');
 
+    Route::post('kanbanItemComments/{kanbanItemComment}/react', 'KanbanItemCommentController@reaction')->name('kanbanItemCommentController.react');
     Route::resource('kanbanItemComment', 'KanbanItemCommentController');
 
     Route::resource('agendas', 'AgendaController');
@@ -321,6 +322,9 @@ Route::group(['middleware' => 'auth'], function () {
 //}
 
 if (env('GUEST_USER') !== null) {
+     Route::get('kanbans/{kanban}/token', 'KanbanController@getKanbanByToken');
+     Route::get('kanban/share/{token}', 'ShareTokenController@auth');
+
     Route::get('/guest', function () {
         if (Auth::user() == null) {       //if no user is authenticated authenticate guest
             LogController::set('guestLogin');
@@ -334,3 +338,4 @@ if (env('GUEST_USER') !== null) {
         }
     });
 }
+

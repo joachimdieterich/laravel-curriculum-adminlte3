@@ -39,14 +39,21 @@
         <div class="direct-chat-text"
              @mouseover="hover = comment.id"
              @mouseleave="hover = false">
+            <Reaction
+                :model="comment"
+                class="pull-right"
+                reaction="like"
+                url="/kanbanItemComments"
+            />
           <i v-if="$userId == comment.user.id && hover == comment.id"
-             class="text-danger pull-right p-1 fa fa-trash pointer"
+             class="text-danger pull-right p-1 mr-1 fa fa-trash pointer"
              @click="deleteComment(comment.id)"></i>
           <i v-else-if="hover == comment.id"
              v-can="'message_delete'"
-             class="text-danger pull-right p-1 fa fa-trash pointer"
+             class="text-danger pull-right p-1 mr-1 fa fa-trash pointer"
              @click="deleteComment(comment.id)"></i>
             <small>{{ comment.comment }}</small>
+
         </div>
       </div>
     </div>
@@ -74,10 +81,14 @@
 <script>
 import Avatar from "../uiElements/Avatar"
 import Form from 'form-backend-validation';
+import Reaction from "../reaction/Reaction";
 
 export default {
     name: 'Comments',
-    components: {Avatar},
+    components: {
+        Avatar,
+        Reaction
+    },
     props: {
         comments: {},
         model: {},

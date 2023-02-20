@@ -14,9 +14,9 @@
             <div class="d-flex flex-column">
                 <div>
                     <span>
-                        {{ item.subscribable.username }} |
+                        {{ item.title }} |
                         <small>
-                            {{ trans('global.valid_to') }} {{ diffForHumans(item.due_date) }}
+                            {{ diffForHumans(item.due_date) }}
                         </small>
                     </span>
                     <span class="pull-right custom-control custom-switch custom-switch-on-green">
@@ -34,7 +34,7 @@
                     </button>
                 </div>
                 <div>
-                    <span @click="copyToClipboard" class="pointer text-muted text-xs" v-html="generateShareURL(item.subscribable.sharing_token)"></span>
+                    <span @click="copyToClipboard" class="pointer text-muted text-xs" v-html="generateShareURL(item)"></span>
                 </div>
             </div>
         </li>
@@ -58,8 +58,9 @@ export default {
         }
     },
     methods: {
-        generateShareURL(token){
-            return window.location.origin + "/" + this.modelUrl + "/share/" + token;
+        generateShareURL(item){
+            return window.location.origin + "/" + this.modelUrl + "s/" + item.kanban_id + "/token/?sharing_token=" + item.sharing_token;
+            //return window.location.origin + "/" + this.modelUrl + "/share/" + token;
         },
         copyToClipboard(event){
             console.log(event.target.innerText);
@@ -82,7 +83,10 @@ export default {
             }
         },
         diffForHumans : function (date) {
-            return moment(date).locale('de').fromNow();
+            if (date == null){
+                return window.trans.global.valid;
+            }
+            return window.trans.global.valid_to + ' ' + moment(date).locale('de').fromNow();
         },
         successNotification(message) {
             this.$toast.success(message, {

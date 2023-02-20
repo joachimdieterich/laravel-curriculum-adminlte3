@@ -2,7 +2,8 @@
     <div class="card">
         <div class="card-header px-3 py-2" :style="{ backgroundColor: item.color, color: textColor }">
             <div class="card-tools">
-                <div v-if="editable && editor === false" class="btn btn-flat py-0 px-2 "
+                <div v-if="(editable == 1 && editor === false && onlyEditOwnedItems !== 1) || ($userId == item.owner_id )"
+                     class="btn btn-flat py-0 px-2 "
                      :id="'kanbanItemDropdown_'+index"
                      style="background-color: transparent;"
                      data-toggle="dropdown"
@@ -16,9 +17,11 @@
                         <i class="fa fa-pencil-alt mr-4"></i>
                         {{ trans('global.kanbanItem.edit') }}
                       </button>
-                      <button :name="'kanbanItemAddMedia_'+index"
-                              class="dropdown-item text-secondary  py-1"
-                              @click="addMedia()">
+                      <button
+                          v-can="'medium_create'"
+                          :name="'kanbanItemAddMedia_'+index"
+                          class="dropdown-item text-secondary  py-1"
+                          @click="addMedia()">
                         <i class="fa fa-folder-open mr-4"></i>
                         {{ trans('global.media.title_singular') }}
                       </button>
@@ -164,6 +167,7 @@ export default {
     'index': String,
     'width': Number,
     'commentable': false,
+    'onlyEditOwnedItems': false,
     'likable': true,
     'editable': true
   },
@@ -213,7 +217,7 @@ export default {
             this.form = this.item;
             this.$nextTick(() => {
                 this.$initTinyMCE([
-                    "autolink link example"
+                    "autolink link"
                 ] );
             });
 

@@ -58,6 +58,7 @@ class KanbanItemReloadEvent implements ShouldBroadcast
                 ->with([
                     'comments',
                     'comments.user',
+                    'comments.likes',
                     'likes',
                     'mediaSubscriptions.medium',
                     'owner',

@@ -12,6 +12,8 @@
                     "field" => "description",
                     "placeholder" => trans('global.kanban.fields.description'),
                     "rows" => 3,
+                    "editor_config_plugins" => [],
+                    "editor_config_toolbar" => "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link",
                     "value" => old('description', isset($kanban->description) ? $kanban->description : '')])
 @can('medium_create')
     @include ('forms.input.file',
@@ -43,6 +45,18 @@
             name="auto_refresh"
             {{ ($kanban->auto_refresh) ? "checked" : "" }}>
         <label class="custom-control-label " for="auto_refresh" > Automatisches aktualisieren</label>
+    </span>
+</div>
+
+<div id="kanban_only_edit_owned_items_form_group" class="form-group pt-3">
+    <span class="custom-control custom-switch custom-switch-on-green">
+        <input
+            type="checkbox"
+            class="custom-control-input pt-1 "
+            id="only_edit_owned_items"
+            name="only_edit_owned_items"
+            {{ ($kanban->only_edit_owned_items) ? "checked" : "" }}>
+        <label class="custom-control-label " for="only_edit_owned_items" > Nutzer können nur selbst erstellte Status/Karten bearbeiten. </label>
     </span>
 </div>
 

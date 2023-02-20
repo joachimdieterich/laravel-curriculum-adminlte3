@@ -37,18 +37,33 @@
 @section('scripts')
 @parent
 <script>
+    var editor_config_plugins =
+        @if(isset($editor_config_plugins))
+            @json($editor_config_plugins)
+    @else
+            [
+                "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+                "searchreplace wordcount visualblocks visualchars code fullscreen",
+                "insertdatetime media nonbreaking save table directionality",
+                "emoticons template paste textpattern"
+            ]
+    @endif
+    ;
+    var editor_config_toolbar =
+      @if(isset($editor_config_toolbar))
+          "{{ $editor_config_toolbar }}"
+      @else
+          "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media"
+      @endif
+    ;
+
   var editor_config = {
     path_absolute : "/",
     selector: "textarea.my-editor",
     branding:false,
     language: 'de',
-    plugins: [
-      "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-      "searchreplace wordcount visualblocks visualchars code fullscreen",
-      "insertdatetime media nonbreaking save table directionality",
-      "emoticons template paste textpattern"
-    ],
-    toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
+    plugins: editor_config_plugins,
+    toolbar: editor_config_toolbar,
     relative_urls: false,
     file_browser_callback : function(field_name, url, type, win) {
       var x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;

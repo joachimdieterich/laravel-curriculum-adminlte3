@@ -54,7 +54,11 @@ class KanbanItemCommentUpdatedEvent implements ShouldBroadcast
         return [
             'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
             'message' => KanbanItem::where('id', $this->kanbanItem->id)
-                ->with(['comments', 'comments.user'])->get()->first(),
+                ->with([
+                    'comments',
+                    'comments.user',
+                    'comments.likes',
+                ])->get()->first(),
         ];
     }
 }

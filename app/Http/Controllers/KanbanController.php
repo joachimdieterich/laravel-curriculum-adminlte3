@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Kanban;
+use App\KanbanSubscription;
 use App\Medium;
 use App\Organization;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maize\Markable\Models\Like;
@@ -103,6 +105,7 @@ class KanbanController extends Controller
             'medium_id' => $new_kanban['medium_id'] ?? null, //$this->getMediumIdByInputFilepath($new_kanban),
             'commentable' => isset($input['commentable']) ? 1 : '0',
             'auto_refresh' => isset($input['auto_refresh']) ? 1 : '0',
+            'only_edit_owned_items' => isset($input['only_edit_owned_items']) ? 1 : '0',
             'owner_id' => auth()->user()->id,
         ]);
 
@@ -115,22 +118,6 @@ class KanbanController extends Controller
         return redirect($kanban->path());
     }
 
-    /**
-     * If $input['filepath'] is set and medium exists, id is return, else return is null
-     *
-     * @param  array  $input
-     * @return mixed
-     */
-    /*public function getMediumIdByInputFilepath($input)
-    {
-        if (isset($input['filepath'])) {
-            $medium = new Medium();
-
-            return (null !== $medium->getByFilemanagerPath($input['filepath'])) ? $medium->getByFilemanagerPath($input['filepath'])->id : null;
-        } else {
-            return null;
-        }
-    }*/
 
     /**
      * Display the specified resource.
@@ -140,11 +127,12 @@ class KanbanController extends Controller
      */
     public function show(Kanban $kanban)
     {
-        abort_unless((\Gate::allows('kanban_show') and $this->userKanbans()->contains($kanban->id)), 403);
+        //abort_unless((\Gate::allows('kanban_show') and $this->userKanbans()->contains($kanban->id)), 403);
+        abort_unless((\Gate::allows('kanban_show') and $kanban->isAccessible()), 403);
         $kanban = $this->getKanbanWithRelations($kanban);
 
         $may_edit = $kanban->isEditable();
-        $is_shared = Auth::user()->sharing_token !== null;
+        $is_shared = $kanban->owner_id !== auth()->user()->id; //Auth::user()->sharing_token !== null;
         $is_pusher_active = env('PUSHER_APP_ACTIVE');
 
         LogController::set(get_class($this).'@'.__FUNCTION__, $kanban->id);
@@ -189,6 +177,7 @@ class KanbanController extends Controller
             'medium_id' => $input['medium_id'] ?? $kanban->medium_id,
             'commentable' => isset($input['commentable']) ? 1 : '0',
             'auto_refresh' => isset($input['auto_refresh']) ? 1 : '0',
+            'only_edit_owned_items' => isset($input['only_edit_owned_items']) ? 1 : '0',
             'owner_id' => auth()->user()->id,
         ]);
 
@@ -309,6 +298,7 @@ class KanbanController extends Controller
                     ->with([
                         'comments',
                         'comments.user',
+                        'comments.likes',
                         'likes',
                         'mediaSubscriptions.medium',
                         'owner',
@@ -316,6 +306,29 @@ class KanbanController extends Controller
                     ->orderBy('order_id');
             },
         ])->where('id', $kanban->id)->get()->first();
+    }
+
+    public function getKanbanByToken(Kanban $kanban, Request $request)
+    {
+        if (Auth::user() == null) {       //if no user is authenticated authenticate guest
+            LogController::set('guestLogin');
+            LogController::setStatistics();
+            Auth::loginUsingId((env('GUEST_USER')), true);
+        }
+
+        $input = $this->validateRequest();
+
+        $subscription = KanbanSubscription::where('sharing_token',$input['sharing_token'] )->get()->first();
+        if ($subscription->due_date) {
+            $now = Carbon::now();
+            $due_date = Carbon::parse($subscription->due_date);
+            if ($due_date < $now) {
+                abort(410, 'Dieser Link ist nicht mehr gültig');
+            }
+        }
+
+        return $this->show($kanban);
+
     }
 
     protected function validateRequest()
@@ -327,7 +340,9 @@ class KanbanController extends Controller
             'commentable' => 'sometimes',
             'auto_refresh' => 'sometimes',
             'color' => 'sometimes',
-            'filter' => 'sometimes'
+            'filter' => 'sometimes',
+            'only_edit_owned_items' => 'sometimes',
+            'sharing_token' => 'sometimes'
         ]);
     }
 }

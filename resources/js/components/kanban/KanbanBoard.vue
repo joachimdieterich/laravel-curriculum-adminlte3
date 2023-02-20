@@ -448,7 +448,20 @@ export default {
                     return false;
                 }
                 return true;
+            },
+            hexToRgbA(hex){
+                var c;
+                if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+                    c= hex.substring(1).split('');
+                    if(c.length== 3){
+                        c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+                    }
+                    c= '0x'+c.join('');
+                    return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+', 0.7)';
+                }
+                throw new Error('Bad Hex');
             }
+
         },
         mounted() {
             // Listen for the 'Kanban' event in the 'Presence.App.Kanban' presence channel
@@ -456,7 +469,13 @@ export default {
         },
         created () {
             this.statuses = this.kanban.statuses;
-            this.kanbanColor = this.kanban.color;
+
+            if (this.kanban.color.length < 8) {
+                this.kanbanColor = this.hexToRgbA(this.kanban.color)
+            } else {
+                this.kanbanColor = this.kanban.color;
+            }
+
 
             if (this.kanban.auto_refresh === 1){
                 this.autoRefresh = true;

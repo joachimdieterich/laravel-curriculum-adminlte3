@@ -93,14 +93,25 @@ class Kanban extends Model
         }
     }
 
-    public function isEditable($user_id = null)
+    public function isEditable($user_id = null, $token = null)
     {
         if ($user_id == null)
         {
             $user_id = auth()->user()->id;
         }
 
-        $subscribtion = optional($this->userSubscriptions()->where('subscribable_id', $user_id)->first());
+        if ($token == null){
+            $subscribtion = optional($this->userSubscriptions()
+                ->where('subscribable_id', $user_id)
+                ->first());
+        }
+        else
+        {
+            $subscribtion = optional($this->userSubscriptions()
+                ->where('subscribable_id', $user_id)
+                ->where('sharing_token', $token)
+                ->first());
+        }
         if (
             $subscribtion->editable // user enrolled
             or ($this->owner_id == $user_id)            // or owner

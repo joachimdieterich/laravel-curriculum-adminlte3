@@ -125,13 +125,21 @@ class KanbanController extends Controller
      * @param  \App\Kanban  $kanban
      * @return \Illuminate\Http\Response
      */
-    public function show(Kanban $kanban)
+    public function show(Kanban $kanban, $token = null)
     {
         //abort_unless((\Gate::allows('kanban_show') and $this->userKanbans()->contains($kanban->id)), 403);
         abort_unless((\Gate::allows('kanban_show') and $kanban->isAccessible()), 403);
         $kanban = $this->getKanbanWithRelations($kanban);
 
-        $may_edit = $kanban->isEditable();
+        if ($token == null)
+        {
+            $may_edit = $kanban->isEditable();
+        }
+        else
+        {
+            $may_edit = $kanban->isEditable(auth()->user()->id, $token);
+        }
+
         $is_shared = $kanban->owner_id !== auth()->user()->id; //Auth::user()->sharing_token !== null;
         $is_pusher_active = env('PUSHER_APP_ACTIVE');
 
@@ -327,7 +335,7 @@ class KanbanController extends Controller
             }
         }
 
-        return $this->show($kanban);
+        return $this->show($kanban, $input['sharing_token']);
 
     }
 

@@ -89,7 +89,7 @@ class ShareTokenController extends Controller
             }
         }
 
-        return redirect('/kanbans/'.$subscription->kanban_id);
+        return redirect('/kanbans/'.$subscription->kanban_id.'/token/?sharing_token='.$token);
     }
     protected function validateRequest()
     {

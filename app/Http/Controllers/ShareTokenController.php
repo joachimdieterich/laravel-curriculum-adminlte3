@@ -34,7 +34,7 @@ class ShareTokenController extends Controller
                 'subscribable_id' => $user->id,
             ])->get()->first();
 
-        if ($subscribe->sharing_token !== null)
+        if (isset($subscribe->sharing_token))
         {
             $token = $subscribe->sharing_token;
 

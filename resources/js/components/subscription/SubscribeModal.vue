@@ -253,6 +253,8 @@ export default {
                         },
                         cache: true
                     },
+                }).on('select2:open', () => {
+                    document.querySelector('.select2-search__field').focus();
                 }).on('select2:select', function (e) {
                     this.subscribe('App\\User', e.params.data.id, this.modelId);
                 }.bind(this));
@@ -270,6 +272,8 @@ export default {
                         },
                         cache: true
                     },
+                }).on('select2:open', () => {
+                    document.querySelector('.select2-search__field').focus();
                 }).on('select2:select', function (e) {
                     this.subscribe('App\\Group', e.params.data.id, this.modelId);
                 }.bind(this));
@@ -287,6 +291,8 @@ export default {
                         },
                         cache: true
                     },
+                }).on('select2:open', () => {
+                    document.querySelector('.select2-search__field').focus();
                 }).on('select2:select', function (e) {
                     this.subscribe('App\\Organization', e.params.data.id, this.modelId);
                 }.bind(this));

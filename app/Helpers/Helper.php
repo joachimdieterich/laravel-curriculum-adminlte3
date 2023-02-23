@@ -24,6 +24,15 @@ if (! function_exists('getEntriesForSelect2ByModel')) {
 
         $term = $input['term'];
 
+        $count = Count($model::where(   // count all enties FIRST with filter to get pagination working
+            function ($query) use ($field, $term) {
+                foreach ((array)$field as $f) {
+                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                }
+            })
+            //->orderBy($oderby)
+            ->get());
+
         $entries = $model::where(
             function ($query) use ($field, $term) {
                 foreach ((array)$field as $f) {
@@ -34,16 +43,6 @@ if (! function_exists('getEntriesForSelect2ByModel')) {
             ->skip($offset)
             ->take($resultCount)
             ->get([$id, DB::raw($text . ' as text')]);
-
-        $count = $entries->count();
-       /* $count = Count($model::where(
-            function ($query) use ($field, $term) {
-                foreach ((array)$field as $f) {
-                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
-                }
-            })
-            ->orderBy($oderby)
-            ->get([$id, DB::raw($text . ' as text')]));*/
 
         $endCount = $offset + $resultCount;
         $morePages = $count > $endCount;
@@ -73,6 +72,15 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
 
         $term = $input['term'];
 
+        $count = Count($collection->where(  // count all enties FIRST with filter to get pagination working
+            function($query) use ($field, $term)
+            {
+                foreach ((array) $field as $f) {
+                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                }
+            })
+            ->get());
+
         $entries = $collection->where(
             function($query) use ($field, $term)
             {
@@ -86,17 +94,8 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
             ->select([$table.$id, DB::raw($text . ' as text')])
             ->get();
 
-        $count = $entries->count();
-        /*$count = Count($collection->where(
-            function($query) use ($field, $term)
-            {
-                foreach ((array) $field as $f) {
-                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
-                }
-            })
-            ->orderBy($oderby)
-            ->select([$table.$id, DB::raw($text . ' as text')])
-            ->get());*/
+
+        //dump('resultcount: '.$resultCount.' all'. $count);
 
         $endCount = $offset + $resultCount;
         $morePages = $count > $endCount;

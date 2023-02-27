@@ -126,7 +126,7 @@
 
                         <div class="form-group pt-2">
                             <input v-model="nameToken" class="form-control mb-2" style="width: 100%;"
-                                   placeholder="Name">
+                                   placeholder="Freigabetitel">
                             <date-picker v-model="endDateToken" style="width:100%;"
                                          placeholder="Ablaufdatum"></date-picker>
                         </div>

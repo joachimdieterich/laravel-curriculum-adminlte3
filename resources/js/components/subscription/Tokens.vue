@@ -59,8 +59,7 @@ export default {
     },
     methods: {
         generateShareURL(item){
-            return window.location.origin + "/" + this.modelUrl + "s/" + item.kanban_id + "/token/?sharing_token=" + item.sharing_token;
-            //return window.location.origin + "/" + this.modelUrl + "/share/" + token;
+            return window.location.origin + "/" + this.modelUrl + "s/" + item.kanban_id + "/token?sharing_token=" + item.sharing_token;
         },
         copyToClipboard(event){
             console.log(event.target.innerText);

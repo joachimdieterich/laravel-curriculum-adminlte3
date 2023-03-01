@@ -28,7 +28,8 @@
                     :src="this.uploadIframeUrl"
                     :width="this.width"
                     :height="this.height"
-                    frameborder="0">
+                    frameborder="0"
+                >
                 </iframe>
             </div>
             <div id="edusharing_link"
@@ -38,7 +39,8 @@
                     :src="this.cloudIframeUrl"
                     :width="this.width"
                     :height="this.height"
-                    frameborder="0">
+                    frameborder="0"
+                >
                 </iframe>
             </div>
         </div>

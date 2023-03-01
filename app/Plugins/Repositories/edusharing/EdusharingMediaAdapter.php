@@ -32,10 +32,20 @@ class EdusharingMediaAdapter implements MediaInterface
      */
     public function create()
     {
+        $base = new EduSharingHelperBase(
+            env('EDUSHARING_REPO_URL', ''),
+            env('EDUSHARING_PRIV_KEY', ''),
+            env('EDUSHARING_APP_ID', ''),
+        );
+
+        $authHelper = new EduSharingAuthHelper($base);
+
+        $ticket = $authHelper->getTicketForUser(auth()->user()->common_name);
+
         if (request()->wantsJson()) {
             return [
-                'uploadIframeUrl' => config('medium.repositories.edusharing.upload_iframe_url'),
-                'cloudIframeUrl' => config('medium.repositories.edusharing.cloud_iframe_url').'&ticket='.(new Edusharing())->accessToken,
+                'uploadIframeUrl' => config('medium.repositories.edusharing.upload_iframe_url').'&ticket='.$ticket,
+                'cloudIframeUrl' => config('medium.repositories.edusharing.cloud_iframe_url').'&ticket='.$ticket,
             ];
         }
         abort(404);
@@ -68,7 +78,7 @@ class EdusharingMediaAdapter implements MediaInterface
         if (($input['subscribable_type'] !== 'null') and ($input['subscribable_id'] !== 'null')) {
             //create usage
 
-          /*  try {
+            try {
                 $edusharing = new Edusharing;
 
                 $usage = $edusharing
@@ -79,7 +89,7 @@ class EdusharingMediaAdapter implements MediaInterface
                     );
             } catch (Exception $e) {
                 dump($e->getMessage());
-            }*/
+            }
 
 
             //subscribe
@@ -114,19 +124,22 @@ class EdusharingMediaAdapter implements MediaInterface
         if ($medium->subscriptions()) {
             foreach ($medium->subscriptions as $subscription) {
                 if ($this->checkIfUserHasSubscription($subscription)) {
-                    /*if (!is_null($medium->additional_data))
+
+                    if ($subscription->additional_data != null)
                     {
-                        $repositoryPlugin = app()->make('App\Plugins\Repositories\RepositoryPlugin');
+                        $edusharing = new Edusharing;
+                        $node = $edusharing->getNodeByUsage($subscription->additional_data, $subscription->owner_id);
 
-                        $node = $repositoryPlugin->plugins[$medium->adapter]
-                            ->getNodeByUsage($medium->additional_data);
+                        //dump($node);
+                        if (request()->wantsJson()) {
+                            return [
+                                'detailsSnippet' => $node['detailsSnippet']
+                            ];
+                        }
+                        //return request('download') ? redirect($node['node']['downloadUrl']['url']) : redirect($node['node']['preview']['url']);
+                    }
 
-                        dump($node);
-
-                        return $node;
-                    }*/
-
-                    return request('download') ? redirect($medium->path) : redirect($medium->thumb_path);
+                    //return request('download') ? redirect($medium->path) : redirect($medium->thumb_path);
                 }
             }
         }
@@ -188,6 +201,7 @@ class EdusharingMediaAdapter implements MediaInterface
         if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
             $subscribable_type = $input['subscribable_type'];
             $subscribable_id = $input['subscribable_id'];
+
 
             MediumSubscription::where([
                 ['subscribable_type', $subscribable_type],

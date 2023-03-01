@@ -1,6 +1,7 @@
 <?php
 namespace App\Plugins\Repositories\edusharing;
 
+use Exception;
 class EduSharingAuthHelper extends EduSharingHelperAbstract  {
 
     /**
@@ -44,14 +45,18 @@ class EduSharingAuthHelper extends EduSharingHelperAbstract  {
      */
     public function getTicketForUser(string $username) {
 
+        //dump($this->base->baseUrl . '/rest/authentication/v1/appauth/' . rawurlencode($username));
         $curl = $this->base->handleCurlRequest($this->base->baseUrl . '/rest/authentication/v1/appauth/' . rawurlencode($username), [
             CURLOPT_POST => 1,
             CURLOPT_FAILONERROR => false,
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_HTTPHEADER => $this->getSignatureHeaders($username),
             CURLOPT_CONNECTTIMEOUT => 5,
-            CURLOPT_TIMEOUT => 5
+            CURLOPT_TIMEOUT => 5,
+            CURLOPT_SSL_VERIFYHOST => env('EDUSHARING_CURLOPT_SSL_VERIFYHOST', 2),
+            CURLOPT_SSL_VERIFYPEER => env('EDUSHARING_CURLOPT_SSL_VERIFYPEER', 1),
         ]);
+        //dump($curl);
         $data = json_decode($curl->content, true);
         if ($curl->error === 0 && $curl->info["http_code"] === 200 && ($data['userId'] === $username ||
                 substr($data['userId'], 0, strlen($username) + 1) === $username . '@'

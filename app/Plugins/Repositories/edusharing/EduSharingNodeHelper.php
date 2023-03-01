@@ -1,6 +1,8 @@
 <?php
 namespace App\Plugins\Repositories\edusharing;
 
+use Exception;
+
 class EduSharingNodeHelper extends EduSharingHelperAbstract  {
     /**
      * creates a usage for a given node
@@ -44,7 +46,9 @@ class EduSharingNodeHelper extends EduSharingHelperAbstract  {
                 'nodeVersion' => $nodeVersion,
             ]),
             CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_HTTPHEADER => $headers
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_SSL_VERIFYHOST => env('EDUSHARING_CURLOPT_SSL_VERIFYHOST', 2),
+            CURLOPT_SSL_VERIFYPEER => env('EDUSHARING_CURLOPT_SSL_VERIFYPEER', 1),
         ]);
         $data = json_decode($curl->content, true);
         if ($curl->error === 0 && $curl->info["http_code"] === 200) {
@@ -87,7 +91,9 @@ class EduSharingNodeHelper extends EduSharingHelperAbstract  {
         $curl = $this->base->handleCurlRequest($this->base->baseUrl . '/rest/usage/v1/usages/node/' . rawurlencode($nodeId), [
             CURLOPT_FAILONERROR => false,
             CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_HTTPHEADER => $headers
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_SSL_VERIFYHOST => env('EDUSHARING_CURLOPT_SSL_VERIFYHOST', 2),
+            CURLOPT_SSL_VERIFYPEER => env('EDUSHARING_CURLOPT_SSL_VERIFYPEER', 1),
         ]);
         $data = json_decode($curl->content, true);
         if ($curl->error === 0 && $curl->info["http_code"] === 200) {
@@ -139,7 +145,9 @@ class EduSharingNodeHelper extends EduSharingHelperAbstract  {
             CURLOPT_POST => 1,
             CURLOPT_POSTFIELDS => json_encode($renderingParams),
             CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_HTTPHEADER => $headers
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_SSL_VERIFYHOST => env('EDUSHARING_CURLOPT_SSL_VERIFYHOST', 2),
+            CURLOPT_SSL_VERIFYPEER => env('EDUSHARING_CURLOPT_SSL_VERIFYPEER', 1),
         ]);
 
         $data = json_decode($curl->content, true);
@@ -175,7 +183,9 @@ class EduSharingNodeHelper extends EduSharingHelperAbstract  {
             CURLOPT_FAILONERROR => false,
             CURLOPT_CUSTOMREQUEST => 'DELETE',
             CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_HTTPHEADER => $headers
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_SSL_VERIFYHOST => env('EDUSHARING_CURLOPT_SSL_VERIFYHOST', 2),
+            CURLOPT_SSL_VERIFYPEER => env('EDUSHARING_CURLOPT_SSL_VERIFYPEER', 1),
         ]);
         $data = json_decode($curl->content, true);
         if ($curl->error === 0 && $curl->info["http_code"] === 200) {

@@ -267,7 +267,7 @@ export default {
             callbackFunction: null,
             callbackParentComponent: null,
             callbackComponent: null,
-            eventHubCallbackFunctioneventHubCallbackFunction: null,
+            eventHubCallbackFunction: null,
             eventHubCallbackFunctionParams: null,
 
             form: new Form({

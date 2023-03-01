@@ -10,7 +10,12 @@ class Usage
     public $resourceId;
     public $usageId;
 
-    public function __construct($nodeId, $nodeVersion, $containerId, $resourceId, $usageId)
+    public function __construct(
+        $nodeId,
+        $nodeVersion,
+        $containerId,
+        $resourceId,
+        $usageId)
     {
         $this->nodeId = $nodeId;
         $this->nodeVersion = $nodeVersion;

@@ -173,7 +173,7 @@ export default {
   },
   data() {
     return {
-      new_media: null,
+        new_media: null,
         show_comments: false,
         editor: false,
         form: new Form({
@@ -205,7 +205,7 @@ export default {
       },
         deleteItem() {
           axios.delete("/kanbanItems/" + this.item.id)
-              .then(res => { // Tell the parent component we've added a new task and include it
+              .then(res => {
                 this.$emit("item-destroyed", this.item);
               })
               .catch(err => {
@@ -262,17 +262,17 @@ export default {
           this.$modal.show(
               'medium-create-modal',
               {
-                'referenceable_type': 'App\\\KanbanItem',
-                'referenceable_id': this.item.id,
-                'callbackParentComponent': 'kanbanBoard',
-                'callbackComponent': 'kanbanItemId' + this.item.id,
-                'callbackFunction': 'reload',
+                    'referenceable_type': 'App\\\KanbanItem',
+                    'referenceable_id': this.item.id,
+                    'eventHubCallbackFunction': 'reload_kanban_item',
+                    'eventHubCallbackFunctionParams': this.item.id,
               });
         },
         reload() { //after media upload
           axios.get("/kanbanItems/" + this.item.id)
               .then(res => {
-                this.item = res.data.message;
+                  this.$emit("item-updated", res.data.message);
+                  //this.item = res.data.message;
               })
               .catch(err => {
                 console.log(err.response);
@@ -282,6 +282,11 @@ export default {
       },
         mounted() {
             this.form = this.item;
+            this.$eventHub.$on('reload_kanban_item', (e) => {
+                if (this.item.id == e.id) {
+                    this.reload();
+                }
+            });
         },
 
         components: {

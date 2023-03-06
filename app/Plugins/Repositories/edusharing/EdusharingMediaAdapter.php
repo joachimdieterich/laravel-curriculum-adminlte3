@@ -202,13 +202,20 @@ class EdusharingMediaAdapter implements MediaInterface
             $subscribable_type = $input['subscribable_type'];
             $subscribable_id = $input['subscribable_id'];
 
-
-            MediumSubscription::where([
+            $subscription = MediumSubscription::where([
                 ['subscribable_type', $subscribable_type],
                 ['subscribable_id', $subscribable_id],
                 ['medium_id', $medium->id],
-            ])
-            ->delete();
+            ])->first()->get();
+
+            // delete usage
+            $edusharing = new Edusharing;
+            $edusharing->deleteUsage(
+                $subscription->additional_data['node_id'],
+                $subscription->additional_data['usage_id'],
+            );
+
+            $subscription->delete();
         }
 
         if ($medium->subscriptions()->count() <= 1) {

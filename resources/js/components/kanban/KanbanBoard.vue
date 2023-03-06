@@ -58,7 +58,9 @@
                                      :width="itemWidth"
                                      v-on:item-destroyed="handleItemDestroyedWithoutWebsocket"
                                      v-on:item-updated="handleItemUpdatedWithoutWebsocket"
-                                     v-on:item-edit=""/>
+                                     v-on:item-edit=""
+                                     v-on:sync="sync"/>
+
                             </span>
                                 <!--  ./Items -->
                             </transition-group>
@@ -126,9 +128,9 @@ export default {
             statuses:{
                 deep: true,
                 handler(){
-                    //console.log('The list of colours has changed!');
+                    //console.log('changed');
                 }
-            }
+            },
         },
         data() {
             return {
@@ -331,6 +333,7 @@ export default {
             },
             handleItemUpdatedWithoutWebsocket(updatedItem){
                 if (this.pusher == 0){
+                    //console.log('update'+updatedItem);
                     this.handleItemUpdated(updatedItem);
                 }
             },
@@ -466,6 +469,9 @@ export default {
         mounted() {
             // Listen for the 'Kanban' event in the 'Presence.App.Kanban' presence channel
             this.startPusher();
+            this.$eventHub.$on('reload_kanban_board', (e) => {
+                this.sync()
+            });
         },
         created () {
             this.statuses = this.kanban.statuses;

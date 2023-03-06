@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div  v-html="this.detailsSnippet"></div>
+        <div v-html="this.detailsSnippet"></div>
 
         <div :id="'loading_'+this.medium.id" class="overlay text-center" style="width:100% !important;">
             <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
@@ -26,7 +26,7 @@
                 $("#loading_"+this.medium.id).show();
                 axios.get('/media/' + this.medium.id)
                     .then((response) => {
-                        console.log(response);
+                        //console.log(response);
                         this.detailsSnippet = response.data.detailsSnippet;
                         $("#loading_"+this.medium.id).hide();
                     })

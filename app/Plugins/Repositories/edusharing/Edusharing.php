@@ -314,6 +314,18 @@ class Edusharing extends RepositoryPlugin
         );
     }
 
+    public function deleteUsage(
+        string $nodeId,
+        string $usageId
+    )
+    {
+        $nodeHelper = new EduSharingNodeHelper($this->helperBase());
+        return $nodeHelper->deleteUsage(
+            $nodeId,
+            $usageId
+        );
+    }
+
     public function getNodeByUsage($usage, $owner_id)
     {
         $nodeHelper = new EduSharingNodeHelper($this->helperBase($owner_id));

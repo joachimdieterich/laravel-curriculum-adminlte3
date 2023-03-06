@@ -270,7 +270,18 @@ class KanbanController extends Controller
 
         foreach ($kanban->statuses as $status) {
             foreach ($status->items as $k) {
-                fputcsv($fp, [$status->title, $k->title, strip_tags($k->description),  $k->created_at, $k->owner->fullName()]);
+                fputcsv(
+                    $fp,
+                    [
+                        $status->title,
+                        $k->title,
+                        strip_tags(
+                            preg_replace('~<a href="(?!https?://)[^"]+">(.*?)</a>~', '$1', $k->description)
+                        ),
+                        $k->created_at,
+                        $k->owner->fullName()
+                    ]
+                );
             }
         }
 

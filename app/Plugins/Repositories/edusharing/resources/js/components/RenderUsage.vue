@@ -1,6 +1,11 @@
 <template>
     <div>
-        <div v-html="this.detailsSnippet"></div>
+        <div v-html="this.detailsSnippet"
+        @click="show()"></div>
+        <div style="width: 100%;display: block;height: 25px;">
+            <i class="edusharing_download fa fa-download text-muted pointer"
+               @click="show()"></i>
+        </div>
 
         <div :id="'loading_'+this.medium.id" class="overlay text-center" style="width:100% !important;">
             <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
@@ -35,10 +40,9 @@
                         $("#loading_"+this.medium.id).hide();
                     });
             },
-            show(medium) {
-                //window.open(medium.path, '_blank');
+            show() {
+                window.open(this.medium.path, '_blank');
             },
-
         },
         mounted(){
             this.loader();
@@ -59,5 +63,25 @@
 .edusharing_rendering_content_footer_top,
 .edusharing_rendering_content_footer {
     display: none !important;
+    /*width: 60%;
+    margin-right: 25px;
+    margin-left: 25px;*/
+}
+
+.edusharing_download {
+    position: absolute;
+    left: 0;
+    bottom: 5px;
+    z-index: 15;
+    display: flex;
+    justify-content: center;
+    padding-left: 0;
+    margin-right: 15%;
+    margin-left: 15%;
+    list-style: none;
+}
+
+iframe {
+    min-height: 350px !important;
 }
 </style>

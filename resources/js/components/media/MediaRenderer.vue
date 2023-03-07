@@ -10,7 +10,8 @@
         </span>
         <span v-else-if="mime(medium.mime_type) === 'external'">
             <render-usage
-                :medium="medium"></render-usage>
+                :medium="medium"
+                ></render-usage>
 <!--            <img
                 :src="scr"
                 :width="width"

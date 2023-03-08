@@ -18,6 +18,7 @@
                         {{ trans('global.kanbanItem.edit') }}
                       </button>
                       <button
+                          v-can="'medium_create'"
                           :name="'kanbanItemAddMedia_'+index"
                           class="dropdown-item text-secondary  py-1"
                           @click="addMedia()">

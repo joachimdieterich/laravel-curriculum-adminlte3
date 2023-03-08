@@ -38,7 +38,7 @@
             <div class="d-md-flex">
                 <div class="card-pane-left p-0">
                     <ul class="nav flex-column">
-                        <li class="nav-link text-sm" v-can="'medium_create'">
+                        <li class="nav-link text-sm" v-can="'medium_access'">
                             <a class="link-muted"
                                href="#upload"
                                data-toggle="tab"
@@ -46,7 +46,7 @@
                                 {{ trans('global.media.upload') }}
                             </a>
                         </li>
-                        <li class="nav-link text-sm" v-can="'medium_create'">
+                        <li class="nav-link text-sm" v-can="'medium_access'">
                             <a class="link-muted"
                                href="#media"
                                data-toggle="tab"

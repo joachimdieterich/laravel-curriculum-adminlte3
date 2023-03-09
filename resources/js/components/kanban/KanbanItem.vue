@@ -287,7 +287,15 @@ export default {
                     this.reload();
                 }
             });
+            this.$nextTick(() => {
+                MathJax.startup.defaultReady();
+            })
         },
+    watch: {
+        form: function (){
+            MathJax.startup.defaultReady();
+        }
+    },
 
         components: {
             Comments,

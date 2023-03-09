@@ -99,7 +99,7 @@ export default {
             this.form.order_id = this.status.items.length;
         }
         this.$initTinyMCE([
-            "autolink link example"
+            "autolink link"
         ], );
     },
     methods: {

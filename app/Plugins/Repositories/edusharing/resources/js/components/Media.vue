@@ -63,7 +63,7 @@
                      :style="{'background':'white url('+iconUrl(medium)+') no-repeat center', 'background-size': '24px'}"
                      >
                 </div>
-                <span
+<!--                <span
                     v-can="'medium_delete'"
                     class="p-1 pointer_hand"
                     accesskey="" style="position:absolute; top:0px; height: 30px; width:100%;">
@@ -74,7 +74,7 @@
                             @click.stop="unlinkMedium(medium.node_id, medium.value);">
                             <small><i class="fa fa-unlink"></i></small>
                         </button>
-                </span>
+                </span>-->
 
                 <span class="bg-white text-center p-1 overflow-auto "
                       style="position:absolute; bottom:0px; height: 150px; width:100%;">

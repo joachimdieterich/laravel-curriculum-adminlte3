@@ -102,7 +102,7 @@ class KanbanController extends Controller
             'title' => $new_kanban['title'],
             'description' => $new_kanban['description'],
             'color' => $new_kanban['color'] ?? '#2980B9',
-            'medium_id' => $new_kanban['medium_id'] ?? null, //$this->getMediumIdByInputFilepath($new_kanban),
+            'medium_id' => $new_kanban['medium_id'] ?? null,
             'commentable' => isset($input['commentable']) ? 1 : '0',
             'auto_refresh' => isset($input['auto_refresh']) ? 1 : '0',
             'only_edit_owned_items' => isset($input['only_edit_owned_items']) ? 1 : '0',

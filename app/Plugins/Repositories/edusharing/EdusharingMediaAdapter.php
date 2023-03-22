@@ -237,7 +237,6 @@ class EdusharingMediaAdapter implements MediaInterface
                     and ($subscription->visibility == 1)) {
                     return true;
                 }
-
                 break;
             case "App\Group":
                 if (in_array($subscription->subscribable_id, auth()->user()->groups()->pluck('groups.id')->toArray())
@@ -255,6 +254,10 @@ class EdusharingMediaAdapter implements MediaInterface
                 if ($subscription->subscribable->kanban->isAccessible()) {
                     return true;
                 }
+                break;
+            case "App\Kanban":
+            case "App\Logbook":
+                    return $subscription->subscribable->isAccessible();
                 break;
 
             default: return false;

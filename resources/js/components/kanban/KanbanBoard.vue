@@ -1,5 +1,12 @@
 <template>
     <div>
+<!--        <media-renderer
+            v-if="kanban.medium_id !== null"
+            class="kanban_board_wrapper p-0"
+            style="height:100%;width:100%"
+            :medium="kanban.medium"
+            :downloadable=false
+        ></media-renderer>-->
         <img v-if="kanban.medium_id !== null"
             class="kanban_board_wrapper p-0"
              :src="'/media/'+ kanban.medium_id + '?model=Kanban&model_id=' + kanban.id"

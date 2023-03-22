@@ -134,6 +134,7 @@ Vue.component('content-modal', require('./components/content/ContentModal.vue').
 Vue.component('content-create-modal', require('./components/content/ContentCreateModal.vue').default);
 Vue.component('content-subscription-modal', require('./components/content/ContentSubscriptionModal.vue').default);
 Vue.component('reference-objective-modal', require('./components/reference/ReferenceObjectiveModal.vue').default);
+Vue.component('media-renderer', require('./components/media/MediaRenderer.vue').default);
 Vue.component('medium-modal', require('./components/media/MediumModal.vue').default);
 Vue.component('medium-create-modal', require('./components/media/MediumCreateModal.vue').default);
 Vue.component('medium-export-modal', require('./components/media/MediumExportModal.vue').default);

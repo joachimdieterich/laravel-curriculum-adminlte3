@@ -63,7 +63,7 @@
         <!-- Main content -->
         <section class="content">
             @yield('content')
-            <input id="medium_id" class="invisible">
+<!--            <input id="medium_id" class="invisible">-->
         </section>
         <!-- /.content -->
     </div>

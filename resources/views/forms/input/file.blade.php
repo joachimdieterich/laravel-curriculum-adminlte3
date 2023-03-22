@@ -10,7 +10,13 @@
     <span class="input-group-btn">
         <a id="openMediumCreateModal"
            class="btn btn-primary text-white"
-           onclick="app.__vue__.$modal.show('medium-create-modal',  {'description': {{ json_encode('') }} ,'accept': '{{ isset($accept) ? $accept : ''}}' });">
+           onclick="app.__vue__.$modal.show('medium-create-modal',
+                {
+                    'description': {{ json_encode('') }} ,
+                    'accept': '{{ $accept ?? '' }}',
+                    'subscribable_type': '{{  $subscribable_type ?? '' }}',
+                    'subscribable_id': '{{  $subscribable_id ?? '' }}',
+                });">
             <i class="fa fa-cloud-upload-alt pr-2"></i>
             {{ trans('global.'.$model.'.title_singular') }}
         </a>
@@ -27,20 +33,25 @@
     @endif
 </div>
 
-<img id="holder"
+<media-renderer
+    style="max-height: 150px; overflow: auto;"
+    :medium="{{ App\Medium::find($value) }}"
+    :downloadable=false
+></media-renderer>
+<!--<img id="{{ $field }}_holder"
      @if($value != '')
      src="/media/{{$value}}"
      @endif
-     style="margin-top:15px;max-height:100px;">
+     style="margin-top:15px;max-height:100px;">-->
 
 <medium-create-modal></medium-create-modal>
 @section('scripts')
 @parent
 <script>
     $(document).ready( function () {
-        $('#medium_id').on('change', function() {
+        $("#{{ $field }}").on('change', function() {
             //reload thumbs
-            $('#holder').attr("src", '/media/'+ $('#medium_id').val());
+            $("#{{ $field }}_holder").attr("src", '/media/'+ $("#{{ $field }}").val());
         });
     });
 </script>

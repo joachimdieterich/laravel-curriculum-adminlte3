@@ -3,7 +3,8 @@
         <div v-html="this.detailsSnippet"
         @click="show()"></div>
         <div style="width: 100%;display: block;height: 25px;">
-            <i class="edusharing_download fa fa-download text-muted pointer"
+            <i v-if="downloadable"
+                class="edusharing_download fa fa-download text-muted pointer"
                @click="show()"></i>
         </div>
 
@@ -18,8 +19,13 @@
 <script>
     export default {
         props: {
-                'medium': {},
-              },
+            medium: {},
+            downloadable: {
+                type: Boolean,
+                default: true
+            }
+        },
+
         data() {
             return {
                 detailsSnippet: '',

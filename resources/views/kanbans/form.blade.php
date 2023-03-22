@@ -15,15 +15,18 @@
                     "editor_config_plugins" => [],
                     "editor_config_toolbar" => "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link",
                     "value" => old('description', isset($kanban->description) ? $kanban->description : '')])
-@can('medium_create')
-    @include ('forms.input.file',
-                ["model" => "media",
-                "field" => "medium_id",
-                "label" => false,
-                "accept" => "image/*",
-                "value" => old('medium_id', isset($kanban->medium_id) ? $kanban->medium_id : '')])
-@endcan
-
+@if(isset($kanban->id))
+    @can('medium_create')
+        @include ('forms.input.file',
+                    ["model" => "media",
+                    "field" => "medium_id",
+                    "label" => false,
+                    "accept" => "image/*",
+                    "subscribable_type" => "App\\\Kanban",
+                    "subscribable_id" => $kanban->id ?? '',
+                    "value" => old('medium_id', $kanban->medium_id ?? '')])
+    @endcan
+@endif
 <div id="kanban_comments_form_group" class="form-group pt-3">
     <span class="custom-control custom-switch custom-switch-on-green">
         <input

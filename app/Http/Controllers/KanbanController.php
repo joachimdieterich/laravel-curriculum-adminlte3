@@ -324,6 +324,7 @@ class KanbanController extends Controller
                     ])
                     ->orderBy('order_id');
             },
+            'medium',
         ])->where('id', $kanban->id)->get()->first();
     }
 

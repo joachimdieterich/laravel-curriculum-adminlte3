@@ -11,6 +11,7 @@
         <span v-else-if="mime(medium.mime_type) === 'external'">
             <render-usage
                 :medium="medium"
+                :downloadable="downloadable"
                 ></render-usage>
 <!--            <img
                 :src="scr"
@@ -49,6 +50,10 @@ import renderUsage from "../../../../app/Plugins/Repositories/edusharing/resourc
             edit: {
                 type: Boolean,
                 default: false
+            },
+            downloadable: {
+                type: Boolean,
+                default: true
             }
         },
         data() {
@@ -92,7 +97,7 @@ import renderUsage from "../../../../app/Plugins/Repositories/edusharing/resourc
         },
         components: {
             renderUsage
-        }
+        },
 
     }
 </script>

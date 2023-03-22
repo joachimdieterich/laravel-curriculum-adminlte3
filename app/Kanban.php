@@ -45,6 +45,12 @@ class Kanban extends Model
         return $this->hasMany(KanbanSubscription::class);
     }
 
+    public function medium()
+    {
+        return $this->hasOne('App\Medium', 'id', 'medium_id');
+    }
+
+
     public function userSubscriptions()
     {
         return $this->hasMany(KanbanSubscription::class)

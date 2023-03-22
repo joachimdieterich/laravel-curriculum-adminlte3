@@ -342,7 +342,7 @@ export default {
         beforeOpen(event) {
             this.selectedFiles = [];
             this.message = '';
-
+            //console.log(event.params);
             if (event.params.referenceable_type){
                 this.form.subscribable_type = event.params.referenceable_type;
             }
@@ -379,6 +379,7 @@ export default {
             if (event.params.eventHubCallbackFunctionParams) {
                 this.eventHubCallbackFunctionParams = event.params.eventHubCallbackFunctionParams;
             }
+            //console.log(this.form);
         },
         setTab(tab){
             this.tab = tab;
@@ -388,7 +389,7 @@ export default {
         },
         beforeClose() {
         },
-        saveToForm() {
+        saveToForm(selected = null) {
             if (this.eventHubCallbackFunction) {
                 this.$eventHub.$emit(this.eventHubCallbackFunction, {'id': this.eventHubCallbackFunctionParams, 'selectedMediumId': this.selectedFiles});
             } else if (this.callbackComponent) {
@@ -398,7 +399,7 @@ export default {
                     app.__vue__.$refs[this.callbackComponent][0][this.callbackFunction]();
                 }
             } else {
-                $('#' + this.target).val(this.selectedFiles);
+                $('#' + this.target).val(selected ? selected : this.selectedFiles);
                 $('#' + this.target).trigger("change");
             }
 
@@ -466,7 +467,8 @@ export default {
             this.form = form;
             axios.post('/media?repository=' + this.form.repository, this.form)
                  .then((response) => {
-                    this.saveToForm()
+                    // console.log(response);
+                    this.saveToForm(response.data.id);
                  });
         });
     },

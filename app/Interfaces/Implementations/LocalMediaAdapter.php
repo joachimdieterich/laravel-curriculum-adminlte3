@@ -75,7 +75,7 @@ class LocalMediaAdapter implements MediaInterface
 
             $files = $request->file('file');
             $uploaded = new Collection();
-            $pathPrefix = '/users/'.auth()->user()->id.'/';
+            $pathPrefix = '/users/'.auth()->user()->id;//.'/';
             foreach ($files as $file) {
                 $filename = time().'_'.pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME).'.'.$file->getClientOriginalExtension(); //todo: filename should be editable
 

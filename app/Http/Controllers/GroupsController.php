@@ -353,7 +353,7 @@ class GroupsController extends Controller
             return $this->select2RequestWithOptGroup(
                 Organization::select(['id', 'title'])
             );
-        } elseif (is_schooladmin()) {
+        } elseif (is_schooladmin() OR is_teacher()) {
             return $this->select2RequestWithOptGroup(
                 auth()->user()->organizations()->select(['organizations.id', 'organizations.title'])
                 //Organization::where('id', auth()->user()->current_organization_id)->select(['id', 'title'])

@@ -318,6 +318,13 @@ if (! function_exists('is_schooladmin')) {
     }
 }
 
+if (! function_exists('is_teacher')) {
+    function is_teacher()
+    {
+        return auth()->user()->role()->id == 5;
+    }
+}
+
 if (! function_exists('str_replace_special_chars')) {
     function str_replace_special_chars($string)
     {

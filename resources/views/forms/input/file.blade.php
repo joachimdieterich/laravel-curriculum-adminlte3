@@ -33,16 +33,16 @@
     @endif
 </div>
 
-<media-renderer
+<!--<media-renderer
     style="max-height: 150px; overflow: auto;"
     :medium="{{ App\Medium::find($value) }}"
     :downloadable=false
-></media-renderer>
-<!--<img id="{{ $field }}_holder"
+></media-renderer>-->
+<img id="{{ $field }}_holder"
      @if($value != '')
      src="/media/{{$value}}"
      @endif
-     style="margin-top:15px;max-height:100px;">-->
+     style="margin-top:15px;max-height:100px;">
 
 <medium-create-modal></medium-create-modal>
 @section('scripts')

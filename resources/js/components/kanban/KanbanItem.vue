@@ -2,7 +2,7 @@
     <div class="card">
         <div class="card-header px-3 py-2" :style="{ backgroundColor: item.color, color: textColor }">
             <div class="card-tools">
-                <div v-if="(editable == 1 && editor === false && onlyEditOwnedItems !== 1) || ($userId == item.owner_id )"
+                <div v-if="(editable == 1 && editor === false && onlyEditOwnedItems !== 1) || (editable == 1 && $userId == item.owner_id )"
                      class="btn btn-flat py-0 px-2 "
                      :id="'kanbanItemDropdown_'+index"
                      style="background-color: transparent;"
@@ -11,31 +11,31 @@
                     <i class="fas fa-ellipsis-v"
                        :style="{ 'text-color': textColor }"></i>
                     <div class="dropdown-menu" x-placement="top-start">
-                      <button :name="'kanbanItemEdit_'+index"
-                              class="dropdown-item text-secondary  py-1"
-                              @click="edit()">
-                        <i class="fa fa-pencil-alt mr-4"></i>
-                        {{ trans('global.kanbanItem.edit') }}
-                      </button>
-                      <button
-                          v-can="'medium_create'"
-                          :name="'kanbanItemAddMedia_'+index"
-                          class="dropdown-item text-secondary  py-1"
-                          @click="addMedia()">
-                        <i class="fa fa-folder-open mr-4"></i>
-                        {{ trans('global.media.title_singular') }}
-                      </button>
-<!--                      <button :name="'kanbanItemShare_'+index"
-                              class="dropdown-item text-secondary  py-1"
-                              @click="open('subscribe-modal')">
-                        <i class="fa fa-share-alt mr-4"></i>
-                        {{ trans('global.share') }}
-                      </button>-->
-                      <hr class="my-1">
-                      <button
-                          v-can="'kanban_delete'"
-                          :name="'kanbanItemDelete_'+index"
-                          class="dropdown-item py-1 text-red"
+                        <button :name="'kanbanItemEdit_'+index"
+                                class="dropdown-item text-secondary  py-1"
+                                @click="edit()">
+                            <i class="fa fa-pencil-alt mr-4"></i>
+                            {{ trans('global.kanbanItem.edit') }}
+                        </button>
+                        <button
+                            v-can="'external_medium_create'"
+                            :name="'kanbanItemAddMedia_'+index"
+                            class="dropdown-item text-secondary  py-1"
+                            @click="addMedia()">
+                            <i class="fa fa-folder-open mr-4"></i>
+                            {{ trans('global.media.title_singular') }}
+                        </button>
+                        <!--                      <button :name="'kanbanItemShare_'+index"
+                                                      class="dropdown-item text-secondary  py-1"
+                                                      @click="open('subscribe-modal')">
+                                                <i class="fa fa-share-alt mr-4"></i>
+                                                {{ trans('global.share') }}
+                                              </button>-->
+                        <hr class="my-1">
+                        <button
+                            v-can="'kanban_delete'"
+                            :name="'kanbanItemDelete_'+index"
+                            class="dropdown-item py-1 text-red"
                             @click="confirmItemDelete()">
                             <i class="fa fa-trash mr-4"></i>
                             {{ trans('global.delete') }}
@@ -57,14 +57,14 @@
                         </span>
                         <input
                             :id="'title_'+index"
-                             type="text"
-                             v-model="form.title"
-                             class="w-100"
-                             style="font-size: 1.1rem; font-weight: 400; border: 0; border-bottom: 1px; border-style:solid; margin: 0;"
-                             :style="{ backgroundColor: item.color, color: textColor }"
+                            type="text"
+                            v-model="form.title"
+                            class="w-100"
+                            style="font-size: 1.1rem; font-weight: 400; border: 0; border-bottom: 1px; border-style:solid; margin: 0;"
+                            :style="{ backgroundColor: item.color, color: textColor }"
                         />
                     </span>
-                    <span v-else>
+                <span v-else>
                         {{ item.title }}
                     </span>
                 <br/>
@@ -94,46 +94,46 @@
                 {{ trans('global.save') }}
             </button>
 
-<!--          <kanbanTask
-              class="mx-3 "
-              :tasks="item.task_subscription">
-          </kanbanTask>-->
+            <!--          <kanbanTask
+                          class="mx-3 "
+                          :tasks="item.task_subscription">
+                      </kanbanTask>-->
 
-          <mediaCarousel
-              v-if="item.media_subscriptions.length > 0"
-              :subscriptions="item.media_subscriptions"
-              :width="width -16"
-          ></mediaCarousel>
+            <mediaCarousel
+                v-if="item.media_subscriptions.length > 0"
+                :subscriptions="item.media_subscriptions"
+                :width="width -16"
+            ></mediaCarousel>
         </div>
 
-      <div class="card-footer px-3 py-2"
-           :class="{'border-top-0':item.description === null}"
-      >
-          <div class="d-flex">
-              <avatar class="pull-left contacts-list-img flex-fill"
-                      data-toggle="tooltip"
-                      :title="item.owner.firstname + ' ' + item.owner.lastname"
-                      :username="item.owner.username"
-                      :firstname="item.owner.firstname"
-                      :lastname="item.owner.lastname"
-                      :size="25"
-              ></avatar>
-              <div v-if="commentable"
-                  @click="openComments"
-                   class=" position-relative pull-right mr-2">
-                  <i  class="far fa-comments pointer with-comment-count"></i>
-                  <span v-if="item.comments.length > 0"
-                        class="comment-count mt-1 small bg-success" >
+        <div class="card-footer px-3 py-2"
+             :class="{'border-top-0':item.description === null}"
+        >
+            <div class="d-flex">
+                <avatar class="pull-left contacts-list-img flex-fill"
+                        data-toggle="tooltip"
+                        :title="item.owner.firstname + ' ' + item.owner.lastname"
+                        :username="item.owner.username"
+                        :firstname="item.owner.firstname"
+                        :lastname="item.owner.lastname"
+                        :size="25"
+                ></avatar>
+                <div v-if="commentable"
+                     @click="openComments"
+                     class=" position-relative pull-right mr-2">
+                    <i  class="far fa-comments pointer with-comment-count"></i>
+                    <span v-if="item.comments.length > 0"
+                          class="comment-count mt-1 small bg-success" >
                       {{ item.comments.length }}
                   </span>
-              </div>
-              <Reaction
-                  :model="item"
-                  reaction="like"
-                  url="/kanbanItems"
-              />
-          </div>
-      </div>
+                </div>
+                <Reaction
+                    :model="item"
+                    reaction="like"
+                    url="/kanbanItems"
+                />
+            </div>
+        </div>
 
         <Comments
             v-if="show_comments"
@@ -162,55 +162,55 @@ import Reaction from "../reaction/Reaction";
 import Comments from "./Comments";
 
 export default {
-  props: {
-    'item': Object,
-    'index': String,
-    'width': Number,
-    'commentable': false,
-    'onlyEditOwnedItems': false,
-    'likable': true,
-    'editable': true
-  },
-  data() {
-    return {
-        new_media: null,
-        show_comments: false,
-        editor: false,
-        form: new Form({
-            'id':'',
-            'title':'',
-            'description': '',
-            'kanban_id': '',
-            'kanban_status_id': '',
-            'order_id': 0,
-            'color': '#F4F4F4'
-        }),
-    };
+    props: {
+        'item': Object,
+        'index': String,
+        'width': Number,
+        'commentable': false,
+        'onlyEditOwnedItems': false,
+        'likable': true,
+        'editable': true
+    },
+    data() {
+        return {
+            new_media: null,
+            show_comments: false,
+            editor: false,
+            form: new Form({
+                'id':'',
+                'title':'',
+                'description': '',
+                'kanban_id': '',
+                'kanban_status_id': '',
+                'order_id': 0,
+                'color': '#F4F4F4'
+            }),
+        };
     },
     computed:{
         textColor: function(){
-          if(this.item.color == "" || this.item.color == null ) return;
-          let hex = this.item.color.substring(1, 7);
-          let r = parseInt(hex.slice(0, 2), 16),
-              g = parseInt(hex.slice(2, 4), 16),
-              b = parseInt(hex.slice(4, 6), 16);
+            if(this.item.color == "" || this.item.color == null ) return;
+            let hex = this.item.color.substring(1, 7);
+            let r = parseInt(hex.slice(0, 2), 16),
+                g = parseInt(hex.slice(2, 4), 16),
+                b = parseInt(hex.slice(4, 6), 16);
 
-          // Return light or dark class based on contrast calculation
-          return ((r * 0.299 + g * 0.587 + b * 0.114) > 186) ? '#333333' : '#FFFFFF';
-      }
+            // Return light or dark class based on contrast calculation
+            return ((r * 0.299 + g * 0.587 + b * 0.114) > 186) ? '#333333' : '#FFFFFF';
+        }
     },
-  methods: {
-      confirmItemDelete(){
-          $('#itemModal_'+ this.index).modal('show');
-      },
+    methods: {
+        confirmItemDelete(){
+            $('#itemModal_'+ this.index).modal('show');
+        },
         deleteItem() {
-          axios.delete("/kanbanItems/" + this.item.id)
-              .then(res => {
-                this.$emit("item-destroyed", this.item);
-              })
-              .catch(err => {
-                console.log(err.response);
-              });
+            axios.delete("/kanbanItems/" + this.item.id)
+                .then(res => {
+                    this.$emit("item-destroyed", this.item);
+                })
+                .catch(err => {
+                    console.log(err.response);
+                });
         },
         edit() {
             this.editor = true;
@@ -222,88 +222,89 @@ export default {
             });
 
         },
-          submit() {
-               let form = new Form({
-                  'id': this.item.id,
-                  'title': this.item.title,
-                  'description': tinyMCE.get('description_'+this.item.id).getContent(),
-                  'kanban_id': this.item.kanban_id,
-                  'kanban_status_id': this.item.kanban_status_id,
-                  'order_id': this.item.order_id,
-                  'color': this.item.color
-              });
+        submit() {
+            let form = new Form({
+                'id': this.item.id,
+                'title': this.item.title,
+                'description': tinyMCE.get('description_'+this.item.id).getContent(),
+                'kanban_id': this.item.kanban_id,
+                'kanban_status_id': this.item.kanban_status_id,
+                'order_id': this.item.order_id,
+                'color': this.item.color
+            });
 
-              axios.patch('/kanbanItems/' + form.id, form)
-                  .then(res => { // Tell the parent component we've updated an item
-                      tinymce.get('description_'+this.item.id).remove();
-                      this.form = res.data.message; //selfUpdate
-                      this.$emit("item-updated", res.data.message);
-                  })
-                  .catch(error => { // Handle the error returned from our request
-                      this.form.errors = error.response.data.errors;
-                  });
-              this.editor = false;
-          },
+            axios.patch('/kanbanItems/' + form.id, form)
+                .then(res => { // Tell the parent component we've updated an item
+                    tinyMCE.get('description_'+this.item.id).remove();
+                    this.form = res.data.message; //selfUpdate
+                    this.$emit("item-updated", res.data.message);
+                })
+                .catch(error => { // Handle the error returned from our request
+                    this.form.errors = error.response.data.errors;
+                });
+            this.editor = false;
+            MathJax.startup.defaultReady();
+        },
 
-          openComments(){
+        openComments(){
             this.show_comments = !this.show_comments;
-          },
+        },
 
 
         open(modal) {
-          this.$modal.show(modal, {
-            'modelUrl': 'kanbanItem',
-            'modelId': this.item.id,
-            'shareWithGroups': false,
-            'shareWithOrganizations': false
-          });
+            this.$modal.show(modal, {
+                'modelUrl': 'kanbanItem',
+                'modelId': this.item.id,
+                'shareWithGroups': false,
+                'shareWithOrganizations': false
+            });
         },
         addMedia() {
-          this.$modal.show(
-              'medium-create-modal',
-              {
+            this.$modal.show(
+                'medium-create-modal',
+                {
                     'referenceable_type': 'App\\\KanbanItem',
                     'referenceable_id': this.item.id,
                     'eventHubCallbackFunction': 'reload_kanban_item',
                     'eventHubCallbackFunctionParams': this.item.id,
-              });
+                });
         },
         reload() { //after media upload
-          axios.get("/kanbanItems/" + this.item.id)
-              .then(res => {
-                  this.$emit("item-updated", res.data.message);
-                  //this.item = res.data.message;
-              })
-              .catch(err => {
-                console.log(err.response);
-              });
+            axios.get("/kanbanItems/" + this.item.id)
+                .then(res => {
+                    this.$emit("item-updated", res.data.message);
+                    //this.item = res.data.message;
+                })
+                .catch(err => {
+                    console.log(err.response);
+                });
         },
 
-      },
-        mounted() {
-            this.form = this.item;
-            this.$eventHub.$on('reload_kanban_item', (e) => {
-                if (this.item.id == e.id) {
-                    this.reload();
-                }
-            });
-            this.$nextTick(() => {
-                MathJax.startup.defaultReady();
-            })
-        },
+    },
+    mounted() {
+        this.form = this.item;
+        this.$eventHub.$on('reload_kanban_item', (e) => {
+            if (this.item.id == e.id) {
+                this.reload();
+            }
+        });
+        this.$nextTick(() => {
+            MathJax.startup.defaultReady();
+        })
+    },
     watch: {
         form: function (){
             MathJax.startup.defaultReady();
         }
     },
 
-        components: {
-            Comments,
-            Reaction,
-          /*kanbanTask,*/
-          mediaCarousel,
-          avatar,
-          Modal
-        }
+    components: {
+        Comments,
+        Reaction,
+        /*kanbanTask,*/
+        mediaCarousel,
+        avatar,
+        Modal
     }
+}
 </script>

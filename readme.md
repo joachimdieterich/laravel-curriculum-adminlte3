@@ -374,3 +374,6 @@ to
 
 $table->text('variants')->nullable(); 
 ```
+
+### Logo for embededEvent.vue
+Put ```logo.png``` in the following path: ```public/favicons/logo.png```

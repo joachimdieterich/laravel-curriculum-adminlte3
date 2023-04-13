@@ -724,7 +724,7 @@ return [
             'action' => 'Aktion',
         ],
         'add_remove_users' => [
-            'students_exam_title' => 'Studenten in der Testung',
+            'students_exam_title' => 'Schülerinnen und Schüler in der Testung',
             'users_group_title' => 'Benutzer in der Gruppe',
         ],
         'status_options' => [
@@ -741,7 +741,7 @@ return [
         ],
         'error_messages' => [
             'get_tests' => 'Testliste konnte nicht abgerufen werden',
-            'remove_users' => 'Schüler mit Status bearbeitet oder fertiggestellt, können nicht entfernt werden.',
+            'remove_users' => 'Schülerinnen und Schüler mit Status bearbeitet oder fertiggestellt, können nicht entfernt werden.',
             'remove_exam' => 'Diese Testung wurde von einem oder mehreren Schülern begonnen und kann nicht entfernt werden',
         ],
     ],

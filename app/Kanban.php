@@ -122,7 +122,7 @@ class Kanban extends Model
         else
         {
             $userSubscribtion = optional($this->userSubscriptions()
-                ->where('subscribable_id', $user_id)
+                /*->where('subscribable_id', $user_id)*/ // fix 500 error on authenticated users
                 ->where('sharing_token', $token)
                 ->first());
         }

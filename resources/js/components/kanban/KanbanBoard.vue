@@ -503,6 +503,7 @@ export default {
                   animation: 200,
                   group: "column-list",
                   dragClass: "status-drag",
+                  fallbackTolerance: 5,
                   disabled: !this.editable
                 };
             },
@@ -511,6 +512,7 @@ export default {
                   animation: 200,
                   group: "item-list",
                   dragClass: "status-drag",
+                  fallbackTolerance: 5,
                   disabled: !this.editable
                 };
             },

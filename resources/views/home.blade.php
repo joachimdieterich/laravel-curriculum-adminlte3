@@ -38,6 +38,17 @@
                         "include" =>  'home.logbooksInfo',
                     ])
                 @endcan
+                @can('kanban_access')
+                    @include('partials.infobox', [
+                        "infoBoxId" =>  'kanbansBox',
+                        "infoBoxRoute" =>  route("kanbans.index"),
+                        "infoBoxClass" =>  'info-box-icon bg-orange elevation-1',
+                        "infoBoxIcon" =>  'fa fa-columns',
+                        "infoText" =>  trans('global.kanban.title'),
+
+                        "include" =>  'home.kanbansInfo',
+                    ])
+                @endcan
             </section>
 
             <section id="right" class="col-md-6 ">

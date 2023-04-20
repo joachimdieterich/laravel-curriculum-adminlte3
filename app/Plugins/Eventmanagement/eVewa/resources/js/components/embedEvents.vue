@@ -11,25 +11,26 @@
         </div>
         <div class="m-0"
              style="background-color: #EDEDED">
+            <div class="input-group col-2 mr-0 p-3 float-right" >
+                <input
+                    type="text" id="search"
+                    name="eventId"
+                    class="form-control"
+                    v-model="search"
+                    required
+                    @keyup.enter="loader()"
+                />
+
+                <div class="input-group-append" @click="loader()">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                </div>
+            </div>
             <img src="/favicons/logo.png"
                  height="142"
                  class="ml-4">
             <h4 class="px-3">{{title}}</h4>
             <div class="col-12">
-                <div class="input-group col-2 mr-0 pr-0 mb-4 float-right" >
-                    <input
-                        type="text" id="search"
-                        name="eventId"
-                        class="form-control"
-                        v-model="search"
-                        required
-                        @keyup.enter="loader()"
-                    />
 
-                    <div class="input-group-append" @click="loader()">
-                        <span class="input-group-text"><i class="fas fa-search"></i></span>
-                    </div>
-                </div>
                 <button v-for="(value, id) in tags"
                         type="button"
                         class="btn btn-default mr-3 mb-3"

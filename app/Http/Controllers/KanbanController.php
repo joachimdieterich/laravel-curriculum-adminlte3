@@ -27,7 +27,7 @@ class KanbanController extends Controller
         return view('kanbans.index');
     }
 
-    protected function userKanbans($withOwned = true)
+    public function userKanbans($withOwned = true)
     {
 
         $userCanSee = auth()->user()->kanbans;

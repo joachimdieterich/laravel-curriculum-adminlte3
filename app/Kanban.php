@@ -128,8 +128,8 @@ class Kanban extends Model
         }
         if (
             $userSubscribtion->editable // user enrolled
-            or $groupSubscribtion->editable // group enrolled
-            or $organizationSubscribtion->editable // organization enrolled
+            or $groupSubscribtion->editable ?? false // group enrolled
+            or $organizationSubscribtion->editable ?? false // organization enrolled
             or ($this->owner_id == $user_id)            // or owner
             or is_admin() // or admin
         ) {

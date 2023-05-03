@@ -6,7 +6,7 @@
  */
 require('./bootstrap');
 require('tinymce/tinymce');
-
+require('leaflet/dist/leaflet.js');
 require('@activix/bootstrap-datetimepicker');
 
 //vue

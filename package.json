@@ -47,6 +47,7 @@
         "form-backend-validation": "^2.4.0",
         "laravel-echo": "^1.15.0",
         "laravel-vue-datatable": "^0.6.0",
+        "leaflet": "^1.9.3",
         "mathjax": "^3.2.2",
         "moment": "^2.29.4",
         "pusher-js": "^4.3.1",

@@ -20,30 +20,30 @@ class LogbookController extends Controller
         return view('logbooks.index');
     }
 
-    public function list()
+    public function list(Request $request)
     {
         abort_unless(\Gate::allows('logbook_access'), 403);
 
-        $logbooks = is_admin() ? Logbook::with('subscriptions') : Logbook::with('subscriptions')
-            ->whereHas('subscriptions', function ($query) {
-                $query->where(
-                    function ($query) {
-                        $query->where('subscribable_type', 'App\\Course')->whereIn('subscribable_id', auth()->user()->currentGroupEnrolments->pluck('course_id'));
-                    })
-                    ->orWhere(
-                        function ($query) {
-                            $query->where('subscribable_type', 'App\\Organization')->where('subscribable_id', auth()->user()->current_organization_id);
-                        })
-                    ->orWhere(
-                        function ($query) {
-                            $query->where('subscribable_type', 'App\\Group')->whereIn('subscribable_id', auth()->user()->groups->pluck('id'));
-                        })
-                    ->orWhere(
-                        function ($query) {
-                            $query->where('subscribable_type', 'App\\User')->where('subscribable_id', auth()->user()->id);
-                        });
-            })
-            ->orWhere('owner_id', auth()->user()->id);
+        $logbooks = Logbook::with('subscriptions');
+
+        if (!is_admin()) {
+            switch ($request->filter) {
+                case 'owner':
+                    $logbooks = $logbooks->where('owner_id', auth()->user()->id);
+                    break;
+                case 'shared_with_me':
+                    $logbooks = $this->getLogbooks(false);
+                    break;
+                case 'shared_by_me':
+                    $logbooks = $logbooks->where('owner_id', auth()->user()->id)->whereHas('subscriptions');
+                    break;
+                case 'all':
+                default:
+                    $logbooks = $this->getLogbooks();
+                    break;
+            }
+        }
+
 
         $edit_gate = \Gate::allows('logbook_edit');
         $delete_gate = \Gate::allows('logbook_delete');
@@ -111,6 +111,7 @@ class LogbookController extends Controller
         $logbook = Logbook::Create([
             'title' => $new_logbook['title'],
             'description' => $new_logbook['description'],
+            'color' => $new_logbook['color'] ?? '#2980B9',
             'owner_id' => auth()->user()->id,
         ]);
 
@@ -276,11 +277,41 @@ class LogbookController extends Controller
         }
     }
 
+    private function getLogbooks($withOwned = true)
+    {
+        $logbooks = Logbook::with('subscriptions')->whereHas('subscriptions', function ($query) {
+            $query->where(
+                function ($query) {
+                    $query->where('subscribable_type', 'App\\Course')->whereIn('subscribable_id', auth()->user()->currentGroupEnrolments->pluck('course_id'));
+                }
+            )->orWhere(
+                function ($query) {
+                    $query->where('subscribable_type', 'App\\Organization')->where('subscribable_id', auth()->user()->current_organization_id);
+                }
+            )->orWhere(
+                function ($query) {
+                    $query->where('subscribable_type', 'App\\Group')->whereIn('subscribable_id', auth()->user()->groups->pluck('id'));
+                }
+            )->orWhere(
+                function ($query) {
+                    $query->where('subscribable_type', 'App\\User')->where('subscribable_id', auth()->user()->id);
+                }
+            );
+        });
+
+        if ($withOwned) {
+            $logbooks = $logbooks->orWhere('owner_id', auth()->user()->id);
+        }
+
+        return $logbooks;
+    }
+
     protected function validateRequest()
     {
         return request()->validate([
             'title' => 'sometimes|required',
             'description' => 'sometimes',
+            'color' => 'sometimes',
             'subscribable_type' => 'sometimes',
             'subscribable_id' => 'sometimes',
         ]);

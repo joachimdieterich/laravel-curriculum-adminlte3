@@ -674,6 +674,8 @@ return [
         'create' => 'Create Logbook',
         'edit' => 'Edit Logbook',
         'print' => 'Print Logbook',
+        'delete' => 'Delete Logbook',
+        'delete_helper' => 'Should this Logbook and all its corresponding data be deleted?',
     ],
     'logbookEntry' => [
         'title' => 'Logs',

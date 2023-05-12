@@ -144,6 +144,7 @@ Vue.component('notes', require('./components/note/Notes.vue').default);
 /*Vue.component('objective-medium-modal', require('./components/objectives/ObjectiveMediumModal.vue').default);*/
 Vue.component('certificate-generate-modal', require('./components/certificate/GenerateCertificateModal.vue').default);
 Vue.component('logbook', require('./components/logbooks/Logbook.vue').default);
+Vue.component('logbooks-new', require('./components/logbooks/LogbooksNew.vue').default);
 Vue.component('logbook-entry-modal', require('./components/logbooks/LogbookEntryModal.vue').default);
 Vue.component('subscribe-objective-modal', require('./components/objectives/SubscribeObjectiveModal.vue').default);
 Vue.component('objective-progress-subscription-modal', require('./components/objectives/ObjectiveProgressSubscriptionModal.vue').default);

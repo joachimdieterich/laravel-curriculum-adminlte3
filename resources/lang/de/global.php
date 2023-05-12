@@ -677,6 +677,8 @@ return [
         'create' => 'Logbuch erstellen',
         'edit' => 'Logbuch bearbeiten',
         'print' => 'Logbuch drucken',
+        'delete' => 'Logbuch löschen',
+        'delete_helper' => 'Soll das Logbuch sowie die zugehörigen Daten gelöscht werden?',
     ],
     'logbookEntry' => [
         'title' => 'Logbucheinträge',

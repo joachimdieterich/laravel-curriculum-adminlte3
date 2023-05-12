@@ -6,7 +6,7 @@
  */
 require('./bootstrap');
 require('tinymce/tinymce');
-
+require('leaflet/dist/leaflet.js');
 require('@activix/bootstrap-datetimepicker');
 
 //vue
@@ -159,7 +159,7 @@ Vue.component('prerequisite-modal', require('./components/prerequisites/Prerequi
 Vue.component('lms-modal', require('./../../app/Plugins/Lms/resources/js/components/Create.vue').default);
 Vue.component('color-picker-component', require('./components/kanban/ColorPickerComponent.vue').default);
 Vue.component('color-picker-input', require('./components/kanban/ColorPickerInput.vue').default);
-
+Vue.component('leaflet-map', require('./components/map/Map.vue').default);
 
 Vue.component('tests-table', require('./components/tests/TestsTable.vue').default);
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LogController;
+use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/home');
 Route::get('/features', 'OpenController@features')->name('features');
@@ -155,6 +156,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     /* logbook entries */
     Route::resource('logbookEntries', 'LogbookEntryController');
+
+    Route::resource('maps', 'MapController');
 
     /* Metadataset */
     Route::get('metadatasets/list', 'MetadatasetController@list');
@@ -322,8 +325,8 @@ Route::group(['middleware' => 'auth'], function () {
 //}
 
 if (env('GUEST_USER') !== null) {
-     Route::get('kanbans/{kanban}/token', 'KanbanController@getKanbanByToken');
-     Route::get('kanban/share/{token}', 'ShareTokenController@auth');
+    Route::get('kanbans/{kanban}/token', 'KanbanController@getKanbanByToken');
+    Route::get('kanban/share/{token}', 'ShareTokenController@auth');
 
     Route::get('/guest', function () {
         if (Auth::user() == null) {       //if no user is authenticated authenticate guest
@@ -332,10 +335,9 @@ if (env('GUEST_USER') !== null) {
             Auth::loginUsingId((env('GUEST_USER')), true);
         }
         if (\App\User::find(env('GUEST_USER'))->organizations()->first()->navigators()->first() != null) { //use guests default navigator
-            return redirect('/navigators/'.\App\User::find(env('GUEST_USER'))->organizations()->first()->navigators()->first()->id);
+            return redirect('/navigators/' . \App\User::find(env('GUEST_USER'))->organizations()->first()->navigators()->first()->id);
         } else {
             return redirect('/');
         }
     });
 }
-

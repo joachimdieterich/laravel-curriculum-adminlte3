@@ -27,6 +27,16 @@
                         @click.stop="print()">
                         <i class="fa fa-print "></i>
                     </button>-->
+                            <span>
+                                <label for="subjects">Fach: </label>
+                                <select :id="'subject_' + entry.id"
+                                        name="subjects"
+                                        class="form-control"
+                                        @click="initSelect2()"
+                                >
+                                    <option default>{{ subject }}</option>
+                                </select>
+                            </span>
                     <button
                         type="button"
                         class="btn btn-tool pt-3"
@@ -262,6 +272,7 @@ export default {
         'search': '',
         'first': false,
         'editable': false,
+        'subject': '',
     },
     data() {
         return {
@@ -283,7 +294,29 @@ export default {
                 }
                 this.$parent.$emit('deleteLogbookEntry', this.entry);
             },
-
+            initSelect2() {
+                $('#subject_' + this.entry.id).select2({
+                    allowClear: false,
+                    ajax: {
+                        url: "/subjects",
+                        dataType: 'json',
+                        data: function (params) {
+                            return {
+                                term: params.term || '',
+                                page: params.page || 1
+                            }
+                        },
+                        cache: true
+                    },
+                }).on('select2:open', () => {
+                    document.querySelector('.select2-search__field').focus();
+                }).on('select2:select', function (e) {
+                    const entryId = this.id.split('_')[1]; // this = select-element
+                    axios.post('/logbookEntries/setSubject?id=' + entryId, {
+                        'subject_id' : e.params.data.id,
+                    });
+                }).bind(this);
+            },
             postDate() {
                 var start = new Date(this.entry.begin.replace(/-/g, "/"));
                 var end = new Date(this.entry.end.replace(/-/g, "/"));
@@ -327,7 +360,6 @@ export default {
                 //console.log('isEditableForOrganization(): '+exists);
                 return (exists !== -1);
             },
-
             displayAbsences() {
                 const exists = this.logbook.subscriptions.findIndex(            // Only Show absences on group and course subscriptions
                     subscription => subscription.subscribable_type === "App\\Course" || subscription.subscribable_type === "App\\Group"
@@ -356,6 +388,11 @@ export default {
             //load contents if tab is selected
             if (this.checkLocalStorage('#logbook_' + this.entry.id, '#logbook_contents_' + this.entry.id) == 'active') {
                 this.$refs.Contents.loaderEvent();
+            }
+
+            if (this.entry.subject_id !== null) {
+                axios.get('/subjects/getSubject?id=' + this.entry.subject_id)
+                    .then(response => this.subject = response.data[0].title);
             }
 
             //register events

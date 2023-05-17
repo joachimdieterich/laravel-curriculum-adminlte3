@@ -156,6 +156,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     /* logbook entries */
     Route::resource('logbookEntries', 'LogbookEntryController');
+    Route::post('logbookEntries/setSubject', 'LogbookEntryController@setSubject');
 
     Route::resource('maps', 'MapController');
 
@@ -262,6 +263,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     /* subjects  */
     Route::get('subjects/list', 'SubjectController@list')->name('subjects.list');
+    Route::get('subjects/getSubject', 'SubjectController@getSubject');
     Route::resource('subjects', 'SubjectController');
 
     /* tasks */

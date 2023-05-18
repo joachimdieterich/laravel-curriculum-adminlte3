@@ -47,7 +47,9 @@
 </template>
 
 <script>
-    import Notes from '../note/Notes'
+const Notes =
+    () => import('../note/Notes');
+    //import Notes from '../note/Notes'
 
     export default {
         data() {

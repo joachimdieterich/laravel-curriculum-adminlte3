@@ -444,7 +444,7 @@ class Edusharing extends RepositoryPlugin
     {
         switch ($params['filter']) {
             case '3':  $filter = 'cm:creator';                             //user_files
-                        $filter_value = auth()->user()->common_name;
+                       $filter_value = auth()->user()->common_name;
                 break;
             case '2':                                                      // shared_files
             case '1':                                                      // public_files
@@ -535,15 +535,15 @@ class Edusharing extends RepositoryPlugin
     {
         parse_str($arguments, $query);
 
-        $apiEndpoint = isset($query['endpoint']) ? $query['endpoint'] : 'node';
-        $contentType = isset($query['contentType']) ? $query['contentType'] : 'ALL';    // e.g.'FILES';
-        $combineMode = isset($query['combineMode']) ? $query['combineMode'] : 'AND';    // AND / OR
-        $property = isset($query['property']) ? $query['property'] : 'cm:name';      // e.g.'ccm:competence_digital2';
-        $value = isset($query['value']) ? $query['value'] : $arguments;           // e.g.11990503;
-        $maxItems = isset($query['maxItems']) ? $query['maxItems'] : 40;             // used for pagination
-        $skipCount = isset($query['skipCount']) ? $query['skipCount'] : 0;            // used for pagination
-        $propertyFilter = isset($query['propertyFilter']) ? $query['propertyFilter'] : 'cm:creator';  // get creator uuid
-        $filter = isset($query['filter']) ? $query['filter'] : '';  // set filter e.g. cm:creator
+        $apiEndpoint = $query['endpoint'] ?? 'node';
+        $contentType = $query['contentType'] ?? 'ALL';    // e.g.'FILES';
+        $combineMode = $query['combineMode'] ?? 'AND';    // AND / OR
+        $property = $query['property'] ?? 'cm:name';      // e.g.'ccm:competence_digital2';
+        $value = $query['value'] ?? $arguments;           // e.g.11990503;
+        $maxItems = $query['maxItems'] ?? 40;             // used for pagination
+        $skipCount = $query['skipCount'] ?? 0;            // used for pagination
+        $propertyFilter = $query['propertyFilter'] ?? 'cm:creator';  // get creator uuid
+        $filter = $query['filter'] ?? '';  // set filter e.g. cm:creator
 
         //$nodes        = $this->getSearchCustom('-home-', array ('contentType' =>'FILES', 'property' => 'ccm:competence_digital2', 'value' => '11061007', 'maxItems' => 10));
 

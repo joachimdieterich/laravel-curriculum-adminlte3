@@ -9,7 +9,9 @@
 </template>
 
 <script>
-    import TerminalObjectives from '../objectives/TerminalObjectives.vue'
+const TerminalObjectives =
+    () => import('../objectives/TerminalObjectives.vue');
+    //import TerminalObjectives from '../objectives/TerminalObjectives.vue'
 
     export default {
         props: {

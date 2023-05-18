@@ -78,10 +78,15 @@
 
   </div>
 </template>
+
 <script>
-import Avatar from "../uiElements/Avatar"
 import Form from 'form-backend-validation';
-import Reaction from "../reaction/Reaction";
+const Avatar =
+    () => import('../uiElements/Avatar');
+const Reaction =
+    () => import('../reaction/Reaction');
+//import Avatar from "../uiElements/Avatar"
+//import Reaction from "../reaction/Reaction";
 
 export default {
     name: 'Comments',

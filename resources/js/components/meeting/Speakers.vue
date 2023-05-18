@@ -71,9 +71,13 @@
   </div>
 </template>
 <script>
-import Avatar from "../uiElements/Avatar"
 import Form from "form-backend-validation";
-import Select2 from "../forms/Select2";
+const Avatar =
+    () => import('../uiElements/Avatar');
+const Select2 =
+    () => import('../forms/Select2');
+/*import Avatar from "../uiElements/Avatar"
+import Select2 from "../forms/Select2";*/
 
 export default {
   name: 'Speakers',

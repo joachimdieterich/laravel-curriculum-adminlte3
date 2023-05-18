@@ -1,34 +1,36 @@
 <template>
     <span style="position:relative;">
-        <chrome-picker 
+        <chrome-picker
             style="position: absolute; left:0;bottom:0;"
-            v-if="displayPicker" 
-            :value="colors" 
+            v-if="displayPicker"
+            :value="colors"
             @input="updateFromPicker" />
         <div ref="colorpicker" class="input-group">
-            <input 
-                v-model="colorValue" 
-                type="text" 
-                class="form-control" 
-                @focus="showPicker()" 
+            <input
+                v-model="colorValue"
+                type="text"
+                class="form-control"
+                @focus="showPicker()"
                 @input="updateFromInput"/>
             <div class="input-group-append">
                 <span class="input-group-text">
-                    <i  class="fas fa-square" 
-                        :style="'color: ' + colorValue" 
+                    <i  class="fas fa-square"
+                        :style="'color: ' + colorValue"
                         @click="togglePicker()" >
                     </i>
                 </span>
             </div>
         </div>
-         
+
     </span>
-    
+
 </template>
 
 <script>
-    import VueColor from 'vue-color';
-    
+const VueColor =
+    () => import('vue-color');
+    //import VueColor from 'vue-color';
+
     export default {
         props: ["color"],
 	data() {
@@ -105,6 +107,6 @@
         components: {
             'chrome-picker': VueColor.Chrome
         }
-        
+
     }
 </script>

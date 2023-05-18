@@ -52,7 +52,9 @@
     </div>
 </template>
 <script>
-import ObjectiveBox from '../objectives/ObjectiveBox'
+const ObjectiveBox =
+    () => import('../objectives/ObjectiveBox');
+//import ObjectiveBox from '../objectives/ObjectiveBox'
 
 export default {
     name: 'reference-list',

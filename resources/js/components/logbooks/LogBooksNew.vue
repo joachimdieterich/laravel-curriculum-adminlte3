@@ -96,7 +96,9 @@
 </template>
 
 <script>
-import Modal from "./../uiElements/Modal";
+const Modal =
+    () => import('./../uiElements/Modal');
+//import Modal from "./../uiElements/Modal";
 
 export default {
     props: {

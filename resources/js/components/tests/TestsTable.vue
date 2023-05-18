@@ -27,8 +27,9 @@
 </template>
 
 <script>
-
-import multiselect from 'vue-multiselect'
+const multiselect =
+    () => import('vue-multiselect');
+//import multiselect from 'vue-multiselect'
 
 export default {
     props: {

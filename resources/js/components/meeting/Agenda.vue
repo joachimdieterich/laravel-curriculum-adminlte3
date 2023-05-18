@@ -43,10 +43,18 @@
 </template>
 <script>
 
-import MeetingAgendaForm from "./MeetingAgendaForm";
 import Form from "form-backend-validation";
+
+const MeetingAgendaForm =
+    () => import('./MeetingAgendaForm');
+const AgendaItemForm =
+    () => import('./AgendaItemForm');
+const AgendaItem =
+    () => import('./AgendaItem');
+//import MeetingAgendaForm from "./MeetingAgendaForm";
+/*
 import AgendaItemForm from "./AgendaItemForm";
-import AgendaItem from "./AgendaItem";
+import AgendaItem from "./AgendaItem";*/
 
 export default {
     name: 'Agenda',

@@ -120,9 +120,15 @@
 </template>
 
 <script>
-import Agenda from "./Agenda";
+const Agenda =
+    () => import('./Agenda');
+const MeetingDateForm =
+    () => import('./MeetingDateForm');
+const MeetingAgendaForm =
+    () => import('./MeetingAgendaForm');
+/*import Agenda from "./Agenda";
 import MeetingDateForm from "./MeetingDateForm";
-import MeetingAgendaForm from "./MeetingAgendaForm";
+import MeetingAgendaForm from "./MeetingAgendaForm";*/
 
 export default {
     props: {

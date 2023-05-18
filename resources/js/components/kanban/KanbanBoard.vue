@@ -63,6 +63,7 @@
                                      :index="index + '_' + itemIndex"
                                      :item="item"
                                      :width="itemWidth"
+                                     style="min-height: 150px"
                                      v-on:item-destroyed="handleItemDestroyedWithoutWebsocket"
                                      v-on:item-updated="handleItemUpdatedWithoutWebsocket"
                                      v-on:item-edit=""
@@ -119,10 +120,18 @@
 </template>
 
 <script>
-import draggable from "vuedraggable";
-import KanbanItem from './KanbanItem';
+const draggable =
+    () => import('vuedraggable');
+const KanbanItem =
+    () => import('./KanbanItem');
+const KanbanItemCreate =
+    () => import('./KanbanItemCreate');
+const KanbanStatus =
+    () => import('./KanbanStatus');
+//import draggable from "vuedraggable";
+/*import KanbanItem from './KanbanItem';
 import KanbanItemCreate from "./KanbanItemCreate";
-import KanbanStatus from "./KanbanStatus";
+import KanbanStatus from "./KanbanStatus";*/
 
 export default {
         props: {

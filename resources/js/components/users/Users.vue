@@ -75,7 +75,9 @@
 </template>
 
 <script>
-    import Avatar from "../uiElements/Avatar";
+const Avatar =
+    () => import('../uiElements/Avatar');
+    //import Avatar from "../uiElements/Avatar";
     export default {
         props: {
             group: Object,

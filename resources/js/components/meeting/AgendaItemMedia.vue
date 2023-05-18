@@ -32,7 +32,9 @@
     </div>
 </template>
 <script>
-import Medium from "../media/Medium";
+const Medium =
+    () => import('../media/Medium');
+//import Medium from "../media/Medium";
 export default {
     name: 'AgendaItemMedia',
     components: {Medium},

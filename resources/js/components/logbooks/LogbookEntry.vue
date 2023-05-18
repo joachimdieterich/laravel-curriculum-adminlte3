@@ -247,13 +247,27 @@
 </template>
 
 <script>
-import Absences from '../absence/Absences';
-import Contents from '../content/Contents';
-import TaskList from '../uiElements/TaskList';
-import Media from '../media/Media';
-import Lms from '../../../../app/Plugins/Lms/resources/js/components/Lms';
-import ReferenceList from "../reference/ReferenceList";
-import Avatar from "../uiElements/Avatar";
+const Absences =
+    () => import('../absence/Absences');
+const Contents =
+    () => import('../content/Contents');
+const TaskList =
+    () => import('../uiElements/TaskList');
+const Media =
+    () => import('../media/Media');
+const Lms =
+    () => import('../../../../app/Plugins/Lms/resources/js/components/Lms');
+const ReferenceList =
+    () => import('../reference/ReferenceList');
+const Avatar =
+    () => import('../uiElements/Avatar');
+//import Absences from '../absence/Absences';
+//import Contents from '../content/Contents';
+//import TaskList from '../uiElements/TaskList';
+//import Media from '../media/Media';
+//import Lms from '../../../../app/Plugins/Lms/resources/js/components/Lms';
+//import ReferenceList from "../reference/ReferenceList";
+//import Avatar from "../uiElements/Avatar";
 
 export default {
     props: {

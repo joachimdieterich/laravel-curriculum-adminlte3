@@ -135,9 +135,15 @@
 </template>
 
 <script>
-import ObjectiveBox from '../objectives/ObjectiveBox';
+const ObjectiveBox =
+    () => import('../objectives/ObjectiveBox');
+const Media =
+    () => import('../media/Media');
+const Contents =
+    () => import('../content/Contents');
+/*import ObjectiveBox from '../objectives/ObjectiveBox';
 import Media from '../media/Media';
-import Contents from '../content/Contents';
+import Contents from '../content/Contents';*/
 
 export default {
     props: {

@@ -89,7 +89,9 @@
 </template>
 <script>
 import Form from 'form-backend-validation';
-import draggable from "vuedraggable";
+const draggable =
+    () => import('vuedraggable');
+/*import draggable from "vuedraggable";*/
 
 
 export default {

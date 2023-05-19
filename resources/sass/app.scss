@@ -164,7 +164,7 @@ tr:hover .vuehover {
 
 @media (max-width: 991px) {
     .sidebar-collapse .kanban_board_wrapper {
-        height: calc(100vh - 195px - 2rem);
+        height: calc(100vh - 195px - 3rem);
         width: calc(100vw - 30px) !important;
         position: absolute;
         overflow: auto;

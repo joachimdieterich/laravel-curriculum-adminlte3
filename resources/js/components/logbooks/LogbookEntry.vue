@@ -34,7 +34,7 @@
                                         class="form-control"
                                         @click="initSelect2()"
                                 >
-                                    <option default>{{ subject }}</option>
+                                    <option default>{{ this.entry.subject?.title }}</option>
                                 </select>
                             </span>
                     <button
@@ -272,7 +272,6 @@ export default {
         'search': '',
         'first': false,
         'editable': false,
-        'subject': '',
     },
     data() {
         return {
@@ -388,11 +387,6 @@ export default {
             //load contents if tab is selected
             if (this.checkLocalStorage('#logbook_' + this.entry.id, '#logbook_contents_' + this.entry.id) == 'active') {
                 this.$refs.Contents.loaderEvent();
-            }
-
-            if (this.entry.subject_id !== null) {
-                axios.get('/subjects/getSubject?id=' + this.entry.subject_id)
-                    .then(response => this.subject = response.data[0].title);
             }
 
             //register events

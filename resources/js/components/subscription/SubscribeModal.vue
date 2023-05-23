@@ -178,15 +178,15 @@
 </template>
 
 <script>
-const subscribers =
+/*const subscribers =
     () => import('./Subscribers');
 const tokens =
     () => import('./Tokens');
 const DatePicker =
-    () => import('vue2-datepicker');
-/*import subscribers from "./Subscribers";
+    () => import('vue2-datepicker');*/
+import subscribers from "./Subscribers";
 import tokens from "./Tokens";
-import DatePicker from 'vue2-datepicker';*/
+import DatePicker from 'vue2-datepicker';
 import 'vue2-datepicker/index.css';
 
 export default {

@@ -15,13 +15,12 @@ class SubjectController extends Controller
             if (is_admin()) {
                 abort_unless(\Gate::allows('subject_access'), 403);
 
-                return  getEntriesForSelect2ByModel(
+                return getEntriesForSelect2ByModel(
                     "App\Subject"
                 );
-            } else { // TODO
-                return  getEntriesForSelect2ByCollection(
-                    auth()->user()->organizations(),
-                    'organizations.'
+            } else { // TODO: only get subjects in reference with teacher(?)
+                return getEntriesForSelect2ByModel(
+                    "App\Subject"
                 );
             }
         }

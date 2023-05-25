@@ -319,36 +319,16 @@
 </template>
 
 <script>
-const References =
-    () => import('../reference/References');
-const Quotes =
-    () => import('../quote/Quotes');
-const Contents =
-    () => import('../content/Contents');
-const Eventmanagement =
-    () => import('../../../../app/Plugins/Eventmanagement/resources/js/components/Events');
-const Lms =
-    () => import('../../../../app/Plugins/Lms/resources/js/components/Lms');
-const ObjectiveBox =
-    () => import('./ObjectiveBox');
-const Achievements =
-    () => import('./Achievements');
-const ObjectiveMedia =
-    () => import('./ObjectiveMedia');
-const Prerequisites =
-    () => import('../prerequisites/Prerequisites');
-const Variants =
-    () => import('./Variants');
-//import References from '../reference/References';
-//import Quotes from '../quote/Quotes';
-//import Contents from '../content/Contents';
-//import Eventmanagement from '../../../../app/Plugins/Eventmanagement/resources/js/components/Events';
-//import Lms from '../../../../app/Plugins/Lms/resources/js/components/Lms';
-//import ObjectiveBox from './ObjectiveBox'
-/*import Achievements from './Achievements'
+import References from '../reference/References';
+import Quotes from '../quote/Quotes';
+import Contents from '../content/Contents';
+import Eventmanagement from '../../../../app/Plugins/Eventmanagement/resources/js/components/Events';
+import Lms from '../../../../app/Plugins/Lms/resources/js/components/Lms';
+import ObjectiveBox from './ObjectiveBox'
+import Achievements from './Achievements'
 import ObjectiveMedia from "./ObjectiveMedia";
 import Prerequisites from "../prerequisites/Prerequisites";
-import Variants from "./Variants";*/
+import Variants from "./Variants";
 
 export default {
         props: {

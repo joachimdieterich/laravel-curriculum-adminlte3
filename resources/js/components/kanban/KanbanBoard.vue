@@ -510,6 +510,7 @@ export default {
             columnDragOptions() {
                 return {
                   animation: 200,
+                  delay: 200,
                   group: "column-list",
                   dragClass: "status-drag",
                   fallbackTolerance: 5,
@@ -519,6 +520,7 @@ export default {
             itemDragOptions() {
                 return {
                   animation: 200,
+                  delay: 200,
                   group: "item-list",
                   dragClass: "status-drag",
                   fallbackTolerance: 5,

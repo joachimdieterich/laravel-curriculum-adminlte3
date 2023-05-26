@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="kanban_board_container">
 <!--        <media-renderer
             v-if="kanban.medium_id !== null"
             class="kanban_board_wrapper p-0"
@@ -87,6 +87,7 @@
                         <div v-show="newItem !== status.id" v-if="editable"
                              :id="'kanbanItemCreateButton_' + index"
                              class="btn btn-flat py-0 w-100"
+                             style="margin-bottom: 1rem;"
                              @click="openForm('item', status.id)">
                             <i class="text-white fa fa-2x fa-plus-circle"></i>
                         </div>
@@ -537,9 +538,34 @@ export default {
         }
     }
 </script>
-<style scoped>
+<style> /* not scoped since '.content-only' and 'sidebar-collapse' are outside of of this component */
 .status-drag {
     transition: transform 0.5s;
     transition-property: all;
+}
+.kanban_board_container {
+    position: relative;
+    height: calc(100vh - 205px);
+    width: calc(100vw - 293px);
+}
+.content-only .kanban_board_container { width: calc(100vw - 1rem); }
+.kanban_board_wrapper {
+    position:absolute;
+    height: 100%;
+    width: 100%;
+    padding: 2rem;
+    overflow:auto;
+}
+@media (max-width: 991px) {
+    .kanban_board_container { width: calc(100vw - 30px) !important; }
+}
+@media (max-width: 767.98px) {
+    .sidebar-collapse .kanban_board_container,
+    .content-only .kanban_board_container,
+    .kanban_board_container
+    {
+        width: 100vw !important;
+        margin-left: -1rem;
+    }
 }
 </style>

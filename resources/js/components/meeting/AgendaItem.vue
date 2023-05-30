@@ -84,10 +84,18 @@
     </div>
 </template>
 <script>
-import AgendaItemForm from "./AgendaItemForm";
+const AgendaItemForm =
+    () => import('./AgendaItemForm');
+const AgendaItemMedia =
+    () => import('./AgendaItemMedia');
+const Speakers =
+    () => import('./Speakers');
+const VideoConference =
+    () => import('./VideoConference');
+/*import AgendaItemForm from "./AgendaItemForm";
 import AgendaItemMedia from "./AgendaItemMedia";
 import Speakers from "./Speakers";
-import VideoConference from "./VideoConference";
+import VideoConference from "./VideoConference";*/
 
 export default {
     name: 'AgendaItem',

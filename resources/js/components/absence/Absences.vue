@@ -22,7 +22,9 @@
 </template>
 
 <script>
-    import Absence from '../absence/Absence.vue'
+const Absence =
+    () => import('../absence/Absence.vue');
+    //import Absence from '../absence/Absence.vue'
     export default {
         props: {
             'absences': Array,

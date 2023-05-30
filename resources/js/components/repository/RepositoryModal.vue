@@ -110,8 +110,13 @@
 </template>
 
 <script>
-    import Form from 'form-backend-validation';
+import Form from 'form-backend-validation';
+const DatePicker =
+    () => import('vue2-datepicker');
+
+/*
     import DatePicker from 'vue2-datepicker';
+*/
     import 'vue2-datepicker/index.css';
     export default {
         data() {

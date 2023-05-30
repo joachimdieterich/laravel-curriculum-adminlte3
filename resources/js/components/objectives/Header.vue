@@ -49,7 +49,9 @@
 </template>
 
 <script>
-    import DropdownButton from './DropdownButton'
+const DropdownButton =
+    () => import('./DropdownButton');
+    //import DropdownButton from './DropdownButton'
     export default {
         props: ['objective', 'type', 'menuEntries', 'settings', 'textcolor', 'max_id'],
 

@@ -252,8 +252,11 @@
 </template>
 
 <script>
-import Form from 'form-backend-validation'
-import RepositoryPluginCreate from '../../../../app/Plugins/Repositories/resources/js/components/Create';
+import Form from 'form-backend-validation';
+const RepositoryPluginCreate =
+    () => import('../../../../app/Plugins/Repositories/resources/js/components/Create');
+
+//import RepositoryPluginCreate from '../../../../app/Plugins/Repositories/resources/js/components/Create';
 require('datatables.net/js/jquery.dataTables.min.js')
 
 const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;

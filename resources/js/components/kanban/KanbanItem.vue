@@ -153,13 +153,25 @@
 </template>
 
 <script>
-/*import kanbanTask from './KanbanTask';*/
-import mediaCarousel from '../media/MediaCarousel';
-import avatar from "../uiElements/Avatar";
 import Form from "form-backend-validation";
+/*import kanbanTask from './KanbanTask';*/
+/*const kanbanTask =
+    () => import('./KanbanTask');*/
+const mediaCarousel =
+    () => import('../media/MediaCarousel');
+const avatar =
+    () => import('../uiElements/Avatar');
+const Modal =
+    () => import('./../uiElements/Modal');
+const Reaction =
+    () => import('../reaction/Reaction');
+const Comments =
+    () => import('./Comments');
+//import mediaCarousel from '../media/MediaCarousel';
+/*import avatar from "../uiElements/Avatar";
 import Modal from "./../uiElements/Modal";
 import Reaction from "../reaction/Reaction";
-import Comments from "./Comments";
+import Comments from "./Comments";*/
 
 export default {
     props: {

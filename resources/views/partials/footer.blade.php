@@ -30,13 +30,13 @@
             </ul>
         </div>
 
-        <div class="col-lg-2 pt-2 d-none d-sm-inline-block ">
+<!--        <div class="col-lg-2 pt-2 d-none d-sm-inline-block ">
             <a class="text-white-50 text-decoration-none "
                href="http://curriculumonline.de">
                 <small>
                     Version 1.0.0
                 </small>
             </a>
-        </div>
+        </div>-->
     </div>
 </footer>

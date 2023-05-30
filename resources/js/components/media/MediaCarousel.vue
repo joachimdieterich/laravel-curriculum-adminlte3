@@ -52,7 +52,9 @@
 </template>
 
 <script>
-import mediumRenderer from '../media/MediaRenderer';
+const mediumRenderer =
+    () => import('../media/MediaRenderer');
+//import mediumRenderer from '../media/MediaRenderer';
 
 export default {
     props: {

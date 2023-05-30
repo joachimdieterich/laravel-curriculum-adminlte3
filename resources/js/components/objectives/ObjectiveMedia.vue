@@ -92,8 +92,9 @@
     </div>
 </template>
 <script>
-    import Media from '../media/Media'
-    import Repository from '../../../../app/Plugins/Repositories/resources/js/components/Media'
+
+import Media from '../../../../app/Plugins/Repositories/resources/js/components/Media'
+import Repository from '../../../../app/Plugins/Repositories/resources/js/components/Media'
 
     export default {
         name: 'objectiveMedia',

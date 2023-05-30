@@ -202,10 +202,18 @@
 </template>
 
 <script>
-    import TerminalObjectives from '../objectives/TerminalObjectives.vue'
-    import Glossars from '../glossar/Glossars';
-    import Media from '../media/Media';
-    import Contents from '../content/Contents';
+const TerminalObjectives =
+    () => import('../objectives/TerminalObjectives.vue');
+const Glossars =
+    () => import('../glossar/Glossars');
+const Media =
+    () => import('../media/Media');
+const Contents =
+    () => import('../content/Contents');
+    //import TerminalObjectives from '../objectives/TerminalObjectives.vue'
+    //import Glossars from '../glossar/Glossars';
+    //import Media from '../media/Media';
+    //import Contents from '../content/Contents';
 
     export default {
         props: {

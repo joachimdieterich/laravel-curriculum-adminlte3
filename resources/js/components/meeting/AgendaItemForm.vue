@@ -84,8 +84,13 @@
 </template>
 <script>
 import Form from "form-backend-validation";
+const Select2 =
+    () => import('../forms/Select2');
+const DatePicker =
+    () => import('vue2-datepicker');
+/*
 import Select2 from "../forms/Select2";
-import DatePicker from 'vue2-datepicker';
+import DatePicker from 'vue2-datepicker';*/
 import 'vue2-datepicker/index.css';
 
 export default {

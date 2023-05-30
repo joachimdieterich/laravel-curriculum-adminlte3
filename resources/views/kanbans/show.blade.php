@@ -62,7 +62,7 @@
     <subscribe-modal></subscribe-modal>
     <medium-modal></medium-modal>
     <medium-create-modal></medium-create-modal>
-    <task-modal></task-modal>
+<!--    <task-modal></task-modal>-->
 @endsection
 
 @section('scripts')

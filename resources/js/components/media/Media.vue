@@ -98,7 +98,9 @@
 
 <script>
 
-    import License from '../uiElements/License'
+const License =
+    () => import('../uiElements/License');
+    //import License from '../uiElements/License'
     export default {
         props: {
             subscription: {},

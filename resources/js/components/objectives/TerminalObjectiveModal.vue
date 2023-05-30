@@ -106,8 +106,10 @@
 </template>
 
 <script>
-    import Form from 'form-backend-validation';
-    import ColorPicker from '../uiElements/ColorPicker';
+import Form from 'form-backend-validation';
+const ColorPicker =
+    () => import('../uiElements/ColorPicker');
+    /*  import ColorPicker from '../uiElements/ColorPicker';*/
 
     export default {
         data() {

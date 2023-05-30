@@ -24,7 +24,7 @@ class LogbookController extends Controller
     {
         abort_unless(\Gate::allows('logbook_access'), 403);
 
-        $logbooks = Logbook::with('subscriptions');
+       $logbooks = Logbook::with('subscriptions');
 
         if (!is_admin()) {
             switch ($request->filter) {
@@ -196,6 +196,7 @@ class LogbookController extends Controller
         $logbook->update([
             'title' => $request['title'],
             'description' => $request['description'],
+            'color' => $request['color'],
         ]);
 
         return redirect()->route('logbooks.index');

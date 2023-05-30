@@ -22,7 +22,9 @@
 </template>
 
 <script>
-    import ObjectiveBox from './ObjectiveBox'
+const ObjectiveBox =
+    () => import('./ObjectiveBox');
+   // import ObjectiveBox from './ObjectiveBox'
 
     export default {
         props: {

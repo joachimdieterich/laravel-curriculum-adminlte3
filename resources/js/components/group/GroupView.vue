@@ -250,16 +250,36 @@
 </template>
 
 <script>
-    import CourseItem from '../course/CourseItem.vue'
-    import Glossars from '../glossar/Glossars';
-    import Media from '../media/Media';
-    import Contents from '../content/Contents';
-    import Users from "../users/Users";
-    import Logbooks from "../logbooks/Logbooks";
-    import Kanbans from "../kanban/Kanbans";
-    import Tasks from "../tasks/Tasks";
-    import Plans from "../plan/Plans";
-    import Tests from "../tests/Tests_Exams_View";
+const CourseItem =
+    () => import('../course/CourseItem.vue');
+const Glossars =
+    () => import('../glossar/Glossars');
+const Media =
+    () => import('../media/Media');
+const Contents =
+    () => import('../content/Contents');
+const Users =
+    () => import('../users/Users');
+const Logbooks =
+    () => import('../logbooks/Logbooks');
+const Kanbans =
+    () => import('../kanban/Kanbans');
+const Tasks =
+    () => import('../tasks/Tasks');
+const Plans =
+    () => import('../plan/Plans');
+const Tests =
+    () => import('../tests/Tests_Exams_View');
+    //import CourseItem from '../course/CourseItem.vue'
+    //import Glossars from '../glossar/Glossars';
+    //import Media from '../media/Media';
+    //import Contents from '../content/Contents';
+    //import Users from "../users/Users";
+    //import Logbooks from "../logbooks/Logbooks";
+    //import Kanbans from "../kanban/Kanbans";
+    //import Tasks from "../tasks/Tasks";
+    //import Plans from "../plan/Plans";
+    //import Tests from "../tests/Tests_Exams_View";
 
     export default {
         props: {

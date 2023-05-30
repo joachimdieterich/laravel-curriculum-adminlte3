@@ -129,8 +129,12 @@
 </template>
 
 <script>
-import MeetingDates from "./MeetingDates";
-import Livestream from "./Livestream";
+const MeetingDates =
+    () => import('./MeetingDates');
+const Livestream =
+    () => import('./Livestream');
+/*import MeetingDates from "./MeetingDates";
+import Livestream from "./Livestream";*/
 
 export default {
     props: {

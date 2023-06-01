@@ -17,7 +17,10 @@ class EdusharingMediaAdapter implements MediaInterface
      */
     public function index(Request $request)
     {
-        abort(404);
+        $edusharing = new Edusharing;
+
+        return $edusharing->getSearchQueriesV2('-home-',$request);
+
     }
 
     public function list()
@@ -42,7 +45,8 @@ class EdusharingMediaAdapter implements MediaInterface
 
         $ticket = $authHelper->getTicketForUser(auth()->user()->common_name);
 
-        if (request()->wantsJson()) {
+        if (request()->wantsJson())
+        {
             return [
                 'uploadIframeUrl' => config('medium.repositories.edusharing.upload_iframe_url').'&ticket='.$ticket,
                 'cloudIframeUrl' => config('medium.repositories.edusharing.cloud_iframe_url').'&ticket='.$ticket,
@@ -75,9 +79,9 @@ class EdusharingMediaAdapter implements MediaInterface
             'owner_id' => auth()->user()->id,
         ]);
 
-        if (($input['subscribable_type'] !== 'null') and ($input['subscribable_id'] !== 'null')) {
+        if (($input['subscribable_type'] !== 'null') and ($input['subscribable_id'] !== 'null'))
+        {
             //create usage
-
             try {
                 $edusharing = new Edusharing;
 
@@ -87,7 +91,9 @@ class EdusharingMediaAdapter implements MediaInterface
                         $input['subscribable_id'],
                         $input['external_id'],
                     );
-            } catch (Exception $e) {
+            }
+            catch (Exception $e)
+            {
                 dump($e->getMessage());
             }
 
@@ -121,17 +127,19 @@ class EdusharingMediaAdapter implements MediaInterface
         }*/
 
         /* checkIfUserHasSubscription and visibility*/
-        if ($medium->subscriptions()) {
-            foreach ($medium->subscriptions as $subscription) {
-                if ($this->checkIfUserHasSubscription($subscription)) {
-
+        if ($medium->subscriptions())
+        {
+            foreach ($medium->subscriptions as $subscription)
+            {
+                if ($this->checkIfUserHasSubscription($subscription))
+                {
                     if ($subscription->additional_data != null)
                     {
                         $edusharing = new Edusharing;
                         $node = $edusharing->getNodeByUsage($subscription->additional_data, $subscription->owner_id);
 
-                        //dump($node);
-                        if (request()->wantsJson()) {
+                        if (request()->wantsJson())
+                        {
                             return [
                                 'detailsSnippet' => $node['detailsSnippet']
                             ];
@@ -144,31 +152,32 @@ class EdusharingMediaAdapter implements MediaInterface
             }
         }
         /* end checkIfUserHasSubscription and visibility */
-
-        /* user has permission to access this file ! */
-        abort(403);
+        abort(403); // user has no permission to access this file !
     }
 
     public function thumb(Medium $medium, $size) //todo: return smaller images/files/thumbs
     {
 
         // Medium is public (sharing_level_id == 1) or user is owner
-        if (($medium->public == true) or ($medium->owner_id == auth()->user()->id)) {
+        if (($medium->public == true) or ($medium->owner_id == auth()->user()->id))
+        {
             return redirect($medium->thumb_path);
         }
 
         /* checkIfUserHasSubscription and visibility*/
-        if ($medium->subscriptions()) {
-            foreach ($medium->subscriptions as $subscription) {
-                if ($this->checkIfUserHasSubscription($subscription)) {
+        if ($medium->subscriptions())
+        {
+            foreach ($medium->subscriptions as $subscription)
+            {
+                if ($this->checkIfUserHasSubscription($subscription))
+                {
                     return redirect($medium->thumb_path); //return file or url
                 }
             }
         }
         /* end checkIfUserHasSubscription and visibility */
 
-        /* user has permission to access this file ! */
-        abort(403);
+        abort(403); // user has no permission to access this file !
     }
 
     public function edit(Medium $medium)
@@ -180,11 +189,14 @@ class EdusharingMediaAdapter implements MediaInterface
     {
         abort_unless(\Gate::allows('medium_edit'), 403);
 
-        if ($medium->owner_id === auth()->user()->id) {
+        if ($medium->owner_id === auth()->user()->id)
+        {
             $medium->update($this->validateRequest());
 
             return response()->json(['message' => $medium]);
-        } else {
+        }
+        else
+        {
             return response()->json(['errors' => 'Only file-owner can edit'], 403);
         }
     }
@@ -198,7 +210,8 @@ class EdusharingMediaAdapter implements MediaInterface
          * - if not -> delete only medium_subscription
          */
         $input = $this->validateRequest();
-        if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
+        if (isset($input['subscribable_type']) and isset($input['subscribable_id']))
+        {
             $subscribable_type = $input['subscribable_type'];
             $subscribable_id = $input['subscribable_id'];
 
@@ -218,13 +231,13 @@ class EdusharingMediaAdapter implements MediaInterface
             $subscription->delete();
         }
 
-        if ($medium->subscriptions()->count() <= 1) {
-            // todo delete usages in edusharing
-
+        if ($medium->subscriptions()->count() <= 1)
+        {
             $medium->delete();
         }
 
-        if (request()->wantsJson()) {
+        if (request()->wantsJson())
+        {
             return ['message' => true];
         }
     }
@@ -234,24 +247,28 @@ class EdusharingMediaAdapter implements MediaInterface
         switch ($subscription->subscribable_type) {
             case "App\Organization":
                 if (in_array($subscription->subscribable_id, auth()->user()->organizations()->pluck('organization_id')->toArray())
-                    and ($subscription->visibility == 1)) {
+                    and ($subscription->visibility == 1))
+                {
                     return true;
                 }
                 break;
             case "App\Group":
                 if (in_array($subscription->subscribable_id, auth()->user()->groups()->pluck('groups.id')->toArray())
-                    and ($subscription->visibility == 1)) {
+                    and ($subscription->visibility == 1))
+                {
                     return true;
                 }
                 break;
             case "App\User":
                 if ($subscription->subscribable_id == auth()->user()->id
-                    and ($subscription->visibility == 1)) {
+                    and ($subscription->visibility == 1))
+                {
                     return true;
                 }
                 break;
             case "App\KanbanItem":
-                if ($subscription->subscribable->kanban->isAccessible()) {
+                if ($subscription->subscribable->kanban->isAccessible())
+                {
                     return true;
                 }
                 break;

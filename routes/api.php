@@ -89,4 +89,7 @@ Route::group([
     Route::get('moodle/curricula/{curriculum}/enablingObjectives', 'MoodleApiController@getEnablingObjectives');
     Route::get('moodle/logbooks', 'MoodleApiController@getLogbooks');
     Route::get('moodle/kanbans', 'MoodleApiController@getKanbans');
+
+    Route::apiResource('kanbans', 'KanbansApiController');
+
 });

@@ -1,7 +1,7 @@
 <template>
     <div class="card-header border-bottom-0 p-0 kanban-header"
          :key="form.id">
-        <span v-if="editor !== false"
+        <span v-if="(editor !== false && form.visibility !== 0) || (editor !== false && $userId == status.owner_id )"
               filter=".ignore">
             <input
                 :id="'title_'+ form.id"
@@ -12,16 +12,29 @@
                 style="font-size: 1.1rem; font-weight: 400; border: 0; border-bottom: 1px; border-style:solid; margin: 0;"
             />
              <div class="form-group ">
-                    <div class="form-check">
-                        <input type="checkbox"
-                               class="form-check-input"
-                               :id="'locked_'+ form.id"
-                               v-model="form.locked" >
-                        <label class="form-check-label"
-                               for="editable">{{ trans('global.locked') }}</label>
-                    </div>
-                </div>
-
+                 <span class="custom-control custom-switch custom-switch-on-green">
+                    <input  v-model="form.locked"
+                            type="checkbox"
+                            class="custom-control-input pt-1 "
+                            :id="'locked_'+ form.id">
+                    <label class="custom-control-label  font-weight-light"
+                           :for="'locked_'+ form.id" >
+                        {{ trans('global.locked') }}
+                    </label>
+                </span>
+                 <span v-if="($userId == status.owner_id)"
+                       class="custom-control custom-switch custom-switch-on-green">
+                    <input
+                        v-model="form.visibility"
+                            type="checkbox"
+                            class="custom-control-input pt-1 "
+                            :id="'visibility_'+ form.id">
+                    <label class="custom-control-label font-weight-light"
+                           :for="'visibility_'+ form.id" >
+                        {{ trans('global.visibility') }}
+                    </label>
+                </span>
+            </div>
 
              <button :name="'kanbanStatusSave_'+form.id"
                      class="btn btn-primary p-2 m-2"
@@ -39,7 +52,7 @@
         </span>
         <span v-else>
             <strong>{{ form.title }}</strong>
-            <div v-if="(editable == 1 && form.locked !== 1 && kanban.onlyEditOwnedItems !== 1) || ($userId == status.owner_id )"
+            <div v-if="(editable == 1 && form.locked !== 1 && form.visibility == 1 && kanban.onlyEditOwnedItems !== 1) || ($userId == status.owner_id )"
                  :id="'kanbanStatusDropdown_'+form.id"
                  class="btn btn-flat py-0 pl-0 pull-left"
                  data-toggle="dropdown"
@@ -102,6 +115,7 @@ export default {
               'title': '',
               'kanban_id': '',
               'locked': false,
+              'visibility': true,
           }),
           url: '',
           method: 'patch',

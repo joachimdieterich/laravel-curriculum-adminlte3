@@ -23,7 +23,7 @@ return [
     'updated_at_helper' => '',
     'deleted_at' => 'Deleted at',
     'deleted_at_helper' => '',
-
+    'visibility' => 'Visibel',
     'my_files' => 'My media',
     'shared_files' => 'shared media',
     'public_files' => 'public media',

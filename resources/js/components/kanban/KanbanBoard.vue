@@ -27,6 +27,7 @@
                 @end="syncStatusMoved">
                 <div
                     v-for="(status, index) in statuses"
+                    v-if="(status.visibility == 1) || ($userId == status.owner_id )"
                     :key="'header_'+status.id"
                     class=" no-border pr-3"
                     :style="'float:left; width:' + itemWidth + 'px;'">

@@ -23,7 +23,7 @@ return [
     'updated_at_helper' => '',
     'deleted_at' => 'Gelöscht am',
     'deleted_at_helper' => '',
-
+    'visibility' => 'Für andere Nutzer:innen sichtbar',
     'my_files' => 'meine Medien',
     'shared_files' => 'freigegebene Medien',
     'public_files' => 'alle Medien',

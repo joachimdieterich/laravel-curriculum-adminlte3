@@ -5,6 +5,24 @@ namespace App;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ *   @OA\Schema(
+ *      required={"id", "title"},
+ *      @OA\Xml(name="Grade"),
+ *
+ *      @OA\Property( property="id", type="integer"),
+ *      @OA\Property( property="title", type="string"),
+ *      @OA\Property( property="description", type="string"),
+ *      @OA\Property( property="color", type="string"),
+ *      @OA\Property( property="medium_id", type="integer"),
+ *      @OA\Property( property="owner_id", type="integer"),
+ *      @OA\Property( property="created_at", type="string"),
+ *      @OA\Property( property="updated_at", type="string"),
+ *      @OA\Property( property="commentable", type="integer"),
+ *      @OA\Property( property="auto_refresh", type="integer"),
+ *      @OA\Property( property="only_edit_owned_items", type="integer")
+ *   ),
+ */
 class Kanban extends Model
 {
     protected $guarded = [];

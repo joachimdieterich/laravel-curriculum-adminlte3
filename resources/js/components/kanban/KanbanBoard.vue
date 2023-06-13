@@ -27,6 +27,7 @@
                 @end="syncStatusMoved">
                 <div
                     v-for="(status, index) in statuses"
+                    v-if="(status.visibility == 1) || ($userId == status.owner_id )"
                     :key="'header_'+status.id"
                     class=" no-border pr-3"
                     :style="'float:left; width:' + itemWidth + 'px;'">
@@ -511,7 +512,8 @@ export default {
             columnDragOptions() {
                 return {
                   animation: 200,
-                  delay: 200,
+                  // checks if a mobile-browser is used and if true, add delay
+                  ...(/Mobi/i.test(window.navigator.userAgent) && {delay: 200}),
                   group: "column-list",
                   dragClass: "status-drag",
                   fallbackTolerance: 5,
@@ -521,7 +523,7 @@ export default {
             itemDragOptions() {
                 return {
                   animation: 200,
-                  delay: 200,
+                  ...(/Mobi/i.test(window.navigator.userAgent) && {delay: 200}),
                   group: "item-list",
                   dragClass: "status-drag",
                   fallbackTolerance: 5,

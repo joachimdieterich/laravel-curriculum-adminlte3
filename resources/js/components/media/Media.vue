@@ -1,4 +1,4 @@
-<template >
+<template>
 <div>
     <div v-if="format =='list'">
         <table
@@ -98,9 +98,7 @@
 
 <script>
 
-const License =
-    () => import('../uiElements/License');
-    //import License from '../uiElements/License'
+    import License from '../uiElements/License'
     export default {
         props: {
             subscription: {},

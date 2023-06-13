@@ -18,10 +18,10 @@ class LmsUserTokenController extends Controller
         $token = LmsUserToken::where('user_id', auth()->user()->id)
             ->where('organization_id', auth()->user()->current_organization_id)
             ->get()
-            ->first();
+            ->first()->token;
 
         if (request()->wantsJson()) {
-            if (! is_null($token)) {
+            if (!is_string($token)) {
                 $current_organization = Organization::where('id', auth()->user()->current_organization_id)->get()->first();
 
                 return [

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\QRCodeHelper;
 use App\Kanban;
 use App\KanbanSubscription;
 use App\User;
@@ -27,19 +28,26 @@ class KanbanSubscriptionController extends Controller
             return empty($kanbans) ? '' : DataTables::of($kanbans)
                 ->setRowId('id')
                 ->make(true);
-            /*$subscriptions = KanbanSubscription::where([
-                'subscribable_type' => $input['subscribable_type'],
-                'subscribable_id' => $input['subscribable_id'],
-            ]);
-
-            if (request()->wantsJson()) {
-                return ['subscriptions' => $subscriptions->with(['kanban'])->get()];
-            }*/
-        } else {
-            if (request()->wantsJson()) {
-                $tokens = KanbanSubscription::where('kanban_id', request('kanban_id'))
+        }
+        else
+        {
+            if (request()->wantsJson())
+            {
+                $tokenscodes = KanbanSubscription::where('kanban_id', request('kanban_id'))
                     ->where('sharing_token', "!=", null)
                     ->get();
+
+                foreach ($tokenscodes as $token)
+                {
+                    $tokens[] = [
+                        "token" => $token,
+                        "qr"    => (new QRCodeHelper())
+                            ->generateQRCodeByString(
+                                env("APP_URL"). "/kanbans/" . request('kanban_id') ."/token?sharing_token=" .$token->sharing_token
+                            )
+                    ];
+                }
+
                 return [
                     'subscribers' => [
                         'tokens' => $tokens,
@@ -87,7 +95,7 @@ class KanbanSubscriptionController extends Controller
                 ->with('subscribable')
                 ->whereHasMorph('subscribable', '*', function ($q, $type) {
                     if ($type == 'App\\User') {
-                        $q->whereNull('sharing_token');
+                        $q->whereNot('id', env('GUEST_USER'));
                     }
                 })->get(),
             ];

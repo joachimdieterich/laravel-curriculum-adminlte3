@@ -26,10 +26,41 @@
       box-shadow: $box-boxshadow;
       border-radius: 0.25rem;
 
-  &.box-objective{
+    .symbol {
+        position: absolute;
+        padding: 6px;
+        z-index: 1;
+        width: 30px;
+        height: 40px;
+        top: 0px;
+        font-size: 1.2em;
+        left: 10px;
+    }
+
+  &.box-objective {
       margin: 0px;
       height:50px;
       border: 1px solid $gray-lte;
+
+      &.edusharing-box {
+          height: 300px !important;
+          min-width: 200px !important;
+          padding: 0;
+          background-size: cover;
+          background-repeat: no-repeat;
+
+          .edusharing-box-bg {
+              position:absolute;
+              top:0px;
+              height: 150px;
+              width:100%;
+              background-size: cover;
+              background-repeat: no-repeat;
+              border-top-left-radius: 0.16rem;
+              border-top-right-radius: 0.16rem;
+          }
+      }
+
   }
 
 

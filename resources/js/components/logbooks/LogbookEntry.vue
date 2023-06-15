@@ -234,10 +234,10 @@
                          class="tab-pane"
                          :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_lms_'+entry.id)"
                          v-bind:id="'lms_'+entry.id">
-                        <lms ref="LmsPlugin"
+<!--                        <lms ref="LmsPlugin"
                              :referenceable_type="model"
                              :referenceable_id="entry.id">
-                        </lms>
+                        </lms>-->
                     </div>
                 </div>
             </div>
@@ -252,7 +252,7 @@ import Absences from '../absence/Absences';
 import Contents from '../content/Contents';
 import TaskList from '../uiElements/TaskList';
 import Media from '../media/Media';
-import Lms from '../../../../app/Plugins/Lms/resources/js/components/Lms';
+//import Lms from '../../../../app/Plugins/Lms/resources/js/components/Lms';
 import ReferenceList from "../reference/ReferenceList";
 import Avatar from "../uiElements/Avatar";
 

@@ -381,7 +381,7 @@ export default {
             Media,
             Contents,
             TaskList,
-            Lms
+            //Lms
         }
     }
 </script>

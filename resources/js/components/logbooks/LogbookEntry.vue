@@ -126,7 +126,7 @@
                     </a>
                 </li>
 
-                <li v-permission="'lms_access'"
+<!--                <li v-permission="'lms_access'"
                     class="nav-item"
                     @click="setLocalStorage('#logbook_'+entry.id, '#logbook_lms_'+entry.id)">
                     <a class="nav-link small link-muted"
@@ -138,7 +138,7 @@
                         <span v-if="help">{{ trans('global.lms.title_singular') }}</span>
 
                     </a>
-                </li>
+                </li>-->
 
                 <li class="nav-item ml-auto pull-right">
                     <a class="nav-link small link-muted"
@@ -230,7 +230,7 @@
                     </div>
                     <!-- /.tab-pane -->
 
-                    <div v-permission="'lms_access'"
+<!--                    <div v-permission="'lms_access'"
                          class="tab-pane"
                          :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_lms_'+entry.id)"
                          v-bind:id="'lms_'+entry.id">
@@ -238,7 +238,7 @@
                              :referenceable_type="model"
                              :referenceable_id="entry.id">
                         </lms>
-                    </div>
+                    </div>-->
                 </div>
             </div>
         </div>
@@ -252,7 +252,7 @@ import Absences from '../absence/Absences';
 import Contents from '../content/Contents';
 import TaskList from '../uiElements/TaskList';
 import Media from '../media/Media';
-import Lms from '../../../../app/Plugins/Lms/resources/js/components/Lms';
+//import Lms from '../../../../app/Plugins/Lms/resources/js/components/Lms';
 import ReferenceList from "../reference/ReferenceList";
 import Avatar from "../uiElements/Avatar";
 
@@ -343,9 +343,9 @@ export default {
             loaderAbsences: function () {
                 this.$refs.Absences.loaderEvent();
             },
-            loadLmsPlugin() {
+            /*loadLmsPlugin() {
                 this.$refs.LmsPlugin.loaderEvent();
-            },
+            },*/
             print() {
                 location.href = '/print/LogbookEntry/' + this.entry.id
             }
@@ -381,7 +381,7 @@ export default {
             Media,
             Contents,
             TaskList,
-            Lms
+            //Lms
         }
     }
 </script>

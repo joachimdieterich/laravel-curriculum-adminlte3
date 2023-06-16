@@ -15,10 +15,10 @@ class LmsUserTokenController extends Controller
      */
     public function index()
     {
-        $token = LmsUserToken::where('user_id', auth()->user()->id)
+        $token = optional(LmsUserToken::where('user_id', auth()->user()->id)
             ->where('organization_id', auth()->user()->current_organization_id)
             ->get()
-            ->first()->token;
+            ->first())->token;
 
         if (request()->wantsJson()) {
             if (!is_string($token)) {

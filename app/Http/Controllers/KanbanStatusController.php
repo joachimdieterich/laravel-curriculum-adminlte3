@@ -32,6 +32,7 @@ class KanbanStatusController extends Controller
             'order_id' => $order_id ?? 1,
             'kanban_id' => $input['kanban_id'],
             'locked' => $input['locked'] ?? false,
+            'visibility' => $input['visibility'] ?? true,
 
             'owner_id' => auth()->user()->id,
         ]);
@@ -63,6 +64,7 @@ class KanbanStatusController extends Controller
         $kanbanStatus->update([
             'title' => $input['title'],
             'locked' => $input['locked'] ?? false,
+            'visibility' => $input['visibility'] ?? true,
         ]);
 
         if (request()->wantsJson()) {
@@ -169,6 +171,7 @@ class KanbanStatusController extends Controller
             'kanban_id' => 'sometimes|required|integer',
             'order_id' => 'sometimes|integer',
             'locked' => 'sometimes|boolean',
+            'visibility' => 'sometimes|boolean',
         ]);
     }
 

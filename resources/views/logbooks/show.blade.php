@@ -32,10 +32,8 @@
 @section('content')
     <!-- {!! $logbook->description !!}-->
 
-<!--
     <logbook :logbook="{{ $logbook }}"
              :period="{{App\Period::find(auth()->user()->current_period_id)}}"></logbook>
--->
 
     <medium-modal></medium-modal>
     <medium-create-modal></medium-create-modal>

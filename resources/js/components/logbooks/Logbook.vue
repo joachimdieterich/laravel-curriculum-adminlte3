@@ -41,18 +41,18 @@
         </div>
 
         <div class="col-md-12">
-             <LogbookEntry
+<!--             <LogbookEntry
                  v-for="(entry, index) in entries"
                  v-bind:key="entry.id"
                  :first=" index === 0 "
                  :entry="entry"
                  :search="search"
                  :logbook="logbook">
-            </LogbookEntry>
+            </LogbookEntry>-->
         </div>
         <!-- /.col -->
         <logbook-entry-modal></logbook-entry-modal>
-<!--        <lms-modal></lms-modal>-->
+        <lms-modal></lms-modal>
     </div>
 </template>
 

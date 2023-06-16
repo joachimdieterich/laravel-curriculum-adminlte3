@@ -87,7 +87,7 @@
                         <span v-if="help">{{ trans('global.task.title') }}</span>
                     </a>
                 </li>
-                <li class="nav-item small"
+<!--                <li class="nav-item small"
                     v-permission="'medium_access'"
                     @click="setLocalStorage('#logbook_'+entry.id, '#logbook_media_'+entry.id)">
                     <a class="nav-link"
@@ -97,7 +97,7 @@
                         <i class="fa fa-photo-video pr-1"></i>
                         <span v-if="help">{{ trans('global.media.title') }}</span>
                     </a>
-                </li>
+                </li>-->
                 <li class="nav-item small"
                     v-permission="'reference_access'"
                     @click="setLocalStorage('#logbook_'+entry.id, '#logbook_objectives_'+entry.id)">
@@ -189,7 +189,7 @@
                     </div>
                     <!-- /.tab-pane -->
                     <!-- /.tab-pane -->
-                    <div v-permission="'medium_access'"
+<!--                    <div v-permission="'medium_access'"
                          class="tab-pane"
                          :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_media_'+entry.id)"
                          v-bind:id="'logbook_media_'+entry.id">
@@ -197,7 +197,7 @@
                                :subscribable_id="entry.id"
                                format="list">
                         </media>
-                    </div>
+                    </div>-->
                     <!-- /.tab-pane -->
                     <div class="tab-pane"
                          v-permission="'reference_access'"
@@ -251,7 +251,7 @@
 import Absences from '../absence/Absences';
 import Contents from '../content/Contents';
 import TaskList from '../uiElements/TaskList';
-import Media from '../media/Media';
+//import Media from '../media/Media';
 //import Lms from '../../../../app/Plugins/Lms/resources/js/components/Lms';
 import ReferenceList from "../reference/ReferenceList";
 import Avatar from "../uiElements/Avatar";
@@ -360,9 +360,9 @@ export default {
             }
 
             //register events
-            this.$root.$on('lmsUpdate', () => {
+           /* this.$root.$on('lmsUpdate', () => {
                 this.$refs.LmsPlugin.loaderEvent();
-            });
+            });*/
         },
         computed: {
             isActive: function () {
@@ -378,7 +378,7 @@ export default {
             ReferenceList,
             Absences,
             Avatar,
-            Media,
+           // Media,
             Contents,
             TaskList,
             //Lms

@@ -52,6 +52,7 @@
         </div>
         <!-- /.col -->
         <logbook-entry-modal></logbook-entry-modal>
+        <logbook-entry-subject-modal></logbook-entry-subject-modal>
         <lms-modal></lms-modal>
     </div>
 </template>

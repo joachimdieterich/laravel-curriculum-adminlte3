@@ -682,12 +682,14 @@ return [
         'title_singular' => 'Log',
         'create' => 'Create Logbookentry',
         'edit' => 'Edit Logbookentry',
+        'subject' => 'Choose Subject',
         'addition' => 'Make addition to Logbookentry',
         'fields' => [
             'begin' => 'Begin',
             'begin_helper' => '',
             'end' => 'End',
             'end_helper' => '',
+            'subject' => 'Subject',
         ],
     ],
     'task' => [

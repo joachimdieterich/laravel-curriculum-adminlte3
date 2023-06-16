@@ -685,12 +685,14 @@ return [
         'title_singular' => 'Logbucheintrag',
         'create' => 'Logbucheintrag erstellen',
         'edit' => 'Logbucheintrag bearbeiten',
+        'subject' => 'Fach auswählen',
         'addition' => 'Logbucheintrag ergänzen',
         'fields' => [
             'begin' => 'Beginn',
             'begin_helper' => '',
             'end' => 'Ende',
             'end_helper' => '',
+            'subject' => 'Fach',
         ],
     ],
     'task' => [

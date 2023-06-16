@@ -27,16 +27,12 @@
                         @click.stop="print()">
                         <i class="fa fa-print "></i>
                     </button>-->
-                            <span>
-                                <label for="subjects">Fach: </label>
-                                <select :id="'subject_' + entry.id"
-                                        name="subjects"
-                                        class="form-control"
-                                        @click="initSelect2()"
-                                >
-                                    <option default>{{ this.entry.subject?.title }}</option>
-                                </select>
-                            </span>
+                    <button
+                        type="button"
+                        class="btn btn-tool pt-3"
+                        @click.stop="subject()">
+                        <i class="fa fa-pencil"></i>
+                    </button>
                     <button
                         type="button"
                         class="btn btn-tool pt-3"
@@ -297,7 +293,10 @@ export default {
         },
         methods: {
             edit() {
-                 this.$modal.show('logbook-entry-modal', { 'id': this.entry.id, 'method': 'patch'});
+                this.$modal.show('logbook-entry-modal', { 'id': this.entry.id, 'method': 'patch'});
+            },
+            subject() {
+                this.$modal.show('logbook-entry-subject-modal', { 'id': this.entry.id, 'subject': this.entry.subject?.title });
             },
             async destroy(){
                 try {
@@ -306,29 +305,6 @@ export default {
                     console.log(error);
                 }
                 this.$parent.$emit('deleteLogbookEntry', this.entry);
-            },
-            initSelect2() {
-                $('#subject_' + this.entry.id).select2({
-                    allowClear: false,
-                    ajax: {
-                        url: "/subjects",
-                        dataType: 'json',
-                        data: function (params) {
-                            return {
-                                term: params.term || '',
-                                page: params.page || 1
-                            }
-                        },
-                        cache: true
-                    },
-                }).on('select2:open', () => {
-                    document.querySelector('.select2-search__field').focus();
-                }).on('select2:select', function (e) {
-                    const entryId = this.id.split('_')[1]; // this = select-element
-                    axios.post('/logbookEntries/setSubject?id=' + entryId, {
-                        'subject_id' : e.params.data.id,
-                    });
-                }).bind(this);
             },
             postDate() {
                 var start = new Date(this.entry.begin.replace(/-/g, "/"));

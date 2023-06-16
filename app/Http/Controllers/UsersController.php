@@ -40,17 +40,17 @@ class UsersController extends Controller
         }
 
         abort_unless(\Gate::allows('user_access'), 403);
-        // todo check: is the following condition used anymore
+        // todo check: is the following condition used anymore (-> used only by user-tab on group/{id}?) --> change to top condition
         if (request()->wantsJson()) {
-            if (auth()->user()->role()->id == 1) {
-                $users = User::addGlobalScope(NoSharingUsers::class)->withTrashed()
-                    ->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get();
+            /*if (auth()->user()->role()->id == 1) {
+                $users = json_encode(User::withTrashed()
+                    ->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get());
 
                 return ['users' => $users];
-            } else {
+            } else {*/
                 return ['users' => json_encode(Organization::where('id', auth()->user()->current_organization_id)
-                    ->get()->first()->users()->addGlobalScope(NoSharingUsers::class)->get())];
-            }
+                    ->get()->first()->users()->get())];
+          /*  }*/
         }
 
         return view('users.index');

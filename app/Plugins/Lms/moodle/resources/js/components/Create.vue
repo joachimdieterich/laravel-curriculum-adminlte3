@@ -135,7 +135,7 @@ export default {
                     this.token      = response.data.token;
                     this.lms_url    = response.data.lms_url;
                     if (this.lms_url !== ''){
-                        this.getTokenFromLms(this.lms_url + 'mod/curriculum/get_token.php');
+                        this.getTokenFromLms(this.lms_url + '/mod/curriculum/get_token.php');
                     }
             }).catch(e => {
                 error.log(response);

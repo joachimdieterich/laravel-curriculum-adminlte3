@@ -2,7 +2,7 @@
     data-widget="todo-list"
     style="display: flex;flex-direction: column;">
     @foreach ($exams as $title => $exam_group)
-        <h6>{{ $title }}</h6>
+        <h6 class="p-2 mt-2">{{ $title }}</h6>
         @foreach ($exam_group as $exam)
             <li class="bg-light mb-2" style="display: flex;column-gap: 5px;align-items: center;">
                 <!-- drag handle -->

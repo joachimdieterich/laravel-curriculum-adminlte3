@@ -31,7 +31,7 @@
                         type="button"
                         class="btn btn-tool pt-3"
                         @click.stop="subject()">
-                        <i class="fa fa-pencil"></i>
+                        <i class="fa fa-book-open"></i>
                     </button>
                     <button
                         type="button"

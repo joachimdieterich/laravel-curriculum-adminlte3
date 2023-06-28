@@ -72,7 +72,10 @@ export default {
             this.subject = event.params.subject ?? '';
         },
         opened() {},
-        beforeClose() {}
+        beforeClose() {},
+        close() {
+            this.$modal.hide('logbook-entry-modal');
+        },
     }
 }
 </script>

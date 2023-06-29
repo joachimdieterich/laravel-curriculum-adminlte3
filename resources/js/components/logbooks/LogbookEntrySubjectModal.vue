@@ -65,18 +65,21 @@ export default {
                 axios.post('/logbookEntries/setSubject?id=' + entryId, {
                     'subject_id' : e.params.data.id,
                 });
-            }).bind(this);
+            });
         },
         beforeOpen(event) {
             this.id = event.params.id;
             this.subject = event.params.subject ?? '';
         },
-        opened() {},
+        opened() {
+            // select-element always throws error on first click, so click it instantly on popup
+            $('#subject_' + this.id).click();
+        },
         beforeClose() {},
         close() {
-            this.$modal.hide('logbook-entry-modal');
+            this.$modal.hide('logbook-entry-subject-modal');
         },
-    }
+    },
 }
 </script>
 <style>

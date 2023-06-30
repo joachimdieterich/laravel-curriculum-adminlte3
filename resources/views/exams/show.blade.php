@@ -28,7 +28,7 @@
     <div class="row ">
         <div class="col-sm-12">
             <div class="btn-group pull-right" role="group" aria-label="...">
-                @include ('forms.input.button', ["onclick" => "expelFromExam()", "field" => "expelFromExam", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-minus", "label" => "Aus Testung ausschreiben"])
+                @include ('forms.input.button', ["onclick" => "expelFromExam()", "field" => "expelFromExam", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-minus", "label" => "Aus Lernstandsanalyse ausschreiben"])
             </div>
         </div><!-- ./col-xs-12 -->
     </div>
@@ -49,7 +49,7 @@
     <div class="row ">
         <div class="col-sm-12">
             <div class="btn-group pull-right" role="group" aria-label="...">
-                @include ('forms.input.button', ["onclick" => "enroleIntoExam()", "field" => "enroleIntoExam", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-plus", "label" => "In Testung einschreiben"])
+                @include ('forms.input.button', ["onclick" => "enroleIntoExam()", "field" => "enroleIntoExam", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-plus", "label" => "In Lernstandsanalyse einschreiben"])
             </div>
         </div><!-- ./col-xs-12 -->
     </div>

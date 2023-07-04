@@ -686,6 +686,7 @@ return [
         'create' => 'Logbucheintrag erstellen',
         'edit' => 'Logbucheintrag bearbeiten',
         'subject' => 'Fach auswählen',
+        'no_subject' => 'Kein Fach ausgewählt',
         'addition' => 'Logbucheintrag ergänzen',
         'fields' => [
             'begin' => 'Beginn',

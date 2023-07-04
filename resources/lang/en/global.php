@@ -683,6 +683,7 @@ return [
         'create' => 'Create Logbookentry',
         'edit' => 'Edit Logbookentry',
         'subject' => 'Choose Subject',
+        'no_subject' => 'No Subject selected',
         'addition' => 'Make addition to Logbookentry',
         'fields' => [
             'begin' => 'Begin',

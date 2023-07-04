@@ -26,12 +26,12 @@
             </div>
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                 <label for="subjects">{{ trans("global.logbookEntry.fields.subject") }}</label>
-                <select :id="'subject_' + this.id"
+                <select :id="'subject_' + id"
                         name="subjects"
                         class="form-control"
                         @click="initSelect2()"
                 >
-                    <option default>{{ this.subject }}</option>
+                    <option default>{{ subject }}</option>
                 </select>
             </div>
         </div>
@@ -39,9 +39,11 @@
 </template>
 <script>
 export default {
-    props: {
-        'id': Number,
-        'subject': String,
+    data() {
+        return {
+            id: Number,
+            subject: String,
+        };
     },
     methods: {
         initSelect2() {
@@ -61,10 +63,15 @@ export default {
             }).on('select2:open', () => {
                 document.querySelector('.select2-search__field').focus();
             }).on('select2:select', (e) => {
-                const entryId = this.id.split('_')[1]; // this = select-element
-                axios.post('/logbookEntries/setSubject?id=' + entryId, {
+                axios.post('/logbookEntries/setSubject?id=' + this.id, {
                     'subject_id' : e.params.data.id,
                 });
+                
+                this.$eventHub.$emit('updateSubjectBadge', {
+                    id: this.id,
+                    title: e.params.data.text,
+                });
+                this.$modal.hide('logbook-entry-subject-modal');
             });
         },
         beforeOpen(event) {

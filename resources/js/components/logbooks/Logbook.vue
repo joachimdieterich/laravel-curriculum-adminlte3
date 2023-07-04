@@ -102,6 +102,12 @@ const LogbookPrintOptions =
                 this.entries[index].description = updatedEntry.description;
                 this.entries[index].updated_at = updatedEntry.updated_at;
             });
+            this.$eventHub.$on('updateSubjectBadge', (updatedEntry) => {
+                const index = this.entries.findIndex(
+                    entry => entry.id === updatedEntry.id
+                );
+                this.entries[index].subject.title = updatedEntry.title;
+            });
 
             this.$on('deleteLogbookEntry', function (deletedEntry) {
                 let index = this.entries.indexOf(deletedEntry);

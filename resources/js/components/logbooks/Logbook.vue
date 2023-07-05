@@ -58,12 +58,8 @@
 </template>
 
 <script>
-const LogbookEntry =
-    () => import('../logbooks/LogbookEntry.vue');
-const LogbookPrintOptions =
-    () => import('./LogbookPrintOptions');
-//import LogbookEntry from '../logbooks/LogbookEntry.vue';
-//import LogbookPrintOptions from "./LogbookPrintOptions";
+import LogbookEntry from '../logbooks/LogbookEntry.vue';
+import LogbookPrintOptions from "./LogbookPrintOptions";
 
     export default {
         props: {

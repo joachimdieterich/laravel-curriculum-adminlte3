@@ -2,9 +2,8 @@
 @section('title')
     <div>
         <h4>Tool: {{  isset($exam) ? $exam->tool : 'tool' }}</h4>
-        <h1 style="text-align: center;">{{  isset($exam) ? $exam->test_name : 'exam' }}</h1>
     </div>
-    <div>{{ trans('global.exam.add_remove_users.students_exam_title') }}</div>
+    <div>{{ trans('global.exam.add_remove_users.students_exam_title') }} {{  isset($exam) ? $exam->test_name : 'exam' }}</div>
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item "><a href="/"><i class="fa fa-home"></i></a></li>

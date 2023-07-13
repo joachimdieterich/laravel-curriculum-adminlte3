@@ -165,7 +165,9 @@ export default {
           this.form.variant_definition_id = id;
 
           this.$nextTick(() => {
-              this.$initTinyMCE();
+              this.$initTinyMCE([
+                  "autolink link example"
+              ]);
           });
 
       },

@@ -127,7 +127,10 @@
                 }
             },
             opened(){
-                this.$initTinyMCE();
+                this.$initTinyMCE([
+                        "autolink link example"
+                    ]
+                );
             },
             beforeClose() {
                 //console.log('close')

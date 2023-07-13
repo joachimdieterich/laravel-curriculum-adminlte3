@@ -153,7 +153,9 @@ const DatePicker =
                 }
              },
             opened(){
-                this.$initTinyMCE();
+                this.$initTinyMCE([
+                    "autolink link example"
+                ]);
             },
             beforeClose(event) {
 

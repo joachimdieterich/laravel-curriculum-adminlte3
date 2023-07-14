@@ -311,7 +311,9 @@ export default {
             editor.parentNode.removeChild(editor);
             hidePlaceholder.parentNode.removeChild(hidePlaceholder);
             placeholder.appendChild(editor);
-            this.$initTinyMCE();
+            this.$initTinyMCE([
+                "autolink link example"
+            ]);
 
         },
         loadNotes(type, id){
@@ -395,7 +397,9 @@ export default {
         }
 
         this.load();
-        this.$initTinyMCE();
+        this.$initTinyMCE([
+            "autolink link example"
+        ]);
     },
 }
 </script>

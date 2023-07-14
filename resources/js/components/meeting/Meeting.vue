@@ -1,15 +1,16 @@
 <template>
     <div class="row">
 
-        <div class="col-md-12 col-lg-6">
+        <div class="col-sm-12 col-md-8">
             <div class="card mb-2 bg-gradient-dark">
                 <img v-if ="this.meeting.medium_id"
                      class="card-img-top"
                      :src="'/media/'+this.meeting.medium_id"
+                     style="height: 200px !important"
                      alt="image"
                 >
                 <div class="card-img-overlay d-flex flex-column justify-content-end"
-                     style="padding:0 !important;min-height:140px">
+                     style="padding:0 !important;min-height:50px">
                     <span class="p-3" style="background-color: rgba(0,0,0,0.5); ">
                         <h5 class="card-title text-white" v-html="this.meeting.title"></h5>
                         <p class="card-text text-white pb-2 pt-1" v-html="this.meeting.subtitle">
@@ -20,7 +21,8 @@
             </div>
         </div>
 
-        <div class="col-md-12 col-lg-6">
+        <div class="col-sm-12 col-md-4"
+             style="height: 200px !important">
             <Livestream
             :meeting="meeting"/>
         </div>
@@ -129,12 +131,8 @@
 </template>
 
 <script>
-const MeetingDates =
-    () => import('./MeetingDates');
-const Livestream =
-    () => import('./Livestream');
-/*import MeetingDates from "./MeetingDates";
-import Livestream from "./Livestream";*/
+import MeetingDates from "./MeetingDates";
+import Livestream from "./Livestream";
 
 export default {
     props: {

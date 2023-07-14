@@ -142,7 +142,9 @@ export default {
             }
 
             this.time = [moment().format("YYYY-MM-DD HH:mm:ss"), moment().add(30, 'minutes').format("YYYY-MM-DD HH:mm:ss")];
-            this.$initTinyMCE();
+            this.$initTinyMCE([
+                "autolink link example"
+            ]);
         },
         async submit() {
             try {

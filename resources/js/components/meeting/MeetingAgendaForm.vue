@@ -95,7 +95,9 @@ export default {
             this.form.populate(this.agenda);
             this.method = 'patch';
         }
-        this.$initTinyMCE();
+        this.$initTinyMCE([
+            "autolink link example"
+        ]);
     },
 
 }

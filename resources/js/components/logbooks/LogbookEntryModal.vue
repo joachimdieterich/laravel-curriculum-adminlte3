@@ -126,7 +126,9 @@ import 'vue2-datepicker/index.css';
             },
 
             opened(){
-                this.$initTinyMCE();
+                this.$initTinyMCE([
+                    "autolink link example"
+                ]);
             },
 
             beforeClose() {},

@@ -103,7 +103,10 @@ export default {
     name: 'KanbanStatus',
     props: {
         kanban: {},
-        status: {},
+        status: {
+            type: Array,
+            default: -1
+        },
         'editable': true,
         'newStatus': false,
     },

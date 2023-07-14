@@ -202,7 +202,9 @@
             beforeClose() {
             },
             opened(){
-                this.$initTinyMCE();
+                this.$initTinyMCE([
+                    "autolink link example"
+                ]);
                 this.initSelect2();
             },
             initSelect2(){

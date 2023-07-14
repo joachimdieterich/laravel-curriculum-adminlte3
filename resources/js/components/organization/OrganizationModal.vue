@@ -206,7 +206,9 @@
                 }
             },
             opened(){
-                this.$initTinyMCE();
+                this.$initTinyMCE([
+                    "autolink link example"
+                ]);
             },
             close(){
                 this.$modal.hide('organization-modal');

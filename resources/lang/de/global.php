@@ -713,10 +713,10 @@ return [
     'exam' => [
         'title' => 'Lernstandsanalysen',
         'title_singular' => 'Lernstandsanalyse',
-        'create' => 'Testung erstellen',
-        'edit' => 'Testung bearbeiten',
+        'create' => 'Lernstandsanalyse erstellen',
+        'edit' => 'Lernstandsanalyse bearbeiten',
         'login_key' => 'Anmeldeschlüssel',
-        'select_tests' => 'Tests auswählen',
+        'select_tests' => 'Testheft(e) auswählen',
         'fields' => [
             'tool' => 'Tool',
             'test_booklet' => 'Testhefte',
@@ -726,7 +726,7 @@ return [
             'action' => 'Aktion',
         ],
         'add_remove_users' => [
-            'students_exam_title' => 'Schülerinnen und Schüler in der Testung',
+            'students_exam_title' => 'Schülerinnen und Schüler in der Lernstandsanalyse',
             'users_group_title' => 'Benutzer in der Gruppe',
         ],
         'status_options' => [
@@ -735,16 +735,16 @@ return [
             'completed' => 'Fertiggestellt',
         ],
         'confirm_messages' => [
-            'confirm_delete' => 'Sind Sie sicher, dass Sie diese Testung löschen wollen?',
+            'confirm_delete' => 'Sind Sie sicher, dass Sie diese Lernstandsanalyse löschen wollen?',
         ],
         'success_messages' => [
-            'exam_created' => 'Erfolgreich erstellte Testung',
-            'exam_removed' => 'Erfolgreich entfernte Testung',
+            'exam_created' => 'Erfolgreich erstellte Lernstandsanalyse',
+            'exam_removed' => 'Erfolgreich entfernte Lernstandsanalyse',
         ],
         'error_messages' => [
-            'get_tests' => 'Testliste konnte nicht abgerufen werden',
+            'get_tests' => 'Testhefte konnten nicht abgerufen werden',
             'remove_users' => 'Schülerinnen und Schüler mit Status bearbeitet oder fertiggestellt, können nicht entfernt werden.',
-            'remove_exam' => 'Diese Testung wurde von einem oder mehreren Schülern begonnen und kann nicht entfernt werden',
+            'remove_exam' => 'Diese Lernstandsanalyse wurde von einem oder mehreren Schülern begonnen und kann nicht entfernt werden',
         ],
     ],
     'absences' => [

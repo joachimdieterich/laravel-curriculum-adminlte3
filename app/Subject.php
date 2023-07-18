@@ -27,4 +27,9 @@ class Subject extends Model
     {
         return route('subjects.show', $this->id);
     }
+
+    public function entries() 
+    {
+        return $this->hasMany(LogbookEntry::class);
+    }
 }

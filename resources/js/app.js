@@ -115,54 +115,57 @@ Vue.filter('truncate', filter);
  *
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
-Vue.component('organization-modal', require('./components/organization/OrganizationModal.vue').default);
-Vue.component('group-modal', require('./components/group/GroupModal.vue').default);
+Vue.component('organization-modal', () => import('./components/organization/OrganizationModal.vue'));
+Vue.component('group-modal', () => import('./components/group/GroupModal.vue'));
 
-Vue.component('admin-view', require('./components/admin/AdminView.vue').default);
-Vue.component('absence-modal', require('./components/absence/AbsenceModal.vue').default);
-Vue.component('curriculum-view', require('./components/curriculum/CurriculumView.vue').default);
-Vue.component('group-view', require('./components/group/GroupView.vue').default);
-Vue.component('terminal-objective-modal', require('./components/objectives/TerminalObjectiveModal.vue').default);
-Vue.component('data-table-widgets', require('./components/uiElements/DataTableWidgets.vue').default);
-Vue.component('enabling-objective-modal', require('./components/objectives/EnablingObjectiveModal.vue').default);
-Vue.component('events', require('../../app/Plugins/Eventmanagement/eVewa/resources/js/components/embedEvents').default);
-Vue.component('objective-view', require('./components/objectives/ObjectiveView.vue').default);
-Vue.component('objective-box', require('./components/objectives/ObjectiveBox.vue').default);
-Vue.component('dropdown-button', require('./components/uiElements/DropdownButton.vue').default);
-Vue.component('model-limiter', require('./components/config/ModelLimiter.vue').default);
-Vue.component('content-modal', require('./components/content/ContentModal.vue').default);
-Vue.component('content-create-modal', require('./components/content/ContentCreateModal.vue').default);
-Vue.component('content-subscription-modal', require('./components/content/ContentSubscriptionModal.vue').default);
-Vue.component('reference-objective-modal', require('./components/reference/ReferenceObjectiveModal.vue').default);
-Vue.component('media-renderer', require('./components/media/MediaRenderer.vue').default);
-Vue.component('medium-modal', require('./components/media/MediumModal.vue').default);
-Vue.component('medium-create-modal', require('./components/media/MediumCreateModal.vue').default);
-Vue.component('medium-export-modal', require('./components/media/MediumExportModal.vue').default);
-Vue.component('meeting', require('./components/meeting/Meeting.vue').default);
-Vue.component('note-modal', require('./components/note/NoteModal.vue').default);
-Vue.component('notes', require('./components/note/Notes.vue').default);
-/*Vue.component('objective-medium-modal', require('./components/objectives/ObjectiveMediumModal.vue').default);*/
-Vue.component('certificate-generate-modal', require('./components/certificate/GenerateCertificateModal.vue').default);
-Vue.component('logbook', require('./components/logbooks/Logbook.vue').default);
-Vue.component('logbooks-new', require('./components/logbooks/LogbooksNew.vue').default);
-Vue.component('logbook-entry-modal', require('./components/logbooks/LogbookEntryModal.vue').default);
-Vue.component('subscribe-objective-modal', require('./components/objectives/SubscribeObjectiveModal.vue').default);
-Vue.component('objective-progress-subscription-modal', require('./components/objectives/ObjectiveProgressSubscriptionModal.vue').default);
-Vue.component('task-modal', require('./components/tasks/TaskModal.vue').default);
-Vue.component('task', require('./components/tasks/Task.vue').default);
-Vue.component('task-timeline', require('./components/tasks/Timeline.vue').default);
-Vue.component('kanbans', require('./components/kanban/Kanbans.vue').default);
-Vue.component('kanban-board', require('./components/kanban/KanbanBoard.vue').default);
-Vue.component('subscribe-modal', require('./components/subscription/SubscribeModal.vue').default);
-Vue.component('sidebar', require('./components/uiElements/Sidebar.vue').default);
-Vue.component('move-terminal-objective-modal', require('./components/objectives/MoveTerminalObjectiveModal.vue').default);
-Vue.component('prerequisite-modal', require('./components/prerequisites/PrerequisiteObjectiveModal.vue').default);
-Vue.component('lms-modal', require('./../../app/Plugins/Lms/resources/js/components/Create.vue').default);
-Vue.component('color-picker-component', require('./components/kanban/ColorPickerComponent.vue').default);
-Vue.component('color-picker-input', require('./components/kanban/ColorPickerInput.vue').default);
-Vue.component('leaflet-map', require('./components/map/Map.vue').default);
+Vue.component('admin-view', () => import('./components/admin/AdminView.vue'));
+Vue.component('absence-modal', () => import('./components/absence/AbsenceModal.vue'));
+Vue.component('curriculum-view', () => import('./components/curriculum/CurriculumView.vue'));
+Vue.component('group-view', () => import('./components/group/GroupView.vue'));
+Vue.component('terminal-objective-modal', () => import('./components/objectives/TerminalObjectiveModal.vue'));
+Vue.component('data-table-widgets', () => import('./components/uiElements/DataTableWidgets.vue'));
+Vue.component('enabling-objective-modal', () => import('./components/objectives/EnablingObjectiveModal.vue'));
+Vue.component('events', () => import('../../app/Plugins/Eventmanagement/eVewa/resources/js/components/embedEvents'));
+Vue.component('objective-view', () => import('./components/objectives/ObjectiveView.vue'));
+Vue.component('objective-box', () => import('./components/objectives/ObjectiveBox.vue'));
+Vue.component('dropdown-button', () => import('./components/uiElements/DropdownButton.vue'));
+Vue.component('model-limiter', () => import('./components/config/ModelLimiter.vue'));
+Vue.component('content-modal', () => import('./components/content/ContentModal.vue'));
+Vue.component('content-create-modal', () => import('./components/content/ContentCreateModal.vue'));
+Vue.component('content-subscription-modal', () => import('./components/content/ContentSubscriptionModal.vue'));
+Vue.component('reference-objective-modal', () => import('./components/reference/ReferenceObjectiveModal.vue'));
+Vue.component('media-renderer', () => import('./components/media/MediaRenderer.vue'));
+Vue.component('medium-modal', () => import('./components/media/MediumModal.vue'));
+Vue.component('medium-create-modal', () => import('./components/media/MediumCreateModal.vue'));
+Vue.component('medium-export-modal', () => import('./components/media/MediumExportModal.vue'));
+Vue.component('meeting', () => import('./components/meeting/Meeting.vue'));
+Vue.component('note-modal', () => import('./components/note/NoteModal.vue'));
+Vue.component('notes', () => import('./components/note/Notes.vue'));
+/*Vue.component('objective-medium-modal', () => import('./components/objectives/ObjectiveMediumModal.vue'));*/
+Vue.component('certificate-generate-modal', () => import('./components/certificate/GenerateCertificateModal.vue'));
+Vue.component('logbook', () => import('./components/logbooks/Logbook.vue'));
+Vue.component('logbooks-new', () => import('./components/logbooks/LogbooksNew.vue'));
+Vue.component('logbook-entry-modal', () => import('./components/logbooks/LogbookEntryModal.vue'));
 
-Vue.component('tests-table', require('./components/tests/TestsTable.vue').default);
+Vue.component('logbook-entry-subject-modal', () => import('./components/logbooks/LogbookEntrySubjectModal.vue'));
+
+Vue.component('subscribe-objective-modal', () => import('./components/objectives/SubscribeObjectiveModal.vue'));
+Vue.component('objective-progress-subscription-modal', () => import('./components/objectives/ObjectiveProgressSubscriptionModal.vue'));
+Vue.component('task-modal', () => import('./components/tasks/TaskModal.vue'));
+Vue.component('task', () => import('./components/tasks/Task.vue'));
+Vue.component('task-timeline', () => import('./components/tasks/Timeline.vue'));
+Vue.component('kanbans', () => import('./components/kanban/Kanbans.vue'));
+Vue.component('kanban-board', () => import('./components/kanban/KanbanBoard.vue'));
+Vue.component('subscribe-modal', () => import('./components/subscription/SubscribeModal.vue'));
+Vue.component('sidebar', () => import('./components/uiElements/Sidebar.vue'));
+Vue.component('move-terminal-objective-modal', () => import('./components/objectives/MoveTerminalObjectiveModal.vue'));
+Vue.component('prerequisite-modal', () => import('./components/prerequisites/PrerequisiteObjectiveModal.vue'));
+Vue.component('lms-modal', () => import('./../../app/Plugins/Lms/resources/js/components/Create.vue'));
+Vue.component('color-picker-component', () => import('./components/kanban/ColorPickerComponent.vue'));
+Vue.component('color-picker-input', () => import('./components/kanban/ColorPickerInput.vue'));
+Vue.component('leaflet-map', () => import('./components/map/Map.vue'));
+
+Vue.component('tests-table', () => import('./components/tests/TestsTable.vue'));
 
 let tinyMcePlugins = [
     "advlist autolink lists link image charmap print preview hr anchor pagebreak",

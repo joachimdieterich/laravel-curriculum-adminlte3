@@ -152,6 +152,9 @@ class LogbookController extends Controller
             'entries.absences.owner' => function ($query) {
                 $query->select('id', 'username', 'firstname', 'lastname', 'medium_id');
             }, //todo: lazyload
+            'entries.subject' => function ($query) {
+                $query->select('id', 'title');
+            },
             'entries.absences.absent_user',
             'entries.terminalObjectiveSubscriptions.terminalObjective',
             'entries.enablingObjectiveSubscriptions.enablingObjective.terminalObjective',

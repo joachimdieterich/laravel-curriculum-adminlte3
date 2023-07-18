@@ -167,21 +167,21 @@ Vue.component('leaflet-map', () => import('./components/map/Map.vue'));
 
 Vue.component('tests-table', () => import('./components/tests/TestsTable.vue'));
 
-let tinyMcePlugins = [
-    "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-    "searchreplace wordcount visualblocks visualchars code fullscreen",
-    "insertdatetime media nonbreaking save table directionality",
-    "emoticons template paste textpattern example"
-];
-
 Vue.prototype.$initTinyMCE = function (tinyMcePlugins) {
+    
+    const defaultPlugins = [
+        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+        "searchreplace wordcount visualblocks visualchars code fullscreen",
+        "insertdatetime media nonbreaking save table directionality",
+        "emoticons template paste textpattern example"
+    ];
 
     tinymce.remove();
     tinymce.init({
         path_absolute : "/",
         selector: "textarea.my-editor",
         branding:false,
-        plugins: tinyMcePlugins,
+        plugins: tinyMcePlugins ?? defaultPlugins,
         external_plugins: {'mathjax': '/node_modules/@dimakorotkov/tinymce-mathjax/plugin.min.js'},
         toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | example mathjax link image media ",
         relative_urls: false,

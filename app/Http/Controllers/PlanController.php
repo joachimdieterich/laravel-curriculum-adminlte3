@@ -83,7 +83,12 @@ class PlanController extends Controller
 
         $plan = new Plan();
         //$types = PlanType::all()
-        $types = PlanType::where('id', 1)->get();
+        $types = PlanType::whereIn('id',
+                explode(
+                    ',',
+                    \App\Config::where('key', 'availablePlanTypes')->get()->first()->value
+                )
+            )->get();
 
         return view('plans.create')
                 ->with(compact('types'))
@@ -149,7 +154,12 @@ class PlanController extends Controller
     public function edit(Plan $plan)
     {
         abort_unless((\Gate::allows('plan_edit') and $plan->isAccessible()), 403);
-        $types = PlanType::all();
+        $types = PlanType::whereIn('id',
+            explode(
+                ',',
+                \App\Config::where('key', 'availablePlanTypes')->get()->first()->value
+            )
+        )->get();
 
         return view('plans.edit')
                 ->with(compact('plan'))

@@ -52,6 +52,7 @@
         </div>
         <!-- /.col -->
         <logbook-entry-modal></logbook-entry-modal>
+        <logbook-entry-subject-modal></logbook-entry-subject-modal>
         <lms-modal></lms-modal>
     </div>
 </template>
@@ -96,6 +97,12 @@ import LogbookPrintOptions from "./LogbookPrintOptions";
                 this.entries[index].title = updatedEntry.title;
                 this.entries[index].description = updatedEntry.description;
                 this.entries[index].updated_at = updatedEntry.updated_at;
+            });
+            this.$eventHub.$on('updateSubjectBadge', (updatedEntry) => {
+                const index = this.entries.findIndex(
+                    entry => entry.id === updatedEntry.id
+                );
+                this.entries[index].subject.title = updatedEntry.title;
             });
 
             this.$on('deleteLogbookEntry', function (deletedEntry) {

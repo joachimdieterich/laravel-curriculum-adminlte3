@@ -44,30 +44,30 @@
                 </div>
             </div>
             <div class="pb-1" >
-                    <span v-if="editor !== false">
-                        <span
-                            class="pull-left"
-                            style="border-style: solid; border-width: 1px; border-radius: 20px; padding: 2px 2px 0 2px;"
-                            :style="{borderColor: textColor }">
-                            <color-picker-input
-                                :id="'colorPicker_'+index"
-                                v-if="editor !== false"
-                                v-model="form.color">
-                            </color-picker-input>
-                        </span>
-                        <input
-                            :id="'title_'+index"
-                            type="text"
-                            v-model="form.title"
-                            class="w-100"
-                            style="font-size: 1.1rem; font-weight: 400; border: 0; border-bottom: 1px; border-style:solid; margin: 0;"
-                            :style="{ backgroundColor: item.color, color: textColor }"
-                        />
+                <span v-if="editor !== false">
+                    <span
+                        class="pull-left"
+                        style="border-style: solid; border-width: 1px; border-radius: 20px; padding: 2px 2px 0 2px;"
+                        :style="{borderColor: textColor }">
+                        <color-picker-input
+                            :id="'colorPicker_'+index"
+                            v-if="editor !== false"
+                            v-model="form.color">
+                        </color-picker-input>
                     </span>
+                    <input
+                        :id="'title_'+index"
+                        type="text"
+                        v-model="form.title"
+                        class="w-100"
+                        style="font-size: 1.1rem; font-weight: 400; border: 0; border-bottom: 1px; border-style:solid; margin: 0;"
+                        :style="{ backgroundColor: item.color, color: textColor }"
+                    />
+                </span>
                 <span v-else>
                         {{ item.title }}
-                    </span>
-                <br/>
+                </span>
+                <div class="due-date">{{ postDate() }}</div>
                 <span class="" style="font-size: .5rem">
                     {{ item.created_at }}
                 </span>
@@ -87,6 +87,13 @@
                  class="text-muted small px-3 py-2"
                  v-html="form.description">
             </div>
+            <date-picker
+                v-if="editor !== false"
+                class="w-100 mt-2"
+                v-model="time"
+                type="datetime" range
+                valueType="YYYY-MM-DD HH:mm:ss">
+            </date-picker>
             <button v-if="editor !== false"
                     :name="'kanbanItemSave_' + index"
                     class="btn btn-primary p-2 m-2"
@@ -154,6 +161,8 @@
 
 <script>
 import Form from "form-backend-validation";
+import DatePicker from 'vue2-datepicker';
+import 'vue2-datepicker/index.css';
 /*import kanbanTask from './KanbanTask';*/
 /*const kanbanTask =
     () => import('./KanbanTask');*/
@@ -188,6 +197,7 @@ export default {
             new_media: null,
             show_comments: false,
             editor: false,
+            time: [null, null],
             form: new Form({
                 'id':'',
                 'title':'',
@@ -195,7 +205,9 @@ export default {
                 'kanban_id': '',
                 'kanban_status_id': '',
                 'order_id': 0,
-                'color': '#F4F4F4'
+                'color': '#F4F4F4',
+                'begin': '',
+                'end': ''
             }),
         };
     },
@@ -241,6 +253,8 @@ export default {
                 'description': tinyMCE.get('description_'+this.item.id).getContent(),
                 'kanban_id': this.item.kanban_id,
                 'kanban_status_id': this.item.kanban_status_id,
+                'begin': this.time[0],
+                'end': this.time[1],
                 'order_id': this.item.order_id,
                 'color': this.item.color
             });
@@ -291,10 +305,33 @@ export default {
                     console.log(err.response);
                 });
         },
+        postDate() {
+            if (this.time.some(elem => elem == null)) return undefined;
 
+            const start = new Date(this.time[0].replace(/-/g, "/"));
+            const end = new Date(this.time[1].replace(/-/g, "/"));
+            const dateFormat = {
+                weekday: 'short',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+
+            if (start.toDateString() === end.toDateString()) {
+                return start.toLocaleString([], dateFormat) + " - " + end.toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } else {
+                return start.toLocaleString([], dateFormat) + " - " + end.toLocaleString([], dateFormat);
+            }
+        },
     },
     mounted() {
         this.form = this.item;
+        this.time = [this.item.begin, this.item.end];
         this.$eventHub.$on('reload_kanban_item', (e) => {
             if (this.item.id == e.id) {
                 this.reload();
@@ -316,7 +353,16 @@ export default {
         /*kanbanTask,*/
         mediaCarousel,
         avatar,
-        Modal
+        Modal,
+        DatePicker
     }
 }
 </script>
+<style scoped>
+.due-date {
+    color: #6c757d;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: -4px;
+}
+</style>

@@ -14,7 +14,7 @@
                     />
                 <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
             </div>
-            <div class="form-group mb-2">
+            <div class="form-group">
                  <textarea
                      id="description"
                      name="description"
@@ -33,6 +33,13 @@
                     <span class="ml-2">{{ trans('global.task.create') }}</span>
                 </button>
             </div>-->
+
+            <date-picker
+                class="w-100 mb-2"
+                v-model="time"
+                type="datetime" range
+                valueType="YYYY-MM-DD HH:mm:ss">
+            </date-picker>
 
             <button
                 name="kanbanItemCancel"
@@ -55,6 +62,8 @@
 
 <script>
 import Form from 'form-backend-validation';
+import DatePicker from 'vue2-datepicker';
+import 'vue2-datepicker/index.css';
 /*import kanbanTask from "./KanbanTask";*/
 
 export default {
@@ -68,15 +77,18 @@ export default {
         return {
             method: 'post',
             requestUrl: '/kanbanItems',
+            time: null,
             form: new Form({
-                    'id':'',
-                    'title':'',
-                    'description': '',
-                    'kanban_id': '',
-                    'kanban_status_id': '',
-                    'order_id': 0,
-                    'color': '#F4F4F4'
-                }),
+                'id':'',
+                'title':'',
+                'description': '',
+                'kanban_id': '',
+                'kanban_status_id': '',
+                'order_id': 0,
+                'color': '#F4F4F4',
+                'begin': '',
+                'end': ''
+            }),
         };
     },
     created() {
@@ -92,11 +104,13 @@ export default {
             this.form.kanban_id = this.item.kanban_id;
             this.form.kanban_status_id = this.item.kanban_status_id;
             this.form.order_id = this.item.order_id;
+            this.time = [this.item.begin, this.item.end];
             this.method = 'patch';
         } else {
             this.form.kanban_id = this.status.kanban_id;
             this.form.kanban_status_id = this.status.id;
             this.form.order_id = this.status.items.length;
+            // this.time = [moment().format("YYYY-MM-DD HH:mm:ss"), moment().add(30, 'minutes').format("YYYY-MM-DD HH:mm:ss")];
         }
         this.$initTinyMCE([
             "autolink link"
@@ -129,6 +143,8 @@ export default {
         submit() {
             let method = this.method.toLowerCase();
             this.form.description = tinyMCE.get('description').getContent();
+            this.form.begin = this.time[0];
+            this.form.end = this.time[1];
             if (method === 'patch') {
                     axios.patch(this.requestUrl += '/' + this.form.id, this.form)
                      .then(res => { // Tell the parent component we've updated a task
@@ -151,6 +167,8 @@ export default {
         },
 
     },
-    components: {}
+    components: {
+        DatePicker
+    },
 };
 </script>

@@ -29,6 +29,22 @@ class LogbookEntryController extends Controller
     }
 
     /**
+     * Update the subject_id of a specific entry
+     */
+    public function setSubject(Request $request) {
+        $input = $this->validateRequest();
+
+        $update = LogbookEntry::updateOrCreate([
+            'id' => $request->id,
+        ], [
+            'subject_id' => $input['subject_id'],
+        ]);
+        $update->save();
+
+        return true;
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -172,6 +188,7 @@ class LogbookEntryController extends Controller
             'begin'             => 'sometimes',
             'end'               => 'sometimes',
             'owner_id'          => 'sometimes',
+            'subject_id'        => 'sometimes',
         ]);
     }
 }

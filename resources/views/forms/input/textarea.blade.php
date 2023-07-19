@@ -65,28 +65,35 @@
     plugins: editor_config_plugins,
     toolbar: editor_config_toolbar,
     relative_urls: false,
-    file_browser_callback : function(field_name, url, type, win) {
-      var x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
-      var y = window.innerHeight|| document.documentElement.clientHeight|| document.getElementsByTagName('body')[0].clientHeight;
-
-      var cmsURL = editor_config.path_absolute + 'laravel-filemanager?field_name=' + field_name;
-//      if (type == 'image') {
-//        cmsURL = cmsURL + "&type=Images";
-//      } else {
-        cmsURL = cmsURL + "&type=Files";
-      //}
-
-      tinyMCE.activeEditor.windowManager.open({
-        file : cmsURL,
-        title : 'Filemanager',
-        width : x * 0.8,
-        height : y * 0.8,
-        resizable : "yes",
-        close_previous : "no"
-      });
-    }
   };
 
   tinymce.init(editor_config);
+    tinymce.PluginManager.add('example', function(editor, url) {
+        var openDialog = function () {
+            document.querySelector("#app").__vue__.$modal.show('medium-create-modal', {'public': 1 });
+            $('#medium_id').on('change', function() {
+                //reload thumbs
+                editor.insertContent('<img src="/media/'+ document.getElementById('medium_id').value +'" width="500">', {format: 'raw'});
+            });
+        };
+
+        // Add a button that opens a window
+        editor.ui.registry.addButton('example', {
+            text: 'Medien',
+            onAction: function ()  {
+                // Open window
+                openDialog();
+            }
+        });
+
+        return {
+            getMetadata: function () {
+                return  {
+                    name: 'Curriculum Media Plugin',
+                    url: 'http://curriculumonline.de'
+                };
+            }
+        };
+    });
 </script>
 @endsection

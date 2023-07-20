@@ -105,7 +105,9 @@ export default {
         kanban: {},
         status: {
             type: Array,
-            default: -1
+            default: {
+                'owner_id' : -1
+            }
         },
         'editable': true,
         'newStatus': false,

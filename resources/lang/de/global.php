@@ -863,6 +863,7 @@ return [
         'edit' => 'Karte bearbeiten',
         'delete' => 'Karte löschen',
         'delete_helper' => 'Soll die Karte sowie die zugehörigen Daten gelöscht werden?',
+        'due_date' => 'Fälligkeitsdatum',
         'fields' => [
             'order_id' => 'Order ID',
             'order_id_helper' => '',

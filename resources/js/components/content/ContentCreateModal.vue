@@ -128,7 +128,7 @@
             },
             opened(){
                 this.$initTinyMCE([
-                        "autolink link example"
+                        "autolink link example table lists"
                     ]
                 );
             },

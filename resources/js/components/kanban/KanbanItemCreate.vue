@@ -77,7 +77,7 @@ export default {
         return {
             method: 'post',
             requestUrl: '/kanbanItems',
-            time: null,
+            time: [null, null],
             form: new Form({
                 'id':'',
                 'title':'',

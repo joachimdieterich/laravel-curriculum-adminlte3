@@ -89,10 +89,11 @@
             </div>
             <date-picker
                 v-if="editor !== false"
-                class="w-100 mt-2"
+                class="w-100 mt-3"
                 v-model="time"
                 type="datetime" range
-                valueType="YYYY-MM-DD HH:mm:ss">
+                valueType="YYYY-MM-DD HH:mm:ss"
+                :placeholder="trans('global.kanbanItem.due_date')">
             </date-picker>
             <button v-if="editor !== false"
                     :name="'kanbanItemSave_' + index"

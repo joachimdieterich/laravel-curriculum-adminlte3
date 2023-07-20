@@ -105,6 +105,9 @@
                     Trainingspläne
                 </div>
                 <div class="card-body py-2">
+                    <img class="pull-left mr-2"
+                         style="height: 150px"
+                         src="http://127.0.0.1:8000/media/3183/thumb"/>
                     <img class="pull-right"
                          src="http://127.0.0.1:8000/media/3176/thumb"/>
                     Hier ist dein MoveItRLP-Trainingsplan. Ein Trainingsplan dokumentiert deine Fortschritte und zeigt dir neue Übungen, um noch fitter zu werden. In deinem Trainingsplan findest du

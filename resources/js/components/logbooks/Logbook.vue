@@ -100,9 +100,12 @@ import LogbookPrintOptions from "./LogbookPrintOptions";
             });
             this.$eventHub.$on('updateSubjectBadge', (updatedEntry) => {
                 const index = this.entries.findIndex(
-                    entry => entry.id === updatedEntry.id
+                    entry => entry.id === updatedEntry.entry_id
                 );
-                this.entries[index].subject.title = updatedEntry.title;
+                this.entries[index].subject = {
+                    id: updatedEntry.subject_id,
+                    title: updatedEntry.title,
+                }
             });
 
             this.$on('deleteLogbookEntry', function (deletedEntry) {

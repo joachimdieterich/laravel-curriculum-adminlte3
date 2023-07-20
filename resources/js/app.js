@@ -146,9 +146,8 @@ Vue.component('certificate-generate-modal', () => import('./components/certifica
 Vue.component('logbook', () => import('./components/logbooks/Logbook.vue'));
 Vue.component('logbooks-new', () => import('./components/logbooks/LogbooksNew.vue'));
 Vue.component('logbook-entry-modal', () => import('./components/logbooks/LogbookEntryModal.vue'));
-
 Vue.component('logbook-entry-subject-modal', () => import('./components/logbooks/LogbookEntrySubjectModal.vue'));
-
+Vue.component('plan', () => import('./components/plan/plan.vue'));
 Vue.component('subscribe-objective-modal', () => import('./components/objectives/SubscribeObjectiveModal.vue'));
 Vue.component('objective-progress-subscription-modal', () => import('./components/objectives/ObjectiveProgressSubscriptionModal.vue'));
 Vue.component('task-modal', () => import('./components/tasks/TaskModal.vue'));

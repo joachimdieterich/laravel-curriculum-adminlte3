@@ -38,7 +38,8 @@
                 class="w-100 mb-2"
                 v-model="time"
                 type="datetime" range
-                valueType="YYYY-MM-DD HH:mm:ss">
+                valueType="YYYY-MM-DD HH:mm:ss"
+                :placeholder="trans('global.kanbanItem.due_date')">
             </date-picker>
 
             <button

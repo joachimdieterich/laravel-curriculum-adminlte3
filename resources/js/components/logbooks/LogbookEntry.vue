@@ -42,7 +42,7 @@
                 </span>
                 <span >{{ entry.title }}</span>
                 <span class="description ml-0 ">
-                    {{ postDate() }}
+                    {{ timePeriod }}
                     <small
                         style="vertical-align: middle;"
                         class="badge badge-secondary"
@@ -277,6 +277,7 @@ export default {
         return {
             media: {},
             active: true,
+            timePeriod: '',
             model: 'App\\LogbookEntry',
             help: true,
         };
@@ -297,9 +298,9 @@ export default {
             this.$parent.$emit('deleteLogbookEntry', this.entry);
         },
         postDate() {
-            var start = new Date(this.entry.begin.replace(/-/g, "/"));
-            var end = new Date(this.entry.end.replace(/-/g, "/"));
-            var dateFormat = {
+            const start = new Date(this.entry.begin.replace(/-/g, "/"));
+            const end = new Date(this.entry.end.replace(/-/g, "/"));
+            const dateFormat = {
                 weekday: 'short',
                 day: '2-digit',
                 month: '2-digit',
@@ -309,12 +310,12 @@ export default {
             };
 
             if (start.toDateString() === end.toDateString()) {
-                return start.toLocaleString([], dateFormat) + " - " + end.toLocaleTimeString([], {
+                this.timePeriod = start.toLocaleString([], dateFormat) + " - " + end.toLocaleTimeString([], {
                     hour: '2-digit',
                     minute: '2-digit'
                 });
             } else {
-                return start.toLocaleString([], dateFormat) + " - " + end.toLocaleString([], dateFormat);
+                this.timePeriod = start.toLocaleString([], dateFormat) + " - " + end.toLocaleString([], dateFormat);
             }
         },
         isEditableForUser() {
@@ -373,6 +374,8 @@ export default {
         this.$root.$on('lmsUpdate', () => {
             this.$refs.LmsPlugin.loaderEvent();
         });
+        
+        this.postDate();
     },
     computed: {
         isActive: function () {
@@ -383,7 +386,10 @@ export default {
             }
         },
     },
-
+    watch: {
+        'entry.begin': function() { this.postDate(); },
+        'entry.end': function() { this.postDate(); }
+    },
     components: {
         ReferenceList,
         Absences,

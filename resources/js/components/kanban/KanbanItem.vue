@@ -67,7 +67,10 @@
                 <span v-else>
                         {{ item.title }}
                 </span>
-                <div class="due-date">{{ postDate() }}</div>
+                <div style="margin-bottom: -4px;">
+                    <span class="due-date">{{ postDate() }}</span>
+                    <span v-if="expired" class="badge badge-secondary">{{ trans('global.kanbanItem.expired') }}</span>
+                </div>
                 <span class="" style="font-size: .5rem">
                     {{ item.created_at }}
                 </span>
@@ -90,8 +93,8 @@
             <date-picker
                 v-if="editor !== false"
                 class="w-100 mt-3"
-                v-model="time"
-                type="datetime" range
+                v-model="due_date"
+                type="datetime"
                 valueType="YYYY-MM-DD HH:mm:ss"
                 :placeholder="trans('global.kanbanItem.due_date')">
             </date-picker>
@@ -198,7 +201,8 @@ export default {
             new_media: null,
             show_comments: false,
             editor: false,
-            time: [null, null],
+            due_date: null,
+            expired: false,
             form: new Form({
                 'id':'',
                 'title':'',
@@ -207,8 +211,7 @@ export default {
                 'kanban_status_id': '',
                 'order_id': 0,
                 'color': '#F4F4F4',
-                'begin': '',
-                'end': ''
+                'due_date': ''
             }),
         };
     },
@@ -254,8 +257,7 @@ export default {
                 'description': tinyMCE.get('description_'+this.item.id).getContent(),
                 'kanban_id': this.item.kanban_id,
                 'kanban_status_id': this.item.kanban_status_id,
-                'begin': this.time[0],
-                'end': this.time[1],
+                'due_date': this.due_date,
                 'order_id': this.item.order_id,
                 'color': this.item.color
             });
@@ -307,10 +309,9 @@ export default {
                 });
         },
         postDate() {
-            if (this.time.some(elem => elem == null)) return undefined;
+            if (this.due_date == null) return undefined;
 
-            const start = new Date(this.time[0].replace(/-/g, "/"));
-            const end = new Date(this.time[1].replace(/-/g, "/"));
+            const date = new Date(this.due_date.replace(/-/g, "/"));
             const dateFormat = {
                 weekday: 'short',
                 day: '2-digit',
@@ -320,19 +321,14 @@ export default {
                 minute: '2-digit'
             };
 
-            if (start.toDateString() === end.toDateString()) {
-                return start.toLocaleString([], dateFormat) + " - " + end.toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-            } else {
-                return start.toLocaleString([], dateFormat) + " - " + end.toLocaleString([], dateFormat);
-            }
+            this.expired = new Date() > date; 
+
+            return date.toLocaleString([], dateFormat);
         },
     },
     mounted() {
         this.form = this.item;
-        this.time = [this.item.begin, this.item.end];
+        this.due_date = this.item.due_date;
         this.$eventHub.$on('reload_kanban_item', (e) => {
             if (this.item.id == e.id) {
                 this.reload();
@@ -364,6 +360,13 @@ export default {
     color: #6c757d;
     font-size: 12px;
     font-weight: 600;
-    margin-bottom: -4px;
+}
+.badge {
+    border: 1px solid #dc3545;
+    background-color: #fff;
+    color: #dc3545;
+    font-size: 10px;
+    line-height: 11px;
+    vertical-align: middle;
 }
 </style>

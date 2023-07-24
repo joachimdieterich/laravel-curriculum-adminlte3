@@ -864,6 +864,7 @@ return [
         'delete' => 'Karte löschen',
         'delete_helper' => 'Soll die Karte sowie die zugehörigen Daten gelöscht werden?',
         'due_date' => 'Fälligkeitsdatum',
+        'expired' => 'Abgelaufen',
         'fields' => [
             'order_id' => 'Order ID',
             'order_id_helper' => '',

@@ -861,6 +861,7 @@ return [
         'delete' => 'Delete items',
         'delete_helper' => 'Should item be deleted?',
         'due_date' => 'Due-Date',
+        'expired' => 'Expired',
         'fields' => [
             'order_id' => 'Order ID',
             'order_id_helper' => '',

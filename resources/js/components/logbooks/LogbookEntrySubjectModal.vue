@@ -68,7 +68,8 @@ export default {
                 });
                 
                 this.$eventHub.$emit('updateSubjectBadge', {
-                    id: this.id,
+                    entry_id: this.id,
+                    subject_id: e.params.data.id,
                     title: e.params.data.text,
                 });
                 this.$modal.hide('logbook-entry-subject-modal');

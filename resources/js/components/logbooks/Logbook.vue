@@ -87,6 +87,12 @@ import LogbookPrintOptions from "./LogbookPrintOptions";
             this.entries = this.logbook.entries;
 
             this.$eventHub.$on('addLogbookEntry', (newEntry) => {
+                if (newEntry.subject == undefined) {
+                    newEntry.subject = {
+                        id: null,
+                        title: null,
+                    };
+                }
                 this.entries.unshift(newEntry);       // Add newly created entry
             });
             this.$eventHub.$on('updateLogbookEntry', (updatedEntry) => {
@@ -97,12 +103,17 @@ import LogbookPrintOptions from "./LogbookPrintOptions";
                 this.entries[index].title = updatedEntry.title;
                 this.entries[index].description = updatedEntry.description;
                 this.entries[index].updated_at = updatedEntry.updated_at;
+                this.entries[index].begin = updatedEntry.begin;
+                this.entries[index].end = updatedEntry.end;
             });
             this.$eventHub.$on('updateSubjectBadge', (updatedEntry) => {
                 const index = this.entries.findIndex(
-                    entry => entry.id === updatedEntry.id
+                    entry => entry.id === updatedEntry.entry_id
                 );
-                this.entries[index].subject.title = updatedEntry.title;
+                this.entries[index].subject = {
+                    id: updatedEntry.subject_id,
+                    title: updatedEntry.title,
+                }
             });
 
             this.$on('deleteLogbookEntry', function (deletedEntry) {

@@ -33,8 +33,7 @@ class KanbanItemController extends Controller
             'kanban_id'         => $input['kanban_id'],
             'kanban_status_id'  => $input['kanban_status_id'],
             'color'             => $input['color'],
-            'begin'             => $input['begin'],
-            'end'               => $input['end'],
+            'due_date'             => $input['due_date'],
             'owner_id'          => auth()->user()->id,
         ]);
 
@@ -145,8 +144,7 @@ class KanbanItemController extends Controller
             'kanban_id' => $input['kanban_id'],
             'kanban_status_id' => $input['kanban_status_id'],
             'color' => $input['color'],
-            'begin' => $input['begin'],
-            'end' => $input['end'],
+            'due_date' => $input['due_date'],   
             'owner_id' => auth()->user()->id,
         ]);
 
@@ -232,8 +230,7 @@ class KanbanItemController extends Controller
             'kanban_id' => 'sometimes|required|integer',
             'kanban_status_id' => 'sometimes|required|integer',
             'color' => 'sometimes',
-            'begin' => 'sometimes',
-            'end' => 'sometimes',
+            'due_date' => 'sometimes',
         ]);
     }
 

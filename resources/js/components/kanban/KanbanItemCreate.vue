@@ -36,8 +36,8 @@
 
             <date-picker
                 class="w-100 mb-2"
-                v-model="time"
-                type="datetime" range
+                v-model="due_date"
+                type="datetime"
                 valueType="YYYY-MM-DD HH:mm:ss"
                 :placeholder="trans('global.kanbanItem.due_date')">
             </date-picker>
@@ -78,7 +78,7 @@ export default {
         return {
             method: 'post',
             requestUrl: '/kanbanItems',
-            time: [null, null],
+            due_date: null,
             form: new Form({
                 'id':'',
                 'title':'',
@@ -87,8 +87,7 @@ export default {
                 'kanban_status_id': '',
                 'order_id': 0,
                 'color': '#F4F4F4',
-                'begin': '',
-                'end': ''
+                'due_date': ''
             }),
         };
     },
@@ -105,13 +104,13 @@ export default {
             this.form.kanban_id = this.item.kanban_id;
             this.form.kanban_status_id = this.item.kanban_status_id;
             this.form.order_id = this.item.order_id;
-            this.time = [this.item.begin, this.item.end];
+            this.due_date = this.item.due_date;
             this.method = 'patch';
         } else {
             this.form.kanban_id = this.status.kanban_id;
             this.form.kanban_status_id = this.status.id;
             this.form.order_id = this.status.items.length;
-            // this.time = [moment().format("YYYY-MM-DD HH:mm:ss"), moment().add(30, 'minutes').format("YYYY-MM-DD HH:mm:ss")];
+            // this.due_date = moment().add(30, 'minutes').format("YYYY-MM-DD HH:mm:ss");
         }
         this.$initTinyMCE([
             "autolink link"
@@ -144,8 +143,7 @@ export default {
         submit() {
             let method = this.method.toLowerCase();
             this.form.description = tinyMCE.get('description').getContent();
-            this.form.begin = this.time[0];
-            this.form.end = this.time[1];
+            this.form.due_date = this.due_date;
             if (method === 'patch') {
                     axios.patch(this.requestUrl += '/' + this.form.id, this.form)
                      .then(res => { // Tell the parent component we've updated a task

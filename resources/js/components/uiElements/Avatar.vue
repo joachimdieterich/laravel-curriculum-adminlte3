@@ -23,11 +23,11 @@
             </div>
 
         </span>
-        <span v-else>
+        <span v-else :style="'width:'+size+'px !important; height:'+size+'px !important;'">
             <img v-if="typeof medium_id === 'number'"
                  class="direct-chat-img"
                  :class="css"
-                 :style="'width:'+size+' !important;height:'+size+' !important;'"
+                 :style="'width:'+size+'px !important;height:'+size+'px !important;'"
                  :src="'/media/'+medium_id"/>
             <canvas
                 v-else

@@ -64,16 +64,12 @@
                         :style="{ backgroundColor: item.color, color: textColor }"
                     />
                 </span>
-                <span v-else>
+                <div v-else>
                         {{ item.title }}
-                </span>
-                <div style="margin-bottom: -4px;">
-                    <span class="due-date">{{ postDate() }}</span>
-                    <span v-if="expired" class="badge badge-secondary">{{ trans('global.kanbanItem.expired') }}</span>
                 </div>
-                <span class="" style="font-size: .5rem">
+                <div style="font-size: .5rem">
                     {{ item.created_at }}
-                </span>
+                </div>
             </div>
 
         </div>
@@ -120,8 +116,8 @@
         <div class="card-footer px-3 py-2"
              :class="{'border-top-0':item.description === null}"
         >
-            <div class="d-flex">
-                <avatar class="pull-left contacts-list-img flex-fill"
+            <div class="d-flex align-items-center">
+                <avatar class="d-flex pull-left contacts-list-img"
                         data-toggle="tooltip"
                         :title="item.owner.firstname + ' ' + item.owner.lastname"
                         :username="item.owner.username"
@@ -129,6 +125,12 @@
                         :lastname="item.owner.lastname"
                         :size="25"
                 ></avatar>
+                <div class="d-flex pull-left flex-fill">
+                    <div class="d-flex flex-column align-items-start justify-content-center">
+                        <div class="due-date">{{ postDate() }}</div>
+                        <div v-if="expired" class="badge badge-secondary">{{ trans('global.kanbanItem.expired') }}</div>
+                    </div>
+                </div>
                 <div v-if="commentable"
                      @click="openComments"
                      class=" position-relative pull-right mr-2">

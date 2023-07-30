@@ -22,9 +22,9 @@
             </span>
         </span>
 
-        <span v-if="(type == 'enabling'  && objective.level != null)">
+        <span v-if="(type == 'enabling' && objective.level != null)">
             <button type="button"
-                    class="btn btn-block  btn-xs"
+                    class="btn btn-block btn-xs"
                     v-bind:class="objective.level.css_color"
                     v-html="objective.level.title">
             </button>

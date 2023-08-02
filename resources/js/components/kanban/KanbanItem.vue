@@ -336,9 +336,15 @@ export default {
                 this.reload();
             }
         });
+        this.$eventHub.$on('filter', (filter) => {
+            if (this.$el.innerText.includes(filter)) this.$el.style.display = 'block';
+            else this.$el.style.display = 'none';
+        });
+        this.$eventHub.$on('clearFilter', () => this.$el.style.display = 'block');
+        
         this.$nextTick(() => {
             MathJax.startup.defaultReady();
-        })
+        });
     },
     watch: {
         form: function (){

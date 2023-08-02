@@ -43,7 +43,7 @@
             @include('partials.menu')
 
     <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
+    <div class="content-wrapper d-flex flex-column">
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <div class="container-fluid">
@@ -61,7 +61,7 @@
         </section>
 
         <!-- Main content -->
-        <section class="content">
+        <section class="content d-flex flex-column flex-fill">
             @yield('content')
 <!--            <input id="medium_id" class="invisible">-->
         </section>

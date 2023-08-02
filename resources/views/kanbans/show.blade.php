@@ -51,7 +51,7 @@
 
 @section('content')
     <!-- {!! $kanban->description !!}-->
-    <div>
+    <div class="d-flex flex-fill">
         <kanban-board
             :editable="{{ $may_edit ? "1":"0" }}"
             :pusher="{{ $is_pusher_active ? "1":"0" }}"

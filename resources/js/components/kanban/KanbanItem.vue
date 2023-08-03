@@ -337,10 +337,15 @@ export default {
             }
         });
         this.$eventHub.$on('filter', (filter) => {
-            if (this.$el.innerText.includes(filter)) this.$el.style.display = 'block';
-            else this.$el.style.display = 'none';
+            // always case insensitive
+            const content = this.$el.innerText.toLowerCase();
+            const search = filter.toLowerCase();
+
+            this.$el.style.display = content.includes(search)
+                ? 'block'
+                : 'none';
         });
-        this.$eventHub.$on('clearFilter', () => this.$el.style.display = 'block');
+        this.$eventHub.$on('removeFilter', () => this.$el.style.display = 'block');
         
         this.$nextTick(() => {
             MathJax.startup.defaultReady();

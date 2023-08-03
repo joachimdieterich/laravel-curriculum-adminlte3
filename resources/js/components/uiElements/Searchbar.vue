@@ -6,11 +6,11 @@
             :placeholder="trans('global.search')"
             :aria-label="trans('global.search')"
             v-model="filter"
-            @keyup="checkFilter"/>
+            @keydown.enter="prepareEvent(true)"/>
         <button
             class="btn h-100 position-absolute end-0"
             type="button"
-            @click="checkFilter({key: 'Enter'})">
+            @click="prepareEvent(true)">
             <span class="fa fa-search"></span>
         </button>
     </div>
@@ -25,25 +25,24 @@ export default {
         }
     },
     methods: {
-        checkFilter(e) {
+        prepareEvent(forced = false) {
             clearTimeout(this.timer);
 
-            if (e.key == 'Enter') {
+            if (forced) { // forced == Enter or button-click
                 this.throwEvent();
                 return;
+            } else if (this.filter.length < 3) {
+                if (this.filtered) this.removeFilter();
+                return;
             }
-            // else if (this.filter.length < 3 || this.filtered) {
-            //     this.clearFilter();
-            //     return;
-            // }
             
-            // this.timer = setTimeout(() => {
-            //     this.throwEvent();
-            // }, 750);
+            this.timer = setTimeout(() => {
+                this.throwEvent();
+            }, 750);
         },
-        clearFilter() {
+        removeFilter() {
             this.filtered = false; // only throw this event once
-            this.$eventHub.$emit('clearFilter');
+            this.$eventHub.$emit('removeFilter');
         },
         throwEvent() {
             this.filtered = true;
@@ -51,19 +50,7 @@ export default {
         }
     },
     watch: {
-        filter(newValue) {
-            clearTimeout(this.timer);
-            console.log(newValue, this.filtered);
-            if (newValue.length < 3 || this.filtered) {
-                this.clearFilter();
-                return;
-            }
-
-            this.timer = setTimeout(() => {
-                console.warn('New Event');
-                this.throwEvent();
-            }, 750);
-        }
+        filter() { this.prepareEvent(); }
     }
 }
 </script>

@@ -7,12 +7,13 @@
 <!-- Site wrapper -->
 <div id="app" class="wrapper">
     <!-- Navbar -->
-    <nav class="main-header navbar navbar-expand navbar-lime navbar-light">
+    <nav class="main-header navbar navbar-expand navbar-lime navbar-light user-select-none">
         <!-- Left navbar links -->
         <ul class="navbar-nav">
             <li class="nav-item">
                 <a class="nav-link"
                    data-widget="pushmenu"
+                   href="#"
                    onclick="toggleMenu()">
                     <i class="fas fa-bars"></i>
                 </a>

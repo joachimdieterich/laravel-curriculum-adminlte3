@@ -104,10 +104,9 @@ export default {
     props: {
         kanban: {},
         status: {
-            type: Array,
-            default: {
+            default: () => ({
                 'owner_id' : -1
-            }
+            })
         },
         'editable': true,
         'newStatus': false,

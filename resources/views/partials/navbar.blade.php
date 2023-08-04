@@ -55,7 +55,7 @@
 @endcan
 <!--Notifications Dropdown Menu-->
     <li class="dropdown">
-        <span class="user-menu dropdown-toggle" data-toggle="dropdown">
+        <span class="user-menu dropdown-toggle" data-toggle="dropdown" role="button">
           <img class="img-circle color-white"
                src="{{ (auth()->user()->medium_id !== null) ? '/media/'.auth()->user()->medium_id  : Avatar::create(auth()->user()->fullName())->toBase64() }}"
                alt="User profile picture"
@@ -63,7 +63,7 @@
           <b>{{ auth()->user()->fullName() }}</b>
         </span>
         <div class="user-menu dropdown-menu bg-lime dropdown-menu-lg dropdown-menu-right">
-            <span class="dropdown-item dropdown-header text-black">{{ optional(Auth::user()->role())->title}}</span>
+            <span class="dropdown-header text-black">{{ optional(Auth::user()->role())->title}}</span>
             <div class="dropdown-divider"></div>
             @can('user_show')
                 <a href="{{route('users.show', auth()->user()->id)}}" class="dropdown-item">

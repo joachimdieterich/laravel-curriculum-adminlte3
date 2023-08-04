@@ -1,7 +1,7 @@
 <template>
     <div class="card-header border-bottom-0 p-0 kanban-header"
          :key="form.id">
-        <span v-if="(editor !== false && form.visibility !== 0) || (editor !== false && $userId == status.owner_id )"
+        <span v-if="(editor !== false && form.visibility !== 0) || (editor !== false && $userId == status?.owner_id )"
               filter=".ignore">
             <input
                 :id="'title_'+ form.id"
@@ -22,7 +22,7 @@
                         {{ trans('global.locked') }}
                     </label>
                 </span>
-                 <span v-if="($userId == status.owner_id)"
+                 <span v-if="($userId == status?.owner_id)"
                        class="custom-control custom-switch custom-switch-on-green">
                     <input
                         v-model="form.visibility"
@@ -52,7 +52,7 @@
         </span>
         <span v-else>
             <strong>{{ form.title }}</strong>
-            <div v-if="(editable == 1 && form.locked !== 1 && form.visibility == 1 && kanban.onlyEditOwnedItems !== 1) || ($userId == status.owner_id )"
+            <div v-if="(editable == 1 && form.locked !== 1 && form.visibility == 1 && kanban.onlyEditOwnedItems !== 1) || ($userId == status?.owner_id )"
                  :id="'kanbanStatusDropdown_'+form.id"
                  class="btn btn-flat py-0 pl-0 pull-left"
                  data-toggle="dropdown"
@@ -103,11 +103,7 @@ export default {
     name: 'KanbanStatus',
     props: {
         kanban: {},
-        status: {
-            default: () => ({
-                'owner_id' : -1
-            })
-        },
+        status: {},
         'editable': true,
         'newStatus': false,
     },

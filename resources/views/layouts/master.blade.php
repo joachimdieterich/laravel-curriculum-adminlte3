@@ -23,7 +23,7 @@
         </ul>
 
                 <!-- SEARCH FORM -->
-<!--                <form class="form-inline ml-3">
+                <!-- <form class="form-inline ml-3">
                     <div class="input-group input-group-sm">
                         <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
                         <div class="input-group-append">
@@ -35,12 +35,15 @@
                 </form>-->
 
                 <!-- Right navbar links -->
-                @include('partials.navbar')
-            </nav>
+        <ul class="navbar-nav ml-auto">
+            <searchbar></searchbar>
+        </ul>
+        @include('partials.navbar')
+    </nav>
     <!-- /.navbar -->
 
-            <!-- Main Sidebar Container -->
-            @include('partials.menu')
+    <!-- Main Sidebar Container -->
+    @include('partials.menu')
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper d-flex flex-column">

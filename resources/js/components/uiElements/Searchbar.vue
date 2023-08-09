@@ -49,6 +49,9 @@ export default {
             this.$eventHub.$emit('filter', this.filter);
         }
     },
+    mounted() {
+        this.$eventHub.$on('showSearchbar', () => this.$el.classList.remove('d-none'));
+    },
     watch: {
         filter() { this.prepareEvent(); }
     }

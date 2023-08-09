@@ -510,7 +510,7 @@ export default {
             this.autoRefresh = false;
         }
 
-        document.getElementById('searchbar').classList.remove('d-none');
+        this.$eventHub.$emit('showSearchbar');
     },
     computed: {
         columnDragOptions() {

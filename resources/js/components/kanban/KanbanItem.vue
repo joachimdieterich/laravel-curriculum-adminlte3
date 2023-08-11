@@ -336,9 +336,20 @@ export default {
                 this.reload();
             }
         });
+        this.$eventHub.$on('filter', (filter) => {
+            // always case insensitive
+            const content = this.$el.innerText.toLowerCase();
+            const search = filter.toLowerCase();
+
+            this.$el.style.display = content.includes(search)
+                ? 'block'
+                : 'none';
+        });
+        this.$eventHub.$on('removeFilter', () => this.$el.style.display = 'block');
+        
         this.$nextTick(() => {
             MathJax.startup.defaultReady();
-        })
+        });
     },
     watch: {
         form: function (){

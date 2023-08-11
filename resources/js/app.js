@@ -163,6 +163,7 @@ Vue.component('lms-modal', () => import('./../../app/Plugins/Lms/resources/js/co
 Vue.component('color-picker-component', () => import('./components/kanban/ColorPickerComponent.vue'));
 Vue.component('color-picker-input', () => import('./components/kanban/ColorPickerInput.vue'));
 Vue.component('leaflet-map', () => import('./components/map/Map.vue'));
+Vue.component('searchbar', () => import('./components/uiElements/Searchbar.vue'));
 
 Vue.component('tests-table', () => import('./components/tests/TestsTable.vue'));
 

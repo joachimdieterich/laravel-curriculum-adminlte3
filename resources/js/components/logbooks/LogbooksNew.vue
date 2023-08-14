@@ -1,11 +1,6 @@
 <template>
     <div class="row">
         <div class="col-md-12 py-2">
-            <div id="logbooks_filter" class="dataTables_filter">
-                <label>
-                    <input type="search" class="form-control form-control-sm" placeholder="Suchbegriff" v-model="search">
-                </label>
-            </div>
             <ul class="nav nav-pills" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link " :class="filter === 'all' ? 'active' : ''" id="logbook-filter-all"
@@ -164,6 +159,28 @@ export default {
     },
     mounted() {
         this.loaderEvent();
+        this.$eventHub.$emit('showSearchbar');
+
+        this.$eventHub.$on('filter', (filter) => {
+            // always case insensitive
+            const elements = this.$el.getElementsByClassName('box');
+            const search = filter.toLowerCase();
+
+            for (let i = 0; i < elements.length; i++) {
+                const element = elements[i];
+                const content = element.innerText.toLowerCase();
+                
+                element.style.display = content.includes(search)
+                    ? 'block'
+                    : 'none';
+            }
+
+        });
+        this.$eventHub.$on('removeFilter', () => {
+            this.$el.getElementsByClassName('box').forEach(element => {
+                element.style.display = 'block';
+            });
+        });
     },
     components: {
         Modal

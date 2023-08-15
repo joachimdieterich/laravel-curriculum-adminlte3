@@ -21,5 +21,5 @@
             ])
         </form>
     </div>
-</disv>
+</div>
 @endsection

@@ -38,7 +38,7 @@
                             class="dropdown-item py-1 text-red"
                             @click="confirmItemDelete()">
                             <i class="fa fa-trash mr-4"></i>
-                            {{ trans('global.delete') }}
+                            {{ trans('global.kanbanItem.delete') }}
                         </button>
                     </div>
                 </div>

@@ -516,7 +516,8 @@ return [
         'title_singular' => 'Terminal Objective',
         'create' => 'Create terminal objective',
         'edit' => 'Edit terminal objective',
-        'move_to_curriculum' => 'Move terminal objective to other curriculum',
+        'move' => 'Change Curriculum',
+        'delete' => 'Delete terminal objective',
         'fields' => [
             'time_approach' => 'Time approach',
         ],
@@ -891,9 +892,9 @@ return [
     'kanbanItem' => [
         'title' => 'Items',
         'title_singular' => 'Item',
-        'create' => 'Create items',
-        'edit' => 'Edit items',
-        'delete' => 'Delete items',
+        'create' => 'Create item',
+        'edit' => 'Edit item',
+        'delete' => 'Delete item',
         'delete_helper' => 'Should item be deleted?',
         'due_date' => 'Due-Date',
         'expired' => 'Expired',

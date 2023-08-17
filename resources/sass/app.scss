@@ -142,3 +142,21 @@ tr:hover .vuehover {
 .dropdown-item {
     padding: 0.25rem 1rem !important;
 }
+
+@media only screen and (max-width: 576px) {
+    #searchbar > input {
+        width: 188px;
+        transition: .5s width, .5s padding;
+        
+        &:not(:focus-within) {
+            width: 0px;
+            padding: 0px !important;
+            
+            & + button {
+                right: -48px;
+                
+                &::before { width: 55px; }
+            }
+        }
+    }
+}

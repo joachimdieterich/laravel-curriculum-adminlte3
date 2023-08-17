@@ -1,5 +1,5 @@
 <template>
-    <div id="searchbar" class="d-none input-group">
+    <div id="searchbar" class="d-none input-group mx-3">
         <input
             class="form-control border-0 rounded pr-5"
             type="search"
@@ -8,9 +8,9 @@
             v-model="filter"
             @keydown.enter="prepareEvent(true)"/>
         <button
-            class="btn h-100 position-absolute end-0"
+            class="btn h-100 position-absolute"
             type="button"
-            @click="prepareEvent(true)">
+            @click="checkState()">
             <span class="fa fa-search"></span>
         </button>
     </div>
@@ -29,7 +29,7 @@ export default {
             clearTimeout(this.timer);
 
             if (forced) { // forced == Enter or button-click
-                this.throwEvent();
+                this.fireEvent();
                 return;
             } else if (this.filter.length < 3) {
                 if (this.filtered) this.removeFilter();
@@ -37,16 +37,25 @@ export default {
             }
             
             this.timer = setTimeout(() => {
-                this.throwEvent();
+                this.fireEvent();
             }, 750);
         },
         removeFilter() {
             this.filtered = false; // only throw this event once
             this.$eventHub.$emit('removeFilter');
         },
-        throwEvent() {
+        fireEvent() {
             this.filtered = true;
             this.$eventHub.$emit('filter', this.filter);
+        },
+        checkState() {
+            const notFocused = this.$el.firstChild.width == 0;
+
+            if (window.innerWidth < 576 && notFocused) {
+                this.$el.getElementsByTagName('input')[0].focus();
+            } else {
+                this.prepareEvent(true);
+            }
         }
     },
     mounted() {
@@ -59,11 +68,21 @@ export default {
 </script>
 <style scoped>
 button {
+    display: flex;
+    align-items: center;
     background-color: #EAF099;
     z-index: 10;
     right: 0;
+    transition: .5s right;
 }
-input[type="search"]::-webkit-search-cancel-button:hover { 
-    cursor:pointer; 
+button::before {
+    content: 'Suche';
+    width: 0px;
+    overflow: hidden;
+    text-align: left;
+    transition: .5s width;
+}
+input[type="search"]::-webkit-search-cancel-button:hover {
+    cursor:pointer;
 }
 </style>

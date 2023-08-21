@@ -180,21 +180,11 @@ export default {
         this.$eventHub.$emit('showSearchbar');
 
         this.$eventHub.$on('filter', (filter) => {
-            // always case insensitive
-            const elements = this.$el.getElementsByClassName('box');
-            const search = filter.toLowerCase();
-
-            for (let i = 0; i < elements.length; i++) {
-                const element = elements[i];
-                const content = element.innerText.toLowerCase();
-                
-                element.style.display = content.includes(search)
-                    ? 'block'
-                    : 'none';
-            }
-
+            this.search = filter;
+            this.searchContent();
         });
         this.$eventHub.$on('removeFilter', () => {
+            this.search = '';
             this.$el.getElementsByClassName('box').forEach(element => {
                 element.style.display = 'block';
             });

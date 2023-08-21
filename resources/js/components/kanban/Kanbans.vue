@@ -158,6 +158,8 @@
 </template>
 
 <script>
+import { nextTick } from 'vue';
+
 const Modal =
     () => import('./../uiElements/Modal');
 //import Modal from "./../uiElements/Modal";

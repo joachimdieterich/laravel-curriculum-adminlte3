@@ -1,14 +1,6 @@
 <template >
     <div class="row">
         <div class="col-md-12 py-2">
-            <div id="kanbans_filter" class="dataTables_filter">
-                <label >
-                    <input type="search"
-                           class="form-control form-control-sm"
-                           placeholder="Suchbegriff"
-                           v-model="search">
-                </label>
-            </div>
             <ul class="nav nav-pills" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link "
@@ -60,8 +52,6 @@
 
         <div class="col-md-12 py-2">
             <div v-for="(kanban,index) in kanbans"
-                 v-if="(kanban.title.toLowerCase().indexOf(search.toLowerCase()) !== -1)
-                        || search.length < 3"
                  :id="'kanban-' + kanban.id"
                  class="box box-objective nav-item-box-image pointer my-1"
                  style="min-width: 200px !important;"
@@ -140,6 +130,8 @@
 </template>
 
 <script>
+import { nextTick } from 'vue';
+
 const Modal =
     () => import('./../uiElements/Modal');
 //import Modal from "./../uiElements/Modal";
@@ -170,12 +162,16 @@ const Modal =
                     this.url = '/kanbanSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
                 }
                 axios.get(this.url + '?filter=' + this.filter)
-                    .then(response => {
-                            if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
-                                this.kanbans = response.data.data;
-                            } else {
-                                this.kanbans = response.data.data;
-                            }
+                    .then(async response => {
+                        if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
+                            this.kanbans = response.data.data;
+                        } else {
+                            this.kanbans = response.data.data;
+                        }
+
+                        await nextTick();
+                        // if the searchbar had some input before changing filters, redo the search
+                        if (this.search != '') this.searchContent();
                     })
                     .catch(e => {
                         console.log(e.data.errors);
@@ -184,6 +180,20 @@ const Modal =
             setFilter(filter){
                 this.filter = filter;
                 this.loaderEvent();
+            },
+            searchContent() {
+                // always case insensitive
+                const elements = this.$el.getElementsByClassName('box');
+                const search = this.search.toLowerCase();
+
+                for (let i = 0; i < elements.length; i++) {
+                    const element = elements[i];
+                    const content = element.innerText.toLowerCase();
+                    
+                    element.style.display = content.includes(search)
+                        ? 'block'
+                        : 'none';
+                }
             },
             decodeHtml(html) {
                 let txt = document.createElement("textarea");
@@ -201,6 +211,18 @@ const Modal =
 
         mounted() {
             this.loaderEvent();
+
+            this.$eventHub.$on('filter', (filter) => {
+                this.search = filter;   
+                this.searchContent();
+            });
+            this.$eventHub.$on('removeFilter', () => {
+                this.search = '';
+                this.$el.getElementsByClassName('box').forEach(element => {
+                    element.style.display = 'block';
+                });
+            });
+            this.$eventHub.$emit('showSearchbar');
         },
         components: {
             Modal

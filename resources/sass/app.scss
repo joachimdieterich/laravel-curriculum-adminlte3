@@ -140,10 +140,14 @@ tr:hover .vuehover {
 }
 
 @media only screen and (max-width: 400px) {
-    #searchbar > input:not(:focus-within) + button {
-        right: -21px !important;
-
-        &::before { content: none; }
+    div#searchbar > input {
+        transition: .5s width, .5s padding !important;
+        
+        &:not(:focus-within) {
+            padding: 0px 41px 0px 0px !important;
+    
+            & + div > button::before { content: none; }
+        }
     }
 }
 
@@ -151,17 +155,14 @@ tr:hover .vuehover {
     #searchbar > input {
         width: calc(100vw - 183px);
         max-width: 248px;
-        transition: .5s width, .5s padding;
+        transition: .5s width, .4s padding;
         
         &:not(:focus-within) {
             width: 0px;
-            padding: 0px !important;
+            padding: 0px 96px 0px 0px !important;
+            transition: .5s width .1s, .4s padding;
             
-            & + button {
-                right: -48px;
-                
-                &::before { width: 55px; }
-            }
+            & + div > button::before { width: 55px; }
         }
     }
 }

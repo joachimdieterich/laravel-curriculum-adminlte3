@@ -139,10 +139,18 @@ tr:hover .vuehover {
     padding-right: 10px;
 }
 
+@media only screen and (max-width: 400px) {
+    #searchbar > input:not(:focus-within) + button {
+        right: -21px !important;
+
+        &::before { content: none; }
+    }
+}
 
 @media only screen and (max-width: 576px) {
     #searchbar > input {
-        width: 188px;
+        width: calc(100vw - 183px);
+        max-width: 248px;
         transition: .5s width, .5s padding;
         
         &:not(:focus-within) {

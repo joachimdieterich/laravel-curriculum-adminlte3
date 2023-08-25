@@ -7,12 +7,14 @@
             :aria-label="trans('global.search')"
             v-model="filter"
             @keydown.enter="prepareEvent(true)"/>
-        <button
-            class="btn h-100 position-absolute"
-            type="button"
-            @click="checkState()">
-            <span class="fa fa-search"></span>
-        </button>
+        <div class="position-relative">
+            <button
+                class="btn h-100 position-absolute"
+                type="button"
+                @click="checkState()">
+                <span class="fa fa-search"></span>
+            </button>
+        </div>
     </div>
 </template>
 <script>
@@ -73,14 +75,13 @@ button {
     background-color: #EAF099;
     z-index: 10;
     right: 0;
-    transition: .5s right;
 }
 button::before {
     content: 'Suche';
     width: 0px;
     overflow: hidden;
     text-align: left;
-    transition: .5s width;
+    transition: .4s width;
 }
 input[type="search"]::-webkit-search-cancel-button:hover {
     cursor:pointer;

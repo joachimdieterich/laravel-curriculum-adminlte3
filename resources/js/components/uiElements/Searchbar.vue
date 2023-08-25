@@ -75,14 +75,13 @@ button {
     background-color: #EAF099;
     z-index: 10;
     right: 0;
-    transition: .5s right;
 }
 button::before {
     content: 'Suche';
     width: 0px;
     overflow: hidden;
     text-align: left;
-    transition: .5s width;
+    transition: .4s width;
 }
 button::before {
     content: 'Suche';

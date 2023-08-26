@@ -22,7 +22,7 @@
            v-bind:data-count="[white_count]"
            @click.prevent="achieve('0')">
         </i>
-        
+
     </span>
 
 </template>
@@ -61,7 +61,8 @@
             async achieve(status){
                 var selected = this.users;
                 if (selected.length === 0){
-                    selected = ($('#users-datatable').DataTable().rows({ selected: true }).ids().toArray())
+                    selected = localStorage.getItem('user-datatable-selection');
+                    //console.log(selected);
                 }
                 let archievement = {
                     'referenceable_type': (this.type === 'terminal' ? 'App\\TerminalObjective' : 'App\\EnablingObjective'),

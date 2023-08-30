@@ -153,6 +153,7 @@ Vue.component('objective-progress-subscription-modal', () => import('./component
 Vue.component('task-modal', () => import('./components/tasks/TaskModal.vue'));
 Vue.component('task', () => import('./components/tasks/Task.vue'));
 Vue.component('task-timeline', () => import('./components/tasks/Timeline.vue'));
+Vue.component('training', () => import('./components/training/Training'));
 Vue.component('kanbans', () => import('./components/kanban/Kanbans.vue'));
 Vue.component('kanban-board', () => import('./components/kanban/KanbanBoard.vue'));
 Vue.component('subscribe-modal', () => import('./components/subscription/SubscribeModal.vue'));

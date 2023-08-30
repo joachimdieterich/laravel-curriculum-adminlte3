@@ -22,6 +22,11 @@ class Plan extends Model
         return $this->hasOne('App\User', 'id', 'owner_id');
     }
 
+    public function entries()
+    {
+        return $this->hasMany(PlanEntry::class);
+    }
+
     public function taskSubscriptions()
     {
         return $this->morphMany('App\TaskSubscription', 'subscribable');
@@ -47,6 +52,11 @@ class Plan extends Model
     public function subscriptions()
     {
         return $this->hasMany(PlanSubscription::class);
+    }
+
+    public function mediaSubscriptions()
+    {
+        return $this->morphMany('App\MediumSubscription', 'subscribable');
     }
 
     public function userSubscriptions()

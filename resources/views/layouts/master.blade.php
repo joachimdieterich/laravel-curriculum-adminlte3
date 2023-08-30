@@ -63,7 +63,7 @@
         <!-- Main content -->
         <section class="content">
             @yield('content')
-<!--            <input id="medium_id" class="invisible">-->
+            <input id="medium_id" class="invisible"> <!-- DONT REMOVE - used by TINYMCE -->
         </section>
         <!-- /.content -->
     </div>

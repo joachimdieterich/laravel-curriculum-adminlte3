@@ -410,7 +410,6 @@ export default {
             }).catch(e => {
                 console.log(e)
             });
-
             //register events
             this.$root.$on('lmsUpdate', () => {
                 this.$refs.LmsPlugin.loaderEvent();

@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    {{ trans('global.plan.title_singular') }}
+    {{ $plan->title }}
     @can('plan_create')
         @if (Auth::user()->id ==  $plan->owner_id)
             <button class="btn btn-flat"
@@ -32,6 +32,7 @@
                'plan' =>  $plan,
                'buttonText' => trans('global.plan.create')
            ])
+
             @break
 
         @default

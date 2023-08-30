@@ -88,7 +88,11 @@
                 </a>
             </p>
             <p class="mb-0">
-
+                @if ( ( env('SHOW_IMRESSUM') !== null ))
+                    <a class="" href="{{ route('impressum') }}">
+                        Impressum
+                    </a>
+                @endif
             </p>
             <p class="mb-1">
 

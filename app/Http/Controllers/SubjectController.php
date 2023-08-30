@@ -4,11 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Subject;
 use Yajra\DataTables\DataTables;
+use Illuminate\Http\Request;
 
 class SubjectController extends Controller
 {
     public function index()
     {
+        // select2 request
+        if (request()->wantsJson() and request()->has(['term', 'page'])) {
+            if (is_admin()) {
+                abort_unless(\Gate::allows('subject_access'), 403);
+
+                return getEntriesForSelect2ByModel(
+                    "App\Subject"
+                );
+            } else { // TODO: only get subjects in reference with teacher(?)
+                return getEntriesForSelect2ByModel(
+                    "App\Subject"
+                );
+            }
+        }
         abort_unless(\Gate::allows('subject_access'), 403);
 
         return view('subjects.index');
@@ -49,6 +64,12 @@ class SubjectController extends Controller
             ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
+    }
+
+    public function getSubject(Request $request)
+    {
+        abort_unless(\Gate::allows('subject_access'), 403);
+        return Subject::select('title')->where('id', $request->id)->get();
     }
 
     public function create()

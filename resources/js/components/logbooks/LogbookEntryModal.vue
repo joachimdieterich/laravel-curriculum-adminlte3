@@ -73,9 +73,9 @@
 </template>
 
 <script>
-    import Form from 'form-backend-validation';
-    import DatePicker from 'vue2-datepicker';
-    import 'vue2-datepicker/index.css';
+import Form from 'form-backend-validation';
+import DatePicker from 'vue2-datepicker';
+import 'vue2-datepicker/index.css';
 
     export default {
         data() {
@@ -126,7 +126,9 @@
             },
 
             opened(){
-                this.$initTinyMCE();
+                this.$initTinyMCE([
+                    "autolink link example"
+                ]);
             },
 
             beforeClose() {},

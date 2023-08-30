@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\DB;
+use App\Medium;
+use App\MediumSubscription;
 
 if (! function_exists('getEntriesForSelect2ByModel')) {
     /**
@@ -24,6 +26,14 @@ if (! function_exists('getEntriesForSelect2ByModel')) {
 
         $term = $input['term'];
 
+        $count = Count($model::where(   // count all enties FIRST with filter to get pagination working
+            function ($query) use ($field, $term) {
+                foreach ((array)$field as $f) {
+                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                }
+            })
+            ->get());
+
         $entries = $model::where(
             function ($query) use ($field, $term) {
                 foreach ((array)$field as $f) {
@@ -35,19 +45,9 @@ if (! function_exists('getEntriesForSelect2ByModel')) {
             ->take($resultCount)
             ->get([$id, DB::raw($text . ' as text')]);
 
-        $count = $entries->count();
-       /* $count = Count($model::where(
-            function ($query) use ($field, $term) {
-                foreach ((array)$field as $f) {
-                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
-                }
-            })
-            ->orderBy($oderby)
-            ->get([$id, DB::raw($text . ' as text')]));*/
-
         $endCount = $offset + $resultCount;
         $morePages = $count > $endCount;
-        //dump($resultCount.' '.$count);
+
         $results = array(
             "results" => $entries,
             "pagination" => array(
@@ -73,6 +73,15 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
 
         $term = $input['term'];
 
+        $count = Count($collection->where(  // count all enties FIRST with filter to get pagination working
+            function($query) use ($field, $term)
+            {
+                foreach ((array) $field as $f) {
+                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                }
+            })
+            ->get());
+
         $entries = $collection->where(
             function($query) use ($field, $term)
             {
@@ -85,18 +94,6 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
             ->take($resultCount)
             ->select([$table.$id, DB::raw($text . ' as text')])
             ->get();
-
-        $count = $entries->count();
-        /*$count = Count($collection->where(
-            function($query) use ($field, $term)
-            {
-                foreach ((array) $field as $f) {
-                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
-                }
-            })
-            ->orderBy($oderby)
-            ->select([$table.$id, DB::raw($text . ' as text')])
-            ->get());*/
 
         $endCount = $offset + $resultCount;
         $morePages = $count > $endCount;
@@ -161,12 +158,12 @@ if (! function_exists('relativeToAbsoutePaths')) {
             '/<img\s+[^>]*(src="\/media\/(.*?)")(\s+[^>]*)?[^>]*>/mi',
             function ($match) {
                 $media = App\Medium::find($match[2]);
-                //dump($media->absolutePath());
+
                 if (! file_exists($media->absolutePath())) {
                     return ''; //"<!--File does not exist-->"; //todo: remove from db?
                 }
                 if ($media !== null) {
-                    return str_replace($match[1], "src=\"{$media->absolutePath()}\"", $match[0]);
+                    return str_replace($match[1], 'src="'.$media->absolutePath().'"' , $match[0]);
                 } else {
                     return ''; //"<!--Image not available-->";
                 }
@@ -312,10 +309,48 @@ if (! function_exists('is_admin')) {
     }
 }
 
+if (! function_exists('is_creator')) {
+    function is_creator()
+    {
+        return auth()->user()->role()->id == 2;
+    }
+}
+
 if (! function_exists('is_schooladmin')) {
     function is_schooladmin()
     {
         return auth()->user()->role()->id == 4;
+    }
+}
+
+if (! function_exists('is_teacher')) {
+    function is_teacher()
+    {
+        return auth()->user()->role()->id == 5;
+    }
+}
+if (! function_exists('checkForEmbeddedMedia')) {
+
+    function checkForEmbeddedMedia($model, $field = 'description')
+    {
+        preg_match_all('/src="\\/media\\/(.+?)"/s', $model->{$field}, $matches, PREG_SET_ORDER, 0);
+        foreach ($matches as $match) {
+            subscribeMediaToModel($model, Medium::find($match[1]));
+        }
+    }
+
+    function subscribeMediaToModel($model, $medium)
+    {
+        $subscribe = MediumSubscription::updateOrCreate([
+            'medium_id' => $medium->id,
+            'subscribable_type' => get_class($model),
+            'subscribable_id' => $model->id,
+        ], [
+            'sharing_level_id' => 1, // has to be global = 1
+            'visibility' => 1, // has to be public  = 1
+            'owner_id' => auth()->user()->id,
+        ]);
+        $subscribe->save();
     }
 }
 

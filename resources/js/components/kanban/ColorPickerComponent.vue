@@ -3,7 +3,9 @@
 </template>
 
 <script>
-import VSwatches from 'vue-swatches'
+const VSwatches =
+    () => import('vue-swatches');
+//import VSwatches from 'vue-swatches'
 
 // Import the styles too, globally
 import "vue-swatches/dist/vue-swatches.css"

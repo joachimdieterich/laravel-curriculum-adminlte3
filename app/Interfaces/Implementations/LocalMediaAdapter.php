@@ -75,7 +75,7 @@ class LocalMediaAdapter implements MediaInterface
 
             $files = $request->file('file');
             $uploaded = new Collection();
-            $pathPrefix = '/users/'.auth()->user()->id.'/';
+            $pathPrefix = '/users/'.auth()->user()->id;//.'/';
             foreach ($files as $file) {
                 $filename = time().'_'.pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME).'.'.$file->getClientOriginalExtension(); //todo: filename should be editable
 
@@ -234,6 +234,7 @@ class LocalMediaAdapter implements MediaInterface
 
     public function checkIfUserHasSubscription($subscription)
     {
+
         switch ($subscription->subscribable_type) {
             case "App\Organization":
                 if (in_array($subscription->subscribable_id, auth()->user()->organizations()->pluck('organization_id')->toArray())
@@ -258,6 +259,17 @@ class LocalMediaAdapter implements MediaInterface
                     return true;
                 }
                 break;
+            case "App\Plan":
+                if ($subscription->subscribable->isAccessible()) {
+                    return true;
+                }
+                break;
+            case "App\PlanEntry":
+                if ($subscription->subscribable->isAccessible()) {
+                    return true;
+                }
+                break;
+
 
             default: return false;
                 break;

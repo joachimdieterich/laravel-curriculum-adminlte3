@@ -43,27 +43,20 @@
             <span class="sr-only">Loading...</span>
         </div>
 
-
         <span v-for="media_subscription in media">
             <div v-for="medium in media_subscription"
                  :id="medium.node_id"
-                 class="box box-objective pointer my-1"
-                 style="height: 300px !important; min-width: 200px !important; padding: 0; background-size: cover;"
-                 :style="{'background-image':'url('+href(medium)+')'}"
+                 style="border: 1px solid #d2d6de;"
+                 class="box box-objective edusharing-box pointer my-1"
                  @click="show(medium)">
-                <div class="symbol"
-                    style="position: absolute;
-                    padding: 6px;
-                    z-index: 1;
-                    width: 30px;
-                    height: 40px;
-                    top: 0px;
-                    font-size: 1.2em;
-                    left: 10px;"
-                     :style="{'background':'white url('+iconUrl(medium)+') no-repeat center', 'background-size': '24px'}"
-                     >
+                <div class="bg-white text-center edusharing-box-bg p-1 overflow-auto "
+                     :style="{'background-image':'url('+href(medium)+')'}">
+                   <div class="symbol"
+                        :style="{'background':'white url('+iconUrl(medium)+') no-repeat center', 'background-size': '24px'}"
+                       >
+                   </div>
                 </div>
-                <span
+<!--            <span
                     v-can="'medium_delete'"
                     class="p-1 pointer_hand"
                     accesskey="" style="position:absolute; top:0px; height: 30px; width:100%;">
@@ -74,7 +67,7 @@
                             @click.stop="unlinkMedium(medium.node_id, medium.value);">
                             <small><i class="fa fa-unlink"></i></small>
                         </button>
-                </span>
+                </span>-->
 
                 <span class="bg-white text-center p-1 overflow-auto "
                       style="position:absolute; bottom:0px; height: 150px; width:100%;">
@@ -86,7 +79,6 @@
                         style="height: 16px; "
                         :src="medium.license.icon"/>
                 </span>
-
             </div>
         </span>
         <div v-if="media !== null" class="row pt-1" style="width:100% !important;">
@@ -95,14 +87,18 @@
                    <button type="button"
                            class="btn btn-block btn-primary"
                            :class="page > 0 ? '' : 'disabled'"
-                           @click="lastPage()"><i class="fa fa-arrow-left"></i></button>
+                           @click="lastPage()">
+                       <i class="fa fa-arrow-left"></i>
+                   </button>
                </span>
 
                 <span class="col-6">
                    <button type="button"
                            class="btn btn-block btn-primary"
                            :class="media[0].length == maxItems ? '' : 'disabled'"
-                           @click="nextPage()"><i class="fa fa-arrow-right"></i></button>
+                           @click="nextPage()">
+                       <i class="fa fa-arrow-right"></i>
+                   </button>
                </span>
             </span>
         </div>

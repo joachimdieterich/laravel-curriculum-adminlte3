@@ -19,6 +19,11 @@ class LogbookEntry extends Model
         //return $this->belongsTo('App\Logbook')->withTimestamps(); --> has to be without timestamps to get isAccessible working
     }
 
+    public function subject()
+    {
+        return $this->belongsTo(Subject::class);
+    }
+
     public function absences()
     {
         return $this->morphMany('App\Absence', 'referenceable');

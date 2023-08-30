@@ -11,9 +11,14 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js(['resources/js/app.js', 'vendor/select2/select2/dist/js/select2.min.js'], 'public/js')
-   .js('node_modules/popper.js/dist/popper.js', 'public/js').sourceMaps()
-   .sass('resources/sass/app.scss', 'public/css')
+mix.js([
+        'resources/js/app.js',
+        'vendor/select2/select2/dist/js/select2.min.js'
+    ], 'public/js')
+    .vue({version: 2});
+
+mix.js('node_modules/popper.js/dist/popper.js', 'public/js').sourceMaps()
+   .sass('resources/sass/app.scss', 'public/css');
 
 /* broadcasting */
 mix.options({
@@ -30,6 +35,7 @@ mix.copyDirectory('node_modules/tinymce/skins', 'public/js/skins');
 mix.copyDirectory('node_modules/tinymce/themes', 'public/js/themes');
 mix.copyDirectory('node_modules/tinymce/icons', 'public/js/icons');
 mix.copyDirectory('node_modules/tinymce', 'public/node_modules/tinymce');
+mix.copyDirectory('resources/js/langs', 'public/node_modules/tinymce/langs');
 
 /* Bootstrap colorpicker */
 mix.copyDirectory('node_modules/bootstrap-colorpicker/dist', 'public/node_modules/bootstrap-colorpicker');
@@ -49,4 +55,4 @@ mix.copyDirectory('node_modules/@dimakorotkov/tinymce-mathjax', 'public/node_mod
 
 
 mix.version();
-mix.vue({version: 2});
+//mix.vue({version: 2});

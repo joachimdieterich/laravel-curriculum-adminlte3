@@ -127,7 +127,10 @@
                 }
             },
             opened(){
-                this.$initTinyMCE();
+                this.$initTinyMCE([
+                        "autolink link example table lists"
+                    ]
+                );
             },
             beforeClose() {
                 //console.log('close')

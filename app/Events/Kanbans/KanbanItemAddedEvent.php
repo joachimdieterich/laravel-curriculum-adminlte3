@@ -56,7 +56,14 @@ class KanbanItemAddedEvent implements ShouldBroadcast
         return [
             'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
             'message' =>  KanbanItem::where('id', $this->kanbanItem->id)
-                ->with(['mediaSubscriptions', 'media', 'owner', /*'taskSubscription',*/ 'comments'])
+                ->with([
+                    'comments',
+                    'comments.user',
+                    'comments.likes',
+                    'likes',
+                    'mediaSubscriptions.medium',
+                    'owner',
+                ])
                 ->get()->first()
         ];
     }

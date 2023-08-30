@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Kanban;
 use App\KanbanItem;
+use Maize\Markable\Models\Like;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -32,6 +33,7 @@ class KanbanItemController extends Controller
             'kanban_id'         => $input['kanban_id'],
             'kanban_status_id'  => $input['kanban_status_id'],
             'color'             => $input['color'],
+            'due_date'             => $input['due_date'],
             'owner_id'          => auth()->user()->id,
         ]);
 
@@ -83,7 +85,7 @@ class KanbanItemController extends Controller
             if (!pusher_event(new \App\Events\Kanbans\KanbanItemMovedEvent($request->columns)))
             {
                 return [
-                    'message' => $this->columns
+                    'message' => $request->columns
                 ];
             }
         }
@@ -106,7 +108,14 @@ class KanbanItemController extends Controller
                     'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
                     'message' =>  $kanbanItem
                         ->where('id', $kanbanItem->id)
-                        ->with(['owner', 'mediaSubscriptions.medium', 'subscribable'])
+                        ->with([
+                            'comments',
+                            'comments.user',
+                            'comments.likes',
+                            'likes',
+                            'mediaSubscriptions.medium',
+                            'owner',
+                            ])
                         ->get()->first()
                 ];
             }
@@ -135,6 +144,7 @@ class KanbanItemController extends Controller
             'kanban_id' => $input['kanban_id'],
             'kanban_status_id' => $input['kanban_status_id'],
             'color' => $input['color'],
+            'due_date' => $input['due_date'],   
             'owner_id' => auth()->user()->id,
         ]);
 
@@ -165,6 +175,7 @@ class KanbanItemController extends Controller
 
         $kanbanItem->mediaSubscriptions()->delete();
         $kanbanItem->subscriptions()->delete();
+        $kanbanItem->delete();
 
         if (request()->wantsJson()) {
             if (!pusher_event(new \App\Events\Kanbans\KanbanItemDeletedEvent($kanbanItemForEvent)))
@@ -172,6 +183,39 @@ class KanbanItemController extends Controller
                 return [
                     'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
                     'message' =>  $kanbanItemForEvent
+                ];
+            }
+        }
+    }
+
+    /**
+     * React to kanbanItem the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\KanbanItem  $kanbanItem
+     * @return \Illuminate\Http\Response
+     */
+    public function reaction(Request $request, KanbanItem $kanbanItem)
+    {
+        abort_unless( $kanbanItem->isAccessible(), 403);
+
+        $input = $this->validateRequest();
+        //todo: use reaction_type 'like'...
+        if (Like::has($kanbanItem, auth()->user())){
+            Like::remove($kanbanItem, auth()->user()); // unmarks the $kanbanItem liked for the given user
+        } else {
+            Like::add($kanbanItem, auth()->user()); // marks the $kanbanItem liked for the given user
+        }
+
+        if (request()->wantsJson()) {
+            if (!pusher_event(new \App\Events\Kanbans\KanbanItemUpdatedEvent($kanbanItem)))
+            {
+                return [
+                    'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
+                    'message' => KanbanItem::where('id', $kanbanItem->id)
+                        ->with([
+                            'likes',
+                        ])->get()->first(),
                 ];
             }
         }
@@ -186,6 +230,7 @@ class KanbanItemController extends Controller
             'kanban_id' => 'sometimes|required|integer',
             'kanban_status_id' => 'sometimes|required|integer',
             'color' => 'sometimes',
+            'due_date' => 'sometimes',
         ]);
     }
 

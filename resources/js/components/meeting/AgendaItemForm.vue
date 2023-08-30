@@ -84,8 +84,13 @@
 </template>
 <script>
 import Form from "form-backend-validation";
+const Select2 =
+    () => import('../forms/Select2');
+const DatePicker =
+    () => import('vue2-datepicker');
+/*
 import Select2 from "../forms/Select2";
-import DatePicker from 'vue2-datepicker';
+import DatePicker from 'vue2-datepicker';*/
 import 'vue2-datepicker/index.css';
 
 export default {
@@ -164,7 +169,9 @@ export default {
                 this.errors = e.data.errors;
             });
         this.time = [moment().format("YYYY-MM-DD HH:mm:ss"), moment().add(30, 'minutes').format("YYYY-MM-DD HH:mm:ss")];
-        this.$initTinyMCE();
+        this.$initTinyMCE([
+            "autolink link example"
+        ]);
     },
     created() {
         this.$eventHub.$on('add_media_to_agenda_item', (e) => {

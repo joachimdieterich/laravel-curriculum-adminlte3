@@ -61,7 +61,6 @@
 
                             <div class="ml-auto">
                                 <EnablingObjectives
-                                    :curriculum="curriculum"
                                     :terminalobjective="objective"
                                     :objectives="objective.enabling_objectives"
                                     :settings="settings">
@@ -92,9 +91,15 @@
 </template>
 
 <script>
-    import ObjectiveBox from './ObjectiveBox'
+const ObjectiveBox =
+    () => import('./ObjectiveBox');
+const EnablingObjectives =
+    () => import('./EnablingObjectives');
+const draggable =
+    () => import('vuedraggable');
+  /*  import ObjectiveBox from './ObjectiveBox'
     import EnablingObjectives from './EnablingObjectives'
-    import draggable from "vuedraggable"; // import the vuedraggable
+    import draggable from "vuedraggable"; // import the vuedraggable*/
 
     export default {
         props: {

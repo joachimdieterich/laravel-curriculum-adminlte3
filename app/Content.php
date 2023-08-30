@@ -98,6 +98,7 @@ class Content extends Model
         if (
             auth()->user()->contents->contains('id', $this->id) // user enrolled
             or is_admin() // or admin
+            or is_creator() //or creator --> important if ownership of curricula is passed to another creator
         ) {
             return true;
         } else {

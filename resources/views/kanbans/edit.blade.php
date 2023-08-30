@@ -19,7 +19,7 @@
 
                 @include ('kanbans.form', [
                     'kanban' => $kanban,
-                    'buttonText' => trans('global.kanban.edit')
+                    'buttonText' => trans('global.save')
                 ])
                 @if (isset($_GET['subscribable_id']))
                     <input style="display:none" name="subscribable_id" value="{{ $_GET['subscribable_id']}}">

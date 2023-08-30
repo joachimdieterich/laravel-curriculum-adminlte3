@@ -186,7 +186,10 @@
 
 <script>
 import Form from 'form-backend-validation';
-import moment from 'moment';
+
+const moment =
+    () => import('moment');
+//import moment from 'moment';
 
 export default {
     props: {
@@ -308,7 +311,9 @@ export default {
             editor.parentNode.removeChild(editor);
             hidePlaceholder.parentNode.removeChild(hidePlaceholder);
             placeholder.appendChild(editor);
-            this.$initTinyMCE();
+            this.$initTinyMCE([
+                "autolink link example"
+            ]);
 
         },
         loadNotes(type, id){
@@ -392,7 +397,9 @@ export default {
         }
 
         this.load();
-        this.$initTinyMCE();
+        this.$initTinyMCE([
+            "autolink link example"
+        ]);
     },
 }
 </script>

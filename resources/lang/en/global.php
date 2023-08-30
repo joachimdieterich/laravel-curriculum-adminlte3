@@ -23,7 +23,11 @@ return [
     'updated_at_helper' => '',
     'deleted_at' => 'Deleted at',
     'deleted_at_helper' => '',
-
+    'begin'            => 'Begin',
+    'end'              => 'End',
+    'notes'            => 'Notes',
+    'select_icon'      => 'select icon',
+    'visibility' => 'Visibel',
     'my_files' => 'My media',
     'shared_files' => 'shared media',
     'public_files' => 'public media',
@@ -38,6 +42,7 @@ return [
     'search' => 'Search',
     'view' => 'View',
     'edit' => 'Edit',
+    'locked' => 'locked',
     'delete' => 'Delete dataset finally',
     'forceDelete' => '.',
     'save' => 'Save',
@@ -234,6 +239,7 @@ return [
     'time' => 'Time',
     'valid_from' => 'Valid from',
     'valid_to' => 'Valid to',
+    'valid' => 'valid',
     'code' => 'Code',
     'start_time' => 'Start time',
     'end_time' => 'End time',
@@ -245,7 +251,6 @@ return [
     'first_name' => 'First name',
     'last_name' => 'Last name',
     'phone' => 'Phone',
-    'photo' => 'Photo (max 8mb)',
     'tags' => 'Tags',
     'tag' => 'Tag',
     'photo' => 'Photo',
@@ -438,9 +443,7 @@ return [
         'create' => 'Create Period',
         'edit' => 'Edit Period',
         'fields' => [
-            'begin' => 'Begin',
             'begin_helper' => '',
-            'end' => 'End',
             'end_helper' => '',
         ],
     ],
@@ -610,6 +613,7 @@ return [
         'add_reference' => 'Add Reference',
         'navigator_view' => 'Link a navigator view',
         'curriculum' => 'Link a curriculum',
+        'link' => 'Link curriculum-objective',
         'content' => 'Link a text',
         'medium' => 'Link a medium (file, url)',
     ],
@@ -672,18 +676,21 @@ return [
         'create' => 'Create Logbook',
         'edit' => 'Edit Logbook',
         'print' => 'Print Logbook',
+        'delete' => 'Delete Logbook',
+        'delete_helper' => 'Should this Logbook and all its corresponding data be deleted?',
     ],
     'logbookEntry' => [
         'title' => 'Logs',
         'title_singular' => 'Log',
         'create' => 'Create Logbookentry',
         'edit' => 'Edit Logbookentry',
+        'subject' => 'Choose Subject',
+        'no_subject' => 'No Subject selected',
         'addition' => 'Make addition to Logbookentry',
         'fields' => [
-            'begin' => 'Begin',
             'begin_helper' => '',
-            'end' => 'End',
             'end_helper' => '',
+            'subject' => 'Subject',
         ],
     ],
     'task' => [
@@ -822,6 +829,22 @@ return [
             'type_helper' => '',
         ],
     ],
+    'exercise' => [
+        'title' => 'exercises',
+        'title_singular' => 'exercise',
+        'create' => 'create exercise',
+        'search' => 'search exercise',
+        'edit' => 'edit exerciese',
+        'fields' => [
+            'recommended_iterations' => 'Wie oft soll die Übung wiederholt werden?'
+        ]
+    ],
+    'exercisedone' => [
+        'fields' => [
+            'iterations' => 'Iterations'
+        ]
+
+    ],
     'contactdetail' => [
         'title' => 'Contact',
         'title_singular' => 'Contact',
@@ -843,6 +866,8 @@ return [
         'title_singular' => 'Kanban-Board',
         'create' => 'Create Kanban-Board',
         'edit' => 'Edit Kanban-Board',
+        'delete' => 'Delete Kanban-Board',
+        'delete_helper' => 'Should Kanban-Board be deleted?',
     ],
     'kanbanItem' => [
         'title' => 'Items',
@@ -851,6 +876,8 @@ return [
         'edit' => 'Edit items',
         'delete' => 'Delete items',
         'delete_helper' => 'Should item be deleted?',
+        'due_date' => 'Due-Date',
+        'expired' => 'Expired',
         'fields' => [
             'order_id' => 'Order ID',
             'order_id_helper' => '',
@@ -917,8 +944,6 @@ return [
             'info_helper'      => '',
             'speakers'         => 'Speakers',
             'speakers_helper'  => '',
-            'begin'            => 'Begin',
-            'end'              => 'End',
             'status'           => 'Status',
             'category'         => 'Category',
             'target_group'     => 'Targetgroup',
@@ -939,8 +964,6 @@ return [
             'access_token_helper' => '',
             'address'          => 'Address',
             'address_helper'   => '',
-            'begin'            => 'Begin',
-            'end'              => 'End',
             'type'             => 'Type',
             'type_helper'       => '',
         ],
@@ -951,6 +974,7 @@ return [
         'title_singular' => 'Typ',
     ],
     'token' => 'Token',
+    'token_copied' => 'Token copied to clipboard!',
     'variantDefinitions' => [
         'title' => 'Variant Definitions',
         'title_singular' => 'Variant Definition',

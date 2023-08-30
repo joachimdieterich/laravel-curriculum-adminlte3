@@ -10,7 +10,7 @@ curriculum is a learning platform where teachers can create topic-based learning
 - laravel Ver. 9
 
 ### Prerequisites
-- PHP 8.1 Extensions: xml, dom, zip, curl, mbstring, bcmath, gd, mysqli, PDO, tokenizer, openssl, fileinfo, ctype, cli, common, opcache, readline, soap
+- PHP 8.1 Extensions: xml, dom, zip, curl, mbstring, bcmath, gd, mysqli, PDO, tokenizer, openssl, fileinfo, ctype, cli, common, opcache, readline
 - ghostscript
 - imagemagick
 - git
@@ -115,7 +115,6 @@ Content-Type: 'application/json'
 form-data
 client_id: [id]
 client_secret: [secret]
-grant_type: 'client_credentials'
 ```
 ### Use access token to access API
 ```
@@ -259,6 +258,7 @@ PUSHER_APP_CLUSTER=eu
 PUSHER_APP_ACTIVE=true
 PUSHER_APP_HOST=localhost
 PUSHER_APP_SCHEME=http
+PUSHER_APP_USE_TLS=true
 PUSHER_APP_FORCE_TLS=false
 PUSHER_APP_ENCRYPTED=true
 PUSHER_APP_DISABLE_STATS=true
@@ -270,6 +270,7 @@ MIX_PUSHER_APP_HOST="${PUSHER_APP_HOST}"
 MIX_PUSHER_APP_SCHEME="${PUSHER_APP_SCHEME}"
 MIX_PUSHER_APP_KEY="${PUSHER_APP_KEY}"
 MIX_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
+MIX_PUSHER_APP_USE_TLS="${PUSHER_APP_USE_TLS}"
 MIX_PUSHER_APP_FORCE_TLS="${PUSHER_APP_FORCE_TLS}"
 MIX_PUSHER_APP_ENCRYPTED="${PUSHER_APP_ENCRYPTED}"
 MIX_PUSHER_APP_DISABLE_STATS="${PUSHER_APP_DISABLE_STATS}"
@@ -277,7 +278,9 @@ MIX_PUSHER_APP_WSPORT="${PUSHER_APP_WSPORT}"
 MIX_PUSHER_APP_WSSPORT="${PUSHER_APP_WSSPORT}"
 ```
 
-Start Websocket with `php artisan websocket:serve`
+If SSL certificate path `LARAVEL_WEBSOCKETS_SSL_LOCAL_CERT` and `LARAVEL_WEBSOCKETS_SSL_LOCAL_PK` are only readable by root start websocket with sudo.
+
+Start Websocket with `sudo php artisan websocket:serve`
 
 Further information [laravel-websockets](https://beyondco.de/docs/laravel-websockets/getting-started/introduction)
 
@@ -355,7 +358,7 @@ public function down()
 
 ### json-fields in MariaDB
 
-If migrations failing with the following message: 
+If migrations failing with the following message (MariaDB Version < 10.2.7): 
 
 
 ```
@@ -370,3 +373,6 @@ to
 
 $table->text('variants')->nullable(); 
 ```
+
+### Logo for embededEvent.vue
+Put ```logo.png``` in the following path: ```public/favicons/logo.png```

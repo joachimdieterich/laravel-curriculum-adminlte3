@@ -25,8 +25,10 @@ class UsersController extends Controller
 {
     public function index()
     {
-        abort_unless(\Gate::allows('user_access'), 403);
-
+        if (auth()->user()->role()->id > 6) {   //todo check: should students see all other user of current org?
+            abort(403);
+        }
+        //every user should share with users of current org.
         if (request()->wantsJson() and request()->has(['term', 'page'])) {
             return  getEntriesForSelect2ByCollection(
                 Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->noSharing(),
@@ -36,17 +38,19 @@ class UsersController extends Controller
                 "CONCAT(firstname, ' ' ,lastname)",
             );
         }
-        // todo check: is the following condition used anymore
+
+        abort_unless(\Gate::allows('user_access'), 403);
+        // todo check: is the following condition used anymore (-> used only by user-tab on group/{id}?) --> change to top condition
         if (request()->wantsJson()) {
-            if (auth()->user()->role()->id == 1) {
-                $users = User::addGlobalScope(NoSharingUsers::class)->withTrashed()
-                    ->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get();
+            /*if (auth()->user()->role()->id == 1) {
+                $users = json_encode(User::withTrashed()
+                    ->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get());
 
                 return ['users' => $users];
-            } else {
+            } else {*/
                 return ['users' => json_encode(Organization::where('id', auth()->user()->current_organization_id)
-                    ->get()->first()->users()->addGlobalScope(NoSharingUsers::class)->get())];
-            }
+                    ->get()->first()->users()->get())];
+          /*  }*/
         }
 
         return view('users.index');
@@ -325,7 +329,7 @@ class UsersController extends Controller
     public function forceDestroy(User $user, $permission = false)
     {
         if ($permission == false) {
-            abort_unless(\Gate::allows('user_delete'), 403); //if permission != true (for API) check via Gate
+            abort_unless(\Gate::allows('user_delete'), 403); //if permission != true (for API ) check via Gate
             abort_unless(auth()->user()->role()->id == 1, 403); //only admins!
         }
 

@@ -57,12 +57,13 @@ if (process.env.MIX_PUSHER_APP_ACTIVE == 'true') {
         broadcaster: 'pusher',
         key: process.env.MIX_PUSHER_APP_KEY,
         cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+        useTLS: process.env.MIX_PUSHER_APP_USE_TLS === 'true',
         forceTLS: process.env.MIX_PUSHER_APP_FORCE_TLS === 'true',
         encrypted: process.env.MIX_PUSHER_APP_ENCRYPTED === 'true',
         wsHost: window.location.hostname,
         wssHost: window.location.hostname,
         wsPort: process.env.MIX_PUSHER_APP_WSPORT,
         wssPort: process.env.MIX_PUSHER_APP_WSSPORT,
-        enableTransports: ['ws', 'wss'],
+        enableTransports: ['ws', 'wss']
     });
 }

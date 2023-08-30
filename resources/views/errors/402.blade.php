@@ -2,4 +2,4 @@
 
 @section('title', __('Limit reached'))
 @section('code', '402')
-@section('message', __($exception->getMessage() ?: 'global.code_402'))
+@section('message', trans($exception->getMessage() ?: 'global.code_402'))

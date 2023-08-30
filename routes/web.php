@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LogController;
+use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/home');
 Route::get('/features', 'OpenController@features')->name('features');
@@ -9,7 +10,7 @@ Route::get('/impressum', 'OpenController@impressum')->name('impressum');
 
 Route::get('/terms', 'OpenController@terms')->name('terms');
 
-Route::get('kanban/share/{token}', 'ShareTokenController@auth');
+//Route::get('kanban/share/{token}', 'ShareTokenController@auth');
 
 Auth::routes(['register' => false]);
 
@@ -22,6 +23,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/admin', 'AdminController@index')->name('admin.index');
 
+    Route::resource('calendarEvents', 'CalendarEventController');
+
+    Route::post('kanbanItemComments/{kanbanItemComment}/react', 'KanbanItemCommentController@reaction')->name('kanbanItemCommentController.react');
     Route::resource('kanbanItemComment', 'KanbanItemCommentController');
 
     Route::resource('agendas', 'AgendaController');
@@ -97,6 +101,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('eventSubscriptions/search', 'EventSubscriptionController@search')->name('eventSubscriptions.search');
     Route::post('eventSubscriptions/getEvents', 'EventSubscriptionController@getEvents')->name('eventSubscriptions.getEvents');
 
+    Route::resource('exercises', 'ExerciseController');
+    Route::resource('exerciseDones', 'ExerciseDoneController');
+
     Route::resource('eventSubscriptions', 'EventSubscriptionController');
 
     Route::resource('glossar', 'GlossarController');
@@ -120,8 +127,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('export_csv/{kanban}', 'KanbanController@exportKanbanCsv');
     Route::get('export_pdf/{kanban}', 'KanbanController@exportKanbanPdf');
     Route::resource('kanbans', 'KanbanController');
+
+    Route::post('kanbanItems/{kanbanItem}/react', 'KanbanItemController@reaction')->name('kanbanItems.react');
     Route::put('kanbanItems/sync', 'KanbanItemController@sync')->name('kanbanItems.sync');
     Route::resource('kanbanItems', 'KanbanItemController');
+
     Route::get('kanbanStatuses/{kanban}/checkSync', 'KanbanStatusController@checkSync');
     Route::put('kanbanStatuses/sync', 'KanbanStatusController@sync')->name('kanbanStatuses.sync');
     Route::resource('kanbanStatuses', 'KanbanStatusController');
@@ -151,6 +161,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     /* logbook entries */
     Route::resource('logbookEntries', 'LogbookEntryController');
+    Route::post('logbookEntries/setSubject', 'LogbookEntryController@setSubject');
+
+    Route::resource('maps', 'MapController');
 
     /* Metadataset */
     Route::get('metadatasets/list', 'MetadatasetController@list');
@@ -227,6 +240,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('plans', 'PlanController');
 
     Route::resource('planSubscriptions', 'PlanSubscriptionController');
+    Route::resource('planEntries', 'PlanEntryController');
 
     Route::resource('prerequisites', 'PrerequisitesController');
 
@@ -255,6 +269,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     /* subjects  */
     Route::get('subjects/list', 'SubjectController@list')->name('subjects.list');
+    Route::get('subjects/getSubject', 'SubjectController@getSubject');
     Route::resource('subjects', 'SubjectController');
 
     /* tasks */
@@ -270,6 +285,9 @@ Route::group(['middleware' => 'auth'], function () {
     /* terminalObjectiveSubscriptions */
     Route::post('terminalObjectiveSubscriptions/destroy', 'TerminalObjectiveSubscriptionsController@destroySubscription');
     Route::resource('terminalObjectiveSubscriptions', 'TerminalObjectiveSubscriptionsController');
+
+    Route::resource('trainings', 'TrainingController');
+    Route::resource('trainingSubscriptions', 'TrainingSubscriptionController');
 
     /* reference(Subscription)  */
     Route::resource('references', 'ReferenceController');
@@ -318,6 +336,9 @@ Route::group(['middleware' => 'auth'], function () {
 //}
 
 if (env('GUEST_USER') !== null) {
+    Route::get('kanbans/{kanban}/token', 'KanbanController@getKanbanByToken');
+    Route::get('kanban/share/{token}', 'ShareTokenController@auth');
+
     Route::get('/guest', function () {
         if (Auth::user() == null) {       //if no user is authenticated authenticate guest
             LogController::set('guestLogin');
@@ -325,7 +346,7 @@ if (env('GUEST_USER') !== null) {
             Auth::loginUsingId((env('GUEST_USER')), true);
         }
         if (\App\User::find(env('GUEST_USER'))->organizations()->first()->navigators()->first() != null) { //use guests default navigator
-            return redirect('/navigators/'.\App\User::find(env('GUEST_USER'))->organizations()->first()->navigators()->first()->id);
+            return redirect('/navigators/' . \App\User::find(env('GUEST_USER'))->organizations()->first()->navigators()->first()->id);
         } else {
             return redirect('/');
         }

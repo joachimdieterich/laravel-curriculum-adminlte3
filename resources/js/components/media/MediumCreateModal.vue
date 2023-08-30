@@ -38,15 +38,15 @@
             <div class="d-md-flex">
                 <div class="card-pane-left p-0">
                     <ul class="nav flex-column">
-                        <li class="nav-link text-sm" v-can="'medium_create'">
-                            <a class="active show link-muted"
+                        <li class="nav-link text-sm" v-can="'medium_access'">
+                            <a class="link-muted"
                                href="#upload"
                                data-toggle="tab"
                                @click="setTab('upload')">
                                 {{ trans('global.media.upload') }}
                             </a>
                         </li>
-                        <li class="nav-link text-sm" v-can="'medium_create'">
+                        <li class="nav-link text-sm" v-can="'medium_access'">
                             <a class="link-muted"
                                href="#media"
                                data-toggle="tab"
@@ -63,7 +63,7 @@
                             </a>
                         </li>
                         <li class="nav-link text-sm" v-can="'external_medium_create'">
-                            <a class="link-muted"
+                            <a class="link-muted active show"
                                href="#external"
                                data-toggle="tab"
                                @click="setTab('external')">
@@ -76,7 +76,7 @@
                 <div class="p-1 flex-fill border-left"
                      style="min-height: 350px">
                     <div class="tab-content p-2">
-                        <div class="tab-pane active show"
+                        <div class="tab-pane"
                              id="upload"
                              v-can="'medium_create'">
 
@@ -205,7 +205,7 @@
                             </div>
                         </div><!-- /.tab-pane -->
 
-                        <div class="tab-pane" id="link" v-can="'link_create'">
+                        <div class="tab-pane  " id="link" v-can="'link_create'">
                             <div class="form-group " >
                                 <input
                                     type="text" id="link"
@@ -217,7 +217,7 @@
                             </div>
                         </div><!-- /.tab-pane -->
 
-                        <div class="tab-pane"
+                        <div class="tab-pane active show"
                              id="external"
                              v-can="'external_medium_create'">
                             <repository-plugin-create
@@ -252,8 +252,11 @@
 </template>
 
 <script>
-import Form from 'form-backend-validation'
-import RepositoryPluginCreate from '../../../../app/Plugins/Repositories/resources/js/components/Create';
+import Form from 'form-backend-validation';
+const RepositoryPluginCreate =
+    () => import('../../../../app/Plugins/Repositories/resources/js/components/Create');
+
+//import RepositoryPluginCreate from '../../../../app/Plugins/Repositories/resources/js/components/Create';
 require('datatables.net/js/jquery.dataTables.min.js')
 
 const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
@@ -262,12 +265,12 @@ export default {
         return {
             method: 'post',
             requestUrl: '/mediaSubscriptions',
-            tab: 'media',
+            tab: 'external',
             target: 'medium_id',
             callbackFunction: null,
             callbackParentComponent: null,
             callbackComponent: null,
-            eventHubCallbackFunctioneventHubCallbackFunction: null,
+            eventHubCallbackFunction: null,
             eventHubCallbackFunctionParams: null,
 
             form: new Form({
@@ -342,7 +345,7 @@ export default {
         beforeOpen(event) {
             this.selectedFiles = [];
             this.message = '';
-
+            //console.log(event.params);
             if (event.params.referenceable_type){
                 this.form.subscribable_type = event.params.referenceable_type;
             }
@@ -379,6 +382,7 @@ export default {
             if (event.params.eventHubCallbackFunctionParams) {
                 this.eventHubCallbackFunctionParams = event.params.eventHubCallbackFunctionParams;
             }
+            //console.log(this.form);
         },
         setTab(tab){
             this.tab = tab;
@@ -388,7 +392,7 @@ export default {
         },
         beforeClose() {
         },
-        saveToForm() {
+        saveToForm(selected = null) {
             if (this.eventHubCallbackFunction) {
                 this.$eventHub.$emit(this.eventHubCallbackFunction, {'id': this.eventHubCallbackFunctionParams, 'selectedMediumId': this.selectedFiles});
             } else if (this.callbackComponent) {
@@ -398,7 +402,7 @@ export default {
                     app.__vue__.$refs[this.callbackComponent][0][this.callbackFunction]();
                 }
             } else {
-                $('#' + this.target).val(this.selectedFiles);
+                $('#' + this.target).val(selected ? selected : this.selectedFiles);
                 $('#' + this.target).trigger("change");
             }
 
@@ -466,7 +470,8 @@ export default {
             this.form = form;
             axios.post('/media?repository=' + this.form.repository, this.form)
                  .then((response) => {
-                    this.saveToForm()
+                    // console.log(response);
+                    this.saveToForm(response.data.id);
                  });
         });
     },

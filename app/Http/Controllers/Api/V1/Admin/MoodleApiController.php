@@ -115,7 +115,7 @@ class MoodleApiController extends Controller
             ->select('id', 'title')->get()
             ->merge(
                 $user->kanbans()
-                    ->select('kanbans.id', 'title')->get()
+                    ->select('kanbans.id', 'kanbans.title')->get()
             );
         return $kanbans->map->only('id', 'title')->unique('id');
 

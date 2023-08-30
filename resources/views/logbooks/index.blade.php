@@ -28,7 +28,8 @@
     </div>
 @endcan
 
-<table id="logbooks-datatable" class="table table-hover datatable">
+<logbooks-new></logbooks-new>
+{{-- <table id="logbooks-datatable" class="table table-hover datatable">
     <thead>
     <tr>
         <th width="10"></th>
@@ -36,7 +37,7 @@
         <th>{{ trans('global.datatables.action') }}</th>
     </tr>
     </thead>
-</table>
+</table> --}}
 {{--<data-table-widgets model-url="logbooks"></data-table-widgets>--}}
 @endsection
 

@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Kanban;
+use App\KanbanSubscription;
 use App\Medium;
 use App\Organization;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maize\Markable\Models\Like;
 use Yajra\DataTables\DataTables;
 
 class KanbanController extends Controller
@@ -24,28 +27,48 @@ class KanbanController extends Controller
         return view('kanbans.index');
     }
 
-    protected function userKanbans()
+    public function userKanbans($withOwned = true)
     {
+
         $userCanSee = auth()->user()->kanbans;
 
-        foreach (auth()->user()->currentGroups as $group) {
+        if (auth()->user()->sharing_token !== null)  //tokenuser? only return subscriptions
+        {
+            return $userCanSee;
+        }
+
+        foreach (auth()->user()->groups as $group) {
             $userCanSee = $userCanSee->merge($group->kanbans);
         }
         $organization = Organization::find(auth()->user()->current_organization_id)->kanbans;
         $userCanSee = $userCanSee->merge($organization);
 
-        $owned = Kanban::where('owner_id', auth()->user()->id)->get();
-        $userCanSee = $userCanSee->merge($owned);
+        if ($withOwned)
+        {
+            $owned = Kanban::where('owner_id', auth()->user()->id)->get();
+            $userCanSee = $userCanSee->merge($owned);
+
+        }
 
         return $userCanSee->unique();
     }
 
-    public function list()
+    public function list(Request $request)
     {
         abort_unless(\Gate::allows('kanban_access'), 403);
 
-
-        $kanbans = $this->userKanbans();
+        switch ($request->filter)
+        {
+            case 'owner':            $kanbans = Kanban::where('owner_id', auth()->user()->id)->get();
+                break;
+            case 'shared_with_me':   $kanbans = $this->userKanbans(false);
+                break;
+            case 'shared_by_me':     $kanbans = Kanban::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
+                break;
+            case 'all':
+            default:                $kanbans = $this->userKanbans();
+                break;
+        }
 
         return empty($kanbans) ? '' : DataTables::of($kanbans)
             ->setRowId('id')
@@ -79,9 +102,10 @@ class KanbanController extends Controller
             'title' => $new_kanban['title'],
             'description' => $new_kanban['description'],
             'color' => $new_kanban['color'] ?? '#2980B9',
-            'medium_id' => $this->getMediumIdByInputFilepath($new_kanban),
+            'medium_id' => $new_kanban['medium_id'] ?? null,
             'commentable' => isset($input['commentable']) ? 1 : '0',
             'auto_refresh' => isset($input['auto_refresh']) ? 1 : '0',
+            'only_edit_owned_items' => isset($input['only_edit_owned_items']) ? 1 : '0',
             'owner_id' => auth()->user()->id,
         ]);
 
@@ -94,22 +118,6 @@ class KanbanController extends Controller
         return redirect($kanban->path());
     }
 
-    /**
-     * If $input['filepath'] is set and medium exists, id is return, else return is null
-     *
-     * @param  array  $input
-     * @return mixed
-     */
-    public function getMediumIdByInputFilepath($input)
-    {
-        if (isset($input['filepath'])) {
-            $medium = new Medium();
-
-            return (null !== $medium->getByFilemanagerPath($input['filepath'])) ? $medium->getByFilemanagerPath($input['filepath'])->id : null;
-        } else {
-            return null;
-        }
-    }
 
     /**
      * Display the specified resource.
@@ -117,13 +125,24 @@ class KanbanController extends Controller
      * @param  \App\Kanban  $kanban
      * @return \Illuminate\Http\Response
      */
-    public function show(Kanban $kanban)
+    public function show(Kanban $kanban, $token = null)
     {
-        abort_unless((\Gate::allows('kanban_show') and $this->userKanbans()->contains($kanban->id)), 403);
+
+        //abort_unless((\Gate::allows('kanban_show') and $this->userKanbans()->contains($kanban->id)), 403);
+        abort_unless(/*\Gate::allows('kanban_show') and*/ $kanban->isAccessible(), 403); // don't use kanban_show -> bugfix for 403 problem on tokens.
+
         $kanban = $this->getKanbanWithRelations($kanban);
 
-        $may_edit = $kanban->isEditable();
-        $is_shared = Auth::user()->sharing_token !== null;
+        if ($token == null)
+        {
+            $may_edit = $kanban->isEditable();
+        }
+        else
+        {
+            $may_edit = $kanban->isEditable(auth()->user()->id, $token);
+        }
+
+        $is_shared = $kanban->owner_id !== auth()->user()->id; //Auth::user()->sharing_token !== null;
         $is_pusher_active = env('PUSHER_APP_ACTIVE');
 
         LogController::set(get_class($this).'@'.__FUNCTION__, $kanban->id);
@@ -165,9 +184,10 @@ class KanbanController extends Controller
             'title' => $input['title'] ?? $kanban->title ,
             'description' => $input['description'] ?? $kanban->title,
             'color' => $input['color'] ?? $kanban->color,
-            'medium_id' => $this->getMediumIdByInputFilepath($input) ?? $kanban->medium_id,
+            'medium_id' => $input['medium_id'] ?? $kanban->medium_id,
             'commentable' => isset($input['commentable']) ? 1 : '0',
             'auto_refresh' => isset($input['auto_refresh']) ? 1 : '0',
+            'only_edit_owned_items' => isset($input['only_edit_owned_items']) ? 1 : '0',
             'owner_id' => auth()->user()->id,
         ]);
 
@@ -197,6 +217,8 @@ class KanbanController extends Controller
     public function updateKanbansColor(Request $request)
     {
         $kanban = Kanban::where('id', $request->id)->first();
+        abort_unless((\Gate::allows('kanban_create') and $kanban->isAccessible()), 403);
+
         if (! $kanban) {
             return;
         }
@@ -205,6 +227,15 @@ class KanbanController extends Controller
             $kanban->color = '#F4F4F4';
         }
         $kanban->save();
+
+        if (request()->wantsJson()) {
+            if (!pusher_event(new \App\Events\Kanbans\KanbanColorUpdatedEvent($kanban)))
+            {
+                return [
+                    'message' => $kanban->color
+                ];
+            }
+        }
     }
 
     public function getKanbansColor($id)
@@ -241,7 +272,18 @@ class KanbanController extends Controller
 
         foreach ($kanban->statuses as $status) {
             foreach ($status->items as $k) {
-                fputcsv($fp, [$status->title, $k->title, strip_tags($k->description),  $k->created_at, $k->owner->fullName()]);
+                fputcsv(
+                    $fp,
+                    [
+                        $status->title,
+                        $k->title,
+                        strip_tags(
+                            preg_replace('~<a href="(?!https?://)[^"]+">(.*?)</a>~', '$1', $k->description)
+                        ),
+                        $k->created_at,
+                        $k->owner->fullName()
+                    ]
+                );
             }
         }
 
@@ -271,17 +313,44 @@ class KanbanController extends Controller
     public function getKanbanWithRelations(Kanban $kanban)
     {
         return $kanban->with([
-            'statuses', 'statuses.items' => function ($query) use ($kanban) {
+            'statuses',
+            'statuses.items' => function ($query) use ($kanban) {
                 $query->where('kanban_id', $kanban->id)
-                    ->with(['owner',
-                        /*'taskSubscription.task.subscriptions' => function ($query) {
-                            $query->where('subscribable_id', auth()->user()->id)
-                                ->where('subscribable_type', 'App\User');
-                        },*/
-                        'mediaSubscriptions.medium'])
+                    ->with([
+                        'comments',
+                        'comments.user',
+                        'comments.likes',
+                        'likes',
+                        'mediaSubscriptions.medium',
+                        'owner',
+                    ])
                     ->orderBy('order_id');
-            }, 'statuses.items.subscriptions', 'statuses.items.comments', 'statuses.items.comments.user',
+            },
+            'medium',
         ])->where('id', $kanban->id)->get()->first();
+    }
+
+    public function getKanbanByToken(Kanban $kanban, Request $request)
+    {
+        if (Auth::user() == null) {       //if no user is authenticated authenticate guest
+            LogController::set('guestLogin');
+            LogController::setStatistics();
+            Auth::loginUsingId((env('GUEST_USER')), true);
+        }
+
+        $input = $this->validateRequest();
+
+        $subscription = KanbanSubscription::where('sharing_token',$input['sharing_token'] )->get()->first();
+        if ($subscription->due_date) {
+            $now = Carbon::now();
+            $due_date = Carbon::parse($subscription->due_date);
+            if ($due_date < $now) {
+                abort(410, 'Dieser Link ist nicht mehr gültig');
+            }
+        }
+
+        return $this->show($kanban, $input['sharing_token']);
+
     }
 
     protected function validateRequest()
@@ -289,10 +358,13 @@ class KanbanController extends Controller
         return request()->validate([
             'title' => 'sometimes|required',
             'description' => 'sometimes',
-            'filepath' => 'sometimes',
+            'medium_id' => 'sometimes',
             'commentable' => 'sometimes',
             'auto_refresh' => 'sometimes',
             'color' => 'sometimes',
+            'filter' => 'sometimes',
+            'only_edit_owned_items' => 'sometimes',
+            'sharing_token' => 'sometimes'
         ]);
     }
 }

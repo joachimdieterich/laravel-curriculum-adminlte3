@@ -2,15 +2,40 @@
 
 namespace App;
 
+use DateTimeInterface;
+use Maize\Markable\Markable;
+use Maize\Markable\Models\Like;
 use Illuminate\Database\Eloquent\Model;
 
 class KanbanItem extends Model
 {
+    use Markable;
+
     protected $guarded = [];
 
     protected $casts = [
         'created_at' => 'datetime:d.m.Y H:i',
     ];
+
+    protected $dates = [
+        'updated_at',
+        'created_at',
+    ];
+
+    protected static $marks = [
+        Like::class,
+    ];
+
+    /**
+     * Prepare a date for array / JSON serialization.
+     *
+     * @param  \DateTimeInterface  $date
+     * @return string
+     */
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
+    }
 
     public function path()
     {

@@ -170,8 +170,12 @@
 </template>
 
 <script>
-    import Logins from '../statistic/Logins';
-    import PieChart from "../statistic/PieChart";
+const Logins =
+    () => import('../statistic/Logins');
+const PieChart =
+    () => import('../statistic/PieChart');
+    //import Logins from '../statistic/Logins';
+    //import PieChart from "../statistic/PieChart";
 
     export default {
         props: {

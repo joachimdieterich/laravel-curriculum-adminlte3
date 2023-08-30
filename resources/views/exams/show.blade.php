@@ -2,9 +2,8 @@
 @section('title')
     <div>
         <h4>Tool: {{  isset($exam) ? $exam->tool : 'tool' }}</h4>
-        <h1 style="text-align: center;">{{  isset($exam) ? $exam->test_name : 'exam' }}</h1>
     </div>
-    <div>{{ trans('global.exam.add_remove_users.students_exam_title') }}</div>
+    <div>{{ trans('global.exam.add_remove_users.students_exam_title') }} {{  isset($exam) ? $exam->test_name : 'exam' }}</div>
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item "><a href="/"><i class="fa fa-home"></i></a></li>
@@ -28,7 +27,7 @@
     <div class="row ">
         <div class="col-sm-12">
             <div class="btn-group pull-right" role="group" aria-label="...">
-                @include ('forms.input.button', ["onclick" => "expelFromExam()", "field" => "expelFromExam", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-minus", "label" => "Aus Testung ausschreiben"])
+                @include ('forms.input.button', ["onclick" => "expelFromExam()", "field" => "expelFromExam", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-minus", "label" => "Aus Lernstandsanalyse ausschreiben"])
             </div>
         </div><!-- ./col-xs-12 -->
     </div>
@@ -49,7 +48,7 @@
     <div class="row ">
         <div class="col-sm-12">
             <div class="btn-group pull-right" role="group" aria-label="...">
-                @include ('forms.input.button', ["onclick" => "enroleIntoExam()", "field" => "enroleIntoExam", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-plus", "label" => "In Testung einschreiben"])
+                @include ('forms.input.button', ["onclick" => "enroleIntoExam()", "field" => "enroleIntoExam", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-plus", "label" => "In Lernstandsanalyse einschreiben"])
             </div>
         </div><!-- ./col-xs-12 -->
     </div>

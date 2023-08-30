@@ -17,7 +17,7 @@
                   enctype="multipart/form-data">
                 @include ('kanbans.form', [
                     'kanban' => new App\Kanban,
-                    'buttonText' => trans('global.kanban.create')
+                    'buttonText' => trans('global.save')
                 ])
                 @if (isset($_GET['subscribable_id']))
                     <input style="display:none" name="subscribable_id" value="{{ $_GET['subscribable_id']}}">

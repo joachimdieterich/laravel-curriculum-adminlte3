@@ -83,7 +83,12 @@ class PlanController extends Controller
 
         $plan = new Plan();
         //$types = PlanType::all()
-        $types = PlanType::where('id', 1)->get();
+        $types = PlanType::whereIn('id',
+                explode(
+                    ',',
+                    \App\Config::where('key', 'availablePlanTypes')->get()->first()->value
+                )
+            )->get();
 
         return view('plans.create')
                 ->with(compact('types'))
@@ -111,7 +116,9 @@ class PlanController extends Controller
             'owner_id'          => auth()->user()->id,
         ]);
 
-        LogController::set(get_class($this).'@'.__FUNCTION__);
+        // subscribe embedded media
+        checkForEmbeddedMedia($plan, 'description');
+
         // axios call?
         if (request()->wantsJson()) {
             return ['message' => $plan->path()];
@@ -149,7 +156,12 @@ class PlanController extends Controller
     public function edit(Plan $plan)
     {
         abort_unless((\Gate::allows('plan_edit') and $plan->isAccessible()), 403);
-        $types = PlanType::all();
+        $types = PlanType::whereIn('id',
+            explode(
+                ',',
+                \App\Config::where('key', 'availablePlanTypes')->get()->first()->value
+            )
+        )->get();
 
         return view('plans.edit')
                 ->with(compact('plan'))
@@ -172,6 +184,9 @@ class PlanController extends Controller
         }
 
         $plan->update($clean_data);
+
+        // subscribe embedded media
+        checkForEmbeddedMedia($plan, 'description');
 
         return redirect($plan->path());
     }

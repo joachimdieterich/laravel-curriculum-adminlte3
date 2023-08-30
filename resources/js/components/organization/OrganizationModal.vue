@@ -116,7 +116,7 @@
                 </div>
                 <div class="form-group ">
                     <label>{{ trans('global.organization.fields.status') }}</label>
-                    <select class="form-control" 
+                    <select class="form-control"
                             v-model="form.status_definition_id"
                             id="status"
                             name="status"
@@ -132,8 +132,8 @@
                 <div class="card-footer">
                      <span class="pull-right">
                          <button id="organization-cancel"
-                                 type="button" 
-                                 class="btn btn-default" 
+                                 type="button"
+                                 class="btn btn-default"
                                  data-widget="remove" @click="close()">{{ trans('global.cancel') }}</button>
                          <button id="organization-save"
                                  class="btn btn-primary" @click="submit(method)" >{{ trans('global.save') }}</button>
@@ -175,7 +175,7 @@
                     } else {
                         this.location = (await axios.post('/organizations', this.form)).data.message;
                     }
-                    
+
                 } catch(error) {
                     this.form.errors = error.response.data.form.errors;
                 }
@@ -189,7 +189,7 @@
                 this.method = event.params.method;
             },
             beforeClose(event) {
-            
+
             },
             async getStatusDefinitions() {
                 try {
@@ -206,7 +206,9 @@
                 }
             },
             opened(){
-                this.$initTinyMCE();
+                this.$initTinyMCE([
+                    "autolink link example"
+                ]);
             },
             close(){
                 this.$modal.hide('organization-modal');

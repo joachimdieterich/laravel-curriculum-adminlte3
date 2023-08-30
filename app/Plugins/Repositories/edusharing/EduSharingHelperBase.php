@@ -2,12 +2,15 @@
 
 namespace App\Plugins\Repositories\edusharing;
 
+use Exception;
+
 class EduSharingHelperBase {
-    public $baseUrl;
-    public $privateKey;
-    public $appId;
-    public $language = 'de';
+    public string $baseUrl;
+    public string $privateKey;
+    public string $appId;
+    public string $language = 'de';
     private $curlHandler;
+
     /**
      * @param string $baseUrl
      * The base url to your repository in the format "http://<host>/edu-sharing"
@@ -20,11 +23,14 @@ class EduSharingHelperBase {
         string $baseUrl,
         string $privateKey,
         string $appId
-    ) {
-        if(!preg_match('/^([a-z]|[A-Z]|[0-9]|[-_])+$/', $appId)) {
+    )
+    {
+        if(!preg_match('/^([a-z]|[A-Z]|[0-9]|[-_])+$/', $appId))
+        {
             throw new Exception('The given app id contains invalid characters or symbols');
         }
-        if(substr($baseUrl, -1) === '/') {
+        if(substr($baseUrl, -1) === '/')
+        {
             $baseUrl = substr($baseUrl, 0, -1);
         }
         $this->baseUrl=$baseUrl;
@@ -33,24 +39,27 @@ class EduSharingHelperBase {
         $this->curlHandler=new DefaultCurlHandler();
     }
 
-    public function registerCurlHandler(CurlHandler $handler) {
+    public function registerCurlHandler(CurlHandler $handler)
+    {
         $this->curlHandler = $handler;
     }
 
-    public function handleCurlRequest(string $url, array $curlOptions) {
+    public function handleCurlRequest(string $url, array $curlOptions)
+    {
         return $this->curlHandler->handleCurlRequest($url, $curlOptions);
     }
 
-    public function setLanguage(string $language) {
+    public function setLanguage(string $language)
+    {
         $this->language = $language;
     }
 
-    function sign(string $toSign) {
+    function sign(string $toSign)
+    {
         $pkeyid = openssl_get_privatekey($this->privateKey);
         openssl_sign($toSign, $signature, $pkeyid);
         $signature = base64_encode($signature);
         @openssl_free_key($pkeyid);
         return $signature;
     }
-
 }

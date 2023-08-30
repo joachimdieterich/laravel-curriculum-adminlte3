@@ -89,7 +89,9 @@
 </template>
 <script>
 import Form from 'form-backend-validation';
-import draggable from "vuedraggable";
+const draggable =
+    () => import('vuedraggable');
+/*import draggable from "vuedraggable";*/
 
 
 export default {
@@ -163,7 +165,9 @@ export default {
           this.form.variant_definition_id = id;
 
           this.$nextTick(() => {
-              this.$initTinyMCE();
+              this.$initTinyMCE([
+                  "autolink link example"
+              ]);
           });
 
       },

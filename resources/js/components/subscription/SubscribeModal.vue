@@ -9,7 +9,7 @@
         @before-open="beforeOpen"
         @opened="opened"
         @before-close="beforeClose"
-        style="z-index: 1100"
+        style="z-index: 1100;"
     >
         <div class="card"
              style="margin-bottom: 0px !important">
@@ -34,27 +34,27 @@
                     <li v-if="shareWithUsers"
                         class="nav-item">
                         <a class="nav-link active show" href="#user_subscription" data-toggle="tab">
-                            <i class="fa fa-user mr-3"></i>{{ trans('global.user.title') }}
+                            <i class="fa fa-user mr-2"></i>{{ trans('global.user.title') }}
                         </a>
                     </li>
                     <!-- Group -->
                     <li v-if="shareWithGroups"
                         class="nav-item">
                         <a class="nav-link" href="#group_subscription" data-toggle="tab">
-                            <i class="fa fa-users mr-3"></i>{{ trans('global.group.title') }}
+                            <i class="fa fa-users mr-2"></i>{{ trans('global.group.title') }}
                         </a>
                     </li>
                     <!-- Organization -->
                     <li v-if="shareWithOrganizations"
                         class="nav-item">
                         <a class="nav-link" href="#organization_subscription" data-toggle="tab">
-                            <i class="fa fa-university mr-3"></i>{{ trans('global.organization.title') }}
+                            <i class="fa fa-university mr-2"></i>{{ trans('global.organization.title') }}
                         </a>
                     </li>
                     <li v-if="shareWithToken"
                         class="nav-item">
                         <a class="nav-link" href="#token_subscription" data-toggle="tab">
-                            <i class="fa fa-key mr-3"></i>{{ trans('global.token') }}
+                            <i class="fa fa-key mr-2"></i>{{ trans('global.token') }}
                         </a>
                     </li>
                     <!-- Global -->
@@ -126,7 +126,7 @@
 
                         <div class="form-group pt-2">
                             <input v-model="nameToken" class="form-control mb-2" style="width: 100%;"
-                                   placeholder="Name">
+                                   placeholder="Freigabetitel">
                             <date-picker v-model="endDateToken" style="width:100%;"
                                          placeholder="Ablaufdatum"></date-picker>
                         </div>
@@ -178,6 +178,12 @@
 </template>
 
 <script>
+/*const subscribers =
+    () => import('./Subscribers');
+const tokens =
+    () => import('./Tokens');
+const DatePicker =
+    () => import('vue2-datepicker');*/
 import subscribers from "./Subscribers";
 import tokens from "./Tokens";
 import DatePicker from 'vue2-datepicker';
@@ -190,7 +196,7 @@ export default {
             modelId: null,
             subscribable_id: null,
             subscribable_type: null,
-            endDateToken: null,
+            endDateToken: new Date(),
             subscribers: Object,
             hover: false,
             canEditToken: false,
@@ -253,6 +259,8 @@ export default {
                         },
                         cache: true
                     },
+                }).on('select2:open', () => {
+                    document.querySelector('.select2-search__field').focus();
                 }).on('select2:select', function (e) {
                     this.subscribe('App\\User', e.params.data.id, this.modelId);
                 }.bind(this));
@@ -270,6 +278,8 @@ export default {
                         },
                         cache: true
                     },
+                }).on('select2:open', () => {
+                    document.querySelector('.select2-search__field').focus();
                 }).on('select2:select', function (e) {
                     this.subscribe('App\\Group', e.params.data.id, this.modelId);
                 }.bind(this));
@@ -287,6 +297,8 @@ export default {
                         },
                         cache: true
                     },
+                }).on('select2:open', () => {
+                    document.querySelector('.select2-search__field').focus();
                 }).on('select2:select', function (e) {
                     this.subscribe('App\\Organization', e.params.data.id, this.modelId);
                 }.bind(this));
@@ -318,11 +330,14 @@ export default {
         createUserToken() {
             axios.post('/' + this.modelUrl + '/token', {
                 'model_id': this.modelId,
-                'name': this.nameToken,
+                'title': this.nameToken,
                 'date': this.endDateToken,
                 'editable': this.canEditToken
             }).then( () => this.loadSubscribers())
         }
+    },
+    mounted() {
+        this.endDateToken.setMonth(this.endDateToken.getMonth() + 1)
     },
     components: {
         subscribers,

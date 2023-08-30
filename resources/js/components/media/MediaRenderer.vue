@@ -9,10 +9,14 @@
                 frameborder="0"></iframe>
         </span>
         <span v-else-if="mime(medium.mime_type) === 'external'">
-            <img
-                :src="this.medium.thumb_path"
+            <render-usage
+                :medium="medium"
+                :downloadable="downloadable"
+                ></render-usage>
+<!--            <img
+                :src="scr"
                 :width="width"
-                @click="show()"/>
+                @click="show()"/>-->
         </span>
         <span v-else-if="mime(medium.mime_type) === 'img'">
             <img
@@ -28,6 +32,9 @@
 </template>
 
 <script>
+const renderUsage =
+    () => import('../../../../app/Plugins/Repositories/edusharing/resources/js/components/RenderUsage');
+//import renderUsage from "../../../../app/Plugins/Repositories/edusharing/resources/js/components/RenderUsage";
     export default {
         props: {
             medium: {
@@ -45,6 +52,10 @@
             edit: {
                 type: Boolean,
                 default: false
+            },
+            downloadable: {
+                type: Boolean,
+                default: true
             }
         },
         data() {
@@ -85,6 +96,9 @@
             scr: function () {
                 return '/media/'+ this.medium.id;
             },
+        },
+        components: {
+            renderUsage
         },
 
     }

@@ -79,6 +79,6 @@
             </g>
         </svg>
 
-        <span class="pl-1 brand-text ">{{ env('APP_NAME') }}</span>
+        <span class="pl-1 brand-text d-inline-block">{{ env('APP_NAME') }}</span>
    </a>
 @endif

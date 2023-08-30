@@ -9,31 +9,55 @@
                            v-model="search">
                 </label>
             </div>
+            <ul class="nav nav-pills" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link "
+                       :class="filter === 'all' ? 'active' : ''"
+                       id="kanban-filter-all"
+                       @click="setFilter('all')"
+                       data-toggle="pill"
+                       role="tab"
+                       >
+                       <i class="fa fa-columns pr-2"></i>Alle Pinnwände
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                       :class="filter === 'owner' ? 'active' : ''"
+                       id="custom-filter-owner"
+                       @click="setFilter('owner')"
+                       data-toggle="pill"
+                       role="tab"
+                    >
+                        <i class="fa fa-user  pr-2"></i>Meine Pinnwände
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                       :class="filter === 'shared_with_me' ? 'active' : ''"
+                       id="custom-filter-shared-with-me"
+                       @click="setFilter('shared_with_me')"
+                       data-toggle="pill"
+                       role="tab"
+                       >
+                        <i class="fa fa-paper-plane pr-2"></i>Für mich freigegeben
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                       :class="filter === 'shared_by_me' ? 'active' : ''"
+                       id="custom-tabs-shared-by-me"
+                       @click="setFilter('shared_by_me')"
+                       data-toggle="pill"
+                       role="tab"
+                       >
+                        <i class="fa fa-share-nodes  pr-2"></i>Von mir freigegeben
+                    </a>
+                </li>
+
+            </ul>
         </div>
 
-<!--        <div style="clear:right;"
-             v-for="(kanban,index) in kanbans"
-             v-if="(kanban.title.toLowerCase().indexOf(search.toLowerCase()) !== -1)
-                || search.length < 3"
-             :id="kanban.id"
-             v-bind:value="kanban.id"
-             class="col-md-4">
-            <a :href="'kanbans/'+kanban.id"
-               class="text-decoration-none text-black">
-                <div class="info-box elevation-1" :style="'border-bottom: 5px solid ' + kanban.color">
-                        <span  class="info-box-icon bg-info elevation-1" :style="{backgroundColor: kanban.color + ' !important'}">
-                            <i class="fa fa-columns"></i>
-                        </span>
-                    <div class="info-box-content">
-                        <span v-if="$userId == kanban.owner_id"
-                              class="pull-right" v-html="kanban.action">
-                        </span>
-                        <span class="info-box-text"><strong v-html="kanban.title"></strong></span>
-                        <span class="pt-2 " v-html="decodeHtml(kanban.description)"></span>
-                    </div>
-                </div>
-            </a>
-        </div>-->
         <div class="col-md-12 py-2">
             <div v-for="(kanban,index) in kanbans"
                  v-if="(kanban.title.toLowerCase().indexOf(search.toLowerCase()) !== -1)
@@ -43,10 +67,15 @@
                  style="min-width: 200px !important;"
                  :style="'border-bottom: 5px solid ' + kanban.color">
                 <a :href="'/kanbans/'+kanban.id"
-                   class="text-decoration-none text-black">
+                   class="text-decoration-none text-black"
+                   >
                     <div v-if="kanban.medium_id"
                          class="nav-item-box-image-size"
-                         :style="{'background': 'url(/media/' + kanban.medium_id + '?model=Kanban&model_id=' + kanban.id +') top center no-repeat', 'background-size': 'cover'  }">
+                         :style="{'background': 'url(/media/' + kanban.medium_id + '?model=Kanban&model_id=' + kanban.id +') top center no-repeat', 'background-size': 'cover', }">
+                         <div class="nav-item-box-image-size"
+                              style="width: 100% !important;"
+                              :style="{backgroundColor: kanban.color + ' !important',  'opacity': '0.5'}">
+                         </div>
                     </div>
                     <div v-else
                          class="nav-item-box-image-size text-center"
@@ -85,7 +114,7 @@
                        <button
                            :id="'delete-kanban-'+kanban.id"
                            type="submit" class="btn btn-danger btn-sm pull-right"
-                           @click.prevent="destroy(kanban.id)">
+                           @click.prevent="confirmItemDelete(kanban.id)">
                            <small><i class="fa fa-trash"></i></small>
                        </button>
 
@@ -98,11 +127,22 @@
 
             </div>
         </div>
+        <Modal
+            :id="'kanbanModal'"
+            css="danger"
+            :title="trans('global.kanban.delete')"
+            :text="trans('global.kanban.delete_helper')"
+            :ok_label="trans('global.kanban.delete')"
+            v-on:ok="destroy()"
+        />
 
     </div>
 </template>
 
 <script>
+const Modal =
+    () => import('./../uiElements/Modal');
+//import Modal from "./../uiElements/Modal";
 
     export default {
         props: {
@@ -115,36 +155,44 @@
                 subscriptions: {},
                 search: '',
                 url: 'kanbans/list',
-                errors: {}
+                errors: {},
+                tempId: Number,
+                filter: 'all'
             }
         },
         methods: {
+            confirmItemDelete(kanbanId){
+                $('#kanbanModal').modal('show');
+                this.tempId = kanbanId;
+            },
             loaderEvent(){
-
                 if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
                     this.url = '/kanbanSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
                 }
-                axios.get(this.url)
+                axios.get(this.url + '?filter=' + this.filter)
                     .then(response => {
                             if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
                                 this.kanbans = response.data.data;
                             } else {
                                 this.kanbans = response.data.data;
                             }
-
                     })
                     .catch(e => {
                         console.log(e.data.errors);
                     });
             },
+            setFilter(filter){
+                this.filter = filter;
+                this.loaderEvent();
+            },
             decodeHtml(html) {
                 let txt = document.createElement("textarea");
                 txt.innerHTML = html;
-                return txt.value.replace(/<[^>]+>/g, '');
+                return txt.value.replace(/(<([^>]+)>)/ig,"");
             },
-            async destroy(id) {
+            async destroy() {
                 try {
-                    this.kanbans = (await axios.delete('/kanbans/' + id)).data.data;
+                    this.kanbans = (await axios.delete('/kanbans/' + this.tempId)).data.data;
                 } catch (error) {
                     console.log(error);
                 }
@@ -155,7 +203,7 @@
             this.loaderEvent();
         },
         components: {
-
+            Modal
         },
     }
 </script>

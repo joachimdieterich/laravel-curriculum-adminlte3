@@ -202,7 +202,9 @@
             beforeClose() {
             },
             opened(){
-                this.$initTinyMCE();
+                this.$initTinyMCE([
+                    "autolink link example"
+                ]);
                 this.initSelect2();
             },
             initSelect2(){
@@ -239,7 +241,7 @@
             removeHtmlTags(array){
                 var i;
                 for (i = 0; i < array.length; i++) {
-                    array[i].title = array[i].title.replace(/<[^>]+>/g, '');
+                    array[i].title = array[i].title.replace(/(<([^>]+)>)/ig,"");
                 }
             },
             async del(){

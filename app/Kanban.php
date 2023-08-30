@@ -2,11 +2,46 @@
 
 namespace App;
 
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ *   @OA\Schema(
+ *      required={"id", "title"},
+ *      @OA\Xml(name="Grade"),
+ *
+ *      @OA\Property( property="id", type="integer"),
+ *      @OA\Property( property="title", type="string"),
+ *      @OA\Property( property="description", type="string"),
+ *      @OA\Property( property="color", type="string"),
+ *      @OA\Property( property="medium_id", type="integer"),
+ *      @OA\Property( property="owner_id", type="integer"),
+ *      @OA\Property( property="created_at", type="string"),
+ *      @OA\Property( property="updated_at", type="string"),
+ *      @OA\Property( property="commentable", type="integer"),
+ *      @OA\Property( property="auto_refresh", type="integer"),
+ *      @OA\Property( property="only_edit_owned_items", type="integer")
+ *   ),
+ */
 class Kanban extends Model
 {
     protected $guarded = [];
+
+    protected $dates = [
+        'updated_at',
+        'created_at',
+    ];
+
+    /**
+     * Prepare a date for array / JSON serialization.
+     *
+     * @param  \DateTimeInterface  $date
+     * @return string
+     */
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
+    }
 
     public function path()
     {
@@ -27,6 +62,12 @@ class Kanban extends Model
     {
         return $this->hasMany(KanbanSubscription::class);
     }
+
+    public function medium()
+    {
+        return $this->hasOne('App\Medium', 'id', 'medium_id');
+    }
+
 
     public function userSubscriptions()
     {
@@ -67,6 +108,7 @@ class Kanban extends Model
             or ($this->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() //user is enroled in group
             or ($this->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id))->isNotEmpty() //user is enroled in group
             or ($this->owner_id == auth()->user()->id)            // or owner
+            or ((env('GUEST_USER') != null) ? User::find(env('GUEST_USER'))->kanbans->contains('id', $this->id) : false) //or allowed via guest
             or is_admin() // or admin
         ) {
             return true;
@@ -75,12 +117,38 @@ class Kanban extends Model
         }
     }
 
-    public function isEditable()
+    public function isEditable($user_id = null, $token = null)
     {
-        $subscribtion = optional($this->userSubscriptions()->where('subscribable_id', auth()->user()->id)->first());
+        if ($user_id == null)
+        {
+            $user_id = auth()->user()->id;
+        }
+
+        if ($token == null){
+            $userSubscribtion = optional($this->userSubscriptions()
+                ->where('subscribable_id', $user_id)
+                ->first());
+            $groupSubscribtion = optional($this->groupSubscriptions()
+                ->whereIn('subscribable_id', auth()->user()->groups->pluck('id'))
+                ->where('editable', 1)
+                ->first());
+            $organizationSubscribtion = optional($this->organizationSubscriptions()
+                ->whereIn('subscribable_id', auth()->user()->organizations->pluck('id'))
+                ->where('editable', 1)
+                ->first());
+        }
+        else
+        {
+            $userSubscribtion = optional($this->userSubscriptions()
+                /*->where('subscribable_id', $user_id)*/ // fix 500 error on authenticated users
+                ->where('sharing_token', $token)
+                ->first());
+        }
         if (
-            $subscribtion->editable // user enrolled
-            or ($this->owner_id == auth()->user()->id)            // or owner
+            $userSubscribtion->editable // user enrolled
+            or $groupSubscribtion->editable ?? false // group enrolled
+            or $organizationSubscribtion->editable ?? false // organization enrolled
+            or ($this->owner_id == $user_id)            // or owner
             or is_admin() // or admin
         ) {
             return true;

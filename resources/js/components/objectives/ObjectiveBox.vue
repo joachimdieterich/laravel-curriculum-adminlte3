@@ -64,8 +64,12 @@
 
 
 <script>
-    import Header from './Header';
-    import Footer from './Footer';
+const Header =
+    () => import('./Header');
+const Footer =
+    () => import('./Footer');
+/*    import Header from './Header';
+    import Footer from './Footer';*/
 
     export default {
         props: {

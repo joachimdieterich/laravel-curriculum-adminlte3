@@ -1,4 +1,4 @@
-<template >
+<template>
 <div>
     <div v-if="format =='list'">
         <table

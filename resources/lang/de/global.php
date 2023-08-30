@@ -23,7 +23,11 @@ return [
     'updated_at_helper' => '',
     'deleted_at' => 'Gelöscht am',
     'deleted_at_helper' => '',
-
+    'begin'            => 'Beginn',
+    'end'              => 'Ende',
+    'notes'            => 'Notizen',
+    'select_icon'      => 'Icon auswählen',
+    'visibility' => 'Für andere Nutzer:innen sichtbar',
     'my_files' => 'meine Medien',
     'shared_files' => 'freigegebene Medien',
     'public_files' => 'alle Medien',
@@ -38,6 +42,7 @@ return [
     'search' => 'Suchbegriff',
     'view' => 'Ansicht',
     'edit' => 'editieren',
+    'locked' => 'Bearbeitung sperren',
     'delete' => 'löschen',
     'forceDelete' => 'Datensatz endgültig löschen.',
     'save' => 'Speichern',
@@ -69,7 +74,7 @@ return [
     'login_password_show' => 'Passwort anzeigen',
     'login_password_confirmation' => 'Passwort bestätigen',
     'login_SSO' => 'SSO Anmeldung',
-    'owner' => 'Eigentümer',
+    'owner' => 'Eigentümer/in',
     'yes' => 'Ja',
     'no' => 'Nein',
     'view_file' => 'Datei anzeigen',
@@ -234,6 +239,7 @@ return [
     'time' => 'Zeit',
     'valid_from' => 'Gültig ab',
     'valid_to' => 'Gültig bis',
+    'valid' => 'unbefristet',
     'code' => 'Code',
     'start_time' => 'Start-Zeit',
     'end_time' => 'End-Zeit',
@@ -245,7 +251,6 @@ return [
     'first_name' => 'Vorname',
     'last_name' => 'Nachname',
     'phone' => 'Telefon',
-    'photo' => 'Foto (max 8mb)',
     'tags' => 'Tags',
     'tag' => 'Tag',
     'photo' => 'Foto',
@@ -441,9 +446,7 @@ return [
         'create' => 'Lernzeitraum erstellen',
         'edit' => 'Lernzeitraum bearbeiten',
         'fields' => [
-            'begin' => 'Anfang',
             'begin_helper' => '',
-            'end' => 'Ende',
             'end_helper' => '',
         ],
     ],
@@ -613,6 +616,7 @@ return [
         'add_reference' => 'Querverweise hinzufügen',
         'navigator_view' => 'Navigator-Ansicht verknüpfen',
         'curriculum' => 'Curriculum verknüpfen',
+        'link' => 'Curriculum-Bereich/Baustein verknüpfen',
         'content' => 'Text verknüpfen',
         'medium' => 'Medium (file, url) verknüpfen',
     ],
@@ -675,18 +679,21 @@ return [
         'create' => 'Logbuch erstellen',
         'edit' => 'Logbuch bearbeiten',
         'print' => 'Logbuch drucken',
+        'delete' => 'Logbuch löschen',
+        'delete_helper' => 'Soll das Logbuch sowie die zugehörigen Daten gelöscht werden?',
     ],
     'logbookEntry' => [
         'title' => 'Logbucheinträge',
         'title_singular' => 'Logbucheintrag',
         'create' => 'Logbucheintrag erstellen',
         'edit' => 'Logbucheintrag bearbeiten',
+        'subject' => 'Fach auswählen',
+        'no_subject' => 'Kein Fach ausgewählt',
         'addition' => 'Logbucheintrag ergänzen',
         'fields' => [
-            'begin' => 'Beginn',
             'begin_helper' => '',
-            'end' => 'Ende',
             'end_helper' => '',
+            'subject' => 'Fach',
         ],
     ],
     'task' => [
@@ -709,10 +716,10 @@ return [
     'exam' => [
         'title' => 'Lernstandsanalysen',
         'title_singular' => 'Lernstandsanalyse',
-        'create' => 'Testung erstellen',
-        'edit' => 'Testung bearbeiten',
+        'create' => 'Lernstandsanalyse erstellen',
+        'edit' => 'Lernstandsanalyse bearbeiten',
         'login_key' => 'Anmeldeschlüssel',
-        'select_tests' => 'Tests auswählen',
+        'select_tests' => 'Testheft(e) auswählen',
         'fields' => [
             'tool' => 'Tool',
             'test_booklet' => 'Testhefte',
@@ -722,7 +729,7 @@ return [
             'action' => 'Aktion',
         ],
         'add_remove_users' => [
-            'students_exam_title' => 'Studenten in der Testung',
+            'students_exam_title' => 'Schülerinnen und Schüler in der Lernstandsanalyse',
             'users_group_title' => 'Benutzer in der Gruppe',
         ],
         'status_options' => [
@@ -731,16 +738,16 @@ return [
             'completed' => 'Fertiggestellt',
         ],
         'confirm_messages' => [
-            'confirm_delete' => 'Sind Sie sicher, dass Sie diese Testung löschen wollen?',
+            'confirm_delete' => 'Sind Sie sicher, dass Sie diese Lernstandsanalyse löschen wollen?',
         ],
         'success_messages' => [
-            'exam_created' => 'Erfolgreich erstellte Testung',
-            'exam_removed' => 'Erfolgreich entfernte Testung',
+            'exam_created' => 'Erfolgreich erstellte Lernstandsanalyse',
+            'exam_removed' => 'Erfolgreich entfernte Lernstandsanalyse',
         ],
         'error_messages' => [
-            'get_tests' => 'Testliste konnte nicht abgerufen werden',
-            'remove_users' => 'Schüler mit Status bearbeitet oder fertiggestellt, können nicht entfernt werden.',
-            'remove_exam' => 'Diese Testung wurde von einem oder mehreren Schülern begonnen und kann nicht entfernt werden',
+            'get_tests' => 'Testhefte konnten nicht abgerufen werden',
+            'remove_users' => 'Schülerinnen und Schüler mit Status bearbeitet oder fertiggestellt, können nicht entfernt werden.',
+            'remove_exam' => 'Diese Lernstandsanalyse wurde von einem oder mehreren Schülern begonnen und kann nicht entfernt werden',
         ],
     ],
     'absences' => [
@@ -758,8 +765,8 @@ return [
         ],
     ],
     'externalRepositorySubscription' => [
-        'title' => 'Externe Ressourcen',
-        'title_singular' => 'Externe Ressource',
+        'title' => 'Mediathek/Cloud',
+        'title_singular' => 'Mediathek/Cloud',
         'create' => 'Externe Ressource erstellen',
         'search' => 'Externe Ressource suchen',
         'edit' => 'Externe Ressource bearbeiten',
@@ -825,6 +832,39 @@ return [
             'type_helper' => '',
         ],
     ],
+    'planEntry' => [
+        'title' => 'Einträge',
+        'title_singular' => 'Eintrag',
+        'create' => 'Eintrag erstellen',
+        'search' => 'Eintrag suchen',
+        'edit' => 'Eintrag bearbeiten',
+
+    ],
+    'training' => [
+        'title' => 'Trainings',
+        'title_singular' => 'Training',
+        'create' => 'Training erstellen',
+        'search' => 'Training suchen',
+        'edit' => 'Training bearbeiten',
+
+    ],
+    'exercise' => [
+        'title' => 'Übungen',
+        'title_singular' => 'Übung',
+        'create' => 'Übung erstellen',
+        'search' => 'Übung suchen',
+        'edit' => 'Übung bearbeiten',
+        'fields' => [
+            'recommended_iterations' => 'Wie oft soll die Übung wiederholt werden?'
+        ]
+
+    ],
+    'exercisedone' => [
+        'fields' => [
+            'iterations' => 'Wiederholungen'
+        ]
+
+    ],
     'contactdetail' => [
         'title' => 'Kontaktdaten',
         'title_singular' => 'Kontaktdaten',
@@ -846,6 +886,8 @@ return [
         'title_singular' => 'Pinnwand',
         'create' => 'Pinnwand erstellen',
         'edit' => 'Pinnwand bearbeiten',
+        'delete' => 'Pinnwand löschen',
+        'delete_helper' => 'Soll die Pinnwand sowie die zugehörigen Daten gelöscht werden?',
     ],
     'kanbanItem' => [
         'title' => 'Karten',
@@ -854,6 +896,8 @@ return [
         'edit' => 'Karte bearbeiten',
         'delete' => 'Karte löschen',
         'delete_helper' => 'Soll die Karte sowie die zugehörigen Daten gelöscht werden?',
+        'due_date' => 'Fälligkeitsdatum',
+        'expired' => 'Abgelaufen',
         'fields' => [
             'order_id' => 'Order ID',
             'order_id_helper' => '',
@@ -920,8 +964,6 @@ return [
             'info_helper'      => '',
             'speakers'         => 'Referenten',
             'speakers_helper'  => '',
-            'begin'            => 'Beginn',
-            'end'              => 'Ende',
             'status'           => 'Status',
             'category'         => 'Kategorie',
             'target_group'     => 'Zielgruppe',
@@ -942,8 +984,6 @@ return [
             'access_token_helper' => '',
             'address'          => 'Adresse',
             'address_helper'   => '',
-            'begin'            => 'Beginn',
-            'end'              => 'Ende',
             'type'             => 'Typ',
             'type_helper'       => '',
         ],
@@ -953,7 +993,8 @@ return [
         'title' => 'Typ',
         'title_singular' => 'Typ',
     ],
-    'token' => 'Token',
+    'token' => 'Freigabelink',
+    'token_copied' => 'Freigabelink wurde in die Zwischenablage gespeichert!',
     'variantDefinitions' => [
         'title' => 'Varianten (Definitionen)',
         'title_singular' => 'Varianten (Definitionen)',

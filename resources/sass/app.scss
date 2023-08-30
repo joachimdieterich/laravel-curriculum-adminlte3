@@ -13,6 +13,8 @@
 @import '~bootstrap/scss/bootstrap';
 
 @import '~@activix/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css';
+// Leaflet
+@import "~leaflet/dist/leaflet.css";
 // Select2
 @import '~select2/dist/css/select2.min.css';
 
@@ -132,48 +134,7 @@ tr:hover .vuehover {
     top: -5px;
     left: 10px;
 }
-
-.kanban_board_wrapper {
-    height: calc(100vh - 155px - 2rem);
-    width: calc(100vw - 270px - 1rem);
-    position:absolute;
-    overflow:auto;
-    padding: 2rem;
-}
-
-.content-only .kanban_board_wrapper {
-    height: calc(100vh - 155px - 2rem);
-    width: calc(100vw - 1rem);
-    position:absolute;
-    overflow:auto;
-    padding: 2rem;
-}
-
-.sidebar-collapse .kanban_board_wrapper {
-    height: calc(100vh - 155px - 2rem);
-    width: calc(100vw - 100px) !important;
-    position:absolute;
-    overflow:auto;
-}
-
-@media (max-width: 991px) {
-    .sidebar-collapse .kanban_board_wrapper {
-        height: calc(100vh - 155px - 2rem);
-        width: calc(100vw - 30px) !important;
-        position: absolute;
-        overflow: auto;
-    }
-}
-@media (max-width: 767.98px) {
-    .sidebar-collapse
-    .kanban_board_wrapper,
-    .content-only
-    .kanban_board_wrapper,
-    .kanban_board_wrapper
-    {
-        height: calc(100vh - 155px - 2rem);
-        width: 100vw !important;
-        position: absolute;
-        overflow: auto;
-    }
+.with-comment-count{
+    padding-top: 5px;
+    padding-right: 10px;
 }

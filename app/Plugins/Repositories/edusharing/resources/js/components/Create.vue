@@ -28,7 +28,8 @@
                     :src="this.uploadIframeUrl"
                     :width="this.width"
                     :height="this.height"
-                    frameborder="0">
+                    frameborder="0"
+                >
                 </iframe>
             </div>
             <div id="edusharing_link"
@@ -38,7 +39,8 @@
                     :src="this.cloudIframeUrl"
                     :width="this.width"
                     :height="this.height"
-                    frameborder="0">
+                    frameborder="0"
+                >
                 </iframe>
             </div>
         </div>
@@ -63,7 +65,6 @@ export default {
             let data = event.data.data;
 
             if(event.data.event === 'APPLY_NODE') {
-                //let usage = this.createUsage(event.data.data.nodeId);
                 //console.log(data);
                 this.$eventHub.$emit('external_add', {
                     repository:     'edusharing',
@@ -81,7 +82,10 @@ export default {
                     subscribable_type:  this.model.subscribable_type,
                     public:             1,
                 });
+
+                window.removeEventListener("message", this.receiveMessage);
             }
+
         },
         getLicenseID(licenseURL) {
             if (licenseURL.search(/none.svg/i) !== -1){
@@ -119,6 +123,7 @@ export default {
             });
 
         window.addEventListener("message", this.receiveMessage, false);
-    }
+    },
+
 }
 </script>

@@ -10,8 +10,12 @@ class KanbanSubscription extends Model
         'subscribable_type',
         'subscribable_id',
         'kanban_id',
+        'due_date',
         'editable',
-        'owner_id', ];
+        'owner_id',
+        'sharing_token',
+        'title'
+    ];
 
     /**
      * Get the subscriber model.

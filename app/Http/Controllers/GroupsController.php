@@ -289,6 +289,15 @@ class GroupsController extends Controller
         $resultCount = 25;
         $offset = ($page - 1) * $resultCount;
 
+        $count = count($collection->where(
+            function($query) use ($field, $term)
+            {
+                $query->whereHas('groups', function ($query) use ($term) {
+                    $query->where('title', 'like', '%' . $term . '%'); }
+                );
+            })
+            ->get());
+
         $entries = $collection->where(
             function($query) use ($field, $term)
             {
@@ -302,7 +311,6 @@ class GroupsController extends Controller
             ->select(['organizations.id', DB::raw('title as text')])
             ->get();
 
-        $count = $entries->count();
         $endCount = $offset + $resultCount;
         $morePages = $count > $endCount;
 
@@ -345,9 +353,9 @@ class GroupsController extends Controller
             return $this->select2RequestWithOptGroup(
                 Organization::select(['id', 'title'])
             );
-        } elseif (is_schooladmin()) {
+        } elseif (is_schooladmin() OR is_teacher()) {
             return $this->select2RequestWithOptGroup(
-                auth()->user()->organizations()->select(['id', 'title'])
+                auth()->user()->organizations()->select(['organizations.id', 'organizations.title'])
                 //Organization::where('id', auth()->user()->current_organization_id)->select(['id', 'title'])
             ); //todo: search/filter not working for schooladmins
         } else {

@@ -59,7 +59,7 @@
             decodeHtml(html) {
                 var txt = document.createElement("textarea");
                 txt.innerHTML = html;
-                return txt.value.replace(/<[^>]+>/g, '');
+                return txt.value.replace(/(<([^>]+)>)/ig,"");
             },
 
          },

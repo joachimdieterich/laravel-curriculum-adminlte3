@@ -8,7 +8,7 @@
              :data-target="'#logbook_body_'+entry.id"
              aria-expanded="true">
 
-            <span class="username ml-0">
+            <span class="username">
                 <avatar class="pull-right ml-2 contacts-list-img"
                         data-toggle="tooltip"
                         :title="entry.owner.firstname + ' ' + entry.owner.lastname"
@@ -369,12 +369,12 @@ export default {
         if (this.checkLocalStorage('#logbook_' + this.entry.id, '#logbook_contents_' + this.entry.id) == 'active') {
             this.$refs.Contents.loaderEvent();
         }
-        
+
         //register events
         this.$root.$on('lmsUpdate', () => {
             this.$refs.LmsPlugin.loaderEvent();
         });
-        
+
         this.postDate();
     },
     computed: {

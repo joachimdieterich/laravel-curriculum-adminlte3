@@ -89,7 +89,7 @@ class Medium extends Model
      * @param  type  $basePath
      * @return type
      */
-    public function convertFilemanagerEventPathToMediumPath($eventPath, $cutBasename = true, $basePath = 'app')
+   /* public function convertFilemanagerEventPathToMediumPath($eventPath, $cutBasename = true, $basePath = 'app')
     {
         $filePath = str_replace(public_path(), '', $eventPath);
         if ($cutBasename) {
@@ -97,5 +97,5 @@ class Medium extends Model
         } else {
             return str_replace(storage_path()."/{$basePath}", '', $eventPath);
         }
-    }
+    }*/
 }

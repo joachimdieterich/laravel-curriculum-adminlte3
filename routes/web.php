@@ -23,6 +23,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/admin', 'AdminController@index')->name('admin.index');
 
+    Route::resource('calendarEvents', 'CalendarEventController');
+
     Route::post('kanbanItemComments/{kanbanItemComment}/react', 'KanbanItemCommentController@reaction')->name('kanbanItemCommentController.react');
     Route::resource('kanbanItemComment', 'KanbanItemCommentController');
 
@@ -98,6 +100,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('eventSubscriptions/destroySubscription', 'EventSubscriptionController@destroySubscription')->name('eventSubscriptions.destroySubscription');
     Route::post('eventSubscriptions/search', 'EventSubscriptionController@search')->name('eventSubscriptions.search');
     Route::post('eventSubscriptions/getEvents', 'EventSubscriptionController@getEvents')->name('eventSubscriptions.getEvents');
+
+    Route::resource('exercises', 'ExerciseController');
+    Route::resource('exerciseDones', 'ExerciseDoneController');
 
     Route::resource('eventSubscriptions', 'EventSubscriptionController');
 
@@ -235,6 +240,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('plans', 'PlanController');
 
     Route::resource('planSubscriptions', 'PlanSubscriptionController');
+    Route::resource('planEntries', 'PlanEntryController');
 
     Route::resource('prerequisites', 'PrerequisitesController');
 
@@ -279,6 +285,9 @@ Route::group(['middleware' => 'auth'], function () {
     /* terminalObjectiveSubscriptions */
     Route::post('terminalObjectiveSubscriptions/destroy', 'TerminalObjectiveSubscriptionsController@destroySubscription');
     Route::resource('terminalObjectiveSubscriptions', 'TerminalObjectiveSubscriptionsController');
+
+    Route::resource('trainings', 'TrainingController');
+    Route::resource('trainingSubscriptions', 'TrainingSubscriptionController');
 
     /* reference(Subscription)  */
     Route::resource('references', 'ReferenceController');

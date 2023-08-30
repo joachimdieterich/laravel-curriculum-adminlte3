@@ -67,7 +67,7 @@
         <!-- Main content -->
         <section class="content d-flex flex-column flex-fill">
             @yield('content')
-<!--            <input id="medium_id" class="invisible">-->
+            <input id="medium_id" class="invisible"> <!-- DONT REMOVE - used by TINYMCE -->
         </section>
         <!-- /.content -->
     </div>

@@ -1,52 +1,37 @@
 @extends('layouts.master')
 
-@section('title')
-    {{ trans('global.plan.title_singular') }}
-    @can('plan_create')
-        @if (Auth::user()->id ==  $plan->owner_id)
-            <button class="btn btn-flat"
-                    onclick="app.__vue__.$modal.show('subscribe-modal',  {'modelId': {{ $plan->id }}, 'modelUrl': 'plan' });">
-                <i class="fa fa-share-alt text-secondary"></i>
-            </button>
-        @endif
-    @endcan
-@endsection
-
-@section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/"><i class="fa fa-home"></i></a></li>
-    <li class="breadcrumb-item active">{{ trans('global.plan.title_singular') }}</li>
-    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i
-                class="fas fa-question-circle"></i></a></li>
-@endsection
 @section('content')
-    <div class="card pb-3">
-        <div class="card-header">
+<div class="card pb-3">
+    <div class="card-header">
         <div class="card-title">
-            <h5 class="m-0">
-                <i class="fa fa-clipboard-list mr-1"></i>
-                {{ $plan->title }}
-            </h5>
-            <small>{{ $plan->type->title}} </small>
+            {{ $plan->type->title }}</br>
+<!--            <small>
+                <i class="fa fa-calendar pr-1 text-muted"></i>
+                {{ $plan->begin }}
+                <i class="fa fa-calendar-check pl-2 pr-1 text-muted "></i>
+                {{ $plan->end }}
+            </small>-->
         </div>
-@can('plan_edit')
-        <div class="card-tools pr-2 no-print">
-            <a onclick="window.print();" class="link-muted pr-4">
-                <i class="fa fa-print text-muted"></i>
-            </a>
-             <a href="{{route('plans.edit', $plan->id) }}" class="link-muted">
-                <i class="far fa-edit"></i>
-            </a>
-        </div>
-@endcan
-
+        @can('plan_edit')
+            @if($plan->owner_id == auth()->user()->id)
+            <div class="card-tools pr-2 no-print">
+                <a onclick="window.print();" class="link-muted pr-4">
+                    <i class="fa fa-print text-muted"></i>
+                </a>
+                 <a href="{{route('plans.edit', $plan->id) }}" class="link-muted">
+                    <i class="fa fa-pencil-alt"></i>
+                </a>
+            </div>
+                @endif
+        @endcan
     </div>
     <!-- /.card-header -->
     <div class="card-body">
         <div class="row">
-            <span class="col-9 col-xs-12">
+            <span class="col-12">
                  {!! $plan->description !!}
             </span>
-            <span class="col-sm-3 col-xs-12">
+<!--            <span class="col-sm-3 col-xs-12">
                 <span class="row text-muted">
                     @if($plan->owner->contactdetail != null)
                     <span class="col-12 pb-3">
@@ -69,14 +54,16 @@
                         <i class="fa fa-stopwatch pr-1"></i>
                         {{ $plan->duration }} {{trans('global.minutes')}}
                     </span>
-
                 </span>
-            </span>
+            </span>-->
         </div>
     </div>
 
 </div>
-<plan></plan>
+<plan :plan="{{$plan}}"></plan>
+@can('medium_create')
+    <medium-create-modal></medium-create-modal>
+@endcan
 
 {{--@php
 $period = Carbon\CarbonPeriod::create($plan->begin, $plan->end);
@@ -123,6 +110,7 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
     @can('plan_create')
         @if (Auth::user()->id ==  $plan->owner_id)
             <subscribe-modal></subscribe-modal>
+            <subscribe-objective-modal></subscribe-objective-modal>
         @endif
     @endcan
 

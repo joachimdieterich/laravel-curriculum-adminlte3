@@ -83,30 +83,16 @@
 @if(isset(json_decode($settings)->achievements))
 <script>
 
-function getDatatablesIds(selector){
-    return $(selector).DataTable().rows({ selected: true }).ids().toArray();
+function getDatatablesIds(table){
+    let selection = table.rows('.selected').ids().toArray()
+    localStorage.setItem('user-datatable-selection', selection); // used by AchievementIndivator.vue
+    return selection
 }
 
-function triggerVueEvent(type){
+function triggerVueEvent(type, table){
     if ( type === 'row' ) {
-        app.__vue__.$refs.curriculumView.$refs.terminalObjectives.externalEvent(getDatatablesIds('#users-datatable')); //pass Ids to terminalObjectives vue component
+        app.__vue__.$refs.curriculumView.$refs.terminalObjectives.externalEvent(getDatatablesIds(table)); //pass Ids to terminalObjectives vue component
     }
-}
-
-function isElementInViewport (el) {
-    //special bonus for those using jQuery
-    if (typeof jQuery === "function" && el instanceof jQuery) {
-        el = el[0];
-    }
-
-    var rect = el.getBoundingClientRect();
-
-    return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-    );
 }
 
 function togglePosition(){
@@ -135,6 +121,7 @@ function togglePosition(){
 $(document).ready( function () {
     //let dtButtons = false;//$.extend(true, [], $.fn.dataTable.defaults.buttons)
     localStorage.setItem('#users-datatable-position', 'content');
+    localStorage.setItem('user-datatable-selection', ''); // used by AchievementIndivator.vue
     table = $('#users-datatable').DataTable({
         ajax: "/courses/list?course_id={{ $course->id }}",
         columns: [
@@ -150,12 +137,12 @@ $(document).ready( function () {
     });
 
     table.on( 'select', function ( e, dt, type, indexes ) { //on select event
-        triggerVueEvent(type);
-        app.__vue__.$refs.curriculumView.externalEvent(true);
+        triggerVueEvent(type, table);
+        app.__vue__.$refs.curriculumView.externalEvent(true); //needed for certificates
     });
     table.on( 'deselect', function ( e, dt, type, indexes ) { //on deselect event
-        triggerVueEvent(type);
-        app.__vue__.$refs.curriculumView.externalEvent(false);
+        triggerVueEvent(type, table);
+        app.__vue__.$refs.curriculumView.externalEvent(false);//needed for certificates
     });
 
  });

@@ -15,7 +15,27 @@ class EnablingObjectiveSubscriptionsController extends Controller
      */
     public function index()
     {
-        //
+        $input = $this->validateRequest();
+        if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
+            $model = $input['subscribable_type']::find($input['subscribable_id']);
+            abort_unless((\Gate::allows('curriculum_show') and $model->isAccessible()), 403);
+
+            if (request()->wantsJson()) {
+                return [
+                    'subscriptions' =>
+                        EnablingObjectiveSubscriptions::where('subscribable_type', $input['subscribable_type'])
+                            ->where('subscribable_id', $input['subscribable_id'])
+                            ->with(
+                                [
+                                    'enablingObjective',
+                                    'enablingObjective.achievements'=> function ($query) {
+                                        $query->where('user_id', auth()->user()->id);
+                                    },
+                                ])
+                            ->get()
+                ];
+            }
+        }
     }
 
     /**

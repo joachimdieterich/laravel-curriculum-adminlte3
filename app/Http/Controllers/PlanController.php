@@ -116,7 +116,9 @@ class PlanController extends Controller
             'owner_id'          => auth()->user()->id,
         ]);
 
-        LogController::set(get_class($this).'@'.__FUNCTION__);
+        // subscribe embedded media
+        checkForEmbeddedMedia($plan, 'description');
+
         // axios call?
         if (request()->wantsJson()) {
             return ['message' => $plan->path()];
@@ -182,6 +184,9 @@ class PlanController extends Controller
         }
 
         $plan->update($clean_data);
+
+        // subscribe embedded media
+        checkForEmbeddedMedia($plan, 'description');
 
         return redirect($plan->path());
     }

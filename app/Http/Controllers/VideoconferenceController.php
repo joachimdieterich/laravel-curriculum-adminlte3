@@ -130,8 +130,22 @@ class VideoconferenceController extends Controller
             'meetingName'   => $videoconference->meetingName,
             'attendeePW'    => $videoconference->attendeePW,
             'moderatorPW'   => $videoconference->moderatorPW,
+            'presentation'  => $this->getPresentations($videoconference),
             'userName'      => auth()->user()->fullName()
         ]);
+    }
+
+    public function getPresentations($videoconference)
+    {
+        $presentations = [];
+        foreach ($videoconference->media AS $medium){
+            $presentations[] = [
+                'link' => env('APP_URL'). $medium->path(),
+                'fileName' => $medium->filename
+            ];
+        }
+        //dump($presentations);
+        return $presentations;
     }
 
     /**

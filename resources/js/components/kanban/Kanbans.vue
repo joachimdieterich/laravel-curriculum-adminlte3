@@ -9,7 +9,8 @@
                            v-model="search">
                 </label>
             </div>
-            <ul class="nav nav-pills" role="tablist">
+            <ul v-if="typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined'"
+                class="nav nav-pills" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link "
                        :class="filter === 'all' ? 'active' : ''"
@@ -59,7 +60,7 @@
         </div>
 
         <div class="col-md-12 py-2">
-            <div v-for="(kanban,index) in kanbans"
+            <div v-for="kanban in kanbans"
                  v-if="(kanban.title.toLowerCase().indexOf(search.toLowerCase()) !== -1)
                         || search.length < 3"
                  :id="'kanban-' + kanban.id"
@@ -83,14 +84,14 @@
                         <i class="fa fa-2x p-5 fa-columns nav-item-text text-white"></i>
                     </div>
 
-                    <span class="bg-white text-center p-1 overflow-auto nav-item-box">
+                    <div class="bg-white text-center p-1 overflow-auto nav-item-box">
                        <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
                            {{ kanban.title }}
                        </h1>
                        <p class="text-muted small"
                           v-html="decodeHtml(kanban.description)">
                        </p>
-                    </span>
+                    </div>
 
                     <div class="symbol"
                          style="position: absolute;
@@ -99,17 +100,17 @@
                                 width: 30px;
                                 height: 40px;
                                 background-color: #0583C9;
-                                top: 0px;
+                                top: 0;
                                 font-size: 1.2em;
                                 left: 10px;">
-                        <i v-if="$userId == kanban.owner_id"
+                        <i v-if="$userId === kanban.owner_id"
                            class="fa fa-user text-white pt-2"></i>
                         <i v-else
                            class="fa fa-share-nodes text-white pt-2"></i>
                     </div>
-                    <span v-if="$userId == kanban.owner_id"
+                    <span v-if="$userId === kanban.owner_id"
                           class="p-1 pointer_hand"
-                          accesskey="" style="position:absolute; top:0px; height: 30px; width:100%;">
+                          accesskey="" style="position:absolute; top:0; height: 30px; width:100%;">
 
                        <button
                            :id="'delete-kanban-'+kanban.id"
@@ -168,8 +169,10 @@ const Modal =
             loaderEvent(){
                 if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
                     this.url = '/kanbanSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
+                } else {
+                    this.url = 'kanbans/list?filter=' + this.filter
                 }
-                axios.get(this.url + '?filter=' + this.filter)
+                axios.get(this.url)
                     .then(response => {
                             if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
                                 this.kanbans = response.data.data;

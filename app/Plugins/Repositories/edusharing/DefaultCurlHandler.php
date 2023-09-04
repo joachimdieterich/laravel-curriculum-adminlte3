@@ -22,6 +22,7 @@ class DefaultCurlHandler extends CurlHandler {
         else
         {
             dump($error);
+            return false;
         }
 
     }

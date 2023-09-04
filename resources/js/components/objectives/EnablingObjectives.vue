@@ -13,7 +13,7 @@
              v-can="'curriculum_edit'"
              v-if="settings.edit === true">
             <ObjectiveBox type="createenabling"
-                :objective="{'curriculum_id': curriculum.id, 'terminal_objective_id': terminalobjective.id}"
+                :objective="{'curriculum_id': terminalobjective.curriculum_id, 'terminal_objective_id': terminalobjective.id}"
                 :settings="settings"
                 :max_id="localSettings.last">
             </ObjectiveBox>
@@ -29,7 +29,6 @@ const ObjectiveBox =
     export default {
         props: {
             'objectives': Array,
-            'curriculum': Object,
             'terminalobjective': Object,
             'settings': Object
         },

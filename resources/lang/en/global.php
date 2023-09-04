@@ -23,6 +23,10 @@ return [
     'updated_at_helper' => '',
     'deleted_at' => 'Deleted at',
     'deleted_at_helper' => '',
+    'begin'            => 'Begin',
+    'end'              => 'End',
+    'notes'            => 'Notes',
+    'select_icon'      => 'select icon',
     'visibility' => 'Visibel',
     'my_files' => 'My media',
     'shared_files' => 'shared media',
@@ -247,7 +251,6 @@ return [
     'first_name' => 'First name',
     'last_name' => 'Last name',
     'phone' => 'Phone',
-    'photo' => 'Photo (max 8mb)',
     'tags' => 'Tags',
     'tag' => 'Tag',
     'photo' => 'Photo',
@@ -440,9 +443,7 @@ return [
         'create' => 'Create Period',
         'edit' => 'Edit Period',
         'fields' => [
-            'begin' => 'Begin',
             'begin_helper' => '',
-            'end' => 'End',
             'end_helper' => '',
         ],
     ],
@@ -613,6 +614,7 @@ return [
         'add_reference' => 'Add Reference',
         'navigator_view' => 'Link a navigator view',
         'curriculum' => 'Link a curriculum',
+        'link' => 'Link curriculum-objective',
         'content' => 'Link a text',
         'medium' => 'Link a medium (file, url)',
     ],
@@ -687,9 +689,7 @@ return [
         'no_subject' => 'No Subject selected',
         'addition' => 'Make addition to Logbookentry',
         'fields' => [
-            'begin' => 'Begin',
             'begin_helper' => '',
-            'end' => 'End',
             'end_helper' => '',
             'subject' => 'Subject',
         ],
@@ -830,6 +830,22 @@ return [
             'type_helper' => '',
         ],
     ],
+    'exercise' => [
+        'title' => 'exercises',
+        'title_singular' => 'exercise',
+        'create' => 'create exercise',
+        'search' => 'search exercise',
+        'edit' => 'edit exerciese',
+        'fields' => [
+            'recommended_iterations' => 'Wie oft soll die Übung wiederholt werden?'
+        ]
+    ],
+    'exercisedone' => [
+        'fields' => [
+            'iterations' => 'Iterations'
+        ]
+
+    ],
     'contactdetail' => [
         'title' => 'Contact',
         'title_singular' => 'Contact',
@@ -929,8 +945,6 @@ return [
             'info_helper'      => '',
             'speakers'         => 'Speakers',
             'speakers_helper'  => '',
-            'begin'            => 'Begin',
-            'end'              => 'End',
             'status'           => 'Status',
             'category'         => 'Category',
             'target_group'     => 'Targetgroup',
@@ -951,8 +965,6 @@ return [
             'access_token_helper' => '',
             'address'          => 'Address',
             'address_helper'   => '',
-            'begin'            => 'Begin',
-            'end'              => 'End',
             'type'             => 'Type',
             'type_helper'       => '',
         ],

@@ -61,7 +61,6 @@
 
                             <div class="ml-auto">
                                 <EnablingObjectives
-                                    :curriculum="curriculum"
                                     :terminalobjective="objective"
                                     :objectives="objective.enabling_objectives"
                                     :settings="settings">

@@ -91,7 +91,6 @@
                 certificate_id: null,
                 curriculum_id:null,
                 date: new Date().toLocaleDateString(),
-                curriculum_id: null,
                 requestUrl: '/certificates/generate',
                 download_url: null
             }
@@ -102,7 +101,7 @@
                 try {
                    this.download_url = (await axios.post('/certificates/generate', {
                        'certificate_id': this.certificate_id,
-                       'user_ids' : getDatatablesIds('#users-datatable'),
+                       'user_ids' : localStorage.getItem('user-datatable-selection'), //getDatatablesIds('#users-datatable'),
                        'date': this.date,
                        'curriculum_id': this.curriculum_id
                    })).data.message;

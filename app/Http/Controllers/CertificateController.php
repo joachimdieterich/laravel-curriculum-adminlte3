@@ -7,6 +7,7 @@ use App\Curriculum;
 use App\Medium;
 use App\Organization;
 use App\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -407,14 +408,23 @@ class CertificateController extends Controller
         /* replace relative media links with absolute paths to get snappy working */
         $html = relativeToAbsoutePaths($html);
 
-        SnappyPdf::loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'.$html)
+        $pdf = Pdf::loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'.$html)
+            ->setPaper('a4')
+            //->setOrientation($orientation)
+            ->setOption('margin-bottom', 0)
+            ->setOption('enable-local-file-access', true)
+            ->save(storage_path('app/'.$path.$filename));
+        return $this->addFileToDb($filename);
+
+        // replaced
+  /*      SnappyPdf::loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'.$html)
                 ->setPaper('a4')
                 ->setOrientation($orientation)
                 ->setOption('margin-bottom', 0)
                 ->setOption('enable-local-file-access', true)
                 ->save(storage_path('app/'.$path.$filename));
 
-        return $this->addFileToDb($filename);
+        return $this->addFileToDb($filename);*/
     }
 
     protected function zipper($path, $files)

@@ -53,6 +53,7 @@
         </section>
         <div class="pl-2 pr-2" style="padding-bottom:50px">
             @yield('content')
+            <input id="medium_id" class="invisible"> <!-- DONT REMOVE - used by TINYMCE -->
         </div>
             <!-- Footer -->
             @include('partials.footer', ['contentonly' => true])

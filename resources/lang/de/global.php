@@ -23,6 +23,10 @@ return [
     'updated_at_helper' => '',
     'deleted_at' => 'Gelöscht am',
     'deleted_at_helper' => '',
+    'begin'            => 'Beginn',
+    'end'              => 'Ende',
+    'notes'            => 'Notizen',
+    'select_icon'      => 'Icon auswählen',
     'visibility' => 'Für andere Nutzer:innen sichtbar',
     'my_files' => 'meine Medien',
     'shared_files' => 'freigegebene Medien',
@@ -247,7 +251,6 @@ return [
     'first_name' => 'Vorname',
     'last_name' => 'Nachname',
     'phone' => 'Telefon',
-    'photo' => 'Foto (max 8mb)',
     'tags' => 'Tags',
     'tag' => 'Tag',
     'photo' => 'Foto',
@@ -443,9 +446,7 @@ return [
         'create' => 'Lernzeitraum erstellen',
         'edit' => 'Lernzeitraum bearbeiten',
         'fields' => [
-            'begin' => 'Anfang',
             'begin_helper' => '',
-            'end' => 'Ende',
             'end_helper' => '',
         ],
     ],
@@ -616,6 +617,7 @@ return [
         'add_reference' => 'Querverweise hinzufügen',
         'navigator_view' => 'Navigator-Ansicht verknüpfen',
         'curriculum' => 'Curriculum verknüpfen',
+        'link' => 'Curriculum-Bereich/Baustein verknüpfen',
         'content' => 'Text verknüpfen',
         'medium' => 'Medium (file, url) verknüpfen',
     ],
@@ -690,9 +692,7 @@ return [
         'no_subject' => 'Kein Fach ausgewählt',
         'addition' => 'Logbucheintrag ergänzen',
         'fields' => [
-            'begin' => 'Beginn',
             'begin_helper' => '',
-            'end' => 'Ende',
             'end_helper' => '',
             'subject' => 'Fach',
         ],
@@ -833,6 +833,39 @@ return [
             'type_helper' => '',
         ],
     ],
+    'planEntry' => [
+        'title' => 'Einträge',
+        'title_singular' => 'Eintrag',
+        'create' => 'Eintrag erstellen',
+        'search' => 'Eintrag suchen',
+        'edit' => 'Eintrag bearbeiten',
+
+    ],
+    'training' => [
+        'title' => 'Trainings',
+        'title_singular' => 'Training',
+        'create' => 'Training erstellen',
+        'search' => 'Training suchen',
+        'edit' => 'Training bearbeiten',
+
+    ],
+    'exercise' => [
+        'title' => 'Übungen',
+        'title_singular' => 'Übung',
+        'create' => 'Übung erstellen',
+        'search' => 'Übung suchen',
+        'edit' => 'Übung bearbeiten',
+        'fields' => [
+            'recommended_iterations' => 'Wie oft soll die Übung wiederholt werden?'
+        ]
+
+    ],
+    'exercisedone' => [
+        'fields' => [
+            'iterations' => 'Wiederholungen'
+        ]
+
+    ],
     'contactdetail' => [
         'title' => 'Kontaktdaten',
         'title_singular' => 'Kontaktdaten',
@@ -932,8 +965,6 @@ return [
             'info_helper'      => '',
             'speakers'         => 'Referenten',
             'speakers_helper'  => '',
-            'begin'            => 'Beginn',
-            'end'              => 'Ende',
             'status'           => 'Status',
             'category'         => 'Kategorie',
             'target_group'     => 'Zielgruppe',
@@ -954,8 +985,6 @@ return [
             'access_token_helper' => '',
             'address'          => 'Adresse',
             'address_helper'   => '',
-            'begin'            => 'Beginn',
-            'end'              => 'Ende',
             'type'             => 'Typ',
             'type_helper'       => '',
         ],

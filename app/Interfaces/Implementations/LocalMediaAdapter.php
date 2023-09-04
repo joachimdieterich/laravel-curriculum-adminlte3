@@ -234,6 +234,7 @@ class LocalMediaAdapter implements MediaInterface
 
     public function checkIfUserHasSubscription($subscription)
     {
+
         switch ($subscription->subscribable_type) {
             case "App\Organization":
                 if (in_array($subscription->subscribable_id, auth()->user()->organizations()->pluck('organization_id')->toArray())
@@ -258,6 +259,17 @@ class LocalMediaAdapter implements MediaInterface
                     return true;
                 }
                 break;
+            case "App\Plan":
+                if ($subscription->subscribable->isAccessible()) {
+                    return true;
+                }
+                break;
+            case "App\PlanEntry":
+                if ($subscription->subscribable->isAccessible()) {
+                    return true;
+                }
+                break;
+
 
             default: return false;
                 break;

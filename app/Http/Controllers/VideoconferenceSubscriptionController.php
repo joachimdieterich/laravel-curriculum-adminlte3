@@ -15,6 +15,21 @@ class VideoconferenceSubscriptionController extends Controller
      */
     public function index()
     {
+        $input = $this->validateRequest();
+        if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
+            $model = $input['subscribable_type']::find($input['subscribable_id']);
+            abort_unless((\Gate::allows('videoconference_access') and $model->isAccessible()), 403);
+
+            $subscriptions = VideoconferenceSubscription::where([
+                'subscribable_type' => $input['subscribable_type'],
+                'subscribable_id' => $input['subscribable_id'],
+            ]);
+
+            if (request()->wantsJson()) {
+                return ['subscriptions' => $subscriptions->with(['videoconference'])->get()];
+            }
+        }
+
         $videoconference = Videoconference::find(request('videoconference_id'));
         abort_unless((\Gate::allows('videoconference_access') and $videoconference->isAccessible()), 403);
 

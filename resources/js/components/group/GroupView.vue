@@ -104,6 +104,21 @@
                     <i class="fa-solid fa-ranking-star"></i>
                 </a>
             </li>
+            <li v-permission="'videoconference_access'"
+                class="nav-item"
+                @click="setLocalStorage('#group_'+group.id, '#group_videoconference_'+group.id);">
+                <a class="nav-link link-muted"
+                   :class="checkLocalStorage('#group_'+group.id, '#group_videoconference_'+group.id)"
+                   id="test-nav-tab"
+                   data-toggle="pill"
+                   href="#videoconference-tab"
+                   role="tab"
+                   aria-controls="videoconference-tab"
+                   aria-selected="true"
+                >
+                    <i class="fa-solid fa-video"></i>
+                </a>
+            </li>
             <li class="nav-item ">
                 <a v-if="group.glossar != null"
                    class="nav-link link-muted"
@@ -214,6 +229,17 @@
                     ref="Tests"
                     :group_id="group.id"></tests>
             </div>
+            <div v-permission="'videoconference_access'"
+                 class="tab-pane "
+                 :class="checkLocalStorage('#group_'+group.id, '#group_videoconference_'+group.id)"
+                 id="videoconference-tab"
+                 role="tab"
+                 aria-labelledby="tests-nav-tab">
+                <videoconferences
+                    ref="Videoconference"
+                    subscribable_type="App\Group"
+                    :subscribable_id="group.id"></videoconferences>
+            </div>
             <div v-permission="'plan_access'"
                  class="tab-pane fade "
                  id="plan-tab"
@@ -250,6 +276,7 @@
 </template>
 
 <script>
+import Videoconferences from "../videoconference/Videoconferences";
 const CourseItem =
     () => import('../course/CourseItem.vue');
 const Glossars =
@@ -314,6 +341,7 @@ const Tests =
 
         },
         components: {
+            Videoconferences,
             Users,
             CourseItem,
             Media,

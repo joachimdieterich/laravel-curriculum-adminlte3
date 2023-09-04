@@ -10,7 +10,7 @@
                     </div>
                 </div>
                 <div v-else>
-                    <div :id="'navigator-item-' + entry.id"
+                    <div :id="'plan-entry-' + entry.id"
                          v-if="!editor"
                          :style="{ 'border-left-style': 'solid', 'border-radius': '0.25rem', 'border-color': entry.color }">
                         <div class="card-header">

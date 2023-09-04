@@ -165,6 +165,7 @@ Vue.component('color-picker-component', () => import('./components/kanban/ColorP
 Vue.component('color-picker-input', () => import('./components/kanban/ColorPickerInput.vue'));
 Vue.component('leaflet-map', () => import('./components/map/Map.vue'));
 Vue.component('searchbar', () => import('./components/uiElements/Searchbar.vue'));
+Vue.component('videoconference', () => import('./components/videoconference/Videoconference'));
 
 Vue.component('tests-table', () => import('./components/tests/TestsTable.vue'));
 

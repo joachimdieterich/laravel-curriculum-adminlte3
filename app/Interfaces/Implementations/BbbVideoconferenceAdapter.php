@@ -50,21 +50,25 @@ class BbbVideoconferenceAdapter implements VideoconferenceInterface
 
     public function start(array $input){
 
-        $url = \Bigbluebutton::start([
+        $url = \Bigbluebutton::start($input);
+       /* $url = \Bigbluebutton::start([
             'meetingID' => $input['meetingID'],
             'meetingName' => $input['meetingName'],
             'moderatorPW' => $input['moderatorPW'],
             'attendeePW' => $input['attendeePW'],
             'userName' => $input['userName'],
+            'presentation'  => $input['presentation'] ?? [],
+            'bannerColor'  => '#E9F476',
+            'welcomeMessage' => 'Hello BBB',
+
             //'redirect' => false // only want to create and meeting and get join url then use this parameter
-        ]);
+        ]);*/
 
         return redirect()->to($url);
     }
 
     public function join(array $input)
     {
-
         return redirect()->to(
             \JoisarJignesh\Bigbluebutton\Facades\Bigbluebutton::join([
                 'meetingID' => $input['meetingID'],
@@ -136,7 +140,7 @@ class BbbVideoconferenceAdapter implements VideoconferenceInterface
     public function hooksCreate(array $input)
     {
         return \Bigbluebutton::hooksCreate([
-            'callbackURL' => $input['callbackURL'], //required
+            'callbackURL' => $input['callbackUrl'], //required
             'meetingID' => $input['meetingID'], //optional  if not set then hooks set for all meeting id
             'getRaw' => $input['getRaw'] ?? true //optional
         ]);

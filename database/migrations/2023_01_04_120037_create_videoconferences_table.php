@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('meetingName');
             $table->string('attendeePW');
             $table->string('moderatorPW');
-            $table->string('callbackURL');
+            $table->string('callbackUrl');
 
             $table->unsignedbigInteger('owner_id');
 

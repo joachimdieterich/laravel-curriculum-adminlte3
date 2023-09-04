@@ -25,7 +25,7 @@
             <th>{{ trans('global.videoconference.fields.meetingName') }}</th>
             <th>{{ trans('global.videoconference.fields.attendeePW') }}</th>
             <th>{{ trans('global.videoconference.fields.moderatorPW') }}</th>
-            <th>{{ trans('global.videoconference.fields.callbackURL') }}</th>
+            <th>{{ trans('global.videoconference.fields.callbackUrl') }}</th>
             <th>{{ trans('global.datatables.action') }}</th>
         </tr>
     </thead>
@@ -45,7 +45,7 @@
                  { data: 'meetingName' },
                  { data: 'attendeePW' },
                  { data: 'moderatorPW' },
-                 { data: 'callbackURL' },
+                 { data: 'callbackUrl' },
                  { data: 'action' }
                 ],
         columnDefs: [
@@ -66,7 +66,7 @@
         buttons: dtButtons
     });
     table.on( 'select', function ( e, dt, type, indexes ) { //on select event
-        window.location.href = "/videoconferences/" + table.row({ selected: true }).data().id ;
+        window.location.href = "/videoconferences/" + table.row({ selected: true }).data().id +"/edit" ;
     });
 })
 

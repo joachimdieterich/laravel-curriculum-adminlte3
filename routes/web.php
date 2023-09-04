@@ -314,6 +314,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('videoconferences/list', 'VideoconferenceController@list');
     Route::resource('videoconferences', 'VideoconferenceController');
+    Route::resource('videoconferenceSubscriptions', 'VideoconferenceSubscriptionController');
 
     /* Tests */
     Route::get('tests', 'Tests\TestController@index');

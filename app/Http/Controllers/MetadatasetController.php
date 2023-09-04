@@ -69,8 +69,7 @@ class MetadatasetController extends Controller
         $curricula = Curriculum::where('type_id', 1)->get();
 
         foreach ($curricula as $curriculum) {
-            $current_metadata = $this->processCurriculum($curriculum);
-            $metadata[] = $current_metadata;
+            $metadata[] = $this->processCurriculum($curriculum);
         }
 
         $new_metadataset = $this->validateRequest();

@@ -14,6 +14,15 @@ class DefaultCurlHandler extends CurlHandler {
         $error     = curl_errno( $curl );
         $info = curl_getinfo($curl);
         curl_close($curl);
-        return new CurlResult($content, $error, $info);
+
+        if ($error != 0)
+        {
+            return new CurlResult($content, $error, $info);
+        }
+        else
+        {
+            dump($error);
+        }
+
     }
 }

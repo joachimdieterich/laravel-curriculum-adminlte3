@@ -128,7 +128,7 @@ class EduSharingApiHelper extends EduSharingHelperAbstract  {
         if ($filter != '')
         {
             $postFields = [
-                'criterias' => [
+                'criteria' => [
                     [
                         'property' => $params['property'],
                         'values' => [
@@ -147,7 +147,7 @@ class EduSharingApiHelper extends EduSharingHelperAbstract  {
         else
         {
             $postFields = [
-                'criterias' => [
+                'criteria' => [
                     [
                         'property' => $params['property'],
                         'values' => [
@@ -164,12 +164,12 @@ class EduSharingApiHelper extends EduSharingHelperAbstract  {
         }
 
         //dump(json_encode ( $postFields ));
-        //dump($this->repoUrl . '/rest/search/v1/queriesV2/' . $repository.'/-default-/curriculum?'.http_build_query($params));
+        //dump($this->repoUrl . '/rest/search/v1/queries/' . $repository.'/-default-/curriculum?'.http_build_query($params));
 
         $headers = $this->getSignatureHeaders($ticket);
         $headers[] = $this->getRESTAuthenticationHeader($ticket);
         $curl = $this->base->handleCurlRequest(
-            $this->base->baseUrl.'/rest/search/v1/queriesV2/'.$repository.'/-default-/curriculum?'.http_build_query($params),
+            $this->base->baseUrl.'/rest/search/v1/queries/'.$repository.'/-default-/curriculum?'.http_build_query($params),
             [
                 CURLOPT_POST => true,
                 CURLOPT_POSTFIELDS => json_encode($postFields),

@@ -4,7 +4,7 @@
 @include('layouts.partials.head')
 
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed content-only" >
-    <div id="app" class="wrapper">
+    <div id="app" class="d-flex flex-column flex-fill wrapper" style="height: 100vh">
         <!-- Navbar -->
         <nav class="main-header navbar navbar-expand navbar-lime navbar-light">
             <!-- Left navbar links -->
@@ -54,7 +54,7 @@
                 </div>
             </div><!-- /.container-fluid -->
         </section>
-        <div class="pl-2 pr-2" style="padding-bottom:50px">
+        <div class="d-flex flex-column flex-fill px-2">
             @yield('content')
             <input id="medium_id" class="invisible"> <!-- DONT REMOVE - used by TINYMCE -->
         </div>

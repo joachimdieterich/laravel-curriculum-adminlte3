@@ -551,12 +551,13 @@ export default {
 }
 .kanban_board_container {
     position: relative;
-    width: 100%;
+    height: calc(100vh - 205px);
+    width: calc(100vw - 293px);
 }
 .content-only .kanban_board_container { width: calc(100vw - 1rem); }
 .kanban_board_wrapper {
     position:absolute;
-    /*height: 100%;*/
+    height: 100%;
     width: 100%;
     padding: 2rem;
     overflow:auto;

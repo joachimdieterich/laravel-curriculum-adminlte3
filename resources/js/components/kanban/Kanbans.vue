@@ -1,4 +1,4 @@
-<template >
+<template>
     <div class="row">
         <div class="col-md-12 py-2">
             <ul class="nav nav-pills" role="tablist">
@@ -150,6 +150,8 @@
             v-on:ok="copy()"
         />
 
+        <table id="kanban-datatable"></table>
+        <div id="kanban-conten" style="display: none;"></div>
     </div>
 </template>
 
@@ -159,108 +161,154 @@ import { nextTick } from 'vue';
 const Modal =
     () => import('./../uiElements/Modal');
 //import Modal from "./../uiElements/Modal";
+let observer;
+const observerOptions = { childList: true, subtree: true };
 
-    export default {
-        props: {
-            subscribable_type: '',
-            subscribable_id: '',
-              },
-        data() {
-            return {
-                kanbans: [],
-                subscriptions: {},
-                search: '',
-                url: 'kanbans/list',
-                errors: {},
-                tempId: Number,
-                filter: 'all'
+export default {
+    props: {
+        subscribable_type: '',
+        subscribable_id: '',
+    },
+    data() {
+        return {
+            kanbans: [],
+            subscriptions: {},
+            search: '',
+            url: 'kanbans/list',
+            errors: {},
+            tempId: Number,
+            filter: 'all'
+        }
+    },
+    methods: {
+        confirmItemDelete(kanbanId){
+            $('#kanbanModal').modal('show');
+            this.tempId = kanbanId;
+        },
+        confirmKanbanCopy(kanbanId){
+            $('#kanbanCopyModal').modal('show');
+            this.tempId = kanbanId;
+        },
+        editKanban(id){
+            window.location = "/kanbans/" + id + "/edit";
+        },
+        copy(){
+            window.location = "/kanbans/" + this.tempId + "/copy";
+        },
+        loaderEvent(){
+            if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
+                this.url = '/kanbanSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
+            }
+            axios.get(this.url + '?filter=' + this.filter)
+                .then(async response => {
+                    if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
+                        this.kanbans = response.data.data;
+                    } else {
+                        this.kanbans = response.data.data;
+                    }
+
+                    await nextTick();
+                    // if the searchbar had some input before changing filters, redo the search
+                    if (this.search != '') this.searchContent();
+                })
+                .catch(e => {
+                    console.log(e.data.errors);
+                });
+        },
+        setFilter(filter){
+            this.filter = filter;
+            this.loaderEvent();
+        },
+        searchContent() {
+            // always case insensitive
+            const elements = this.$el.getElementsByClassName('box');
+            const search = this.search.toLowerCase();
+
+            for (let i = 0; i < elements.length; i++) {
+                const element = elements[i];
+                const content = element.innerText.toLowerCase();
+                
+                element.style.display = content.includes(search)
+                    ? 'block'
+                    : 'none';
             }
         },
-        methods: {
-            confirmItemDelete(kanbanId){
-                $('#kanbanModal').modal('show');
-                this.tempId = kanbanId;
-            },
-            confirmKanbanCopy(kanbanId){
-                $('#kanbanCopyModal').modal('show');
-                this.tempId = kanbanId;
-            },
-            editKanban(id){
-                window.location = "/kanbans/" + id + "/edit";
-            },
-            copy(){
-                window.location = "/kanbans/" + this.tempId + "/copy";
-            },
-            loaderEvent(){
-                if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
-                    this.url = '/kanbanSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
-                }
-                axios.get(this.url + '?filter=' + this.filter)
-                    .then(async response => {
-                        if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
-                            this.kanbans = response.data.data;
-                        } else {
-                            this.kanbans = response.data.data;
-                        }
-
-                        await nextTick();
-                        // if the searchbar had some input before changing filters, redo the search
-                        if (this.search != '') this.searchContent();
-                    })
-                    .catch(e => {
-                        console.log(e.data.errors);
-                    });
-            },
-            setFilter(filter){
-                this.filter = filter;
-                this.loaderEvent();
-            },
-            searchContent() {
-                // always case insensitive
-                const elements = this.$el.getElementsByClassName('box');
-                const search = this.search.toLowerCase();
-
-                for (let i = 0; i < elements.length; i++) {
-                    const element = elements[i];
-                    const content = element.innerText.toLowerCase();
-                    
-                    element.style.display = content.includes(search)
-                        ? 'block'
-                        : 'none';
-                }
-            },
-            decodeHtml(html) {
-                let txt = document.createElement("textarea");
-                txt.innerHTML = html;
-                return txt.value.replace(/(<([^>]+)>)/ig,"");
-            },
-            async destroy() {
-                try {
-                    this.kanbans = (await axios.delete('/kanbans/' + this.tempId)).data.data;
-                } catch (error) {
-                    console.log(error);
-                }
+        decodeHtml(html) {
+            let txt = document.createElement("textarea");
+            txt.innerHTML = html;
+            return txt.value.replace(/(<([^>]+)>)/ig,"");
+        },
+        async destroy() {
+            try {
+                this.kanbans = (await axios.delete('/kanbans/' + this.tempId)).data.data;
+            } catch (error) {
+                console.log(error);
+            }
                 window.location = "/kanbans";
+        },
+        tableToJson() { 
+            const table = document.getElementById('kanban-datatable')
+            let data = [];
+            for (let row = 1; row < table.rows.length; row++) { 
+                let tableRow = table.rows[row]; 
+                let rowData = []; 
+                for (let cell = 0; cell < tableRow.cells.length; cell++) { 
+                    rowData.push(tableRow.cells[cell].innerHTML);
+                } 
+                data.push(rowData); 
+            } 
+            return data; 
+        }
+    },
+    mounted() {
+        this.loaderEvent();
+
+        this.$eventHub.$on('filter', (filter) => {
+            this.search = filter;
+            this.searchContent();
+        });
+        this.$eventHub.$on('removeFilter', () => {
+            this.search = '';
+            this.$el.getElementsByClassName('box').forEach(element => {
+                element.style.display = 'block';
+            });
+        });
+        this.$eventHub.$emit('showSearchbar');
+
+        observer = new MutationObserver(this.tableToJson);
+        observer.observe(document.getElementById('kanban-datatable'), observerOptions);
+
+        $('#kanban-datatable').DataTable({
+            ajax: this.url + '?filter=' + this.filter,
+            
+            columns: [
+                { title: 'color', data: 'color' },
+                { title: 'description', data: 'description' },
+                { title: 'id', data: 'id' },
+                { title: 'medium_id', data: 'medium_id' },
+                { title: 'owner_id', data: 'owner_id' },
+                { title: 'title', data: 'title' },
+            ],
+            searching: false,
+            initComplete: function(settings, json) {
+                $('#kanban-content').insertBefore('#kanban-datatable');
+                $('#kanban-content').show();
             },
-        },
-
-        mounted() {
-            this.loaderEvent();
-
-            this.$eventHub.$on('filter', (filter) => {
-                this.search = filter;   
-                this.searchContent();
-            });
-            this.$eventHub.$on('removeFilter', () => {
-                this.search = '';
-                this.$el.getElementsByClassName('box').forEach(element => {
-                    element.style.display = 'block';
-                });
-            });
-            this.$eventHub.$emit('showSearchbar');
-        },
-        components: {
-            Modal
-        },
-    }
+            // rowCallback: function(row, data) {
+                // create kanban in here and append to kanban-content
+                // const div = $(document.createElement('div'));
+                // console.warn(data);
+                
+                // div.append('<kanban :kanban="data"></kanban>');
+                // div.appendTo('#kanban-content');
+            // },
+            // preDrawCallback: function(settings) {
+            //     $('#kanban-content').empty();
+            // }
+        });
+    },
+    components: {
+        Modal
+    },
+}
 </script>

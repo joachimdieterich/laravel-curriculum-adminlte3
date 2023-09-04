@@ -1,6 +1,6 @@
 @if(isset($contentonly))
 <footer class="main-footer py-1 no-print"
-        style="background-color:#737c83; position: fixed;left: 0;bottom: 0;width: 100%;margin-left:0 !important;" >
+        style="background-color: #737c83; width: 100%; margin-left: 0 !important;" >
 @else
 <footer class="main-footer py-1 no-print"
         style="background-color:#737c83">

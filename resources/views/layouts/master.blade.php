@@ -36,7 +36,7 @@
                 </form>-->
 
                 <!-- Right navbar links -->
-        <ul class="navbar-nav ml-auto">
+        <ul class="navbar-nav pl-2 mr-auto">
             <searchbar></searchbar>
         </ul>
         @include('partials.navbar')

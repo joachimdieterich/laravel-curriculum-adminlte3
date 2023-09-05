@@ -70,6 +70,7 @@
                         </button>
                         <hr class="my-1">
                         <button
+                            v-if="($userId == status.owner_id) || (editable == 1 && $userId == kanban.owner_id  )"
                             v-can="'kanban_delete'"
                             name="kanbanStatusDelete"
                             class="dropdown-item py-1 text-red "

@@ -2,7 +2,7 @@
     <div class="card">
         <div class="card-header px-3 py-2" :style="{ backgroundColor: item.color, color: textColor }">
             <div class="card-tools">
-                <div v-if="(editable == 1 && editor === false && onlyEditOwnedItems !== 1) || (editable == 1 && $userId == item.owner_id )"
+                <div v-if="(editable == 1 && editor === false && onlyEditOwnedItems !== 1) || (editable == 1 && $userId == item.owner_id) || (editable == 1 && $userId == kanban_owner_id )"
                      class="btn btn-flat py-0 px-2 "
                      :id="'kanbanItemDropdown_'+index"
                      style="background-color: transparent;"
@@ -33,6 +33,7 @@
                                               </button>-->
                         <hr class="my-1">
                         <button
+                            v-if="($userId == item.owner_id) || (editable == 1 && $userId == kanban_owner_id )"
                             v-can="'kanban_delete'"
                             :name="'kanbanItemDelete_'+index"
                             class="dropdown-item py-1 text-red"
@@ -196,7 +197,11 @@ export default {
         'commentable': false,
         'onlyEditOwnedItems': false,
         'likable': true,
-        'editable': true
+        'editable': true,
+        'kanban_owner_id': {
+            type: Number,
+            default: null
+        }
     },
     data() {
         return {
@@ -323,7 +328,7 @@ export default {
                 minute: '2-digit'
             };
 
-            this.expired = new Date() > date; 
+            this.expired = new Date() > date;
 
             return date.toLocaleString([], dateFormat);
         },
@@ -346,7 +351,7 @@ export default {
                 : 'none';
         });
         this.$eventHub.$on('removeFilter', () => this.$el.style.display = 'block');
-        
+
         this.$nextTick(() => {
             MathJax.startup.defaultReady();
         });

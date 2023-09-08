@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Kanban;
+use App\KanbanItem;
+use App\KanbanStatus;
 use App\KanbanSubscription;
 use App\Medium;
+use App\MediumSubscription;
 use App\Organization;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -351,6 +354,61 @@ class KanbanController extends Controller
 
         return $this->show($kanban, $input['sharing_token']);
 
+    }
+
+    public function copyKanban(Kanban $kanban, Request $request)
+    {
+        $kanbanCopy = Kanban::create([
+            'title' => $kanban->title . '_' . date('Y.m.d_H:i:s'),
+            'description' => $kanban->description,
+            'color' => $kanban->color,
+            'medium_id' => $kanban->medium_id,
+            'commentable' => $kanban->commentable,
+            'auto_refresh' => $kanban->auto_refresh,
+            'only_edit_owned_items' => $kanban->only_edit_owned_items,
+            'owner_id' => auth()->user()->id,
+        ]);
+
+        $statuses = $kanban->statuses;
+        foreach ($statuses as $status)
+        {
+            $statusCopy = KanbanStatus::Create([
+                'title' => $status->title,
+                'order_id' => $status->order_id,
+                'kanban_id' => $kanbanCopy->id,
+                'locked' => $kanbanCopy->locked ?? false,
+                'visibility' => $kanbanCopy->visibility ?? true,
+                'owner_id' => auth()->user()->id,
+            ]);
+
+            foreach ($status->items as $item)
+            {
+               $kanbanItemCopy = KanbanItem::Create([
+                    'title'             => $item->title,
+                    'description'       => $item->description,
+                    'order_id'          => $item->order_id,
+                    'kanban_id'         => $kanbanCopy->id,
+                    'kanban_status_id'  => $statusCopy->id,
+                    'color'             => $item->color,
+                    'due_date'          => $item->due_date,
+                    'owner_id'          => auth()->user()->id,
+                ]);
+               // dump($item->mediaSubscriptions);
+               foreach ($item->mediaSubscriptions as $mediaSubscription)
+               {
+                   $subscribe = MediumSubscription::Create([
+                       'medium_id' => $mediaSubscription->medium_id,
+                       'subscribable_type' => $mediaSubscription->subscribable_type,
+                       'subscribable_id' => $kanbanItemCopy->id,
+                       'sharing_level_id' => $mediaSubscription->sharing_level_id,
+                       'visibility' => $mediaSubscription->visibility,
+                       'additional_data' => $mediaSubscription->additional_data,
+                       'owner_id' => auth()->user()->id,
+                   ]);
+               }
+            }
+        }
+        return redirect('/kanbans');
     }
 
     protected function validateRequest()

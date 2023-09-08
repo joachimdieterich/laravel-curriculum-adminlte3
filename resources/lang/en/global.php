@@ -305,6 +305,9 @@ return [
     'reply' => 'Reply',
     'documents' => 'Documents',
     'file' => 'File',
+    'footer' => 'Footer',
+    'header' => 'Header',
+    'start_date' => 'Start date',
     'current_password' => 'Current password',
     'new_password' => 'New password',
     'change_password' => 'Change password',
@@ -819,15 +822,30 @@ return [
         ],
     ],
     'planItem' => [
-        'title' => 'Aufgaben',
-        'title_singular' => 'Aufgabe',
-        'create' => 'Aufgabe erstellen',
-        'search' => 'Aufgabe suchen',
-        'edit' => 'Aufgabe bearbeiten',
+        'title' => 'Tasks',
+        'title_singular' => 'Task',
+        'create' => 'Create Task',
+        'search' => 'Search tasks',
+        'edit' => 'Edit task',
         'fields' => [
             'type' => 'Typ',
             'type_helper' => '',
         ],
+    ],
+    'planEntry' => [
+        'title' => 'Entries',
+        'title_singular' => 'Entry',
+        'create' => 'Create entry',
+        'search' => 'Search entries',
+        'edit' => 'Edit entry',
+
+    ],
+    'training' => [
+        'title' => 'Trainings',
+        'title_singular' => 'Training',
+        'create' => 'Training erstellen',
+        'search' => 'Training suchen',
+        'edit' => 'Training bearbeiten',
     ],
     'exercise' => [
         'title' => 'exercises',
@@ -843,7 +861,6 @@ return [
         'fields' => [
             'iterations' => 'Iterations'
         ]
-
     ],
     'contactdetail' => [
         'title' => 'Contact',
@@ -866,6 +883,8 @@ return [
         'title_singular' => 'Kanban-Board',
         'create' => 'Create Kanban-Board',
         'edit' => 'Edit Kanban-Board',
+        'copy' => 'Copy Kanban-Board',
+        'copy_helper' => 'Do you want to copy this Kanban-Board',
         'delete' => 'Delete Kanban-Board',
         'delete_helper' => 'Should Kanban-Board be deleted?',
     ],

@@ -34,8 +34,8 @@ return [
     'add' => 'hinzufügen',
     'create' => 'erstellen',
     'paste' => 'einfügen',
-    'resetOrder' => 'Reihenfolge zurücksetzen',
     'list' => 'Liste',
+    'resetOrder' => 'Reihenfolge zurücksetzen',
     'show' => 'anzeigen',
     'entries' => 'Einträge',
     'perPage' => 'Einträge pro Seite',
@@ -846,7 +846,6 @@ return [
         'create' => 'Training erstellen',
         'search' => 'Training suchen',
         'edit' => 'Training bearbeiten',
-
     ],
     'exercise' => [
         'title' => 'Übungen',
@@ -857,13 +856,11 @@ return [
         'fields' => [
             'recommended_iterations' => 'Wie oft soll die Übung wiederholt werden?'
         ]
-
     ],
     'exercisedone' => [
         'fields' => [
             'iterations' => 'Wiederholungen'
         ]
-
     ],
     'contactdetail' => [
         'title' => 'Kontaktdaten',
@@ -886,6 +883,8 @@ return [
         'title_singular' => 'Pinnwand',
         'create' => 'Pinnwand erstellen',
         'edit' => 'Pinnwand bearbeiten',
+        'copy' => 'Pinnwand kopieren',
+        'copy_helper' => 'Wollen Sie die Pinnwand kopieren?',
         'delete' => 'Pinnwand löschen',
         'delete_helper' => 'Soll die Pinnwand sowie die zugehörigen Daten gelöscht werden?',
     ],

@@ -110,7 +110,6 @@
                     <span v-if="$userId == kanban.owner_id"
                           class="p-1 pointer_hand"
                           accesskey="" style="position:absolute; top:0px; height: 30px; width:100%;">
-
                        <button
                            :id="'delete-kanban-'+kanban.id"
                            type="submit" class="btn btn-danger btn-sm pull-right"
@@ -122,6 +121,14 @@
                           class="btn btn-primary btn-sm pull-right mr-1">
                            <small><i class="fa fa-pencil-alt"></i></small>
                        </a>
+                        <button
+                            :id="'copy-kanban-'+kanban.id"
+                            type="submit"
+                            class="btn btn-primary btn-sm pull-right mr-1"
+                            @click.prevent="confirmKanbanCopy(kanban.id)">
+                           <small><i class="fa fa-copy"></i></small>
+                       </button>
+
                    </span>
                 </a>
 
@@ -134,6 +141,14 @@
             :text="trans('global.kanban.delete_helper')"
             :ok_label="trans('global.kanban.delete')"
             v-on:ok="destroy()"
+        />
+        <Modal
+            :id="'kanbanCopyModal'"
+            css="primary"
+            :title="trans('global.kanban.copy')"
+            :text="trans('global.kanban.copy_helper')"
+            ok_label="OK"
+            v-on:ok="copy()"
         />
 
     </div>
@@ -164,6 +179,13 @@ const Modal =
             confirmItemDelete(kanbanId){
                 $('#kanbanModal').modal('show');
                 this.tempId = kanbanId;
+            },
+            confirmKanbanCopy(kanbanId){
+                $('#kanbanCopyModal').modal('show');
+                this.tempId = kanbanId;
+            },
+            copy(){
+                window.location = "/kanbans/" + this.tempId + "/copy";
             },
             loaderEvent(){
                 if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
@@ -196,6 +218,7 @@ const Modal =
                 } catch (error) {
                     console.log(error);
                 }
+                window.location = "/kanbans";
             },
         },
 

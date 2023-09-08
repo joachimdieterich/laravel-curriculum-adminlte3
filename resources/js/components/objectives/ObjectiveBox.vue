@@ -85,13 +85,13 @@ const Footer =
                     {
                       title: 'Edit',
                       icon: 'fa fa-edit',
-                      action: 'update',
+                      action: 'edit',
                       model: this.type+'Objectives',
                       value: this.type+'-objective-modal'
                     },
                     {
                         title: 'Move',
-                        icon: 'fa fa-arrows-alt',
+                        icon: 'fa fa-repeat',
                         action: 'move',
                         model: this.type+'Objectives',
                         value: 'move-'+this.type+'-objective-modal'
@@ -101,7 +101,7 @@ const Footer =
                     },
                     {
                       title: 'Delete',
-                      icon: 'fa fa-minus',
+                      icon: 'fa fa-trash',
                       action: 'delete',
                       model: this.type+'Objectives',
                     }

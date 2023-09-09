@@ -67,11 +67,14 @@ class MetadatasetController extends Controller
 
         $metadata = []; //{'id', 'title'}
         $curricula = Curriculum::where('type_id', 1)->get();
+        //$mem_usage = 0;                                               //uncomment to track memory usage
 
         foreach ($curricula as $curriculum) {
             $current_metadata = $this->processCurriculum($curriculum);
             $metadata[] = $current_metadata;
+            //$mem_usage += memory_get_peak_usage();                    //uncomment to track memory usage
         }
+        //dump($mem_usage);                                             //uncomment to track memory usage
 
         $new_metadataset = $this->validateRequest();
 
@@ -118,13 +121,7 @@ class MetadatasetController extends Controller
 
         // generate curriculum part of identifier
         $this->setModelUuid($curriculum);
-        /*$metadata[] = [
-            'id'        => $curriculum->uuid,
-            'old_id'    => $curriculum->ui,
-            'title'     => $curriculum->title,
-            'parent_id' => null
-        ];*/
-        //hack for rlp until new edusharing-version is active
+
         $metadata[] = [
             'id' => ($curriculum->ui != null) ? $curriculum->ui : $curriculum->uuid,
             'title' => $curriculum->title,
@@ -133,36 +130,30 @@ class MetadatasetController extends Controller
 
         $previous_objectiveType = '';
 
-        foreach ($curriculum->terminalObjectives()->get() as $terminalObjective) {            // foreach terminal_type
+        $current_objectiveType = null;
+        // foreach terminal_type
+        foreach ($curriculum->terminalObjectives()->get() as $terminalObjective)
+        {
             // terminal objective type
-            $current_objectiveType = ObjectiveType::where('id', $terminalObjective->objective_type_id)->get()->first();
+            if (optional($current_objectiveType)->id != $terminalObjective->objective_type_id) //reduce db calls
+            {
+                $current_objectiveType = ObjectiveType::where('id', $terminalObjective->objective_type_id)->get()->first();
+            }
+
             $this->setModelUuid($current_objectiveType);
             if ($previous_objectiveType != $current_objectiveType->uuid) {
                 $previous_objectiveType = $current_objectiveType->uuid;
 
-                /* $metadata[] = [
-                     'id' => $curriculum->uuid.$current_objectiveType->uuid, //concat curriculum->uuid and objectiveType->uuid to get it unique for every curriculum
-                     'old_id'    => 'null',
-                     'title' => $this->format_data(ObjectiveType::where('id', $terminalObjective->objective_type_id)->get()->first()->title),
-                     'parent_id' => $curriculum->uuid
-                 ];*/
                 $metadata[] = [
                     'id' => $curriculum->uuid.$current_objectiveType->uuid, //concat curriculum->uuid and objectiveType->uuid to get it unique for every curriculum
                     'old_id' => 'null',
-                    'title' => $this->format_data(ObjectiveType::where('id', $terminalObjective->objective_type_id)->get()->first()->title),
+                    'title' => $this->format_data($current_objectiveType->title),
                     'parent_id' => ($curriculum->ui != null) ? $curriculum->ui : $curriculum->uuid,
                 ];
             }
 
             // terminal objective
             $this->setModelUuid($terminalObjective);
-            /*$metadata[] = [
-                'id'        => $terminalObjective->uuid,
-                'old_id'    => $terminalObjective->ui,
-                'title'     => $this->format_data($terminalObjective->title),
-                'parent_id' => $curriculum->uuid.$current_objectiveType->uuid, // combined uuids
-            ];*/
-            //hack for rlp until new edusharing-version is active
             $metadata[] = [
                 'id' => ($terminalObjective->ui != null) ? $terminalObjective->ui : $terminalObjective->uuid,
                 'title' => $this->format_data($terminalObjective->title),
@@ -170,23 +161,29 @@ class MetadatasetController extends Controller
             ];
 
             // enabling objective
-            foreach ($terminalObjective->enablingObjectives()->get() as $enablingObjective) {
-                $this->setModelUuid($enablingObjective);
-                /* $metadata[] = [
-                     'id'        => $enablingObjective->uuid,
-                     'old_id'    => $enablingObjective->ui,
-                     'title'     => $this->format_data($enablingObjective->title),
-                     'parent_id' => $terminalObjective->uuid,
-                 ];*/
-                //hack for rlp until new edusharing-version is active
-                $metadata[] = [
-                    'id' => ($enablingObjective->ui != null) ? $enablingObjective->ui : $enablingObjective->uuid,
-                    'title' => $this->format_data($enablingObjective->title),
-                    'parent_id' => ($terminalObjective->ui != null) ? $terminalObjective->ui : $terminalObjective->uuid,
-                ];
+            foreach ($terminalObjective->enablingObjectives()->without(['terminalObjective', 'level'])->get() as $enablingObjective) { //use without to reduce db calls
+                $metadata = $this->getEnablingObjectMetadata($enablingObjective, $terminalObjective, $metadata);
             }
         }
 
+        return $metadata;
+    }
+
+    /**
+     * @param mixed $enablingObjective
+     * @param mixed $terminalObjective
+     * @param array $metadata
+     * @return array
+     */
+    public function getEnablingObjectMetadata(mixed $enablingObjective, mixed $terminalObjective, array $metadata): array
+    {
+        $this->setModelUuid($enablingObjective);
+
+        $metadata[] = [
+            'id' => ($enablingObjective->ui != null) ? $enablingObjective->ui : $enablingObjective->uuid,
+            'title' => $this->format_data($enablingObjective->title),
+            'parent_id' => ($terminalObjective->ui != null) ? $terminalObjective->ui : $terminalObjective->uuid,
+        ];
         return $metadata;
     }
 

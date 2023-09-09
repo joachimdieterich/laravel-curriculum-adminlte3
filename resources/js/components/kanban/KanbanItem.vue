@@ -14,7 +14,7 @@
                         <button :name="'kanbanItemEdit_'+index"
                                 class="dropdown-item text-secondary  py-1"
                                 @click="edit()">
-                            <i class="fa fa-pencil-alt mr-4"></i>
+                            <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.kanbanItem.edit') }}
                         </button>
                         <button
@@ -22,15 +22,9 @@
                             :name="'kanbanItemAddMedia_'+index"
                             class="dropdown-item text-secondary  py-1"
                             @click="addMedia()">
-                            <i class="fa fa-folder-open mr-4"></i>
+                            <i class="fa fa-folder-open mr-2"></i>
                             {{ trans('global.media.title_singular') }}
                         </button>
-                        <!--                      <button :name="'kanbanItemShare_'+index"
-                                                      class="dropdown-item text-secondary  py-1"
-                                                      @click="open('subscribe-modal')">
-                                                <i class="fa fa-share-alt mr-4"></i>
-                                                {{ trans('global.share') }}
-                                              </button>-->
                         <hr class="my-1">
                         <button
                             v-if="($userId == item.owner_id) || (editable == 1 && $userId == kanban_owner_id )"
@@ -38,7 +32,7 @@
                             :name="'kanbanItemDelete_'+index"
                             class="dropdown-item py-1 text-red"
                             @click="confirmItemDelete()">
-                            <i class="fa fa-trash mr-4"></i>
+                            <i class="fa fa-trash mr-2"></i>
                             {{ trans('global.kanbanItem.delete') }}
                         </button>
                     </div>

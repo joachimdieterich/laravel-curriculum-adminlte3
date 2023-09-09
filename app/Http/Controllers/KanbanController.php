@@ -109,6 +109,7 @@ class KanbanController extends Controller
             'commentable' => isset($input['commentable']) ? 1 : '0',
             'auto_refresh' => isset($input['auto_refresh']) ? 1 : '0',
             'only_edit_owned_items' => isset($input['only_edit_owned_items']) ? 1 : '0',
+            'allow_copy' => isset($input['allow_copy']) ? 1 : '0',
             'owner_id' => auth()->user()->id,
         ]);
 
@@ -191,6 +192,7 @@ class KanbanController extends Controller
             'commentable' => isset($input['commentable']) ? 1 : '0',
             'auto_refresh' => isset($input['auto_refresh']) ? 1 : '0',
             'only_edit_owned_items' => isset($input['only_edit_owned_items']) ? 1 : '0',
+            'allow_copy' => isset($input['allow_copy']) ? 1 : '0',
             'owner_id' => auth()->user()->id,
         ]);
 
@@ -366,6 +368,7 @@ class KanbanController extends Controller
             'commentable' => $kanban->commentable,
             'auto_refresh' => $kanban->auto_refresh,
             'only_edit_owned_items' => $kanban->only_edit_owned_items,
+            'allow_copy' => $kanban->allow_copy,
             'owner_id' => auth()->user()->id,
         ]);
 
@@ -422,6 +425,7 @@ class KanbanController extends Controller
             'color' => 'sometimes',
             'filter' => 'sometimes',
             'only_edit_owned_items' => 'sometimes',
+            'allow_copy' => 'sometimes',
             'sharing_token' => 'sometimes'
         ]);
     }

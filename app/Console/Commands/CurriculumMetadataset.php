@@ -43,12 +43,13 @@ class CurriculumMetadataset extends Command
      */
     public function handle()
     {
-        $this->info('Generate metadataset version '.$this->argument('version'));
+        //$this->info('Generate metadataset version '.$this->argument('version'));
 
-        $curricula = Curriculum::where('type_id', 1)->get();
-        $this->generate($curricula, $this->argument('version'));
+        //$curricula = Curriculum::where('type_id', 1)->get();
+        //$this->generate($curricula, $this->argument('version'));
 
-        $this->info(' ...done');
+        //$this->info(' ...done');
+        $this->info('Please use Frontend generator --> User menu --> Settings --> Metadatasets');
     }
 
     protected function generate($curricula, $version)

@@ -61,30 +61,43 @@
                         </p>
                     </span>
 
-                    <div class="symbol" style="position: absolute;
-                        padding: 6px;
-                        z-index: 1;
-                        width: 30px;
-                        height: 40px;
-                        background-color: #0583C9;
-                        top: 0px;
-                        font-size: 1.2em;
-                        left: 10px;">
-                        <i v-if="$userId == logbook.owner_id" class="fa fa-user text-white pt-2"></i>
-                        <i v-else class="fa fa-share-nodes text-white pt-2"></i>
+                    <div class="symbol"
+                         :style="'color:' + $textcolor(logbook.color) + '!important'"
+                         style="position: absolute; width: 30px; height: 40px;"
+                    >
+                        <i v-if="$userId == logbook.owner_id"
+                           class="fa fa-user pt-2"></i>
+                        <i v-else
+                           class="fa fa-share-nodes pt-2"></i>
                     </div>
-                    <span v-if="$userId == logbook.owner_id" class="p-1 pointer_hand" accesskey=""
-                        style="position:absolute; top:0px; height: 30px; width:100%;">
 
-                        <button :id="'delete-logbook-' + logbook.id" type="submit" class="btn btn-danger btn-sm pull-right"
-                            @click.prevent="confirmItemDelete(logbook.id)">
-                            <small><i class="fa fa-trash"></i></small>
-                        </button>
+                    <div v-if="$userId == logbook.owner_id"
+                         class="btn btn-flat pull-right "
+                         :id="'logbookDropdown_' + logbook.id"
+                         style="position:absolute; top:0; right: 0; background-color: transparent;"
+                         data-toggle="dropdown"
+                         aria-expanded="false">
+                        <i class="fas fa-ellipsis-v"
+                           :style="'color:' + $textcolor(logbook.color)"></i>
+                        <div class="dropdown-menu dropdown-menu-right"
+                             x-placement="left-start">
 
-                        <a :href="'/logbooks/' + logbook.id + '/edit'" class="btn btn-primary btn-sm pull-right mr-1">
-                            <small><i class="fa fa-pencil-alt"></i></small>
-                        </a>
-                    </span>
+                            <button :name="'logbookEdit_'+logbook.id"
+                                    class="dropdown-item text-secondary"
+                                    @click.prevent="editLogbook(logbook.id)">
+                                <i class="fa fa-pencil-alt mr-2"></i>
+                                {{ trans('global.logbook.edit') }}
+                            </button>
+                            <hr class="my-1">
+                            <button :id="'delete-logbook-' + logbook.id"
+                                    type="submit"
+                                    class="dropdown-item py-1 text-red"
+                                    @click.prevent="confirmItemDelete(logbook.id)">
+                                <i class="fa fa-trash mr-2"></i>
+                                {{ trans('global.logbook.delete') }}
+                            </button>
+                        </div>
+                    </div>
                 </a>
 
             </div>
@@ -119,6 +132,9 @@ export default {
         confirmItemDelete(logbookId) {
             $('#logbookModal').modal('show');
             this.tempId = logbookId;
+        },
+        editLogbook(id){
+            window.location = "/logbooks/" + id + "/edit";
         },
         loaderEvent() {
             axios.get('logbooks/list?filter=' + this.filter)

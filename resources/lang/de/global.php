@@ -31,11 +31,12 @@ return [
     'my_files' => 'meine Medien',
     'shared_files' => 'freigegebene Medien',
     'public_files' => 'alle Medien',
+    'auto_refresh' => 'Automatisches aktualisieren',
     'add' => 'hinzufügen',
     'create' => 'erstellen',
     'paste' => 'einfügen',
-    'resetOrder' => 'Reihenfolge zurücksetzen',
     'list' => 'Liste',
+    'resetOrder' => 'Reihenfolge zurücksetzen',
     'show' => 'anzeigen',
     'entries' => 'Einträge',
     'perPage' => 'Einträge pro Seite',
@@ -301,6 +302,7 @@ return [
     'message_subject' => 'Betreff',
     'message' => 'Nachricht',
     'comment' => 'Kommentar',
+    'commentable' => 'Kommentare aktivieren',
     'send' => 'Senden',
     'reply' => 'Antwort',
     'documents' => 'Dokumente',
@@ -516,7 +518,8 @@ return [
         'title_singular' => 'Bereich',
         'create' => 'Bereich erstellen',
         'edit' => 'Bereich bearbeiten',
-        'move_to_curriculum' => 'Bereich in anderes Curriculum verschieben',
+        'move' => 'Curriculum ändern',
+        'delete' => 'Bereich löschen',
         'fields' => [
             'time_approach' => 'Zeitansatz',
         ],
@@ -846,7 +849,6 @@ return [
         'create' => 'Training erstellen',
         'search' => 'Training suchen',
         'edit' => 'Training bearbeiten',
-
     ],
     'exercise' => [
         'title' => 'Übungen',
@@ -857,13 +859,11 @@ return [
         'fields' => [
             'recommended_iterations' => 'Wie oft soll die Übung wiederholt werden?'
         ]
-
     ],
     'exercisedone' => [
         'fields' => [
             'iterations' => 'Wiederholungen'
         ]
-
     ],
     'contactdetail' => [
         'title' => 'Kontaktdaten',
@@ -886,6 +886,10 @@ return [
         'title_singular' => 'Pinnwand',
         'create' => 'Pinnwand erstellen',
         'edit' => 'Pinnwand bearbeiten',
+        'copy' => 'Pinnwand kopieren',
+        'copy_helper' => 'Wollen Sie die Pinnwand kopieren?',
+        'only_edit_owned_items' => 'Nutzer können nur selbst erstellte Status/Karten bearbeiten.',
+        'allow_copy' => 'Pinnwand darf kopiert werden.',
         'delete' => 'Pinnwand löschen',
         'delete_helper' => 'Soll die Pinnwand sowie die zugehörigen Daten gelöscht werden?',
     ],

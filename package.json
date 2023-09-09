@@ -34,6 +34,11 @@
     "dependencies": {
         "@activix/bootstrap-datetimepicker": "^2.0.7",
         "@dimakorotkov/tinymce-mathjax": "^1.0.8",
+        "@fullcalendar/core": "^6.1.8",
+        "@fullcalendar/daygrid": "^6.1.8",
+        "@fullcalendar/interaction": "^6.1.8",
+        "@fullcalendar/timegrid": "^6.1.8",
+        "@fullcalendar/vue": "^6.1.8",
         "@popperjs/core": "^2.11.6",
         "admin-lte": "^3.2.0",
         "babel-loader": "^8.2.5",

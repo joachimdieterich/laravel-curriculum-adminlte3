@@ -66,6 +66,7 @@ const PlanEntry =
         },
 
         mounted() {
+            localStorage.removeItem('user-datatable-selection'); //reset selection to prevent wrong inputs
             this.loaderEvent();
             this.entries = this.plan.entries;
             this.$eventHub.$on('plan_entry_added', (e) => {

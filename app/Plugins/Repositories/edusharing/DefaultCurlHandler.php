@@ -11,9 +11,10 @@ class DefaultCurlHandler extends CurlHandler {
         $curl = curl_init($url);
         curl_setopt_array($curl, $curlOptions);
         $content = curl_exec($curl);
-        $error     = curl_errno( $curl );
-        $info = curl_getinfo($curl);
+        $error   = curl_errno( $curl );
+        $info    = curl_getinfo($curl);
         curl_close($curl);
+
         return new CurlResult($content, $error, $info);
     }
 }

@@ -85,13 +85,13 @@ const Footer =
                     {
                       title: 'Edit',
                       icon: 'fa fa-edit',
-                      action: 'update',
+                      action: 'edit',
                       model: this.type+'Objectives',
                       value: this.type+'-objective-modal'
                     },
                     {
                         title: 'Move',
-                        icon: 'fa fa-arrows-alt',
+                        icon: 'fa fa-repeat',
                         action: 'move',
                         model: this.type+'Objectives',
                         value: 'move-'+this.type+'-objective-modal'
@@ -101,7 +101,7 @@ const Footer =
                     },
                     {
                       title: 'Delete',
-                      icon: 'fa fa-minus',
+                      icon: 'fa fa-trash',
                       action: 'delete',
                       model: this.type+'Objectives',
                     }
@@ -154,12 +154,7 @@ const Footer =
             },
             textcolor: function() {
                 if (this.type === 'terminal'){
-                    var color = (this.objective.color.charAt(0) === '#') ? this.objective.color.substring(1, 7) : this.objective.color;
-                    var r = parseInt(color.substring(0, 2), 16); // hexToR
-                    var g = parseInt(color.substring(2, 4), 16); // hexToG
-                    var b = parseInt(color.substring(4, 6), 16); // hexToB
-                    return (((r * 0.299) + (g * 0.587) + (b * 0.114)) > 140) ?
-                      "#000" : "#fff";
+                    return this.$textcolor(this.objective.color);
                 } else {
                     return "#000";
                 }

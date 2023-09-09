@@ -17,7 +17,7 @@ class TrainingSubscriptionController extends Controller
         $input = $this->validateRequest();
         if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
             $model = $input['subscribable_type']::find($input['subscribable_id']);
-            abort_unless((\Gate::allows('plan_access') and $model->isAccessible()), 403);
+            abort_unless((\Gate::allows('plan_show') and $model->isAccessible()), 403);
 
             if (request()->wantsJson()) {
                 return ['trainings' => $model->trainings];

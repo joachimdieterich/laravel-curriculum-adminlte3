@@ -35,7 +35,7 @@
             id="commentable"
             name="commentable"
             {{ ($kanban->commentable) ? "checked" : "" }}>
-        <label class="custom-control-label " for="commentable" > Kommentare aktivieren</label>
+        <label class="custom-control-label " for="commentable" > {{ trans('global.commentable') }}</label>
     </span>
 </div>
 
@@ -47,7 +47,7 @@
             id="auto_refresh"
             name="auto_refresh"
             {{ ($kanban->auto_refresh) ? "checked" : "" }}>
-        <label class="custom-control-label " for="auto_refresh" > Automatisches aktualisieren</label>
+        <label class="custom-control-label " for="auto_refresh" > {{ trans('global.auto_refresh') }}</label>
     </span>
 </div>
 
@@ -59,7 +59,19 @@
             id="only_edit_owned_items"
             name="only_edit_owned_items"
             {{ ($kanban->only_edit_owned_items) ? "checked" : "" }}>
-        <label class="custom-control-label " for="only_edit_owned_items" > Nutzer können nur selbst erstellte Status/Karten bearbeiten. </label>
+        <label class="custom-control-label " for="only_edit_owned_items" > {{ trans('global.kanban.only_edit_owned_items') }}</label>
+    </span>
+</div>
+
+<div id="kanban_allow_copy_form_group" class="form-group pt-3">
+    <span class="custom-control custom-switch custom-switch-on-green">
+        <input
+            type="checkbox"
+            class="custom-control-input pt-1 "
+            id="allow_copy"
+            name="allow_copy"
+            {{ ($kanban->allow_copy) ? "checked" : "" }}>
+        <label class="custom-control-label " for="allow_copy" > {{ trans('global.kanban.allow_copy') }}</label>
     </span>
 </div>
 

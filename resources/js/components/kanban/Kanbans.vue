@@ -94,36 +94,52 @@
                     </div>
 
                     <div class="symbol"
-                         style="position: absolute;
-                                padding: 6px;
-                                z-index: 1;
-                                width: 30px;
-                                height: 40px;
-                                background-color: #0583C9;
-                                top: 0;
-                                font-size: 1.2em;
-                                left: 10px;">
-                        <i v-if="$userId === kanban.owner_id"
-                           class="fa fa-user text-white pt-2"></i>
+                         :style="'color:' + $textcolor(kanban.color) + '!important'"
+                         style="position: absolute; width: 30px; height: 40px;"
+                    >
+                        <i v-if="$userId == kanban.owner_id"
+                           class="fa fa-user pt-2"></i>
                         <i v-else
-                           class="fa fa-share-nodes text-white pt-2"></i>
+                           class="fa fa-share-nodes pt-2"></i>
                     </div>
-                    <span v-if="$userId === kanban.owner_id"
-                          class="p-1 pointer_hand"
-                          accesskey="" style="position:absolute; top:0; height: 30px; width:100%;">
 
-                       <button
-                           :id="'delete-kanban-'+kanban.id"
-                           type="submit" class="btn btn-danger btn-sm pull-right"
-                           @click.prevent="confirmItemDelete(kanban.id)">
-                           <small><i class="fa fa-trash"></i></small>
-                       </button>
+                    <div v-if="$userId == kanban.owner_id"
+                         class="btn btn-flat pull-right "
+                         :id="'kanbanDropdown_' + kanban.id"
+                         style="position:absolute; top:0; right: 0; background-color: transparent;"
+                         data-toggle="dropdown"
+                         aria-expanded="false">
+                        <i class="fas fa-ellipsis-v"
+                           :style="'color:' + $textcolor(kanban.color)"></i>
+                        <div class="dropdown-menu dropdown-menu-right"
+                             x-placement="left-start">
+                            <button :name="'kanbanEdit_'+kanban.id"
+                                    class="dropdown-item text-secondary"
+                                    @click.prevent="editKanban(kanban.id)">
+                                    <i class="fa fa-pencil-alt mr-2"></i>
+                                {{ trans('global.kanban.edit') }}
+                            </button>
+                            <button
+                                v-if="kanban.allow_copy"
+                                :id="'copy-kanban-'+kanban.id"
+                                type="submit"
+                                class="dropdown-item text-secondary py-1"
+                                @click.prevent="confirmKanbanCopy(kanban.id)">
+                                <i class="fa fa-copy mr-2"></i>
+                                {{ trans('global.kanban.copy') }}
+                            </button>
+                            <hr class="my-1">
+                            <button
+                                :id="'delete-kanban-'+kanban.id"
+                                type="submit"
+                                class="dropdown-item py-1 text-red"
+                                @click.prevent="confirmItemDelete(kanban.id)">
+                                <i class="fa fa-trash mr-2"></i>
+                                {{ trans('global.kanban.delete') }}
+                            </button>
+                        </div>
+                    </div>
 
-                       <a :href="'/kanbans/' + kanban.id + '/edit'"
-                          class="btn btn-primary btn-sm pull-right mr-1">
-                           <small><i class="fa fa-pencil-alt"></i></small>
-                       </a>
-                   </span>
                 </a>
 
             </div>
@@ -135,6 +151,14 @@
             :text="trans('global.kanban.delete_helper')"
             :ok_label="trans('global.kanban.delete')"
             v-on:ok="destroy()"
+        />
+        <Modal
+            :id="'kanbanCopyModal'"
+            css="primary"
+            :title="trans('global.kanban.copy')"
+            :text="trans('global.kanban.copy_helper')"
+            ok_label="OK"
+            v-on:ok="copy()"
         />
 
     </div>
@@ -166,13 +190,21 @@ const Modal =
                 $('#kanbanModal').modal('show');
                 this.tempId = kanbanId;
             },
+            confirmKanbanCopy(kanbanId){
+                $('#kanbanCopyModal').modal('show');
+                this.tempId = kanbanId;
+            },
+            editKanban(id){
+                window.location = "/kanbans/" + id + "/edit";
+            },
+            copy(){
+                window.location = "/kanbans/" + this.tempId + "/copy";
+            },
             loaderEvent(){
                 if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
                     this.url = '/kanbanSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
-                } else {
-                    this.url = 'kanbans/list?filter=' + this.filter
                 }
-                axios.get(this.url)
+                axios.get(this.url + '?filter=' + this.filter)
                     .then(response => {
                             if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
                                 this.kanbans = response.data.data;
@@ -199,6 +231,7 @@ const Modal =
                 } catch (error) {
                     console.log(error);
                 }
+                window.location = "/kanbans";
             },
         },
 

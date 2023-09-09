@@ -41,6 +41,30 @@ Vue.prototype.trans = (key) => {
 
 import "vue-swatches/dist/vue-swatches.css";
 
+
+Vue.prototype.$textcolor = (color) => {
+    if (typeof(color) != 'string'){
+        color = 'ffffff';
+    }
+
+    color = (color.charAt(0) === '#') ? color.substring(1, 7) : color;
+    //console.log(color);
+    var r = parseInt(color.substring(0, 2), 16); // hexToR
+    var g = parseInt(color.substring(2, 4), 16); // hexToG
+    var b = parseInt(color.substring(4, 6), 16); // hexToB
+    //console.log(r + ' ' + g + ' ' + b);
+    if (((r * 0.299) + (g * 0.587) + (b * 0.114)) > 140)
+    {
+        //console.log('black');
+        return '#000';
+
+    } else {
+        //console.log('white');
+        return '#fff';
+    }
+};
+
+
 /**
  * Store current ab in browser storage
  * example @click="setLocalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id)"

@@ -57,7 +57,7 @@
                                     v-for="(item, itemIndex) in status.items"
                                     :key="'transition_group-'+item.id">
                                  <KanbanItem
-                                     :editable="editable"
+                                     :editable="(status.locked == 1 && $userId != kanban.owner_id) ? 0 : editable"
                                      :commentable="kanban.commentable"
                                      :onlyEditOwnedItems="kanban.only_edit_owned_items"
                                      :ref="'kanbanItemId' + item.id"
@@ -86,7 +86,8 @@
                             v-on:item-canceled="closeForm"
                             style="z-index: 2">
                         </KanbanItemCreate>
-                        <div v-show="newItem !== status.id" v-if="editable"
+                        <div v-if="(editable == 1) && (status.locked == 0) || (editor !== false && $userId == status.owner_id ) "
+                             v-show="newItem !== status.id"
                              :id="'kanbanItemCreateButton_' + index"
                              class="btn btn-flat py-0 w-100"
                              style="margin-bottom: 1rem;"

@@ -50,7 +50,8 @@
             </ul>
         </div>
 
-        <div class="col-md-12 py-2">
+        <table id="kanban-datatable" style="display: none;"></table>
+        <div id="kanban-content">
             <div v-for="(kanban,index) in kanbans"
                  :id="'kanban-' + kanban.id"
                  class="box box-objective nav-item-box-image pointer my-1"
@@ -72,7 +73,7 @@
                          :style="{backgroundColor: kanban.color + ' !important'}">
                         <i class="fa fa-2x p-5 fa-columns nav-item-text text-white"></i>
                     </div>
-
+    
                     <span class="bg-white text-center p-1 overflow-auto nav-item-box">
                        <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
                            {{ kanban.title }}
@@ -81,7 +82,7 @@
                           v-html="decodeHtml(kanban.description)">
                        </p>
                     </span>
-
+    
                     <div class="symbol"
                          :style="'color:' + $textcolor(kanban.color) + '!important'"
                          style="position: absolute; width: 30px; height: 40px;"
@@ -130,9 +131,10 @@
                     </div>
 
                 </a>
-
+    
             </div>
         </div>
+        
         <Modal
             :id="'kanbanModal'"
             css="danger"
@@ -156,8 +158,6 @@
 </template>
 
 <script>
-import { nextTick } from 'vue';
-
 const Modal =
     () => import('./../uiElements/Modal');
 //import Modal from "./../uiElements/Modal";
@@ -173,7 +173,7 @@ export default {
         return {
             kanbans: [],
             subscriptions: {},
-            search: '',
+            // search: '',
             url: 'kanbans/list',
             errors: {},
             tempId: Number,
@@ -199,40 +199,42 @@ export default {
             if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
                 this.url = '/kanbanSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
             }
-            axios.get(this.url + '?filter=' + this.filter)
-                .then(async response => {
-                    if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
-                        this.kanbans = response.data.data;
-                    } else {
-                        this.kanbans = response.data.data;
-                    }
+            // axios.get(this.url + '?filter=' + this.filter)
+            //     .then(async response => {
+            //         if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
+            //             this.kanbans = response.data.data;
+            //         } else {
+            //             this.kanbans = response.data.data;
+            //         }
 
-                    await nextTick();
-                    // if the searchbar had some input before changing filters, redo the search
-                    if (this.search != '') this.searchContent();
-                })
-                .catch(e => {
-                    console.log(e.data.errors);
-                });
+            //     })
+            //     .catch(e => {
+                //         console.log(e.data.errors);
+                //     });
+                
+                $('#kanban-datatable').DataTable().ajax.url(this.url + '?filter=' + this.filter).load();
+                // await nextTick();
+                // if the searchbar had some input before changing filters, redo the search
+                // if (this.search != '') this.searchContent();
         },
         setFilter(filter){
             this.filter = filter;
             this.loaderEvent();
         },
-        searchContent() {
+        // searchContent() {
             // always case insensitive
-            const elements = this.$el.getElementsByClassName('box');
-            const search = this.search.toLowerCase();
+            // const elements = this.$el.getElementsByClassName('box');
+            // const search = this.search.toLowerCase();
 
-            for (let i = 0; i < elements.length; i++) {
-                const element = elements[i];
-                const content = element.innerText.toLowerCase();
+            // for (let i = 0; i < elements.length; i++) {
+            //     const element = elements[i];
+            //     const content = element.innerText.toLowerCase();
                 
-                element.style.display = content.includes(search)
-                    ? 'block'
-                    : 'none';
-            }
-        },
+            //     element.style.display = content.includes(search)
+            //         ? 'block'
+            //         : 'none';
+            // }
+        // },
         decodeHtml(html) {
             let txt = document.createElement("textarea");
             txt.innerHTML = html;
@@ -246,41 +248,51 @@ export default {
             }
                 window.location = "/kanbans";
         },
-        tableToJson() { 
-            const table = document.getElementById('kanban-datatable')
+        tableToData() { 
+            const table = document.getElementById('kanban-datatable');
+
+            if (table.getElementsByClassName('dataTables_empty').length > 0) {
+                this.kanbans = [];
+                return;
+            }
+
+            const headers = table.querySelector('thead tr').children;
             let data = [];
+
             for (let row = 1; row < table.rows.length; row++) { 
                 let tableRow = table.rows[row]; 
-                let rowData = []; 
+                let rowData = {}; 
                 for (let cell = 0; cell < tableRow.cells.length; cell++) { 
-                    rowData.push(tableRow.cells[cell].innerHTML);
+                    rowData[headers[cell].innerText] = tableRow.cells[cell].innerHTML;
                 } 
                 data.push(rowData); 
             } 
-            return data; 
+            this.kanbans = data; 
         }
     },
     mounted() {
-        this.loaderEvent();
+        // this.loaderEvent();
 
         this.$eventHub.$on('filter', (filter) => {
-            this.search = filter;
-            this.searchContent();
+            // this.search = filter;
+            // this.searchContent();
+            $('#kanban-datatable').DataTable().search(filter).draw();
         });
         this.$eventHub.$on('removeFilter', () => {
-            this.search = '';
-            this.$el.getElementsByClassName('box').forEach(element => {
-                element.style.display = 'block';
-            });
+            // this.search = '';
+            // this.$el.getElementsByClassName('box').forEach(element => {
+            //     element.style.display = 'block';
+            // });
+            $('#kanban-datatable').DataTable().search('').draw();
         });
         this.$eventHub.$emit('showSearchbar');
 
-        observer = new MutationObserver(this.tableToJson);
+        // checks if the datatable-data changes, to update the kanban-data
+        observer = new MutationObserver(this.tableToData);
         observer.observe(document.getElementById('kanban-datatable'), observerOptions);
 
         $('#kanban-datatable').DataTable({
             ajax: this.url + '?filter=' + this.filter,
-            
             columns: [
                 { title: 'color', data: 'color' },
                 { title: 'description', data: 'description' },
@@ -289,26 +301,18 @@ export default {
                 { title: 'owner_id', data: 'owner_id' },
                 { title: 'title', data: 'title' },
             ],
-            searching: false,
-            initComplete: function(settings, json) {
-                $('#kanban-content').insertBefore('#kanban-datatable');
-                $('#kanban-content').show();
-            },
-            // rowCallback: function(row, data) {
-                // create kanban in here and append to kanban-content
-                // const div = $(document.createElement('div'));
-                // console.warn(data);
-                
-                // div.append('<kanban :kanban="data"></kanban>');
-                // div.appendTo('#kanban-content');
-            // },
-            // preDrawCallback: function(settings) {
-            //     $('#kanban-content').empty();
-            // }
+            pageLength: 6,
         });
+
+        // place the content where the table would normally be
+        $('#kanban-content').insertBefore('#kanban-datatable');
     },
     components: {
         Modal
     },
 }
 </script>
+<style>
+/* hide the built-in datatable-searchbar, but keep its functionality */
+.dataTables_filter { display: none; }
+</style>

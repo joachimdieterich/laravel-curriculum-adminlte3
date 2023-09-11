@@ -1,8 +1,11 @@
 <template >
     <div class="row ">
-        <div class="col-12 pt-2">
+        <div v-if="editor"
+             class="col-12 pt-2">
             <div class="card">
                 <div class="card-body">
+                    <h5>Raum-Einstellungen</h5>
+                    <hr class="bg-gray mt-0">
                     <div class="form-group">
                         <label for="meetingName">
                             {{ trans('global.videoconference.fields.meetingName') }}
@@ -16,191 +19,195 @@
                             :placeholder="trans('global.videoconference.fields.meetingName')"
                         />
                         <p class="help-block" v-if="form.errors?.dialNumber" v-text="form.errors?.dialNumber[0]"></p>
-                    </div>
-                    <div class="form-group w-50 pull-left pr-1">
-                        <label for="welcomeMessage">
-                            {{ trans('global.videoconference.fields.welcomeMessage') }}
-                        </label>
-                        <textarea
-                            id="welcomeMessage"
-                            name="welcomeMessage"
-                            :placeholder="trans('global.videoconference.fields.welcomeMessage')"
-                            class="form-control description my-editor "
-                            v-model.trim="form.welcomeMessage"
-                        ></textarea>
-                    </div>
-                    <div class="form-group w-50 pull-left">
-                        <label for="moderatorOnlyMessage">
-                            {{ trans('global.videoconference.fields.moderatorOnlyMessage') }}
-                        </label>
-                        <textarea
-                            id="moderatorOnlyMessage"
-                            name="moderatorOnlyMessage"
-                            :placeholder="trans('global.videoconference.fields.moderatorOnlyMessage')"
-                            class="form-control description my-editor"
-                            v-model.trim="form.moderatorOnlyMessage"
-                        ></textarea>
+                    </div> <!-- meetingName -->
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-grou ">
+                                <label for="welcomeMessage">
+                                    {{ trans('global.videoconference.fields.welcomeMessage') }}
+                                </label>
+                                <textarea
+                                    id="welcomeMessage"
+                                    name="welcomeMessage"
+                                    :placeholder="trans('global.videoconference.fields.welcomeMessage')"
+                                    class="form-control description my-editor "
+                                    v-model.trim="form.welcomeMessage"
+                                ></textarea>
+                            </div> <!-- welcomeMessage -->
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="moderatorOnlyMessage">
+                                    {{ trans('global.videoconference.fields.moderatorOnlyMessage') }}
+                                </label>
+                                <textarea
+                                    id="moderatorOnlyMessage"
+                                    name="moderatorOnlyMessage"
+                                    :placeholder="trans('global.videoconference.fields.moderatorOnlyMessage')"
+                                    class="form-control description my-editor"
+                                    v-model.trim="form.moderatorOnlyMessage"
+                                ></textarea>
+                            </div> <!-- moderatorOnlyMessage -->
+                        </div>
                     </div>
 
-                    <div class="form-group  w-50 pull-left pr-1">
-                        <label for="maxParticipants">
-                            {{ trans('global.videoconference.fields.maxParticipants') }}
-                        </label>
-                        <input
-                            type="number"
-                            id="maxParticipants"
-                            name="maxParticipants"
-                            class="form-control"
-                            v-model.trim="form.maxParticipants"
-                        />
-                        <p class="help-block" >{{ trans('global.videoconference.fields.maxParticipants_helper') }}</p>
-                        <p class="help-block" v-if="form.errors?.maxParticipants" v-text="form.errors?.maxParticipants[0]"></p>
-                    </div>
-                    <div class="form-group  w-50 pull-left">
-                        <label for="duration">
-                            {{ trans('global.videoconference.fields.duration') }}
-                        </label>
-                        <input
-                            type="number"
-                            id="duration"
-                            name="duration"
-                            class="form-control"
-                            v-model.trim="form.duration"
-                        />
-                        <p class="help-block" >{{ trans('global.videoconference.fields.duration_helper') }}</p>
-                        <p class="help-block" v-if="form.errors?.duration" v-text="form.errors?.duration[0]"></p>
-                    </div>
-                    <div class="clearfix form-group ">
-                        <label for="logoutUrl">
-                            {{ trans('global.videoconference.fields.logoutUrl') }}
-                        </label>
-                        <input
-                            type="text"
-                            id="logoutUrl"
-                            name="logoutUrl"
-                            class="form-control"
-                            required
-                            v-model.trim="form.logoutUrl"
-                        />
-                        <p class="help-block" >{{ trans('global.videoconference.fields.logoutUrl_helper') }}</p>
-                        <p class="help-block" v-if="form.errors?.logoutUrl" v-text="form.errors?.logoutUrl[0]"></p>
-                    </div>
-                    <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="maxParticipants">
+                                    {{ trans('global.videoconference.fields.maxParticipants') }}
+                                </label>
+                                <input
+                                    type="number"
+                                    id="maxParticipants"
+                                    name="maxParticipants"
+                                    class="form-control"
+                                    v-model.trim="form.maxParticipants"
+                                />
+                                <small class="help-block" >{{ trans('global.videoconference.fields.maxParticipants_helper') }}</small>
+                                <p class="help-block" v-if="form.errors?.maxParticipants" v-text="form.errors?.maxParticipants[0]"></p>
+                            </div> <!-- maxParticipants -->
+                            <div class="form-group ">
+                                <label for="categorie">
+                                    {{ trans('global.videoconference.fields.guestPolicy') }}
+                                </label>
+                                <select id="guestPolicy"
+                                        v-model="guestPolicyConstants[form.guestPolicy]"
+                                        class="form-control select2"
+                                        style="width:100%;">
+                                    <option v-for="(value,index) in guestPolicyConstants"
+                                            :id="index"
+                                            :value="value">
+                                        {{ value }}
+                                    </option>
+                                </select>
+                            </div> <!-- guestPolicy -->
+                            <div class="form-group">
                          <span class="custom-control custom-switch custom-switch-on-green">
-                            <input  v-model="form.record"
+                            <input  v-model="form.allJoinAsModerator"
                                     type="checkbox"
                                     class="custom-control-input pt-1 "
-                                    id="record">
+                                    id="allJoinAsModerator">
                             <label class="custom-control-label  font-weight-light"
-                                   for="record" >
-                                {{ trans('global.videoconference.fields.record') }}
+                                   for="allJoinAsModerator" >
+                                {{ trans('global.videoconference.fields.allJoinAsModerator') }}
                             </label>
                         </span>
-                        <p class="help-block" >{{ trans('global.videoconference.fields.record_helper') }}</p>
-                    </div>
-                    <div class="form-group">
-                         <span class="custom-control custom-switch custom-switch-on-green">
-                            <input  v-model="form.autoStartRecording"
-                                    type="checkbox"
-                                    class="custom-control-input pt-1 "
-                                    id="autoStartRecording">
-                            <label class="custom-control-label  font-weight-light"
-                                   for="autoStartRecording" >
-                                {{ trans('global.videoconference.fields.autoStartRecording') }}
-                            </label>
-                        </span>
+                                <p class="help-block" >{{ trans('global.videoconference.fields.allJoinAsModerator_helper') }}</p>
+                            </div> <!-- allJoinAsModerator -->
+                            <div class="form-group">
+                                <label for="duration">
+                                    {{ trans('global.videoconference.fields.duration') }}
+                                </label>
+                                <input
+                                    type="number"
+                                    id="duration"
+                                    name="duration"
+                                    class="form-control"
+                                    v-model.trim="form.duration"
+                                />
+                                <small class="help-block" >{{ trans('global.videoconference.fields.duration_helper') }}</small>
+                                <p class="help-block" v-if="form.errors?.duration" v-text="form.errors?.duration[0]"></p>
+                            </div> <!-- duration -->
+<!--                            <div class="form-group">
+                                <label for="categorie">
+                                    {{ trans('global.videoconference.fields.learningDashboardCleanupDelayInMinutes') }}
+                                </label>
+                                <input
+                                    type="number"
+                                    id="learningDashboardCleanupDelayInMinutes"
+                                    name="learningDashboardCleanupDelayInMinutes"
+                                    class="form-control"
+                                    v-model.trim="form.learningDashboardCleanupDelayInMinutes"
+                                />
+                                <p class="help-block" v-if="form.errors?.learningDashboardCleanupDelayInMinutes" v-text="form.errors?.learningDashboardCleanupDelayInMinutes[0]"></p>
+                            </div> &lt;!&ndash; learningDashboardCleanupDelayInMinutes &ndash;&gt;-->
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group ">
+                                <label for="logoutUrl">
+                                    {{ trans('global.videoconference.fields.logoutUrl') }}
+                                </label>
+                                <input
+                                    type="text"
+                                    id="logoutUrl"
+                                    name="logoutUrl"
+                                    class="form-control"
+                                    required
+                                    v-model.trim="form.logoutUrl"
+                                />
+                                <p class="help-block" >{{ trans('global.videoconference.fields.logoutUrl_helper') }}</p>
+                                <p class="help-block" v-if="form.errors?.logoutUrl" v-text="form.errors?.logoutUrl[0]"></p>
+                            </div>
+                            <div v-if="form.meetingID"
+                                class="form-group">
+                                <MediumForm :form="form"
+                                            :id="component_id"
+                                            :medium_id="form.medium_id"
+                                            accept="image/*"/>
+                            </div>
+
+                            <!-- logoutUrl -->
+<!--                            <div class="form-group">
+                                <label for="logo">
+                                    {{ trans('global.videoconference.fields.logo') }}
+                                </label>
+                                <input
+                                    type="text"
+                                    id="logo"
+                                    name="logo"
+                                    class="form-control"
+                                    v-model.trim="form.logo"
+                                />
+                                <p class="help-block" v-if="form.errors?.logo" v-text="form.errors?.logo[0]"></p>
+                            </div> &lt;!&ndash; logoUrl &ndash;&gt;-->
+                            <div class="form-group">
+                                 <span class="custom-control custom-switch custom-switch-on-green">
+                                    <input  v-model="form.endWhenNoModerator"
+                                            type="checkbox"
+                                            class="custom-control-input pt-1 "
+                                            id="endWhenNoModerator">
+                                    <label class="custom-control-label font-weight-light"
+                                           for="endWhenNoModerator" >
+                                        {{ trans('global.videoconference.fields.endWhenNoModerator') }}
+                                    </label>
+                                </span>
+                            </div> <!-- endWhenNoModerator -->
+                            <div v-if="form.endWhenNoModerator"
+                                 class="form-group">
+                                <label for="categorie">
+                                    {{ trans('global.videoconference.fields.endWhenNoModeratorDelayInMinutes') }}
+                                </label>
+                                <input
+                                    type="number"
+                                    id="endWhenNoModeratorDelayInMinutes"
+                                    name="endWhenNoModeratorDelayInMinutes"
+                                    class="form-control"
+                                    v-model.trim="form.endWhenNoModeratorDelayInMinutes"
+                                />
+                                <p class="help-block" v-if="form.errors?.endWhenNoModeratorDelayInMinutes" v-text="form.errors?.endWhenNoModeratorDelayInMinutes[0]"></p>
+                            </div> <!--endWhenNoModeratorDelayInMinutes -->
+                        </div>
                     </div>
 
-<!--                    <div class="form-group">
-                         <span class="custom-control custom-switch custom-switch-on-green">
-                            <input  v-model="form.isBreakout"
-                                    type="checkbox"
-                                    class="custom-control-input pt-1 "
-                                    id="isBreakout">
-                            <label class="custom-control-label  font-weight-light"
-                                   for="isBreakout" >
-                                {{ trans('global.videoconference.fields.isBreakout') }}
-                            </label>
-                        </span>
-                    </div>-->
-
-
-                    <div class="form-group">
-                        <label for="bannerText">
-                            {{ trans('global.videoconference.fields.bannerText') }}
-                        </label>
-                        <input
-                            type="text"
-                            id="bannerText"
-                            name="bannerText"
-                            class="form-control"
-                            v-model.trim="form.bannerText"
-                        />
-                        <p class="help-block" v-if="form.errors?.bannerText" v-text="form.errors?.bannerText[0]"></p>
-                    </div>
-
-                    <label for="bannerColor">
-                        {{ trans('global.videoconference.fields.bannerColor') }}
-                    </label>
-                    <color-picker-input
-                        v-model="form.bannerColor">
-
-                    </color-picker-input>
-                    <div class="form-group">
-                        <label for="logo">
-                            {{ trans('global.videoconference.fields.logo') }}
-                        </label>
-                        <input
-                            type="text"
-                            id="logo"
-                            name="logo"
-                            class="form-control"
-                            v-model.trim="form.logo"
-                        />
-                        <p class="help-block" v-if="form.errors?.logo" v-text="form.errors?.logo[0]"></p>
-                    </div>
-                    <div class="form-group">
-                        <label for="copyright">
-                            {{ trans('global.videoconference.fields.copyright') }}
-                        </label>
-                        <input
-                            type="text"
-                            id="copyright"
-                            name="copyright"
-                            class="form-control"
-                            v-model.trim="form.copyright"
-                        />
-                        <p class="help-block" v-if="form.errors?.copyright" v-text="form.errors?.copyright[0]"></p>
-                    </div>
-                    <div class="form-group">
-                        <label for="muteOnStart">
-                            {{ trans('global.videoconference.fields.muteOnStart') }}
-                        </label>
-                         <span class="custom-control custom-switch custom-switch-on-green">
-                            <input  v-model="form.muteOnStart"
-                                    type="checkbox"
-                                    class="custom-control-input pt-1 "
-                                    id="muteOnStart">
-                            <label class="custom-control-label  font-weight-light"
-                                   for="muteOnStart" >
-                                {{ trans('global.videoconference.fields.muteOnStart') }}
-                            </label>
-                        </span>
-                        <p class="help-block" >{{ trans('global.videoconference.fields.muteOnStart_helper') }}</p>
-                    </div>
-<!--                    <div class="form-group">
-                         <span class="custom-control custom-switch custom-switch-on-green">
-                            <input  v-model="form.allowModsToUnmuteUsers"
-                                    type="checkbox"
-                                    class="custom-control-input pt-1 "
-                                    id="allowModsToUnmuteUsers">
-                            <label class="custom-control-label  font-weight-light"
-                                   for="allowModsToUnmuteUsers" >
-                                {{ trans('global.videoconference.fields.allowModsToUnmuteUsers') }}
-                            </label>
-                        </span>
-                    </div>-->
-                    <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h5 class="pt-4">Audio-/Video-Einstellungen</h5>
+                            <hr class="bg-gray mt-0">
+                            <div class="form-group">
+                                <span class="custom-control custom-switch custom-switch-on-green">
+                                    <input  v-model="form.muteOnStart"
+                                            type="checkbox"
+                                            class="custom-control-input pt-1 "
+                                            id="muteOnStart">
+                                    <label class="custom-control-label  font-weight-light"
+                                           for="muteOnStart" >
+                                        {{ trans('global.videoconference.fields.muteOnStart') }}
+                                    </label>
+                                </span>
+                                <small class="help-block" >{{ trans('global.videoconference.fields.muteOnStart_helper') }}</small>
+                            </div> <!-- muteOnStart -->
+                            <div class="form-group">
                          <span class="custom-control custom-switch custom-switch-on-green">
                             <input  v-model="form.lockSettingsDisableCam"
                                     type="checkbox"
@@ -211,9 +218,9 @@
                                 {{ trans('global.videoconference.fields.lockSettingsDisableCam') }}
                             </label>
                         </span>
-                        <p class="help-block" >{{ trans('global.videoconference.fields.lockSettingsDisableCam_helper') }}</p>
-                    </div>
-                    <div class="form-group">
+                                <p class="help-block" >{{ trans('global.videoconference.fields.lockSettingsDisableCam_helper') }}</p>
+                            </div> <!-- lockSettingsDisableCam -->
+                            <div class="form-group">
                          <span class="custom-control custom-switch custom-switch-on-green">
                             <input  v-model="form.lockSettingsDisableMic"
                                     type="checkbox"
@@ -224,166 +231,9 @@
                                 {{ trans('global.videoconference.fields.lockSettingsDisableMic') }}
                             </label>
                         </span>
-                        <p class="help-block" >{{ trans('global.videoconference.fields.lockSettingsDisableMic_helper') }}</p>
-                    </div>
-                    <div class="form-group">
-                         <span class="custom-control custom-switch custom-switch-on-green">
-                            <input  v-model="form.lockSettingsDisablePrivateChat"
-                                    type="checkbox"
-                                    class="custom-control-input pt-1 "
-                                    id="lockSettingsDisablePrivateChat">
-                            <label class="custom-control-label  font-weight-light"
-                                   for="lockSettingsDisablePrivateChat" >
-                                {{ trans('global.videoconference.fields.lockSettingsDisablePrivateChat') }}
-                            </label>
-                        </span>
-                        <p class="help-block" >{{ trans('global.videoconference.fields.lockSettingsDisablePrivateChat_helper') }}</p>
-                    </div>
-                    <div class="form-group">
-                         <span class="custom-control custom-switch custom-switch-on-green">
-                            <input  v-model="form.lockSettingsDisablePublicChat"
-                                    type="checkbox"
-                                    class="custom-control-input pt-1 "
-                                    id="lockSettingsDisablePublicChat">
-                            <label class="custom-control-label  font-weight-light"
-                                   for="lockSettingsDisablePublicChat" >
-                                {{ trans('global.videoconference.fields.lockSettingsDisablePublicChat') }}
-                            </label>
-                        </span>
-                        <p class="help-block" >{{ trans('global.videoconference.fields.lockSettingsDisablePublicChat_helper') }}</p>
-                    </div>
-                    <div class="form-group">
-                         <span class="custom-control custom-switch custom-switch-on-green">
-                            <input  v-model="form.lockSettingsDisableNote"
-                                    type="checkbox"
-                                    class="custom-control-input pt-1 "
-                                    id="lockSettingsDisableNote">
-                            <label class="custom-control-label font-weight-light"
-                                   for="lockSettingsDisableNote" >
-                                {{ trans('global.videoconference.fields.lockSettingsDisableNote') }}
-                            </label>
-                        </span>
-                        <p class="help-block" >{{ trans('global.videoconference.fields.lockSettingsDisableNote_helper') }}</p>
-                    </div>
-                    <div class="form-group">
-                         <span class="custom-control custom-switch custom-switch-on-green">
-                            <input  v-model="form.lockSettingsLockedLayout"
-                                    type="checkbox"
-                                    class="custom-control-input pt-1 "
-                                    id="lockSettingsLockedLayout">
-                            <label class="custom-control-label font-weight-light"
-                                   for="lockSettingsLockedLayout" >
-                                {{ trans('global.videoconference.fields.lockSettingsLockedLayout') }}
-                            </label>
-                        </span>
-                    </div>
-<!--                    <div class="form-group">
-                         <span class="custom-control custom-switch custom-switch-on-green">
-                            <input  v-model="form.lockSettingsLockOnJoin"
-                                    type="checkbox"
-                                    class="custom-control-input pt-1 "
-                                    id="lockSettingsLockOnJoin">
-                            <label class="custom-control-label font-weight-light"
-                                   for="lockSettingsLockOnJoin" >
-                                {{ trans('global.videoconference.fields.lockSettingsLockOnJoin') }}
-                            </label>
-                        </span>
-                    </div>-->
-<!--                    <div class="form-group">
-                         <span class="custom-control custom-switch custom-switch-on-green">
-                            <input  v-model="form.lockSettingsLockOnJoinConfigurable"
-                                    type="checkbox"
-                                    class="custom-control-input pt-1 "
-                                    id="lockSettingsLockOnJoinConfigurable">
-                            <label class="custom-control-label font-weight-light"
-                                   for="lockSettingsLockOnJoinConfigurable" >
-                                {{ trans('global.videoconference.fields.lockSettingsLockOnJoinConfigurable') }}
-                            </label>
-                        </span>
-                    </div>-->
-                    <div class="form-group ">
-                        <label for="categorie">
-                            {{ trans('global.videoconference.fields.guestPolicy') }}
-                        </label>
-                        <select id="guestPolicy"
-                                v-model="guestPolicyConstants[form.guestPolicy]"
-                                class="form-control select2"
-                                style="width:100%;">
-                            <option v-for="(value,index) in guestPolicyConstants"
-                                    :id="index"
-                                    :value="value">
-                                {{ value }}
-                            </option>
-                        </select>
-                    </div>
-                    <div class="form-group ">
-                        <label for="categorie">
-                            {{ trans('global.videoconference.fields.meetingLayout') }}
-                        </label>
-                        <select
-                            id="meetingLayout"
-                            v-model="meetingLayoutConstants[form.meetingLayout]"
-                            class="form-control select2"
-                            style="width:100%;">
-                            <option v-for="(value,index) in meetingLayoutConstants"
-                                    :id="index"
-                                    :value="value">
-                                {{ value }}
-                            </option>
-                        </select>
-                    </div>
-<!--                    <div class="form-group">
-                         <span class="custom-control custom-switch custom-switch-on-green">
-                            <input  v-model="form.meetingKeepEvents"
-                                    type="checkbox"
-                                    class="custom-control-input pt-1 "
-                                    id="meetingKeepEvents">
-                            <label class="custom-control-label font-weight-light"
-                                   for="meetingKeepEvents" >
-                                {{ trans('global.videoconference.fields.meetingKeepEvents') }}
-                            </label>
-                        </span>
-                    </div>-->
-                    <div class="form-group">
-                         <span class="custom-control custom-switch custom-switch-on-green">
-                            <input  v-model="form.endWhenNoModerator"
-                                    type="checkbox"
-                                    class="custom-control-input pt-1 "
-                                    id="endWhenNoModerator">
-                            <label class="custom-control-label font-weight-light"
-                                   for="endWhenNoModerator" >
-                                {{ trans('global.videoconference.fields.endWhenNoModerator') }}
-                            </label>
-                        </span>
-                    </div>
-                    <div class="form-group">
-                        <label for="categorie">
-                            {{ trans('global.videoconference.fields.endWhenNoModeratorDelayInMinutes') }}
-                        </label>
-                        <input
-                            type="number"
-                            id="endWhenNoModeratorDelayInMinutes"
-                            name="endWhenNoModeratorDelayInMinutes"
-                            class="form-control"
-                            v-model.trim="form.endWhenNoModeratorDelayInMinutes"
-                        />
-                        <p class="help-block" v-if="form.errors?.endWhenNoModeratorDelayInMinutes" v-text="form.errors?.endWhenNoModeratorDelayInMinutes[0]"></p>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="categorie">
-                            {{ trans('global.videoconference.fields.learningDashboardCleanupDelayInMinutes') }}
-                        </label>
-                        <input
-                            type="number"
-                            id="learningDashboardCleanupDelayInMinutes"
-                            name="learningDashboardCleanupDelayInMinutes"
-                            class="form-control"
-                            v-model.trim="form.learningDashboardCleanupDelayInMinutes"
-                        />
-                        <p class="help-block" v-if="form.errors?.learningDashboardCleanupDelayInMinutes" v-text="form.errors?.learningDashboardCleanupDelayInMinutes[0]"></p>
-                    </div>
-                    <div class="form-group">
+                                <p class="help-block" >{{ trans('global.videoconference.fields.lockSettingsDisableMic_helper') }}</p>
+                            </div> <!-- lockSettingsDisableMic -->
+                            <div class="form-group">
                          <span class="custom-control custom-switch custom-switch-on-green">
                             <input  v-model="form.allowModsToEjectCameras"
                                     type="checkbox"
@@ -394,8 +244,162 @@
                                 {{ trans('global.videoconference.fields.allowModsToEjectCameras') }}
                             </label>
                         </span>
+                            </div> <!-- allowModsToEjectCameras -->
+                        </div>
+                        <div class="col-sm-6">
+                            <h5 class="pt-4">Kollaborations-Einstellungen</h5>
+                            <hr class="bg-gray mt-0">
+                            <div class="form-group">
+                         <span class="custom-control custom-switch custom-switch-on-green">
+                            <input  v-model="form.lockSettingsDisablePrivateChat"
+                                    type="checkbox"
+                                    class="custom-control-input pt-1 "
+                                    id="lockSettingsDisablePrivateChat">
+                            <label class="custom-control-label  font-weight-light"
+                                   for="lockSettingsDisablePrivateChat" >
+                                {{ trans('global.videoconference.fields.lockSettingsDisablePrivateChat') }}
+                            </label>
+                        </span>
+                                <p class="help-block" >{{ trans('global.videoconference.fields.lockSettingsDisablePrivateChat_helper') }}</p>
+                            </div>
+                            <div class="form-group">
+                         <span class="custom-control custom-switch custom-switch-on-green">
+                            <input  v-model="form.lockSettingsDisablePublicChat"
+                                    type="checkbox"
+                                    class="custom-control-input pt-1 "
+                                    id="lockSettingsDisablePublicChat">
+                            <label class="custom-control-label  font-weight-light"
+                                   for="lockSettingsDisablePublicChat" >
+                                {{ trans('global.videoconference.fields.lockSettingsDisablePublicChat') }}
+                            </label>
+                        </span>
+                                <p class="help-block" >{{ trans('global.videoconference.fields.lockSettingsDisablePublicChat_helper') }}</p>
+                            </div>
+                            <div class="form-group">
+                         <span class="custom-control custom-switch custom-switch-on-green">
+                            <input  v-model="form.lockSettingsDisableNote"
+                                    type="checkbox"
+                                    class="custom-control-input pt-1 "
+                                    id="lockSettingsDisableNote">
+                            <label class="custom-control-label font-weight-light"
+                                   for="lockSettingsDisableNote" >
+                                {{ trans('global.videoconference.fields.lockSettingsDisableNote') }}
+                            </label>
+                        </span>
+                                <p class="help-block" >{{ trans('global.videoconference.fields.lockSettingsDisableNote_helper') }}</p>
+                            </div>
+                        </div>
                     </div>
-<!--                    <div class="form-group">
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h5 class="pt-4">Layout-Einstellungen</h5>
+                            <hr class="bg-gray mt-0">
+                            <div class="form-group ">
+                                <select
+                                    id="meetingLayout"
+                                    v-model="meetingLayoutConstants[form.meetingLayout]"
+                                    class="form-control select2"
+                                    style="width:100%;">
+                                    <option v-for="(value,index) in meetingLayoutConstants"
+                                            :id="index"
+                                            :value="value">
+                                        {{ value }}
+                                    </option>
+                                </select>
+                            </div> <!-- meetingLayout -->
+                            <div class="form-group">
+                         <span class="custom-control custom-switch custom-switch-on-green">
+                            <input  v-model="form.lockSettingsLockedLayout"
+                                    type="checkbox"
+                                    class="custom-control-input pt-1 "
+                                    id="lockSettingsLockedLayout">
+                            <label class="custom-control-label font-weight-light"
+                                   for="lockSettingsLockedLayout" >
+                                {{ trans('global.videoconference.fields.lockSettingsLockedLayout') }}
+                            </label>
+                        </span>
+                            </div> <!-- lockSettingsLockedLayout -->
+                        </div>
+                        <div class="col-sm-6">
+                            <h5 class="pt-4">Aufnahme-Einstellungen</h5>
+                            <hr class="bg-gray mt-0">
+                            <div class="form-group">
+                         <span class="custom-control custom-switch custom-switch-on-green">
+                            <input  v-model="form.record"
+                                    type="checkbox"
+                                    class="custom-control-input pt-1 "
+                                    id="record">
+                            <label class="custom-control-label  font-weight-light"
+                                   for="record" >
+                                {{ trans('global.videoconference.fields.record') }}
+                            </label>
+                        </span>
+                                <small class="help-block" >{{ trans('global.videoconference.fields.record_helper') }}</small>
+                            </div> <!-- record -->
+                            <div class="form-group">
+                         <span v-if="form.record"
+                             class="custom-control custom-switch custom-switch-on-green">
+                            <input  v-model="form.autoStartRecording"
+                                    type="checkbox"
+                                    class="custom-control-input pt-1 "
+                                    id="autoStartRecording">
+                            <label class="custom-control-label  font-weight-light"
+                                   for="autoStartRecording" >
+                                {{ trans('global.videoconference.fields.autoStartRecording') }}
+                            </label>
+                        </span>
+                            </div> <!-- autoStartRecording -->
+                        </div>
+                    </div>
+
+                    <!--                    <div class="form-group">
+                                             <span class="custom-control custom-switch custom-switch-on-green">
+                                                <input  v-model="form.isBreakout"
+                                                        type="checkbox"
+                                                        class="custom-control-input pt-1 "
+                                                        id="isBreakout">
+                                                <label class="custom-control-label  font-weight-light"
+                                                       for="isBreakout" >
+                                                    {{ trans('global.videoconference.fields.isBreakout') }}
+                                                </label>
+                                            </span>
+                                        </div>-->
+<!--                                        <div class="form-group">
+                                            <label for="bannerText">
+                                                {{ trans('global.videoconference.fields.bannerText') }}
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="bannerText"
+                                                name="bannerText"
+                                                class="form-control"
+                                                v-model.trim="form.bannerText"
+                                            />
+                                            <p class="help-block" v-if="form.errors?.bannerText" v-text="form.errors?.bannerText[0]"></p>
+                                        </div>-->
+
+                                        <label for="bannerColor">
+                                            {{ trans('global.videoconference.fields.bannerColor') }}
+                                        </label>
+                                        <color-picker-input
+                                            v-model="form.bannerColor">
+
+                                        </color-picker-input>
+                    <!--                    <div class="form-group">
+                                            <label for="copyright">
+                                                {{ trans('global.videoconference.fields.copyright') }}
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="copyright"
+                                                name="copyright"
+                                                class="form-control"
+                                                v-model.trim="form.copyright"
+                                            />
+                                            <p class="help-block" v-if="form.errors?.copyright" v-text="form.errors?.copyright[0]"></p>
+                                        </div>-->
+                    <!--                    <div class="form-group">
                          <span class="custom-control custom-switch custom-switch-on-green">
                             <input  v-model="form.allowRequestsWithoutSession"
                                     type="checkbox"
@@ -407,35 +411,78 @@
                             </label>
                         </span>
                     </div>-->
-<!--                    <div class="form-group">
-                        <input
-                            type="number"
-                            id="userCameraCap"
-                            name="userCameraCap"
-                            class="form-control"
-                            v-model.trim="form.userCameraCap"
-                        />
-                        <p class="help-block" v-if="form.errors?.userCameraCap" v-text="form.errors?.userCameraCap[0]"></p>
+                    <!--                    <div class="form-group">
+                                            <input
+                                                type="number"
+                                                id="userCameraCap"
+                                                name="userCameraCap"
+                                                class="form-control"
+                                                v-model.trim="form.userCameraCap"
+                                            />
+                                            <p class="help-block" v-if="form.errors?.userCameraCap" v-text="form.errors?.userCameraCap[0]"></p>
+                                        </div>-->
+                    <!--                    <div class="form-group">
+                                            <label for="dialNumber">
+                                                {{ trans('global.videoconference.fields.dialNumber') }}
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="dialNumber"
+                                                name="dialNumber"
+                                                class="form-control"
+                                                v-model.trim="form.dialNumber"
+                                                :placeholder="trans('global.videoconference.fields.dialNumber')"
+                                            />
+                                            <p class="help-block" v-if="form.errors?.dialNumber" v-text="form.errors?.dialNumber[0]"></p>
+                                        </div>-->
+                    <!--                    <div class="form-group">
+                         <span class="custom-control custom-switch custom-switch-on-green">
+                            <input  v-model="form.meetingKeepEvents"
+                                    type="checkbox"
+                                    class="custom-control-input pt-1 "
+                                    id="meetingKeepEvents">
+                            <label class="custom-control-label font-weight-light"
+                                   for="meetingKeepEvents" >
+                                {{ trans('global.videoconference.fields.meetingKeepEvents') }}
+                            </label>
+                        </span>
                     </div>-->
-
-
-<!--                    <div class="form-group">
-                        <label for="dialNumber">
-                            {{ trans('global.videoconference.fields.dialNumber') }}
-                        </label>
-                        <input
-                            type="text"
-                            id="dialNumber"
-                            name="dialNumber"
-                            class="form-control"
-                            v-model.trim="form.dialNumber"
-                            :placeholder="trans('global.videoconference.fields.dialNumber')"
-                        />
-                        <p class="help-block" v-if="form.errors?.dialNumber" v-text="form.errors?.dialNumber[0]"></p>
+                    <!--                    <div class="form-group">
+                         <span class="custom-control custom-switch custom-switch-on-green">
+                            <input  v-model="form.lockSettingsLockOnJoin"
+                                    type="checkbox"
+                                    class="custom-control-input pt-1 "
+                                    id="lockSettingsLockOnJoin">
+                            <label class="custom-control-label font-weight-light"
+                                   for="lockSettingsLockOnJoin" >
+                                {{ trans('global.videoconference.fields.lockSettingsLockOnJoin') }}
+                            </label>
+                        </span>
                     </div>-->
-
-
-
+                    <!--                    <div class="form-group">
+                                             <span class="custom-control custom-switch custom-switch-on-green">
+                                                <input  v-model="form.lockSettingsLockOnJoinConfigurable"
+                                                        type="checkbox"
+                                                        class="custom-control-input pt-1 "
+                                                        id="lockSettingsLockOnJoinConfigurable">
+                                                <label class="custom-control-label font-weight-light"
+                                                       for="lockSettingsLockOnJoinConfigurable" >
+                                                    {{ trans('global.videoconference.fields.lockSettingsLockOnJoinConfigurable') }}
+                                                </label>
+                                            </span>
+                                        </div>-->
+                    <!--                    <div class="form-group">
+                         <span class="custom-control custom-switch custom-switch-on-green">
+                            <input  v-model="form.allowModsToUnmuteUsers"
+                                    type="checkbox"
+                                    class="custom-control-input pt-1 "
+                                    id="allowModsToUnmuteUsers">
+                            <label class="custom-control-label  font-weight-light"
+                                   for="allowModsToUnmuteUsers" >
+                                {{ trans('global.videoconference.fields.allowModsToUnmuteUsers') }}
+                            </label>
+                        </span>
+                    </div>-->
                     <button :name="'videoconferenceSave'"
                             class="btn btn-primary p-2 m-2"
                             @click="submit()">
@@ -445,12 +492,45 @@
 
             </div>
         </div>
+        <div v-else class="col-12 pt-2">
+
+            <div v-if="loading"
+                 class=" text-center ">
+                <i class="fas fa-2x fa-spinner fa-spin"></i>
+                <p> {{ loadingMessage }} {{ timerCount }}</p>
+
+                <button @click="toggleTimer()"
+                        class="btn btn-primary pt-2">
+                    {{ trans('global.cancel') }}
+                </button>
+            </div>
+            <div v-else>
+                <div class="form-group">
+                    <label for="userName">
+                        {{ trans('global.name') }}
+                    </label>
+                    <input
+                        type="text"
+                        id="userName"
+                        name="userName"
+                        class="form-control"
+                        v-model.trim="form.userName"
+                        :placeholder="trans('global.name')"
+                    />
+                </div> <!-- guestName -->
+                <button @click="startVideoconference()"
+                        class="btn btn-primary pt-2">
+                    {{ trans('global.videoconference.start') }}
+                </button>
+            </div>
+        </div>
     </div>
+
 </template>
 
 <script>
 import Form from "form-backend-validation";
-
+import MediumForm from "../media/MediumForm";
 const Trainings =
     () => import('../training/Trainings');
 
@@ -459,7 +539,10 @@ export default {
         videoconference: {
             default: null
         },
-        create: {
+        user: {
+            default: null
+        },
+        editor: {
             default: false
         },
 
@@ -486,7 +569,7 @@ export default {
                 'autoStartRecording': false,
                 'allowStartStopRecording': true,
                 'bannerText': '',
-                'bannerColor': '#222F3D',
+                'bannerColor': '#F2C511',
                 'logo': null,
                 'copyright': '',
                 'muteOnStart': false,
@@ -500,6 +583,7 @@ export default {
                 'lockSettingsLockOnJoin': false,
                 'lockSettingsLockOnJoinConfigurable': false,
                 'guestPolicy': 'ALWAYS_ACCEPT',
+                'userName': '',
                 'meetingKeepEvents': false,
                 'endWhenNoModerator': false,
                 'endWhenNoModeratorDelayInMinutes': 1,
@@ -508,6 +592,8 @@ export default {
                 'allowModsToEjectCameras': false,
                 'allowRequestsWithoutSession': false,
                 'userCameraCap': 3,
+                'allJoinAsModerator': false,
+                'medium_id': null,
             }),
             guestPolicyConstants: {
                 'ALWAYS_ACCEPT': window.trans.global.videoconference.ALWAYS_ACCEPT,
@@ -520,14 +606,19 @@ export default {
                 'PRESENTATION_FOCUS': window.trans.global.videoconference.PRESENTATION_FOCUS,
                 'VIDEO_FOCUS': window.trans.global.videoconference.VIDEO_FOCUS
             },
-            editor: false,
             errors: {},
+            loading: false,
+            loadingMessage: 'Lade Konferenz',
+            timerEnabled: false,
+            timerCount: 10
         }
     },
     mounted() {
-
         if ( this.videoconference !== null ) {
             this.form = this.videoconference;
+            if(this.user != null){
+                this.form.userName = this.user.firstname + ' ' + this.user.lastname;
+            }
             this.method = 'patch';
         }
 
@@ -547,6 +638,15 @@ export default {
             .val(this.meetingLayoutConstants[this.form.meetingLayout])
             .trigger('change');
 
+        // Set eventlistener for Media
+        this.$eventHub.$on('addMedia', (e) => {
+            if (this.component_id == e.id) {
+                this.form.medium_id = e.selectedMediumId;
+                if ( Array.isArray(this.form.medium_id))  {
+                    this.form.medium_id = this.form.medium_id[0]; //Hack to get existing files working.
+                }
+            }
+        });
 
         this.$initTinyMCE([
             "autolink link"
@@ -554,13 +654,6 @@ export default {
 
     },
     methods: {
-        /*edit() {
-            this.editor = !this.editor ;
-
-            this.$nextTick(() => {
-                this.$initTinyMCE( );
-            });
-        },*/
         destroy(videoconference){
             axios.delete('/videoconferences/'+videoconference.id)
                 .then(response => {
@@ -593,14 +686,60 @@ export default {
                         console.log(error);
                     });
             }
-            /*this.form.title = '';
-            this.form.description = '';*/
-            this.editor = false;
-
         },
+        toggleTimer(){
+            this.loading = false;
+            this.timerEnabled = false;
+            this.loadingMessage = 'Laden abgebrochen. Fenster neu laden um Verbindungsaufbau neu zu starten.'
+        },
+        startVideoconference(){
+            this.loading = !this.loading;
+            this.timerCount= 10;
+            this.timerEnabled = true;
+            if (this.videoconference.owner_id == this.$userId){
+                window.location = '/videoconferences/' + this.videoconference.id + '/start?userName=' + this.form.userName;
+            } else {
+                axios.get('/videoconferences/' + this.videoconference.id + '/getStatus')
+                    .then(response => {
+                        if (response.data.videoconference == false) {
+                            this.loadingMessage = 'Konferenz ist noch nicht gestartet. Neuer Verbindungsversuch in ';
+                        } else {
+                            this.timerEnabled = false;
+                            window.location = response.data.videoconference + '/start?userName=' + this.form.userName;
+                        }
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    });
+            }
+        },
+
+    },
+    watch: {
+        timerEnabled(value) {
+            if (value) {
+                setTimeout(() => {
+                    this.timerCount--;
+                }, 1000);
+            }
+        },
+        timerCount: {
+            handler(value) {
+                if (value > 0 && this.timerEnabled) {
+                    setTimeout(() => {
+                        this.timerCount--;
+                    }, 1000);
+                } else {
+                    this.loading = !this.loading;
+                    this.startVideoconference();
+                }
+            },
+        }
+
     },
 
     components: {
+        MediumForm,
     },
 }
 </script>

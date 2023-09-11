@@ -1,4 +1,5 @@
 @extends('layouts.master')
+
 @section('title')
     {{ trans('global.videoconference.title') }}
 @endsection
@@ -18,57 +19,12 @@
         </div>
     </div>
 @endcan
-<table id="videoconferences-datatable" class="table table-hover datatable">
-    <thead>
-        <tr>
-            <th width="10"> </th>
-            <th>{{ trans('global.videoconference.fields.meetingName') }}</th>
-            <th>{{ trans('global.videoconference.fields.attendeePW') }}</th>
-            <th>{{ trans('global.videoconference.fields.moderatorPW') }}</th>
-            <th>{{ trans('global.videoconference.fields.callbackUrl') }}</th>
-            <th>{{ trans('global.datatables.action') }}</th>
-        </tr>
-    </thead>
-</table>
+
+<videoconferences model-url="videoconferences"></videoconferences>
+
+@can('videoconference_create')
+    <subscribe-modal></subscribe-modal>
+@endcan
 
 @endsection
-@section('scripts')
-@parent
-<script>
-    $(function () {
 
-    let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-    var table = $('#videoconferences-datatable').DataTable({
-        ajax: "{{ url('videoconferences/list') }}",
-        columns: [
-                 { data: 'check'},
-                 { data: 'meetingName' },
-                 { data: 'attendeePW' },
-                 { data: 'moderatorPW' },
-                 { data: 'callbackUrl' },
-                 { data: 'action' }
-                ],
-        columnDefs: [
-            { "visible": false, "targets": 0 },
-            {
-                orderable: false,
-                searchable: false,
-                targets: - 1
-            }
-        ],
-        bStateSave: false,
-        fnStateSave: function (oSettings, oData) {
-            localStorage.setItem( 'DataTables', JSON.stringify(oData) );
-        },
-        fnStateLoad: function (oSettings) {
-            return JSON.parse( localStorage.getItem('DataTables') );
-        },
-        buttons: dtButtons
-    });
-    table.on( 'select', function ( e, dt, type, indexes ) { //on select event
-        window.location.href = "/videoconferences/" + table.row({ selected: true }).data().id +"/edit" ;
-    });
-})
-
-</script>
-@endsection

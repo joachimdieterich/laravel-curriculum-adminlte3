@@ -18,7 +18,7 @@
                     {{ trans('global.media.title_singular') }}
             </a>
         </div>
-        <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
+<!--        <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>-->
     </div>
 </template>
 <script>

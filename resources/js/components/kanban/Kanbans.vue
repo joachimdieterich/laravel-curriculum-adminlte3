@@ -203,17 +203,19 @@ const Modal =
             loaderEvent(){
                 if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
                     this.url = '/kanbanSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
+                } else {
+                    this.url =  'kanbans/list?filter=' + this.filter
                 }
-                axios.get(this.url + '?filter=' + this.filter)
+                axios.get(this.url)
                     .then(response => {
-                            if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
-                                this.kanbans = response.data.data;
-                            } else {
-                                this.kanbans = response.data.data;
-                            }
+                        if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
+                            this.kanbans = response.data.data;
+                        } else {
+                            this.kanbans = response.data.data;
+                        }
                     })
                     .catch(e => {
-                        console.log(e.data.errors);
+                        console.log(e);
                     });
             },
             setFilter(filter){

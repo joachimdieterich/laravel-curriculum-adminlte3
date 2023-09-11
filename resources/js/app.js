@@ -190,6 +190,7 @@ Vue.component('color-picker-input', () => import('./components/kanban/ColorPicke
 Vue.component('leaflet-map', () => import('./components/map/Map.vue'));
 Vue.component('searchbar', () => import('./components/uiElements/Searchbar.vue'));
 Vue.component('videoconference', () => import('./components/videoconference/Videoconference'));
+Vue.component('videoconferences', () => import('./components/videoconference/Videoconferences'));
 
 Vue.component('tests-table', () => import('./components/tests/TestsTable.vue'));
 

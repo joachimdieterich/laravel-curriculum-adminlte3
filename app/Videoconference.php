@@ -49,9 +49,12 @@ class Videoconference extends Model
         'allowModsToEjectCameras',
         'allowRequestsWithoutSession',
         'userCameraCap',
+        'allJoinAsModerator',
         'owner_id',
         'subscribable_type',
         'subscribable_id',
+        'userName',
+        'medium_id'
     ];
 
     protected $casts = [
@@ -73,6 +76,7 @@ class Videoconference extends Model
         'endWhenNoModerator' => 'boolean',
         'allowModsToEjectCameras' => 'boolean',
         'allowRequestsWithoutSession' => 'boolean',
+        'allJoinAsModerator' => 'boolean',
     ];
 
     public function path()
@@ -90,6 +94,11 @@ class Videoconference extends Model
         return $this->morphMany('App\MediumSubscription', 'subscribable');
     }
 
+    public function medium()
+    {
+        return $this->hasOne('App\Medium', 'id', 'medium_id');
+    }
+
     public function media()
     {
         return $this->hasManyThrough(
@@ -104,9 +113,13 @@ class Videoconference extends Model
 
     public function isAccessible()
     {
+
         if (
             auth()->user()->videoconferences->contains('id', $this->id) // user enrolled
+            or ($this->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() //user is enroled in group
+            or ($this->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id))->isNotEmpty() //user is enroled in group
             or ($this->owner_id == auth()->user()->id)            // or owner
+            or ((env('GUEST_USER') != null) ? User::find(env('GUEST_USER'))->videoconferences->contains('id', $this->id) : false) //or allowed via guest
             or is_admin() // or admin
         ) {
             return true;

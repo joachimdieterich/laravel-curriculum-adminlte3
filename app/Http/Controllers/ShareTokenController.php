@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\KanbanSubscription;
+use App\VideoconferenceSubscription;
 use App\OrganizationRoleUser;
 use App\User;
 use Carbon\Carbon;
@@ -27,9 +28,24 @@ class ShareTokenController extends Controller
 
         $user = User::find(env('GUEST_USER'));
 
-        $subscribe = KanbanSubscription::where(
+        switch ($input['model_url'])
+        {
+            case 'videoconference':
+                $subscriptionClass = new VideoconferenceSubscription();
+                $field_model_id = 'videoconference_id';
+                break;
+            case 'kanban':
+                $subscriptionClass = new KanbanSubscription();
+                $field_model_id = 'kanban_id';
+                break;
+
+            default:
+            break;
+        }
+
+        $subscribe = $subscriptionClass->where(
             [
-                'kanban_id' => $input['model_id'],
+                $field_model_id => $input['model_id'],
                 'subscribable_type' => "App\User",
                 'subscribable_id' => $user->id,
             ])->get()->first();
@@ -38,8 +54,8 @@ class ShareTokenController extends Controller
         {
             $token = $subscribe->sharing_token;
 
-            $subscribe = KanbanSubscription::updateOrCreate([
-                'kanban_id' => $input['model_id'],
+            $subscribe = $subscriptionClass->updateOrCreate([
+                $field_model_id => $input['model_id'],
                 'subscribable_type' => "App\User",
                 'subscribable_id' => $user->id,
             ], [
@@ -53,8 +69,8 @@ class ShareTokenController extends Controller
         }
         else
         {
-            $subscribe = KanbanSubscription::updateOrCreate([
-                'kanban_id' => $input['model_id'],
+            $subscribe =  $subscriptionClass->updateOrCreate([
+                $field_model_id => $input['model_id'],
                 'subscribable_type' => "App\User",
                 'subscribable_id' => $user->id,
                 'sharing_token' => $token,
@@ -66,14 +82,12 @@ class ShareTokenController extends Controller
             ]);
             $subscribe->save();
         }
-
-
-
-        return response()->json(['url' => '/kanban/share/'.$token]);
+        return response()->json(['url' => '/'.$input['model_url'].'/'.$input['model_id'].'/token?sharing_token='.$token]);
     }
 
     public function auth($token)
     {
+        //only used by old kanban urls
         if (Auth::user() == null) {       //if no user is authenticated authenticate guest
             LogController::set('guestLogin');
             LogController::setStatistics();
@@ -89,7 +103,7 @@ class ShareTokenController extends Controller
             }
         }
 
-        return redirect('/kanbans/'.$subscription->kanban_id.'/token/?sharing_token='.$token);
+        return redirect('/kanbans/'.$subscription->kanban_id.'/token?sharing_token='.$token);
     }
     protected function validateRequest()
     {
@@ -98,6 +112,7 @@ class ShareTokenController extends Controller
             'date' => 'nullable|date',
             'model_id' => 'integer',
             'editable' => 'sometimes',
+            'model_url' => 'sometimes|string',
         ]);
     }
 }

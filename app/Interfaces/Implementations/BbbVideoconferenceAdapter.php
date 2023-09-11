@@ -104,7 +104,7 @@ class BbbVideoconferenceAdapter implements VideoconferenceInterface
      * This call enables you to simply check on whether or not a meeting is running by looking it up with your meeting ID.
      *
      */
-    public function isMeetingRunning(array $input)
+    public function isMeetingRunning(string $input)
     {
         return \Bigbluebutton::isMeetingRunning($input);
     }

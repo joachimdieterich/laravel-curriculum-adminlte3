@@ -19,7 +19,10 @@
 @section('content')
 <div class="row">
     <div class="col-12">
-        <videoconference :videoconference="{{ $videoconference }}"></videoconference>
+        <videoconference
+            :videoconference="{{ $videoconference }}"
+            editor="true"
+        ></videoconference>
     </div>
 
 </div>

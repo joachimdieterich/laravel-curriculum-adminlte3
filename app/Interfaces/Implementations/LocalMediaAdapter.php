@@ -123,14 +123,16 @@ class LocalMediaAdapter implements MediaInterface
         $params = $this->validateRequest();
         if ($params['model']) {
             switch ($params['model']){
+                case 'Videoconference':
                 case 'Kanban':
                     $class = 'App\\'.$params['model'];
                     $model = (new $class)::where('id',$params['model_id'] )->get()->first();
-
+               
                     if ($model->isAccessible()){
                         return ($medium->mime_type != 'url') ? response()->file($path) : redirect($medium->path); //return file or url
                     }
                 break;
+
                 default:
                     break;
             }

@@ -12,7 +12,7 @@
 <div class="row">
     <div class="col-12">
         <videoconference
-            :create="true"></videoconference>
+            :editor=true></videoconference>
     </div>
 
 </div>

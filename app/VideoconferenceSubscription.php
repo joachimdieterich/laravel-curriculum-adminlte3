@@ -14,7 +14,11 @@ class VideoconferenceSubscription extends Model
         'subscribable_id',
         'videoconference_id',
         'editable',
-        'owner_id', ];
+        'due_date',
+        'title',
+        'sharing_token',
+        'owner_id'
+        ];
 
     /**
      * Get the subscriber model.

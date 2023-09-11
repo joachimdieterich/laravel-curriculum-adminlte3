@@ -50,7 +50,7 @@ class KanbanSubscriptionController extends Controller
 
                 return [
                     'subscribers' => [
-                        'tokens' => $tokens,
+                        'tokens' => $tokens ?? [],
                         'subscriptions' => optional(
                                 optional(
                                     Kanban::find(request('kanban_id'))

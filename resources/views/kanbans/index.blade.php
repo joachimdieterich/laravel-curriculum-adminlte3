@@ -30,22 +30,3 @@
 
 <kanbans model-url="kanbans"></kanbans>
 @endsection
-@section('scripts')
-@parent
-
-<script>
-$(document).ready( function () {
-    var table = $('#kanbans-datatable').DataTable({
-        ajax: "{{ url('kanbans/list') }}",
-        columns:
-            [
-                {data: 'check'},
-                {data: 'title'},
-                {data: 'action'}
-            ],
-        buttons: []
-    });
-});
-</script>
-
-@endsection

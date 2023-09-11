@@ -94,7 +94,7 @@
                         </a>
                     </li>
                 @endcan
-                @can('plan_access')
+                {{--@can('plan_access')
                     <li class="nav-item"
                         role="menuitem">
                         <a href="{{ route("plans.index") }}"
@@ -105,7 +105,7 @@
                             </p>
                         </a>
                     </li>
-                @endcan
+                @endcan--}}
                 @can('kanban_access')
                     <li class="nav-item"
                         role="menuitem">

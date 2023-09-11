@@ -19,7 +19,7 @@
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fa fa-columns pr-2"></i>Alle Pinnwände
+                        <i class="fas fa-chalkboard-teacher pr-2"></i>Alle Videokonferenzen
                     </a>
                 </li>
                 <li class="nav-item">
@@ -30,7 +30,7 @@
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fa fa-user  pr-2"></i>Meine Pinnwände
+                        <i class="fa fa-user  pr-2"></i>Meine Videokonferenzen
                     </a>
                 </li>
                 <li class="nav-item">
@@ -194,7 +194,7 @@ export default {
         },
         async destroy() {
             try {
-                this.kanbans = (await axios.delete('/videoconferences/' + this.currentVideoconference.id)).data.data;
+                this.videoconferences = (await axios.delete('/videoconferences/' + this.currentVideoconference.id)).data.data;
             } catch (error) {
                 console.log(error);
             }

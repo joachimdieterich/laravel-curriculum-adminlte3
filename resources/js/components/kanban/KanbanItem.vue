@@ -341,10 +341,10 @@ export default {
             const search = filter.toLowerCase();
 
             this.$el.style.display = content.includes(search)
-                ? 'block'
+                ? 'flex'
                 : 'none';
         });
-        this.$eventHub.$on('removeFilter', () => this.$el.style.display = 'block');
+        this.$eventHub.$on('removeFilter', () => this.$el.style.display = 'flex');
 
         this.$nextTick(() => {
             MathJax.startup.defaultReady();

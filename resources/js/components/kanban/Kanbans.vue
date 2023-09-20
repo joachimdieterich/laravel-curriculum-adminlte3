@@ -92,8 +92,6 @@
                         <i v-else
                            class="fa fa-share-nodes pt-2"></i>
                     </div>
-<<<<<<< HEAD
-
                     <div v-if="$userId == kanban.owner_id"
                          class="btn btn-flat pull-right "
                          :id="'kanbanDropdown_' + kanban.id"
@@ -191,7 +189,7 @@
         />
 
         <table id="kanban-datatable"></table>
-        <div id="kanban-conten" style="display: none;"></div>
+        <div id="kanban-content" style="display: none;"></div>
     </div>
 </template>
 
@@ -332,9 +330,9 @@ export default {
         $('#kanban-datatable').DataTable({
             ajax: this.url + '?filter=' + this.filter,
             columns: [
-                { title: 'color', data: 'color' },
-                { title: 'description', data: 'description' },
                 { title: 'id', data: 'id' },
+                { title: 'description', data: 'description' },
+                { title: 'color', data: 'color' },
                 { title: 'medium_id', data: 'medium_id' },
                 { title: 'owner_id', data: 'owner_id' },
                 { title: 'title', data: 'title' },

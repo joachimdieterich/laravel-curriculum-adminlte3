@@ -1020,6 +1020,7 @@ return [
         'edit' => 'Edit videoconference ',
         'delete' => 'Delete videoconference',
         'delete_helper' => 'Should the videoconference be deleted?',
+        'add_presentation' => 'Add presentation',
         'fields' => [
             'meetingID' => 'meetingID',
             'meetingID_helper' => '',

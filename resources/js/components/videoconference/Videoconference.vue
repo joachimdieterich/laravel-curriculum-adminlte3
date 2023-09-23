@@ -4,7 +4,11 @@
              class="col-12 pt-2">
             <div class="card">
                 <div class="card-body">
-                    <h5>Raum-Einstellungen</h5>
+                    <h5>Raum-Einstellungen
+                        <i class="fa fa-share-alt text-secondary pull-right"
+                           @click="showModal()"
+                        ></i>
+                    </h5>
                     <hr class="bg-gray mt-0">
                     <div class="form-group">
                         <label for="meetingName">
@@ -365,7 +369,7 @@
                                                 </label>
                                             </span>
                                         </div>-->
-<!--                                        <div class="form-group">
+                                        <div class="form-group">
                                             <label for="bannerText">
                                                 {{ trans('global.videoconference.fields.bannerText') }}
                                             </label>
@@ -377,7 +381,7 @@
                                                 v-model.trim="form.bannerText"
                                             />
                                             <p class="help-block" v-if="form.errors?.bannerText" v-text="form.errors?.bannerText[0]"></p>
-                                        </div>-->
+                                        </div>
 
                                         <label for="bannerColor">
                                             {{ trans('global.videoconference.fields.bannerColor') }}
@@ -493,44 +497,75 @@
             </div>
         </div>
         <div v-else class="col-12 pt-2">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card card-primary">
+                        <div class="card-body">
+                            <h5>
+                                {{ videoconference.meetingName }}
+                                <span v-if="videoconference.owner_id == this.$userId">
+                                    <a
+                                    :href="'/videoconferences/' + videoconference.id + '/edit'">
+                                        <i class="fa fa-pencil-alt text-secondary pl-2"></i>
+                                    </a>
+                                    <i class="fa fa-share-alt text-secondary pull-right"
+                                       @click="showModal()"
+                                    ></i>
+                                </span>
 
-            <div v-if="loading"
-                 class=" text-center ">
-                <i class="fas fa-2x fa-spinner fa-spin"></i>
-                <p> {{ loadingMessage }} {{ timerCount }}</p>
+                            </h5>
+                            <hr class="bg-gray mt-0">
+                            <div v-if="loading"
+                                 class=" text-center ">
+                                <i class="fas fa-2x fa-spinner fa-spin"></i>
+                                <p> {{ loadingMessage }} {{ timerCount }}</p>
 
-                <button @click="toggleTimer()"
-                        class="btn btn-primary pt-2">
-                    {{ trans('global.cancel') }}
-                </button>
-            </div>
-            <div v-else>
-                <div class="form-group">
-                    <label for="userName">
-                        {{ trans('global.name') }}
-                    </label>
-                    <input
-                        type="text"
-                        id="userName"
-                        name="userName"
-                        class="form-control"
-                        v-model.trim="form.userName"
-                        :placeholder="trans('global.name')"
-                    />
-                </div> <!-- guestName -->
-                <button @click="startVideoconference()"
-                        class="btn btn-primary pt-2">
-                    {{ trans('global.videoconference.start') }}
-                </button>
+                                <button @click="toggleTimer()"
+                                        class="btn btn-primary pt-2">
+                                    {{ trans('global.cancel') }}
+                                </button>
+                            </div>
+                            <div v-else
+                            class="row">
+                                <div class="col-6">
+                                    {{ videoconference.owner.firstname }} {{ videoconference.owner.lastname }} (Initiator)
+                                </div>
+                                <div class="col-6 input-group">
+                                    <input
+                                        type="text"
+                                        id="userName"
+                                        name="userName"
+                                        class="form-control"
+                                        v-model.trim="form.userName"
+                                        :placeholder="trans('global.name')"
+                                    />
+                                    <span class="input-group-append"
+                                          @click="startVideoconference()">
+                                        <button type="button" class="btn btn-primary">
+                                            {{ trans('global.videoconference.start') }}
+                                        </button>
+                                    </span>
+                                </div> <!-- guestName -->
+                                <div v-if="videoconference.owner_id == this.$userId"
+                                    class="col-12">
+                                    <h5 class="pt-4">Präsentationen</h5>
+                                    <hr class="bg-gray mt-0">
+                                    <VideoconferenceMedia :model="videoconference" ></VideoconferenceMedia>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
 </template>
 
 <script>
 import Form from "form-backend-validation";
 import MediumForm from "../media/MediumForm";
+import VideoconferenceMedia from "./VideoconferenceMedia";
 const Trainings =
     () => import('../training/Trainings');
 
@@ -654,6 +689,9 @@ export default {
 
     },
     methods: {
+        showModal() {
+            this.$modal.show('subscribe-modal', { 'modelId': this.videoconference.id, 'modelUrl': 'videoconference' , 'shareWithToken': true});
+        },
         destroy(videoconference){
             axios.delete('/videoconferences/'+videoconference.id)
                 .then(response => {
@@ -739,6 +777,7 @@ export default {
     },
 
     components: {
+        VideoconferenceMedia,
         MediumForm,
     },
 }

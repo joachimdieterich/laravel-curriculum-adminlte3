@@ -1021,6 +1021,7 @@ return [
         'start' => 'Videokonferenz starten',
         'delete' => 'Videokonferenz löschen',
         'delete_helper' => 'Soll die Videokonferenz gelöscht werden?',
+        'add_presentation' => 'Präsentation hinzufügen',
         'fields' => [
             'meetingID' => 'meetingID',
             'meetingID_helper' => '',

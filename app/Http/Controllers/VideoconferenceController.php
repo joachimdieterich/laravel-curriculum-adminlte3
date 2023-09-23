@@ -31,20 +31,23 @@ class VideoconferenceController extends Controller
         return view('videoconference.index');
     }
 
-    public function userVideoconferences($withOwned = true)
+    public function userVideoconferences($withOwned = true, $user = null)
     {
+        if ($user == null)
+        {
+            $user = auth()->user();
+        }
+        $userCanSee = $user->videoconferences;
 
-        $userCanSee = auth()->user()->videoconferences;
-
-        foreach (auth()->user()->groups as $group) {
+        foreach ($user->groups as $group) {
             $userCanSee = $userCanSee->merge($group->videoconferences);
         }
-        $organization = Organization::find(auth()->user()->current_organization_id)->videoconferences;
+        $organization = Organization::find($user->current_organization_id)->videoconferences;
         $userCanSee = $userCanSee->merge($organization);
 
         if ($withOwned)
         {
-            $owned = Videoconference::where('owner_id', auth()->user()->id)->get();
+            $owned = Videoconference::where('owner_id', $user->id)->get();
             $userCanSee = $userCanSee->merge($owned);
 
         }
@@ -197,6 +200,8 @@ class VideoconferenceController extends Controller
     public function show(Videoconference $videoconference)
     {
         abort_unless(\Gate::allows('videoconference_show') AND $videoconference->isAccessible(), 403);
+        $videoconference = $videoconference->withoutRelations(['subscriptions'])->load(['media.license', 'owner']);
+
         return view('videoconference.show')
             ->with(compact('videoconference'));
     }
@@ -225,14 +230,14 @@ class VideoconferenceController extends Controller
                 'presentation'                          => $this->getPresentations($videoconference),
                 'userName'                              => $userName,
                 'callbackUrl'                           => $videoconference->callbackUrl,
-                'welcomeMessage'                        => $videoconference->welcomeMessage,
+                'welcomeMessage'                        => nl2br($videoconference->welcomeMessage),
                 'dialNumber'                            => $videoconference->dialNumber,
                 'maxParticipants'                       => $videoconference->maxParticipants,
                 'logoutUrl'                             => $videoconference->logoutUrl,
                 'record'                                => $videoconference->record,
                 'duration'                              => $videoconference->duration,
                 'isBreakout'                            => $videoconference->isBreakout,
-                'moderatorOnlyMessage'                  => $videoconference->moderatorOnlyMessage,
+                'moderatorOnlyMessage'                  => nl2br($videoconference->moderatorOnlyMessage),
                 'autoStartRecording'                    => $videoconference->autoStartRecording,
                 'allowStartStopRecording'               => $videoconference->allowStartStopRecording,
                 'bannerText'                            => $videoconference->bannerText,
@@ -288,8 +293,8 @@ class VideoconferenceController extends Controller
         $presentations = [];
         foreach ($videoconference->media AS $medium){
             $presentations[] = [
-                'link' => env('APP_URL'). $medium->path(),
-                'fileName' => $medium->filename
+                'link' => ($medium->mime_type == 'url') ? $medium->path : env('APP_URL'). $medium->path(),
+                'fileName' => $medium->title
             ];
         }
         //dump($presentations);

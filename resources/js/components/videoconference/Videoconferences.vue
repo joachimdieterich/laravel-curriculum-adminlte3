@@ -1,17 +1,26 @@
 <template >
     <div class="row">
         <div class="col-md-12 py-2">
-            <div id="videoconferences_filter" class="dataTables_filter">
+<!--            <div id="videoconferences_filter" class="dataTables_filter">
                 <label >
                     <input type="search"
                            class="form-control form-control-sm"
                            placeholder="Suchbegriff"
                            v-model="search">
                 </label>
-            </div>
+            </div>-->
             <ul v-if="typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined'"
                 class="nav nav-pills" role="tablist">
-                <li class="nav-item">
+                <li v-can="'videoconference_create'"
+                    class="nav-item ">
+                    <a class="nav-link active bg-green"
+                       href="/videoconferences/create"
+                       id="custom-tabs-create-videoconference"
+                    >
+                        <i class="fa fa-plus pr-2"></i> {{ trans('global.videoconference.create') }}
+                    </a>
+                </li>
+                <li class="nav-item ml-auto">
                     <a class="nav-link "
                        :class="filter === 'all' ? 'active' : ''"
                        id="videoconference-filter-all"
@@ -83,7 +92,7 @@
                     <div v-else
                          class="nav-item-box-image-size text-center"
                          :style="{backgroundColor: videoconference.bannerColor + ' !important'}">
-                        <i class="fa fa-2x p-5 fa-video nav-item-text text-white"></i>
+<!--                        <i class="fa fa-2x p-5 fa-video nav-item-text text-white"></i>-->
                     </div>
                     <span class="bg-white text-center p-1 overflow-auto nav-item-box">
                    <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
@@ -155,7 +164,7 @@ export default {
             videoconferences: [],
             subscriptions: {},
             search: '',
-            url: 'videoconferences/list',
+            url: '/videoconferences/list',
             errors: {},
             currentVideoconference: {},
             filter: 'all'
@@ -173,7 +182,7 @@ export default {
             if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
                 this.url = '/videoconferenceSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
             } else {
-                this.url =  'videoconferences/list?filter=' + this.filter
+                this.url = '/videoconferences/list?filter=' + this.filter
             }
             axios.get(this.url)
                 .then(response => {
@@ -201,8 +210,24 @@ export default {
             window.location = "/videoconferences";
         },
     },
+    created() {
+        document.getElementById('searchbar').classList.remove('d-none');
+    },
 
     mounted() {
+        const filters = ["all", "owner", "shared_with_me", "shared_by_me"];
+
+        let url = new URL(window.location.href);
+        let urlFilter = url.searchParams.get("filter");
+
+        if (filters.includes(urlFilter)){
+          this.filter = urlFilter
+        }
+
+        this.$eventHub.$on('filter', (filter) => {
+            this.search = filter;
+        });
+
         this.loaderEvent();
     },
 

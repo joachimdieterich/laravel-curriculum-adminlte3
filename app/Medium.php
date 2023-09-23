@@ -35,7 +35,12 @@ class Medium extends Model
 
     public function path()
     {
-        return "/media/{$this->id}";
+        if ($this->mime_type == 'url'){
+            return $this->path;
+        } else {
+            return "/media/{$this->id}";
+        }
+
     }
 
     public function absolutePath()

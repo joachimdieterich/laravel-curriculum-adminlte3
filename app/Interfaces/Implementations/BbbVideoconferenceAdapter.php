@@ -51,6 +51,7 @@ class BbbVideoconferenceAdapter implements VideoconferenceInterface
     public function start(array $input){
 
         $url = \Bigbluebutton::start($input);
+
        /* $url = \Bigbluebutton::start([
             'meetingID' => $input['meetingID'],
             'meetingName' => $input['meetingName'],

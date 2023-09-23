@@ -1,6 +1,6 @@
-@extends('layouts.master')
+@extends('layouts.contentonly')
 @section('title')
-    {{ trans('global.videoconference.title_singular') }}
+    {{--{{ trans('global.videoconference.title_singular') }}
     @can('videoconference_create')
         @if($videoconference->owner_id == auth()->user()->id)
             <button class="btn btn-flat"
@@ -8,7 +8,7 @@
                 <i class="fa fa-share-alt text-secondary"></i>
             </button>
         @endif
-    @endcan
+    @endcan--}}
 @endsection
 @section('breadcrumb')
     <li class="breadcrumb-item "><a href="/"><i class="fa fa-home"></i></a></li>
@@ -17,15 +17,10 @@
     <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
-<div class="row">
-    <div class="col-12">
-        <videoconference
-            :videoconference="{{ $videoconference }}"
-            editor="true"
-        ></videoconference>
-    </div>
-
-</div>
+    <videoconference
+        :videoconference="{{ $videoconference }}"
+        editor="true"
+    ></videoconference>
 @can('medium_create')
     <medium-create-modal></medium-create-modal>
 @endcan

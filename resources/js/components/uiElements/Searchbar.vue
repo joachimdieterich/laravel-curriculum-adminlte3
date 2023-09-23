@@ -35,14 +35,15 @@ export default {
                 if (this.filtered) this.removeFilter();
                 return;
             }
-            
+
             this.timer = setTimeout(() => {
                 this.throwEvent();
-            }, 750);
+            }, 250);
         },
         removeFilter() {
             this.filtered = false; // only throw this event once
-            this.$eventHub.$emit('removeFilter');
+            this.$eventHub.$emit('removeFilter'); //todo: needed?
+            this.$eventHub.$emit('filter', '');
         },
         throwEvent() {
             this.filtered = true;
@@ -60,7 +61,7 @@ button {
     z-index: 10;
     right: 0;
 }
-input[type="search"]::-webkit-search-cancel-button:hover { 
-    cursor:pointer; 
+input[type="search"]::-webkit-search-cancel-button:hover {
+    cursor:pointer;
 }
 </style>

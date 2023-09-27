@@ -16,7 +16,7 @@
                 class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
-    @can('kanban_create')
+    {{--@can('kanban_create')
         <div style="margin-bottom: 10px;" class="row">
             <div class="col-lg-12">
                 <a id="add-kanban"
@@ -24,9 +24,27 @@
                    href="{{ route("kanbans.create") }}">
                     {{ trans('global.kanban.create') }}
                 </a>
+            </div>
         </div>
-    </div>
-@endcan
+    @endcan--}}
+    <kanbans model-url="kanbans"></kanbans>
+@endsection
+@section('scripts')
+@parent
+{{--
+<script>
+$(document).ready( function () {
+    var table = $('#kanbans-datatable').DataTable({
+        ajax: "{{ url('kanbans/list') }}",
+        columns:
+            [
+                {data: 'check'},
+                {data: 'title'},
+                {data: 'action'}
+            ],
+        buttons: []
+    });
+});
+</script>--}}
 
-<kanbans model-url="kanbans"></kanbans>
 @endsection

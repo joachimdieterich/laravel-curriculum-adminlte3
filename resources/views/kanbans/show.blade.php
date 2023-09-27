@@ -13,7 +13,8 @@
     <small>{{ $kanban->title }} </small>
     @if(Auth::user()->id == $kanban->owner_id)
         <a class="btn btn-flat"
-           href="/kanbans/{{ $kanban->id }}/edit">
+           onclick="app.__vue__.$eventHub.$emit('edit_kanban', {{$kanban->toJson()}})"
+           >
             <i class="fa fa-pencil-alt text-secondary"></i>
         </a>
         @can('kanban_create')

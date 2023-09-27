@@ -2,7 +2,12 @@
     <div class="card">
         <div class="card-header px-3 py-2" :style="{ backgroundColor: item.color, color: textColor }">
             <div class="card-tools">
-                <div v-if="(editable == 1 && editor === false && onlyEditOwnedItems !== 1) || (editable == 1 && $userId == item.owner_id) || (editable == 1 && $userId == kanban_owner_id )"
+                <div
+                    v-if="
+                        (editable == 1 && item.editable == 1 && editor === false && onlyEditOwnedItems !== 1) ||
+                        (editable == 1 && item.editable == 1 && $userId == item.owner_id  && editor === false ) ||
+                        (item.editable == 1 && $userId == kanban_owner_id  && editor === false ) ||
+                        ($userId == kanban_owner_id  && editor === false )"
                      class="btn btn-flat py-0 px-2 "
                      :id="'kanbanItemDropdown_'+index"
                      style="background-color: transparent;"
@@ -27,7 +32,7 @@
                         </button>
                         <hr class="my-1">
                         <button
-                            v-if="($userId == item.owner_id) || (editable == 1 && $userId == kanban_owner_id )"
+                            v-if="(item.editable == 1 && $userId == item.owner_id) || ($userId == kanban_owner_id )"
                             v-can="'kanban_delete'"
                             :name="'kanbanItemDelete_'+index"
                             class="dropdown-item py-1 text-red"
@@ -81,21 +86,81 @@
                  class="text-muted small px-3 py-2"
                  v-html="form.description">
             </div>
-            <date-picker
-                v-if="editor !== false"
-                class="w-100 mt-3"
-                v-model="due_date"
-                type="datetime"
-                valueType="YYYY-MM-DD HH:mm:ss"
-                :placeholder="trans('global.kanbanItem.due_date')">
-            </date-picker>
+
+
+
+            <div v-if="(editor !== false) && ($userId == form.owner_id)"
+            class="p-2">
+                <b class="pt-2">{{ trans('global.settings')}}</b>
+                <hr class="mt-0">
+                <div class="form-group ">
+                    <date-picker
+                        v-if="editor !== false"
+                        class="w-100 mb-2"
+                        v-model="form.due_date"
+                        type="datetime"
+                        valueType="YYYY-MM-DD HH:mm:ss"
+                        :placeholder="trans('global.kanbanItem.due_date')">
+                    </date-picker>
+
+                     <span class="custom-control custom-switch custom-switch-on-green">
+                        <input  v-model="form.locked"
+                                type="checkbox"
+                                class="custom-control-input pt-1 "
+                                :id="'locked_'+ form.id">
+                        <label class="custom-control-label  font-weight-light"
+                               :for="'locked_'+ form.id" >
+                            {{ trans('global.locked') }}
+                        </label>
+                    </span>
+                    <span class="custom-control custom-switch custom-switch-on-green">
+                        <input  v-model="form.editable"
+                                type="checkbox"
+                                class="custom-control-input pt-1 "
+                                :id="'editable_'+ form.id">
+                        <label class="custom-control-label  font-weight-light"
+                               :for="'editable_'+ form.id" >
+                            {{ trans('global.editable') }}
+                        </label>
+                    </span>
+                    <span class="custom-control custom-switch custom-switch-on-green">
+                        <input
+                            v-model="form.visibility"
+                            type="checkbox"
+                            class="custom-control-input pt-1 "
+                            :id="'visibility_'+ form.id">
+                        <label class="custom-control-label font-weight-light"
+                               :for="'visibility_'+ form.id" >
+                            {{ trans('global.visibility') }}:
+                        </label>
+                    </span>
+
+                    <date-picker
+                        v-if="form.visibility == 1"
+                        class="w-100 pt-2"
+                        v-model="form.visible_from"
+                        type="datetime"
+                        valueType="YYYY-MM-DD HH:mm:ss"
+                        :placeholder="trans('global.kanbanItem.fields.visible_from')">
+                    </date-picker>
+                    <date-picker
+                        v-if="form.visibility == 1"
+                        class="w-100 pt-2"
+                        v-model="form.visible_until"
+                        type="datetime"
+                        valueType="YYYY-MM-DD HH:mm:ss"
+                        :placeholder="trans('global.kanbanItem.fields.visible_until')">
+                    </date-picker>
+                </div>
+
+
+            </div>
             <button v-if="editor !== false"
-                    :name="'kanbanItemSave_' + index"
-                    class="btn btn-primary p-2 m-2"
-                    @click="submit()">
+                :name="'kanbanItemSave_' + index"
+                class="btn btn-primary pull-right mb-2 mr-2"
+                @click="submit()">
                 {{ trans('global.save') }}
             </button>
-
             <!--          <kanbanTask
                           class="mx-3 "
                           :tasks="item.task_subscription">
@@ -107,25 +172,57 @@
                 :width="width -16"
             ></mediaCarousel>
         </div>
+        <div class="card-footer px-3 py-2"
+             v-if="(editor === false) && ((item.visible_from != null) || (item.visible_until != null)) && (item.due_date != null)"
+             :class="{'border-top-0':item.description === null}"
+        >
+            <div class="w-100 ">
+                <div class="due-date pull-left">{{ postDate() }}</div>
+                <span v-if="expired"
+                      class="pull-right badge badge-secondary">
+                    {{ trans('global.kanbanItem.expired') }}
+                </span>
+                <div v-if="(item.visible_from != null) || (item.visible_until != null)"
+                    class="due-date pull-left">
+                    {{ trans('global.visibility')}} {{ trans('global.timeFrom')}}:  {{ diffForHumans(item.visible_from)}} {{ trans('global.timeTo')}}: {{ diffForHumans(item.visible_until) }}
+                </div>
+            </div>
+
+        </div>
 
         <div class="card-footer px-3 py-2"
+             v-if="editor === false"
              :class="{'border-top-0':item.description === null}"
         >
             <div class="d-flex align-items-center">
-                <avatar class="d-flex pull-left contacts-list-img"
+                <avatar
+                    v-if="$userId == 8"
+                    class="contacts-list-img"
+                    data-toggle="tooltip"
+                    :title="item.owner.firstname + ' ' + item.owner.lastname"
+                    :username="item.owner.username"
+                    :firstname="item.owner.firstname"
+                    :lastname="item.owner.lastname"
+                    :size="25"
+                ></avatar>
+                <avatar
+                    v-else
+                    class="contacts-list-img"
+                    data-toggle="tooltip"
+                    :user_id="item.owner_id"
+                    :size="25"
+                ></avatar>
+                <avatar
+                    v-for="(editor_user, index) in item.editors_ids.filter((value, index, array) => array.indexOf(value) === index)"
+                    v-if="editor_user != '' && $userId != 8"
+                    :key="item.id + '_editor_' + index"
+                    class="contacts-list-img"
                         data-toggle="tooltip"
-                        :title="item.owner.firstname + ' ' + item.owner.lastname"
-                        :username="item.owner.username"
-                        :firstname="item.owner.firstname"
-                        :lastname="item.owner.lastname"
+                        :user_id="editor_user"
                         :size="25"
                 ></avatar>
-                <div class="d-flex pull-left flex-fill">
-                    <div class="d-flex flex-column align-items-start justify-content-center">
-                        <div class="due-date">{{ postDate() }}</div>
-                        <div v-if="expired" class="badge badge-secondary">{{ trans('global.kanbanItem.expired') }}</div>
-                    </div>
-                </div>
+
+                <span class="d-flex flex-fill"></span>
                 <div v-if="commentable"
                      @click="openComments"
                      class=" position-relative pull-right mr-2">
@@ -177,6 +274,7 @@ const Reaction =
     () => import('../reaction/Reaction');
 const Comments =
     () => import('./Comments');
+import moment from 'moment';
 //import mediaCarousel from '../media/MediaCarousel';
 /*import avatar from "../uiElements/Avatar";
 import Modal from "./../uiElements/Modal";
@@ -202,7 +300,6 @@ export default {
             new_media: null,
             show_comments: false,
             editor: false,
-            due_date: null,
             expired: false,
             form: new Form({
                 'id':'',
@@ -212,23 +309,29 @@ export default {
                 'kanban_status_id': '',
                 'order_id': 0,
                 'color': '#F4F4F4',
-                'due_date': ''
+                'due_date': null,
+                'locked': false,
+                'editable': true,
+                'visibility': true,
+                'visible_from': null,
+                'visible_until': null,
             }),
         };
     },
     computed:{
         textColor: function(){
             if(this.item.color == "" || this.item.color == null ) return;
-            let hex = this.item.color.substring(1, 7);
-            let r = parseInt(hex.slice(0, 2), 16),
-                g = parseInt(hex.slice(2, 4), 16),
-                b = parseInt(hex.slice(4, 6), 16);
-
-            // Return light or dark class based on contrast calculation
-            return ((r * 0.299 + g * 0.587 + b * 0.114) > 186) ? '#333333' : '#FFFFFF';
+            return this.$textcolor(this.item.color, '#333333');
         }
     },
     methods: {
+        diffForHumans: function (date) {
+            if (date == null){
+                return '\u221E';
+            } else {
+                return moment(date).locale('de').fromNow();
+            }
+        },
         confirmItemDelete(){
             $('#itemModal_'+ this.index).modal('show');
         },
@@ -252,28 +355,20 @@ export default {
 
         },
         submit() {
-            let form = new Form({
-                'id': this.item.id,
-                'title': this.item.title,
-                'description': tinyMCE.get('description_'+this.item.id).getContent(),
-                'kanban_id': this.item.kanban_id,
-                'kanban_status_id': this.item.kanban_status_id,
-                'due_date': this.due_date,
-                'order_id': this.item.order_id,
-                'color': this.item.color
-            });
+            this.form.description = tinyMCE.get('description_'+this.item.id).getContent();
 
-            axios.patch('/kanbanItems/' + form.id, form)
+            axios.patch('/kanbanItems/' + this.form.id, this.form)
                 .then(res => { // Tell the parent component we've updated an item
                     tinyMCE.get('description_'+this.item.id).remove();
                     this.form = res.data.message; //selfUpdate
                     this.$emit("item-updated", res.data.message);
+                    MathJax.startup.defaultReady();
                 })
                 .catch(error => { // Handle the error returned from our request
                     this.form.errors = error.response.data.errors;
                 });
             this.editor = false;
-            MathJax.startup.defaultReady();
+
         },
 
         openComments(){
@@ -310,9 +405,9 @@ export default {
                 });
         },
         postDate() {
-            if (this.due_date == null) return undefined;
+            if (this.form.due_date == null) return undefined;
 
-            const date = new Date(this.due_date.replace(/-/g, "/"));
+            const date = new Date(this.form.due_date.replace(/-/g, "/"));
             const dateFormat = {
                 weekday: 'short',
                 day: '2-digit',
@@ -329,7 +424,7 @@ export default {
     },
     mounted() {
         this.form = this.item;
-        this.due_date = this.item.due_date;
+        //this.due_date = this.item.due_date;
         this.$eventHub.$on('reload_kanban_item', (e) => {
             if (this.item.id == e.id) {
                 this.reload();
@@ -341,10 +436,10 @@ export default {
             const search = filter.toLowerCase();
 
             this.$el.style.display = content.includes(search)
-                ? 'block'
+                ? 'flex'
                 : 'none';
         });
-        this.$eventHub.$on('removeFilter', () => this.$el.style.display = 'block');
+        this.$eventHub.$on('removeFilter', () => this.$el.style.display = 'flex');
 
         this.$nextTick(() => {
             MathJax.startup.defaultReady();

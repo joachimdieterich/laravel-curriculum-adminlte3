@@ -40,6 +40,11 @@ export default {
             selectedMediumId: ''
         }
     },
+    watch: {
+        medium_id: function(newVal, oldVal) {
+            this.thumbnail_medium_id = newVal;
+        }
+    },
     mounted () {
         if (this.medium_id) {
             this.thumbnail_medium_id = this.medium_id;

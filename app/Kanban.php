@@ -32,6 +32,12 @@ class Kanban extends Model
         'created_at',
     ];
 
+    protected $casts = [
+        'commentable' => 'boolean',
+        'auto_refresh' => 'boolean',
+        'only_edit_owned_items' => 'boolean',
+        'allow_copy' => 'boolean',
+    ];
     /**
      * Prepare a date for array / JSON serialization.
      *

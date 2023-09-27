@@ -85,9 +85,10 @@ class KanbanController extends Controller
      */
     public function create()
     {
-        abort_unless(\Gate::allows('kanban_create'), 403);
+        abort(405);
+        /*abort_unless(\Gate::allows('kanban_create'), 403);
 
-        return view('kanbans.create');
+        return view('kanbans.create');*/
     }
 
     /**
@@ -163,14 +164,15 @@ class KanbanController extends Controller
      */
     public function edit(Kanban $kanban)
     {
-        abort_unless((\Gate::allows('kanban_edit') and $kanban->isAccessible()), 403);
+        abort(405);
+       /* abort_unless((\Gate::allows('kanban_edit') and $kanban->isAccessible()), 403);
 
         $kanban = $this->getKanbanWithRelations($kanban);
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         return view('kanbans.edit')
-            ->with(compact('kanban'));
+            ->with(compact('kanban'));*/
     }
 
     /**
@@ -184,19 +186,27 @@ class KanbanController extends Controller
     {
         abort_unless((\Gate::allows('kanban_edit') and $kanban->isAccessible()), 403);
         $input = $this->validateRequest();
-        $kanban->update([
+        $test = $kanban->update([
             'title' => $input['title'] ?? $kanban->title ,
             'description' => $input['description'] ?? $kanban->title,
             'color' => $input['color'] ?? $kanban->color,
             'medium_id' => $input['medium_id'] ?? $kanban->medium_id,
-            'commentable' => isset($input['commentable']) ? 1 : '0',
-            'auto_refresh' => isset($input['auto_refresh']) ? 1 : '0',
-            'only_edit_owned_items' => isset($input['only_edit_owned_items']) ? 1 : '0',
-            'allow_copy' => isset($input['allow_copy']) ? 1 : '0',
+            'commentable' => $input['commentable'],
+            'auto_refresh' => $input['auto_refresh'],
+            'only_edit_owned_items' => $input['only_edit_owned_items'],
+            'allow_copy' => $input['allow_copy'],
             'owner_id' => auth()->user()->id,
         ]);
 
-        return redirect(route('kanbans.show', ['kanban' => $kanban]));
+        if (request()->wantsJson())
+        {
+            return ['kanban' => $kanban]; // not used yed
+        }
+        else
+        {
+            return redirect(route('kanbans.show', ['kanban' => $kanban]));
+        }
+
     }
 
     /**

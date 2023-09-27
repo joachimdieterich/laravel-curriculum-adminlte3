@@ -19,7 +19,7 @@ class KanbanItemController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        abort_unless((\Gate::allows('kanban_create') and Kanban::find($input['kanban_id'])->isAccessible()), 403);
+        abort_unless((\Gate::allows('kanban_edit') and Kanban::find($input['kanban_id'])->isAccessible()), 403);
 
         $order_id = DB::table('kanban_items')
             ->where('kanban_id', $input['kanban_id'])
@@ -29,11 +29,16 @@ class KanbanItemController extends Controller
         $kanbanItem = KanbanItem::firstOrCreate([
             'title'             => $input['title'],
             'description'       => $input['description'],
-            'order_id'          => $order_id ?? 0,
+            'order_id'          => ($order_id === NULL) ? 0 : $order_id + 1,
             'kanban_id'         => $input['kanban_id'],
             'kanban_status_id'  => $input['kanban_status_id'],
             'color'             => $input['color'],
-            'due_date'             => $input['due_date'],
+            'due_date'          => $input['due_date'],
+            'locked' => $input['locked'] ?? false,
+            'editable' => $input['editable'] ?? true,
+            'visibility' => $input['visibility'] ?? true,
+            'visible_from' => $input['visible_from'],
+            'visible_until' => $input['visible_until'],
             'owner_id'          => auth()->user()->id,
         ]);
 
@@ -144,8 +149,14 @@ class KanbanItemController extends Controller
             'kanban_id' => $input['kanban_id'],
             'kanban_status_id' => $input['kanban_status_id'],
             'color' => $input['color'],
-            'due_date' => $input['due_date'],   
-            'owner_id' => auth()->user()->id,
+            'due_date' => $input['due_date'],
+            'locked' => $input['locked'] ?? false,
+            'editable' => $input['editable'] ?? true,
+            'visibility' => $input['visibility'] ?? true,
+            'visible_from' => $input['visible_from'] ?? NULL,
+            'visible_until' => $input['visible_until'] ?? NULL,
+            'owner_id' => $kanbanItem->owner_id, //owner should not be updated
+            'editors_ids' => array_merge($kanbanItem->editors_ids, [auth()->user()->id] )
         ]);
 
         if (request()->wantsJson()) {
@@ -231,6 +242,12 @@ class KanbanItemController extends Controller
             'kanban_status_id' => 'sometimes|required|integer',
             'color' => 'sometimes',
             'due_date' => 'sometimes',
+            'locked' => 'sometimes|boolean',
+            'editable' => 'sometimes|boolean',
+            'visibility' => 'sometimes|boolean',
+            'visible_from' => 'sometimes',
+            'visible_until' => 'sometimes',
+            'editors_id' => 'sometimes',
         ]);
     }
 

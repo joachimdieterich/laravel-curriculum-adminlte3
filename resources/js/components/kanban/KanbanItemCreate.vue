@@ -25,22 +25,74 @@
                 <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
             </div>
 
-<!--            <div v-if="form.title != '' && method === 'post'">
-                <button class="btn btn-block btn-outline-secondary mb-2"
-                        v-can="'task_create'"
-                        @click.stop.prevent="open('task-modal', 'subscribable');">
-                    <i class="fas fa-tasks"></i>
-                    <span class="ml-2">{{ trans('global.task.create') }}</span>
-                </button>
-            </div>-->
 
-            <date-picker
-                class="w-100 mb-2"
-                v-model="due_date"
-                type="datetime"
-                valueType="YYYY-MM-DD HH:mm:ss"
-                :placeholder="trans('global.kanbanItem.due_date')">
-            </date-picker>
+
+            <div class="p-2">
+                <b class="pt-2">{{ trans('global.settings')}}</b>
+                <hr class="mt-0">
+                <div class="form-group ">
+                    <date-picker
+                        v-if="editor !== false"
+                        class="w-100 mb-2"
+                        v-model="form.due_date"
+                        type="datetime"
+                        valueType="YYYY-MM-DD HH:mm:ss"
+                        :placeholder="trans('global.kanbanItem.due_date')">
+                    </date-picker>
+
+                    <span class="custom-control custom-switch custom-switch-on-green">
+                        <input  v-model="form.locked"
+                                type="checkbox"
+                                class="custom-control-input pt-1 "
+                                :id="'locked_'+ form.id">
+                        <label class="custom-control-label  font-weight-light"
+                               :for="'locked_'+ form.id" >
+                            {{ trans('global.locked') }}
+                        </label>
+                    </span>
+                    <span class="custom-control custom-switch custom-switch-on-green">
+                        <input  v-model="form.editable"
+                                type="checkbox"
+                                class="custom-control-input pt-1 "
+                                :id="'editable_'+ form.id">
+                        <label class="custom-control-label  font-weight-light"
+                               :for="'editable_'+ form.id" >
+                            {{ trans('global.editable') }}
+                        </label>
+                    </span>
+                    <span class="custom-control custom-switch custom-switch-on-green">
+                        <input
+                            v-model="form.visibility"
+                            type="checkbox"
+                            class="custom-control-input pt-1 "
+                            :id="'visibility_'+ form.id">
+                        <label class="custom-control-label font-weight-light"
+                               :for="'visibility_'+ form.id" >
+                            {{ trans('global.visibility') }}:
+                        </label>
+                    </span>
+
+                    <date-picker
+                        v-if="form.visibility == 1"
+                        class="w-100 pt-2"
+                        v-model="form.visible_from"
+                        type="datetime"
+                        valueType="YYYY-MM-DD HH:mm:ss"
+                        :placeholder="trans('global.kanbanItem.fields.visible_from')">
+                    </date-picker>
+                    <date-picker
+                        v-if="form.visibility == 1"
+                        class="w-100 pt-2"
+                        v-model="form.visible_until"
+                        type="datetime"
+                        valueType="YYYY-MM-DD HH:mm:ss"
+                        :placeholder="trans('global.kanbanItem.fields.visible_until')">
+                    </date-picker>
+                </div>
+
+
+            </div>
+
 
             <button
                 name="kanbanItemCancel"
@@ -78,7 +130,6 @@ export default {
         return {
             method: 'post',
             requestUrl: '/kanbanItems',
-            due_date: null,
             form: new Form({
                 'id':'',
                 'title':'',
@@ -87,7 +138,12 @@ export default {
                 'kanban_status_id': '',
                 'order_id': 0,
                 'color': '#F4F4F4',
-                'due_date': ''
+                'due_date': null,
+                'locked': false,
+                'editable': true,
+                'visibility': true,
+                'visible_from': null,
+                'visible_until': null,
             }),
         };
     },
@@ -104,13 +160,12 @@ export default {
             this.form.kanban_id = this.item.kanban_id;
             this.form.kanban_status_id = this.item.kanban_status_id;
             this.form.order_id = this.item.order_id;
-            this.due_date = this.item.due_date;
+            this.form.due_date = this.item.due_date;
             this.method = 'patch';
         } else {
             this.form.kanban_id = this.status.kanban_id;
             this.form.kanban_status_id = this.status.id;
             this.form.order_id = this.status.items.length;
-            // this.due_date = moment().add(30, 'minutes').format("YYYY-MM-DD HH:mm:ss");
         }
         this.$initTinyMCE([
             "autolink link"
@@ -143,15 +198,13 @@ export default {
         submit() {
             let method = this.method.toLowerCase();
             this.form.description = tinyMCE.get('description').getContent();
-            this.form.due_date = this.due_date;
             if (method === 'patch') {
-                    axios.patch(this.requestUrl += '/' + this.form.id, this.form)
+                    axios.patch(this.requestUrl + '/' + this.form.id, this.form)
                      .then(res => { // Tell the parent component we've updated a task
                              this.$emit("item-updated", res.data.message);
-
                         })
                      .catch(error => { // Handle the error returned from our request
-                             this.form.errors = error.response.data.errors;
+                         console.log(error);
                         });
             } else {
                 axios.post(this.requestUrl, this.form)
@@ -159,7 +212,7 @@ export default {
                             this.$emit("item-added", res.data.message);
                         })
                      .catch(error => { // Handle the error returned from our request
-                             this.form.errors = error.response.data.errors;
+                            console.log(error);
                         });
             }
 

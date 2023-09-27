@@ -1,5 +1,6 @@
 <template>
-    <div class="kanban_board_container">
+    <div id="kanban_board_container"
+         class="kanban_board_container">
 <!--        <media-renderer
             v-if="kanban.medium_id !== null"
             class="kanban_board_wrapper p-0"
@@ -7,6 +8,7 @@
             :medium="kanban.medium"
             :downloadable=false
         ></media-renderer>-->
+
         <img v-if="kanban.medium_id !== null"
             class="kanban_board_wrapper p-0"
              :src="'/media/'+ kanban.medium_id + '?model=Kanban&model_id=' + kanban.id"
@@ -15,6 +17,13 @@
         <div id="kanban_board_wrapper"
              class="kanban_board_wrapper"
              :style="'background-color:' + kanbanColor">
+            <div @click="toggleFullscreen"
+                 :style="{ color: textColor }"
+            style="float: left;
+                 margin-top: -25px;
+                 margin-left: -20px;">
+                <i class="fa fa-expand"></i>
+            </div>
             <div
             :style="kanbanWidth "
             class="m-0"
@@ -27,7 +36,7 @@
                 @end="syncStatusMoved">
                 <div
                     v-for="(status, index) in statuses"
-                    v-if="(status.visibility == 1) || ($userId == status.owner_id )"
+                    v-if="(status.visibility == true) || ($userId == status.owner_id )"
                     :key="'header_'+status.id"
                     class=" no-border pr-3"
                     :style="'float:left; width:' + itemWidth + 'px;'">
@@ -45,6 +54,7 @@
                             class="flex-1 overflow-hidden hide-scrollbars"
                             v-model="status.items"
                             v-bind="itemDragOptions"
+                            :move="isLocked"
                             @end="syncItemMoved"
                             filter=".ignore">
                             <transition-group
@@ -57,7 +67,8 @@
                                     v-for="(item, itemIndex) in status.items"
                                     :key="'transition_group-'+item.id">
                                  <KanbanItem
-                                     :editable="(status.locked == 1 && $userId != kanban.owner_id) ? 0 : editable"
+                                     v-if="(item.visibility == true && visiblefrom_to(item.visible_from, item.visible_until) == true) || ($userId == item.owner_id ) || ($userId == kanban.owner_id )"
+                                     :editable="(status.locked == true && $userId != kanban.owner_id) ? false : editable"
                                      :commentable="kanban.commentable"
                                      :onlyEditOwnedItems="kanban.only_edit_owned_items"
                                      :ref="'kanbanItemId' + item.id"
@@ -86,7 +97,7 @@
                             v-on:item-canceled="closeForm"
                             style="z-index: 2">
                         </KanbanItemCreate>
-                        <div v-if="(editable == 1) && (status.locked == 0) || (editor !== false && $userId == status.owner_id ) "
+                        <div v-if="(editable == true) && (status.editable == true) || (editor !== false && $userId == status.owner_id ) "
                              v-show="newItem !== status.id"
                              :id="'kanbanItemCreateButton_' + index"
                              class="btn btn-flat py-0 w-100"
@@ -119,6 +130,9 @@
             </div>
         </div>
         </div>
+        <KanbanIndexAddWidget
+            :visible="false"
+            v-can="'kanban_create'"/>
     </div>
 
 </template>
@@ -132,11 +146,8 @@ const KanbanItemCreate =
     () => import('./KanbanItemCreate');
 const KanbanStatus =
     () => import('./KanbanStatus');
+import KanbanIndexAddWidget from "./KanbanIndexAddWidget";
 //import draggable from "vuedraggable";
-/*import KanbanItem from './KanbanItem';
-import KanbanItemCreate from "./KanbanItemCreate";
-import KanbanStatus from "./KanbanStatus";*/
-
 export default {
     props: {
         'kanban': Object,
@@ -166,6 +177,26 @@ export default {
         };
     },
     methods: {
+        toggleFullscreen(){
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                $('#kanban_board_container').get(0).requestFullscreen();
+            }
+        },
+        visiblefrom_to(visible_from, visible_until){
+            const now = moment().format("YYYY-MM-DD HH:mm:ss");
+            if (
+                (now >= visible_from && now <= visible_until) ||
+                (now >= visible_from && visible_until == null) ||
+                (visible_from == null && now <= visible_until) ||
+                (visible_from == null && visible_until == null)
+            ){
+                return true;
+            } else {
+                return false;
+            }
+        },
         sync(){
             axios.get("/kanbanStatuses/" + this.kanban.id + "/checkSync")
                 .then(res => {
@@ -383,7 +414,6 @@ export default {
             this.kanbanColor = color;
         },
 
-
         startPusher(){
             if (this.pusher == 1){
                 this.$echo.join('Presence.App.Kanban.' + this.kanban.id)
@@ -467,10 +497,15 @@ export default {
             });
         },
         isLocked(value){
+            //console.log(value.draggedContext.element.locked );
             if (value.draggedContext.element.locked == true && this.$userId != value.draggedContext.element.owner_id) { //locked and not owner
+                //console.log(false );
                 return false;
+            } else {
+                //console.log(true );
+                return true;
             }
-            return true;
+
         },
         hexToRgbA(hex){
             var c;
@@ -503,7 +538,7 @@ export default {
         }
 
 
-        if (this.kanban.auto_refresh === 1){
+        if (this.kanban.auto_refresh === true){
             this.autoRefresh = true;
             this.timer();
         } else {
@@ -513,6 +548,10 @@ export default {
         document.getElementById('searchbar').classList.remove('d-none');
     },
     computed: {
+        textColor: function(){
+            if(this.kanban.color == "" || this.kanban.color == null ) return;
+            return this.$textcolor(this.kanban.color, '#333333');
+        },
         columnDragOptions() {
             return {
                 animation: 200,
@@ -543,8 +582,9 @@ export default {
         draggable,
         KanbanItem,
         KanbanItemCreate,
+        KanbanIndexAddWidget
     }
-    }
+}
 </script>
 <style> /* not scoped since '.content-only' and 'sidebar-collapse' are outside of of this component */
 .status-drag {
@@ -552,6 +592,7 @@ export default {
     transition-property: all;
 }
 .kanban_board_container {
+    background-color: #fff;
     position: relative;
     height: calc(100vh - 205px);
     width: 100%;

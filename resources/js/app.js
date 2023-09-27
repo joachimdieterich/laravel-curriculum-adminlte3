@@ -42,7 +42,7 @@ Vue.prototype.trans = (key) => {
 import "vue-swatches/dist/vue-swatches.css";
 
 
-Vue.prototype.$textcolor = (color) => {
+Vue.prototype.$textcolor = (color, dark = '#000', light = '#fff') => {
     if (typeof(color) != 'string'){
         color = 'ffffff';
     }
@@ -56,11 +56,11 @@ Vue.prototype.$textcolor = (color) => {
     if (((r * 0.299) + (g * 0.587) + (b * 0.114)) > 140)
     {
         //console.log('black');
-        return '#000';
+        return dark;
 
     } else {
         //console.log('white');
-        return '#fff';
+        return light;
     }
 };
 

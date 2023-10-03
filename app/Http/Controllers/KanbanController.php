@@ -86,9 +86,6 @@ class KanbanController extends Controller
     public function create()
     {
         abort(405);
-        /*abort_unless(\Gate::allows('kanban_create'), 403);
-
-        return view('kanbans.create');*/
     }
 
     /**
@@ -165,14 +162,6 @@ class KanbanController extends Controller
     public function edit(Kanban $kanban)
     {
         abort(405);
-       /* abort_unless((\Gate::allows('kanban_edit') and $kanban->isAccessible()), 403);
-
-        $kanban = $this->getKanbanWithRelations($kanban);
-
-        LogController::set(get_class($this).'@'.__FUNCTION__);
-
-        return view('kanbans.edit')
-            ->with(compact('kanban'));*/
     }
 
     /**

@@ -1,16 +1,6 @@
 <template >
     <div class="row">
         <div class="col-md-12 py-2">
-<!--            <div id="kanbans_filter" class="dataTables_filter">
-                <label >
-                    <input type="search"
-                           class="form-control form-control-sm"
-                           placeholder="Suchbegriff"
-                           v-model="search">
-                </label>
-            </div>-->
-            <ul class="nav nav-pills" role="tablist">
-            </div>
             <ul v-if="typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined'"
                 class="nav nav-pills" role="tablist">
                 <li class="nav-item">

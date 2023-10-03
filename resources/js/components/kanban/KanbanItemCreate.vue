@@ -89,11 +89,8 @@
                         :placeholder="trans('global.kanbanItem.fields.visible_until')">
                     </date-picker>
                 </div>
-
-
             </div>
-
-
+            
             <button
                 name="kanbanItemCancel"
                 @click="$emit('item-canceled')"
@@ -215,9 +212,7 @@ export default {
                             console.log(error);
                         });
             }
-
         },
-
     },
     components: {
         DatePicker

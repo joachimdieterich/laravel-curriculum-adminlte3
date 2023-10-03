@@ -97,7 +97,7 @@
                             v-on:item-canceled="closeForm"
                             style="z-index: 2">
                         </KanbanItemCreate>
-                        <div v-if="(editable == true) && (status.editable == true) || (editor !== false && $userId == status.owner_id ) "
+                        <div v-if="(editable == true) && (status.editable == true) || ( $userId == status.owner_id ) "
                              v-show="newItem !== status.id"
                              :id="'kanbanItemCreateButton_' + index"
                              class="btn btn-flat py-0 w-100"
@@ -526,6 +526,9 @@ export default {
         this.startPusher();
         this.$eventHub.$on('reload_kanban_board', (e) => {
             this.sync()
+        });
+        this.$eventHub.$on('kanban-updated', (e) => {
+            window.location.href = '/kanbans/'+this.kanban.id;
         });
     },
     created () {

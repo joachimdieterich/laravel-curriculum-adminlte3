@@ -52,7 +52,14 @@ class KanbanItemController extends Controller
             {
                 return [
                     'message' =>  KanbanItem::where('id', $kanbanItem->id)
-                        ->with(['mediaSubscriptions', 'media', 'owner', /*'taskSubscription',*/ 'comments'])
+                        ->with([
+                            'comments',
+                            'comments.user',
+                            'comments.likes',
+                            'likes',
+                            'mediaSubscriptions.medium',
+                            'owner',
+                        ])
                         ->get()->first()
                 ];
             }
@@ -231,6 +238,25 @@ class KanbanItemController extends Controller
             }
         }
     }
+
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\KanbanItem  $kanbanItem
+     * @return \Illuminate\Http\Response
+     */
+    public function editors(KanbanItem $kanbanItem)
+    {
+        abort_unless((\Gate::allows('kanban_show') and $kanbanItem->isAccessible()), 403);
+
+        if (request()->wantsJson()) {
+            return [
+                'editors' =>  $kanbanItem->editors(['id', 'username', 'firstname', 'lastname'])
+            ];
+        }
+    }
+
 
     protected function validateRequest()
     {

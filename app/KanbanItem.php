@@ -138,9 +138,13 @@ class KanbanItem extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function editors()
+    public function editors($select = NULL)
     {
-        return User::whereIn('id', $this->editors_ids);
+        if ($select == NULL){
+            return User::whereIn('id', $this->editors_ids);
+        } else {
+            return User::whereIn('id', $this->editors_ids)->select($select)->get();
+        }
     }
 
     /**

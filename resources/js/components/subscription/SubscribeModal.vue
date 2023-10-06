@@ -328,11 +328,12 @@ export default {
             this.shareWithOrganizations = true;
         },
         createUserToken() {
-            axios.post('/' + this.modelUrl + '/token', {
+            axios.post('/tokens', {
                 'model_id': this.modelId,
                 'title': this.nameToken,
                 'date': this.endDateToken,
-                'editable': this.canEditToken
+                'editable': this.canEditToken,
+                'model_url': this.modelUrl
             }).then( () => this.loadSubscribers())
         }
     },

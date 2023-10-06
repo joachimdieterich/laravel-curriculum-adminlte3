@@ -99,6 +99,18 @@ class Group extends Model
         )->where('subscribable_type', get_class($this));
     }
 
+    public function videoconferences()
+    {
+        return $this->hasManyThrough(
+            'App\Videoconference',
+            'App\VideoconferenceSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'videoconference_id'
+        )->where('subscribable_type', get_class($this));
+    }
+
     public function lmsReferences()
     {
         return $this->hasManyThrough(

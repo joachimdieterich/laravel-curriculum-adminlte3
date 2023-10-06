@@ -46,8 +46,21 @@ class MediumSubscriptionController extends Controller
      */
     public function store(Request $request)
     {
-        //not used?
+        abort_unless(\Gate::allows('medium_create'), 403);
+        $input = $this->validateRequest();
 
+        $subscribe = MediumSubscription::updateOrCreate([
+            'medium_id' => $input['medium_id'],
+            'subscribable_type' => $input['subscribable_type'],
+            'subscribable_id' => $input['subscribable_id'],
+        ], [
+            'sharing_level_id' => $input['sharing_level_id'] ?? 1,
+            'visibility' => $input['visibility'] ?? 1,
+            'owner_id' => auth()->user()->id,
+        ]);
+        $subscribe->save();
+
+        return $subscribe;
     }
 
     /**
@@ -95,6 +108,7 @@ class MediumSubscriptionController extends Controller
 
     public function destroySubscription(Request $request)
     {
+        abort_unless(\Gate::allows('medium_delete'), 403);
         $subscription = $this->validateRequest();
 
         return MediumSubscription::where([

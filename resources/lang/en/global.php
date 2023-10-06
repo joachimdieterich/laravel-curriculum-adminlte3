@@ -1020,6 +1020,7 @@ return [
         'edit' => 'Edit videoconference ',
         'delete' => 'Delete videoconference',
         'delete_helper' => 'Should the videoconference be deleted?',
+        'add_presentation' => 'Add presentation',
         'fields' => [
             'meetingID' => 'meetingID',
             'meetingID_helper' => '',
@@ -1029,8 +1030,8 @@ return [
             'attendeePW_helper' => '',
             'moderatorPW' => 'Moderator-Password',
             'moderatorPW_helper' => '',
-            'callbackURL' => 'Callback URL',
-            'callbackURL_helper' => '',
+            'callbackUrl' => 'Callback URL',
+            'callbackUrl_helper' => '',
         ],
     ],
 ];

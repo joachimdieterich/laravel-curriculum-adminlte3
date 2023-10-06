@@ -15,11 +15,16 @@ class KanbanItem extends Model
 
     protected $casts = [
         'created_at' => 'datetime:d.m.Y H:i',
+        'locked' => 'boolean',
+        'editable' => 'boolean',
+        'visibility' => 'boolean',
     ];
 
     protected $dates = [
         'updated_at',
         'created_at',
+        'visible_from',
+        'visible_until',
     ];
 
     protected static $marks = [
@@ -110,6 +115,58 @@ class KanbanItem extends Model
             'id', // Local key on enabling_objectives table...
             'medium_id' // Local key on medium_subscription table...
         )->where('subscribable_type', get_class($this));
+    }
+
+    /**
+     * Accessor that mimics Eloquent dynamic property.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getEditorsAttribute()
+    {
+        if (!$this->relationLoaded('editors')) {
+            $layers = User::whereIn('id', $this->editors_ids)->get();
+
+            $this->setRelation('editors', $layers);
+        }
+
+        return $this->getRelation('editors');
+    }
+
+    /**
+     * Access editors relation query.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function editors($select = NULL)
+    {
+        if ($select == NULL){
+            return User::whereIn('id', $this->editors_ids);
+        } else {
+            return User::whereIn('id', $this->editors_ids)->select($select)->get();
+        }
+    }
+
+    /**
+     * Accessor for editors_ids property.
+     *
+     * @return array
+     */
+    public function getEditorsIdsAttribute($commaSeparatedIds)
+    {
+
+        return explode(',', $commaSeparatedIds);
+    }
+
+    /**
+     * Mutator for layer_ids property.
+     *
+     * @param  array|string|id $ids
+     * @return void
+     */
+    public function setEditorsIdsAttribute($ids)
+    {
+        $this->attributes['editors_ids'] = is_string($ids) ? $ids : implode(',', array_filter($ids)); // array filter removes empty entries.
     }
 
     public function isAccessible()

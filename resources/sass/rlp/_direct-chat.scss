@@ -1,7 +1,7 @@
 //
 // Component: Direct Chat
 //
- 
+
 .direct-chat {
   .card-body {
     overflow-x: hidden;
@@ -179,10 +179,23 @@
 
 .contacts-list-img {
   @include border-radius(50%);
-  float: left;
-  width: 40px;
+   float: left;
+   width: 40px;
+   display: inline-block;
 }
 
+.contacts-list-img:not(:first-child) {
+    transition: all 0.5s ease;
+    margin-left: -25px;
+}
+.contacts-list-img:hover:not(:first-child) {
+    transition: all 0.5s ease;
+    margin-left: -10px !important;
+}
+.contacts-list-img:hover:not(:last-child) {
+    transition: all 0.5s ease;
+    margin-right: 15px !important;
+}
 .contacts-list-info {
   color: $white;
   margin-left: 45px;

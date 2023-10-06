@@ -64,6 +64,7 @@ export default {
         modelUrl: String,
         subscriptions: {},
         subscribing_model: String,
+
     },
     data() {
         return {
@@ -73,7 +74,7 @@ export default {
     },
     methods: {
         generateShareURL(item) {
-            return window.location.origin + "/" + this.modelUrl + "s/" + item.kanban_id + "/token?sharing_token=" + item.sharing_token;
+            return window.location.origin + "/" + this.modelUrl + "s/" + item[this.modelUrl+'_id']  + "/token?sharing_token=" + item.sharing_token;
         },
         copyToClipboard(event) {
             console.log(event.target.innerText);

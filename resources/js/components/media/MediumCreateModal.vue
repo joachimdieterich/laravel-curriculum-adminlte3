@@ -272,7 +272,7 @@ export default {
             callbackComponent: null,
             eventHubCallbackFunction: null,
             eventHubCallbackFunctionParams: null,
-
+            subscribeSelected: false,
             form: new Form({
                 'path': '',
                 'thumb_path': '',
@@ -343,8 +343,9 @@ export default {
             this.progressBar = false;
         },
         beforeOpen(event) {
+            this.getFiles(); // move to beforeOpen from mounted to reduce unused requests
             this.selectedFiles = [];
-            this.message = '';
+            this.message = ''; // == no previous upload was made, if so message == OK
             //console.log(event.params);
             if (event.params.referenceable_type){
                 this.form.subscribable_type = event.params.referenceable_type;
@@ -357,6 +358,9 @@ export default {
             }
             if (event.params.subscribable_id) {
                 this.form.subscribable_id = event.params.subscribable_id;
+            }
+            if (event.params.subscribeSelected) {
+                this.subscribeSelected = event.params.subscribeSelected;
             }
             if (event.params.target) {
                 this.form.target = event.params.target;
@@ -393,8 +397,11 @@ export default {
         beforeClose() {
         },
         saveToForm(selected = null) {
+            if (this.subscribeSelected){ //subscribe selected
+                this.subscribe();
+            }
             if (this.eventHubCallbackFunction) {
-                this.$eventHub.$emit(this.eventHubCallbackFunction, {'id': this.eventHubCallbackFunctionParams, 'selectedMediumId': this.selectedFiles});
+                this.$eventHub.$emit(this.eventHubCallbackFunction, {'id': this.eventHubCallbackFunctionParams, 'selectedMediumId': this.selectedFiles, 'files': this.getMediaById()});
             } else if (this.callbackComponent) {
                 if (this.callbackParentComponent) {
                     app.__vue__.$refs[this.callbackParentComponent].$refs[this.callbackComponent][0].reload();
@@ -411,6 +418,42 @@ export default {
         },
         close(){
             this.$modal.hide('medium-create-modal');
+        },
+        subscribe(){
+            let media = this.getMediaById();
+            media.forEach((medium) => {
+                axios.post('/mediumSubscriptions', {
+                    subscribable_type: this.form.subscribable_type,
+                    subscribable_id: this.form.subscribable_id,
+                    medium_id: medium.id
+                }).then((response) => {
+                    console.log(medium.id + 'subscribed');
+                });
+            });
+        },
+        getMediaById(){ //get full media entries for callbackfunctions
+            let selectedMediaList = [];
+            //console.log(this.selectedFiles);
+            if (Array.isArray(this.selectedFiles)){ // select from list
+                this.selectedFiles.forEach((medium_id) => {
+                    this.files.filter((file) => {
+                            if (file.id == medium_id) {
+                                selectedMediaList.push(file);
+                            }
+                        }
+                    );
+                });
+            } else { // fileupload
+                this.files.filter((file) => {
+                        if (file.id == this.selectedFiles) {
+                            selectedMediaList.push(file);
+                        }
+                    }
+                );
+            }
+            //console.log(selectedMediaList);
+
+            return selectedMediaList;
         },
         filesChange(fieldName, fileList) {
             const formData = new FormData();
@@ -463,7 +506,7 @@ export default {
     mounted() {
         this.reset();
 
-        this.getFiles();
+        //this.getFiles(); //moved to bevorOpen!
 
         this.$eventHub.$on('external_add', (form) => {
             //console.log(form);

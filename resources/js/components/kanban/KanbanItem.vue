@@ -43,14 +43,15 @@
                     </div>
                 </div>
             </div>
-            <div class="pb-1" >
+            <div class="pb-0" >
                 <span v-if="editor !== false">
                     <span
                         class="pull-left"
-                        style="border-style: solid; border-width: 1px; border-radius: 20px; padding: 2px 2px 0 2px; height: 25px;"
+                        style="border-style: solid; border-width: 1px; border-radius: 15px; padding: 1px;"
                         :style="{borderColor: textColor }">
                         <color-picker-input
                             :id="'colorPicker_'+index"
+                            :triggerStyle="{width: '24px', height: '18px'}"
                             v-if="editor !== false"
                             v-model="form.color">
                         </color-picker-input>
@@ -58,41 +59,58 @@
                     <input
                         :id="'title_'+index"
                         type="text"
+                        class="ml-2"
                         v-model="form.title"
-                        class="w-100"
-                        style="font-size: 1.1rem; font-weight: 400; border: 0; border-bottom: 1px; border-style:solid; margin: 0;"
+                        style="width: 235px !important;font-size: 1.1rem; font-weight: 400; border: 0; border-bottom: 1px; border-style:solid; margin: 0;"
                         :style="{ backgroundColor: item.color, color: textColor }"
                     />
                 </span>
                 <div v-else>
-                        {{ item.title }}
-                </div>
-                <div style="font-size: .5rem">
-                    {{ item.created_at }}
+                    {{ item.title }}
+                    <div class="clearfix"
+                         style="font-size: .5rem">
+                        {{ item.created_at }}
+                    </div>
                 </div>
             </div>
 
         </div>
         <div class="card-body p-0">
-            <textarea
-                v-if="editor !== false"
-                :id="'description_' + item.id"
-                :name="'description_' + index"
-                :placeholder="trans('global.kanbanItem.fields.description')"
-                class="form-control description my-editor "
-                v-model.trim="form.description"
-            ></textarea>
-            <div v-else-if="item.description !== null"
-                 class="text-muted small px-3 py-2"
-                 v-html="form.description">
-            </div>
+            <span v-if="(editor == false)">
+                <div v-if="item.description !== null "
+                     class="text-muted small px-3 py-2"
+                     v-html="form.description">
+                </div>
+            </span>
 
-
-
-            <div v-if="(editor !== false) && ($userId == form.owner_id)"
+            <div v-if="(editor !== false)"
             class="p-2">
-                <b class="pt-2">{{ trans('global.settings')}}</b>
-                <hr class="mt-0">
+                <div class="pb-2">
+                    <textarea
+                        :id="'description_' + item.id"
+                        :name="'description_' + index"
+                        :placeholder="trans('global.kanbanItem.fields.description')"
+                        class="form-control description my-editor "
+                        v-model.trim="form.description"
+                    ></textarea>
+                </div>
+                <div>
+                    <b class="pt-2 pointer"
+                       @click="() => (expand = !expand)">
+                        {{ trans('global.settings')}}
+                        <span class="pull-right">
+                        <i v-if="expand == true"
+                           class="fa fa-caret-up"
+                        ></i>
+                        <i v-else
+                           class="fa fa-caret-down"
+                        ></i>
+                    </span>
+                    </b>
+                </div>
+                <span
+                    v-if="expand == true">
+                     <hr class="mt-0">
                 <div class="form-group ">
                     <date-picker
                         v-if="editor !== false"
@@ -152,7 +170,7 @@
                         :placeholder="trans('global.kanbanItem.fields.visible_until')">
                     </date-picker>
                 </div>
-
+                </span>
 
             </div>
             <button v-if="editor !== false"
@@ -195,31 +213,27 @@
              :class="{'border-top-0':item.description === null}"
         >
             <div class="d-flex align-items-center">
-                <avatar
-                    v-if="$userId == 8"
-                    class="contacts-list-img"
-                    data-toggle="tooltip"
+               <avatar
+                    :key="item.id + '_editor_' +item.owner.id"
                     :title="item.owner.firstname + ' ' + item.owner.lastname"
                     :username="item.owner.username"
                     :firstname="item.owner.firstname"
                     :lastname="item.owner.lastname"
                     :size="25"
-                ></avatar>
-                <avatar
-                    v-else
                     class="contacts-list-img"
                     data-toggle="tooltip"
-                    :user_id="item.owner_id"
-                    :size="25"
                 ></avatar>
                 <avatar
-                    v-for="(editor_user, index) in item.editors_ids.filter((value, index, array) => array.indexOf(value) === index)"
+                    v-for="(editor_user, index) in editors"
                     v-if="editor_user != '' && $userId != 8"
                     :key="item.id + '_editor_' + index"
+                    :title="editor_user.firstname + ' ' + editor_user.lastname"
+                    :username="editor_user.username"
+                    :firstname="editor_user.firstname"
+                    :lastname="editor_user.lastname"
+                    :size="25"
                     class="contacts-list-img"
-                        data-toggle="tooltip"
-                        :user_id="editor_user"
-                        :size="25"
+                    data-toggle="tooltip"
                 ></avatar>
 
                 <span class="d-flex flex-fill"></span>
@@ -275,11 +289,6 @@ const Reaction =
 const Comments =
     () => import('./Comments');
 import moment from 'moment';
-//import mediaCarousel from '../media/MediaCarousel';
-/*import avatar from "../uiElements/Avatar";
-import Modal from "./../uiElements/Modal";
-import Reaction from "../reaction/Reaction";
-import Comments from "./Comments";*/
 
 export default {
     props: {
@@ -316,6 +325,8 @@ export default {
                 'visible_from': null,
                 'visible_until': null,
             }),
+            expand: false,
+            editors: {}
         };
     },
     computed:{
@@ -404,6 +415,15 @@ export default {
                     console.log(err.response);
                 });
         },
+        getEditors() { //after media upload
+            axios.get("/kanbanItems/" + this.item.id + "/editors")
+                .then(res => {
+                    this.editors = res.data.editors;
+                })
+                .catch(err => {
+                    console.log(err.response);
+                });
+        },
         postDate() {
             if (this.form.due_date == null) return undefined;
 
@@ -424,6 +444,7 @@ export default {
     },
     mounted() {
         this.form = this.item;
+        this.getEditors();
         //this.due_date = this.item.due_date;
         this.$eventHub.$on('reload_kanban_item', (e) => {
             if (this.item.id == e.id) {
@@ -444,11 +465,12 @@ export default {
         this.$nextTick(() => {
             MathJax.startup.defaultReady();
         });
+
     },
     watch: {
         form: function (){
             MathJax.startup.defaultReady();
-        }
+        },
     },
 
     components: {

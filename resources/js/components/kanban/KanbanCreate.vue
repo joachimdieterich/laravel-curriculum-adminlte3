@@ -59,10 +59,13 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body pb-0">
-              <color-picker-input
+              <span
                   class="pull-left"
-                  v-model="form.color">
-              </color-picker-input>
+                  :style="{borderColor: textColor }">
+                <color-picker-input
+                    v-model="form.color">
+                </color-picker-input>
+            </span>
               <MediumForm
                   class="pull-right"
                   :form="form"
@@ -155,7 +158,7 @@ import MediumForm from "../media/MediumForm"
 import Form from "form-backend-validation";
 
 export default {
-    name: 'KanbanForm',
+    name: 'KanbanCrerate',
     components: {MediumForm},
     props: {
         kanban: {}
@@ -169,7 +172,7 @@ export default {
                 'id': '',
                 'title':  '',
                 'description':  '',
-                'color':'#F4F4F4',
+                'color':'#27AF60',
                 'medium_id': null,
                 'commentable': true,
                 'auto_refresh': false,
@@ -193,6 +196,11 @@ export default {
             this.method= 'patch';
         }
     },
+    computed:{
+        textColor: function(){
+            return this.$textcolor(this.form.color, '#333333');
+        }
+    },
     methods: {
         decodeHtml(html) {
             var txt = document.createElement("textarea");
@@ -214,6 +222,7 @@ export default {
             } else {
                 axios.post(this.requestUrl, this.form)
                     .then(res => {
+                        window.location = res.data.message;
                         //this.$eventHub.$emit("kanban-added", res.data.message);
                     })
                     .catch(error => { // Handle the error returned from our request

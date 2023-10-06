@@ -1,6 +1,13 @@
 <template>
     <div>
-        <v-swatches v-model="content" @input="handleInput" ></v-swatches>
+        <v-swatches
+            :swatch-size="swatchSize"
+            :trigger-style="triggerStyle"
+            :popover-to="popoverTo"
+            v-model="content"
+            @input="handleInput"
+            :max-height="height"
+        ></v-swatches>
         <input type="hidden" name="color" :value="content"/>
     </div>
 </template>
@@ -17,7 +24,27 @@ import "vue-swatches/dist/vue-swatches.css"
 export default {
     components: {VSwatches},
     name: "ColorPickerInput",
-    props: ["current","value"],
+    props: {
+        current: {
+            default: "#F4F4F4",
+        },
+        value: {
+            default: "#F4F4F4",
+        },
+        swatchSize: {
+            default: 49
+        },
+        popoverTo: {
+            type: String,
+            default: 'right'
+        },
+        triggerStyle: {},
+        height: {
+            type: Number,
+            default: 300
+        }
+    }
+    ,
     methods: {
         handleInput (e) {
             this.$emit('input', this.content)
@@ -29,8 +56,11 @@ export default {
         }
     },
     watch: {
+        value: function(newVal){
+            this.content = newVal;
+        },
         content: function(){
-            console.log(this.content);
+            //console.log(this.content);
         }
     }
 }

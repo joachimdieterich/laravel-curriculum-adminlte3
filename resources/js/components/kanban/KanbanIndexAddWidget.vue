@@ -17,7 +17,7 @@
             </span>
         </div>
         <!-- Create Modal -->
-        <KanbanForm
+        <KanbanCreate
             id="modal-kanban-form"
             :kanban="kanban"
         />
@@ -26,7 +26,7 @@
 </template>
 <script>
 import Form from "form-backend-validation";
-import KanbanForm from "./KanbanForm";
+import KanbanCreate from "./KanbanCreate";
 
 export default {
     name: 'KanbanIndexAddWidget',
@@ -53,7 +53,7 @@ export default {
         });
     },
     components: {
-        KanbanForm,
+        KanbanCreate,
     },
 }
 </script>

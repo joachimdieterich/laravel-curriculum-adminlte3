@@ -1,111 +1,127 @@
 <template>
-    <div class="card mr-3 ">
-        <div class="card-body">
-            <color-picker-input v-model="form.color"></color-picker-input>
-            <div class="form-group">
-                <input
-                    type="text"
-                    id="title"
-                    name="title"
-                    class="form-control"
-                    v-model.trim="form.title"
-                    :placeholder="trans('global.kanbanItem.fields.title')"
-                    required
-                    />
-                <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+    <div class="card mr-3">
+        <div class="card-header px-3 py-2" :style="{ backgroundColor: form.color, color: textColor }">
+            <span
+                class="pull-left"
+                style="border-style: solid; border-width: 1px; border-radius: 15px; padding: 1px;"
+                :style="{borderColor: textColor }">
+                <color-picker-input
+                    :triggerStyle="{width: '24px', height: '18px'}"
+                    v-model="form.color">
+                </color-picker-input>
+            </span>
+            <input
+                :id="'title_' + component_id"
+                type="text"
+                v-model="form.title"
+                class="ml-2"
+                style="width: 235px !important;font-size: 1.1rem; font-weight: 400; border: 0; border-bottom: 1px; border-style:solid; margin: 0;"
+                :style="{ backgroundColor: form.color, color: textColor }"
+            />
+        </div>
+        <div class="card-body p-2">
+            <div class="pb-2">
+                <textarea
+                    id="description"
+                    name="description"
+                    :placeholder="trans('global.kanbanItem.fields.description')"
+                    class="form-control description my-editor "
+                    v-model.trim="form.description"
+                ></textarea>
             </div>
-            <div class="form-group">
-                 <textarea
-                     id="description"
-                     name="description"
-                     :placeholder="trans('global.kanbanItem.fields.description')"
-                     class="form-control description my-editor "
-                     v-model.trim="form.description"
-                 ></textarea>
-                <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
-            </div>
+            <div class="pb-2">
+                <b class="pt-2 pointer"
+                   @click="() => (this.expand = !this.expand)">
+                    {{ trans('global.settings')}}
+                    <span class="pull-right">
+                        <i v-if="expand == true"
+                           class="fa fa-caret-up"
+                        ></i>
+                        <i v-else
+                           class="fa fa-caret-down"
+                        ></i>
+                    </span>
+                </b>
+                <span
+                v-if="expand == true">
+                    <hr class="mt-0">
+                    <div class="form-group ">
+                        <date-picker
+                            class="w-100 mb-2"
+                            v-model="form.due_date"
+                            type="datetime"
+                            valueType="YYYY-MM-DD HH:mm:ss"
+                            :placeholder="trans('global.kanbanItem.due_date')">
+                        </date-picker>
 
-
-
-            <div class="p-2">
-                <b class="pt-2">{{ trans('global.settings')}}</b>
-                <hr class="mt-0">
-                <div class="form-group ">
-                    <date-picker
-                        v-if="editor !== false"
-                        class="w-100 mb-2"
-                        v-model="form.due_date"
-                        type="datetime"
-                        valueType="YYYY-MM-DD HH:mm:ss"
-                        :placeholder="trans('global.kanbanItem.due_date')">
-                    </date-picker>
-
-                    <span class="custom-control custom-switch custom-switch-on-green">
-                        <input  v-model="form.locked"
+                        <span class="custom-control custom-switch custom-switch-on-green">
+                            <input  v-model="form.locked"
+                                    type="checkbox"
+                                    class="custom-control-input pt-1 "
+                                    :id="'locked_'+ form.id">
+                            <label class="custom-control-label  font-weight-light"
+                                   :for="'locked_'+ form.id" >
+                                {{ trans('global.locked') }}
+                            </label>
+                        </span>
+                        <span class="custom-control custom-switch custom-switch-on-green">
+                            <input  v-model="form.editable"
+                                    type="checkbox"
+                                    class="custom-control-input pt-1 "
+                                    :id="'editable_'+ form.id">
+                            <label class="custom-control-label  font-weight-light"
+                                   :for="'editable_'+ form.id" >
+                                {{ trans('global.editable') }}
+                            </label>
+                        </span>
+                        <span class="custom-control custom-switch custom-switch-on-green">
+                            <input
+                                v-model="form.visibility"
                                 type="checkbox"
                                 class="custom-control-input pt-1 "
-                                :id="'locked_'+ form.id">
-                        <label class="custom-control-label  font-weight-light"
-                               :for="'locked_'+ form.id" >
-                            {{ trans('global.locked') }}
-                        </label>
-                    </span>
-                    <span class="custom-control custom-switch custom-switch-on-green">
-                        <input  v-model="form.editable"
-                                type="checkbox"
-                                class="custom-control-input pt-1 "
-                                :id="'editable_'+ form.id">
-                        <label class="custom-control-label  font-weight-light"
-                               :for="'editable_'+ form.id" >
-                            {{ trans('global.editable') }}
-                        </label>
-                    </span>
-                    <span class="custom-control custom-switch custom-switch-on-green">
-                        <input
-                            v-model="form.visibility"
-                            type="checkbox"
-                            class="custom-control-input pt-1 "
-                            :id="'visibility_'+ form.id">
-                        <label class="custom-control-label font-weight-light"
-                               :for="'visibility_'+ form.id" >
-                            {{ trans('global.visibility') }}:
-                        </label>
-                    </span>
+                                :id="'visibility_'+ form.id">
+                            <label class="custom-control-label font-weight-light"
+                                   :for="'visibility_'+ form.id" >
+                                {{ trans('global.visibility') }}:
+                            </label>
+                        </span>
 
-                    <date-picker
-                        v-if="form.visibility == 1"
-                        class="w-100 pt-2"
-                        v-model="form.visible_from"
-                        type="datetime"
-                        valueType="YYYY-MM-DD HH:mm:ss"
-                        :placeholder="trans('global.kanbanItem.fields.visible_from')">
-                    </date-picker>
-                    <date-picker
-                        v-if="form.visibility == 1"
-                        class="w-100 pt-2"
-                        v-model="form.visible_until"
-                        type="datetime"
-                        valueType="YYYY-MM-DD HH:mm:ss"
-                        :placeholder="trans('global.kanbanItem.fields.visible_until')">
-                    </date-picker>
-                </div>
+                        <date-picker
+                            v-if="form.visibility == 1"
+                            class="w-100 pt-2"
+                            v-model="form.visible_from"
+                            type="datetime"
+                            valueType="YYYY-MM-DD HH:mm:ss"
+                            :placeholder="trans('global.kanbanItem.fields.visible_from')">
+                        </date-picker>
+                        <date-picker
+                            v-if="form.visibility == 1"
+                            class="w-100 pt-2"
+                            v-model="form.visible_until"
+                            type="datetime"
+                            valueType="YYYY-MM-DD HH:mm:ss"
+                            :placeholder="trans('global.kanbanItem.fields.visible_until')">
+                        </date-picker>
+                    </div>
+                </span>
             </div>
-            
-            <button
-                name="kanbanItemCancel"
-                @click="$emit('item-canceled')"
-                type="reset"
-                class="btn btn-default"
-              >
-                {{ trans('global.cancel') }}
-            </button>
-            <button
-                name="kanbanItemSave"
-                class="btn btn-primary pull-right"
-                @click="submit"
-              >
-                {{ trans('global.save') }}
-            </button>
+            <div class="pb-2">
+                <button
+                    name="kanbanItemCancel"
+                    @click="$emit('item-canceled')"
+                    type="reset"
+                    class="btn btn-default"
+                  >
+                    {{ trans('global.cancel') }}
+                </button>
+                <button
+                    name="kanbanItemSave"
+                    class="btn btn-primary pull-right"
+                    @click="submit"
+                  >
+                    {{ trans('global.save') }}
+                </button>
+            </div>
         </div>
     </div>
 </template>
@@ -125,6 +141,7 @@ export default {
     },
     data() {
         return {
+            component_id: this._uid,
             method: 'post',
             requestUrl: '/kanbanItems',
             form: new Form({
@@ -142,6 +159,7 @@ export default {
                 'visible_from': null,
                 'visible_until': null,
             }),
+            expand: false,
         };
     },
     created() {
@@ -167,6 +185,11 @@ export default {
         this.$initTinyMCE([
             "autolink link"
         ], );
+    },
+    computed:{
+        textColor: function(){
+            return this.$textcolor(this.form.color, '#333333');
+        }
     },
     methods: {
         open(modal, relationKey) {
@@ -212,7 +235,9 @@ export default {
                             console.log(error);
                         });
             }
+
         },
+
     },
     components: {
         DatePicker

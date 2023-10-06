@@ -64,4 +64,7 @@ button {
 input[type="search"]::-webkit-search-cancel-button:hover {
     cursor:pointer;
 }
+input[type="search"]:focus {
+    width: 250px !important;
+}
 </style>

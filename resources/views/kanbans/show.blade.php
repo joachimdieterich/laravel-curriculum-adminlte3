@@ -2,14 +2,14 @@
 
 @section('title')
 
-    @if(Auth::user()->id == $kanban->owner_id)
+    {{--@if(Auth::user()->id == $kanban->owner_id)
         @can('kanban_create')
             <color-picker-component
                 id="{{ $kanban->id }}"
                 class="@if(!$may_edit) d-none @endif"
             ></color-picker-component>
         @endcan
-    @endif
+    @endif--}}
     <small>{{ $kanban->title }} </small>
     @if(Auth::user()->id == $kanban->owner_id)
         <a class="btn btn-flat"

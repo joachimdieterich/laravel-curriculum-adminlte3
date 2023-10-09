@@ -19,6 +19,7 @@
         <!-- Create Modal -->
         <KanbanCreate
             id="modal-kanban-form"
+            :method="method"
             :kanban="kanban"
         />
     </div>
@@ -39,17 +40,22 @@ export default {
     data() {
         return {
             kanban: null,
+            method: {
+                type: String,
+                default: 'post'
+            }
         }
     },
     methods: {
-       open(){
+       open(method = 'post'){
+           this.method = method;
            $('#modal-kanban-form').modal('show');
        },
     },
     mounted() {
         this.$eventHub.$on('edit_kanban', (kanban) => {
             this.kanban = kanban;
-            this.open();
+            this.open('patch');
         });
     },
     components: {

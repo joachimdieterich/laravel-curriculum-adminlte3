@@ -79,16 +79,19 @@
                             <i class="fa fa-pencil-alt mr-4"></i>
                             {{ trans('global.kanbanStatus.edit') }}
                         </button>
-                        <hr class="my-1">
-                        <button
-                            v-if="($userId == status_owner_id) || (editable == 1 && $userId == kanban.owner_id  )"
-                            v-can="'kanban_delete'"
-                            name="kanbanStatusDelete"
-                            class="dropdown-item py-1 text-red "
-                            @click="confirmStatusDelete()">
-                            <i class="fa fa-trash mr-4"></i>
-                            {{ trans('global.delete') }}
-                        </button>
+                        <span v-if="($userId == status_owner_id) || (editable == 1 && $userId == kanban.owner_id)">
+                            <hr class="my-1">
+                            <button
+
+                                v-can="'kanban_delete'"
+                                name="kanbanStatusDelete"
+                                class="dropdown-item py-1 text-red "
+                                @click="confirmStatusDelete()">
+                                <i class="fa fa-trash mr-4"></i>
+                                {{ trans('global.delete') }}
+                            </button>
+                        </span>
+
                     </span>
                 </div>
             </div>

@@ -31,7 +31,7 @@
 @endsection
 @section('scripts')
 @parent
-{{--
+
 <script>
 $(document).ready( function () {
     var table = $('#kanbans-datatable').DataTable({
@@ -45,6 +45,6 @@ $(document).ready( function () {
         buttons: []
     });
 });
-</script>--}}
+</script>
 
 @endsection

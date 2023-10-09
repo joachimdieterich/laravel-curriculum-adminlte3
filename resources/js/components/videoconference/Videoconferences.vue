@@ -11,7 +11,7 @@
             </div>-->
             <ul v-if="typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined'"
                 class="nav nav-pills" role="tablist">
-                <li v-can="'videoconference_create'"
+<!--                <li v-can="'videoconference_create'"
                     class="nav-item ">
                     <a class="nav-link active bg-green"
                        href="/videoconferences/create"
@@ -19,8 +19,8 @@
                     >
                         <i class="fa fa-plus pr-2"></i> {{ trans('global.videoconference.create') }}
                     </a>
-                </li>
-                <li class="nav-item ml-auto">
+                </li>-->
+                <li class="nav-item">
                     <a class="nav-link "
                        :class="filter === 'all' ? 'active' : ''"
                        id="videoconference-filter-all"
@@ -125,6 +125,12 @@
                                 <i class="fa fa-pencil-alt mr-2"></i>
                                 {{ trans('global.videoconference.edit') }}
                             </button>
+                            <button :name="'videoconference-share_' + videoconference.id"
+                                    class="dropdown-item text-secondary"
+                                    @click.prevent="shareVideoconference(videoconference)">
+                                <i class="fa fa-share-alt mr-2"></i>
+                                {{ trans('global.videoconference.share') }}
+                            </button>
                             <hr class="my-1">
                             <button
                                 :id="'delete-videoconference-' + videoconference.id"
@@ -138,6 +144,8 @@
                     </div>
                 </a>
             </div>
+            <videoconference-index-add-widget
+                v-can="'videoconference_create'"/>
         </div>
         <Modal
             :id="'videoconferenceModal'"
@@ -151,6 +159,7 @@
 </template>
 
 <script>
+import VideoconferenceIndexAddWidget from "./VideoconferenceIndexAddWidget";
 const Modal =
     () => import('./../uiElements/Modal');
 
@@ -176,7 +185,11 @@ export default {
             this.currentVideoconference = videoconference;
         },
         editVideoconference(videoconference){
-            window.location = "/videoconferences/" + videoconference.id + "/edit";
+            this.$eventHub.$emit('edit_videoconference', videoconference);
+            //window.location = "/videoconferences/" + videoconference.id + "/edit";
+        },
+        shareVideoconference(videoconference){
+            this.$modal.show('subscribe-modal', { 'modelId': videoconference.id, 'modelUrl': 'videoconference' , 'shareWithToken': true, 'canEditLabel': 'darf Videoknferenz starten'});
         },
         loaderEvent(){
             if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
@@ -201,13 +214,15 @@ export default {
             txt.innerHTML = html;
             return txt.value.replace(/(<([^>]+)>)/ig,"");
         },
-        async destroy() {
-            try {
-                this.videoconferences = (await axios.delete('/videoconferences/' + this.currentVideoconference.id)).data.data;
-            } catch (error) {
-                console.log(error);
-            }
-            window.location = "/videoconferences";
+        destroy() {
+            axios.delete('/videoconferences/' + this.currentVideoconference.id)
+                .then(res => {
+                    let index = this.videoconferences.indexOf(this.currentVideoconference);
+                    this.videoconferences.splice(index, 1);
+                })
+                .catch(err => {
+                    console.log(err.response);
+                });
         },
     },
     created() {
@@ -229,9 +244,25 @@ export default {
         });
 
         this.loaderEvent();
+        this.$eventHub.$on('videoconference-added', (videoconference) => {
+            this.videoconferences.push(videoconference);
+        });
+        this.$eventHub.$on('videoconference-updated', (videoconference) => {
+            //console.log(videoconference);
+            const index = this.videoconferences.findIndex(
+                vc => vc.id === videoconference.id
+            );
+
+            for (const [key, value] of Object.entries(videoconference)) {
+                this.videoconferences[index][key] = value;
+            }
+            //this.loaderEvent();
+        });
+
     },
 
     components: {
+        VideoconferenceIndexAddWidget,
         Modal
     },
 }

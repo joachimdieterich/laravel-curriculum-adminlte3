@@ -1030,8 +1030,8 @@ return [
             'attendeePW_helper' => '',
             'moderatorPW' => 'Moderator-Password',
             'moderatorPW_helper' => '',
-            'callbackUrl' => 'Callback URL',
-            'callbackUrl_helper' => '',
+            'endCallbackUrl' => 'Callback URL',
+            'endCallbackUrl_helper' => '',
         ],
     ],
 ];

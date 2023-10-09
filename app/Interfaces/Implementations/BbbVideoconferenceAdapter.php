@@ -93,7 +93,8 @@ class BbbVideoconferenceAdapter implements VideoconferenceInterface
     }
 
     /**
-     * This call enables you to simply check on whether or not a videoconference is running by looking it up with your meeting ID.
+     * returns information about the meeting.
+     * @params array (meetingID,moderatorPW)
      *
      */
     public function getMeetingInfo(array $array)
@@ -141,7 +142,7 @@ class BbbVideoconferenceAdapter implements VideoconferenceInterface
     public function hooksCreate(array $input)
     {
         return \Bigbluebutton::hooksCreate([
-            'callbackURL' => $input['callbackUrl'], //required
+            'callbackURL' => $input['endCallbackUrl'], //required //check: callbackURL or endCallbackUrl?
             'meetingID' => $input['meetingID'], //optional  if not set then hooks set for all meeting id
             'getRaw' => $input['getRaw'] ?? true //optional
         ]);

@@ -16,7 +16,10 @@
 
                     <i class="pr-2"
                        v-bind:class="[iconCss(medium.mime_type)]"></i>
-                    {{ medium.title }}
+                    <span style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+                          {{ medium.title }}
+                    </span>
+
                 </td>
                 <td>
                     <i class="fa fa-trash text-danger pull-right"

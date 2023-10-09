@@ -4,7 +4,7 @@
              class="col-12 pt-2">
             <div class="card">
                 <div class="card-body">
-                    <h5>Raum-Einstellungen
+                    <h5>{{ trans('global.videoconference.edit') }}
                         <i class="fa fa-share-alt text-secondary pull-right"
                            @click="showModal()"
                         ></i>
@@ -498,19 +498,20 @@
         </div>
         <div v-else class="col-12 pt-2">
             <div class="row">
-                <div class="col-sm-12">
+                <div class="col-12">
                     <div class="card card-primary">
                         <div class="card-body">
                             <h5>
                                 {{ videoconference.meetingName }}
                                 <span v-if="videoconference.owner_id == this.$userId">
-                                    <a
-                                    :href="'/videoconferences/' + videoconference.id + '/edit'">
-                                        <i class="fa fa-pencil-alt text-secondary pl-2"></i>
-                                    </a>
-                                    <i class="fa fa-share-alt text-secondary pull-right"
+                                    <i class="fa fa-share-alt text-secondary pl-2"
                                        @click="showModal()"
                                     ></i>
+                                    <a
+                                    :href="'/videoconferences/' + videoconference.id + '/edit'">
+                                        <i class="fa fa-pencil-alt text-secondary pull-right"></i>
+                                    </a>
+
                                 </span>
 
                             </h5>
@@ -546,15 +547,18 @@
                                         </button>
                                     </span>
                                 </div> <!-- guestName -->
-                                <div v-if="videoconference.owner_id == this.$userId"
-                                    class="col-12">
-                                    <h5 class="pt-4">Präsentationen</h5>
-                                    <hr class="bg-gray mt-0">
-                                    <VideoconferenceMedia :model="videoconference" ></VideoconferenceMedia>
-                                </div>
+
 
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div v-if="videoconference.owner_id == this.$userId"
+                         class="col-12">
+                        <h5 class="pt-4">Präsentationen</h5>
+                        <hr class="bg-gray mt-0">
+                        <VideoconferenceMedia :model="videoconference" ></VideoconferenceMedia>
                     </div>
                 </div>
             </div>
@@ -592,7 +596,7 @@ export default {
                 'meetingName': '',
                 'attendeePW': '',
                 'moderatorPW': '',
-                'callbackUrl': '',
+                'endCallbackUrl': '',
                 'welcomeMessage': '',
                 'dialNumber': null,
                 'maxParticipants': 0,
@@ -629,6 +633,8 @@ export default {
                 'userCameraCap': 3,
                 'allJoinAsModerator': false,
                 'medium_id': null,
+                'webcamsOnlyForModerator': false,
+                'anyoneCanStart': true,
             }),
             guestPolicyConstants: {
                 'ALWAYS_ACCEPT': window.trans.global.videoconference.ALWAYS_ACCEPT,
@@ -690,7 +696,7 @@ export default {
     },
     methods: {
         showModal() {
-            this.$modal.show('subscribe-modal', { 'modelId': this.videoconference.id, 'modelUrl': 'videoconference' , 'shareWithToken': true});
+            this.$modal.show('subscribe-modal', { 'modelId': this.videoconference.id, 'modelUrl': 'videoconference' , 'shareWithToken': true, 'canEditLabel': 'darf Videoknferenz starten'});
         },
         destroy(videoconference){
             axios.delete('/videoconferences/'+videoconference.id)
@@ -734,7 +740,7 @@ export default {
             this.loading = !this.loading;
             this.timerCount= 10;
             this.timerEnabled = true;
-            if (this.videoconference.owner_id == this.$userId){
+            if (this.videoconference.owner_id == this.$userId || this.videoconference.anyoneCanStart === true || this.videoconference.editable === true){
                 window.location = '/videoconferences/' + this.videoconference.id + '/start?userName=' + this.form.userName;
             } else {
                 axios.get('/videoconferences/' + this.videoconference.id + '/getStatus')

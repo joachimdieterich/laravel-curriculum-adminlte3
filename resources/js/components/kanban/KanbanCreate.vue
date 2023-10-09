@@ -158,15 +158,15 @@ import MediumForm from "../media/MediumForm"
 import Form from "form-backend-validation";
 
 export default {
-    name: 'KanbanCrerate',
+    name: 'KanbanCreate',
     components: {MediumForm},
     props: {
-        kanban: {}
+        kanban: {},
+        method: ''
     },
     data() {
         return {
             component_id: this._uid,
-            method: 'post',
             requestUrl: '/kanbans',
             form: new Form({
                 'id': '',
@@ -193,7 +193,11 @@ export default {
             this.form.auto_refresh = newVal.auto_refresh;
             this.form.only_edit_owned_items = newVal.only_edit_owned_items;
             this.form.allow_copy = newVal.allow_copy;
-            this.method= 'patch';
+        },
+        method: function (newVal, oldVal) {
+            if (newVal == 'post') {
+                this.form.reset();
+            }
         }
     },
     computed:{
@@ -218,7 +222,7 @@ export default {
                     .catch(error => { // Handle the error returned from our request
                         console.log(error);
                     });
-                this.method= 'post';
+
             } else {
                 axios.post(this.requestUrl, this.form)
                     .then(res => {

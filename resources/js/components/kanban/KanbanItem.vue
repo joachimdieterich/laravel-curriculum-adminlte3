@@ -30,16 +30,19 @@
                             <i class="fa fa-folder-open mr-2"></i>
                             {{ trans('global.media.title_singular') }}
                         </button>
-                        <hr class="my-1">
-                        <button
-                            v-if="(item.editable == 1 && $userId == item.owner_id) || ($userId == kanban_owner_id )"
-                            v-can="'kanban_delete'"
-                            :name="'kanbanItemDelete_'+index"
-                            class="dropdown-item py-1 text-red"
-                            @click="confirmItemDelete()">
-                            <i class="fa fa-trash mr-2"></i>
-                            {{ trans('global.kanbanItem.delete') }}
-                        </button>
+                        <span v-if="(item.editable == 1 && $userId == item.owner_id) || ($userId == kanban_owner_id)">
+                            <hr class="my-1">
+                            <button
+
+                                v-can="'kanban_delete'"
+                                :name="'kanbanItemDelete_'+index"
+                                class="dropdown-item py-1 text-red"
+                                @click="confirmItemDelete()">
+                                <i class="fa fa-trash mr-2"></i>
+                                {{ trans('global.kanbanItem.delete') }}
+                            </button>
+                        </span>
+
                     </div>
                 </div>
             </div>

@@ -91,7 +91,7 @@
             @if(  Request::is('videoconferences') )
                 {{ trans('global.videoconference.title') }}
             @else
-                {{ env('APP_NAME') }}d
+                {{ env('APP_NAME') }}
             @endif
         </span>
    </a>

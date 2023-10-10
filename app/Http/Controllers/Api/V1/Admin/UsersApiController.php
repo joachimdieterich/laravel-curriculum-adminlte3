@@ -111,13 +111,13 @@ class UsersApiController extends Controller
         ];
 
         // Get Videoconferences
-        $sharedVideoconferences = $user->videoconferences()->select('videoconferences.id', 'videoconferences.meetingName')->get();
+       /* $sharedVideoconferences = $user->videoconferences()->select('videoconferences.id', 'videoconferences.meetingName')->get();
 
         foreach ($user->groups as $group) {
             $sharedVideoconferences = $sharedVideoconferences->merge($group->videoconferences()->select('videoconferences.id', 'videoconferences.meetingName')->get());
         }
         $organization = Organization::find($user->current_organization_id)->videoconferences()->select('videoconferences.id', 'videoconferences.meetingName')->get();
-        $sharedVideoconferences = $sharedVideoconferences->merge($organization);
+        $sharedVideoconferences = $sharedVideoconferences->merge($organization);*/
 
 
         return ['enrollments' => $user->currentGroups()
@@ -126,10 +126,10 @@ class UsersApiController extends Controller
                                             $query->select('curricula.id', 'curricula.title');
                                        }])->get(),
             'notifications' => $user->notifications,
-            'videoconferences' => [
+          /*  'videoconferences' => [
                 'owned' => Videoconference::where('owner_id', $user->id)->select('id', 'meetingName')->get(),
                 'shared_with_me' => $sharedVideoconferences,
-            ],
+            ],*/
             'events' => [/*$event*/],
         ];
     }

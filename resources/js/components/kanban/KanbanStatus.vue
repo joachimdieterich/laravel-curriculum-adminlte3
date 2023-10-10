@@ -1,7 +1,7 @@
 <template>
     <div class="card-header border-bottom-0 p-0 kanban-header"
          :key="form.id">
-        <span v-if="(editor !== false && form.visibility !== 0) || (editor !== false && $userId == status.owner_id ) || (editor !== false && $userId == kanban.owner_id ) "
+        <span v-if="(editor !== false && form.visibility !== 0 ) || (editor !== false && $userId == status_owner_id ) || (editor !== false && $userId == kanban.owner_id ) "
               filter=".ignore">
             <input
                 :id="'title_'+ form.id"
@@ -11,7 +11,18 @@
                 class="w-100"
                 style="font-size: 1.1rem; font-weight: 400; border: 0; border-bottom: 1px; border-style:solid; margin: 0;"
             />
-             <div class="form-group ">
+             <div class="form-group "
+                  v-if="($userId == status_owner_id)">
+                 <span class="custom-control custom-switch custom-switch-on-green">
+                    <input  v-model="form.editable"
+                            type="checkbox"
+                            class="custom-control-input pt-1 "
+                            :id="'editable_'+ form.id">
+                    <label class="custom-control-label  font-weight-light"
+                           :for="'editable_'+ form.id" >
+                        {{ trans('global.editable') }}
+                    </label>
+                </span>
                  <span class="custom-control custom-switch custom-switch-on-green">
                     <input  v-model="form.locked"
                             type="checkbox"
@@ -37,7 +48,7 @@
             </div>
 
              <button :name="'kanbanStatusSave_'+form.id"
-                     class="btn btn-primary p-2 m-2"
+                     class="btn btn-primary p-2 pull-right"
                      @click="submit()">
                 {{ trans('global.save') }}
             </button>
@@ -52,7 +63,7 @@
         </span>
         <span v-else>
             <strong>{{ form.title }}</strong>
-            <div v-if="(editable == 1 && form.locked !== 1 && form.visibility == 1 && kanban.onlyEditOwnedItems !== 1) || ($userId == status.owner_id ) || ($userId == kanban.owner_id )"
+            <div v-if="(editable == 1 && status.editable == true && status.visibility == true && kanban.only_edit_owned_items !== true) || (editable == 1 && $userId == status_owner_id ) || ($userId == kanban.owner_id )"
                  :id="'kanbanStatusDropdown_'+form.id"
                  class="btn btn-flat py-0 pl-0 pull-left"
                  data-toggle="dropdown"
@@ -68,16 +79,19 @@
                             <i class="fa fa-pencil-alt mr-4"></i>
                             {{ trans('global.kanbanStatus.edit') }}
                         </button>
-                        <hr class="my-1">
-                        <button
-                            v-if="($userId == status.owner_id) || (editable == 1 && $userId == kanban.owner_id  )"
-                            v-can="'kanban_delete'"
-                            name="kanbanStatusDelete"
-                            class="dropdown-item py-1 text-red "
-                            @click="confirmStatusDelete()">
-                            <i class="fa fa-trash mr-4"></i>
-                            {{ trans('global.delete') }}
-                        </button>
+                        <span v-if="($userId == status_owner_id) || (editable == 1 && $userId == kanban.owner_id)">
+                            <hr class="my-1">
+                            <button
+
+                                v-can="'kanban_delete'"
+                                name="kanbanStatusDelete"
+                                class="dropdown-item py-1 text-red "
+                                @click="confirmStatusDelete()">
+                                <i class="fa fa-trash mr-4"></i>
+                                {{ trans('global.delete') }}
+                            </button>
+                        </span>
+
                     </span>
                 </div>
             </div>
@@ -105,10 +119,7 @@ export default {
     props: {
         kanban: {},
         status: {
-            type: Array,
-            default: {
-                'owner_id' : -1
-            }
+            type: Object,
         },
         'editable': true,
         'newStatus': false,
@@ -121,7 +132,10 @@ export default {
               'title': '',
               'kanban_id': '',
               'locked': false,
+              'editable': true,
               'visibility': true,
+              'visible_from': null,
+              'visible_until': null,
           }),
           url: '',
           method: 'patch',
@@ -180,6 +194,15 @@ export default {
         } else {
             this.form = this.status;
         }
+    },
+    computed: {
+        status_owner_id: function () {
+            if (typeof(this.status) == 'undefined') {
+                return -1;
+            } else {
+                return this.status.owner_id
+            }
+        },
     },
     components: {
         Modal,

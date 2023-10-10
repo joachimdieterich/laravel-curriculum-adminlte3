@@ -1,7 +1,8 @@
 <template>
     <div class="row">
         <div class="col-md-12 py-2">
-            <ul class="nav nav-pills" role="tablist">
+            <ul v-if="typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined'"
+                class="nav nav-pills" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link "
                        :class="filter === 'all' ? 'active' : ''"
@@ -169,6 +170,14 @@
                 </a>
     
             </div>
+        <div class="col-md-12 py-2">
+            <KanbanIndexWidget
+                v-for="(kanban,index) in kanbans"
+                :key="index+'_kanban_'+kanban.id"
+                :kanban="kanban"
+                :search="search.toLowerCase()"/>
+            <KanbanIndexAddWidget
+                v-can="'kanban_create'"/>
         </div>
         
         <Modal
@@ -194,6 +203,9 @@
 </template>
 
 <script>
+import KanbanIndexWidget from "./KanbanIndexWidget";
+import KanbanIndexAddWidget from "./KanbanIndexAddWidget";
+
 const Modal =
     () => import('./../uiElements/Modal');
 //import Modal from "./../uiElements/Modal";
@@ -225,8 +237,9 @@ export default {
             $('#kanbanCopyModal').modal('show');
             this.tempId = kanbanId;
         },
-        editKanban(id){
-            window.location = "/kanbans/" + id + "/edit";
+        editKanban(kanban){
+            this.$eventHub.$emit('edit_kanban', kanban);
+            // window.location = "/kanbans/" + id + "/edit";
         },
         copy(){
             window.location = "/kanbans/" + this.tempId + "/copy";
@@ -234,6 +247,8 @@ export default {
         loaderEvent(){
             if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
                 this.url = '/kanbanSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
+            } else {
+                    this.url =  'kanbans/list?filter=' + this.filter
             }
             // axios.get(this.url + '?filter=' + this.filter)
             //     .then(async response => {
@@ -306,6 +321,9 @@ export default {
             this.kanbans = data; 
         }
     },
+    created() {
+            document.getElementById('searchbar').classList.remove('d-none');
+        },
     mounted() {
         // this.loaderEvent();
 
@@ -344,6 +362,8 @@ export default {
         $('#kanban-content').insertBefore('#kanban-datatable');
     },
     components: {
+        KanbanIndexWidget,
+            KanbanIndexAddWidget,
         Modal
     },
 }

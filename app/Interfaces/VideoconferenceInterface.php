@@ -17,7 +17,7 @@ interface VideoconferenceInterface
     public function close(array $array);
 
     public function getMeetingInfo(array $array);
-    public function isMeetingRunning(array $array);
+    public function isMeetingRunning(string $array);
 
     public function getRecordings(array $array);
     public function publishRecordings(array $array);

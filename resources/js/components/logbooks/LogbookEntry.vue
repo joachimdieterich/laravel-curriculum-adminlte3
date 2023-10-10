@@ -8,7 +8,7 @@
              :data-target="'#logbook_body_'+entry.id"
              aria-expanded="true">
 
-            <span class="username">
+            <span class="username ml-0">
                 <avatar class="pull-right ml-2 contacts-list-img"
                         data-toggle="tooltip"
                         :title="entry.owner.firstname + ' ' + entry.owner.lastname"

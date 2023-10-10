@@ -143,6 +143,10 @@ tr:hover .vuehover {
     padding: 0.25rem 1rem !important;
 }
 
+.overlay{
+    background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
 @media only screen and (max-width: 400px) {
     div#searchbar > input {
         transition: .5s width, .5s padding !important;

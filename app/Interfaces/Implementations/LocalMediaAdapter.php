@@ -123,6 +123,7 @@ class LocalMediaAdapter implements MediaInterface
         $params = $this->validateRequest();
         if ($params['model']) {
             switch ($params['model']){
+                case 'Videoconference':
                 case 'Kanban':
                     $class = 'App\\'.$params['model'];
                     $model = (new $class)::where('id',$params['model_id'] )->get()->first();
@@ -131,6 +132,7 @@ class LocalMediaAdapter implements MediaInterface
                         return ($medium->mime_type != 'url') ? response()->file($path) : redirect($medium->path); //return file or url
                     }
                 break;
+
                 default:
                     break;
             }
@@ -222,7 +224,10 @@ class LocalMediaAdapter implements MediaInterface
         }
 
         if ($medium->subscriptions()->count() <= 1) {
-            Storage::disk(config('filesystems.default'))->delete($medium->path.$medium->medium_name);
+            if ($medium->mime_type != 'url')
+            {
+                Storage::disk(config('filesystems.default'))->delete($medium->path.$medium->medium_name);
+            }
 
             $medium->delete();
         }

@@ -42,7 +42,7 @@ Vue.prototype.trans = (key) => {
 import "vue-swatches/dist/vue-swatches.css";
 
 
-Vue.prototype.$textcolor = (color) => {
+Vue.prototype.$textcolor = (color, dark = '#000', light = '#fff') => {
     if (typeof(color) != 'string'){
         color = 'ffffff';
     }
@@ -56,11 +56,11 @@ Vue.prototype.$textcolor = (color) => {
     if (((r * 0.299) + (g * 0.587) + (b * 0.114)) > 140)
     {
         //console.log('black');
-        return '#000';
+        return dark;
 
     } else {
         //console.log('white');
-        return '#fff';
+        return light;
     }
 };
 
@@ -189,6 +189,9 @@ Vue.component('color-picker-component', () => import('./components/kanban/ColorP
 Vue.component('color-picker-input', () => import('./components/kanban/ColorPickerInput.vue'));
 Vue.component('leaflet-map', () => import('./components/map/Map.vue'));
 Vue.component('searchbar', () => import('./components/uiElements/Searchbar.vue'));
+Vue.component('date-picker-wrapper', () => import('./components/uiElements/DatePickerWrapper.vue'));
+Vue.component('videoconference', () => import('./components/videoconference/Videoconference'));
+Vue.component('videoconferences', () => import('./components/videoconference/Videoconferences'));
 
 Vue.component('tests-table', () => import('./components/tests/TestsTable.vue'));
 

@@ -37,14 +37,15 @@ export default {
                 if (this.filtered) this.removeFilter();
                 return;
             }
-            
+
             this.timer = setTimeout(() => {
                 this.fireEvent();
-            }, 750);
+            }, 250);
         },
         removeFilter() {
             this.filtered = false; // only throw this event once
-            this.$eventHub.$emit('removeFilter');
+            this.$eventHub.$emit('removeFilter'); //todo: needed?
+            this.$eventHub.$emit('filter', '');
         },
         fireEvent() {
             this.filtered = true;

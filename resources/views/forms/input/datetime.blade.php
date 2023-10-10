@@ -5,46 +5,33 @@
             *
         @endif
     </label>
-
-    <div class="input-group">
-        <div class="input-group-prepend">
-            <span class="input-group-text">
-                <i class="far fa-calendar-alt"></i>
-            </span>
-        </div>
-        <input
-            name="{{ $field }}"
-            id="{{ $field }}"
-            type="text"
-            class="form-control {{ $errors->has($field) ? ' is-invalid' : '' }}"
-            value="{{ $value }}"
-            @if(isset($placeholder))
-                placeholder="{{ trans($placeholder) }}"
-            @endif
-            @if(isset($readonly))
-                readonly
-            @endif
+    {{-- in order for the date-picker component to work, it needs a 'v-model' reference --}}
+    <date-picker-wrapper
+        :input-attr="{
+            id: '{{ $field }}',
+            name: '{{ $field }}',
             @if(isset($required))
-                required
+                required: true
             @endif
-            />
-            @if ($errors->has( $field ))
-                <span
-                    id="{{ $field }}-error"
-                    class="error text-danger"
-                    for="input-{{ $field }}">{{ $errors->first( $field ) }}
-                </span>
-            @endif
-    </div>
+        }"
+        class="w-100 {{ $errors->has($field) ? ' is-invalid' : '' }}"
+        type="datetime"
+        value-type="YYYY-MM-DD HH:mm:ss"
+        value="{{ $value }}"
+        :popup-style="{ bottom: '100%', left: 0 }"
+        :append-to-body="false"
+        @if(isset($placeholder))
+            :placeholder="'{{ trans($placeholder) }}'"
+        @endif
+        @if(isset($readonly))
+            :editable="false"
+        @endif
+    ></date-picker-wrapper>
+    @if ($errors->has( $field ))
+        <span
+            id="{{ $field }}-error"
+            class="error text-danger"
+            for="input-{{ $field }}">{{ $errors->first( $field ) }}
+        </span>
+    @endif
 </div>
-
-@section('scripts')
-@parent
-    <script src="{{ asset('node_modules/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.'. app() -> getLocale().'.js') }}"></script>
-    <script>
-        $('#{{ $field }}').datetimepicker({
-            format: 'yyyy-mm-dd hh:ii:ss',
-            autoclose: true,
-        });
-    </script>
-@endsection

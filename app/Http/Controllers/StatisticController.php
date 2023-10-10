@@ -44,6 +44,12 @@ class StatisticController extends Controller
                 case 'repositoryPlugin':
                     return ['message' => $this->getEntriesByKeyWithRelatedTitleFromUuid('App\Http\Controllers\RepositorySubscriptionController@getMedia', 'enabling_objectives', request('date_begin'), request('date_end'), 'uuid')];
                     break;
+                case 'bbbPlugin':
+                    return ['message' => $this->getEntriesByKey('App\Http\Controllers\VideoconferenceController@start', request('date_begin'), request('date_end'))];
+                    break;
+                case 'bbbPluginParticipants':
+                    return ['message' => $this->getEntriesByKey('App\Http\Controllers\VideoconferenceController@endCallback->participantCount',  request('date_begin'), request('date_end'))];
+                    break;
                 case 'organizations':
                     return ['message' => $this->getEntriesByKeyWithRelatedTitle('activeOrg', 'organizations', request('date_begin'), request('date_end'))];
                     break;

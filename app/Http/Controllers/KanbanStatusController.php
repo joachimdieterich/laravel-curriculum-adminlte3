@@ -21,7 +21,7 @@ class KanbanStatusController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        abort_unless((\Gate::allows('kanban_create') and Kanban::find($input['kanban_id'])->isAccessible()), 403);
+        abort_unless((\Gate::allows('kanban_edit') and Kanban::find($input['kanban_id'])->isAccessible()), 403);
 
         $order_id = DB::table('kanban_statuses')
             ->where('kanban_id', $input['kanban_id'])
@@ -29,11 +29,13 @@ class KanbanStatusController extends Controller
 
         $kanbanStatus = KanbanStatus::firstOrCreate([
             'title' => $input['title'],
-            'order_id' => $order_id ?? 1,
+            'order_id' => ($order_id === NULL) ? 0 : $order_id + 1,
             'kanban_id' => $input['kanban_id'],
             'locked' => $input['locked'] ?? false,
+            'editable' => $input['editable'] ?? true,
             'visibility' => $input['visibility'] ?? true,
-
+            'visible_from' => $input['visible_from'] ?? NULL,
+            'visible_until' => $input['visible_until'] ?? NULL,
             'owner_id' => auth()->user()->id,
         ]);
 
@@ -64,7 +66,12 @@ class KanbanStatusController extends Controller
         $kanbanStatus->update([
             'title' => $input['title'],
             'locked' => $input['locked'] ?? false,
+            'editable' => $input['editable'] ?? true,
             'visibility' => $input['visibility'] ?? true,
+            'visible_from' => $input['visible_from'],
+            'visible_until' => $input['visible_until'],
+            'owner_id' => $kanbanStatus->owner_id, //owner should not be updated
+            'editors_ids' => array_merge($kanbanStatus->editors_ids, [auth()->user()->id] )
         ]);
 
         if (request()->wantsJson()) {
@@ -171,7 +178,11 @@ class KanbanStatusController extends Controller
             'kanban_id' => 'sometimes|required|integer',
             'order_id' => 'sometimes|integer',
             'locked' => 'sometimes|boolean',
+            'editable' => 'sometimes|boolean',
             'visibility' => 'sometimes|boolean',
+            'visible_from' => 'sometimes',
+            'visible_until' => 'sometimes',
+            'editors_id' => 'sometimes',
         ]);
     }
 

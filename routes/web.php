@@ -130,13 +130,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('kanbans', 'KanbanController');
 
     Route::post('kanbanItems/{kanbanItem}/react', 'KanbanItemController@reaction')->name('kanbanItems.react');
+    Route::get('kanbanItems/{kanbanItem}/editors', 'KanbanItemController@editors')->name('kanbanItems.editors');
     Route::put('kanbanItems/sync', 'KanbanItemController@sync')->name('kanbanItems.sync');
     Route::resource('kanbanItems', 'KanbanItemController');
 
     Route::get('kanbanStatuses/{kanban}/checkSync', 'KanbanStatusController@checkSync');
     Route::put('kanbanStatuses/sync', 'KanbanStatusController@sync')->name('kanbanStatuses.sync');
     Route::resource('kanbanStatuses', 'KanbanStatusController');
-    Route::post('kanban/token', 'ShareTokenController@create');
+
+    Route::post('tokens', 'ShareTokenController@create');
 
     Route::get('get_kanbans_color/{id}', 'KanbanController@getKanbansColor');
     Route::post('update_kanbans_color', 'KanbanController@updateKanbansColor');
@@ -314,7 +316,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('variants', 'VariantController');
 
     Route::get('videoconferences/list', 'VideoconferenceController@list');
+    Route::get('videoconferences/endCallback', 'VideoconferenceController@endCallback');
     Route::resource('videoconferences', 'VideoconferenceController');
+    Route::get('videoconferences/{videoconference}/getStatus', 'VideoconferenceController@getStatus');
+    Route::get('videoconferences/{videoconference}/start', 'VideoconferenceController@start');
+
+
+    Route::resource('videoconferenceSubscriptions', 'VideoconferenceSubscriptionController');
 
     /* Tests */
     Route::get('tests', 'Tests\TestController@index');
@@ -337,6 +345,7 @@ Route::group(['middleware' => 'auth'], function () {
 //}
 
 if (env('GUEST_USER') !== null) {
+    Route::get('videoconferences/{videoconference}/token', 'VideoconferenceController@getVideoconferenceByToken');
     Route::get('kanbans/{kanban}/token', 'KanbanController@getKanbanByToken');
     Route::get('kanban/share/{token}', 'ShareTokenController@auth');
 

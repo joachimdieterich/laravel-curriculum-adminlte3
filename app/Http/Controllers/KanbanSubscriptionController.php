@@ -31,6 +31,7 @@ class KanbanSubscriptionController extends Controller
         }
         else
         {
+            $tokens = null;
             if (request()->wantsJson())
             {
                 $tokenscodes = KanbanSubscription::where('kanban_id', request('kanban_id'))
@@ -50,7 +51,7 @@ class KanbanSubscriptionController extends Controller
 
                 return [
                     'subscribers' => [
-                        'tokens' => $tokens,
+                        'tokens' => $tokens ?? [],
                         'subscriptions' => optional(
                                 optional(
                                     Kanban::find(request('kanban_id'))

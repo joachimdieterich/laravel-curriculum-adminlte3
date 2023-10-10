@@ -79,6 +79,7 @@
                         <subscribers
                             v-if="typeof subscribers.subscriptions != 'undefined'"
                             :modelUrl="modelUrl"
+                            :canEditLabel="canEditLabel"
                             :subscriptions="subscribers.subscriptions"
                             :subscribing_model="'App\\User'"/>
 
@@ -98,6 +99,7 @@
                         <subscribers
                             v-if="typeof subscribers.subscriptions != 'undefined'"
                             :modelUrl="modelUrl"
+                            :canEditLabel="canEditLabel"
                             :subscriptions="subscribers.subscriptions"
                             :subscribing_model="'App\\Group'"/>
                     </div>
@@ -116,6 +118,7 @@
                         <subscribers
                             v-if="typeof subscribers.subscriptions != 'undefined'"
                             :modelUrl="modelUrl"
+                            :canEditLabel="canEditLabel"
                             :subscriptions="subscribers.subscriptions"
                             :subscribing_model="'App\\Organization'"/>
                     </div>
@@ -130,7 +133,7 @@
                             <date-picker v-model="endDateToken" style="width:100%;"
                                          placeholder="Ablaufdatum"></date-picker>
                         </div>
-                        <small>darf bearbeiten</small>
+                        <small>{{ canEditLabel }}</small>
                         <span class="pull-right custom-control custom-switch custom-switch-on-green">
                             <input v-model="canEditToken"
                                    type="checkbox"
@@ -152,6 +155,7 @@
                             <tokens
                                 v-if="typeof subscribers.subscriptions != 'undefined'"
                                 :modelUrl="modelUrl"
+                                :canEditLabel="canEditLabel"
                                 :subscriptions="subscribers.tokens"/>
                         </div>
 
@@ -204,7 +208,8 @@ export default {
             shareWithGroups: true,
             shareWithOrganizations: true,
             shareWithToken: false,
-            nameToken: ''
+            nameToken: '',
+            canEditLabel: window.trans.global.can_edit
         };
     },
     methods: {
@@ -223,6 +228,12 @@ export default {
             }
             if (event.params.shareWithToken == true) {
                 this.shareWithToken = event.params.shareWithToken;
+            }
+            if (event.params.shareWithToken == true) {
+                this.shareWithToken = event.params.shareWithToken;
+            }
+            if (typeof (event.params.canEditLabel) !== 'undefined') {
+                this.canEditLabel = event.params.canEditLabel;
             }
             this.loadSubscribers();
         },
@@ -328,11 +339,12 @@ export default {
             this.shareWithOrganizations = true;
         },
         createUserToken() {
-            axios.post('/' + this.modelUrl + '/token', {
+            axios.post('/tokens', {
                 'model_id': this.modelId,
                 'title': this.nameToken,
                 'date': this.endDateToken,
-                'editable': this.canEditToken
+                'editable': this.canEditToken,
+                'model_url': this.modelUrl
             }).then( () => this.loadSubscribers())
         }
     },

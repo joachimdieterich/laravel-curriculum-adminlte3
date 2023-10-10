@@ -17,11 +17,10 @@
         <div id="kanban_board_wrapper"
              class="kanban_board_wrapper"
              :style="'background-color:' + kanbanColor">
-            <div @click="toggleFullscreen"
-                 :style="{ color: textColor }"
-            style="float: left;
-                 margin-top: -25px;
-                 margin-left: -20px;">
+            <div
+                id="fullscreen" 
+                @click="toggleFullscreen"
+                :style="{ color: textColor }">
                 <i class="fa fa-expand"></i>
             </div>
             <div
@@ -607,6 +606,15 @@ export default {
     width: 100%;
     padding: 2rem;
     overflow:auto;
+}
+#fullscreen {
+    float: left;
+    padding: 0px 5px;
+    margin-top: -25px;
+    margin-left: -25px;
+}
+#fullscreen:hover {
+    cursor: pointer;
 }
 @media (max-width: 991px) {
     .kanban_board_container { width: calc(100vw - 30px) !important; }

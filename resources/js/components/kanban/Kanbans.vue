@@ -92,6 +92,42 @@
                         <i v-else
                            class="fa fa-share-nodes pt-2"></i>
                     </div>
+                    <div v-if="$userId == kanban.owner_id"
+                         class="btn btn-flat pull-right "
+                         :id="'kanbanDropdown_' + kanban.id"
+                         style="position:absolute; top:0; right: 0; background-color: transparent;"
+                         data-toggle="dropdown"
+                         aria-expanded="false">
+                        <i class="fas fa-ellipsis-v"
+                           :style="'color:' + $textcolor(kanban.color)"></i>
+                        <div class="dropdown-menu dropdown-menu-right"
+                             x-placement="left-start">
+                            <button :name="'kanbanEdit_'+kanban.id"
+                                    class="dropdown-item text-secondary"
+                                    @click.prevent="editKanban(kanban.id)">
+                                    <i class="fa fa-pencil-alt mr-2"></i>
+                                {{ trans('global.kanban.edit') }}
+                            </button>
+                            <button
+                                v-if="kanban.allow_copy"
+                                :id="'copy-kanban-'+kanban.id"
+                                type="submit"
+                                class="dropdown-item text-secondary py-1"
+                                @click.prevent="confirmKanbanCopy(kanban.id)">
+                                <i class="fa fa-copy mr-2"></i>
+                                {{ trans('global.kanban.copy') }}
+                            </button>
+                            <hr class="my-1">
+                            <button
+                                :id="'delete-kanban-'+kanban.id"
+                                type="submit"
+                                class="dropdown-item py-1 text-red"
+                                @click.prevent="confirmItemDelete(kanban.id)">
+                                <i class="fa fa-trash mr-2"></i>
+                                {{ trans('global.kanban.delete') }}
+                            </button>
+                        </div>
+                    </div>
 
                     <div v-if="$userId == kanban.owner_id"
                          class="btn btn-flat pull-right "

@@ -83,13 +83,6 @@ button::before {
     text-align: left;
     transition: .4s width;
 }
-button::before {
-    content: 'Suche';
-    width: 0px;
-    overflow: hidden;
-    text-align: left;
-    transition: .4s width;
-}
 input[type="search"]::-webkit-search-cancel-button:hover {
     cursor:pointer;
 }

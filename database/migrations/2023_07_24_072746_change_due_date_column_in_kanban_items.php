@@ -30,7 +30,7 @@ return new class extends Migration
         Schema::table('kanban_items', function (Blueprint $table) {
             $table->timestamp('begin')->nullable();
             $table->timestamp('end')->nullable();
-            $table->dropColumn('due-date');
+            $table->dropColumn('due_date');
         });
     }
 };

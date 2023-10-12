@@ -44,7 +44,6 @@ export default {
         },
         removeFilter() {
             this.filtered = false; // only throw this event once
-            this.$eventHub.$emit('removeFilter'); //todo: needed?
             this.$eventHub.$emit('filter', '');
         },
         fireEvent() {
@@ -86,5 +85,8 @@ button::before {
 }
 input[type="search"]::-webkit-search-cancel-button:hover {
     cursor:pointer;
+}
+input[type="search"]:focus {
+    width: 250px !important;
 }
 </style>

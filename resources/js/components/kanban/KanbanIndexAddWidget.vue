@@ -1,5 +1,5 @@
 <template>
-    <div style="float: left;">
+    <div>
         <div
             v-if="visible"
             :id="'kanban-add'"

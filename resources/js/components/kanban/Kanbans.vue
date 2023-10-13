@@ -53,7 +53,7 @@
 
         <table id="kanban-datatable" style="display: none;"></table>
         <div id="kanban-content">
-            <div class="col-md-12 py-2">
+            <div class="py-2">
                 <KanbanIndexWidget
                     v-for="(kanban,index) in kanbans"
                     :key="index+'_kanban_'+kanban.id"
@@ -88,8 +88,7 @@
 import KanbanIndexWidget from "./KanbanIndexWidget";
 import KanbanIndexAddWidget from "./KanbanIndexAddWidget";
 
-const Modal =
-    () => import('./../uiElements/Modal');
+const Modal = () => import('./../uiElements/Modal');
 //import Modal from "./../uiElements/Modal";
 
 export default {
@@ -153,27 +152,6 @@ export default {
             }
             window.location = "/kanbans";
         },
-        tableToData() { 
-            const table = document.getElementById('kanban-datatable');
-
-            if (table.getElementsByClassName('dataTables_empty').length > 0) {
-                this.kanbans = [];
-                return;
-            }
-
-            const headers = table.querySelector('thead tr').children;
-            let data = [];
-
-            for (let row = 1; row < table.rows.length; row++) { 
-                const tableRow = table.rows[row]; 
-                let rowData = {}; 
-                for (let cell = 0; cell < tableRow.cells.length; cell++) { 
-                    rowData[headers[cell].innerText] = tableRow.cells[cell].innerHTML;
-                } 
-                data.push(rowData); 
-            } 
-            this.kanbans = data; 
-        }
     },
     mounted() {
         document.getElementById('searchbar').classList.remove('d-none');
@@ -185,26 +163,32 @@ export default {
 
         const parent = this;
         // checks if the datatable-data changes, to update the kanban-data
-        $('#kanban-datatable').on('draw.dt', () => parent.tableToData());
+        $('#kanban-datatable').on('draw.dt', () => {
+            parent.kanbans = $('#kanban-datatable').DataTable().rows({ page: 'current' }).data().toArray();
+        });
 
         $('#kanban-datatable').DataTable({
             ajax: this.url + '?filter=' + this.filter,
             dom: 'tilpr',
             columns: [ // only gets attributes used in this component
-                { title: 'id', data: 'id', 'searchable': false },
-                { title: 'title', data: 'title', 'searchable': true },
-                { title: 'description', data: 'description', 'searchable': true },
-                { title: 'color', data: 'color', 'searchable': false },
-                { title: 'owner_id', data: 'owner_id', 'searchable': false },
+                { title: 'id', data: 'id', searchable: false },
+                { title: 'title', data: 'title', searchable: true },
+                { title: 'description', data: description, searchable: true },
+                { title: 'color', data: 'color', searchable: false },
+                { title: 'owner_id', data: 'owner_id', searchable: false },
                 { title: 'medium_id', data: 'medium_id', 'searchable': false },
+                { title: 'allow_copy', data: 'allow_copy', 'searchable': false },
+                { title: 'commentable', data: 'commentable', 'searchable': false },
+                { title: 'auto_refresh', data: 'auto_refresh', 'searchable': false },
+                { title: 'only_edit_owned_items', data: 'only_edit_owned_items', 'searchable': false },
             ],
-            pageLength: 6, // TODO: maybe set per variable based on window-width (mobile/tablet etc.)
+            //pageLength: 6, // TODO: maybe set per variable based on window-width (mobile/tablet etc.)
         });
 
         // place the content where the table would normally be
         setTimeout(() => {
             $('#kanban-content').insertBefore('#kanban-datatable');
-        }, 100);
+        }, 250); // needs delay, because the wrapper only appears after receiving first ajax-response
     },
     components: {
         KanbanIndexWidget,
@@ -213,3 +197,20 @@ export default {
     },
 }
 </script>
+<style>
+#kanban-datatable_wrapper { width: 100%; }
+@media only screen and (min-width: 992px) {
+    #kanban-datatable_wrapper { padding: 0px 15px; }
+}
+</style>
+<style scoped>
+.nav-link:hover {
+    cursor: default;
+    user-select: none;
+}
+
+.nav-item:hover .nav-link:not(.active) {
+    background-color: rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+</style>

@@ -173,14 +173,14 @@ export default {
             columns: [ // only gets attributes used in this component
                 { title: 'id', data: 'id', searchable: false },
                 { title: 'title', data: 'title', searchable: true },
-                { title: 'description', data: description, searchable: true },
+                { title: 'description', data: 'description', searchable: true },
                 { title: 'color', data: 'color', searchable: false },
                 { title: 'owner_id', data: 'owner_id', searchable: false },
-                { title: 'medium_id', data: 'medium_id', 'searchable': false },
-                { title: 'allow_copy', data: 'allow_copy', 'searchable': false },
-                { title: 'commentable', data: 'commentable', 'searchable': false },
-                { title: 'auto_refresh', data: 'auto_refresh', 'searchable': false },
-                { title: 'only_edit_owned_items', data: 'only_edit_owned_items', 'searchable': false },
+                { title: 'medium_id', data: 'medium_id', searchable: false },
+                { title: 'allow_copy', data: 'allow_copy', searchable: false },
+                { title: 'commentable', data: 'commentable', searchable: false },
+                { title: 'auto_refresh', data: 'auto_refresh', searchable: false },
+                { title: 'only_edit_owned_items', data: 'only_edit_owned_items', searchable: false },
             ],
             //pageLength: 6, // TODO: maybe set per variable based on window-width (mobile/tablet etc.)
         });

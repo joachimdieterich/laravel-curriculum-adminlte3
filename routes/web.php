@@ -316,6 +316,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('variants', 'VariantController');
 
     Route::get('videoconferences/list', 'VideoconferenceController@list');
+    Route::get('videoconferences/endCallback', 'VideoconferenceController@endCallback');
     Route::resource('videoconferences', 'VideoconferenceController');
     Route::get('videoconferences/{videoconference}/getStatus', 'VideoconferenceController@getStatus');
     Route::get('videoconferences/{videoconference}/start', 'VideoconferenceController@start');

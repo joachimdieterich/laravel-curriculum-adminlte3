@@ -15,7 +15,7 @@ class Videoconference extends Model
         'meetingName',
         'attendeePW',
         'moderatorPW',
-        'callbackUrl',
+        'endCallbackUrl',
         'welcomeMessage',
         'dialNumber',
         'maxParticipants',
@@ -54,7 +54,9 @@ class Videoconference extends Model
         'subscribable_type',
         'subscribable_id',
         'userName',
-        'medium_id'
+        'medium_id',
+        'webcamsOnlyForModerator',
+        'anyoneCanStart'
     ];
 
     protected $casts = [
@@ -77,6 +79,8 @@ class Videoconference extends Model
         'allowModsToEjectCameras' => 'boolean',
         'allowRequestsWithoutSession' => 'boolean',
         'allJoinAsModerator' => 'boolean',
+        'webcamsOnlyForModerator' => 'boolean',
+        'anyoneCanStart' => 'boolean',
     ];
 
     public function path()

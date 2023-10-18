@@ -4,7 +4,7 @@
         class="products-list product-list-in-card pl-2 pr-2">
         <li v-if="subscriptions.length != 0">&nbsp;
             <span class="pull-right">
-                <small>{{ trans('global.can_edit') }}</small>
+                <small>{{ canEditLabel }}</small>
             </span>
         </li>
         <li style="clear:right;"
@@ -64,7 +64,7 @@ export default {
         modelUrl: String,
         subscriptions: {},
         subscribing_model: String,
-
+        canEditLabel: String
     },
     data() {
         return {

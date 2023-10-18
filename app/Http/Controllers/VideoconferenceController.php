@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Organization;
+use App\User;
 use App\Videoconference;
 use App\VideoconferenceSubscription;
 use Carbon\Carbon;
@@ -75,50 +76,6 @@ class VideoconferenceController extends Controller
         return empty($videoconferences) ? '' : DataTables::of($videoconferences)
             ->setRowId('id')
             ->make(true);
-
-        /*$videoconferences = (auth()->user()->role()->id == 1) ? Videoconference::all() : auth()->user()->videoconferences()->get();
-
-        $delete_gate = \Gate::allows('videoconference_delete');
-        $edit_gate = \Gate::allows('videoconference_edit');
-
-        return DataTables::of($videoconferences)
-            ->addColumn('action', function ($videoconferences) use ($edit_gate, $delete_gate) {
-
-                $actions = '<a href="'.route('videoconferences.show', $videoconferences->id).'" '
-                    .'id="show-videoconference-'.$videoconferences->id.'" '
-                    .'class="btn p-1">'
-                    .'<i class="fa fa-list-alt text-secondary"></i>'
-                    .'</a>';
-                if ($edit_gate) {
-                    $actions .= '<button class="btn btn-flat"'
-                    . 'onclick="app.__vue__.$modal.show(\'subscribe-modal\', {\'modelId\' :'. $videoconferences->id .', \'modelUrl\' : \'videoconference\',\'shareWithToken\' : true } );">'
-                    . '<i class="fa fa-share-alt text-secondary"></i>'
-                    . '</button>';
-                }
-
-                if ($edit_gate) {
-                    $actions .= '<a href="'.route('videoconferences.edit', $videoconferences->id).'" '
-                        .'id="edit-videoconference-'.$videoconferences->id.'" '
-                        .'class="btn">'
-                        .'<i class="fa fa-pencil-alt text-secondary"></i>'
-                        .'</a>';
-                }
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                        .'class="btn text-danger" '
-                        .'onclick="destroyDataTableEntry(\'videoconferences\','.$videoconferences->id.')">'
-                        .'<i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
-            })
-
-            ->addColumn('check', '')
-            ->setRowId('id')
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
-            ->make(true);*/
     }
 
     /**
@@ -131,7 +88,6 @@ class VideoconferenceController extends Controller
         abort_unless(\Gate::allows('videoconference_create'), 403);
 
         return view('videoconference.create');
-
     }
 
     /**
@@ -146,29 +102,58 @@ class VideoconferenceController extends Controller
 
         $input = $this->validateRequest();
 
-        $callbackUrl = $input['endCallbackUrl'] ?? $input['logoutUrl'];
-        if ($callbackUrl == null)
-        {
-            $callbackUrl == env('APP_URL');
-        }
-
         $conference =  (new $this->adapter())->create([
             'meetingID'     => $input['meetingID'] ?? Str::uuid(),
             'meetingName'   => $input['meetingName'],
             'attendeePW'    => $input['attendeePW'],
             'moderatorPW'   => $input['moderatorPW'],
-            'endCallbackUrl'=> $callbackUrl,
             'logoutUrl'     => $input['logoutUrl'],
-
         ]);
 
         $videoconference = Videoconference::updateOrCreate([
-            'meetingID'     => $conference['meetingID'],
-            'meetingName'   => $input['meetingName'],
-            'attendeePW'    => $conference['attendeePW'],
-            'moderatorPW'   => $conference['moderatorPW'],
-            'callbackUrl'   => $callbackUrl,
-            'owner_id'      => auth()->user()->id,
+            'meetingID'         => $conference['meetingID'],
+            'meetingName'       => $input['meetingName'],
+            'attendeePW'        => $conference['attendeePW'],
+            'moderatorPW'       => $conference['moderatorPW'],
+            'endCallbackUrl'    => env('APP_URL') . '/videoconferences/endCallback?meetingID=' . $conference['meetingID'],
+            'owner_id'          => auth()->user()->id,
+            'welcomeMessage'    => $input['welcomeMessage'] ?? config('bigbluebutton.create.welcomeMessage'),
+            'dialNumber'        => $input['dialNumber'] ?? config('bigbluebutton.create.dialNumber'),
+            'maxParticipants'   => $input['maxParticipants'] ?? config('bigbluebutton.create.maxParticipants'),
+            'logoutUrl'         => $input['logoutUrl'] ?? config('bigbluebutton.create.logoutUrl'),
+            'record'            => $input['record'] ?? config('bigbluebutton.create.record'),
+            'duration'          => $input['duration'] ?? config('bigbluebutton.create.duration'),
+            'isBreakout'        => $input['isBreakout'] ?? config('bigbluebutton.create.isBreakout'),
+            'moderatorOnlyMessage'      => $input['moderatorOnlyMessage'] ?? config('bigbluebutton.create.moderatorOnlyMessage'),
+            'autoStartRecording'        => $input['autoStartRecording'] ?? config('bigbluebutton.create.autoStartRecording'),
+            'allowStartStopRecording'   => $input['allowStartStopRecording'] ?? config('bigbluebutton.create.allowStartStopRecording'),
+            'bannerText'        => $input['bannerText'] ?? config('bigbluebutton.create.bannerText'),
+            'bannerColor'       => $input['bannerColor'] ?? config('bigbluebutton.create.bannerColor'),
+            'logo'              => $input['logo'] ?? config('bigbluebutton.create.logo'),
+            'copyright'         => $input['copyright'] ?? config('bigbluebutton.create.copyright'),
+            'muteOnStart'       => $input['muteOnStart'] ?? config('bigbluebutton.create.muteOnStart'),
+            'allowModsToUnmuteUsers' => $input['allowModsToUnmuteUsers'] ?? config('bigbluebutton.create.allowModsToUnmuteUsers'),
+            'lockSettingsDisableCam' => $input['lockSettingsDisableCam'] ?? config('bigbluebutton.create.lockSettingsDisableCam'),
+            'lockSettingsDisableMic' => $input['lockSettingsDisableMic'] ?? config('bigbluebutton.create.lockSettingsDisableMic'),
+            'lockSettingsDisablePrivateChat' => $input['lockSettingsDisablePrivateChat'] ?? config('bigbluebutton.create.lockSettingsDisablePrivateChat'),
+            'lockSettingsDisablePublicChat' => $input['lockSettingsDisablePublicChat'] ?? config('bigbluebutton.create.lockSettingsDisablePublicChat'),
+            'lockSettingsDisableNote' => $input['lockSettingsDisableNote'] ?? config('bigbluebutton.create.lockSettingsDisableNote'),
+            'lockSettingsLockedLayout' => $input['lockSettingsLockedLayout'] ?? config('bigbluebutton.create.lockSettingsLockedLayout'),
+            'lockSettingsLockOnJoin' => $input['lockSettingsLockOnJoin'] ?? config('bigbluebutton.create.lockSettingsLockOnJoin'),
+            'lockSettingsLockOnJoinConfigurable' => $input['lockSettingsLockOnJoinConfigurable'] ?? config('bigbluebutton.create.lockSettingsLockOnJoinConfigurable'),
+            'guestPolicy' => $input['guestPolicy'] ?? config('bigbluebutton.create.guestPolicy'),
+            'meetingKeepEvents' => $input['meetingKeepEvents'] ?? config('bigbluebutton.create.meetingKeepEvents'),
+            'endWhenNoModerator' => $input['endWhenNoModerator'] ?? config('bigbluebutton.create.endWhenNoModerator'),
+            'endWhenNoModeratorDelayInMinutes' => $input['endWhenNoModeratorDelayInMinutes'] ?? config('bigbluebutton.create.endWhenNoModeratorDelayInMinutes'),
+            'meetingLayout' => $input['meetingLayout'] ?? config('bigbluebutton.create.meetingLayout'),
+            'learningDashboardCleanupDelayInMinutes' => $input['learningDashboardCleanupDelayInMinutes'] ?? config('bigbluebutton.create.learningDashboardCleanupDelayInMinutes'),
+            'allowModsToEjectCameras' => $input['allowModsToEjectCameras'] ?? config('bigbluebutton.create.allowModsToEjectCameras'),
+            'allowRequestsWithoutSession' => $input['allowRequestsWithoutSession'] ?? config('bigbluebutton.create.allowRequestsWithoutSession'),
+            'allJoinAsModerator' => $input['allJoinAsModerator'] ?? false,
+            'userCameraCap' => $input['userCameraCap'] ?? config('bigbluebutton.create.userCameraCap'),
+            'medium_id' => $input['medium_id'] ?? null,
+            'webcamsOnlyForModerator' => $input['webcamsOnlyForModerator'] ?? config('bigbluebutton.create.webcamsOnlyForModerator'),
+            'anyoneCanStart' => $input['anyoneCanStart'] ?? false,
         ]);
 
         if (isset($input['subscribable_type']) AND isset($input['subscribable_id']))
@@ -197,17 +182,55 @@ class VideoconferenceController extends Controller
      * @param  \App\Videoconference  $videoconference
      * @return \Illuminate\Http\Response
      */
-    public function show(Videoconference $videoconference)
+    public function show(Videoconference $videoconference, $editable = null)
     {
-        abort_unless(\Gate::allows('videoconference_show') AND $videoconference->isAccessible(), 403);
+        abort_unless(/*\Gate::allows('videoconference_show') AND*/ $videoconference->isAccessible(), 403);
         $videoconference = $videoconference->withoutRelations(['subscriptions'])->load(['media.license', 'owner']);
+        if ($this->isModerator($videoconference))
+        {
+            $videoconference->editable= true; //hack moderation flag
+        }
+        else
+        {
+            $videoconference->editable= $editable;
+        }
+
 
         return view('videoconference.show')
             ->with(compact('videoconference'));
     }
 
+    private function isModerator(Videoconference $videoconference)
+    {
+        if (
+            $videoconference->subscriptions->where('subscribable_type', "App\User")
+                ->where('editable', 1)
+                ->whereIn('subscribable_id', auth()->user()->id)->isNotEmpty()
+            or $videoconference->subscriptions->where('subscribable_type', "App\Group")
+                    ->where('editable', 1)
+                    ->whereIn('subscribable_id', auth()->user()->groups->pluck('id'))->isNotEmpty()
+            or $videoconference->subscriptions->where('subscribable_type', "App\Organization")
+                ->where('editable', 1)
+                ->whereIn('subscribable_id', auth()->user()->current_organization_id)->isNotEmpty()
+            or ((env('GUEST_USER') != null)
+                ? $videoconference->subscriptions->where('subscribable_type', "App\User")
+                    ->where('editable', 1)
+                    ->whereIn('subscribable_id', User::find(env('GUEST_USER'))->id)->isNotEmpty()
+                : false) //or enrolled via guest
+        )
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     public function start(Videoconference $videoconference)
     {
+        abort_unless(/*\Gate::allows('videoconference_show') AND*/ $videoconference->isAccessible(), 403);
+
         $input = $this->validateRequest();
 
         $userName = auth()->user()->fullName();
@@ -216,11 +239,13 @@ class VideoconferenceController extends Controller
             (auth()->user()->role()->id == 8) || ($input['userName'] != $userName)
         )
         {
-            $userName = $input['userName'];
+            $userName = $input['userName'] ?? auth()->user()->fullName();
         }
 
+        LogController::set(get_class($this).'@'.__FUNCTION__, date('d.m.Y'));
+
         $adapter = new $this->adapter();
-        if ((auth()->user()->id == $videoconference->owner_id) || ($videoconference->allJoinAsModerator == true))
+        if ((auth()->user()->id == $videoconference->owner_id) || ($videoconference->allJoinAsModerator == true) || $this->isModerator($videoconference) === true )
         {
             return $adapter->start([
                 'meetingID'                             => $videoconference->meetingID,
@@ -229,7 +254,7 @@ class VideoconferenceController extends Controller
                 'moderatorPW'                           => $videoconference->moderatorPW,
                 'presentation'                          => $this->getPresentations($videoconference),
                 'userName'                              => $userName,
-                'callbackUrl'                           => $videoconference->callbackUrl,
+                'endCallbackUrl'                        => $videoconference->endCallbackUrl,
                 'welcomeMessage'                        => nl2br($videoconference->welcomeMessage),
                 'dialNumber'                            => $videoconference->dialNumber,
                 'maxParticipants'                       => $videoconference->maxParticipants,
@@ -262,15 +287,62 @@ class VideoconferenceController extends Controller
                 'learningDashboardCleanupDelayInMinutes' => $videoconference->learningDashboardCleanupDelayInMinutes,
                 'allowModsToEjectCameras'               => $videoconference->allowModsToEjectCameras,
                 'allowRequestsWithoutSession'           => $videoconference->allowRequestsWithoutSession,
-                // 'allJoinAsModerator'                    => $videoconference->allJoinAsModerator,
                 'userCameraCap'                         => $videoconference->userCameraCap,
             ]);
         } else {
+            if (!$adapter->isMeetingRunning($videoconference->meetingID))
+            {
+                //meeting not running, start
+                 $adapter->start([
+                    'meetingID'                             => $videoconference->meetingID,
+                    'meetingName'                           => $videoconference->meetingName,
+                    'attendeePW'                            => $videoconference->attendeePW,
+                     'moderatorPW'                           => $videoconference->moderatorPW,
+                    'presentation'                          => $this->getPresentations($videoconference),
+                    'userName'                              => $userName,
+                    'endCallbackUrl'                        => $videoconference->endCallbackUrl,
+                    'welcomeMessage'                        => nl2br($videoconference->welcomeMessage),
+                    'dialNumber'                            => $videoconference->dialNumber,
+                    'maxParticipants'                       => $videoconference->maxParticipants,
+                    'logoutUrl'                             => $videoconference->logoutUrl,
+                    'record'                                => $videoconference->record,
+                    'duration'                              => $videoconference->duration,
+                    'isBreakout'                            => $videoconference->isBreakout,
+                    'moderatorOnlyMessage'                  => nl2br($videoconference->moderatorOnlyMessage),
+                    'autoStartRecording'                    => $videoconference->autoStartRecording,
+                    'allowStartStopRecording'               => $videoconference->allowStartStopRecording,
+                    'bannerText'                            => $videoconference->bannerText,
+                    'bannerColor'                           => $videoconference->bannerColor,
+                    'logo'                                  => $videoconference->logo,
+                    'copyright'                             => $videoconference->copyright,
+                    'muteOnStart'                           => $videoconference->muteOnStart,
+                    'allowModsToUnmuteUsers'                => $videoconference->allowModsToUnmuteUsers,
+                    'lockSettingsDisableCam'                => $videoconference->lockSettingsDisableCam,
+                    'lockSettingsDisableMic'                => $videoconference->lockSettingsDisableMic,
+                    'lockSettingsDisablePrivateChat'        => $videoconference->lockSettingsDisablePrivateChat,
+                    'lockSettingsDisablePublicChat'         => $videoconference->lockSettingsDisablePublicChat,
+                    'lockSettingsDisableNote'               => $videoconference->lockSettingsDisableNote,
+                    'lockSettingsLockedLayout'              => $videoconference->lockSettingsLockedLayout,
+                    'lockSettingsLockOnJoin'                => $videoconference->lockSettingsLockOnJoin,
+                    'lockSettingsLockOnJoinConfigurable'    => $videoconference->lockSettingsLockOnJoinConfigurable,
+                    'guestPolicy'                           => $videoconference->guestPolicy,
+                    'meetingKeepEvents'                     => $videoconference->meetingKeepEvents,
+                    'endWhenNoModerator'                    => $videoconference->endWhenNoModerator,
+                    'endWhenNoModeratorDelayInMinutes'      => $videoconference->endWhenNoModeratorDelayInMinutes,
+                    'meetingLayout'                         => $videoconference->meetingLayout,
+                    'learningDashboardCleanupDelayInMinutes' => $videoconference->learningDashboardCleanupDelayInMinutes,
+                    'allowModsToEjectCameras'               => $videoconference->allowModsToEjectCameras,
+                    'allowRequestsWithoutSession'           => $videoconference->allowRequestsWithoutSession,
+                    'userCameraCap'                         => $videoconference->userCameraCap,
+                ]);
+            }
+            //join as guest
             return $adapter->join([
                 'meetingID' => $videoconference->meetingID,
                 'userName'  => $userName,
                 'password'  =>  $videoconference->attendeePW,
             ]);
+
         }
     }
 
@@ -309,8 +381,7 @@ class VideoconferenceController extends Controller
      */
     public function edit(Videoconference $videoconference)
     {
-        //abort_unless((\Gate::allows('group_edit') and $videoconference->isAccessible()), 403);
-
+        abort_unless((\Gate::allows('group_edit') and $videoconference->isAccessible()), 403);
 
         return view('videoconference.edit')
             ->with(compact('videoconference'));
@@ -328,18 +399,12 @@ class VideoconferenceController extends Controller
         $input = $this->validateRequest();
         abort_unless((\Gate::allows('videoconference_edit') and $videoconference->isAccessible()), 403);
 
-        $callbackUrl = $input['endCallbackUrl'] ?? $input['callbackUrl'];
-        if ($callbackUrl == null)
-        {
-            $callbackUrl == $input['logoutUrl'];
-        }
-
         $videoconference->update([
             'meetingID' => $input['meetingID'] ?? $videoconference->meetingID,
             'meetingName' => $input['meetingName'] ?? $videoconference->meetingName,
             'attendeePW' => $input['attendeePW'] ?? $videoconference->attendeePW,
             'moderatorPW' => $input['moderatorPW'] ?? $videoconference->moderatorPW,
-            'callbackUrl' => $input['callbackUrl'] ?? $videoconference->callbackUrl,
+            'endCallbackUrl' => $input['endCallbackUrl'] ?? $videoconference->endCallbackUrl,
             'welcomeMessage' => $input['welcomeMessage'] ?? $videoconference->welcomeMessage,
             'dialNumber' => $input['dialNumber'] ?? $videoconference->dialNumber,
             'maxParticipants' => $input['maxParticipants'] ?? $videoconference->maxParticipants,
@@ -375,6 +440,8 @@ class VideoconferenceController extends Controller
             'allJoinAsModerator' => $input['allJoinAsModerator'] ?? $videoconference->allJoinAsModerator,
             'userCameraCap' => $input['userCameraCap'] ?? $videoconference->userCameraCap,
             'medium_id' => $input['medium_id'] ?? null,
+            'webcamsOnlyForModerator' => $input['webcamsOnlyForModerator'] ?? $videoconference->webcamsOnlyForModerator,
+            'anyoneCanStart' => $input['anyoneCanStart'] ?? $videoconference->anyoneCanStart,
 
             'owner_id' => auth()->user()->id,
         ]);
@@ -422,7 +489,24 @@ class VideoconferenceController extends Controller
             }
         }
 
-        return $this->show($videoconference, $input['sharing_token']);
+        return $this->show($videoconference, $subscription->editable);
+
+    }
+
+    public function endCallback(Request $request)
+    {
+        $input = $this->validateRequest();
+        $videoconference = Videoconference::where('meetingID', $input['meetingID'])->get()->first();
+
+        $adapter = new $this->adapter();
+        $info = $adapter->getMeetingInfo(
+            [
+                'meetingID' => $videoconference->meetingID,
+                'moderatorPW' => $videoconference->moderatorPW
+            ]
+        );
+        //dump($info['participantCount']);
+        LogController::set(get_class($this).'@'.__FUNCTION__.'->participantCount', $videoconference->meetingID, $info['participantCount']);
 
     }
 
@@ -440,7 +524,6 @@ class VideoconferenceController extends Controller
             'userName' => 'sometimes',
             'password' => 'sometimes',
             'endCallbackUrl' => 'sometimes',
-            'callbackUrl' => 'sometimes',
             'welcomeMessage' => 'sometimes|string|nullable',
             'dialNumber' => 'sometimes',
             'maxParticipants' => 'sometimes|integer',
@@ -480,7 +563,9 @@ class VideoconferenceController extends Controller
             'subscribable_type' => 'sometimes|string',
             'subscribable_id'   => 'sometimes|integer',
             'sharing_token' => 'sometimes',
-            'medium_id' => 'sometimes'
+            'medium_id' => 'sometimes',
+            'webcamsOnlyForModerator' => 'sometimes|boolean',
+            'anyoneCanStart' => 'sometimes|boolean',
         ]);
     }
 

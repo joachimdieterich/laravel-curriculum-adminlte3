@@ -2,7 +2,9 @@
 
     <ul class="products-list product-list-in-card pl-2 pr-2">
         <li v-if="filterSubscriptions.length != 0">&nbsp;
-            <span class="btn btn-flat pull-right py-0"><small>{{ trans('global.can_edit') }}</small></span>
+            <span class="btn btn-flat pull-right py-0">
+                <small>{{ canEditLabel }}</small>
+            </span>
         </li>
         <li style="clear:right;"
             v-for="(item,index) in filterSubscriptions"
@@ -43,10 +45,11 @@
 
     export default {
         props: {
-                modelUrl: String,
-                subscriptions: {},
-                subscribing_model: String,
-              },
+            modelUrl: String,
+            subscriptions: {},
+            subscribing_model: String,
+            canEditLabel: String
+        },
         data() {
             return {
                 errors: {}

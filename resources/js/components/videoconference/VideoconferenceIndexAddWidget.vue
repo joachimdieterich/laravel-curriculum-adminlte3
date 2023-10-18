@@ -2,44 +2,45 @@
     <div>
         <div
             v-if="visible"
-            :id="'kanban-add'"
+            :id="'videoconference-add'"
             class="box box-objective nav-item-box-image pointer my-1"
-            style="min-width: 200px !important; "
+            style="min-width: 200px !important; border-style: dotted !important; "
             @click="open()">
-            <div class="nav-item-box-image-size text-center bg-success">
-                <i class="fa fa-2x p-5 fa-plus nav-item-text text-white"></i>
+            <div class="nav-item-box-image-size text-center">
+                <i class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
             </div>
 
-            <span class="bg-white text-center p-1 overflow-auto nav-item-box">
+            <span class="text-center p-1 overflow-auto nav-item-box bg-gray-light">
                    <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                       {{ trans('global.kanban.create') }}
+                       {{ trans('global.videoconference.create') }}
                    </h1>
             </span>
         </div>
         <!-- Create Modal -->
-        <KanbanCreate
-            id="modal-kanban-form"
+        <videoconferenceCreate
+            id="modal-videoconference-form"
             :method="method"
-            :kanban="kanban"
+            :videoconference="videoconference"
         />
     </div>
 
 </template>
 <script>
 import Form from "form-backend-validation";
-import KanbanCreate from "./KanbanCreate";
+import videoconferenceCreate from "./VideoconferenceCreate";
 
 export default {
-    name: 'KanbanIndexAddWidget',
+    name: 'videoconferenceIndexAddWidget',
     props: {
         visible: {
             type: Boolean,
             default: true
-        }
+        },
+
     },
     data() {
         return {
-            kanban: null,
+            videoconference: null,
             method: {
                 type: String,
                 default: 'post'
@@ -49,17 +50,17 @@ export default {
     methods: {
        open(method = 'post'){
            this.method = method;
-           $('#modal-kanban-form').modal('show');
+           $('#modal-videoconference-form').modal('show');
        },
     },
     mounted() {
-        this.$eventHub.$on('edit_kanban', (kanban) => {
-            this.kanban = kanban;
+        this.$eventHub.$on('edit_videoconference', (videoconference) => {
+            this.videoconference = videoconference;
             this.open('patch');
         });
     },
     components: {
-        KanbanCreate,
+        videoconferenceCreate,
     },
 }
 </script>

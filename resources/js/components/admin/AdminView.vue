@@ -143,6 +143,22 @@
                                    :date_end="date_end">
                         </pie-chart>
                     </span>
+                    <span class="col-6 mt-1">
+                        <pie-chart id="bbbPlugin_chart"
+                                   :title="trans('global.videoconference.title')"
+                                   chart="bbbPlugin"
+                                   :date_begin="date_begin"
+                                   :date_end="date_end">
+                        </pie-chart>
+                    </span>
+                    <span class="col-6 mt-1">
+                        <pie-chart id="bbbPlugin_chart"
+                                   :title="trans('global.videoconference.title')"
+                                   chart="bbbPluginParticipants"
+                                   :date_begin="date_begin"
+                                   :date_end="date_end">
+                        </pie-chart>
+                    </span>
                     <span class="col-12 mt-1">
                         <logins id="login_chart"
                                 :date_begin="date_begin"

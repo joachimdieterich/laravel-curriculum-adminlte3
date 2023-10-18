@@ -168,8 +168,16 @@ const Modal =
                 this.search = filter;
             });
             this.loaderEvent();
+
             this.$eventHub.$on('kanban-updated', (kanban) => {
-                this.loaderEvent();
+                const index = this.kanbans.findIndex(
+                    kb => kb.id === kanban.id
+                );
+
+                for (const [key, value] of Object.entries(kanban)) {
+                    this.kanbans[index][key] = value;
+                }
+                //this.loaderEvent();
             });
         },
         components: {

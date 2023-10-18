@@ -131,9 +131,6 @@ export default {
             }
             
             $('#kanban-datatable').DataTable().ajax.url(this.url).load();
-            // await nextTick();
-            // if the searchbar had some input before changing filters, redo the search
-            // if (this.search != '') this.searchContent();
         },
         setFilter(filter){
             this.filter = filter;

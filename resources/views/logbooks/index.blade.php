@@ -28,7 +28,7 @@
     </div>
 @endcan
 
-<logbooks-new></logbooks-new>
+<logbooks></logbooks>
 {{-- <table id="logbooks-datatable" class="table table-hover datatable">
     <thead>
     <tr>

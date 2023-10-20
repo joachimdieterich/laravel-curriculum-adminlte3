@@ -163,7 +163,7 @@ export default {
                 'lockSettingsLockOnJoin': false,
                 'lockSettingsLockOnJoinConfigurable': false,
                 'guestPolicy': 'ALWAYS_ACCEPT',
-                'userName': '',
+                'userName': '', // TODO: where is this needed? | not in db
                 'meetingKeepEvents': false,
                 'endWhenNoModerator': false,
                 'endWhenNoModeratorDelayInMinutes': 1,

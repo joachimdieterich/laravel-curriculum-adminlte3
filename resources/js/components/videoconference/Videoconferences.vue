@@ -182,7 +182,7 @@ export default {
             //window.location = "/videoconferences/" + videoconference.id + "/edit";
         },
         shareVideoconference(videoconference){
-            this.$modal.show('subscribe-modal', { 'modelId': videoconference.id, 'modelUrl': 'videoconference' , 'shareWithToken': true, 'canEditLabel': 'darf Videoknferenz starten'});
+            this.$modal.show('subscribe-modal', { 'modelId': videoconference.id, 'modelUrl': 'videoconference' , 'shareWithToken': true, 'canEditLabel': 'darf Videokonferenz starten'});
         },
         loaderEvent(){
             if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
@@ -191,7 +191,7 @@ export default {
                 this.url = '/videoconferences/list?filter=' + this.filter
             }
 
-            $('#videoconfere-datatable').DataTable().ajax.url(this.url).load();
+            $('#videoconference-datatable').DataTable().ajax.url(this.url).load();
             // axios.get(this.url)
             //     .then(response => {
             //         this.videoconferences = response.data.data;

@@ -14,6 +14,9 @@
             class="item">
             <div class="d-flex flex-column">
                 <div>
+                    {{ item.token.title }}
+                </div>
+                <div>
                     <i class="fa fa-qrcode"
                         @click="setQRCodeId(item.token.id)"></i>
                     <span>

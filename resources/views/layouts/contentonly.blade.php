@@ -45,7 +45,7 @@
                 </div>
             </div><!-- /.container-fluid -->
         </section>
-        <div class="d-flex flex-column flex-fill px-2">
+        <div class="d-flex flex-column flex-fill px-3">
             @yield('content')
             <input id="medium_id" class="invisible"> <!-- DONT REMOVE - used by TINYMCE -->
         </div>

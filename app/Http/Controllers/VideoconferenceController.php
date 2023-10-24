@@ -210,8 +210,7 @@ class VideoconferenceController extends Controller
         {
             $videoconference->editable= $editable;
         }
-
-
+        //dump($videoconference);
         return view('videoconference.show')
             ->with(compact('videoconference'));
     }
@@ -246,10 +245,12 @@ class VideoconferenceController extends Controller
     public function start(Videoconference $videoconference)
     {
         $input = $this->validateRequest();
+        $moderatorPW =  $input['moderatorPW'];
+        $attendeePW = $input['attendeePW'];
         abort_unless((
-                $videoconference->attendeePW == isset($input['attendeePW']) ? $input['attendeePW'] : null
+                $videoconference->attendeePW == $attendeePW
                 OR
-                $videoconference->moderatorPW == isset($input['moderatorPW'])? $input['moderatorPW'] : null
+                $videoconference->moderatorPW == $moderatorPW
             )
             OR
             $videoconference->isAccessible(),
@@ -267,7 +268,7 @@ class VideoconferenceController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__, date('d.m.Y'));
 
         $adapter = new $this->adapter();
-        if ((auth()->user()->id == $videoconference->owner_id) || ($videoconference->allJoinAsModerator == true) || $this->isModerator($videoconference) === true || $videoconference->moderatorPW == isset($input['moderatorPW'])? $input['moderatorPW'] : null)
+        if ((auth()->user()->id == $videoconference->owner_id) || ($videoconference->allJoinAsModerator == true) || $this->isModerator($videoconference) === true || $videoconference->moderatorPW == $moderatorPW)
         {
             return $adapter->start([
                 'meetingID'                             => $videoconference->meetingID,
@@ -314,6 +315,7 @@ class VideoconferenceController extends Controller
         } else {
             if (!$adapter->isMeetingRunning($videoconference->meetingID))
             {
+
                 //meeting not running, start
                  $adapter->start([
                     'meetingID'                             => $videoconference->meetingID,
@@ -359,6 +361,7 @@ class VideoconferenceController extends Controller
                 ]);
             }
             //join as guest
+
             return $adapter->join([
                 'meetingID' => $videoconference->meetingID,
                 'userName'  => $userName,

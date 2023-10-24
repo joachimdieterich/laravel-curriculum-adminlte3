@@ -167,32 +167,6 @@ class VideoconferenceController extends Controller
                 'owner_id' => auth()->user()->id,
             ]);
             $subscribe->save();
-        } else {
-            $guestToken = Str::uuid();
-            $modToken = Str::uuid();
-            $guest_id = User::find(env('GUEST_USER'))->id;
-
-            $subscribe = VideoconferenceSubscription::create([
-                'videoconference_id' => $videoconference->id,
-                'subscribable_type' => 'App\User',
-                'subscribable_id' => $guest_id,
-                'title' => 'Link für Gäste',
-                'editable' => false,
-                'owner_id' => auth()->user()->id,
-                'sharing_token' => $guestToken,
-            ]);
-            $subscribe->save();
-
-            $subscribe = VideoconferenceSubscription::create([
-                'videoconference_id' => $videoconference->id,
-                'subscribable_type' => 'App\User',
-                'subscribable_id' => $guest_id,
-                'title' => 'Link für Moderierende',
-                'editable' => true,
-                'owner_id' => auth()->user()->id,
-                'sharing_token' => $modToken,
-            ]);
-            $subscribe->save();
         }
 
         if (request()->wantsJson()) {

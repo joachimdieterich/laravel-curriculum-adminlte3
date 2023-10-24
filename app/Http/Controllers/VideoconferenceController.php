@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Organization;
 use App\User;
+use \App\Http\Controllers\ShareTokenController;
 use App\Videoconference;
 use App\VideoconferenceSubscription;
 use Carbon\Carbon;
@@ -85,7 +86,7 @@ class VideoconferenceController extends Controller
      */
     public function create()
     {
-        abort_unless(\Gate::allows('videoconference_create'), 403);
+        abort_unless(\Gate::allows('videoconference_create') AND is_admin(), 403);
 
         return view('videoconference.create');
     }
@@ -168,7 +169,6 @@ class VideoconferenceController extends Controller
             $subscribe->save();
         }
 
-
         if (request()->wantsJson()) {
             return ['videoconference' => $videoconference];
         }
@@ -184,9 +184,25 @@ class VideoconferenceController extends Controller
      */
     public function show(Videoconference $videoconference, $editable = null)
     {
-        abort_unless(/*\Gate::allows('videoconference_show') AND*/ $videoconference->isAccessible(), 403);
+        if (Auth::user() == null) {       //if no user is authenticated authenticate guest
+            LogController::set('guestLogin');
+            LogController::setStatistics();
+            Auth::loginUsingId((env('GUEST_USER')), true);
+        }
+        $input = $this->validateRequest();
+
+        abort_unless((
+            $videoconference->attendeePW == isset($input['attendeePW']) ? $input['attendeePW'] : null
+            OR
+            $videoconference->moderatorPW == isset($input['moderatorPW'])? $input['moderatorPW'] : null
+        )
+        OR
+        $videoconference->isAccessible(),
+        403);
+
         $videoconference = $videoconference->withoutRelations(['subscriptions'])->load(['media.license', 'owner']);
-        if ($this->isModerator($videoconference))
+
+        if ($this->isModerator($videoconference) OR ($videoconference->moderatorPW == isset($input['moderatorPW'])? $input['moderatorPW'] : null))
         {
             $videoconference->editable= true; //hack moderation flag
         }
@@ -229,9 +245,15 @@ class VideoconferenceController extends Controller
 
     public function start(Videoconference $videoconference)
     {
-        abort_unless(/*\Gate::allows('videoconference_show') AND*/ $videoconference->isAccessible(), 403);
-
         $input = $this->validateRequest();
+        abort_unless((
+                $videoconference->attendeePW == isset($input['attendeePW']) ? $input['attendeePW'] : null
+                OR
+                $videoconference->moderatorPW == isset($input['moderatorPW'])? $input['moderatorPW'] : null
+            )
+            OR
+            $videoconference->isAccessible(),
+            403);
 
         $userName = auth()->user()->fullName();
 
@@ -245,7 +267,7 @@ class VideoconferenceController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__, date('d.m.Y'));
 
         $adapter = new $this->adapter();
-        if ((auth()->user()->id == $videoconference->owner_id) || ($videoconference->allJoinAsModerator == true) || $this->isModerator($videoconference) === true )
+        if ((auth()->user()->id == $videoconference->owner_id) || ($videoconference->allJoinAsModerator == true) || $this->isModerator($videoconference) === true || $videoconference->moderatorPW == isset($input['moderatorPW'])? $input['moderatorPW'] : null)
         {
             return $adapter->start([
                 'meetingID'                             => $videoconference->meetingID,
@@ -265,7 +287,7 @@ class VideoconferenceController extends Controller
                 'moderatorOnlyMessage'                  => nl2br($videoconference->moderatorOnlyMessage),
                 'autoStartRecording'                    => $videoconference->autoStartRecording,
                 'allowStartStopRecording'               => $videoconference->allowStartStopRecording,
-                'bannerText'                            => $videoconference->bannerText,
+                'bannerText'                            => $videoconference->bannerText ?? null,
                 'bannerColor'                           => $videoconference->bannerColor,
                 'logo'                                  => $videoconference->logo,
                 'copyright'                             => $videoconference->copyright,
@@ -381,7 +403,7 @@ class VideoconferenceController extends Controller
      */
     public function edit(Videoconference $videoconference)
     {
-        abort_unless((\Gate::allows('group_edit') and $videoconference->isAccessible()), 403);
+        abort_unless((\Gate::allows('group_edit') and $videoconference->isAccessible() AND is_admin()), 403);
 
         return view('videoconference.edit')
             ->with(compact('videoconference'));

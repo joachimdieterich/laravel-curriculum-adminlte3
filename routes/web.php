@@ -346,6 +346,7 @@ Route::group(['middleware' => 'auth'], function () {
 
 if (env('GUEST_USER') !== null) {
     Route::get('videoconferences/{videoconference}/token', 'VideoconferenceController@getVideoconferenceByToken');
+    Route::get('videoconferences/{videoconference}/startWithPw', 'VideoconferenceController@show');
     Route::get('kanbans/{kanban}/token', 'KanbanController@getKanbanByToken');
     Route::get('kanban/share/{token}', 'ShareTokenController@auth');
 

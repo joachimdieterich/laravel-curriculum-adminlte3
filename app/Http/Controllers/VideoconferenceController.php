@@ -403,7 +403,7 @@ class VideoconferenceController extends Controller
      */
     public function edit(Videoconference $videoconference)
     {
-        abort_unless(/*(\Gate::allows('group_edit') and $videoconference->isAccessible() AND */is_admin()), 403);
+        abort_unless((/*\Gate::allows('group_edit') and $videoconference->isAccessible() AND */is_admin()), 403);
 
         return view('videoconference.edit')
             ->with(compact('videoconference'));

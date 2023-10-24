@@ -57,7 +57,7 @@
         "moment": "^2.29.4",
         "pusher-js": "^4.3.1",
         "serialize-javascript": "^3.1.0",
-        "tinymce": "^5.10.7",
+        "tinymce": "^5.10.8",
         "vue-chartjs": "^4.1.2",
         "vue-color": "^2.8.1",
         "vue-echo": "^1.0.2",

@@ -361,7 +361,7 @@ class VideoconferenceController extends Controller
                     'moderatorOnlyMessage'                  => nl2br($videoconference->moderatorOnlyMessage),
                     'autoStartRecording'                    => $videoconference->autoStartRecording,
                     'allowStartStopRecording'               => $videoconference->allowStartStopRecording,
-                    'bannerText'                            => $videoconference->bannerText,
+                    'bannerText'                            => $videoconference->bannerText ?? null,
                     'bannerColor'                           => $videoconference->bannerColor,
                     'logo'                                  => $videoconference->logo,
                     'copyright'                             => $videoconference->copyright,

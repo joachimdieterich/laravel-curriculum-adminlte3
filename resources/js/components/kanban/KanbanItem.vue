@@ -188,6 +188,7 @@
                       </kanbanTask>-->
 
             <mediaCarousel
+                class="clearfix"
                 v-if="item.media_subscriptions.length > 0"
                 :subscriptions="item.media_subscriptions"
                 :width="width -16"

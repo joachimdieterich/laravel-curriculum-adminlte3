@@ -548,19 +548,34 @@
                                     </span>
                                 </div> <!-- guestName -->
 
+                                <div v-if="videoconference.owner_id == this.$userId || videoconference.moderatorPW == this.urlParamModeratorPW"
+                                     class="pt-4 col-12"
+                                >
+                                    <a @click="copyToClipboard('attendee')"
+                                       class="btn btn-light pt-2 pull-right">
+                                        <i class="fa fa-copy"></i>
+                                        Link für Teilnehmer:innen
+                                    </a>
+                                    <a @click="copyToClipboard('moderator')"
+                                            class="btn btn-light pt-2 mr-2 pull-right">
+                                        <i class="fa fa-copy"></i>
+                                        Link für Moderator:innen
+                                    </a>
+
+                                </div>
 
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-12">
+<!--                <div class="col-12">
                     <div v-if="videoconference.owner_id == this.$userId"
                          class="col-12">
                         <h5 class="pt-4">Präsentationen</h5>
                         <hr class="bg-gray mt-0">
                         <VideoconferenceMedia :model="videoconference" ></VideoconferenceMedia>
                     </div>
-                </div>
+                </div>-->
             </div>
         </div>
     </div>
@@ -651,10 +666,18 @@ export default {
             loading: false,
             loadingMessage: 'Lade Konferenz',
             timerEnabled: false,
-            timerCount: 10
+            timerCount: 10,
+            urlParamModeratorPW: '',
+            urlParamAttendeePW: '',
+
         }
     },
     mounted() {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        this.urlParamModeratorPW = urlParams.get('moderatorPW')
+        this.urlParamAttendeePW = urlParams.get('attendeePW')
+
         if ( this.videoconference !== null ) {
             this.form = this.videoconference;
             if(this.user != null){
@@ -695,6 +718,32 @@ export default {
 
     },
     methods: {
+        copyToClipboard(role) {
+            if (role === 'moderator') {
+                console.log(window.location.origin + '/videoconferences/' + this.videoconference.id + '/startWithPw?moderatorPW=' + this.videoconference.moderatorPW);
+                navigator.clipboard.writeText(window.location.origin + '/videoconferences/' + this.videoconference.id + '/startWithPw?moderatorPW=' + this.videoconference.moderatorPW);
+            } else if (role === 'attendee') {
+                console.log(window.location.origin + '/videoconferences/' + this.videoconference.id + '/startWithPw?attendeePW=' + this.videoconference.attendeePW);
+                navigator.clipboard.writeText(window.location.origin + '/videoconferences/' + this.videoconference.id + '/startWithPw?attendeePW=' + this.videoconference.attendeePW);
+            }
+            this.successNotification(window.trans.global.token_copied);
+        },
+        successNotification(message) {
+            this.$toast.success(message, {
+                position: "top-right",
+                timeout: 3000,
+                closeOnClick: true,
+                pauseOnFocusLoss: true,
+                pauseOnHover: true,
+                draggable: true,
+                draggablePercent: 0.6,
+                showCloseButtonOnHover: false,
+                hideProgressBar: true,
+                closeButton: "button",
+                icon: true,
+                rtl: false
+            });
+        },
         showModal() {
             this.$modal.show('subscribe-modal', { 'modelId': this.videoconference.id, 'modelUrl': 'videoconference' , 'shareWithToken': true, 'canEditLabel': 'darf Videoknferenz starten'});
         },
@@ -740,8 +789,14 @@ export default {
             this.loading = !this.loading;
             this.timerCount= 10;
             this.timerEnabled = true;
-            if (this.videoconference.owner_id == this.$userId || this.videoconference.anyoneCanStart === true || this.videoconference.editable === true){
-                window.location = '/videoconferences/' + this.videoconference.id + '/start?userName=' + this.form.userName;
+
+            if (this.videoconference.owner_id == this.$userId ||
+                this.videoconference.anyoneCanStart === true ||
+                this.videoconference.editable === true ||
+                this.urlParamModeratorPW === this.videoconference.moderatorPW ||
+                this.urlParamAttendeePW === this.videoconference.attendeePW ){
+
+                window.location = '/videoconferences/' + this.videoconference.id + '/start?userName=' + this.form.userName + '&moderatorPW=' + this.urlParamModeratorPW + '&attendeePW=' + this.urlParamAttendeePW;
             } else {
                 axios.get('/videoconferences/' + this.videoconference.id + '/getStatus')
                     .then(response => {

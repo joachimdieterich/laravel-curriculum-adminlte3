@@ -20,7 +20,7 @@
                     <i class="fa fa-qrcode"
                         @click="setQRCodeId(item.token.id)"></i>
                     <span>
-                        {{ item.title }} |
+                        {{ item.token.title }} |
                         <small>
                             {{ diffForHumans(item.token.due_date) }}
                         </small>

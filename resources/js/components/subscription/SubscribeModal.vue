@@ -143,7 +143,7 @@
                             <label class="custom-control-label " for="canEditToken"></label>
                         </span>
                         <div>
-                            <button type="button" @click="createUserToken()" :disabled="nameToken == ''"
+                            <button type="button" @click="createUserToken()" :disabled="nameToken.trim() == ''"
                                     class="btn btn-sm btn-outline-success pull-right my-2">
                                 Speichern
                             </button>

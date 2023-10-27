@@ -48,6 +48,7 @@ class ShareTokenController extends Controller
                 $field_model_id => $input['model_id'],
                 'subscribable_type' => "App\User",
                 'subscribable_id' => $user->id,
+                'editable' => $input['editable'] ?? false, // needed so there can be 2 token links
             ])->get()->first();
 
         if (isset($subscribe->sharing_token))
@@ -58,10 +59,11 @@ class ShareTokenController extends Controller
                 $field_model_id => $input['model_id'],
                 'subscribable_type' => "App\User",
                 'subscribable_id' => $user->id,
+                'editable' => $input['editable'] ?? false, // needed so there can be 2 token links
             ], [
                 'due_date' => $date,
-                'title' => isset($input['title']) ? $input['title'] : false,
-                'editable' => isset($input['editable']) ? $input['editable'] : false,
+                'title' => $input['title'] ?? false,
+                'editable' => $input['editable'] ?? false,
                 'owner_id' => auth()->user()->id,
                 'sharing_token' => $token,
             ]);
@@ -76,8 +78,8 @@ class ShareTokenController extends Controller
                 'sharing_token' => $token,
             ], [
                 'due_date' => $date,
-                'title' => isset($input['title']) ? $input['title'] : false,
-                'editable' => isset($input['editable']) ? $input['editable'] : false,
+                'title' => $input['title'] ?? false,
+                'editable' => $input['editable'] ?? false,
                 'owner_id' => auth()->user()->id,
             ]);
             $subscribe->save();

@@ -1,14 +1,6 @@
 <template >
     <div class="row">
         <div class="col-md-12 py-2">
-<!--            <div id="videoconferences_filter" class="dataTables_filter">
-                <label >
-                    <input type="search"
-                           class="form-control form-control-sm"
-                           placeholder="Suchbegriff"
-                           v-model="search">
-                </label>
-            </div>-->
             <ul v-if="typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined'"
                 class="nav nav-pills" role="tablist">
 <!--                <li v-can="'videoconference_create'"
@@ -68,7 +60,8 @@
             </ul>
         </div>
 
-        <div class="col-md-12 py-2">
+        <table id="videoconference-datatable" style="display: none;"></table>
+        <div id="videoconference-content" class="py-2">
             <div v-for="videoconference in videoconferences"
                  v-if="(videoconference.meetingName.toLowerCase().indexOf(search.toLowerCase()) !== -1)
                 || search.length < 3"
@@ -189,7 +182,7 @@ export default {
             //window.location = "/videoconferences/" + videoconference.id + "/edit";
         },
         shareVideoconference(videoconference){
-            this.$modal.show('subscribe-modal', { 'modelId': videoconference.id, 'modelUrl': 'videoconference' , 'shareWithToken': true, 'canEditLabel': 'darf Videoknferenz starten'});
+            this.$modal.show('subscribe-modal', { 'modelId': videoconference.id, 'modelUrl': 'videoconference' , 'shareWithToken': true, 'canEditLabel': 'darf Videokonferenz starten'});
         },
         loaderEvent(){
             if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
@@ -197,13 +190,15 @@ export default {
             } else {
                 this.url = '/videoconferences/list?filter=' + this.filter
             }
-            axios.get(this.url)
-                .then(response => {
-                    this.videoconferences = response.data.data;
-                })
-                .catch(e => {
-                    console.log(e);
-                });
+
+            $('#videoconference-datatable').DataTable().ajax.url(this.url).load();
+            // axios.get(this.url)
+            //     .then(response => {
+            //         this.videoconferences = response.data.data;
+            //     })
+            //     .catch(e => {
+            //         console.log(e);
+            //     });
         },
         setFilter(filter){
             this.filter = filter;
@@ -225,13 +220,10 @@ export default {
                 });
         },
     },
-    created() {
-        document.getElementById('searchbar').classList.remove('d-none');
-    },
-
     mounted() {
-        const filters = ["all", "owner", "shared_with_me", "shared_by_me"];
+        document.getElementById('searchbar').classList.remove('d-none');
 
+        const filters = ["all", "owner", "shared_with_me", "shared_by_me"];
         let url = new URL(window.location.href);
         let urlFilter = url.searchParams.get("filter");
 
@@ -240,10 +232,8 @@ export default {
         }
 
         this.$eventHub.$on('filter', (filter) => {
-            this.search = filter;
+            $('#videoconference-datatable').DataTable().search(filter).draw();
         });
-
-        this.loaderEvent();
         this.$eventHub.$on('videoconference-added', (videoconference) => {
             this.videoconferences.push(videoconference);
         });
@@ -259,6 +249,66 @@ export default {
             //this.loaderEvent();
         });
 
+        const parent = this;
+        // checks if the datatable-data changes, to update the videoconference-data
+        $('#videoconference-datatable').on('draw.dt', () => {
+            parent.videoconferences = $('#videoconference-datatable').DataTable().rows({ page: 'current' }).data().toArray();
+        });
+
+        $('#videoconference-datatable').DataTable({
+            ajax: this.url + '?filter' + this.filter,
+            dom: 'tilpr',
+            columns: [
+                { title: 'id', data: 'id', searchable: false },
+                { title: 'meetingID', data: 'meetingID', searchable: false },
+                { title: 'meetingName', data: 'meetingName', searchable: true },
+                { title: 'attendeePW', data: 'attendeePW', searchable: false },
+                { title: 'moderatorPW', data: 'moderatorPW', searchable: false },
+                { title: 'endCallbackUrl', data: 'endCallbackUrl', searchable: false },
+                { title: 'welcomeMessage', data: 'welcomeMessage', searchable: true },
+                { title: 'dialNumber', data: 'dialNumber', searchable: false },
+                { title: 'maxParticipants', data: 'maxParticipants', searchable: false },
+                { title: 'logoutUrl', data: 'logoutUrl', searchable: false },
+                { title: 'record', data: 'record', searchable: false },
+                { title: 'duration', data: 'duration', searchable: false },
+                { title: 'isBreakout', data: 'isBreakout', searchable: false },
+                { title: 'moderatorOnlyMessage', data: 'moderatorOnlyMessage', searchable: false },
+                { title: 'autoStartRecording', data: 'autoStartRecording', searchable: false },
+                { title: 'allowStartStopRecording', data: 'allowStartStopRecording', searchable: false },
+                { title: 'bannerText', data: 'bannerText', searchable: false },
+                { title: 'bannerColor', data: 'bannerColor', searchable: false },
+                { title: 'logo', data: 'logo', searchable: false },
+                { title: 'copyright', data: 'copyright', searchable: false },
+                { title: 'muteOnStart', data: 'muteOnStart', searchable: false },
+                { title: 'allowModsToUnmuteUsers', data: 'allowModsToUnmuteUsers', searchable: false },
+                { title: 'lockSettingsDisableCam', data: 'lockSettingsDisableCam', searchable: false },
+                { title: 'lockSettingsDisableMic', data: 'lockSettingsDisableMic', searchable: false },
+                { title: 'lockSettingsDisablePrivateChat', data: 'lockSettingsDisablePrivateChat', searchable: false },
+                { title: 'lockSettingsDisablePublicChat', data: 'lockSettingsDisablePublicChat', searchable: false },
+                { title: 'lockSettingsDisableNote', data: 'lockSettingsDisableNote', searchable: false },
+                { title: 'lockSettingsLockedLayout', data: 'lockSettingsLockedLayout', searchable: false },
+                { title: 'lockSettingsLockOnJoin', data: 'lockSettingsLockOnJoin', searchable: false },
+                { title: 'lockSettingsLockOnJoinConfigurable', data: 'lockSettingsLockOnJoinConfigurable', searchable: false },
+                { title: 'guestPolicy', data: 'guestPolicy', searchable: false },
+                { title: 'meetingKeepEvents', data: 'meetingKeepEvents', searchable: false },
+                { title: 'endWhenNoModerator', data: 'endWhenNoModerator', searchable: false },
+                { title: 'endWhenNoModeratorDelayInMinutes', data: 'endWhenNoModeratorDelayInMinutes', searchable: false },
+                { title: 'meetingLayout', data: 'meetingLayout', searchable: false },
+                { title: 'learningDashboardCleanupDelayInMinutes', data: 'learningDashboardCleanupDelayInMinutes', searchable: false },
+                { title: 'allowModsToEjectCameras', data: 'allowModsToEjectCameras', searchable: false },
+                { title: 'allowRequestsWithoutSession', data: 'allowRequestsWithoutSession', searchable: false },
+                { title: 'userCameraCap', data: 'userCameraCap', searchable: false },
+                { title: 'allJoinAsModerator', data: 'allJoinAsModerator', searchable: false },
+                { title: 'medium_id', data: 'medium_id', searchable: false },
+                { title: 'webcamsOnlyForModerator', data: 'webcamsOnlyForModerator', searchable: false },
+                { title: 'anyoneCanStart', data: 'anyoneCanStart', searchable: false },
+            ],
+        });
+
+        // place the content where the table would normally be
+        setTimeout(() => {
+            $('#videoconference-content').insertBefore('#videoconference-datatable');
+        }, 250); // needs delay, because the wrapper only appears after receiving first ajax-response
     },
 
     components: {
@@ -267,3 +317,20 @@ export default {
     },
 }
 </script>
+<style>
+#videoconference-datatable_wrapper {
+    width: 100%;
+    padding: 0px 15px;
+}
+</style>
+<style scoped>
+.nav-link:hover {
+    cursor: default;
+    user-select: none;
+}
+
+.nav-item:hover .nav-link:not(.active) {
+    background-color: rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+</style>

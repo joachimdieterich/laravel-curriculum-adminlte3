@@ -146,3 +146,31 @@ tr:hover .vuehover {
 .overlay{
     background-color: rgba(255, 255, 255, 0.9) !important;
 }
+
+@media only screen and (max-width: 400px) {
+    div#searchbar > input {
+        transition: .5s width, .5s padding !important;
+        
+        &:not(:focus-within) {
+            padding: 0px 41px 0px 0px !important;
+    
+            & + div > button::before { content: none; }
+        }
+    }
+}
+
+@media only screen and (max-width: 576px) {
+    #searchbar > input {
+        width: calc(100vw - 183px);
+        max-width: 248px;
+        transition: .5s width, .4s padding;
+        
+        &:not(:focus-within) {
+            width: 0px;
+            padding: 0px 96px 0px 0px !important;
+            transition: .5s width .1s, .4s padding;
+            
+            & + div > button::before { width: 55px; }
+        }
+    }
+}

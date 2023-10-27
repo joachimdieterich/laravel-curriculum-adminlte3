@@ -180,10 +180,10 @@ class KanbanController extends Controller
             'description' => $input['description'] ?? $kanban->title,
             'color' => $input['color'] ?? $kanban->color,
             'medium_id' => $input['medium_id'] ?? $kanban->medium_id,
-            'commentable' => $input['commentable'],
-            'auto_refresh' => $input['auto_refresh'],
-            'only_edit_owned_items' => $input['only_edit_owned_items'],
-            'allow_copy' => $input['allow_copy'],
+            'commentable' => $input['commentable'] ? 1 : '0',
+            'auto_refresh' => $input['auto_refresh'] ? 1 : '0',
+            'only_edit_owned_items' => $input['only_edit_owned_items'] ? 1 : '0',
+            'allow_copy' => $input['allow_copy'] ? 1 : '0',
             'owner_id' => auth()->user()->id,
         ]);
 

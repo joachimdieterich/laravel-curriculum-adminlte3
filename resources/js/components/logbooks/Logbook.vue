@@ -26,20 +26,6 @@
             </LogbookPrintOptions>
         </div>
 
-        <div class="col-md-12 pb-3">
-            <div id="logbook_filter"
-                 class="dataTables_filter"
-                 v-if="logbook.entries.length > 0">
-                <label>
-                    <input type="search"
-                           class="form-control form-control-sm"
-                           :placeholder="trans('global.search')"
-                           v-model="search"
-                           :aria-label="trans('global.search')">
-                </label>
-            </div>
-        </div>
-
         <div class="col-md-12">
              <LogbookEntry
                  v-for="(entry, index) in entries"
@@ -115,6 +101,7 @@ import LogbookPrintOptions from "./LogbookPrintOptions";
                     title: updatedEntry.title,
                 }
             });
+            this.$eventHub.$emit('showSearchbar');
 
             this.$on('deleteLogbookEntry', function (deletedEntry) {
                 let index = this.entries.indexOf(deletedEntry);

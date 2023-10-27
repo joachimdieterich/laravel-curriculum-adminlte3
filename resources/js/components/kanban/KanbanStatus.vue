@@ -33,7 +33,7 @@
                         {{ trans('global.locked') }}
                     </label>
                 </span>
-                 <span
+                 <span v-if="($userId == status?.owner_id)"
                        class="custom-control custom-switch custom-switch-on-green">
                     <input
                         v-model="form.visibility"

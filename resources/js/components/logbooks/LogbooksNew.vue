@@ -1,11 +1,6 @@
 <template>
     <div class="row">
         <div class="col-md-12 py-2">
-            <div id="logbooks_filter" class="dataTables_filter">
-                <label>
-                    <input type="search" class="form-control form-control-sm" placeholder="Suchbegriff" v-model="search">
-                </label>
-            </div>
             <ul class="nav nav-pills" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link " :class="filter === 'all' ? 'active' : ''" id="logbook-filter-all"
@@ -37,8 +32,7 @@
         </div>
 
         <div class="col-md-12 py-2">
-            <div v-for="(logbook, index) in logbooks" v-if="(logbook.title.toLowerCase().indexOf(search.toLowerCase()) !== -1)
-                || search.length < 3" :id="logbook.id" v-bind:value="logbook.id"
+            <div v-for="(logbook, index) in logbooks" :id="logbook.id" v-bind:value="logbook.id"
                 class="box box-objective nav-item-box-image pointer my-1" style="min-width: 200px !important;"
                 :style="'border-bottom: 5px solid ' + (logbook.color ?? '#2980B9')">
                 <a :href="'/logbooks/' + logbook.id" class="text-decoration-none text-black">
@@ -109,6 +103,8 @@
 </template>
 
 <script>
+import { nextTick } from 'vue';
+
 const Modal =
     () => import('./../uiElements/Modal');
 //import Modal from "./../uiElements/Modal";
@@ -138,8 +134,11 @@ export default {
         },
         loaderEvent() {
             axios.get('logbooks/list?filter=' + this.filter)
-                .then(response => {
+                .then(async response => {
                     this.logbooks = response.data.data;
+                    
+                    await nextTick();
+                    if (this.searchh != '') this.searchContent();
                 })
                 .catch(e => {
                     this.errors = e.data.errors;
@@ -148,6 +147,20 @@ export default {
         setFilter(filter) {
             this.filter = filter;
             this.loaderEvent();
+        },
+        searchContent() {
+            // always case insensitive
+            const elements = this.$el.getElementsByClassName('box');
+            const search = this.search.toLowerCase();
+
+            for (let i = 0; i < elements.length; i++) {
+                const element = elements[i];
+                const content = element.innerText.toLowerCase();
+                
+                element.style.display = content.includes(search)
+                    ? 'block'
+                    : 'none';
+            }
         },
         decodeHtml(html) {
             let txt = document.createElement("textarea");
@@ -164,6 +177,18 @@ export default {
     },
     mounted() {
         this.loaderEvent();
+        this.$eventHub.$emit('showSearchbar');
+
+        this.$eventHub.$on('filter', (filter) => {
+            this.search = filter;
+            this.searchContent();
+        });
+        this.$eventHub.$on('removeFilter', () => {
+            this.search = '';
+            this.$el.getElementsByClassName('box').forEach(element => {
+                element.style.display = 'block';
+            });
+        });
     },
     components: {
         Modal

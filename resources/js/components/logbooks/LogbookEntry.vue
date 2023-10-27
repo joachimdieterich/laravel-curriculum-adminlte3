@@ -375,6 +375,17 @@ export default {
             this.$refs.LmsPlugin.loaderEvent();
         });
 
+        this.$eventHub.$on('filter', (filter) => {
+            // always case insensitive
+            const content = this.$el.innerText.toLowerCase();
+            const search = filter.toLowerCase();
+
+            this.$el.style.display = content.includes(search)
+                ? 'flex'
+                : 'none';
+        });
+        this.$eventHub.$on('removeFilter', () => this.$el.style.display = 'flex');
+        
         this.postDate();
     },
     computed: {

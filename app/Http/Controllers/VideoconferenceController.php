@@ -202,7 +202,7 @@ class VideoconferenceController extends Controller
 
         $videoconference = $videoconference->withoutRelations(['subscriptions'])->load(['media.license', 'owner']);
 
-        if ($this->isModerator($videoconference) OR ($videoconference->moderatorPW == isset($input['moderatorPW'])? $input['moderatorPW'] : null))
+        if ($this->isModerator($videoconference) OR ($videoconference->moderatorPW == isset($input['moderatorPW']) ? $input['moderatorPW'] : null))
         {
             $videoconference->editable= true; //hack moderation flag
         }

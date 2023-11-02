@@ -1,12 +1,9 @@
-<template >
+<template>
     <div class="row">
         <div class="col-md-12 py-2">
             <div id="logbooks_filter" class="dataTables_filter">
-                <label >
-                    <input type="search"
-                           class="form-control form-control-sm"
-                           placeholder="Suchbegriff"
-                           v-model="search">
+                <label>
+                    <input type="search" class="form-control form-control-sm" placeholder="Suchbegriff" v-model="search">
                 </label>
             </div>
         </div>
@@ -25,7 +22,7 @@
                             <i class="fas fa-book pr-2 text-muted"></i>
                             {{ item.logbook.title }}
                         </h3>
-                    </a>
+                </a>
                 </div>
             </div>
         </div>
@@ -35,36 +32,36 @@
 
 <script>
 
-    export default {
-        props: {
-            subscribable_type: '',
-            subscribable_id: '',
-              },
-        data() {
-            return {
-                logbooks: [],
-                subscriptions: {},
-                search: '',
+export default {
+    props: {
+        subscribable_type: '',
+        subscribable_id: '',
+    },
+    data() {
+        return {
+            logbooks: [],
+            subscriptions: {},
+            search: '',
                 errors: {}
-            }
-        },
-        methods: {
-            loaderEvent(){
+        }
+    },
+    methods: {
+        loaderEvent() {
                 axios.get('/logbookSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id)
-                    .then(response => {
+                .then(response => {
                         this.subscriptions = response.data.subscriptions;
-                    })
-                    .catch(e => {
-                        this.errors = e.data.errors;
-                    });
-            },
+                })
+                .catch(e => {
+                    this.errors = e.data.errors;
+                });
+        },
         },
 
-        mounted() {
-            this.loaderEvent();
-        },
-        components: {
+    mounted() {
+        this.loaderEvent();
+    },
+    components: {
 
-        },
-    }
+    },
+}
 </script>

@@ -608,6 +608,15 @@ export default {
     padding: 2rem;
     overflow:auto;
 }
+#fullscreen {
+    float: left;
+    padding: 0px 5px;
+    margin-top: -25px;
+    margin-left: -25px;
+}
+#fullscreen:hover {
+    cursor: pointer;
+}
 @media (max-width: 991px) {
     .kanban_board_container { width: calc(100vw - 30px) !important; }
 }

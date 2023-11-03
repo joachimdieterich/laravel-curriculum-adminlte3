@@ -40,8 +40,8 @@ class SAMLLoginListener
         $sso_user = $event->getSaml2User();
         session(['sessionIndex' => $sso_user->getSessionIndex()]);
         session(['nameId' => $sso_user->getNameId()]);
-
-        $laravelUser = User::where('username', $sso_user->getUserId())->first(); //find user by ID or attribute
+        dump($sso_user);
+        $laravelUser = User::where('username', $sso_user->cn)->first(); //find user by ID or attribute
         //if it does not exist create it and go on or show an error message
         if ($laravelUser) {
             //dump($laravelUser);

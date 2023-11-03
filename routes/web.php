@@ -4,6 +4,7 @@ use App\Http\Controllers\LogController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/home');
+//Route::get('/wip', 'OpenController@wip')->name('wip');
 Route::get('/features', 'OpenController@features')->name('features');
 
 Route::get('/impressum', 'OpenController@impressum')->name('impressum');

@@ -4,9 +4,15 @@ namespace App\Listeners;
 
 use Aacotroneo\Saml2\Events\Saml2LoginEvent;
 use App\Http\Controllers\LogController;
+use App\Notifications\Welcome;
+use App\Organization;
+use App\OrganizationRoleUser;
+use App\Role;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class SAMLLoginListener
 {
@@ -31,24 +37,95 @@ class SAMLLoginListener
         $messageId = $event->getSaml2Auth()->getLastMessageId();
         // Add your own code preventing reuse of a $messageId to stop replay attacks
 
-        $user = $event->getSaml2User();
-        session(['sessionIndex' => $user->getSessionIndex()]);
-        session(['nameId' => $user->getNameId()]);
+        $sso_user = $event->getSaml2User();
+        session(['sessionIndex' => $sso_user->getSessionIndex()]);
+        session(['nameId' => $sso_user->getNameId()]);
 
-        $laravelUser = User::where('username', $user->getUserId())->get(); //find user by ID or attribute
+        $laravelUser = User::where('username', $sso_user->getUserId())->first(); //find user by ID or attribute
         //if it does not exist create it and go on or show an error message
-        Auth::login($laravelUser->first());
+        if ($laravelUser) {
+            //dump($laravelUser);
+            Auth::login($laravelUser);
+        }
+        else //-- if sso_user does not exist. Create!
+        {
+            if (User::withTrashed()->where('common_name', $sso_user->cn)->exists())
+            {
+                User::withTrashed()->where('common_name', $sso_user->cn)->restore();
+                $user = User::where('common_name', $sso_user->cn)->get()->first();
+                $user->update([
+                    'email' => $sso_user->mail,
+                    'firstname' => $sso_user->givenname,
+                    'lastname' => $sso_user->sn,
+                ]);
+            }
+            else
+            {
+                if ($user = User::create(
+                    [
+                        'username' => $sso_user->username,
+                        'common_name' => $sso_user->cn,
+                        'email' => $sso_user->mail,
+                        'firstname' => $sso_user->givenname,
+                        'lastname' => $sso_user->sn,
+                        'password' => Hash::make(Str::uuid()),
+                    ])
+                )
+                {
+                    $user->notify(new Welcome());
+                }
+            }
+
+            // Enrol user to (creators) institution. Every user have to be enrolled to an institution!
+            $org_id = Organization::where('common_name', $sso_user->rpidmprimaryorganisationdn)->first()->id;
+            switch ($sso_user->rpidmcategory)
+            {
+                case 'Schooladmin':
+                    $role_id = Role::where('title', 'Schooladmin')->first()->id;
+                    break;
+                case 'Lehrkraft':
+                case 'LehrerInRP':
+                    $role_id = Role::where('title', 'Teacher')->first()->id;
+                    break;
+                case 'SchülerIn':
+                    $role_id = Role::where('title', 'Student')->first()->id;
+                    break;
+                case 'Sorgeberechtigte':
+                    $role_id = Role::where('title', 'Parent')->first()->id;
+                    break;
+                case 'Sonstige':
+                    $role_id = Role::where('title', 'Guest')->first()->id;// Guest
+                    break;
+                default:
+                    $role_id = Role::where('title', 'Guest')->first()->id;// Guest
+            }
+
+            OrganizationRoleUser::firstOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'organization_id' => $org_id,
+                ],
+                [
+                    'role_id' => $role_id,
+                ]
+            );
+            $user->current_organization_id = $org_id;
+            $user->save();
+
+            Auth::login($user); //login new user
+        }
 
         // if users current_organization_id is not set -> get first organization as default
-        if (auth()->user()->current_organization_id === null) {
-            $u = \App\User::find(auth()->user()->id);
+        $u = $u = \App\User::find(auth()->user()->id);
+        if ($u->current_organization_id === null)
+        {
             // if provisioning is correct set current_organization_id else abort
             $u->current_organization_id = (auth()->user()->organizations()->first() === null) ? abort(422) : auth()->user()->organizations()->first()->id;
             $u->save();
         }
-        // if users current_period_id is not set -> if not enroled in group current_period_id == null
-        if (auth()->user()->current_period_id === null) {
-            $u = \App\User::find(auth()->user()->id);
+        // if users current_period_id is not set -> if not enroled in group, current_period_id == null
+        if ($u->current_period_id === null)
+        {
             $u->current_period_id = optional(DB::table('periods')
                     ->select('periods.*')
                     ->join('groups', 'groups.period_id', '=', 'periods.id')
@@ -59,7 +136,6 @@ class SAMLLoginListener
             $u->save();
         }
 
-        //setStatistics
         LogController::setStatistics();
         LogController::set('ssoLogin');
         LogController::set('activeOrg', auth()->user()->current_organization_id);

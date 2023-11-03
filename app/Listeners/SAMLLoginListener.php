@@ -69,7 +69,7 @@ class SAMLLoginListener
                         'email' => $sso_user->getAttribute('mail'),
                         'firstname' => $sso_user->getAttribute('givenname'),
                         'lastname' => $sso_user->getAttribute('sn'),
-                        'password' => $pw
+                        'password' => $pw[0]
                     ])
                 )
                 {

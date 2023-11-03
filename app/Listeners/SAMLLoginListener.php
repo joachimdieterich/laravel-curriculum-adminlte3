@@ -41,7 +41,7 @@ class SAMLLoginListener
         session(['sessionIndex' => $sso_user->getSessionIndex()]);
         session(['nameId' => $sso_user->getNameId()]);
         dump($sso_user->getAttribute('cn'));
-        $laravelUser = User::where('username', $sso_user->cn)->first(); //find user by ID or attribute
+        $laravelUser = User::where('username', $sso_user->getAttribute('cn'))->first(); //find user by ID or attribute
         //if it does not exist create it and go on or show an error message
         if ($laravelUser) {
             //dump($laravelUser);
@@ -49,25 +49,25 @@ class SAMLLoginListener
         }
         else //-- if sso_user does not exist. Create!
         {
-            if (User::withTrashed()->where('common_name', $sso_user->cn)->exists())
+            if (User::withTrashed()->where('common_name', $sso_user->getAttribute('cn'))->exists())
             {
-                User::withTrashed()->where('common_name', $sso_user->cn)->restore();
-                $user = User::where('common_name', $sso_user->cn)->get()->first();
+                User::withTrashed()->where('common_name', $sso_user->getAttribute('cn'))->restore();
+                $user = User::where('common_name', $sso_user->getAttribute('cn'))->get()->first();
                 $user->update([
-                    'email' => $sso_user->mail,
-                    'firstname' => $sso_user->givenname,
-                    'lastname' => $sso_user->sn,
+                    'email' => $sso_user->getAttribute('mail'),
+                    'firstname' => $sso_user->getAttribute('givenname'),
+                    'lastname' => $sso_user->getAttribute('sn'),
                 ]);
             }
             else
             {
                 if ($user = User::create(
                     [
-                        'username' => $sso_user->username,
-                        'common_name' => $sso_user->cn,
-                        'email' => $sso_user->mail,
-                        'firstname' => $sso_user->givenname,
-                        'lastname' => $sso_user->sn,
+                        'username' => $sso_user->getAttribute('username'),
+                        'common_name' => $sso_user->getAttribute('cn'),
+                        'email' => $sso_user->getAttribute('mail'),
+                        'firstname' => $sso_user->getAttribute('givenname'),
+                        'lastname' => $sso_user->getAttribute('sn'),
                         'password' => Hash::make(Str::uuid()),
                     ])
                 )
@@ -77,8 +77,8 @@ class SAMLLoginListener
             }
 
             // Enrol user to (creators) institution. Every user have to be enrolled to an institution!
-            $org_id = Organization::where('common_name', $sso_user->rpidmprimaryorganisationdn)->first()->id;
-            switch ($sso_user->rpidmcategory)
+            $org_id = Organization::where('common_name', $sso_user->getAttribute('rpidmprimaryorganisationdn'))->first()->id;
+            switch ($sso_user->getAttribute('rpidmcategory'))
             {
                 case 'Schooladmin':
                     $role_id = Role::where('title', 'Schooladmin')->first()->id;

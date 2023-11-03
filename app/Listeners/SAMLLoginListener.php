@@ -40,10 +40,7 @@ class SAMLLoginListener
         $sso_user = $event->getSaml2User();
         session(['sessionIndex' => $sso_user->getSessionIndex()]);
         session(['nameId' => $sso_user->getNameId()]);
-        dump([
-            'org' => $sso_user->getAttribute('organizations'),
-            'category' => $sso_user->getAttribute('rpidmcategory'),
-        ]);
+
         $laravelUser = User::where('common_name', $sso_user->getAttribute('cn')[0])->first(); //find user by ID or attribute
         //if it does not exist create it and go on or show an error message
         if ($laravelUser) {
@@ -64,8 +61,6 @@ class SAMLLoginListener
             }
             else
             {
-
-
                 if ($user = User::create(
                     [
                         'username' => $sso_user->getUserId(),

@@ -62,6 +62,7 @@ class SAMLLoginListener
             else
             {
                 $pw = Hash::make(Str::uuid());
+                dump($pw);
                 if ($user = User::create(
                     [
                         'username' => $sso_user->getAttribute('username'),
@@ -69,7 +70,7 @@ class SAMLLoginListener
                         'email' => $sso_user->getAttribute('mail'),
                         'firstname' => $sso_user->getAttribute('givenname'),
                         'lastname' => $sso_user->getAttribute('sn'),
-                        'password' => $pw[0]
+                        'password' => $pw
                     ])
                 )
                 {

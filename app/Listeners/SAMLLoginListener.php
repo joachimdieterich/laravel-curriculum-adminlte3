@@ -40,7 +40,10 @@ class SAMLLoginListener
         $sso_user = $event->getSaml2User();
         session(['sessionIndex' => $sso_user->getSessionIndex()]);
         session(['nameId' => $sso_user->getNameId()]);
-        //dump($sso_user->getAttribute('cn'));
+        dump([
+            'org' => $sso_user->getAttribute('rpidmprimaryorganisationdn'),
+            'category' => $sso_user->getAttribute('rpidmcategory'),
+        ]);
         $laravelUser = User::where('common_name', $sso_user->getAttribute('cn')[0])->first(); //find user by ID or attribute
         //if it does not exist create it and go on or show an error message
         if ($laravelUser) {
@@ -77,13 +80,10 @@ class SAMLLoginListener
                     $user->notify(new Welcome());
                 }
             }
-            dump([
-                'org' => $sso_user->getAttribute('rpidmprimaryorganisationdn'),
-                'category' => $sso_user->getAttribute('rpidmcategory'),
-            ]);
+
             // Enrol user to (creators) institution. Every user have to be enrolled to an institution!
-            $org_id = Organization::where('common_name', $sso_user->getAttribute('rpidmprimaryorganisationdn')[0])->first()->id;
-            switch ($sso_user->getAttribute('rpidmcategory')[0])
+            $org_id = Organization::where('common_name', $sso_user->getAttribute('rpidmprimaryorganisationdn'))->first()->id;
+            switch ($sso_user->getAttribute('rpidmcategory'))
             {
                 case 'Schooladmin':
                     $role_id = Role::where('title', 'Schooladmin')->first()->id;

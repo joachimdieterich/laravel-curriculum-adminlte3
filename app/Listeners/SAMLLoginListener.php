@@ -62,10 +62,7 @@ class SAMLLoginListener
             else
             {
 
-                dump([
-                    'org' => $sso_user->getAttribute('rpidmprimaryorganisationdn'),
-                    'category' => $sso_user->getAttribute('rpidmcategory'),
-                ]);
+
                 if ($user = User::create(
                     [
                         'username' => $sso_user->getUserId(),
@@ -80,7 +77,10 @@ class SAMLLoginListener
                     $user->notify(new Welcome());
                 }
             }
-
+            dump([
+                'org' => $sso_user->getAttribute('rpidmprimaryorganisationdn'),
+                'category' => $sso_user->getAttribute('rpidmcategory'),
+            ]);
             // Enrol user to (creators) institution. Every user have to be enrolled to an institution!
             $org_id = Organization::where('common_name', $sso_user->getAttribute('rpidmprimaryorganisationdn')[0])->first()->id;
             switch ($sso_user->getAttribute('rpidmcategory')[0])

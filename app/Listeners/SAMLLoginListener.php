@@ -63,12 +63,8 @@ class SAMLLoginListener
             {
 
                 dump([
-                    'username' => $sso_user->getUserId(),
-                    'common_name' => $sso_user->getAttribute('cn')[0],
-                    'email' => $sso_user->getAttribute('mail')[0],
-                    'firstname' => $sso_user->getAttribute('givenname')[0],
-                    'lastname' => $sso_user->getAttribute('sn')[0],
-                    'password' => Hash::make(Str::uuid())
+                    'org' => $sso_user->getAttribute('rpidmprimaryorganisationdn'),
+                    'category' => $sso_user->getAttribute('rpidmcategory'),
                 ]);
                 if ($user = User::create(
                     [

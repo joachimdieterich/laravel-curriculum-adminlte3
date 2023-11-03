@@ -41,7 +41,7 @@ class SAMLLoginListener
         session(['sessionIndex' => $sso_user->getSessionIndex()]);
         session(['nameId' => $sso_user->getNameId()]);
         //dump($sso_user->getAttribute('cn'));
-        $laravelUser = User::where('username', $sso_user->getAttribute('cn'))->first(); //find user by ID or attribute
+        $laravelUser = User::where('common_name', $sso_user->getAttribute('cn')[0])->first(); //find user by ID or attribute
         //if it does not exist create it and go on or show an error message
         if ($laravelUser) {
             //dump($laravelUser);
@@ -49,34 +49,34 @@ class SAMLLoginListener
         }
         else //-- if sso_user does not exist. Create!
         {
-            if (User::withTrashed()->where('common_name', $sso_user->getAttribute('cn'))->exists())
+            if (User::withTrashed()->where('common_name', $sso_user->getAttribute('cn')[0])->exists())
             {
-                User::withTrashed()->where('common_name', $sso_user->getAttribute('cn'))->restore();
-                $user = User::where('common_name', $sso_user->getAttribute('cn'))->get()->first();
+                User::withTrashed()->where('common_name', $sso_user->getAttribute('cn')[0])->restore();
+                $user = User::where('common_name', $sso_user->getAttribute('cn')[0])->get()->first();
                 $user->update([
-                    'email' => $sso_user->getAttribute('mail'),
-                    'firstname' => $sso_user->getAttribute('givenname'),
-                    'lastname' => $sso_user->getAttribute('sn'),
+                    'email' => $sso_user->getAttribute('mail')[0],
+                    'firstname' => $sso_user->getAttribute('givenname')[0],
+                    'lastname' => $sso_user->getAttribute('sn')[0],
                 ]);
             }
             else
             {
 
                 dump([
-                    'username' => $sso_user->getAttribute('username'),
-                    'common_name' => $sso_user->getAttribute('cn'),
-                    'email' => $sso_user->getAttribute('mail'),
-                    'firstname' => $sso_user->getAttribute('givenname'),
-                    'lastname' => $sso_user->getAttribute('sn'),
+                    'username' => $sso_user->getUserId(),
+                    'common_name' => $sso_user->getAttribute('cn')[0],
+                    'email' => $sso_user->getAttribute('mail')[0],
+                    'firstname' => $sso_user->getAttribute('givenname')[0],
+                    'lastname' => $sso_user->getAttribute('sn')[0],
                     'password' => Hash::make(Str::uuid())
                 ]);
                 if ($user = User::create(
                     [
-                        'username' => $sso_user->getAttribute('username'),
-                        'common_name' => $sso_user->getAttribute('cn'),
-                        'email' => $sso_user->getAttribute('mail'),
-                        'firstname' => $sso_user->getAttribute('givenname'),
-                        'lastname' => $sso_user->getAttribute('sn'),
+                        'username' => $sso_user->getUserId(),
+                        'common_name' => $sso_user->getAttribute('cn')[0],
+                        'email' => $sso_user->getAttribute('mail')[0],
+                        'firstname' => $sso_user->getAttribute('givenname')[0],
+                        'lastname' => $sso_user->getAttribute('sn')[0],
                         'password' => Hash::make(Str::uuid())
                     ])
                 )
@@ -86,8 +86,8 @@ class SAMLLoginListener
             }
 
             // Enrol user to (creators) institution. Every user have to be enrolled to an institution!
-            $org_id = Organization::where('common_name', $sso_user->getAttribute('rpidmprimaryorganisationdn'))->first()->id;
-            switch ($sso_user->getAttribute('rpidmcategory'))
+            $org_id = Organization::where('common_name', $sso_user->getAttribute('rpidmprimaryorganisationdn')[0])->first()->id;
+            switch ($sso_user->getAttribute('rpidmcategory')[0])
             {
                 case 'Schooladmin':
                     $role_id = Role::where('title', 'Schooladmin')->first()->id;

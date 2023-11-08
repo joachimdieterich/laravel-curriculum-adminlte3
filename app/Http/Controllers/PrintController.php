@@ -81,7 +81,7 @@ class PrintController extends Controller
 
         /* replace relative media links with absolute paths to get snappy working */
 
-        $html = relativeToAbsoutePaths($html);
+        $html = relativeToAbsolutePaths($html);
 
         $pdf = SnappyPdf::loadHTML($meta.$html)
                    ->setPaper('a4')

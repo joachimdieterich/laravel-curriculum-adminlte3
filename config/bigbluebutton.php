@@ -15,12 +15,14 @@ return [
      */
     'servers' => [
         'server1' => [
-            'BBB_SECURITY_SALT'    => '',
-            'BBB_SERVER_BASE_URL' => '',
+            'BBB_SERVER_NAME' => env('BBB_SERVER_NAME_1', 'Server_1'),
+            'BBB_SECURITY_SALT'    => env('BBB_SECURITY_SALT', env('BBB_SECURITY_SALT_1', '')),
+            'BBB_SERVER_BASE_URL' => env('BBB_SERVER_BASE_URL', env('BBB_SERVER_BASE_URL_1', '')),
         ],
         'server2' => [
-            'BBB_SECURITY_SALT'    => '',
-            'BBB_SERVER_BASE_URL' => '',
+            'BBB_SERVER_NAME' => env('BBB_SERVER_NAME_2', 'Server_2'),
+            'BBB_SECURITY_SALT'    => env('BBB_SECURITY_SALT_2', ''),
+            'BBB_SERVER_BASE_URL' => env('BBB_SERVER_BASE_URL_2', ''),
         ],
     ],
 

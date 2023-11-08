@@ -56,7 +56,8 @@ class Videoconference extends Model
         'userName',
         'medium_id',
         'webcamsOnlyForModerator',
-        'anyoneCanStart'
+        'anyoneCanStart',
+        'server'
     ];
 
     protected $casts = [

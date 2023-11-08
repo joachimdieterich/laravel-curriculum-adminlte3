@@ -252,8 +252,6 @@ $( function () {
         $('#password').attr('type',$('#checkbox').prop('checked')==true?"text":"password");
     });
 
-    let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-
 
     var table = $('#users-datatable').DataTable({
         ajax: "{{ url('users/list') }}",
@@ -266,14 +264,7 @@ $( function () {
             {data: 'deleted_at', "defaultContent": null},
             {data: 'action'}
         ],
-        bStateSave: true,
-        fnStateSave: function (oSettings, oData) {
-            localStorage.setItem('DataTables', JSON.stringify(oData));
-        },
-        fnStateLoad: function (oSettings) {
-            return JSON.parse(localStorage.getItem('DataTables'));
-        },
-        buttons: dtButtons
+
     });
 
 });

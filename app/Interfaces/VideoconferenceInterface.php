@@ -7,25 +7,25 @@ use Illuminate\Http\Request;
 
 interface VideoconferenceInterface
 {
-    public function index();
+    public function index(array $input);
 
-    public function create(array $array);
-    public function initCreateMeeting(array $array);
+    public function create(array $input);
+    public function initCreateMeeting(array $input);
 
-    public function start(array $array);
-    public function join(array $array);
-    public function close(array $array);
+    public function start(array $input);
+    public function join(array $input);
+    public function close(array $input);
 
-    public function getMeetingInfo(array $array);
-    public function isMeetingRunning(string $array);
+    public function getMeetingInfo(array $input);
+    public function isMeetingRunning(array $input);
 
-    public function getRecordings(array $array);
-    public function publishRecordings(array $array);
-    public function deleteRecordings(array $array);
+    public function getRecordings(array $input);
+    public function publishRecordings(array $input);
+    public function deleteRecordings(array $input);
 
-    public function hooksCreate(array $array);
-    public function hooksDestroy(array $array);
-    public function isConnect();
+    public function hooksCreate(array $input);
+    public function hooksDestroy(array $input);
+    public function isConnect(array $input);
 
-    public function getApiVersion();
+    public function getApiVersion(array $input);
 }

@@ -5,7 +5,8 @@
             <div class="card">
                 <div class="card-body">
                     <h5>{{ trans('global.videoconference.edit') }}
-                        <i class="fa fa-share-alt text-secondary pull-right"
+                        <i v-if="videoconference != null"
+                            class="fa fa-share-alt text-secondary pull-right"
                            @click="showModal()"
                         ></i>
                     </h5>
@@ -24,6 +25,20 @@
                         />
                         <p class="help-block" v-if="form.errors?.dialNumber" v-text="form.errors?.dialNumber[0]"></p>
                     </div> <!-- meetingName -->
+                    <div v-if="videoconference == null"
+                         class="form-group ">
+                        <select
+                            id="server"
+                            v-model="form.server"
+                            class="form-control select2"
+                            style="width:100%;">
+                            <option v-for="(value,index) in servers"
+                                    :id="value.server"
+                                    :value="value.server">
+                                {{ value.BBB_SERVER_NAME }}
+                            </option>
+                        </select>
+                    </div> <!-- meetingLayout -->
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-grou ">
@@ -542,7 +557,14 @@
                                     />
                                     <span class="input-group-append"
                                           @click="startVideoconference()">
-                                        <button type="button" class="btn btn-primary">
+                                        <button
+                                            v-if="isRunning"
+                                            type="button" class="btn btn-info">
+                                            {{ trans('global.videoconference.join') }}
+                                        </button>
+                                        <button
+                                            v-else
+                                            type="button" class="btn btn-primary">
                                             {{ trans('global.videoconference.start') }}
                                         </button>
                                     </span>
@@ -650,6 +672,7 @@ export default {
                 'medium_id': null,
                 'webcamsOnlyForModerator': false,
                 'anyoneCanStart': true,
+                'server': 'server1'
             }),
             guestPolicyConstants: {
                 'ALWAYS_ACCEPT': window.trans.global.videoconference.ALWAYS_ACCEPT,
@@ -665,11 +688,12 @@ export default {
             errors: {},
             loading: false,
             loadingMessage: 'Lade Konferenz',
+            isRunning: false,
             timerEnabled: false,
             timerCount: 10,
             urlParamModeratorPW: '',
             urlParamAttendeePW: '',
-
+            servers:{}
         }
     },
     mounted() {
@@ -711,6 +735,34 @@ export default {
                 }
             }
         });
+
+        axios.get('/videoconferences/servers')
+            .then(response => {
+                this.servers = response.data;
+                $("#server").select2({
+                    dropdownParent: $("#server").parent(),
+                    allowClear: false
+                }).on('select2:select', function (e) {
+                    this.form.server = e.params.data.element.id
+                }.bind(this))
+                    .val(this.servers[this.form.server])
+                    .trigger('change');
+                })
+            .catch(e => {
+            console.log(e);
+        });
+
+        axios.get('/videoconferences/' + this.videoconference.id + '/getStatus')
+            .then(response => {
+                if (response.data.videoconference == false) {
+                    this.isRunning = false;
+                } else {
+                    this.isRunning = true;
+                }
+            })
+            .catch(e => {
+                console.log(e);
+            });
 
         this.$initTinyMCE([
             "autolink link"

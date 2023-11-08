@@ -138,6 +138,7 @@
                 </a>
             </div>
             <videoconference-index-add-widget
+                v-if="((this.filter == 'all' && typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined')|| this.filter  == 'owner') "
                 v-can="'videoconference_create'"/>
         </div>
         <Modal
@@ -246,18 +247,26 @@ export default {
             for (const [key, value] of Object.entries(videoconference)) {
                 this.videoconferences[index][key] = value;
             }
-            //this.loaderEvent();
         });
+        if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
+            this.url = '/videoconferenceSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
+        } else {
+            this.url = '/videoconferences/list?filter=' + this.filter
+        }
 
-        const parent = this;
-        // checks if the datatable-data changes, to update the videoconference-data
-        $('#videoconference-datatable').on('draw.dt', () => {
-            parent.videoconferences = $('#videoconference-datatable').DataTable().rows({ page: 'current' }).data().toArray();
-        });
-
-        $('#videoconference-datatable').DataTable({
-            ajax: this.url + '?filter' + this.filter,
+        const dtObject = $('#videoconference-datatable').DataTable({
+            ajax: this.url,
             dom: 'tilpr',
+            pageLength: 50,
+            language: {
+                url: 'datatables/i18n/German.json',
+                paginate: {
+                    "first":      '<i class="fa fa-angle-double-left"></id>',
+                    "last":       '<i class="fa fa-angle-double-right"></id>',
+                    "next":       '<i class="fa fa-angle-right"></id>',
+                    "previous":   '<i class="fa fa-angle-left"></id>',
+                },
+            },
             columns: [
                 { title: 'id', data: 'id', searchable: false },
                 { title: 'meetingID', data: 'meetingID', searchable: false },
@@ -303,6 +312,8 @@ export default {
                 { title: 'webcamsOnlyForModerator', data: 'webcamsOnlyForModerator', searchable: false },
                 { title: 'anyoneCanStart', data: 'anyoneCanStart', searchable: false },
             ],
+        }).on('draw.dt', () => { // checks if the datatable-data changes, to update the videoconference-data
+            this.videoconferences = dtObject.rows({ page: 'current' }).data().toArray();
         });
 
         // place the content where the table would normally be

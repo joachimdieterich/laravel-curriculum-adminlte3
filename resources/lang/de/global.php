@@ -1025,6 +1025,7 @@ return [
         'create' => 'Videokonferenzraum erstellen',
         'edit' => 'Raumeinstellungen',
         'start' => 'Videokonferenz starten',
+        'join' => 'Videokonferenz beitreten',
         'share' => 'Zugriff verwalten/Teilen',
         'delete' => 'Löschen',
         'delete_helper' => 'Soll die Videokonferenz gelöscht werden?',

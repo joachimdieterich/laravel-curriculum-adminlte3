@@ -65,7 +65,7 @@
     <script src="{{ asset('node_modules/datatables.net-select/js/dataTables.select.min.js') }}"></script>
     <script src="{{ asset('node_modules/moment/js/moment.min.js') }}"></script>
     <script src="{{ asset('node_modules/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}"></script>
-    <script>
+<!--    <script>
         $(function () {
             let languages = {
                 'de': '{{ asset("datatables/i18n/German.json") }}',
@@ -111,7 +111,7 @@
             });
             $.fn.dataTable.ext.classes.sPageButton = '';
         });
-    </script>
+    </script>-->
     @yield('scripts')
 
 </body>

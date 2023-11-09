@@ -709,6 +709,9 @@ export default {
             }
             this.method = 'patch';
         }
+        this.$initTinyMCE([
+            "autolink link"
+        ] );
 
         $('#guestPolicy').select2({
             dropdownParent: $('#guestPolicy').parent(),
@@ -763,10 +766,6 @@ export default {
             .catch(e => {
                 console.log(e);
             });
-
-        this.$initTinyMCE([
-            "autolink link"
-        ] );
 
     },
     methods: {

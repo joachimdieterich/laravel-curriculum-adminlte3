@@ -151,8 +151,8 @@ if (! function_exists('getImmediateChildrenByTagName')) {
     }
 }
 
-if (! function_exists('relativeToAbsoutePaths')) {
-    function relativeToAbsoutePaths($input)
+if (! function_exists('relativeToAbsolutePaths')) {
+    function relativeToAbsolutePaths($input)
     {
         return preg_replace_callback(
             '/<img\s+[^>]*(src="\/media\/(.*?)")(\s+[^>]*)?[^>]*>/mi',

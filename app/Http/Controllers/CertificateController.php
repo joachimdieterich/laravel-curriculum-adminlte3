@@ -406,7 +406,7 @@ class CertificateController extends Controller
     protected function buildPdf($html, $path, $filename, $orientation = 'portrait')
     {
         /* replace relative media links with absolute paths to get snappy working */
-        $html = relativeToAbsoutePaths($html);
+        $html = relativeToAbsolutePaths($html);
 
         $pdf = Pdf::loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'.$html)
             ->setPaper('a4')

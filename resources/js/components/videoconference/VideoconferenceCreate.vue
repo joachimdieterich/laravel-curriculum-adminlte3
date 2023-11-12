@@ -2,7 +2,7 @@
   <div class="modal fade">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header bg-success">
+        <div class="modal-header">
           <b  v-if="form.meetingID == ''"
               class="modal-title">
             {{ trans('global.videoconference.create') }}

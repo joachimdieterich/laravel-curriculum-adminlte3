@@ -209,7 +209,7 @@ export default {
         decodeHtml(html) {
             var txt = document.createElement("textarea");
             txt.innerHTML = html;
-            return txt.value.replace(/<\/?\w(?:[^"'>]|(script)|"[^"]*"|'[^']*')*>/gmi, '');
+            return txt.value.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
         },
         submit() {
             let method = this.method.toLowerCase();

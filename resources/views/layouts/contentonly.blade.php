@@ -65,53 +65,6 @@
     <script src="{{ asset('node_modules/datatables.net-select/js/dataTables.select.min.js') }}"></script>
     <script src="{{ asset('node_modules/moment/js/moment.min.js') }}"></script>
     <script src="{{ asset('node_modules/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}"></script>
-<!--    <script>
-        $(function () {
-            let languages = {
-                'de': '{{ asset("datatables/i18n/German.json") }}',
-                'en': '{{ asset("datatables/i18n/English.json") }}',
-                /* 'fr': '{{ asset("datatables/i18n/French.json") }}',*/
-            };
-            $.extend(true, $.fn.dataTable.Buttons.defaults.dom.button, {className: 'btn-primary py-2 ml-1'})
-
-            $.extend(true, $.fn.dataTable.defaults, {
-                processing: true,
-                serverSide: true,
-                language: {
-                    url: languages.{{ app() -> getLocale() }},
-                    searchPlaceholder: '{{ trans('global.search') }}',
-                    paginate: {
-                        "first":      '<i class="fa fa-angle-double-left"></id>',
-                        "last":       '<i class="fa fa-angle-double-right"></id>',
-                        "next":       '<i class="fa fa-angle-right"></id>',
-                        "previous":   '<i class="fa fa-angle-left"></id>',
-                    },
-                },
-                columnDefs: [
-                    {
-                        orderable: false,
-                        className: 'select-checkbox',
-                        targets:   0
-                    },
-                    {
-                        orderable: false,
-                        searchable: false,
-                        targets: - 1
-                    }],
-                select: {
-                    style:  'multi+shift',
-                    selector: 'td:not(:last-child)'
-                },
-                order: [[ 1, 'asc' ]],
-                scrollX: true,
-                pageLength: 50,
-                pagingType: "full_numbers",
-                dom: '<"top"f>rt<"bottom"pl>i',
-                buttons: []
-            });
-            $.fn.dataTable.ext.classes.sPageButton = '';
-        });
-    </script>-->
     @yield('scripts')
 
 </body>

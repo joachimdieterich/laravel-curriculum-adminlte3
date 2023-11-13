@@ -26,6 +26,30 @@ class VideoconferenceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function servers()
+    {
+        abort_unless(\Gate::allows('videoconference_create'), 403);
+
+        $servers = [];
+        $i = 1;
+        foreach (config('bigbluebutton.servers') as $server) {
+            $servers[] = [
+                "server"  => "server$i",
+                "BBB_SERVER_NAME"  => $server['BBB_SERVER_NAME'],
+                ];
+            $i++;
+        }
+
+        if (request()->wantsJson()) {
+            return $servers;
+        }
+
+    }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
         abort_unless(\Gate::allows('videoconference_access'), 403);
@@ -51,7 +75,6 @@ class VideoconferenceController extends Controller
         {
             $owned = Videoconference::where('owner_id', $user->id)->get();
             $userCanSee = $userCanSee->merge($owned);
-
         }
 
         return $userCanSee->unique();
@@ -109,6 +132,7 @@ class VideoconferenceController extends Controller
             'attendeePW'    => $input['attendeePW'],
             'moderatorPW'   => $input['moderatorPW'],
             'logoutUrl'     => $input['logoutUrl'],
+            'server'        => $input['server'] ?? 'server1'
         ]);
 
         $videoconference = Videoconference::updateOrCreate([
@@ -155,6 +179,7 @@ class VideoconferenceController extends Controller
             'medium_id' => $input['medium_id'] ?? null,
             'webcamsOnlyForModerator' => $input['webcamsOnlyForModerator'] ?? config('bigbluebutton.create.webcamsOnlyForModerator'),
             'anyoneCanStart' => $input['anyoneCanStart'] ?? false,
+            'server' => $input['server'] ?? 'server1',
         ]);
 
         if (isset($input['subscribable_type']) AND isset($input['subscribable_id']))
@@ -267,6 +292,12 @@ class VideoconferenceController extends Controller
 
         LogController::set(get_class($this).'@'.__FUNCTION__, date('d.m.Y'));
 
+        $moderatorTextPostfix = '<br/>Um jemanden als <b>Moderator:in</b> zur Konferenz einzuladen, schicken Sie diesen Link: <a href="'. env('APP_URL') . '/videoconferences/' . $videoconference->id . '/startWithPw?moderatorPW=' . $videoconference->moderatorPW
+        . '">'. env('APP_URL') . '/videoconferences/' . $videoconference->id . '/startWithPw?moderatorPW=' . $videoconference->moderatorPW
+            . '</a><br/><br/> Um jemanden als <b>Teilnehmer:in</b> zur Konferenz einzuladen, schicken Sie diesen Link:  <a href="'. env('APP_URL') . '/videoconferences/' . $videoconference->id . '/startWithPw?moderatorPW=' . $videoconference->moderatorPW
+            . '">'. env('APP_URL') . '/videoconferences/' . $videoconference->id . '/startWithPw?attendeePW=' . $videoconference->attendeePW
+            . '</a>';
+
         $adapter = new $this->adapter();
         if ((auth()->user()->id == $videoconference->owner_id) || ($videoconference->allJoinAsModerator == true) || $this->isModerator($videoconference) === true || $videoconference->moderatorPW == $moderatorPW)
         {
@@ -285,7 +316,7 @@ class VideoconferenceController extends Controller
                 'record'                                => $videoconference->record,
                 'duration'                              => $videoconference->duration,
                 'isBreakout'                            => $videoconference->isBreakout,
-                'moderatorOnlyMessage'                  => nl2br($videoconference->moderatorOnlyMessage),
+                'moderatorOnlyMessage'                  => nl2br($videoconference->moderatorOnlyMessage) . $moderatorTextPostfix,
                 'autoStartRecording'                    => $videoconference->autoStartRecording,
                 'allowStartStopRecording'               => $videoconference->allowStartStopRecording,
                 'bannerText'                            => $videoconference->bannerText ?? null,
@@ -311,9 +342,14 @@ class VideoconferenceController extends Controller
                 'allowModsToEjectCameras'               => $videoconference->allowModsToEjectCameras,
                 'allowRequestsWithoutSession'           => $videoconference->allowRequestsWithoutSession,
                 'userCameraCap'                         => $videoconference->userCameraCap,
+                'server'                                => $videoconference->server ?? 'server1'
             ]);
         } else {
-            if (!$adapter->isMeetingRunning($videoconference->meetingID))
+            if (!$adapter->isMeetingRunning([
+                'server' => $videoconference->server,
+                'meetingID' => $videoconference->meetingID
+                ])
+            )
             {
 
                 //meeting not running, start
@@ -358,6 +394,7 @@ class VideoconferenceController extends Controller
                     'allowModsToEjectCameras'               => $videoconference->allowModsToEjectCameras,
                     'allowRequestsWithoutSession'           => $videoconference->allowRequestsWithoutSession,
                     'userCameraCap'                         => $videoconference->userCameraCap,
+                    'server'                                => $videoconference->server ?? 'server1'
                 ]);
             }
             //join as guest
@@ -365,7 +402,8 @@ class VideoconferenceController extends Controller
             return $adapter->join([
                 'meetingID' => $videoconference->meetingID,
                 'userName'  => $userName,
-                'password'  =>  $videoconference->attendeePW,
+                'password'  => $videoconference->attendeePW,
+                'server'    => $videoconference->server ?? 'server1'
             ]);
 
         }
@@ -375,7 +413,10 @@ class VideoconferenceController extends Controller
     {
         $adapter = new $this->adapter();
         if (request()->wantsJson()) {
-            if ($adapter->isMeetingRunning($videoconference->meetingID))
+            if ($adapter->isMeetingRunning([
+                'server'    => $videoconference->server ?? 'server1',
+                'meetingID' => $videoconference->meetingID
+            ]))
             {
                 return ['videoconference' => $videoconference->path()];
             } else
@@ -591,6 +632,7 @@ class VideoconferenceController extends Controller
             'medium_id' => 'sometimes',
             'webcamsOnlyForModerator' => 'sometimes|boolean',
             'anyoneCanStart' => 'sometimes|boolean',
+            'server' => 'sometimes|string'
         ]);
     }
 

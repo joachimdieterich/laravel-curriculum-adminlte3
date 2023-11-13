@@ -62,7 +62,7 @@
                 <KanbanIndexAddWidget
                     v-can="'kanban_create'"/>
             </div>
-            
+
             <Modal
                 :id="'kanbanModal'"
                 css="danger"
@@ -101,7 +101,7 @@ export default {
             kanbans: [],
             subscriptions: {},
             search: '',
-            url: 'kanbans/list',
+            url: '/kanbans/list',
             errors: {},
             tempId: Number,
             filter: 'all'
@@ -129,7 +129,7 @@ export default {
             } else {
                 this.url = 'kanbans/list?filter=' + this.filter;
             }
-            
+
             $('#kanban-datatable').DataTable().ajax.url(this.url).load();
         },
         setFilter(filter){

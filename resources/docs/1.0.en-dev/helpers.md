@@ -18,6 +18,8 @@ Curriculum includes some global "helper" PHP functions.
 helper function for selects. If input is an array, it returns the first value of array
 else it returns the input.
 
+
+
 ### getImmediateChildrenByTagName(DOMElement $element, $tagName)
 Traverse an elements children and collect those nodes that have the tagname specified in $tagName. Non-recursive
 

@@ -138,6 +138,7 @@
                 </a>
             </div>
             <videoconference-index-add-widget
+                v-if="((this.filter == 'all' && typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined')|| this.filter  == 'owner') "
                 v-can="'videoconference_create'"/>
         </div>
         <Modal
@@ -246,63 +247,73 @@ export default {
             for (const [key, value] of Object.entries(videoconference)) {
                 this.videoconferences[index][key] = value;
             }
-            //this.loaderEvent();
         });
+        if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
+            this.url = '/videoconferenceSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
+        } else {
+            this.url = '/videoconferences/list?filter=' + this.filter
+        }
 
-        const parent = this;
-        // checks if the datatable-data changes, to update the videoconference-data
-        $('#videoconference-datatable').on('draw.dt', () => {
-            parent.videoconferences = $('#videoconference-datatable').DataTable().rows({ page: 'current' }).data().toArray();
-        });
-
-        $('#videoconference-datatable').DataTable({
-            ajax: this.url + '?filter' + this.filter,
+        const dtObject = $('#videoconference-datatable').DataTable({
+            ajax: this.url,
             dom: 'tilpr',
+            pageLength: 50,
+            language: {
+                url: 'datatables/i18n/German.json',
+                paginate: {
+                    "first":      '<i class="fa fa-angle-double-left"></id>',
+                    "last":       '<i class="fa fa-angle-double-right"></id>',
+                    "next":       '<i class="fa fa-angle-right"></id>',
+                    "previous":   '<i class="fa fa-angle-left"></id>',
+                },
+            },
             columns: [
-                { title: 'id', data: 'id', searchable: false },
-                { title: 'meetingID', data: 'meetingID', searchable: false },
-                { title: 'meetingName', data: 'meetingName', searchable: true },
-                { title: 'attendeePW', data: 'attendeePW', searchable: false },
-                { title: 'moderatorPW', data: 'moderatorPW', searchable: false },
-                { title: 'endCallbackUrl', data: 'endCallbackUrl', searchable: false },
+                { title: 'id', data: 'id' },
+                { title: 'meetingID', data: 'meetingID' },
+                { title: 'meetingName', data: 'meetingName' },
+                { title: 'attendeePW', data: 'attendeePW' },
+                { title: 'moderatorPW', data: 'moderatorPW' },
+                { title: 'endCallbackUrl', data: 'endCallbackUrl' },
                 { title: 'welcomeMessage', data: 'welcomeMessage', searchable: true },
-                { title: 'dialNumber', data: 'dialNumber', searchable: false },
-                { title: 'maxParticipants', data: 'maxParticipants', searchable: false },
-                { title: 'logoutUrl', data: 'logoutUrl', searchable: false },
-                { title: 'record', data: 'record', searchable: false },
-                { title: 'duration', data: 'duration', searchable: false },
-                { title: 'isBreakout', data: 'isBreakout', searchable: false },
-                { title: 'moderatorOnlyMessage', data: 'moderatorOnlyMessage', searchable: false },
-                { title: 'autoStartRecording', data: 'autoStartRecording', searchable: false },
-                { title: 'allowStartStopRecording', data: 'allowStartStopRecording', searchable: false },
-                { title: 'bannerText', data: 'bannerText', searchable: false },
-                { title: 'bannerColor', data: 'bannerColor', searchable: false },
-                { title: 'logo', data: 'logo', searchable: false },
-                { title: 'copyright', data: 'copyright', searchable: false },
-                { title: 'muteOnStart', data: 'muteOnStart', searchable: false },
-                { title: 'allowModsToUnmuteUsers', data: 'allowModsToUnmuteUsers', searchable: false },
-                { title: 'lockSettingsDisableCam', data: 'lockSettingsDisableCam', searchable: false },
-                { title: 'lockSettingsDisableMic', data: 'lockSettingsDisableMic', searchable: false },
-                { title: 'lockSettingsDisablePrivateChat', data: 'lockSettingsDisablePrivateChat', searchable: false },
-                { title: 'lockSettingsDisablePublicChat', data: 'lockSettingsDisablePublicChat', searchable: false },
-                { title: 'lockSettingsDisableNote', data: 'lockSettingsDisableNote', searchable: false },
-                { title: 'lockSettingsLockedLayout', data: 'lockSettingsLockedLayout', searchable: false },
-                { title: 'lockSettingsLockOnJoin', data: 'lockSettingsLockOnJoin', searchable: false },
-                { title: 'lockSettingsLockOnJoinConfigurable', data: 'lockSettingsLockOnJoinConfigurable', searchable: false },
-                { title: 'guestPolicy', data: 'guestPolicy', searchable: false },
-                { title: 'meetingKeepEvents', data: 'meetingKeepEvents', searchable: false },
-                { title: 'endWhenNoModerator', data: 'endWhenNoModerator', searchable: false },
-                { title: 'endWhenNoModeratorDelayInMinutes', data: 'endWhenNoModeratorDelayInMinutes', searchable: false },
-                { title: 'meetingLayout', data: 'meetingLayout', searchable: false },
-                { title: 'learningDashboardCleanupDelayInMinutes', data: 'learningDashboardCleanupDelayInMinutes', searchable: false },
-                { title: 'allowModsToEjectCameras', data: 'allowModsToEjectCameras', searchable: false },
-                { title: 'allowRequestsWithoutSession', data: 'allowRequestsWithoutSession', searchable: false },
-                { title: 'userCameraCap', data: 'userCameraCap', searchable: false },
-                { title: 'allJoinAsModerator', data: 'allJoinAsModerator', searchable: false },
-                { title: 'medium_id', data: 'medium_id', searchable: false },
-                { title: 'webcamsOnlyForModerator', data: 'webcamsOnlyForModerator', searchable: false },
-                { title: 'anyoneCanStart', data: 'anyoneCanStart', searchable: false },
+                { title: 'dialNumber', data: 'dialNumber' },
+                { title: 'maxParticipants', data: 'maxParticipants' },
+                { title: 'logoutUrl', data: 'logoutUrl' },
+                { title: 'record', data: 'record' },
+                { title: 'duration', data: 'duration' },
+                { title: 'isBreakout', data: 'isBreakout' },
+                { title: 'moderatorOnlyMessage', data: 'moderatorOnlyMessage'},
+                { title: 'autoStartRecording', data: 'autoStartRecording' },
+                { title: 'allowStartStopRecording', data: 'allowStartStopRecording' },
+                { title: 'bannerText', data: 'bannerText' },
+                { title: 'bannerColor', data: 'bannerColor' },
+                { title: 'logo', data: 'logo' },
+                { title: 'copyright', data: 'copyright' },
+                { title: 'muteOnStart', data: 'muteOnStart' },
+                { title: 'allowModsToUnmuteUsers', data: 'allowModsToUnmuteUsers' },
+                { title: 'lockSettingsDisableCam', data: 'lockSettingsDisableCam' },
+                { title: 'lockSettingsDisableMic', data: 'lockSettingsDisableMic' },
+                { title: 'lockSettingsDisablePrivateChat', data: 'lockSettingsDisablePrivateChat' },
+                { title: 'lockSettingsDisablePublicChat', data: 'lockSettingsDisablePublicChat' },
+                { title: 'lockSettingsDisableNote', data: 'lockSettingsDisableNote' },
+                { title: 'lockSettingsLockedLayout', data: 'lockSettingsLockedLayout' },
+                { title: 'lockSettingsLockOnJoin', data: 'lockSettingsLockOnJoin' },
+                { title: 'lockSettingsLockOnJoinConfigurable', data: 'lockSettingsLockOnJoinConfigurable' },
+                { title: 'guestPolicy', data: 'guestPolicy' },
+                { title: 'meetingKeepEvents', data: 'meetingKeepEvents' },
+                { title: 'endWhenNoModerator', data: 'endWhenNoModerator' },
+                { title: 'endWhenNoModeratorDelayInMinutes', data: 'endWhenNoModeratorDelayInMinutes' },
+                { title: 'meetingLayout', data: 'meetingLayout' },
+                { title: 'learningDashboardCleanupDelayInMinutes', data: 'learningDashboardCleanupDelayInMinutes' },
+                { title: 'allowModsToEjectCameras', data: 'allowModsToEjectCameras' },
+                { title: 'allowRequestsWithoutSession', data: 'allowRequestsWithoutSession' },
+                { title: 'userCameraCap', data: 'userCameraCap' },
+                { title: 'allJoinAsModerator', data: 'allJoinAsModerator' },
+                { title: 'medium_id', data: 'medium_id' },
+                { title: 'webcamsOnlyForModerator', data: 'webcamsOnlyForModerator' },
+                { title: 'anyoneCanStart', data: 'anyoneCanStart' },
             ],
+        }).on('draw.dt', () => { // checks if the datatable-data changes, to update the videoconference-data
+            this.videoconferences = dtObject.rows({ page: 'current' }).data().toArray();
         });
 
         // place the content where the table would normally be

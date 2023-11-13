@@ -7,9 +7,10 @@ use App\Interfaces\VideoconferenceInterface;
 class BbbVideoconferenceAdapter implements VideoconferenceInterface
 {
 
-    public function index()
+
+    public function index(array $input)
     {
-        return \Bigbluebutton::all();
+        return \Bigbluebutton::server( $input['server'] )->all();
     }
 
     /**
@@ -19,7 +20,7 @@ class BbbVideoconferenceAdapter implements VideoconferenceInterface
     {
         abort_unless(\Gate::allows('videoconference_create'), 403);
 
-        return \Bigbluebutton::create([
+        return \Bigbluebutton::server( $input['server'] )->create([
             'meetingID'     => $input['meetingID'],
             'meetingName'   => $input['meetingName'],
             'attendeePW'    => $input['attendeePW'],
@@ -36,7 +37,7 @@ class BbbVideoconferenceAdapter implements VideoconferenceInterface
 
     public function initCreateMeeting(array $input)
     {
-        $createMeeting = \Bigbluebutton::initCreateMeeting([
+        $createMeeting = \Bigbluebutton::server( $input['server'] )->initCreateMeeting([
             'meetingID'     => $input['meetingID'],
             'meetingName'   => $input['meetingName'],
             'attendeePW'    => $input['attendeePW'],
@@ -45,14 +46,14 @@ class BbbVideoconferenceAdapter implements VideoconferenceInterface
 
         $createMeeting->setDuration(100); //overwrite default configuration
 
-        return \Bigbluebutton::create($createMeeting);
+        return \Bigbluebutton::server( $input['server'] )->create($createMeeting);
     }
 
     public function start(array $input){
 
-        $url = \Bigbluebutton::start($input);
+        $url = \Bigbluebutton::server( $input['server'] )->start($input);
 
-       /* $url = \Bigbluebutton::start([
+       /* $url = \Bigbluebutton::server( $input['server'] )->start([
             'meetingID' => $input['meetingID'],
             'meetingName' => $input['meetingName'],
             'moderatorPW' => $input['moderatorPW'],
@@ -71,7 +72,7 @@ class BbbVideoconferenceAdapter implements VideoconferenceInterface
     public function join(array $input)
     {
         return redirect()->to(
-            \JoisarJignesh\Bigbluebutton\Facades\Bigbluebutton::join([
+            \JoisarJignesh\Bigbluebutton\Facades\Bigbluebutton::server( $input['server'] )->join([
                 'meetingID' => $input['meetingID'],
                 'userName' =>  $input['userName'],
                 'password' =>  $input['password'],
@@ -85,7 +86,7 @@ class BbbVideoconferenceAdapter implements VideoconferenceInterface
      */
     public function close(array $input)
     {
-        return \Bigbluebutton::close([
+        return \Bigbluebutton::server( $input['server'] )->close([
             'meetingID' => $input['meetingID'],
             'moderatorPW' => $input['moderatorPW'],
         ]);
@@ -97,23 +98,23 @@ class BbbVideoconferenceAdapter implements VideoconferenceInterface
      * @params array (meetingID,moderatorPW)
      *
      */
-    public function getMeetingInfo(array $array)
+    public function getMeetingInfo(array $input)
     {
-        return \Bigbluebutton::getMeetingInfo($array);
+        return \Bigbluebutton::server( $input['server'] )->getMeetingInfo($input['meetingID']);
     }
 
     /**
      * This call enables you to simply check on whether or not a meeting is running by looking it up with your meeting ID.
      *
      */
-    public function isMeetingRunning(string $input)
+    public function isMeetingRunning(array $input)
     {
-        return \Bigbluebutton::isMeetingRunning($input);
+        return \Bigbluebutton::server( $input['server'] )->isMeetingRunning($input['meetingID']);
     }
 
     public function getRecordings(array $input)
     {
-        return \Bigbluebutton::getRecordings([
+        return \Bigbluebutton::server( $input['server'] )->getRecordings([
             'meetingID' => $input['meetingID'],
             //'meetingID' => ['tamku','xyz'], //pass as array if get multiple recordings
             //'recordID' => 'a3f1s',
@@ -124,7 +125,7 @@ class BbbVideoconferenceAdapter implements VideoconferenceInterface
 
     public function publishRecordings(array $input)
     {
-        return \Bigbluebutton::getRecordings([
+        return \Bigbluebutton::server( $input['server'] )->getRecordings([
             'recordID' => $input['recordID'],
             //'recordID' => ['xyz.1','pqr.1'] //pass as array if publish multiple recordings
             'state' => $input['state'] ?? true //default is true
@@ -133,7 +134,7 @@ class BbbVideoconferenceAdapter implements VideoconferenceInterface
 
     public function deleteRecordings(array $input)
     {
-        return \Bigbluebutton::deleteRecordings([
+        return \Bigbluebutton::server( $input['server'] )->deleteRecordings([
             'recordID' => $input['recordID'],
             //'recordID' => ['xyz.1','pqr.1'] //pass as array if publish multiple recordings
         ]);
@@ -141,7 +142,7 @@ class BbbVideoconferenceAdapter implements VideoconferenceInterface
 
     public function hooksCreate(array $input)
     {
-        return \Bigbluebutton::hooksCreate([
+        return \Bigbluebutton::server( $input['server'] )->hooksCreate([
             'callbackURL' => $input['endCallbackUrl'], //required //check: callbackURL or endCallbackUrl?
             'meetingID' => $input['meetingID'], //optional  if not set then hooks set for all meeting id
             'getRaw' => $input['getRaw'] ?? true //optional
@@ -150,20 +151,20 @@ class BbbVideoconferenceAdapter implements VideoconferenceInterface
 
     public function hooksDestroy(array $input)
     {
-        return \Bigbluebutton::hooksDestroy([
+        return \Bigbluebutton::server( $input['server'] )->hooksDestroy([
             'hooksID' => $input['hooksID'],
 
         ]);
     }
 
-    public function isConnect()
+    public function isConnect(array $input)
     {
-        return \Bigbluebutton::isConnect();
+        return \Bigbluebutton::server( $input['server'] )->isConnect();
     }
 
-    public function getApiVersion()
+    public function getApiVersion(array $input)
     {
-        return \Bigbluebutton::getApiVersion();
+        return \Bigbluebutton::server( $input['server'] )->getApiVersion();
     }
 
 }

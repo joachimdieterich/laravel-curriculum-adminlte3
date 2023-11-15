@@ -90,6 +90,7 @@
                     </div>
                 </a>
             </div>
+            <LogbookIndexAddWidget v-can="'logbook_create'"/>
         </div>
         <Modal :id="'logbookModal'" css="danger" :title="trans('global.logbook.delete')"
                :text="trans('global.logbook.delete_helper')" :ok_label="trans('global.logbook.delete')" v-on:ok="destroy()" />
@@ -97,9 +98,12 @@
 </template>
 <script>
 import { nextTick } from 'vue';
+import LogbookIndexAddWidget from './LogbookIndexAddWidget.vue';
+
 const Modal =
     () => import('./../uiElements/Modal');
 //import Modal from "./../uiElements/Modal";
+
 export default {
     props: {
         subscribable_type: '',
@@ -180,8 +184,9 @@ export default {
         });
     },
     components: {
-        Modal
-    },
+    Modal,
+    LogbookIndexAddWidget
+},
 }
 </script>
 <style scoped>

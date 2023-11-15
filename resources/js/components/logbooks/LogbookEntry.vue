@@ -377,9 +377,10 @@ export default {
 
         this.$eventHub.$on('filter', (filter) => {
             // always case insensitive
-            const content =
-                this.$el.querySelector('.username').innerText.toLowerCase() + ' '
-                + this.$el.querySelector('[id^="logbook_description"]').innerText.toLowerCase();
+            const content = (
+                this.$el.querySelector('.username').innerText + ' '
+                + this.$el.querySelector('[id^="logbook_description"]').innerText
+            ).toLowerCase();
             const search = filter.toLowerCase();
 
             this.$el.style.display = content.includes(search)

@@ -315,6 +315,7 @@ export default {
         }).on('draw.dt', () => { // checks if the datatable-data changes, to update the videoconference-data
             this.videoconferences = dtObject.rows({ page: 'current' }).data().toArray();
         });
+        $('#videoconference-content').insertBefore('#videoconference-datatable'); //for fist call
 
         // place the content where the table would normally be
         setTimeout(() => {

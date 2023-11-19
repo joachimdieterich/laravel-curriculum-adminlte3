@@ -499,10 +499,10 @@ export default {
         isLocked(value){
             //console.log(value.draggedContext.element.locked );
             if (value.draggedContext.element.locked == true && this.$userId != value.draggedContext.element.owner_id) { //locked and not owner
-                //console.log(false );
+                //console.log(false);
                 return false;
             } else {
-                //console.log(true );
+                //console.log(true);
                 return true;
             }
 

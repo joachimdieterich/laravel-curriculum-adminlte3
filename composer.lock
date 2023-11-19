@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2c0b2fc4ee97dd98d302c40ede3da03a",
+    "content-hash": "9dc5d9c8b33bfdadc88a73bd06b0fbd3",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -3299,22 +3299,22 @@
         },
         {
             "name": "joisarjignesh/bigbluebutton",
-            "version": "v2.4.4",
+            "version": "v2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/joisarjignesh/bigbluebutton.git",
-                "reference": "73f84504996c23db5baf60714319b64b93e83d52"
+                "reference": "5643f4d2569d56d53be6400365a93f8051a621f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/joisarjignesh/bigbluebutton/zipball/73f84504996c23db5baf60714319b64b93e83d52",
-                "reference": "73f84504996c23db5baf60714319b64b93e83d52",
+                "url": "https://api.github.com/repos/joisarjignesh/bigbluebutton/zipball/5643f4d2569d56d53be6400365a93f8051a621f1",
+                "reference": "5643f4d2569d56d53be6400365a93f8051a621f1",
                 "shasum": ""
             },
             "require": {
                 "illuminate/support": "^5.5|^6.0|^7.0|^8.0|^9.0|^10.0",
-                "littleredbutton/bigbluebutton-api-php": "dev-master",
-                "php": "^7.4|^8.0|^8.1"
+                "littleredbutton/bigbluebutton-api-php": "~5.0",
+                "php": "^7.4|^8.0|^8.1|^8.2"
             },
             "require-dev": {
                 "orchestra/testbench": "^4.0|^7.0|^8.0",
@@ -3379,7 +3379,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2023-03-06T06:44:39+00:00"
+            "time": "2023-10-11T20:23:54+00:00"
         },
         {
             "name": "knplabs/knp-snappy",
@@ -4976,7 +4976,7 @@
         },
         {
             "name": "littleredbutton/bigbluebutton-api-php",
-            "version": "dev-master",
+            "version": "5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/littleredbutton/bigbluebutton-api-php.git",
@@ -5012,7 +5012,6 @@
                 "symfony/http-client": "To use the SymfonyHttpClientTransport.",
                 "symfony/http-client-contracts": "To use the SymfonyHttpClientTransport."
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "hooks": {

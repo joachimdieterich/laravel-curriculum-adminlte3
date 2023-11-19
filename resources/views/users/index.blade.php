@@ -26,7 +26,7 @@
        class="table table-hover datatable">
     <thead>
         <tr>
-            <th width="10"></th>
+            <th ></th>
             <th>{{ trans('global.user.fields.username') }}</th>
             <th>{{ trans('global.user.fields.firstname') }}</th>
             <th>{{ trans('global.user.fields.lastname') }}</th>
@@ -44,12 +44,12 @@
                 <ul class="nav nav-pills">
                     @can('user_reset_password')
                         <li id="nav_tab_password" class="nav-item">
-                            <a href="#tab_password" class="nav-link active" data-toggle="tab">Passwort</a>
+                            <a href="#tab_password" class="nav-link " data-toggle="tab">Passwort</a>
                         </li>
                     @endcan
                     @can('group_enrolment')
                         <li id="nav_tab_group" class="nav-item">
-                            <a href="#tab_group" class="nav-link" data-toggle="tab">Lerngruppe</a>
+                            <a href="#tab_group" class="nav-link active" data-toggle="tab">Lerngruppe</a>
                         </li>
                     @endcan
                     @can('organization_enrolment')
@@ -70,7 +70,7 @@
             <div class="card-body">
                 <div class="tab-content">
                     @can('user_reset_password')
-                        <div id="tab_password" class="tab-pane active row " >
+                        <div id="tab_password" class="tab-pane row" >
                             <div class="form-horizontal col-xs-12 px-4">
                             @include ('forms.input.info', ["value" => "Neues Passwort für markierte Benutzer festlegen. Passwort muss mind. 6 Zeichen lang sein."])
                             @include ('forms.input.password', ["model" => "user", "field" => "password", "placeholder" => "New Password", "type" => "password", "value" => ""])
@@ -81,7 +81,7 @@
                     @endcan
 
                     @can('group_enrolment')
-                        <div id="tab_group" class="tab-pane row " >
+                        <div id="tab_group" class="tab-pane active row" >
                             <div class="form-horizontal col-xs-12 px-4">
                                 @include ('forms.input.info', ["value" => "Markierte Benutzer in Lerngruppe ein bzw. ausschreiben.\nBenutzer muss an der entsprechenden Institution eingeschrieben sein, damit  die Lerngruppe angezeigt wird."])
 
@@ -249,11 +249,11 @@ function massDestroyUser() {
 
 $( function () {
     $('#login_password_show').on('change', function(){
-        $('#password').attr('type',$('#checkbox').prop('checked')==true?"text":"password");
+        $('#password').attr('type',$('#checkbox').prop('checked') === true?"text":"password");
     });
 
 
-    var table = $('#users-datatable').DataTable({
+    $('#users-datatable').DataTable({
         ajax: "{{ url('users/list') }}",
         columns: [
             {data: 'check'},
@@ -264,7 +264,6 @@ $( function () {
             {data: 'deleted_at', "defaultContent": null},
             {data: 'action'}
         ],
-
     });
 
 });

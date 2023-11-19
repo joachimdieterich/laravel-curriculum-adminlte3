@@ -111,8 +111,8 @@ class GroupsApiController extends Controller
                     'title' => request()->input('period'),
                 ],
                 [
-                    'begin' => Carbon::createFromDate($dates[0])->format('Y-m-d h:m:s'),
-                    'end' => Carbon::createFromDate($dates[1])->format('Y-m-d h:m:s'),
+                    'begin' => Carbon::createFromDate(ltrim($dates[0], '('))->format('Y-m-d h:m:s'),
+                    'end' => Carbon::createFromDate(rtrim($dates[1], ')'))->format('Y-m-d h:m:s'),
                     'owner_id' => 1, //api call
                 ]);
         } elseif ((request()->input('period_id')) and strtolower(request()->input('period_id')) != 'null') {

@@ -104,7 +104,7 @@
                     <i class="fa-solid fa-ranking-star"></i>
                 </a>
             </li>
-            <li v-permission="'videoconference_access'"
+<!--            <li v-permission="'videoconference_access'"
                 class="nav-item"
                 @click="setLocalStorage('#group_'+group.id, '#group_videoconference_'+group.id);">
                 <a class="nav-link link-muted"
@@ -118,7 +118,7 @@
                 >
                     <i class="fa-solid fa-video"></i>
                 </a>
-            </li>
+            </li>-->
             <li class="nav-item ">
                 <a v-if="group.glossar != null"
                    class="nav-link link-muted"
@@ -229,7 +229,7 @@
                     ref="Tests"
                     :group_id="group.id"></tests>
             </div>
-            <div v-permission="'videoconference_access'"
+<!--            <div v-permission="'videoconference_access'"
                  class="tab-pane "
                  :class="checkLocalStorage('#group_'+group.id, '#group_videoconference_'+group.id)"
                  id="videoconference-tab"
@@ -239,7 +239,7 @@
                     ref="Videoconference"
                     subscribable_type="App\Group"
                     :subscribable_id="group.id"></videoconferences>
-            </div>
+            </div>-->
             <div v-permission="'plan_access'"
                  class="tab-pane fade "
                  id="plan-tab"

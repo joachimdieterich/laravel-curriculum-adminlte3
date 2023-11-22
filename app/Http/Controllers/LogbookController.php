@@ -101,6 +101,7 @@ class LogbookController extends Controller
             'title' => $new_logbook['title'],
             'description' => $new_logbook['description'],
             'color' => $new_logbook['color'] ?? '#2980B9',
+            'css_icon' => $new_logbook['css_icon'],
             'owner_id' => auth()->user()->id,
         ]);
 
@@ -183,6 +184,7 @@ class LogbookController extends Controller
             'title' => $input['title'],
             'description' => $input['description'],
             'color' => $input['color'],
+            'css_icon' => $input['css_icon'],
         ]);
 
         return ['logbook' => $logbook];
@@ -302,6 +304,7 @@ class LogbookController extends Controller
             'title' => 'sometimes|required',
             'description' => 'sometimes',
             'color' => 'sometimes',
+            'css_icon' => 'sometimes',
             'subscribable_type' => 'sometimes',
             'subscribable_id' => 'sometimes',
         ]);

@@ -62,6 +62,12 @@
                                     v-model="form.color">
                                 </color-picker-input>
                             </span>
+                            <div class="pull-right">
+                                <font-awesome-picker
+                                    :searchbox="trans('global.select_icon')"
+                                    v-on:selectIcon="setIcon"
+                                ></font-awesome-picker>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -84,6 +90,7 @@
 </template>
 <script>
 import Form from "form-backend-validation";
+import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker";
 
 export default {
     name: 'LogbookCreate',
@@ -100,6 +107,7 @@ export default {
                 'title':  '',
                 'description':  '',
                 'color':'#27AF60',
+                'css_icon': 'fa fa-book',
             }),
         };
     },
@@ -127,6 +135,9 @@ export default {
             txt.innerHTML = html;
             return txt.value.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
         },
+        setIcon(selectedIcon) {
+            this.form.css_icon = 'fa fa-' + selectedIcon.className;
+        },
         submit() {
             let method = this.method.toLowerCase();
 
@@ -150,5 +161,8 @@ export default {
             }
         },
     },
+    components: {
+        FontAwesomePicker,
+    }
 }
 </script>

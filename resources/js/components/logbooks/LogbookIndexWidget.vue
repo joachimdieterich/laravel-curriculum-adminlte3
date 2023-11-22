@@ -14,7 +14,7 @@
             </div>
             <div v-else class="nav-item-box-image-size text-center"
                 :style="{ backgroundColor: (logbook.color ?? '#2980B9') + ' !important' }">
-                <i class="fa fa-2x p-5 fa-book nav-item-text text-white"></i>
+                <i :class="logbook.css_icon + ' fa-2x p-5 nav-item-text text-white'"></i>
             </div>
             <span class="bg-white text-center p-1 overflow-auto nav-item-box">
                 <h1 class="h6 events-heading pt-1 hyphens nav-item-text">

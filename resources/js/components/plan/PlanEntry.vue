@@ -74,7 +74,7 @@
                     </div>
                     <div class="form-group">
                         <font-awesome-picker
-                            :seachbox="trans('global.select_icon')"
+                            :searchbox="trans('global.select_icon')"
                             v-on:selectIcon="setIcon"
                         ></font-awesome-picker>
                     </div>

@@ -5,7 +5,7 @@
             :id="'logbook-add'"
             class="box box-objective nav-item-box-image pointer my-1"
             style="min-width: 200px !important; border-bottom: 5px solid #28a745"
-            @click="open()">
+            @click="open()"
         >
             <div class="nav-item-box-image-size text-center bg-success">
                 <i class="fa fa-2x p-5 fa-plus nav-item-text text-white"></i>
@@ -18,9 +18,9 @@
             </span>
         </div>
         <LogbookCreate
-            id="modal-kanban-form"
+            id="modal-logbook-form"
             :method="method"
-            :kanban="kanban"
+            :logbook="logbook"
         />
     </div>
 </template>

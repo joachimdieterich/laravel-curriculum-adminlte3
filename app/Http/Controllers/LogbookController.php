@@ -76,18 +76,7 @@ class LogbookController extends Controller
      */
     public function create()
     {
-        abort_unless(\Gate::allows('logbook_create'), 403);
-        abort_unless(limiter(
-            'App\\Role',
-            auth()->user()->role()->id,
-            'logbook_limiter',
-            'App\\Logbook',
-            'owner_id'), 402); //is there an role limit?
-
-        $logbooks = Logbook::all();
-
-        return view('logbooks.create')
-            ->with(compact('logbooks'));
+        abort(405);
     }
 
     /**
@@ -176,10 +165,7 @@ class LogbookController extends Controller
      */
     public function edit(Logbook $logbook)
     {
-        $this->checkPermissions($logbook, 'edit');
-
-        return view('logbooks.edit')
-            ->with(compact('logbook'));
+        abort(405);
     }
 
     /**
@@ -192,14 +178,14 @@ class LogbookController extends Controller
     public function update(Request $request, Logbook $logbook)
     {
         $this->checkPermissions($logbook, 'edit');
-
+        $input = $this->validateRequest();
         $logbook->update([
-            'title' => $request['title'],
-            'description' => $request['description'],
-            'color' => $request['color'],
+            'title' => $input['title'],
+            'description' => $input['description'],
+            'color' => $input['color'],
         ]);
 
-        return redirect()->route('logbooks.index');
+        return ['logbook' => $logbook];
     }
 
     /**

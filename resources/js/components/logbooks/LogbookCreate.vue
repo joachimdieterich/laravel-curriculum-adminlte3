@@ -105,7 +105,6 @@ export default {
     },
     watch: {
         logbook: function(newVal, oldVal) {
-            //console.log(newVal);
             this.form.id = newVal.id;
             this.form.title = newVal.title;
             this.form.description = this.decodeHtml(newVal.description);
@@ -139,7 +138,6 @@ export default {
                     .catch(error => { // Handle the error returned from our request
                         console.log(error);
                     });
-
             } else {
                 axios.post(this.requestUrl, this.form)
                     .then(res => {

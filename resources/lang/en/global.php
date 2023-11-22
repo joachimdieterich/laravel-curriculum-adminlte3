@@ -1021,6 +1021,7 @@ return [
         'delete' => 'Delete videoconference',
         'delete_helper' => 'Should the videoconference be deleted?',
         'add_presentation' => 'Add presentation',
+        'enter_name' => 'Please enter your name',
         'fields' => [
             'meetingID' => 'meetingID',
             'meetingID_helper' => '',

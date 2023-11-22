@@ -1030,6 +1030,7 @@ return [
         'delete' => 'Löschen',
         'delete_helper' => 'Soll die Videokonferenz gelöscht werden?',
         'add_presentation' => 'Präsentation hinzufügen',
+        'enter_name' => 'Bitte Vor- und Nachnamen eingeben',
         'fields' => [
             'meetingID' => 'meetingID',
             'meetingID_helper' => '',

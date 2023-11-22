@@ -12,7 +12,7 @@
                 style="font-size: 1.1rem; font-weight: 400; border: 0; border-bottom: 1px; border-style:solid; margin: 0;"
             />
              <div class="form-group "
-                  v-if="($userId == status_owner_id)">
+                  v-if="($userId == status_owner_id) || ($userId == kanban.owner_id) ">
                  <span class="custom-control custom-switch custom-switch-on-green">
                     <input  v-model="form.editable"
                             type="checkbox"
@@ -33,8 +33,7 @@
                         {{ trans('global.locked') }}
                     </label>
                 </span>
-                 <span v-if="($userId == status?.owner_id)"
-                       class="custom-control custom-switch custom-switch-on-green">
+                 <span class="custom-control custom-switch custom-switch-on-green">
                     <input
                         v-model="form.visibility"
                             type="checkbox"

@@ -181,6 +181,8 @@ export default {
             this.form.kanban_id = this.status.kanban_id;
             this.form.kanban_status_id = this.status.id;
             this.form.order_id = this.status.items.length;
+            this.form.locked = this.status.locked;
+            this.form.editable = this.status.editable;
         }
         this.$initTinyMCE([
             "autolink link"

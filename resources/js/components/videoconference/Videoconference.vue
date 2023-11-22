@@ -553,9 +553,10 @@
                                         name="userName"
                                         class="form-control"
                                         v-model.trim="form.userName"
-                                        :placeholder="trans('global.name')"
+                                        placeholder="Bitte Vor- und Nachnamen eintragen."
                                     />
                                     <span class="input-group-append"
+                                          v-if="form.userName"
                                           @click="startVideoconference()">
                                         <button
                                             v-if="isRunning"
@@ -704,7 +705,7 @@ export default {
 
         if ( this.videoconference !== null ) {
             this.form = this.videoconference;
-            if(this.user != null){
+            if(this.user != null && this.user.firstname != 'Guest'){
                 this.form.userName = this.user.firstname + ' ' + this.user.lastname;
             }
             this.method = 'patch';

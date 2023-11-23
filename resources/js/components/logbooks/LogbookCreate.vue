@@ -54,19 +54,31 @@
                                 Darstellung
                             </h5>
                         </div>
-                        <div class="card-body pb-0">
-                            <span
-                                class="pull-left"
-                                :style="{borderColor: textColor }">
-                                <color-picker-input
-                                    v-model="form.color">
-                                </color-picker-input>
-                            </span>
-                            <div class="pull-right">
-                                <font-awesome-picker
-                                    :searchbox="trans('global.select_icon')"
-                                    v-on:selectIcon="setIcon"
-                                ></font-awesome-picker>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <span
+                                    :style="{borderColor: textColor, height: '42px'}">
+                                    <color-picker-input
+                                        v-model="form.color">
+                                    </color-picker-input>
+                                </span>
+                                <div class="dropdown">
+                                    <button
+                                        class="btn btn-default"
+                                        style="width: 42px; padding: 6px 0px;"
+                                        type="button"
+                                        data-toggle="dropdown"
+                                        aria-expanded="false"
+                                    >
+                                        <i :class="form.css_icon + ' pt-2'"></i>
+                                    </button>
+                                    <font-awesome-picker
+                                        class="dropdown-menu dropdown-menu-right"
+                                        style="min-width: 400px;"
+                                        :searchbox="trans('global.select_icon')"
+                                        v-on:selectIcon="setIcon"
+                                    ></font-awesome-picker>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -117,6 +129,7 @@ export default {
             this.form.title = newVal.title;
             this.form.description = this.decodeHtml(newVal.description);
             this.form.color = newVal.color;
+            this.form.css_icon = newVal.css_icon;
         },
         method: function (newVal, oldVal) {
             if (newVal == 'post') {

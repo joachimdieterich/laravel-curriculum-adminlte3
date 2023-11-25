@@ -14,6 +14,7 @@
                    aria-selected="false"
                   >
                     <i class="fas fa-th"></i>
+                    <span v-if="help"> {{ trans('global.curriculum.title') }}</span>
                 </a>
             </li>
             <li v-permission="'group_enrolment'"
@@ -29,6 +30,7 @@
                    aria-selected="true"
                 >
                     <i class="fa fa-users"></i>
+                    <span v-if="help"> {{ trans('global.user.title') }}</span>
                 </a>
             </li>
             <li class="nav-item "
@@ -44,6 +46,7 @@
                    aria-selected="true"
                 >
                     <i class="fas fa-book "></i>
+                    <span v-if="help">{{ trans('global.logbook.title') }}</span>
                 </a>
             </li>
             <li class="nav-item "
@@ -59,6 +62,7 @@
                    aria-selected="true"
                 >
                     <i class="fa fa-columns"></i>
+                    <span v-if="help">{{ trans('global.kanban.title') }}</span>
                 </a>
             </li>
            <li class="nav-item"
@@ -73,6 +77,7 @@
                    aria-controls="task-tab"
                    aria-selected="true">
                     <i class="fas fa-tasks"></i>
+                    <span v-if="help">{{ trans('global.task.title') }}</span>
                 </a>
             </li>
             <li class="nav-item"
@@ -87,6 +92,7 @@
                    aria-controls="plan-tab"
                    aria-selected="true">
                     <i class="fa fa-clipboard-list"></i>
+                    <span v-if="help">{{ trans('global.plan.title') }}</span>
                 </a>
             </li>
             <li v-permission="'test_access'"
@@ -102,9 +108,10 @@
                    aria-selected="true"
                 >
                     <i class="fa-solid fa-ranking-star"></i>
+                    <span v-if="help">{{ trans('global.test.title') }}</span>
                 </a>
             </li>
-<!--            <li v-permission="'videoconference_access'"
+            <li v-permission="'videoconference_access'"
                 class="nav-item"
                 @click="setLocalStorage('#group_'+group.id, '#group_videoconference_'+group.id);">
                 <a class="nav-link link-muted"
@@ -118,7 +125,7 @@
                 >
                     <i class="fa-solid fa-video"></i>
                 </a>
-            </li>-->
+            </li>
             <li class="nav-item ">
                 <a v-if="group.glossar != null"
                    class="nav-link link-muted"
@@ -128,7 +135,9 @@
                    role="tab"
                    aria-controls="glossar-tab"
                    aria-selected="true">
-                    <i class="fa fa-book-open pr-2"></i>{{ trans('global.glossar.title_singular') }}
+                    <i class="fa fa-book-open pr-2"></i>
+                    <span v-if="help"> {{ trans('global.glossar.title_singular') }}</span>
+
                 </a>
                 <a v-else
                    v-permission="'glossar_create'"
@@ -139,7 +148,7 @@
                     <i class="fa fa-book-open pr-2"></i>{{ trans('global.glossar.create') }}
                 </a>
             </li>
-            <!-- <li class="nav-item ">
+             <li class="nav-item ">
                 <a class="nav-link link-muted"
                    id="medium-nav-tab"
                    data-toggle="pill"
@@ -149,11 +158,17 @@
                    aria-selected="true">
                     <i class="fa fa-folder-open pr-2"></i>{{trans('global.media.title')}}
                 </a>
-            </li>-->
+            </li>
 
 
+            <li class="nav-item ml-auto pull-right">
+                <a class="nav-link small link-muted"
+                   @click="help = !help">
+                    <i class="fa fa-question pr-1"></i>
+                </a>
+            </li>
             <li v-permission="'group_edit'"
-                class="nav-item ml-auto">
+                class="nav-item">
                 <a class="nav-link link-muted"
                    :href="'/groups/'+ group.id +'/edit'"
                    id="config-nav-tab">
@@ -315,7 +330,7 @@ const Tests =
         },
         data () {
             return {
-
+                help: false,
             };
         },
 

@@ -76,7 +76,7 @@ class SAMLLoginListener
                 }
             }
 
-            // Enrol user to (creators) institution. Every user have to be enrolled to an institution!
+                // Enrol user to (creators) institution. Every user has to be enrolled to an institution! If not error 500 is thrown
             $org_id = Organization::where('common_name', $sso_user->getAttribute('organizations')[0])->first()->id;
             switch ($sso_user->getAttribute('rpidmcategory')[0])
             {

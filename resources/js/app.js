@@ -101,7 +101,7 @@ Vue.prototype.checkPermission = (permission) => {
 Vue.prototype.htmlToText = (html) => {
     var txt = document.createElement("textarea");
     txt.innerHTML = html;
-    return txt.value.replace(/<script.*?<\/script>|<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
+    return txt.value.replace(/(&lt|<)script.*?(&lt|<)\/script(&gt;|>)|<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
 }
 
 /**

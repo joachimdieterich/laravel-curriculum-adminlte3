@@ -127,7 +127,7 @@ export default {
         logbook: function(newVal, oldVal) {
             this.form.id = newVal.id;
             this.form.title = newVal.title;
-            this.form.description = this.decodeHtml(newVal.description);
+            this.form.description = this.htmlToText(newVal.description);
             this.form.color = newVal.color;
             this.form.css_icon = newVal.css_icon;
         },
@@ -143,11 +143,6 @@ export default {
         }
     },
     methods: {
-        decodeHtml(html) {
-            var txt = document.createElement("textarea");
-            txt.innerHTML = html;
-            return txt.value.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
-        },
         setIcon(selectedIcon) {
             this.form.css_icon = 'fa fa-' + selectedIcon.className;
         },

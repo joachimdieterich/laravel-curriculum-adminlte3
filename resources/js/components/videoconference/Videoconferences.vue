@@ -83,7 +83,7 @@
                        {{ videoconference.meetingName }}
                    </h1>
                    <p class="text-muted small"
-                      v-html="decodeHtml(videoconference.welcomeMessage)">
+                      v-html="htmlToText(videoconference.welcomeMessage)">
                    </p>
                 </span>
                     <div class="symbol"
@@ -253,11 +253,6 @@ export default {
         setFilter(filter){
             this.filter = filter;
             this.loaderEvent();
-        },
-        decodeHtml(html) {
-            let txt = document.createElement("textarea");
-            txt.innerHTML = html;
-            return txt.value.replace(/(<([^>]+)>)/ig,"");
         },
         destroy() {
             axios.delete('/videoconferences/' + this.currentVideoconference.id)

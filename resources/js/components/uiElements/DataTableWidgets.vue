@@ -9,7 +9,7 @@
                         <div class="info-box-content">
                             <span class="pull-right bg-gray-light" v-html="entry.action"></span>
                             <span class="text-white">{{ entry.title }}</span><br>
-                            <span class="pt-2 text-white small" v-html="decodeHtml(entry.description)"></span>
+                            <span class="pt-2 text-white small" v-html="htmlToText(entry.description)"></span>
                         </div>
                     </div>
                 </a>
@@ -28,7 +28,7 @@
                         <div class="info-box-content">
                             <span class="pull-right" v-html="entry.action"></span>
                             <span class="info-box-text"><strong v-html="entry.title"></strong></span>
-                            <span class="pt-2 " v-html="decodeHtml(entry.description)"></span>
+                            <span class="pt-2 " v-html="htmlToText(entry.description)"></span>
                         </div>
                     </div>
                 </a>
@@ -55,14 +55,7 @@
                // console.log(error);
                 });
         },
-         methods: {
-            decodeHtml(html) {
-                var txt = document.createElement("textarea");
-                txt.innerHTML = html;
-                return txt.value.replace(/(<([^>]+)>)/ig,"");
-            },
-
-         },
+         methods: {},
          computed: {
                 styles() {
                     return {

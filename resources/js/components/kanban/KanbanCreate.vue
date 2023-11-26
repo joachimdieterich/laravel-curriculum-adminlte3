@@ -186,7 +186,7 @@ export default {
             //console.log(newVal);
             this.form.id = newVal.id;
             this.form.title = newVal.title;
-            this.form.description = this.decodeHtml(newVal.description);
+            this.form.description = this.htmlToText(newVal.description);
             this.form.color = newVal.color;
             this.form.medium_id = newVal.medium_id;
             this.form.commentable = newVal.commentable;
@@ -206,11 +206,6 @@ export default {
         }
     },
     methods: {
-        decodeHtml(html) {
-            var txt = document.createElement("textarea");
-            txt.innerHTML = html;
-            return txt.value.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
-        },
         submit() {
             let method = this.method.toLowerCase();
 

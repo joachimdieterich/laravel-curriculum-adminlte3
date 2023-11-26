@@ -106,11 +106,6 @@ export default {
                     : 'none';
             }
         },
-        decodeHtml(html) {
-            let txt = document.createElement("textarea");
-            txt.innerHTML = html;
-            return txt.value.replace(/(<([^>]+)>)/ig, "");
-        },
         async destroy() {
             try {
                 this.logbooks = (await axios.delete('/logbooks/' + this.tempId)).data.data;

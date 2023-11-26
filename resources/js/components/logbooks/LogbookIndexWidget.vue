@@ -20,7 +20,7 @@
                 <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
                     {{ logbook.title }}
                 </h1>
-                <p class="text-muted small" v-html="decodeHtml(logbook.description)">
+                <p class="text-muted small" v-html="htmlToText(logbook.description)">
                 </p>
             </span>
             <div class="symbol"
@@ -71,13 +71,7 @@ export default {
             default: ''
         }
     },
-    methods: {
-        decodeHtml(html) {
-            let txt = document.createElement("textarea");
-            txt.innerHTML = html;
-            return txt.value.replace(/(<([^>]+)>)/ig,"");
-        },
-    },
+    methods: {},
 }
 </script>
 <style scoped>

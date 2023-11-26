@@ -28,7 +28,7 @@
                            {{ kanban.title }}
                        </h1>
                        <p class="text-muted small"
-                          v-html="decodeHtml(kanban.description)">
+                          v-html="htmlToText(kanban.description)">
                        </p>
                     </span>
 
@@ -91,13 +91,7 @@ export default {
         default: ''
       }
     },
-    methods: {
-      decodeHtml(html) {
-        let txt = document.createElement("textarea");
-        txt.innerHTML = html;
-        return txt.value.replace(/(<([^>]+)>)/ig,"");
-      },
-    },
+    methods: {},
 }
 </script>
 <style scoped>

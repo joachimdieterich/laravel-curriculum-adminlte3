@@ -98,7 +98,11 @@ Vue.prototype.checkPermission = (permission) => {
     return window.Laravel.permissions.indexOf(permission) !== -1;
 };
 
-
+Vue.prototype.htmlToText = (html) => {
+    var txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value.replace(/<script.*?<\/script>|<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
+}
 
 /**
  * make userId accessible for vue

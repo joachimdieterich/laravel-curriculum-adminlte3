@@ -136,11 +136,6 @@ export default {
             this.filter = filter;
             this.loaderEvent();
         },
-        decodeHtml(html) {
-            let txt = document.createElement("textarea");
-            txt.innerHTML = html;
-            return txt.value.replace(/(<([^>]+)>)/ig,"");
-        },
         async destroy() {
             try {
                 this.kanbans = (await axios.delete('/kanbans/' + this.tempId)).data.data;

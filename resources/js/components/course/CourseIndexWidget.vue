@@ -28,7 +28,7 @@
                    {{ course.curriculum.title }}
                </h1>
                <p class="text-muted small"
-                  v-html="decodeHtml(course.curriculum.description)">
+                  v-html="htmlToText(course.curriculum.description)">
                </p>
             </span>
 
@@ -71,11 +71,6 @@
             }
         },
         methods: {
-            decodeHtml(html) {
-                let txt = document.createElement("textarea");
-                txt.innerHTML = html;
-                return txt.value.replace(/(<([^>]+)>)/ig,"");
-            },
             href: function (id) {
                 return '/media/'+ id;
             },

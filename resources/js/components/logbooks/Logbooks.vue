@@ -32,64 +32,13 @@
         </div>
 
         <div class="col-md-12 py-2">
-            <div v-for="(logbook, index) in logbooks" :id="logbook.id" v-bind:value="logbook.id"
-                 class="box box-objective nav-item-box-image pointer my-1" style="min-width: 200px !important;"
-                 :style="'border-bottom: 5px solid ' + (logbook.color ?? '#2980B9')">
-                <a :href="'/logbooks/' + logbook.id" class="text-decoration-none text-black">
-                    <div v-if="logbook.medium_id" class="nav-item-box-image-size"
-                         :style="{ 'background': 'url(/media/' + logbook.medium_id + '?model=logbook&model_id=' + logbook.id + ') top center no-repeat', 'background-size': 'cover', }">
-                        <div class="nav-item-box-image-size" style="width: 100% !important;"
-                             :style="{ backgroundColor: (logbook.color ?? '#2980B9') + ' !important', 'opacity': '0.5' }">
-                        </div>
-                    </div>
-                    <div v-else class="nav-item-box-image-size text-center"
-                         :style="{ backgroundColor: (logbook.color ?? '#2980B9') + ' !important' }">
-                        <i class="fa fa-2x p-5 fa-book nav-item-text text-white"></i>
-                    </div>
-                    <span class="bg-white text-center p-1 overflow-auto nav-item-box">
-                        <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                            {{ logbook.title }}
-                        </h1>
-                        <p class="text-muted small" v-html="decodeHtml(logbook.description)">
-                        </p>
-                    </span>
-                    <div class="symbol"
-                         :style="'color:' + $textcolor(logbook.color) + '!important'"
-                         style="position: absolute; width: 30px; height: 40px;"
-                    >
-                        <i v-if="$userId == logbook.owner_id"
-                           class="fa fa-user pt-2"></i>
-                        <i v-else
-                           class="fa fa-share-nodes pt-2"></i>
-                    </div>
-                    <div v-if="$userId == logbook.owner_id"
-                         class="btn btn-flat pull-right "
-                         :id="'logbookDropdown_' + logbook.id"
-                         style="position:absolute; top:0; right: 0; background-color: transparent;"
-                         data-toggle="dropdown"
-                         aria-expanded="false">
-                        <i class="fas fa-ellipsis-v"
-                           :style="'color:' + $textcolor(logbook.color)"></i>
-                        <div class="dropdown-menu dropdown-menu-right"
-                             x-placement="left-start">
-                            <button :name="'logbookEdit_'+logbook.id"
-                                    class="dropdown-item text-secondary"
-                                    @click.prevent="editLogbook(logbook.id)">
-                                <i class="fa fa-pencil-alt mr-2"></i>
-                                {{ trans('global.logbook.edit') }}
-                            </button>
-                            <hr class="my-1">
-                            <button :id="'delete-logbook-' + logbook.id"
-                                    type="submit"
-                                    class="dropdown-item py-1 text-red"
-                                    @click.prevent="confirmItemDelete(logbook.id)">
-                                <i class="fa fa-trash mr-2"></i>
-                                {{ trans('global.logbook.delete') }}
-                            </button>
-                        </div>
-                    </div>
-                </a>
-            </div>
+            <LogbookIndexWidget
+                v-for="(logbook, index) in logbooks"
+                :key="index + '_logbook_' + logbook.id"
+                :logbook="logbook"
+                :search="search"
+            />
+            <LogbookIndexAddWidget v-can="'logbook_create'"/>
         </div>
         <Modal :id="'logbookModal'" css="danger" :title="trans('global.logbook.delete')"
                :text="trans('global.logbook.delete_helper')" :ok_label="trans('global.logbook.delete')" v-on:ok="destroy()" />
@@ -97,9 +46,13 @@
 </template>
 <script>
 import { nextTick } from 'vue';
+import LogbookIndexAddWidget from './LogbookIndexAddWidget';
+import LogbookIndexWidget from './LogbookIndexWidget';
+
 const Modal =
     () => import('./../uiElements/Modal');
 //import Modal from "./../uiElements/Modal";
+
 export default {
     props: {
         subscribable_type: '',
@@ -120,8 +73,9 @@ export default {
             $('#logbookModal').modal('show');
             this.tempId = logbookId;
         },
-        editLogbook(id){
-            window.location = "/logbooks/" + id + "/edit";
+        editLogbook(logbook){
+            this.$eventHub.$emit('edit_logbook', logbook);
+            // window.location = "/logbooks/" + id + "/edit";
         },
         loaderEvent() {
             axios.get('/logbooks/list?filter=' + this.filter)
@@ -178,9 +132,20 @@ export default {
                 element.style.display = 'block';
             });
         });
+        this.$eventHub.$on('logbook-updated', (logbook) => {
+            const index = this.logbooks.findIndex(
+                lb => lb.id === logbook.id
+            );
+
+            for (const [key, value] of Object.entries(logbook)) {
+                this.logbooks[index][key] = value;
+            }
+        });
     },
     components: {
-        Modal
+        Modal,
+        LogbookIndexAddWidget,
+        LogbookIndexWidget
     },
 }
 </script>

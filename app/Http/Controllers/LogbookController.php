@@ -76,18 +76,7 @@ class LogbookController extends Controller
      */
     public function create()
     {
-        abort_unless(\Gate::allows('logbook_create'), 403);
-        abort_unless(limiter(
-            'App\\Role',
-            auth()->user()->role()->id,
-            'logbook_limiter',
-            'App\\Logbook',
-            'owner_id'), 402); //is there an role limit?
-
-        $logbooks = Logbook::all();
-
-        return view('logbooks.create')
-            ->with(compact('logbooks'));
+        abort(405);
     }
 
     /**
@@ -112,6 +101,7 @@ class LogbookController extends Controller
             'title' => $new_logbook['title'],
             'description' => $new_logbook['description'],
             'color' => $new_logbook['color'] ?? '#2980B9',
+            'css_icon' => $new_logbook['css_icon'],
             'owner_id' => auth()->user()->id,
         ]);
 
@@ -176,10 +166,7 @@ class LogbookController extends Controller
      */
     public function edit(Logbook $logbook)
     {
-        $this->checkPermissions($logbook, 'edit');
-
-        return view('logbooks.edit')
-            ->with(compact('logbook'));
+        abort(405);
     }
 
     /**
@@ -192,14 +179,15 @@ class LogbookController extends Controller
     public function update(Request $request, Logbook $logbook)
     {
         $this->checkPermissions($logbook, 'edit');
-
+        $input = $this->validateRequest();
         $logbook->update([
-            'title' => $request['title'],
-            'description' => $request['description'],
-            'color' => $request['color'],
+            'title' => $input['title'],
+            'description' => $input['description'],
+            'color' => $input['color'],
+            'css_icon' => $input['css_icon'],
         ]);
 
-        return redirect()->route('logbooks.index');
+        return ['logbook' => $logbook];
     }
 
     /**
@@ -316,6 +304,7 @@ class LogbookController extends Controller
             'title' => 'sometimes|required',
             'description' => 'sometimes',
             'color' => 'sometimes',
+            'css_icon' => 'sometimes',
             'subscribable_type' => 'sometimes',
             'subscribable_id' => 'sometimes',
         ]);

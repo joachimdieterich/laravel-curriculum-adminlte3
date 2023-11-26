@@ -85,24 +85,19 @@
 export default {
     name: 'KanbanIndexWidget',
     props: {
-        kanban: {},
-        search: {
-            type: String,
-            default: ''
-        }
+      kanban: {},
+      search: {
+        type: String,
+        default: ''
+      }
     },
     methods: {
-        decodeHtml(html) {
-            let txt = document.createElement("textarea");
-            txt.innerHTML = html;
-            return txt.value.replace(/(<([^>]+)>)/ig,"");
-        },
+      decodeHtml(html) {
+        let txt = document.createElement("textarea");
+        txt.innerHTML = html;
+        return txt.value.replace(/(<([^>]+)>)/ig,"");
+      },
     },
-    mounted() {
-
-    },
-
-
 }
 </script>
 <style scoped>

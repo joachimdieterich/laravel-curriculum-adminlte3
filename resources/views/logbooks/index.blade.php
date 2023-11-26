@@ -16,18 +16,6 @@
                 class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
-    @can('logbook_create')
-        <div style="margin-bottom: 10px;" class="row">
-            <div class="col-lg-12">
-                <a id="add-logbook"
-                   class="btn btn-success"
-                   href="{{ route("logbooks.create") }}">
-                    {{ trans('global.logbook.create') }}
-                </a>
-        </div>
-    </div>
-@endcan
-
 <logbooks></logbooks>
 {{-- <table id="logbooks-datatable" class="table table-hover datatable">
     <thead>

@@ -93,7 +93,7 @@
                     </div>
                     <div v-if="$userId == videoconference.owner_id"
                          class="btn btn-flat pull-right"
-                         :id="'videoconferebceDropdown_' + videoconference.id"
+                         :id="'videoconferenceDropdown_' + videoconference.id"
                          style="position:absolute; top:0; right: 0; background-color: transparent;"
                          data-toggle="dropdown"
                          aria-expanded="false"

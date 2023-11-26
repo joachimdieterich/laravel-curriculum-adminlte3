@@ -153,10 +153,19 @@ export default {
     mounted() {
         document.getElementById('searchbar').classList.remove('d-none');
 
+        this.$eventHub.$emit('showSearchbar');
         this.$eventHub.$on('filter', (filter) => {
             $('#kanban-datatable').DataTable().search(filter).draw();
         });
-        this.$eventHub.$emit('showSearchbar');
+        this.$eventHub.$on('kanban-updated', (kanban) => {
+            const index = this.kanbans.findIndex(
+                k => k.id === kanban.id
+            );
+
+            for (const [key, value] of Object.entries(kanban)) {
+                this.kanbans[index][key] = value;
+            }
+        });
 
         const parent = this;
         // checks if the datatable-data changes, to update the kanban-data

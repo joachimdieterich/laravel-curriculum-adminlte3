@@ -1,17 +1,8 @@
 <template >
     <div class="row">
-        <div class="col-md-12 py-2">
+        <div class="col-md-12 ">
             <ul v-if="typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined'"
-                class="nav nav-pills" role="tablist">
-<!--                <li v-can="'videoconference_create'"
-                    class="nav-item ">
-                    <a class="nav-link active bg-green"
-                       href="/videoconferences/create"
-                       id="custom-tabs-create-videoconference"
-                    >
-                        <i class="fa fa-plus pr-2"></i> {{ trans('global.videoconference.create') }}
-                    </a>
-                </li>-->
+                class="nav nav-pills py-2" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link "
                        :class="filter === 'all' ? 'active' : ''"
@@ -61,7 +52,7 @@
         </div>
 
         <table id="videoconference-datatable" style="display: none;"></table>
-        <div id="videoconference-content" class="py-2">
+        <div id="videoconference-content" >
             <div v-for="videoconference in videoconferences"
                  v-if="(videoconference.meetingName.toLowerCase().indexOf(search.toLowerCase()) !== -1)
                 || search.length < 3"
@@ -192,14 +183,72 @@ export default {
                 this.url = '/videoconferences/list?filter=' + this.filter
             }
 
-            $('#videoconference-datatable').DataTable().ajax.url(this.url).load();
-            // axios.get(this.url)
-            //     .then(response => {
-            //         this.videoconferences = response.data.data;
-            //     })
-            //     .catch(e => {
-            //         console.log(e);
-            //     });
+            if ($.fn.dataTable.isDataTable( '#videoconference-datatable' )){
+                $('#videoconference-datatable').DataTable().ajax.url(this.url).load();
+            } else {
+                const dtObject = $('#videoconference-datatable').DataTable({
+                    ajax: this.url,
+                    dom: 'tilpr',
+                    pageLength: 50,
+                    language: {
+                        url: '/datatables/i18n/German.json',
+                        paginate: {
+                            "first":      '<i class="fa fa-angle-double-left"></id>',
+                            "last":       '<i class="fa fa-angle-double-right"></id>',
+                            "next":       '<i class="fa fa-angle-right"></id>',
+                            "previous":   '<i class="fa fa-angle-left"></id>',
+                        },
+                    },
+                    columns: [
+                        { title: 'id', data: 'id' },
+                        { title: 'meetingID', data: 'meetingID' },
+                        { title: 'meetingName', data: 'meetingName', searchable: true},
+                        { title: 'welcomeMessage', data: 'welcomeMessage', searchable: true },
+                       /* { title: 'attendeePW', data: 'attendeePW' },
+                        { title: 'moderatorPW', data: 'moderatorPW' },
+                        { title: 'endCallbackUrl', data: 'endCallbackUrl' },
+                        { title: 'dialNumber', data: 'dialNumber' },
+                        { title: 'maxParticipants', data: 'maxParticipants' },
+                        { title: 'logoutUrl', data: 'logoutUrl' },
+                        { title: 'record', data: 'record' },
+                        { title: 'duration', data: 'duration' },
+                        { title: 'isBreakout', data: 'isBreakout' },
+                        { title: 'moderatorOnlyMessage', data: 'moderatorOnlyMessage'},
+                        { title: 'autoStartRecording', data: 'autoStartRecording' },
+                        { title: 'allowStartStopRecording', data: 'allowStartStopRecording' },
+                        { title: 'bannerText', data: 'bannerText' },
+                        { title: 'bannerColor', data: 'bannerColor' },
+                        { title: 'logo', data: 'logo' },
+                        { title: 'copyright', data: 'copyright' },
+                        { title: 'muteOnStart', data: 'muteOnStart' },
+                        { title: 'allowModsToUnmuteUsers', data: 'allowModsToUnmuteUsers' },
+                        { title: 'lockSettingsDisableCam', data: 'lockSettingsDisableCam' },
+                        { title: 'lockSettingsDisableMic', data: 'lockSettingsDisableMic' },
+                        { title: 'lockSettingsDisablePrivateChat', data: 'lockSettingsDisablePrivateChat' },
+                        { title: 'lockSettingsDisablePublicChat', data: 'lockSettingsDisablePublicChat' },
+                        { title: 'lockSettingsDisableNote', data: 'lockSettingsDisableNote' },
+                        { title: 'lockSettingsLockedLayout', data: 'lockSettingsLockedLayout' },
+                        { title: 'lockSettingsLockOnJoin', data: 'lockSettingsLockOnJoin' },
+                        { title: 'lockSettingsLockOnJoinConfigurable', data: 'lockSettingsLockOnJoinConfigurable' },
+                        { title: 'guestPolicy', data: 'guestPolicy' },
+                        { title: 'meetingKeepEvents', data: 'meetingKeepEvents' },
+                        { title: 'endWhenNoModerator', data: 'endWhenNoModerator' },
+                        { title: 'endWhenNoModeratorDelayInMinutes', data: 'endWhenNoModeratorDelayInMinutes' },
+                        { title: 'meetingLayout', data: 'meetingLayout' },
+                        { title: 'learningDashboardCleanupDelayInMinutes', data: 'learningDashboardCleanupDelayInMinutes' },
+                        { title: 'allowModsToEjectCameras', data: 'allowModsToEjectCameras' },
+                        { title: 'allowRequestsWithoutSession', data: 'allowRequestsWithoutSession' },
+                        { title: 'userCameraCap', data: 'userCameraCap' },
+                        { title: 'allJoinAsModerator', data: 'allJoinAsModerator' },
+                        { title: 'medium_id', data: 'medium_id' },
+                        { title: 'webcamsOnlyForModerator', data: 'webcamsOnlyForModerator' },
+                        { title: 'anyoneCanStart', data: 'anyoneCanStart' },*/
+                    ],
+                }).on('draw.dt', () => { // checks if the datatable-data changes, to update the videoconference-data
+                    this.videoconferences = dtObject.rows({ page: 'current' }).data().toArray();
+                    $('#videoconference-content').insertBefore('#videoconference-datatable');
+                });
+            }
         },
         setFilter(filter){
             this.filter = filter;
@@ -222,7 +271,9 @@ export default {
         },
     },
     mounted() {
-        document.getElementById('searchbar').classList.remove('d-none');
+        if (document.getElementById('searchbar') != null) {
+            document.getElementById('searchbar').classList.remove('d-none');
+        }
 
         const filters = ["all", "owner", "shared_with_me", "shared_by_me"];
         let url = new URL(window.location.href);
@@ -248,79 +299,7 @@ export default {
                 this.videoconferences[index][key] = value;
             }
         });
-        if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
-            this.url = '/videoconferenceSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
-        } else {
-            this.url = '/videoconferences/list?filter=' + this.filter
-        }
-
-        const dtObject = $('#videoconference-datatable').DataTable({
-            ajax: this.url,
-            dom: 'tilpr',
-            pageLength: 50,
-            language: {
-                url: 'datatables/i18n/German.json',
-                paginate: {
-                    "first":      '<i class="fa fa-angle-double-left"></id>',
-                    "last":       '<i class="fa fa-angle-double-right"></id>',
-                    "next":       '<i class="fa fa-angle-right"></id>',
-                    "previous":   '<i class="fa fa-angle-left"></id>',
-                },
-            },
-            columns: [
-                { title: 'id', data: 'id' },
-                { title: 'meetingID', data: 'meetingID' },
-                { title: 'meetingName', data: 'meetingName' },
-                { title: 'attendeePW', data: 'attendeePW' },
-                { title: 'moderatorPW', data: 'moderatorPW' },
-                { title: 'endCallbackUrl', data: 'endCallbackUrl' },
-                { title: 'welcomeMessage', data: 'welcomeMessage', searchable: true },
-                { title: 'dialNumber', data: 'dialNumber' },
-                { title: 'maxParticipants', data: 'maxParticipants' },
-                { title: 'logoutUrl', data: 'logoutUrl' },
-                { title: 'record', data: 'record' },
-                { title: 'duration', data: 'duration' },
-                { title: 'isBreakout', data: 'isBreakout' },
-                { title: 'moderatorOnlyMessage', data: 'moderatorOnlyMessage'},
-                { title: 'autoStartRecording', data: 'autoStartRecording' },
-                { title: 'allowStartStopRecording', data: 'allowStartStopRecording' },
-                { title: 'bannerText', data: 'bannerText' },
-                { title: 'bannerColor', data: 'bannerColor' },
-                { title: 'logo', data: 'logo' },
-                { title: 'copyright', data: 'copyright' },
-                { title: 'muteOnStart', data: 'muteOnStart' },
-                { title: 'allowModsToUnmuteUsers', data: 'allowModsToUnmuteUsers' },
-                { title: 'lockSettingsDisableCam', data: 'lockSettingsDisableCam' },
-                { title: 'lockSettingsDisableMic', data: 'lockSettingsDisableMic' },
-                { title: 'lockSettingsDisablePrivateChat', data: 'lockSettingsDisablePrivateChat' },
-                { title: 'lockSettingsDisablePublicChat', data: 'lockSettingsDisablePublicChat' },
-                { title: 'lockSettingsDisableNote', data: 'lockSettingsDisableNote' },
-                { title: 'lockSettingsLockedLayout', data: 'lockSettingsLockedLayout' },
-                { title: 'lockSettingsLockOnJoin', data: 'lockSettingsLockOnJoin' },
-                { title: 'lockSettingsLockOnJoinConfigurable', data: 'lockSettingsLockOnJoinConfigurable' },
-                { title: 'guestPolicy', data: 'guestPolicy' },
-                { title: 'meetingKeepEvents', data: 'meetingKeepEvents' },
-                { title: 'endWhenNoModerator', data: 'endWhenNoModerator' },
-                { title: 'endWhenNoModeratorDelayInMinutes', data: 'endWhenNoModeratorDelayInMinutes' },
-                { title: 'meetingLayout', data: 'meetingLayout' },
-                { title: 'learningDashboardCleanupDelayInMinutes', data: 'learningDashboardCleanupDelayInMinutes' },
-                { title: 'allowModsToEjectCameras', data: 'allowModsToEjectCameras' },
-                { title: 'allowRequestsWithoutSession', data: 'allowRequestsWithoutSession' },
-                { title: 'userCameraCap', data: 'userCameraCap' },
-                { title: 'allJoinAsModerator', data: 'allJoinAsModerator' },
-                { title: 'medium_id', data: 'medium_id' },
-                { title: 'webcamsOnlyForModerator', data: 'webcamsOnlyForModerator' },
-                { title: 'anyoneCanStart', data: 'anyoneCanStart' },
-            ],
-        }).on('draw.dt', () => { // checks if the datatable-data changes, to update the videoconference-data
-            this.videoconferences = dtObject.rows({ page: 'current' }).data().toArray();
-        });
-        $('#videoconference-content').insertBefore('#videoconference-datatable'); //for fist call
-
-        // place the content where the table would normally be
-        setTimeout(() => {
-            $('#videoconference-content').insertBefore('#videoconference-datatable');
-        }, 250); // needs delay, because the wrapper only appears after receiving first ajax-response
+        this.loaderEvent()
     },
 
     components: {

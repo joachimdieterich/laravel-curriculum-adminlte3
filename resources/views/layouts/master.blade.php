@@ -22,6 +22,12 @@
 
         <!-- Right navbar links -->
         <ul class="navbar-nav pl-2 mr-auto">
+            <li class="nav-item">
+                <a class="nav-link"
+                   href="/">
+                    <b>Startseite</b>
+                </a>
+            </li>
             <searchbar></searchbar>
         </ul>
         @include('partials.navbar')

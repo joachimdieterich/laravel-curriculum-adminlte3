@@ -127,7 +127,7 @@ export default {
             if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
                 this.url = '/kanbanSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id;
             } else {
-                this.url = 'kanbans/list?filter=' + this.filter;
+                this.url = '/kanbans/list?filter=' + this.filter;
             }
 
             $('#kanban-datatable').DataTable().ajax.url(this.url).load();

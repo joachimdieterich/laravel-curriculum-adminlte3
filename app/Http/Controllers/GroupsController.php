@@ -142,22 +142,16 @@ class GroupsController extends Controller
     {
         abort_unless((\Gate::allows('group_show') and $group->isAccessible()), 403);
 
-        /*  abort_unless((auth()->user()->groups->contains($group)
-              OR is_admin()
-              OR ($group->organization_id == auth()->user()->current_organization_id)), 403);*/
-
         LogController::set(get_class($this).'@'.__FUNCTION__, $group->id);
         // axios call?
         if (request()->wantsJson()) {
-            // dump(json_encode($group->users));
             return ['users' => json_encode($group->users)];
         }
-        $courses = $group->courses()->with('curriculum')->get();
+
         $group = Group::where('id', $group->id)->with('glossar')->get()->first();
 
         return view('groups.show')
-                ->with(compact('group'))
-                ->with(compact('courses'));
+                ->with(compact('group'));
     }
 
     public function edit(Group $group)

@@ -124,7 +124,7 @@ export default {
             window.location = "/logbooks/" + id + "/edit";
         },
         loaderEvent() {
-            axios.get('logbooks/list?filter=' + this.filter)
+            axios.get('/logbooks/list?filter=' + this.filter)
                 .then(async response => {
                     this.logbooks = response.data.data;
 

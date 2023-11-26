@@ -553,7 +553,7 @@
                                         name="userName"
                                         class="form-control"
                                         v-model.trim="form.userName"
-                                        placeholder="Bitte Vor- und Nachnamen eintragen."
+                                        placeholder="Bitte Vor- und Nachnamen eingeben..."
                                     />
                                     <span class="input-group-append"
                                           v-if="form.userName"

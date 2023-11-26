@@ -108,7 +108,7 @@
                    aria-selected="true"
                 >
                     <i class="fa-solid fa-ranking-star"></i>
-                    <span v-if="help">{{ trans('global.test.title') }}</span>
+                    <span v-if="help">{{ trans('global.exam.title') }}</span>
                 </a>
             </li>
             <li v-permission="'videoconference_access'"

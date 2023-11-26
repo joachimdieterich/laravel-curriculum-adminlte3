@@ -49,10 +49,9 @@
                 </li>
 
             </ul>
-        </div>
 
-        <table id="kanban-datatable" style="display: none;"></table>
-        <div id="kanban-content">
+            <table id="kanban-datatable" style="display: none;"></table>
+            <div id="kanban-content">
             <div class="py-2">
                 <KanbanIndexWidget
                     v-for="(kanban,index) in kanbans"
@@ -80,6 +79,7 @@
                 v-on:ok="copy()"
             />
 
+        </div>
         </div>
     </div>
 </template>
@@ -205,9 +205,6 @@ export default {
 </script>
 <style>
 #kanban-datatable_wrapper { width: 100%; }
-@media only screen and (min-width: 992px) {
-    #kanban-datatable_wrapper { padding: 0px 15px; }
-}
 </style>
 <style scoped>
 .nav-link:hover {

@@ -35,6 +35,7 @@ if (process.env.MIX_PUSHER_APP_ACTIVE == 'true') {
 // use trans function like in blade
 import _ from 'lodash'; //needed to get
 
+//todo: explain function
 Vue.prototype.trans = (key) => {
     return _.get(window.trans, key, _.get(window.trans, 'global.' + key.split(".").splice(-1), key) );
 };
@@ -74,6 +75,7 @@ Vue.prototype.$textcolor = (color, dark = '#000', light = '#fff') => {
 Vue.prototype.setLocalStorage = (key, value) => {
     localStorage.setItem(key, value);
 };
+
 /**
  * check if current value is set in browser storage
  * example: :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id)"
@@ -91,6 +93,13 @@ Vue.prototype.checkLocalStorage = (key, value, class_string = "active", is_defau
         return class_string;
     }
 };
+
+Vue.prototype.checkPermission = (permission) => {
+    return window.Laravel.permissions.indexOf(permission) !== -1;
+};
+
+
+
 /**
  * make userId accessible for vue
  * @type {string}
@@ -98,8 +107,6 @@ Vue.prototype.checkLocalStorage = (key, value, class_string = "active", is_defau
 if (document.querySelector("meta[name='user-id']")){
     Vue.prototype.$userId = document.querySelector("meta[name='user-id']").getAttribute('content');
 }
-
-
 
 import VModal from 'vue-js-modal';
 
@@ -356,6 +363,7 @@ Vue.prototype.$eventHub = new Vue();
  */
 var app = new Vue({
     el: '#app'
+
 });
 
 $(document).ready(function () {

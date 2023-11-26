@@ -626,6 +626,7 @@ return [
     'course' => [
         'title' => 'Courses',
         'title_singular' => 'Course',
+        'create' => 'Enrol to Curriculum',
     ],
     'achievement' => [
         'title' => 'Achievements',

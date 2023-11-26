@@ -183,6 +183,8 @@ return [
     'all' => 'Alle',
     'trash' => 'Papierkorb',
     'update' => 'aktualisieren',
+    'expel' => 'Vernknüpfung löschen',
+    'expel_helper' => 'Gruppe aus Curriculum ausschreiben.',
     'enrol_info' => 'Markierte Gruppen in Lehrpläne / Kompetenzraster ein bzw. ausschreiben.',
     'objective_tab' => 'Kompetenzerwerb',
     'superordinate_element_singular' => 'Übergeordnetes Element',
@@ -219,9 +221,7 @@ return [
         'fields' => [
             'username' => 'Benutzername',
             'username_helper' => '',
-            'firstname' => 'Vorname',
             'firstname_helper' => '',
-            'lastname' => 'Nachname',
             'lastname_helper' => '',
             'email' => 'E-Mail',
             'email_helper' => '',
@@ -251,8 +251,8 @@ return [
     'website' => 'Website',
     'contacts' => 'Kontakte',
     'contact' => 'Kontakt',
-    'first_name' => 'Vorname',
-    'last_name' => 'Nachname',
+    'firstname' => 'Vorname',
+    'lastname' => 'Nachname',
     'phone' => 'Telefon',
     'tags' => 'Tags',
     'tag' => 'Tag',
@@ -628,6 +628,7 @@ return [
     'course' => [
         'title' => 'Kurse',
         'title_singular' => 'Kurs',
+        'create' => 'Curriculum verknüpfen'
     ],
     'achievement' => [
         'title' => 'Leistungen',

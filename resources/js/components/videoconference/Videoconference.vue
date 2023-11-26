@@ -553,7 +553,7 @@
                                         name="userName"
                                         class="form-control"
                                         v-model.trim="form.userName"
-                                        :placeholder="trans('global.videoconference.enter_name')"
+                                        placeholder="Bitte Vor- und Nachnamen eingeben..."
                                     />
                                     <span class="input-group-append"
                                           v-if="form.userName"

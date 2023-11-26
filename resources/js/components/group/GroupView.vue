@@ -14,9 +14,10 @@
                    aria-selected="false"
                   >
                     <i class="fas fa-th"></i>
+                    <span v-if="help"> {{ trans('global.curriculum.title') }}</span>
                 </a>
             </li>
-            <li v-permission="'group_enrolment'"
+            <li v-if="checkPermission('group_enrolment')"
                 class="nav-item"
                 @click="setLocalStorage('#group_'+group.id, '#group_users_'+group.id);">
                 <a class="nav-link link-muted"
@@ -29,10 +30,11 @@
                    aria-selected="true"
                 >
                     <i class="fa fa-users"></i>
+                    <span v-if="help"> {{ trans('global.user.title') }}</span>
                 </a>
             </li>
             <li class="nav-item "
-                v-permission="'logbook_access'"
+                v-if="checkPermission('logbook_access')"
                 @click="setLocalStorage('#group_'+group.id, '#group_logbooks_'+group.id);">
                 <a class="nav-link link-muted"
                    :class="checkLocalStorage('#group_'+group.id, '#group_logbooks_'+group.id)"
@@ -44,10 +46,11 @@
                    aria-selected="true"
                 >
                     <i class="fas fa-book "></i>
+                    <span v-if="help">{{ trans('global.logbook.title') }}</span>
                 </a>
             </li>
             <li class="nav-item "
-                v-permission="'kanban_access'"
+                v-if="checkPermission('kanban_access')"
                 @click="setLocalStorage('#group_'+group.id, '#group_kanbans_'+group.id);">
                 <a class="nav-link link-muted"
                    :class="checkLocalStorage('#group_'+group.id, '#group_kanbans_'+group.id)"
@@ -59,10 +62,11 @@
                    aria-selected="true"
                 >
                     <i class="fa fa-columns"></i>
+                    <span v-if="help">{{ trans('global.kanban.title') }}</span>
                 </a>
             </li>
            <li class="nav-item"
-               v-permission="'task_access'"
+               v-if="checkPermission('task_access')"
                @click="setLocalStorage('#group_'+group.id, '#group_tasks_'+group.id);">
                 <a class="nav-link link-muted"
                    :class="checkLocalStorage('#group_'+group.id, '#group_tasks_'+group.id)"
@@ -73,10 +77,11 @@
                    aria-controls="task-tab"
                    aria-selected="true">
                     <i class="fas fa-tasks"></i>
+                    <span v-if="help">{{ trans('global.task.title') }}</span>
                 </a>
             </li>
             <li class="nav-item"
-                v-permission="'plan_access'"
+                v-if="checkPermission('plan_access')"
                 @click="setLocalStorage('#group_'+group.id, '#group_plans_'+group.id);">
                 <a class="nav-link link-muted"
                    :class="checkLocalStorage('#group_'+group.id, '#group_plans_'+group.id)"
@@ -87,9 +92,10 @@
                    aria-controls="plan-tab"
                    aria-selected="true">
                     <i class="fa fa-clipboard-list"></i>
+                    <span v-if="help">{{ trans('global.plan.title') }}</span>
                 </a>
             </li>
-            <li v-permission="'test_access'"
+            <li v-if="checkPermission('test_access')"
                 class="nav-item"
                 @click="setLocalStorage('#group_'+group.id, '#group_tests_'+group.id);">
                 <a class="nav-link link-muted"
@@ -102,9 +108,10 @@
                    aria-selected="true"
                 >
                     <i class="fa-solid fa-ranking-star"></i>
+                    <span v-if="help">{{ trans('global.test.title') }}</span>
                 </a>
             </li>
-<!--            <li v-permission="'videoconference_access'"
+            <li v-permission="'videoconference_access'"
                 class="nav-item"
                 @click="setLocalStorage('#group_'+group.id, '#group_videoconference_'+group.id);">
                 <a class="nav-link link-muted"
@@ -118,7 +125,7 @@
                 >
                     <i class="fa-solid fa-video"></i>
                 </a>
-            </li>-->
+            </li>
             <li class="nav-item ">
                 <a v-if="group.glossar != null"
                    class="nav-link link-muted"
@@ -128,7 +135,9 @@
                    role="tab"
                    aria-controls="glossar-tab"
                    aria-selected="true">
-                    <i class="fa fa-book-open pr-2"></i>{{ trans('global.glossar.title_singular') }}
+                    <i class="fa fa-book-open pr-2"></i>
+                    <span v-if="help"> {{ trans('global.glossar.title_singular') }}</span>
+
                 </a>
                 <a v-else
                    v-permission="'glossar_create'"
@@ -152,8 +161,14 @@
             </li>-->
 
 
-            <li v-permission="'group_edit'"
-                class="nav-item ml-auto">
+            <li class="nav-item ml-auto pull-right">
+                <a class="nav-link small link-muted"
+                   @click="help = !help">
+                    <i class="fa fa-question pr-1"></i>
+                </a>
+            </li>
+            <li v-if="checkPermission('group_edit')"
+                class="nav-item">
                 <a class="nav-link link-muted"
                    :href="'/groups/'+ group.id +'/edit'"
                    id="config-nav-tab">
@@ -169,13 +184,20 @@
                  id="curriculum-tab"
                  role="tabpanel"
                  aria-labelledby="curriculum-nav-tab">
-                <course-item
+                <courses
+                    ref="Courses"
+                    :group="group"></courses>
+<!--                <course-item
                     v-for="(item,index) in courses"
                     :key="'course_item'+index"
                     :course="item">
-                </course-item>
+                </course-item>-->
+<!--                <CourseIndexAddWidget
+                    :group="group"
+                    v-if="checkPermission('group_enrolment')"/>-->
+
             </div>
-            <div v-permission="'group_enrolment'"
+            <div v-if="checkPermission('group_enrolment')"
                  class="tab-pane "
                  :class="checkLocalStorage('#group_'+group.id, '#group_users_'+group.id)"
                  id="users-tab"
@@ -185,7 +207,7 @@
                     ref="Users"
                     :group="group"></users>
             </div>
-            <div v-permission="'logbook_access'"
+            <div v-if="checkPermission('logbook_access')"
                class="tab-pane "
                  :class="checkLocalStorage('#group_'+group.id, '#group_logbooks_'+group.id)"
                 id="logbook-tab"
@@ -197,7 +219,7 @@
                     :subscribable_id="group.id"
                 ></logbooks>
            </div>
-            <div v-permission="'kanban_access'"
+            <div v-if="checkPermission('kanban_access')"
                  class="tab-pane "
                  :class="checkLocalStorage('#group_'+group.id, '#group_kanbans_'+group.id)"
                  id="kanban-tab"
@@ -209,7 +231,7 @@
                     :subscribable_id="group.id"
                 ></kanbans>
             </div>
-           <div v-permission="'task_access'"
+           <div v-if="checkPermission('task_access')"
                 class="tab-pane fade "
                  id="task-tab"
                  role="tab"
@@ -219,7 +241,7 @@
                  subscribable_type="App\Group"
                 :subscribable_id="group.id"></tasks>
             </div>
-            <div v-permission="'test_access'"
+            <div v-if="checkPermission('test_access')"
                  class="tab-pane "
                  :class="checkLocalStorage('#group_'+group.id, '#group_tests_'+group.id)"
                  id="tests-tab"
@@ -229,7 +251,7 @@
                     ref="Tests"
                     :group_id="group.id"></tests>
             </div>
-<!--            <div v-permission="'videoconference_access'"
+            <div v-permission="'videoconference_access'"
                  class="tab-pane "
                  :class="checkLocalStorage('#group_'+group.id, '#group_videoconference_'+group.id)"
                  id="videoconference-tab"
@@ -239,8 +261,8 @@
                     ref="Videoconference"
                     subscribable_type="App\Group"
                     :subscribable_id="group.id"></videoconferences>
-            </div>-->
-            <div v-permission="'plan_access'"
+            </div>
+            <div v-if="checkPermission('plan_access')"
                  class="tab-pane fade "
                  id="plan-tab"
                  role="tab"
@@ -268,17 +290,14 @@
                       format="list">
                </media>
            </div>-->
-
-
-
         </div>
     </div>
 </template>
 
 <script>
 import Videoconferences from "../videoconference/Videoconferences";
-const CourseItem =
-    () => import('../course/CourseItem.vue');
+const Courses =
+    () => import('../course/Courses.vue');
 const Glossars =
     () => import('../glossar/Glossars');
 const Media =
@@ -297,16 +316,6 @@ const Plans =
     () => import('../plan/Plans');
 const Tests =
     () => import('../tests/Tests_Exams_View');
-    //import CourseItem from '../course/CourseItem.vue'
-    //import Glossars from '../glossar/Glossars';
-    //import Media from '../media/Media';
-    //import Contents from '../content/Contents';
-    //import Users from "../users/Users";
-    //import Logbooks from "../logbooks/Logbooks";
-    //import Kanbans from "../kanban/Kanbans";
-    //import Tasks from "../tasks/Tasks";
-    //import Plans from "../plan/Plans";
-    //import Tests from "../tests/Tests_Exams_View";
 
     export default {
         props: {
@@ -315,11 +324,14 @@ const Tests =
         },
         data () {
             return {
-
+                help: false,
             };
         },
 
         methods: {
+            loaderCourses: function() {
+                this.$refs.Courses.loaderEvent();
+            },
             loaderEvent: function() {
                 this.$refs.Contents.loaderEvent();
             },
@@ -334,16 +346,23 @@ const Tests =
             },
             loadTasks: function() {
                 this.$refs.Tasks.loaderEvent();
-            }
-
+            },
         },
         mounted() {
+            if (document.getElementById('searchbar') != null) {
+                document.getElementById('searchbar').classList.remove('d-none');
+            }
+
+            this.$eventHub.$on('course-updated', () => {
+                this.loaderCourses()
+            });
 
         },
         components: {
+            //CourseIndexAddWidget,
             Videoconferences,
             Users,
-            CourseItem,
+            Courses,
             Media,
             Glossars,
             Contents,

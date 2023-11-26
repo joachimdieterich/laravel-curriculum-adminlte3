@@ -125,7 +125,7 @@
                     this.curricula = (await axios.get('/curricula')).data.curricula;
 
                 } catch(error) {
-                    this.errors = error.response.data.errors;
+                    console.log(error);
                 }
                 this.form.terminal_objective_id = null; //reset selection
                 this.form.enabling_objective_id = null;

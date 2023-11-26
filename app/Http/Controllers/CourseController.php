@@ -4,16 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Certificate;
 use App\Course;
+use App\Group;
 use App\Curriculum;
 use App\ObjectiveType;
 use App\User;
+use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class CourseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('home');
+        abort_unless(\Gate::allows('curriculum_show'), 403);
+        $input = $this->validateRequest();
+
+        $group = Group::find($input['group_id']);
+        $courses = $group->courses()->with('curriculum')->get();
+
+        return empty($courses) ? '' : DataTables::of($courses)
+            ->setRowId('id')
+            ->make(true);
+
     }
 
     public function show(Course $course)
@@ -121,5 +132,12 @@ class CourseController extends Controller
             ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
+    }
+
+    protected function validateRequest()
+    {
+        return request()->validate([
+            'group_id' => 'sometimes|integer',
+        ]);
     }
 }

@@ -12,9 +12,7 @@
     <div class="row">
         <div class="col-12">
             <group-view
-                :group="{{ $group }}"
-                :courses="{{ $courses }}"
-            >
+                :group="{{ $group }}">
             </group-view>
             {{--
                     @foreach($group->curricula as $id => $curriculum)

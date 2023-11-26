@@ -14,24 +14,20 @@
             <!-- Left navbar links -->
             <ul class="navbar-nav">
                 @include('partials.topmenu')
-               {{-- <li class="nav-item">
-                    <a class="nav-link" data-widget="pushmenu"
-                       onclick="toggleMenu()"><i class="fas fa-bars"></i></a>
-                </li>--}}
             </ul>
 
             <!-- Right navbar links -->
             <ul class="navbar-nav pl-2 mr-auto">
                 <searchbar></searchbar>
             </ul>
-
             @include('partials.navbar')
-        </nav>
 
+        </nav>
         <!-- /.navbar -->
-    <!-- Content Header (Page header) -->
+
+        <!-- Content Header (Page header) -->
         <section class="content-header p-2"
-        style="padding-top:60px !important">
+            style="padding-top:60px !important">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-sm-6 pl-0">
@@ -43,15 +39,14 @@
                         </ol>
                     </div>
                 </div>
-            </div><!-- /.container-fluid -->
+            </div>
         </section>
         <div class="d-flex flex-column flex-fill px-3">
             @yield('content')
             <input id="medium_id" class="invisible"> <!-- DONT REMOVE - used by TINYMCE -->
         </div>
-            <!-- Footer -->
-            @include('partials.footer', ['contentonly' => true])
-
+        <!-- Footer -->
+        @include('partials.footer', ['contentonly' => true])
     </div>
 
     <form id="logoutform" action="{{ route('logout') }}" method="POST" style="display: none;">

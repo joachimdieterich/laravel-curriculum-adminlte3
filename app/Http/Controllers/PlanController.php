@@ -22,7 +22,7 @@ class PlanController extends Controller
         return view('plans.index');
     }
 
-    protected function userPlans()
+    protected function userPlans($withOwned = true)
     {
         $userCanSee = auth()->user()->plans;
 
@@ -32,6 +32,13 @@ class PlanController extends Controller
 
         $organization = Organization::find(auth()->user()->current_organization_id)->plans;
         $userCanSee = $userCanSee->merge($organization);
+
+        if ($withOwned)
+        {
+            $owned = Plan::where('owner_id', auth()->user()->id)->get();
+            $userCanSee = $userCanSee->merge($owned);
+
+        }
 
         return $userCanSee->unique();
     }

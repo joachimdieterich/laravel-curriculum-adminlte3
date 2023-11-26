@@ -89,7 +89,10 @@
                     <div class="symbol"
                          :style="'color:' + $textcolor(videoconference.bannerColor) + '!important'"
                          style="position: absolute; width: 30px; height: 40px;">
-                        <i class="fa fa-video pt-2"></i>
+                        <i v-if="videoconference.server === 'server1'"
+                           class="fa fa-video pt-2"></i>
+                        <i v-else
+                           class="fa fa-chalkboard-user pt-2"></i>
                     </div>
                     <div v-if="$userId == videoconference.owner_id"
                          class="btn btn-flat pull-right"

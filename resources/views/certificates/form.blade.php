@@ -42,6 +42,17 @@
                       "options"=> $organisations,
                       "value" => old('organization_id', isset($certificate->organization_id) ? $certificate->organization_id : '') ])
 
+<div id="certificate_global_form_group" class="form-group pt-3">
+    <span class="custom-control custom-switch custom-switch-on-green">
+        <input
+            type="checkbox"
+            class="custom-control-input pt-1 "
+            id="global"
+            name="global"
+            {{ ($certificate->global) ? "checked" : "" }}>
+        <label class="custom-control-label " for="global" > global</label>
+    </span>
+</div>
 <input id="progress_reference"  type="hidden"/>
 <objective-progress-subscription-modal></objective-progress-subscription-modal>
 <medium-create-modal></medium-create-modal>

@@ -120,7 +120,7 @@ class CertificateController extends Controller
             'curriculum_id'   => format_select_input($input['curriculum_id']),
             'organization_id' => format_select_input($input['organization_id']),
             'owner_id'        => auth()->user()->id,
-
+            'global'          => isset($input['global']) ? 1 : '0',
         ]);
 
         // axios call?
@@ -172,12 +172,15 @@ class CertificateController extends Controller
     {
         abort_unless(\Gate::allows('certificate_edit'), 403);
 
+        $input = $this->validateRequest();
+
         $certificate->update([
-            'title' => $request['title'],
-            'description' => $request['description'],
-            'body' => $request['body'],
-            'curriculum_id' => format_select_input($request['curriculum_id']),
-            'organization_id' => format_select_input($request['organization_id']),
+            'title' => $input['title'],
+            'description' => $input['description'],
+            'body' => $input['body'],
+            'curriculum_id' => format_select_input($input['curriculum_id']) ?? $certificate->curriculum_id,
+            'organization_id' => format_select_input($input['organization_id']) ?? $certificate->organization_id,
+            'global' => isset($input['global']) ? 1 : '0',
         ]);
 
         return redirect()->route('certificates.index');
@@ -211,7 +214,6 @@ class CertificateController extends Controller
 
         switch ($certificate->type) {
             case 'user':            LogController::set(get_class($this).'@'.__FUNCTION__, request()->certificate_id, (is_array(request()->user_ids)) ? count(request()->user_ids) : 1);
-
                                     return $this->generateForUsers($certificate);
                 break;
             case 'group':           return $this->generateForGroup($certificate);
@@ -276,7 +278,6 @@ class CertificateController extends Controller
                 $html
             );
             //end progress
-
             $filename = date('Y-m-d_H-i-s').str_replace_special_chars($user->lastname.'_'.$user->firstname).'.pdf'; //Username escape german umlaute
             $path = 'users/'.auth()->user()->id.'/';
             $pathOfNewFile = $this->buildPdf($html, $path, $filename);
@@ -478,6 +479,7 @@ class CertificateController extends Controller
             'body'                  => 'sometimes',
             'curriculum_id'         => 'sometimes',
             'organization_id'       => 'sometimes',
+            'global'                => 'sometimes',
         ]);
     }
 }

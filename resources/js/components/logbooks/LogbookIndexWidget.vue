@@ -13,8 +13,8 @@
                 </div>
             </div>
             <div v-else class="nav-item-box-image-size text-center"
-                :style="{ backgroundColor: (logbook.color ?? '#2980B9') + ' !important' }">
-                <i :class="logbook.css_icon + ' fa-2x p-5 nav-item-text text-white'"></i>
+                :style="'background-color: ' + (logbook.color ?? '#2980B9') + ' !important; color: ' + $textcolor(logbook.color) + ' !important;'">
+                <i :class="logbook.css_icon + ' fa-2x p-5 nav-item-text'"></i>
             </div>
             <span class="bg-white text-center p-1 overflow-auto nav-item-box">
                 <h1 class="h6 events-heading pt-1 hyphens nav-item-text">

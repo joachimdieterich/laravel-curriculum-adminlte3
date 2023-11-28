@@ -2,9 +2,12 @@
   <div class="modal fade">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header bg-success">
-          <b class="modal-title">
+        <div class="modal-header">
+          <b v-if="this.method === 'post'" class="modal-title">
             {{ trans('global.kanban.create') }}
+          </b>
+          <b v-else>
+            {{ trans('global.kanban.edit') }}
           </b>
           <button
               type="button"

@@ -19,8 +19,8 @@
       </div>
       <div v-else
            class="nav-item-box-image-size text-center"
-           :style="{backgroundColor: kanban.color + ' !important'}">
-        <i class="fa fa-2x p-5 fa-columns nav-item-text text-white"></i>
+           :style="'background-color: ' + (kanban.color ?? '#2980B9') + ' !important; color: ' + $textcolor(kanban.color) + ' !important;'">
+        <i class="fa fa-2x p-5 fa-columns nav-item-text"></i>
       </div>
 
       <span class="bg-white text-center p-1 overflow-auto nav-item-box">

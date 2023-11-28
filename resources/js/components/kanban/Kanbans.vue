@@ -47,39 +47,38 @@
                         <i class="fa fa-share-nodes  pr-2"></i>Von mir freigegeben
                     </a>
                 </li>
-
             </ul>
 
             <table id="kanban-datatable" style="display: none;"></table>
             <div id="kanban-content">
-            <div class="py-2">
-                <KanbanIndexWidget
-                    v-for="(kanban,index) in kanbans"
-                    :key="index+'_kanban_'+kanban.id"
-                    :kanban="kanban"
-                    :search="search.toLowerCase()"/>
-                <KanbanIndexAddWidget
-                    v-can="'kanban_create'"/>
+                <div class="py-2">
+                    <KanbanIndexWidget
+                        v-for="(kanban,index) in kanbans"
+                        :key="index+'_kanban_'+kanban.id"
+                        :kanban="kanban"
+                        :search="search.toLowerCase()"/>
+                    <KanbanIndexAddWidget
+                        v-can="'kanban_create'"/>
+                </div>
+
+                <Modal
+                    :id="'kanbanModal'"
+                    css="danger"
+                    :title="trans('global.kanban.delete')"
+                    :text="trans('global.kanban.delete_helper')"
+                    :ok_label="trans('global.kanban.delete')"
+                    v-on:ok="destroy()"
+                />
+                <Modal
+                    :id="'kanbanCopyModal'"
+                    css="primary"
+                    :title="trans('global.kanban.copy')"
+                    :text="trans('global.kanban.copy_helper')"
+                    ok_label="OK"
+                    v-on:ok="copy()"
+                />
+
             </div>
-
-            <Modal
-                :id="'kanbanModal'"
-                css="danger"
-                :title="trans('global.kanban.delete')"
-                :text="trans('global.kanban.delete_helper')"
-                :ok_label="trans('global.kanban.delete')"
-                v-on:ok="destroy()"
-            />
-            <Modal
-                :id="'kanbanCopyModal'"
-                css="primary"
-                :title="trans('global.kanban.copy')"
-                :text="trans('global.kanban.copy_helper')"
-                ok_label="OK"
-                v-on:ok="copy()"
-            />
-
-        </div>
         </div>
     </div>
 </template>
@@ -200,6 +199,7 @@ export default {
 </script>
 <style>
 #kanban-datatable_wrapper { width: 100%; }
+
 </style>
 <style scoped>
 .nav-link:hover {

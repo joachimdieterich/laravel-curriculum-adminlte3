@@ -27,8 +27,8 @@
                <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
                    {{ course.curriculum.title }}
                </h1>
-               <p class="text-muted small"
-                  v-html="htmlToText(course.curriculum.description)">
+               <p class="text-muted small">
+                  {{ htmlToText(course.curriculum.description) }}
                </p>
             </span>
 

@@ -6,7 +6,8 @@
        class="box box-objective nav-item-box-image pointer my-1"
        style="min-width: 200px !important;"
        :style="'border-bottom: 5px solid ' + kanban.color">
-    <a :href="'/kanbans/'+kanban.id"
+
+    <a :href="'/kanbans/' + kanban.id"
        class="text-decoration-none text-black"
     >
       <div v-if="kanban.medium_id"
@@ -24,23 +25,23 @@
       </div>
 
       <span class="bg-white text-center p-1 overflow-auto nav-item-box">
-                       <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                           {{ kanban.title }}
-                       </h1>
-                       <p class="text-muted small"
-                          v-html="htmlToText(kanban.description)">
-                       </p>
-                    </span>
+           <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
+               {{ kanban.title }}
+           </h1>
+           <p class="text-muted small">
+               {{ htmlToText(kanban.description) }}
+           </p>
+      </span>
 
-      <div class="symbol"
-           :style="'color:' + $textcolor(kanban.color) + '!important'"
-           style="position: absolute; width: 30px; height: 40px;"
-      >
-        <i v-if="$userId == kanban.owner_id"
-           class="fa fa-user pt-2"></i>
-        <i v-else
-           class="fa fa-share-nodes pt-2"></i>
-      </div>
+        <div class="symbol"
+             :style="'color:' + $textcolor(kanban.color) + '!important'"
+             style="position: absolute; width: 30px; height: 40px;"
+        >
+            <i v-if="$userId == kanban.owner_id"
+               class="fa fa-user pt-2"></i>
+            <i v-else
+               class="fa fa-share-nodes pt-2"></i>
+        </div>
 
       <div v-if="$userId == kanban.owner_id"
            class="btn btn-flat pull-right "
@@ -91,7 +92,17 @@ export default {
         default: ''
       }
     },
-    methods: {},
+    methods: {
+        href: function (id) {
+            return '/media/'+ id;
+        },
+
+    },
+    mounted() {
+        this.$eventHub.$on('filter', (filter) => {
+            this.search = filter;
+        })
+    },
 }
 </script>
 <style scoped>

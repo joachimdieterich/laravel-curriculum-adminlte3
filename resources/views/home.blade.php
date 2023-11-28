@@ -69,7 +69,7 @@
                     "infoBoxClass" =>  'info-box-icon bg-info elevation-1',
                     "infoBoxIcon" =>  'fas fa-th',
                     "infoText" =>  "Curricula",
-                    "infoBoxNumber" =>  count(auth()->user()->curricula()->unique('id')) /*.'/'.App\Curriculum::count()*/,
+                   /* "infoBoxNumber" =>  count(auth()->user()->curricula()->unique('id')) .'/'.App\Curriculum::count(),*/
                      "include" =>  'home.curriculaInfo',
                 ])
             @endcan

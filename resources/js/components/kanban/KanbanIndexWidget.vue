@@ -34,7 +34,7 @@
       </span>
 
         <div class="symbol"
-             :style="'color:' + $textcolor(kanban.color) + '!important'"
+             :style="'color:' + $textcolor(kanban.color) + ' !important'"
              style="position: absolute; width: 30px; height: 40px;"
         >
             <i v-if="$userId == kanban.owner_id"

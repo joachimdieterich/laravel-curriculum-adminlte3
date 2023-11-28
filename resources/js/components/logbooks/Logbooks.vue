@@ -97,7 +97,7 @@ export default {
             // always case insensitive
             const elements = this.$el.getElementsByClassName('box');
             const search = this.search.toLowerCase();
-            for (let i = 0; i < elements.length; i++) {
+            for (let i = 0; i < elements.length - 1; i++) {
                 const element = elements[i];
                 const content = element.innerText.toLowerCase();
 

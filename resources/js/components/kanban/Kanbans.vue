@@ -146,29 +146,11 @@ export default {
     },
     mounted() {
         document.getElementById('searchbar').classList.remove('d-none');
-
         this.$eventHub.$emit('showSearchbar');
-        this.$eventHub.$on('filter', (filter) => {
-            $('#kanban-datatable').DataTable().search(filter).draw();
-        });
-        this.$eventHub.$on('kanban-updated', (kanban) => {
-            const index = this.kanbans.findIndex(
-                k => k.id === kanban.id
-            );
-
-            for (const [key, value] of Object.entries(kanban)) {
-                this.kanbans[index][key] = value;
-            }
-        });
 
         const parent = this;
-        // checks if the datatable-data changes, to update the kanban-data
-        $('#kanban-datatable').on('draw.dt', () => {
-            parent.kanbans = $('#kanban-datatable').DataTable().rows({ page: 'current' }).data().toArray();
-        });
 
-        $('#kanban-datatable').DataTable({
-            ajax: this.url + '?filter=' + this.filter,
+        let dt = $('#kanban-datatable').DataTable({
             dom: 'tilpr',
             columns: [ // only gets attributes used in this component
                 { title: 'id', data: 'id', searchable: false },
@@ -183,12 +165,25 @@ export default {
                 { title: 'only_edit_owned_items', data: 'only_edit_owned_items', searchable: false },
             ],
             //pageLength: 6, // TODO: maybe set per variable based on window-width (mobile/tablet etc.)
+        }).on('draw.dt', () => {  // checks if the datatable-data changes, to update the kanban-data
+            parent.kanbans = $('#kanban-datatable').DataTable().rows({ page: 'current' }).data().toArray();
+            $('#kanban-content').insertBefore('#kanban-datatable');
         });
 
-        // place the content where the table would normally be
-        setTimeout(() => {
-            $('#kanban-content').insertBefore('#kanban-datatable');
-        }, 250); // needs delay, because the wrapper only appears after receiving first ajax-response
+        this.loaderEvent();
+
+        this.$eventHub.$on('filter', (filter) => {
+            dt.search(filter).draw();
+        });
+        this.$eventHub.$on('kanban-updated', (kanban) => {
+            const index = this.kanbans.findIndex(
+                k => k.id === kanban.id
+            );
+
+            for (const [key, value] of Object.entries(kanban)) {
+                this.kanbans[index][key] = value;
+            }
+        });
     },
     components: {
         KanbanIndexWidget,

@@ -126,7 +126,7 @@
                     },
                     order: [[ 1, 'asc' ]],
                     scrollX: true,
-                    pageLength: 50,
+                    pageLength: 25,
                     pagingType: "full_numbers",
                     dom: '<"top"f>rt<"bottom"pl>i',
                     buttons: []

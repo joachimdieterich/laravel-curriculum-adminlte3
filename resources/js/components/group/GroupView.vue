@@ -124,6 +124,7 @@
                    aria-selected="true"
                 >
                     <i class="fa-solid fa-video"></i>
+                    <span v-if="help">{{ trans('global.videoconference.title') }}</span>
                 </a>
             </li>
             <li class="nav-item ">

@@ -131,7 +131,7 @@ export default {
                 'plan_id': '',
                 'css_icon': 'fas fa-calendar-day',
                 'order_id': 0,
-                'color': '#F4F4F4',
+                'color': '#27AF60',
                 'medium_id': null,
 
             }),

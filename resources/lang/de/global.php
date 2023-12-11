@@ -103,6 +103,7 @@ return [
     'lastYear' => 'Letztes Jahr',
     'currentPeriod' => 'Aktueller Lernzeitraum',
     'selectDateRange' => 'Zeitraum auswählen',
+    'invalid_form' => 'Bitte füllen Sie dieses Feld aus.',
     'dashboard' => [
         'title' => 'Dashboard',
         'actual' => 'Aktuell',

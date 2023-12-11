@@ -45,54 +45,65 @@
                     </div>
                 </div>
 
-                <div class="card-footer"
+                <div class="card-footer" role="button"
                      v-if="!editor &&  $userId == training.owner_id"
                      @click="edit()">
                     <i class="fa fa-add"></i> {{ trans('global.exercise.create') }}
                 </div>
 
-                <div v-if="editor "
-                     class="card-body">
-                    <div class="form-group">
-                        <input
-                            type="text"
-                            id="title"
-                            name="title"
-                            class="form-control"
-                            v-model.trim="form.title"
-                            :placeholder="trans('global.exercise.fields.title')"
-                            required
-                        />
-                        <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
-                    </div>
-
-                    <div class="form-group">
-                        <textarea
-                            :id="'description'+component_id"
-                            :name="'description'+component_id"
-                            :placeholder="trans('global.exercise.fields.description')"
-                            class="form-control description my-editor"
-                            v-model.trim="form.description"
-                        ></textarea>
-                        <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
-                    </div>
-
-                    <div class="form-group">
-                        <input
-                            type="number"
-                            id="recommended_iterations"
-                            name="recommended_iterations"
-                            class="form-control"
-                            v-model.trim="form.recommended_iterations"
-                            :placeholder="trans('global.exercise.fields.recommended_iterations')"
-                            required
-                        />
-                    </div>
-                    <button :name="'exerciseSave'"
-                            class="btn btn-primary p-2 m-2"
-                            @click="submit()">
-                        {{ trans('global.save') }}
-                    </button>
+                <div v-if="editor"
+                    class="card-body"
+                >
+                    <form class="needs-validation">
+                        <div class="form-group">
+                            <input
+                                type="text"
+                                id="title"
+                                name="title"
+                                class="form-control"
+                                v-model.trim="form.title"
+                                :placeholder="trans('global.exercise.fields.title')"
+                                required
+                            />
+                            <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                            <div class="invalid-feedback">
+                                {{ trans('global.invalid_form') }}
+                            </div>
+                        </div>
+    
+                        <div class="form-group">
+                            <textarea
+                                :id="'description'+component_id"
+                                :name="'description'+component_id"
+                                :placeholder="trans('global.exercise.fields.description')"
+                                class="form-control description my-editor"
+                                v-model.trim="form.description"
+                            ></textarea>
+                            <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
+                        </div>
+                            
+                        <div class="form-group">
+                            <input
+                                type="number"
+                                min="1"
+                                id="recommended_iterations"
+                                name="recommended_iterations"
+                                class="form-control"
+                                v-model.trim="form.recommended_iterations"
+                                :placeholder="trans('global.exercise.fields.recommended_iterations')"
+                                required
+                            />
+                            <div class="invalid-feedback">
+                                {{ trans('global.invalid_form') }}
+                            </div>
+                        </div>
+                        <button :name="'exerciseSave'"
+                                class="btn btn-primary p-2 m-2"
+                                @click.prevent="submit()"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -177,9 +188,10 @@ export default {
                     console.log(e);
                 });
         },
-
         submit() {
-            let method = this.method.toLowerCase();
+            if (!this.validate()) return;
+
+            const method = this.method.toLowerCase();
             this.form.description = tinyMCE.get('description'+this.component_id).getContent();
             this.form.training_id = this.training.id;
             this.form.order_id = this.exercises.length;
@@ -207,6 +219,17 @@ export default {
             this.form.description = '';
             this.form.recommended_iterations = '';
             this.form.order_id = null;
+        },
+        validate() {
+            const form = this.$el.querySelector('.needs-validation');
+
+            if (!form.checkValidity()) {
+                form.classList.add('was-validated')
+                return false;
+            } else {
+                form.classList.remove('was-validated')
+                return true;
+            }
         },
         toggle(id){
             if (this.toggle_id != id){

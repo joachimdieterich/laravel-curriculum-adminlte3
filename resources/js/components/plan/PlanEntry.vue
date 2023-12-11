@@ -41,13 +41,15 @@
                         <Trainings
                             :plan="plan"
                             subscribable_type="App\PlanEntry"
-                            :subscribable_id="entry.id"></Trainings>
+                            :subscribable_id="entry.id"
+                        ></Trainings>
                     </div>
                 </div>
                 <div v-if="editor"
                      class="card-body">
                     <color-picker-input
-                        v-model="form.color"></color-picker-input>
+                        v-model="form.color"
+                    ></color-picker-input>
 
                     <div class="form-group">
                         <input

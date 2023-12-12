@@ -71,8 +71,8 @@
 
             </div>
             <div class="card-footer">
-                <span class="pull-right">
-                     <button type="button" class="btn btn-primary" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
+                <span class="d-flex justify-content-between">
+                     <button type="button" class="btn btn-default" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
                      <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
                 </span>
             </div>
@@ -129,12 +129,12 @@
                 this.terminal_objective_id = parseInt(id);
                 this.enabling_objective_id = terminal[0].enabling_objectives[0].id;
                 this.requestUrl = '/terminalObjectiveSubscriptions';
-                this.initSelect2();
+                // this.initSelect2();
             },
             setEnabling(id){
                 this.enabling_objective_id = parseInt(id);
                 this.requestUrl = '/enablingObjectiveSubscriptions';
-                this.initSelect2();
+                // this.initSelect2();
             },
             async submit() {
                 try {
@@ -151,14 +151,13 @@
                     //
                 }
             },
-
             beforeOpen(event) {
                 this.loadCurricula();
                 if (event.params.referenceable_type){
                     this.referenceable_type = event.params.referenceable_type;
                     this.referenceable_id = event.params.referenceable_id;
                 }
-             },
+            },
             beforeClose() {
             },
             opened(){

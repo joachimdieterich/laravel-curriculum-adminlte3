@@ -1,7 +1,8 @@
 <template>
     <div id="searchbar" class="d-none input-group mx-3">
         <input
-            class="form-control border-0 rounded pr-5"
+            class="form-control border-0 h-100 rounded"
+            style="padding-right: 4rem;"
             type="search"
             :placeholder="trans('global.search')"
             :aria-label="trans('global.search')"
@@ -9,7 +10,16 @@
             @keydown.enter="prepareEvent(true)"/>
         <div class="position-relative">
             <button
-                class="btn h-100 position-absolute"
+                v-if="filter.length > 0"
+                id="clearSearch"
+                class="btn d-flex align-items-center h-100 position-absolute"
+                type="button"
+                @click="clearSearch()">
+                <span class="fa fa-xmark"></span>
+            </button>
+            <button
+                id="searchButton"
+                class="btn d-flex align-items-center h-100 position-absolute"
                 type="button"
                 @click="checkState()">
                 <span class="fa fa-search"></span>
@@ -50,6 +60,10 @@ export default {
             this.filtered = true;
             this.$eventHub.$emit('filter', this.filter);
         },
+        clearSearch() {
+            this.filter = '';
+            this.$el.getElementsByTagName('input')[0].focus();
+        },
         checkState() {
             const notFocused = this.$el.firstChild.width == 0;
 
@@ -69,24 +83,32 @@ export default {
 }
 </script>
 <style scoped>
-button {
-    display: flex;
-    align-items: center;
+#searchButton {
     background-color: #EAF099;
     z-index: 10;
     right: 0;
 }
-button::before {
+#searchButton::before {
     content: 'Suche';
     width: 0px;
     overflow: hidden;
     text-align: left;
     transition: .4s width;
 }
-input[type="search"]::-webkit-search-cancel-button:hover {
-    cursor:pointer;
+#clearSearch {
+    z-index: 20;
+    right: 40px;
+}
+#clearSearch:focus {
+    box-shadow: none;
 }
 input[type="search"]:focus {
-    width: 250px !important;
+    min-width: 250px !important;
+}
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance:none;
 }
 </style>

@@ -13,36 +13,36 @@
                     <div :id="'plan-entry-' + entry.id"
                          v-if="!editor"
                          :style="{ 'border-left-style': 'solid', 'border-radius': '0.25rem', 'border-color': entry.color }">
-                        <div class="card-header">
+                        <div class="card-header" data-toggle="collapse" :data-target="'#plan-entry-' + entry.id + ' > .card-body'" aria-expanded="true">
                             <i class="mr-1"
                             :class="entry.css_icon"></i>
                             {{ entry.title }}
                             <div v-if="$userId == plan.owner_id"
                                 class="card-tools">
-                                <i class="fa fa-pencil-alt mr-2 pointer text-muted"
+                                <i class="fa fa-pencil-alt mr-2 pointer link-muted"
                                    @click="edit()"></i>
                                 <i class="fas fa-trash pointer text-danger"
                                    @click="destroy(entry)"></i>
                             </div>
                         </div>
-                        <div class="card-body py-2">
+                        <div class="card-body py-2 collapse show">
                             <img v-if="Number.isInteger(entry.medium_id)"
                                  class="pull-right"
                                  :src="'/media/' + entry.medium_id + '/thumb'"/>
                             <span v-html="entry.description"></span>
+
+                            <objectives
+                                referenceable_type="App\PlanEntry"
+                                :referenceable_id="entry.id"
+                                :owner_id="entry.owner_id"
+                            ></objectives>
+    
+                            <Trainings
+                                :plan="plan"
+                                subscribable_type="App\PlanEntry"
+                                :subscribable_id="entry.id"
+                            ></Trainings>
                         </div>
-
-                        <objectives
-                            referenceable_type="App\PlanEntry"
-                            :referenceable_id="entry.id"
-                            :owner_id="entry.owner_id"
-                        ></objectives>
-
-                        <Trainings
-                            :plan="plan"
-                            subscribable_type="App\PlanEntry"
-                            :subscribable_id="entry.id"
-                        ></Trainings>
                     </div>
                 </div>
                 <div v-if="editor"
@@ -233,3 +233,9 @@ export default {
     },
 }
 </script>
+<style scoped>
+.card-header:hover {
+    background-color: #e9ecef;
+    cursor: pointer;
+}
+</style>

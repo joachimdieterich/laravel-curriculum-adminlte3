@@ -173,10 +173,8 @@ export default {
     },
     methods: {
         setIcon(selectedIcon) {
-            console.log('selected', selectedIcon);
             this.form.css_icon = 'fa fa-'+  selectedIcon.className;
         },
-
         edit() {
             this.editor = !this.editor ;
             if ( this.entry !== null ) {
@@ -218,8 +216,6 @@ export default {
                         console.log(error);
                     });
             }
-            this.form.title = '';
-            this.form.description = '';
             this.editor = false;
 
         },

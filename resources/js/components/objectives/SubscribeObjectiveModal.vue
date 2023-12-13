@@ -36,10 +36,10 @@
                     <select name="curricula"
                             id="curricula"
                             v-model="curriculum_id"
-                            class="form-control select2 "
+                            class="form-control select2"
                             style="width:100%;"
-                            >
-                         <option v-for="(item,index) in curricula" v-bind:value="item.id">{{ item.title }}</option>
+                    >
+                        <option v-for="(item,index) in curricula" v-bind:value="item.id">{{ item.title }}</option>
                     </select>
                 </div>
 
@@ -49,10 +49,11 @@
                     </label>
                     <select name="terminalObjectives"
                             id="terminalObjectives"
-                            class="form-control select2 "
+                            v-model="terminal_objective_id"
+                            class="form-control select2"
                             style="width:100%;"
-                            >
-                         <option v-for="(item,index) in terminalObjectives" v-bind:value="item.id">{{ item.title }}</option>
+                    >
+                        <option v-for="(item,index) in terminalObjectives" v-bind:value="item.id">{{ item.title }}</option>
                     </select>
                 </div>
 
@@ -62,10 +63,11 @@
                     </label>
                     <select name="enablingObjectives"
                             id="enablingObjectives"
-                            class="form-control select2 "
+                            v-model="enabling_objective_id"
+                            class="form-control select2"
                             style="width:100%;"
-                            >
-                         <option v-for="(item,index) in enablingObjectives" v-bind:value="item.id">{{ item.title }}</option>
+                    >
+                        <option v-for="(item,index) in enablingObjectives" v-bind:value="item.id">{{ item.title }}</option>
                     </select>
                 </div>
 
@@ -82,7 +84,6 @@
 
 <script>
     export default {
-
         data() {
             return {
                 referenceable_type: null,
@@ -109,32 +110,30 @@
                 this.terminal_objective_id = null; //reset selection
                 this.enabling_objective_id = null;
             },
-
             async loadObjectives(id) {
                 this.curriculum_id = parseInt(id);
                 try {
-                   this.terminalObjectives = (await axios.get('/curricula/'+this.curriculum_id+'/objectives')).data.curriculum.terminal_objectives;
-                   this.removeHtmlTags(this.terminalObjectives);
-                   this.terminal_objective_id = this.terminalObjectives[0].id;
-                   this.loadEnabling(this.terminal_objective_id);
-                   this.initSelect2();
+                    this.terminalObjectives = (await axios.get('/curricula/'+this.curriculum_id+'/objectives')).data.curriculum.terminal_objectives;
+                    this.removeHtmlTags(this.terminalObjectives);
                 } catch(error) {
                     this.errors = error.response.data.errors;
                 }
             },
             loadEnabling(id){
-                let terminal = [].concat(...this.terminalObjectives.filter(ena => ena.enabling_objectives.find(e => e.terminal_objective_id === parseInt(id))));
-                this.enablingObjectives = terminal[0].enabling_objectives;
-                this.removeHtmlTags(this.enablingObjectives);
                 this.terminal_objective_id = parseInt(id);
-                this.enabling_objective_id = terminal[0].enabling_objectives[0].id;
+                this.enablingObjectives = this.terminalObjectives.find(terminal => terminal.id === parseInt(id)).enabling_objectives;
+                this.removeHtmlTags(this.enablingObjectives);
                 this.requestUrl = '/terminalObjectiveSubscriptions';
-                // this.initSelect2();
+                // this select2 needs to be reinitialized, else it won't update the select-options
+                // the 'on:select' is still functionable
+                $("#enablingObjectives").select2({
+                    dropdownParent: $(".v--modal-overlay"),
+                    allowClear: false
+                });
             },
             setEnabling(id){
                 this.enabling_objective_id = parseInt(id);
                 this.requestUrl = '/enablingObjectiveSubscriptions';
-                // this.initSelect2();
             },
             async submit() {
                 try {
@@ -171,15 +170,20 @@
                     dropdownParent: $(".v--modal-overlay"),
                     allowClear: false
                 }).on('select2:select', function (e) {
-                    this.loadObjectives(e.params.data.id);
+                    this.terminal_objective_id = null;
                     this.terminalObjectives = {};
                     this.enablingObjectives = {};
+                    this.loadObjectives(e.params.data.id);
                 }.bind(this)); //make loadObjectives accessible!
 
                 $("#terminalObjectives").select2({
                     dropdownParent: $(".v--modal-overlay"),
                     allowClear: false
                 }).on('select2:select', function (e) {
+                    this.enabling_objective_id = null;
+                    this.enablingObjectives = {};
+                    // needs to be cleared, else the selected option will appear on other objectives
+                    $("#enablingObjectives").val(null).trigger('change');
                     this.loadEnabling(e.params.data.id);
                 }.bind(this)); //make loadEnabling accessible!
 
@@ -195,9 +199,8 @@
                 this.$modal.hide('subscribe-objective-modal');
             },
             removeHtmlTags(array, field){
-                var i;
-                for (i = 0; i < array.length; i++) {
-                    array[i].title = array[i].title.replace(/(<([^>]+)>)/ig,"");
+                for (let i = 0; i < array.length; i++) {
+                    array[i].title = array[i].title.replace(/(<([^>]+)>)/ig, "");
                 }
             }
 

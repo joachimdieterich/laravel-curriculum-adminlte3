@@ -94,13 +94,13 @@ const EnablingObjectives =
         },
         methods: {
             loaderEvent() {
-                    axios.get('/terminalObjectiveSubscriptions?subscribable_type=' + this.referenceable_type + '&subscribable_id=' + this.referenceable_id)
-                        .then(response => {
-                            this.subscriptions = response.data.subscriptions;
-                        })
-                        .catch(e => {
-                            console.log(e);
-                        });
+                axios.get('/terminalObjectiveSubscriptions?subscribable_type=' + this.referenceable_type + '&subscribable_id=' + this.referenceable_id)
+                    .then(response => {
+                        this.subscriptions = response.data.subscriptions;
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    });
                 axios.get('/enablingObjectiveSubscriptions?subscribable_type=' + this.referenceable_type + '&subscribable_id=' + this.referenceable_id)
                     .then(response => {
                         response.data.subscriptions.forEach(

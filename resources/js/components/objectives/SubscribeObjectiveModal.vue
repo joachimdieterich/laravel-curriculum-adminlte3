@@ -52,7 +52,7 @@
                             v-model="terminal_objective_id"
                             class="form-control select2"
                             style="width:100%;"
-                            :disabled="isEmpty(terminalObjectives) ? 'disabled' : null"
+                            :disabled="isObjEmpty(terminalObjectives) ? 'disabled' : null"
                     >
                         <option v-for="(item,index) in terminalObjectives" v-bind:value="item.id">{{ item.title }}</option>
                     </select>
@@ -67,7 +67,7 @@
                             v-model="enabling_objective_id"
                             class="form-control select2"
                             style="width:100%;"
-                            :disabled="isEmpty(enablingObjectives) ? 'disabled' : null"
+                            :disabled="isObjEmpty(enablingObjectives) ? 'disabled' : null"
                     >
                         <option v-for="(item,index) in enablingObjectives" v-bind:value="item.id">{{ item.title }}</option>
                     </select>
@@ -203,7 +203,7 @@
                     array[i].title = array[i].title.replace(/(<([^>]+)>)/ig, "");
                 }
             },
-            isEmpty(obj) {
+            isObjEmpty(obj) { // needs wrapper function, since jQuery can't be referenced in HTML
                 return $.isEmptyObject(obj);
             },
         }

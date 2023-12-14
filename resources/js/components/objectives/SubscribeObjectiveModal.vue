@@ -52,6 +52,7 @@
                             v-model="terminal_objective_id"
                             class="form-control select2"
                             style="width:100%;"
+                            :disabled="isEmpty(terminalObjectives) ? 'disabled' : null"
                     >
                         <option v-for="(item,index) in terminalObjectives" v-bind:value="item.id">{{ item.title }}</option>
                     </select>
@@ -66,6 +67,7 @@
                             v-model="enabling_objective_id"
                             class="form-control select2"
                             style="width:100%;"
+                            :disabled="isEmpty(enablingObjectives) ? 'disabled' : null"
                     >
                         <option v-for="(item,index) in enablingObjectives" v-bind:value="item.id">{{ item.title }}</option>
                     </select>
@@ -99,6 +101,9 @@
                 enabling_objective_id: null,
                 requestUrl: null
             };
+        },
+        mounted() {
+            this.loadCurricula();
         },
         methods: {
             async loadCurricula() {
@@ -151,19 +156,14 @@
                 }
             },
             beforeOpen(event) {
-                this.loadCurricula();
                 if (event.params.referenceable_type){
                     this.referenceable_type = event.params.referenceable_type;
                     this.referenceable_id = event.params.referenceable_id;
                 }
             },
-            beforeClose() {
-            },
-            opened(){
+            beforeClose() {},
+            opened() {
                 this.initSelect2();
-                this.curricula = {};
-                this.terminalObjectives = {};
-                this.enablingObjectives = {};
             },
             initSelect2(){
                 $("#curricula").select2({
@@ -202,8 +202,10 @@
                 for (let i = 0; i < array.length; i++) {
                     array[i].title = array[i].title.replace(/(<([^>]+)>)/ig, "");
                 }
-            }
-
+            },
+            isEmpty(obj) {
+                return $.isEmptyObject(obj);
+            },
         }
     }
 </script>

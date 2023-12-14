@@ -34,54 +34,58 @@ const Calendar =
 const PlanEntry =
     () => import('./PlanEntry');
 
-    export default {
-        props: {
-            plan: [],
-
-              },
-        data() {
-            return {
-                plans: [],
-                entries: [],
-                subscriptions: {},
-                search: '',
-                errors: {}
-            }
+export default {
+    props: {
+        plan: [],
+    },
+    data() {
+        return {
+            plans: [],
+            entries: [],
+            subscriptions: {},
+            search: '',
+            errors: {},
+        }
+    },
+    methods: {
+        loaderEvent(){
+            axios.get('/planEntries?plan_id=' + this.plan.id)
+                .then(response => {
+                    this.entries = response.data.entries;
+                })
+                .catch(e => {
+                    console.log(e);
+                });
         },
-        methods: {
-            loaderEvent(){
-                axios.get('/planEntries?plan_id=' + this.plan.id)
-                    .then(response => {
-                        this.entries = response.data.entries;
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    });
-            },
-
-            handleEntryDeleted(entry){
-                let index = this.entries.indexOf(entry);
-                this.entries.splice(index, 1);
-            },
+        handleEntryDeleted(entry){
+            let index = this.entries.indexOf(entry);
+            this.entries.splice(index, 1);
         },
-
-        mounted() {
-            localStorage.removeItem('user-datatable-selection'); //reset selection to prevent wrong inputs
+        //? maybe put event in Objectives.vue
+        handleObjectiveAdded(objective, entryId) {
+            const entry = this.entries.find(entry => entry.id === entryId);
+        },
+    },
+    mounted() {
+        localStorage.removeItem('user-datatable-selection'); //reset selection to prevent wrong inputs
+        this.loaderEvent();
+        this.entries = this.plan.entries;
+        this.$eventHub.$on('plan_entry_added', (e) => {
             this.loaderEvent();
-            this.entries = this.plan.entries;
-            this.$eventHub.$on('plan_entry_added', (e) => {
-                this.loaderEvent();
-            });
-            this.$eventHub.$on('plan_entry_updated', (e) => {
-                this.loaderEvent();
-            });
-            this.$eventHub.$on('plan_entry_deleted', (e) => {
-                this.handleEntryDeleted();
-            });
-        },
-        components: {
-            Calendar,
-            PlanEntry
-        },
-    }
+        });
+        this.$eventHub.$on('plan_entry_updated', (e) => {
+            this.loaderEvent();
+        });
+        this.$eventHub.$on('plan_entry_deleted', (e) => {
+            this.handleEntryDeleted();
+        });
+        this.$eventHub.$on('objective_added', (objective, entryId) => {
+            this.handleObjectiveAdded(objective, entryId);
+        });
+    },
+    components: {
+        Calendar,
+        PlanEntry
+    },
+}
 </script>

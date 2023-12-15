@@ -214,6 +214,19 @@ class PlanController extends Controller
         return back();
     }
 
+    public function syncEntriesOrder(Plan $plan)
+    {
+        abort_unless(auth()->user()->id == $plan->owner_id, 403);
+
+        $input = $this->validateRequest();
+
+        $plan->update([
+            'entry_order' => $input['entry_order']
+        ]);
+
+        return ['entry_order' => $plan->entry_order];
+    }
+
     protected function validateRequest()
     {
         return request()->validate([
@@ -223,6 +236,7 @@ class PlanController extends Controller
             'end'           => 'sometimes',
             'duration'      => 'sometimes',
             'type_id'       => 'sometimes',
+            'entry_order'   => 'sometimes',
         ]);
     }
 }

@@ -8,6 +8,10 @@ class Plan extends Model
 {
     protected $guarded = [];
 
+    protected $casts = [
+        'entry_order' => 'array',
+    ];
+
     protected $attributes = [
         'type_id' => 1,  //= Wochenplan
     ];

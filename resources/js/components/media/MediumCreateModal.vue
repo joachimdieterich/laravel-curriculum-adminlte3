@@ -12,7 +12,7 @@
         @before-close="beforeClose"
         style="z-index: 100000 !important; ">
         <div class="card"
-             style="margin-bottom: 0px !important; min-height: 400px">
+             style="margin-bottom: 0 !important; min-height: 400px">
             <div class="card-header">
                 <h3 class="card-title">
                     <i class="fa fa-photo-video"></i>
@@ -139,6 +139,7 @@
                                         <td style="width: 60px" class="pointer"
                                             @click="edit(file)">
                                             <img v-if="file.mime_type.includes('image')"
+                                                 :alt="file.title"
                                                  :src="'/media/' + file.id + '/thumb'" height="50" /></td>
                                         <td class="pointer"
                                             @click="edit(file)">{{ file.title }}</td>
@@ -257,7 +258,7 @@ const RepositoryPluginCreate =
     () => import('../../../../app/Plugins/Repositories/resources/js/components/Create');
 
 //import RepositoryPluginCreate from '../../../../app/Plugins/Repositories/resources/js/components/Create';
-require('datatables.net/js/jquery.dataTables.min.js')
+//require('datatables.net/js/jquery.dataTables.min.js')
 
 const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
 export default {
@@ -276,6 +277,12 @@ export default {
             form: new Form({
                 'path': '',
                 'thumb_path': '',
+                'medium_name': '',
+                'title': '',
+                'author': '',
+                'size': '',
+                'mimetype': '',
+                'license_id': '',
                 'external_id': '',
                 'subscribable_type': null,
                 'subscribable_id': null,
@@ -341,6 +348,21 @@ export default {
             this.currentStatus = STATUS_INITIAL;
             this.uploadError = null;
             this.progressBar = false;
+            this.form = new Form({
+                'path': '',
+                'thumb_path': '',
+                'medium_name': '',
+                'title': '',
+                'author': '',
+                'size': '',
+                'mimetype': '',
+                'license_id': '',
+                'external_id': '',
+                'subscribable_type': null,
+                'subscribable_id': null,
+                'repository': 'local',
+                'public': 0
+            });
         },
         beforeOpen(event) {
             this.getFiles(); // move to beforeOpen from mounted to reduce unused requests
@@ -398,17 +420,21 @@ export default {
         },
         saveToForm(selected = null) {
             if (this.subscribeSelected){ //subscribe selected
+                //console.log('subscribeSelected');
                 this.subscribe();
             }
             if (this.eventHubCallbackFunction) {
+                //console.log('eventHubCallbackFunction');
                 this.$eventHub.$emit(this.eventHubCallbackFunction, {'id': this.eventHubCallbackFunctionParams, 'selectedMediumId': this.selectedFiles, 'files': this.getMediaById()});
             } else if (this.callbackComponent) {
+                //console.log('callbackComponent');
                 if (this.callbackParentComponent) {
                     app.__vue__.$refs[this.callbackParentComponent].$refs[this.callbackComponent][0].reload();
                 } else {
                     app.__vue__.$refs[this.callbackComponent][0][this.callbackFunction]();
                 }
             } else {
+                //console.log('set '+'#' + this.target);
                 $('#' + this.target).val(selected ? selected : this.selectedFiles);
                 $('#' + this.target).trigger("change");
             }
@@ -488,6 +514,20 @@ export default {
                     console.log(e);
                 });
         },
+        externalAdd(form){
+            //console.log(form);
+            //this.form = form;
+
+            axios.post('/media?repository=edusharing', form)
+                .then((response) => {
+                    //console.log(response);
+                    this.saveToForm(response.data.id);
+                })
+                .catch((err) => {
+                    console.log(err);
+                    //this.saveToForm(response.data.id);
+                });
+        }
     },
     computed: {
         isInitial() {
@@ -506,16 +546,8 @@ export default {
     mounted() {
         this.reset();
 
-        //this.getFiles(); //moved to bevorOpen!
-
         this.$eventHub.$on('external_add', (form) => {
-            //console.log(form);
-            this.form = form;
-            axios.post('/media?repository=' + this.form.repository, this.form)
-                 .then((response) => {
-                    // console.log(response);
-                    this.saveToForm(response.data.id);
-                 });
+            this.externalAdd(form);
         });
     },
     components: {

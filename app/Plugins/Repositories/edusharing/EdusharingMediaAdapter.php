@@ -141,7 +141,11 @@ class EdusharingMediaAdapter implements MediaInterface
                         if (request()->wantsJson())
                         {
                             return [
-                                'detailsSnippet' => $node['detailsSnippet']
+                                'detailsSnippet' => $node['detailsSnippet'],
+                                'downloadUrl' => $node['node']['downloadUrl'],
+                                'preview' => $node['node']['preview'],
+                                'title' => $node['node']['title'],
+                                'name' => $node['node']['name'],
                             ];
                         }
                         //return request('download') ? redirect($node['node']['downloadUrl']['url']) : redirect($node['node']['preview']['url']);

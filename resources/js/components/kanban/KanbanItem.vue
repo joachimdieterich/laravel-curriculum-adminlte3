@@ -266,6 +266,7 @@
             v-if="show_comments"
             :comments="item.comments"
             :model="item"
+            :kanban_owner_id="kanban_owner_id"
             url="/kanbanItemComment"
         />
         <Modal

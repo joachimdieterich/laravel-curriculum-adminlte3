@@ -6,7 +6,7 @@
          style="max-height: 300px;"
         class="hide-scrollbars overflow-auto">
       <div
-          v-for="comment in comments"
+          v-for="comment in conversation"
           class="direct-chat-msg"
           :class="{ 'right': comment.user_id == $userId }"
           s>
@@ -45,15 +45,11 @@
                 reaction="like"
                 url="/kanbanItemComments"
             />
-          <i v-if="$userId == comment.user.id && hover == comment.id"
-             class="text-danger pull-right p-1 mr-1 fa fa-trash pointer"
-             @click="deleteComment(comment.id)"></i>
-          <i v-else-if="hover == comment.id"
+          <i v-if="($userId == comment.user.id && hover == comment.id) || ($userId == kanban_owner_id && hover == comment.id) "
              v-can="'message_delete'"
              class="text-danger pull-right p-1 mr-1 fa fa-trash pointer"
              @click="deleteComment(comment.id)"></i>
             <small>{{ comment.comment }}</small>
-
         </div>
       </div>
     </div>
@@ -97,46 +93,49 @@ export default {
     props: {
         comments: {},
         model: {},
-        url: String
+        url: String,
+        kanban_owner_id: {
+            type: Number,
+            default: null
+        }
     },
     data() {
         return {
-            new_comment: '',
             hover: false,
             form: new Form({
                 'model_id': this.model.id,
                 'comment': '',
             }),
+            conversation: {}
         }
     },
     methods: {
         sendComment() {
-            this.form.submit('post', this.url)
+            axios.post(this.url, this.form)
                 .then(res => {
-                    this.comments = res.data.data;
+                    this.conversation = res.data.data.comments;
+                    this.form.comment = '';
+                    this.$nextTick(function() {
+                        let container = this.$refs.scroll_container;
+                        container.scrollTop = container.scrollHeight + 120;
+                    });
                 })
-                .catch(response => function () {
-                    console.log(err.response);
+                .catch(err => function () {
+                    console.log(err);
                 });
         },
         deleteComment(id){
             axios.delete(this.url + "/" + id)
                 .then(res => { // Tell the parent component we've added a new task and include it
-                    this.comments = res.data.data;
+                    this.conversation = res.data.data;
                 })
                 .catch(err => {
                     console.log(err.response);
                 });
-
         },
     },
-    watch: {
-        comments: function() {
-            this.$nextTick(function() {
-                let container = this.$refs.scroll_container;
-                container.scrollTop = container.scrollHeight + 120;
-            });
-        }
-    }
+    mounted() {
+        this.conversation = this.comments;
+    },
 }
 </script>

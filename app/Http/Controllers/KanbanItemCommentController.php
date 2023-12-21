@@ -28,9 +28,11 @@ class KanbanItemCommentController extends Controller
             if (!pusher_event(new \App\Events\Kanbans\KanbanItemCommentUpdatedEvent($kanbanItem)))
             {
                 return [
-                    'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
-                    'message' => KanbanItem::where('id', $request['model_id'])
-                        ->with(['comments', 'comments.user'])->get()->first(),
+                    //'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
+                    'data' => KanbanItem::where('id', $request['model_id'])
+                        ->with(['comments',
+                            'comments.user',
+                            'comments.likes'])->get()->first(),
                 ];
             }
         }
@@ -50,7 +52,8 @@ class KanbanItemCommentController extends Controller
 
     private function getComments($id)
     {
-        return KanbanItemComment::where('kanban_item_id', $id)->with('user')->get();
+        return KanbanItemComment::where('kanban_item_id', $id)
+            ->with(['user', 'likes'])->get();
     }
 
     /**

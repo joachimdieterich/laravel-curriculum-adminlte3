@@ -11,17 +11,19 @@
 
         <img v-if="kanban.medium_id !== null"
             class="kanban_board_wrapper p-0"
+             alt="background image"
              :src="'/media/'+ kanban.medium_id + '?model=Kanban&model_id=' + kanban.id"
              style="object-fit: cover;
              position:absolute;"/>
         <div id="kanban_board_wrapper"
              class="kanban_board_wrapper"
              :style="'background-color:' + kanbanColor">
-            <div @click="toggleFullscreen"
+            <div class="pointer"
                  :style="{ color: textColor }"
-            style="float: left;
+                style="float: left;
                  margin-top: -25px;
-                 margin-left: -20px;">
+                 margin-left: -20px;"
+                 @click="toggleFullscreen">
                 <i class="fa fa-expand"></i>
             </div>
             <div
@@ -32,6 +34,7 @@
             <draggable
                 v-model="statuses"
                 v-bind="columnDragOptions"
+                handle=".handle"
                 :move="isLocked"
                 @end="syncStatusMoved">
                 <div
@@ -46,6 +49,7 @@
                         :editable="editable"
                         v-on:status-updated="handleStatusUpdatedWithoutWebsocket"
                         v-on:status-destroyed="handleStatusDestroyedWithoutWebsocket"
+                        filter=".ignore"
                     />
                     <div style="margin-top:15px; bottom:0;overflow-y:scroll; z-index: 1"
                          :style="'width:' + itemWidth + 'px;'"
@@ -56,7 +60,7 @@
                             v-bind="itemDragOptions"
                             :move="isLocked"
                             @end="syncItemMoved"
-                            filter=".ignore">
+                            handle=".handle">
                             <transition-group
                                 style="display:flex; flex-direction: column;"
                                 :style="'width:' + itemWidth + 'px;'"
@@ -80,7 +84,8 @@
                                      v-on:item-destroyed="handleItemDestroyedWithoutWebsocket"
                                      v-on:item-updated="handleItemUpdatedWithoutWebsocket"
                                      v-on:item-edit=""
-                                     v-on:sync="sync"/>
+                                     v-on:sync="sync"
+                                     filter=".ignore"/>
 
                             </span>
                                 <!--  ./Items -->
@@ -524,11 +529,14 @@ export default {
     mounted() {
         // Listen for the 'Kanban' event in the 'Presence.App.Kanban' presence channel
         this.startPusher();
-        this.$eventHub.$on('reload_kanban_board', (e) => {
+        this.$eventHub.$on('reload_kanban_board', () => {
             this.sync()
         });
-        this.$eventHub.$on('kanban-updated', (e) => {
+        this.$eventHub.$on('kanban-updated', () => {
             window.location.href = '/kanbans/'+this.kanban.id;
+        });
+        this.$eventHub.$on('item-updated', (item) => {
+            this.handleItemUpdated(item);
         });
     },
     created () {
@@ -607,15 +615,6 @@ export default {
     width: 100%;
     padding: 2rem;
     overflow:auto;
-}
-#fullscreen {
-    float: left;
-    padding: 0px 5px;
-    margin-top: -25px;
-    margin-left: -25px;
-}
-#fullscreen:hover {
-    cursor: pointer;
 }
 @media (max-width: 991px) {
     .kanban_board_container { width: calc(100vw - 30px) !important; }

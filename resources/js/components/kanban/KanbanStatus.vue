@@ -62,7 +62,9 @@
         </div>
         <div v-else>
             <strong>{{ form.title }}</strong>
-            <div v-if="(editable == 1 && status.editable == true && status.visibility == true && kanban.only_edit_owned_items !== true) || (editable == 1 && $userId == status_owner_id ) || ($userId == kanban.owner_id )"
+            <div v-if="(editable == 1 && status.editable == true && status.visibility == true && kanban.only_edit_owned_items == false)
+                || (editable == 1 && $userId == status_owner_id )
+                || ($userId == kanban.owner_id )"
                  :id="'kanbanStatusDropdown_'+form.id"
                  class="btn btn-flat py-0 pl-0 pull-left"
                  data-toggle="dropdown"
@@ -92,7 +94,8 @@
                     </div>
                 </div>
             </div>
-            <div class="pull-right handle pointer">
+            <div v-if="!status.locked"
+                 class="pull-right handle pointer">
                 <i class="fa fa-arrows-up-down-left-right text-muted"></i>
             </div>
 

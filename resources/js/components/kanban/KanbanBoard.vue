@@ -1,13 +1,6 @@
 <template>
     <div id="kanban_board_container"
          class="kanban_board_container">
-<!--        <media-renderer
-            v-if="kanban.medium_id !== null"
-            class="kanban_board_wrapper p-0"
-            style="height:100%;width:100%"
-            :medium="kanban.medium"
-            :downloadable=false
-        ></media-renderer>-->
 
         <img v-if="kanban.medium_id !== null"
             class="kanban_board_wrapper p-0"
@@ -72,7 +65,7 @@
                                     :key="'transition_group-'+item.id">
                                  <KanbanItem
                                      v-if="(item.visibility == true && visiblefrom_to(item.visible_from, item.visible_until) == true) || ($userId == item.owner_id ) || ($userId == kanban.owner_id )"
-                                     :editable="(status.locked == true && $userId != kanban.owner_id) ? false : editable"
+                                     :editable="(status.editable == false && $userId != kanban.owner_id) ? false : editable"
                                      :commentable="kanban.commentable"
                                      :onlyEditOwnedItems="kanban.only_edit_owned_items"
                                      :ref="'kanbanItemId' + item.id"
@@ -125,7 +118,7 @@
                 </div>
             </draggable>
             <!-- ./Columns -->
-            <div v-if="pusher == 1"
+            <div v-if="pusher === true"
                  class="card p-2"
                  style="position: fixed;right: 15px;bottom: 30px;">
 
@@ -156,8 +149,14 @@ import KanbanIndexAddWidget from "./KanbanIndexAddWidget";
 export default {
     props: {
         'kanban': Object,
-        'editable': true,
-        'pusher': false,
+        'editable': {
+            type: Boolean,
+            default: true
+        },
+        'pusher': {
+            type: Boolean,
+            default: false
+        },
         'search': ''
     },
     watch: {
@@ -191,16 +190,11 @@ export default {
         },
         visiblefrom_to(visible_from, visible_until){
             const now = moment().format("YYYY-MM-DD HH:mm:ss");
-            if (
-                (now >= visible_from && now <= visible_until) ||
+
+            return (now >= visible_from && now <= visible_until) ||
                 (now >= visible_from && visible_until == null) ||
                 (visible_from == null && now <= visible_until) ||
-                (visible_from == null && visible_until == null)
-            ){
-                return true;
-            } else {
-                return false;
-            }
+                (visible_from == null && visible_until == null);
         },
         sync(){
             axios.get("/kanbanStatuses/" + this.kanban.id + "/checkSync")
@@ -248,7 +242,7 @@ export default {
                 });
             axios.put(url, {columns: cols})
                 .then(res => { // Tell the parent component we've added a new task and include it
-                    if (this.pusher == 0){
+                    if (this.pusher === false){
                         if (url == '/kanbanStatuses/sync'){
                             this.handleStatusMoved(res.data.message.statuses);
                         } else {
@@ -264,7 +258,6 @@ export default {
             this.item = null;
             if (type === 'status'){
                 this.newStatus = value;
-
             } else {
                 this.newItem = value;
             }
@@ -275,7 +268,7 @@ export default {
             this.newItem = 0;
         },
         handleStatusAddedWithoutWebsocket(newStatus){
-            if (this.pusher == 0){
+            if (this.pusher === false){
                 this.sync();
                 //this.handleStatusAdded(newStatus);
             }
@@ -289,7 +282,7 @@ export default {
             //this.closeForm();
         },
         handleStatusUpdatedWithoutWebsocket(newStatus){
-            if (this.pusher == 0){
+            if (this.pusher === false){
                 this.handleStatusUpdated(newStatus);
             }
         },
@@ -303,7 +296,7 @@ export default {
             }
         },
         handleStatusDestroyedWithoutWebsocket(status){
-            if (this.pusher == 0){
+            if (this.pusher === false){
                 this.handleStatusDestroyed(status);
             }
         },
@@ -323,7 +316,7 @@ export default {
             this.statuses = newStatusesOrderTemp;
         },
         handleItemAddedWithoutWebsocket(newItem){
-            if (this.pusher == 0){
+            if (this.pusher === false){
                 this.handleItemAdded(newItem);
             }
         },
@@ -373,7 +366,7 @@ export default {
                 return foundItem;
         },
         handleItemDestroyedWithoutWebsocket(item){
-            if (this.pusher == 0){
+            if (this.pusher === false){
                 this.handleItemDestroyed(item);
             }
         },
@@ -388,7 +381,7 @@ export default {
             this.statuses[statusIndex].items.splice(index, 1);
         },
         handleItemUpdatedWithoutWebsocket(updatedItem){
-            if (this.pusher == 0){
+            if (this.pusher === false){
                 //console.log('update'+updatedItem);
                 this.handleItemUpdated(updatedItem);
             }
@@ -420,7 +413,7 @@ export default {
         },
 
         startPusher(){
-            if (this.pusher == 1){
+            if (this.pusher === true){
                 this.$echo.join('Presence.App.Kanban.' + this.kanban.id)
                     .here((users) =>{
                         this.usersOnline = [...users];

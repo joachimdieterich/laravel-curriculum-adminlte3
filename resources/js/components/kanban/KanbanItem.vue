@@ -4,10 +4,10 @@
             <div class="card-tools">
                 <div
                     v-if="
-                        (editable == 1 && item.editable == 1 && editor === false && onlyEditOwnedItems !== 1) ||
-                        (editable == 1 && item.editable == 1 && $userId == item.owner_id  && editor === false ) ||
-                        (item.editable == 1 && $userId == kanban_owner_id  && editor === false ) ||
-                        ($userId == kanban_owner_id  && editor === false )"
+                        (editable == true && item.editable == true && editor == false && onlyEditOwnedItems != true) ||
+                        (editable == true && item.editable == true && $userId == item.owner_id  && editor == false ) ||
+                        (item.editable == true && $userId == kanban_owner_id  && editor == false ) ||
+                        ($userId == kanban_owner_id  && editor == false )"
                      class="float-right py-0 px-2 "
                      :id="'kanbanItemDropdown_'+index"
                      style="background-color: transparent;"
@@ -45,7 +45,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="float-right  py-0 px-2 handle pointer" >
+                <div v-if="(!item.locked || $userId == item.owner_id) || $userId == kanban_owner_id "
+                    class="float-right  py-0 px-2 handle pointer" >
                     <i class="fa fa-arrows-up-down-left-right"
                        :style="{ 'text-color': textColor }"></i>
                 </div>

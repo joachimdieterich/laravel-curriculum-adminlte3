@@ -54,8 +54,8 @@
     <!-- {!! $kanban->description !!}-->
     <div class="d-flex flex-fill">
         <kanban-board
-            :editable="{{ $may_edit ? "1":"0" }}"
-            :pusher="{{ $is_pusher_active ? "1":"0" }}"
+            :editable="{{ $may_edit ? 'true' : 'false' }}"
+            :pusher="{{ $is_pusher_active ? 'true' : 'false' }}"
             ref="kanbanBoard"
             :kanban="{{ $kanban }}"></kanban-board>
     </div>

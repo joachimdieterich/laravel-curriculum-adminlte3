@@ -17,6 +17,8 @@ return [
     'title_helper' => '',
     'description' => 'Beschreibung',
     'description_helper' => '',
+    'type' => 'Typ',
+    'url' => 'URL',
     'name' => 'Name',
     'created_at' => 'Erstellt am',
     'created_at_helper' => '',
@@ -478,7 +480,7 @@ return [
             'content_helper' => '',
         ],
     ],
-    'categorie' => [
+    'category' => [
         'title' => 'Kategorien',
         'title_singular' => 'Kategorie',
         'create' => 'Kategorie erstellen',
@@ -1105,5 +1107,17 @@ return [
         'CUSTOM_LAYOUT' => 'Benutzerdefiniertes Layout',
         'PRESENTATION_FOCUS' => 'Präsentation im Zentrum',
         'VIDEO_FOCUS' => 'Video im Zentrum',
+    ],
+    'marker' => [
+        'title' => 'Marker',
+        'title_singular' => 'Marker',
+        'create' => 'Marker erstellen',
+        'edit' => 'Marker bearbeiten',
+        'delete' => 'Marker löschen',
+        'delete_helper' => 'Soll der Marker gelöscht werden?',
+        'fields' => [
+            'latitude' => 'Latitude (geografische Breite)',
+            'longitude' => 'Longitude (geografische Länge)',
+        ],
     ],
 ];

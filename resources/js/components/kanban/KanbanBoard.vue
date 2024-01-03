@@ -1,27 +1,22 @@
 <template>
     <div id="kanban_board_container"
          class="kanban_board_container">
-<!--        <media-renderer
-            v-if="kanban.medium_id !== null"
-            class="kanban_board_wrapper p-0"
-            style="height:100%;width:100%"
-            :medium="kanban.medium"
-            :downloadable=false
-        ></media-renderer>-->
 
         <img v-if="kanban.medium_id !== null"
             class="kanban_board_wrapper p-0"
+             alt="background image"
              :src="'/media/'+ kanban.medium_id + '?model=Kanban&model_id=' + kanban.id"
              style="object-fit: cover;
              position:absolute;"/>
         <div id="kanban_board_wrapper"
              class="kanban_board_wrapper"
              :style="'background-color:' + kanbanColor">
-            <div @click="toggleFullscreen"
+            <div class="pointer"
                  :style="{ color: textColor }"
-            style="float: left;
+                style="float: left;
                  margin-top: -25px;
-                 margin-left: -20px;">
+                 margin-left: -20px;"
+                 @click="toggleFullscreen">
                 <i class="fa fa-expand"></i>
             </div>
             <div
@@ -32,6 +27,7 @@
             <draggable
                 v-model="statuses"
                 v-bind="columnDragOptions"
+                handle=".handle"
                 :move="isLocked"
                 @end="syncStatusMoved">
                 <div
@@ -46,6 +42,7 @@
                         :editable="editable"
                         v-on:status-updated="handleStatusUpdatedWithoutWebsocket"
                         v-on:status-destroyed="handleStatusDestroyedWithoutWebsocket"
+                        filter=".ignore"
                     />
                     <div style="margin-top:15px; bottom:0;overflow-y:scroll; z-index: 1"
                          :style="'width:' + itemWidth + 'px;'"
@@ -56,7 +53,7 @@
                             v-bind="itemDragOptions"
                             :move="isLocked"
                             @end="syncItemMoved"
-                            filter=".ignore">
+                            handle=".handle">
                             <transition-group
                                 style="display:flex; flex-direction: column;"
                                 :style="'width:' + itemWidth + 'px;'"
@@ -68,7 +65,7 @@
                                     :key="'transition_group-'+item.id">
                                  <KanbanItem
                                      v-if="(item.visibility == true && visiblefrom_to(item.visible_from, item.visible_until) == true) || ($userId == item.owner_id ) || ($userId == kanban.owner_id )"
-                                     :editable="(status.locked == true && $userId != kanban.owner_id) ? false : editable"
+                                     :editable="(status.editable == false && $userId != kanban.owner_id) ? false : editable"
                                      :commentable="kanban.commentable"
                                      :onlyEditOwnedItems="kanban.only_edit_owned_items"
                                      :ref="'kanbanItemId' + item.id"
@@ -80,7 +77,8 @@
                                      v-on:item-destroyed="handleItemDestroyedWithoutWebsocket"
                                      v-on:item-updated="handleItemUpdatedWithoutWebsocket"
                                      v-on:item-edit=""
-                                     v-on:sync="sync"/>
+                                     v-on:sync="sync"
+                                     filter=".ignore"/>
 
                             </span>
                                 <!--  ./Items -->
@@ -120,7 +118,7 @@
                 </div>
             </draggable>
             <!-- ./Columns -->
-            <div v-if="pusher == 1"
+            <div v-if="pusher === true"
                  class="card p-2"
                  style="position: fixed;right: 15px;bottom: 30px;">
 
@@ -151,8 +149,14 @@ import KanbanIndexAddWidget from "./KanbanIndexAddWidget";
 export default {
     props: {
         'kanban': Object,
-        'editable': true,
-        'pusher': false,
+        'editable': {
+            type: Boolean,
+            default: true
+        },
+        'pusher': {
+            type: Boolean,
+            default: false
+        },
         'search': ''
     },
     watch: {
@@ -186,16 +190,11 @@ export default {
         },
         visiblefrom_to(visible_from, visible_until){
             const now = moment().format("YYYY-MM-DD HH:mm:ss");
-            if (
-                (now >= visible_from && now <= visible_until) ||
+
+            return (now >= visible_from && now <= visible_until) ||
                 (now >= visible_from && visible_until == null) ||
                 (visible_from == null && now <= visible_until) ||
-                (visible_from == null && visible_until == null)
-            ){
-                return true;
-            } else {
-                return false;
-            }
+                (visible_from == null && visible_until == null);
         },
         sync(){
             axios.get("/kanbanStatuses/" + this.kanban.id + "/checkSync")
@@ -243,7 +242,7 @@ export default {
                 });
             axios.put(url, {columns: cols})
                 .then(res => { // Tell the parent component we've added a new task and include it
-                    if (this.pusher == 0){
+                    if (this.pusher === false){
                         if (url == '/kanbanStatuses/sync'){
                             this.handleStatusMoved(res.data.message.statuses);
                         } else {
@@ -259,7 +258,6 @@ export default {
             this.item = null;
             if (type === 'status'){
                 this.newStatus = value;
-
             } else {
                 this.newItem = value;
             }
@@ -270,7 +268,7 @@ export default {
             this.newItem = 0;
         },
         handleStatusAddedWithoutWebsocket(newStatus){
-            if (this.pusher == 0){
+            if (this.pusher === false){
                 this.sync();
                 //this.handleStatusAdded(newStatus);
             }
@@ -284,7 +282,7 @@ export default {
             //this.closeForm();
         },
         handleStatusUpdatedWithoutWebsocket(newStatus){
-            if (this.pusher == 0){
+            if (this.pusher === false){
                 this.handleStatusUpdated(newStatus);
             }
         },
@@ -298,7 +296,7 @@ export default {
             }
         },
         handleStatusDestroyedWithoutWebsocket(status){
-            if (this.pusher == 0){
+            if (this.pusher === false){
                 this.handleStatusDestroyed(status);
             }
         },
@@ -318,7 +316,7 @@ export default {
             this.statuses = newStatusesOrderTemp;
         },
         handleItemAddedWithoutWebsocket(newItem){
-            if (this.pusher == 0){
+            if (this.pusher === false){
                 this.handleItemAdded(newItem);
             }
         },
@@ -368,7 +366,7 @@ export default {
                 return foundItem;
         },
         handleItemDestroyedWithoutWebsocket(item){
-            if (this.pusher == 0){
+            if (this.pusher === false){
                 this.handleItemDestroyed(item);
             }
         },
@@ -383,7 +381,7 @@ export default {
             this.statuses[statusIndex].items.splice(index, 1);
         },
         handleItemUpdatedWithoutWebsocket(updatedItem){
-            if (this.pusher == 0){
+            if (this.pusher === false){
                 //console.log('update'+updatedItem);
                 this.handleItemUpdated(updatedItem);
             }
@@ -415,7 +413,7 @@ export default {
         },
 
         startPusher(){
-            if (this.pusher == 1){
+            if (this.pusher === true){
                 this.$echo.join('Presence.App.Kanban.' + this.kanban.id)
                     .here((users) =>{
                         this.usersOnline = [...users];
@@ -524,11 +522,14 @@ export default {
     mounted() {
         // Listen for the 'Kanban' event in the 'Presence.App.Kanban' presence channel
         this.startPusher();
-        this.$eventHub.$on('reload_kanban_board', (e) => {
+        this.$eventHub.$on('reload_kanban_board', () => {
             this.sync()
         });
-        this.$eventHub.$on('kanban-updated', (e) => {
+        this.$eventHub.$on('kanban-updated', () => {
             window.location.href = '/kanbans/'+this.kanban.id;
+        });
+        this.$eventHub.$on('item-updated', (item) => {
+            this.handleItemUpdated(item);
         });
     },
     created () {
@@ -607,15 +608,6 @@ export default {
     width: 100%;
     padding: 2rem;
     overflow:auto;
-}
-#fullscreen {
-    float: left;
-    padding: 0px 5px;
-    margin-top: -25px;
-    margin-left: -25px;
-}
-#fullscreen:hover {
-    cursor: pointer;
 }
 @media (max-width: 991px) {
     .kanban_board_container { width: calc(100vw - 30px) !important; }

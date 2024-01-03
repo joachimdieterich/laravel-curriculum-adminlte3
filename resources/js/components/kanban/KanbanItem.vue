@@ -4,17 +4,18 @@
             <div class="card-tools">
                 <div
                     v-if="
-                        (editable == 1 && item.editable == 1 && editor === false && onlyEditOwnedItems !== 1) ||
-                        (editable == 1 && item.editable == 1 && $userId == item.owner_id  && editor === false ) ||
-                        (item.editable == 1 && $userId == kanban_owner_id  && editor === false ) ||
-                        ($userId == kanban_owner_id  && editor === false )"
-                     class="btn btn-flat py-0 px-2 "
+                        (editable == true && item.editable == true && editor == false && onlyEditOwnedItems != true) ||
+                        (editable == true && item.editable == true && $userId == item.owner_id  && editor == false ) ||
+                        (item.editable == true && $userId == kanban_owner_id  && editor == false ) ||
+                        ($userId == kanban_owner_id  && editor == false )"
+                     class="float-right py-0 px-2 "
                      :id="'kanbanItemDropdown_'+index"
                      style="background-color: transparent;"
                      data-toggle="dropdown"
                      aria-expanded="false">
                     <i class="fas fa-ellipsis-v"
                        :style="{ 'text-color': textColor }"></i>
+
                     <div class="dropdown-menu" x-placement="top-start">
                         <button :name="'kanbanItemEdit_'+index"
                                 class="dropdown-item text-secondary  py-1"
@@ -30,7 +31,7 @@
                             <i class="fa fa-folder-open mr-2"></i>
                             {{ trans('global.media.title_singular') }}
                         </button>
-                        <span v-if="(item.editable == 1 && $userId == item.owner_id) || ($userId == kanban_owner_id)">
+                        <div v-if="(item.editable == 1 && $userId == item.owner_id) || ($userId == kanban_owner_id)">
                             <hr class="my-1">
                             <button
 
@@ -41,9 +42,13 @@
                                 <i class="fa fa-trash mr-2"></i>
                                 {{ trans('global.kanbanItem.delete') }}
                             </button>
-                        </span>
-
+                        </div>
                     </div>
+                </div>
+                <div v-if="(!item.locked || $userId == item.owner_id) || $userId == kanban_owner_id "
+                    class="float-right  py-0 px-2 handle pointer" >
+                    <i class="fa fa-arrows-up-down-left-right"
+                       :style="{ 'text-color': textColor }"></i>
                 </div>
             </div>
             <div class="pb-0" >
@@ -79,12 +84,12 @@
 
         </div>
         <div class="card-body p-0">
-            <span v-if="(editor == false)">
+            <div v-if="(editor == false)">
                 <div v-if="item.description !== null "
                      class="text-muted small px-3 py-2"
                      v-html="form.description">
                 </div>
-            </span>
+            </div>
 
             <div v-if="(editor !== false)"
             class="p-2">
@@ -111,70 +116,69 @@
                     </span>
                     </b>
                 </div>
-                <span
+                <div
                     v-if="expand == true">
-                     <hr class="mt-0">
-                <div class="form-group ">
-                    <date-picker
-                        v-if="editor !== false"
-                        class="w-100 mb-2"
-                        v-model="form.due_date"
-                        type="datetime"
-                        valueType="YYYY-MM-DD HH:mm:ss"
-                        :placeholder="trans('global.kanbanItem.due_date')">
-                    </date-picker>
+                    <hr class="mt-0">
+                    <div class="form-group ">
+                        <date-picker
+                            v-if="editor !== false"
+                            class="w-100 mb-2"
+                            v-model="form.due_date"
+                            type="datetime"
+                            valueType="YYYY-MM-DD HH:mm:ss"
+                            :placeholder="trans('global.kanbanItem.due_date')">
+                        </date-picker>
 
-                     <span class="custom-control custom-switch custom-switch-on-green">
-                        <input  v-model="form.locked"
+                         <span class="custom-control custom-switch custom-switch-on-green">
+                            <input  v-model="form.locked"
+                                    type="checkbox"
+                                    class="custom-control-input pt-1 "
+                                    :id="'locked_'+ form.id">
+                            <label class="custom-control-label  font-weight-light"
+                                   :for="'locked_'+ form.id" >
+                                {{ trans('global.locked') }}
+                            </label>
+                        </span>
+                        <span class="custom-control custom-switch custom-switch-on-green">
+                            <input  v-model="form.editable"
+                                    type="checkbox"
+                                    class="custom-control-input pt-1 "
+                                    :id="'editable_'+ form.id">
+                            <label class="custom-control-label  font-weight-light"
+                                   :for="'editable_'+ form.id" >
+                                {{ trans('global.editable') }}
+                            </label>
+                        </span>
+                        <span class="custom-control custom-switch custom-switch-on-green">
+                            <input
+                                v-model="form.visibility"
                                 type="checkbox"
                                 class="custom-control-input pt-1 "
-                                :id="'locked_'+ form.id">
-                        <label class="custom-control-label  font-weight-light"
-                               :for="'locked_'+ form.id" >
-                            {{ trans('global.locked') }}
-                        </label>
-                    </span>
-                    <span class="custom-control custom-switch custom-switch-on-green">
-                        <input  v-model="form.editable"
-                                type="checkbox"
-                                class="custom-control-input pt-1 "
-                                :id="'editable_'+ form.id">
-                        <label class="custom-control-label  font-weight-light"
-                               :for="'editable_'+ form.id" >
-                            {{ trans('global.editable') }}
-                        </label>
-                    </span>
-                    <span class="custom-control custom-switch custom-switch-on-green">
-                        <input
-                            v-model="form.visibility"
-                            type="checkbox"
-                            class="custom-control-input pt-1 "
-                            :id="'visibility_'+ form.id">
-                        <label class="custom-control-label font-weight-light"
-                               :for="'visibility_'+ form.id" >
-                            {{ trans('global.visibility') }}:
-                        </label>
-                    </span>
+                                :id="'visibility_'+ form.id">
+                            <label class="custom-control-label font-weight-light"
+                                   :for="'visibility_'+ form.id" >
+                                {{ trans('global.visibility') }}:
+                            </label>
+                        </span>
 
-                    <date-picker
+                        <date-picker
                         v-if="form.visibility == 1"
-                        class="w-100 pt-2"
-                        v-model="form.visible_from"
-                        type="datetime"
-                        valueType="YYYY-MM-DD HH:mm:ss"
-                        :placeholder="trans('global.kanbanItem.fields.visible_from')">
-                    </date-picker>
-                    <date-picker
+                            class="w-100 pt-2"
+                            v-model="form.visible_from"
+                            type="datetime"
+                            valueType="YYYY-MM-DD HH:mm:ss"
+                            :placeholder="trans('global.kanbanItem.fields.visible_from')">
+                        </date-picker>
+                        <date-picker
                         v-if="form.visibility == 1"
-                        class="w-100 pt-2"
-                        v-model="form.visible_until"
-                        type="datetime"
-                        valueType="YYYY-MM-DD HH:mm:ss"
-                        :placeholder="trans('global.kanbanItem.fields.visible_until')">
-                    </date-picker>
+                            class="w-100 pt-2"
+                            v-model="form.visible_until"
+                            type="datetime"
+                            valueType="YYYY-MM-DD HH:mm:ss"
+                            :placeholder="trans('global.kanbanItem.fields.visible_until')">
+                        </date-picker>
+                    </div>
                 </div>
-                </span>
-
             </div>
             <button v-if="editor !== false"
                 :name="'kanbanItemSave_' + index"
@@ -352,7 +356,7 @@ export default {
         },
         deleteItem() {
             axios.delete("/kanbanItems/" + this.item.id)
-                .then(res => {
+                .then(() => {
                     this.$emit("item-destroyed", this.item);
                 })
                 .catch(err => {
@@ -412,7 +416,8 @@ export default {
         reload() { //after media upload
             axios.get("/kanbanItems/" + this.item.id)
                 .then(res => {
-                    this.$emit("item-updated", res.data.message);
+                    //this.$emit("item-updated", res.data.message);
+                    this.$eventHub.$emit("item-updated", res.data.message);
                     //this.item = res.data.message;
                 })
                 .catch(err => {

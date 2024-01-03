@@ -24,7 +24,7 @@
             <div id="edusharing_new"
                  class="tab-pane col-12 active">
                 <iframe
-                    id="eduSharingFrame"
+                    id="eduSharingNewFrame"
                     :src="this.uploadIframeUrl"
                     :width="this.width"
                     :height="this.height"
@@ -35,7 +35,7 @@
             <div id="edusharing_link"
                  class="tab-pane col-12">
                 <iframe
-                    id="eduSharingFrame"
+                    id="eduSharingLinkFrame"
                     :src="this.cloudIframeUrl"
                     :width="this.width"
                     :height="this.height"
@@ -54,6 +54,7 @@ export default {
     },
     data() {
         return {
+            component_id: this._uid,
             width:          "100%",
             height:         "650",
             uploadIframeUrl: '',
@@ -66,25 +67,28 @@ export default {
 
             if(event.data.event === 'APPLY_NODE') {
                 //console.log(data);
-                this.$eventHub.$emit('external_add', {
-                    repository:     'edusharing',
-                    external_id:    data.ref.id, //= event.data.data.nodeId ?
-                    path:           data.content.url,
-                    thumb_path:     data.preview.url,
-                    medium_name:    data.name,
-                    title:          data.title,
-                    author:         data.owner.firstName + ' ' + data.owner.lastName,
-                    size:           data.size,
-                    mimetype:       data.mimetype,
-                    license_id:     this.getLicenseID(data.license.icon),
-
-                    subscribable_id:    this.model.subscribable_id,
-                    subscribable_type:  this.model.subscribable_type,
-                    public:             1,
-                });
+                setTimeout(() => {  this.emitEvent(data); }, 2000); //
 
                 window.removeEventListener("message", this.receiveMessage);
             }
+
+        },
+        emitEvent(data){
+            this.$eventHub.$emit('external_add', {
+                path:               data.content.url,
+                thumb_path:         data.preview.url,
+                medium_name:        data.name,
+                title:              data.title,
+                author:             data.owner.firstName + ' ' + data.owner.lastName,
+                size:               data.size,
+                mimetype:           data.mimetype,
+                license_id:         this.getLicenseID(data.license.icon),
+                external_id:        data.ref.id, //= event.data.data.nodeId ?
+                subscribable_id:    this.model.subscribable_id,
+                subscribable_type:  this.model.subscribable_type,
+                repository:         'edusharing',
+                public:             1,
+            });
 
         },
         getLicenseID(licenseURL) {

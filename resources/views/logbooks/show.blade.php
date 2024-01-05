@@ -38,6 +38,7 @@
     <medium-modal></medium-modal>
     <medium-create-modal></medium-create-modal>
     <subscribe-objective-modal></subscribe-objective-modal>
+    <logbook-entry-subject-modal></logbook-entry-subject-modal>
     <task-modal></task-modal>
     <absence-modal></absence-modal>
     @can('logbook_create')

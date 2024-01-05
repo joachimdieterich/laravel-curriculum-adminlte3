@@ -1,6 +1,5 @@
 <template>
     <div class="row">
-
         <div v-permission="'logbook_entry_create'"
              class="col-md-12 pl-3 pt-0 pb-2">
             <button id="add-logbook-entry"
@@ -38,7 +37,6 @@
         </div>
         <!-- /.col -->
         <logbook-entry-modal></logbook-entry-modal>
-        <logbook-entry-subject-modal></logbook-entry-subject-modal>
         <lms-modal></lms-modal>
     </div>
 </template>
@@ -112,6 +110,5 @@ import LogbookPrintOptions from "./LogbookPrintOptions";
             LogbookPrintOptions,
             LogbookEntry
         }
-
     }
 </script>

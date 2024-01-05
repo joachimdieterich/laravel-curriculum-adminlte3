@@ -48,6 +48,7 @@ export default {
     methods: {
         initSelect2() {
             $('#subject_' + this.id).select2({
+                dropdownParent: $(".v--modal-overlay"),
                 allowClear: false,
                 ajax: {
                     url: "/subjects",
@@ -66,7 +67,7 @@ export default {
                 axios.post('/logbookEntries/setSubject?id=' + this.id, {
                     'subject_id' : e.params.data.id,
                 });
-                
+
                 this.$eventHub.$emit('updateSubjectBadge', {
                     entry_id: this.id,
                     subject_id: e.params.data.id,
@@ -90,6 +91,3 @@ export default {
     },
 }
 </script>
-<style>
-.select2-container { z-index: 1100; }
-</style>

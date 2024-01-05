@@ -25,7 +25,7 @@
                                    @click="destroy(entry)"></i>
                             </div>
                         </div>
-                        <div class="card-body py-2 collapse show">
+                        <div class="card-body py-2 collapse">
                             <img v-if="Number.isInteger(entry.medium_id)"
                                  class="pull-right"
                                  :src="'/media/' + entry.medium_id + '/thumb'"/>

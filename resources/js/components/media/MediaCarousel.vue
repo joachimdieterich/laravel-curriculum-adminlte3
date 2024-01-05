@@ -3,7 +3,7 @@
          class="carousel slide ignore"
          data-interval="false">
 
-        <span class="carousel-indicators">
+        <div class="carousel-indicators">
             <li v-for="(item, index) in subscriptions"
                 v-if="subscriptions.length > 1"
                 :class="{ 'active': index === 0 }"
@@ -11,8 +11,22 @@
                 :data-slide-to="index"
                 @click="setSlide(index)">
             </li>
-        </span>
+        </div>
         <div class="carousel-inner">
+            <div class="w-100">
+                <div class="carousel-indicators-tools">
+                    <a class="text-muted px-2"
+                       @click.prevent="downloadMedium(subscriptions[currentSlide])">
+                        <i class="fa fa-download"></i>
+                    </a>
+                    <a v-if="$userId == subscriptions[currentSlide].medium.owner_id"
+                       class="text-danger px-2 "
+                       @click.prevent="unlinkMedium(subscriptions[currentSlide])">
+                        <i class="fa fa-trash"></i>
+                    </a>
+                </div>
+            </div>
+
             <div v-for="(item, index) in subscriptions"
                  :class="{ 'active': index === 0 }"
                  class="carousel-item">
@@ -20,14 +34,9 @@
                     :medium="item.medium"
                     :width="width"
                 ></medium-renderer>
-                <a v-if="$userId == item.medium.owner_id"
-                   class="carousel-indicators-destroy pl-3 text-muted text-danger"
-                   @click.prevent="unlinkMedium(item)">
-                    <i class="fa fa-trash"></i>
-                </a>
             </div>
-
         </div>
+
         <a class="carousel-control-prev "
            v-if="subscriptions.length > 1"
            :href="'#'+id"
@@ -54,7 +63,6 @@
 <script>
 const mediumRenderer =
     () => import('../media/MediaRenderer');
-//import mediumRenderer from '../media/MediaRenderer';
 
 export default {
     props: {
@@ -89,35 +97,38 @@ export default {
                 this.currentSlide++;
             }
         },
+        downloadMedium(item) {
+            this.$eventHub.$emit('download', item.medium);
+        },
         unlinkMedium(item) { //id of external reference and value in db
-            axios.delete('/media/'+item.medium.id, {
+            axios.delete('/media/' + item.medium.id, {
                 data: {
                     subscribable_type: item.subscribable_type,
-                    subscribable_id: item.subscribable_id }
+                    subscribable_id:   item.subscribable_id
+                }
             })
-                .then(res => {
-                    //console.log(res);
-                    this.$eventHub.$emit('reload_kanban_item', {id: item.subscribable_id });
-                    this.subscriptions.splice(item, 1);
-                    if (this.currentSlide == 0) {
-                        $('#' + this.id).carousel('prev');
-                    } else {
-                        $('#' + this.id).carousel('next');
-                    }
-                })
-                .catch(err => {
-                    console.log(err.response);
-                });
+            .then(res => {
+                //console.log(res);
+                this.$eventHub.$emit('reload_kanban_item', { id: item.subscribable_id });
+                this.subscriptions.splice(item, 1);
+                if (this.currentSlide == 0) {
+                    $('#' + this.id).carousel('next');
+                } else {
+                    $('#' + this.id).carousel('prev');
+                }
+            })
+            .catch(err => {
+                console.log(err.response);
+            });
         },
     },
-    watch: {
-        subscriptions(newSubscriptions, oldSubscriptions){
-            if (newSubscriptions.length > oldSubscriptions.length){
-                this.setSlide(newSubscriptions.length -1)
-            }
-        }
-    },
-
+    /*watch: {
+      subscriptions(newSubscriptions, oldSubscriptions){
+           if (newSubscriptions.length > oldSubscriptions.length){
+               this.setSlide(newSubscriptions.length -1)
+           }
+       }
+    },*/
     components: {
         mediumRenderer,
     }

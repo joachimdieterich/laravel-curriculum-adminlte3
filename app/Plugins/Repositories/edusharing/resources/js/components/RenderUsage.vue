@@ -1,12 +1,25 @@
 <template>
     <div>
-        <div v-html="this.detailsSnippet"
-        @click="show()"></div>
-        <div style="width: 100%;display: block;height: 25px;">
+        <img :src="this.preview.url"
+             style="width: 100%"
+             :alt="this.title"
+             @click="show()">
+        <div class="edusharing_caption">
+            <span v-if="this.title">
+                {{ this.title }}
+            </span>
+            <span v-else>
+                {{ this.name }}
+            </span>
+        </div>
+
+<!--        <div v-html="this.detailsSnippet"
+        @click="show()"></div>-->
+<!--        <div style="width: 100%;display: block;height: 25px;">
             <i v-if="downloadable"
                 class="edusharing_download fa fa-download text-muted pointer"
                @click="show()"></i>
-        </div>
+        </div>-->
 
         <div :id="'loading_'+this.medium.id" class="overlay text-center" style="width:100% !important;">
             <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
@@ -29,6 +42,10 @@
         data() {
             return {
                 detailsSnippet: '',
+                downloadUrl: '',
+                preview: '',
+                title: '',
+                name: '',
                 errors:  {},
             }
         },
@@ -37,8 +54,12 @@
                 $("#loading_"+this.medium.id).show();
                 axios.get('/media/' + this.medium.id)
                     .then((response) => {
-                        //console.log(response);
+                        //console.log(response.data);
                         this.detailsSnippet = response.data.detailsSnippet;
+                        this.downloadUrl = response.data.downloadUrl;
+                        this.preview = response.data.preview;
+                        this.title = response.data.title;
+                        this.name = response.data.name;
                         $("#loading_"+this.medium.id).hide();
                     })
                     .catch((error) => {
@@ -52,6 +73,12 @@
         },
         mounted(){
             this.loader();
+
+            this.$eventHub.$on('download', (medium) => {
+                if (this.medium.id == medium.id) {
+                    window.location.assign(this.downloadUrl);
+                }
+            });
         },
         watch: {
             media: function (value, oldValue) {
@@ -74,7 +101,7 @@
     margin-left: 25px;*/
 }
 
-.edusharing_download {
+/*.edusharing_download {
     position: absolute;
     left: 0;
     bottom: 5px;
@@ -85,6 +112,19 @@
     margin-right: 15%;
     margin-left: 15%;
     list-style: none;
+}*/
+.edusharing_caption {
+    position: absolute;
+    display:block;
+    background-color: #ffffff70;
+    border-radius: 0 0 0 5px ;
+    width:100%;
+    z-index: 15;
+    display: flex;
+    justify-content: space-around;
+    margin: 0 auto;
+    padding: 2px;
+    bottom:25px;
 }
 
 iframe {

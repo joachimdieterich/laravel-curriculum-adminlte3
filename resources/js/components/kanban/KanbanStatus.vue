@@ -1,7 +1,7 @@
 <template>
     <div class="card-header border-bottom-0 p-0 kanban-header"
          :key="form.id">
-        <span v-if="(editor !== false && form.visibility !== 0 ) || (editor !== false && $userId == status_owner_id ) || (editor !== false && $userId == kanban.owner_id ) "
+        <div v-if="(editor !== false && form.visibility !== 0 ) || (editor !== false && $userId == status_owner_id ) || (editor !== false && $userId == kanban.owner_id ) "
               filter=".ignore">
             <input
                 :id="'title_'+ form.id"
@@ -51,18 +51,20 @@
                      @click="submit()">
                 {{ trans('global.save') }}
             </button>
-        </span>
-        <span v-else-if="newStatus === true"
+        </div>
+        <div v-else-if="newStatus == true"
               :id="'kanbanStatusCreate_'+form.id">
             <strong
                 class="text-secondary btn px-1 py-0"
                 @click="edit()">
                 <i class="fa fa-plus"></i> {{ trans('global.kanbanStatus.create') }}
             </strong>
-        </span>
-        <span v-else>
+        </div>
+        <div v-else>
             <strong>{{ form.title }}</strong>
-            <div v-if="(editable == 1 && status.editable == true && status.visibility == true && kanban.only_edit_owned_items !== true) || (editable == 1 && $userId == status_owner_id ) || ($userId == kanban.owner_id )"
+            <div v-if="(editable == 1 && status.editable == true && status.visibility == true && kanban.only_edit_owned_items == false)
+                || (editable == 1 && $userId == status_owner_id )
+                || ($userId == kanban.owner_id )"
                  :id="'kanbanStatusDropdown_'+form.id"
                  class="btn btn-flat py-0 pl-0 pull-left"
                  data-toggle="dropdown"
@@ -70,7 +72,7 @@
                 <i class="text-muted fas fa-bars"></i>
                 <div class="dropdown-menu"
                      x-placement="top-start">
-                    <span>
+                    <div>
                         <button
                             name="kanbanStatusEdit"
                             class="dropdown-item py-1"
@@ -78,10 +80,9 @@
                             <i class="fa fa-pencil-alt mr-4"></i>
                             {{ trans('global.kanbanStatus.edit') }}
                         </button>
-                        <span v-if="($userId == status_owner_id) || (editable == 1 && $userId == kanban.owner_id)">
+                        <div v-if="($userId == status_owner_id) || (editable == 1 && $userId == kanban.owner_id)">
                             <hr class="my-1">
                             <button
-
                                 v-can="'kanban_delete'"
                                 name="kanbanStatusDelete"
                                 class="dropdown-item py-1 text-red "
@@ -89,12 +90,16 @@
                                 <i class="fa fa-trash mr-4"></i>
                                 {{ trans('global.delete') }}
                             </button>
-                        </span>
-
-                    </span>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </span>
+            <div v-if="!status.locked"
+                 class="pull-right handle pointer">
+                <i class="fa fa-arrows-up-down-left-right text-muted"></i>
+            </div>
+
+        </div>
 
         <Modal
             :id="'statusModal_'+form.id"
@@ -178,7 +183,7 @@ export default {
         },
         deleteStatus(){
             axios.delete("/kanbanStatuses/"+this.form.id)
-                .then(res => {
+                .then(() => {
                     this.$emit("status-destroyed", this.status);
                 })
                 .catch(err => {

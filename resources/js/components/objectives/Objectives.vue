@@ -81,7 +81,6 @@ const EnablingObjectives =
         },
         data() {
             return {
-                objectives: {},
                 settings: {
                     'last': null,
                     'course' : true,
@@ -89,6 +88,8 @@ const EnablingObjectives =
                     'achievements' : true,
                 },
                 subscriptions: [],
+                enablingSubscriptions: [],
+                terminalSubscriptions: [],
                 errors: {},
             }
         },
@@ -96,20 +97,67 @@ const EnablingObjectives =
             loaderEvent() {
                 axios.get('/terminalObjectiveSubscriptions?subscribable_type=' + this.referenceable_type + '&subscribable_id=' + this.referenceable_id)
                     .then(response => {
-                        this.subscriptions = response.data.subscriptions;
+                        this.terminalSubscriptions = response.data.subscriptions;
                     })
                     .catch(e => {
                         console.log(e);
                     });
                 axios.get('/enablingObjectiveSubscriptions?subscribable_type=' + this.referenceable_type + '&subscribable_id=' + this.referenceable_id)
                     .then(response => {
-                        response.data.subscriptions.forEach(
-                            (subscription) => this.subscriptions.push(subscription)
-                        );
+                        this.enablingSubscriptions = response.data.subscriptions;
+                        //? if function is called outside axios-call, it gets called too early
+                        // putting await before both axios-calls might increase waiting time too much
+                        this.checkSubscriptions();
                     })
                     .catch(e => {
                         console.log(e);
-                    });
+                    });      
+            },
+            /**
+             * combine enablingObjectives into their terminalObjective
+             */
+            checkSubscriptions() {
+                if (this.terminalSubscriptions.length > 0) {
+                    this.subscriptions = this.terminalSubscriptions;
+                    
+                    // reverse-loop, since removing an item while counting up messes with the index
+                    for (let i = this.enablingSubscriptions.length - 1; i >= 0; i--) {
+                        const subscription = this.enablingSubscriptions[i];
+                        const parent = this.terminalSubscriptions.find(
+                            terminal => terminal.terminal_objective_id === subscription.enabling_objective.terminal_objective_id
+                        );
+                        
+                        // if a terminalObjective is already subscribed,
+                        // enablingSubscriptions from this terminalObjective aren't needed
+                        if (parent !== undefined) {
+                            axios.post('/enablingObjectiveSubscriptions/destroy', subscription);
+                            this.enablingSubscriptions.splice(i, 1);
+                        }
+                    }
+                }
+
+                const newTerminals = {};
+                this.enablingSubscriptions.forEach(sub => {
+                    const terminalID = sub.enabling_objective.terminal_objective_id;
+                    if (newTerminals[terminalID] === undefined) {
+                        // create a new terminal object for this ID
+                        //? might need more properties
+                        newTerminals[terminalID] =
+                        {
+                            'owner_id': sub.owner_id,
+                            'terminal_objective': sub.enabling_objective.terminal_objective,
+                            'terminal_objective_id': terminalID
+                        };
+    
+                        newTerminals[terminalID].terminal_objective.enabling_objectives = [sub.enabling_objective];
+                    } else {
+                        newTerminals[terminalID].terminal_objective.enabling_objectives.push(sub.enabling_objective);
+                    }
+                });
+
+                Object.keys(newTerminals).forEach(key => {
+                    this.subscriptions.push(newTerminals[key]);
+                });
             },
             is_owner(){
                 return (this.$userId == this.owner_id) ?? false
@@ -133,9 +181,7 @@ const EnablingObjectives =
         },
         mounted() {
             this.loaderEvent();
-            this.objectives = this.subscriptions;
         },
-
         components: {
             ObjectiveBox,
             EnablingObjectives,

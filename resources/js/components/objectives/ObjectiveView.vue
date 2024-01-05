@@ -414,6 +414,12 @@ export default {
             this.$root.$on('lmsUpdate', () => {
                 this.$refs.LmsPlugin.loaderEvent();
             });
+            this.$eventHub.$on('addEnablingObjective', (newEnablingObjective) => {
+                window.location.reload();
+            });
+            this.$eventHub.$on('addTerminalObjective', (newTerminalObjective) => {
+                window.location.reload();
+            });
 
             this.variant_order = this.objective.curriculum.variants['order'];
 

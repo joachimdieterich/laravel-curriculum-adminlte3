@@ -84,7 +84,7 @@ const Footer =
                 menuEntries:  [
                     {
                       title: 'Edit',
-                      icon: 'fa fa-edit',
+                      icon: 'fa fa-pencil-alt',
                       action: 'edit',
                       model: this.type+'Objectives',
                       value: this.type+'-objective-modal'

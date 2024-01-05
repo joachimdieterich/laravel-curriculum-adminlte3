@@ -1,7 +1,8 @@
 <template>
     <div>
-        <ul class="nav nav-pills"
-            id="terminalObjectivesTopNav">
+        <ul class="nav nav-pills bg-gray-light"
+            id="terminalObjectivesTopNav"
+            style="position:sticky; top:60px; z-index: 2000">
             <draggable
                 class="nav nav-pills"
                 v-can="'curriculum_edit'"
@@ -216,11 +217,11 @@ const draggable =
                 });
 
             //eventlistener
-            this.$on('addTerminalObjective', function(newTerminalObjective) {
-                this.activetab = newTerminalObjective.objective_type_id;
+            this.$eventHub.$on('addEnablingObjective', (newEnablingObjective) => {
                 this.loadObjectives(this.activetab);
             });
-            this.$on('addEnablingObjective', function(newEnablingObjective) {
+            this.$eventHub.$on('addTerminalObjective', (newTerminalObjective) => {
+                this.activetab = newTerminalObjective.objective_type_id;
                 this.loadObjectives(this.activetab);
             });
         },

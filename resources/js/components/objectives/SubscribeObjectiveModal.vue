@@ -52,6 +52,7 @@
                             v-model="terminal_objective_id"
                             class="form-control select2"
                             style="width:100%;"
+                            multiple="multiple"
                             :disabled="isObjEmpty(terminalObjectives) ? 'disabled' : null"
                     >
                         <option v-for="(item,index) in terminalObjectives" v-bind:value="item.id">{{ item.title }}</option>
@@ -67,6 +68,7 @@
                             v-model="enabling_objective_id"
                             class="form-control select2"
                             style="width:100%;"
+                            multiple="multiple"
                             :disabled="isObjEmpty(enablingObjectives) ? 'disabled' : null"
                     >
                         <option v-for="(item,index) in enablingObjectives" v-bind:value="item.id">{{ item.title }}</option>
@@ -95,10 +97,10 @@
                 curriculum_id: null,
                 terminalObjectives: {},
                 terminalObjective: {},
-                terminal_objective_id: null,
+                terminal_objective_id: [],
                 enablingObjectives: {},
                 enablingObjective: {},
-                enabling_objective_id: null,
+                enabling_objective_id: [],
                 requestUrl: null
             };
         },
@@ -112,8 +114,6 @@
                 } catch(error) {
                     this.errors = error.response.data.errors;
                 }
-                this.terminal_objective_id = null; //reset selection
-                this.enabling_objective_id = null;
             },
             async loadObjectives(id) {
                 this.curriculum_id = parseInt(id);
@@ -125,10 +125,16 @@
                 }
             },
             loadEnabling(id){
-                this.terminal_objective_id = parseInt(id);
+                this.terminal_objective_id.push(id);
+
+                if (this.terminal_objective_id.length > 1) return;
+
                 this.enablingObjectives = this.terminalObjectives.find(terminal => terminal.id === parseInt(id)).enabling_objectives;
                 this.removeHtmlTags(this.enablingObjectives);
                 this.requestUrl = '/terminalObjectiveSubscriptions';
+                
+                // needs to be cleared, else the selected option will appear on other objectives
+                $("#enablingObjectives").val(null).trigger('change');
                 // this select2 needs to be reinitialized, else it won't update the select-options
                 // the 'on:select' is still functionable
                 $("#enablingObjectives").select2({
@@ -137,7 +143,7 @@
                 });
             },
             setEnabling(id){
-                this.enabling_objective_id = parseInt(id);
+                this.enabling_objective_id.push(id);
                 this.requestUrl = '/enablingObjectiveSubscriptions';
             },
             async submit() {
@@ -170,7 +176,7 @@
                     dropdownParent: $(".v--modal-overlay"),
                     allowClear: false
                 }).on('select2:select', function (e) {
-                    this.terminal_objective_id = null;
+                    this.terminal_objective_id = [];
                     this.terminalObjectives = {};
                     this.enablingObjectives = {};
                     this.loadObjectives(e.params.data.id);
@@ -180,10 +186,8 @@
                     dropdownParent: $(".v--modal-overlay"),
                     allowClear: false
                 }).on('select2:select', function (e) {
-                    this.enabling_objective_id = null;
+                    this.enabling_objective_id = [];
                     this.enablingObjectives = {};
-                    // needs to be cleared, else the selected option will appear on other objectives
-                    $("#enablingObjectives").val(null).trigger('change');
                     this.loadEnabling(e.params.data.id);
                 }.bind(this)); //make loadEnabling accessible!
 

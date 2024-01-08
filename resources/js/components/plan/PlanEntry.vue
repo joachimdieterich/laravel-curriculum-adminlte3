@@ -13,10 +13,11 @@
                     <div :id="'plan-entry-' + entry.id"
                          v-if="!editor"
                          :style="{ 'border-left-style': 'solid', 'border-radius': '0.25rem', 'border-color': entry.color }">
-                        <div class="card-header" data-toggle="collapse" :data-target="'#plan-entry-' + entry.id + ' > .card-body'" aria-expanded="true">
+                        <div class="card-header collapsed" data-toggle="collapse" :data-target="'#plan-entry-' + entry.id + ' > .card-body'" aria-expanded="false">
                             <i class="mr-1"
                             :class="entry.css_icon"></i>
                             {{ entry.title }}
+                            <i class="fa fa-angle-up"></i>
                             <div v-if="$userId == plan.owner_id"
                                 class="card-tools">
                                 <i class="fa fa-pencil-alt mr-2 pointer link-muted"
@@ -233,5 +234,11 @@ export default {
 .card-header:hover {
     background-color: #e9ecef;
     cursor: pointer;
+}
+.card-header .fa-angle-up {
+    transition: 0.3s transform;
+}
+.card-header.collapsed .fa-angle-up {
+    transform: rotate(-180deg);
 }
 </style>

@@ -9,7 +9,7 @@
                     <div class="card-tools pull-right">
                         <span v-if="is_owner()">
                             <a @click="destroy('terminal', subscription)" >
-                                <i class="fas fa-trash text-danger"></i>
+                                <i class="fas fa-trash text-danger pointer"></i>
                             </a>
                         </span>
                     </div>

@@ -686,7 +686,7 @@ class CurriculumController extends Controller
         {
             return getEntriesForSelect2ByModel("App\Curriculum");
         }
-        else if (is_schooladmin())
+        else if (is_schooladmin() || is_teacher())
         {
             return getEntriesForSelect2ByCollection(
                 Curriculum::where(

@@ -210,10 +210,11 @@ class CertificateController extends Controller
     public function generate(Request $request)
     {
         abort_unless(\Gate::allows('certificate_access'), 403);
+        $user_ids = explode(',', request()->user_ids);
         $certificate = Certificate::find(request()->certificate_id);
 
         switch ($certificate->type) {
-            case 'user':            LogController::set(get_class($this).'@'.__FUNCTION__, request()->certificate_id, (is_array(request()->user_ids)) ? count(request()->user_ids) : 1);
+            case 'user':            LogController::set(get_class($this).'@'.__FUNCTION__, request()->certificate_id, (is_array($user_ids)) ? count($user_ids) : 1);
                                     return $this->generateForUsers($certificate);
                 break;
             case 'group':           return $this->generateForGroup($certificate);
@@ -234,8 +235,9 @@ class CertificateController extends Controller
      */
     protected function generateForUsers($certificate)
     {
+        $user_ids = explode(',', request()->user_ids);
         $generated_files = [];
-        foreach ((array) request()->user_ids as $id) {
+        foreach ($user_ids as $id) {
             $user = User::where('id', $id)->get()->first();
             abort_unless(auth()->user()->mayAccessUser($user), 403);
             //replace placeholder
@@ -269,10 +271,10 @@ class CertificateController extends Controller
                                 ->where('associable_type', $associable_type)
                                 ->where('associable_id', $associable_id)
                                 ->get();
-
+                    //dump($progress->avg('value').'_'.$progress->avg('value').'_'.$match[3]);
                     return ($progress->avg('value') != null and $progress->avg('value') >= (int) $match[3])
                             ? $match[4]
-                            : $match[4].'<div style="display: block; position: absolute; top:0; height:100%; width: 140px; background: white; opacity: 0.8;"></div>';
+                            : '<div style="opacity: .5;">'.$match[4].'</div>';
                 },
 
                 $html
@@ -301,11 +303,14 @@ class CertificateController extends Controller
      */
     protected function generateForGroup($certificate)
     {
+        $user_ids = explode(',', request()->user_ids);
+
         $td_style = 'style="border-bottom: 1px solid silver;border-right: 1px solid silver;"';
 
         $html = '<table repeat_header="1" style="width: 100%;padding-bottom: 10px;" border="0"><tbody>'
                 .'<thead><tr><td style="border-bottom: 1px solid silver;"><strong>Ziele / Namen</strong></td>';
-        foreach ((array) request()->user_ids as $id) {
+        foreach ($user_ids as $id) {
+
             abort_unless(auth()->user()->mayAccessUser(User::find($id)), 403);
             $user = User::where('id', $id)->get()->first();
             $html .= '<td '.$td_style.'><strong>'.$user->firstname.' '.$user->lastname.'</strong></td>';
@@ -318,14 +323,11 @@ class CertificateController extends Controller
             ->find((request()->curriculum_id != null) ? request()->curriculum_id : $certificate->curriculum_id);
 
         foreach ($curriculum->terminalObjectives as $ter_value) {
-            $html .= '<tr><td '.$td_style.'><strong>'.strip_tags($ter_value->title).'</strong></td>';
-            foreach ((array) request()->user_ids as $id) {
-                $html .= '<td '.$td_style.'></td>';
-            }
-            $html .= '</tr>';
+            $html .= '<tr><td '.$td_style.' colspan="'.( count($user_ids) + 1 ).'"><strong>'.strip_tags($ter_value->title).'</strong></td></tr>';
+
             foreach ($ter_value->enablingObjectives as $ena) {
                 $html .= '<tr><td style="width: 25%;border-bottom: 1px solid silver;border-right: 1px solid silver;">'.strip_tags($ena->title).'</td>';
-                foreach ((array) request()->user_ids as $user_id) {
+                foreach ($user_ids as $user_id) {
                     $html .= '<td style="text-align: center; border-bottom: 1px solid silver;border-right: 1px solid silver;">';
                     $html .= $this->achievementIndicator(optional(\App\Achievement::where(
                             [
@@ -377,7 +379,7 @@ class CertificateController extends Controller
 
     protected function achievementIndicator($status)
     {
-        $span_style = 'style="text-align: center; font-family: Arial Unicode MS, Lucida Grande"';
+        $span_style = 'style="text-align: center; font-family: DejaVu Sans;"';
 
         switch (true) {
             case in_array($status, ['01', '11', '21', '31']): $html = '<span '.$span_style.'>&#10004;</span>';

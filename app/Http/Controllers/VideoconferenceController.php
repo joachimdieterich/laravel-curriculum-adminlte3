@@ -561,6 +561,7 @@ class VideoconferenceController extends Controller
 
     public function endCallback(Request $request)
     {
+        /* this endpoint is accessible without authentification, only use validated input! */
         $input = $this->validateRequest();
         $videoconference = Videoconference::where('meetingID', $input['meetingID'])->get()->first();
 

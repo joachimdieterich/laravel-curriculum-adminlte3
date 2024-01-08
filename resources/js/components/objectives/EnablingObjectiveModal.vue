@@ -182,10 +182,12 @@
                 this.form.description = tinyMCE.get('description').getContent();
                 if (method === 'patch'){
                     this.form.patch(this.requestUrl + '/' + this.form.id)
-                             .then(response => this.$parent.$emit('addEnablingObjective', response.message));
+                             .then(response => {
+                                 this.$eventHub.$emit("addEnablingObjective", response.message);
+                             });
                 } else {
                     this.form.post(this.requestUrl)
-                             .then(response => this.$parent.$emit('addEnablingObjective', response.message));
+                             .then(response => this.$eventHub.$emit('addEnablingObjective', response.message));
                 }
 
                 this.close();

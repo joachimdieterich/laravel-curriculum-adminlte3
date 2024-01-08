@@ -14,7 +14,8 @@
                         <i class="fas fa-chalkboard-teacher pr-2"></i>Alle Videokonferenzen
                     </a>
                 </li>
-                <li class="nav-item">
+                <li v-can="'videoconference_create'"
+                    class="nav-item">
                     <a class="nav-link"
                        :class="filter === 'owner' ? 'active' : ''"
                        id="custom-filter-owner"
@@ -25,7 +26,8 @@
                         <i class="fa fa-user  pr-2"></i>Meine Videokonferenzen
                     </a>
                 </li>
-                <li class="nav-item">
+                <li v-can="'videoconference_create'"
+                    class="nav-item">
                     <a class="nav-link"
                        :class="filter === 'shared_with_me' ? 'active' : ''"
                        id="custom-filter-shared-with-me"
@@ -36,7 +38,8 @@
                         <i class="fa fa-paper-plane pr-2"></i>Für mich freigegeben
                     </a>
                 </li>
-                <li class="nav-item">
+                <li v-can="'videoconference_create'"
+                    class="nav-item">
                     <a class="nav-link"
                        :class="filter === 'shared_by_me' ? 'active' : ''"
                        id="custom-tabs-shared-by-me"

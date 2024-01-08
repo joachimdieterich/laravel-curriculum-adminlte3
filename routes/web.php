@@ -11,12 +11,10 @@ Route::get('/impressum', 'OpenController@impressum')->name('impressum');
 
 Route::get('/terms', 'OpenController@terms')->name('terms');
 
-//Route::get('kanban/share/{token}', 'ShareTokenController@auth');
-
 Auth::routes(['register' => false]);
 
-//embeddable routes
-Route::get('eventSubscriptions/embed', 'EventSubscriptionController@embed')->name('eventSubscriptions.embed');
+Route::get('eventSubscriptions/embed', 'EventSubscriptionController@embed')->name('eventSubscriptions.embed'); //embeddable routes
+Route::get('videoconferences/endCallback', 'VideoconferenceController@endCallback'); // called via bbb server (with meeting id)
 
 Route::group(['middleware' => 'auth'], function () {
     //LogController::setStatistics(); //to slow -> use queue instead
@@ -321,7 +319,6 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('videoconferences/list', 'VideoconferenceController@list');
     Route::get('videoconferences/servers', 'VideoconferenceController@servers');
-    Route::get('videoconferences/endCallback', 'VideoconferenceController@endCallback');
     Route::resource('videoconferences', 'VideoconferenceController');
     Route::get('videoconferences/{videoconference}/getStatus', 'VideoconferenceController@getStatus');
     Route::get('videoconferences/{videoconference}/start', 'VideoconferenceController@start');

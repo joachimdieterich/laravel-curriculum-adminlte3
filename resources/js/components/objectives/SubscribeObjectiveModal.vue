@@ -69,7 +69,7 @@
                             class="form-control select2"
                             style="width:100%;"
                             multiple="multiple"
-                            :disabled="isObjEmpty(enablingObjectives) ? 'disabled' : null"
+                            :disabled="(isObjEmpty(enablingObjectives) || terminal_objective_id.length > 1) ? 'disabled' : null"
                     >
                         <option v-for="(item,index) in enablingObjectives" v-bind:value="item.id">{{ item.title }}</option>
                     </select>
@@ -125,8 +125,6 @@
                 }
             },
             loadEnabling(id){
-                this.terminal_objective_id.push(id);
-
                 if (this.terminal_objective_id.length > 1) return;
 
                 this.enablingObjectives = this.terminalObjectives.find(terminal => terminal.id === parseInt(id)).enabling_objectives;
@@ -139,22 +137,41 @@
                 // the 'on:select' is still functionable
                 $("#enablingObjectives").select2({
                     dropdownParent: $(".v--modal-overlay"),
-                    allowClear: false
+                    allowClear: false,
+                    closeOnSelect: false,
                 });
             },
             setEnabling(id){
                 this.enabling_objective_id.push(id);
                 this.requestUrl = '/enablingObjectiveSubscriptions';
             },
-            async submit() {
+            submit() {
                 try {
-                    this.location = (await axios.post(this.requestUrl, {
-                        'curriculum_id':            this.curriculum_id,
-                        'terminal_objective_id':    this.terminal_objective_id,
-                        'enabling_objective_id':    this.enabling_objective_id,
-                        'subscribable_type':        this.referenceable_type,
-                        'subscribable_id':          this.referenceable_id
-                    })).data.message;
+                    if (this.requestUrl == '/terminalObjectiveSubscriptions') {
+                        this.terminal_objective_id.forEach(async id => {
+
+                            this.location = (await axios.post(this.requestUrl, {
+                                'curriculum_id':            this.curriculum_id,
+                                'terminal_objective_id':    id,
+                                'enabling_objective_id':    this.enabling_objective_id,
+                                'subscribable_type':        this.referenceable_type,
+                                'subscribable_id':          this.referenceable_id
+                            })).data.message;
+
+                        });
+                    } else {
+                        this.enabling_objective_id.forEach(async id => {
+
+                            this.location = (await axios.post(this.requestUrl, {
+                                'curriculum_id':            this.curriculum_id,
+                                'terminal_objective_id':    this.terminal_objective_id,
+                                'enabling_objective_id':    id,
+                                'subscribable_type':        this.referenceable_type,
+                                'subscribable_id':          this.referenceable_id
+                            })).data.message;
+
+                        });
+                    }
                     location.reload(true);
 
                 } catch(error) {
@@ -174,29 +191,42 @@
             initSelect2(){
                 $("#curricula").select2({
                     dropdownParent: $(".v--modal-overlay"),
-                    allowClear: false
+                    allowClear: false,
                 }).on('select2:select', function (e) {
                     this.terminal_objective_id = [];
                     this.terminalObjectives = {};
                     this.enablingObjectives = {};
                     this.loadObjectives(e.params.data.id);
                 }.bind(this)); //make loadObjectives accessible!
-
+                    
                 $("#terminalObjectives").select2({
                     dropdownParent: $(".v--modal-overlay"),
-                    allowClear: false
+                    allowClear: false,
+                    closeOnSelect: false,
                 }).on('select2:select', function (e) {
                     this.enabling_objective_id = [];
                     this.enablingObjectives = {};
+                    this.terminal_objective_id.push(e.params.data.id);
+                    
                     this.loadEnabling(e.params.data.id);
-                }.bind(this)); //make loadEnabling accessible!
+                }.bind(this)) //make loadEnabling accessible!
+                .on('select2:unselect', function (e) {
+                    this.terminal_objective_id.splice(this.terminal_objective_id.findIndex(id => parseInt(id) == e.params.data.id), 1);
+
+                    if (this.terminal_objective_id.length === 1) this.loadEnabling(this.terminal_objective_id[0]);
+                    else this.enablingObjectives = {};
+                }.bind(this));
 
                 $("#enablingObjectives").select2({
                     dropdownParent: $(".v--modal-overlay"),
-                    allowClear: false
+                    allowClear: false,
+                    closeOnSelect: false,
                 }).on('select2:select', function (e) {
                     this.setEnabling(e.params.data.id);
-                }.bind(this)); //make setEnabling accessible!
+                }.bind(this)) //make setEnabling accessible!
+                .on('select2:unselect', function (e) {
+                    this.enabling_objective_id.splice(this.enabling_objective_id.findIndex(id => id == e.params.data.id), 1);
+                }.bind(this));
 
             },
             close(){

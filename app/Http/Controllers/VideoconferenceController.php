@@ -569,7 +569,8 @@ class VideoconferenceController extends Controller
         $info = $adapter->getMeetingInfo(
             [
                 'meetingID' => $videoconference->meetingID,
-                'moderatorPW' => $videoconference->moderatorPW
+                'moderatorPW' => $videoconference->moderatorPW,
+                'server' => $videoconference->server
             ]
         );
         //dump($info['participantCount']);

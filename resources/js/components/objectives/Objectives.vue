@@ -8,7 +8,7 @@
                 <div class="col-12">
                     <div class="card-tools pull-right">
                         <span v-if="is_owner()">
-                            <a @click="destroy('terminal', subscription)" >
+                            <a @click="destroy(subscription)" >
                                 <i class="fas fa-trash text-danger pointer"></i>
                             </a>
                         </span>
@@ -28,12 +28,13 @@
                     </div>
                 </div>
             </div>
-            <div v-else
-                 class="row"> <!-- enablingObjective -->
+            <!-- enablingObjective -->
+            <!-- <div v-else
+                 class="row">
                 <div class="col-12">
                     <div class="card-tools pull-right">
                         <span v-if="is_owner()">
-                            <a @click="destroy('enabling', subscription)" >
+                            <a @click="destroy(subscription)" >
                                 <i class="fas fa-trash text-danger"></i>
                             </a>
                         </span>
@@ -52,7 +53,7 @@
                         </ObjectiveBox>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
         </div>
         <div v-if="is_owner()"
@@ -146,7 +147,8 @@ const EnablingObjectives =
                         {
                             'owner_id': sub.owner_id,
                             'terminal_objective': sub.enabling_objective.terminal_objective,
-                            'terminal_objective_id': terminalID
+                            'terminal_objective_id': terminalID,
+                            'fake': true,  // needs an attribute to differentiate between an actual terminal-subscription
                         };
     
                         newTerminals[terminalID].terminal_objective.enabling_objectives = [sub.enabling_objective];
@@ -159,7 +161,7 @@ const EnablingObjectives =
                     this.subscriptions.push(newTerminals[key]);
                 });
             },
-            is_owner(){
+            is_owner() {
                 return (this.$userId == this.owner_id) ?? false
             },
             open() {
@@ -168,14 +170,41 @@ const EnablingObjectives =
                     'referenceable_id': this.referenceable_id
                 });
             },
-            destroy(type, subscription){
-                axios.post('/' + type + 'ObjectiveSubscriptions/destroy', subscription)
-                    .then((res) => {
-                        this.loaderEvent();
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });
+            destroy(subscription) {
+                // enabling-subscriptions with the same parent are combined into terminal-subscriptions and marked with a 'fake'-tag
+                if (subscription.fake) {
+                    const length = subscription.terminal_objective.enabling_objectives.length - 1;
+                    // reverse-loop because of explanation below
+                    for (let i = length; i >= 0; i--) {
+                        const objective = subscription.terminal_objective.enabling_objectives[i];
+                        const enablingSubscription = this.enablingSubscriptions.find(obj => obj.enabling_objective_id === objective.id);
+
+                        /**
+                         * for some reason the [0]-index objective references itself,
+                         * which creates a JSON-loop, which throws an error when trying to do an axios-call.
+                         * by removing the reference, the original value also gets removed
+                         * INFO: the 'enablingSubscriptions'-data sent by the server in 'loaderEvent()'
+                         *       doesn't have this reference when checking the response from the network-tab, 
+                         *       but for some magical reason, when outputing 'response.data' it's there in the [0]-index
+                         */
+                        if (i === 0) enablingSubscription.enabling_objective.terminal_objective.enabling_objectives = [];
+                        
+                        axios.post('/enablingObjectiveSubscriptions/destroy', enablingSubscription)
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                    }
+
+                    this.subscriptions.splice(this.subscriptions.findIndex(sub => sub.terminal_objective_id === subscription.terminal_objective_id), 1);
+                } else {
+                    axios.post('/terminalObjectiveSubscriptions/destroy', subscription)
+                        .then((res) => {
+                            this.subscriptions.splice(this.subscriptions.findIndex(sub => sub.terminal_objective_id === subscription.terminal_objective_id), 1);
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                }
             },
 
         },

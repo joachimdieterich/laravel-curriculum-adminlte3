@@ -208,10 +208,10 @@ const ColorPicker =
 
                 if (method === 'patch') {
                     this.form.patch( this.requestUrl + '/' + this.form.id)
-                        .then(response => this.$parent.$emit('addTerminalObjective', response.message));
+                        .then(response => this.$eventHub.$emit('addTerminalObjective', response.message));
                 } else {
                     this.form.post(this.requestUrl)
-                        .then(response =>  this.$parent.$emit('addTerminalObjective', response.message));
+                        .then(response =>  this.$eventHub.$emit('addTerminalObjective', response.message));
                 }
                 this.close();
 

@@ -124,7 +124,7 @@
                     this.errors = error.response.data.errors;
                 }
             },
-            loadEnabling(id){
+            loadEnabling(id) {
                 if (this.terminal_objective_id.length > 1) return;
 
                 this.enablingObjectives = this.terminalObjectives.find(terminal => terminal.id === parseInt(id)).enabling_objectives;
@@ -141,7 +141,7 @@
                     closeOnSelect: false,
                 });
             },
-            setEnabling(id){
+            setEnabling(id) {
                 this.enabling_objective_id.push(id);
                 this.requestUrl = '/enablingObjectiveSubscriptions';
             },
@@ -188,7 +188,7 @@
             opened() {
                 this.initSelect2();
             },
-            initSelect2(){
+            initSelect2() {
                 $("#curricula").select2({
                     dropdownParent: $(".v--modal-overlay"),
                     allowClear: false,
@@ -197,7 +197,8 @@
                     this.terminalObjectives = {};
                     this.enablingObjectives = {};
                     this.loadObjectives(e.params.data.id);
-                }.bind(this)); //make loadObjectives accessible!
+                }.bind(this));
+
                     
                 $("#terminalObjectives").select2({
                     dropdownParent: $(".v--modal-overlay"),
@@ -206,16 +207,27 @@
                 }).on('select2:select', function (e) {
                     this.enabling_objective_id = [];
                     this.enablingObjectives = {};
-                    this.terminal_objective_id.push(e.params.data.id);
-                    
+                    // if only 1 option is selected, close the dropdown
+                    if (this.terminal_objective_id.push(e.params.data.id) === 1) {
+                        $("#terminalObjectives").select2('close');
+                    }
                     this.loadEnabling(e.params.data.id);
-                }.bind(this)) //make loadEnabling accessible!
+                }.bind(this))
                 .on('select2:unselect', function (e) {
                     this.terminal_objective_id.splice(this.terminal_objective_id.findIndex(id => parseInt(id) == e.params.data.id), 1);
-
+                    // after removing an option, if 1 option is left selected, reload its enabling-objectives
                     if (this.terminal_objective_id.length === 1) this.loadEnabling(this.terminal_objective_id[0]);
                     else this.enablingObjectives = {};
-                }.bind(this));
+                    // prevent select2 toggling the dropdown after removing an option
+                    $("#terminalObjectives").data('unselecting', true);
+                }.bind(this))
+                .on('select2:opening', function (e) {
+                    if ($(this).data('unselecting')) {
+                        $(this).removeData('unselecting');
+                        e.preventDefault();
+                    }
+                });
+
 
                 $("#enablingObjectives").select2({
                     dropdownParent: $(".v--modal-overlay"),
@@ -223,16 +235,15 @@
                     closeOnSelect: false,
                 }).on('select2:select', function (e) {
                     this.setEnabling(e.params.data.id);
-                }.bind(this)) //make setEnabling accessible!
+                }.bind(this))
                 .on('select2:unselect', function (e) {
                     this.enabling_objective_id.splice(this.enabling_objective_id.findIndex(id => id == e.params.data.id), 1);
                 }.bind(this));
-
             },
-            close(){
+            close() {
                 this.$modal.hide('subscribe-objective-modal');
             },
-            removeHtmlTags(array, field){
+            removeHtmlTags(array, field) {
                 for (let i = 0; i < array.length; i++) {
                     array[i].title = array[i].title.replace(/(<([^>]+)>)/ig, "");
                 }

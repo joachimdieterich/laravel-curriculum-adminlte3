@@ -91,7 +91,7 @@ class MoodleApiController extends Controller
         Auth::loginUsingId($user->first()->id);
         $curriculum->isAccessible();
 
-        return $curriculum->enablingObjectives->map->only('id', 'title');
+        return $curriculum->enablingObjectives->map->only('id', 'title', 'terminal_objective_id');
     }
 
     public function getLogbooks(Request $request)

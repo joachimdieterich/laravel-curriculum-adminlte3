@@ -15,8 +15,8 @@
         @can('plan_edit')
             @if($plan->owner_id == auth()->user()->id)
             <div class="card-tools pr-2 no-print">
-                <a onclick="window.print();" class="link-muted pr-4">
-                    <i class="fa fa-print text-muted"></i>
+                <a onclick="window.print();" class="link-muted pr-4 pointer">
+                    <i class="fa fa-print"></i>
                 </a>
                  <a href="{{route('plans.edit', $plan->id) }}" class="link-muted">
                     <i class="fa fa-pencil-alt"></i>

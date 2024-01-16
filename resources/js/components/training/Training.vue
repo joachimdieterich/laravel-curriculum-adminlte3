@@ -44,7 +44,8 @@ export default {
         }
     },
     mounted() {
-        this.postDate();
+        // TODO: improve this
+        if (this.training.begin != null && this.training.end != null) this.postDate();
     },
     methods: {
         postDate() {

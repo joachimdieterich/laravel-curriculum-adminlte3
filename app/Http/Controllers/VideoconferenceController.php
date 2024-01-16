@@ -351,7 +351,6 @@ class VideoconferenceController extends Controller
                 ])
             )
             {
-
                 //meeting not running, start
                  $adapter->start([
                     'meetingID'                             => $videoconference->meetingID,
@@ -398,7 +397,6 @@ class VideoconferenceController extends Controller
                 ]);
             }
             //join as guest
-
             return $adapter->join([
                 'meetingID' => $videoconference->meetingID,
                 'userName'  => $userName,
@@ -574,7 +572,10 @@ class VideoconferenceController extends Controller
             ]
         );
         //dump($info['participantCount']);
-        LogController::set(get_class($this).'@'.__FUNCTION__.'->participantCount', $videoconference->meetingID, $info['participantCount']);
+        if (isset($info['participantCount']))
+        {
+            LogController::set(get_class($this).'@'.__FUNCTION__.'->participantCount', $videoconference->meetingID, $info['participantCount']);
+        }
 
     }
 

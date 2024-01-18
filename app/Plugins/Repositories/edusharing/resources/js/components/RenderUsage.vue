@@ -1,9 +1,7 @@
 <template>
     <div>
-        <img :src="this.detailsSnippet"
-             style="width: 100%"
-             :alt="this.title"
-             @click="show()">
+        <div v-html="this.detailsSnippet"
+             @click="show()"></div>
         <div class="edusharing_caption">
             <span v-if="this.title">
                 {{ this.title }}

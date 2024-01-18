@@ -1,6 +1,6 @@
 <template>
     <div>
-        <img :src="this.preview.url"
+        <img :src="this.detailsSnippet"
              style="width: 100%"
              :alt="this.title"
              @click="show()">

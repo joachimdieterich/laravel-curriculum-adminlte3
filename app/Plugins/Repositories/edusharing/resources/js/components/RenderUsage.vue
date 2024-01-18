@@ -2,14 +2,14 @@
     <div>
         <div v-html="this.detailsSnippet"
              @click="show()"></div>
-        <div class="edusharing_caption">
+<!--        <div class="edusharing_caption">
             <span v-if="this.title">
                 {{ this.title }}
             </span>
             <span v-else>
                 {{ this.name }}
             </span>
-        </div>
+        </div>-->
 
 <!--        <div v-html="this.detailsSnippet"
         @click="show()"></div>-->

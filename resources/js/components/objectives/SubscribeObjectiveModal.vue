@@ -150,7 +150,7 @@
                     if (this.requestUrl == '/terminalObjectiveSubscriptions') {
                         this.terminal_objective_id.forEach(async id => {
 
-                            this.location = (await axios.post(this.requestUrl, {
+                            (await axios.post(this.requestUrl, {
                                 'curriculum_id':            this.curriculum_id,
                                 'terminal_objective_id':    id,
                                 'enabling_objective_id':    this.enabling_objective_id,
@@ -162,7 +162,7 @@
                     } else {
                         this.enabling_objective_id.forEach(async id => {
 
-                            this.location = (await axios.post(this.requestUrl, {
+                            (await axios.post(this.requestUrl, {
                                 'curriculum_id':            this.curriculum_id,
                                 'terminal_objective_id':    this.terminal_objective_id,
                                 'enabling_objective_id':    id,
@@ -172,8 +172,9 @@
 
                         });
                     }
-                    location.reload(true);
 
+                    this.$eventHub.$emit('subscriptions_added', this.referenceable_id);
+                    this.close();
                 } catch(error) {
                     //
                 }
@@ -187,6 +188,12 @@
             beforeClose() {},
             opened() {
                 this.initSelect2();
+            },
+            close() {
+                this.$modal.hide('subscribe-objective-modal');
+                // if the user re-opens the modal, only save which 'curriculum' was picked
+                this.enabling_objective_id = [];
+                this.terminal_objective_id = [];
             },
             initSelect2() {
                 $("#curricula").select2({
@@ -239,9 +246,6 @@
                 .on('select2:unselect', function (e) {
                     this.enabling_objective_id.splice(this.enabling_objective_id.findIndex(id => id == e.params.data.id), 1);
                 }.bind(this));
-            },
-            close() {
-                this.$modal.hide('subscribe-objective-modal');
             },
             removeHtmlTags(array, field) {
                 for (let i = 0; i < array.length; i++) {

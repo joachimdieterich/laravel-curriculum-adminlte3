@@ -40,12 +40,12 @@ $(document).ready( function () {
     var table = $('#plans-datatable').DataTable({
         ajax: "{{ url('plans/list') }}",
         columns: [
-                 { data: 'check'},
-                 { data: 'title' },
-            {data: 'action'}
+            { data: 'check' },
+            { data: 'title' },
+            { data: 'action' }
         ],
         columnDefs: [
-            {"visible": false, "targets": 0},
+            { "visible": false, "targets": 0 },
             {
                 orderable: false,
                 searchable: false,
@@ -62,7 +62,9 @@ $(document).ready( function () {
         },
         buttons: dtButtons
     });
-    table.on('click', 'tr', function () {
+    table.on('click', 'tr', function (e) {
+        // trying to delete an entry will run this function first
+        if (e.target.tagName == "BUTTON" || e.target.tagName == "I") return;
         window.location.href = "/plans/" + table.row(this).id()
     });
 

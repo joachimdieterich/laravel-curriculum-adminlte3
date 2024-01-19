@@ -111,13 +111,13 @@ export default {
         this.loaderEvent();
         this.entries = this.plan.entries;
         this.$eventHub.$on('plan_entry_added', (e) => {
-            this.handleEntryAdded();
+            this.handleEntryAdded(e);
         });
         this.$eventHub.$on('plan_entry_updated', (e) => {
             this.loaderEvent();
         });
         this.$eventHub.$on('plan_entry_deleted', (e) => {
-            this.handleEntryDeleted();
+            this.handleEntryDeleted(e);
         });
         this.$eventHub.$on('objective_added', (objective, entryId) => {
             this.handleObjectiveAdded(objective, entryId);

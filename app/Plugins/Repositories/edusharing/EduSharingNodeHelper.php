@@ -1,9 +1,6 @@
 <?php
 namespace App\Plugins\Repositories\edusharing;
 
-use EduSharingApiClient\NodeDeletedException;
-use EduSharingApiClient\Usage;
-use EduSharingApiClient\UsageDeletedException;
 use Exception;
 
 class EduSharingNodeHelper extends EduSharingHelperAbstract  {
@@ -236,7 +233,7 @@ class EduSharingNodeHelper extends EduSharingHelperAbstract  {
      * @throws Exception
      */
     public function getRedirectUrl(string $mode, $usage): string {
-        $headers = $this->getSignatureHeaders($usage->usageId);
+        $headers = $this->getUsageSignatureHeaders($usage);
         $node    = $this->getNodeByUsage($usage);
         $params  = '';
         foreach ($headers as $header) {
@@ -255,6 +252,20 @@ class EduSharingNodeHelper extends EduSharingHelperAbstract  {
             throw new Exception('Unknown parameter for mode: ' . $mode);
         }
         return $url . (str_contains($url, '?') ? '' : '?') . $params;
+    }
+
+    /**
+     * Function getUsageSignatureHeaders
+     *
+     * @param $usage
+     * @return array
+     */
+    private function getUsageSignatureHeaders($usage): array {
+        $headers   = $this->getSignatureHeaders($usage->usageId);
+        $headers[] = 'X-Edu-Usage-Node-Id: ' . $usage->nodeId;
+        $headers[] = 'X-Edu-Usage-Course-Id: ' . $usage->containerId;
+        $headers[] = 'X-Edu-Usage-Resource-Id: ' . $usage->resourceId;
+        return $headers;
     }
 
 }

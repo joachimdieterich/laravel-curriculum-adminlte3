@@ -66,7 +66,13 @@
                     });
             },
             show() {
-                window.open(this.medium.path, '_blank');
+                axios.get('/media/' + this.medium.id + '?content=true')
+                    .then((response) => {
+                        window.location.assign(response.data.url);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
             },
         },
         mounted(){

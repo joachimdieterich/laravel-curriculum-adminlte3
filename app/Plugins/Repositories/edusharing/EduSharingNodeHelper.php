@@ -1,6 +1,9 @@
 <?php
 namespace App\Plugins\Repositories\edusharing;
 
+use EduSharingApiClient\NodeDeletedException;
+use EduSharingApiClient\Usage;
+use EduSharingApiClient\UsageDeletedException;
 use Exception;
 
 class EduSharingNodeHelper extends EduSharingHelperAbstract  {
@@ -118,7 +121,7 @@ class EduSharingNodeHelper extends EduSharingHelperAbstract  {
 
     /**
      * Loads the edu-sharing node refered by a given usage
-     * @param Usage $usage
+     * @param $usage
      * The usage, as previously returned by @createUsage
      * @param string $displayMode
      * The displayMode
@@ -131,7 +134,7 @@ class EduSharingNodeHelper extends EduSharingHelperAbstract  {
      * @throws Exception
      */
     public function getNodeByUsage(
-        Usage $usage,
+        $usage,
         $displayMode = DisplayMode::Inline,
         array $renderingParams = null
     )
@@ -220,4 +223,38 @@ class EduSharingNodeHelper extends EduSharingHelperAbstract  {
         }
 
     }
+
+    /**
+     * Function getRedirectUrl
+     *
+     * @param string $mode
+     * @param $usage
+     * @return string
+     * @throws JsonException
+     * @throws NodeDeletedException
+     * @throws UsageDeletedException
+     * @throws Exception
+     */
+    public function getRedirectUrl(string $mode, $usage): string {
+        $headers = $this->getSignatureHeaders($usage->usageId);
+        $node    = $this->getNodeByUsage($usage);
+        $params  = '';
+        foreach ($headers as $header) {
+            if (!str_starts_with($header, 'X-')) {
+                continue;
+            }
+            $header = explode(': ', $header);
+            $params .= '&' . $header[0] . '=' . urlencode($header[1]);
+        }
+        if ($mode === 'content') {
+            $url    = $node['node']['content']['url'] ?? '';
+            $params .= '&closeOnBack=true';
+        } else if ($mode === 'download') {
+            $url = $node['node']['downloadUrl'] ?? '';
+        } else {
+            throw new Exception('Unknown parameter for mode: ' . $mode);
+        }
+        return $url . (str_contains($url, '?') ? '' : '?') . $params;
+    }
+
 }

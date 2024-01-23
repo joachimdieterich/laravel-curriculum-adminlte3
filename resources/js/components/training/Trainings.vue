@@ -11,11 +11,18 @@
                     <a :href="'/trainings/'+training.id">{{training.title}}</a>
 
                     <!-- General tools such as edit or delete-->
-                    <div
-                         class="tools pull-right ">
-                        <small class="badge badge-secondary mr-2 ">
-                            {{ diffForHumans(training.begin) }} - {{ diffForHumans(training.end) }}
-                        </small>
+                    <div class="tools pull-right">
+                        <span>
+                            <small v-if="training.begin !== null && training.end !== null" class="badge badge-secondary mr-2">
+                                {{ diffForHumans(training.begin) }} - {{ diffForHumans(training.end) }}
+                            </small>
+                            <small v-else-if="training.begin !== null" class="badge badge-secondary mr-2">
+                                {{ trans('global.begin') + ' ' + diffForHumans(training.begin) }}
+                            </small>
+                            <small v-else-if="training.end !== null" class="badge badge-secondary mr-2">
+                                {{ trans('global.end') + ' ' + diffForHumans(training.end) }}
+                            </small>
+                        </span>
                         <span v-if="$userId == plan.owner_id" class="icons">
                             <a @click="lower(training)" >
                                 <i class="px-1 fa fa-caret-up text-muted"></i>

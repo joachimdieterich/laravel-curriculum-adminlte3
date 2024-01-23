@@ -16,19 +16,18 @@
                         <small class="badge badge-secondary mr-2 ">
                             {{ diffForHumans(training.begin) }} - {{ diffForHumans(training.end) }}
                         </small>
-                        <span v-if="$userId == plan.owner_id">
+                        <span v-if="$userId == plan.owner_id" class="icons">
                             <a @click="lower(training)" >
-                                <i class="pr-2 fa fa-caret-up text-muted"></i>
+                                <i class="px-1 fa fa-caret-up text-muted"></i>
                             </a>
                             <a @click="higher(training)" >
-                                <i class="pr-2 fa fa-caret-down text-muted"></i>
+                                <i class="px-1 fa fa-caret-down text-muted"></i>
                             </a>
                             <a @click="edit(training)" >
-                                <i class="pr-2 fa fa-pencil-alt text-muted"></i>
+                                <i class="px-1 fa fa-pencil-alt text-muted"></i>
                             </a>
-
                             <a @click="destroy(training)" >
-                                <i class="fas fa-trash text-danger"></i>
+                                <i class="px-1 fas fa-trash text-danger"></i>
                             </a>
                         </span>
 
@@ -188,7 +187,7 @@ export default {
         },
         higher(training){
             this.form.id = training.id;
-            this.form.order_id = this.form.order_id + 1 ;
+            this.form.order_id = this.form.order_id + 1;
             this.method = 'patch';
             this.submit(training);
         },
@@ -220,9 +219,13 @@ export default {
             this.editor = false;
         },
         diffForHumans: function (date) {
-            return  moment(date).locale('de').fromNow();
+            return moment(date).locale('de').fromNow();
         },
     },
 
 }
 </script>
+<style scoped>
+.icons:hover { cursor: default; }
+.icons i:hover { cursor: pointer; }
+</style>

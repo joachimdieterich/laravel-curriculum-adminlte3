@@ -12,7 +12,8 @@
                 @end="handleEntryOrder"
             >
                 <PlanEntry
-                    v-for="entry in entries"
+                    v-for="(entry, index) in entries"
+                    :key="entries[index].id"
                     :entry="entry"
                     :plan="plan"
                 ></PlanEntry>

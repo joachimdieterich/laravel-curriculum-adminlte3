@@ -8,6 +8,7 @@ use App\Medium;
 use App\MediumSubscription;
 use Illuminate\Http\Request;
 
+
 class EdusharingMediaAdapter implements MediaInterface
 {
     /**
@@ -136,22 +137,37 @@ class EdusharingMediaAdapter implements MediaInterface
                     if ($subscription->additional_data != null)
                     {
                         $edusharing = new Edusharing;
-                        $node = $edusharing->getNodeByUsage($subscription->additional_data, $subscription->owner_id);
 
                         if (request()->wantsJson())
                         {
-                            return [
-                                'detailsSnippet' => $node['detailsSnippet'],
-                                'downloadUrl' => $node['node']['downloadUrl'],
-                                'preview' => $node['node']['preview'],
-                                'title' => $node['node']['title'],
-                                'name' => $node['node']['name'],
-                            ];
+                            if (request('download'))
+                            {
+                                $url = $edusharing->getRedirectUrl($subscription->additional_data, 'download', $subscription->owner_id);
+                                return [
+                                    'url' => $url,
+                                ];
+                            }
+                            else if (request('content'))
+                            {
+                                $url = $edusharing->getRedirectUrl($subscription->additional_data, 'content', $subscription->owner_id);
+                                return [
+                                    'url' => $url,
+                                ];
+                            }
+                            else
+                            {
+                                $node = $edusharing->getNodeByUsage($subscription->additional_data, $subscription->owner_id);
+                                return [
+                                    'detailsSnippet' => $node['detailsSnippet'],
+                                    'downloadUrl' => $node['node']['downloadUrl'],
+                                    'preview' => $node['node']['preview'],
+                                    'title' => $node['node']['title'],
+                                    'name' => $node['node']['name'],
+                                ];
+                            }
                         }
                         //return request('download') ? redirect($node['node']['downloadUrl']['url']) : redirect($node['node']['preview']['url']);
                     }
-
-                    //return request('download') ? redirect($medium->path) : redirect($medium->thumb_path);
                 }
             }
         }

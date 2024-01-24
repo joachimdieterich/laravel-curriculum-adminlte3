@@ -66,7 +66,13 @@
                     });
             },
             show() {
-                window.open(this.medium.path, '_blank');
+                axios.get('/media/' + this.medium.id + '?content=true')
+                    .then((response) => {
+                        window.location.assign(response.data.url);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
             },
         },
         mounted(){
@@ -74,7 +80,13 @@
 
             this.$eventHub.$on('download', (medium) => {
                 if (this.medium.id == medium.id) {
-                    window.location.assign(this.downloadUrl);
+                    axios.get('/media/' + this.medium.id + '?download=true')
+                        .then((response) => {
+                            window.location.assign(response.data.url);
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
                 }
             });
         },

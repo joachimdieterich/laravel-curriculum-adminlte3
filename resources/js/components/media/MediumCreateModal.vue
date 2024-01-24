@@ -147,7 +147,7 @@
                                             v-model="selectedFiles"
                                             :value="file.id"
                                             type="checkbox"
-                                            id="medium"
+                                            :id="'medium_'+file.id"
                                         ></td>
                                         <!--   <th>{{ file.size }}</th>
                                            <th>{{ file.created_at }}</th>

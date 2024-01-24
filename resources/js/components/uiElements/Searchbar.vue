@@ -2,6 +2,7 @@
     <div id="searchbar" class="d-none input-group mx-3">
         <input
             class="form-control border-0 h-100 rounded"
+            id="searchbar_input"
             style="padding-right: 4rem;"
             type="search"
             :placeholder="trans('global.search')"

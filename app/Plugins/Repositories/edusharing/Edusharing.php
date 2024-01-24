@@ -104,6 +104,22 @@ class Edusharing extends RepositoryPlugin
         );
     }
 
+    public function getRedirectUrl($usage, $mode, $owner_id)
+    {
+        $nodeHelper = new EduSharingNodeHelper($this->helperBase($owner_id));
+
+        return $nodeHelper->getRedirectUrl(
+            $mode,
+            new Usage(
+                $usage['nodeId'],
+                $usage['nodeVersion'],
+                $usage['containerId'],
+                $usage['resourceId'],
+                $usage['usageId'],
+            )
+        );
+    }
+
     public function getRendering($repository, $node)
     {
         $apiHelper = new EduSharingApiHelper($this->helperBase());

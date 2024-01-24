@@ -270,8 +270,8 @@ class VideoconferenceController extends Controller
     public function start(Videoconference $videoconference)
     {
         $input = $this->validateRequest();
-        $moderatorPW =  $input['moderatorPW'];
-        $attendeePW = $input['attendeePW'];
+        $moderatorPW =  $input['moderatorPW'] ?? '';
+        $attendeePW = $input['attendeePW'] ?? $videoconference->attendeePW;
         abort_unless((
                 $videoconference->attendeePW == $attendeePW
                 OR

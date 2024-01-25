@@ -49,7 +49,6 @@
                 v-if="subscriptions.length !== 0"
                 type="button" class="btn btn-tool "
                 :href="'#contentCarousel_'+uid" role="button"
-                data-slide="prev"
                 :aria-label="trans('pagination.previous')"
                 @click="prev()">
                 <i class="fa fa-arrow-left"></i>
@@ -58,7 +57,6 @@
                 v-if="subscriptions.length !== 0"
                 type="button" class="btn btn-tool "
                 :href="'#contentCarousel_'+uid" role="button"
-                data-slide="next"
                 :aria-label="trans('pagination.next')"
                 @click="next()">
                 <i class="fa fa-arrow-right"></i>
@@ -72,7 +70,8 @@
                 <li :data-target="'#contentCarousel_'+uid"
                     data-slide-to="0"
                     class="active"
-                    @click="setSlide(0)"></li>
+                    @click="setSlide(0)">
+                </li>
                 <li v-for="(item,index) in subscriptions"
                     data-placement="top"
                     :title="item.content.title"
@@ -139,7 +138,8 @@
                 <div v-for="item in subscriptions"
                      class="carousel-item" :title="item.content.title">
                     <div class="p-3"
-                         v-html="item.content.content"></div>
+                         v-html="item.content.content"
+                    ></div>
                 </div>
             </div>
         </div>
@@ -171,24 +171,26 @@
             }
         },
         methods: {
-            setSlide(id){
+            setSlide(id) {
                 this.currentSlide = id;
             },
-            prev(){
+            prev() {
                 if (this.currentSlide === 0){
                     this.currentSlide = this.subscriptions.length;
                 } else {
                     this.currentSlide--;
                 }
+                $('#contentCarousel_' + this.uid).carousel(this.currentSlide);
             },
-            next(){
+            next() {
                 if (this.currentSlide === this.subscriptions.length){
                     this.currentSlide = 0;
                 } else {
                     this.currentSlide++;
                 }
+                $('#contentCarousel_' + this.uid).carousel(this.currentSlide);
             },
-            show(modal){
+            show(modal) {
                 this.$modal.show(modal, {
                     'referenceable_type': this.subscribable_type,
                     'referenceable_id': this.subscribable_id,
@@ -221,7 +223,7 @@
                     this.errors = error.response.data.errors;
                 }
             },
-            edit(contentSubscription){
+            edit(contentSubscription) {
                 this.$modal.show('content-create-modal', {
                     'id': contentSubscription.content_id,
                     'method': 'patch',
@@ -229,7 +231,7 @@
                     'referenceable_id': contentSubscription.subscribable_id
                 });
             },
-            async deleteSubscription(contentSubscription){
+            async deleteSubscription(contentSubscription) {
                 try {
                     await axios.post('/contents/'+contentSubscription.content_id+'/destroy',  { 'referenceable_type': contentSubscription.subscribable_type, 'referenceable_id': contentSubscription.subscribable_id } );
                     // remove on page
@@ -240,7 +242,7 @@
                     this.errors = error.response.data.errors;
                 }
             },
-            loaderEvent(){
+            loaderEvent() {
                 axios.get('/contentSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id)
                     .then(response => {
                         this.subscriptions = response.data.message;

@@ -101,7 +101,7 @@
             serverSide: true,
             language: {
                 url: languages.{{ app() -> getLocale() }},
-                searchPlaceholder: '{{ trans('global.search') }}',
+                searchPlaceholder: "{{ trans('global.search') }}",
                 paginate: {
                             "first":      '<i class="fa fa-angle-double-left"></id>',
                             "last":       '<i class="fa fa-angle-double-right"></id>',
@@ -162,11 +162,11 @@
                }
 
                function destroyDataTableEntry(route, id){
-                    if (confirm('{{ trans('global.areYouSure') }}')) {
+                    if (confirm("{{ trans('global.areYouSure') }}")) {
                         $.ajax({
-                            headers: {'x-csrf-token': _token},
+                            headers: { 'x-csrf-token': _token },
                             method: 'POST',
-                            url: route+'/'+id,
+                            url: '/'+route+'/'+id,
                             data: { _method: 'DELETE' }
                         })
                         .done(function () {

@@ -90,7 +90,7 @@ table.dataTable {
     margin-top: 0 !important;
 }
 
-.dataTable thead:first-child tr,
+.dataTable thead:first-child tr
 {
     border: 1 !important;
 }
@@ -99,7 +99,7 @@ table.dataTable tr {
     cursor: pointer;
 }
 
-.dataTable body:first-child tr,
+.dataTable body:first-child tr
 {
     border: 0 !important;
 }

@@ -2,16 +2,19 @@
     <modal
         id="subscribe-objective-modal"
         name="subscribe-objective-modal"
-        height="auto"
+        height="420px"
         :adaptive=true
         draggable=".draggable"
         :resizable=true
         @before-open="beforeOpen"
         @opened="opened"
         @before-close="beforeClose"
-        style="z-index: 1100">
-        <div class="card"
-             style="margin-bottom: 0px !important">
+        style="z-index: 1100"
+    >
+        <div
+            class="card"
+            style="margin-bottom: 0px !important; height: 100%;"
+        >
             <div class="card-header">
                  <h3 class="card-title">
                     {{ trans('global.referenceable_types.objective') }}

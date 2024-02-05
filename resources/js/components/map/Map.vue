@@ -373,6 +373,11 @@ export default {
 
 </script>
 <style scoped>
+@import "~leaflet/dist/leaflet.css";
+@import "~sidebar-v2/css/leaflet-sidebar.css";
+@import "~leaflet.markercluster/dist/MarkerCluster.css";
+@import "~leaflet.markercluster/dist/MarkerCluster.Default.css";
+@import "~leaflet-extra-markers/dist/css/leaflet.extra-markers.min.css";
 #map, #outermap {
     height: 100%;
 }

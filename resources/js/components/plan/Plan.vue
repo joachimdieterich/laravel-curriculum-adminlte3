@@ -5,7 +5,7 @@
         <div class="col-12 pt-2">
             <!-- Bewegungsfeld -->
             <draggable
-                v-can="'plan_edit'"
+                :disabled="this.disabled"
                 v-bind="columnDragOptions"
                 v-model="entries"
                 @start="drag=true"
@@ -54,6 +54,7 @@ export default {
             entry_order: [],
             subscriptions: {},
             search: '',
+            disabled: false,
             errors: {},
         }
     },
@@ -102,7 +103,8 @@ export default {
         },
     },
     mounted() {
-        localStorage.removeItem('user-datatable-selection'); //reset selection to prevent wrong inputs
+        localStorage.removeItem('user-datatable-selection'); // reset selection to prevent wrong inputs
+        this.disabled = this.$userId != this.plan.owner_id;
         this.loaderEvent();
         this.entries = this.plan.entries;
         this.$eventHub.$on('plan_entry_added', (e) => {

@@ -23,7 +23,7 @@
     "model" => "plan",
     "show_label" => true,
     "label" => trans('global.App\\Group'),
-    "field" => "group",
+    "field" => "group_id",
     "options" => $groups,
     "option_id" => "id",
     "option_label"=> "title",

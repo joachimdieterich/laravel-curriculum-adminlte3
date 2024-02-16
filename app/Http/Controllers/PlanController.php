@@ -122,6 +122,7 @@ class PlanController extends Controller
             'end'               => $input['end'],
             'duration'          => $input['duration'],
             'type_id'           => format_select_input($input['type_id']),
+            'group_id'          => format_select_input($input['group_id']),
             'owner_id'          => auth()->user()->id,
         ]);
 
@@ -191,7 +192,10 @@ class PlanController extends Controller
         abort_unless((\Gate::allows('plan_edit') and $plan->isAccessible()), 403);
         $clean_data = $this->validateRequest();
         if (isset($clean_data['type_id'])) {
-            $clean_data['type_id'] = format_select_input($clean_data['type_id']);  //hack to prevent array to string conversion
+            $clean_data['type_id'] = format_select_input($clean_data['type_id']); //hack to prevent array to string conversion
+        }
+        if (isset($clean_data['group_id'])) {
+            $clean_data['group_id'] = format_select_input($clean_data['group_id']);
         }
 
         $plan->update($clean_data);
@@ -238,6 +242,7 @@ class PlanController extends Controller
             'end'           => 'sometimes',
             'duration'      => 'sometimes',
             'type_id'       => 'sometimes',
+            'group_id'      => 'sometimes',
             'entry_order'   => 'sometimes',
         ]);
     }

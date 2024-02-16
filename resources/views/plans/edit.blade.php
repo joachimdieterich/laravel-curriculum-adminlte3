@@ -18,6 +18,7 @@
             @include('plans.form', [
                 'plan' => $plan,
                 'types' => $types,
+                'groups' => $groups,
                 'buttonText' => trans('global.plan.edit')
             ])
         </form>

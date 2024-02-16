@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Group;
 use App\Organization;
 use App\Plan;
 use App\PlanType;
@@ -89,7 +90,7 @@ class PlanController extends Controller
         abort_unless(\Gate::allows('plan_create'), 403);
 
         $plan = new Plan();
-        //$types = PlanType::all();
+        $groups = Group::all();
         $types = PlanType::whereIn('id',
                 explode(
                     ',',
@@ -99,6 +100,7 @@ class PlanController extends Controller
 
         return view('plans.create')
                 ->with(compact('types'))
+                ->with(compact('groups'))
                 ->with(compact('plan'));
     }
 
@@ -163,6 +165,7 @@ class PlanController extends Controller
     public function edit(Plan $plan)
     {
         abort_unless((\Gate::allows('plan_edit') and $plan->isAccessible()), 403);
+        $groups = Group::all();
         $types = PlanType::whereIn('id',
             explode(
                 ',',
@@ -172,6 +175,7 @@ class PlanController extends Controller
 
         return view('plans.edit')
                 ->with(compact('plan'))
+                ->with(compact('groups'))
                 ->with(compact('types'));
     }
 

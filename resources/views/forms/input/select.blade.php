@@ -4,8 +4,10 @@
     @if(isset($show_label))
         <label for="{{ $field }}" class="{{ isset($class_left) ? $class_left : 'p-0 col-sm-12' }}">
 
-            {{ isset($label) ? $label :trans("global.{$model}.title_singular") }}
-
+            {{ isset($label) ? $label : trans("global.{$model}.title_singular") }}
+            @if(isset($required))
+                *
+            @endif
             @if(isset($multiple))
                 <span class="btn btn-info btn-xs deselect-all pull-right">{{trans("global.deselect_all")}}</span>
                 <span class="btn btn-info btn-xs select-all pull-right mr-1">{{trans("global.select_all")}}</span>

@@ -53,6 +53,10 @@
                 </PlanEntry>
             </div>
         </div>
+
+        <div id="corner-button" class="position-sticky d-flex justify-content-center align-items-center float-right mb-3" role="button">
+            <i class="fa fa-users"></i>
+        </div>
     </div>
 </template>
 
@@ -154,3 +158,13 @@ export default {
     },
 }
 </script>
+<style scoped>
+#corner-button {
+    color: white;
+    background-color: #333;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    bottom: 25px;
+}
+</style>

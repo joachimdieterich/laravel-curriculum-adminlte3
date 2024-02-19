@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('content')
-<div class="card pb-3">
+{{-- <div class="card pb-3">
     <div class="card-header">
         <div class="card-title">
             {{ $plan->type->title }}</br>
@@ -10,7 +10,8 @@
                 {{ $plan->begin }}
                 <i class="fa fa-calendar-check pl-2 pr-1 text-muted "></i>
                 {{ $plan->end }}
-            </small>-->
+            </small>
+-->
         </div>
         @can('plan_edit')
             @if($plan->owner_id == auth()->user()->id)
@@ -55,11 +56,13 @@
                         {{ $plan->duration }} {{trans('global.minutes')}}
                     </span>
                 </span>
-            </span>-->
+            </span>
+-->
         </div>
     </div>
 
 </div>
+--}}
 <plan :plan="{{ $plan }}" :group="{{ $group }}"></plan>
 @can('medium_create')
     <medium-create-modal></medium-create-modal>

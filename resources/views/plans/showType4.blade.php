@@ -60,7 +60,7 @@
     </div>
 
 </div>
-<plan :plan="{{$plan}}"></plan>
+<plan :plan="{{ $plan }}" :group="{{ $group }}"></plan>
 @can('medium_create')
     <medium-create-modal></medium-create-modal>
 @endcan

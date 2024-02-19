@@ -47,6 +47,7 @@ const PlanEntry =
 export default {
     props: {
         plan: [],
+        group: [],
     },
     data() {
         return {

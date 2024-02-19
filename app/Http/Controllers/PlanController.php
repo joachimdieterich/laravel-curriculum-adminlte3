@@ -146,6 +146,10 @@ class PlanController extends Controller
     public function show(Plan $plan)
     {
         abort_unless((\Gate::allows('plan_show') and $plan->isAccessible()), 403);
+        $group = null;
+        if ($plan->owner_id == auth()->user()->id) {
+            $group = Group::find($plan->group_id)->users;
+        }
 
         if (request()->wantsJson()) {
             return [
@@ -154,7 +158,8 @@ class PlanController extends Controller
         }
 
         return view('plans.show')
-            ->with(compact('plan'));
+            ->with(compact('plan'))
+            ->with(compact('group'));
     }
 
     /**

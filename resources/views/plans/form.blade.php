@@ -19,17 +19,6 @@
     "value" => old('title', isset($plan) ? $plan->title : '')
 ])
 
-@include('forms.input.select', [
-    "model" => "plan",
-    "show_label" => true,
-    "label" => trans('global.App\\Group'),
-    "field" => "group_id",
-    "options" => $groups,
-    "option_id" => "id",
-    "option_label"=> "title",
-    "value" => old('group', isset($plan) ? $plan->group : '')
-])
-
 @include ('forms.input.textarea', [
     "model" => "plan",
     "field" => "description",

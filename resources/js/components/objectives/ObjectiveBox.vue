@@ -42,7 +42,7 @@
                 :textcolor="textcolor"
                 @eventDelete="deleteEvent"
                 @eventSort="sortEvent"
-                ></Header>
+        ></Header>
 
         <div class="panel-body boxwrap pointer"
              @click.prevent="showDetails()">
@@ -58,7 +58,8 @@
         <Footer :objective="objective"
                 :textcolor="textcolor"
                 :type="type"
-                :settings="settings"></Footer>
+                :settings="settings">
+        </Footer>
     </div>
 </template>
 

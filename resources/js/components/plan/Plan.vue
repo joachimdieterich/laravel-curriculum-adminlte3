@@ -53,10 +53,15 @@
                 </PlanEntry>
             </div>
         </div>
-
-        <div id="corner-button" class="position-sticky d-flex justify-content-center align-items-center float-right mb-3" role="button">
+        <!-- overlay button in bottom right corner -->
+        <!-- <div
+            id="corner-button"
+            class="position-sticky d-flex justify-content-center align-items-center float-right mb-3"
+            role="button"
+            @click="open()"
+        >
             <i class="fa fa-users"></i>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -71,7 +76,6 @@ const PlanEntry =
 export default {
     props: {
         plan: [],
-        group: [],
     },
     data() {
         return {
@@ -158,7 +162,7 @@ export default {
     },
 }
 </script>
-<style scoped>
+<!-- <style scoped>
 #corner-button {
     color: white;
     background-color: #333;
@@ -167,4 +171,4 @@ export default {
     height: 50px;
     bottom: 25px;
 }
-</style>
+</style> -->

@@ -53,11 +53,6 @@ class Plan extends Model
         return $this->hasOne('App\PlanType', 'id', 'type_id');
     }
 
-    public function group()
-    {
-        return $this->hasOne('App\Group', 'id', 'group_id');
-    }
-
     public function subscriptions()
     {
         return $this->hasMany(PlanSubscription::class);

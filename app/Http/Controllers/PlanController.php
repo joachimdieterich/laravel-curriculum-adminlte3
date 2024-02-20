@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Group;
 use App\Organization;
 use App\Plan;
 use App\PlanType;
@@ -90,7 +89,6 @@ class PlanController extends Controller
         abort_unless(\Gate::allows('plan_create'), 403);
 
         $plan = new Plan();
-        $groups = Group::all();
         $types = PlanType::whereIn('id',
                 explode(
                     ',',
@@ -100,7 +98,6 @@ class PlanController extends Controller
 
         return view('plans.create')
                 ->with(compact('types'))
-                ->with(compact('groups'))
                 ->with(compact('plan'));
     }
 
@@ -122,7 +119,6 @@ class PlanController extends Controller
             'end'               => $input['end'],
             'duration'          => $input['duration'],
             'type_id'           => format_select_input($input['type_id']),
-            'group_id'          => format_select_input($input['group_id']),
             'owner_id'          => auth()->user()->id,
         ]);
 
@@ -146,10 +142,6 @@ class PlanController extends Controller
     public function show(Plan $plan)
     {
         abort_unless((\Gate::allows('plan_show') and $plan->isAccessible()), 403);
-        $group = null;
-        if ($plan->owner_id == auth()->user()->id) {
-            $group = Group::find($plan->group_id)->users;
-        }
 
         if (request()->wantsJson()) {
             return [
@@ -158,8 +150,7 @@ class PlanController extends Controller
         }
 
         return view('plans.show')
-            ->with(compact('plan'))
-            ->with(compact('group'));
+            ->with(compact('plan'));
     }
 
     /**
@@ -171,7 +162,6 @@ class PlanController extends Controller
     public function edit(Plan $plan)
     {
         abort_unless((\Gate::allows('plan_edit') and $plan->isAccessible()), 403);
-        $groups = Group::all();
         $types = PlanType::whereIn('id',
             explode(
                 ',',
@@ -181,7 +171,6 @@ class PlanController extends Controller
 
         return view('plans.edit')
                 ->with(compact('plan'))
-                ->with(compact('groups'))
                 ->with(compact('types'));
     }
 
@@ -198,9 +187,6 @@ class PlanController extends Controller
         $clean_data = $this->validateRequest();
         if (isset($clean_data['type_id'])) {
             $clean_data['type_id'] = format_select_input($clean_data['type_id']); //hack to prevent array to string conversion
-        }
-        if (isset($clean_data['group_id'])) {
-            $clean_data['group_id'] = format_select_input($clean_data['group_id']);
         }
 
         $plan->update($clean_data);
@@ -247,7 +233,6 @@ class PlanController extends Controller
             'end'           => 'sometimes',
             'duration'      => 'sometimes',
             'type_id'       => 'sometimes',
-            'group_id'      => 'sometimes',
             'entry_order'   => 'sometimes',
         ]);
     }

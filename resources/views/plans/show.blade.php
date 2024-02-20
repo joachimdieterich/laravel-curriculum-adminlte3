@@ -30,7 +30,6 @@
         @case(4)
             @include ('plans.showType4', [
                'plan' =>  $plan,
-               'group' => $group,
                'buttonText' => trans('global.plan.create')
            ])
 

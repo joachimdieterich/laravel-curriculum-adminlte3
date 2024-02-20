@@ -63,7 +63,7 @@
 
 </div>
 --}}
-<plan :plan="{{ $plan }}" :group="{{ $group }}"></plan>
+<plan :plan="{{ $plan }}"></plan>
 @can('medium_create')
     <medium-create-modal></medium-create-modal>
 @endcan
@@ -114,6 +114,7 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
         @if (Auth::user()->id ==  $plan->owner_id)
             <subscribe-modal></subscribe-modal>
             <subscribe-objective-modal></subscribe-objective-modal>
+            <set-achievements-modal></set-achievements-modal>
         @endif
     @endcan
 

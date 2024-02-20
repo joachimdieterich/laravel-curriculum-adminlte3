@@ -6,9 +6,9 @@
         :adaptive=true
         draggable=".draggable"
         :resizable=true
-        @before-open="beforeOpen"
-        @opened="opened"
-        @before-close="beforeClose"
+        @before-open="beforeOpen()"
+        @opened="opened()"
+        @before-close="beforeClose()"
         style="z-index: 1100"
     >
         <div

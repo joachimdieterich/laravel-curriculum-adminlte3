@@ -138,10 +138,14 @@ const Footer =
                 }
                 window.location = this.location;
             },
-            showDetails(modal) {
-                location.href= '/'+this.type+'Objectives/'+this.objective.id;
+            showDetails() {
+                if (this.settings.achievements === undefined) {
+                    location.href= '/'+this.type+'Objectives/'+this.objective.id;
+                } else {
+                    this.$modal.show('set-achievements-modal', {})
+                }
             },
-
+            
         },
         computed: {
             background: function () {

@@ -103,7 +103,7 @@ export default {
     mounted() {
         
     },
-    meethods: {
+    methods: {
         currentUser(id)
         {
             let currentUsersObjective = JSON.parse(JSON.stringify(this.objectiveWithAchievement));

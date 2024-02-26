@@ -142,7 +142,7 @@ export default {
             if (this.settings.achievements === undefined) {
                 location.href= '/'+this.type+'Objectives/'+this.objective.id;
             } else {
-                this.$modal.show('set-achievements-modal', {})
+                this.$modal.show('set-achievements-modal', { 'objective': this.objective });
             }
         },
         

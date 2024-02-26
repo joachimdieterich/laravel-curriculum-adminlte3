@@ -58,19 +58,19 @@ export default {
     },
     methods: {
         async achieve(status){
-            var selected = this.users;
+            let selected = this.users;
             if (selected.length === 0){
                 selected = localStorage.getItem('user-datatable-selection');
                 //console.log(selected);
             }
-            let archievement = {
+            let achievement = {
                 'referenceable_type': (this.type === 'terminal' ? 'App\\TerminalObjective' : 'App\\EnablingObjective'),
                 'referenceable_id': this.objective.id,
                 'user_id': selected,
                 'status': status
             }
             try {
-                this.status = (await axios.post('/achievements', archievement)).data.message;
+                this.status = (await axios.post('/achievements', achievement)).data.message;
 //                    calculateProgress(); //todo?
             } catch(error) {
                 alert(error);

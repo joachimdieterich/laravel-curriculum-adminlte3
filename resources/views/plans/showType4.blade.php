@@ -114,7 +114,7 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
         @if (Auth::user()->id ==  $plan->owner_id)
             <subscribe-modal></subscribe-modal>
             <subscribe-objective-modal></subscribe-objective-modal>
-            <set-achievements-modal></set-achievements-modal>
+            <set-achievements-modal :users="{{ json_encode($users) }}"></set-achievements-modal>
         @endif
     @endcan
 

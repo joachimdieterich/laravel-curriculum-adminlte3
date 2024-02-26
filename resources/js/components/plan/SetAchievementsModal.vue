@@ -37,42 +37,24 @@
                     <thead class=" border-top-0">
                         <tr class="border-top-0">
                             <th class="border-top-0">{{trans('global.name')}}</th>
-                            <th class="border-top-0">{{trans('global.created_at')}}</th>
-                            <th class="border-top-0">{{trans('global.updated_at')}}</th>
-                            <th class="border-top-0">{{trans('global.teacher')}}</th>
-                            <th class="border-top-0">{{trans('global.notes')}}</th>
+                            <!-- <th class="border-top-0">{{trans('global.notes')}}</th> -->
                             <th class="border-top-0">Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="user in users">
                             <td>{{ user.firstname }} {{ user.lastname }}</td>
-                            <td>
-                                <span v-if="currentUser(user.id).achievements[0]">
-                                    {{ currentUser(user.id).achievements[0].created_at }}
-                                </span>
-                            </td>
-                            <td>
-                                <span v-if="currentUser(user.id).achievements[0]">
-                                    {{ currentUser(user.id).achievements[0].updated_at }}
-                                </span>
-                            </td>
-                            <td>
-                                <span v-if="currentUser(user.id).achievements[0]">
-                                    {{ currentUser(user.id).achievements[0].owner.firstname }} {{ currentUser(user.id).achievements[0].owner.lastname }}
-                                </span>
-                            </td>
-                            <td v-if="currentUser(user.id).achievements[0]">
+                            <!-- <td v-if="currentUser(user.id).achievements[0]">
                                 <i style="font-size:18px;"
                                     class="far fa-sticky-note text-muted pointer"
                                     @click.prevent="$modal.show('note-modal', {'method': 'post', 'notable_type': 'App\\Achievement', 'notable_id': currentUser(user.id).achievements[0].id,'show_tabs': false}) ">
                                 </i>
                             </td>
-                            <td v-else></td>
+                            <td v-else></td> -->
                             <td>
                                 <AchievementIndicator
                                     v-permission="'achievement_create'"
-                                    :objective="currentUser(user.id)"
+                                    :objective="this.objective"
                                     :type="type"
                                     :users="[user.id]"
                                     :settings="{'achievements' : false, 'edit': false}">
@@ -95,24 +77,27 @@
 const AchievementIndicator = () => import('./../objectives/AchievementIndicator.vue');
 
 export default {
+    props: {
+        users: [],
+    },
     data() {
         return {
-            users: {},
+            objective: {},
         };
     },
     mounted() {
         
     },
     methods: {
-        currentUser(id)
-        {
-            let currentUsersObjective = JSON.parse(JSON.stringify(this.objectiveWithAchievement));
-            const achievement = currentUsersObjective.achievements.find(e => e.user_id == id);
-            currentUsersObjective.achievements = [achievement];
-
-            return currentUsersObjective;
+        close() {
+            this.$modal.hide('set-achievements-modal');
         },
-        beforeOpen() {},
+        submit() {
+            this.close();
+        },
+        beforeOpen(event) {
+            this.objective = event.params.objective;
+        },
         beforeClose() {},
         opened() {},
         closed() {},

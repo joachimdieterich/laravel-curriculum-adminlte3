@@ -6,7 +6,7 @@
         :adaptive=true
         draggable=".draggable"
         :resizable=true
-        @before-open="beforeOpen()"
+        @before-open="beforeOpen"
         @opened="opened()"
         @before-close="beforeClose()"
         style="z-index: 1100"
@@ -54,8 +54,8 @@
                             <td>
                                 <AchievementIndicator
                                     v-permission="'achievement_create'"
-                                    :objective="this.objective"
-                                    :type="type"
+                                    :objective="objective"
+                                    :type="'enabling'"
                                     :users="[user.id]"
                                     :settings="{'achievements' : false, 'edit': false}">
                                 </AchievementIndicator>

@@ -121,6 +121,16 @@
                         </div><!-- /.tab-pane -->
 
                         <div class="tab-pane" id="media" v-can="'medium_create'">
+                            <div id="media_create_datatable_filter" class="dataTables_filter">
+                                <input
+                                    type="search"
+                                    class="form-control form-control-sm"
+                                    v-model="search"
+                                    @input="searchFiles()"
+                                    placeholder="Suchbegriff"
+                                    aria-controls="media_create_datatable"
+                                />
+                            </div>
                             <div class="form-group table-responsive" style="height: 300px;">
                                 <table id="media_create_datatable" class="table table-head-fixed">
                                     <thead>
@@ -300,6 +310,8 @@ export default {
             file: '',
             files: [],
             selectedFiles: [],
+            search: '',
+            filteredFiles: [],
             accept: '',
             datatable: null,
             //pagination
@@ -498,6 +510,7 @@ export default {
             axios.get(path, { params: { per_page: this.per_page } })
                 .then((response)=>{
                     this.files          = response.data.data;
+                    this.filteredFiles  = response.data.data;
                     this.current_page   = response.data.current_page;
                     this.first_page_url = response.data.first_page_url;
                     this.from           = response.data.from;
@@ -513,6 +526,25 @@ export default {
                 .catch((e) => {
                     console.log(e);
                 });
+        },
+        searchFiles() {
+            if (this.search.length < 3) {
+                this.files = this.filteredFiles;
+                return;
+            }
+
+            const allFiles = this.filteredFiles;
+            this.filteredFiles = [];
+
+            for (let i = 0; i < this.files.length; i++) {
+                const file = this.files[i];
+                if (file.title.includes(this.search)) {
+                    this.filteredFiles.push(file);
+                }
+            }
+
+            this.files = this.filteredFiles;
+            this.filteredFiles = allFiles;
         },
         externalAdd(form){
             //console.log(form);

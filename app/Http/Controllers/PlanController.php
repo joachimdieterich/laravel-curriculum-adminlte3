@@ -89,7 +89,7 @@ class PlanController extends Controller
         abort_unless(\Gate::allows('plan_create'), 403);
 
         $plan = new Plan();
-        //$types = PlanType::all()
+        //$types = PlanType::all();
         $types = PlanType::whereIn('id',
                 explode(
                     ',',
@@ -208,10 +208,8 @@ class PlanController extends Controller
     {
         abort_unless((\Gate::allows('plan_delete') and $plan->isAccessible()), 403);
 
-        $plan->subscriptions()->delete();
+        $plan->entries()->delete();
         $plan->delete();
-
-        return back();
     }
 
     public function syncEntriesOrder(Plan $plan)

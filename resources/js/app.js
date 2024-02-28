@@ -206,7 +206,7 @@ Vue.component('videoconferences', () => import('./components/videoconference/Vid
 
 Vue.component('tests-table', () => import('./components/tests/TestsTable.vue'));
 
-Vue.prototype.$initTinyMCE = function (tinyMcePlugins) {
+Vue.prototype.$initTinyMCE = function (tinyMcePlugins, attr = null) {
 
     const defaultPlugins = [
         "advlist autolink lists link image charmap print preview hr anchor pagebreak",
@@ -217,6 +217,10 @@ Vue.prototype.$initTinyMCE = function (tinyMcePlugins) {
 
     tinymce.remove();
     tinymce.init({
+        // allows adding additional attributes for specific cases
+        // attributes can be overwritten if they are set BEFORE this line
+        ...attr,
+
         path_absolute : "/",
         selector: "textarea.my-editor",
         branding:false,

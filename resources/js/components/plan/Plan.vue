@@ -6,14 +6,15 @@
             <!-- Bewegungsfeld -->
             <draggable
                 v-can="'plan_edit'"
-                v-model="entry_order"
+                v-bind="columnDragOptions"
+                v-model="entries"
                 @start="drag=true"
                 @end="handleEntryOrder"
             >
                 <PlanEntry
-                    v-for="(value, index) in entry_order"
-                    v-bind:key="entries[index].id"
-                    :entry="entries[index]"
+                    v-for="(entry, index) in entries"
+                    :key="entries[index].id"
+                    :entry="entry"
                     :plan="plan"
                 ></PlanEntry>
             </draggable>
@@ -62,12 +63,13 @@ export default {
                 .then(response => {
                     if (this.plan.entry_order != null) {
                         this.entry_order = this.plan.entry_order
+                        // rearrange entries to the specified order by their ID
+                        // since this is O[n^2], it could become a performance issue in the future
                         this.entries = this.entry_order.map(
-                            order_id => response.data.entries.find(entry => entry.id === order_id)
+                            id => response.data.entries.find(entry => entry.id === id)
                         );
                     } else {
                         this.entries = response.data.entries;
-                        this.entry_order = this.entries.map(entry => entry.id);
                     }
                 })
                 .catch(e => {
@@ -77,7 +79,7 @@ export default {
         handleEntryAdded(entry) {
             this.entries.push(entry);
             this.entry_order.push(entry.id);
-            this.handleEntryOrder();
+            this.updateEntryOrder();
         },
         handleEntryDeleted(entry){
             let index = this.entries.indexOf(entry);
@@ -85,16 +87,9 @@ export default {
             this.entry_order.splice(index, 1);
             this.updateEntryOrder();
         },
-        //? maybe put event in Objectives.vue
-        handleObjectiveAdded(objective, entryId) {
-            const entry = this.entries.find(entry => entry.id === entryId);
-        },
-        handleEntryOrder() {
-            // rearrange entries to the specified order by ID
-            // since this is O[n^2], it could be a performance problem in the future
-            this.entries = this.entry_order.map(
-                order_id => this.entries.find(entry => entry.id === order_id)
-            );
+        handleEntryOrder(e) {
+            if (e.newIndex === e.oldIndex) return;
+            this.entry_order = this.entries.map(entry => entry.id);
             this.updateEntryOrder();
         },
         updateEntryOrder() {
@@ -111,17 +106,23 @@ export default {
         this.loaderEvent();
         this.entries = this.plan.entries;
         this.$eventHub.$on('plan_entry_added', (e) => {
-            this.handleEntryAdded();
+            this.handleEntryAdded(e);
         });
         this.$eventHub.$on('plan_entry_updated', (e) => {
             this.loaderEvent();
         });
         this.$eventHub.$on('plan_entry_deleted', (e) => {
-            this.handleEntryDeleted();
+            this.handleEntryDeleted(e);
         });
-        this.$eventHub.$on('objective_added', (objective, entryId) => {
-            this.handleObjectiveAdded(objective, entryId);
-        });
+    },
+    computed: {
+        columnDragOptions() {
+            return {
+                animation: 200,
+                // checks if a mobile-browser is used and if true, add delay
+                ...(/Mobi/i.test(window.navigator.userAgent) && {delay: 200}),
+            };
+        },
     },
     components: {
         Calendar,

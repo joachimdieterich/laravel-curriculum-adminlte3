@@ -66,13 +66,13 @@
                     </div>
 
                     <div class="form-group">
-                            <textarea
-                                id="description"
-                                name="description"
-                                :placeholder="trans('global.planEntry.fields.description')"
-                                class="form-control description my-editor"
-                                v-model.trim="form.description"
-                            ></textarea>
+                        <textarea
+                            id="description"
+                            name="description"
+                            :placeholder="trans('global.planEntry.fields.description')"
+                            class="form-control description my-editor"
+                            v-model.trim="form.description"
+                        ></textarea>
                         <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
                     </div>
                     <div class="form-group">

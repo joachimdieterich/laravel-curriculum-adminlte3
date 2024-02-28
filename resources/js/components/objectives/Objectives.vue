@@ -210,6 +210,9 @@ const EnablingObjectives =
         },
         mounted() {
             this.loaderEvent();
+            this.$eventHub.$on('subscriptions_added', id => {
+                if (id === this.referenceable_id) this.loaderEvent();
+            });
         },
         components: {
             ObjectiveBox,

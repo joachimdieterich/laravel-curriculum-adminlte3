@@ -126,10 +126,11 @@
                     this.load(event.params.id);
                 }
             },
-            opened(){
+            opened() {
                 this.$initTinyMCE([
                         "autolink link example table lists"
-                    ]
+                    ],
+                    { height: 300 }
                 );
             },
             beforeClose() {
@@ -143,7 +144,7 @@
                     //console.log('loading failed')
                 }
             },
-            close(){
+            close() {
                 this.$modal.hide('content-create-modal');
             }
         },

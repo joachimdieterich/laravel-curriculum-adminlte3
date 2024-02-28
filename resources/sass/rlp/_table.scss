@@ -75,11 +75,7 @@ tbody tr:hover .icon-circle {
     appearance: searchfield !important;
 }
 
-.dataTables_filter input::-webkit-search-cancel-button {
-    -webkit-appearance: searchfield-cancel-button;
-}
-
-dataTables_scrollBody {
+.dataTables_scrollBody {
     border-bottom: 0 !important
 }
 
@@ -94,7 +90,7 @@ table.dataTable {
     margin-top: 0 !important;
 }
 
-.dataTable thead:first-child tr,
+.dataTable thead:first-child tr
 {
     border: 1 !important;
 }
@@ -103,7 +99,7 @@ table.dataTable tr {
     cursor: pointer;
 }
 
-.dataTable body:first-child tr,
+.dataTable body:first-child tr
 {
     border: 0 !important;
 }

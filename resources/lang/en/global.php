@@ -815,8 +815,9 @@ return [
         'create' => 'Create plan',
         'search' => 'Search plan',
         'edit' => 'Edit plan',
+        'select_users' => 'Select users',
         'fields' => [
-            'type' => 'Typ',
+            'type' => 'Type',
             'type_helper' => '',
             'begin' => 'Start date',
             'begin_helper' => '',

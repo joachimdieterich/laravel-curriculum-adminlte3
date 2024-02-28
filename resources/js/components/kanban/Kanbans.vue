@@ -58,7 +58,9 @@
                         :kanban="kanban"
                         :search="search.toLowerCase()"/>
                     <KanbanIndexAddWidget
-                        v-can="'kanban_create'"/>
+                        v-if="((this.filter == 'all' && typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined') || this.filter == 'owner')"
+                        v-can="'kanban_create'"
+                    />
                 </div>
 
                 <Modal

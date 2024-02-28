@@ -1,39 +1,68 @@
 <template >
-    <div class="row ">
+    <div>
+        <div class="card pb-3">
+            <div class="card-header">
+                <div class="card-title">{{ plan.title }}</div>
+                <div
+                    v-if="$userId == plan.owner_id"
+                    v-can="'plan_edit'"
+                    class="card-tools pr-2 no-print"
+                >
+                    <a onclick="window.print()" class="link-muted pr-4 pointer">
+                        <i class="fa fa-print"></i>
+                    </a>
+                    <a :href="'plans/' + plan.id + '/edit'" class="link-muted">
+                        <i class="fa fa-pencil-alt"></i>
+                    </a>
+                </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <div class="row">
+                    <span class="col-12">
+                        {{ htmlToText(plan.description) }}
+                    </span>
+                </div>
+            </div>
+        </div>
 
+        <div class="row ">
+            <div class="col-12 pt-2">
+                <draggable
+                    :disabled="this.disabled"
+                    v-bind="columnDragOptions"
+                    v-model="entries"
+                    @start="drag=true"
+                    @end="handleEntryOrder"
+                >
+                    <PlanEntry
+                        v-for="(entry, index) in entries"
+                        :key="entries[index].id"
+                        :entry="entry"
+                        :plan="plan"
+                    ></PlanEntry>
+                </draggable>
+            </div>
 
-        <div class="col-12 pt-2">
-            <!-- Bewegungsfeld -->
-            <draggable
-                v-can="'plan_edit'"
-                v-bind="columnDragOptions"
-                v-model="entries"
-                @start="drag=true"
-                @end="handleEntryOrder"
-            >
+            <div class="col-12">
+                <!--<Calendar></Calendar>-->
                 <PlanEntry
-                    v-for="(entry, index) in entries"
-                    :key="entries[index].id"
-                    :entry="entry"
+                    v-if="$userId == plan.owner_id"
                     :plan="plan"
-                ></PlanEntry>
-            </draggable>
+                    create="true">
+                </PlanEntry>
+            </div>
         </div>
-
-        <div class="col-12">
-            <!--            <Calendar></Calendar>-->
-            <PlanEntry
-                v-if="$userId == plan.owner_id "
-                :plan="plan"
-                create="true">
-            </PlanEntry>
-
-        </div>
-
+        <!-- overlay button in bottom right corner -->
+        <!-- <div
+            id="corner-button"
+            class="position-sticky d-flex justify-content-center align-items-center float-right mb-3"
+            role="button"
+            @click="open()"
+        >
+            <i class="fa fa-users"></i>
+        </div> -->
     </div>
-
-
-
 </template>
 
 <script>
@@ -54,6 +83,7 @@ export default {
             entry_order: [],
             subscriptions: {},
             search: '',
+            disabled: false,
             errors: {},
         }
     },
@@ -102,7 +132,8 @@ export default {
         },
     },
     mounted() {
-        localStorage.removeItem('user-datatable-selection'); //reset selection to prevent wrong inputs
+        localStorage.removeItem('user-datatable-selection'); // reset selection to prevent wrong inputs
+        this.disabled = this.$userId != this.plan.owner_id;
         this.loaderEvent();
         this.entries = this.plan.entries;
         this.$eventHub.$on('plan_entry_added', (e) => {
@@ -131,3 +162,13 @@ export default {
     },
 }
 </script>
+<!-- <style scoped>
+#corner-button {
+    color: white;
+    background-color: #333;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    bottom: 25px;
+}
+</style> -->

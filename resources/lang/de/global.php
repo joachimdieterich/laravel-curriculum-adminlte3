@@ -817,6 +817,7 @@ return [
         'create' => 'Lern-/Arbeitsplan erstellen',
         'search' => 'Lern-/Arbeitsplan suchen',
         'edit' => 'Lern-/Arbeitsplan bearbeiten',
+        'select_users' => 'Benutzer auswählen',
         'fields' => [
             'type' => 'Typ',
             'type_helper' => '',

@@ -163,9 +163,9 @@
 
 
             <li class="nav-item ml-auto pull-right">
-                <a class="nav-link small link-muted"
+                <a class="nav-link small link-muted pointer" style="line-height: 24px;"
                    @click="help = !help">
-                    <i class="fa fa-question pr-1"></i>
+                    <i class="fa fa-question pr-1" style="font-size: 16px;"></i>
                 </a>
             </li>
             <li v-if="checkPermission('group_edit')"
@@ -325,7 +325,7 @@ const Tests =
         },
         data () {
             return {
-                help: false,
+                help: true,
             };
         },
 

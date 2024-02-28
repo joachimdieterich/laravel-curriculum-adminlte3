@@ -158,7 +158,7 @@
                     </a>
                 </li>
                 <li class="nav-item ml-auto pull-right">
-                    <a class="nav-link small link-muted"
+                    <a class="nav-link small link-muted pointer"
                        @click="help = !help">
                         <i class="fa fa-question pr-1"></i>
                     </a>

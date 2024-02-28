@@ -1,9 +1,11 @@
 <template>
     <div>
         <div @click="show()">
-            <img v-if="typeof this.preview.url != 'undefined'"
-                 :src='this.preview.url.info.url' class="p-0 w-100" >
-            <img v-else :src='this.preview' class="p-0 w-100" >
+            <img v-if="previewImg"
+                 :src='previewImg' class="p-0 w-100" >
+            <img v-else
+                 :src='this.preview' class="p-0 w-100" >
+
         </div>
 <!--        <div class="edusharing_caption">
             <span v-if="this.title">
@@ -45,6 +47,7 @@
                 detailsSnippet: '',
                 downloadUrl: '',
                 preview: '',
+                previewImg: false,
                 title: '',
                 name: '',
                 errors:  {},
@@ -72,7 +75,14 @@
                 $("#loading_"+this.medium.id).show();
                 axios.get('/media/' + this.medium.id + '?preview=true')
                     .then((response) => {
-                        this.preview = response.data;
+                        //console.log(response.data);
+                        if(typeof response.data.url == 'undefined'){
+                            if (response.data.startsWith('data:image')){
+                                this.previewImg = response.data;
+                            }
+                        } else {
+                            this.preview = response.data.url.info.redirect_url
+                        }
                         $("#loading_"+this.medium.id).hide();
                     })
                     .catch((error) => {

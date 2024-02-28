@@ -268,4 +268,28 @@ class EduSharingNodeHelper extends EduSharingHelperAbstract  {
         return $headers;
     }
 
+    /**
+     * Function getPreview
+     *
+     * @param Usage $usage
+     * @return CurlResult
+     */
+    public function getPreview(Usage $usage): CurlResult {
+        $url = $this->base->baseUrl . '/preview?nodeId=' . rawurlencode($usage->nodeId) . '&maxWidth=400&maxHeight=400&crop=true';
+
+        if ($usage->nodeVersion !== null) {
+            $url .= '&version=' . rawurlencode($usage->nodeVersion);
+        }
+
+        $headers = $this->getUsageSignatureHeaders($usage);
+
+        return $this->base->handleCurlRequest($url, [
+            CURLOPT_FAILONERROR    => false,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_HTTPHEADER     => $headers,
+            CURLOPT_SSL_VERIFYHOST => env('EDUSHARING_CURLOPT_SSL_VERIFYHOST', 2),
+            CURLOPT_SSL_VERIFYPEER => env('EDUSHARING_CURLOPT_SSL_VERIFYPEER', 1),
+        ]);
+    }
+
 }

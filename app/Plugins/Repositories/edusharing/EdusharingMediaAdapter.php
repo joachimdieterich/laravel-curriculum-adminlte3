@@ -154,6 +154,23 @@ class EdusharingMediaAdapter implements MediaInterface
                                     'url' => $url,
                                 ];
                             }
+                            else if (request('preview'))
+                            {
+                                $url = $edusharing->getPreview($subscription->additional_data, $subscription->owner_id);
+
+                                if ($url->content == "")
+                                {
+                                    return [
+                                        'url' => $url,
+                                    ];
+                                }
+                                else
+                                {
+                                    header('Content-Type: image/*');
+                                    return 'data:image/*;base64,' . base64_encode($url->content);
+                                }
+
+                            }
                             else
                             {
                                 $node = $edusharing->getNodeByUsage($subscription->additional_data, $subscription->owner_id);

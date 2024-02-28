@@ -120,6 +120,21 @@ class Edusharing extends RepositoryPlugin
         );
     }
 
+    public function getPreview($usage, $owner_id)
+    {
+        $nodeHelper = new EduSharingNodeHelper($this->helperBase($owner_id));
+
+        return $nodeHelper->getPreview(
+            new Usage(
+                $usage['nodeId'],
+                $usage['nodeVersion'] ?? null,
+                $usage['containerId'],
+                $usage['resourceId'],
+                $usage['usageId'],
+            )
+        );
+    }
+
     public function getRendering($repository, $node)
     {
         $apiHelper = new EduSharingApiHelper($this->helperBase());

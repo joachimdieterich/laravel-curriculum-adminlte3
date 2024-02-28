@@ -79,17 +79,24 @@ export default {
                 thumb_path:         data.preview.url,
                 medium_name:        data.name,
                 title:              data.title,
-                author:             data.owner.firstName + ' ' + data.owner.lastName,
+                author:             this.getAuthor(data.owner),
                 size:               data.size,
                 mimetype:           data.mimetype,
                 license_id:         this.getLicenseID(data.license.icon),
-                external_id:        data.ref.id, //= event.data.data.nodeId ?
+                external_id:        data.nodeId, //= data.ref.id,
                 subscribable_id:    this.model.subscribable_id,
                 subscribable_type:  this.model.subscribable_type,
                 repository:         'edusharing',
                 public:             1,
             });
 
+        },
+        getAuthor(owner){
+          let author = '';
+          if (typeof owner !== 'undefined'){
+              author = owner?.firstName + ' ' + owner?.lastName;
+          }
+          return author;
         },
         getLicenseID(licenseURL) {
             if (licenseURL.search(/none.svg/i) !== -1){

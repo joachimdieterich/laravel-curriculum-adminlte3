@@ -1,7 +1,10 @@
 <template>
     <div>
-        <div v-html="this.detailsSnippet"
-             @click="show()"></div>
+        <div @click="show()">
+            <img v-if="typeof this.preview.url != 'undefined'"
+                 :src='this.preview.url.info.url' class="p-0 w-100" >
+            <img v-else :src='this.preview' class="p-0 w-100" >
+        </div>
 <!--        <div class="edusharing_caption">
             <span v-if="this.title">
                 {{ this.title }}
@@ -65,27 +68,47 @@
                         $("#loading_"+this.medium.id).hide();
                     });
             },
-            show() {
-                axios.get('/media/' + this.medium.id + '?content=true')
+            async getPreview() {
+                $("#loading_"+this.medium.id).show();
+                axios.get('/media/' + this.medium.id + '?preview=true')
                     .then((response) => {
-                        window.location.assign(response.data.url);
+                        this.preview = response.data;
+                        $("#loading_"+this.medium.id).hide();
                     })
                     .catch((error) => {
                         console.log(error);
+                        $("#loading_"+this.medium.id).hide();
+                    });
+            },
+            show() {
+                $("#loading_"+this.medium.id).show();
+                axios.get('/media/' + this.medium.id + '?content=true')
+                    .then((response) => {
+                        window.location.assign(response.data.url);
+                        $("#loading_"+this.medium.id).hide();
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        $("#loading_"+this.medium.id).hide();
                     });
             },
         },
         mounted(){
-            this.loader();
+            this.getPreview();
+            //this.loader();
 
             this.$eventHub.$on('download', (medium) => {
+
                 if (this.medium.id == medium.id) {
+                    $("#loading_"+this.medium.id).show();
                     axios.get('/media/' + this.medium.id + '?download=true')
                         .then((response) => {
                             window.location.assign(response.data.url);
+                            $("#loading_"+this.medium.id).hide();
                         })
                         .catch((error) => {
                             console.log(error);
+                            $("#loading_"+this.medium.id).hide();
                         });
                 }
             });
@@ -106,23 +129,8 @@
 .edusharing_rendering_content_footer_top,
 .edusharing_rendering_content_footer {
     display: none !important;
-    /*width: 60%;
-    margin-right: 25px;
-    margin-left: 25px;*/
 }
 
-/*.edusharing_download {
-    position: absolute;
-    left: 0;
-    bottom: 5px;
-    z-index: 15;
-    display: flex;
-    justify-content: center;
-    padding-left: 0;
-    margin-right: 15%;
-    margin-left: 15%;
-    list-style: none;
-}*/
 .edusharing_caption {
     position: absolute;
     display:block;

@@ -62,7 +62,6 @@
             table.on('click', 'tr', function () {
                 window.location.href = "/logbooks/" + table.row(this).id()
             });
-
         })
 
     </script>

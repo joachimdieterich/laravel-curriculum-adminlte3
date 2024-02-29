@@ -150,11 +150,14 @@ class PlanController extends Controller
         if ($plan->owner_id === auth()->user()->id) {
             foreach ($subscriptions as $subscription) {
                 if ($subscription['subscribable_type'] == 'App\Group') {
-                    $group_users = Group::find($subscription['id'])->users()->get()->toArray();
+                    $group_users = Group::find($subscription['subscribable_id'])->users()->get()->toArray();
                     $users = array_merge($users, $group_users);
-                } else {
-                    $user = User::find($subscription['id'])->toArray();
+                } else if ($subscription['subscribable_type'] == 'App\User') {
+                    $user = User::find($subscription['subscribable_id'])->toArray();
                     array_push($users, $user);
+                } else if ($subscription['subscribable_type'] == 'App\Organization') {
+                    $organization_users = Organization::find($subscription['subscribable_id'])->users()->get()->toArray();
+                    $users = array_merge($users, $organization_users);
                 }
             }
         }

@@ -35,12 +35,10 @@
             v-if="edit_settings === true"
             class="ml-auto">
             <DropdownButton v-if="type == 'terminal'"
-                            @eventDelete="emitDeleteEvent"
                             :menuEntries="menuEntries"
                             :objective.sync="objective"
                             :textcolor="textcolor"/>
             <DropdownButton v-else-if="type == 'enabling'"
-                            @eventDelete="emitDeleteEvent"
                             :menuEntries="menuEntries"
                             :objective.sync="objective"
                             :textcolor="textcolor"/>
@@ -56,9 +54,7 @@ const DropdownButton =
         props: ['objective', 'type', 'menuEntries', 'settings', 'textcolor', 'max_id'],
 
         methods: {
-            emitDeleteEvent() {
-                //this.$emit('eventtriggered')
-            },
+
         },
         computed: {
             edit_settings: function() {

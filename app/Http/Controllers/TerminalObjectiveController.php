@@ -128,7 +128,7 @@ class TerminalObjectiveController extends Controller
         abort_unless((\Gate::allows('objective_delete') and $terminalObjective->isAccessible()), 403);
 
         //set temp vars
-        $curriculum_id = $terminalObjective->curiculum_id;
+        $curriculum_id = $terminalObjective->curriculum_id;
         $objective_type_id = $terminalObjective->objective_type_id;
         $order_id = $terminalObjective->order_id;
 

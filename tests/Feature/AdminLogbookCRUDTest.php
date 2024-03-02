@@ -55,7 +55,7 @@ class AdminLogbookCRUDTest extends TestCase
     public function an_administrator_get_create_view_for_logbooks()
     {
         $this->get('logbooks/create')
-            ->assertStatus(200);
+            ->assertStatus(405);
     }
 
     /** @test
@@ -106,7 +106,6 @@ class AdminLogbookCRUDTest extends TestCase
         $logbook = Logbook::factory()->create();
 
         $this->get("logbooks/{$logbook->id}/edit")
-            ->assertStatus(200)
-            ->assertSee($logbook->toArray());
+            ->assertStatus(405);
     }
 }

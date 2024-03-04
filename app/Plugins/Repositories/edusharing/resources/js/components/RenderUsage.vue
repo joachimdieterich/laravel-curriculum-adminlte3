@@ -1,17 +1,20 @@
 <template>
     <div>
-        <img :src="this.preview.url"
-             style="width: 100%"
-             :alt="this.title"
-             @click="show()">
-        <div class="edusharing_caption">
+        <div @click="show()">
+            <img v-if="previewImg"
+                 :src='previewImg' class="p-0 w-100" >
+            <img v-else
+                 :src='this.preview' class="p-0 w-100" >
+
+        </div>
+<!--        <div class="edusharing_caption">
             <span v-if="this.title">
                 {{ this.title }}
             </span>
             <span v-else>
                 {{ this.name }}
             </span>
-        </div>
+        </div>-->
 
 <!--        <div v-html="this.detailsSnippet"
         @click="show()"></div>-->
@@ -44,6 +47,7 @@
                 detailsSnippet: '',
                 downloadUrl: '',
                 preview: '',
+                previewImg: false,
                 title: '',
                 name: '',
                 errors:  {},
@@ -60,6 +64,29 @@
                         this.preview = response.data.preview;
                         this.title = response.data.title;
                         this.name = response.data.name;
+                        //console.log(this.downloadUrl);
+                        if (this.downloadUrl == null){
+                            $("#download_medium_"+this.medium.id).hide();
+                        }
+
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        $("#loading_"+this.medium.id).hide();
+                    });
+            },
+            async getPreview() {
+                $("#loading_"+this.medium.id).show();
+                axios.get('/media/' + this.medium.id + '?preview=true')
+                    .then((response) => {
+                        //console.log(response.data);
+                        if(typeof response.data.url == 'undefined'){
+                            if (response.data.startsWith('data:image')){
+                                this.previewImg = response.data;
+                            }
+                        } else {
+                            this.preview = response.data.url.info.redirect_url
+                        }
                         $("#loading_"+this.medium.id).hide();
                     })
                     .catch((error) => {
@@ -68,15 +95,38 @@
                     });
             },
             show() {
-                window.open(this.medium.path, '_blank');
+                $("#loading_"+this.medium.id).show();
+                axios.get('/media/' + this.medium.id + '?content=true')
+                    .then((response) => {
+                        window.location.assign(response.data.url);
+                        $("#loading_"+this.medium.id).hide();
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        $("#loading_"+this.medium.id).hide();
+                    });
             },
         },
         mounted(){
-            this.loader();
+            this.loader(); // needed to see if downloadURL is set
+            this.getPreview();
+
 
             this.$eventHub.$on('download', (medium) => {
+
                 if (this.medium.id == medium.id) {
-                    window.location.assign(this.downloadUrl);
+                    $("#loading_"+this.medium.id).show();
+                    axios.get('/media/' + this.medium.id + '?download=true')
+                        .then((response) => {
+                            window.location.assign(response.data.url);
+                            $("#loading_"+this.medium.id).hide();
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            $("#loading_"+this.medium.id).hide();
+                        });
+                } else {
+                    console.log('no downloadURL');
                 }
             });
         },
@@ -96,23 +146,8 @@
 .edusharing_rendering_content_footer_top,
 .edusharing_rendering_content_footer {
     display: none !important;
-    /*width: 60%;
-    margin-right: 25px;
-    margin-left: 25px;*/
 }
 
-/*.edusharing_download {
-    position: absolute;
-    left: 0;
-    bottom: 5px;
-    z-index: 15;
-    display: flex;
-    justify-content: center;
-    padding-left: 0;
-    margin-right: 15%;
-    margin-left: 15%;
-    list-style: none;
-}*/
 .edusharing_caption {
     position: absolute;
     display:block;

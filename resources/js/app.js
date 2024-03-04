@@ -184,6 +184,7 @@ Vue.component('logbook-entry-modal', () => import('./components/logbooks/Logbook
 Vue.component('logbook-entry-subject-modal', () => import('./components/logbooks/LogbookEntrySubjectModal.vue'));
 Vue.component('plan', () => import('./components/plan/Plan.vue'));
 Vue.component('subscribe-objective-modal', () => import('./components/objectives/SubscribeObjectiveModal.vue'));
+Vue.component('set-achievements-modal', () => import('./components/plan/SetAchievementsModal.vue'));
 Vue.component('objective-progress-subscription-modal', () => import('./components/objectives/ObjectiveProgressSubscriptionModal.vue'));
 Vue.component('task-modal', () => import('./components/tasks/TaskModal.vue'));
 Vue.component('task', () => import('./components/tasks/Task.vue'));
@@ -206,7 +207,7 @@ Vue.component('videoconferences', () => import('./components/videoconference/Vid
 
 Vue.component('tests-table', () => import('./components/tests/TestsTable.vue'));
 
-Vue.prototype.$initTinyMCE = function (tinyMcePlugins) {
+Vue.prototype.$initTinyMCE = function (tinyMcePlugins, attr = null) {
 
     const defaultPlugins = [
         "advlist autolink lists link image charmap print preview hr anchor pagebreak",
@@ -217,6 +218,10 @@ Vue.prototype.$initTinyMCE = function (tinyMcePlugins) {
 
     tinymce.remove();
     tinymce.init({
+        // allows adding additional attributes for specific cases
+        // attributes can be overwritten if they are set BEFORE this line
+        ...attr,
+
         path_absolute : "/",
         selector: "textarea.my-editor",
         branding:false,
@@ -243,10 +248,12 @@ Vue.prototype.$initTinyMCE = function (tinyMcePlugins) {
 
     tinymce.PluginManager.add('example', function(editor, url) {
         var openDialog = function () {
-            document.querySelector("#app").__vue__.$modal.show('medium-create-modal', {'public': 1 });
-            $('#medium_id').on('change', function() {
-                //reload thumbs
-                editor.insertContent('<img src="/media/'+ document.getElementById('medium_id').value +'" width="500">', {format: 'raw'});
+            document.querySelector("#app").__vue__.$modal.show('medium-create-modal', attr);
+            document.querySelector("#app").__vue__.$eventHub.$on('insertContent', (event) => {
+                console.log(event);
+                if (attr.eventHubCallbackFunctionParams == event.id) {
+                    editor.insertContent('<img src="/media/'+ event.selectedMediumId +'?preview=true" width="500">', {format: 'raw'});
+                }
             });
         };
 

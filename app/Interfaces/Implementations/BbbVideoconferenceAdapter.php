@@ -100,7 +100,11 @@ class BbbVideoconferenceAdapter implements VideoconferenceInterface
      */
     public function getMeetingInfo(array $input)
     {
-        return \Bigbluebutton::server( $input['server'] )->getMeetingInfo($input['meetingID']);
+        return \Bigbluebutton::server( $input['server'] )->getMeetingInfo(
+            [
+                'meetingID' => $input['meetingID'],
+                'moderatorPW' => $input['moderatorPW'],
+            ]);
     }
 
     /**

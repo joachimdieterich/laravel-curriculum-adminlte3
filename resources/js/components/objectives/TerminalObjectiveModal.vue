@@ -114,6 +114,7 @@ const ColorPicker =
     export default {
         data() {
             return {
+                component_id: this._uid,
                 value: null,
                 objectiveTypes: [],
                 method: 'post',
@@ -172,7 +173,13 @@ const ColorPicker =
             opened(){
                 this.$initTinyMCE([
                     "autolink link example"
-                ]);
+                ], {
+                    'public': 1,
+                    'referenceable_type': 'App\\\Curriculum',
+                    'referenceable_id': this.form.curriculum_id,
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id
+                });
                 this.initSelect2();
             },
             initSelect2(){
@@ -208,10 +215,10 @@ const ColorPicker =
 
                 if (method === 'patch') {
                     this.form.patch( this.requestUrl + '/' + this.form.id)
-                        .then(response => this.$eventHub.$emit("addTerminalObjective", response.message));
+                        .then(response => this.$eventHub.$emit('addTerminalObjective', response.message));
                 } else {
                     this.form.post(this.requestUrl)
-                        .then(response => this.$eventHub.$emit("addTerminalObjective", response.message));
+                        .then(response =>  this.$eventHub.$emit('addTerminalObjective', response.message));
                 }
                 this.close();
 

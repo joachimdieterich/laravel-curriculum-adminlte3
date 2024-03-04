@@ -38,7 +38,10 @@
                 :logbook="logbook"
                 :search="search"
             />
-            <LogbookIndexAddWidget v-can="'logbook_create'"/>
+            <LogbookIndexAddWidget
+                v-if="((this.filter == 'all' && typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined') || this.filter == 'owner')"
+                v-can="'logbook_create'"
+            />
         </div>
         <Modal :id="'logbookModal'" css="danger" :title="trans('global.logbook.delete')"
                :text="trans('global.logbook.delete_helper')" :ok_label="trans('global.logbook.delete')" v-on:ok="destroy()" />
@@ -107,11 +110,13 @@ export default {
             }
         },
         async destroy() {
-            try {
-                this.logbooks = (await axios.delete('/logbooks/' + this.tempId)).data.data;
-            } catch (error) {
-                console.log(error);
-            }
+             axios.delete('/logbooks/' + this.tempId)
+                 .then(() => {
+                     this.loaderEvent();
+                 })
+                 .catch ((e) => {
+                     console.log(e);
+                });
         },
     },
     mounted() {

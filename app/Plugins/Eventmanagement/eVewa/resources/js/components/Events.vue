@@ -47,6 +47,12 @@
                     <div class="col-2"><strong>VA-Nummer</strong></div>
                     <div class="col-10" v-html="event.ARTIKEL_NR"></div>
 
+                    <div class="col-2"
+                         v-if="event.BEZ_1_2.length > 2">
+                        <strong>Untertitel</strong></div>
+                    <div class="col-10 pre-formatted"
+                         v-if="event.BEZ_1_2.length > 2"
+                         v-html="event.BEZ_1_2"></div>
                     <div class="col-2"><strong>Beschreibung</strong></div>
                     <div class="col-10 pre-formatted" v-html="event.BEMERKUNG"></div>
 

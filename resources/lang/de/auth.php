@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'or' => 'ODER',
     'failed' => 'Diese Anmeldedaten stimmen nicht mit den hinterlegten Daten überein.',
     'throttle' => 'Zu viele Anmeldeversuche. Bitte versuchen Sie es erneut in :seconds Sekunden.',
     'site_title' => 'curriculum',

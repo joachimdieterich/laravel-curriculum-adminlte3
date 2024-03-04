@@ -237,6 +237,14 @@ class CertificateController extends Controller
     {
         $user_ids = explode(',', request()->user_ids);
         $generated_files = [];
+        if(str_contains($certificate->body, '[accomplished_objectives]') || str_contains($certificate->body, '[accomplished_objectives_without_terminal_objectives]') )
+        {
+            $curriculum = Curriculum::with([
+                'terminalObjectives',
+                'terminalObjectives.enablingObjectives',])
+                ->find((request()->curriculum_id != null) ? request()->curriculum_id : $certificate->curriculum_id);
+        }
+
         foreach ($user_ids as $id) {
             $user = User::where('id', $id)->get()->first();
             abort_unless(auth()->user()->mayAccessUser($user), 403);
@@ -246,6 +254,16 @@ class CertificateController extends Controller
                     $user,
                     Organization::where('id', auth()->user()->current_organization_id)->get()->first(),
                     request()->date);
+
+            if(str_contains($certificate->body, '[accomplished_objectives]'))
+            {
+                $html = $this->generateAccomplishedObjectiveList($html, $id, $curriculum); //generate list if "[accomplished_objectives]" is in certificate
+            }
+            if(str_contains($certificate->body, '[accomplished_objectives_without_terminal_objectives]'))
+            {
+                $html = $this->generateAccomplishedObjectiveList($html, $id, $curriculum, '[accomplished_objectives_without_terminal_objectives]', false); //generate list if "[accomplished_objectives]" is in certificate
+            }
+
 
             $html = preg_replace_callback(
                 '/<span\s+[^>]*reference_type="(.*?)"\s+[^>]*reference_id="(.*?)"\s+[^>]*min_value="(.*?)"[^>]*>(.*?)<\/span>/mis',
@@ -294,6 +312,43 @@ class CertificateController extends Controller
                 return ['message' => $pathOfNewFile];
             }
         }
+    }
+
+
+    protected function generateAccomplishedObjectiveList($html, $user_id, $curriculum, $replace = "[accomplished_objectives]", $with_terminal_objectives = true)
+    {
+        $accomplished_list = '';
+        foreach ($curriculum->terminalObjectives as $ter_value) {
+            $i = 0;
+            foreach ($ter_value->enablingObjectives as $ena) {
+
+               $status = optional(\App\Achievement::where(
+                    [
+                        'referenceable_type' => 'App\EnablingObjective',
+                        'referenceable_id'   => $ena->id,
+                        'user_id'            => $user_id,
+                    ])->get()->first())->status;
+                if (in_array($status, ['01', '11', '21', '31'] ) OR in_array($status, ['02', '12', '22', '32']))
+                {
+                    if ($i === 0) //
+                    {
+                        if ($with_terminal_objectives)
+                        {
+                            $accomplished_list .= '<strong>'.strip_tags($ter_value->title).'</strong><br>';
+                        }
+
+                        $i++; //iterator for terminal objective output
+                    }
+                    if (in_array($status, ['01', '11', '21', '31']))
+                    {
+                        $accomplished_list .= strip_tags($ena->title).'<br>';
+                    } else {
+                        $accomplished_list .= '('.strip_tags($ena->title).')<br>';
+                    }
+                }
+            }
+        }
+        return str_replace($replace, $accomplished_list,$html);
     }
 
     /**

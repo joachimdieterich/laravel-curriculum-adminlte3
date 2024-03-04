@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Organization;
 use App\Plan;
+use App\User;
+use App\Group;
 use App\PlanType;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -89,7 +91,6 @@ class PlanController extends Controller
         abort_unless(\Gate::allows('plan_create'), 403);
 
         $plan = new Plan();
-        //$types = PlanType::all()
         $types = PlanType::whereIn('id',
                 explode(
                     ',',
@@ -143,15 +144,31 @@ class PlanController extends Controller
     public function show(Plan $plan)
     {
         abort_unless((\Gate::allows('plan_show') and $plan->isAccessible()), 403);
+        $subscriptions = $plan->subscriptions()->get()->toArray();
+        $users = [];
+
+        if ($plan->owner_id === auth()->user()->id) {
+            foreach ($subscriptions as $subscription) {
+                if ($subscription['subscribable_type'] == 'App\Group') {
+                    $group_users = Group::find($subscription['id'])->users()->get()->toArray();
+                    $users = array_merge($users, $group_users);
+                } else {
+                    $user = User::find($subscription['id'])->toArray();
+                    array_push($users, $user);
+                }
+            }
+        }
 
         if (request()->wantsJson()) {
             return [
                 'plan' => $plan,
+                'users' => $users,
             ];
         }
 
         return view('plans.show')
-            ->with(compact('plan'));
+            ->with(compact('plan'))
+            ->with(compact('users'));
     }
 
     /**
@@ -187,7 +204,7 @@ class PlanController extends Controller
         abort_unless((\Gate::allows('plan_edit') and $plan->isAccessible()), 403);
         $clean_data = $this->validateRequest();
         if (isset($clean_data['type_id'])) {
-            $clean_data['type_id'] = format_select_input($clean_data['type_id']);  //hack to prevent array to string conversion
+            $clean_data['type_id'] = format_select_input($clean_data['type_id']); //hack to prevent array to string conversion
         }
 
         $plan->update($clean_data);
@@ -208,10 +225,21 @@ class PlanController extends Controller
     {
         abort_unless((\Gate::allows('plan_delete') and $plan->isAccessible()), 403);
 
-        $plan->subscriptions()->delete();
+        $plan->entries()->delete();
         $plan->delete();
+    }
 
-        return back();
+    public function syncEntriesOrder(Plan $plan)
+    {
+        abort_unless(auth()->user()->id == $plan->owner_id, 403);
+
+        $input = $this->validateRequest();
+
+        $plan->update([
+            'entry_order' => $input['entry_order']
+        ]);
+
+        return ['entry_order' => $plan->entry_order];
     }
 
     protected function validateRequest()
@@ -223,6 +251,7 @@ class PlanController extends Controller
             'end'           => 'sometimes',
             'duration'      => 'sometimes',
             'type_id'       => 'sometimes',
+            'entry_order'   => 'sometimes',
         ]);
     }
 }

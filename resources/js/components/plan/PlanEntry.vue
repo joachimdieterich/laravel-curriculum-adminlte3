@@ -13,41 +13,44 @@
                     <div :id="'plan-entry-' + entry.id"
                          v-if="!editor"
                          :style="{ 'border-left-style': 'solid', 'border-radius': '0.25rem', 'border-color': entry.color }">
-                        <div class="card-header">
+                        <div class="card-header collapsed" data-toggle="collapse" :data-target="'#plan-entry-' + entry.id + ' > .card-body'" aria-expanded="false">
                             <i class="mr-1"
                             :class="entry.css_icon"></i>
                             {{ entry.title }}
+                            <i class="fa fa-angle-up"></i>
                             <div v-if="$userId == plan.owner_id"
                                 class="card-tools">
-                                <i class="fa fa-pencil-alt mr-2 pointer text-muted"
+                                <i class="fa fa-pencil-alt mr-2 pointer link-muted"
                                    @click="edit()"></i>
                                 <i class="fas fa-trash pointer text-danger"
                                    @click="destroy(entry)"></i>
                             </div>
                         </div>
-                        <div class="card-body py-2">
+                        <div class="card-body py-2 collapse">
                             <img v-if="Number.isInteger(entry.medium_id)"
                                  class="pull-right"
                                  :src="'/media/' + entry.medium_id + '/thumb'"/>
                             <span v-html="entry.description"></span>
+
+                            <objectives
+                                referenceable_type="App\PlanEntry"
+                                :referenceable_id="entry.id"
+                                :owner_id="entry.owner_id"
+                            ></objectives>
+    
+                            <Trainings
+                                :plan="plan"
+                                subscribable_type="App\PlanEntry"
+                                :subscribable_id="entry.id"
+                            ></Trainings>
                         </div>
-
-                        <objectives
-                            referenceable_type="App\PlanEntry"
-                            :referenceable_id="entry.id"
-                            :owner_id="entry.owner_id"
-                        ></objectives>
-
-                        <Trainings
-                            :plan="plan"
-                            subscribable_type="App\PlanEntry"
-                            :subscribable_id="entry.id"></Trainings>
                     </div>
                 </div>
                 <div v-if="editor"
                      class="card-body">
                     <color-picker-input
-                        v-model="form.color"></color-picker-input>
+                        v-model="form.color"
+                    ></color-picker-input>
 
                     <div class="form-group">
                         <input
@@ -63,13 +66,13 @@
                     </div>
 
                     <div class="form-group">
-                            <textarea
-                                id="description"
-                                name="description"
-                                :placeholder="trans('global.planEntry.fields.description')"
-                                class="form-control description my-editor"
-                                v-model.trim="form.description"
-                            ></textarea>
+                        <textarea
+                            id="description"
+                            name="description"
+                            :placeholder="trans('global.planEntry.fields.description')"
+                            class="form-control description my-editor"
+                            v-model.trim="form.description"
+                        ></textarea>
                         <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
                     </div>
                     <div class="form-group">
@@ -131,7 +134,7 @@ export default {
                 'plan_id': '',
                 'css_icon': 'fas fa-calendar-day',
                 'order_id': 0,
-                'color': '#F4F4F4',
+                'color': '#27AF60',
                 'medium_id': null,
 
             }),
@@ -171,10 +174,8 @@ export default {
     },
     methods: {
         setIcon(selectedIcon) {
-            console.log('selected', selectedIcon);
             this.form.css_icon = 'fa fa-'+  selectedIcon.className;
         },
-
         edit() {
             this.editor = !this.editor ;
             if ( this.entry !== null ) {
@@ -216,8 +217,6 @@ export default {
                         console.log(error);
                     });
             }
-            this.form.title = '';
-            this.form.description = '';
             this.editor = false;
 
         },
@@ -231,3 +230,15 @@ export default {
     },
 }
 </script>
+<style scoped>
+.card-header:hover {
+    background-color: #e9ecef;
+    cursor: pointer;
+}
+.card-header .fa-angle-up {
+    transition: 0.3s transform;
+}
+.card-header.collapsed .fa-angle-up {
+    transform: rotate(-180deg);
+}
+</style>

@@ -270,8 +270,8 @@ class VideoconferenceController extends Controller
     public function start(Videoconference $videoconference)
     {
         $input = $this->validateRequest();
-        $moderatorPW =  $input['moderatorPW'];
-        $attendeePW = $input['attendeePW'];
+        $moderatorPW =  $input['moderatorPW'] ?? '';
+        $attendeePW = $input['attendeePW'] ?? $videoconference->attendeePW;
         abort_unless((
                 $videoconference->attendeePW == $attendeePW
                 OR
@@ -351,7 +351,6 @@ class VideoconferenceController extends Controller
                 ])
             )
             {
-
                 //meeting not running, start
                  $adapter->start([
                     'meetingID'                             => $videoconference->meetingID,
@@ -398,7 +397,6 @@ class VideoconferenceController extends Controller
                 ]);
             }
             //join as guest
-
             return $adapter->join([
                 'meetingID' => $videoconference->meetingID,
                 'userName'  => $userName,
@@ -569,11 +567,15 @@ class VideoconferenceController extends Controller
         $info = $adapter->getMeetingInfo(
             [
                 'meetingID' => $videoconference->meetingID,
-                'moderatorPW' => $videoconference->moderatorPW
+                'moderatorPW' => $videoconference->moderatorPW,
+                'server' => $videoconference->server
             ]
         );
         //dump($info['participantCount']);
-        LogController::set(get_class($this).'@'.__FUNCTION__.'->participantCount', $videoconference->meetingID, $info['participantCount']);
+        if (isset($info['participantCount']))
+        {
+            LogController::set(get_class($this).'@'.__FUNCTION__.'->participantCount', $videoconference->meetingID, $info['participantCount']);
+        }
 
     }
 

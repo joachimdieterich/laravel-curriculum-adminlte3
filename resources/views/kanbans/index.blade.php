@@ -34,6 +34,7 @@
 
 <script>
 $(document).ready( function () {
+    document.getElementById('searchbar').classList.remove('d-none');
     var table = $('#kanbans-datatable').DataTable({
         ajax: "{{ url('kanbans/list') }}",
         columns:

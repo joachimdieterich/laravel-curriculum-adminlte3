@@ -92,6 +92,13 @@ const renderUsage =
                 });
             },
         },
+        mounted() {
+            this.$eventHub.$on('download', (medium) => {
+                if (this.medium.id == medium.id && this.mime(medium.mime_type) !== 'external') {
+                    this.show();
+                }
+            });
+        },
         computed: {
             scr: function () {
                 return '/media/'+ this.medium.id;

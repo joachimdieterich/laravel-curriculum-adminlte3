@@ -15,7 +15,8 @@
         <div class="carousel-inner">
             <div class="w-100">
                 <div class="carousel-indicators-tools">
-                    <a class="text-muted px-2"
+                    <a :id="'download_medium_'+subscriptions[currentSlide].medium_id"
+                        class="text-muted px-2"
                        @click.prevent="downloadMedium(subscriptions[currentSlide])">
                         <i class="fa fa-download"></i>
                     </a>

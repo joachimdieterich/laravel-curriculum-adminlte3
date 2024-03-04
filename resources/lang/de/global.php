@@ -105,6 +105,7 @@ return [
     'lastYear' => 'Letztes Jahr',
     'currentPeriod' => 'Aktueller Lernzeitraum',
     'selectDateRange' => 'Zeitraum auswählen',
+    'invalid_form' => 'Bitte füllen Sie dieses Feld aus.',
     'dashboard' => [
         'title' => 'Dashboard',
         'actual' => 'Aktuell',
@@ -818,6 +819,7 @@ return [
         'create' => 'Lern-/Arbeitsplan erstellen',
         'search' => 'Lern-/Arbeitsplan suchen',
         'edit' => 'Lern-/Arbeitsplan bearbeiten',
+        'select_users' => 'Benutzer auswählen',
         'fields' => [
             'type' => 'Typ',
             'type_helper' => '',

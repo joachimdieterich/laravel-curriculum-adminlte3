@@ -42,7 +42,7 @@
                 :textcolor="textcolor"
                 @eventDelete="deleteEvent"
                 @eventSort="sortEvent"
-                ></Header>
+        ></Header>
 
         <div class="panel-body boxwrap pointer"
              @click.prevent="showDetails()">
@@ -58,7 +58,8 @@
         <Footer :objective="objective"
                 :textcolor="textcolor"
                 :type="type"
-                :settings="settings"></Footer>
+                :settings="settings">
+        </Footer>
     </div>
 </template>
 
@@ -71,130 +72,134 @@ const Footer =
 /*    import Header from './Header';
     import Footer from './Footer';*/
 
-    export default {
-        props: {
-                objective: {},
-                objective_type_id: {},
-                type: {},
-                settings: {},
-                max_id: Number
-              },
-         data() {
-            return {
-                menuEntries:  [
-                    {
-                      title: 'Edit',
-                      icon: 'fa fa-pencil-alt',
-                      action: 'edit',
-                      model: this.type+'Objectives',
-                      value: this.type+'-objective-modal'
-                    },
-                    {
-                        title: 'Move',
-                        icon: 'fa fa-repeat',
-                        action: 'move',
-                        model: this.type+'Objectives',
-                        value: 'move-'+this.type+'-objective-modal'
-                    },
-                    {
-                      hr: true,
-                    },
-                    {
-                      title: 'Delete',
-                      icon: 'fa fa-trash',
-                      action: 'delete',
-                      model: this.type+'Objectives',
-                    }
-               ],
-               visibility: 100,
-               errors: {}
+export default {
+    props: {
+        objective: {},
+        objective_type_id: {},
+        type: {},
+        settings: {},
+        max_id: Number
+    },
+    data() {
+        return {
+            menuEntries:  [
+                {
+                    title: 'Edit',
+                    icon: 'fa fa-pencil-alt',
+                    action: 'edit',
+                    model: this.type+'Objectives',
+                    value: this.type+'-objective-modal'
+                },
+                {
+                    title: 'Move',
+                    icon: 'fa fa-repeat',
+                    action: 'move',
+                    model: this.type+'Objectives',
+                    value: 'move-'+this.type+'-objective-modal'
+                },
+                {
+                    hr: true,
+                },
+                {
+                    title: 'Delete',
+                    icon: 'fa fa-trash',
+                    action: 'delete',
+                    model: this.type+'Objectives',
+                }
+            ],
+            visibility: 100,
+            errors: {}
+        }
+    },
+    methods: {
+        showModal(modal) {
+            this.$modal.show(modal, { 'objective': this.objective, 'method': 'post' , 'objective_type_id': this.objective_type_id});
+        },
+        async deleteEvent(){
+            try {
+                this.location = (await axios.delete('/'+this.type+'Objectives/'+this.objective.id)).data.message
+            }
+            catch(error) {
+                this.formerrors = error.response.data.errors;
+            }
+            this.$eventHub.$emit('deletedObjective', {'objective': this.objective, 'type': this.type});
+        },
+
+        async sortEvent(amount) {
+            let objective = {
+                'id': this.objective.id,
+                'order_id': this.objective.order_id + parseInt(amount)
+            }
+
+            try {
+                this.location = (await axios.patch('/'+this.type+'Objectives/'+this.objective.id, objective)).data.message;
+            } catch(error) {
+                this.errors = error.response.data.errors;
+            }
+            window.location = this.location;
+        },
+        showDetails() {
+            if (this.settings.achievements === undefined) {
+                location.href= '/'+this.type+'Objectives/'+this.objective.id;
+            } else {
+                this.$modal.show('set-achievements-modal', { 'objective': this.objective });
             }
         },
-        methods: {
-            showModal(modal) {
-                this.$modal.show(modal, { 'objective': this.objective, 'method': 'post' , 'objective_type_id': this.objective_type_id});
-            },
-            async deleteEvent(object){
-                try {
-                    this.location = (await axios.delete('/'+this.type+'Objectives/'+this.objective.id)).data.message
-                }
-                catch(error) {
-                    this.formerrors = error.response.data.errors;
-                }
-                 location.reload(true);
-            },
 
-            async sortEvent(amount) {
-                let objective = {
-                    'id': this.objective.id,
-                    'order_id': this.objective.order_id + parseInt(amount)
-                }
-
-                try {
-                    this.location = (await axios.patch('/'+this.type+'Objectives/'+this.objective.id, objective)).data.message;
-                } catch(error) {
-                    this.errors = error.response.data.errors;
-                }
-                window.location = this.location;
-            },
-            showDetails(modal) {
-                location.href= '/'+this.type+'Objectives/'+this.objective.id;
-            },
+    },
+    computed: {
+        background: function () {
+            return (this.type === 'terminal' ? 'none' : "");
+        },
+        backgroundcolor: function () {
+            return (this.type === 'terminal' ? this.objective.color : "#fff");
+        },
+        bordercolor: function () {
+            return (this.type === 'terminal' ? this.objective.color : this.objective.terminal_objective.color);
+        },
+        textcolor: function() {
+            if (this.type === 'terminal'){
+                return this.$textcolor(this.objective.color);
+            } else {
+                return "#000";
+            }
+        },
+        id: function (){
+            return this.type + '_' +this.objective.id;
+        },
+        opacity: function () {
+            if (this.objective.visibility == false) {
+                this.visibility = 20/100;
+                return this.visibility;
+            } else {
+                return this.visibility/100;
+            }
 
         },
-        computed: {
-            background: function () {
-                return (this.type === 'terminal' ? 'none' : "");
-            },
-            backgroundcolor: function () {
-                return (this.type === 'terminal' ? this.objective.color : "#fff");
-            },
-            bordercolor: function () {
-                return (this.type === 'terminal' ? this.objective.color : this.objective.terminal_objective.color);
-            },
-            textcolor: function() {
-                if (this.type === 'terminal'){
-                    return this.$textcolor(this.objective.color);
-                } else {
-                    return "#000";
-                }
-            },
-            id: function (){
-                return this.type + '_' +this.objective.id;
-            },
-            opacity: function () {
-                if (this.objective.visibility == false) {
-                    this.visibility = 20/100;
-                    return this.visibility;
-                } else {
-                    return this.visibility/100;
-                }
-
-            },
-            filter: function () {
-                return "alpha(opacity="+this.visibility+")";
-            },
-            cross_reference: function() {
-                if (typeof this.settings !== "undefined"){
-                    return this.settings.cross_reference_curriculum_id;
-                } else {
-                    return false;
-                }
-            },
+        filter: function () {
+            return "alpha(opacity="+this.visibility+")";
         },
-        watch: {
-            cross_reference: function() {
-                if ((this.settings.cross_reference_curriculum_id !== false) || (this.settings.cross_reference_curriculum_id === "") ){ // reset view with x button
-                    this.visibility = 40;
+        cross_reference: function() {
+            if (typeof this.settings !== "undefined"){
+                return this.settings.cross_reference_curriculum_id;
+            } else {
+                return false;
+            }
+        },
+    },
+    watch: {
+        cross_reference: function() {
+            if ((this.settings.cross_reference_curriculum_id !== false) || (this.settings.cross_reference_curriculum_id === "") ){ // reset view with x button
+                this.visibility = 40;
 
-                    if (typeof this.objective.referencing_curriculum_id !== "undefined" ){
-                        if ( this.objective.referencing_curriculum_id !== null ){
-                            if (this.objective.referencing_curriculum_id.includes(parseInt(this.settings.cross_reference_curriculum_id)))
-                            {
-                                this.visibility = 100;
-                            }
+                if (typeof this.objective.referencing_curriculum_id !== "undefined" ){
+                    if ( this.objective.referencing_curriculum_id !== null ){
+                        if (this.objective.referencing_curriculum_id.includes(parseInt(this.settings.cross_reference_curriculum_id)))
+                        {
+                            this.visibility = 100;
                         }
                     }
+                }
 
 //                    if (typeof this.objective.quote_subscriptions !== "undefined"){
 //                        let check = this.objective.quote_subscriptions.find(c => c.siblings.find(s => s.quotable.curriculum_id == this.settings.cross_reference_curriculum_id))
@@ -203,35 +208,34 @@ const Footer =
 //                        }
 //                    }
 
-                } else {
-                    this.visibility = 100;
-                }
-
+            } else {
+                this.visibility = 100;
             }
-        },
-        created: function () {
-            this.$root.$on('eventDelete', () => {
+
+        }
+    },
+    created: function () {
+        this.$eventHub.$on('deleteObjective', function(deletedObjective) {
+            if (this.objective === deletedObjective){
                 this.deleteEvent()
-            });
-            this.$root.$on('eventSort', () => {
-                this.sortEvent()
-            })
-        },
-        mounted() {
-            this.$nextTick(() => {
-                MathJax.startup.defaultReady();
-            })
+            }
+        }.bind(this));
+    },
+    mounted() {
+        this.$nextTick(() => {
+            MathJax.startup.defaultReady();
+        })
 
-        },
-        beforeDestroy: function () {
-            this.$root.$off('eventDelete');
-            this.$root.$off('eventSort')
-        },
+    },
+    beforeDestroy: function () {
+        this.$root.$off('eventDelete');
+        this.$root.$off('eventSort')
+    },
 
-        components: {
-            Header,
-            Footer,
-        },
-    }
+    components: {
+        Header,
+        Footer,
+    },
+}
 </script>
 

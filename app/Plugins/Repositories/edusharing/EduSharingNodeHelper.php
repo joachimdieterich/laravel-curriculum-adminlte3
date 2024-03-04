@@ -118,7 +118,7 @@ class EduSharingNodeHelper extends EduSharingHelperAbstract  {
 
     /**
      * Loads the edu-sharing node refered by a given usage
-     * @param Usage $usage
+     * @param $usage
      * The usage, as previously returned by @createUsage
      * @param string $displayMode
      * The displayMode
@@ -131,7 +131,7 @@ class EduSharingNodeHelper extends EduSharingHelperAbstract  {
      * @throws Exception
      */
     public function getNodeByUsage(
-        Usage $usage,
+        $usage,
         $displayMode = DisplayMode::Inline,
         array $renderingParams = null
     )
@@ -220,4 +220,76 @@ class EduSharingNodeHelper extends EduSharingHelperAbstract  {
         }
 
     }
+
+    /**
+     * Function getRedirectUrl
+     *
+     * @param string $mode
+     * @param $usage
+     * @return string
+     * @throws JsonException
+     * @throws NodeDeletedException
+     * @throws UsageDeletedException
+     * @throws Exception
+     */
+    public function getRedirectUrl(string $mode, $usage): string {
+        $headers = $this->getUsageSignatureHeaders($usage);
+        $node    = $this->getNodeByUsage($usage);
+        $params  = '';
+        foreach ($headers as $header) {
+            if (!str_starts_with($header, 'X-')) {
+                continue;
+            }
+            $header = explode(': ', $header);
+            $params .= '&' . $header[0] . '=' . urlencode($header[1]);
+        }
+        if ($mode === 'content') {
+            $url    = $node['node']['content']['url'] ?? '';
+            $params .= '&closeOnBack=true';
+        } else if ($mode === 'download') {
+            $url = $node['node']['downloadUrl'] ?? '';
+        } else {
+            throw new Exception('Unknown parameter for mode: ' . $mode);
+        }
+        return $url . (str_contains($url, '?') ? '' : '?') . $params;
+    }
+
+    /**
+     * Function getUsageSignatureHeaders
+     *
+     * @param $usage
+     * @return array
+     */
+    private function getUsageSignatureHeaders($usage): array {
+        $headers   = $this->getSignatureHeaders($usage->usageId);
+        $headers[] = 'X-Edu-Usage-Node-Id: ' . $usage->nodeId;
+        $headers[] = 'X-Edu-Usage-Course-Id: ' . $usage->containerId;
+        $headers[] = 'X-Edu-Usage-Resource-Id: ' . $usage->resourceId;
+        return $headers;
+    }
+
+    /**
+     * Function getPreview
+     *
+     * @param Usage $usage
+     * @return CurlResult
+     */
+    public function getPreview(Usage $usage): CurlResult {
+        $url = $this->base->baseUrl . '/preview?nodeId=' . rawurlencode($usage->nodeId) . '&maxWidth=400&maxHeight=400&crop=true';
+
+        if ($usage->nodeVersion !== null) {
+            $url .= '&version=' . rawurlencode($usage->nodeVersion);
+        }
+
+        $headers = $this->getUsageSignatureHeaders($usage);
+
+        return $this->base->handleCurlRequest($url, [
+            CURLOPT_FAILONERROR    => false,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_HTTPHEADER     => $headers,
+            CURLOPT_SSL_VERIFYHOST => env('EDUSHARING_CURLOPT_SSL_VERIFYHOST', 2),
+            CURLOPT_SSL_VERIFYPEER => env('EDUSHARING_CURLOPT_SSL_VERIFYPEER', 1),
+        ]);
+    }
+
 }

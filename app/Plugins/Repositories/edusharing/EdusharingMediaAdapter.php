@@ -8,6 +8,7 @@ use App\Medium;
 use App\MediumSubscription;
 use Illuminate\Http\Request;
 
+
 class EdusharingMediaAdapter implements MediaInterface
 {
     /**
@@ -136,22 +137,73 @@ class EdusharingMediaAdapter implements MediaInterface
                     if ($subscription->additional_data != null)
                     {
                         $edusharing = new Edusharing;
-                        $node = $edusharing->getNodeByUsage($subscription->additional_data, $subscription->owner_id);
 
-                        if (request()->wantsJson())
+
+                        if (request('download'))
                         {
-                            return [
-                                'detailsSnippet' => $node['detailsSnippet'],
-                                'downloadUrl' => $node['node']['downloadUrl'],
-                                'preview' => $node['node']['preview'],
-                                'title' => $node['node']['title'],
-                                'name' => $node['node']['name'],
-                            ];
+                            $url = $edusharing->getRedirectUrl($subscription->additional_data, 'download', $subscription->owner_id);
+                            if (request()->wantsJson()) {
+                                return [
+                                    'url' => $url,
+                                ];
+                            } else{
+                                return redirect($node['node']['downloadUrl']['url']);
+                            }
                         }
-                        //return request('download') ? redirect($node['node']['downloadUrl']['url']) : redirect($node['node']['preview']['url']);
-                    }
+                        else if (request('content'))
+                        {
+                            $url = $edusharing->getRedirectUrl($subscription->additional_data, 'content', $subscription->owner_id);
+                            if (request()->wantsJson()) {
+                                return [
+                                    'url' => $url,
+                                ];
+                            } else {
+                                return redirect($node['node']['preview']['url']['content']);
+                            }
+                        }
+                        else if (request('preview'))
+                        {
+                            $url = $edusharing->getPreview($subscription->additional_data, $subscription->owner_id);
 
-                    //return request('download') ? redirect($medium->path) : redirect($medium->thumb_path);
+                            if ($url->content == "")
+                            {
+                                if (request()->wantsJson()) {
+                                    return [
+                                        'url' => $url,
+                                    ];
+                                } else {
+                                    return redirect($node['node']['preview']['url']['info']['redirect_url']);
+                                }
+                            }
+                            else
+                            {
+                                if (request()->wantsJson()) {
+                                    header('Content-Type: image/*');
+                                    return 'data:image/*;base64,' . base64_encode($url->content);
+                                } else {
+
+                                    return redirect($url->info['url']);
+
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            $node = $edusharing->getNodeByUsage($subscription->additional_data, $subscription->owner_id);
+                            if (request()->wantsJson()) {
+                                return [
+                                    'detailsSnippet' => $node['detailsSnippet'],
+                                    'downloadUrl' => $node['node']['downloadUrl'],
+                                    'preview' => $node['node']['preview'],
+                                    'title' => $node['node']['title'],
+                                    'name' => $node['node']['name'],
+                                ];
+                            } else {
+                                return redirect($node['node']['preview']['url']['info']['redirect_url']);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -279,6 +331,9 @@ class EdusharingMediaAdapter implements MediaInterface
             case "App\Kanban":
             case "App\Logbook":
                     return $subscription->subscribable->isAccessible();
+                break;
+            case "App\Curriculum":
+                return $subscription->subscribable->isAccessible();
                 break;
 
             default: return false;

@@ -147,7 +147,7 @@
                                             v-model="selectedFiles"
                                             :value="file.id"
                                             type="checkbox"
-                                            id="medium"
+                                            :id="'medium_'+file.id"
                                         ></td>
                                         <!--   <th>{{ file.size }}</th>
                                            <th>{{ file.created_at }}</th>
@@ -425,7 +425,14 @@ export default {
             }
             if (this.eventHubCallbackFunction) {
                 //console.log('eventHubCallbackFunction');
-                this.$eventHub.$emit(this.eventHubCallbackFunction, {'id': this.eventHubCallbackFunctionParams, 'selectedMediumId': this.selectedFiles, 'files': this.getMediaById()});
+                this.$eventHub.$emit(
+                    this.eventHubCallbackFunction,
+                    {
+                        'id': this.eventHubCallbackFunctionParams,
+                        'selectedMediumId': this.selectedFiles.length == 0 ? selected : this.selectedFiles,
+                        'files': this.getMediaById(),
+                    }
+                );
             } else if (this.callbackComponent) {
                 //console.log('callbackComponent');
                 if (this.callbackParentComponent) {
@@ -548,6 +555,7 @@ export default {
 
         this.$eventHub.$on('external_add', (form) => {
             this.externalAdd(form);
+
         });
     },
     components: {

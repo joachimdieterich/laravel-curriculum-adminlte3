@@ -101,6 +101,7 @@ return [
     'lastYear' => 'last year',
     'currentPeriod' => 'current learning period',
     'selectDateRange' => 'Select range',
+    'invalid_form' => 'Please fill out this field.',
     'dashboard' => [
         'title' => 'Dashboard',
         'actual' => 'Aktuell',
@@ -814,8 +815,9 @@ return [
         'create' => 'Create plan',
         'search' => 'Search plan',
         'edit' => 'Edit plan',
+        'select_users' => 'Select users',
         'fields' => [
-            'type' => 'Typ',
+            'type' => 'Type',
             'type_helper' => '',
             'begin' => 'Start date',
             'begin_helper' => '',

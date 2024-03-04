@@ -20,39 +20,42 @@
                 <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
                     {{ logbook.title }}
                 </h1>
-                <p class="text-muted small" v-html="htmlToText(logbook.description)">
-                </p>
+                <p class="text-muted small" v-html="htmlToText(logbook.description)"></p>
             </span>
             <div class="symbol"
                 :style="'color:' + $textcolor(logbook.color) + ' !important'"
                 style="position: absolute; width: 30px; height: 40px;"
             >
-                <i v-if="$userId == logbook.owner_id"
-                    class="fa fa-user pt-2"></i>
-                <i v-else
-                    class="fa fa-share-nodes pt-2"></i>
+                <i v-if="$userId == logbook.owner_id" class="fa fa-user pt-2"></i>
+                <i v-else class="fa fa-share-nodes pt-2"></i>
             </div>
             <div v-if="$userId == logbook.owner_id"
                 class="btn btn-flat pull-right "
                 :id="'logbookDropdown_' + logbook.id"
                 style="position:absolute; top:0; right: 0; background-color: transparent;"
                 data-toggle="dropdown"
-                aria-expanded="false">
+                aria-expanded="false"
+            >
                 <i class="fas fa-ellipsis-v"
                     :style="'color:' + $textcolor(logbook.color)"></i>
                 <div class="dropdown-menu dropdown-menu-right"
-                    x-placement="left-start">
-                    <button :name="'logbookEdit_'+logbook.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="$parent.editLogbook(logbook)">
+                    x-placement="left-start"
+                >
+                    <button
+                        :name="'logbookEdit_'+logbook.id"
+                        class="dropdown-item text-secondary"
+                        @click.prevent="$parent.editLogbook(logbook)"
+                    >
                         <i class="fa fa-pencil-alt mr-2"></i>
                         {{ trans('global.logbook.edit') }}
                     </button>
                     <hr class="my-1">
-                    <button :id="'delete-logbook-' + logbook.id"
-                            type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="$parent.confirmItemDelete(logbook.id)">
+                    <button
+                        :id="'delete-logbook-' + logbook.id"
+                        type="submit"
+                        class="dropdown-item py-1 text-red"
+                        @click.prevent="$parent.confirmItemDelete(logbook.id)"
+                    >
                         <i class="fa fa-trash mr-2"></i>
                         {{ trans('global.logbook.delete') }}
                     </button>

@@ -248,10 +248,12 @@ Vue.prototype.$initTinyMCE = function (tinyMcePlugins, attr = null) {
 
     tinymce.PluginManager.add('example', function(editor, url) {
         var openDialog = function () {
-            document.querySelector("#app").__vue__.$modal.show('medium-create-modal', {'public': 1 });
-            $('#medium_id').on('change', function() {
-                //reload thumbs
-                editor.insertContent('<img src="/media/'+ document.getElementById('medium_id').value +'" width="500">', {format: 'raw'});
+            document.querySelector("#app").__vue__.$modal.show('medium-create-modal', attr);
+            document.querySelector("#app").__vue__.$eventHub.$on('insertContent', (event) => {
+                console.log(event);
+                if (attr.eventHubCallbackFunctionParams == event.id) {
+                    editor.insertContent('<img src="/media/'+ event.selectedMediumId +'?preview=true" width="500">', {format: 'raw'});
+                }
             });
         };
 

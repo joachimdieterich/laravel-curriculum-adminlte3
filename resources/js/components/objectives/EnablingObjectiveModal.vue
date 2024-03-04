@@ -106,6 +106,7 @@
     export default {
         data() {
             return {
+                component_id: this._uid,
                 value: null,
                 levels: [],
                 method: 'post',
@@ -151,12 +152,17 @@
                         };
                     }
                 }
-
             },
             opened(){
                 this.$initTinyMCE([
                     "autolink link example"
-                ]);
+                ], {
+                    'public': 1,
+                    'referenceable_type': 'App\\\Curriculum',
+                    'referenceable_id': this.form.curriculum_id,
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id
+                });
                 this.initSelect2();
             },
             initSelect2(){

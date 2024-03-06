@@ -54,7 +54,7 @@
                             <td>
                                 <AchievementIndicator
                                     v-permission="'achievement_create'"
-                                    :objective="objective"
+                                    :objective="objective[user.id] ?? objective.default"
                                     :type="'enabling'"
                                     :users="[user.id]"
                                     :settings="{'achievements' : false, 'edit': false}">
@@ -85,18 +85,35 @@ export default {
             objective: {},
         };
     },
-    mounted() {
-        
-    },
+    mounted() {},
     methods: {
         close() {
             this.$modal.hide('set-achievements-modal');
+            this.objective = {};
         },
         submit() {
             this.close();
         },
+        /**
+         * since we need the achievement-status combined with the specific user,
+         * we'll create an object with the user_id as the attribute
+         * and set a default for users with no achievement
+         * INFO: I don't want to do a double for-loop because O(n^2)
+         */
         beforeOpen(event) {
-            this.objective = event.params.objective;
+            const eventObj = event.params.objective;
+            const obj = {}; // if we add attributes directly to 'this.objective' it won't work
+            obj.default = { id: eventObj.id };
+            
+            eventObj.achievements.forEach(achievement => {
+                // only add attributes that are actually needed
+                obj[achievement.user_id] = {
+                    id: eventObj.id,
+                    achievements: [achievement],
+                };
+            });
+
+            this.objective = obj;
         },
         beforeClose() {},
         opened() {},

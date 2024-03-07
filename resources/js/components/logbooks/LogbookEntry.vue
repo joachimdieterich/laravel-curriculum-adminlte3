@@ -275,6 +275,7 @@ export default {
     },
     data() {
         return {
+            component_id: this._uid,
             media: {},
             active: true,
             timePeriod: '',
@@ -388,7 +389,7 @@ export default {
                 : 'none';
         });
         this.$eventHub.$on('removeFilter', () => this.$el.style.display = 'flex');
-        
+
         this.postDate();
     },
     computed: {

@@ -24,6 +24,8 @@ class LogbookFactory extends Factory
         return [
             'title' => $this->faker->word,
             'description' => $this->faker->paragraph,
+            'color' => $this->faker->hexColor,
+            'css_icon' => 'fa fa-book',
 
             'owner_id' => auth()->user()->id,
         ];

@@ -80,6 +80,7 @@ import 'vue2-datepicker/index.css';
     export default {
         data() {
             return {
+                component_id: this._uid,
                 method: 'post',
                 requestUrl: '/logbookEntries',
                 categories: {},
@@ -128,7 +129,13 @@ import 'vue2-datepicker/index.css';
             opened(){
                 this.$initTinyMCE([
                     "autolink link example"
-                ]);
+                ],{
+                    'public': 1,
+                    'referenceable_type': 'App\\\Logbook',
+                    'referenceable_id': this.form.logbook_id,
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id
+                });
             },
 
             beforeClose() {},

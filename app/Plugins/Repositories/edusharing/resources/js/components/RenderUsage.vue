@@ -64,7 +64,11 @@
                         this.preview = response.data.preview;
                         this.title = response.data.title;
                         this.name = response.data.name;
-                        $("#loading_"+this.medium.id).hide();
+                        //console.log(this.downloadUrl);
+                        if (this.downloadUrl == null){
+                            $("#download_medium_"+this.medium.id).hide();
+                        }
+
                     })
                     .catch((error) => {
                         console.log(error);
@@ -104,8 +108,9 @@
             },
         },
         mounted(){
+            this.loader(); // needed to see if downloadURL is set
             this.getPreview();
-            //this.loader();
+
 
             this.$eventHub.$on('download', (medium) => {
 
@@ -120,6 +125,8 @@
                             console.log(error);
                             $("#loading_"+this.medium.id).hide();
                         });
+                } else {
+                    console.log('no downloadURL');
                 }
             });
         },

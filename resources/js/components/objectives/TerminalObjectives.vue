@@ -217,13 +217,18 @@ export default {
             });
 
         //eventlistener
-        this.$on('addTerminalObjective', function(newTerminalObjective) {
+
+        this.$eventHub.$on('addTerminalObjective', function(newTerminalObjective) {
             this.activetab = newTerminalObjective.objective_type_id;
             this.loadObjectives(this.activetab);
-        });
-        this.$on('addEnablingObjective', function(newEnablingObjective) {
+        }.bind(this));
+        this.$eventHub.$on('addEnablingObjective', function(newEnablingObjective) {
             this.loadObjectives(this.activetab);
-        });
+        }.bind(this));
+        this.$eventHub.$on('deletedObjective', function(deletedObjective) {
+            this.activetab = (deletedObjective.type === 'terminal') ? deletedObjective.objective.objective_type_id : deletedObjective.objective.terminal_objective.objective_type_id;
+            this.loadObjectives(this.activetab);
+        }.bind(this));
     },
 
     components: {

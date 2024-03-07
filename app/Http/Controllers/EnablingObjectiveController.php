@@ -101,7 +101,7 @@ class EnablingObjectiveController extends Controller
         abort_unless((\Gate::allows('objective_delete') and $enablingObjective->isAccessible()), 403);
 
         //set temp vars
-        $curriculum_id = $enablingObjective->curiculum_id;
+        $curriculum_id = $enablingObjective->curriculum_id;
         $terminal_objective_id = $enablingObjective->terminal_objective_id;
         $order_id = $enablingObjective->order_id;
 

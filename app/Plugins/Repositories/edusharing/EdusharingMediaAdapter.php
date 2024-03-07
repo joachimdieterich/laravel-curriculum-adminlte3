@@ -181,9 +181,7 @@ class EdusharingMediaAdapter implements MediaInterface
                                     header('Content-Type: image/*');
                                     return 'data:image/*;base64,' . base64_encode($url->content);
                                 } else {
-
-                                    return redirect($url->info['url']);
-
+                                    return redirect($url->info['url']); //Todo replace img tag with data:image/*;base64 data inside of textareas.
                                 }
                             }
 

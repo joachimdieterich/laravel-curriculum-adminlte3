@@ -48,7 +48,9 @@ class MapController extends Controller
      */
     public function show(Map $map)
     {
-        //
+        $map = $map->with(['type', 'category', 'markers'])->get()->first();
+        return view('map.index')
+            ->with(compact('map'));
     }
 
     /**

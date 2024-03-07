@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'author' => 'Autor',
+    'author_helper' => '',
     'code_401' => 'Sie sind nicht authentifiziert oder verfügen nicht über die notwendigen Berechtigungen.',
     'code_402' => 'Limit erreicht. Diese Aktion kann nicht ausgeführt werden.',
     'code_403' => 'Sie verfügen nicht über die notwendigen Berechtigungen.',
@@ -498,8 +500,6 @@ return [
         'print' => 'Curriculum drucken',
         'print_references' => 'Querverweise drucken',
         'fields' => [
-            'author' => 'Autor',
-            'author_helper' => '',
             'publisher' => 'Herausgeber',
             'publisher_helper' => '',
             'city' => 'Ort',
@@ -569,8 +569,6 @@ return [
             'path_helper' => '',
             'medium_name' => 'Mediumname',
             'medium_name_helper' => '',
-            'author' => 'Autor',
-            'author_helper' => '',
             'publisher' => 'Herausgeber',
             'publisher_helper' => '',
             'city' => 'Ort',
@@ -1120,6 +1118,8 @@ return [
         'fields' => [
             'latitude' => 'Latitude (geografische Breite)',
             'longitude' => 'Longitude (geografische Länge)',
+            'link' => 'Link',
+            'link_helper' => '',
         ],
     ],
 ];

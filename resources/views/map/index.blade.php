@@ -14,7 +14,9 @@
     </head>
     <body>
         <div id="app" class="h-100">
-            <leaflet-map></leaflet-map>
+            <leaflet-map
+                :map="{{ $map }}"
+            ></leaflet-map>
         </div>
         <script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script>
         <script src="{{ mix('js/app.js') }}"></script>

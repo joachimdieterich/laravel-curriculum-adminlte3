@@ -1,7 +1,7 @@
 <template>
     <div id="outermap">
 
-        <div id="sidebar" class="sidebar collapsed">
+        <div id="sidebar" class="sidebar">
             <!-- navigation tabs -->
             <div class="sidebar-tabs">
                 <ul role="tablist">
@@ -16,13 +16,37 @@
 
             <!-- tab panes -->
             <div class="sidebar-content">
-                <div class="sidebar-pane" id="ll-home">
+                <div class="sidebar-pane active"
+                     id="ll-home"
+                >
                     <h1 class="sidebar-header mb-3">
-                        Bildungsnavigator Rheinland-Pfalz
+                        {{ this.map.title }}
                         <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
                     </h1>
+                    <span class="pb-2">
+                        <h5 >{{ this.map.subtitle }}</h5>
+                        <span class="right badge badge-primary">{{ this.map.type.title }}</span>
+                    </span>
 
-                    <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+                    <p class="pt-2">
+                        {{ this.map.description}}
+                    </p>
+
+                    <h5 class="pt-2">{{ trans('global.entries') }}</h5>
+                    <ul class="todo-list">
+                        <li v-for="marker in this.map.markers">
+                            <i class="fa fa-location-dot pr-2"></i>
+                            <a @click="setCurrentMarker(marker)"
+                               class="text-decoration-none">
+                                {{ marker.title }}
+                            </a>
+                            <div class="tools">
+                                <i class="fas fa-edit"></i>
+                                <i class="text-danger fa fa-trash ml-2"></i>
+                            </div>
+                        </li>
+                    </ul>
+
                 </div>
 
                 <div class="sidebar-pane" id="ll-layer">
@@ -30,7 +54,6 @@
                         Ebenen
                         <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
                     </h1>
-
 
                     <div v-if="mapMarkerTypes"
                          class="form-group ">
@@ -66,13 +89,56 @@
                     </button>
                 </div>
 
-                <div class="sidebar-pane" id="ll-marker">
+                <div v-if="typeof this.currentMarker.ARTIKEL == 'undefined'"
+                     class="sidebar-pane" id="ll-marker">
+                    <MarkerView :marker="this.currentMarker"/>
+                </div>
+                <div v-else
+                     class="sidebar-pane" id="ll-marker">
                     <h1 class="sidebar-header  mb-3">
-                        {{ this.currentMarker.title }}
+                        {{ this.currentMarker.ARTIKEL }}
                         <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
                     </h1>
 
-                   <div v-html="this.currentMarker.description"></div>
+                    <div class="py-0 pt-2"
+                         v-if="this.currentMarker.BEZ_1_2.length > 2">
+                        <strong>Untertitel</strong></div>
+                    <div class="py-0 pre-formatted"
+                         v-if="this.currentMarker.BEZ_1_2.length > 2"
+                         v-html="this.currentMarker.BEZ_1_2"></div>
+
+                    <div class="py-0 pt-2">
+                        <strong>Beschreibung</strong></div>
+                    <div class="py-0 pre-formatted"
+                         style="text-align:justify;"
+                         v-html="this.currentMarker.BEMERKUNG"></div>
+
+                    <div class="py-0 pt-2"><strong>Termine</strong></div>
+                    <div class="py-0 pre-formatted">
+                        <div v-for="termin in this.currentMarker.termine" >
+                            {{ dateforHumans(termin.DATUM) }}, {{ termin.BEGINN }} - {{ termin.ENDE }}
+                            <br/>
+                            {{ termin.VO_ORT }}
+                        </div>
+                    </div>
+
+                    <div class="py-0 pt-2"><strong>VA-Nummer</strong></div>
+                    <div class="py-0 pre-formatted" v-html="this.currentMarker.ARTIKEL_NR"></div>
+
+                    <div class="py-0 pt-2">
+                        <a :href="this.currentMarker.LINK_DETAIL"
+                           class="btn btn-default"
+                           target="_blank">
+                            <i class="fa fa-info"></i> Details/Anmeldung
+                        </a>
+
+                        <a :href="this.currentMarker.LINK_DETAIL+'&print=1'"
+                           onclick="return !window.open(this.href, 'Drucken', 'width=800,scrollbars=1')"
+                           class="btn btn-default"
+                           target="_blank">
+                            <i class="fa fa-print"></i> Drucken
+                        </a>
+                    </div>
                 </div>
 
                 <div class="sidebar-pane" id="ll-search">
@@ -106,7 +172,7 @@
 
                 </div>
 
-                <div v-if="markers">
+<!--                <div v-if="markers">
                     <p v-for="item in markers"
                     style="list-style-type: none;"
                        >
@@ -115,7 +181,7 @@
                         ></i>
                         {{ item.title }}
                     </p>
-                </div>
+                </div>-->
             </div>
         </div>
 
@@ -132,17 +198,25 @@ import "leaflet.markercluster/dist/leaflet.markercluster.js";
 import Form from "form-backend-validation";
 import "leaflet-extra-markers/dist/js/leaflet.extra-markers.js"
 import MapSidebarCreate from "./MapSidebarCreate";
+import moment from "moment/moment";
+import MarkerView from "./MarkerView";
 
 
 export default {
     components: {
+        MarkerView,
         MapSidebarCreate
+    },
+    props: {
+        map: {
+            default: null
+        },
     },
     data() {
         return {
             component_id: this._uid,
+            mapCanvas: [],
             events: {},
-            map:[],
             sidebar: {},
             search: 'digiWerkzeug',
             bordersGroup: {},
@@ -156,6 +230,9 @@ export default {
                 'type_id': '',
                 'category_id': '',
             }),
+            initialLatitude: '49.314908280766346',
+            initialLongitude: '8.413913138283617',
+            zoom: 10
         }
     },
     methods: {
@@ -188,6 +265,8 @@ export default {
                 .catch(err => {
                     console.log(err);
                 });
+
+            this.loadMarkers();
         },
 
         loadMarkers(){
@@ -202,8 +281,9 @@ export default {
                             this.createMarker(
                                 marker.latitude,
                                 marker.longitude,
+                                marker,
                                 marker.title,
-                                marker.description,
+                                marker.teaser_text,
                                 'll-marker',
                                 this.getCss('type', marker.type_id)['css_icon'],
                                 this.getCss('type', marker.category_id)['color'],
@@ -212,7 +292,7 @@ export default {
                             )
                         ); // add marker to the clustergroup
                     });
-                    this.map.addLayer(this.clusterGroup); // add clustergroup to the map
+                    this.mapCanvas.addLayer(this.clusterGroup); // add clustergroup to the map
                 })
                 .catch(err => {
                     console.log(err);
@@ -225,15 +305,15 @@ export default {
                     search: this.search,
                     page: 1,
                     plugin: 'evewa'
-                })).data.message.lesePlrlpVeranstaltungen.data;
+                })).data.events.data;
             } catch (error) {
                 console.log(error);
             }
             this.refreshMap();
         },
 
-        sendNominatimRequest() {
-            axios.get('https://nominatim.openstreetmap.org/search?polygon_geojson=1&format=geojson&polygon_threshold=0.001&country=de&state=RP')
+        getBorder() {
+            axios.get(this.map.border_url)
                  .then(res => {
                      this.processNominatimReply(res.data);
                 })
@@ -252,7 +332,7 @@ export default {
             var countryBounds = L.latLngBounds(topLeft, bottomRight);
 
 
-            this.map.flyToBounds(countryBounds);
+            this.mapCanvas.flyToBounds(countryBounds);
         },
 
         refreshMap(){
@@ -277,8 +357,9 @@ export default {
                             this.createMarker(
                                 res.data[0].lat,
                                 res.data[0].lon,
+                                data,
                                 data.ARTIKEL,
-                                data.LINK_DETAIL,
+                                data.KATEGORIE,
                                 'll-marker',
                                 'fa-circle',
                                 '#2471A3',
@@ -288,7 +369,7 @@ export default {
                         ); // add marker to the clustergroup
                     });
             });
-            this.map.addLayer(this.clusterGroup); // add clustergroup to the map
+            this.mapCanvas.addLayer(this.clusterGroup); // add clustergroup to the map
         },
         getCss(type, id){
 
@@ -306,13 +387,12 @@ export default {
                         'color' : this.mapMarkerCategories[category_index].color,
                         'shape' : this.mapMarkerCategories[category_index].shape
                     }
-
                     break;
                 default: return '#000';
                 // code block
             }
         },
-        createMarker(lat, lon, title, description, sidebar_target, icon, markerColor, shape, prefix){
+        createMarker(lat, lon, entry, title, description, sidebar_target, icon, markerColor, shape, prefix){
             var svgMarker = L.ExtraMarkers.icon({
                 icon: icon,
                 markerColor: markerColor,
@@ -324,19 +404,42 @@ export default {
                     'icon': svgMarker,
                     'title': title // accessibility
                 })
-                .bindPopup('<b>'+ title + '</b>' + description +'<br/>')
-                .addTo(this.map).on('click', function(e) {
-                    this.currentMarker = {
-                        'title': title,
-                        'description': description,
-                    };
+                .bindPopup('<b>'+ title + '</b></br>' + description +'<br/>')
+                .addTo(this.mapCanvas).on('click', function(e) {
+                    this.currentMarker = entry;
                     this.sidebar.open(sidebar_target);
                 }.bind(this, sidebar_target));
+        },
+        dateforHumans(begin, end = null) {
+            if (end === begin || end === null){
+                return moment(begin).locale('de').format('LL');
+            } else {
+                return moment(begin).locale('de').format('LL') + " - " + moment(end).locale('de').format('LL');
+            }
+        },
+        setCurrentMarker(marker){
+            this.currentMarker = marker;
+            this.sidebar.open('ll-marker');
         }
-
     },
     mounted() {
-        this.map = L.map('map').setView([49.314908280766346, 8.413913138283617], 10); // PL Speyer location
+        if (this.map.initialLatitude){
+            this.initialLatitude = this.map.initialLatitude;
+        }
+        if (this.map.initialLongitude){
+            this.initialLongitude = this.map.initialLongitude;
+        }
+        if (this.map.zoom){
+            this.zoom = this.map.zoom;
+        }
+        if (this.map.type_id){
+            this.form.type_id = this.map.type_id;
+        }
+        if (this.map.category_id){
+            this.form.category_id = this.map.category_id;
+        }
+
+        this.mapCanvas = L.map('map').setView([this.initialLatitude, this.initialLongitude], this.zoom);
 
         // default icon-url throws an error (apparently a common problem)
         // so we need to rebind the file-locations
@@ -350,12 +453,12 @@ export default {
         // set OpenStreetMaps as tile-distributor
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(this.map);
+        }).addTo(this.mapCanvas);
 
 
-        this.sidebar = L.control.sidebar('sidebar').addTo(map);
+        this.sidebar = L.control.sidebar('sidebar').addTo(this.mapCanvas);
 
-        this.bordersGroup = L.geoJSON().addTo(this.map);
+        this.bordersGroup = L.geoJSON().addTo(this.mapCanvas);
 
         /*var overlays = {
             'Landesgrenze anzeigen': this.bordersGroup
@@ -365,7 +468,7 @@ export default {
             collapsed: false
         }).addTo(this.map);*/
 
-        this.sendNominatimRequest();
+        this.getBorder();
 
         this.loader();
     }

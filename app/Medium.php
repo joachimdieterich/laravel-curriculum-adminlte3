@@ -88,19 +88,4 @@ class Medium extends Model
                     ->first();
     }
 
-    /**
-     * @param  type  $eventPath
-     * @param  type  $cutBasename if true basename is cut off
-     * @param  type  $basePath
-     * @return type
-     */
-   /* public function convertFilemanagerEventPathToMediumPath($eventPath, $cutBasename = true, $basePath = 'app')
-    {
-        $filePath = str_replace(public_path(), '', $eventPath);
-        if ($cutBasename) {
-            return str_replace(basename($filePath), '', str_replace(storage_path()."/{$basePath}", '', $eventPath));
-        } else {
-            return str_replace(storage_path()."/{$basePath}", '', $eventPath);
-        }
-    }*/
 }

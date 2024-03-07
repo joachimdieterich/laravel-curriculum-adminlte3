@@ -29,8 +29,9 @@ class EventSubscriptionController extends Controller
 
         LogController::set(get_class($this).'@'.__FUNCTION__, $input['search'], (int) $events->lesePlrlpVeranstaltungen->GESAMT);
 
+        //dump($events);
         if (request()->wantsJson()) {
-            return ['message' => $events];
+            return ['events' => $events->lesePlrlpVeranstaltungen];
         }
     }
 

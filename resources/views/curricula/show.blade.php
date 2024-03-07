@@ -84,7 +84,9 @@
 <script>
 
 function getDatatablesIds(table){
+
     let selection = table.rows('.selected').ids().toArray()
+    console.log(selection);
     localStorage.setItem('user-datatable-selection', selection); // used by AchievementIndivator.vue
     return selection
 }
@@ -122,7 +124,7 @@ $(document).ready( function () {
     //let dtButtons = false;//$.extend(true, [], $.fn.dataTable.defaults.buttons)
     localStorage.setItem('#users-datatable-position', 'content');
     localStorage.setItem('user-datatable-selection', ''); // used by AchievementIndivator.vue
-    table = $('#users-datatable').DataTable({
+    let table = $('#users-datatable').DataTable({
         ajax: "/courses/list?course_id={{ $course->id }}",
         columns: [
                  { data: 'check'},

@@ -204,9 +204,12 @@ class LogbookController extends Controller
         foreach ($logbook->subscriptions as $subscription) {
             (new LogbookSubscriptionController())->destroy($subscription);
         }
-        $logbook->delete();
 
-        return back();
+        if ($logbook->delete()){
+            return view('logbooks.index');
+        }
+
+
     }
 
     /**

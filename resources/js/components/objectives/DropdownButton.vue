@@ -81,7 +81,8 @@
                 this.$modal.show(entry.value, {'objective': this.objective, 'method': 'PATCH' });
             },
             emitDeleteEvent() {
-                this.$parent.$emit('eventDelete', this.objective)
+                this.$eventHub.$emit('deleteObjective', this.objective);
+                //this.$parent.$emit('eventDelete', this.objective)
             },
             action(entry) {
                 this.$modal.show(entry.value);

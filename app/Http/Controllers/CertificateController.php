@@ -237,7 +237,7 @@ class CertificateController extends Controller
     {
         $user_ids = explode(',', request()->user_ids);
         $generated_files = [];
-        if(str_contains($certificate->body, '[accomplished_objectives]'))
+        if(str_contains($certificate->body, '[accomplished_objectives]') || str_contains($certificate->body, '[accomplished_objectives_without_terminal_objectives]') )
         {
             $curriculum = Curriculum::with([
                 'terminalObjectives',
@@ -258,6 +258,10 @@ class CertificateController extends Controller
             if(str_contains($certificate->body, '[accomplished_objectives]'))
             {
                 $html = $this->generateAccomplishedObjectiveList($html, $id, $curriculum); //generate list if "[accomplished_objectives]" is in certificate
+            }
+            if(str_contains($certificate->body, '[accomplished_objectives_without_terminal_objectives]'))
+            {
+                $html = $this->generateAccomplishedObjectiveList($html, $id, $curriculum, '[accomplished_objectives_without_terminal_objectives]', false); //generate list if "[accomplished_objectives]" is in certificate
             }
 
 
@@ -311,7 +315,7 @@ class CertificateController extends Controller
     }
 
 
-    protected function generateAccomplishedObjectiveList($html, $user_id, $curriculum)
+    protected function generateAccomplishedObjectiveList($html, $user_id, $curriculum, $replace = "[accomplished_objectives]", $with_terminal_objectives = true)
     {
         $accomplished_list = '';
         foreach ($curriculum->terminalObjectives as $ter_value) {
@@ -328,7 +332,11 @@ class CertificateController extends Controller
                 {
                     if ($i === 0) //
                     {
-                        $accomplished_list .= '<strong>'.strip_tags($ter_value->title).'</strong><br>';
+                        if ($with_terminal_objectives)
+                        {
+                            $accomplished_list .= '<strong>'.strip_tags($ter_value->title).'</strong><br>';
+                        }
+
                         $i++; //iterator for terminal objective output
                     }
                     if (in_array($status, ['01', '11', '21', '31']))
@@ -340,7 +348,7 @@ class CertificateController extends Controller
                 }
             }
         }
-        return str_replace("[accomplished_objectives]",$accomplished_list,$html);
+        return str_replace($replace, $accomplished_list,$html);
     }
 
     /**

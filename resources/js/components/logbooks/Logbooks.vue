@@ -110,11 +110,13 @@ export default {
             }
         },
         async destroy() {
-            try {
-                this.logbooks = (await axios.delete('/logbooks/' + this.tempId)).data.data;
-            } catch (error) {
-                console.log(error);
-            }
+             axios.delete('/logbooks/' + this.tempId)
+                 .then(() => {
+                     this.loaderEvent();
+                 })
+                 .catch ((e) => {
+                     console.log(e);
+                });
         },
     },
     mounted() {

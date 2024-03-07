@@ -115,14 +115,14 @@ export default {
         showModal(modal) {
             this.$modal.show(modal, { 'objective': this.objective, 'method': 'post' , 'objective_type_id': this.objective_type_id});
         },
-        async deleteEvent(object){
+        async deleteEvent(){
             try {
                 this.location = (await axios.delete('/'+this.type+'Objectives/'+this.objective.id)).data.message
             }
             catch(error) {
                 this.formerrors = error.response.data.errors;
             }
-                location.reload(true);
+            this.$eventHub.$emit('deletedObjective', {'objective': this.objective, 'type': this.type});
         },
 
         async sortEvent(amount) {
@@ -145,7 +145,7 @@ export default {
                 this.$modal.show('set-achievements-modal', { 'objective': this.objective });
             }
         },
-        
+
     },
     computed: {
         background: function () {
@@ -215,12 +215,11 @@ export default {
         }
     },
     created: function () {
-        this.$root.$on('eventDelete', () => {
-            this.deleteEvent()
-        });
-        this.$root.$on('eventSort', () => {
-            this.sortEvent()
-        })
+        this.$eventHub.$on('deleteObjective', function(deletedObjective) {
+            if (this.objective === deletedObjective){
+                this.deleteEvent()
+            }
+        }.bind(this));
     },
     mounted() {
         this.$nextTick(() => {

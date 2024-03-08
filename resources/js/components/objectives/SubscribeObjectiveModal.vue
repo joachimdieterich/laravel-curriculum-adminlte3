@@ -3,6 +3,8 @@
         id="subscribe-objective-modal"
         name="subscribe-objective-modal"
         height="420px"
+        :minWidth="300"
+        :minHeight="420"
         :adaptive=true
         draggable=".draggable"
         :resizable=true

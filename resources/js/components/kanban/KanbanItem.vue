@@ -2,17 +2,17 @@
     <div class="card">
         <div class="card-header px-3 py-2" :style="{ backgroundColor: item.color, color: textColor }">
             <div class="card-tools">
-                <div
-                    v-if="
+                <div v-if="
                         (editable == true && item.editable == true && editor == false && onlyEditOwnedItems != true) ||
-                        (editable == true && item.editable == true && $userId == item.owner_id  && editor == false ) ||
-                        (item.editable == true && $userId == kanban_owner_id  && editor == false ) ||
-                        ($userId == kanban_owner_id  && editor == false )"
-                     class="float-right py-0 px-2 "
-                     :id="'kanbanItemDropdown_'+index"
-                     style="background-color: transparent;"
-                     data-toggle="dropdown"
-                     aria-expanded="false">
+                        (editable == true && item.editable == true && $userId == item.owner_id  && editor == false) ||
+                        (item.editable == true && $userId == kanban_owner_id  && editor == false) ||
+                        ($userId == kanban_owner_id  && editor == false)"
+                    class="float-right py-0 px-2 pointer"
+                    :id="'kanbanItemDropdown_'+index"
+                    style="background-color: transparent;"
+                    data-toggle="dropdown"
+                    aria-expanded="false"
+                >
                     <i class="fas fa-ellipsis-v"
                        :style="{ 'text-color': textColor }"></i>
 
@@ -34,7 +34,6 @@
                         <div v-if="(item.editable == 1 && $userId == item.owner_id) || ($userId == kanban_owner_id)">
                             <hr class="my-1">
                             <button
-
                                 v-can="'kanban_delete'"
                                 :name="'kanbanItemDelete_'+index"
                                 class="dropdown-item py-1 text-red"
@@ -46,7 +45,7 @@
                     </div>
                 </div>
                 <div v-if="(!item.locked || $userId == item.owner_id) || $userId == kanban_owner_id "
-                    class="float-right  py-0 px-2 handle pointer" >
+                    class="float-right  py-0 px-1 mx-1 handle pointer" >
                     <i class="fa fa-arrows-up-down-left-right"
                        :style="{ 'text-color': textColor }"></i>
                 </div>

@@ -28,6 +28,7 @@
                     :src="this.uploadIframeUrl"
                     :width="this.width"
                     :height="this.height"
+                    style="height: 80vh;"
                     frameborder="0"
                 >
                 </iframe>
@@ -39,6 +40,7 @@
                     :src="this.cloudIframeUrl"
                     :width="this.width"
                     :height="this.height"
+                    style="height: 80vh;"
                     frameborder="0"
                 >
                 </iframe>

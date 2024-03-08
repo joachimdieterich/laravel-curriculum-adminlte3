@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\TerminalObjective;
 use App\TerminalObjectiveSubscriptions;
+use App\Group;
+use App\User;
 use Illuminate\Http\Request;
 
 class TerminalObjectiveSubscriptionsController extends Controller
@@ -17,8 +19,24 @@ class TerminalObjectiveSubscriptionsController extends Controller
     {
         $input = $this->validateRequest();
         if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
-            $model = $input['subscribable_type']::find($input['subscribable_id']);
-            abort_unless((\Gate::allows('curriculum_show') and $model->isAccessible()), 403);
+            $modal = $input['subscribable_type']::find($input['subscribable_id']);
+            abort_unless((\Gate::allows('curriculum_show') and $modal->isAccessible()), 403);
+
+            $user_ids = [];
+            // only if plan owner
+            if ($input['subscribable_type'] == 'App\PlanEntry' and $modal->plan->owner->id === auth()->user()->id) {
+                $subscriptions = $modal->plan->subscriptions;
+                // get every user id of all subscriptions
+                foreach ($subscriptions as $subscription) {
+                    if ($subscription['subscribable_type'] == 'App\Group') {
+                        $user_ids = array_merge($user_ids, Group::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray());
+                    } else if ($subscription['subscribable_type'] == 'App\User') {
+                        array_push($user_ids, User::find($subscription['subscribable_id'])->id);
+                    }
+                }
+            } else {
+                $user_ids = [auth()->user()->id];
+            }
 
             if (request()->wantsJson()) {
                 return [
@@ -30,8 +48,8 @@ class TerminalObjectiveSubscriptionsController extends Controller
                                     'terminalObjective',
                                     'terminalObjective.achievements',
                                     'terminalObjective.enablingObjectives',
-                                    'terminalObjective.enablingObjectives.achievements' => function ($query) {
-                                        $query->where('user_id', auth()->user()->id);
+                                    'terminalObjective.enablingObjectives.achievements' => function ($query) use ($user_ids) {
+                                        $query->where('user_id', $user_ids)->with(['owner', 'user']);
                                     },
                                 ])
                                 ->get()

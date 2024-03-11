@@ -8,10 +8,10 @@
                     v-can="'plan_edit'"
                     class="card-tools pr-2 no-print"
                 >
-                    <a onclick="window.print()" class="link-muted pr-4 pointer">
+                    <a onclick="window.print()" class="link-muted mr-3 px-1 pointer">
                         <i class="fa fa-print"></i>
                     </a>
-                    <a :href="'plans/' + plan.id + '/edit'" class="link-muted">
+                    <a :href="plan.id + '/edit'" class="link-muted px-1">
                         <i class="fa fa-pencil-alt"></i>
                     </a>
                 </div>

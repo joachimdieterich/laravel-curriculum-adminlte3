@@ -92,7 +92,7 @@ export default {
             axios.get('/planEntries?plan_id=' + this.plan.id)
                 .then(response => {
                     if (this.plan.entry_order != null) {
-                        this.entry_order = this.plan.entry_order
+                        this.entry_order = this.plan.entry_order;
                         // rearrange entries to the specified order by their ID
                         // since this is O[n^2], it could become a performance issue in the future
                         this.entries = this.entry_order.map(
@@ -135,7 +135,6 @@ export default {
         localStorage.removeItem('user-datatable-selection'); // reset selection to prevent wrong inputs
         this.disabled = this.$userId != this.plan.owner_id;
         this.loaderEvent();
-        this.entries = this.plan.entries;
         this.$eventHub.$on('plan_entry_added', (e) => {
             this.handleEntryAdded(e);
         });

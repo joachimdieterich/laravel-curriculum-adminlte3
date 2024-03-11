@@ -1,13 +1,10 @@
 <template>
     <div
-        v-if="(kanban.title.toLowerCase().indexOf(search.toLowerCase()) !== -1)
-                            || search.length < 3"
         :id="'kanban-' + kanban.id"
         class="box box-objective nav-item-box-image pointer my-1"
         style="min-width: 200px !important;"
         :style="'border-bottom: 5px solid ' + kanban.color"
     >
-
         <a :href="'/kanbans/' + kanban.id"
             class="text-decoration-none text-black"
         >
@@ -102,11 +99,6 @@ export default {
         href: function (id) {
             return '/media/'+ id;
         },
-    },
-    mounted() {
-        this.$eventHub.$on('filter', (filter) => {
-            this.search = filter;
-        })
     },
 }
 </script>

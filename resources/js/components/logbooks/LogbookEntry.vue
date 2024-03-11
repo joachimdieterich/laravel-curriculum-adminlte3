@@ -388,7 +388,6 @@ export default {
                 ? 'flex'
                 : 'none';
         });
-        this.$eventHub.$on('removeFilter', () => this.$el.style.display = 'flex');
 
         this.postDate();
     },

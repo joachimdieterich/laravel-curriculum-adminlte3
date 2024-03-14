@@ -10,6 +10,23 @@ class MapMarker extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'id',
+        'title',
+        'teaser_text',
+        'description',
+        'author',
+        'type_id',
+        'category_id',
+        'tags',
+        'latitude',
+        'longitude',
+        'address',
+        'url',
+        'url_title',
+        'owner_id',
+    ];
+
     protected $dates = [
         'updated_at',
         'created_at',

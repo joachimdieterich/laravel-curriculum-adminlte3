@@ -2,33 +2,61 @@
     <div>
         <h1 class="sidebar-header  mb-3">
             {{ this.marker.title }}
-            <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+            <span v-can="'map_edit'" class="card-tools pl-2">
+                <a @click.prevent="editMarker()" >
+                    <i class="fa fa-pencil-alt"></i>
+                </a>
+            </span>
         </h1>
-        <h5 class="pt-2">{{ trans('global.author') }}</h5>
-        <p>{{ this.marker.author }}</p>
+        <div>
+            <span v-for="tag in this.tag_array"
+                  class="right badge badge-primary mr-2">
+                {{ tag }}
+            </span>
+        </div>
 
-        <h5 class="pt-2">{{ trans('global.description') }}</h5>
+        <h5 class="pt-3">{{ trans('global.author') }}</h5>
+        <div>{{ this.marker.author }}</div>
+
+        <h5 class="pt-3">{{ trans('global.description') }}</h5>
         <div class="pb-2"
              v-html="this.marker.description"></div>
 
-        <h5 class="pt-2">{{ trans('global.marker.fields.link') }}</h5>
-        <p>
-            <a :href="this.marker.url">
+        <h5 class="pt-3">{{ trans('global.media.title') }}</h5>
+        <div v-if="marker.id != null"
+             v-permission="'medium_access'"
+             v-bind:id="'map_marker_media_'+marker.id">
+            <media
+                subscribable_type="App\MapMarker"
+               :subscribable_id="marker.id"
+               format="list"/>
+        </div>
+
+        <h5 class="pt-3">{{ trans('global.marker.fields.address') }}</h5>
+        <div v-html="this.marker.address"></div>
+
+        <h5 class="pt-3">{{ trans('global.marker.fields.link') }}</h5>
+        <div>
+            <a :href="this.marker.url"
+            target="_blank">
                 <span v-if="this.marker.url_title">
                     {{ this.marker.url_title }}
                 </span>
                 <span v-else>Link zum Projekt</span>
             </a>
-        </p>
-
-        <h5 class="pt-2">{{ trans('global.media.title') }}</h5>
-        <p >-</p>
+        </div>
     </div>
 
 </template>
 <script>
+
+import Media from '../media/Media';
+
 export default {
-  name: 'MarkerView',
+    name: 'MarkerView',
+    components: {
+        Media,
+    },
     props: {
         marker: {
             default: null
@@ -37,14 +65,20 @@ export default {
     data() {
         return {
             component_id: this._uid,
+            tag_array: {},
         }
     },
-    methods: {
+    watch: { // reload if context change
+        marker: function(newVal, oldVal) {
+            this.tag_array = newVal.tags.split(",");
+        },
 
     },
-    mounted() {
+    methods: {
+        editMarker(){
 
-    }
+        },
+    },
 
 }
 </script>

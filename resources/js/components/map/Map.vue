@@ -1,7 +1,7 @@
 <template>
     <div id="outermap">
-
-        <div id="sidebar" class="sidebar">
+        <div id="sidebar"
+             class="sidebar">
             <!-- navigation tabs -->
             <div class="sidebar-tabs">
                 <ul role="tablist">
@@ -10,7 +10,12 @@
                     <li><a href="#ll-marker" role="tab"><i class="fa fa-location-dot"></i></a></li>
                     <li><a href="#ll-search" role="tab"><i class="fa fa-search"></i></a></li>
                     <hr>
-                    <li><a href="#ll-create" role="tab"><i class="fa fa-plus"></i></a></li>
+                    <li>
+                        <a role="tab"
+                        @click="createMarker()">
+                            <i class="fa fa-plus"></i>
+                        </a>
+                    </li>
                 </ul>
             </div>
 
@@ -21,7 +26,6 @@
                 >
                     <h1 class="sidebar-header mb-3">
                         {{ this.map.title }}
-                        <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
                     </h1>
                     <span class="pb-2">
                         <h5 >{{ this.map.subtitle }}</h5>
@@ -52,7 +56,6 @@
                 <div class="sidebar-pane" id="ll-layer">
                     <h1 class="sidebar-header mb-3">
                         Ebenen
-                        <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
                     </h1>
 
                     <div v-if="mapMarkerTypes"
@@ -97,7 +100,6 @@
                      class="sidebar-pane" id="ll-marker">
                     <h1 class="sidebar-header  mb-3">
                         {{ this.currentMarker.ARTIKEL }}
-                        <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
                     </h1>
 
                     <div class="py-0 pt-2"
@@ -144,9 +146,7 @@
                 <div class="sidebar-pane" id="ll-search">
                     <h1 class="sidebar-header  mb-3">
                         {{ this.currentMarker.title }}
-                        <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
                     </h1>
-
 
                     <div class="form-group "
                          :class="form.errors.search ? 'has-error' : ''"
@@ -164,28 +164,18 @@
                     </div>
                 </div>
 
-                <div v-if="mapMarkerTypes && mapMarkerCategories"
-                     class="sidebar-pane" id="ll-create">
-                    <MapSidebarCreate
-                        :mapMarkerTypes="this.mapMarkerTypes"
-                        :mapMarkerCategories="this.mapMarkerCategories"/>
-
-                </div>
-
-<!--                <div v-if="markers">
-                    <p v-for="item in markers"
-                    style="list-style-type: none;"
-                       >
-                        <i class="fa fa-location-dot"
-                           :style="{ 'color': getCss('type', item.type_id)['color'] + ' !important', 'background': getCss('category', item.category_id)['color'] + ' !important' }"
-                        ></i>
-                        {{ item.title }}
-                    </p>
-                </div>-->
             </div>
         </div>
 
         <div id="map" class="sidebar-map"></div>
+
+        <!-- Create Modal -->
+        <MarkerCreate
+            v-can="'marker_create'"
+            id="modal-marker-form"
+            :method="method"
+            :marker="marker"
+        />
     </div>
 </template>
 <script>
@@ -197,7 +187,7 @@ import "sidebar-v2/js/leaflet-sidebar.js";
 import "leaflet.markercluster/dist/leaflet.markercluster.js";
 import Form from "form-backend-validation";
 import "leaflet-extra-markers/dist/js/leaflet.extra-markers.js"
-import MapSidebarCreate from "./MapSidebarCreate";
+import MarkerCreate from "./MarkerCreate";
 import moment from "moment/moment";
 import MarkerView from "./MarkerView";
 
@@ -205,7 +195,7 @@ import MarkerView from "./MarkerView";
 export default {
     components: {
         MarkerView,
-        MapSidebarCreate
+        MarkerCreate
     },
     props: {
         map: {
@@ -232,21 +222,19 @@ export default {
             }),
             initialLatitude: '49.314908280766346',
             initialLongitude: '8.413913138283617',
-            zoom: 10
+            zoom: 10,
+            marker: null,
+            method: {
+                type: String,
+                default: 'post'
+            }
         }
     },
     methods: {
         loader() {
-        //test
             axios.get('/mapMarkerTypes')
                 .then(res => {
                     this.mapMarkerTypes = res.data.mapMarkerTypes;
-                    $("#mapMarkerType").select2({
-                        dropdownParent: $("#mapMarkerType").parent(),
-                        allowClear: false
-                    }).on('select2:select', function (e) {
-                        this.form.type_id = e.params.data.element.value
-                    }.bind(this))
                 })
                 .catch(err => {
                     console.log(err);
@@ -255,20 +243,20 @@ export default {
             axios.get('/mapMarkerCategories')
                 .then(res => {
                     this.mapMarkerCategories = res.data.mapMarkerCategories;
-                    $("#mapMarkerCategory").select2({
-                        dropdownParent: $("#mapMarkerCategory").parent(),
-                        allowClear: false
-                    }).on('select2:select', function (e) {
-                        this.form.category_id = e.params.data.element.value
-                    }.bind(this))
                 })
                 .catch(err => {
                     console.log(err);
                 });
-
+            this.syncSelect2();
             this.loadMarkers();
         },
-
+        createMarker(method = 'post'){
+            this.method = method;
+            $('#modal-marker-form').modal('show');
+        },
+        editMarker(marker){
+            this.$eventHub.$emit('edit_marker', marker);
+        },
         loadMarkers(){
             axios.get('/mapMarkers?type_id=' + this.form.type_id + '&category_id=' + this.form.category_id)
                 .then(res => {
@@ -278,7 +266,7 @@ export default {
 
                     this.markers.forEach((marker) => {
                         this.clusterGroup.addLayer(
-                            this.createMarker(
+                            this.generateMarker(
                                 marker.latitude,
                                 marker.longitude,
                                 marker,
@@ -354,7 +342,7 @@ export default {
                 axios.get(url)
                     .then(res => {
                         this.clusterGroup.addLayer(
-                            this.createMarker(
+                            this.generateMarker(
                                 res.data[0].lat,
                                 res.data[0].lon,
                                 data,
@@ -392,7 +380,7 @@ export default {
                 // code block
             }
         },
-        createMarker(lat, lon, entry, title, description, sidebar_target, icon, markerColor, shape, prefix){
+        generateMarker(lat, lon, entry, title, description, sidebar_target, icon, markerColor, shape, prefix){
             var svgMarker = L.ExtraMarkers.icon({
                 icon: icon,
                 markerColor: markerColor,
@@ -420,7 +408,25 @@ export default {
         setCurrentMarker(marker){
             this.currentMarker = marker;
             this.sidebar.open('ll-marker');
-        }
+        },
+        syncSelect2(){
+            $("#type_id").select2({
+                dropdownParent: $("#type_id").parent(),
+                allowClear: false
+            }).on('select2:select', function (e) {
+                this.form.type_id = e.params.data.element.value
+            }.bind(this))
+                .val(this.form.type_id)
+                .trigger('change');
+            $("#category_id").select2({
+                dropdownParent: $("#category_id").parent(),
+                allowClear: false
+            }).on('select2:select', function (e) {
+                this.form.category_id = e.params.data.element.value
+            }.bind(this))
+                .val(this.form.category_id)
+                .trigger('change');
+        },
     },
     mounted() {
         if (this.map.initialLatitude){
@@ -486,5 +492,8 @@ export default {
 }
 .sidebar {
     z-index: 1000 !important;
+    height: 83% !important;
+    margin-top: 67px;
+    margin-left: 17px;
 }
 </style>

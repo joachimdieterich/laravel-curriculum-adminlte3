@@ -1036,6 +1036,20 @@ return [
             'endCallbackUrl_helper' => '',
         ],
     ],
+    'map' => [
+        'title' => 'Maps',
+        'title_singular' => 'Map',
+        'create' => 'Create map',
+        'edit' => 'Edit map',
+        'delete' => 'Delete map',
+        'delete_helper' => 'Should map be deleted?',
+        'fields' => [
+            'latitude' => 'Latitude',
+            'longitude' => 'Longitude',
+            'link' => 'Link',
+            'link_helper' => '',
+        ],
+    ],
     'marker' => [
         'title' => 'Marker',
         'title_singular' => 'Marker',

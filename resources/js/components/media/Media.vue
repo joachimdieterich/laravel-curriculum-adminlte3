@@ -119,12 +119,20 @@
                 currentUser: {}
             }
         },
+        watch: { // reload if context change
+            subscribable_id: function(newVal, oldVal) {
+                if (newVal != oldVal){
+                    this.loader();
+                }
+            },
+
+        },
         methods: {
             loader() { //todo: remove duplicate in beforMount.
                 axios.get(this.url + '?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id).then(response => {
                     this.subscriptions = response.data.message;
                 }).catch(e => {
-                    this.errors = error.response.data.errors;
+                    console.log(e);
                 });
             },
             show(model, entry) {
@@ -195,7 +203,7 @@
                 axios.get(this.url + '?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id).then(response => {
                     this.subscriptions = response.data.message;
                 }).catch(e => {
-                    this.errors = error.response.data.errors;
+                    console.log(e);
                 });
             }
         },

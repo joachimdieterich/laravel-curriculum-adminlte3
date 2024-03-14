@@ -169,6 +169,7 @@ Vue.component('content-modal', () => import('./components/content/ContentModal.v
 Vue.component('content-create-modal', () => import('./components/content/ContentCreateModal.vue'));
 Vue.component('content-subscription-modal', () => import('./components/content/ContentSubscriptionModal.vue'));
 Vue.component('reference-objective-modal', () => import('./components/reference/ReferenceObjectiveModal.vue'));
+Vue.component('maps', () => import('./components/map/Maps.vue'));
 Vue.component('media-renderer', () => import('./components/media/MediaRenderer.vue'));
 Vue.component('medium-modal', () => import('./components/media/MediumModal.vue'));
 Vue.component('medium-create-modal', () => import('./components/media/MediumCreateModal.vue'));

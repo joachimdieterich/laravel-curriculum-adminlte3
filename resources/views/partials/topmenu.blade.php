@@ -13,6 +13,11 @@
                 style="font-size: 24px !important"></i>
                 {{ trans('global.videoconference.title') }}
                 <i class="fa fa-chevron-down"></i>
+            @elseif(  Request::is('maps') || Request::is('maps/*'))
+                <i class="fa fa-map-location-dot text-white p-2"
+                   style="font-size: 24px !important"></i>
+                {{ trans('global.map.header_title') }}
+                <i class="fa fa-chevron-down"></i>
             @else
                 <svg  class="p-1" version="1.0" xmlns="http://www.w3.org/2000/svg"
                       height="32.000000pt" viewBox="0 0 400.000000 460.000000"

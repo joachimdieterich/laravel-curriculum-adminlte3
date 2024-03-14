@@ -28,15 +28,6 @@ class MapMarkerController extends Controller
 
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -46,7 +37,26 @@ class MapMarkerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        abort_unless(\Gate::allows('map_create'), 403);
+
+        $input = $this->validateRequest();
+
+        $marker = MapMarker::create([
+            'title' => $input['title'],
+            'description' => $input['description'],
+            'type_id' => $input['type_id'],
+            'category_id' => $input['category_id'],
+            'tags' => $input['tags'],
+            'latitude' => $input['latitude'],
+            'longitude' => $input['longitude'],
+            'address' => $input['address'],
+            'url' => $input['url'],
+            'owner_id' => auth()->user()->id,
+        ]);
+
+        if (request()->wantsJson()) {
+            return ['marker' => $marker];
+        }
     }
 
     /**
@@ -104,7 +114,7 @@ class MapMarkerController extends Controller
             'category_id' => 'sometimes|integer',
             'tags' => 'sometimes|string',
             'latitude' => 'sometimes|nullable',
-            'longlitude' => 'sometimes|nullable',
+            'longitude' => 'sometimes|nullable',
             'address' => 'sometimes|nullable',
             'url' => 'sometimes|nullable',
             'owner_id' => 'sometimes|integer',

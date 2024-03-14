@@ -43,16 +43,15 @@ class TerminalObjectiveSubscriptionsController extends Controller
                     'subscriptions' =>
                         TerminalObjectiveSubscriptions::where('subscribable_type', $input['subscribable_type'])
                             ->where('subscribable_id', $input['subscribable_id'])
-                            ->with(
-                                [
-                                    'terminalObjective',
-                                    'terminalObjective.achievements',
-                                    'terminalObjective.enablingObjectives',
-                                    'terminalObjective.enablingObjectives.achievements' => function ($query) use ($user_ids) {
-                                        $query->where('user_id', $user_ids)->with(['owner', 'user']);
-                                    },
-                                ])
-                                ->get()
+                            ->with([
+                                'terminalObjective',
+                                // 'terminalObjective.achievements', // there's currently no implementation for this
+                                'terminalObjective.enablingObjectives',
+                                'terminalObjective.enablingObjectives.achievements' => function ($query) use ($user_ids) {
+                                    $query->whereIn('user_id', $user_ids)->with(['owner', 'user']);
+                                },
+                            ])
+                            ->get()
                 ];
             }
         }

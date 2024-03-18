@@ -95,31 +95,34 @@ const EnablingObjectives =
             }
         },
         methods: {
-            loaderEvent() {
-                axios.get('/terminalObjectiveSubscriptions?subscribable_type=' + this.referenceable_type + '&subscribable_id=' + this.referenceable_id)
+            async loaderEvent() {
+                //TODO: might need a loading indicator
+                // since we need to wait for two sequentiell axios-calls, this might take a long time to load
+                await axios.get('/terminalObjectiveSubscriptions?subscribable_type=' + this.referenceable_type + '&subscribable_id=' + this.referenceable_id)
                     .then(response => {
                         this.terminalSubscriptions = response.data.subscriptions;
                     })
                     .catch(e => {
                         console.log(e);
                     });
-                axios.get('/enablingObjectiveSubscriptions?subscribable_type=' + this.referenceable_type + '&subscribable_id=' + this.referenceable_id)
+                await axios.get('/enablingObjectiveSubscriptions?subscribable_type=' + this.referenceable_type + '&subscribable_id=' + this.referenceable_id)
                     .then(response => {
                         this.enablingSubscriptions = response.data.subscriptions;
-                        //? if function is called outside axios-call, it gets called too early
-                        // putting await before both axios-calls might increase waiting time too much
-                        this.checkSubscriptions();
                     })
                     .catch(e => {
                         console.log(e);
                     });      
+
+                this.checkSubscriptions();
             },
             /**
              * combine enablingObjectives into their terminalObjective
              */
             checkSubscriptions() {
+                let subObj = {};
+
                 if (this.terminalSubscriptions.length > 0) {
-                    this.subscriptions = this.terminalSubscriptions;
+                    subObj = this.terminalSubscriptions;
                     
                     // reverse-loop, since removing an item while counting up messes with the index
                     for (let i = this.enablingSubscriptions.length - 1; i >= 0; i--) {
@@ -157,9 +160,12 @@ const EnablingObjectives =
                     }
                 });
 
+                // add new terminalObjectives through their ID
                 Object.keys(newTerminals).forEach(key => {
-                    this.subscriptions.push(newTerminals[key]);
+                    subObj.push(newTerminals[key]);
                 });
+
+                this.subscriptions = subObj;
             },
             is_owner() {
                 return (this.$userId == this.owner_id) ?? false

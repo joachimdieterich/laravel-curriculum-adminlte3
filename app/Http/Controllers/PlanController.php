@@ -148,18 +148,30 @@ class PlanController extends Controller
         $users = [];
 
         if ($plan->owner_id === auth()->user()->id) {
+            // get every user-id through all subscriptions
             foreach ($subscriptions as $subscription) {
-                if ($subscription['subscribable_type'] == 'App\Group') {
-                    $group_users = Group::find($subscription['subscribable_id'])->users()->get()->toArray();
-                    $users = array_merge($users, $group_users);
-                } else if ($subscription['subscribable_type'] == 'App\User') {
-                    $user = User::find($subscription['subscribable_id'])->toArray();
-                    array_push($users, $user);
-                } else if ($subscription['subscribable_type'] == 'App\Organization') {
-                    $organization_users = Organization::find($subscription['subscribable_id'])->users()->get()->toArray();
-                    $users = array_merge($users, $organization_users);
+                switch ($subscription['subscribable_type']) {
+                    case 'App\User':
+                        array_push($users, $subscription['subscribable_id']);
+                        break;
+                    case 'App\Group':
+                        $ids = Group::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray();
+                        $users = array_merge($users, $ids);
+                        break;
+                    case 'App\Organization':
+                        $ids = Organization::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray();
+                        $users = array_merge($users, $ids);
+                        break;
+                    default:
+                        break;
                 }
             }
+
+            // duplicates have to be removed, because SQL will return multiple entries
+            $users = array_unique($users, SORT_NUMERIC);
+
+            // get needed user-data through their ID
+            $users = User::select('id', 'firstname', 'lastname')->whereIn('id', $users)->get()->toArray();
         }
 
         if (request()->wantsJson()) {

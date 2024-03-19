@@ -241,9 +241,13 @@ class PlanController extends Controller
      */
     public function destroy(Plan $plan)
     {
+        //TODO: only owner/admin should be able to delete a plan
+        // theoretically a user enroled in a plan can send a delete request
         abort_unless((\Gate::allows('plan_delete') and $plan->isAccessible()), 403);
 
         $plan->entries()->delete();
+        $plan->subscriptions()->delete();
+        //? if media-subscriptions can be added in the future, they need to be deleted too
         $plan->delete();
     }
 

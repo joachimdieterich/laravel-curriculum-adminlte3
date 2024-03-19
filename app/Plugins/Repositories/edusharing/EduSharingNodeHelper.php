@@ -246,6 +246,7 @@ class EduSharingNodeHelper extends EduSharingHelperAbstract  {
         if ($mode === 'content') {
             $url    = $node['node']['content']['url'] ?? '';
             $params .= '&closeOnBack=true';
+            //$params .= '&closeOnBack=true&repository=' . $node['node']['ref']['repo'];
         } else if ($mode === 'download') {
             $url = $node['node']['downloadUrl'] ?? '';
         } else {

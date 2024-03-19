@@ -1,10 +1,13 @@
 <template>
     <div>
         <div @click="show()">
-            <img v-if="previewImg"
+            <img :src="'/media/'+this.medium.id+'?preview=true'" class="p-0 w-100" >
+
+
+<!--            <img v-if="previewImg"
                  :src='previewImg' class="p-0 w-100" >
             <img v-else
-                 :src='this.preview' class="p-0 w-100" >
+                 :src='this.preview' class="p-0 w-100" >-->
 
         </div>
 <!--        <div class="edusharing_caption">
@@ -25,7 +28,7 @@
         </div>-->
 
         <div :id="'loading_'+this.medium.id" class="overlay text-center" style="width:100% !important;">
-            <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+            <i class="fa fa-spinner fa-pulse fa-fw"></i>
             <span class="sr-only">Loading...</span>
         </div>
     </div>
@@ -56,7 +59,7 @@
         methods: {
             async loader() {
                 $("#loading_"+this.medium.id).show();
-                axios.get('/media/' + this.medium.id)
+                await axios.get('/media/' + this.medium.id)
                     .then((response) => {
                         //console.log(response.data);
                         this.detailsSnippet = response.data.detailsSnippet;
@@ -68,14 +71,14 @@
                         if (this.downloadUrl == null){
                             $("#download_medium_"+this.medium.id).hide();
                         }
-
+                        $("#loading_"+this.medium.id).hide();
                     })
                     .catch((error) => {
                         console.log(error);
                         $("#loading_"+this.medium.id).hide();
                     });
             },
-            async getPreview() {
+           /* async getPreview() {
                 $("#loading_"+this.medium.id).show();
                 axios.get('/media/' + this.medium.id + '?preview=true')
                     .then((response) => {
@@ -93,7 +96,7 @@
                         console.log(error);
                         $("#loading_"+this.medium.id).hide();
                     });
-            },
+            },*/
             show() {
                 $("#loading_"+this.medium.id).show();
                 axios.get('/media/' + this.medium.id + '?content=true')
@@ -108,9 +111,10 @@
             },
         },
         mounted(){
-            this.loader(); // needed to see if downloadURL is set
-            this.getPreview();
-
+            $("#loading_"+this.medium.id).hide();
+            this.$nextTick(() => {
+                this.loader();
+            })
 
             this.$eventHub.$on('download', (medium) => {
 
@@ -130,12 +134,6 @@
                 }
             });
         },
-        watch: {
-            media: function (value, oldValue) {
-                $("#loading_"+this.medium.id).hide();
-            }
-        },
-
     }
 </script>
 

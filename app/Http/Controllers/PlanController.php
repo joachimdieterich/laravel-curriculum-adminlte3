@@ -55,6 +55,9 @@ class PlanController extends Controller
 
         return DataTables::of($plans)
             ->addColumn('action', function ($plans) use ($edit_gate, $delete_gate) {
+                // actions should only be visible to owner. admin has all rights
+                if ($plans->owner_id != auth()->user()->id && !is_admin()) return '';
+
                 $actions = '';
                 if ($edit_gate) {
                     $actions .= '<a href="'.route('plans.edit', $plans->id).'"'
@@ -167,7 +170,7 @@ class PlanController extends Controller
                 }
             }
 
-            // duplicates have to be removed, because SQL will return multiple entries
+            // duplicates have to be removed, because SQL will return the same entry multiple times
             $users = array_unique($users, SORT_NUMERIC);
 
             // get needed user-data through their ID

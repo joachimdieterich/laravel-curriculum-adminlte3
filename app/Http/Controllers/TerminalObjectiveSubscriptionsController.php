@@ -45,7 +45,7 @@ class TerminalObjectiveSubscriptionsController extends Controller
                     }
                 }
 
-                // duplicates have to be removed, because SQL will return multiple entries
+                // duplicates have to be removed, because SQL will return the same entry multiple times
                 $user_ids = array_unique($user_ids, SORT_NUMERIC);
             } else {
                 $user_ids = [auth()->user()->id];

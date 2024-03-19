@@ -147,7 +147,7 @@ class EdusharingMediaAdapter implements MediaInterface
                                     'url' => $url,
                                 ];
                             } else{
-                                return redirect($node['node']['downloadUrl']['url']);
+                                return redirect($url->info['downloadUrl']['url']);
                             }
                         }
                         else if (request('content'))
@@ -158,7 +158,7 @@ class EdusharingMediaAdapter implements MediaInterface
                                     'url' => $url,
                                 ];
                             } else {
-                                return redirect($node['node']['preview']['url']['content']);
+                                return redirect($url->content);
                             }
                         }
                         else if (request('preview'))
@@ -167,26 +167,12 @@ class EdusharingMediaAdapter implements MediaInterface
 
                             if ($url->content == "")
                             {
-                                if (request()->wantsJson()) {
-                                    return [
-                                        'url' => $url,
-                                    ];
-                                } else {
-                                    return redirect($node['node']['preview']['url']['info']['redirect_url']);
-                                }
+                                return redirect($url->info['redirect_url']);
                             }
                             else
                             {
-                                if (request()->wantsJson()) {
-                                    header('Content-Type: image/*');
-                                    return 'data:image/*;base64,' . base64_encode($url->content);
-                                } else {
-
-                                    return redirect($url->info['url']);
-
-                                }
+                                return response($url->content)->header('Content-Type', 'image/png');
                             }
-
                         }
                         else
                         {

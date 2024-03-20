@@ -78,6 +78,7 @@
     export default {
         data() {
             return {
+                component_id: this._uid,
                 method: 'post',
                 requestUrl: '/contents',
                 show_add_categorie: 'invisible',
@@ -130,7 +131,11 @@
                 this.$initTinyMCE([
                         "autolink link example table lists"
                     ],
-                    { height: 300 }
+                    {
+                        height: 300,
+                        'eventHubCallbackFunction': 'insertContent',
+                        'eventHubCallbackFunctionParams': this.component_id,
+                    }
                 );
             },
             beforeClose() {

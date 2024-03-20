@@ -367,9 +367,11 @@ export default {
             this.editor = true;
             this.form = this.item;
             this.$nextTick(() => {
-                this.$initTinyMCE([
-                    "autolink link"
-                ] );
+                this.$initTinyMCE(
+                    [
+                        "autolink link"
+                    ]
+                );
             });
 
         },

@@ -150,6 +150,7 @@
     export default {
         data() {
             return {
+                component_id: this._uid,
                 method: 'post',
                 requestUrl: '/enablingObjectives',
                 form: new Form({
@@ -206,9 +207,15 @@
                 }
             },
             opened(){
-                this.$initTinyMCE([
-                    "autolink link example"
-                ]);
+                this.$initTinyMCE(
+                    [
+                        "autolink link example"
+                    ],
+                    {
+                        'eventHubCallbackFunction': 'insertContent',
+                        'eventHubCallbackFunctionParams': this.component_id,
+                    }
+                );
             },
             close(){
                 this.$modal.hide('organization-modal');

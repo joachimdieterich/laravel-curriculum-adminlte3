@@ -1,5 +1,5 @@
 <template>
-    <div >
+    <div>
 
         <draggable
             class="row px-1"
@@ -95,8 +95,8 @@ const draggable =
 
 
 export default {
-  name: 'variants',
-  props: {
+    name: 'variants',
+    props: {
         model: {},
         referenceable_type: String,
         referenceable_id: Number,
@@ -117,9 +117,10 @@ export default {
             type: String,
             default: 'callout callout-primary'
         }
-  },
-  data() {
+    },
+    data() {
         return {
+            component_id: this._uid,
             form: new Form({
                 'id': '',
                 'title': '',
@@ -132,84 +133,90 @@ export default {
             definitions: null,
             edit: false,
         }
-  },
+    },
 
 
-  methods: {
-      loadVariantDefinitions: function () {
-          axios.get('/curricula/' + this.model.curriculum.id + '/variantDefinitions')
-              .then(response => {
-              this.definitions = response.data.definitions;
-                  MathJax.startup.defaultReady();
-          }).catch(e => {
-              console.log(e);
-          });
-      },
-      handleVariantMoved() {
-          axios.put("/curricula/"+this.model.curriculum.id+"/variantDefinitions", {variants: this.definitions.map(s=>s.id)})
-              .catch(err => {
-                  console.log(err.response);
-                  alert(err.response.statusText);
-              });
-      },
+    methods: {
+        loadVariantDefinitions: function () {
+            axios.get('/curricula/' + this.model.curriculum.id + '/variantDefinitions')
+                .then(response => {
+                this.definitions = response.data.definitions;
+                    MathJax.startup.defaultReady();
+            }).catch(e => {
+                console.log(e);
+            });
+        },
+        handleVariantMoved() {
+            axios.put("/curricula/"+this.model.curriculum.id+"/variantDefinitions", {variants: this.definitions.map(s=>s.id)})
+                .catch(err => {
+                    console.log(err.response);
+                    alert(err.response.statusText);
+                });
+        },
 
 
-      togglEdit(id) {
-          this.edit = !this.edit;
-          let variant = this.filterVariant(id)[0];
-          if (typeof variant != 'undefined') {
-              this.form.id = variant.id;
-              this.form.title = variant.title;
-              this.form.description = variant.description;
-          }
-          this.form.variant_definition_id = id;
+        togglEdit(id) {
+            this.edit = !this.edit;
+            let variant = this.filterVariant(id)[0];
+            if (typeof variant != 'undefined') {
+                this.form.id = variant.id;
+                this.form.title = variant.title;
+                this.form.description = variant.description;
+            }
+            this.form.variant_definition_id = id;
 
-          this.$nextTick(() => {
-              this.$initTinyMCE([
-                  "autolink link example"
-              ]);
-          });
+            this.$nextTick(() => {
+                this.$initTinyMCE(
+                    [
+                        "autolink link example"
+                    ],
+                    {
+                        'eventHubCallbackFunction': 'insertContent',
+                        'eventHubCallbackFunctionParams': this.component_id,
+                    }
+                );
+            });
 
-      },
-      filterVariant(id) {
-          let variant =  this.variants.filter(
-              v => v.variant_definition_id === id
-          );
+        },
+        filterVariant(id) {
+            let variant =  this.variants.filter(
+                v => v.variant_definition_id === id
+            );
 
-          return variant;
-      },
-      filterVariantDefinition(id) {
-          let definition = this.filterVariant(id)[0]['definition']
+            return variant;
+        },
+        filterVariantDefinition(id) {
+            let definition = this.filterVariant(id)[0]['definition']
 
-          return definition;
-      },
-      submit() {
-          this.form.title = tinyMCE.get('title').getContent();
-          this.form.description = tinyMCE.get('description').getContent();
-          this.form.referenceable_type = this.referenceable_type;
-          this.form.referenceable_id = this.referenceable_id;
+            return definition;
+        },
+        submit() {
+            this.form.title = tinyMCE.get('title').getContent();
+            this.form.description = tinyMCE.get('description').getContent();
+            this.form.referenceable_type = this.referenceable_type;
+            this.form.referenceable_id = this.referenceable_id;
 
-          if (this.form.id !== '') {
-              let id = this.form.id;
-              this.form.patch( '/variants/' + id)
-                  .then(response => {
-                      const variantIndex =  this.variants.findIndex(
-                          v => v.variant_definition_id === id
-                      );
+            if (this.form.id !== '') {
+                let id = this.form.id;
+                this.form.patch( '/variants/' + id)
+                    .then(response => {
+                        const variantIndex =  this.variants.findIndex(
+                            v => v.variant_definition_id === id
+                        );
 
-                      this.variants[variantIndex].title = response.variant.title;
-                      this.variants[variantIndex].description = response.variant.description;
-                  })
-          } else {
-              this.form.post('/variants/')
-                  .then(response =>  {
-                      this.variants.push(response.variant);
-                  });
-          }
-          this.edit = !this.edit;
-      },
+                        this.variants[variantIndex].title = response.variant.title;
+                        this.variants[variantIndex].description = response.variant.description;
+                    })
+            } else {
+                this.form.post('/variants/')
+                    .then(response =>  {
+                        this.variants.push(response.variant);
+                    });
+            }
+            this.edit = !this.edit;
+        },
 
-  },
+    },
     mounted() {
         this.loadVariantDefinitions();
         this.variants = this.model.variants;
@@ -218,30 +225,30 @@ export default {
         enableDraggable(){
             return window.Laravel.permissions.indexOf('curriculum_edit') !== -1; //v-can="curriculum_edit"
         },
-      width_css() {
-          if (this.field === 'description'){
-              return 'col-12';
-          }
+        width_css() {
+            if (this.field === 'description'){
+                return 'col-12';
+            }
 
-          switch(this.variant_order.length) {
-              case 2:
-                  return 'col-md-6 col-sm-12';
-                  break;
-              case 3:
-                  return 'col-md-4 col-sm-12';
-                  break;
-              case 4:
-                  return 'col-md-3 col-sm-12';
-                  break;
-              case 5:
-              case 6:
-                  return 'col-md-2 col-sm-12';
-                  break;
+            switch(this.variant_order.length) {
+                case 2:
+                    return 'col-md-6 col-sm-12';
+                    break;
+                case 3:
+                    return 'col-md-4 col-sm-12';
+                    break;
+                case 4:
+                    return 'col-md-3 col-sm-12';
+                    break;
+                case 5:
+                case 6:
+                    return 'col-md-2 col-sm-12';
+                    break;
 
-              default: return 'col-md-4 col-sm-12';
-                  break;
-          }
-      }
+                default: return 'col-md-4 col-sm-12';
+                    break;
+            }
+        }
     },
     components: {
         draggable,

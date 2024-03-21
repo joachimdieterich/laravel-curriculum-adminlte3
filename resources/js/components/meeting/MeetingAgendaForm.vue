@@ -57,6 +57,7 @@ export default {
     },
     data() {
         return {
+            component_id: this._uid,
             method: 'post',
             requestUrl: '/agendas',
             form: new Form({
@@ -95,9 +96,15 @@ export default {
             this.form.populate(this.agenda);
             this.method = 'patch';
         }
-        this.$initTinyMCE([
-            "autolink link example"
-        ]);
+        this.$initTinyMCE(
+            [
+                "autolink link example"
+            ],
+            {
+                'eventHubCallbackFunction': 'insertContent',
+                'eventHubCallbackFunctionParams': this.component_id,
+            }
+        );
     },
 
 }

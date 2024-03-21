@@ -96,6 +96,7 @@ const DatePicker =
     export default {
         data() {
             return {
+                component_id: this._uid,
                 method: 'post',
                 requestUrl: '/tasks',
 
@@ -153,9 +154,15 @@ const DatePicker =
                 }
              },
             opened(){
-                this.$initTinyMCE([
-                    "autolink link example"
-                ]);
+                this.$initTinyMCE(
+                    [
+                        "autolink link example"
+                    ],
+                    {
+                        'eventHubCallbackFunction': 'insertContent',
+                        'eventHubCallbackFunctionParams': this.component_id,
+                    }
+                );
             },
             beforeClose(event) {
 

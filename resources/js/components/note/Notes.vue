@@ -199,6 +199,7 @@ export default {
     },
     data() {
         return {
+            component_id: this._uid,
             method: 'post',
             requestUrl: '/notes',
             notes: {},
@@ -311,10 +312,15 @@ export default {
             editor.parentNode.removeChild(editor);
             hidePlaceholder.parentNode.removeChild(hidePlaceholder);
             placeholder.appendChild(editor);
-            this.$initTinyMCE([
-                "autolink link example"
-            ]);
-
+            this.$initTinyMCE(
+                [
+                    "autolink link example"
+                ],
+                {
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id,
+                }
+            );
         },
         loadNotes(type, id){
             if (type == 'all') {
@@ -397,9 +403,15 @@ export default {
         }
 
         this.load();
-        this.$initTinyMCE([
-            "autolink link example"
-        ]);
+        this.$initTinyMCE(
+            [
+                "autolink link example"
+            ],
+            {
+                'eventHubCallbackFunction': 'insertContent',
+                'eventHubCallbackFunctionParams': this.component_id,
+            }
+        );
     },
 }
 </script>

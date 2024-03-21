@@ -56,7 +56,7 @@
                         v-for="(kanban,index) in kanbans"
                         :key="index+'_kanban_'+kanban.id"
                         :kanban="kanban"
-                        :search="search.toLowerCase()"/>
+                    />
                     <KanbanIndexAddWidget
                         v-if="((this.filter == 'all' && typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined') || this.filter == 'owner')"
                         v-can="'kanban_create'"
@@ -101,7 +101,6 @@ export default {
         return {
             kanbans: [],
             subscriptions: {},
-            search: '',
             url: '/kanbans/list',
             errors: {},
             tempId: Number,
@@ -147,7 +146,6 @@ export default {
         },
     },
     mounted() {
-        document.getElementById('searchbar').classList.remove('d-none');
         this.$eventHub.$emit('showSearchbar');
 
         const parent = this;

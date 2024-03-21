@@ -144,9 +144,15 @@ export default {
     },
     mounted() {
         this.loaderEvent();
-        this.$initTinyMCE([
-            "autolink link"
-        ] );
+        this.$initTinyMCE(
+            [
+                "autolink link"
+            ],
+            {
+                'eventHubCallbackFunction': 'insertContent',
+                'eventHubCallbackFunctionParams': this.component_id,
+            }
+        );
         this.$eventHub.$on('exercise_dones_added', (e) => {
             this.loaderEvent();
         });
@@ -173,9 +179,15 @@ export default {
             this.editor = !this.editor;
 
             this.$nextTick(() => {
-                this.$initTinyMCE([
-                    "autolink link example"
-                ] );
+                this.$initTinyMCE(
+                    [
+                        "autolink link example"
+                    ],
+                    {
+                        'eventHubCallbackFunction': 'insertContent',
+                        'eventHubCallbackFunctionParams': this.component_id,
+                    }
+                );
             });
 
         },

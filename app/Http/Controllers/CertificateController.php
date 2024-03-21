@@ -300,6 +300,7 @@ class CertificateController extends Controller
             //end progress
             $filename = date('Y-m-d_H-i-s').str_replace_special_chars($user->lastname.'_'.$user->firstname).'.pdf'; //Username escape german umlaute
             $path = 'users/'.auth()->user()->id.'/';
+            if (!is_dir($path)) mkdir($path); // create folder if it doesn't exist
             $pathOfNewFile = $this->buildPdf($html, $path, $filename);
 
             array_push($generated_files, ['filename' => $filename, 'path' => Storage::disk('local')->path($path.$filename)]);

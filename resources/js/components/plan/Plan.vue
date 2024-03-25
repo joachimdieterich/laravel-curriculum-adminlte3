@@ -38,6 +38,7 @@
                     <PlanEntry
                         v-for="(entry, index) in entries"
                         :key="entries[index].id"
+                        :editable="editable"
                         :entry="entry"
                         :plan="plan"
                     ></PlanEntry>
@@ -76,6 +77,10 @@ const PlanEntry =
 export default {
     props: {
         plan: [],
+        editable: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {

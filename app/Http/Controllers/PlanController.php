@@ -147,10 +147,11 @@ class PlanController extends Controller
     public function show(Plan $plan)
     {
         abort_unless((\Gate::allows('plan_show') and $plan->isAccessible()), 403);
-        $subscriptions = $plan->subscriptions()->get()->toArray();
+        $editable = $plan->isEditable();
         $users = [];
-
-        if ($plan->owner_id === auth()->user()->id) {
+        
+        if ($editable) {
+            $subscriptions = $plan->subscriptions()->get()->toArray();
             // get every user-id through all subscriptions
             foreach ($subscriptions as $subscription) {
                 switch ($subscription['subscribable_type']) {
@@ -181,12 +182,12 @@ class PlanController extends Controller
             return [
                 'plan' => $plan,
                 'users' => $users,
+                'editable' => $editable,
             ];
         }
-
+        
         return view('plans.show')
-            ->with(compact('plan'))
-            ->with(compact('users'));
+            ->with(compact('plan', 'users', 'editable'));
     }
 
     /**

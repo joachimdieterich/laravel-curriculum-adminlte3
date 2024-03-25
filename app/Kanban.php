@@ -131,29 +131,29 @@ class Kanban extends Model
         }
 
         if ($token == null){
-            $userSubscribtion = optional($this->userSubscriptions()
+            $userSubscription = optional($this->userSubscriptions()
                 ->where('subscribable_id', $user_id)
                 ->first());
-            $groupSubscribtion = optional($this->groupSubscriptions()
+            $groupSubscription = optional($this->groupSubscriptions()
                 ->whereIn('subscribable_id', auth()->user()->groups->pluck('id'))
                 ->where('editable', 1)
                 ->first());
-            $organizationSubscribtion = optional($this->organizationSubscriptions()
+            $organizationSubscription = optional($this->organizationSubscriptions()
                 ->whereIn('subscribable_id', auth()->user()->organizations->pluck('id'))
                 ->where('editable', 1)
                 ->first());
         }
         else
         {
-            $userSubscribtion = optional($this->userSubscriptions()
+            $userSubscription = optional($this->userSubscriptions()
                 /*->where('subscribable_id', $user_id)*/ // fix 500 error on authenticated users
                 ->where('sharing_token', $token)
                 ->first());
         }
         if (
-            $userSubscribtion->editable // user enrolled
-            or $groupSubscribtion->editable ?? false // group enrolled
-            or $organizationSubscribtion->editable ?? false // organization enrolled
+            $userSubscription->editable // user enrolled
+            or $groupSubscription->editable ?? false // group enrolled
+            or $organizationSubscription->editable ?? false // organization enrolled
             or ($this->owner_id == $user_id)            // or owner
             or is_admin() // or admin
         ) {

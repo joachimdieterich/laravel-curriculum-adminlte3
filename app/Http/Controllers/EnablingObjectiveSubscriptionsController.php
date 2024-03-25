@@ -24,8 +24,8 @@ class EnablingObjectiveSubscriptionsController extends Controller
             abort_unless((\Gate::allows('curriculum_show') and $modal->isAccessible()), 403);
 
             $user_ids = [];
-            // only if plan owner
-            if ($input['subscribable_type'] == 'App\PlanEntry' and $modal->plan->owner->id === auth()->user()->id) {
+            
+            if ($input['subscribable_type'] == 'App\PlanEntry' and $modal->plan->isEditable()) {
                 $subscriptions = $modal->plan->subscriptions;
 
                 // get every user-id through all subscriptions

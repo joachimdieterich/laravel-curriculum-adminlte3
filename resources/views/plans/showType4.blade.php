@@ -63,7 +63,7 @@
 
 </div>
 --}}
-<plan :plan="{{ $plan }}"></plan>
+<plan :plan="{{ $plan }}" :editable="{{ $editable ? 'true' : 'false' }}"></plan>
 @can('medium_create')
     <medium-create-modal></medium-create-modal>
 @endcan
@@ -111,7 +111,7 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
 @endforeach--}}
 
     @can('plan_create')
-        @if (Auth::user()->id ==  $plan->owner_id)
+        @if ($editable)
             <subscribe-modal></subscribe-modal>
             <subscribe-objective-modal></subscribe-objective-modal>
             <set-achievements-modal :users="{{ json_encode($users) }}"></set-achievements-modal>

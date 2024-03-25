@@ -36,6 +36,7 @@
                                 referenceable_type="App\PlanEntry"
                                 :referenceable_id="entry.id"
                                 :owner_id="entry.owner_id"
+                                :editable="editable"
                             ></objectives>
     
                             <Trainings
@@ -121,7 +122,10 @@ export default {
             default: false
         },
         plan: [],
-          },
+        editable: {
+            default: false
+        },
+    },
     data() {
         return {
             component_id: this._uid,

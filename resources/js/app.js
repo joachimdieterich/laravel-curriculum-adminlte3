@@ -256,6 +256,11 @@ Vue.prototype.$initTinyMCE = function (tinyMcePlugins, attr = null) {
                     editor.insertContent('<img src="/media/'+ event.selectedMediumId +'?preview=true" width="500">', {format: 'raw'});
                 }
             });
+            // fallback if $eventHub solution doesn't work correctly
+            // $('#medium_id').on('change', function() {
+            //     //reload thumbs
+            //     editor.insertContent('<img src="/media/'+ document.getElementById('medium_id').value +'" width="500">', {format: 'raw'});
+            // });
         };
 
         // Add a button that opens a window

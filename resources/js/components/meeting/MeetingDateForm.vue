@@ -142,9 +142,15 @@ export default {
             }
 
             this.time = [moment().format("YYYY-MM-DD HH:mm:ss"), moment().add(30, 'minutes').format("YYYY-MM-DD HH:mm:ss")];
-            this.$initTinyMCE([
-                "autolink link example"
-            ]);
+            this.$initTinyMCE(
+                [
+                    "autolink link example"
+                ],
+                {
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.form.id,
+                }
+            );
         },
         async submit() {
             try {

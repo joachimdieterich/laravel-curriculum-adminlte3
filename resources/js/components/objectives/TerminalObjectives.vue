@@ -2,7 +2,7 @@
     <div>
         <ul class="nav nav-pills bg-gray-light"
             id="terminalObjectivesTopNav"
-            style="position:sticky; top:60px; z-index: 1100">
+            style="position:sticky; top:56px; z-index: 100">
             <draggable
                 class="nav nav-pills"
                 v-can="'curriculum_edit'"

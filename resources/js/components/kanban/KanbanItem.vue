@@ -367,9 +367,11 @@ export default {
             this.editor = true;
             this.form = this.item;
             this.$nextTick(() => {
-                this.$initTinyMCE([
-                    "autolink link"
-                ] );
+                this.$initTinyMCE(
+                    [
+                        "autolink link"
+                    ]
+                );
             });
 
         },
@@ -469,7 +471,6 @@ export default {
                 ? 'flex'
                 : 'none';
         });
-        this.$eventHub.$on('removeFilter', () => this.$el.style.display = 'flex');
 
         this.$nextTick(() => {
             MathJax.startup.defaultReady();

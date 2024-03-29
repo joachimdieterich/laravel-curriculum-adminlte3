@@ -110,13 +110,13 @@ export default {
             }
         },
         async destroy() {
-             axios.delete('/logbooks/' + this.tempId)
-                 .then(() => {
-                     this.loaderEvent();
-                 })
-                 .catch ((e) => {
-                     console.log(e);
-                });
+            axios.delete('/logbooks/' + this.tempId)
+                .then(() => {
+                    this.loaderEvent();
+                })
+                .catch ((e) => {
+                    console.log(e);
+            });
         },
     },
     mounted() {
@@ -125,12 +125,6 @@ export default {
         this.$eventHub.$on('filter', (filter) => {
             this.search = filter;
             this.searchContent();
-        });
-        this.$eventHub.$on('removeFilter', () => {
-            this.search = '';
-            this.$el.getElementsByClassName('box').forEach(element => {
-                element.style.display = 'block';
-            });
         });
         this.$eventHub.$on('logbook-updated', (logbook) => {
             const index = this.logbooks.findIndex(

@@ -184,9 +184,11 @@ export default {
             this.form.locked = this.status.locked;
             this.form.editable = this.status.editable;
         }
-        this.$initTinyMCE([
-            "autolink link"
-        ], );
+        this.$initTinyMCE(
+            [
+                "autolink link"
+            ]
+        );
     },
     computed:{
         textColor: function(){

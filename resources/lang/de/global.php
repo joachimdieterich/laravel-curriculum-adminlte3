@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'author' => 'Autor',
+    'author_helper' => '',
     'code_401' => 'Sie sind nicht authentifiziert oder verfügen nicht über die notwendigen Berechtigungen.',
     'code_402' => 'Limit erreicht. Diese Aktion kann nicht ausgeführt werden.',
     'code_403' => 'Sie verfügen nicht über die notwendigen Berechtigungen.',
@@ -17,6 +19,9 @@ return [
     'title_helper' => '',
     'description' => 'Beschreibung',
     'description_helper' => '',
+    'type' => 'Typ',
+    'url' => 'URL',
+    'url_title' => 'URL Titel',
     'name' => 'Name',
     'created_at' => 'Erstellt am',
     'created_at_helper' => '',
@@ -182,6 +187,9 @@ return [
     'restore' => 'wiederherstellen',
     'permadel' => 'Dauerhaft löschen',
     'all' => 'Alle',
+    'my' => 'Meine',
+    'shared_with_me' => 'Für mich freigegeben',
+    'shared_by_me' => 'Von mir freigegeben',
     'trash' => 'Papierkorb',
     'update' => 'aktualisieren',
     'expel' => 'Vernknüpfung löschen',
@@ -479,7 +487,7 @@ return [
             'content_helper' => '',
         ],
     ],
-    'categorie' => [
+    'category' => [
         'title' => 'Kategorien',
         'title_singular' => 'Kategorie',
         'create' => 'Kategorie erstellen',
@@ -495,9 +503,9 @@ return [
         'export' => 'Curriculum exportieren',
         'print' => 'Curriculum drucken',
         'print_references' => 'Querverweise drucken',
+        'delete' => 'Curriculum löschen',
+        'delete_helper' => 'Soll das Curriculum sowie die zugehörigen Daten gelöscht werden?',
         'fields' => [
-            'author' => 'Autor',
-            'author_helper' => '',
             'publisher' => 'Herausgeber',
             'publisher_helper' => '',
             'city' => 'Ort',
@@ -567,8 +575,6 @@ return [
             'path_helper' => '',
             'medium_name' => 'Mediumname',
             'medium_name_helper' => '',
-            'author' => 'Autor',
-            'author_helper' => '',
             'publisher' => 'Herausgeber',
             'publisher_helper' => '',
             'city' => 'Ort',
@@ -1108,4 +1114,42 @@ return [
         'PRESENTATION_FOCUS' => 'Präsentation im Zentrum',
         'VIDEO_FOCUS' => 'Video im Zentrum',
     ],
+    'map' => [
+        'header_title' => 'Bildungsnavigator',
+        'title' => 'Landkarten',
+        'title_singular' => 'Landkarte',
+        'create' => 'Landkarte erstellen',
+        'edit' => 'Landkarte bearbeiten',
+        'delete' => 'Landkarte löschen',
+        'delete_helper' => 'Soll die Landkarte gelöscht werden?',
+        'fields' => [
+            'latitude' => 'Latitude (geografische Breite)',
+            'longitude' => 'Longitude (geografische Länge)',
+            'link' => 'Link',
+            'link_helper' => '',
+            'border_url' => 'URL für Markierung',
+            'border_url_helper' => '(z. B. https://nominatim.openstreetmap.org/search?polygon_geojson=1&format=geojson&polygon_threshold=0.005&country=de&state=RP)',
+            'zoom' => 'Zoom',
+            'zoom_helper' => '',
+        ],
+    ],
+    'marker' => [
+        'title' => 'Marker',
+        'title_singular' => 'Marker',
+        'create' => 'Marker erstellen',
+        'edit' => 'Marker bearbeiten',
+        'delete' => 'Marker löschen',
+        'delete_helper' => 'Soll der Marker gelöscht werden?',
+        'fields' => [
+            'teaser_text' => 'Kurzbeschreibung',
+            'latitude' => 'Latitude (geografische Breite)',
+            'longitude' => 'Longitude (geografische Länge)',
+            'link' => 'Link',
+            'link_helper' => '',
+        ],
+    ],
+    'global' => [
+        'title_singular'        => 'global verfügbar',
+    ]
+
 ];

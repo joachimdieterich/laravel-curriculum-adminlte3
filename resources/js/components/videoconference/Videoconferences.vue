@@ -35,7 +35,7 @@
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fa fa-paper-plane pr-2"></i>Für mich freigegeben
+                        <i class="fa fa-paper-plane pr-2"></i>{{ trans('global.shared_with_me') }}
                     </a>
                 </li>
                 <li v-can="'videoconference_create'"
@@ -47,7 +47,7 @@
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fa fa-share-nodes  pr-2"></i>Von mir freigegeben
+                        <i class="fa fa-share-nodes  pr-2"></i>{{ trans('global.shared_by_me') }}
                     </a>
                 </li>
 

@@ -81,6 +81,24 @@
                 </span>
             </div>
         </span>
+
+        <!-- Add Media -->
+        <div
+            :id="'media-add'"
+            class="box box-objective nav-item-box-image pointer my-1"
+            style="min-width: 200px !important; border-style: dotted !important; "
+            @click="addMedia()">
+            <div class="nav-item-box-image-size text-center">
+                <i class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
+            </div>
+
+            <span class="text-center p-1 overflow-auto nav-item-box bg-gray-light">
+                   <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
+                       {{ trans('global.media.create') }}
+                   </h1>
+            </span>
+        </div>
+
         <div v-if="media !== null" class="row pt-1" style="width:100% !important;">
             <span v-if="[0].length > maxItems">
                 <span class="col-6">
@@ -197,6 +215,23 @@
             setCurrentTab(id){
                 this.currentTab = id;
             },
+            addMedia() {
+                this.$modal.show(
+                    'medium-create-modal',
+                    {
+                        'referenceable_type': this.subscribable_type(),
+                        'referenceable_id': this.model.id,
+                        'eventHubCallbackFunction': 'reload_objective',
+                        'eventHubCallbackFunctionParams': this.model.id,
+                    });
+            },
+        },
+        mounted() {
+            this.$eventHub.$on('reload_objective', (e) => {
+                if (this.model.id == e.id) {
+                    this.loader();
+                }
+            });
         },
         watch: {
             media: function (value, oldValue) {

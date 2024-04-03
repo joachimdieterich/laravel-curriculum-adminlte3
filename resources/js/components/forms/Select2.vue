@@ -138,6 +138,7 @@
             }
         },
         mounted() {
+
             $('#' + this.id).select2({
                 placeholder: this.placeholder,
                 dropdownParent: $('#' + this.id).parent(),

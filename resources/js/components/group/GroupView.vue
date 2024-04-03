@@ -188,14 +188,6 @@
                 <courses
                     ref="Courses"
                     :group="group"></courses>
-<!--                <course-item
-                    v-for="(item,index) in courses"
-                    :key="'course_item'+index"
-                    :course="item">
-                </course-item>-->
-<!--                <CourseIndexAddWidget
-                    :group="group"
-                    v-if="checkPermission('group_enrolment')"/>-->
 
             </div>
             <div v-if="checkPermission('group_enrolment')"
@@ -360,7 +352,6 @@ const Tests =
 
         },
         components: {
-            //CourseIndexAddWidget,
             Videoconferences,
             Users,
             Courses,

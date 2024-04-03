@@ -55,6 +55,8 @@ class Curriculum extends Model
         'type_id' => 4,  //= user
     ];
 
+    protected $with = ['owner:id,firstname,lastname'];
+
     /**
      * Prepare a date for array / JSON serialization.
      *
@@ -117,7 +119,8 @@ class Curriculum extends Model
 
     public function groups()
     {
-        return $this->belongsToMany('App\Group', 'curriculum_group')->withTimestamps();
+        return $this->hasMany(CurriculumSubscription::class)
+            ->where('subscribable_type', 'App\Group');
     }
 
     public function enablingObjectives()
@@ -204,12 +207,19 @@ class Curriculum extends Model
         return $this->morphMany('App\Prerequisites', 'predecessor');
     }
 
+    public function subscriptions()
+    {
+        return $this->hasMany(CurriculumSubscription::class);
+    }
+
     public function isAccessible()
     {
         if (
-            auth()->user()->curricula()->contains('id', $this->id) // user enrolled
+            auth()->user()->curricula->contains('id', $this->id) // user enrolled
+            or ($this->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() //user is enroled in group
+            or ($this->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id))->isNotEmpty() //user is enroled in group
             or ($this->owner_id == auth()->user()->id)            // or owner
-            or ((env('GUEST_USER') != null) ? User::find(env('GUEST_USER'))->curricula()->contains('id', $this->id) : false) //or allowed via guest
+            or ((env('GUEST_USER') != null) ? User::find(env('GUEST_USER'))->curricula->contains('id', $this->id) : false) //or allowed via guest
             or is_admin() // or admin
         ) {
             return true;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\CurriculumType;
 use App\Grade;
 use Yajra\DataTables\DataTables;
 
@@ -9,6 +10,11 @@ class GradesController extends Controller
 {
     public function index()
     {
+        if (request()->wantsJson()) {
+            return getEntriesForSelect2ByModel(
+                "App\Grade"
+            );
+        }
         abort_unless(\Gate::allows('grade_access'), 403);
 
         return view('grades.index');

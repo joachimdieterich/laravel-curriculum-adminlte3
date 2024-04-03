@@ -23,6 +23,10 @@ class SubjectController extends Controller
                     "App\Subject"
                 );
             }
+        } else {
+            if (request()->wantsJson()) {
+                return Subject::all();
+            }
         }
         abort_unless(\Gate::allows('subject_access'), 403);
 

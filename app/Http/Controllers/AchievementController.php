@@ -21,7 +21,7 @@ class AchievementController extends Controller
 
         $input = $this->validateRequest();
 
-        $user_ids = ! empty($input['user_id']) ? $input['user_id'] : auth()->user()->id;
+        $user_ids = ! empty($input['user_id']) ? explode(",", $input['user_id']) : auth()->user()->id;
 
         foreach ((array) $user_ids as $user_id) {
             abort_unless(auth()->user()->mayAccessUser(User::find($user_id)), 403);

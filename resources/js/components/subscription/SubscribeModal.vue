@@ -119,6 +119,7 @@
                             v-if="typeof subscribers.subscriptions != 'undefined'"
                             :modelUrl="modelUrl"
                             :canEditLabel="canEditLabel"
+                            :canEditCheckbox="canEditCheckbox"
                             :subscriptions="subscribers.subscriptions"
                             :subscribing_model="'App\\Organization'"/>
                     </div>
@@ -204,6 +205,7 @@ export default {
             subscribers: Object,
             hover: false,
             canEditToken: false,
+            canEditCheckbox: true,
             shareWithUsers: true,
             shareWithGroups: true,
             shareWithOrganizations: true,

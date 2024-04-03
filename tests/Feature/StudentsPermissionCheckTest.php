@@ -45,9 +45,11 @@ class StudentsPermissionCheckTest extends TestCase
     /** @test */
     public function can_not_access_a_curriculum_where_its_group_is_not_enroled()
     {
-        //ID 6 == Student
-        DB::table('group_user')->where('user_id', '=', 6)->delete(); //delete seeded enrolment
-        DB::table('group_user')->where('user_id', '=', 8)->delete(); //delete seeded guest enrolment
+        DB::table('curriculum_subscriptions')
+            ->where('curriculum_id', 1)
+            ->where('subscribable_type', "App\Group")
+            ->where('subscribable_id', 1)
+            ->delete(); //delete seeded enrolment
 
         $this->get('/curricula/1')->assertStatus(403); //curriculum was created by seeder
     }

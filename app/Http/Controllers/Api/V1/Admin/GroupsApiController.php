@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\CurriculumSubscription;
 use App\Group;
 use App\Http\Controllers\Controller;
 use App\OrganizationRoleUser;
@@ -58,7 +59,10 @@ class GroupsApiController extends Controller
     {
 
         // first delete all relations
-        $group->curricula()->detach();
+        CurriculumSubscription::where('subscribable_type', "App\Group")
+            ->where('subscribable_id', $group->id)
+            ->delete();
+        //$group->curricula()->detach();
         $group->users()->detach();
 
         //todo: delete subscriptions ( eg. kanban), yet no relation in Group.php

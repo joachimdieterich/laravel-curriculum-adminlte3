@@ -139,6 +139,18 @@ class Organization extends Model
         )->where('subscribable_type', get_class($this));
     }
 
+    public function maps()
+    {
+        return $this->hasManyThrough(
+            'App\Map',
+            'App\MapSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'map_id'
+        )->where('subscribable_type', get_class($this));
+    }
+
     public function lmsReferences()
     {
         return $this->hasManyThrough(
@@ -160,6 +172,18 @@ class Organization extends Model
             'id',
             'id',
             'plan_id'
+        )->where('subscribable_type', get_class($this));
+    }
+
+    public function curricula()
+    {
+        return $this->hasManyThrough(
+            'App\Curriculum',
+            'App\CurriculumSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'curriculum_id'
         )->where('subscribable_type', get_class($this));
     }
 

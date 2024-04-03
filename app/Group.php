@@ -59,7 +59,15 @@ class Group extends Model
 
     public function curricula()
     {
-        return $this->belongsToMany(Curriculum::class, 'curriculum_group')->withTimestamps();
+        return  $this->hasManyThrough(
+            'App\Curriculum',
+            'App\CurriculumSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'curriculum_id'
+        )->where('subscribable_type', get_class($this));
+
     }
 
     public function grade()

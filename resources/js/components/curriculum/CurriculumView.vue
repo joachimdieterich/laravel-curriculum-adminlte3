@@ -63,7 +63,7 @@
                     <i class="fa fa-book-open pr-2"></i>{{trans('global.glossar.create')}}
                 </a>
             </li>
-            <li v-if="course"
+<!--            <li v-if="course"
                 class="nav-item"
                 role="tab"
                 aria-controls="logbook-tab"
@@ -82,7 +82,7 @@
                    id="logbooks-nav-tab">
                     <i class="fas fa-book pr-2"></i>{{trans('global.logbook.create')}}
                 </a>
-            </li>
+            </li>-->
 
             <li v-if="course && showGenerateCertificate"
                 v-permission="'certificate_access'"
@@ -138,10 +138,11 @@
                     <i class="fas fa-cloud-download-alt"></i>
                 </a>
             </li>
-            <li v-can="'curriculum_edit'"
+            <li v-if="$userId == curriculum.owner_id"
+                v-can="'curriculum_edit'"
                 class="nav-item">
                 <a class="nav-link link-muted"
-                   :href="'/curricula/'+ curriculum.id +'/edit'"
+                   @click="edit()"
                    id="edit-curriculum-nav-tab">
                     <i class="fa fa-pencil-alt"></i>
                 </a>
@@ -197,12 +198,17 @@
 
         </div>
         <medium-export-modal v-can="'curriculum_create'"></medium-export-modal>
-
+        <curriculumCreate
+            id="modal-curriculum-form"
+            method="patch"
+            :curriculum="curriculum"/>
     </div>
 
 </template>
 
 <script>
+import curriculumCreate from "./CurriculumCreate";
+
 const TerminalObjectives =
     () => import('../objectives/TerminalObjectives.vue');
 const Glossars =
@@ -234,6 +240,9 @@ const Contents =
         },
 
         methods: {
+            edit(){
+                $('#modal-curriculum-form').modal('show');
+            },
             setCrossReferenceCurriculumId: function(curriculum_id) { //can be called external
                 this.settings.cross_reference_curriculum_id = curriculum_id;
             },
@@ -272,7 +281,8 @@ const Contents =
             TerminalObjectives,
             Media,
             Glossars,
-            Contents
+            Contents,
+            curriculumCreate
         }
     }
 </script>

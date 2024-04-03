@@ -57,9 +57,9 @@
             :course="{{ $course }}"
         @endif
 
-        @if(isset($logbook))
+        {{--@if(isset($logbook))
             :logbook="{{ $logbook }}"
-        @endif
+        @endif--}}
         :curriculum="{{ $curriculum }}"
         :objectivetypes="{{ $objectiveTypes }}"
         :settings="{{ $settings }}">

@@ -65,6 +65,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     /* country */
     Route::get('countries/{country}/states', 'CountryController@getStates')->name('countries.states');
+    Route::resource('countries', 'CountryController');
 
     /* curricula */
     Route::get('curricula/{curriculum}/variantDefinitions', 'CurriculumController@getVariantDefinitions');
@@ -72,6 +73,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('curricula/enrol', 'CurriculumController@enrol')->name('curricula.enrol');
     Route::delete('curricula/expel', 'CurriculumController@expel')->name('curricula.expel');
     Route::get('curricula/list', 'CurriculumController@list');
+    Route::get('curricula/types', 'CurriculumController@types');
     Route::get('curricula/import', 'CurriculumImportController@import')->name('curricula.import');
     Route::post('curricula/import/store', 'CurriculumImportController@store')->name('curricula.import.store');
     Route::get('curricula/{curriculum}/export', 'CurriculumExportController@export')->name('curricula.export');
@@ -85,6 +87,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('curricula/{curriculum}/print', 'CurriculumController@print')->name('curricula.print');
     Route::put('curricula/{curriculum}/syncObjectiveTypesOrder', 'CurriculumController@syncObjectiveTypesOrder')->name('curricula.syncObjectiveTypesOrder');
     Route::resource('curricula', 'CurriculumController');
+    Route::resource('curriculumSubscriptions', 'CurriculumSubscriptionController');
 
     /* enablingObjectives */
     Route::get('enablingObjectives/{enablingObjective}/referenceSubscriptionSiblings', 'EnablingObjectiveController@referenceSubscriptionSiblings');

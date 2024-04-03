@@ -168,6 +168,7 @@ Vue.component('model-limiter', () => import('./components/config/ModelLimiter.vu
 Vue.component('content-modal', () => import('./components/content/ContentModal.vue'));
 Vue.component('content-create-modal', () => import('./components/content/ContentCreateModal.vue'));
 Vue.component('content-subscription-modal', () => import('./components/content/ContentSubscriptionModal.vue'));
+Vue.component('curricula', () => import('./components/curriculum/Curricula.vue'));
 Vue.component('reference-objective-modal', () => import('./components/reference/ReferenceObjectiveModal.vue'));
 Vue.component('media-renderer', () => import('./components/media/MediaRenderer.vue'));
 Vue.component('medium-modal', () => import('./components/media/MediumModal.vue'));

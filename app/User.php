@@ -187,32 +187,34 @@ class User extends Authenticatable
     {
         return DB::table('groups')
             ->join('group_user', 'groups.id', '=', 'group_user.group_id')
-            ->join('curriculum_group', 'curriculum_group.group_id', '=', 'group_user.group_id')
+            ->join('curriculum_subscriptions', 'curriculum_subscriptions.subscribable_id', '=', 'group_user.group_id')
+            ->where('curriculum_subscriptions.subscribable_type', 'App\Group')
             ->where('group_user.user_id', $this->id)
-            ->where('curriculum_group.curriculum_id', $curriculum_id)
+            ->where('curriculum_subscriptions.curriculum_id', $curriculum_id)
             ->get();
     }
 
-    public function curricula($select = ['curricula.*', 'curriculum_group.id AS course_id', 'curriculum_group.group_id AS group_id'])
+    public function curricula()
     {
-        return DB::table('curricula')
-            ->distinct()
-            ->select($select)
-            ->leftjoin('curriculum_group', 'curricula.id', '=', 'curriculum_group.curriculum_id')
-            ->leftjoin('group_user', 'group_user.group_id', '=', 'curriculum_group.group_id')
-            ->where('group_user.user_id', $this->id)
-            ->orWhere('curricula.owner_id', $this->id) //user should also see curricula which he/she owns
-            ->get();
+        return $this->hasManyThrough(
+            'App\Curriculum',
+            'App\CurriculumSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'curriculum_id'
+        )->where('subscribable_type', get_class($this));
     }
 
     public function currentCurriculaEnrolments()
     {
         return DB::table('curricula')
-           // ->distinct()
-            ->select('curricula.id', 'curricula.title', 'curriculum_group.id AS course_id', 'curriculum_group.group_id AS group_id')
-            ->leftjoin('curriculum_group', 'curricula.id', '=', 'curriculum_group.curriculum_id')
-            ->leftjoin('group_user', 'group_user.group_id', '=', 'curriculum_group.group_id')
+            // ->distinct()
+            ->select('curricula.id', 'curricula.title', 'curriculum_subscriptions.id AS course_id', 'curriculum_subscriptions.subscribable_id AS group_id')
+            ->leftjoin('curriculum_subscriptions', 'curricula.id', '=', 'curriculum_subscriptions.curriculum_id')
+            ->leftjoin('group_user', 'group_user.group_id', '=', 'curriculum_subscriptions.subscribable_id')
             ->join('groups', 'groups.id', '=', 'group_user.group_id')
+            ->where('curriculum_subscriptions.subscribable_type', 'App\Group')
             ->where('groups.period_id', $this->current_period_id)
             ->where('groups.organization_id', $this->current_organization_id)
             ->where('group_user.user_id', $this->id)
@@ -223,8 +225,9 @@ class User extends Authenticatable
     public function currentGroupEnrolments()
     {
         return $this->belongsToMany('App\Group', 'group_user')
-            ->select('groups.*', 'curriculum_group.id AS course_id', 'curriculum_group.curriculum_id')
-            ->leftjoin('curriculum_group', 'curriculum_group.group_id', '=', 'groups.id')
+            ->select('groups.*', 'curriculum_subscriptions.id AS course_id', 'curriculum_subscriptions.curriculum_id')
+            ->leftjoin('curriculum_subscriptions', 'curriculum_subscriptions.subscribable_id', '=', 'groups.id')
+            ->where('curriculum_subscriptions.subscribable_type', 'App\Group')
             ->where('period_id', $this->current_period_id)
             ->where('organization_id', $this->current_organization_id)
             ->orderBy('groups.id')

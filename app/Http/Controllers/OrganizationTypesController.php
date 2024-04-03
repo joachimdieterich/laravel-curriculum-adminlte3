@@ -11,11 +11,21 @@ class OrganizationTypesController extends Controller
 {
     public function index()
     {
-        abort_unless(\Gate::allows('organization_type_access'), 403);
 
-        $organization_types = OrganizationType::all();
+        if (request()->wantsJson()) {
+            return getEntriesForSelect2ByModel(
+                "App\OrganizationType"
+            );
+        }
+        else
+        {
+            abort_unless(\Gate::allows('organization_type_access'), 403);
 
-        return view('organizationtypes.index', compact('organization_types'));
+            $organization_types = OrganizationType::all();
+
+            return view('organizationtypes.index', compact('organization_types'));
+        }
+
     }
 
     public function list()

@@ -19,7 +19,8 @@
             {{ item.subscribable.title }}
             </span>
 
-            <span class="pull-right custom-control custom-switch custom-switch-on-green">
+            <span v-if="canEditCheckbox"
+                  class="pull-right custom-control custom-switch custom-switch-on-green">
                 <input  v-model="item.editable"
                         type="checkbox"
                         class="custom-control-input pt-1 "
@@ -29,7 +30,6 @@
             </span>
 
             <span class="pull-right pr-2" ></span>
-
 
             <button class="btn btn-flat py-0 pull-right"
                 @click="unsubscribe(item.id)">
@@ -48,7 +48,8 @@
             modelUrl: String,
             subscriptions: {},
             subscribing_model: String,
-            canEditLabel: String
+            canEditLabel: String,
+            canEditCheckbox: true
         },
         data() {
             return {

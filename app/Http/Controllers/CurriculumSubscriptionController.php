@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\QRCodeHelper;
-use App\Videoconference;
-use App\VideoconferenceSubscription;
+use App\Curriculum;
+use App\CurriculumSubscription;
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
 
-class VideoconferenceSubscriptionController extends Controller
+class CurriculumSubscriptionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,11 +18,11 @@ class VideoconferenceSubscriptionController extends Controller
         $input = $this->validateRequest();
         if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
             $model = $input['subscribable_type']::find($input['subscribable_id']);
-            abort_unless((\Gate::allows('videoconference_access') and $model->isAccessible()), 403);
+            abort_unless((\Gate::allows('curriculum_access') and $model->isAccessible()), 403);
 
-            $videoconference = $model->videoconferences;
+            $curriculum = $model->curriculum;
 
-            return empty($videoconference) ? '' : DataTables::of($videoconference)
+            return empty($curriculum) ? '' : DataTables::of($curriculum)
                 ->setRowId('id')
                 ->make(true);
         }
@@ -33,7 +31,7 @@ class VideoconferenceSubscriptionController extends Controller
             if (request()->wantsJson())
             {
 
-                $tokenscodes = VideoconferenceSubscription::where('videoconference_id', request('videoconference_id'))
+                $tokenscodes = CurriculumSubscription::where('curriculum_id', request('curriculum_id'))
                     ->where('sharing_token', "!=", null)
                     ->get();
 
@@ -43,7 +41,7 @@ class VideoconferenceSubscriptionController extends Controller
                         "token" => $token,
                         "qr"    => (new QRCodeHelper())
                             ->generateQRCodeByString(
-                                env("APP_URL"). "/videoconferences/" . request('videoconference_id') ."/token?sharing_token=" .$token->sharing_token
+                                env("APP_URL"). "/curricula/" . request('curriculum_id') ."/token?sharing_token=" .$token->sharing_token
                             )
                     ];
                 }
@@ -52,7 +50,7 @@ class VideoconferenceSubscriptionController extends Controller
                         'tokens' => $tokens ?? [],
                         'subscriptions' => optional(
                             optional(
-                                Videoconference::find(request('videoconference_id'))
+                                Curriculum::find(request('curriculum_id'))
                             )->subscriptions()
                         )->with('subscribable')
                             ->whereHasMorph('subscribable', '*', function ($q, $type) {
@@ -60,7 +58,6 @@ class VideoconferenceSubscriptionController extends Controller
                                     $q->whereNot('id', env('GUEST_USER'));
                                 }
                             })->get(),
-                        //'subscriptions' => $videoconference->subscriptions()->with('subscribable')->get(),
                     ],
                 ];
             }
@@ -76,11 +73,11 @@ class VideoconferenceSubscriptionController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        $videoconference = Videoconference::find($input['model_id']);
-        abort_unless((\Gate::allows('videoconference_create') and $videoconference->isAccessible()), 403);
+        $curriculum = Curriculum::find($input['model_id']);
+        abort_unless((\Gate::allows('curriculum_create') and $curriculum->isAccessible()), 403);
 
-        $subscribe = VideoconferenceSubscription::updateOrCreate([
-            'videoconference_id' => $input['model_id'],
+        $subscribe = CurriculumSubscription::updateOrCreate([
+            'curriculum_id' => $input['model_id'],
             'subscribable_type' => $input['subscribable_type'],
             'subscribable_id' => $input['subscribable_id'],
         ], [
@@ -90,7 +87,7 @@ class VideoconferenceSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return ['subscription' => $videoconference->subscriptions()->with('subscribable')->get()];
+            return ['subscription' => $curriculum->subscriptions()->with('subscribable')->get()];
         }
     }
 
@@ -98,36 +95,36 @@ class VideoconferenceSubscriptionController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\VideoconferenceSubscription  $videoconferenceSubscription
+     * @param  \App\CurriculumSubscription  $curriculumSubscription
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, VideoconferenceSubscription $videoconferenceSubscription)
+    public function update(Request $request, CurriculumSubscription $curriculumSubscription)
     {
-        abort_unless((\Gate::allows('videoconference_edit') and $videoconferenceSubscription->isAccessible()), 403);
+        abort_unless((\Gate::allows('curriculum_edit') and $curriculumSubscription->isAccessible()), 403);
         $input = $this->validateRequest();
 
-        $videoconferenceSubscription->update([
+        $curriculumSubscription->update([
             'editable'=> isset($input['editable']) ? $input['editable'] : false,
             'owner_id'=> auth()->user()->id,
         ]);
 
         if (request()->wantsJson()) {
-            return ['editable' => $videoconferenceSubscription->editable];
+            return ['editable' => $curriculumSubscription->editable];
         }
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\VideoconferenceSubscription  $videoconferenceSubscription
+     * @param  \App\CurriculumSubscription  $curriculumSubscription
      * @return \Illuminate\Http\Response
      */
-    public function destroy(VideoconferenceSubscription $videoconferenceSubscription)
+    public function destroy(CurriculumSubscription $curriculumSubscription)
     {
-        abort_unless((\Gate::allows('videoconference_delete') and $videoconferenceSubscription->isAccessible()), 403);
+        abort_unless((\Gate::allows('curriculum_delete') and $curriculumSubscription->isAccessible()), 403);
 
         if (request()->wantsJson()) {
-            return ['message' => $videoconferenceSubscription->delete()];
+            return ['message' => $curriculumSubscription->delete()];
         }
     }
 
@@ -138,7 +135,7 @@ class VideoconferenceSubscriptionController extends Controller
             'subscribable_id'   => 'sometimes|integer',
             'model_id'          => 'sometimes|integer',
             'editable'          => 'sometimes',
-            'videoconference_id'=> 'sometimes',
+            'curriculum_id'=> 'sometimes',
         ]);
     }
 }

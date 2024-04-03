@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Curriculum;
+use App\CurriculumSubscription;
 use App\Grade;
 use App\Group;
 use App\Http\Requests\MassDestroyGroupRequest;
@@ -193,7 +194,12 @@ class GroupsController extends Controller
         abort_unless((\Gate::allows('group_delete') and $group->isAccessible()), 403);
 
         // first delete all relations
-        $group->curricula()->detach();
+        CurriculumSubscription::where([
+            'subscribable_type' => "App\Group",
+            'subscribable_id' => $group->id,
+        ])->delete();
+
+        //$group->curricula()->detach();
         $group->users()->detach();
 
         //todo: delete subscriptions ( eg. kanban), yet no relation in Group.php

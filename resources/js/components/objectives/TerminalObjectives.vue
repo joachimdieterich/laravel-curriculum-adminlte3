@@ -167,7 +167,7 @@ export default {
             try {
                 this.terminal_objectives = (await axios.post('/curricula/'+this.curriculum.id+'/achievements', {'user_ids' : ids})).data.curriculum.terminal_objectives;
             } catch(error) {
-                this.errors = error.response.data.errors;
+                consoloe.log(error);
             }
         },
 

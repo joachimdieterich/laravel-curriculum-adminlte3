@@ -4,19 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Country;
 use App\Curriculum;
+use App\CurriculumSubscription;
 use App\CurriculumType;
 use App\Grade;
-use App\Group;
 use App\Medium;
 use App\Organization;
 use App\OrganizationType;
 use App\State;
 use App\Subject;
-use App\User;
 use App\VariantDefinition;
+use Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\DataTables;
 
 class CurriculumController extends Controller
@@ -24,7 +23,6 @@ class CurriculumController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -36,94 +34,78 @@ class CurriculumController extends Controller
             return ['curricula' => auth()->user()->curricula(['curricula.*'])]; //no gate! every user should get his enrolled curricula
         }
 
-        abort_unless(\Gate::allows('curriculum_access'), 403); //check here, cause json return should work for all users
+        abort_unless(Gate::allows('curriculum_access'), 403); //check here, cause json return should work for all users
 
         return view('curricula.index');
     }
 
-    public function list()
+    public function types()
     {
-        abort_unless(\Gate::allows('curriculum_access'), 403);
+        if (request()->wantsJson()) {
 
-        if (auth()->user()->role()->id == 1) {
-            $curricula = Curriculum::select([
-                'id',
-                'title',
-                'state_id',
-                'country_id',
-                'grade_id',
-                'subject_id',
-                'organization_type_id',
-                'type_id',
-                'owner_id',
-            ])->with(['state', 'country', 'grade',
-                'subject', 'organizationType',
-                'type', 'owner', ]);
-        } else {
-            $curricula = Curriculum::select([
-                'id',
-                'title',
-                'state_id',
-                'country_id',
-                'grade_id',
-                'subject_id',
-                'organization_type_id',
-                'type_id',
-                'owner_id',
-            ])->where('owner_id', auth()->user()->id);
+            if (Gate::allows('curriculum_create_global'))
+            {
+                return CurriculumType::all();
+            }
+            else if (Gate::allows('curriculum_create_for_organization'))
+            {
+                return CurriculumType::where('id', ">", 1)->get();
+            }
+            else if (Gate::allows('curriculum_create_for_group'))
+            {
+                return CurriculumType::where('id', ">", 2)->get();
+            }
+            else if (Gate::allows('curriculum_create_for_user'))
+            {
+                return CurriculumType::where('id', ">",  3)->get();
+            }
+        }
+    }
+
+    public function userCurricula($withOwned = true, $user = null)
+    {
+        if ($user == null)
+        {
+            $user = auth()->user();
+        }
+        $userCanSee = $user->curricula;
+
+        foreach ($user->groups as $group) {
+            $userCanSee = $userCanSee->merge($group->curricula);
+        }
+        $organization = Organization::find($user->current_organization_id)->curricula;
+        $userCanSee = $userCanSee->merge($organization);
+
+        if ($withOwned)
+        {
+            $owned = Curriculum::where('owner_id', $user->id)->get();
+            $userCanSee = $userCanSee->merge($owned);
         }
 
-        $edit_gate = \Gate::allows('curriculum_edit');
-        $delete_gate = \Gate::allows('curriculum_delete');
+        return $userCanSee->unique();
+    }
 
-        return DataTables::of($curricula)
-            ->addColumn('state', function ($curricula) {
-                return isset($curricula->state->lang_de) ? $curricula->state->lang_de : '-';
-            })
-            ->addColumn('country', function ($curricula) {
-                return $curricula->country->lang_de;
-            })
-            ->addColumn('grade', function ($curricula) {
-                return $curricula->grade->title;
-            })
-            ->addColumn('subject', function ($curricula) {
-                return $curricula->subject->title;
-            })
-            ->addColumn('organizationtype', function ($curricula) {
-                return $curricula->organizationType->title;
-            })
-            ->addColumn('type', function ($curricula) {
-                return $curricula->type->title;
-            })
-            ->addColumn('owner', function ($curricula) {
-                return $curricula->owner->firstname.' '.$curricula->owner->lastname;
-            })
-            ->addColumn('action', function ($curricula) use ($edit_gate, $delete_gate) {
-                $actions = '';
+    public function list(Request $request)
+    {
+        abort_unless(Gate::allows('curriculum_access'), 403);
 
-                if ($edit_gate and ($curricula->owner_id == auth()->user()->id)) {
-                    $actions .= '<a href="'.route('curricula.edit', $curricula->id).'" '
-                                    .'class="btn">'
-                                    .'<i class="fa fa-pencil-alt"></i>'
-                                    .'</a>';
-                }
-                if ($edit_gate and ($curricula->owner_id == auth()->user()->id)) {
-                    $actions .= '<a href="'.route('curricula.editOwner', $curricula->id).'" '
-                                    .'class="btn">'
-                                    .'<i class="fa fa-user"></i>'
-                                    .'</a>';
-                }
-                if ($delete_gate and ($curricula->owner_id == auth()->user()->id)) {
-                    $actions .= '<button type="button" '
-                                .'class="btn text-danger" '
-                                .'onclick="destroyDataTableEntry(\'curricula\','.$curricula->id.')">'
-                                .'<i class="fa fa-trash"></i></button>';
-                }
 
-                return $actions;
-            })
+        switch ($request->filter)
+        {
+            case 'owner':            $curricula = Curriculum::where('owner_id', auth()->user()->id)->get();
+                break;
+            case 'shared_with_me':   $curricula = $this->userCurricula(false);
+                break;
+            case 'shared_by_me':     $curricula = Curriculum::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
+                break;
+            case 'by_organization':  $curricula = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->curricula;
+                break;
+            case 'all':
+            default:                 $curricula = $this->userCurricula();
+                break;
+        }
 
-            ->addColumn('check', '')
+        return empty($curricula) ? '' : DataTables::of($curricula)
             ->setRowId('id')
             ->make(true);
     }
@@ -135,7 +117,7 @@ class CurriculumController extends Controller
      */
     public function create()
     {
-        abort_unless(\Gate::allows('curriculum_create'), 403);
+        abort_unless(Gate::allows('curriculum_create'), 403);
 
         $grades = Grade::all();
         $subjects = Subject::all();
@@ -163,7 +145,7 @@ class CurriculumController extends Controller
      */
     public function store(Request $request)
     {
-        abort_unless(\Gate::allows('curriculum_create'), 403);
+        abort_unless(Gate::allows('curriculum_create'), 403);
         $input = $this->validateRequest();
 
         $this->checkPermissions($input['type_id']);
@@ -192,9 +174,9 @@ class CurriculumController extends Controller
         ]);
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
-        // axios call?
+
         if (request()->wantsJson()) {
-            return ['message' => $curriculum->path()];
+            return ['curriculum' => $curriculum];
         }
 
         return redirect($curriculum->path());
@@ -208,7 +190,7 @@ class CurriculumController extends Controller
      */
     public function show(Curriculum $curriculum, $achievements = false)
     {
-        abort_unless((\Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
+        abort_unless((Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
         LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
 
         $objectiveTypes = \App\ObjectiveType::all();
@@ -219,7 +201,7 @@ class CurriculumController extends Controller
         ])
         ->find($curriculum->id);
         $settings = json_encode([
-            'edit' => true,
+            'edit' => (auth()->user()->id === $curriculum->owner_id) ? true : false,
             'cross_reference_curriculum_id' => false,
         ]);
 
@@ -274,9 +256,9 @@ class CurriculumController extends Controller
      */
     public function getAchievements(Curriculum $curriculum)
     {
-        abort_unless(\Gate::allows('curriculum_show'), 403);
+        abort_unless(Gate::allows('curriculum_show'), 403);
         //check if user is enrolled or admin -> else 403
-        abort_unless((auth()->user()->curricula()->contains('id', $curriculum->id) // user enrolled
+        abort_unless((auth()->user()->curricula->contains('id', $curriculum->id) // user enrolled
                   or (auth()->user()->currentRole()->first()->id == 1)), 403);     // or admin
         $user_ids = request()->user_ids;
 
@@ -347,7 +329,7 @@ class CurriculumController extends Controller
      */
     public function storeOwner(Request $request, Curriculum $curriculum)
     {
-        abort_unless(\Gate::allows('curriculum_edit'), 403);
+        abort_unless(Gate::allows('curriculum_edit'), 403);
         $input = $this->validateRequest();
 
         $curriculum->update([
@@ -366,7 +348,7 @@ class CurriculumController extends Controller
      */
     public function update(Request $request, Curriculum $curriculum)
     {
-        abort_unless(\Gate::allows('curriculum_edit'), 403);
+        abort_unless(Gate::allows('curriculum_edit'), 403);
 
         $input = $this->validateRequest();
         $this->checkPermissions($input['type_id']);
@@ -405,13 +387,36 @@ class CurriculumController extends Controller
      */
     public function enrol()
     {
-        abort_unless(\Gate::allows('course_create'), 403);
+        abort_unless(Gate::allows('course_create'), 403);
 
-        foreach ((request()->enrollment_list) as $enrolment) {
-            $return[] = Group::findOrFail($enrolment['group_id'])->curricula()->syncWithoutDetaching($enrolment['curriculum_id']);
+        foreach ((request()->enrollment_list) as $enrolment)
+        {
+            if(is_array($enrolment['curriculum_id']))
+            {
+                foreach ($enrolment['curriculum_id'] as $curriculum_id)
+                {
+                    $this->subscribe($curriculum_id, $enrolment['group_id']);
+                }
+            } else {
+                $this->subscribe($enrolment['curriculum_id'], $enrolment['group_id']);
+            }
         }
 
-        return $return;
+        return CurriculumSubscription::where('subscribable_type', "App\Group")
+            ->where('subscribable_id', $enrolment['group_id'])->get();
+    }
+
+    private function subscribe($curriculum_id, $group_id, $model = "App\Group", $editable = false)
+    {
+        $subscribe = CurriculumSubscription::updateOrCreate([
+            'curriculum_id' => $curriculum_id,
+            'subscribable_type' => $model,
+            'subscribable_id' => $group_id,
+        ], [
+            'editable' => $editable,
+            'owner_id' => auth()->user()->id,
+        ]);
+        $subscribe->save();
     }
 
     public function references()
@@ -423,14 +428,32 @@ class CurriculumController extends Controller
 
     public function expel()
     {
-        abort_unless(\Gate::allows('course_create'), 403);
+        abort_unless(Gate::allows('course_create'), 403);
 
-        foreach ((request()->expel_list) as $expel) {
-            $group = Group::find($expel['group_id']);
-            $return[] = $group->curricula()->detach($expel['curriculum_id']);
+        foreach ((request()->expel_list) as $expel)
+        {
+            if(is_array($expel['curriculum_id']))
+            {
+                foreach ($expel['curriculum_id'] as $curriculum_id)
+                {
+                    $this->unsubscribe($curriculum_id, $expel['group_id']);
+                }
+            } else {
+                $this->unsubscribe($expel['curriculum_id'], $expel['group_id']);
+            }
         }
 
-        return $return;
+        return CurriculumSubscription::where('subscribable_type', "App\Group")
+        ->where('subscribable_id', $expel['group_id'])->get();;
+    }
+
+    private function unsubscribe($curriculum_id, $group_id, $model = "App\Group", $editable = false)
+    {
+        CurriculumSubscription::where([
+            'curriculum_id' => $curriculum_id,
+            'subscribable_type' => "App\Group",
+            'subscribable_id' => $group_id,
+        ])->delete();
     }
 
     /**
@@ -442,10 +465,14 @@ class CurriculumController extends Controller
     public function destroy(Curriculum $curriculum)
     {
         //todo: delete media attached to content, descriptions...
-        abort_unless(\Gate::allows('curriculum_delete'), 403);
+        abort_unless(Gate::allows('curriculum_delete'), 403);
 
         // detach groups
-        $curriculum->groups()->detach();
+        CurriculumSubscription::where([
+            'curriculum_id' => $curriculum,
+            'subscribable_type' => "App\Group",
+        ])->delete();
+        //$curriculum->groups()->detach();
 
         // delete certificates
         foreach ($curriculum->certificates as $certificate) {
@@ -481,6 +508,8 @@ class CurriculumController extends Controller
         foreach ($curriculum->contents as $content) {
             (new ContentController)->destroy($content, 'App\Curriculum', $curriculum->id); // delete or unsubscribe if content is still subscribed elsewhere
         }
+
+        $curriculum->subscriptions()->delete();
 
         $return = $curriculum->delete();
 
@@ -630,26 +659,26 @@ class CurriculumController extends Controller
         if ($id == 4) { //user
             abort_unless(
                 (
-                    \Gate::allows('curriculum_create_for_user') or
-                    \Gate::allows('curriculum_create_for_group') or
-                    \Gate::allows('curriculum_create_for_organization') or
-                    \Gate::allows('curriculum_create_global')
+                    Gate::allows('curriculum_create_for_user') or
+                    Gate::allows('curriculum_create_for_group') or
+                    Gate::allows('curriculum_create_for_organization') or
+                    Gate::allows('curriculum_create_global')
                 ), 403);
         } elseif ($id == 3) { //group
             abort_unless(
                 (
-                    \Gate::allows('curriculum_create_for_group') or
-                    \Gate::allows('curriculum_create_for_organization') or
-                    \Gate::allows('curriculum_create_global')
+                    Gate::allows('curriculum_create_for_group') or
+                    Gate::allows('curriculum_create_for_organization') or
+                    Gate::allows('curriculum_create_global')
                 ), 403);
         } elseif ($id == 2) { //organization
             abort_unless(
                 (
-                    \Gate::allows('curriculum_create_for_organization') or
-                    \Gate::allows('curriculum_create_global')
+                    Gate::allows('curriculum_create_for_organization') or
+                    Gate::allows('curriculum_create_global')
                 ), 403);
         } elseif ($id == 1) { //group
-            abort_unless(\Gate::allows('curriculum_create_global'), 403);
+            abort_unless(Gate::allows('curriculum_create_global'), 403);
         }
     }
 
@@ -658,13 +687,13 @@ class CurriculumController extends Controller
      */
     private function getCurriculumTypesByPermission()
     {
-        if (\Gate::allows('curriculum_create_global')) {
+        if (Gate::allows('curriculum_create_global')) {
             $curriculum_types = CurriculumType::all();
-        } elseif (\Gate::allows('curriculum_create_for_organization')) {
+        } elseif (Gate::allows('curriculum_create_for_organization')) {
             $curriculum_types = CurriculumType::where('id', '>', 1)->get();
-        } elseif (\Gate::allows('curriculum_create_for_group')) {
+        } elseif (Gate::allows('curriculum_create_for_group')) {
             $curriculum_types = CurriculumType::where('id', '>', 2)->get();
-        } elseif (\Gate::allows('curriculum_create_for_user')) {
+        } elseif (Gate::allows('curriculum_create_for_user')) {
             $curriculum_types = CurriculumType::where('id', '>', 3)->get();
         } else {
             $curriculum_types = [];
@@ -711,8 +740,9 @@ class CurriculumController extends Controller
                 DB::table('curricula')
                     ->distinct()
                     ->select('curricula.id, curricula.title')
-                    ->leftjoin('curriculum_group', 'curricula.id', '=', 'curriculum_group.curriculum_id')
-                    ->leftjoin('group_user', 'group_user.group_id', '=', 'curriculum_group.group_id')
+                    ->leftjoin('curriculum_subscriptions', 'curricula.id', '=', 'curriculum_subscriptions.curriculum_id')
+                    ->leftjoin('group_user', 'group_user.group_id', '=', 'curriculum_subscriptions.subscribable_id')
+                    ->where('curriculum_subscriptions.subscribable_type', 'App\Group')
                     ->where('group_user.user_id', auth()->user()->id)
                     ->orWhere('curricula.owner_id', auth()->user()->id), //user should also see curricula which he/she owns
                 "curricula."

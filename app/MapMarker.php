@@ -70,5 +70,4 @@ class MapMarker extends Model
         )->where('subscribable_type', get_class($this));
     }
 
-
 }

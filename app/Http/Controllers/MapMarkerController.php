@@ -43,7 +43,9 @@ class MapMarkerController extends Controller
 
         $marker = MapMarker::create([
             'title' => $input['title'],
+            'teaser_text' => $input['teaser_text'],
             'description' => $input['description'],
+            'author' => $input['author'],
             'type_id' => $input['type_id'],
             'category_id' => $input['category_id'],
             'tags' => $input['tags'],
@@ -51,6 +53,7 @@ class MapMarkerController extends Controller
             'longitude' => $input['longitude'],
             'address' => $input['address'],
             'url' => $input['url'],
+            'url_title' => $input['url_title'],
             'owner_id' => auth()->user()->id,
         ]);
 
@@ -59,27 +62,7 @@ class MapMarkerController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\MapMarker  $mapMarker
-     * @return \Illuminate\Http\Response
-     */
-    public function show(MapMarker $mapMarker)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\MapMarker  $mapMarker
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(MapMarker $mapMarker)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -90,7 +73,29 @@ class MapMarkerController extends Controller
      */
     public function update(Request $request, MapMarker $mapMarker)
     {
-        //
+        $input = $this->validateRequest();
+        abort_unless((\Gate::allows('map_edit')), 403);
+
+        $mapMarker->update([
+            'title' => $input['title'] ?? $mapMarker->title,
+            'teaser_text' => $input['teaser_text'] ?? $mapMarker->teaser_text,
+            'description' => $input['description'] ?? $mapMarker->description,
+            'author' => $input['author'] ?? $mapMarker->author,
+            'type_id' => $input['type_id'] ?? $mapMarker->type_id,
+            'category_id' => $input['category_id'] ?? $mapMarker->category_id,
+            'tags' => $input['tags'] ?? $mapMarker->tags,
+            'latitude' => $input['latitude'] ?? $mapMarker->latitude,
+            'longitude' => $input['longitude'] ?? $mapMarker->longitude,
+            'address' => $input['address'] ?? $mapMarker->address,
+            'url' => $input['url'] ?? $mapMarker->url,
+            'url_title' => $input['url_title'] ?? $mapMarker->url_title,
+            'owner_id' => auth()->user()->id,
+        ]);
+
+        $mapMarker->save();
+
+        return $mapMarker;
+
     }
 
     /**
@@ -109,7 +114,9 @@ class MapMarkerController extends Controller
         return request()->validate([
             'id' => 'sometimes|integer|nullable',
             'title' => 'sometimes|string',
+            'teaser_text' => 'sometimes|string',
             'description' => 'sometimes|nullable',
+            'author' => 'sometimes|nullable',
             'type_id' => 'sometimes|integer',
             'category_id' => 'sometimes|integer',
             'tags' => 'sometimes|string',
@@ -117,6 +124,7 @@ class MapMarkerController extends Controller
             'longitude' => 'sometimes|nullable',
             'address' => 'sometimes|nullable',
             'url' => 'sometimes|nullable',
+            'url_title' => 'sometimes|nullable',
             'owner_id' => 'sometimes|integer',
 
         ]);

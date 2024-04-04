@@ -254,9 +254,6 @@ export default {
             this.method = method;
             $('#modal-marker-form').modal('show');
         },
-        editMarker(marker){
-            this.$eventHub.$emit('edit_marker', marker);
-        },
         loadMarkers(){
             axios.get('/mapMarkers?type_id=' + this.form.type_id + '&category_id=' + this.form.category_id)
                 .then(res => {
@@ -429,6 +426,13 @@ export default {
         },
     },
     mounted() {
+
+        this.$eventHub.$on('edit_marker', (marker) => {
+            this.marker = marker;
+            this.method = 'patch';
+            $('#modal-marker-form').modal('show');
+        });
+
         if (this.map.initialLatitude){
             this.initialLatitude = this.map.initialLatitude;
         }

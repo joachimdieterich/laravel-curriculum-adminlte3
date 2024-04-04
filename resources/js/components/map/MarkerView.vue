@@ -3,7 +3,7 @@
         <h1 class="sidebar-header  mb-3">
             {{ this.marker.title }}
             <span v-can="'map_edit'" class="card-tools pl-2">
-                <a @click.prevent="editMarker()" >
+                <a @click="editMarker(marker)" >
                     <i class="fa fa-pencil-alt"></i>
                 </a>
             </span>
@@ -75,8 +75,8 @@ export default {
 
     },
     methods: {
-        editMarker(){
-
+        editMarker(marker){
+            this.$eventHub.$emit('edit_marker', marker);
         },
     },
 

@@ -26,6 +26,7 @@
     <medium-modal></medium-modal>
     @can('medium_create')
         <medium-create-modal></medium-create-modal>
+        <subscribe-modal></subscribe-modal>
     @endcan
 @endsection
 @section('scripts')

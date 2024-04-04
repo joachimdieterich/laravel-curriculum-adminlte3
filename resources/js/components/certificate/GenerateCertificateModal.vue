@@ -11,7 +11,7 @@
         @opened="opened"
         @before-close="beforeClose"
         style="z-index: 1100">
-        <div class="card" style="margin-bottom: 0px !important">
+        <div class="card" style="margin-bottom: 0 !important">
             <div class="card-header">
                 <h3 class="card-title">
                     {{ trans('global.certificate.generate') }}
@@ -90,7 +90,7 @@
                 certificate: null,
                 certificate_id: null,
                 curriculum_id:null,
-                date: new Date().toLocaleDateString(),
+                date: new Date().toLocaleDateString("de-DE",{dateStyle :"medium"}),
                 requestUrl: '/certificates/generate',
                 download_url: null
             }
@@ -135,10 +135,6 @@
             beforeClose() {
                 //console.log('close')
             },
-
-            submit() {
-                var method = this.method.toLowerCase();
-            }
         },
         created() {
 

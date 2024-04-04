@@ -169,6 +169,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('logbookEntries/setSubject', 'LogbookEntryController@setSubject');
 
     Route::get('maps/list', 'MapController@list');
+    Route::resource('mapSubscriptions', 'MapSubscriptionController');
+
     Route::resource('maps', 'MapController');
     Route::resource('mapMarkers', 'MapMarkerController');
     Route::resource('mapMarkerTypes', 'MapMarkerTypeController');

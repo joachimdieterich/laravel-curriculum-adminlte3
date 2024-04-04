@@ -55,6 +55,9 @@ class PlanController extends Controller
 
         return DataTables::of($plans)
             ->addColumn('action', function ($plans) use ($edit_gate, $delete_gate) {
+                // actions should only be visible to owner. admin has all rights
+                if ($plans->owner_id != auth()->user()->id && !is_admin()) return '';
+
                 $actions = '';
                 if ($edit_gate) {
                     $actions .= '<a href="'.route('plans.edit', $plans->id).'"'
@@ -144,34 +147,47 @@ class PlanController extends Controller
     public function show(Plan $plan)
     {
         abort_unless((\Gate::allows('plan_show') and $plan->isAccessible()), 403);
-        $subscriptions = $plan->subscriptions()->get()->toArray();
+        $editable = $plan->isEditable();
         $users = [];
-
-        if ($plan->owner_id === auth()->user()->id) {
+        
+        if ($editable) {
+            $subscriptions = $plan->subscriptions()->get()->toArray();
+            // get every user-id through all subscriptions
             foreach ($subscriptions as $subscription) {
-                if ($subscription['subscribable_type'] == 'App\Group') {
-                    $group_users = Group::find($subscription['subscribable_id'])->users()->get()->toArray();
-                    $users = array_merge($users, $group_users);
-                } else if ($subscription['subscribable_type'] == 'App\User') {
-                    $user = User::find($subscription['subscribable_id'])->toArray();
-                    array_push($users, $user);
-                } else if ($subscription['subscribable_type'] == 'App\Organization') {
-                    $organization_users = Organization::find($subscription['subscribable_id'])->users()->get()->toArray();
-                    $users = array_merge($users, $organization_users);
+                switch ($subscription['subscribable_type']) {
+                    case 'App\User':
+                        array_push($users, $subscription['subscribable_id']);
+                        break;
+                    case 'App\Group':
+                        $ids = Group::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray();
+                        $users = array_merge($users, $ids);
+                        break;
+                    case 'App\Organization':
+                        $ids = Organization::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray();
+                        $users = array_merge($users, $ids);
+                        break;
+                    default:
+                        break;
                 }
             }
+
+            // duplicates have to be removed, because SQL will return the same entry multiple times
+            $users = array_unique($users, SORT_NUMERIC);
+
+            // get needed user-data through their ID
+            $users = User::select('id', 'firstname', 'lastname')->whereIn('id', $users)->get()->toArray();
         }
 
         if (request()->wantsJson()) {
             return [
                 'plan' => $plan,
                 'users' => $users,
+                'editable' => $editable,
             ];
         }
-
+        
         return view('plans.show')
-            ->with(compact('plan'))
-            ->with(compact('users'));
+            ->with(compact('plan', 'users', 'editable'));
     }
 
     /**
@@ -226,9 +242,13 @@ class PlanController extends Controller
      */
     public function destroy(Plan $plan)
     {
+        //TODO: only owner/admin should be able to delete a plan
+        // theoretically a user enroled in a plan can send a delete request
         abort_unless((\Gate::allows('plan_delete') and $plan->isAccessible()), 403);
 
         $plan->entries()->delete();
+        $plan->subscriptions()->delete();
+        //? if media-subscriptions can be added in the future, they need to be deleted too
         $plan->delete();
     }
 

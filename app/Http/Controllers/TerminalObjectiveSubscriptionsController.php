@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\TerminalObjective;
 use App\TerminalObjectiveSubscriptions;
-use App\Group;
 use App\User;
+use App\Group;
+use App\Organization;
 use Illuminate\Http\Request;
 
 class TerminalObjectiveSubscriptionsController extends Controller
@@ -23,17 +24,29 @@ class TerminalObjectiveSubscriptionsController extends Controller
             abort_unless((\Gate::allows('curriculum_show') and $modal->isAccessible()), 403);
 
             $user_ids = [];
-            // only if plan owner
-            if ($input['subscribable_type'] == 'App\PlanEntry' and $modal->plan->owner->id === auth()->user()->id) {
+            
+            if ($input['subscribable_type'] == 'App\PlanEntry' and $modal->plan->isEditable()) {
                 $subscriptions = $modal->plan->subscriptions;
-                // get every user id of all subscriptions
+
+                // get every user-id through all subscriptions
                 foreach ($subscriptions as $subscription) {
-                    if ($subscription['subscribable_type'] == 'App\Group') {
-                        $user_ids = array_merge($user_ids, Group::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray());
-                    } else if ($subscription['subscribable_type'] == 'App\User') {
-                        array_push($user_ids, User::find($subscription['subscribable_id'])->id);
+                    switch ($subscription['subscribable_type']) {
+                        case 'App\User':
+                            array_push($user_ids, User::find($subscription['subscribable_id'])->id);
+                            break;
+                        case 'App\Group':
+                            $user_ids = array_merge($user_ids, Group::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray());
+                            break;
+                        case 'App\Organization':
+                            $user_ids = array_merge($user_ids, Organization::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray());
+                            break;
+                        default:
+                            break;
                     }
                 }
+
+                // duplicates have to be removed, because SQL will return the same entry multiple times
+                $user_ids = array_unique($user_ids, SORT_NUMERIC);
             } else {
                 $user_ids = [auth()->user()->id];
             }
@@ -43,16 +56,15 @@ class TerminalObjectiveSubscriptionsController extends Controller
                     'subscriptions' =>
                         TerminalObjectiveSubscriptions::where('subscribable_type', $input['subscribable_type'])
                             ->where('subscribable_id', $input['subscribable_id'])
-                            ->with(
-                                [
-                                    'terminalObjective',
-                                    'terminalObjective.achievements',
-                                    'terminalObjective.enablingObjectives',
-                                    'terminalObjective.enablingObjectives.achievements' => function ($query) use ($user_ids) {
-                                        $query->where('user_id', $user_ids)->with(['owner', 'user']);
-                                    },
-                                ])
-                                ->get()
+                            ->with([
+                                'terminalObjective',
+                                // 'terminalObjective.achievements', // there's currently no implementation for this
+                                'terminalObjective.enablingObjectives',
+                                'terminalObjective.enablingObjectives.achievements' => function ($query) use ($user_ids) {
+                                    $query->whereIn('user_id', $user_ids)->with(['owner', 'user']);
+                                },
+                            ])
+                            ->get()
                 ];
             }
         }

@@ -8,10 +8,10 @@
                     v-can="'plan_edit'"
                     class="card-tools pr-2 no-print"
                 >
-                    <a onclick="window.print()" class="link-muted pr-4 pointer">
+                    <a onclick="window.print()" class="link-muted mr-3 px-1 pointer">
                         <i class="fa fa-print"></i>
                     </a>
-                    <a :href="'plans/' + plan.id + '/edit'" class="link-muted">
+                    <a :href="plan.id + '/edit'" class="link-muted px-1">
                         <i class="fa fa-pencil-alt"></i>
                     </a>
                 </div>
@@ -38,6 +38,7 @@
                     <PlanEntry
                         v-for="(entry, index) in entries"
                         :key="entries[index].id"
+                        :editable="editable"
                         :entry="entry"
                         :plan="plan"
                     ></PlanEntry>
@@ -76,6 +77,10 @@ const PlanEntry =
 export default {
     props: {
         plan: [],
+        editable: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {
@@ -92,7 +97,7 @@ export default {
             axios.get('/planEntries?plan_id=' + this.plan.id)
                 .then(response => {
                     if (this.plan.entry_order != null) {
-                        this.entry_order = this.plan.entry_order
+                        this.entry_order = this.plan.entry_order;
                         // rearrange entries to the specified order by their ID
                         // since this is O[n^2], it could become a performance issue in the future
                         this.entries = this.entry_order.map(
@@ -135,7 +140,6 @@ export default {
         localStorage.removeItem('user-datatable-selection'); // reset selection to prevent wrong inputs
         this.disabled = this.$userId != this.plan.owner_id;
         this.loaderEvent();
-        this.entries = this.plan.entries;
         this.$eventHub.$on('plan_entry_added', (e) => {
             this.handleEntryAdded(e);
         });

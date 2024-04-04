@@ -95,4 +95,15 @@ class Plan extends Model
             return false;
         }
     }
+
+    public function isEditable() {
+        $user = auth()->user();
+        
+        return
+            is_admin() ||
+            $this->owner_id == $user->id ||
+            $this->userSubscriptions()->where('subscribable_id', $user->id)->where('editable', 1)->first() ||
+            $this->groupSubscriptions()->whereIn('subscribable_id', $user->groups->pluck('id'))->where('editable', 1)->first() ||
+            $this->organizationSubscriptions()->whereIn('subscribable_id', $user->organizations->pluck('id'))->where('editable', 1)->first();
+    }
 }

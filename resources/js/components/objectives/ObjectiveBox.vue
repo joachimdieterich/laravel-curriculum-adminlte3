@@ -32,16 +32,18 @@
     <!--  v-else-if render existing objective-->
     <div  v-bind:id="id" v-else
          class="box box-objective"
-         v-bind:style="{ 'background-color': backgroundcolor, 'border-color': bordercolor, 'opacity': opacity, 'filter': filter }" >
-
-        <Header :objective="objective"
-                :type="type"
-                :menuEntries="menuEntries"
-                :settings="settings"
-                :max_id="max_id"
-                :textcolor="textcolor"
-                @eventDelete="deleteEvent"
-                @eventSort="sortEvent"
+         v-bind:style="{ 'background-color': backgroundcolor, 'border-color': bordercolor, 'opacity': opacity, 'filter': filter }"
+    >
+        <!-- don't load Header if it isn't needed -->
+        <Header v-if="settings.edit == true" 
+            :objective="objective"
+            :type="type"
+            :menuEntries="menuEntries"
+            :settings="settings"
+            :max_id="max_id"
+            :textcolor="textcolor"
+            @eventDelete="deleteEvent"
+            @eventSort="sortEvent"
         ></Header>
 
         <div class="panel-body boxwrap pointer"
@@ -78,7 +80,10 @@ export default {
         objective_type_id: {},
         type: {},
         settings: {},
-        max_id: Number
+        editable: {
+            default: false
+        },
+        max_id: Number,
     },
     data() {
         return {
@@ -139,7 +144,7 @@ export default {
             window.location = this.location;
         },
         showDetails() {
-            if (this.settings.achievements === undefined) {
+            if (this.settings.achievements === undefined || !this.editable) {
                 location.href= '/'+this.type+'Objectives/'+this.objective.id;
             } else {
                 this.$modal.show('set-achievements-modal', { 'objective': this.objective });

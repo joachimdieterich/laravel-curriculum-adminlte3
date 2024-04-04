@@ -23,7 +23,7 @@
                             v-model.trim="form.meetingName"
                             :placeholder="trans('global.videoconference.fields.meetingName')"
                         />
-                        <p class="help-block" v-if="form.errors?.dialNumber" v-text="form.errors?.dialNumber[0]"></p>
+                        <p class="help-block" v-if="form.errors?.meetingName" v-text="form.errors?.meetingName[0]"></p>
                     </div> <!-- meetingName -->
                     <div v-if="videoconference == null"
                          class="form-group ">
@@ -41,7 +41,7 @@
                     </div> <!-- meetingLayout -->
                     <div class="row">
                         <div class="col-sm-6">
-                            <div class="form-grou ">
+                            <div class="form-group ">
                                 <label for="welcomeMessage">
                                     {{ trans('global.videoconference.fields.welcomeMessage') }}
                                 </label>

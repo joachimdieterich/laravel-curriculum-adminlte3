@@ -207,7 +207,7 @@ import moment from 'moment';
                         search: id,
                         page: this.page,
                         plugin: 'evewa'
-                    })).data.message.lesePlrlpVeranstaltungen.data;
+                    })).data.events.data;
                     $("#loading-events").hide();
                 } catch(error) {
                     //this.errors = error.response.data.errors;

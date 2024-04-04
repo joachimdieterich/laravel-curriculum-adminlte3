@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'author' => 'Author',
+    'author_helper' => '',
     'code_401' => 'You are not authenticated or do not have the necessary permissions.',
     'code_403' => 'You do not have the necessary permissions.',
     'code_402' => 'Limit reached. This action cannot be performed.',
@@ -494,8 +496,6 @@ return [
         'print' => 'Print curriculum',
         'print_references' => 'Print curriculum references',
         'fields' => [
-            'author' => 'Author',
-            'author_helper' => '',
             'publisher' => 'Publisher',
             'publisher_helper' => '',
             'city' => 'City',
@@ -565,8 +565,6 @@ return [
             'path_helper' => '',
             'medium_name' => 'Medium name',
             'medium_name_helper' => '',
-            'author' => 'Author',
-            'author_helper' => '',
             'publisher' => 'Publisher',
             'publisher_helper' => '',
             'city' => 'City',
@@ -1036,6 +1034,34 @@ return [
             'moderatorPW_helper' => '',
             'endCallbackUrl' => 'Callback URL',
             'endCallbackUrl_helper' => '',
+        ],
+    ],
+    'map' => [
+        'title' => 'Maps',
+        'title_singular' => 'Map',
+        'create' => 'Create map',
+        'edit' => 'Edit map',
+        'delete' => 'Delete map',
+        'delete_helper' => 'Should map be deleted?',
+        'fields' => [
+            'latitude' => 'Latitude',
+            'longitude' => 'Longitude',
+            'link' => 'Link',
+            'link_helper' => '',
+        ],
+    ],
+    'marker' => [
+        'title' => 'Marker',
+        'title_singular' => 'Marker',
+        'create' => 'Create marker ',
+        'edit' => 'Edit marker',
+        'delete' => 'delete marker',
+        'delete_helper' => 'Should marker be deleted?',
+        'fields' => [
+            'latitude' => 'Latitude',
+            'longitude' => 'Longitude',
+            'link' => 'Link',
+            'link_helper' => '',
         ],
     ],
 ];

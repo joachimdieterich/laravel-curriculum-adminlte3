@@ -450,4 +450,16 @@ class User extends Authenticatable
         )->where('subscribable_type', get_class($this));
     }
 
+    public function maps()
+    {
+        return $this->hasManyThrough(
+            'App\Map',
+            'App\MapSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'map_id'
+        )->where('subscribable_type', get_class($this));
+    }
+
 }

@@ -506,6 +506,8 @@ return [
         'delete' => 'Curriculum löschen',
         'delete_helper' => 'Soll das Curriculum sowie die zugehörigen Daten gelöscht werden?',
         'fields' => [
+            'author' => 'Autor',
+            'author_helper' => '',
             'publisher' => 'Herausgeber',
             'publisher_helper' => '',
             'city' => 'Ort',
@@ -575,6 +577,8 @@ return [
             'path_helper' => '',
             'medium_name' => 'Mediumname',
             'medium_name_helper' => '',
+            'author' => 'Autor',
+            'author_helper' => '',
             'publisher' => 'Herausgeber',
             'publisher_helper' => '',
             'city' => 'Ort',

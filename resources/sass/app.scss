@@ -13,8 +13,7 @@
 @import '~bootstrap/scss/bootstrap';
 
 @import '~@activix/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css';
-// Leaflet
-@import "~leaflet/dist/leaflet.css";
+
 // Select2
 @import '~select2/dist/css/select2.min.css';
 
@@ -28,6 +27,7 @@
 @import 'text.scss';
 // Fonts - Open Sans
 @import "~open-sans-all/scss/open-sans";
+
 
 body {
     font-family: 'Open Sans', Arial, sans-serif !important;
@@ -150,10 +150,10 @@ tr:hover .vuehover {
 @media only screen and (max-width: 400px) {
     div#searchbar > input {
         transition: .5s width, .5s padding !important;
-        
+
         &:not(:focus-within) {
-            padding: 0px 41px 0px 0px !important;
-    
+            padding: 0 41px 0 0 !important;
+
             & + div > #searchButton::before { content: none; }
         }
     }
@@ -167,10 +167,10 @@ tr:hover .vuehover {
             transition: .5s width, .4s padding;
         }
         &:not(:focus-within) > input {
-            width: 0px;
-            padding: 0px 96px 0px 0px !important;
+            width: 0;
+            padding: 0 96px 0 0 !important;
             transition: .5s width .1s, .4s padding;
-            
+
             & + div {
                 > #clearSearch { display: none !important; }
                 > #searchButton::before { width: 55px; }

@@ -168,7 +168,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('logbookEntries', 'LogbookEntryController');
     Route::post('logbookEntries/setSubject', 'LogbookEntryController@setSubject');
 
+    Route::get('maps/list', 'MapController@list');
     Route::resource('maps', 'MapController');
+    Route::resource('mapMarkers', 'MapMarkerController');
+    Route::resource('mapMarkerTypes', 'MapMarkerTypeController');
+    Route::resource('mapMarkerCategories', 'MapMarkerCategoryController');
 
     /* Metadataset */
     Route::get('metadatasets/list', 'MetadatasetController@list');

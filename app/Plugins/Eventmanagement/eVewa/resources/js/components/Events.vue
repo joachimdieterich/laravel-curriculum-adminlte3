@@ -150,7 +150,7 @@
                         search: (search ? search : this.search),
                         page: this.page,
                         plugin: 'evewa'
-                    })).data.message.lesePlrlpVeranstaltungen.data;
+                    })).data.events.data;
                     $("#loading-events").hide();
 
                 } catch(error) {

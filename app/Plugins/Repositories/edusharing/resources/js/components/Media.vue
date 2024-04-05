@@ -84,6 +84,7 @@
 
         <!-- Add Media -->
         <div
+            v-permission="'is_admin'"
             :id="'media-add'"
             class="box box-objective nav-item-box-image pointer my-1"
             style="min-width: 200px !important; border-style: dotted !important; "

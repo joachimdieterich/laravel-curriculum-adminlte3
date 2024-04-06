@@ -506,6 +506,10 @@ class CurriculumImportController extends Controller
     {
         $pathPrefix = 'users/'.auth()->user()->id.'/';
 
+        if(!Storage::exists($pathPrefix)){
+            Storage::makeDirectory($pathPrefix);
+        }
+
         if (File::exists(storage_path("app/{$folder}/media/{$subfolder}{$medium_id}"))) {
             $file = File::files(storage_path("app/{$folder}/media/{$subfolder}{$medium_id}"));   // always only one file!
             File::copy($file[0]->getRealPath(), storage_path('app/'.$pathPrefix.$file[0]->getBasename()));

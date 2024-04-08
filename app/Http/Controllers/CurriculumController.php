@@ -202,6 +202,7 @@ class CurriculumController extends Controller
      */
     public function show(Curriculum $curriculum, $achievements = false)
     {
+
         abort_unless((Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
         LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
 

@@ -162,10 +162,6 @@ export default {
         }
         this.form.plan_id = this.plan.id;
 
-        this.$initTinyMCE([
-            "autolink link"
-        ] );
-
         // Set eventlistener for Media
         this.$eventHub.$on('addMedia', (e) => {
             if (this.component_id == e.id) {
@@ -189,7 +185,7 @@ export default {
             }
 
             this.$nextTick(() => {
-                this.$initTinyMCE( );
+                this.$initTinyMCE("autolink link");
             });
         },
         destroy(entry){

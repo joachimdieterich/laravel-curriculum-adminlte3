@@ -80,6 +80,7 @@
                             v-if="typeof subscribers.subscriptions != 'undefined'"
                             :modelUrl="modelUrl"
                             :canEditLabel="canEditLabel"
+                            :canEditCheckbox="canEditCheckbox"
                             :subscriptions="subscribers.subscriptions"
                             :subscribing_model="'App\\User'"/>
 
@@ -100,6 +101,7 @@
                             v-if="typeof subscribers.subscriptions != 'undefined'"
                             :modelUrl="modelUrl"
                             :canEditLabel="canEditLabel"
+                            :canEditCheckbox="canEditCheckbox"
                             :subscriptions="subscribers.subscriptions"
                             :subscribing_model="'App\\Group'"/>
                     </div>
@@ -135,7 +137,8 @@
                                          placeholder="Ablaufdatum"></date-picker>
                         </div>
                         <small>{{ canEditLabel }}</small>
-                        <span class="pull-right custom-control custom-switch custom-switch-on-green">
+                        <span v-if="canEditCheckbox"
+                              class="pull-right custom-control custom-switch custom-switch-on-green">
                             <input v-model="canEditToken"
                                    type="checkbox"
                                    id="canEditToken"
@@ -157,6 +160,7 @@
                                 v-if="typeof subscribers.subscriptions != 'undefined'"
                                 :modelUrl="modelUrl"
                                 :canEditLabel="canEditLabel"
+                                :canEditCheckbox="canEditCheckbox"
                                 :subscriptions="subscribers.tokens"/>
                         </div>
 
@@ -205,7 +209,10 @@ export default {
             subscribers: Object,
             hover: false,
             canEditToken: false,
-            canEditCheckbox: true,
+            canEditCheckbox: {
+                type: Boolean,
+                default: true
+            },
             shareWithUsers: true,
             shareWithGroups: true,
             shareWithOrganizations: true,
@@ -236,6 +243,9 @@ export default {
             }
             if (typeof (event.params.canEditLabel) !== 'undefined') {
                 this.canEditLabel = event.params.canEditLabel;
+            }
+            if (typeof (event.params.canEditCheckbox) !== 'undefined') {
+                this.canEditCheckbox = event.params.canEditCheckbox;
             }
             this.loadSubscribers();
         },

@@ -25,7 +25,8 @@
                             {{ diffForHumans(item.token.due_date) }}
                         </small>
                     </span>
-                    <span class="pull-right custom-control custom-switch custom-switch-on-green">
+                    <span v-if="canEditCheckbox"
+                          class="pull-right custom-control custom-switch custom-switch-on-green">
                         <input  v-model="item.token.editable"
                                 type="checkbox"
                                 class="custom-control-input pt-1 "
@@ -67,7 +68,11 @@ export default {
         modelUrl: String,
         subscriptions: {},
         subscribing_model: String,
-        canEditLabel: String
+        canEditLabel: String,
+        canEditCheckbox: {
+            type: Boolean,
+            default: true
+        }
     },
     data() {
         return {

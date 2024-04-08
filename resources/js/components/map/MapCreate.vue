@@ -101,7 +101,7 @@
                                 </select>
                             </div>
 
-                            <div
+                            <div v-if="this.mapMarkerCategories.length !== null"
                                 class="form-group">
                                 <label for="map_marker_category">
                                     {{ trans('global.category.title_singular') }}
@@ -314,6 +314,7 @@ export default {
                 .val(this.form.category_id)
                 .trigger('change');
         },
+
         decodeHTMLEntities(text) {
             return $("<textarea/>")
                 .html(text)
@@ -329,7 +330,10 @@ export default {
         axios.get('/mapMarkerTypes')
             .then(res => {
                 this.mapMarkerTypes = res.data.mapMarkerTypes;
-                this.syncSelect2();
+                Vue.nextTick(function () {
+                    this.syncSelect2();
+                })
+
             })
             .catch(err => {
                 console.log(err);
@@ -338,7 +342,10 @@ export default {
         axios.get('/mapMarkerCategories')
             .then(res => {
                 this.mapMarkerCategories = res.data.mapMarkerCategories;
-                this.syncSelect2();
+                Vue.nextTick(function () {
+                    this.syncSelect2();
+                })
+
             })
             .catch(err => {
                 console.log(err);

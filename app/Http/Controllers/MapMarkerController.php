@@ -43,12 +43,12 @@ class MapMarkerController extends Controller
 
         $marker = MapMarker::create([
             'title' => $input['title'],
-            'teaser_text' => $input['teaser_text'],
-            'description' => $input['description'],
-            'author' => $input['author'],
-            'type_id' => $input['type_id'],
+            'teaser_text' => $input['teaser_text'] ?? '',
+            'description' => $input['description'] ?? '',
+            'author' => $input['author'] ?? '',
+            'type_id' => $input['type_id'] ?? '',
             'category_id' => $input['category_id'],
-            'tags' => $input['tags'],
+            'tags' => $input['tags'] ?? '',
             'latitude' => $input['latitude'],
             'longitude' => $input['longitude'],
             'address' => $input['address'],
@@ -64,7 +64,7 @@ class MapMarkerController extends Controller
 
 
 
-    /**
+    /**f
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request

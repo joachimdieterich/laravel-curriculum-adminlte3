@@ -187,9 +187,9 @@
 <script>
 import Form from 'form-backend-validation';
 
-const moment =
-    () => import('moment');
-//import moment from 'moment';
+// const moment =
+//     () => import('moment');
+import moment from 'moment';
 
 export default {
     props: {

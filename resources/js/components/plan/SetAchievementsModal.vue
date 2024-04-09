@@ -39,20 +39,19 @@
                     <thead class=" border-top-0">
                         <tr class="border-top-0">
                             <th class="border-top-0">{{trans('global.name')}}</th>
-                            <!-- <th class="border-top-0">{{trans('global.notes')}}</th> -->
+                            <th class="border-top-0">{{trans('global.notes')}}</th>
                             <th class="border-top-0">Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="user in users">
                             <td>{{ user.firstname }} {{ user.lastname }}</td>
-                            <!-- <td v-if="currentUser(user.id).achievements[0]">
-                                <i style="font-size:18px;"
-                                    class="far fa-sticky-note text-muted pointer"
-                                    @click.prevent="$modal.show('note-modal', {'method': 'post', 'notable_type': 'App\\Achievement', 'notable_id': currentUser(user.id).achievements[0].id,'show_tabs': false}) ">
+                            <td>
+                                <i style="font-size:18px; margin: -0.25rem" 
+                                    class="far fa-sticky-note text-muted pointer p-1"
+                                    @click.prevent="openNotes(user.id)">
                                 </i>
                             </td>
-                            <td v-else></td> -->
                             <td>
                                 <AchievementIndicator
                                     v-permission="'achievement_create'"
@@ -120,6 +119,40 @@ export default {
         beforeClose() {},
         opened() {},
         closed() {},
+        /**
+         * when opening the note-modal, an achievement-id is needed to create a note
+         * if there's no achievement, create one with unset status and get a new ID
+         * @param {Number} user_id 
+         */
+        async openNotes(user_id) {
+            let achievement_id = this.objective[user_id]?.achievements[0].id; // check if achievement exists
+            
+            if (achievement_id === undefined) {
+                const objective_id = this.objective.default.id;
+                const achievement = {
+                    'referenceable_type': 'App\\EnablingObjective',
+                    'referenceable_id': objective_id,
+                    'user_id': user_id,
+                    'status': '0' // only one zero, setting '00' will throw 500
+                }
+                // create a new achievement-entry and get the ID
+                achievement_id = (await axios.post('/achievements', achievement)).data.id;
+
+                // add new achievement to data, in case it is needed
+                this.objective[user_id] = {
+                    achievements: [{ id: achievement_id }],
+                    id: objective_id,
+                };
+                console.log(achievement_id);
+            }
+
+            this.$modal.show('note-modal',{
+                'method': 'post',
+                'notable_type': 'App\\Achievement',
+                'notable_id': achievement_id,
+                'show_tabs': false,
+            });
+        },
     },
     components: {
         AchievementIndicator

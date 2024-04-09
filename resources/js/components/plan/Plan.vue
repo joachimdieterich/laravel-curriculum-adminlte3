@@ -54,7 +54,7 @@
                 </PlanEntry>
             </div>
         </div>
-        <!-- overlay button in bottom right corner -->
+        <!-- * REFERENCE: overlay button in bottom right corner * -->
         <!-- <div
             id="corner-button"
             class="position-sticky d-flex justify-content-center align-items-center float-right mb-3"
@@ -63,6 +63,7 @@
         >
             <i class="fa fa-users"></i>
         </div> -->
+        <note-modal></note-modal>
     </div>
 </template>
 

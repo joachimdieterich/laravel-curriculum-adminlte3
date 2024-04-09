@@ -51,14 +51,14 @@ class AchievementController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__, auth()->user()->role()->id, (is_array($user_ids)) ? count($user_ids) : 1);
         // axios call?
         if (request()->wantsJson()) {
-            return ['message' => $achievement->status];
+            return ['message' => $achievement->status, 'id' => $achievement->id];
         }
 
         return $achievement;
     }
 
     /* calculate proper status id */
-    protected function calculateStatus($user_id, $input, $status = '00')
+    protected function calculateStatus($user_id, $input, $status = '0')
     {
         if (\Gate::allows('achievement_create') and $user_id != auth()->user()->id) {
             abort_unless((auth()->user()->role()->id <= 5), 403); //only Teacher and roles above

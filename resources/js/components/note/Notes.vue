@@ -136,9 +136,9 @@
                     <div class="comment-text ml-0"
                          @mouseover="hover = item.id"
                          @mouseleave="hover = false"
-                         >
+                    >
                         <span :class="'note_editor_hide_placeholder_'+item.id">
-                        <span >
+                        <span>
                              <span v-if="item.notable">
                                  <a v-if="item.notable_type === 'App\\User'"
                                     :href="'/users/'+item.notable.id"
@@ -157,17 +157,19 @@
                             <i v-if="hover == item.id"
                                class="text-muted p-1 fa fa-pencil-alt pointer"
                                style="font-weight: 900;"
-                               @click="editNote(index)"></i>
+                               @click="editNote(index)"
+                            ></i>
 
-                            <small class="text-muted float-right">
+                            <small class="d-flex align-items-center text-muted float-right">
                                 <i v-if="hover == item.id"
                                    class="text-danger p-1 fa fa-trash pointer"
-                                   @click="destroy(item.id, index)"></i>
+                                   @click="destroy(item.id, index)"
+                                ></i>
                                 <a class="pointer link-muted text-decoration-none"
                                    @click="toggleTimestampFormatDiffForHumans()"
                                 >
                                     <span v-if="item.created_at == item.updated_at">
-                                        <i class="fa fa-plus-circle"></i> {{ formatTime(item.created_at) }}
+                                        <i class="fa fa-plus-circle py-1 pl-1"></i> {{ formatTime(item.created_at) }}
                                     </span>
                                     <span v-if="item.created_at != item.updated_at">
                                         <i class="fa fa-plus-circle"></i> {{ formatTime(item.created_at) }}
@@ -358,6 +360,7 @@ export default {
         },
         formatTime(timestamp) {
             let time = timestamp;
+            console.log(time, timestamp);
             if (this.timeFormatDiffForHumans === true){
                 time = this.diffForHumans(timestamp);
             }

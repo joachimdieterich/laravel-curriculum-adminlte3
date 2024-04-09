@@ -60,9 +60,12 @@ export default {
         async achieve(status){
             let selected = this.users;
             if (selected.length === 0){
-                selected = localStorage.getItem('user-datatable-selection');
-                //console.log(selected);
+                selected = localStorage.getItem('user-datatable-selection')?.split(",");
             }
+            if (selected[0] == ''){ // if no user is in localStorage, set empty array!
+                selected = [];
+            }
+
             let achievement = {
                 'referenceable_type': (this.type === 'terminal' ? 'App\\TerminalObjective' : 'App\\EnablingObjective'),
                 'referenceable_id': this.objective.id,

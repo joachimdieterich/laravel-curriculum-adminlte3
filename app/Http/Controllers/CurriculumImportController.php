@@ -10,6 +10,7 @@ use App\Glossar;
 use App\Grade;
 use App\Medium;
 use App\MediumSubscription;
+use App\ObjectiveType;
 use App\OrganizationType;
 use App\Quote;
 use App\QuoteSubscription;
@@ -555,16 +556,19 @@ class CurriculumImportController extends Controller
     private function subscribeMediaToModel($model, $media)
     {
         foreach ($media as $medium) {
-            $subscribe = MediumSubscription::updateOrCreate([
-                'medium_id'         => $medium->id,
-                'subscribable_type' => get_class($model),
-                'subscribable_id'   => $model->id,
-            ], [
-                'sharing_level_id'  => 1, // has to be global = 1
-                'visibility'        => 1, // has to be public  = 1
-                'owner_id'          => auth()->user()->id,
-            ]);
-            $subscribe->save();
+            if ($medium != null)
+            {
+                $subscribe = MediumSubscription::updateOrCreate([
+                    'medium_id'         => $medium->id,
+                    'subscribable_type' => get_class($model),
+                    'subscribable_id'   => $model->id,
+                ], [
+                    'sharing_level_id'  => 1, // has to be global = 1
+                    'visibility'        => 1, // has to be public  = 1
+                    'owner_id'          => auth()->user()->id,
+                ]);
+                $subscribe->save();
+            }
         }
     }
 
@@ -691,7 +695,7 @@ class CurriculumImportController extends Controller
             'color' => $terminalObjective->color,
             'time_approach' => $terminalObjective->time_approach,
             'curriculum_id' => $cur->id,
-            'objective_type_id' => $terminalObjective->objective_type_id,
+            'objective_type_id' => optional(ObjectiveType::where('id',$terminalObjective->objective_type_id)->first())->id ?: 1, //Todo: add objective type title in Backup
             'visibility' => $terminalObjective->visibility,
             'order_id' => $terminalObjective->order_id,
         ]);

@@ -11,7 +11,7 @@
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fas fa-th pr-2"></i></i>{{ trans('global.all') }} {{ trans('global.curriculum.title') }}
+                        <i class="fas fa-th pr-2"></i>{{ trans('global.all') }} {{ trans('global.curriculum.title') }}
                     </a>
                 </li>
                 <li class="nav-item">
@@ -231,7 +231,7 @@ export default {
             window.location = "/curricula/" + curriculum.id + "/editOwner";
         },
         shareCurriculum(curriculum){
-            this.$modal.show('subscribe-modal', { 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true});
+            this.$modal.show('subscribe-modal', { 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false});
         },
         loaderEvent(){
             if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){

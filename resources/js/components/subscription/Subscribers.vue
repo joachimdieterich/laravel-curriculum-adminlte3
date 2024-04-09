@@ -49,7 +49,10 @@
             subscriptions: {},
             subscribing_model: String,
             canEditLabel: String,
-            canEditCheckbox: true
+            canEditCheckbox: {
+                type: Boolean,
+                default: true
+            }
         },
         data() {
             return {

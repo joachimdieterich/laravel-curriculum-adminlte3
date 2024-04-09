@@ -251,12 +251,17 @@ Vue.prototype.$initTinyMCE = function (tinyMcePlugins, attr = null) {
     tinymce.PluginManager.add('example', function(editor, url) {
         var openDialog = function () {
             document.querySelector("#app").__vue__.$modal.show('medium-create-modal', attr);
-            document.querySelector("#app").__vue__.$eventHub.$on('insertContent', (event) => {
-                console.log(event);
-                if (attr.eventHubCallbackFunctionParams == event.id) {
-                    editor.insertContent('<img src="/media/'+ event.selectedMediumId +'?preview=true" width="500">', {format: 'raw'});
-                }
-            });
+
+            if (!document.querySelector("#app").__vue__.$eventHub._events.insertContent){
+                document.querySelector("#app").__vue__.$eventHub.$on('insertContent', (event) => {
+                    console.log(event);
+                    if (attr.eventHubCallbackFunctionParams == event.id) {
+                        editor.insertContent('<img src="/media/'+ event.selectedMediumId +'?preview=true" width="500">', {format: 'raw'});
+                    }
+                    document.querySelector("#app").__vue__.$eventHub._events.insertContent = undefined; //destroy listener to prevent multiple inserts on 2nd, 3rd.. time
+                });
+            }
+
             // fallback if $eventHub solution doesn't work correctly
             // $('#medium_id').on('change', function() {
             //     //reload thumbs

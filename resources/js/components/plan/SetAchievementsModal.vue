@@ -143,7 +143,6 @@ export default {
                     achievements: [{ id: achievement_id }],
                     id: objective_id,
                 };
-                console.log(achievement_id);
             }
 
             this.$modal.show('note-modal',{

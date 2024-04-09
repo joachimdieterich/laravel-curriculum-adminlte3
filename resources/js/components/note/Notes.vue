@@ -54,21 +54,24 @@
                 </a>
             </li>
             <li v-permission="'note_create'"
-                class="nav-item ml-auto small pull-right">
-                <a class="nav-link show link-muted"
-                   v-if="edit === false"
-                   @click="toggleEdit()">
+                class="nav-item ml-auto small pull-right"
+            >
+                <a v-if="edit === false"
+                    class="nav-link show link-muted pointer"
+                    @click="toggleEdit()"
+                >
                     <i class="fa fa-plus pr-1"></i>
                 </a>
             </li>
         </ul>
         <div class="col-md-12 p-0">
             <div id="logbooks_filter" class="dataTables_filter mb-0 rounded-0">
-                <label >
+                <label>
                     <input type="search"
                            class="form-control form-control-sm"
                            placeholder="Suchbegriff"
-                           v-model="search">
+                           v-model="search"
+                    >
                 </label>
             </div>
         </div>

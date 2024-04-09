@@ -126,7 +126,6 @@
         created () {
         },
         methods: {
-
             getItem(item){
                 if (this.optionKey){
                     return item[this.optionKey];
@@ -138,7 +137,6 @@
             }
         },
         mounted() {
-
             $('#' + this.id).select2({
                 placeholder: this.placeholder,
                 dropdownParent: $('#' + this.id).parent(),
@@ -163,5 +161,6 @@
             }.bind(this))
              .val(this.selected).trigger('change');
         }
+
     }
 </script>

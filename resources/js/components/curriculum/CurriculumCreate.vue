@@ -124,7 +124,7 @@
                     <Select2
                         :id="'subject_id'"
                         model="subject"
-                        :selected="this.form.grade_id"
+                        :selected="this.form.subject_id"
                         url="/subjects"
                         :placeholder="trans('global.pleaseSelect')"
                         @selectedValue="(id) => this.form.subject_id = id"

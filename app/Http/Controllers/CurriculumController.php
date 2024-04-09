@@ -12,6 +12,7 @@ use App\Organization;
 use App\OrganizationType;
 use App\State;
 use App\Subject;
+use App\User;
 use App\VariantDefinition;
 use Gate;
 use Illuminate\Http\Request;
@@ -81,6 +82,16 @@ class CurriculumController extends Controller
         {
             $owned = Curriculum::where('owner_id', $user->id)->get();
             $userCanSee = $userCanSee->merge($owned);
+        }
+
+        if ((env('GUEST_USER') != null))
+        {
+            $guest_groups = User::find(env('GUEST_USER'))->groups;
+        }
+
+        foreach ($guest_groups as $group)
+        {
+            $userCanSee = $userCanSee->merge($group->curricula);
         }
 
         return $userCanSee->unique();
@@ -191,6 +202,7 @@ class CurriculumController extends Controller
      */
     public function show(Curriculum $curriculum, $achievements = false)
     {
+
         abort_unless((Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
         LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
 

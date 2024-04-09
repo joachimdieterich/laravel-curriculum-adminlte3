@@ -130,6 +130,19 @@
                         </a>
                     </li>
                 @endcan
+                @can('map_access')
+                    <li class="nav-item"
+                        role="menuitem">
+                        <a href="{{ route("maps.index") }}"
+                           class="nav-link {{ request()->is('maps') || request()->is('maps/*') ? 'active' : '' }}">
+                            <i class="fa fa-map-location-dot"></i>
+                            <p>
+                                <span>{{ trans('global.map.title') }}</span>
+                            </p>
+                        </a>
+                    </li>
+                @endcan
+
 
 {{--                @can('assignment_show')--}}
                     <li class="nav-item"

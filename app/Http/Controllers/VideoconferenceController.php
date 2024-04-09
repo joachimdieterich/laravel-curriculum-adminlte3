@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Hash;
 
 class VideoconferenceController extends Controller
 {
@@ -129,8 +130,8 @@ class VideoconferenceController extends Controller
         $conference =  (new $this->adapter())->create([
             'meetingID'     => $input['meetingID'] ?? Str::uuid(),
             'meetingName'   => $input['meetingName'],
-            'attendeePW'    => $input['attendeePW'],
-            'moderatorPW'   => $input['moderatorPW'],
+            'attendeePW'    => $input['attendeePW'] ?? Hash::make(Str::random(8)),
+            'moderatorPW'   => $input['moderatorPW'] ??  Hash::make(Str::random(8)),
             'logoutUrl'     => $input['logoutUrl'],
             'server'        => $input['server'] ?? 'server1'
         ]);

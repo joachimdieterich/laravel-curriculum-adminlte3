@@ -65,6 +65,13 @@
                                         v-model="form.color">
                                     </color-picker-input>
                                 </span>
+                                <MediumForm
+                                    class="pull-right"
+                                    :form="form"
+                                    :id="component_id"
+                                    :medium_id="form.medium_id"
+                                    accept="image/*"
+                                />
                                 <div class="dropdown">
                                     <button
                                         class="btn btn-default"
@@ -106,6 +113,7 @@
 <script>
 import Form from "form-backend-validation";
 import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker";
+import MediumForm from "../media/MediumForm";
 
 export default {
     name: 'LogbookCreate',
@@ -121,6 +129,7 @@ export default {
                 'id': '',
                 'title':  '',
                 'description':  '',
+                'medium_id': null,
                 'color':'#27AF60',
                 'css_icon': 'fa fa-book',
             }),
@@ -131,6 +140,7 @@ export default {
             this.form.id = newVal.id;
             this.form.title = newVal.title;
             this.form.description = this.htmlToText(newVal.description);
+            this.form.medium_id = newVal.medium_id;
             this.form.color = newVal.color;
             this.form.css_icon = newVal.css_icon;
         },
@@ -172,7 +182,19 @@ export default {
             }
         },
     },
+    mounted() {
+        // Set eventlistener for Media
+        this.$eventHub.$on('addMedia', (e) => {
+            if (this.component_id == e.id) {
+                this.form.medium_id = e.selectedMediumId;
+                if ( Array.isArray(this.form.medium_id))  {
+                    this.form.medium_id = this.form.medium_id[0]; //Hack to get existing files working.
+                }
+            }
+        });
+    },
     components: {
+        MediumForm,
         FontAwesomePicker,
     }
 }

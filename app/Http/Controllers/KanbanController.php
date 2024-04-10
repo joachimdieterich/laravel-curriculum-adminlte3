@@ -175,7 +175,7 @@ class KanbanController extends Controller
     {
         abort_unless((\Gate::allows('kanban_edit') and $kanban->isAccessible()), 403);
         $input = $this->validateRequest();
-        $test = $kanban->update([
+        $kanban->update([
             'title' => $input['title'] ?? $kanban->title ,
             'description' => $input['description'] ?? $kanban->title,
             'color' => $input['color'] ?? $kanban->color,

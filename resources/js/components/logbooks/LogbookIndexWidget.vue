@@ -74,7 +74,6 @@ export default {
             default: ''
         }
     },
-    methods: {},
 }
 </script>
 <style scoped>

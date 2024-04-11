@@ -35,52 +35,65 @@ class PlanController extends Controller
         $organization = Organization::find(auth()->user()->current_organization_id)->plans;
         $userCanSee = $userCanSee->merge($organization);
 
-        if ($withOwned)
-        {
+        if ($withOwned) {
             $owned = Plan::where('owner_id', auth()->user()->id)->get();
             $userCanSee = $userCanSee->merge($owned);
-
         }
 
         return $userCanSee->unique();
     }
 
-    public function list()
+    public function list(Request $request)
     {
         abort_unless(\Gate::allows('plan_access'), 403);
-        $plans = (auth()->user()->role()->id == 1) ? Plan::all() : $this->userPlans();
+        // $plans = (auth()->user()->role()->id == 1) ? Plan::all() : $this->userPlans();
+        $plans = Plan::with('subscriptions');
 
-        $edit_gate = \Gate::allows('plan_edit');
-        $delete_gate = \Gate::allows('plan_delete');
+
+        switch ($request->filter) {
+            case 'owner':
+                $plans = $plans->where('owner_id', auth()->user()->id);
+                break;
+            case 'shared_with_me':
+                $plans = $this->userPlans(false);
+                break;
+            case 'shared_by_me':
+                $plans = $plans->where('owner_id', auth()->user()->id)->whereHas('subscriptions');
+                break;
+            case 'all':
+            default:
+                $plans = $this->userPlans();
+                break;
+        }
+
+        // $edit_gate = \Gate::allows('plan_edit');
+        // $delete_gate = \Gate::allows('plan_delete');
 
         return DataTables::of($plans)
-            ->addColumn('action', function ($plans) use ($edit_gate, $delete_gate) {
-                // actions should only be visible to owner. admin has all rights
-                if ($plans->owner_id != auth()->user()->id && !is_admin()) return '';
+            // ->addColumn('action', function ($plans) use ($edit_gate, $delete_gate) {
+            //     // actions should only be visible to owner. admin has all rights
+            //     if ($plans->owner_id != auth()->user()->id && !is_admin()) return '';
 
-                $actions = '';
-                if ($edit_gate) {
-                    $actions .= '<a href="'.route('plans.edit', $plans->id).'"'
-                                    .'id="edit-plan-'.$plans->id.'" '
-                                    .'class="btn p-1">'
-                                    .'<i class="fa fa-pencil-alt"></i>'
-                                    .'</a>';
-                }
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                                .'class="btn text-danger" '
-                                .'onclick="destroyDataTableEntry(\'plans\','.$plans->id.')">'
-                                .'<i class="fa fa-trash"></i></button>';
-                }
+            //     $actions = '';
+            //     if ($edit_gate) {
+            //         $actions .= '<a href="'.route('plans.edit', $plans->id).'"'
+            //                         .'id="edit-plan-'.$plans->id.'" '
+            //                         .'class="btn p-1">'
+            //                         .'<i class="fa fa-pencil-alt"></i>'
+            //                         .'</a>';
+            //     }
+            //     if ($delete_gate) {
+            //         $actions .= '<button type="button" '
+            //                     .'class="btn text-danger" '
+            //                     .'onclick="destroyDataTableEntry(\'plans\','.$plans->id.')">'
+            //                     .'<i class="fa fa-trash"></i></button>';
+            //     }
 
-                return $actions;
-            })
+            //     return $actions;
+            // })
 
-            ->addColumn('check', '')
+            // ->addColumn('check', '')
             ->setRowId('id')
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
             ->make(true);
     }
 
@@ -252,6 +265,25 @@ class PlanController extends Controller
         $plan->delete();
     }
 
+    public function copyPlan(Plan $plan)
+    {
+        $planCopy = Plan::create([
+            'title' => $plan->title . '_' . date('Y.m.d_H:i:s'),
+            'description' => $plan->description,
+            'color' => $plan->color,
+            'begin' => $plan->begin,
+            'end' => $plan->end,
+            'duration' => $plan->duration,
+            'type_id' => $plan->type_id,
+            // 'medium_id' => $plan->medium_id,
+            'allow_copy' => $plan->allow_copy,
+            'entry_order' => $plan->entry_order,
+            'owner_id' => auth()->user()->id,
+        ]);
+        //TODO: copy planEntries
+        return redirect('/plans');
+    }
+
     public function syncEntriesOrder(Plan $plan)
     {
         abort_unless(auth()->user()->id == $plan->owner_id, 403);
@@ -270,10 +302,12 @@ class PlanController extends Controller
         return request()->validate([
             'title'         => 'sometimes|required',
             'description'   => 'sometimes',
+            'color'         => 'sometimes',
             'begin'         => 'sometimes',
             'end'           => 'sometimes',
             'duration'      => 'sometimes',
             'type_id'       => 'sometimes',
+            'allow_copy'    => 'sometimes',
             'entry_order'   => 'sometimes',
         ]);
     }

@@ -24,7 +24,7 @@ class LogbookController extends Controller
     {
         abort_unless(\Gate::allows('logbook_access'), 403);
 
-       $logbooks = Logbook::with('subscriptions');
+        $logbooks = Logbook::with('subscriptions');
 
         switch ($request->filter) {
             case 'owner':

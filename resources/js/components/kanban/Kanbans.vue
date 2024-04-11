@@ -100,7 +100,6 @@ export default {
     data() {
         return {
             kanbans: [],
-            subscriptions: {},
             url: '/kanbans/list',
             errors: {},
             tempId: Number,
@@ -108,22 +107,21 @@ export default {
         }
     },
     methods: {
-        confirmItemDelete(kanbanId){
+        confirmItemDelete(kanbanId) {
             $('#kanbanModal').modal('show');
             this.tempId = kanbanId;
         },
-        confirmKanbanCopy(kanbanId){
+        confirmKanbanCopy(kanbanId) {
             $('#kanbanCopyModal').modal('show');
             this.tempId = kanbanId;
         },
-        editKanban(kanban){
+        editKanban(kanban) {
             this.$eventHub.$emit('edit_kanban', kanban);
-            // window.location = "/kanbans/" + id + "/edit";
         },
-        copy(){
+        copy() {
             window.location = "/kanbans/" + this.tempId + "/copy";
         },
-        loaderEvent(){
+        loaderEvent() {
             if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
                 this.url = '/kanbanSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id;
             } else {
@@ -132,7 +130,7 @@ export default {
 
             $('#kanban-datatable').DataTable().ajax.url(this.url).load();
         },
-        setFilter(filter){
+        setFilter(filter) {
             this.filter = filter;
             this.loaderEvent();
         },
@@ -194,7 +192,6 @@ export default {
 </script>
 <style>
 #kanban-datatable_wrapper { width: 100%; }
-
 </style>
 <style scoped>
 .nav-link:hover {

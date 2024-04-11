@@ -360,7 +360,6 @@ export default {
         },
         formatTime(timestamp) {
             let time = timestamp;
-            console.log(time, timestamp);
             if (this.timeFormatDiffForHumans === true){
                 time = this.diffForHumans(timestamp);
             }

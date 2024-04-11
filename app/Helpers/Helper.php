@@ -329,6 +329,28 @@ if (! function_exists('is_teacher')) {
         return auth()->user()->role()->id == 5;
     }
 }
+
+if (! function_exists('is_student')) {
+    function is_student()
+    {
+        return auth()->user()->role()->id == 6;
+    }
+}
+
+if (! function_exists('is_parent')) {
+    function is_parent()
+    {
+        return auth()->user()->role()->id == 7;
+    }
+}
+
+if (! function_exists('is_guest')) {
+    function is_guest()
+    {
+        return auth()->user()->role()->id == 8;
+    }
+}
+
 if (! function_exists('checkForEmbeddedMedia')) {
 
     function checkForEmbeddedMedia($model, $field = 'description')

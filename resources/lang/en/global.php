@@ -267,6 +267,7 @@ return [
     'assigned_user' => 'Assigned (user)',
     'content_management' => 'Content management',
     'text' => 'Text',
+    'note_text' => 'Note text',
     'excerpt' => 'Excerpt',
     'featured_image' => 'Featured image',
     'pages' => 'Pages',

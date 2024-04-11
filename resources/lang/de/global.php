@@ -275,6 +275,7 @@ return [
     'assigned_user' => 'Zugeordnet (Benutzer)',
     'content_management' => 'Verwaltung der Inhalte',
     'text' => 'Text',
+    'note_text' => 'Notiztext',
     'excerpt' => 'Auszug',
     'featured_image' => 'Ausgewähltes Bild',
     'pages' => 'Seite',

@@ -829,6 +829,9 @@ return [
             'duration' => 'Duration',
             'duration_helper' => 'Specify how much time (in minutes) should be scheduled to complete the learning/work schedule.',
         ],
+        'types' => [
+            'Trainingsplan' => 'Training plan',
+        ],
     ],
     'planItem' => [
         'title' => 'Tasks',

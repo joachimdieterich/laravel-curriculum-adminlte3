@@ -14,7 +14,7 @@
             </div>
             <div v-else class="nav-item-box-image-size text-center"
                 :style="'background-color: ' + (plan.color ?? '#2980B9') + ' !important; color: ' + $textcolor(plan.color) + ' !important;'">
-                <i class="fa fa-list-check fa-2x p-5 nav-item-text"></i>
+                <i class="fa fa-calendar-day   fa-2x p-5 nav-item-text"></i>
             </div>
             <span class="bg-white text-center p-1 overflow-auto nav-item-box">
                 <h1 class="h6 events-heading pt-1 hyphens nav-item-text">

@@ -843,6 +843,9 @@ return [
             'duration' => 'Zeitansatz',
             'duration_helper' => 'Geben Sie an, wie viel Zeit (in Minuten) zur Erledigung des Lern-/Arbeitsplans eingeplant werden soll.',
         ],
+        'types' => [
+            'Trainingsplan' => 'Trainingsplan',
+        ],
     ],
     'planItem' => [
         'title' => 'Aufgaben',

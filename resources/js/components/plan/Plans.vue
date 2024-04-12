@@ -59,10 +59,10 @@
                     :key="index+'_plan_'+plan.id"
                     :plan="plan"
                 />
-                <!-- <PlanIndexAddWidget
+                <PlanIndexAddWidget
                     v-if="((this.filter == 'all' && typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined') || this.filter == 'owner')"
                     v-can="'plan_create'"
-                /> -->
+                />
 
                 <Modal
                     :id="'planModal'"
@@ -87,7 +87,7 @@
 
 <script>
 import PlanIndexWidget from "./PlanIndexWidget";
-// import PlanIndexAddWidget from "./PlanIndexAddWidget";
+import PlanIndexAddWidget from "./PlanIndexAddWidget";
 const Modal = () => import('./../uiElements/Modal');
 
 export default {
@@ -178,7 +178,7 @@ export default {
     },
     components: {
         PlanIndexWidget,
-        // PlanIndexAddWidget,
+        PlanIndexAddWidget,
         Modal,
     },
 }

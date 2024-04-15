@@ -135,12 +135,13 @@
                         <div class="card-body">
                             <span class="custom-control custom-switch custom-switch-on-green">
                                 <input
+                                    id="allow_copy"
                                     v-model="form.allow_copy"
                                     type="checkbox"
                                     class="custom-control-input pt-1 "
-                                    :id="'allow_copy_'+ form.id">
+                                />
                                 <label class="custom-control-label font-weight-light"
-                                    :for="'allow_copy_'+ form.id">
+                                    for="allow_copy">
                                     {{ trans('global.plan.allow_copy') }}
                                 </label>
                             </span>

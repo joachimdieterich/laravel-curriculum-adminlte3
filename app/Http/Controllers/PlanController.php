@@ -133,10 +133,12 @@ class PlanController extends Controller
         $plan = Plan::firstOrCreate([
             'title'             => $input['title'],
             'description'       => $input['description'],
+            'color'             => $input['color'],
             'begin'             => $input['begin'],
             'end'               => $input['end'],
             'duration'          => $input['duration'],
             'type_id'           => format_select_input($input['type_id']),
+            'allow_copy'          => $input['allow_copy'],
             'owner_id'          => auth()->user()->id,
         ]);
 

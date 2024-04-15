@@ -265,6 +265,10 @@ class PlanController extends Controller
         $plan->delete();
     }
 
+    public function getTypes() {
+        return getEntriesForSelect2ByModel("App\PlanType");
+    }
+
     public function copyPlan(Plan $plan)
     {
         $planCopy = Plan::create([

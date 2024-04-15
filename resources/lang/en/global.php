@@ -818,6 +818,7 @@ return [
         'copy_helper' => 'Do you want to copy this plan?',
         'allow_copy' => 'Allow copying plan',
         'delete' => 'Delete plan',
+        'delete' => 'Should this plan and all its corresponding data be deleted?',
         'select_users' => 'Select users',
         'fields' => [
             'type' => 'Type',

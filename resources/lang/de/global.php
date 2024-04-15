@@ -832,6 +832,7 @@ return [
         'copy_helper' => 'Wollen Sie den Lern-/Arbeitsplan kopieren?',
         'allow_copy' => 'Lern-/Arbeitsplan darf kopiert werden',
         'delete' => 'Lern-/Arbeitsplan löschen',
+        'delete_helper' => 'Soll der Lern-/Arbeitsplan sowie die zugehörigen Daten gelöscht werden?',
         'select_users' => 'Benutzer auswählen',
         'fields' => [
             'type' => 'Typ',

@@ -238,11 +238,7 @@ export default {
         checkRequired() {
             let filledOut = true;
             const fields = this.$el.querySelectorAll('[required]');
-
-            if (this.form.type_id) {
-                
-            }
-
+            
             for (const field of fields) {
                 if (field.value.trim() === '') { // activate error-helper
                     this.errors[field.id] = true;
@@ -251,7 +247,9 @@ export default {
                     this.errors[field.id] = false;
                 }
             }
-
+            // needs to be set separately, because select2
+            this.errors['type_id'] = this.form.type_id == '';
+            
             return filledOut;
         },
     },

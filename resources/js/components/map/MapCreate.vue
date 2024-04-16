@@ -233,8 +233,8 @@ export default {
                 'subtitle':'',
                 'description': '',
                 'tags': '',
-                'type_id': 1,
-                'category_id': 1,
+                'type_id': 2,
+                'category_id': 2,
                 'border_url': '',
                 'latitude': null,
                 'longitude': null,
@@ -305,6 +305,7 @@ export default {
             }.bind(this))
                 .val(this.form.type_id)
                 .trigger('change');
+
             $("#category_id").select2({
                 dropdownParent: $("#category_id").parent(),
                 allowClear: false

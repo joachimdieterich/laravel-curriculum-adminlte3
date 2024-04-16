@@ -28,7 +28,7 @@
                 :disabled="this.readOnly">
                 <option v-for="(item,index) in list"
                         :value="item[this.option_id]"
-                        :data-icon="this.option_icon" >
+                        :data-icon="this.option_icon">
                     <span v-if="this.option_field != ''">
                         {{ item['this.option_field'] }}
                     </span>
@@ -50,6 +50,7 @@
             },
             list: {
                 type: Array,
+                default: null
             },
             url: {
                 type: String,

@@ -43,7 +43,7 @@ class Map extends Model
 
     public function markers()
     {
-        return $this->hasMany(MapMarker::class,'category_id', 'category_id');
+        return $this->hasMany(MapMarker::class,'category_id', 'category_id')->where('type_id', $this->type_id);
 
     }
 

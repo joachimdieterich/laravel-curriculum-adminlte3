@@ -130,53 +130,61 @@
                     <div class="clearfix border-bottom pb-2"></div>
                 </div>
 
-                <div class="card-comment"
-                     v-for="(item,index) in notes" v-bind:value="item.id"
-                     v-if="showNote(item)">
+                <div v-for="(item,index) in notes" v-bind:value="item.id"
+                     v-if="showNote(item)"
+                     class="card-comment"
+                >
                     <div class="comment-text ml-0"
                          @mouseover="hover = item.id"
                          @mouseleave="hover = false"
                     >
                         <span :class="'note_editor_hide_placeholder_'+item.id">
-                        <span>
-                             <span v-if="item.notable">
-                                 <a v-if="item.notable_type === 'App\\User'"
-                                    :href="'/users/'+item.notable.id"
-                                    class="text-bold text-decoration-none text-gray-dark">{{item.notable.firstname }} {{item.notable.lastname }} </a>
-                                 <a v-else-if="item.notable_type === 'App\\Group'"
-                                    :href="'/groups/' + item.notable.id"
-                                    class="text-bold text-gray-dark">{{ item.notable.title }}</a>
-                                 <a v-else-if="item.notable_type === 'App\\Achievement'"
-                                    :href="'/enablingObjectives/' + item.notable.referenceable_id"
-                                    class="text-bold text-gray-dark"><i class="fa fa-link" ></i></a>
-                                 <a v-else
-                                    class="text-bold text-gray-dark">{{item.notable.title }} </a>
-                             </span>
-                            <span class="text-gray-dark">{{item.title}}</span>
-                            <small class="ml-2 badge badge-info">{{ trans('global.'+item.notable_type) }}</small>
-                            <i v-if="hover == item.id"
-                               class="text-muted p-1 fa fa-pencil-alt pointer"
-                               style="font-weight: 900;"
-                               @click="editNote(index)"
-                            ></i>
-
-                            <small class="d-flex align-items-center text-muted float-right">
-                                <i v-if="hover == item.id"
-                                   class="text-danger p-1 fa fa-trash pointer"
-                                   @click="destroy(item.id, index)"
-                                ></i>
-                                <a class="pointer link-muted text-decoration-none"
-                                   @click="toggleTimestampFormatDiffForHumans()"
+                            <span class="d-flex align-items-center flex-wrap">
+                                <span v-if="item.notable">
+                                    <a v-if="item.notable_type === 'App\\User'"
+                                        :href="'/users/'+item.notable.id"
+                                        class="text-bold text-decoration-none text-gray-dark">{{item.notable.firstname }} {{item.notable.lastname }} </a>
+                                    <a v-else-if="item.notable_type === 'App\\Group'"
+                                        :href="'/groups/' + item.notable.id"
+                                        class="text-bold text-gray-dark">{{ item.notable.title }}</a>
+                                    <a v-else-if="item.notable_type === 'App\\Achievement'"
+                                        :href="'/enablingObjectives/' + item.notable.referenceable_id"
+                                        class="text-bold text-gray-dark"><i class="fa fa-link" ></i></a>
+                                    <a v-else
+                                        class="text-bold text-gray-dark">{{item.notable.title }} </a>
+                                </span>
+                                <span class="text-gray-dark">{{item.title}}</span>
+                                <small class="ml-2 badge badge-info">{{ trans('global.'+item.notable_type) }}</small>
+                                <span v-if="hover == item.id"
+                                    class="d-flex"
                                 >
-                                    <span v-if="item.created_at == item.updated_at">
-                                        <i class="fa fa-plus-circle py-1 pl-1"></i> {{ formatTime(item.created_at) }}
-                                    </span>
-                                    <span v-if="item.created_at != item.updated_at">
-                                        <i class="fa fa-plus-circle"></i> {{ formatTime(item.created_at) }}
-                                        <i class="fas fa-pencil-alt"></i> {{ formatTime(item.updated_at) }}
-                                    </span>
-                                </a>
-                            </small>
+                                    <i class="text-muted p-1 fa fa-pencil-alt pointer"
+                                        style="font-weight: 900;"
+                                        @click="editNote(index)"
+                                    ></i>
+                                    <i class="text-muted p-1 fa fa-eye pointer"
+                                        style="font-weight: 900;"
+                                        @click="viewNote(index)"
+                                    ></i>
+                                </span>
+
+                                <small class="d-flex align-items-center text-muted ml-auto">
+                                    <i v-if="hover == item.id"
+                                        class="text-danger fa fa-trash pointer p-1"
+                                        @click="destroy(item.id, index)"
+                                    ></i>
+                                    <a class="pointer link-muted text-decoration-none pl-1"
+                                        @click="toggleTimestampFormatDiffForHumans()"
+                                    >
+                                        <span v-if="item.created_at == item.updated_at">
+                                            <i class="fa fa-plus-circle"></i> {{ formatTime(item.created_at) }}
+                                        </span>
+                                        <span v-if="item.created_at != item.updated_at">
+                                            <i class="fa fa-plus-circle"></i> {{ formatTime(item.created_at) }}
+                                            <i class="fas fa-pencil-alt"></i> {{ formatTime(item.updated_at) }}
+                                        </span>
+                                    </a>
+                                </small>
                             </span>
                             <span v-html="item.content"></span>
                         </span>
@@ -185,12 +193,13 @@
                 </div>
             </div>
         </div>
-
+        <NoteShowModal></NoteShowModal>
     </div>
 </template>
 
 <script>
 import Form from 'form-backend-validation';
+import NoteShowModal from './NoteShowModal.vue';
 
 // const moment =
 //     () => import('moment');
@@ -310,6 +319,9 @@ export default {
                 this.moveNoteEditor(this.form.id);
             })
         },
+        viewNote(index) {
+            this.$modal.show('note-show-modal', { 'note': this.notes[index] });
+        },
         moveNoteEditor(id){
             let editor = this.$el.getElementsByClassName('note_editor_selector')[0];
             let placeholder = this.$el.getElementsByClassName("note_editor_placeholder_" + id)[0];
@@ -418,5 +430,8 @@ export default {
             }
         );
     },
+    components: {
+        NoteShowModal,
+    }
 }
 </script>

@@ -18,6 +18,7 @@ class MapMarker extends Model
         'author',
         'type_id',
         'category_id',
+        'map_id',
         'tags',
         'latitude',
         'longitude',
@@ -68,6 +69,11 @@ class MapMarker extends Model
             'id', // Local key on enabling_objectives table...
             'medium_id' // Local key on medium_subscription table...
         )->where('subscribable_type', get_class($this));
+    }
+
+    public function mediaSubscriptions()
+    {
+        return $this->morphMany('App\MediumSubscription', 'subscribable');
     }
 
 }

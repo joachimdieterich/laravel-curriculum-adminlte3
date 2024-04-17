@@ -38,15 +38,15 @@
 
                     <h5 class="pt-2">{{ trans('global.entries') }}</h5>
                     <ul class="todo-list">
-                        <li v-for="marker in this.map.markers">
+                        <li v-for="marker in this.markers">
                             <i class="fa fa-location-dot pr-2"></i>
                             <a @click="setCurrentMarker(marker)"
                                class="text-decoration-none">
                                 {{ marker.title }}
                             </a>
                             <div class="tools">
-                                <i class="fas fa-edit"></i>
-                                <i class="text-danger fa fa-trash ml-2"></i>
+                                <i class="fa fa-pencil-alt" @click="edit(marker)"></i>
+                                <i class="text-danger fa fa-trash ml-2" @click="confirmItemDelete(marker)"></i>
                             </div>
                         </li>
                     </ul>
@@ -176,6 +176,14 @@
             :method="method"
             :marker="marker"
         />
+        <Modal
+            :id="'deleteMarkerModal'"
+            css="danger"
+            :title="trans('global.marker.delete')"
+            :text="trans('global.marker.delete_helper')"
+            :ok_label="trans('global.marker.delete')"
+            v-on:ok="deleteMarker"
+        />
     </div>
 </template>
 <script>
@@ -190,12 +198,14 @@ import "leaflet-extra-markers/dist/js/leaflet.extra-markers.js"
 import MarkerCreate from "./MarkerCreate";
 import moment from "moment/moment";
 import MarkerView from "./MarkerView";
-
+const Modal =
+    () => import('./../uiElements/Modal');
 
 export default {
     components: {
         MarkerView,
-        MarkerCreate
+        MarkerCreate,
+        Modal
     },
     props: {
         map: {
@@ -424,13 +434,39 @@ export default {
                 .val(this.form.category_id)
                 .trigger('change');
         },
-    },
-    mounted() {
-
-        this.$eventHub.$on('edit_marker', (marker) => {
+        confirmItemDelete(marker){
+            this.currentMarker = marker;
+            $('#deleteMarkerModal').modal('show');
+        },
+        deleteMarker() {
+            axios.delete("/mapMarkers/" + this.currentMarker.id)
+                .then(() => {
+                    let index = this.markers.findIndex(
+                        i => i.id === this.currentMarker.id
+                    );
+                    this.markers.splice(index, 1);
+                })
+                .catch(err => {
+                    console.log(err.response);
+                });
+        },
+        edit(marker) {
             this.marker = marker;
             this.method = 'patch';
             $('#modal-marker-form').modal('show');
+        },
+    },
+    mounted() {
+        this.$eventHub.$on('edit_marker', (marker) => {
+            this.edit(marker);
+        });
+
+        this.$eventHub.$on('marker-updated', (marker) => {
+            let index = this.markers.findIndex(
+                i => i.id === this.currentMarker.id
+            );
+            this.markers.splice(index, 1);
+            this.markers[index] = marker;
         });
 
         if (this.map.initialLatitude){

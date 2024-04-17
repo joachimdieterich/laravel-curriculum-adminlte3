@@ -48,10 +48,11 @@ class MapMarkerController extends Controller
             'author' => $input['author'] ?? '',
             'type_id' => $input['type_id'] ?? '',
             'category_id' => $input['category_id'],
+            'map_id' => $input['map_id'] ?? null ,
             'tags' => $input['tags'] ?? '',
             'latitude' => $input['latitude'],
             'longitude' => $input['longitude'],
-            'address' => $input['address'],
+            'address' => $input['address'] ,
             'url' => $input['url'],
             'url_title' => $input['url_title'],
             'owner_id' => auth()->user()->id,
@@ -83,6 +84,7 @@ class MapMarkerController extends Controller
             'author' => $input['author'] ?? $mapMarker->author,
             'type_id' => $input['type_id'] ?? $mapMarker->type_id,
             'category_id' => $input['category_id'] ?? $mapMarker->category_id,
+            'map_id' => $input['map_id'] ?? $mapMarker->map_id,
             'tags' => $input['tags'] ?? $mapMarker->tags,
             'latitude' => $input['latitude'] ?? $mapMarker->latitude,
             'longitude' => $input['longitude'] ?? $mapMarker->longitude,
@@ -94,7 +96,9 @@ class MapMarkerController extends Controller
 
         $mapMarker->save();
 
-        return $mapMarker;
+        if (request()->wantsJson()) {
+            return ['marker' => $mapMarker];
+        }
 
     }
 
@@ -106,7 +110,13 @@ class MapMarkerController extends Controller
      */
     public function destroy(MapMarker $mapMarker)
     {
-        //
+        abort_unless((\Gate::allows('map_delete') and $mapMarker->owner_id === auth()->user()->id), 403);
+
+        $mapMarker->mediaSubscriptions()->delete();
+        $return = $mapMarker->delete();
+        if (request()->wantsJson()) {
+            return [ $return];
+        }
     }
 
     protected function validateRequest()
@@ -119,7 +129,8 @@ class MapMarkerController extends Controller
             'author' => 'sometimes|nullable',
             'type_id' => 'sometimes|integer',
             'category_id' => 'sometimes|integer',
-            'tags' => 'sometimes|string',
+            'map_id' => 'sometimes|integer',
+            'tags' => 'sometimes|nullable|string',
             'latitude' => 'sometimes|nullable',
             'longitude' => 'sometimes|nullable',
             'address' => 'sometimes|nullable',

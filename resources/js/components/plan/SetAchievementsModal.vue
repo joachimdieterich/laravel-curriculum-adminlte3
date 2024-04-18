@@ -38,19 +38,33 @@
                 >
                     <thead class=" border-top-0">
                         <tr class="border-top-0">
-                            <th class="border-top-0">{{trans('global.name')}}</th>
-                            <th class="border-top-0">{{trans('global.notes')}}</th>
+                            <th class="border-top-0">
+                                <input
+                                    type="checkbox"
+                                    v-model="checkAll"
+                                    @change="toggleUsers()"
+                                />
+                            </th>
+                            <th class="border-top-0">{{ trans('global.name') }}</th>
+                            <th class="border-top-0">{{ trans('global.notes') }}</th>
                             <th class="border-top-0">Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="user in users">
+                            <td>
+                                <input
+                                    type="checkbox"
+                                    :value="user.id"
+                                    v-model="checkedUsers"
+                                />
+                            </td>
                             <td>{{ user.firstname }} {{ user.lastname }}</td>
                             <td>
                                 <i style="font-size:18px; margin: -0.25rem" 
                                     class="far fa-sticky-note text-muted pointer p-1"
-                                    @click.prevent="openNotes(user.id)">
-                                </i>
+                                    @click.prevent="openNotes(user.id)"
+                                ></i>
                             </td>
                             <td>
                                 <AchievementIndicator
@@ -58,8 +72,8 @@
                                     :objective="objective[user.id] ?? objective.default"
                                     :type="'enabling'"
                                     :users="[user.id]"
-                                    :settings="{'achievements' : false, 'edit': false}">
-                                </AchievementIndicator>
+                                    :settings="{'achievements' : false, 'edit': false}"
+                                ></AchievementIndicator>
                             </td>
                         </tr>
                     </tbody>
@@ -84,6 +98,8 @@ export default {
     data() {
         return {
             objective: {},
+            checkedUsers: [],
+            checkAll: false,
         };
     },
     mounted() {},
@@ -151,6 +167,11 @@ export default {
                 'notable_id': achievement_id,
                 'show_tabs': false,
             });
+        },
+        toggleUsers() {
+            this.checkedUsers = this.checkAll
+                ? this.users.map(user => user.id)
+                : [];
         },
     },
     components: {

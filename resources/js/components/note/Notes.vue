@@ -232,7 +232,6 @@ export default {
             notables: {},
         }
     },
-
     methods: {
         async load() {
             const params = '?json=true'+ (this.form.notable_type ? '&notable_type=' + this.form.notable_type : '') + (this.form.notable_id ? '&notable_id=' + this.form.notable_id : '') ;
@@ -268,8 +267,7 @@ export default {
                 //console.log('loading failed')
             }
         },
-
-        syncSelect2(){
+        syncSelect2() {
             $("#notable").select2({
                 dropdownParent: $("#notable").parent(),
                 allowClear: false
@@ -277,18 +275,17 @@ export default {
                 this.form.notable_id = e.params.data.id;
             }.bind(this));
         },
-
         submit() {
-            var method = this.method.toLowerCase();
+            let method = this.method.toLowerCase();
             this.form.content = tinyMCE.get('note_content').getContent();
-
-            tinyMCE.get('note_content').setContent('');
+            // .setContent('') will crash tinymce, when closing and reopening the modal
+            tinymce.get('note_content').execCommand('mceSetContent', false, '');
 
             let currentPath = '';
             if (method === 'patch') {
                 currentPath =  '/' + this.form.id;
                 this.method = 'post';
-                const index = this.notes.findIndex(note => note.id === this.form.id); //remove note, it will be added after submit again
+                const index = this.notes.findIndex(note => note.id === this.form.id); // remove note, it will be added after submit again
                 this.notes.splice(index, 1);
             }
 
@@ -298,14 +295,13 @@ export default {
 
             this.toggleEdit();
         },
-
-        toggleEdit(){
+        toggleEdit() {
             this.edit = !this.edit;
-            if (this.edit === true){
+            if (this.edit === true) {
                 this.loadNotables();
             }
         },
-        editNote(index){
+        editNote(index) {
             this.edit = true;
             this.method = 'patch';
             this.form.id = this.notes[index].id;
@@ -315,14 +311,14 @@ export default {
             tinyMCE.get('note_content').setContent(this.notes[index].content);
             this.loadNotables();
 
-            this.$nextTick(function (){
+            this.$nextTick(function () {
                 this.moveNoteEditor(this.form.id);
             })
         },
         viewNote(index) {
             this.$modal.show('note-show-modal', { 'note': this.notes[index] });
         },
-        moveNoteEditor(id){
+        moveNoteEditor(id) {
             let editor = this.$el.getElementsByClassName('note_editor_selector')[0];
             let placeholder = this.$el.getElementsByClassName("note_editor_placeholder_" + id)[0];
             let hidePlaceholder = this.$el.getElementsByClassName("note_editor_hide_placeholder_" + id)[0];
@@ -339,7 +335,7 @@ export default {
                 }
             );
         },
-        loadNotes(type, id){
+        loadNotes(type, id) {
             if (type == 'all') {
                 this.form.notable_type = false;
                 this.form.notable_id = false;
@@ -347,18 +343,17 @@ export default {
                 this.form.notable_type = 'App\\' + type;
                 this.form.notable_id = id;
             }
-            if (typeof (type) !== 'undefined' || type !== 'all'){
+            if (typeof (type) !== 'undefined' || type !== 'all') {
                 localStorage.setItem('notes_notable_type', type);
                 localStorage.setItem('notes_notable_id', id);
             }
-            if (this.edit === true){
+            if (this.edit === true) {
                 this.loadNotables();
             }
 
             this.load();
         },
-
-        async destroy(id, index){
+        async destroy(id, index) {
             axios.delete("/notes/"+id)
                 .then(res => { // Tell the parent component we've added a new task and include it
                     this.notes.splice(index, 1);
@@ -367,17 +362,17 @@ export default {
                     console.log(err.response);
                 });
         },
-        diffForHumans : function (date) {
+        diffForHumans(date) {
             return moment(date).locale('de').fromNow();
         },
         formatTime(timestamp) {
             let time = timestamp;
-            if (this.timeFormatDiffForHumans === true){
+            if (this.timeFormatDiffForHumans === true) {
                 time = this.diffForHumans(timestamp);
             }
             return time;
         },
-        toggleTimestampFormatDiffForHumans(){
+        toggleTimestampFormatDiffForHumans() {
             this.timeFormatDiffForHumans = !this.timeFormatDiffForHumans;
         },
         showNote(item) {
@@ -385,19 +380,19 @@ export default {
 
             if (item.title.toLowerCase().indexOf(this.search.toLowerCase()) !== -1
                 || item.content.toLowerCase().indexOf(this.search.toLowerCase()) !== -1
-                || this.search.length < 3){
+                || this.search.length < 3) {
                 show = true;
             }
 
-            if (typeof(item.notable) !== 'undefined'){
-                if (item.notable !== null){
-                    if (item.notable_type === 'App\\User'){
+            if (typeof(item.notable) !== 'undefined') {
+                if (item.notable !== null) {
+                    if (item.notable_type === 'App\\User') {
                         if (item.notable.firstname.toLowerCase().indexOf(this.search.toLowerCase()) !== -1
-                            || item.notable.lastname.toLowerCase().indexOf(this.search.toLowerCase()) !== -1){
+                            || item.notable.lastname.toLowerCase().indexOf(this.search.toLowerCase()) !== -1) {
                             show = true;
                         }
-                    } else if (item.notable_type === 'App\\Group'){
-                        if (item.notable.title.toLowerCase().indexOf(this.search.toLowerCase()) !== -1){
+                    } else if (item.notable_type === 'App\\Group') {
+                        if (item.notable.title.toLowerCase().indexOf(this.search.toLowerCase()) !== -1) {
                             show = true;
                         }
                     }
@@ -405,17 +400,16 @@ export default {
             }
             return show;
         },
-
     },
-    mounted(){
+    mounted() {
         this.form.notable_type = this.notable_type;
         this.form.notable_id = this.notable_id;
 
-        if (this.show_tabs === false){
+        if (this.show_tabs === false) {
             localStorage.removeItem('notes_notable_type');
             localStorage.removeItem('notes_notable_id');
         }
-        if (localStorage.getItem('notes_notable_type') != null &&  localStorage.getItem('notes_notable_type') != 'all'){
+        if (localStorage.getItem('notes_notable_type') != null &&  localStorage.getItem('notes_notable_type') != 'all') {
             this.form.notable_type = 'App\\' + localStorage.getItem('notes_notable_type');
         }
 

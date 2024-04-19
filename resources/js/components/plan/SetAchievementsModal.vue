@@ -31,6 +31,26 @@
                  </div>
             </div>
             <div class="card-body overflow-auto">
+                <div>
+                    <span>
+                        {{ checkedUsers.length }} Benutzer ausgewählt
+                    </span>
+                    <span>
+                        <i
+                            class="far fa-sticky-note text-muted pointer p-1"
+                            @click.prevent="openCheckedNotes()"
+                        ></i>
+                    </span>
+                    <span>
+                        <AchievementIndicator
+                            v-permission="'achievement_create'"
+                            :objective="objective.default"
+                            :type="'enabling'"
+                            :users="checkedUsers"
+                            :settings="{'achievements' : false, 'edit': false}"
+                        ></AchievementIndicator>
+                    </span>
+                </div>
                 <table class="table m-0 border-top-0"
                     style="border-top: 0"
                     v-if="this.users.length"
@@ -38,7 +58,7 @@
                 >
                     <thead class=" border-top-0">
                         <tr class="border-top-0">
-                            <th class="border-top-0">
+                            <th class="border-top-0" style="width: 0px;">
                                 <input
                                     type="checkbox"
                                     v-model="checkAll"
@@ -161,12 +181,20 @@ export default {
                 };
             }
 
-            this.$modal.show('note-modal',{
+            this.$modal.show('note-modal', {
                 'method': 'post',
                 'notable_type': 'App\\Achievement',
                 'notable_id': achievement_id,
                 'show_tabs': false,
             });
+        },
+        async openCheckedNotes() {
+            let achievement_ids = {};
+            this.checkedUsers.forEach(
+                user_id => achievement_ids[user_id]?.achievements[0].id
+            );
+
+            
         },
         toggleUsers() {
             this.checkedUsers = this.checkAll

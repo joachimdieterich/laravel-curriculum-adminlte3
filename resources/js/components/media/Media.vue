@@ -114,6 +114,7 @@
         },
         data() {
             return {
+                component_id: this._uid,
                 subscriptions: {},
                 errors: {},
                 currentUser: {}
@@ -140,7 +141,9 @@
                     'content': entry,
                     'subscribable_type': this.subscribable_type,
                     'subscribable_id': this.subscribable_id,
-                    'public': this.public
+                    'public': this.public,
+                    'eventHubCallbackFunction': 'addMedia',
+                    'eventHubCallbackFunctionParams': this.component_id
                 });
             },
             async unlinkMedium(subscription) { //id of external reference and value in db
@@ -200,12 +203,15 @@
                 this.currentUser =  response.data.user
             })
             if (this.subscribable_type  != ''){
-                axios.get(this.url + '?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id).then(response => {
-                    this.subscriptions = response.data.message;
-                }).catch(e => {
-                    console.log(e);
-                });
+                this.loader();
             }
+        },
+        mounted() {
+            this.$eventHub.$on('addMedia', (e) => {
+                if (this.component_id == e.id) {
+                    this.loader();
+                }
+            });
         },
         components: {
             License

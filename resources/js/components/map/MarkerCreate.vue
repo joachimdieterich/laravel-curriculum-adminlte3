@@ -39,7 +39,7 @@
                                 <p class="help-block" v-if="form.errors?.title" v-text="form.errors?.title[0]"></p>
                             </div>
                             <div class="form-group">
-                                <label for="subtitle">
+                                <label for="teaser_text">
                                     {{ trans('global.marker.fields.teaser_text') }}
                                 </label>
                                 <input
@@ -66,13 +66,13 @@
                                 ></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="subtitle">
+                                <label for="author">
                                     {{ trans('global.marker.fields.author') }}
                                 </label>
                                 <input
                                     type="text"
-                                    id="teaser_text"
-                                    name="teaser_text"
+                                    id="author"
+                                    name="author"
                                     class="form-control"
                                     v-model.trim="form.author"
                                     :placeholder="trans('global.marker.fields.author')"
@@ -81,7 +81,7 @@
                                 <p class="help-block" v-if="form.errors?.author" v-text="form.errors?.author[0]"></p>
                             </div>
                             <div class="form-group">
-                                <label for="subtitle">
+                                <label for="tags">
                                     {{ trans('global.marker.fields.tags') }}
                                 </label>
                                 <input
@@ -98,7 +98,7 @@
 
                             <div v-if="this.mapMarkerTypes?.length != null"
                                  class="form-group">
-                                <label for="map_marker_type">
+                                <label for="type_id">
                                     {{ trans('global.marker.fields.type') }}
                                 </label>
                                 <select
@@ -115,7 +115,7 @@
 
                             <div v-if="this.mapMarkerCategories?.length != null"
                                 class="form-group">
-                                <label for="map_marker_category">
+                                <label for="category_id">
                                     {{ trans('global.category.title_singular') }}
                                 </label>
                                 <select
@@ -162,7 +162,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="map_marker_category">
+                                <label for="address">
                                     {{ trans('global.marker.fields.address') }}
                                 </label>
                                 <input
@@ -178,7 +178,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="longitude">
+                                <label for="url">
                                     {{ trans('global.marker.fields.url') }}
                                 </label>
                                 <input
@@ -194,7 +194,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="longitude">
+                                <label for="url_title">
                                     {{ trans('global.marker.fields.url_title') }}
                                 </label>
                                 <input

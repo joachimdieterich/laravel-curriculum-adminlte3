@@ -261,12 +261,6 @@ Vue.prototype.$initTinyMCE = function (tinyMcePlugins, attr = null) {
                     document.querySelector("#app").__vue__.$eventHub._events.insertContent = undefined; //destroy listener to prevent multiple inserts on 2nd, 3rd.. time
                 });
             }
-
-            // fallback if $eventHub solution doesn't work correctly
-            // $('#medium_id').on('change', function() {
-            //     //reload thumbs
-            //     editor.insertContent('<img src="/media/'+ document.getElementById('medium_id').value +'" width="500">', {format: 'raw'});
-            // });
         };
 
         // Add a button that opens a window

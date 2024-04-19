@@ -272,7 +272,7 @@ class LogbookController extends Controller
         }
     }
 
-    private function getLogbooks($withOwned = true)
+    public function getLogbooks($withOwned = true)
     {
         $logbooks = Logbook::with('subscriptions')->whereHas('subscriptions', function ($query) {
             $query->where(

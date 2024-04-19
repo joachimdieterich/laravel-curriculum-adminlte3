@@ -239,6 +239,8 @@ class UsersController extends Controller
 
     public function setCurrentOrganization()
     {
+        abort_if(is_guest(), 403); // guest users should not change current Organization
+
         User::where('id', auth()->user()->id)->update([
             'current_period_id' => (request('current_period_id')) ? request('current_period_id') : 1,
             'current_organization_id' => request('current_organization_id'),

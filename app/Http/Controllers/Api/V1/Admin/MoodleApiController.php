@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 
+use App\Http\Controllers\KanbanController;
+use App\Http\Controllers\LogbookController;
 use App\KanbanSubscription;
 use App\LogbookSubscription;
 use Illuminate\Http\Request;
@@ -100,12 +102,15 @@ class MoodleApiController extends Controller
         $user = User::where('common_name', request('common_name'));
         $user = Auth::loginUsingId($user->first()->id);
 
-        $logbooks = Logbook::where('owner_id', $user->id )
+
+        /*$logbooks = Logbook::where('owner_id', $user->id )
                         ->select('id', 'title')->get()
                         ->merge(
                             $user->logbooks()
                             ->select('logbooks.id', 'title')->get()
-                        );
+                        );*/
+        $logbooks = (new LogbookController())->getLogbooks()->get(); //get all accessible logbooks
+
         return $logbooks->map->only('id', 'title')->unique('id');
 
 
@@ -118,12 +123,13 @@ class MoodleApiController extends Controller
         $user = Auth::loginUsingId($user->first()->id);
 
 
-        $kanbans = Kanban::where('owner_id', $user->id )
+        $kanbans = (new KanbanController())->userKanbans(); //get all accessible kanbans
+        /*$kanbans = Kanban::where('owner_id', $user->id )
             ->select('id', 'title')->get()
             ->merge(
                 $user->kanbans()
                     ->select('kanbans.id', 'kanbans.title')->get()
-            );
+            );*/
         return $kanbans->map->only('id', 'title')->unique('id');
 
     }

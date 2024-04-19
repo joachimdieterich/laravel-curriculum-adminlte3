@@ -107,7 +107,10 @@ class MapController extends Controller
      */
     public function show(Map $map)
     {
-        $map = Map::where('id', $map->id)->with(['type', 'category', 'markers'])->get()->first();
+        $map = Map::where('id', $map->id)
+            ->with(['type', 'category'])
+            ->get()
+            ->first();
         return view('map.show')
             ->with(compact('map'));
     }

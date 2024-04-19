@@ -28,6 +28,7 @@
         </div>
     @endcan--}}
     <kanbans model-url="kanbans"></kanbans>
+    <medium-create-modal></medium-create-modal>
 @endsection
 @section('scripts')
 @parent

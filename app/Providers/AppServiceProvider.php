@@ -6,6 +6,7 @@ use App\Domains\Tests\Interfaces\TestToolkitInterface;
 use App\Domains\Tests\Requests\TestToolRequest;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Blade;
 //use Laravel\Dusk\DuskServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -42,5 +43,14 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
         $this->app->alias('bugsnag.logger', \Illuminate\Contracts\Logging\Log::class);
         $this->app->alias('bugsnag.logger', \Psr\Log\LoggerInterface::class);
+
+        Blade::directive('canany', function ($permissions) {
+            return "<?php if (auth()->check() && array_intersect(auth()->user()->permissions()->pluck('title')->toArray(), {$permissions})): ?>";
+        });
+
+        Blade::directive('endcanany', function () {
+            return '<?php endif; ?>';
+        });
+
     }
 }

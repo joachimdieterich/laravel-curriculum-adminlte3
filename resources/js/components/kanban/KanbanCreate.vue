@@ -74,8 +74,8 @@
                   :form="form"
                   :id="component_id"
                   :medium_id="form.medium_id"
-                  accept="image/*"/>
-
+                  accept="image/*"
+              />
             </div>
             <!-- /.card-body -->
           </div>
@@ -157,7 +157,7 @@
   </div>
 </template>
 <script>
-import MediumForm from "../media/MediumForm"
+import MediumForm from "../media/MediumForm";
 import Form from "form-backend-validation";
 
 export default {

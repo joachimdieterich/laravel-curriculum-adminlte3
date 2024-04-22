@@ -25,8 +25,6 @@ class OrganizationsController extends Controller
         // select2 request
         if (request()->wantsJson() and request()->has(['term', 'page'])) {
             if (is_admin()) {
-                abort_unless(\Gate::allows('organization_access'), 403);
-
                 return  getEntriesForSelect2ByModel(
                     "App\Organization"
                 );

@@ -98,6 +98,7 @@ class LogbookController extends Controller
         $logbook = Logbook::Create([
             'title' => $new_logbook['title'],
             'description' => $new_logbook['description'],
+            'medium_id' => $new_logbook['medium_id'] ?? null,
             'color' => $new_logbook['color'] ?? '#2980B9',
             'css_icon' => $new_logbook['css_icon'],
             'owner_id' => auth()->user()->id,
@@ -181,6 +182,7 @@ class LogbookController extends Controller
         $logbook->update([
             'title' => $input['title'],
             'description' => $input['description'],
+            'medium_id' => $input['medium_id'] ?? $logbook->medium_id,
             'color' => $input['color'],
             'css_icon' => $input['css_icon'],
         ]);
@@ -304,6 +306,7 @@ class LogbookController extends Controller
         return request()->validate([
             'title' => 'sometimes|required',
             'description' => 'sometimes',
+            'medium_id' => 'sometimes',
             'color' => 'sometimes',
             'css_icon' => 'sometimes',
             'subscribable_type' => 'sometimes',

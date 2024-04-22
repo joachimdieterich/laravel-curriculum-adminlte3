@@ -12,21 +12,28 @@
         @endif
     </li>
     <li class="breadcrumb-item active">{{ trans('global.logbook.title') }}</li>
-    <li class="breadcrumb-item "><a href="{{ env('DOCUMENTATION', '/documentation') }}" class="text-black-50"                                    aria-label="{{ trans('global.documentation') }}"><i
-                class="fas fa-question-circle"></i></a></li>
+    <li class="breadcrumb-item ">
+        <a href="{{ env('DOCUMENTATION', '/documentation') }}"
+            class="text-black-50"
+            aria-label="{{ trans('global.documentation') }}"
+        >
+            <i class="fas fa-question-circle"></i>
+        </a>
+    </li>
 @endsection
 @section('content')
-<logbooks></logbooks>
-{{-- <table id="logbooks-datatable" class="table table-hover datatable">
-    <thead>
-    <tr>
-        <th width="10"></th>
-        <th>{{ trans('global.logbook.fields.title') }}</th>
-        <th>{{ trans('global.datatables.action') }}</th>
-    </tr>
-    </thead>
-</table> --}}
-{{--<data-table-widgets model-url="logbooks"></data-table-widgets>--}}
+    <logbooks></logbooks>
+    <medium-create-modal></medium-create-modal>
+    {{-- <table id="logbooks-datatable" class="table table-hover datatable">
+        <thead>
+        <tr>
+            <th width="10"></th>
+            <th>{{ trans('global.logbook.fields.title') }}</th>
+            <th>{{ trans('global.datatables.action') }}</th>
+        </tr>
+        </thead>
+    </table> --}}
+    {{--<data-table-widgets model-url="logbooks"></data-table-widgets>--}}
 @endsection
 
 @section('scripts')

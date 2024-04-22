@@ -85,16 +85,16 @@ class MapController extends Controller
             'tags'=> $input['tags'],
             'type_id'=> $input['type_id'],
             'category_id'=> $input['category_id'],
-            'border_url'=> $input['border_url'],
-            'latitude'=> $input['latitude'],
-            'longitude'=> $input['longitude'],
-            'zoom'=> $input['zoom'],
-            'color'=> $input['color'],
+            'border_url'=> $input['border_url'] ?? "https://nominatim.openstreetmap.org/search?polygon_geojson=1&format=geojson&polygon_threshold=0.005&country=de&state=RP",
+            'latitude'=> $input['latitude'] ?? 49,
+            'longitude'=> $input['longitude'] ?? 8,
+            'zoom'=> $input['zoom'] ?? 10,
+            'color'=> $input['color'] ?? '#F2C511',
             'owner_id' => auth()->user()->id,
         ]);
 
         if (request()->wantsJson()) {
-            return ['map' => $map->path()];
+            return ['map' => $map];
         }
 
     }
@@ -163,9 +163,11 @@ class MapController extends Controller
     {
         abort_unless((\Gate::allows('map_delete') and $map->isAccessible()), 403);
 
-        if ($map->delete()) {
-            return $this->list();
+        $return = $map->delete();
+        if (request()->wantsJson()) {
+            return [$return];
         }
+
     }
 
     protected function validateRequest()

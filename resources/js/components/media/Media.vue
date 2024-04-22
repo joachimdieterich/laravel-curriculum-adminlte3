@@ -2,29 +2,34 @@
 <div>
     <div v-if="format =='list'">
         <table
-               id="sidebar_media_datatable"
-               class="table table-hover datatable media_table">
+            id="sidebar_media_datatable"
+            class="table table-hover datatable media_table"
+        >
             <tr v-for="subscription in subscriptions">
-                <td style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 100px;"
+                <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100px;"
                     class="link-muted text-sm px-2 pointer"
-                    @click="show('medium', subscription.medium)">
+                    @click="show('medium', subscription.medium)"
+                >
 
                     <i class="pr-2"
-                       v-bind:class="[iconCss(subscription.medium.mime_type)]"></i>
+                       v-bind:class="[iconCss(subscription.medium.mime_type)]"
+                    ></i>
                     {{ subscription.medium.title }}
 
                     <i class="pull-right fa fa-graduation-cap text-muted"
                        v-if="subscription.visibility && currentUser.id === subscription.owner_id"
                        v-permission="'artefact_create'"
-                       @click.stop="setArtefact(subscription.medium.id)"></i>
+                       @click.stop="setArtefact(subscription.medium.id)"
+                    ></i>
                     <i v-else-if="currentUser.id === subscription.user_id"
                        v-permission="'artefact_delete'"
                        class="pull-right fa fa-trash text-danger"
-                       @click.stop="destroyArtefact(subscription.medium.id)"></i>
+                       @click.stop="destroyArtefact(subscription.medium.id)"
+                    ></i>
 
                     <license class="pull-right pr-2"
-                             :licenseId="subscription.medium.license_id">
-                    </license>
+                             :licenseId="subscription.medium.license_id"
+                    ></license>
                 </td>
             </tr>
             <tr>
@@ -32,7 +37,8 @@
                     class="py-2 link-muted text-sm pointer"
                     v-permission="'medium_create'"
                     v-if="url == '/mediumSubscriptions'"
-                    @click="show('medium-create', subscription)">
+                    @click="show('medium-create', subscription)"
+                >
                     <i class="fa fa-plus px-2 "></i> {{ trans('global.media.add')}}
                 </td>
             </tr>
@@ -48,47 +54,51 @@
         :style="{'background-image':'url('+href(subscription.medium.id)+')'}"
         @click="show('medium', subscription.medium)"
     >
-    <div class="symbol"
-         style="position: absolute;
-                padding: 6px;
-                z-index: 1;
-                width: 30px;
-                height: 40px;
-                background-color: #0583C9;
-                top: 0px;
-                font-size: 1.2em;
-                left: 10px;">
+        <div class="symbol"
+            style="position: absolute;
+                    padding: 6px;
+                    z-index: 1;
+                    width: 30px;
+                    height: 40px;
+                    background-color: #0583C9;
+                    top: 0px;
+                    font-size: 1.2em;
+                    left: 10px;"
+        >
+            <i v-if="subscription.medium.mime_type === 'pdf'" class="fa fa-file-pdf text-white pt-2"></i>
+            <i v-if="subscription.medium.mime_type === 'url'" class="fa fa-link text-white pt-2"></i>
+            <i v-else class="fa fa-photo-video text-white pt-2"></i>
+        </div>
 
-        <i v-if="subscription.medium.mime_type === 'pdf'" class="fa fa-file-pdf text-white pt-2"></i>
-        <i v-if="subscription.medium.mime_type === 'url'" class="fa fa-link text-white pt-2"></i>
-        <i v-else class="fa fa-photo-video text-white pt-2"></i>
-    </div>
-
-    <i v-if="subscription.medium.mime_type === 'pdf'" class="far fa-file-pdf text-primary text-center pt-2"
-       style="position:absolute; top: 0px; height: 150px !important; width: 100%; font-size:800%;"></i>
-    <i v-if="subscription.medium.mime_type === 'url'" class="fa fa-link text-primary text-center pt-2"
-       style="position:absolute; top: 0px; height: 150px !important; width: 100%; font-size:800%;"></i>
-    <span
-        v-permission="'medium_delete'"
-        class="p-1 pointer_hand"
-        accesskey=""
-        style="position:absolute; top:0px; height: 30px; width:100%;" >
-                <button
-                    :id="'delete-medium'+subscription.medium.id"
-                    type="submit"
-                    class="btn btn-danger btn-sm pull-right"
-                    v-on:click.stop="unlinkMedium(subscription);">
-                    <small>
-                        <i class="fa fa-unlink"
-                        ></i>
-                    </small>
-                </button>
+        <i v-if="subscription.medium.mime_type === 'pdf'" class="far fa-file-pdf text-primary text-center pt-2"
+        style="position:absolute; top: 0px; height: 150px !important; width: 100%; font-size:800%;"
+        ></i>
+        <i v-if="subscription.medium.mime_type === 'url'" class="fa fa-link text-primary text-center pt-2"
+        style="position:absolute; top: 0px; height: 150px !important; width: 100%; font-size:800%;"
+        ></i>
+        <span
+            v-permission="'medium_delete'"
+            class="p-1 pointer_hand"
+            accesskey=""
+            style="position:absolute; top:0px; height: 30px; width:100%;"
+        >
+            <button
+                :id="'delete-medium'+subscription.medium.id"
+                type="submit"
+                class="btn btn-danger btn-sm pull-right"
+                v-on:click.stop="unlinkMedium(subscription);"
+            >
+                <small>
+                    <i class="fa fa-unlink"></i>
+                </small>
+            </button>
         </span>
-    <span class="bg-white text-center p-1 overflow-auto "
-          style="position:absolute; bottom:0px; height: 150px; width:100%;">
+        <span class="bg-white text-center p-1 overflow-auto "
+            style="position:absolute; bottom:0px; height: 150px; width:100%;"
+        >
             <h6 class="events-heading pt-1 hyphens" v-html="subscription.medium.title"></h6>
             <p class=" text-muted small" v-html="subscription.medium.description"></p>
-    </span>
+        </span>
 
     </div>
 </div>
@@ -139,6 +149,7 @@
             show(model, entry) {
                 this.$modal.show(model.toLowerCase() + '-modal', {
                     'content': entry,
+                    'subscribeSelected': true,
                     'subscribable_type': this.subscribable_type,
                     'subscribable_id': this.subscribable_id,
                     'public': this.public,

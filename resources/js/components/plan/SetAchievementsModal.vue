@@ -31,25 +31,27 @@
                  </div>
             </div>
             <div class="card-body overflow-auto">
-                <div>
-                    <span>
+                <div class="d-flex align-items-center" style="padding: 0px 10px;">
+                    <span class="flex-fill">
                         {{ checkedUsers.length }} Benutzer ausgewählt
                     </span>
-                    <span>
+                    <span class="flex-fill">
                         <i
-                            class="far fa-sticky-note text-muted pointer p-1"
+                            class="far fa-sticky-note text-muted p-1"
+                            :class="checkedUsers.length === 0 ? 'text-gray' : 'pointer'"
+                            style="font-size: 18px;"
                             @click.prevent="openCheckedNotes()"
                         ></i>
                     </span>
-                    <span>
-                        <AchievementIndicator
-                            v-permission="'achievement_create'"
-                            :objective="objective.default"
-                            :type="'enabling'"
-                            :users="checkedUsers"
-                            :settings="{'achievements' : false, 'edit': false}"
-                        ></AchievementIndicator>
-                    </span>
+                    <AchievementIndicator
+                        class="mr-3"
+                        v-permission="'achievement_create'"
+                        :objective="objective.default"
+                        :type="'enabling'"
+                        :users="checkedUsers"
+                        :settings="{'achievements' : false, 'edit': false}"
+                        :disabled="checkedUsers.length === 0"
+                    ></AchievementIndicator>
                 </div>
                 <table class="table m-0 border-top-0"
                     style="border-top: 0"

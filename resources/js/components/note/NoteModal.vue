@@ -54,9 +54,9 @@ const Notes =
     export default {
         data() {
             return {
-                notable_type: { type: Boolean, default: false },
-                notable_id: { type: Boolean, default: false },
-                show_tabs: { type: Boolean, default: true }
+                notable_type: { type: String },
+                notable_id: { type: [Number, Array] },
+                show_tabs: { type: Boolean, default: true },
             }
         },
         methods: {
@@ -65,7 +65,7 @@ const Notes =
                 this.notable_id = event.params.notable_id;
                 this.show_tabs = event.params.show_tabs;
             },
-            close(){
+            close() {
                 this.$modal.hide('note-modal');
             },
         },

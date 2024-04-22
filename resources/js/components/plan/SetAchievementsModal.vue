@@ -158,29 +158,40 @@ export default {
         opened() {},
         closed() {},
         /**
+         * creates a new achievement with unset status </br>
+         * if achievement already exists, its status will be set back to default = '00'
+         * @param {Number} user_id 
+         * @returns {Number} id of newly created achievement
+         */
+        async createAchievement(user_id) {
+            const objective_id = this.objective.default.id;
+            const achievement = {
+                'referenceable_type': 'App\\EnablingObjective',
+                'referenceable_id': objective_id,
+                'user_id': user_id,
+                'status': '0' // only one zero, setting '00' will throw 500
+            }
+            // create a new achievement-entry and get the ID
+            const achievement_id = (await axios.post('/achievements', achievement)).data.id;
+
+            // add new achievement to data, in case it is needed
+            this.objective[user_id] = {
+                achievements: [{ id: achievement_id }],
+                id: objective_id,
+            };
+
+            return achievement_id;
+        },
+        /**
          * when opening the note-modal, an achievement-id is needed to create a note
          * if there's no achievement, create one with unset status and get a new ID
          * @param {Number} user_id 
          */
-        async openNotes(user_id) {
+        openNotes(user_id) {
             let achievement_id = this.objective[user_id]?.achievements[0].id; // check if achievement exists
             
             if (achievement_id === undefined) {
-                const objective_id = this.objective.default.id;
-                const achievement = {
-                    'referenceable_type': 'App\\EnablingObjective',
-                    'referenceable_id': objective_id,
-                    'user_id': user_id,
-                    'status': '0' // only one zero, setting '00' will throw 500
-                }
-                // create a new achievement-entry and get the ID
-                achievement_id = (await axios.post('/achievements', achievement)).data.id;
-
-                // add new achievement to data, in case it is needed
-                this.objective[user_id] = {
-                    achievements: [{ id: achievement_id }],
-                    id: objective_id,
-                };
+                achievement_id = this.createAchievement(user_id);
             }
 
             this.$modal.show('note-modal', {
@@ -190,13 +201,29 @@ export default {
                 'show_tabs': false,
             });
         },
+        /**
+         * get achievement for every checked user or create one if not exists
+         */
         async openCheckedNotes() {
-            let achievement_ids = {};
+            // gets an object-structure like this { user_id: achievement_id | undefined }
+            let achievements = {};
             this.checkedUsers.forEach(
-                user_id => achievement_ids[user_id]?.achievements[0].id
+                user_id => achievements[user_id] = this.objective[user_id]?.achievements[0].id
             );
 
-            
+            for (const [user_id, value] of Object.entries(achievements)) {
+                if (value === undefined) {
+                    // changes value from undefined to achievement_id
+                    achievements[user_id] = this.createAchievement(user_id);
+                }
+            }
+
+            this.$modal.show('note-modal', {
+                'method': 'post',
+                'notable_type': 'App\\Achievement',
+                'notable_id': Object.values(achievements), // array of achievement_ids
+                'show_tabs': false,
+            });
         },
         toggleUsers() {
             this.checkedUsers = this.checkAll

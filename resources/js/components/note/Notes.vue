@@ -208,8 +208,8 @@ import moment from 'moment';
 export default {
     props: {
         notable_type: { type: String },
-        notable_id: { type: Number },
-        show_tabs: { type: Boolean, default: true }
+        notable_id: { type: [Number, Array] }, // either single id or array of ids
+        show_tabs: { type: Boolean, default: true },
     },
     data() {
         return {
@@ -260,7 +260,7 @@ export default {
             try {
                 this.notables = JSON.parse((await axios.get('/' + url + params)).data[url])
                 $('#notable').select2("destroy");
-                this.$nextTick(function (){
+                this.$nextTick(function () {
                     this.syncSelect2();
                 })
             } catch(error) {

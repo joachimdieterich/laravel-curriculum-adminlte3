@@ -16,7 +16,10 @@ class NoteController extends Controller
     {
         //abort_unless(\Gate::allows('note_access'), 403);
         if (request()->wantsJson()) {
-            return Note::where($this->validateRequest())
+            $input = $this->validateRequest();
+
+            return Note::where('notable_type', $input['notable_type'])
+                ->whereIn('notable_id', explode(',', $input['notable_id']))
                 ->where('user_id', auth()->id())
                 ->with(['notable'])
                 ->latest('updated_at')->get();

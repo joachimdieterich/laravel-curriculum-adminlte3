@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Organization;
 use App\Plan;
+use App\PlanType;
+use App\PlanEntry;
 use App\User;
 use App\Group;
-use App\PlanType;
+use App\EnablingObjectiveSubscriptions;
+use App\TerminalObjectiveSubscriptions;
+use App\TrainingSubscription;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -261,6 +265,12 @@ class PlanController extends Controller
         // theoretically a user enroled in a plan can send a delete request
         abort_unless((\Gate::allows('plan_delete') and $plan->isAccessible()), 403);
 
+        // objectivesSubscriptions aren't automatically removed
+        foreach ($plan->entries as $entry) {
+            $entry->enablingObjectiveSubscriptions()->delete();
+            $entry->terminalObjectiveSubscriptions()->delete();
+            $entry->trainingSubscriptions()->delete();
+        }
         $plan->entries()->delete();
         $plan->subscriptions()->delete();
         //? if media-subscriptions can be added in the future, they need to be deleted too
@@ -273,6 +283,7 @@ class PlanController extends Controller
 
     public function copyPlan(Plan $plan)
     {
+        $owner_id = auth()->user()->id;
         $planCopy = Plan::create([
             'title' => $plan->title . '_' . date('Y.m.d_H:i:s'),
             'description' => $plan->description,
@@ -284,9 +295,55 @@ class PlanController extends Controller
             // 'medium_id' => $plan->medium_id,
             'allow_copy' => $plan->allow_copy,
             'entry_order' => $plan->entry_order,
-            'owner_id' => auth()->user()->id,
+            'owner_id' => $owner_id,
         ]);
-        //TODO: copy planEntries
+
+        foreach ($plan->entries as $entry) {
+            $entryCopy = PlanEntry::Create([
+                'title' => $entry->title,
+                'description' => $entry->description,
+                'css_icon' => $entry->css_icon,
+                'color' => $entry->color,
+                'medium_id' => $entry->medium_id,
+                'order_id' => $entry->order_id,
+                'plan_id' => $planCopy->id,
+                'owner_id' => $owner_id,
+            ]);
+
+            foreach ($entry->enablingObjectiveSubscriptions as $enabling) {
+                EnablingObjectiveSubscriptions::Create([
+                    'enabling_objective_id' => $enabling->enabling_objective_id,
+                    'subscribable_type' => 'App\PlanEntry',
+                    'subscribable_id' => $entryCopy->id,
+                    'sharing_level_id' => $enabling->sharing_level_id,
+                    'visibility' => $enabling->visibility,
+                    'owner_id' => $owner_id,
+                ]);
+            }
+
+            foreach ($entry->terminalObjectiveSubscriptions as $terminal) {
+                TerminalObjectiveSubscriptions::Create([
+                    'terminal_objective_id' => $terminal->terminal_objective_id,
+                    'subscribable_type' => 'App\PlanEntry',
+                    'subscribable_id' => $entryCopy->id,
+                    'sharing_level_id' => $terminal->sharing_level_id,
+                    'visibility' => $terminal->visibility,
+                    'owner_id' => $owner_id,
+                ]);
+            }
+
+            foreach ($entry->trainings as $training) {
+                TrainingSubscription::Create([
+                    'training_id' => $training->id,
+                    'subscribable_type' => 'App\PlanEntry',
+                    'subscribable_id' => $entryCopy->id,
+                    'order_id' => $training->order_id ?? 0,
+                    'editable' => $training->editable ?? 1,
+                    'owner_id' => $owner_id,
+                ]);
+            }
+        }
+
         return redirect('/plans');
     }
 

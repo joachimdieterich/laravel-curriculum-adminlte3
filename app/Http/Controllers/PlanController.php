@@ -284,6 +284,8 @@ class PlanController extends Controller
     public function copyPlan(Plan $plan)
     {
         $owner_id = auth()->user()->id;
+        $assocOrder = [];
+
         $planCopy = Plan::create([
             'title' => $plan->title . '_' . date('Y.m.d_H:i:s'),
             'description' => $plan->description,
@@ -294,7 +296,7 @@ class PlanController extends Controller
             'type_id' => $plan->type_id,
             // 'medium_id' => $plan->medium_id,
             'allow_copy' => $plan->allow_copy,
-            'entry_order' => $plan->entry_order,
+            'entry_order' => null, // entry_order needs to be set after creating new PlanEntries
             'owner_id' => $owner_id,
         ]);
 
@@ -309,6 +311,8 @@ class PlanController extends Controller
                 'plan_id' => $planCopy->id,
                 'owner_id' => $owner_id,
             ]);
+            // associative array, where old entry-id shows the copied entry-id
+            $assocOrder[$entry->id] = $entryCopy->id;
 
             foreach ($entry->enablingObjectiveSubscriptions as $enabling) {
                 EnablingObjectiveSubscriptions::Create([
@@ -343,6 +347,14 @@ class PlanController extends Controller
                 ]);
             }
         }
+
+        // set new entry_order based of associative array
+        $newEntryOrder = array_map(function($entry_id) use (&$assocOrder) {
+            return $assocOrder[$entry_id];
+        }, $plan->entry_order);
+        
+        $planCopy->entry_order = $newEntryOrder;
+        $planCopy->save();
 
         return redirect('/plans');
     }

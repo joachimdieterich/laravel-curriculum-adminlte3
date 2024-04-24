@@ -97,11 +97,11 @@
             async submit( ) {
                 try {
                     if (this.method === 'patch'){
-                        this.form.content = tinyMCE.activeEditor.getContent();
+                        this.form.content = tinyMCE.get('create_content_modal_content').getContent();
                         this.location = (await axios.patch('/contents/' + this.form.id, this.form)).data.message;
                         this.$parent.$emit('addContent', this.form);
                     } else {
-                        this.form.content = tinyMCE.activeEditor.getContent();
+                        this.form.content = tinyMCE.get('create_content_modal_content').getContent();
                         this.location = (await axios.post('/contents', this.form)).data.message;
                         this.$parent.$emit('addContent', this.form);
                     }
@@ -144,7 +144,7 @@
             async load(id) {
                 try {
                     this.form.populate((await axios.get('/contents/' + id)).data.message);
-                    tinyMCE.activeEditor.setContent(this.form.content);
+                    tinyMCE.get('create_content_modal_content').setContent(this.form.content);
                 } catch(error) {
                     //console.log('loading failed')
                 }

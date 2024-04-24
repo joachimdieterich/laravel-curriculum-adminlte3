@@ -724,7 +724,7 @@ class CurriculumController extends Controller
             'page' => 'required|integer',
             'term' => 'sometimes|string|max:255|nullable',
         ]);
-        if (is_admin())
+        if (is_admin() || is_creator())
         {
             return getEntriesForSelect2ByModel("App\Curriculum");
         }

@@ -22,6 +22,7 @@ class AchievementController extends Controller
         $input = $this->validateRequest();
 
         $user_ids = ! empty($input['user_id']) ? $input['user_id'] : auth()->user()->id;
+        $success_ids = [];
 
         foreach ((array) $user_ids as $user_id) {
             abort_unless(auth()->user()->mayAccessUser(User::find($user_id)), 403);
@@ -43,6 +44,7 @@ class AchievementController extends Controller
                 );
 
             $achievement->save();
+            $success_ids[$user_id] = $achievement->id;
 
             $obj = EnablingObjective::find($input['referenceable_id']);
             (new ProgressController)->calculateProgress('App\TerminalObjective', $obj->terminal_objective_id, $user_id);
@@ -51,7 +53,7 @@ class AchievementController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__, auth()->user()->role()->id, (is_array($user_ids)) ? count($user_ids) : 1);
         // axios call?
         if (request()->wantsJson()) {
-            return ['message' => $achievement->status, 'id' => $achievement->id];
+            return ['message' => $achievement->status, 'id' => $success_ids];
         }
 
         return $achievement;

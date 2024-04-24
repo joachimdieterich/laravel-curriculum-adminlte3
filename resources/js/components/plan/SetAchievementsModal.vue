@@ -33,14 +33,14 @@
             <div class="card-body overflow-auto">
                 <div class="d-flex align-items-center" style="padding: 0px 10px;">
                     <span class="flex-fill">
-                        {{ checkedUsers.length }} Benutzer ausgewählt
+                        {{ selectedUsers.length }} Benutzer ausgewählt
                     </span>
                     <span class="flex-fill">
                         <i
                             class="far fa-sticky-note text-muted p-1"
-                            :class="checkedUsers.length === 0 ? 'text-gray' : 'pointer'"
+                            :class="selectedUsers.length === 0 ? 'text-gray' : 'pointer'"
                             style="font-size: 18px;"
-                            @click.prevent="openCheckedNotes()"
+                            @click.prevent="openSelectedNotes()"
                         ></i>
                     </span>
                     <AchievementIndicator
@@ -48,9 +48,9 @@
                         v-permission="'achievement_create'"
                         :objective="objective.default"
                         :type="'enabling'"
-                        :users="checkedUsers"
-                        :settings="{'achievements' : false, 'edit': false}"
-                        :disabled="checkedUsers.length === 0"
+                        :users="selectedUsers"
+                        :settings="{'achievements' : false, 'edit': false, 'sendStatus': true}"
+                        :disabled="selectedUsers.length === 0"
                     ></AchievementIndicator>
                 </div>
                 <table class="table m-0 border-top-0"
@@ -78,7 +78,7 @@
                                 <input
                                     type="checkbox"
                                     :value="user.id"
-                                    v-model="checkedUsers"
+                                    v-model="selectedUsers"
                                 />
                             </td>
                             <td>{{ user.firstname }} {{ user.lastname }}</td>
@@ -120,7 +120,7 @@ export default {
     data() {
         return {
             objective: {},
-            checkedUsers: [],
+            selectedUsers: [],
             checkAll: false,
         };
     },
@@ -176,7 +176,7 @@ export default {
 
             // add new achievement to data, in case it is needed
             this.objective[user_id] = {
-                achievements: [{ id: achievement_id }],
+                achievements: [{ id: achievement_id, status: '00' }],
                 id: objective_id,
             };
 
@@ -202,12 +202,12 @@ export default {
             });
         },
         /**
-         * get achievement for every checked user or create one if not exists
+         * get achievement for every selected user or create one if not exists
          */
-        async openCheckedNotes() {
+        async openSelectedNotes() {
             // gets an object-structure like this { user_id: achievement_id | undefined }
             let achievements = {};
-            this.checkedUsers.forEach(
+            this.selectedUsers.forEach(
                 user_id => achievements[user_id] = this.objective[user_id]?.achievements[0].id
             );
 
@@ -225,8 +225,27 @@ export default {
                 'show_tabs': false,
             });
         },
+        /**
+         * function is called in AchievementIndicator.vue to overwrite current statuses
+         * @param {string} status the second char of status
+         * @param {object} users list of user-ids and their achievement-id
+         */
+        updateStatus(status, users) {
+            for (const [user_id, achievement_id] of Object.entries(users)) {
+                if (this.objective[user_id] === undefined) {
+                    this.objective[user_id] = {
+                        achievements: [{ id: achievement_id, status: '00' }],
+                        id: this.objective.default.id,
+                    };
+                }
+                
+                const oldVal = this.objective[id].achievements[0].status;
+                // only overwrite the second char of the status
+                this.objective[id].achievements[0].status = oldVal[0] + status;
+            }
+        },
         toggleUsers() {
-            this.checkedUsers = this.checkAll
+            this.selectedUsers = this.checkAll
                 ? this.users.map(user => user.id)
                 : [];
         },

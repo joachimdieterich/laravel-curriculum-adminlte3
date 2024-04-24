@@ -73,7 +73,14 @@ export default {
                 'status': status
             }
             try {
-                this.status = (await axios.post('/achievements', achievement)).data.message;
+                await axios.post('/achievements', achievement).then(response => {
+                    this.status = response.data.message;
+                    // send new status to SetAchievementsModal to overwrite other AchievementIndicators
+                    if (this.settings.sendStatus === true) {
+                        // first parent is VueJsModal, second parent is SetAchievementsModal
+                        this.$parent.$parent.updateStatus(response.data.message[1], response.data.id);
+                    }
+                });
 //                    calculateProgress(); //todo?
             } catch(error) {
                 alert(error);

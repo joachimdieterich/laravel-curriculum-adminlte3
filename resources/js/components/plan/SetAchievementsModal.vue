@@ -239,9 +239,9 @@ export default {
                     };
                 }
                 
-                const oldVal = this.objective[id].achievements[0].status;
+                const oldVal = this.objective[user_id].achievements[0].status;
                 // only overwrite the second char of the status
-                this.objective[id].achievements[0].status = oldVal[0] + status;
+                this.objective[user_id].achievements[0].status = oldVal[0] + status;
             }
         },
         toggleUsers() {

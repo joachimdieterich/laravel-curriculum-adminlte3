@@ -31,28 +31,6 @@
                  </div>
             </div>
             <div class="card-body overflow-auto">
-                <div class="d-flex align-items-center" style="padding: 0px 10px;">
-                    <span class="flex-fill">
-                        {{ selectedUsers.length }} Benutzer ausgewählt
-                    </span>
-                    <span class="flex-fill">
-                        <i
-                            class="far fa-sticky-note text-muted p-1"
-                            :class="selectedUsers.length === 0 ? 'text-gray' : 'pointer'"
-                            style="font-size: 18px;"
-                            @click.prevent="openSelectedNotes()"
-                        ></i>
-                    </span>
-                    <AchievementIndicator
-                        class="mr-3"
-                        v-permission="'achievement_create'"
-                        :objective="objective.default"
-                        :type="'enabling'"
-                        :users="selectedUsers"
-                        :settings="{'achievements' : false, 'edit': false, 'sendStatus': true}"
-                        :disabled="selectedUsers.length === 0"
-                    ></AchievementIndicator>
-                </div>
                 <table class="table m-0 border-top-0"
                     style="border-top: 0"
                     v-if="this.users.length"
@@ -60,19 +38,44 @@
                 >
                     <thead class=" border-top-0">
                         <tr class="border-top-0">
-                            <th class="border-top-0" style="width: 0px;">
-                                <input
-                                    type="checkbox"
-                                    v-model="checkAll"
-                                    @change="toggleUsers()"
-                                />
-                            </th>
+                            <th class="border-top-0" style="width: 0px;"></th>
                             <th class="border-top-0">{{ trans('global.name') }}</th>
                             <th class="border-top-0">{{ trans('global.notes') }}</th>
                             <th class="border-top-0">Status</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <tr style="border-bottom: 2px solid #dee2e6;">
+                            <td>
+                                <input
+                                    type="checkbox"
+                                    v-model="checkAll"
+                                    @change="toggleUsers()"
+                                />
+                            </td>
+                            <td>
+                                {{ selectedUsers.length }} Benutzer ausgewählt
+                            </td>
+                            <td>
+                                <i
+                                    class="far fa-sticky-note text-muted p-1"
+                                    :class="selectedUsers.length === 0 ? 'text-gray' : 'pointer'"
+                                    style="font-size: 18px; margin: -0.25rem"
+                                    @click.prevent="openSelectedNotes()"
+                                ></i>
+                            </td>
+                            <td>
+                                <AchievementIndicator
+                                    class="mr-3"
+                                    v-permission="'achievement_create'"
+                                    :objective="objective.default"
+                                    :type="'enabling'"
+                                    :users="selectedUsers"
+                                    :settings="{'achievements' : false, 'edit': false, 'sendStatus': true}"
+                                    :disabled="selectedUsers.length === 0"
+                                ></AchievementIndicator>
+                            </td>
+                        </tr>
                         <tr v-for="user in users">
                             <td>
                                 <input
@@ -83,7 +86,7 @@
                             </td>
                             <td>{{ user.firstname }} {{ user.lastname }}</td>
                             <td>
-                                <i style="font-size:18px; margin: -0.25rem" 
+                                <i style="font-size: 18px; margin: -0.25rem" 
                                     class="far fa-sticky-note text-muted pointer p-1"
                                     @click.prevent="openNotes(user.id)"
                                 ></i>
@@ -91,7 +94,7 @@
                             <td>
                                 <AchievementIndicator
                                     v-permission="'achievement_create'"
-                                    :objective="objective[user.id] ?? objective.default"
+                                    :objective="objective[user.id]"
                                     :type="'enabling'"
                                     :users="[user.id]"
                                     :settings="{'achievements' : false, 'edit': false}"
@@ -142,14 +145,17 @@ export default {
         beforeOpen(event) {
             const eventObj = event.params.objective;
             const obj = {}; // if we add attributes directly to 'this.objective' it won't work
-            obj.default = { id: eventObj.id };
-            
-            eventObj.achievements.forEach(achievement => {
-                // only add attributes that are actually needed
-                obj[achievement.user_id] = {
-                    id: eventObj.id,
-                    achievements: [achievement],
+            obj.default = { id: eventObj.id }; // needed for group selection
+            // create an achievement-placeholder for every user
+            this.users.forEach(user => {
+                obj[user.id] = {
+                    achievements: [{ status: '00' }],
+                    id: eventObj.id
                 };
+            })
+            // connect achievements based of its user-id
+            eventObj.achievements.forEach(achievement => {
+                obj[achievement.user_id].achievements[0] = achievement;
             });
 
             this.objective = obj;
@@ -164,7 +170,7 @@ export default {
          * @returns {Number} id of newly created achievement
          */
         async createAchievement(user_id) {
-            const objective_id = this.objective.default.id;
+            const objective_id = this.objective.id;
             const achievement = {
                 'referenceable_type': 'App\\EnablingObjective',
                 'referenceable_id': objective_id,
@@ -226,23 +232,17 @@ export default {
             });
         },
         /**
-         * function is called in AchievementIndicator.vue to overwrite current statuses
+         * function is called from AchievementIndicator to overwrite selected statuses
          * @param {string} status the second char of status
-         * @param {object} users list of user-ids and their achievement-id
          */
-        updateStatus(status, users) {
-            for (const [user_id, achievement_id] of Object.entries(users)) {
-                if (this.objective[user_id] === undefined) {
-                    this.objective[user_id] = {
-                        achievements: [{ id: achievement_id, status: '00' }],
-                        id: this.objective.default.id,
-                    };
-                }
-                
-                const oldVal = this.objective[user_id].achievements[0].status;
+        updateStatus(status) {
+            this.selectedUsers.forEach(id => {
+                let selfStatus = this.objective[id].achievements[0].status[0];
                 // only overwrite the second char of the status
-                this.objective[user_id].achievements[0].status = oldVal[0] + status;
-            }
+                this.objective[id].achievements[0].status = selfStatus + status;
+            });
+
+            this.$eventHub.$emit('new_achievements', this.objective.default.id);
         },
         toggleUsers() {
             this.selectedUsers = this.checkAll

@@ -78,7 +78,7 @@ export default {
                     // send new status to SetAchievementsModal to overwrite other AchievementIndicators
                     if (this.settings.sendStatus === true) {
                         // first parent is VueJsModal, second parent is SetAchievementsModal
-                        this.$parent.$parent.updateStatus(response.data.message[1], response.data.id);
+                        this.$parent.$parent.updateStatus(status);
                     }
                 });
 //                    calculateProgress(); //todo?

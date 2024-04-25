@@ -94,7 +94,7 @@ export default {
         }
     },
     methods: {
-        loaderEvent(){
+        loaderEvent() {
             axios.get('/planEntries?plan_id=' + this.plan.id)
                 .then(response => {
                     if (this.plan.entry_order != null) {
@@ -117,7 +117,7 @@ export default {
             this.entry_order.push(entry.id);
             this.updateEntryOrder();
         },
-        handleEntryDeleted(entry){
+        handleEntryDeleted(entry) {
             let index = this.entries.indexOf(entry);
             this.entries.splice(index, 1);
             this.entry_order.splice(index, 1);
@@ -136,19 +136,40 @@ export default {
                     alert(err.response.statusText);
                 });
         },
+        updateAchievements(objective_id) {
+            // go through every entry
+            this.$children[0].$children.forEach((planEntry) => {
+                const objectives = planEntry.$children[0].$children; // get all objective-components
+
+                for (let i = 0; i < objectives.length; i++) {
+                    const objective = objectives[i];
+                    // filter for EnablingObjectives
+                    if (objective.$options._componentTag !== 'EnablingObjectives') continue;
+                    // try to find if one of its ObjectiveBoxes has the corresponding objective_id
+                    const enabling = objective.$children.find(child => child.objective_id == objective_id);
+                    if (enabling !== undefined) {
+                        enabling.updateAchievements(); // call the update-function inside this component
+                        break;
+                    }
+                }
+            });
+        },
     },
     mounted() {
         localStorage.removeItem('user-datatable-selection'); // reset selection to prevent wrong inputs
         this.disabled = this.$userId != this.plan.owner_id;
         this.loaderEvent();
-        this.$eventHub.$on('plan_entry_added', (e) => {
-            this.handleEntryAdded(e);
+        this.$eventHub.$on('plan_entry_added', (entry) => {
+            this.handleEntryAdded(entry);
         });
         this.$eventHub.$on('plan_entry_updated', (e) => {
             this.loaderEvent();
         });
-        this.$eventHub.$on('plan_entry_deleted', (e) => {
-            this.handleEntryDeleted(e);
+        this.$eventHub.$on('plan_entry_deleted', (entry) => {
+            this.handleEntryDeleted(entry);
+        });
+        this.$eventHub.$on('new_achievements', (objective_id) => {
+            this.updateAchievements(objective_id);
         });
     },
     computed: {

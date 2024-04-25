@@ -22,7 +22,6 @@ class AchievementController extends Controller
         $input = $this->validateRequest();
 
         $user_ids = ! empty($input['user_id']) ? $input['user_id'] : auth()->user()->id;
-        $success_ids = [];
 
         foreach ((array) $user_ids as $user_id) {
             abort_unless(auth()->user()->mayAccessUser(User::find($user_id)), 403);
@@ -32,19 +31,18 @@ class AchievementController extends Controller
                                       ->where('user_id', '=', $user_id)->first();
 
             $achievement = Achievement::updateOrCreate(
-                    [
-                        'referenceable_type' => $input['referenceable_type'],
-                        'referenceable_id'   => $input['referenceable_id'],
-                        'user_id'            => $user_id,
-                    ],
-                    [
-                        'status'             => $this->calculateStatus($user_id, $input, ($achievement === null) ? '00' : $achievement->status),
-                        'owner_id'           => auth()->user()->id,
-                    ]
-                );
+                [
+                    'referenceable_type' => $input['referenceable_type'],
+                    'referenceable_id'   => $input['referenceable_id'],
+                    'user_id'            => $user_id,
+                ],
+                [
+                    'status'             => $this->calculateStatus($user_id, $input, ($achievement === null) ? '00' : $achievement->status),
+                    'owner_id'           => auth()->user()->id,
+                ]
+            );
 
             $achievement->save();
-            $success_ids[$user_id] = $achievement->id;
 
             $obj = EnablingObjective::find($input['referenceable_id']);
             (new ProgressController)->calculateProgress('App\TerminalObjective', $obj->terminal_objective_id, $user_id);
@@ -53,10 +51,15 @@ class AchievementController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__, auth()->user()->role()->id, (is_array($user_ids)) ? count($user_ids) : 1);
         // axios call?
         if (request()->wantsJson()) {
-            return ['message' => $achievement->status, 'id' => $success_ids];
+            return ['message' => $achievement->status];
         }
 
         return $achievement;
+    }
+
+    public function getEnablingAchievements($id) {
+        return Achievement::where('referenceable_type', '=', 'App\EnablingObjective')
+            ->where('referenceable_id', '=', $id)->get();
     }
 
     /* calculate proper status id */

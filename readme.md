@@ -356,11 +356,15 @@ public function down()
 }
 ```
 
-### Set statusfilter for telescope
+### Set statusfilte/users for telescope
 ```
 TELESCOPE_STATUS_FILTER="200,302"
+TELESCOPE_USERS="admin@curriculumonline.de"
 ```
-If no status is set, 200 and 302 events are filtered.
+If no status is set, 200 and 302 events are filtered. 
+Both settings are comma-separated 
+
+Don't use whitespaces!
 
 ### json-fields in MariaDB
 

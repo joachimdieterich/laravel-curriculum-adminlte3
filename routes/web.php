@@ -173,6 +173,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('maps', 'MapController');
     Route::resource('mapMarkers', 'MapMarkerController');
+    Route::get('mapMarkerTypes/list', 'MapMarkerTypeController@list');
     Route::resource('mapMarkerTypes', 'MapMarkerTypeController');
     Route::resource('mapMarkerCategories', 'MapMarkerCategoryController');
 

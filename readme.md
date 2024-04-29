@@ -356,6 +356,12 @@ public function down()
 }
 ```
 
+### Set statusfilter for telescope
+```
+TELESCOPE_STATUS_FILTER="200,302"
+```
+If no status is set, 200 and 302 events are filtered.
+
 ### json-fields in MariaDB
 
 If migrations failing with the following message (MariaDB Version < 10.2.7): 

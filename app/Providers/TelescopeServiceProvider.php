@@ -38,21 +38,33 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 //                   $entry->isScheduledTask() ||
 //                   $entry->hasMonitoredTag();
 //        });
-
         // Fix ReflectionException: Class env does not exist #347
         // see:
         // https://github.com/laravel/telescope/issues/347#issuecomment-523550515
         // Disable the filter while in local or testing environment.
-        $disableFilter = $this->app->environment(['local', 'testing', 'production']);
-        Telescope::filter(function (IncomingEntry $entry) use ($disableFilter) {
-            if ($disableFilter) {
-                return true;
-            }
+            /*$disableFilter = $this->app->environment(['local', 'testing', 'production']);
+            Telescope::filter(function (IncomingEntry $entry) use ($disableFilter) {
+                if ($disableFilter) {
+                    return true;
+                }
 
-            return $entry->isReportableException() ||
-                $entry->isFailedJob() ||
-                $entry->isScheduledTask() ||
-                $entry->hasMonitoredTag();
+                return $entry->isReportableException() ||
+                    $entry->isFailedRequest() ||
+                    $entry->isFailedJob() ||
+                    $entry->isScheduledTask() ||
+                    $entry->hasMonitoredTag();
+            });*/
+
+        Telescope::filter(function (IncomingEntry $entry) {
+            if($entry->type == 'request' && !in_array($entry->content['response_status'],  explode(',', env("TELESCOPE_STATUS_FILTER", "200, 302")))){
+                return true;
+            }else {
+                return $entry->isReportableException() ||
+                    $entry->isFailedRequest() ||
+                    $entry->isFailedJob() ||
+                    $entry->isScheduledTask() ||
+                    $entry->hasMonitoredTag();
+            }
         });
     }
 
@@ -86,9 +98,8 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
     protected function gate()
     {
         Gate::define('viewTelescope', function ($user) {
-            return in_array($user->email, [
-
-            ]);
+            return in_array($user->email, explode(',', env("TELESCOPE_USERS"))
+            );
         });
     }
 }

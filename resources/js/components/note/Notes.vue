@@ -275,7 +275,7 @@ export default {
                 this.form.notable_id = e.params.data.id;
             }.bind(this));
         },
-        submit() {
+        async submit() {
             let method = this.method.toLowerCase();
             this.form.content = tinyMCE.get('note_content').getContent();
             // .setContent('') will crash tinymce, when closing and reopening the modal
@@ -288,12 +288,14 @@ export default {
                 const index = this.notes.findIndex(note => note.id === this.form.id); // remove note, it will be added after submit again
                 this.notes.splice(index, 1);
             }
-
-            this.form.submit(method, this.requestUrl + currentPath)
+            
+            this.toggleEdit();
+            // wait for request to be handled, because this.form will have empty values after
+            await this.form.submit(method, this.requestUrl + currentPath)
                 .then(response => this.notes.unshift(response))
                 .catch(response => console.log(response));
 
-            this.toggleEdit();
+            this.prefillForm();
         },
         toggleEdit() {
             this.edit = !this.edit;
@@ -400,17 +402,20 @@ export default {
             }
             return show;
         },
+        prefillForm() {
+            // needs to be filled after each submit, else these values will be null => throws 500
+            this.form.notable_id = this.notable_id;
+            this.form.notable_type = (localStorage.getItem('notes_notable_type') != null &&  localStorage.getItem('notes_notable_type') != 'all')
+                ? 'App\\' + localStorage.getItem('notes_notable_type')
+                : this.notable_type;
+        },
     },
     mounted() {
-        this.form.notable_type = this.notable_type;
-        this.form.notable_id = this.notable_id;
+        this.prefillForm();
 
         if (this.show_tabs === false) {
             localStorage.removeItem('notes_notable_type');
             localStorage.removeItem('notes_notable_id');
-        }
-        if (localStorage.getItem('notes_notable_type') != null &&  localStorage.getItem('notes_notable_type') != 'all') {
-            this.form.notable_type = 'App\\' + localStorage.getItem('notes_notable_type');
         }
 
         this.load();

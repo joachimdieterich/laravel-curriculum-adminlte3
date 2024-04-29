@@ -10,6 +10,7 @@ use App\User;
 use App\Group;
 use App\EnablingObjectiveSubscriptions;
 use App\TerminalObjectiveSubscriptions;
+use App\Training;
 use App\TrainingSubscription;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -337,12 +338,20 @@ class PlanController extends Controller
             }
 
             foreach ($entry->trainings as $training) {
+                $newTraining = Training::Create([
+                    'title' => $training->title,
+                    'description' => $training->description,
+                    'begin' => $training->begin,
+                    'end' => $training->end,
+                    'owner_id' => $owner_id,
+                ]);
+                
                 TrainingSubscription::Create([
-                    'training_id' => $training->id,
+                    'training_id' => $newTraining->id,
                     'subscribable_type' => 'App\PlanEntry',
                     'subscribable_id' => $entryCopy->id,
-                    'order_id' => $training->order_id ?? 0,
-                    'editable' => $training->editable ?? 1,
+                    'order_id' => 0,
+                    'editable' => 1,
                     'owner_id' => $owner_id,
                 ]);
             }

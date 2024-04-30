@@ -34,9 +34,7 @@
             </div>
 
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                <div class="form-group "
-                    :class="form.errors.title ? 'has-error' : ''"
-                      >
+                <div class="form-group">
                     <label for="title">{{ trans('global.logbook.fields.title') }} *</label>
                     <input
                         type="text" id="title"
@@ -45,27 +43,33 @@
                         v-model="form.title"
                         placeholder="Title"
                         required
-                        />
-                     <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                    />
+                    <p v-if="errors.title" class="error-block">
+                        {{ trans('validation.required') }}
+                    </p>
                 </div>
-                <div class="form-group ">
-                    <label for="description">{{ trans('global.logbook.fields.description') }}</label>
+                <div class="form-group">
+                    <label for="description">{{ trans('global.logbook.fields.description') }} *</label>
                     <textarea
-                    id="description"
-                    name="description"
-                    class="form-control description my-editor "
-                    v-model="form.description"
+                        id="description"
+                        name="description"
+                        class="form-control description my-editor "
+                        v-model="form.description"
+                        required
                     ></textarea>
-                    <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
+                    <p v-if="errors.description" class="error-block">
+                        {{ trans('validation.required') }}
+                    </p>
                 </div>
                 <date-picker class="w-100"
                     v-model="time"
                     type="datetime" range
-                    valueType="YYYY-MM-DD HH:mm:ss"></date-picker>
+                    valueType="YYYY-MM-DD HH:mm:ss"
+                ></date-picker>
             </div>
             <div class="card-footer">
                 <span class="pull-right">
-                     <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
+                    <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
                 </span>
             </div>
         </div>
@@ -77,87 +81,104 @@ import Form from 'form-backend-validation';
 import DatePicker from 'vue2-datepicker';
 import 'vue2-datepicker/index.css';
 
-    export default {
-        data() {
-            return {
-                component_id: this._uid,
-                method: 'post',
-                requestUrl: '/logbookEntries',
-                categories: {},
-                time: null,
-                form: new Form({
-                    'id':'',
-                    'logbook_id':'',
-                    'title': '',
-                    'description': '',
-                    'begin': '',
-                    'end': ''
-                })
-            };
-        },
-        methods: {
-            async submit() {
-                try {
-                    this.form.description = tinyMCE.get('description').getContent();
-                    this.form.begin = this.time[0];
-                    this.form.end = this.time[1];
-                    if (this.method === 'patch') {
-                        this.new_entry = (await axios.patch('/logbookEntries/' + this.form.id, this.form)).data.message;
-                        this.$eventHub.$emit('updateLogbookEntry', this.new_entry);
-                    } else {
-                        this.new_entry = (await axios.post('/logbookEntries', this.form)).data.message;
-                        this.$eventHub.$emit('addLogbookEntry', this.new_entry);
-                    }
-
-                    this.close();
-                } catch(error) {
-                    this.form.errors = error.response.data.form.errors;
-                }
+export default {
+    data() {
+        return {
+            component_id: this._uid,
+            method: 'post',
+            requestUrl: '/logbookEntries',
+            categories: {},
+            time: null,
+            form: new Form({
+                'id':'',
+                'logbook_id':'',
+                'title': '',
+                'description': '',
+                'begin': '',
+                'end': ''
+            }),
+            errors: { // required fields need to be initialised
+                title: false,
+                description: false,
             },
-            beforeOpen(event) {
-                this.form.clear();
-                if (event.params.id){
-                    this.load(event.params.id);
-                }
-                if (event.params.logbook_id){
-                    this.form.logbook_id = event.params.logbook_id;
-                }
-                this.method = event.params.method;
-                this.time = [moment().format("YYYY-MM-DD HH:mm:ss"), moment().add(30, 'minutes').format("YYYY-MM-DD HH:mm:ss")];
-            },
+        };
+    },
+    methods: {
+        async submit() {
+            if (!this.checkRequired()) return;
 
-            opened(){
-                this.$initTinyMCE([
-                    "autolink link example"
-                ],{
-                    'public': 1,
-                    'referenceable_type': 'App\\\Logbook',
-                    'referenceable_id': this.form.logbook_id,
-                    'eventHubCallbackFunction': 'insertContent',
-                    'eventHubCallbackFunctionParams': this.component_id
-                });
-            },
-
-            beforeClose() {},
-
-            async load(id) {
-                try {
-                    this.form.populate((await axios.get('/logbookEntries/'+id)).data.message);
-                    this.time = [this.form.begin, this.form.end];
-                } catch(error) {
-                    //console.log('loading failed')
+            try {
+                this.form.description = tinyMCE.get('description').getContent();
+                this.form.begin = this.time[0];
+                this.form.end = this.time[1];
+                if (this.method === 'patch') {
+                    this.new_entry = (await axios.patch('/logbookEntries/' + this.form.id, this.form)).data.message;
+                    this.$eventHub.$emit('updateLogbookEntry', this.new_entry);
+                } else {
+                    this.new_entry = (await axios.post('/logbookEntries', this.form)).data.message;
+                    this.$eventHub.$emit('addLogbookEntry', this.new_entry);
                 }
-            },
-            close(){
-                //console.log('close')
-                this.$modal.hide('logbook-entry-modal');
+
+                this.close();
+            } catch(error) {
+                this.form.errors = error.response.data.form.errors;
             }
         },
-        mounted() {
+        checkRequired() {
+            let filledOut = true;
+            const fields = this.$el.querySelectorAll('[required]');
+            
+            for (const field of fields) {
+                if (field.value.trim() === '') { // activate error-helper
+                    this.errors[field.id] = true;
+                    filledOut = false;
+                } else { // deactivate error-helper
+                    this.errors[field.id] = false;
+                }
+            }
+            
+            return filledOut;
         },
-        components: {
-            DatePicker
+        beforeOpen(event) {
+            this.form.clear();
+            if (event.params.id){
+                this.load(event.params.id);
+            }
+            if (event.params.logbook_id){
+                this.form.logbook_id = event.params.logbook_id;
+            }
+            this.method = event.params.method;
+            this.time = [moment().format("YYYY-MM-DD HH:mm:ss"), moment().add(30, 'minutes').format("YYYY-MM-DD HH:mm:ss")];
         },
-    }
+        opened() {
+            this.$initTinyMCE([
+                "autolink link example"
+            ], {
+                'public': 1,
+                'referenceable_type': 'App\\\Logbook',
+                'referenceable_id': this.form.logbook_id,
+                'eventHubCallbackFunction': 'insertContent',
+                'eventHubCallbackFunctionParams': this.component_id
+            });
+        },
+        beforeClose() {},
+        async load(id) {
+            try {
+                this.form.populate((await axios.get('/logbookEntries/'+id)).data.message);
+                this.time = [this.form.begin, this.form.end];
+            } catch(error) {
+                //console.log('loading failed')
+            }
+        },
+        close() {
+            //console.log('close')
+            this.$modal.hide('logbook-entry-modal');
+        }
+    },
+    mounted() {},
+    components: {
+        DatePicker
+    },
+}
 </script>
 

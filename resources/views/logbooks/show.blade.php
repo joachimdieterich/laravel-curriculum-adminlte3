@@ -5,7 +5,8 @@
     @can('logbook_create')
         @if (Auth::user()->id ==  $logbook->owner_id)
             <a class="btn btn-flat"
-               href="/logbooks/{{ $logbook->id }}/edit">
+                onclick="app.__vue__.$eventHub.$emit('edit_logbook', {{$logbook->toJson()}})"
+            >
                 <i class="fa fa-pencil-alt text-secondary"></i>
             </a>
             <button class="btn btn-flat"

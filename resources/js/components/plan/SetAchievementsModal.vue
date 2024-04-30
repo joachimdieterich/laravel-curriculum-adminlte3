@@ -31,7 +31,9 @@
                  </div>
             </div>
             <div class="card-body overflow-auto">
-                <table class="table m-0 border-top-0"
+                <table
+                    id="achievements-table"
+                    class="table m-0 border-top-0 dataTable"
                     style="border-top: 0"
                     v-if="this.users.length"
                     v-permission="'achievement_access'"
@@ -41,7 +43,7 @@
                             <th class="border-top-0" style="width: 0px;"></th>
                             <th class="border-top-0">{{ trans('global.name') }}</th>
                             <th class="border-top-0">{{ trans('global.notes') }}</th>
-                            <th class="border-top-0">Status</th>
+                            <th class="border-top-0 sorting" @click="sortByStatus">Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -91,7 +93,7 @@
                                     @click.prevent="openNotes(user.id)"
                                 ></i>
                             </td>
-                            <td>
+                            <td :data-value="objective[user.id]?.achievements[0].status ?? '00'">
                                 <AchievementIndicator
                                     v-permission="'achievement_create'"
                                     :objective="objective[user.id]"
@@ -125,6 +127,7 @@ export default {
             objective: {},
             selectedUsers: [],
             checkAll: false,
+            ascending: true,
         };
     },
     mounted() {},
@@ -163,6 +166,29 @@ export default {
         beforeClose() {},
         opened() {},
         closed() {},
+        /**
+         * compares the full statuses <br>
+         * asc = teacher achievement priority from unset to best, no student priority <br>
+         * desc = student achievement priority from best to unset, no teacher priority
+         * @param {Event} e onclick event
+         */
+        sortByStatus(e) {
+            const table = document.querySelector('#achievements-table tbody');
+            const trs = table.querySelectorAll('tr:not(:nth-child(1))'); // first th is group-selection
+
+            Array.from(trs)
+                .sort((a, b) => {
+                    // compare the data-value attribute from the status-cells
+                    return this.ascending
+                        ? b.cells[3].getAttribute('data-value') - a.cells[3].getAttribute('data-value')
+                        : a.cells[3].getAttribute('data-value') - b.cells[3].getAttribute('data-value');
+                }).forEach(tr => table.appendChild(tr));
+            
+            // toggle arrow-up/arrow-down icon on th
+            e.target.classList.toggle('sorting_asc', this.ascending);
+            e.target.classList.toggle('sorting_desc', !this.ascending);
+            this.ascending = !this.ascending;
+        },
         /**
          * creates a new achievement with unset status </br>
          * if achievement already exists, its status will be set back to default = '00'

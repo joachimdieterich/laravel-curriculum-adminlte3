@@ -239,9 +239,14 @@ export default {
         async openSelectedNotes() {
             // gets an object-structure like this { user_id: achievement_id | undefined }
             let achievements = {};
-            this.selectedUsers.forEach(
-                user_id => achievements[user_id] = this.objective[user_id]?.achievements[0].id
-            );
+            let users = {};
+
+            this.selectedUsers.forEach(user_id => {
+                achievements[user_id] = this.objective[user_id]?.achievements[0].id;
+                // get names of each user for the name-label in notes
+                const user = this.users.find(user => user.id === user_id);
+                users[user_id] = `${user.firstname} ${user.lastname}`;
+            });
 
             for (const [user_id, value] of Object.entries(achievements)) {
                 if (value === undefined) {
@@ -255,6 +260,7 @@ export default {
                 'notable_type': 'App\\Achievement',
                 'notable_id': Object.values(achievements), // array of achievement_ids
                 'show_tabs': false,
+                'users': users,
             });
         },
         /**

@@ -167,6 +167,7 @@
                                         @click="viewNote(index)"
                                     ></i>
                                 </span>
+                                <span>{{ users[item.notable.user_id] }}</span>
 
                                 <small class="d-flex align-items-center text-muted ml-auto">
                                     <i v-if="hover == item.id"
@@ -210,6 +211,7 @@ export default {
         notable_type: { type: String },
         notable_id: { type: [Number, Array] }, // either single id or array of ids
         show_tabs: { type: Boolean, default: true },
+        users: { type: Object, default: undefined },
     },
     data() {
         return {

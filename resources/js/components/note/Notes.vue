@@ -141,8 +141,10 @@
                         <span :class="'note_editor_hide_placeholder_'+item.id">
                             <div class="d-flex justify-content-between">
                                 <div class="d-flex flex-wrap">
-                                    <div>
-                                        <span v-if="item.notable">
+                                    <div class="d-flex align-items-center">
+                                        <span v-if="item.notable"
+                                            class="mr-1"
+                                        >
                                             <a v-if="item.notable_type === 'App\\User'"
                                                 :href="'/users/'+item.notable.id"
                                                 class="text-bold text-decoration-none text-gray-dark">{{item.notable.firstname }} {{item.notable.lastname }} </a>
@@ -158,21 +160,23 @@
                                         <span class="text-gray-dark">{{ item.title }}</span>
                                         <small class="ml-2 badge badge-info user-select-none">{{ trans('global.'+item.notable_type) }}</small>
                                         <span v-if="hover == item.id"
-                                            class="user-select-none"
+                                            class="d-flex user-select-none"
                                         >
-                                            <i class="text-muted p-1 fa fa-pencil-alt pointer"
+                                            <i class="text-muted fa fa-pencil-alt pointer p-1 ml-1"
                                                 style="font-weight: 900;"
                                                 @click="editNote(index)"
                                             ></i>
-                                            <i class="text-muted p-1 fa fa-eye pointer"
+                                            <i class="text-muted fa fa-eye pointer p-1 ml-1"
                                                 style="font-weight: 900;"
                                                 @click="viewNote(index)"
                                             ></i>
                                         </span>
                                     </div>
+                                    <!-- force new row -->
                                     <div style="flex-basis: 100%"></div>
-                                    <div>
-                                        <small class="ml-2 badge badge-secondary">{{ users[item.notable.user_id] }}</small>
+                                    <!-- name-badge -->
+                                    <div v-if="users !== undefined">
+                                        <small class="badge badge-secondary">{{ users[item.notable.user_id] }}</small>
                                     </div>
                                 </div>
                                 <div style="flex: 1;">

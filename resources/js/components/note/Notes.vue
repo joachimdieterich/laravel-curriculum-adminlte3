@@ -139,54 +139,63 @@
                          @mouseleave="hover = false"
                     >
                         <span :class="'note_editor_hide_placeholder_'+item.id">
-                            <span class="d-flex align-items-center flex-wrap">
-                                <span v-if="item.notable">
-                                    <a v-if="item.notable_type === 'App\\User'"
-                                        :href="'/users/'+item.notable.id"
-                                        class="text-bold text-decoration-none text-gray-dark">{{item.notable.firstname }} {{item.notable.lastname }} </a>
-                                    <a v-else-if="item.notable_type === 'App\\Group'"
-                                        :href="'/groups/' + item.notable.id"
-                                        class="text-bold text-gray-dark">{{ item.notable.title }}</a>
-                                    <a v-else-if="item.notable_type === 'App\\Achievement'"
-                                        :href="'/enablingObjectives/' + item.notable.referenceable_id"
-                                        class="text-bold text-gray-dark"><i class="fa fa-link" ></i></a>
-                                    <a v-else
-                                        class="text-bold text-gray-dark">{{item.notable.title }} </a>
-                                </span>
-                                <span class="text-gray-dark">{{item.title}}</span>
-                                <small class="ml-2 badge badge-info">{{ trans('global.'+item.notable_type) }}</small>
-                                <span v-if="hover == item.id"
-                                    class="d-flex"
-                                >
-                                    <i class="text-muted p-1 fa fa-pencil-alt pointer"
-                                        style="font-weight: 900;"
-                                        @click="editNote(index)"
-                                    ></i>
-                                    <i class="text-muted p-1 fa fa-eye pointer"
-                                        style="font-weight: 900;"
-                                        @click="viewNote(index)"
-                                    ></i>
-                                </span>
-                                <span>{{ users[item.notable.user_id] }}</span>
-
-                                <small class="d-flex align-items-center text-muted ml-auto">
-                                    <i v-if="hover == item.id"
-                                        class="text-danger fa fa-trash pointer p-1"
-                                        @click="destroy(item.id, index)"
-                                    ></i>
-                                    <a class="pointer link-muted text-decoration-none pl-1"
-                                        @click="toggleTimestampFormatDiffForHumans()"
-                                    >
-                                        <span v-if="item.created_at == item.updated_at">
-                                            <i class="fa fa-plus-circle"></i> {{ formatTime(item.created_at) }}
+                            <div class="d-flex justify-content-between">
+                                <div class="d-flex flex-wrap">
+                                    <div>
+                                        <span v-if="item.notable">
+                                            <a v-if="item.notable_type === 'App\\User'"
+                                                :href="'/users/'+item.notable.id"
+                                                class="text-bold text-decoration-none text-gray-dark">{{item.notable.firstname }} {{item.notable.lastname }} </a>
+                                            <a v-else-if="item.notable_type === 'App\\Group'"
+                                                :href="'/groups/' + item.notable.id"
+                                                class="text-bold text-gray-dark">{{ item.notable.title }}</a>
+                                            <a v-else-if="item.notable_type === 'App\\Achievement'"
+                                                :href="'/enablingObjectives/' + item.notable.referenceable_id"
+                                                class="text-bold text-gray-dark"><i class="fa fa-link" ></i></a>
+                                            <a v-else
+                                                class="text-bold text-gray-dark">{{item.notable.title }} </a>
                                         </span>
-                                        <span v-if="item.created_at != item.updated_at">
-                                            <i class="fa fa-plus-circle"></i> {{ formatTime(item.created_at) }}
-                                            <i class="fas fa-pencil-alt"></i> {{ formatTime(item.updated_at) }}
+                                        <span class="text-gray-dark">{{ item.title }}</span>
+                                        <small class="ml-2 badge badge-info user-select-none">{{ trans('global.'+item.notable_type) }}</small>
+                                        <span v-if="hover == item.id"
+                                            class="user-select-none"
+                                        >
+                                            <i class="text-muted p-1 fa fa-pencil-alt pointer"
+                                                style="font-weight: 900;"
+                                                @click="editNote(index)"
+                                            ></i>
+                                            <i class="text-muted p-1 fa fa-eye pointer"
+                                                style="font-weight: 900;"
+                                                @click="viewNote(index)"
+                                            ></i>
                                         </span>
-                                    </a>
-                                </small>
-                            </span>
+                                    </div>
+                                    <div style="flex-basis: 100%"></div>
+                                    <div>
+                                        <small class="ml-2 badge badge-secondary">{{ users[item.notable.user_id] }}</small>
+                                    </div>
+                                </div>
+                                <div style="flex: 1;">
+                                    <small class="text-muted pull-right">
+                                        <i v-if="hover == item.id"
+                                            class="text-danger fa fa-trash pointer"
+                                            style="padding: 3px;"
+                                            @click="destroy(item.id, index)"
+                                        ></i>
+                                        <a class="pointer link-muted text-decoration-none pl-1"
+                                            @click="toggleTimestampFormatDiffForHumans()"
+                                        >
+                                            <span v-if="item.created_at == item.updated_at">
+                                                <i class="fa fa-plus-circle"></i> {{ formatTime(item.created_at) }}
+                                            </span>
+                                            <span v-if="item.created_at != item.updated_at">
+                                                <i class="fa fa-plus-circle"></i> {{ formatTime(item.created_at) }}
+                                                <i class="fas fa-pencil-alt"></i> {{ formatTime(item.updated_at) }}
+                                            </span>
+                                        </a>
+                                    </small>
+                                </div>
+                            </div>
                             <span v-html="item.content"></span>
                         </span>
                         <span :class="'note_editor_placeholder_'+item.id"></span>

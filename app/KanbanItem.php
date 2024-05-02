@@ -18,14 +18,18 @@ class KanbanItem extends Model
         'locked' => 'boolean',
         'editable' => 'boolean',
         'visibility' => 'boolean',
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
+        'visible_from'  => 'datetime',
+        'visible_until'  => 'datetime',
     ];
 
-    protected $dates = [
+    /*protected $dates = [
         'updated_at',
         'created_at',
         'visible_from',
         'visible_until',
-    ];
+    ];*/
 
     protected static $marks = [
         Like::class,

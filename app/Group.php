@@ -26,16 +26,15 @@ class Group extends Model
 
     protected $guarded = [];
 
-    /**
-     * Prepare a date for array / JSON serialization.
-     *
-     * @param  \DateTimeInterface  $date
-     * @return string
-     */
-    protected $dates = [
-        'updated_at',
-        'created_at',
+    protected $casts = [
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
     ];
+
+    /* protected $dates = [  --> change v.10
+         'updated_at',
+         'created_at',
+     ];*/
 
     protected function serializeDate(DateTimeInterface $date)
     {

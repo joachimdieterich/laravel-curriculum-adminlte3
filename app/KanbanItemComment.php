@@ -14,14 +14,10 @@ class KanbanItemComment extends Model
 
     protected $casts = [
         'created_at' => 'datetime:d.m.Y H:i',
+        'updated_at' => 'datetime:d.m.Y H:i',
     ];
 
     protected $guarded = [];
-
-    protected $dates = [
-        'updated_at',
-        'created_at',
-    ];
 
     protected static $marks = [
         Like::class,

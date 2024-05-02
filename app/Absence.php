@@ -9,10 +9,15 @@ class Absence extends Model
 {
     protected $guarded = [];
 
-    protected $dates = [
-        'updated_at',
-        'created_at',
+    protected $casts = [
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
     ];
+
+    /* protected $dates = [  --> change v.10
+         'updated_at',
+         'created_at',
+     ];*/
 
     /**
      * Prepare a date for array / JSON serialization.

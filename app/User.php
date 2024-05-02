@@ -46,12 +46,19 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected $dates = [
+    protected $casts = [
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
+        'deleted_at' => 'datetime',
+        'email_verified_at'  => 'datetime',
+    ];
+
+    /*protected $dates = [
         'updated_at',
         'created_at',
         'deleted_at',
         'email_verified_at',
-    ];
+    ];*/
 
     protected $fillable = [
         'username',

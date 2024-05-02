@@ -15,12 +15,14 @@ class Medium extends Model
 
     protected $casts = [
         'additional_data' => 'array',
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
     ];
 
-    protected $dates = [
+   /* protected $dates = [  --> change v.10
         'updated_at',
         'created_at',
-    ];
+    ];*/
 
     /**
      * Prepare a date for array / JSON serialization.

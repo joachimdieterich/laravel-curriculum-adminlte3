@@ -27,16 +27,18 @@ class Kanban extends Model
 {
     protected $guarded = [];
 
-    protected $dates = [
-        'updated_at',
-        'created_at',
-    ];
+    /* protected $dates = [  --> change v.10
+         'updated_at',
+         'created_at',
+     ];*/
 
     protected $casts = [
         'commentable' => 'boolean',
         'auto_refresh' => 'boolean',
         'only_edit_owned_items' => 'boolean',
         'allow_copy' => 'boolean',
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
     ];
     /**
      * Prepare a date for array / JSON serialization.

@@ -12,12 +12,21 @@ class Achievement extends Model
 
     protected $guarded = [''];
 
-    protected $dates = [
-        'updated_at',
-        'created_at',
+    protected $cast = [
+        'status' => 'string',
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
+    ]; //important to get id as unique string
+
+    protected $casts = [
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
     ];
 
-    protected $cast = ['status' => 'string']; //important to get id as unique string
+    /* protected $dates = [  --> change v.10
+         'updated_at',
+         'created_at',
+     ];*/
 
     /**
      * Prepare a date for array / JSON serialization.

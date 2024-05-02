@@ -19,16 +19,17 @@ class TerminalObjective extends Model
         'objective_type_id',
         'visibility',
     ];
-
-    protected $dates = [
-        'updated_at',
-        'created_at',
-    ];
-
     protected $casts = [
         'visibility' => 'boolean',
         'referencing_curriculum_id' => 'object',
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
     ];
+
+    /* protected $dates = [  --> change v.10
+         'updated_at',
+         'created_at',
+     ];*/
 
     /**
      * Prepare a date for array / JSON serialization.

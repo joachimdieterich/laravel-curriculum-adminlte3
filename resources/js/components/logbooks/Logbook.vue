@@ -38,77 +38,83 @@
         <!-- /.col -->
         <logbook-entry-modal></logbook-entry-modal>
         <lms-modal></lms-modal>
+        <LogbookIndexAddWidget
+            :visible="false"
+            v-can="'kanban_create'"
+        />
     </div>
 </template>
 
 <script>
 import LogbookEntry from '../logbooks/LogbookEntry.vue';
 import LogbookPrintOptions from "./LogbookPrintOptions";
+import LogbookIndexAddWidget from "./LogbookIndexAddWidget";
 
-    export default {
-        props: {
-            'logbook': Object,
-            'period': Object
+export default {
+    props: {
+        'logbook': Object,
+        'period': Object
+    },
+    data () {
+        return {
+            entries: [],
+            search: '',
+            showPrintOptions: false
+        };
+    },
+
+    methods: {
+        open(modal) {
+            this.$modal.show(modal, {'logbook_id': this.logbook.id});
         },
-        data () {
-            return {
-                entries: [],
-                search: '',
-                showPrintOptions: false
-            };
-        },
-
-        methods: {
-            open(modal) {
-                this.$modal.show(modal, {'logbook_id': this.logbook.id});
-            },
-            togglePrintOptions() {
-                this.showPrintOptions = !this.showPrintOptions;
-            }
-
-        },
-        mounted() {
-            this.entries = this.logbook.entries;
-
-            this.$eventHub.$on('addLogbookEntry', (newEntry) => {
-                if (newEntry.subject == undefined) {
-                    newEntry.subject = {
-                        id: null,
-                        title: null,
-                    };
-                }
-                this.entries.unshift(newEntry);       // Add newly created entry
-            });
-            this.$eventHub.$on('updateLogbookEntry', (updatedEntry) => {
-                const index = this.entries.findIndex(            // Find the index of the status where we should replace the item
-                    entry => entry.id === updatedEntry.id
-                );
-                // only update entry, do not manipulate relations.
-                this.entries[index].title = updatedEntry.title;
-                this.entries[index].description = updatedEntry.description;
-                this.entries[index].updated_at = updatedEntry.updated_at;
-                this.entries[index].begin = updatedEntry.begin;
-                this.entries[index].end = updatedEntry.end;
-            });
-            this.$eventHub.$on('updateSubjectBadge', (updatedEntry) => {
-                const index = this.entries.findIndex(
-                    entry => entry.id === updatedEntry.entry_id
-                );
-                this.entries[index].subject = {
-                    id: updatedEntry.subject_id,
-                    title: updatedEntry.title,
-                }
-            });
-            this.$eventHub.$emit('showSearchbar');
-
-            this.$on('deleteLogbookEntry', function (deletedEntry) {
-                let index = this.entries.indexOf(deletedEntry);
-                this.entries.splice(index, 1);
-            });
-        },
-        components: {
-            LogbookPrintOptions,
-            LogbookEntry
+        togglePrintOptions() {
+            this.showPrintOptions = !this.showPrintOptions;
         }
+
+    },
+    mounted() {
+        this.entries = this.logbook.entries;
+
+        this.$eventHub.$on('addLogbookEntry', (newEntry) => {
+            if (newEntry.subject == undefined) {
+                newEntry.subject = {
+                    id: null,
+                    title: null,
+                };
+            }
+            this.entries.unshift(newEntry);       // Add newly created entry
+        });
+        this.$eventHub.$on('updateLogbookEntry', (updatedEntry) => {
+            const index = this.entries.findIndex(            // Find the index of the status where we should replace the item
+                entry => entry.id === updatedEntry.id
+            );
+            // only update entry, do not manipulate relations.
+            this.entries[index].title = updatedEntry.title;
+            this.entries[index].description = updatedEntry.description;
+            this.entries[index].updated_at = updatedEntry.updated_at;
+            this.entries[index].begin = updatedEntry.begin;
+            this.entries[index].end = updatedEntry.end;
+        });
+        this.$eventHub.$on('updateSubjectBadge', (updatedEntry) => {
+            const index = this.entries.findIndex(
+                entry => entry.id === updatedEntry.entry_id
+            );
+            this.entries[index].subject = {
+                id: updatedEntry.subject_id,
+                title: updatedEntry.title,
+            }
+        });
+        this.$eventHub.$emit('showSearchbar');
+
+        this.$on('deleteLogbookEntry', function (deletedEntry) {
+            let index = this.entries.indexOf(deletedEntry);
+            this.entries.splice(index, 1);
+        });
+    },
+    components: {
+        LogbookPrintOptions,
+        LogbookEntry,
+        LogbookIndexAddWidget,
     }
+}
 </script>

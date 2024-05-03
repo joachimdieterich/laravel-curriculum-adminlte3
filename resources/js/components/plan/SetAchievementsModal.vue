@@ -47,7 +47,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr style="border-bottom: 2px solid #dee2e6;">
+                        <tr class="thick-line">
                             <td>
                                 <input
                                     type="checkbox"
@@ -237,6 +237,7 @@ export default {
          * get achievement for every selected user or create one if not exists
          */
         async openSelectedNotes() {
+            if (this.selectedUsers.length === 0) return;
             // gets an object-structure like this { user_id: achievement_id | undefined }
             let achievements = {};
             let users = {};
@@ -287,3 +288,8 @@ export default {
     }
 }
 </script>
+<style scoped>
+.thick-line > td {
+    border-bottom: 2px solid #dee2e6;
+}
+</style>

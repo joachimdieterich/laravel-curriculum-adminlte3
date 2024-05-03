@@ -196,7 +196,7 @@ export default {
          * @returns {Number} id of newly created achievement
          */
         async createAchievement(user_id) {
-            const objective_id = this.objective.id;
+            const objective_id = this.objective.default.id;
             const achievement = {
                 'referenceable_type': 'App\\EnablingObjective',
                 'referenceable_id': objective_id,
@@ -219,11 +219,11 @@ export default {
          * if there's no achievement, create one with unset status and get a new ID
          * @param {Number} user_id 
          */
-        openNotes(user_id) {
+        async openNotes(user_id) {
             let achievement_id = this.objective[user_id]?.achievements[0].id; // check if achievement exists
-            
+
             if (achievement_id === undefined) {
-                achievement_id = this.createAchievement(user_id);
+                achievement_id = await this.createAchievement(user_id);
             }
 
             this.$modal.show('note-modal', {

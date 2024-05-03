@@ -51,7 +51,7 @@ class AchievementController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__, auth()->user()->role()->id, (is_array($user_ids)) ? count($user_ids) : 1);
         // axios call?
         if (request()->wantsJson()) {
-            return ['message' => $achievement->status];
+            return ['message' => $achievement->status, 'id' => $achievement->id];
         }
 
         return $achievement;

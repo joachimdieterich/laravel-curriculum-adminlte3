@@ -267,6 +267,7 @@ return [
     'assigned_user' => 'Assigned (user)',
     'content_management' => 'Content management',
     'text' => 'Text',
+    'note_text' => 'Note text',
     'excerpt' => 'Excerpt',
     'featured_image' => 'Featured image',
     'pages' => 'Pages',
@@ -813,6 +814,11 @@ return [
         'create' => 'Create plan',
         'search' => 'Search plan',
         'edit' => 'Edit plan',
+        'copy' => 'Copy plan',
+        'copy_helper' => 'Do you want to copy this plan?',
+        'allow_copy' => 'Allow copying plan',
+        'delete' => 'Delete plan',
+        'delete' => 'Should this plan and all its corresponding data be deleted?',
         'select_users' => 'Select users',
         'fields' => [
             'type' => 'Type',
@@ -823,6 +829,9 @@ return [
             'end_helper' => '',
             'duration' => 'Duration',
             'duration_helper' => 'Specify how much time (in minutes) should be scheduled to complete the learning/work schedule.',
+        ],
+        'types' => [
+            'Trainingsplan' => 'Training plan',
         ],
     ],
     'planItem' => [
@@ -890,7 +899,7 @@ return [
         'copy' => 'Copy Kanban-Board',
         'copy_helper' => 'Do you want to copy this Kanban-Board',
         'only_edit_owned_items' => 'Users are only allowed to edit owned items',
-        'allow_copy' => 'Allow kanban copy',
+        'allow_copy' => 'Allow copying Kanban-Board',
         'delete' => 'Delete Kanban-Board',
         'delete_helper' => 'Should Kanban-Board be deleted?',
     ],

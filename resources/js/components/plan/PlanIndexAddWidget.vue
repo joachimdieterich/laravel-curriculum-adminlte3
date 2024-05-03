@@ -2,7 +2,7 @@
     <div>
         <div
             v-if="visible"
-            :id="'kanban-add'"
+            :id="'plan-add'"
             class="box box-objective nav-item-box-image pointer my-1"
             style="min-width: 200px !important; border-bottom: 5px solid #28a745"
             @click="open()"
@@ -10,27 +10,25 @@
             <div class="nav-item-box-image-size text-center bg-success">
                 <i class="fa fa-2x p-5 fa-plus nav-item-text text-white"></i>
             </div>
-
+    
             <span class="bg-white text-center p-1 overflow-auto nav-item-box">
                 <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                    {{ trans('global.kanban.create') }}
+                    {{ trans('global.plan.create') }}
                 </h1>
             </span>
         </div>
-        <!-- Create Modal -->
-        <KanbanCreate
-            id="modal-kanban-form"
+        <PlanCreate
+            id="modal-plan-form"
             :method="method"
-            :kanban="kanban"
+            :plan="plan"
         />
     </div>
-
 </template>
 <script>
-import KanbanCreate from "./KanbanCreate";
+import PlanCreate from "./PlanCreate";
 
-export default {
-    name: 'KanbanIndexAddWidget',
+export  default {
+    name: 'PlanIndexAddWidget',
     props: {
         visible: {
             type: Boolean,
@@ -39,7 +37,7 @@ export default {
     },
     data() {
         return {
-            kanban: null,
+            plan: null,
             method: {
                 type: String,
                 default: 'post'
@@ -49,17 +47,17 @@ export default {
     methods: {
        open(method = 'post'){
            this.method = method;
-           $('#modal-kanban-form').modal('show');
+           $('#modal-plan-form').modal('show');
        },
     },
     mounted() {
-        this.$eventHub.$on('edit_kanban', (kanban) => {
-            this.kanban = kanban;
+        this.$eventHub.$on('edit_plan', (plan) => {
+            this.plan = plan;
             this.open('patch');
         });
     },
     components: {
-        KanbanCreate,
+        PlanCreate
     },
 }
 </script>

@@ -4,9 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Organization;
 use App\Plan;
+use App\PlanType;
+use App\PlanEntry;
 use App\User;
 use App\Group;
-use App\PlanType;
+use App\EnablingObjectiveSubscriptions;
+use App\TerminalObjectiveSubscriptions;
+use App\Training;
+use App\TrainingSubscription;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -35,52 +40,65 @@ class PlanController extends Controller
         $organization = Organization::find(auth()->user()->current_organization_id)->plans;
         $userCanSee = $userCanSee->merge($organization);
 
-        if ($withOwned)
-        {
+        if ($withOwned) {
             $owned = Plan::where('owner_id', auth()->user()->id)->get();
             $userCanSee = $userCanSee->merge($owned);
-
         }
 
         return $userCanSee->unique();
     }
 
-    public function list()
+    public function list(Request $request)
     {
         abort_unless(\Gate::allows('plan_access'), 403);
-        $plans = (auth()->user()->role()->id == 1) ? Plan::all() : $this->userPlans();
+        // $plans = (auth()->user()->role()->id == 1) ? Plan::all() : $this->userPlans();
+        $plans = Plan::with('subscriptions');
 
-        $edit_gate = \Gate::allows('plan_edit');
-        $delete_gate = \Gate::allows('plan_delete');
+
+        switch ($request->filter) {
+            case 'owner':
+                $plans = $plans->where('owner_id', auth()->user()->id);
+                break;
+            case 'shared_with_me':
+                $plans = $this->userPlans(false);
+                break;
+            case 'shared_by_me':
+                $plans = $plans->where('owner_id', auth()->user()->id)->whereHas('subscriptions');
+                break;
+            case 'all':
+            default:
+                $plans = $this->userPlans();
+                break;
+        }
+
+        // $edit_gate = \Gate::allows('plan_edit');
+        // $delete_gate = \Gate::allows('plan_delete');
 
         return DataTables::of($plans)
-            ->addColumn('action', function ($plans) use ($edit_gate, $delete_gate) {
-                // actions should only be visible to owner. admin has all rights
-                if ($plans->owner_id != auth()->user()->id && !is_admin()) return '';
+            // ->addColumn('action', function ($plans) use ($edit_gate, $delete_gate) {
+            //     // actions should only be visible to owner. admin has all rights
+            //     if ($plans->owner_id != auth()->user()->id && !is_admin()) return '';
 
-                $actions = '';
-                if ($edit_gate) {
-                    $actions .= '<a href="'.route('plans.edit', $plans->id).'"'
-                                    .'id="edit-plan-'.$plans->id.'" '
-                                    .'class="btn p-1">'
-                                    .'<i class="fa fa-pencil-alt"></i>'
-                                    .'</a>';
-                }
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                                .'class="btn text-danger" '
-                                .'onclick="destroyDataTableEntry(\'plans\','.$plans->id.')">'
-                                .'<i class="fa fa-trash"></i></button>';
-                }
+            //     $actions = '';
+            //     if ($edit_gate) {
+            //         $actions .= '<a href="'.route('plans.edit', $plans->id).'"'
+            //                         .'id="edit-plan-'.$plans->id.'" '
+            //                         .'class="btn p-1">'
+            //                         .'<i class="fa fa-pencil-alt"></i>'
+            //                         .'</a>';
+            //     }
+            //     if ($delete_gate) {
+            //         $actions .= '<button type="button" '
+            //                     .'class="btn text-danger" '
+            //                     .'onclick="destroyDataTableEntry(\'plans\','.$plans->id.')">'
+            //                     .'<i class="fa fa-trash"></i></button>';
+            //     }
 
-                return $actions;
-            })
+            //     return $actions;
+            // })
 
-            ->addColumn('check', '')
+            // ->addColumn('check', '')
             ->setRowId('id')
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
             ->make(true);
     }
 
@@ -120,10 +138,12 @@ class PlanController extends Controller
         $plan = Plan::firstOrCreate([
             'title'             => $input['title'],
             'description'       => $input['description'],
+            'color'             => $input['color'],
             'begin'             => $input['begin'],
             'end'               => $input['end'],
             'duration'          => $input['duration'],
             'type_id'           => format_select_input($input['type_id']),
+            'allow_copy'          => $input['allow_copy'],
             'owner_id'          => auth()->user()->id,
         ]);
 
@@ -246,10 +266,106 @@ class PlanController extends Controller
         // theoretically a user enroled in a plan can send a delete request
         abort_unless((\Gate::allows('plan_delete') and $plan->isAccessible()), 403);
 
+        // objectivesSubscriptions aren't automatically removed
+        foreach ($plan->entries as $entry) {
+            $entry->enablingObjectiveSubscriptions()->delete();
+            $entry->terminalObjectiveSubscriptions()->delete();
+            $entry->trainingSubscriptions()->delete();
+        }
         $plan->entries()->delete();
         $plan->subscriptions()->delete();
         //? if media-subscriptions can be added in the future, they need to be deleted too
         $plan->delete();
+    }
+
+    public function getTypes() {
+        return getEntriesForSelect2ByModel("App\PlanType");
+    }
+
+    public function copyPlan(Plan $plan)
+    {
+        $owner_id = auth()->user()->id;
+        $assocOrder = [];
+
+        $planCopy = Plan::create([
+            'title' => $plan->title . '_' . date('Y.m.d_H:i:s'),
+            'description' => $plan->description,
+            'color' => $plan->color,
+            'begin' => $plan->begin,
+            'end' => $plan->end,
+            'duration' => $plan->duration,
+            'type_id' => $plan->type_id,
+            // 'medium_id' => $plan->medium_id,
+            'allow_copy' => $plan->allow_copy,
+            'entry_order' => null, // entry_order needs to be set after creating new PlanEntries
+            'owner_id' => $owner_id,
+        ]);
+
+        foreach ($plan->entries as $entry) {
+            $entryCopy = PlanEntry::Create([
+                'title' => $entry->title,
+                'description' => $entry->description,
+                'css_icon' => $entry->css_icon,
+                'color' => $entry->color,
+                'medium_id' => $entry->medium_id,
+                'order_id' => $entry->order_id,
+                'plan_id' => $planCopy->id,
+                'owner_id' => $owner_id,
+            ]);
+            // associative array, where old entry-id shows the copied entry-id
+            $assocOrder[$entry->id] = $entryCopy->id;
+
+            foreach ($entry->enablingObjectiveSubscriptions as $enabling) {
+                EnablingObjectiveSubscriptions::Create([
+                    'enabling_objective_id' => $enabling->enabling_objective_id,
+                    'subscribable_type' => 'App\PlanEntry',
+                    'subscribable_id' => $entryCopy->id,
+                    'sharing_level_id' => $enabling->sharing_level_id,
+                    'visibility' => $enabling->visibility,
+                    'owner_id' => $owner_id,
+                ]);
+            }
+
+            foreach ($entry->terminalObjectiveSubscriptions as $terminal) {
+                TerminalObjectiveSubscriptions::Create([
+                    'terminal_objective_id' => $terminal->terminal_objective_id,
+                    'subscribable_type' => 'App\PlanEntry',
+                    'subscribable_id' => $entryCopy->id,
+                    'sharing_level_id' => $terminal->sharing_level_id,
+                    'visibility' => $terminal->visibility,
+                    'owner_id' => $owner_id,
+                ]);
+            }
+
+            foreach ($entry->trainings as $training) {
+                $newTraining = Training::Create([
+                    'title' => $training->title,
+                    'description' => $training->description,
+                    'begin' => $training->begin,
+                    'end' => $training->end,
+                    'owner_id' => $owner_id,
+                ]);
+                
+                TrainingSubscription::Create([
+                    'training_id' => $newTraining->id,
+                    'subscribable_type' => 'App\PlanEntry',
+                    'subscribable_id' => $entryCopy->id,
+                    'order_id' => 0,
+                    'editable' => 1,
+                    'owner_id' => $owner_id,
+                ]);
+            }
+        }
+
+        // set new entry_order based of associative array
+        $newEntryOrder = array_map(function($entry_id) use (&$assocOrder) {
+            return $assocOrder[$entry_id];
+        }, $plan->entry_order);
+        
+        $planCopy->entry_order = $newEntryOrder;
+        $planCopy->save();
+
+        return redirect('/plans');
     }
 
     public function syncEntriesOrder(Plan $plan)
@@ -270,10 +386,12 @@ class PlanController extends Controller
         return request()->validate([
             'title'         => 'sometimes|required',
             'description'   => 'sometimes',
+            'color'         => 'sometimes',
             'begin'         => 'sometimes',
             'end'           => 'sometimes',
             'duration'      => 'sometimes',
             'type_id'       => 'sometimes',
+            'allow_copy'    => 'sometimes',
             'entry_order'   => 'sometimes',
         ]);
     }

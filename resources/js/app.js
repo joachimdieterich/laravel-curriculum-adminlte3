@@ -185,6 +185,7 @@ Vue.component('logbooks', () => import('./components/logbooks/Logbooks.vue'));
 Vue.component('logbook-entry-modal', () => import('./components/logbooks/LogbookEntryModal.vue'));
 Vue.component('logbook-entry-subject-modal', () => import('./components/logbooks/LogbookEntrySubjectModal.vue'));
 Vue.component('plan', () => import('./components/plan/Plan.vue'));
+Vue.component('plans', () => import('./components/plan/Plans.vue'));
 Vue.component('subscribe-objective-modal', () => import('./components/objectives/SubscribeObjectiveModal.vue'));
 Vue.component('set-achievements-modal', () => import('./components/plan/SetAchievementsModal.vue'));
 Vue.component('objective-progress-subscription-modal', () => import('./components/objectives/ObjectiveProgressSubscriptionModal.vue'));

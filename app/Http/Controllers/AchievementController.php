@@ -31,16 +31,16 @@ class AchievementController extends Controller
                                       ->where('user_id', '=', $user_id)->first();
 
             $achievement = Achievement::updateOrCreate(
-                    [
-                        'referenceable_type' => $input['referenceable_type'],
-                        'referenceable_id'   => $input['referenceable_id'],
-                        'user_id'            => $user_id,
-                    ],
-                    [
-                        'status'             => $this->calculateStatus($user_id, $input, ($achievement === null) ? '00' : $achievement->status),
-                        'owner_id'           => auth()->user()->id,
-                    ]
-                );
+                [
+                    'referenceable_type' => $input['referenceable_type'],
+                    'referenceable_id'   => $input['referenceable_id'],
+                    'user_id'            => $user_id,
+                ],
+                [
+                    'status'             => $this->calculateStatus($user_id, $input, ($achievement === null) ? '00' : $achievement->status),
+                    'owner_id'           => auth()->user()->id,
+                ]
+            );
 
             $achievement->save();
 
@@ -57,8 +57,13 @@ class AchievementController extends Controller
         return $achievement;
     }
 
+    public function getEnablingAchievements($id) {
+        return Achievement::where('referenceable_type', '=', 'App\EnablingObjective')
+            ->where('referenceable_id', '=', $id)->get();
+    }
+
     /* calculate proper status id */
-    protected function calculateStatus($user_id, $input, $status = '00')
+    protected function calculateStatus($user_id, $input, $status = '0')
     {
         if (\Gate::allows('achievement_create') and $user_id != auth()->user()->id) {
             abort_unless((auth()->user()->role()->id <= 5), 403); //only Teacher and roles above

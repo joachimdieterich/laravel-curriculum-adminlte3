@@ -36,6 +36,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('absences', 'AbsenceController');
 
     Route::post('achievements', 'AchievementController@store');
+    Route::get('achievements/enabling/{id}', 'AchievementController@getEnablingAchievements');
 
     Route::post('artefacts/destroy', 'ArtefactController@destroySubscription');
     Route::resource('artefacts', 'ArtefactController');
@@ -249,6 +250,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::delete('plans/massDestroy', 'PlanController@massDestroy')->name('plans.massDestroy');
     Route::get('plans/list', 'PlanController@list');
+    Route::get('plans/getTypes', 'PlanController@getTypes');
+    Route::get('plans/{plan}/copy', 'PlanController@copyPlan');
     Route::put('plans/{plan}/syncEntriesOrder', 'PlanController@syncEntriesOrder')->name('plans.syncEntriesOrder');
     Route::resource('plans', 'PlanController');
 

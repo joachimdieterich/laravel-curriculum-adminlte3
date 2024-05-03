@@ -1,43 +1,41 @@
 <template>
-
-    <span v-if="type === 'enabling' && settings.edit === false">
-
-        <i class="t-18 margin-r-5 text-green pointer"
-           v-bind:class="[green_css, fabadge]"
-           v-bind:data-count="[green_count]"
-           @click.prevent="achieve('1')">
+    <span v-if="type === 'enabling' && settings.edit === false"
+        style="cursor: default;"
+    >
+        <i class="t-18 margin-r-5"
+            v-bind:class="[green_css, fabadge, disabled ? 'text-gray' : 'text-green pointer']"
+            v-bind:data-count="[green_count]"
+            @click.prevent="achieve('1')">
         </i>
-        <i class="t-18 margin-r-5 text-orange pointer"
-           v-bind:class="[orange_css, fabadge]"
-           v-bind:data-count="[orange_count]"
-           @click.prevent="achieve('2')">
+        <i class="t-18 margin-r-5"
+            v-bind:class="[orange_css, fabadge, disabled ? 'text-gray' : 'text-orange pointer']"
+            v-bind:data-count="[orange_count]"
+            @click.prevent="achieve('2')">
         </i>
-        <i class="t-18 margin-r-5 text-red pointer"
-           v-bind:class="[red_css, fabadge]"
-           v-bind:data-count="[red_count]"
-           @click.prevent="achieve('3')">
+        <i class="t-18 margin-r-5"
+            v-bind:class="[red_css, fabadge, disabled ? 'text-gray' : 'text-red pointer']"
+            v-bind:data-count="[red_count]"
+            @click.prevent="achieve('3')">
         </i>
-        <i class="t-18 margin-r-5 text-gray pointer"
-           v-bind:class="[white_css, fabadge]"
-           v-bind:data-count="[white_count]"
-           @click.prevent="achieve('0')">
+        <i class="t-18 margin-r-5 text-gray"
+            v-bind:class="[white_css, fabadge, disabled ? '' : 'pointer']"
+            v-bind:data-count="[white_count]"
+            @click.prevent="achieve('0')">
         </i>
-
     </span>
-
 </template>
-
 
 <script>
 export default {
     props: {
         objective: {},
-        type:{},
-        settings:{},
-        users:{
+        type: {},
+        settings: {},
+        users: {
             type: Array,
             default: () => []
-        }
+        },
+        disabled: false,
     },
     data() {
         return {
@@ -57,7 +55,9 @@ export default {
         };
     },
     methods: {
-        async achieve(status){
+        async achieve(status) {
+            if (this.disabled) return;
+
             let selected = this.users;
             if (selected.length === 0){
                 selected = localStorage.getItem('user-datatable-selection')?.split(",");
@@ -73,14 +73,21 @@ export default {
                 'status': status
             }
             try {
-                this.status = (await axios.post('/achievements', achievement)).data.message;
+                await axios.post('/achievements', achievement).then(response => {
+                    this.status = response.data.message;
+                    // send new status to SetAchievementsModal to overwrite other AchievementIndicators
+                    if (this.settings.sendStatus === true) {
+                        // first parent is VueJsModal, second parent is SetAchievementsModal
+                        this.$parent.$parent.updateStatus(status);
+                    }
+                });
 //                    calculateProgress(); //todo?
             } catch(error) {
                 alert(error);
             }
         },
         calculate_css(number) {
-            var status = "far fa-circle";
+            let status = "far fa-circle";
 
             if (this.status.charAt(0) === number &&
                 this.status.charAt(1) === number){
@@ -94,7 +101,7 @@ export default {
             return status;
         },
         calculate_count(number) {
-            var student = 0, teacher = 0;
+            let student = 0, teacher = 0;
             if (typeof this.objective.achievements !== 'undefined'){
                 if (typeof this.objective.achievements[0] === 'object' && this.settings.achievements === true) {
                     for (let i = 0; i < (this.objective.achievements).length; i++){

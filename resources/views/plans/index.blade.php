@@ -20,7 +20,8 @@
         </div>
     </div>
 @endcan
-<table id="plans-datatable" class="table table-hover datatable">
+<plans></plans>
+{{-- <table id="plans-datatable" class="table table-hover datatable">
     <thead>
         <tr>
             <th></th>
@@ -28,13 +29,13 @@
             <th>{{ trans('global.datatables.action') }}</th>
         </tr>
     </thead>
-</table>
+</table> --}}
 
 @endsection
 @section('scripts')
 @parent
 <script>
-$(document).ready( function () {
+/** $(document).ready( function () {
 
     let dtButtons = '';
     var table = $('#plans-datatable').DataTable({
@@ -68,7 +69,7 @@ $(document).ready( function () {
         window.location.href = "/plans/" + table.row(this).id()
     });
 
-});
+}); */
 </script>
 
 @endsection

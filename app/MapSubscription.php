@@ -35,6 +35,6 @@ class MapSubscription extends Model
 
     public function isAccessible()
     {
-        return $this->videoconference->isAccessible();
+        return $this->map->isAccessible();
     }
 }

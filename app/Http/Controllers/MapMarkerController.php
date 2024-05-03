@@ -124,7 +124,7 @@ class MapMarkerController extends Controller
         return request()->validate([
             'id' => 'sometimes|integer|nullable',
             'title' => 'sometimes|string',
-            'teaser_text' => 'sometimes|string',
+            'teaser_text' => 'sometimes|nullable',
             'description' => 'sometimes|nullable',
             'author' => 'sometimes|nullable',
             'type_id' => 'sometimes|integer',

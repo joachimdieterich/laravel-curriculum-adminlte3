@@ -2,7 +2,9 @@
     <div>
         <h1 class="sidebar-header  mb-3">
             {{ this.marker.title }}
-            <span v-can="'map_edit'" class="card-tools pl-2">
+            <span v-if="$userId == marker.owner_id"
+                  v-can="'map_edit'"
+                  class="card-tools pl-2">
                 <a @click="editMarker(marker)" >
                     <i class="fa fa-pencil-alt"></i>
                 </a>

@@ -1161,6 +1161,20 @@ return [
             'link_helper' => '',
         ],
     ],
+    'mapMarkerType' => [
+        'title' => 'Marker-Typen',
+        'title_singular' => 'Marker-Type',
+        'create' => 'Marker-Type erstellen',
+        'edit' => 'Marker-Type bearbeiten',
+        'delete' => 'Marker-Type löschen',
+        'delete_helper' => 'Soll der Marker-Type gelöscht werden?',
+        'fields' => [
+            'color' => 'Farbe',
+            'color_helper' => '',
+            'css_icon' => 'css icon',
+            'css_icon_helper' => '',
+        ],
+    ],
     'global' => [
         'title_singular'        => 'global verfügbar',
     ]

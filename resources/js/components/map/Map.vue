@@ -6,11 +6,23 @@
             <div class="sidebar-tabs">
                 <ul role="tablist">
                     <li><a href="#ll-home" role="tab"><i class="fa fa-bars"></i></a></li>
-                    <li><a href="#ll-layer" role="tab"><i class="fa fa-layer-group"></i></a></li>
-                    <li><a href="#ll-marker" role="tab"><i class="fa fa-location-dot"></i></a></li>
-                    <li><a href="#ll-search" role="tab"><i class="fa fa-search"></i></a></li>
-                    <hr>
+                    <li v-if="$userId == map.owner_id">
+                        <a href="#ll-layer" role="tab">
+                            <i class="fa fa-layer-group"></i>
+                        </a>
+                    </li>
                     <li>
+                        <a href="#ll-marker" role="tab">
+                            <i class="fa fa-location-dot"></i>
+                        </a>
+                    </li>
+                    <li v-if="$userId == map.owner_id">
+                        <a href="#ll-search" role="tab">
+                            <i class="fa fa-search"></i>
+                        </a>
+                    </li>
+                    <hr v-if="$userId == map.owner_id">
+                    <li v-if="$userId == map.owner_id">
                         <a role="tab"
                         @click="createMarker()">
                             <i class="fa fa-plus"></i>
@@ -44,7 +56,8 @@
                                class="text-decoration-none">
                                 {{ marker.title }}
                             </a>
-                            <div class="tools">
+                            <div v-if="$userId == marker.owner_id"
+                                 class="tools">
                                 <i class="fa fa-pencil-alt" @click="edit(marker)"></i>
                                 <i class="text-danger fa fa-trash ml-2" @click="confirmItemDelete(marker)"></i>
                             </div>
@@ -149,8 +162,7 @@
                     </h1>
 
                     <div class="form-group "
-                         :class="form.errors.search ? 'has-error' : ''"
-                    >
+                         :class="form.errors.search ? 'has-error' : ''">
                         <label for="ll-search">{{ trans('global.search') }}</label>
                         <input
                             type="text" id="ll-search"
@@ -158,12 +170,10 @@
                             class="form-control"
                             v-model="search"
                             @keyup.enter="markerSearch"
-                            placeholder="Suchbegriff..."
-                        />
+                            placeholder="Suchbegriff..."/>
                         <p class="help-block" v-if="form.errors.search" v-text="form.errors.search[0]"></p>
                     </div>
                 </div>
-
             </div>
         </div>
 
@@ -175,6 +185,7 @@
             id="modal-marker-form"
             :method="method"
             :marker="marker"
+            :map="map"
         />
         <Modal
             :id="'deleteMarkerModal'"
@@ -244,21 +255,21 @@ export default {
         loader() {
             axios.get('/mapMarkerTypes')
                 .then(res => {
-                    this.mapMarkerTypes = res.data.mapMarkerTypes;
-                })
-                .catch(err => {
-                    console.log(err);
-                });
+                    this.mapMarkerTypes = res.data.mapMarkerTypes;axios.get('/mapMarkerCategories')
+                        .then(res => {
+                            this.mapMarkerCategories = res.data.mapMarkerCategories;
 
-            axios.get('/mapMarkerCategories')
-                .then(res => {
-                    this.mapMarkerCategories = res.data.mapMarkerCategories;
+                            this.initMap(); //! after makerTypes and Categories are loaded
+                            this.syncSelect2();
+                            this.loadMarkers();
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
                 })
                 .catch(err => {
                     console.log(err);
                 });
-            this.syncSelect2();
-            this.loadMarkers();
         },
         createMarker(method = 'post'){
             this.method = method;
@@ -288,6 +299,7 @@ export default {
                         ); // add marker to the clustergroup
                     });
                     this.mapCanvas.addLayer(this.clusterGroup); // add clustergroup to the map
+                    this.currentMarker = this.markers[0];
                 })
                 .catch(err => {
                     console.log(err);
@@ -367,7 +379,6 @@ export default {
             this.mapCanvas.addLayer(this.clusterGroup); // add clustergroup to the map
         },
         getCss(type, id){
-
             switch(type) {
                 case 'type':
                     let type_index = this.mapMarkerTypes.findIndex(type => type.id === id);
@@ -445,6 +456,7 @@ export default {
                         i => i.id === this.currentMarker.id
                     );
                     this.markers.splice(index, 1);
+                    this.loadMarkers();
                 })
                 .catch(err => {
                     console.log(err.response);
@@ -455,19 +467,60 @@ export default {
             this.method = 'patch';
             $('#modal-marker-form').modal('show');
         },
+        initMap(){
+            this.mapCanvas = L.map('map').setView([this.initialLatitude, this.initialLongitude], this.zoom);
+
+            // default icon-url throws an error (apparently a common problem)
+            // so we need to rebind the file-locations
+            delete Icon.Default.prototype._getIconUrl;
+            Icon.Default.mergeOptions({
+                iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+                iconUrl: require('leaflet/dist/images/marker-icon.png'),
+                shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+            });
+
+            // set OpenStreetMaps as tile-distributor
+            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(this.mapCanvas);
+
+
+            this.sidebar = L.control.sidebar('sidebar').addTo(this.mapCanvas);
+
+            this.bordersGroup = L.geoJSON().addTo(this.mapCanvas);
+
+            /*var overlays = {
+                'Landesgrenze anzeigen': this.bordersGroup
+            };
+
+            L.control.layers(null, overlays, {
+                collapsed: false
+            }).addTo(this.map);*/
+
+            this.getBorder();
+        }
     },
     mounted() {
         this.$eventHub.$on('edit_marker', (marker) => {
             this.edit(marker);
         });
 
+        this.$eventHub.$on('marker-added', (marker) => {
+            this.markers.push(marker);
+            this.loadMarkers();
+        });
+
         this.$eventHub.$on('marker-updated', (marker) => {
             let index = this.markers.findIndex(
-                i => i.id === this.currentMarker.id
+                i => i.id === marker.id
             );
+
             this.markers.splice(index, 1);
-            this.markers[index] = marker;
+            this.markers.push(marker);
+            //this.markers[index] = marker; //doesn't trigger change
+            this.loadMarkers();
         });
+
 
         if (this.map.initialLatitude){
             this.initialLatitude = this.map.initialLatitude;
@@ -484,37 +537,6 @@ export default {
         if (this.map.category_id){
             this.form.category_id = this.map.category_id;
         }
-
-        this.mapCanvas = L.map('map').setView([this.initialLatitude, this.initialLongitude], this.zoom);
-
-        // default icon-url throws an error (apparently a common problem)
-        // so we need to rebind the file-locations
-        delete Icon.Default.prototype._getIconUrl;
-        Icon.Default.mergeOptions({
-            iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-            iconUrl: require('leaflet/dist/images/marker-icon.png'),
-            shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
-        });
-
-        // set OpenStreetMaps as tile-distributor
-        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(this.mapCanvas);
-
-
-        this.sidebar = L.control.sidebar('sidebar').addTo(this.mapCanvas);
-
-        this.bordersGroup = L.geoJSON().addTo(this.mapCanvas);
-
-        /*var overlays = {
-            'Landesgrenze anzeigen': this.bordersGroup
-        };
-
-        L.control.layers(null, overlays, {
-            collapsed: false
-        }).addTo(this.map);*/
-
-        this.getBorder();
 
         this.loader();
     }

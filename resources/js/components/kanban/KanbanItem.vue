@@ -44,7 +44,7 @@
                         </div>
                     </div>
                 </div>
-                <div v-if="(!item.locked || $userId == item.owner_id) || $userId == kanban_owner_id "
+                <div v-if="((!item.locked && editable)|| $userId == item.owner_id) || $userId == kanban_owner_id "
                     class="float-right  py-0 px-1 mx-1 handle pointer" >
                     <i class="fa fa-arrows-up-down-left-right"
                        :style="{ 'text-color': textColor }"></i>

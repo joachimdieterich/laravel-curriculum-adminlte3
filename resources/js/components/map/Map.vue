@@ -255,22 +255,21 @@ export default {
         loader() {
             axios.get('/mapMarkerTypes')
                 .then(res => {
-                    this.mapMarkerTypes = res.data.mapMarkerTypes;
-                    this.initMap(); //! after makerTypes are loaded
-                })
-                .catch(err => {
-                    console.log(err);
-                });
+                    this.mapMarkerTypes = res.data.mapMarkerTypes;axios.get('/mapMarkerCategories')
+                        .then(res => {
+                            this.mapMarkerCategories = res.data.mapMarkerCategories;
 
-            axios.get('/mapMarkerCategories')
-                .then(res => {
-                    this.mapMarkerCategories = res.data.mapMarkerCategories;
+                            this.initMap(); //! after makerTypes and Categories are loaded
+                            this.syncSelect2();
+                            this.loadMarkers();
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
                 })
                 .catch(err => {
                     console.log(err);
                 });
-            this.syncSelect2();
-            this.loadMarkers();
         },
         createMarker(method = 'post'){
             this.method = method;

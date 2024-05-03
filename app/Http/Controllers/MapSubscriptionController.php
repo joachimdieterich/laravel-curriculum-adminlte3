@@ -67,8 +67,6 @@ class MapSubscriptionController extends Controller
         }
     }
 
-
-
     /**
      * Store a newly created resource in storage.
      *
@@ -95,7 +93,6 @@ class MapSubscriptionController extends Controller
             return ['subscription' => $map->subscriptions()->with('subscribable')->get()];
         }
     }
-
 
     /**
      * Update the specified resource in storage.

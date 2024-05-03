@@ -107,6 +107,8 @@ class MapController extends Controller
      */
     public function show(Map $map)
     {
+        abort_unless( $map->isAccessible(), 403); // don't use map_show -> bugfix for 403 problem on tokens.
+
         $map = Map::where('id', $map->id)
             ->with(['type', 'category'])
             ->get()

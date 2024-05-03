@@ -154,7 +154,6 @@ class KanbanItem extends Model
      */
     public function getEditorsIdsAttribute($commaSeparatedIds)
     {
-
         return explode(',', $commaSeparatedIds);
     }
 

@@ -203,6 +203,7 @@ return [
     ],
     'user_management' => 'Users',
     'users' => 'Users',
+    'select_users' => 'Select users',
     'user' => [
         'title' => 'Users',
         'title_singular' => 'User',
@@ -820,6 +821,7 @@ return [
         'delete' => 'Delete plan',
         'delete' => 'Should this plan and all its corresponding data be deleted?',
         'select_users' => 'Select users',
+        'evaluate_user' => 'Evaluate user',
         'fields' => [
             'type' => 'Type',
             'type_helper' => '',

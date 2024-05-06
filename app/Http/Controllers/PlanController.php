@@ -381,6 +381,34 @@ class PlanController extends Controller
         return ['entry_order' => $plan->entry_order];
     }
 
+    public function getUserAchievements(Plan $plan, $userId) {
+        $terminal = TerminalObjectiveSubscriptions::where('subscribable_type', 'App\\PlanEntry')
+            ->whereIn('subscribable_id', $plan->entry_order)
+            ->with([
+                'terminalObjective.enablingObjectives',
+                'terminalObjective.enablingObjectives.achievements' => function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                },
+            ])
+            ->get();
+
+        $enabling = EnablingObjectiveSubscriptions::where('subscribable_type', 'App\\PlanEntry')
+            ->where('subscribable_id', $plan->entry_order)
+            ->with([
+                'enablingObjective', 
+                'enablingObjective.achievements'=> function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                },
+            ])
+            ->get();
+        return [
+            'achievements' => [
+                'terminal' => $terminal,
+                'enabling' => $enabling,
+            ]
+        ];
+    }
+
     protected function validateRequest()
     {
         return request()->validate([

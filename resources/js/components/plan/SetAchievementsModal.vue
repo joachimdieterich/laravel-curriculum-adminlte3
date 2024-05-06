@@ -32,15 +32,14 @@
                 <table
                     id="achievements-table"
                     class="table m-0 border-top-0 dataTable"
-                    style="border-top: 0"
                     v-permission="'achievement_access'"
                 >
-                    <thead class="border-top-0">
+                    <thead>
                         <tr class="border-top-0">
-                            <th class="border-top-0" style="width: 0px;"></th>
-                            <th class="border-top-0">{{ trans('global.name') }}</th>
-                            <th class="border-top-0">{{ trans('global.notes') }}</th>
-                            <th class="border-top-0 sorting" @click="sortByStatus">Status</th>
+                            <th style="width: 0px;"></th>
+                            <th>{{ trans('global.name') }}</th>
+                            <th>{{ trans('global.notes') }}</th>
+                            <th class="sorting" @click="sortByStatus">Status</th>
                         </tr>
                     </thead>
                     <tbody>

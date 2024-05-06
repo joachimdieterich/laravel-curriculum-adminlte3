@@ -252,7 +252,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('plans/list', 'PlanController@list');
     Route::get('plans/getTypes', 'PlanController@getTypes');
     Route::get('plans/{plan}/copy', 'PlanController@copyPlan');
-    Route::put('plans/{plan}/syncEntriesOrder', 'PlanController@syncEntriesOrder')->name('plans.syncEntriesOrder');
+    Route::put('plans/{plan}/syncEntriesOrder', 'PlanController@syncEntriesOrder');
+    Route::get('plans/{plan}/getUserAchievements/{userId}', 'PlanController@getUserAchievements');
     Route::resource('plans', 'PlanController');
 
     Route::resource('planSubscriptions', 'PlanSubscriptionController');

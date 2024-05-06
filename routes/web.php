@@ -36,7 +36,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('absences', 'AbsenceController');
 
     Route::post('achievements', 'AchievementController@store');
-    Route::get('achievements/enabling/{id}', 'AchievementController@getEnablingAchievements');
+    Route::get('achievements/enabling', 'AchievementController@getEnablingAchievements');
 
     Route::post('artefacts/destroy', 'ArtefactController@destroySubscription');
     Route::resource('artefacts', 'ArtefactController');

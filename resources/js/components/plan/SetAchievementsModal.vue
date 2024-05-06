@@ -18,27 +18,24 @@
             style="margin-bottom: 0px !important; height: 100%;"
         >
             <div class="card-header">
-                <h3 class="card-title">
-                    {{ trans('global.plan.select_users') }}
-                </h3>
+                <h3 class="card-title">{{ trans('global.plan.select_users') }}</h3>
                 <div class="card-tools">
-                    <button type="button" class="btn btn-tool draggable" >
+                    <button type="button" class="btn btn-tool draggable">
                         <i class="fa fa-arrows-alt"></i>
                     </button>
                     <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
                         <i class="fa fa-times"></i>
                     </button>
-                 </div>
+                </div>
             </div>
             <div class="card-body overflow-auto">
                 <table
                     id="achievements-table"
                     class="table m-0 border-top-0 dataTable"
                     style="border-top: 0"
-                    v-if="this.users.length"
                     v-permission="'achievement_access'"
                 >
-                    <thead class=" border-top-0">
+                    <thead class="border-top-0">
                         <tr class="border-top-0">
                             <th class="border-top-0" style="width: 0px;"></th>
                             <th class="border-top-0">{{ trans('global.name') }}</th>
@@ -275,7 +272,7 @@ export default {
                 this.objective[id].achievements[0].status = selfStatus + status;
             });
 
-            this.$eventHub.$emit('new_achievements', this.objective.default.id);
+            this.$parent.updateAchievements(this.objective.default.id);
         },
         toggleUsers() {
             this.selectedUsers = this.checkAll

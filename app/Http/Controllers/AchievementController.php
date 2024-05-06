@@ -57,9 +57,11 @@ class AchievementController extends Controller
         return $achievement;
     }
 
-    public function getEnablingAchievements($id) {
+    public function getEnablingAchievements(Request $request) {
         return Achievement::where('referenceable_type', '=', 'App\EnablingObjective')
-            ->where('referenceable_id', '=', $id)->get();
+            ->where('referenceable_id', '=', $request->id)
+            ->whereIn('user_id', $request->users)
+            ->get();
     }
 
     /* calculate proper status id */

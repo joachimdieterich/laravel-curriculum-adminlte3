@@ -70,11 +70,11 @@
                     <i class="fas fa-id-card mr-2 fa-fw text-white"></i>{{ trans('global.myProfile') }}
                 </a>
             @endcan
-            @can('note_access')
+          {{--  @can('note_access')
                 <a href="{{ route("notes.index") }}" class="dropdown-item">
                     <i class="fa fa-sticky-note fa-fw mr-2 text-white"></i>{{ trans('global.note.title') }}
                 </a>
-            @endcan
+            @endcan--}}
             @if(auth()->user()->role()->id == 1)
                 <a href="{{ route("admin.index") }}" class="dropdown-item">
                     <i class="fa fa-cogs fa-fw mr-2 text-white"></i>{{ trans('global.config.title') }}

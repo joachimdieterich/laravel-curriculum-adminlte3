@@ -314,7 +314,7 @@ export default {
 } */
 @media print {
     .print-achievements { print-color-adjust: exact; }
-    .print-achievements >>> p { margin: 0px; }
+    .print-achievements >>> p { margin: 0px; mix-blend-mode: multiply; }
     .print-achievements >>> td { padding: 10px; }
     .print-achievements >>> tr:first-child,
     .print-achievements >>> tr:first-child td { border-top: 0px; }

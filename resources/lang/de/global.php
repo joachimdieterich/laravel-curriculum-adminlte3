@@ -213,6 +213,7 @@ return [
     ],
     'user_management' => 'Benutzerverwaltung',
     'users' => 'Benutzer',
+    'select_users' => 'Benutzer auswählen',
     'user' => [
         'title' => 'Benutzer',
         'title_singular' => 'Benutzer',
@@ -834,6 +835,7 @@ return [
         'delete' => 'Lern-/Arbeitsplan löschen',
         'delete_helper' => 'Soll der Lern-/Arbeitsplan sowie die zugehörigen Daten gelöscht werden?',
         'select_users' => 'Benutzer auswählen',
+        'evaluate_user' => 'Benutzer auswerten',
         'fields' => [
             'type' => 'Typ',
             'type_helper' => '',

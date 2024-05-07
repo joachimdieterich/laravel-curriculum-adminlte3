@@ -51,15 +51,17 @@ class AchievementController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__, auth()->user()->role()->id, (is_array($user_ids)) ? count($user_ids) : 1);
         // axios call?
         if (request()->wantsJson()) {
-            return ['message' => $achievement->status];
+            return ['message' => $achievement->status, 'id' => $achievement->id];
         }
 
         return $achievement;
     }
 
-    public function getEnablingAchievements($id) {
+    public function getEnablingAchievements(Request $request) {
         return Achievement::where('referenceable_type', '=', 'App\EnablingObjective')
-            ->where('referenceable_id', '=', $id)->get();
+            ->where('referenceable_id', '=', $request->id)
+            ->whereIn('user_id', $request->users)
+            ->get();
     }
 
     /* calculate proper status id */

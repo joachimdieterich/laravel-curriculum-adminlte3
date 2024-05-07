@@ -18,36 +18,32 @@
             style="margin-bottom: 0px !important; height: 100%;"
         >
             <div class="card-header">
-                <h3 class="card-title">
-                    {{ trans('global.plan.select_users') }}
-                </h3>
+                <h3 class="card-title">{{ trans('global.plan.select_users') }}</h3>
                 <div class="card-tools">
-                    <button type="button" class="btn btn-tool draggable" >
+                    <button type="button" class="btn btn-tool draggable">
                         <i class="fa fa-arrows-alt"></i>
                     </button>
                     <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
                         <i class="fa fa-times"></i>
                     </button>
-                 </div>
+                </div>
             </div>
             <div class="card-body overflow-auto">
                 <table
                     id="achievements-table"
                     class="table m-0 border-top-0 dataTable"
-                    style="border-top: 0"
-                    v-if="this.users.length"
                     v-permission="'achievement_access'"
                 >
-                    <thead class=" border-top-0">
+                    <thead>
                         <tr class="border-top-0">
-                            <th class="border-top-0" style="width: 0px;"></th>
-                            <th class="border-top-0">{{ trans('global.name') }}</th>
-                            <th class="border-top-0">{{ trans('global.notes') }}</th>
-                            <th class="border-top-0 sorting" @click="sortByStatus">Status</th>
+                            <th style="width: 0px;"></th>
+                            <th>{{ trans('global.name') }}</th>
+                            <th>{{ trans('global.notes') }}</th>
+                            <th class="sorting" @click="sortByStatus">Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr style="border-bottom: 2px solid #dee2e6;">
+                        <tr class="thick-line">
                             <td>
                                 <input
                                     type="checkbox"
@@ -196,7 +192,7 @@ export default {
          * @returns {Number} id of newly created achievement
          */
         async createAchievement(user_id) {
-            const objective_id = this.objective.id;
+            const objective_id = this.objective.default.id;
             const achievement = {
                 'referenceable_type': 'App\\EnablingObjective',
                 'referenceable_id': objective_id,
@@ -219,11 +215,11 @@ export default {
          * if there's no achievement, create one with unset status and get a new ID
          * @param {Number} user_id 
          */
-        openNotes(user_id) {
+        async openNotes(user_id) {
             let achievement_id = this.objective[user_id]?.achievements[0].id; // check if achievement exists
-            
+
             if (achievement_id === undefined) {
-                achievement_id = this.createAchievement(user_id);
+                achievement_id = await this.createAchievement(user_id);
             }
 
             this.$modal.show('note-modal', {
@@ -237,6 +233,7 @@ export default {
          * get achievement for every selected user or create one if not exists
          */
         async openSelectedNotes() {
+            if (this.selectedUsers.length === 0) return;
             // gets an object-structure like this { user_id: achievement_id | undefined }
             let achievements = {};
             let users = {};
@@ -274,7 +271,7 @@ export default {
                 this.objective[id].achievements[0].status = selfStatus + status;
             });
 
-            this.$eventHub.$emit('new_achievements', this.objective.default.id);
+            this.$parent.updateAchievements(this.objective.default.id);
         },
         toggleUsers() {
             this.selectedUsers = this.checkAll
@@ -287,3 +284,8 @@ export default {
     }
 }
 </script>
+<style scoped>
+.thick-line > td {
+    border-bottom: 2px solid #dee2e6;
+}
+</style>

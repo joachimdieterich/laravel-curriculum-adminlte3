@@ -150,10 +150,16 @@ export default {
                 this.$modal.show('set-achievements-modal', { 'objective': this.objective });
             }
         },
-        updateAchievements() {
+        updateAchievements(users) {
             // send a request to fetch new achievements
-            axios.get('/achievements/enabling/' + this.objective.id)
-                .then(response => this.objective.achievements = response.data);
+            axios.get('/achievements/enabling', {
+                params: {
+                    id: this.objective.id,
+                    users: users.map(user => user.id),
+                }
+            }).then(response => {
+                    this.objective.achievements = response.data
+                });
         }
     },
     computed: {

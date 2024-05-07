@@ -179,7 +179,7 @@
                                         <small class="badge badge-secondary">{{ users[item.notable.user_id] }}</small>
                                     </div>
                                 </div>
-                                <div style="flex: 1;">
+                                <div class="d-inline-flex align-items-center justify-content-end" style="height: fit-content;">
                                     <small class="text-muted pull-right">
                                         <i v-if="hover == item.id"
                                             class="text-danger fa fa-trash pointer"
@@ -200,7 +200,7 @@
                                     </small>
                                 </div>
                             </div>
-                            <span v-html="item.content"></span>
+                            <span class="note-content" v-html="item.content"></span>
                         </span>
                         <span :class="'note_editor_placeholder_'+item.id"></span>
                     </div>
@@ -449,3 +449,12 @@ export default {
     }
 }
 </script>
+<style>
+.note-content p {
+    /* truncates text down to 1 line */
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+</style>

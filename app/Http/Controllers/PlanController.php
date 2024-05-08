@@ -223,7 +223,7 @@ class PlanController extends Controller
         // subscribe embedded media
         checkForEmbeddedMedia($plan, 'description');
 
-        return redirect($plan->path());
+        return ['plan' => $plan];
     }
 
     /**

@@ -10,7 +10,7 @@
         @before-close="beforeClose()"
         style="z-index: 1100"
     >
-        <div class="card h-100 mb-0" style="max-height: 100svh;">
+        <div class="card mb-0" style="max-height: 100svh;">
             <div class="card-header">
                 <h3 class="card-title">{{ trans('global.plan.select_users') }}</h3>
                 <div class="card-tools">

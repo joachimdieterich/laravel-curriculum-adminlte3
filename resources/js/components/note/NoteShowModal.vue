@@ -9,7 +9,7 @@
         style="z-index: 1300"
         :styles="{ transform: 'translateX(10px)' }"
     >
-        <div class="card h-100 mb-0">
+        <div class="card mb-0" style="max-height: 90svh;">
             <div class="card-header">
                 <h3 class="card-title">
                     {{ note.title }}
@@ -26,7 +26,6 @@
 
             <div v-html="note.content"
                 class="card-body overflow-auto"
-                style="max-height: 80vh;"
             ></div>
 
             <div class="card-footer">

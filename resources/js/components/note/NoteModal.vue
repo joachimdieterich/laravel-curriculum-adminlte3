@@ -8,7 +8,7 @@
         @before-open="beforeOpen"
         style="z-index: 1200"
     >
-        <div class="card h-100 mb-0" style="max-height: 100svh;">
+        <div class="card mb-0" style="max-height: 100svh;">
             <div class="card-header">
                 <h3 class="card-title">
                     {{ trans('global.notes') }}

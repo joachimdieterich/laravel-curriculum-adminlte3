@@ -109,19 +109,7 @@ class PlanController extends Controller
      */
     public function create()
     {
-        abort_unless(\Gate::allows('plan_create'), 403);
-
-        $plan = new Plan();
-        $types = PlanType::whereIn('id',
-                explode(
-                    ',',
-                    \App\Config::where('key', 'availablePlanTypes')->get()->first()->value
-                )
-            )->get();
-
-        return view('plans.create')
-                ->with(compact('types'))
-                ->with(compact('plan'));
+        abort(405);
     }
 
     /**

@@ -3,10 +3,7 @@
         id="set-achievements-modal"
         name="set-achievements-modal"
         height="auto"
-        :minWidth="400"
-        :minHeight="400"
         :adaptive=true
-        :resizable=true
         draggable=".draggable"
         @before-open="beforeOpen"
         @opened="opened()"

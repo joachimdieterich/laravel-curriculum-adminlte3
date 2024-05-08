@@ -4,7 +4,6 @@
         name="note-modal"
         height="auto"
         :adaptive=true
-        :resizable=true
         draggable=".draggable"
         @before-open="beforeOpen"
         style="z-index: 1200"

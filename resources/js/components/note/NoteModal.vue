@@ -4,14 +4,12 @@
         name="note-modal"
         height="auto"
         :adaptive=true
-        draggable=".draggable"
         :resizable=true
+        draggable=".draggable"
         @before-open="beforeOpen"
         style="z-index: 1200"
     >
-        <div class="card"
-             style="margin-bottom: 0 !important"
-        >
+        <div class="card h-100 mb-0" style="max-height: 100svh;">
             <div class="card-header">
                 <h3 class="card-title">
                     {{ trans('global.notes') }}
@@ -30,12 +28,15 @@
                     </button>
                 </div>
             </div>
-
-            <notes :notable_type="notable_type"
-                   :notable_id="notable_id"
-                   :show_tabs="show_tabs"
-                   :users="users"
-            ></notes>
+            
+            <div class="card-body overflow-auto p-0">
+                <notes
+                    :notable_type="notable_type"
+                    :notable_id="notable_id"
+                    :show_tabs="show_tabs"
+                    :users="users"
+                ></notes>    
+            </div>
 
             <div class="card-footer">
                 <span class="pull-right">

@@ -4,15 +4,12 @@
         name="note-show-modal"
         height="auto"
         :adaptive=true
-        :scrollable="true"
         draggable=".draggable"
         @before-open="beforeOpen"
         style="z-index: 1300"
+        :styles="{ transform: 'translateX(10px)' }"
     >
-        <div
-            class="card"
-            style="margin-bottom: 0px !important; height: 100%;"
-        >
+        <div class="card h-100 mb-0">
             <div class="card-header">
                 <h3 class="card-title">
                     {{ note.title }}

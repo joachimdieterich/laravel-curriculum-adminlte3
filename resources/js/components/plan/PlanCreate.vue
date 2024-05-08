@@ -13,7 +13,8 @@
                         type="button"
                         class="close"
                         data-dismiss="modal"
-                        aria-label="Close">
+                        aria-label="Close"
+                    >
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -21,13 +22,14 @@
                 <div class="modal-body p-0">
                     <div class="card mb-0">
                         <div class="card-header border-bottom"
-                            data-card-widget="collapse">
+                            data-card-widget="collapse"
+                        >
                             <h5 class="card-title">
                                 Allgemein
                             </h5>
                         </div>
                         <div class="card-body pb-0">
-                            <div class="form-group ">
+                            <div class="form-group">
                                 <Select2
                                     id="type_id"
                                     :label="trans('global.plan.fields.type') + ' *'"
@@ -38,7 +40,7 @@
                                     :placeholder="trans('global.pleaseSelect')"
                                     @selectedValue="(id) => this.form.type_id = id"
                                 ></Select2>
-                                <p v-if="errors.type_id == true" class="error-block">
+                                <p v-if="errors.type_id == true" class="error-block" style="margin-top: -0.75rem;">
                                     {{ trans('validation.required') }}
                                 </p>
                             </div>
@@ -47,8 +49,8 @@
                                 <color-picker-input
                                     style="height: 42px;"
                                     class="input-group-prepend"
-                                    v-model="form.color">
-                                </color-picker-input>
+                                    v-model="form.color"
+                                ></color-picker-input>
                                 <input
                                     type="text"
                                     id="title"
@@ -127,7 +129,8 @@
 
                     <div class="card mb-0">
                         <div class="card-header  border-bottom"
-                            data-card-widget="collapse">
+                            data-card-widget="collapse"
+                        >
                             <h5 class="card-title">
                                 Berechtigungen
                             </h5>
@@ -141,7 +144,8 @@
                                     class="custom-control-input pt-1 "
                                 />
                                 <label class="custom-control-label font-weight-light"
-                                    for="allow_copy">
+                                    for="allow_copy"
+                                >
                                     {{ trans('global.plan.allow_copy') }}
                                 </label>
                             </span>
@@ -248,10 +252,21 @@ export default {
                 }
             }
             // needs to be set separately, because select2
-            this.errors['type_id'] = this.form.type_id == '';
+            if (this.form.type_id == '') {
+                this.errors['type_id'] = true;
+                filledOut = false;
+            } else {
+                this.errors["type_id"] = false;
+            }
             
             return filledOut;
         },
+    },
+    mounted() {
+        $('#modal-plan-form').on('hidden.bs.modal', () => {
+            // reset errors to hide error-blocks
+            Object.keys(this.errors).forEach(key => this.errors[key] = false);
+        });
     },
     watch: {
         plan: function(newVal, oldVal) {

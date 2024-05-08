@@ -5,14 +5,12 @@
         height="auto"
         :adaptive=true
         draggable=".draggable"
-        :resizable=true
         @before-open="beforeOpen"
         @opened="opened"
         @before-close="beforeClose"
         style="z-index: 1100;"
     >
-        <div class="card"
-             style="margin-bottom: 0px !important">
+        <div class="card mb-0">
             <div class="card-header">
                 <h3 class="card-title">
                     <i class="fa fa-share-alt text-secondary mr-3"></i>{{ trans('global.share') }}
@@ -250,6 +248,10 @@ export default {
             this.loadSubscribers();
         },
         beforeClose() {
+            if (this.modelUrl == 'plan') {
+                //? if there's a better method to update the users in a plan after subscribing, remove this
+                this.$eventHub.$emit('update_users');
+            }
         },
         opened() {
             this.initSelect2();
@@ -287,54 +289,56 @@ export default {
                 }).on('select2:select', function (e) {
                     this.subscribe('App\\User', e.params.data.id, this.modelId);
                 }.bind(this));
-                $("#groups").select2({
-                    dropdownParent: $(".v--modal-overlay"),
-                    allowClear: false,
-                    ajax: {
-                        url: "/groups",
-                        dataType: 'json',
-                        data: function(params) {
-                            return {
-                                term: params.term || '',
-                                page: params.page || 1
-                            }
-                        },
-                        cache: true
+
+            $("#groups").select2({
+                dropdownParent: $(".v--modal-overlay"),
+                allowClear: false,
+                ajax: {
+                    url: "/groups",
+                    dataType: 'json',
+                    data: function(params) {
+                        return {
+                            term: params.term || '',
+                            page: params.page || 1
+                        }
                     },
-                }).on('select2:open', () => {
-                    document.querySelector('.select2-search__field').focus();
-                }).on('select2:select', function (e) {
-                    this.subscribe('App\\Group', e.params.data.id, this.modelId);
-                }.bind(this));
-                $("#organizations").select2({
-                    dropdownParent: $(".v--modal-overlay"),
-                    allowClear: false,
-                    ajax: {
-                        url: "/organizations",
-                        dataType: 'json',
-                        data: function(params) {
-                            return {
-                                term: params.term || '',
-                                page: params.page || 1
-                            }
-                        },
-                        cache: true
+                    cache: true
+                },
+            }).on('select2:open', () => {
+                document.querySelector('.select2-search__field').focus();
+            }).on('select2:select', function (e) {
+                this.subscribe('App\\Group', e.params.data.id, this.modelId);
+            }.bind(this));
+
+            $("#organizations").select2({
+                dropdownParent: $(".v--modal-overlay"),
+                allowClear: false,
+                ajax: {
+                    url: "/organizations",
+                    dataType: 'json',
+                    data: function(params) {
+                        return {
+                            term: params.term || '',
+                            page: params.page || 1
+                        }
                     },
-                }).on('select2:open', () => {
-                    document.querySelector('.select2-search__field').focus();
-                }).on('select2:select', function (e) {
-                    this.subscribe('App\\Organization', e.params.data.id, this.modelId);
-                }.bind(this));
-            },
-            async subscribe(subscribable_type, subscribable_id, model_id) {
-                try {
-                    this.subscribers.subscriptions = (await axios.post('/' + this.modelUrl + 'Subscriptions', {
-                        'model_id': model_id,
-                        'subscribable_type': subscribable_type,
-                        'subscribable_id': subscribable_id
-                    })).data.subscription;
-                } catch (error) {
-                    console.log(error);
+                    cache: true
+                },
+            }).on('select2:open', () => {
+                document.querySelector('.select2-search__field').focus();
+            }).on('select2:select', function (e) {
+                this.subscribe('App\\Organization', e.params.data.id, this.modelId);
+            }.bind(this));
+        },
+        async subscribe(subscribable_type, subscribable_id, model_id) {
+            try {
+                this.subscribers.subscriptions = (await axios.post('/' + this.modelUrl + 'Subscriptions', {
+                    'model_id': model_id,
+                    'subscribable_type': subscribable_type,
+                    'subscribable_id': subscribable_id
+                })).data.subscription;
+            } catch (error) {
+                console.log(error);
             }
         },
         resetComponent() {

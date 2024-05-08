@@ -168,35 +168,7 @@ class PlanController extends Controller
     {
         abort_unless((\Gate::allows('plan_show') and $plan->isAccessible()), 403);
         $editable = $plan->isEditable();
-        $users = [];
-        
-        if ($editable) {
-            $subscriptions = $plan->subscriptions()->get()->toArray();
-            // get every user-id through all subscriptions
-            foreach ($subscriptions as $subscription) {
-                switch ($subscription['subscribable_type']) {
-                    case 'App\User':
-                        array_push($users, $subscription['subscribable_id']);
-                        break;
-                    case 'App\Group':
-                        $ids = Group::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray();
-                        $users = array_merge($users, $ids);
-                        break;
-                    case 'App\Organization':
-                        $ids = Organization::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray();
-                        $users = array_merge($users, $ids);
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            // duplicates have to be removed, because SQL will return the same entry multiple times
-            $users = array_unique($users, SORT_NUMERIC);
-
-            // get needed user-data through their ID
-            $users = User::select('id', 'firstname', 'lastname')->whereIn('id', $users)->get()->toArray();
-        }
+        $users = $editable ? $this->getUsers($plan) : [];
 
         if (request()->wantsJson()) {
             return [
@@ -278,7 +250,8 @@ class PlanController extends Controller
         $plan->delete();
     }
 
-    public function getTypes() {
+    public function getTypes()
+    {
         return getEntriesForSelect2ByModel("App\PlanType");
     }
 
@@ -368,6 +341,38 @@ class PlanController extends Controller
         return redirect('/plans');
     }
 
+    public function getUsers(Plan $plan)
+    {
+        $users = [];
+        $subscriptions = $plan->subscriptions()->get()->toArray();
+        // get every user-id through all subscriptions
+        foreach ($subscriptions as $subscription) {
+            switch ($subscription['subscribable_type']) {
+                case 'App\User':
+                    array_push($users, $subscription['subscribable_id']);
+                    break;
+                case 'App\Group':
+                    $ids = Group::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray();
+                    $users = array_merge($users, $ids);
+                    break;
+                case 'App\Organization':
+                    $ids = Organization::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray();
+                    $users = array_merge($users, $ids);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // duplicates have to be removed, because SQL will return the same entry multiple times
+        $users = array_unique($users, SORT_NUMERIC);
+
+        // get needed user-data through their ID
+        $users = User::select('id', 'firstname', 'lastname')->whereIn('id', $users)->get()->toArray();
+
+        return $users;
+    }
+
     public function syncEntriesOrder(Plan $plan)
     {
         abort_unless(auth()->user()->id == $plan->owner_id, 403);
@@ -381,7 +386,8 @@ class PlanController extends Controller
         return ['entry_order' => $plan->entry_order];
     }
 
-    public function getUserAchievements(Plan $plan, $userId) {
+    public function getUserAchievements(Plan $plan, $userId)
+    {
         $terminal = TerminalObjectiveSubscriptions::where('subscribable_type', 'App\\PlanEntry')
             ->whereIn('subscribable_id', $plan->entry_order)
             ->with([

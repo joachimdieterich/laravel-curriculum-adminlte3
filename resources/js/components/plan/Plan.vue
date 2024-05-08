@@ -9,7 +9,8 @@
                         v-can="'plan_edit'"
                         class="card-tools pr-2 no-print"
                     >
-                        <a v-if="!this.disabled" @click="openModal()" class="link-muted mr-3 px-1 pointer">
+                        <!-- users with edit-rights can see student-achievements -->
+                        <a v-if="this.editable" @click="openModal()" class="link-muted mr-3 px-1 pointer">
                             <i class="fa fa-chart-simple"></i>
                         </a>
                         <a onclick="window.print()" class="link-muted mr-3 px-1 pointer">
@@ -97,7 +98,7 @@ const PlanEntry =
 export default {
     props: {
         plan: [],
-        editable: {
+        editable: { // true => subscriber with edit-rights | plan-owner
             type: Boolean,
             default: false,
         },
@@ -109,7 +110,7 @@ export default {
             entry_order: [],
             subscriptions: {},
             search: '',
-            disabled: false,
+            disabled: true, // false => only plan-owner
             errors: {},
         }
     },
@@ -275,17 +276,26 @@ export default {
     },
     mounted() {
         localStorage.removeItem('user-datatable-selection'); // reset selection to prevent wrong inputs
-        this.disabled = this.$userId != this.plan.owner_id;
         this.loaderEvent();
-        this.$eventHub.$on('plan_entry_added', (entry) => {
-            this.handleEntryAdded(entry);
-        });
-        this.$eventHub.$on('plan_entry_updated', (e) => {
-            this.loaderEvent();
-        });
-        this.$eventHub.$on('plan_entry_deleted', (entry) => {
-            this.handleEntryDeleted(entry);
-        });
+
+        if (this.$userId == this.plan.owner_id) {
+            this.disabled = false;
+            // only listen to events if plan-owner
+            this.$eventHub.$on('plan_entry_added', (entry) => {
+                this.handleEntryAdded(entry);
+            });
+            this.$eventHub.$on('plan_entry_updated', (e) => {
+                this.loaderEvent();
+            });
+            this.$eventHub.$on('plan_entry_deleted', (entry) => {
+                this.handleEntryDeleted(entry);
+            });
+            this.$eventHub.$on('update_users', () => {
+                axios.get('/plans/' + this.plan.id + '/getUsers')
+                    .then(response => this.users = response.data);
+            });
+        }
+
     },
     computed: {
         columnDragOptions() {

@@ -71,9 +71,26 @@ class MapMarker extends Model
         )->where('subscribable_type', get_class($this));
     }
 
+    public function maps()
+    {
+        return $this->hasMany(Map::class,'category_id', 'category_id')->where('type_id', $this->type_id);
+    }
+
     public function mediaSubscriptions()
     {
         return $this->morphMany('App\MediumSubscription', 'subscribable');
+    }
+
+    public function isAccessible() //accessible yet for all
+    {
+        foreach ($this->maps AS $map)
+        {
+          if ($map->isAccessible())
+          {
+              return true;
+          }
+        }
+        return false;
     }
 
 }

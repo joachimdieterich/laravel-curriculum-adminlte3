@@ -353,18 +353,20 @@ export default {
         axios.get('/mapMarkerTypes')
             .then(res => {
                 this.mapMarkerTypes = res.data.mapMarkerTypes;
+
+                axios.get('/mapMarkerCategories')
+                    .then(res => {
+                        this.mapMarkerCategories = res.data.mapMarkerCategories;
+                        this.syncSelect2();
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
             })
             .catch(err => {
                 console.log(err);
             });
 
-        axios.get('/mapMarkerCategories')
-            .then(res => {
-                this.mapMarkerCategories = res.data.mapMarkerCategories;
-            })
-            .catch(err => {
-                console.log(err);
-            });
     }
 
 }

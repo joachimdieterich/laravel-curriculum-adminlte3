@@ -121,7 +121,7 @@ class LocalMediaAdapter implements MediaInterface
 
         /* check if User has access to model->medium_id*/
         $params = $this->validateRequest();
-        if ($params['model']) {
+        if (isset($params['model'])) {
             switch ($params['model']){
                 case 'Videoconference':
                 case 'Kanban':
@@ -270,6 +270,11 @@ class LocalMediaAdapter implements MediaInterface
                 }
                 break;
             case "App\PlanEntry":
+                if ($subscription->subscribable->isAccessible()) {
+                    return true;
+                }
+                break;
+            case "App\MapMarker":
                 if ($subscription->subscribable->isAccessible()) {
                     return true;
                 }

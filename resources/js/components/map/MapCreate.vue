@@ -61,8 +61,8 @@
                                     {{ trans('global.map.fields.description') }}
                                 </label>
                                 <textarea
-                                    id="description"
-                                    name="description"
+                                    id="map_description"
+                                    name="map_description"
                                     :placeholder="trans('global.map.fields.description')"
                                     class="form-control description my-editor "
                                     v-model.trim="form.description"
@@ -84,13 +84,13 @@
                                 <p class="help-block" v-if="form.errors?.tags" v-text="form.errors?.tags[0]"></p>
                             </div>
 
-                            <div v-if="this.mapMarkerTypes.length !== null"
+                            <div v-if="this.mapMarkerTypes?.length !== null"
                                  class="form-group">
-                                <label for="map_marker_type">
+                                <label for="map_marker_type_id">
                                     {{ trans('global.marker.fields.type') }}
                                 </label>
                                 <select
-                                    id="type_id"
+                                    id="map_marker_type_id"
                                     v-model="this.mapMarkerTypes[form.type_id]"
                                     class="form-control select2"
                                     style="width:100%;">
@@ -101,13 +101,13 @@
                                 </select>
                             </div>
 
-                            <div v-if="this.mapMarkerCategories.length !== null"
+                            <div v-if="this.mapMarkerCategories?.length !== null"
                                 class="form-group">
-                                <label for="map_marker_category">
+                                <label for="map_marker_category_id">
                                     {{ trans('global.category.title_singular') }}
                                 </label>
                                 <select
-                                    id="category_id"
+                                    id="map_marker_category_id"
                                     v-model="this.mapMarkerCategories[form.category_id]"
                                     class="form-control select2"
                                     style="width:100%;">
@@ -119,7 +119,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="map_marker_category">
+                                <label for="border_url">
                                     {{ trans('global.map.fields.border_url') }}
                                 </label>
                                 <input
@@ -261,6 +261,7 @@ export default {
             this.form.zoom = newVal.zoom;
             this.form.color = newVal.color;
             this.form.medium_id = newVal.medium_id;
+            tinyMCE.get('map_description').setContent(this.form.description);
             this.syncSelect2();
         },
         method: function (newVal, oldVal) {
@@ -278,6 +279,7 @@ export default {
     methods: {
         submit() {
             let method = this.method.toLowerCase();
+            this.form.description = tinyMCE.get('map_description').getContent();
             if (method === 'patch') {
                 axios.patch(this.requestUrl + '/' + this.form.id, this.form)
                     .then(res => { // Tell the parent component we've updated a task
@@ -297,8 +299,8 @@ export default {
             }
         },
         syncSelect2(){
-            $("#type_id").select2({
-                dropdownParent: $("#type_id").parent(),
+            $("#map_marker_type_id").select2({
+                dropdownParent: $("#map_marker_type_id").parent(),
                 allowClear: false
             }).on('select2:select', function (e) {
                 this.form.type_id = e.params.data.element.value
@@ -306,8 +308,8 @@ export default {
                 .val(this.form.type_id)
                 .trigger('change');
 
-            $("#category_id").select2({
-                dropdownParent: $("#category_id").parent(),
+            $("#map_marker_category_id").select2({
+                dropdownParent: $("#map_marker_category_id").parent(),
                 allowClear: false
             }).on('select2:select', function (e) {
                 this.form.category_id = e.params.data.element.value
@@ -331,26 +333,21 @@ export default {
         axios.get('/mapMarkerTypes')
             .then(res => {
                 this.mapMarkerTypes = res.data.mapMarkerTypes;
-                Vue.nextTick(function () {
-                    this.syncSelect2();
-                })
+
+                axios.get('/mapMarkerCategories')
+                    .then(res => {
+                        this.mapMarkerCategories = res.data.mapMarkerCategories;
+                        this.syncSelect2();
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
 
             })
             .catch(err => {
                 console.log(err);
             });
 
-        axios.get('/mapMarkerCategories')
-            .then(res => {
-                this.mapMarkerCategories = res.data.mapMarkerCategories;
-                Vue.nextTick(function () {
-                    this.syncSelect2();
-                })
-
-            })
-            .catch(err => {
-                console.log(err);
-            });
     }
 
 }

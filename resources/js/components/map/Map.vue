@@ -44,8 +44,8 @@
                         <span class="right badge badge-primary">{{ this.map.type.title }}</span>
                     </span>
 
-                    <p class="pt-2">
-                        {{ this.map.description}}
+                    <p class="pt-2"
+                    v-html="this.map.description">
                     </p>
 
                     <h5 class="pt-2">{{ trans('global.entries') }}</h5>
@@ -56,7 +56,7 @@
                                class="text-decoration-none">
                                 {{ marker.title }}
                             </a>
-                            <div v-if="$userId == marker.owner_id"
+                            <div v-if="$userId == marker.owner_id || $userId == map.owner_id"
                                  class="tools">
                                 <i class="fa fa-pencil-alt" @click="edit(marker)"></i>
                                 <i class="text-danger fa fa-trash ml-2" @click="confirmItemDelete(marker)"></i>
@@ -107,7 +107,9 @@
 
                 <div v-if="typeof this.currentMarker.ARTIKEL == 'undefined'"
                      class="sidebar-pane" id="ll-marker">
-                    <MarkerView :marker="this.currentMarker"/>
+                    <MarkerView
+                        :marker="this.currentMarker"
+                        :map="this.map"/>
                 </div>
                 <div v-else
                      class="sidebar-pane" id="ll-marker">

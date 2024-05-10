@@ -36,7 +36,7 @@
                 <td
                     class="py-2 link-muted text-sm pointer"
                     v-permission="'medium_create'"
-                    v-if="url == '/mediumSubscriptions'"
+                    v-if="url == '/mediumSubscriptions' && can_add_media == true"
                     @click="show('medium-create', subscription)"
                 >
                     <i class="fa fa-plus px-2 "></i> {{ trans('global.media.add')}}
@@ -111,6 +111,7 @@
     import License from '../uiElements/License'
     export default {
         props: {
+            can_add_media: false,
             subscription: {},
             subscribable_type: '',
             subscribable_id: '',

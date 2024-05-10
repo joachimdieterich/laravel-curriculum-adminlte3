@@ -98,11 +98,11 @@
 
                             <div v-if="this.mapMarkerTypes?.length != null"
                                  class="form-group">
-                                <label for="type_id">
+                                <label for="marker_type_id">
                                     {{ trans('global.marker.fields.type') }}
                                 </label>
                                 <select
-                                    id="type_id"
+                                    id="marker_type_id"
                                     v-model="this.mapMarkerTypes[form.type_id]"
                                     class="form-control select2"
                                     style="width:100%;">
@@ -115,11 +115,11 @@
 
                             <div v-if="this.mapMarkerCategories?.length != null"
                                 class="form-group">
-                                <label for="category_id">
+                                <label for="marker_category_id">
                                     {{ trans('global.category.title_singular') }}
                                 </label>
                                 <select
-                                    id="category_id"
+                                    id="marker_category_id"
                                     v-model="this.mapMarkerCategories[form.category_id]"
                                     class="form-control select2"
                                     style="width:100%;">
@@ -315,8 +315,8 @@ export default {
             }
         },
         syncSelect2(){
-            $("#type_id").select2({
-                dropdownParent: $("#type_id").parent(),
+            $("#marker_type_id").select2({
+                dropdownParent: $("#marker_type_id").parent(),
                 allowClear: false
             }).on('select2:select', function (e) {
                 this.form.type_id = e.params.data.element.value
@@ -324,8 +324,8 @@ export default {
                 .val(this.form.type_id)
                 .trigger('change');
 
-            $("#category_id").select2({
-                dropdownParent: $("#category_id").parent(),
+            $("#marker_category_id").select2({
+                dropdownParent: $("#marker_category_id").parent(),
                 allowClear: false
             }).on('select2:select', function (e) {
                 this.form.category_id = e.params.data.element.value
@@ -353,18 +353,20 @@ export default {
         axios.get('/mapMarkerTypes')
             .then(res => {
                 this.mapMarkerTypes = res.data.mapMarkerTypes;
+
+                axios.get('/mapMarkerCategories')
+                    .then(res => {
+                        this.mapMarkerCategories = res.data.mapMarkerCategories;
+                        this.syncSelect2();
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
             })
             .catch(err => {
                 console.log(err);
             });
 
-        axios.get('/mapMarkerCategories')
-            .then(res => {
-                this.mapMarkerCategories = res.data.mapMarkerCategories;
-            })
-            .catch(err => {
-                console.log(err);
-            });
     }
 
 }

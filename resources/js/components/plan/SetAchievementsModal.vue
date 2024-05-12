@@ -2,21 +2,15 @@
     <modal
         id="set-achievements-modal"
         name="set-achievements-modal"
-        height="60%"
-        :minWidth="300"
-        :minHeight="420"
+        height="auto"
         :adaptive=true
         draggable=".draggable"
-        :resizable=true
         @before-open="beforeOpen"
         @opened="opened()"
         @before-close="beforeClose()"
         style="z-index: 1100"
     >
-        <div
-            class="card"
-            style="margin-bottom: 0px !important; height: 100%;"
-        >
+        <div class="card mb-0" style="max-height: 100svh;">
             <div class="card-header">
                 <h3 class="card-title">{{ trans('global.plan.select_users') }}</h3>
                 <div class="card-tools">

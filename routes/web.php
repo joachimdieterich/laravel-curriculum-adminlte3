@@ -252,6 +252,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('plans/list', 'PlanController@list');
     Route::get('plans/getTypes', 'PlanController@getTypes');
     Route::get('plans/{plan}/copy', 'PlanController@copyPlan');
+    Route::get('plans/{plan}/getUsers', 'PlanController@getUsers');
     Route::put('plans/{plan}/syncEntriesOrder', 'PlanController@syncEntriesOrder');
     Route::get('plans/{plan}/getUserAchievements/{userId}', 'PlanController@getUserAchievements');
     Route::resource('plans', 'PlanController');

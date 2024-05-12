@@ -1,5 +1,5 @@
 <template >
-    <div>
+    <div class="py-2">
         <ul
             v-if="typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined'"
             class="nav nav-pills"
@@ -13,7 +13,7 @@
                     data-toggle="pill"
                     role="tab"
                 >
-                    <i class="fa fa-list-check pr-2"></i>Alle Pläne
+                    <i class="fa fa-list-check pr-2"></i>Alle Pl&auml;ne
                 </a>
             </li>
             <li class="nav-item">
@@ -24,7 +24,7 @@
                     data-toggle="pill"
                     role="tab"
                 >
-                    <i class="fa fa-user  pr-2"></i>Meine Pläne
+                    <i class="fa fa-user  pr-2"></i>Meine Pl&auml;ne
                 </a>
             </li>
             <li class="nav-item">

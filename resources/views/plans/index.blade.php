@@ -8,18 +8,6 @@
     <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
 @section('content')
-@can('plan_create')
-    <div style="margin-bottom: 10px;" class="row">
-        <div class="col-lg-12">
-            <a
-                id="add-plan"
-                class="btn btn-success"
-                href="{{ route("plans.create") }}">
-                {{ trans('global.plan.create') }}
-            </a>
-        </div>
-    </div>
-@endcan
 <plans></plans>
 {{-- <table id="plans-datatable" class="table table-hover datatable">
     <thead>

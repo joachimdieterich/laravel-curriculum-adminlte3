@@ -165,7 +165,7 @@ class PlanController extends Controller
                 'editable' => $editable,
             ];
         }
-        
+
         return view('plans.show')
             ->with(compact('plan', 'users', 'editable'));
     }
@@ -240,7 +240,15 @@ class PlanController extends Controller
 
     public function getTypes()
     {
-        return getEntriesForSelect2ByModel("App\PlanType");
+        $types = PlanType::whereIn('id',
+            explode(
+                ',',
+                \App\Config::where('key', 'availablePlanTypes')->get()->first()->value
+            )
+        );
+
+        return getEntriesForSelect2ByCollection($types); //only show planstypes defined in config
+        //return getEntriesForSelect2ByModel("App\PlanType");
     }
 
     public function copyPlan(Plan $plan)
@@ -306,7 +314,7 @@ class PlanController extends Controller
                     'end' => $training->end,
                     'owner_id' => $owner_id,
                 ]);
-                
+
                 TrainingSubscription::Create([
                     'training_id' => $newTraining->id,
                     'subscribable_type' => 'App\PlanEntry',
@@ -322,7 +330,7 @@ class PlanController extends Controller
         $newEntryOrder = array_map(function($entry_id) use (&$assocOrder) {
             return $assocOrder[$entry_id];
         }, $plan->entry_order);
-        
+
         $planCopy->entry_order = $newEntryOrder;
         $planCopy->save();
 
@@ -389,7 +397,7 @@ class PlanController extends Controller
         $enabling = EnablingObjectiveSubscriptions::where('subscribable_type', 'App\\PlanEntry')
             ->where('subscribable_id', $plan->entry_order)
             ->with([
-                'enablingObjective', 
+                'enablingObjective',
                 'enablingObjective.achievements'=> function ($query) use ($userId) {
                     $query->where('user_id', $userId);
                 },

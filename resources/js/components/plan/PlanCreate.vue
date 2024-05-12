@@ -161,7 +161,7 @@
                     >
                         {{ trans('global.cancel') }}
                     </button>
-                    <button 
+                    <button
                         type="button"
                         class="btn btn-primary"
                         @click="submit()"
@@ -193,7 +193,7 @@ export default {
             requestUrl: '/plans',
             form: new Form({
                 'id': '',
-                'type_id': '',
+                'type_id': 4,
                 'title':  '',
                 'description':  '',
                 'begin': '',
@@ -242,7 +242,7 @@ export default {
         checkRequired() {
             let filledOut = true;
             const fields = this.$el.querySelectorAll('[required]');
-            
+
             for (const field of fields) {
                 if (field.value.trim() === '') { // activate error-helper
                     this.errors[field.id] = true;
@@ -258,7 +258,7 @@ export default {
             } else {
                 this.errors["type_id"] = false;
             }
-            
+
             return filledOut;
         },
     },

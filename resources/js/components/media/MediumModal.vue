@@ -66,16 +66,9 @@
                 <div v-else-if="medium.description != ''"
                     v-html="medium.description"
                     class="text-muted text-sm p-2"></div>
-                <div v-if="mime(medium.mime_type) === 'embed'"
-                     style="height:500px">
-                    <iframe :src="scr" height="500" width="600" frameborder="0"></iframe>
-                </div>
-                <div v-else-if="mime(medium.mime_type) === 'img'">
-                    <img :src="scr" width="600"/>
-                </div>
-                <div v-else>
-                    - Please download file -
-                </div>
+                <mediumRenderer
+                    :medium="medium"
+                ></mediumRenderer>
             </div>
 
             <div class="card-footer">
@@ -108,6 +101,8 @@
 <script>
 const License =
     () => import('../uiElements/License');
+const mediumRenderer =
+    () => import('../media/MediaRenderer');
 //import License from '../uiElements/License'
     export default {
 
@@ -195,7 +190,8 @@ const License =
             },
         },
         components: {
-            License
+            License,
+            mediumRenderer
         }
 
     }

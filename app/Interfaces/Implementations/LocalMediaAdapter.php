@@ -125,6 +125,8 @@ class LocalMediaAdapter implements MediaInterface
             switch ($params['model']){
                 case 'Videoconference':
                 case 'Kanban':
+                case 'Map':
+                case 'MapMarker':
                     $class = 'App\\'.$params['model'];
                     $model = (new $class)::where('id',$params['model_id'] )->get()->first();
 

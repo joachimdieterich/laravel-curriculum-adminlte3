@@ -228,7 +228,7 @@
             },
         },
         mounted() {
-            this.$eventHub.$on('reload_objective', (e) => {
+            this.$eventHub.on('reload_objective', (e) => {
                 if (this.model.id == e.id) {
                     this.loader();
                 }

@@ -218,7 +218,7 @@
             }
         },
         mounted() {
-            this.$eventHub.$on('addMedia', (e) => {
+            this.$eventHub.on('addMedia', (e) => {
                 if (this.component_id == e.id) {
                     this.loader();
                 }

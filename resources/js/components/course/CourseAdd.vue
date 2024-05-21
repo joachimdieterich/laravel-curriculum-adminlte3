@@ -83,7 +83,7 @@ export default {
                     }
                 )
                 .then(res => {
-                    this.$eventHub.$emit("course-updated", res.data.message);
+                    this.$eventHub.emit("course-updated", res.data.message);
                 })
                 .catch(error => { // Handle the error returned from our request
                     console.log(error)
@@ -111,7 +111,7 @@ export default {
         },
     },
     mounted() {
-        this.$eventHub.$on('load_curricula', () => {
+        this.$eventHub.on('load_curricula', () => {
             this.initSelect2();
         });
     },

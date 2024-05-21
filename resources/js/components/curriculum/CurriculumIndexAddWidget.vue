@@ -54,7 +54,7 @@ export default {
        },
     },
     mounted() {
-        this.$eventHub.$on('edit_curriculum', (curriculum) => {
+        this.$eventHub.on('edit_curriculum', (curriculum) => {
             this.curriculum = curriculum;
             this.open('patch');
         });

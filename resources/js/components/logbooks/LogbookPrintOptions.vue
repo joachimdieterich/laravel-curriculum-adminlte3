@@ -114,10 +114,7 @@
 </style>
 <script>
 const DatePicker =
-    () => import('vue2-datepicker');
-//import DatePicker from 'vue2-datepicker';
-import 'vue2-datepicker/index.css';
-import 'vue2-datepicker/locale/de';
+    () => import('vue3-datepicker');
 
 export default {
     props: {

@@ -117,7 +117,7 @@ export default {
             this.tempId = kanbanId;
         },
         editKanban(kanban){
-            this.$eventHub.$emit('edit_kanban', kanban);
+            this.$eventHub.emit('edit_kanban', kanban);
             // window.location = "/kanbans/" + id + "/edit";
         },
         copy(){
@@ -146,7 +146,7 @@ export default {
         },
     },
     mounted() {
-        this.$eventHub.$emit('showSearchbar');
+        this.$eventHub.emit('showSearchbar');
 
         const parent = this;
 
@@ -172,10 +172,10 @@ export default {
 
         this.loaderEvent();
 
-        this.$eventHub.$on('filter', (filter) => {
+        this.$eventHub.on('filter', (filter) => {
             dt.search(filter).draw();
         });
-        this.$eventHub.$on('kanban-updated', (kanban) => {
+        this.$eventHub.on('kanban-updated', (kanban) => {
             const index = this.kanbans.findIndex(
                 k => k.id === kanban.id
             );

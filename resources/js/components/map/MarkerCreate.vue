@@ -294,7 +294,7 @@ export default {
             if (method === 'patch') {
                 axios.patch(this.requestUrl + '/' + this.form.id, this.form)
                     .then(res => { // Tell the parent component we've updated a task
-                        this.$eventHub.$emit("marker-updated", res.data.marker);
+                        this.$eventHub.emit("marker-updated", res.data.marker);
                     })
                     .catch(error => { // Handle the error returned from our request
                         console.log(error);
@@ -302,7 +302,7 @@ export default {
             } else {
                 axios.post(this.requestUrl, this.form)
                     .then(res => {
-                        this.$eventHub.$emit("marker-added", res.data.marker);
+                        this.$eventHub.emit("marker-added", res.data.marker);
                     })
                     .catch(error => { // Handle the error returned from our request
                         console.log(error)

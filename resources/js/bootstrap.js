@@ -1,4 +1,3 @@
-
 window._ = require('lodash');
 
 /**
@@ -13,10 +12,10 @@ try {
     window.$ = window.jQuery = require('jquery');
     require('bootstrap');
     require('admin-lte');
-    require('datatables.net');
+/*    require('datatables.net-vue3');
     require('datatables.net-bs4');
     require('datatables.net-responsive');
-    require('datatables.net-responsive-bs4');
+    require('datatables.net-responsive-bs4');*/
 
 } catch (e) {}
 
@@ -49,7 +48,7 @@ if (token) {
  * for events that are broadcast by Laravel. Echo and event broadcasting
  * allows your team to easily build robust real-time web applications.
  */
-import Echo from 'laravel-echo';
+/*import Echo from 'laravel-echo';
 if (process.env.MIX_PUSHER_APP_ACTIVE == 'true') {
     window.Pusher = require('pusher-js');
 
@@ -66,4 +65,12 @@ if (process.env.MIX_PUSHER_APP_ACTIVE == 'true') {
         wssPort: process.env.MIX_PUSHER_APP_WSSPORT,
         enableTransports: ['ws', 'wss']
     });
-}
+}*/
+
+/**
+ * Echo exposes an expressive API for subscribing to channels and listening
+ * for events that are broadcast by Laravel. Echo and event broadcasting
+ * allow your team to quickly build robust real-time web applications.
+ */
+
+import './echo';

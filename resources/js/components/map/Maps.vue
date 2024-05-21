@@ -172,7 +172,7 @@ export default {
             this.currentMap = map;
         },
         editMap(map){
-            this.$eventHub.$emit('edit_map', map);
+            this.$eventHub.emit('edit_map', map);
             //window.location = "/maps/" + map.id + "/edit";
         },
         shareMap(map){
@@ -243,13 +243,13 @@ export default {
           this.filter = urlFilter
         }
 
-        this.$eventHub.$on('filter', (filter) => {
+        this.$eventHub.on('filter', (filter) => {
             $('#map-datatable').DataTable().search(filter).draw();
         });
-        this.$eventHub.$on('map-added', (map) => {
+        this.$eventHub.on('map-added', (map) => {
             this.maps.push(map);
         });
-        this.$eventHub.$on('map-updated', (map) => {
+        this.$eventHub.on('map-updated', (map) => {
             //console.log(map);
             const index = this.maps.findIndex(
                 vc => vc.id === map.id

@@ -50,7 +50,7 @@ export default {
             this.thumbnail_medium_id = this.medium_id;
         }
         //set event_listener for thumbnail
-        this.$eventHub.$on('addMedia', (e) => {
+        this.$eventHub.on('addMedia', (e) => {
             if (this.id == e.id) {
                 this.thumbnail_medium_id = e.selectedMediumId;
             }

@@ -22,7 +22,6 @@ class OrganizationsController extends Controller
     public function index()
     {
 
-        // select2 request
         if (request()->wantsJson() and request()->has(['term', 'page'])) {
             if (is_admin()) {
                 return  getEntriesForSelect2ByModel(
@@ -52,32 +51,10 @@ class OrganizationsController extends Controller
             $organization_id_field = 'organization_id';
         }
 
-        $edit_gate = \Gate::allows('organization_edit');
-        $delete_gate = \Gate::allows('organization_delete');
-
         return DataTables::of($organizations)
             ->addColumn('status', function ($organizations) {
                 return $organizations->status->lang_de;
             })
-            ->addColumn('action', function ($organizations) use ($edit_gate, $delete_gate, $organization_id_field) {
-                $actions = '';
-                if ($edit_gate) {
-                    $actions .= '<a href="'.route('organizations.edit', $organizations->id).'"'
-                                    .'id="edit-organization-'.$organizations->$organization_id_field.'" '
-                                    .'class="btn p-1">'
-                                    .'<i class="fa fa-pencil-alt"></i>'
-                                    .'</a>';
-                }
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                                .'class="btn text-danger" '
-                                .'onclick="destroyDataTableEntry(\'organizations\','.$organizations->$organization_id_field.')">'
-                                .'<i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
-            })
-
             ->addColumn('check', '')
             ->setRowId($organization_id_field)
             ->setRowAttr([
@@ -127,12 +104,10 @@ class OrganizationsController extends Controller
             )
         );
 
-        // axios call?
         if (request()->wantsJson()) {
             return ['message' => $organization->path()];
         }
-        //dd($organization->path());
-        return redirect($organization->path());
+        //return redirect($organization->path());
     }
 
     /**
@@ -152,51 +127,10 @@ class OrganizationsController extends Controller
             ];
         }
         $status_definitions = StatusDefinition::all();
-
+        $organization = $organization->load('type', 'state', 'country');
         return view('organizations.show')
                 ->with(compact('organization'))
                 ->with(compact('status_definitions'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Organization $organization)
-    {
-        abort_unless(\Gate::allows('organization_edit'), 403);
-        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
-        $status_definitions = StatusDefinition::all();
-        $organization_types = OrganizationType::all();
-        $countries = Country::all();
-        $states = State::where('country', 'DE')->get();
-
-        return view('organizations.edit')
-            ->with(compact('organization'))
-            ->with(compact('countries'))
-            ->with(compact('states'))
-            ->with(compact('status_definitions'))
-            ->with(compact('organization_types'));
-    }
-
-    public function editAddress(Organization $organization)
-    {
-        abort_unless(\Gate::allows('organization_edit_address'), 403);
-        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
-
-        return view('organizations.editAddress')
-            ->with(compact('organization'));
-    }
-
-    public function editLmsUrl(Organization $organization)
-    {
-        abort_unless(\Gate::allows('organization_edit_address'), 403);
-        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
-
-        return view('organizations.editLmsUrl')
-            ->with(compact('organization'));
     }
 
     /**
@@ -220,17 +154,6 @@ class OrganizationsController extends Controller
             $clean_data['status_id'] = request()->status_id[0];  //hack to prevent array to string conversion
         }
 
-        $organization->update($clean_data);
-
-        return redirect($organization->path());
-    }
-
-    public function updateAddress(Organization $organization)
-    {
-        abort_unless(\Gate::allows('organization_edit_address'), 403);
-        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
-
-        $clean_data = $this->validateRequest();
         $organization->update($clean_data);
 
         return redirect($organization->path());

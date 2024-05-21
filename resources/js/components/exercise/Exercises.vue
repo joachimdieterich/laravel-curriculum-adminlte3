@@ -70,7 +70,7 @@
                                 {{ trans('global.invalid_form') }}
                             </div>
                         </div>
-    
+
                         <div class="form-group">
                             <textarea
                                 :id="'description'+component_id"
@@ -81,7 +81,7 @@
                             ></textarea>
                             <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
                         </div>
-                            
+
                         <div class="form-group">
                             <input
                                 type="number"
@@ -153,7 +153,7 @@ export default {
                 'eventHubCallbackFunctionParams': this.component_id,
             }
         );
-        this.$eventHub.$on('exercise_dones_added', (e) => {
+        this.$eventHub.on('exercise_dones_added', (e) => {
             this.loaderEvent();
         });
     },

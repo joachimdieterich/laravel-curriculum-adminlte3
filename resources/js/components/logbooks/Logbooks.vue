@@ -77,7 +77,7 @@ export default {
             this.tempId = logbookId;
         },
         editLogbook(logbook){
-            this.$eventHub.$emit('edit_logbook', logbook);
+            this.$eventHub.emit('edit_logbook', logbook);
             // window.location = "/logbooks/" + id + "/edit";
         },
         loaderEvent() {
@@ -121,12 +121,12 @@ export default {
     },
     mounted() {
         this.loaderEvent();
-        this.$eventHub.$emit('showSearchbar');
-        this.$eventHub.$on('filter', (filter) => {
+        this.$eventHub.emit('showSearchbar');
+        this.$eventHub.on('filter', (filter) => {
             this.search = filter;
             this.searchContent();
         });
-        this.$eventHub.$on('logbook-updated', (logbook) => {
+        this.$eventHub.on('logbook-updated', (logbook) => {
             const index = this.logbooks.findIndex(
                 lb => lb.id === logbook.id
             );

@@ -10,7 +10,7 @@
                    :class="checkLocalStorage('#meeting_' + meeting.id, '#meetingDates_' + date.id, 'active')"
                    @click="setActiveDate(date)"
                    data-toggle="tab">
-                    {{ date.title | truncate(10, '&nbsp;') }}
+                    {{ date.title }}
                 </a>
 
             </li>
@@ -47,7 +47,7 @@
                 <ul class="nav nav-pills"
                     id="AgendaNav">
                     <li class="nav-item pl-0 pr-2 pb-2 pt-2"
-                        @click="setLocalStorage('#meeting_date_' + date.id, '#subscribed_agenda_'+ date.id); $eventHub.$emit('reload_subscribed_agenda', date);"
+                        @click="setLocalStorage('#meeting_date_' + date.id, '#subscribed_agenda_'+ date.id); $eventHub.emit('reload_subscribed_agenda', date);"
                     >
                         <a class="nav-link text-sm"
                            :href="'#subscribed_agenda_' + date.id"

@@ -76,7 +76,7 @@ export default {
 
         },
         emitEvent(data){
-            this.$eventHub.$emit('external_add', {
+            this.$eventHub.emit('external_add', {
                 path:               data.content.url,
                 thumb_path:         data.preview.url,
                 medium_name:        data.name,

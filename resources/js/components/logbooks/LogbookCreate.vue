@@ -165,7 +165,7 @@ export default {
             if (method === 'patch') {
                 axios.patch(this.requestUrl + '/' + this.form.id, this.form)
                     .then(res => { // Tell the parent component we've updated a task
-                        this.$eventHub.$emit("logbook-updated", res.data.logbook);
+                        this.$eventHub.emit("logbook-updated", res.data.logbook);
                     })
                     .catch(error => { // Handle the error returned from our request
                         console.log(error);
@@ -174,7 +174,7 @@ export default {
                 axios.post(this.requestUrl, this.form)
                     .then(res => {
                         window.location = res.data.message;
-                        //this.$eventHub.$emit("logbook-added", res.data.message);
+                        //this.$eventHub.emit("logbook-added", res.data.message);
                     })
                     .catch(error => { // Handle the error returned from our request
                         console.log(error)
@@ -184,7 +184,7 @@ export default {
     },
     mounted() {
         // Set eventlistener for Media
-        this.$eventHub.$on('addMedia', (e) => {
+        this.$eventHub.on('addMedia', (e) => {
             if (this.component_id == e.id) {
                 this.form.medium_id = e.selectedMediumId;
                 if ( Array.isArray(this.form.medium_id))  {

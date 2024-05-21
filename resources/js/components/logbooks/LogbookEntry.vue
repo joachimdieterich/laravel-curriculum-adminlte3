@@ -376,7 +376,7 @@ export default {
             this.$refs.LmsPlugin.loaderEvent();
         });
 
-        this.$eventHub.$on('filter', (filter) => {
+        this.$eventHub.on('filter', (filter) => {
             // always case insensitive
             const content = (
                 this.$el.querySelector('.username').innerText + ' '

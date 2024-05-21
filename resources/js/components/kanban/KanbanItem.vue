@@ -281,11 +281,8 @@
 
 <script>
 import Form from "form-backend-validation";
-import DatePicker from 'vue2-datepicker';
-import 'vue2-datepicker/index.css';
-/*import kanbanTask from './KanbanTask';*/
-/*const kanbanTask =
-    () => import('./KanbanTask');*/
+import DatePicker from 'vue3-datepicker';
+
 const mediaCarousel =
     () => import('../media/MediaCarousel');
 const avatar =
@@ -419,7 +416,7 @@ export default {
             axios.get("/kanbanItems/" + this.item.id)
                 .then(res => {
                     //this.$emit("item-updated", res.data.message);
-                    this.$eventHub.$emit("item-updated", res.data.message);
+                    this.$eventHub.emit("item-updated", res.data.message);
                     //this.item = res.data.message;
                 })
                 .catch(err => {
@@ -457,12 +454,12 @@ export default {
         this.form = this.item;
         this.getEditors();
         //this.due_date = this.item.due_date;
-        this.$eventHub.$on('reload_kanban_item', (e) => {
+        this.$eventHub.on('reload_kanban_item', (e) => {
             if (this.item.id == e.id) {
                 this.reload();
             }
         });
-        this.$eventHub.$on('filter', (filter) => {
+        this.$eventHub.on('filter', (filter) => {
             // always case insensitive
             const content = this.$el.innerText.toLowerCase();
             const search = filter.toLowerCase();

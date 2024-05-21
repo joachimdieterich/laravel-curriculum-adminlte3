@@ -87,11 +87,7 @@ import Form from "form-backend-validation";
 const Select2 =
     () => import('../forms/Select2');
 const DatePicker =
-    () => import('vue2-datepicker');
-/*
-import Select2 from "../forms/Select2";
-import DatePicker from 'vue2-datepicker';*/
-import 'vue2-datepicker/index.css';
+    () => import('vue3-datepicker');
 
 export default {
     name: 'AgendaItemForm',
@@ -174,7 +170,7 @@ export default {
         ]);
     },
     created() {
-        this.$eventHub.$on('add_media_to_agenda_item', (e) => {
+        this.$eventHub.on('add_media_to_agenda_item', (e) => {
             if (this.form.id == e.id) {
                 this.form.medium_id = e.selectedMediumId;
             }

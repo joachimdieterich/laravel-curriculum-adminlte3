@@ -49,7 +49,7 @@ export default {
        open(method = 'post'){
            this.method = method;
            $('#modal-course-form').modal('show');
-           this.$eventHub.$emit('load_curricula');
+           this.$eventHub.emit('load_curricula');
        },
     },
     mounted() {},

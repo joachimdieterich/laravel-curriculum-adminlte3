@@ -15,47 +15,61 @@ if (! function_exists('getEntriesForSelect2ByModel')) {
      */
     function getEntriesForSelect2ByModel($model, $field = 'title', $oderby = 'title', $text = 'title', $id = 'id')
     {
+
         $input = request()->validate([
-            'page' => 'required|integer',
+            'page' => 'sometimes|integer',
             'term' => 'sometimes|string|max:255|nullable',
+            'selected' => 'sometimes|nullable',
         ]);
-        $page = $input['page'];
-        $resultCount = 25;
 
-        $offset = ($page - 1) * $resultCount;
 
-        $term = $input['term'];
+        if (request()->has('selected'))
+        {
+            //dump($input['selected']);
+            return response()->json($model::whereIn($id, (array)$input['selected'])->get()); //todo check for multiple selects
+        }
+        else
+        {
+            $page = $input['page'] ?? 1;
+            $resultCount = 25;
 
-        $count = Count($model::where(   // count all enties FIRST with filter to get pagination working
-            function ($query) use ($field, $term) {
-                foreach ((array)$field as $f) {
-                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
-                }
-            })
-            ->get());
+            $offset = ($page - 1) * $resultCount;
 
-        $entries = $model::where(
-            function ($query) use ($field, $term) {
-                foreach ((array)$field as $f) {
-                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
-                }
-            })
-            ->orderBy($oderby)
-            ->skip($offset)
-            ->take($resultCount)
-            ->get([$id, DB::raw($text . ' as text')]);
+            $term = $input['term'];
 
-        $endCount = $offset + $resultCount;
-        $morePages = $count > $endCount;
+            $count = Count($model::where(   // count all enties FIRST with filter to get pagination working
+                function ($query) use ($field, $term) {
+                    foreach ((array)$field as $f) {
+                        $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                    }
+                })
+                ->get());
 
-        $results = array(
-            "results" => $entries,
-            "pagination" => array(
-                "more" => $morePages
-            )
-        );
+            $entries = $model::where(
+                function ($query) use ($field, $term) {
+                    foreach ((array)$field as $f) {
+                        $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                    }
+                })
+                ->orderBy($oderby)
+                ->skip($offset)
+                ->take($resultCount)
+                ->get([DB::raw( $id . ' as id,' . $text . ' as text')]); //match given $text and $id to get proper values
 
-        return response()->json($results);
+            $endCount = $offset + $resultCount;
+            $morePages = $count > $endCount;
+
+            $results = array(
+                "results" => $entries,
+                "pagination" => array(
+                    "more" => $morePages
+                )
+            );
+
+            return response()->json($results);
+        }
+
+
     }
 }
 if (! function_exists('getEntriesForSelect2ByCollection'))

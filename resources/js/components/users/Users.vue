@@ -142,7 +142,7 @@ const Avatar =
 
         mounted() {
             this.loaderEvent();
-            this.$eventHub.$on('filter', (filter) => {
+            this.$eventHub.on('filter', (filter) => {
                 this.search = filter;
             })
         },

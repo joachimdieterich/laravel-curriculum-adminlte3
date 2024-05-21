@@ -13,6 +13,7 @@ class OrganizationTypesController extends Controller
     {
 
         if (request()->wantsJson()) {
+
             return getEntriesForSelect2ByModel(
                 "App\OrganizationType"
             );

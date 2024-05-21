@@ -206,7 +206,7 @@
                                                 {{ diffForHumans(thread.messages[0].created_at) }}
                                             </small>
                                       </span>
-                                      <span class="contacts-list-msg link-muted">{{thread.subject | truncate(27, '...')}}</span>
+                                      <span class="contacts-list-msg link-muted">{{thread.subject }}</span>
                                 </div>
                                 <!-- /.contacts-list-info -->
                             </a>

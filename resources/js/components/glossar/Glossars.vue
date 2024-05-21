@@ -78,7 +78,7 @@
                                      </span>
                                      <br>
                                      <small class="text-muted">
-                                        {{item.content.content | truncate(200, '...')}}
+                                        {{item.content.content }}
                                      </small>
                                  </span>
                              </li>

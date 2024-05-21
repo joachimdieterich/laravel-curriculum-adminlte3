@@ -10,7 +10,7 @@
             <div class="nav-item-box-image-size text-center bg-success">
                 <i class="fa fa-2x p-5 fa-plus nav-item-text text-white"></i>
             </div>
-    
+
             <span class="bg-white text-center p-1 overflow-auto nav-item-box">
                 <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
                     {{ trans('global.logbook.create') }}
@@ -51,7 +51,7 @@ export default {
        },
     },
     mounted() {
-        this.$eventHub.$on('edit_logbook', (logbook) => {
+        this.$eventHub.on('edit_logbook', (logbook) => {
             this.logbook = logbook;
             this.open('patch');
         });

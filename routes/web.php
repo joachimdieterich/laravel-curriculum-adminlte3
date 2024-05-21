@@ -225,11 +225,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('organizations/enrol', 'OrganizationsController@enrol')->name('organizations.enrol');
     Route::delete('organizations/expel', 'OrganizationsController@expel')->name('organizations.expel');
 
+
     Route::delete('organizations/massDestroy', 'OrganizationsController@massDestroy')->name('organizations.massDestroy');
     Route::get('organizations/list', 'OrganizationsController@list')->name('organizations.list');
-    Route::get('organizations/{organization}/edit/address', 'OrganizationsController@editAddress')->name('organizations.editAddress');
-    Route::get('organizations/{organization}/edit/lmsUrl', 'OrganizationsController@editLmsUrl')->name('organizations.editLmsUrl');
-    Route::patch('organizations/{organization}/address', 'OrganizationsController@updateAddress')->name('organizations.updateAddress');
     Route::resource('organizations', 'OrganizationsController');
 
     /* organizationtype */

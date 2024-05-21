@@ -140,13 +140,13 @@ export default {
         localStorage.removeItem('user-datatable-selection'); // reset selection to prevent wrong inputs
         this.disabled = this.$userId != this.plan.owner_id;
         this.loaderEvent();
-        this.$eventHub.$on('plan_entry_added', (e) => {
+        this.$eventHub.on('plan_entry_added', (e) => {
             this.handleEntryAdded(e);
         });
-        this.$eventHub.$on('plan_entry_updated', (e) => {
+        this.$eventHub.on('plan_entry_updated', (e) => {
             this.loaderEvent();
         });
-        this.$eventHub.$on('plan_entry_deleted', (e) => {
+        this.$eventHub.on('plan_entry_deleted', (e) => {
             this.handleEntryDeleted(e);
         });
     },

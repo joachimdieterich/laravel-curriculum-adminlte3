@@ -874,7 +874,7 @@ export default {
                 }, 1000);
             }
         },
-        timerCount: {
+        s: {
             handler(value) {
                 if (value > 0 && this.timerEnabled) {
                     setTimeout(() => {

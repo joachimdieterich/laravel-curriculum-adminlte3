@@ -94,7 +94,7 @@ export default {
                 }
             )
                 .then(res => {
-                    this.$eventHub.$emit("course-updated", res.data.message);
+                    this.$eventHub.emit("course-updated", res.data.message);
                 })
                 .catch(error => { // Handle the error returned from our request
                     console.log(error)
@@ -105,10 +105,10 @@ export default {
     mounted() {
         this.loaderEvent();
 
-        this.$eventHub.$on('filter', (filter) => {
+        this.$eventHub.on('filter', (filter) => {
             $('#course-datatable').DataTable().search(filter).draw();
         });
-        this.$eventHub.$emit('showSearchbar');
+        this.$eventHub.emit('showSearchbar');
 
         const parent = this;
         // checks if the datatable-data changes, to update the course-data

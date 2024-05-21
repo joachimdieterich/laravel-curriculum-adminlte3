@@ -1,116 +1,122 @@
 <template>
-    <modal
-        id="medium-modal"
-        name="medium-modal"
-        height="auto"
-        :adaptive=true
-        :scrollable=true
-        draggable=".draggable"
-        :resizable=true
-        @before-open="beforeOpen"
-        @before-close="beforeClose"
-        style="z-index: 1300">
-        <div class="card" style="margin-bottom: 0px !important">
-            <div class="card-header">
-                 <h3 class="card-title">
-                     <span v-if="edit == true">
-                         <input
-                             id="save-medium"
-                             type="text"
-                                v-model="medium.title"
-                         style="font-size: 1.1rem; font-weight: 400; border: 0; border-bottom: 1px; border-style:solid; margin: 0; width: 400px;"
-                         @keyup.enter="saveMedium()"/>
-                     </span>
-                     <span v-else>{{ medium.title }}</span>
+    <Transition name="modal">
+        <div v-if="show" class="modal-mask">
+            <div class="modal-container">
+                <div class="card-header">
+                    <h3 class="card-title">
+                         <span v-if="edit == true">
+                             <input
+                                 id="save-medium"
+                                 type="text"
+                                 v-model="medium.title"
+                                 style="font-size: 1.1rem; font-weight: 400; border: 0; border-bottom: 1px; border-style:solid; margin: 0; width: 400px;"
+                                 @keyup.enter="saveMedium()"/>
+                         </span>
+                        <span v-else>{{ medium.title }}</span>
+                    </h3>
 
-                 </h3>
+                    <div class="card-tools">
+                        <button v-can="'medium_edit'"
+                                v-if="edit == true"
+                                type="button"
+                                class="btn btn-tool text-success"
+                                @click="saveMedium()">
+                            <i class="fa fa-save"></i>
+                        </button>
+                        <button v-can="'medium_edit'"
+                                v-if="edit != true"
+                                type="button"
+                                class="btn btn-tool"
+                                @click="edit_title()">
+                            <i class="fa fa-pencil-alt"></i>
+                        </button>
+                        <button v-can="'medium_delete'"
+                                type="button"
+                                class="btn btn-tool"
+                                @click="del()">
+                            <i class="fa fa-trash text-danger"></i>
+                        </button>
+                        <button type="button"
+                                class="btn btn-tool draggable" >
+                            <i class="fa fa-arrows-alt"></i>
+                        </button>
+                        <button type="button"
+                                class="btn btn-tool"
+                                @click="$emit('close')">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
 
-                 <div class="card-tools">
-                     <button v-can="'medium_edit'"
-                             v-if="edit == true"
-                             type="button"
-                             class="btn btn-tool text-success"
-                             @click="saveMedium()">
-                         <i class="fa fa-save"></i>
-                     </button>
-                     <button v-can="'medium_edit'"
-                             v-if="edit != true"
-                             type="button"
-                             class="btn btn-tool"
-                             @click="edit_title()">
-                         <i class="fa fa-pencil-alt"></i>
-                     </button>
-                     <button v-can="'medium_delete'"
-                             type="button"
-                             class="btn btn-tool"
-                             @click="del()">
-                         <i class="fa fa-trash text-danger"></i>
-                     </button>
-                     <button type="button"
-                             class="btn btn-tool draggable" >
-                        <i class="fa fa-arrows-alt"></i>
-                     </button>
-                     <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
-                        <i class="fa fa-times"></i>
-                     </button>
-                 </div>
-            </div>
-            <div class="card-body"
-                 style="overflow-y: auto;padding:0;">
-                <div v-if="edit == true"
-                     class="p-2">
+                </div>
+
+                <div class="card-body"
+                     style="overflow-y: auto;padding:0;">
+                    <div v-if="edit == true"
+                         class="p-2">
                          <textarea
                              style="width:100%"
                              v-model="medium.description"/>
+                    </div>
+                    <div v-else-if="medium.description != ''"
+                         v-html="medium.description"
+                         class="text-muted text-sm p-2"></div>
+                    <div v-if="mime(medium.mime_type) === 'embed'"
+                         style="height:500px">
+                        <iframe :src="scr" height="500" width="600" frameborder="0"></iframe>
+                    </div>
+                    <div v-else-if="mime(medium.mime_type) === 'img'">
+                        <img :src="scr" width="600"/>
+                    </div>
+                    <div v-else>
+                        - Please download file -
+                    </div>
                 </div>
-                <div v-else-if="medium.description != ''"
-                    v-html="medium.description"
-                    class="text-muted text-sm p-2"></div>
-                <div v-if="mime(medium.mime_type) === 'embed'"
-                     style="height:500px">
-                    <iframe :src="scr" height="500" width="600" frameborder="0"></iframe>
-                </div>
-                <div v-else-if="mime(medium.mime_type) === 'img'">
-                    <img :src="scr" width="600"/>
-                </div>
-                <div v-else>
-                    - Please download file -
-                </div>
-            </div>
 
-            <div class="card-footer">
-                <license class="pull-left pr-2"
-                         :licenseId="medium.license_id">
-                </license>
-                 <span class="pull-right">
-                     <button type="button" class="btn btn-info" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
+                <div class="card-footer">
+                    <license class="pull-left pr-2"
+                             :licenseId="medium.license_id">
+                    </license>
+                    <span class="pull-right">
+                     <button type="button"
+                             class="btn btn-info"
+                             data-widget="remove"
+                             @click="$emit('close')">
+                         {{ trans('global.close') }}
+                     </button>
                      <button
                          v-if="medium.mime_type == 'url'"
                          class="btn btn-primary"
                          data-widget="remove"
-                         @click="close();window.open(medium.path, '_blank');">
-                         <a :href="scr" class="text-white text-decoration-none" target="_blank">{{ trans('global.open') }}</a>
+                         @click="$emit('close')">
+                         <a :href="scr"
+                            class="text-white text-decoration-none"
+                            target="_blank">
+                             {{ trans('global.open') }}
+                         </a>
                      </button>
                      <button
                          v-else
                          class="btn btn-primary"
                          data-widget="remove"
-                         @click="close();window.open(medium.path, '_blank');">
-                         <a :href="scr + '?download=true'" class="text-white text-decoration-none" target="_blank">{{ trans('global.downloadFile') }}/{{ trans('global.open') }}</a>
+                         @click="$emit('close')">
+                         <a :href="scr + '?download=true'"
+                            class="text-white text-decoration-none"
+                            target="_blank">
+                             {{ trans('global.downloadFile') }}/{{ trans('global.open') }}
+                         </a>
                      </button>
                 </span>
+                </div>
             </div>
-
         </div>
-    </modal>
+    </Transition>
+
 </template>
 
 <script>
-const License =
-    () => import('../uiElements/License');
-//import License from '../uiElements/License'
+import License from '../uiElements/License'
     export default {
-
+        props:{  show: Boolean },
         data() {
             return {
                 medium: [],
@@ -200,3 +206,55 @@ const License =
 
     }
 </script>
+
+<style>
+.modal-mask {
+    position: fixed;
+    z-index: 9998;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    transition: opacity 0.3s ease;
+}
+
+.modal-container {
+    max-width: 900px;
+    margin: auto;
+    padding: 0;
+    background-color: #fff;
+    border-radius: 2px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
+    transition: all 0.3s ease;
+}
+
+
+.modal-default-button {
+    float: right;
+}
+
+/*
+ * The following styles are auto-applied to elements with
+ * transition="modal" when their visibility is toggled
+ * by Vue.js.
+ *
+ * You can easily play with the modal transition by editing
+ * these styles.
+ */
+
+.modal-enter-from {
+    opacity: 0;
+}
+
+.modal-leave-to {
+    opacity: 0;
+}
+
+.modal-enter-from .modal-container,
+.modal-leave-to .modal-container {
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
+}
+</style>

@@ -75,7 +75,7 @@ export default {
     },
     methods: {
         editMarker(marker){
-            this.$eventHub.$emit('edit_marker', marker);
+            this.$eventHub.emit('edit_marker', marker);
         },
     },
 

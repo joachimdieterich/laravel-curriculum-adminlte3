@@ -128,8 +128,7 @@
 
 <script>
 import Form from 'form-backend-validation';
-import DatePicker from 'vue2-datepicker';
-import 'vue2-datepicker/index.css';
+import DatePicker from 'vue3-datepicker';
 /*import kanbanTask from "./KanbanTask";*/
 
 export default {

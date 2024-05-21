@@ -54,7 +54,7 @@ export default {
        },
     },
     mounted() {
-        this.$eventHub.$on('edit_map', (map) => {
+        this.$eventHub.on('edit_map', (map) => {
             this.map = map;
             this.open('patch');
         });

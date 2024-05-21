@@ -346,7 +346,7 @@ const Tests =
                 document.getElementById('searchbar').classList.remove('d-none');
             }
 
-            this.$eventHub.$on('course-updated', () => {
+            this.$eventHub.on('course-updated', () => {
                 this.loaderCourses()
             });
 

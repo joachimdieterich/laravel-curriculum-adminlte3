@@ -116,7 +116,7 @@
                 this.loader();
             })
 
-            this.$eventHub.$on('download', (medium) => {
+            this.$eventHub.on('download', (medium) => {
 
                 if (this.medium.id == medium.id) {
                     $("#loading_"+this.medium.id).show();

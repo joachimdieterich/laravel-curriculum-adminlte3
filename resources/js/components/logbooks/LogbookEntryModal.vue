@@ -74,8 +74,7 @@
 
 <script>
 import Form from 'form-backend-validation';
-import DatePicker from 'vue2-datepicker';
-import 'vue2-datepicker/index.css';
+import DatePicker from 'vue3-datepicker';
 
     export default {
         data() {
@@ -103,10 +102,10 @@ import 'vue2-datepicker/index.css';
                     this.form.end = this.time[1];
                     if (this.method === 'patch') {
                         this.new_entry = (await axios.patch('/logbookEntries/' + this.form.id, this.form)).data.message;
-                        this.$eventHub.$emit('updateLogbookEntry', this.new_entry);
+                        this.$eventHub.emit('updateLogbookEntry', this.new_entry);
                     } else {
                         this.new_entry = (await axios.post('/logbookEntries', this.form)).data.message;
-                        this.$eventHub.$emit('addLogbookEntry', this.new_entry);
+                        this.$eventHub.emit('addLogbookEntry', this.new_entry);
                     }
 
                     this.close();

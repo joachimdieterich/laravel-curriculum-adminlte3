@@ -522,13 +522,13 @@ export default {
     mounted() {
         // Listen for the 'Kanban' event in the 'Presence.App.Kanban' presence channel
         this.startPusher();
-        this.$eventHub.$on('reload_kanban_board', () => {
+        this.$eventHub.on('reload_kanban_board', () => {
             this.sync()
         });
-        this.$eventHub.$on('kanban-updated', () => {
+        this.$eventHub.on('kanban-updated', () => {
             window.location.href = '/kanbans/'+this.kanban.id;
         });
-        this.$eventHub.$on('item-updated', (item) => {
+        this.$eventHub.on('item-updated', (item) => {
             this.handleItemUpdated(item);
         });
     },
@@ -549,7 +549,7 @@ export default {
             this.autoRefresh = false;
         }
 
-        this.$eventHub.$emit('showSearchbar');
+        this.$eventHub.emit('showSearchbar');
     },
     computed: {
         textColor: function(){

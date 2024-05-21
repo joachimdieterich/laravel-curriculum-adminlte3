@@ -68,7 +68,7 @@ export default {
                     'subject_id' : e.params.data.id,
                 });
 
-                this.$eventHub.$emit('updateSubjectBadge', {
+                this.$eventHub.emit('updateSubjectBadge', {
                     entry_id: this.id,
                     subject_id: e.params.data.id,
                     title: e.params.data.text,

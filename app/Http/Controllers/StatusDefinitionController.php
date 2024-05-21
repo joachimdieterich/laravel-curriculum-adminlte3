@@ -13,16 +13,14 @@ class StatusDefinitionController extends Controller
      */
     public function index()
     {
-        if (request()->wantsJson() and request()->has(['term', 'page'])) {
+        if (request()->wantsJson()) {
             return getEntriesForSelect2ByModel("App\StatusDefinition", 'lang_de', 'lang_de', 'lang_de', 'status_definition_id');
         }
 
         $status_definitions = StatusDefinition::all();
-        // axios call?
+
         if (request()->wantsJson()) {
-            return [
-                'message' => $status_definitions,
-            ];
+            return $status_definitions;
         }
 
         return $status_definitions;

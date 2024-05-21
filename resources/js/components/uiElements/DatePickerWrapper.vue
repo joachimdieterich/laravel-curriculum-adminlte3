@@ -2,8 +2,7 @@
     <date-picker v-model="time" v-bind="$attrs"></date-picker>
 </template>
 <script>
-import Datepicker from 'vue2-datepicker';
-import 'vue2-datepicker/index.css';
+import Datepicker from 'vue3-datepicker';
 
 export default {
     data() {

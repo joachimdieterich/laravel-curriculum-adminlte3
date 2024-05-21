@@ -217,7 +217,7 @@
 </template>
 <script>
 import Form from "form-backend-validation";
-import DatePicker from 'vue2-datepicker';
+import DatePicker from 'vue3-datepicker';
 const Select2 =
     () => import('../forms/Select2');
 

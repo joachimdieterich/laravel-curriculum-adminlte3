@@ -99,7 +99,7 @@ export default {
             }
         },
         downloadMedium(item) {
-            this.$eventHub.$emit('download', item.medium);
+            this.$eventHub.emit('download', item.medium);
         },
         unlinkMedium(item) { //id of external reference and value in db
             axios.delete('/media/' + item.medium.id, {
@@ -110,7 +110,7 @@ export default {
             })
             .then(res => {
                 //console.log(res);
-                this.$eventHub.$emit('reload_kanban_item', { id: item.subscribable_id });
+                this.$eventHub.emit('reload_kanban_item', { id: item.subscribable_id });
                 this.subscriptions.splice(item, 1);
                 if (this.currentSlide == 0) {
                     $('#' + this.id).carousel('next');

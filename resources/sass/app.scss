@@ -5,9 +5,9 @@
 @import '~@fortawesome/fontawesome-free/scss/brands';
 
 // DataTables
-@import '~datatables.net-bs4/css/dataTables.bootstrap4.css';
-@import '~datatables.net-buttons-bs4/css/buttons.bootstrap4.css';
-@import '~datatables.net-select-bs4/css/select.bootstrap4.css';
+@import '~datatables.net-bs5/css/dataTables.bootstrap5.css';
+//@import '~datatables.net-buttons-bs5/css/buttons.bootstrap5.css';
+//@import '~datatables.net-select-bs5/css/select.bootstrap5.css';
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
@@ -34,7 +34,9 @@ body {
     color: #333;
 }
 
-.nav-sidebar .nav-link > .right:nth-child(2), .nav-sidebar .nav-link > p > .right:nth-child(2){
+.nav-sidebar .nav-link > .right:nth-child(2),
+.nav-sidebar .nav-link > p > .right:nth-child(2),
+.nav-link > i {
     right:0;
     padding-right: 10px;
 }
@@ -102,6 +104,9 @@ textarea {
 .select2 {
     max-width: 100%;
     width: 100%;
+}
+.dt-length {
+    float: right !important;
 }
 
 
@@ -177,4 +182,63 @@ tr:hover .vuehover {
             }
         }
     }
+}
+/*
+ * Modal
+ */
+
+.modal-mask {
+    position: fixed;
+    z-index: 9998;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    transition: opacity 0.3s ease;
+}
+
+.modal-container {
+    min-width: 50vh;
+    max-width: 100vh;
+    margin: auto;
+    padding: 0;
+    background-color: #fff;
+    border-radius: 2px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
+    transition: all 0.3s ease;
+}
+
+
+.modal-default-button {
+    float: right;
+}
+
+/*
+ * The following styles are auto-applied to elements with
+ * transition="modal" when their visibility is toggled
+ * by Vue.js.
+ *
+ * You can easily play with the modal transition by editing
+ * these styles.
+ */
+
+.modal-enter-from {
+    opacity: 0;
+}
+
+.modal-leave-to {
+    opacity: 0;
+}
+
+.modal-enter-from .modal-container,
+.modal-leave-to .modal-container {
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
+}
+
+.dataTablesWrapper {
+    width: 100%;
+    padding: 0px 15px;
 }

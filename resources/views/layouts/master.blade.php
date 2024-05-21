@@ -82,18 +82,18 @@
         <script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script>
         <script src="{{ mix('js/app.js') }}"></script>
         <script src="{{ asset('node_modules/mathjax/es5/tex-svg.js') }}"></script>
-        <script src="{{ asset('node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+<!--        <script src="{{ asset('node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
         <script src="{{ asset('node_modules/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
-        <script src="{{ asset('node_modules/datatables.net-select/js/dataTables.select.min.js') }}"></script>
+        <script src="{{ asset('node_modules/datatables.net-select/js/dataTables.select.min.js') }}"></script>-->
         <script src="{{ asset('node_modules/moment/js/moment.min.js') }}"></script>
         <script src="{{ asset('node_modules/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}"></script>
 
         <script>
-            $(function () {
+            /*$(function () {
                 let languages = {
                     'de': '{{ asset("datatables/i18n/German.json") }}',
                     'en': '{{ asset("datatables/i18n/English.json") }}',
-                    /* 'fr': '{{ asset("datatables/i18n/French.json") }}',*/
+                    /!* 'fr': '{{ asset("datatables/i18n/French.json") }}',*!/
                 };
                 $.extend(true, $.fn.dataTable.Buttons.defaults.dom.button, {className: 'btn-primary py-2 ml-1'})
 
@@ -103,7 +103,7 @@
                     language: {
                         url: languages.{{ app() -> getLocale() }},
                         searchPlaceholder: "{{ trans('global.search') }}",
-                        paginate: 
+                        paginate:
                         {
                             "first":      '<i class="fa fa-angle-double-left"></id>',
                             "last":       '<i class="fa fa-angle-double-right"></id>',
@@ -135,7 +135,7 @@
                     buttons: []
                 });
                 $.fn.dataTable.ext.classes.sPageButton = '';
-            });
+            });*/
 
             function setCurrentOrganization(selectBox) {
                 var op = selectBox.options[selectBox.selectedIndex];

@@ -457,11 +457,11 @@ export default {
         },
     },
     mounted() {
-        this.$eventHub.$on('edit_marker', (marker) => {
+        this.$eventHub.on('edit_marker', (marker) => {
             this.edit(marker);
         });
 
-        this.$eventHub.$on('marker-updated', (marker) => {
+        this.$eventHub.on('marker-updated', (marker) => {
             let index = this.markers.findIndex(
                 i => i.id === this.currentMarker.id
             );

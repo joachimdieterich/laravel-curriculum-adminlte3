@@ -53,7 +53,7 @@ export default {
        },
     },
     mounted() {
-        this.$eventHub.$on('edit_kanban', (kanban) => {
+        this.$eventHub.on('edit_kanban', (kanban) => {
             this.kanban = kanban;
             this.open('patch');
         });

@@ -38,7 +38,7 @@
                                 :owner_id="entry.owner_id"
                                 :editable="editable"
                             ></objectives>
-    
+
                             <Trainings
                                 :plan="plan"
                                 subscribable_type="App\PlanEntry"
@@ -167,7 +167,7 @@ export default {
         ] );
 
         // Set eventlistener for Media
-        this.$eventHub.$on('addMedia', (e) => {
+        this.$eventHub.on('addMedia', (e) => {
             if (this.component_id == e.id) {
                 this.form.medium_id = e.selectedMediumId;
                 if ( Array.isArray(this.form.medium_id))  {
@@ -195,7 +195,7 @@ export default {
         destroy(entry){
             axios.delete('/planEntries/'+entry.id)
                 .then(response => {
-                    this.$eventHub.$emit("plan_entry_deleted", entry);
+                    this.$eventHub.emit("plan_entry_deleted", entry);
                 })
                 .catch(e => {
                     console.log(e);
@@ -207,7 +207,7 @@ export default {
             if (method === 'patch') {
                 axios.patch(this.requestUrl + '/' + this.form.id, this.form)
                     .then(res => { // Tell the parent component we've updated a task
-                        this.$eventHub.$emit("plan_entry_updated", res.data.entry);
+                        this.$eventHub.emit("plan_entry_updated", res.data.entry);
                     })
                     .catch(error => { // Handle the error returned from our request
                         console.log(error);
@@ -215,7 +215,7 @@ export default {
             } else {
                 axios.post(this.requestUrl, this.form)
                     .then(res => { // Tell the parent component we've added a new task and include it
-                        this.$eventHub.$emit("plan_entry_added", res.data.entry);
+                        this.$eventHub.emit("plan_entry_added", res.data.entry);
                     })
                     .catch(error => { // Handle the error returned from our request
                         console.log(error);

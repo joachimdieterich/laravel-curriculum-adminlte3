@@ -92,7 +92,7 @@
             },
         },
         mounted() {
-            this.$eventHub.$on('filter', (filter) => {
+            this.$eventHub.on('filter', (filter) => {
                 this.search = filter;
             })
         },

@@ -128,7 +128,7 @@
                                         :data-target="'#contentCarousel_'+uid"
                                         :data-slide-to="index+1"
                                         @click="setSlide(index+1)">
-                                    {{item.content.content | truncate(200, '...')}}
+                                    {{item.content.content }}
                                  </small>
                              </span>
                          </li>

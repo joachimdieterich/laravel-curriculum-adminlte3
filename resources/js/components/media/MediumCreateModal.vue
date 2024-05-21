@@ -437,7 +437,7 @@ export default {
             }
             if (this.eventHubCallbackFunction) {
                 //console.log('eventHubCallbackFunction');
-                this.$eventHub.$emit(
+                this.$eventHub.emit(
                     this.eventHubCallbackFunction,
                     {
                         'id': this.eventHubCallbackFunctionParams,
@@ -585,7 +585,7 @@ export default {
     mounted() {
         this.reset();
 
-        this.$eventHub.$on('external_add', (form) => {
+        this.$eventHub.on('external_add', (form) => {
             this.externalAdd(form);
 
         });

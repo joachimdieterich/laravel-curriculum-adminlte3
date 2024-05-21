@@ -55,11 +55,11 @@ export default {
         },
         removeFilter() {
             this.filtered = false; // only throw this event once
-            this.$eventHub.$emit('filter', '');
+            this.$eventHub.emit('filter', '');
         },
         fireEvent() {
             this.filtered = true;
-            this.$eventHub.$emit('filter', this.filter);
+            this.$eventHub.emit('filter', this.filter);
         },
         clearSearch() {
             this.filter = '';
@@ -76,7 +76,7 @@ export default {
         }
     },
     mounted() {
-        this.$eventHub.$on('showSearchbar', () => this.$el.classList.remove('d-none'));
+        this.$eventHub.on('showSearchbar', () => this.$el.classList.remove('d-none'));
     },
     watch: {
         filter() { this.prepareEvent(); }

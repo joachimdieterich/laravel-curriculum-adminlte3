@@ -1,5 +1,6 @@
 <template >
     <div class="row">
+
         <div class="col-md-12 ">
             <ul v-if="typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined'"
                 class="nav nav-pills py-2" role="tablist">
@@ -61,15 +62,12 @@
                         <i class="fa fa-share-nodes  pr-2"></i>{{ trans('global.shared_by_me') }}
                     </a>
                 </li>
-
             </ul>
         </div>
 
-        <table id="curriculum-datatable" style="display: none;"></table>
-        <div id="curriculum-content" >
+        <div id="curriculum-content"
+             class="col-md-12 m-0">
             <div v-for="curriculum in curricula"
-                 v-if="(curriculum.title.toLowerCase().indexOf(search.toLowerCase()) !== -1)
-                || search.length < 3"
                  :id="curriculum.id"
                  v-bind:value="curriculum.id"
                  class="box box-objective nav-item-box-image pointer my-1 "
@@ -90,7 +88,7 @@
                     <div v-else
                          class="nav-item-box-image-size text-center"
                          :style="{backgroundColor: curriculum.color + ' !important'}">
-<!--                        <i class="fa fa-2x p-5 fa-video nav-item-text text-white"></i>-->
+<!--&lt;!&ndash;                        <i class="fa fa-2x p-5 fa-video nav-item-text text-white"></i>&ndash;&gt;-->
                     </div>
                     <span class="bg-white text-center p-1 overflow-auto nav-item-box">
                    <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
@@ -186,6 +184,16 @@
                 v-if="((this.filter == 'all' && typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined')|| this.filter  == 'owner') "
                 v-can="'curriculum_create'"/>
         </div>
+        <div id="curriculum-datatable-wrapper">
+            <DataTable
+                id="curriculum-datatable"
+                :columns="columns"
+                :options="options"
+                :ajax="url"
+                width="100%"
+                style="display:none; "
+            ></DataTable>
+        </div>
         <Modal
             :id="'curriculumModal'"
             css="danger"
@@ -194,11 +202,37 @@
             :ok_label="trans('global.curriculum.delete')"
             v-on:ok="destroy()"
         />
+        <button id="show-modal"
+                @click="this.showModal = true">
+            Show Modal
+        </button>
+
+        <Teleport to="body">
+            <MediumModal
+                :show="this.showModal"
+                @close="this.showModal = false"
+                ></MediumModal>
+        </Teleport>
+
+        <Teleport to="body">
+            <SubscribeModal
+                :params="this.showSubscribeParams"
+                :show="this.showSubscribeModal"
+                @close="this.showSubscribeModal = false"
+            ></SubscribeModal>
+        </Teleport>
+
     </div>
 </template>
 
 <script>
 import CurriculumIndexAddWidget from "./CurriculumIndexAddWidget";
+
+import DataTable from 'datatables.net-vue3';
+import DataTablesCore from 'datatables.net-bs5';
+DataTable.use(DataTablesCore);
+import MediumModal from "../media/MediumModal";
+import SubscribeModal from "../subscription/SubscribeModal";
 const Modal =
     () => import('./../uiElements/Modal');
 
@@ -212,10 +246,30 @@ export default {
             curricula: [],
             subscriptions: {},
             search: '',
+            showModal: false,
+            showSubscribeModal: false,
+            showSubscribeParams: {},
             url: '/curricula/list',
             errors: {},
             currentCurriculum: {},
-            filter: 'all'
+            filter: 'all',
+            columns: [
+                { title: 'id', data: 'id' },
+                { title: 'title', data: 'title', searchable: true},
+            ],
+            options : {
+                dom: 'tilpr',
+                pageLength: 10,
+                language: {
+                    url: '/datatables/i18n/German.json',
+                    paginate: {
+                        "first":      '<i class="fa fa-angle-double-left"></id>',
+                        "last":       '<i class="fa fa-angle-double-right"></id>',
+                        "next":       '<i class="fa fa-angle-right"></id>',
+                        "previous":   '<i class="fa fa-angle-left"></id>',
+                    },
+                },
+            },
         }
     },
     methods: {
@@ -224,47 +278,29 @@ export default {
             this.currentCurriculum = curriculum;
         },
         editCurriculum(curriculum){
-            this.$eventHub.$emit('edit_curriculum', curriculum);
-            //window.location = "/curricula/" + curriculum.id + "/edit";
+           this.$eventHub.emit('edit_curriculum', curriculum);
         },
         setOwner(curriculum){
             window.location = "/curricula/" + curriculum.id + "/editOwner";
         },
         shareCurriculum(curriculum){
-            this.$modal.show('subscribe-modal', { 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false});
+            this.showSubscribeParams = { 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false};
+            this.showSubscribeModal = true;
+            //this.$modal.show('subscribe-modal', { 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false});
         },
         loaderEvent(){
+
             if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
                 this.url = '/curriculumSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
             } else {
                 this.url = '/curricula/list?filter=' + this.filter
             }
 
-            if ($.fn.dataTable.isDataTable( '#curriculum-datatable' )){
-                $('#curriculum-datatable').DataTable().ajax.url(this.url).load();
-            } else {
-                const dtObject = $('#curriculum-datatable').DataTable({
-                    ajax: this.url,
-                    dom: 'tilpr',
-                    pageLength: 50,
-                    language: {
-                        url: '/datatables/i18n/German.json',
-                        paginate: {
-                            "first":      '<i class="fa fa-angle-double-left"></id>',
-                            "last":       '<i class="fa fa-angle-double-right"></id>',
-                            "next":       '<i class="fa fa-angle-right"></id>',
-                            "previous":   '<i class="fa fa-angle-left"></id>',
-                        },
-                    },
-                    columns: [
-                        { title: 'id', data: 'id' },
-                        { title: 'title', data: 'title', searchable: true},
-                    ],
-                }).on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                    this.curricula = dtObject.rows({ page: 'current' }).data().toArray();
-                    $('#curriculum-content').insertBefore('#curriculum-datatable');
-                });
-            }
+            const dtObject = $('#curriculum-datatable').DataTable();
+            dtObject.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
+                this.curricula = dtObject.rows({page: 'current'}).data().toArray();
+                $('#curriculum-content').insertBefore('#curriculum-datatable-wrapper');
+            });
         },
         setFilter(filter){
             this.filter = filter;
@@ -285,6 +321,7 @@ export default {
         if (document.getElementById('searchbar') != null) {
             document.getElementById('searchbar').classList.remove('d-none');
         }
+        this.loaderEvent();
 
         const filters = ["all", "owner", "shared_with_me", "shared_by_me"];
         let url = new URL(window.location.href);
@@ -294,13 +331,13 @@ export default {
           this.filter = urlFilter
         }
 
-        this.$eventHub.$on('filter', (filter) => {
-            $('#curriculum-datatable').DataTable().search(filter).draw();
+        this.$eventHub.on('filter', (filter) => {
+            DataTable.search(filter).draw();
         });
-        this.$eventHub.$on('curriculum-added', (curriculum) => {
+        this.$eventHub.on('curriculum-added', (curriculum) => {
             this.loaderEvent();//this.curricula.push(curriculum);
         });
-        this.$eventHub.$on('curriculum-updated', (curriculum) => {
+        this.$eventHub.on('curriculum-updated', (curriculum) => {
             //console.log(curriculum);
             const index = this.curricula.findIndex(
                 vc => vc.id === curriculum.id
@@ -310,12 +347,14 @@ export default {
                 this.curricula[index][key] = value;
             }
         });
-        this.loaderEvent()
     },
 
     components: {
+        MediumModal,
         CurriculumIndexAddWidget,
-        Modal
+        Modal,
+        DataTable,
+        SubscribeModal
     },
 }
 </script>
@@ -336,3 +375,4 @@ export default {
     cursor: pointer;
 }
 </style>
+

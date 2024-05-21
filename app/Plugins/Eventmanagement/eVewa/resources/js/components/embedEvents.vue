@@ -16,7 +16,7 @@
                     type="text" id="search"
                     name="eventId"
                     class="form-control"
-                    v-model="search"
+                    value="search"
                     required
                     @keyup.enter="loader()"
                 />

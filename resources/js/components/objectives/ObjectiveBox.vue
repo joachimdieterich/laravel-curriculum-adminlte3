@@ -75,6 +75,7 @@ const Footer =
     import Footer from './Footer';*/
 
 export default {
+    objective_id: null, // identifier to update achievements
     props: {
         objective: {},
         objective_type_id: {},
@@ -129,7 +130,6 @@ export default {
             }
             this.$eventHub.$emit('deletedObjective', {'objective': this.objective, 'type': this.type});
         },
-
         async sortEvent(amount) {
             let objective = {
                 'id': this.objective.id,
@@ -150,7 +150,17 @@ export default {
                 this.$modal.show('set-achievements-modal', { 'objective': this.objective });
             }
         },
-
+        updateAchievements(users) {
+            // send a request to fetch new achievements
+            axios.get('/achievements/enabling', {
+                params: {
+                    id: this.objective.id,
+                    users: users.map(user => user.id),
+                }
+            }).then(response => {
+                    this.objective.achievements = response.data
+                });
+        }
     },
     computed: {
         background: function () {
@@ -227,6 +237,8 @@ export default {
         }.bind(this));
     },
     mounted() {
+        this.objective_id = this.objective.id;
+
         this.$nextTick(() => {
             MathJax.startup.defaultReady();
         })

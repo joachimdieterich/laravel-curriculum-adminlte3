@@ -2,7 +2,9 @@
     <div>
         <h1 class="sidebar-header  mb-3">
             {{ this.marker.title }}
-            <span v-can="'map_edit'" class="card-tools pl-2">
+            <span v-if="$userId == marker.owner_id || $userId == map.owner_id"
+                  v-can="'map_edit'"
+                  class="card-tools pl-2">
                 <a @click="editMarker(marker)" >
                     <i class="fa fa-pencil-alt"></i>
                 </a>
@@ -24,11 +26,11 @@
 
         <h5 class="pt-3">{{ trans('global.media.title') }}</h5>
         <div v-if="marker.id != null"
-             v-permission="'medium_access'"
              v-bind:id="'map_marker_media_'+marker.id">
             <media
                 subscribable_type="App\MapMarker"
                :subscribable_id="marker.id"
+                :can_add_media="$userId == marker.owner_id || $userId == map.owner_id"
                format="list"/>
         </div>
 
@@ -60,6 +62,9 @@ export default {
         marker: {
             default: null
         },
+        map: {
+            default: null
+        }
     },
     data() {
         return {

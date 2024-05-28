@@ -86,7 +86,7 @@ export default {
                     this.logbooks = response.data.data;
 
                     await nextTick();
-                    if (this.searchh != '') this.searchContent();
+                    if (this.search != '') this.searchContent();
                 })
                 .catch(e => {
                     this.errors = e.data.errors;
@@ -109,7 +109,7 @@ export default {
                     : 'none';
             }
         },
-        async destroy() {
+        destroy() {
             axios.delete('/logbooks/' + this.tempId)
                 .then(() => {
                     this.loaderEvent();

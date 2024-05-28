@@ -94,7 +94,7 @@
                     </div>
                 </div>
             </div>
-            <div v-if="(!status.locked || $userId == status.owner_id) || $userId == kanban.owner_id"
+            <div v-if="((!status.locked && editable)|| $userId == status.owner_id) || $userId == kanban.owner_id"
                  class="pull-right handle pointer">
                 <i class="fa fa-arrows-up-down-left-right text-muted"></i>
             </div>

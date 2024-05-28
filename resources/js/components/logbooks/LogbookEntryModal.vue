@@ -175,7 +175,8 @@ export default {
             this.$modal.hide('logbook-entry-modal');
         }
     },
-    mounted() {},
+    mounted() {
+    },
     components: {
         DatePicker
     },

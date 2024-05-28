@@ -147,6 +147,22 @@ tr:hover .vuehover {
     background-color: rgba(255, 255, 255, 0.9) !important;
 }
 
+.help-block {
+    display: block;
+    width: 100%;
+    margin-top: .25rem;
+    font-size: 80%;
+    color: #6c757d;
+}
+
+.error-block {
+    display: block;
+    width: 100%;
+    margin-top: .25rem;
+    font-size: 80%;
+    color: #dc3545;
+}
+
 @media only screen and (max-width: 400px) {
     div#searchbar > input {
         transition: .5s width, .5s padding !important;

@@ -147,7 +147,7 @@ class ObjectiveTypeController extends Controller
 
         $objectiveType->delete();
 
-        return back();
+        return redirect()->route('objectiveTypes.index');
     }
 
     protected function validateRequest()

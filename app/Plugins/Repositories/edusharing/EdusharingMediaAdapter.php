@@ -316,6 +316,8 @@ class EdusharingMediaAdapter implements MediaInterface
                 break;
             case "App\Kanban":
             case "App\Logbook":
+            case "App\Map":
+            case "App\MapMarker":
                     return $subscription->subscribable->isAccessible();
                 break;
             case "App\Curriculum":

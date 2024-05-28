@@ -123,7 +123,7 @@ export default {
          * combine enablingObjectives into their terminalObjective
          */
         checkSubscriptions() {
-            let subObj = {};
+            let subObj = [];
 
             if (this.terminalSubscriptions.length > 0) {
                 subObj = this.terminalSubscriptions;

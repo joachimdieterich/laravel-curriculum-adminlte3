@@ -58,6 +58,9 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
         Telescope::filter(function (IncomingEntry $entry) {
             if($entry->type == 'request' && !in_array($entry->content['response_status'],  explode(',', env("TELESCOPE_STATUS_FILTER", "200, 302")))){
                 return true;
+            } else if (in_array($entry->type, explode(',', env("TELESCOPE_STATUS_FILTER_TYPE", "dump,query")))) //store specific types
+            {
+                return true;
             }else {
                 return $entry->isReportableException() ||
                     $entry->isFailedRequest() ||

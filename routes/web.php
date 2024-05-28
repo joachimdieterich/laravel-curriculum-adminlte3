@@ -36,6 +36,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('absences', 'AbsenceController');
 
     Route::post('achievements', 'AchievementController@store');
+    Route::get('achievements/enabling', 'AchievementController@getEnablingAchievements');
 
     Route::post('artefacts/destroy', 'ArtefactController@destroySubscription');
     Route::resource('artefacts', 'ArtefactController');
@@ -173,6 +174,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('maps', 'MapController');
     Route::resource('mapMarkers', 'MapMarkerController');
+    Route::get('mapMarkerTypes/list', 'MapMarkerTypeController@list');
     Route::resource('mapMarkerTypes', 'MapMarkerTypeController');
     Route::resource('mapMarkerCategories', 'MapMarkerCategoryController');
 
@@ -248,7 +250,11 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::delete('plans/massDestroy', 'PlanController@massDestroy')->name('plans.massDestroy');
     Route::get('plans/list', 'PlanController@list');
-    Route::put('plans/{plan}/syncEntriesOrder', 'PlanController@syncEntriesOrder')->name('plans.syncEntriesOrder');
+    Route::get('plans/getTypes', 'PlanController@getTypes');
+    Route::get('plans/{plan}/copy', 'PlanController@copyPlan');
+    Route::get('plans/{plan}/getUsers', 'PlanController@getUsers');
+    Route::put('plans/{plan}/syncEntriesOrder', 'PlanController@syncEntriesOrder');
+    Route::get('plans/{plan}/getUserAchievements/{userId}', 'PlanController@getUserAchievements');
     Route::resource('plans', 'PlanController');
 
     Route::resource('planSubscriptions', 'PlanSubscriptionController');
@@ -357,6 +363,7 @@ if (env('GUEST_USER') !== null) {
     Route::get('videoconferences/{videoconference}/token', 'VideoconferenceController@getVideoconferenceByToken');
     Route::get('videoconferences/{videoconference}/startWithPw', 'VideoconferenceController@show');
     Route::get('kanbans/{kanban}/token', 'KanbanController@getKanbanByToken');
+    Route::get('maps/{map}/token', 'MapController@getMapByToken');
     Route::get('kanban/share/{token}', 'ShareTokenController@auth');
 
     Route::get('/guest', function () {

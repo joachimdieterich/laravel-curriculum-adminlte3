@@ -73,6 +73,7 @@ export default {
         togglePrintOptions() {
             this.showPrintOptions = !this.showPrintOptions;
         }
+
     },
     mounted() {
         this.entries = this.logbook.entries;
@@ -116,7 +117,7 @@ export default {
     components: {
         LogbookPrintOptions,
         LogbookEntry,
-        LogbookIndexAddWidget
+        LogbookIndexAddWidget,
     }
 }
 </script>

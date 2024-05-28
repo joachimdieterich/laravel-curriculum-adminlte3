@@ -16,6 +16,7 @@
             <div class="pointer"
                 :style="{ color: textColor }"
                 style="float: left;
+                position:fixed;
                 margin-top: -25px;
                 margin-left: -20px;"
                 @click="toggleFullscreen"
@@ -39,9 +40,10 @@
                     v-if="(status.visibility == true) || ($userId == status.owner_id )"
                     :key="'header_'+status.id"
                     class=" no-border pr-3"
-                    :style="'float:left; width:' + itemWidth + 'px;'"
+                    :style="'float:left; width:' + itemWidth + 'px; height: calc(100vh - 425px)'"
                 >
                     <KanbanStatus
+                        :style="'width:' + (itemWidth-16) + 'px;'"
                         :kanban="kanban"
                         :status="status"
                         :editable="editable"
@@ -49,12 +51,35 @@
                         v-on:status-destroyed="handleStatusDestroyedWithoutWebsocket"
                         filter=".ignore"
                     />
-                    <div style="margin-top:15px; bottom:0;overflow-y:scroll; z-index: 1"
+                    <div v-if="(editable == true) && (status.editable == true) || ( $userId == status.owner_id ) "
+                         v-show="newItem !== status.id"
+                         :id="'kanbanTopItemCreateButton_' + index"
+                         class="btn btn-flat py-2 w-100"
+                         @click="openForm('item', status.id)">
+                        <i class="text-white fa fa-2x fa-plus-circle"></i>
+                    </div>
+                    <div v-else
+                         class="py-2 w-100">
+                    </div>
+                    <KanbanItemCreate
+                        v-if="newItem === status.id"
+                        :id="'kanbanItemCreate_' + index"
+                        :status="status"
+                        :item="item"
+                        class="mt-2"
+                        :style="'width:' + (itemWidth-16) + 'px;'"
+                        :width="itemWidth"
+                        v-on:item-added="handleItemAddedWithoutWebsocket"
+                        v-on:item-updated=""
+                        v-on:item-canceled="closeForm"
+                        style="z-index: 2">
+                    </KanbanItemCreate>
+                    <div style="padding-bottom:100px; bottom:0; overflow-y:scroll; max-height: calc(100vh - 50px); z-index: 1"
                          :style="'width:' + itemWidth + 'px;'"
                          class="hide-scrollbars"
                     >
                         <draggable
-                            class="flex-1 overflow-hidden hide-scrollbars"
+                            class="flex-1 "
                             v-model="status.items"
                             v-bind="itemDragOptions"
                             :move="isLocked"
@@ -63,7 +88,7 @@
                         >
                             <transition-group
                                 style="display:flex; flex-direction: column;"
-                                :style="'width:' + itemWidth + 'px;'"
+                                :style="'width:' + itemWidth + 'px; height: calc(100vh + '+ columnHeight + 'px)'"
                                 class="pr-3"
                                 tag="span"
                             >
@@ -72,24 +97,24 @@
                                     v-for="(item, itemIndex) in status.items"
                                     :key="'transition_group-'+item.id"
                                 >
-                                <KanbanItem
-                                    v-if="(item.visibility == true && visiblefrom_to(item.visible_from, item.visible_until) == true) || ($userId == item.owner_id ) || ($userId == kanban.owner_id )"
-                                    :editable="(status.editable == false && $userId != kanban.owner_id) ? false : editable"
-                                    :commentable="kanban.commentable"
-                                    :onlyEditOwnedItems="kanban.only_edit_owned_items"
-                                    :ref="'kanbanItemId' + item.id"
-                                    :index="index + '_' + itemIndex"
-                                    :item="item"
-                                    :width="itemWidth"
-                                    :kanban_owner_id="kanban.owner_id"
-                                    style="min-height: 150px"
-                                    v-on:item-destroyed="handleItemDestroyedWithoutWebsocket"
-                                    v-on:item-updated="handleItemUpdatedWithoutWebsocket"
-                                    v-on:item-edit=""
-                                    v-on:sync="sync"
-                                    filter=".ignore"
-                                />
-                            </span>
+                                    <KanbanItem
+                                        v-if="(item.visibility == true && visiblefrom_to(item.visible_from, item.visible_until) == true) || ($userId == item.owner_id ) || ($userId == kanban.owner_id )"
+                                        :editable="(status.editable == false && $userId != kanban.owner_id) ? false : editable"
+                                        :commentable="kanban.commentable"
+                                        :onlyEditOwnedItems="kanban.only_edit_owned_items"
+                                        :ref="'kanbanItemId' + item.id"
+                                        :index="index + '_' + itemIndex"
+                                        :item="item"
+                                        :width="itemWidth"
+                                        :kanban_owner_id="kanban.owner_id"
+                                        style="min-height: 150px"
+                                        v-on:item-destroyed="handleItemDestroyedWithoutWebsocket"
+                                        v-on:item-updated="handleItemUpdatedWithoutWebsocket"
+                                        v-on:item-edit=""
+                                        v-on:sync="sync"
+                                        filter=".ignore"
+                                    />
+                                </span>
                                 <!--  ./Items -->
                             </transition-group>
                         </draggable>
@@ -103,7 +128,8 @@
                             v-on:item-updated=""
                             v-on:item-canceled="closeForm"
                             style="z-index: 2"
-                        ></KanbanItemCreate>
+                        >
+                        </KanbanItemCreate>
                         <div v-if="(editable == true) && (status.editable == true) || ( $userId == status.owner_id ) "
                              v-show="newItem !== status.id"
                              :id="'kanbanItemCreateButton_' + index"
@@ -185,18 +211,21 @@ export default {
             newItem: 0, // track the ID of the status we want to add to
             newStatus: 0,
             itemWidth: 320,
+            columnHeight: -450,
             item: null,
             autoRefresh: false,
             refreshRate: 5000,
-            usersOnline:[]
+            usersOnline:[],
         };
     },
     methods: {
         toggleFullscreen(){
             if (document.fullscreenElement) {
                 document.exitFullscreen();
+                this.columnHeight= -450; //reset column Height
             } else {
                 $('#kanban_board_container').get(0).requestFullscreen();
+                this.columnHeight= -250; //adjust column Height
             }
         },
         visiblefrom_to(visible_from, visible_until){
@@ -618,7 +647,8 @@ export default {
     height: 100%;
     width: 100%;
     padding: 2rem;
-    overflow:auto;
+    overflow-y:clip;
+    overflow-x: scroll;
 }
 @media (max-width: 991px) {
     .kanban_board_container { width: calc(100vw - 30px) !important; }

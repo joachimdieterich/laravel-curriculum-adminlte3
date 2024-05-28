@@ -54,12 +54,12 @@
                                 <p class="help-block" v-if="form.errors?.teaser_text" v-text="form.errors?.teaser_text[0]"></p>
                             </div>
                             <div class="form-group">
-                                <label for="description">
+                                <label for="marker_description">
                                     {{ trans('global.marker.fields.description') }}
                                 </label>
                                 <textarea
-                                    id="description"
-                                    name="description"
+                                    id="marker_description"
+                                    name="marker_description"
                                     :placeholder="trans('global.marker.fields.description')"
                                     class="form-control description my-editor "
                                     v-model.trim="form.description"
@@ -98,11 +98,11 @@
 
                             <div v-if="this.mapMarkerTypes?.length != null"
                                  class="form-group">
-                                <label for="type_id">
+                                <label for="marker_type_id">
                                     {{ trans('global.marker.fields.type') }}
                                 </label>
                                 <select
-                                    id="type_id"
+                                    id="marker_type_id"
                                     v-model="this.mapMarkerTypes[form.type_id]"
                                     class="form-control select2"
                                     style="width:100%;">
@@ -115,11 +115,11 @@
 
                             <div v-if="this.mapMarkerCategories?.length != null"
                                 class="form-group">
-                                <label for="category_id">
+                                <label for="marker_category_id">
                                     {{ trans('global.category.title_singular') }}
                                 </label>
                                 <select
-                                    id="category_id"
+                                    id="marker_category_id"
                                     v-model="this.mapMarkerCategories[form.category_id]"
                                     class="form-control select2"
                                     style="width:100%;">
@@ -239,6 +239,7 @@ export default {
     name: 'markerCreate',
     components: {},
     props: {
+        map: {},
         marker: {},
         method: ''
     },
@@ -248,11 +249,11 @@ export default {
             requestUrl: '/mapMarkers',
             form: new Form({
                 'title':'',
-                'teaser_tesxt':'',
+                'teaser_text':'',
                 'description': '',
                 'author': '',
-                'type_id': 1,
-                'category_id': 1,
+                'type_id': this.map.type_id,
+                'category_id':  this.map.category_id,
                 'tags': '',
                 'latitude': null,
                 'longitude': null,
@@ -279,6 +280,7 @@ export default {
             this.form.address = newVal.address;
             this.form.url = this.decodeHTMLEntities(newVal.url);
             this.form.url_title = newVal.url_title;
+            tinyMCE.get('marker_description').setContent(this.form.description);
             this.syncSelect2();
         },
         method: function (newVal, oldVal) {
@@ -291,10 +293,12 @@ export default {
     methods: {
         submit() {
             let method = this.method.toLowerCase();
+            this.form.description = tinyMCE.get('marker_description').getContent();
             if (method === 'patch') {
                 axios.patch(this.requestUrl + '/' + this.form.id, this.form)
                     .then(res => { // Tell the parent component we've updated a task
                         this.$eventHub.$emit("marker-updated", res.data.marker);
+                        this.form.reset();
                     })
                     .catch(error => { // Handle the error returned from our request
                         console.log(error);
@@ -303,6 +307,7 @@ export default {
                 axios.post(this.requestUrl, this.form)
                     .then(res => {
                         this.$eventHub.$emit("marker-added", res.data.marker);
+                        this.form.reset();
                     })
                     .catch(error => { // Handle the error returned from our request
                         console.log(error)
@@ -310,16 +315,17 @@ export default {
             }
         },
         syncSelect2(){
-            $("#type_id").select2({
-                dropdownParent: $("#type_id").parent(),
+            $("#marker_type_id").select2({
+                dropdownParent: $("#marker_type_id").parent(),
                 allowClear: false
             }).on('select2:select', function (e) {
                 this.form.type_id = e.params.data.element.value
             }.bind(this))
                 .val(this.form.type_id)
                 .trigger('change');
-            $("#category_id").select2({
-                dropdownParent: $("#category_id").parent(),
+
+            $("#marker_category_id").select2({
+                dropdownParent: $("#marker_category_id").parent(),
                 allowClear: false
             }).on('select2:select', function (e) {
                 this.form.category_id = e.params.data.element.value
@@ -335,27 +341,32 @@ export default {
     },
 
     mounted() {
+        $('#modal-marker-form').on('shown.bs.modal', function () {
+            this.syncSelect2();
+        }.bind(this));
+
+
         this.$initTinyMCE([
-            "autolink link"
+            "autolink link code"
         ] );
 
         axios.get('/mapMarkerTypes')
             .then(res => {
                 this.mapMarkerTypes = res.data.mapMarkerTypes;
-                this.syncSelect2();
+
+                axios.get('/mapMarkerCategories')
+                    .then(res => {
+                        this.mapMarkerCategories = res.data.mapMarkerCategories;
+                        this.syncSelect2();
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
             })
             .catch(err => {
                 console.log(err);
             });
 
-        axios.get('/mapMarkerCategories')
-            .then(res => {
-                this.mapMarkerCategories = res.data.mapMarkerCategories;
-                this.syncSelect2();
-            })
-            .catch(err => {
-                console.log(err);
-            });
     }
 
 }

@@ -65,11 +65,13 @@
                                         v-model="form.color">
                                     </color-picker-input>
                                 </span>
-                                <MediumForm
+                                <MediumForm v-if="form.id !== ''"
                                     class="pull-right"
                                     :form="form"
                                     :id="component_id"
                                     :medium_id="form.medium_id"
+                                    :referencable_type="'App\\Logbook'"
+                                    :referencable_id="form.id"
                                     accept="image/*"
                                 />
                                 <div class="dropdown">

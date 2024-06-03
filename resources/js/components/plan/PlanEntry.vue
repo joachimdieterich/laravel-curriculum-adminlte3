@@ -83,10 +83,12 @@
                         ></font-awesome-picker>
                     </div>
 
-                    <div class="form-group">
+                    <div v-if="form.id !== ''" class="form-group">
                         <MediumForm :form="form"
                                     :id="component_id"
                                     :medium_id="form.medium_id"
+                                    :referencable_type="'App\\PlanEntry'"
+                                    :referencable_id="form.id"
                                     accept="image/*"/>
                     </div>
                     <button :name="'planEntrySave'"

@@ -47,7 +47,7 @@ export default {
         }
     },
     methods: {
-       open(method = 'post'){
+       open(method = 'post') {
            this.method = method;
            $('#modal-kanban-form').modal('show');
        },

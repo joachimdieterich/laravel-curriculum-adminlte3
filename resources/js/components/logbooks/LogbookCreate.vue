@@ -139,16 +139,13 @@ export default {
     },
     watch: {
         logbook: function(newVal, oldVal) {
-            this.form.id = newVal.id;
-            this.form.title = newVal.title;
-            this.form.description = this.htmlToText(newVal.description);
-            this.form.medium_id = newVal.medium_id;
-            this.form.color = newVal.color;
-            this.form.css_icon = newVal.css_icon;
+            this.updateForm(newVal);
         },
         method: function (newVal, oldVal) {
             if (newVal == 'post') {
                 this.form.reset();
+            } else if (this.form.id == '') { // edge case when edit -> open create -> edit again
+                this.updateForm(this.logbook)
             }
         }
     },
@@ -182,6 +179,14 @@ export default {
                         console.log(error)
                     });
             }
+        },
+        updateForm(data) {
+            this.form.id = data.id;
+            this.form.title = data.title;
+            this.form.description = this.htmlToText(data.description);
+            this.form.medium_id = data.medium_id;
+            this.form.color = data.color;
+            this.form.css_icon = data.css_icon;
         },
     },
     mounted() {

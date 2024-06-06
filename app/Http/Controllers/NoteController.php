@@ -18,11 +18,17 @@ class NoteController extends Controller
         if (request()->wantsJson()) {
             $input = $this->validateRequest();
 
-            return Note::where('notable_type', $input['notable_type'])
-                ->whereIn('notable_id', explode(',', $input['notable_id']))
-                ->where('user_id', auth()->id())
-                ->with(['notable'])
-                ->latest('updated_at')->get();
+            if (isset($input['notable_type'], $input['notable_id'])) {
+                return Note::where('notable_type', $input['notable_type'])
+                    ->whereIn('notable_id', explode(',', $input['notable_id']))
+                    ->where('user_id', auth()->id())
+                    ->with(['notable'])
+                    ->latest('updated_at')->get();
+            } else { // get all written notes from this user
+                return Note::where('user_id', auth()->id())
+                    ->with(['notable'])
+                    ->latest('updated_at')->get();
+            } // TODO: get notes for user => a student should see notes that were created to a resource of his
         }
 
         return view('notes.index');

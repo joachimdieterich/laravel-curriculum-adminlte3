@@ -1,21 +1,24 @@
 <template>
     <div>
         <div class="btn-group"
-             @click="loadModal()">
-            <button type="button" class="btn btn-default ">
+             @click="loadModal()"
+        >
+            <button type="button" class="btn btn-default">
                 <img  v-if="this.thumbnail_medium_id"
                       alt="preview"
                       :src="'/media/'+this.thumbnail_medium_id"
                       height="50px"
-                      class="pull-left">
+                      class="pull-left"
+                />
             </button>
             <a id="btn_add_Medium"
                class="btn btn-primary text-white "
                style="display: flex;
-                    justify-content: center;
-                    align-items: center;">
-                    <i class="fa fa-cloud-upload-alt pr-2"></i>
-                    {{ trans('global.media.title_singular') }}
+                justify-content: center;
+                align-items: center;"
+            >
+                <i class="fa fa-cloud-upload-alt pr-2"></i>
+                {{ trans('global.media.title_singular') }}
             </a>
         </div>
 <!--        <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>-->
@@ -23,21 +26,27 @@
 </template>
 <script>
 export default {
-  name: 'MediumForm',
-  props: {
-      id: '',
-      medium_id:{
-          default: false
-      },
-      accept:{
-          default: ''
-      },
-      form: {}
-  },
+    name: 'MediumForm',
+    props: {
+        id: '',
+        medium_id: {
+            default: false,
+        },
+        accept: {
+            default: '',
+        },
+        form: {},
+        referenceable_type: {
+            default: null, // null will throw 500, value needs to be set
+        },
+        referenceable_id: {
+            default: null,
+        }
+    },
     data () {
         return {
             thumbnail_medium_id: '',
-            selectedMediumId: ''
+            selectedMediumId: '',
         }
     },
     watch: {
@@ -60,6 +69,8 @@ export default {
         loadModal() {
             app.__vue__.$modal.show('medium-create-modal',
                 {
+                    'referenceable_type': this.referenceable_type,
+                    'referenceable_id': this.referenceable_id,
                     'description': '',
                     'accept': this.accept,
                     'eventHubCallbackFunction': 'addMedia',

@@ -187,6 +187,11 @@ export default {
          */
         async createAchievement(user_id) {
             const objective_id = this.objective.default.id;
+            // theres a problem outstide of local, where this id doesn't get sent
+            // remove after testing in DEV
+            console.log('Kompetenz-Object = ', this.objective);
+            console.log('Kompetenz-ID = ', objective_id);
+
             const achievement = {
                 'referenceable_type': 'App\\EnablingObjective',
                 'referenceable_id': objective_id,

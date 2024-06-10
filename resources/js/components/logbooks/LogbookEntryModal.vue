@@ -49,12 +49,13 @@
                     </p>
                 </div>
                 <div class="form-group">
-                    <label for="description">{{ trans('global.logbook.fields.description') }}</label>
+                    <label for="description">{{ trans('global.logbook.fields.description') }} *</label>
                     <textarea
                         id="description"
                         name="description"
                         class="form-control description my-editor "
                         v-model="form.description"
+                        required
                     ></textarea>
                     <p v-if="errors.description" class="error-block">
                         {{ trans('validation.required') }}
@@ -104,6 +105,8 @@ export default {
     },
     methods: {
         async submit() {
+            if (!this.checkRequired()) return;
+
             try {
                 this.form.description = tinyMCE.get('description').getContent();
                 this.form.begin = this.time[0];

@@ -1,10 +1,12 @@
 <template>
     <div class="row">
         <div v-permission="'logbook_entry_create'"
-             class="col-md-12 pl-3 pt-0 pb-2">
+             class="col-md-12 pl-3 pt-0 pb-2"
+        >
             <button id="add-logbook-entry"
                     class="btn btn-success"
-                    @click.prevent="open('logbook-entry-modal')">
+                    @click.prevent="open('logbook-entry-modal')"
+            >
                 {{ trans('global.logbookEntry.create') }}
             </button>
             <button
@@ -18,22 +20,23 @@
         </div>
 
         <div class="col-md-12"
-             v-if="showPrintOptions">
+             v-if="showPrintOptions"
+        >
             <LogbookPrintOptions
                 :logbook="logbook"
-                :period="period">
-            </LogbookPrintOptions>
+                :period="period"
+            ></LogbookPrintOptions>
         </div>
 
         <div class="col-md-12">
-             <LogbookEntry
-                 v-for="(entry, index) in entries"
-                 v-bind:key="entry.id"
-                 :first=" index === 0 "
-                 :entry="entry"
-                 :search="search"
-                 :logbook="logbook">
-            </LogbookEntry>
+            <LogbookEntry
+                v-for="(entry, index) in entries"
+                v-bind:key="entry.id"
+                :first=" index === 0 "
+                :entry="entry"
+                :search="search"
+                :logbook="logbook"
+            ></LogbookEntry>
         </div>
         <!-- /.col -->
         <logbook-entry-modal></logbook-entry-modal>
@@ -59,7 +62,7 @@ export default {
         return {
             entries: [],
             search: '',
-            showPrintOptions: false
+            showPrintOptions: false,
         };
     },
 

@@ -261,6 +261,17 @@ export default {
 
             return filledOut;
         },
+        updateForm(data) {
+            this.form.id = data.id;
+            this.form.type_id = data.type_id;
+            this.form.title = data.title;
+            this.form.description = this.htmlToText(data.description);
+            this.form.begin = data.begin;
+            this.form.end = data.end;
+            this.form.duration = data.duration;
+            this.form.color = data.color;
+            this.form.allow_copy = data.allow_copy;
+        },
     },
     mounted() {
         $('#modal-plan-form').on('hidden.bs.modal', () => {
@@ -270,19 +281,13 @@ export default {
     },
     watch: {
         plan: function(newVal, oldVal) {
-            this.form.id = newVal.id;
-            this.form.type_id = newVal.type_id;
-            this.form.title = newVal.title;
-            this.form.description = this.htmlToText(newVal.description);
-            this.form.begin = newVal.begin;
-            this.form.end = newVal.end;
-            this.form.duration = newVal.duration;
-            this.form.color = newVal.color;
-            this.form.allow_copy = newVal.allow_copy;
+            this.updateForm(newVal);
         },
         method: function (newVal, oldVal) {
             if (newVal == 'post') {
                 this.form.reset();
+            } else if (this.form.id == '') { // edge case when edit -> open create -> edit again
+                this.updateForm(this.plan)
             }
         }
     },

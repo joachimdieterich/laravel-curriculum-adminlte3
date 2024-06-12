@@ -186,7 +186,12 @@ class EdusharingMediaAdapter implements MediaInterface
                                     'name' => $node['node']['name'],
                                 ];
                             } else {
-                                return redirect($node['node']['preview']['url']['info']['redirect_url']);
+                                $url = $node['node']['preview']['url'];
+                                if (gettype($url) == 'string') {
+                                    return redirect($url);
+                                } else { // don't understand why/when the 'url'-attribute should be an array
+                                    return redirect($node['node']['preview']['url']['info']['redirect_url']);
+                                }
                             }
                         }
                     }

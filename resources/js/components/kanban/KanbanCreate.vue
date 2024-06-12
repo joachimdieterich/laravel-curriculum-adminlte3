@@ -77,8 +77,8 @@
                                 :form="form"
                                 :id="component_id"
                                 :medium_id="form.medium_id"
-                                :referencable_type="'App\\Kanban'"
-                                :referencable_id="form.id"
+                                :referenceable_type="'App\\Kanban'"
+                                :referenceable_id="form.id"
                                 accept="image/*"
                             />
                         </div>

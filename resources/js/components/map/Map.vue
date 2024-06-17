@@ -222,7 +222,8 @@ export default {
     },
     props: {
         map: {
-            default: null
+            type: Object,
+            default: {},
         },
     },
     data() {
@@ -247,10 +248,7 @@ export default {
             initialLongitude: '8.413913138283617',
             zoom: 10,
             marker: null,
-            method: {
-                type: String,
-                default: 'post'
-            }
+            method: 'post',
         }
     },
     methods: {

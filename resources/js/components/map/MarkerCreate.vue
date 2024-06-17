@@ -241,7 +241,7 @@ export default {
     props: {
         map: {},
         marker: {},
-        method: ''
+        method: '',
     },
     data() {
         return {

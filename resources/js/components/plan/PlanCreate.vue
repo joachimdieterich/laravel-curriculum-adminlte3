@@ -36,8 +36,9 @@
                                     model="PlanType"
                                     :selected="this.form.type_id"
                                     url="/plans/getTypes"
+                                    :list="[{id: 4, title: 'Trainingsplan'}]"
                                     style="width: 100%;"
-                                    placeholder="Trainingsplan"
+                                    :placeholder="trans('global.pleaseSelect')"
                                     :readOnly="true"
                                     @selectedValue="(id) => this.form.type_id = id"
                                 ></Select2>
@@ -179,6 +180,7 @@ import Form from "form-backend-validation";
 import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker";
 import DatePicker from 'vue2-datepicker';
 import 'vue2-datepicker/index.css';
+import { list } from "postcss";
 const Select2 =
     () => import('../forms/Select2');
 

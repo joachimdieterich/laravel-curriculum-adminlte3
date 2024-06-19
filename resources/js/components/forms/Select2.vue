@@ -27,9 +27,9 @@
                 :multiple="this.multiple"
                 :disabled="this.readOnly">
                 <option v-for="(item,index) in list"
-                        :value="item[this.option_id]"
-                        :data-icon="this.option_icon">
-                    <span v-if="this.option_field != ''">
+                        :value="item[option_id]"
+                        :data-icon="option_icon">
+                    <span v-if="option_field != ''">
                         {{ item['this.option_field'] }}
                     </span>
                     <span v-else>

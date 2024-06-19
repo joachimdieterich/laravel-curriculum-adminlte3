@@ -186,7 +186,12 @@ class EdusharingMediaAdapter implements MediaInterface
                                     'name' => $node['node']['name'],
                                 ];
                             } else {
-                                return redirect($node['node']['preview']['url']['info']['redirect_url']);
+                                $url = $node['node']['preview']['url'];
+                                if (gettype($url) == 'string') {
+                                    return redirect($url);
+                                } else { // don't understand why/when the 'url'-attribute should be an array
+                                    return redirect($node['node']['preview']['url']['info']['redirect_url']);
+                                }
                             }
                         }
                     }
@@ -309,18 +314,15 @@ class EdusharingMediaAdapter implements MediaInterface
                 }
                 break;
             case "App\KanbanItem":
-                if ($subscription->subscribable->kanban->isAccessible())
-                {
-                    return true;
-                }
+                return $subscription->subscribable->kanban->isAccessible();
                 break;
+            case "App\Curriculum":
             case "App\Kanban":
             case "App\Logbook":
             case "App\Map":
             case "App\MapMarker":
-                    return $subscription->subscribable->isAccessible();
-                break;
-            case "App\Curriculum":
+            case "App\EnablingObjective":
+            case "App\TerminalObjective":
                 return $subscription->subscribable->isAccessible();
                 break;
 

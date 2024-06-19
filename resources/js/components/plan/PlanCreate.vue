@@ -36,8 +36,10 @@
                                     model="PlanType"
                                     :selected="this.form.type_id"
                                     url="/plans/getTypes"
+                                    :list="[{id: 4, title: 'Trainingsplan'}]"
                                     style="width: 100%;"
                                     :placeholder="trans('global.pleaseSelect')"
+                                    :readOnly="true"
                                     @selectedValue="(id) => this.form.type_id = id"
                                 ></Select2>
                                 <p v-if="errors.type_id == true" class="error-block" style="margin-top: -0.75rem;">
@@ -178,6 +180,7 @@ import Form from "form-backend-validation";
 import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker";
 import DatePicker from 'vue2-datepicker';
 import 'vue2-datepicker/index.css';
+import { list } from "postcss";
 const Select2 =
     () => import('../forms/Select2');
 
@@ -263,7 +266,9 @@ export default {
         },
         updateForm(data) {
             this.form.id = data.id;
-            this.form.type_id = data.type_id;
+            // TODO: #462 temporary solution for select2 not working in safari/firefox
+            this.form.type_id = 4;
+            // this.form.type_id = data.type_id;
             this.form.title = data.title;
             this.form.description = this.htmlToText(data.description);
             this.form.begin = data.begin;

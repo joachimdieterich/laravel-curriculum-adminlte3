@@ -213,9 +213,7 @@ class KanbanController extends Controller
         $kanban->statuses()->delete();
         $kanban->subscriptions()->delete();
 
-        if ($kanban->delete()) {
-            return $this->list();
-        }
+        $kanban->delete();
     }
 
     public function updateKanbansColor(Request $request)

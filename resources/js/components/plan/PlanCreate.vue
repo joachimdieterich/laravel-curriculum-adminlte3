@@ -37,7 +37,8 @@
                                     :selected="this.form.type_id"
                                     url="/plans/getTypes"
                                     style="width: 100%;"
-                                    :placeholder="trans('global.pleaseSelect')"
+                                    placeholder="Trainingsplan"
+                                    :readOnly="true"
                                     @selectedValue="(id) => this.form.type_id = id"
                                 ></Select2>
                                 <p v-if="errors.type_id == true" class="error-block" style="margin-top: -0.75rem;">
@@ -263,7 +264,9 @@ export default {
         },
         updateForm(data) {
             this.form.id = data.id;
-            this.form.type_id = data.type_id;
+            // TODO: #462 temporary solution for select2 not working in safari/firefox
+            this.form.type_id = 4;
+            // this.form.type_id = data.type_id;
             this.form.title = data.title;
             this.form.description = this.htmlToText(data.description);
             this.form.begin = data.begin;

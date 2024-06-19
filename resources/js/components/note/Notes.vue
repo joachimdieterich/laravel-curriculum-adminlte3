@@ -347,6 +347,8 @@ export default {
                     "autolink link example"
                 ],
                 {
+                    'referenceable_type': 'App\\Note',
+                    'referenceable_id': this.form.id,
                     'eventHubCallbackFunction': 'insertContent',
                     'eventHubCallbackFunctionParams': this.component_id,
                 }

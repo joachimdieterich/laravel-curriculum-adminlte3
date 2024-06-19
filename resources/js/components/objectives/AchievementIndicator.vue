@@ -33,7 +33,7 @@ export default {
         settings: {},
         users: {
             type: Array,
-            default: () => []
+            default: () => [],
         },
         disabled: false,
     },
@@ -59,11 +59,11 @@ export default {
             if (this.disabled) return;
 
             let selected = this.users;
-            if (selected.length === 0){
+            if (selected.length === 0) {
                 selected = localStorage.getItem('user-datatable-selection')?.split(",");
             }
-            if (selected[0] == ''){ // if no user is in localStorage, set empty array!
-                selected = [];
+            if (selected === undefined || selected[0] == '') { // if no user is in localStorage, set current user for self-assessment
+                selected = [this.$userId];
             }
 
             let achievement = {

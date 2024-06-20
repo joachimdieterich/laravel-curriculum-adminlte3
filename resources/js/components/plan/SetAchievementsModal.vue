@@ -153,7 +153,9 @@ export default {
 
             this.objective = obj;
         },
-        beforeClose() {},
+        beforeClose() {
+            this.$parent.updateAchievements(this.objective.default.id);
+        },
         opened() {},
         closed() {},
         /**
@@ -265,8 +267,6 @@ export default {
                 // only overwrite the second char of the status
                 this.objective[id].achievements[0].status = selfStatus + status;
             });
-
-            this.$parent.updateAchievements(this.objective.default.id);
         },
         toggleUsers() {
             this.selectedUsers = this.checkAll

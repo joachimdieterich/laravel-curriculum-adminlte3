@@ -166,8 +166,9 @@
                 <contents
                     ref="Contents"
                     subscribable_type="App\Curriculum"
-                    :subscribable_id="curriculum.id">
-                </contents>
+                    :subscribable_id="curriculum.id"
+                    :owner="$userId == curriculum.owner_id"
+                ></contents>
             </div>
             <div class="tab-pane fade "
                  id="medium-tab"

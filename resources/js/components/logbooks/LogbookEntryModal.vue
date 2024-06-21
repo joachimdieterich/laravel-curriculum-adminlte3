@@ -129,7 +129,11 @@ export default {
             const fields = this.$el.querySelectorAll('[required]');
             
             for (const field of fields) {
-                if (field.value.trim() === '') { // activate error-helper
+                if (field.id === 'description') { // tinyMCE needs to be checked separately
+                    const isEmpty = tinyMCE.get('description').getContent() === '';
+                    this.errors[field.id] = isEmpty;
+                    filledOut = isEmpty ? false : filledOut;
+                } else if (field.value.trim() === '') { // activate error-helper
                     this.errors[field.id] = true;
                     filledOut = false;
                 } else { // deactivate error-helper

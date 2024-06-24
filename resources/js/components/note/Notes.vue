@@ -130,7 +130,7 @@
                     <div class="clearfix border-bottom pb-2"></div>
                 </div>
 
-                <div v-for="(item,index) in notes" v-bind:value="item.id"
+                <div v-for="(item,index) in notes"
                      v-if="showNote(item)"
                      class="card-comment"
                 >
@@ -300,7 +300,8 @@ export default {
             if (method === 'patch') {
                 currentPath =  '/' + this.form.id;
                 this.method = 'post';
-                const index = this.notes.findIndex(note => note.id === this.form.id); // remove note, it will be added after submit again
+                // remove note, it will be added after submit again
+                const index = this.notes.findIndex(note => note.id === this.form.id);
                 this.notes.splice(index, 1);
             }
             
@@ -316,6 +317,9 @@ export default {
             this.edit = !this.edit;
             if (this.edit === true) {
                 this.loadNotables();
+            } else {
+                // if edit got cancelled, show element again
+                this.$el.querySelector('span.hide')?.classList.remove('hide');
             }
         },
         editNote(index) {
@@ -328,6 +332,9 @@ export default {
             tinyMCE.get('note_content').setContent(this.notes[index].content);
             this.loadNotables();
 
+            // if you edit a note and then click edit on another note, show the first note again
+            this.$el.querySelector('span.hide')?.classList.remove('hide');
+
             this.$nextTick(function () {
                 this.moveNoteEditor(this.form.id);
             })
@@ -338,9 +345,8 @@ export default {
         moveNoteEditor(id) {
             let editor = this.$el.getElementsByClassName('note_editor_selector')[0];
             let placeholder = this.$el.getElementsByClassName("note_editor_placeholder_" + id)[0];
-            let hidePlaceholder = this.$el.getElementsByClassName("note_editor_hide_placeholder_" + id)[0];
+            this.$el.getElementsByClassName("note_editor_hide_placeholder_" + id)[0].classList.add('hide');
             editor.parentNode.removeChild(editor);
-            hidePlaceholder.parentNode.removeChild(hidePlaceholder);
             placeholder.appendChild(editor);
             this.$initTinyMCE(
                 [

@@ -3,21 +3,24 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <b  v-if="form.id == ''"
-                        class="modal-title">
+                    <b v-if="form.id == undefined"
+                        class="modal-title"
+                    >
                         {{ trans('global.marker.create') }}
                     </b>
-                    <b  v-else
-                        class="modal-title">
+                    <b v-else
+                        class="modal-title"
+                    >
                         {{ trans('global.marker.edit') }}
                     </b>
-                <button
-                    type="button"
-                    class="close"
-                    data-dismiss="modal"
-                    aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                    <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close"
+                    >
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
 
                 <div class="modal-body p-0">
@@ -25,7 +28,7 @@
                         <div class="card-body pb-0">
                             <div class="form-group">
                                 <label for="title">
-                                    {{ trans('global.marker.fields.subtitle') }}
+                                    {{ trans('global.marker.fields.title') }} *
                                 </label>
                                 <input
                                     type="text"
@@ -55,7 +58,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="marker_description">
-                                    {{ trans('global.marker.fields.description') }}
+                                    {{ trans('global.marker.fields.description') }} *
                                 </label>
                                 <textarea
                                     id="marker_description"
@@ -63,6 +66,7 @@
                                     :placeholder="trans('global.marker.fields.description')"
                                     class="form-control description my-editor "
                                     v-model.trim="form.description"
+                                    required
                                 ></textarea>
                             </div>
                             <div class="form-group">
@@ -76,7 +80,6 @@
                                     class="form-control"
                                     v-model.trim="form.author"
                                     :placeholder="trans('global.marker.fields.author')"
-                                    required
                                 />
                                 <p class="help-block" v-if="form.errors?.author" v-text="form.errors?.author[0]"></p>
                             </div>
@@ -91,40 +94,46 @@
                                     class="form-control"
                                     v-model.trim="form.tags"
                                     :placeholder="trans('global.marker.fields.tags')"
-                                    required
                                 />
                                 <p class="help-block" v-if="form.errors?.tags" v-text="form.errors?.tags[0]"></p>
                             </div>
 
                             <div v-if="this.mapMarkerTypes?.length != null"
-                                 class="form-group">
+                                 class="form-group"
+                            >
                                 <label for="marker_type_id">
-                                    {{ trans('global.marker.fields.type') }}
+                                    {{ trans('global.marker.fields.type') }} *
                                 </label>
                                 <select
                                     id="marker_type_id"
                                     v-model="this.mapMarkerTypes[form.type_id]"
                                     class="form-control select2"
-                                    style="width:100%;">
-                                    <option v-for="(value,index) in this.mapMarkerTypes"
-                                            :value="value.id">
+                                    style="width:100%;"
+                                    required
+                                >
+                                    <option v-for="value in this.mapMarkerTypes"
+                                            :value="value.id"
+                                    >
                                         {{ value.title }}
                                     </option>
                                 </select>
                             </div>
 
                             <div v-if="this.mapMarkerCategories?.length != null"
-                                class="form-group">
+                                class="form-group"
+                            >
                                 <label for="marker_category_id">
-                                    {{ trans('global.category.title_singular') }}
+                                    {{ trans('global.category.title_singular') }} *
                                 </label>
                                 <select
                                     id="marker_category_id"
                                     v-model="this.mapMarkerCategories[form.category_id]"
                                     class="form-control select2"
-                                    style="width:100%;">
-                                    <option v-for="(value,index) in this.mapMarkerCategories"
-                                            :value="value.id">
+                                    style="width:100%;"
+                                >
+                                    <option v-for="value in this.mapMarkerCategories"
+                                            :value="value.id"
+                                    >
                                         {{ value.title }}
                                     </option>
                                 </select>
@@ -132,7 +141,7 @@
 
                             <div class="form-group">
                                 <label for="latitude">
-                                    {{ trans('global.marker.fields.latitude') }}
+                                    {{ trans('global.marker.fields.latitude') }} *
                                 </label>
                                 <input
                                     type="text"
@@ -140,15 +149,15 @@
                                     name="latitude"
                                     class="form-control"
                                     v-model.trim="form.latitude"
-
                                     :placeholder="trans('global.marker.fields.latitude')"
+                                    required
                                 />
                                 <p class="help-block" v-if="form.errors?.latitude" v-text="form.errors?.latitude[0]"></p>
                             </div>
 
                             <div class="form-group">
                                 <label for="longitude">
-                                    {{ trans('global.marker.fields.longitude') }}
+                                    {{ trans('global.marker.fields.longitude') }} *
                                 </label>
                                 <input
                                     type="text"
@@ -157,6 +166,7 @@
                                     class="form-control"
                                     v-model.trim="form.longitude"
                                     :placeholder="trans('global.marker.fields.longitude')"
+                                    required
                                 />
                                 <p class="help-block" v-if="form.errors?.longitude" v-text="form.errors?.longitude[0]"></p>
                             </div>
@@ -172,7 +182,6 @@
                                     class="form-control"
                                     v-model.trim="form.address"
                                     :placeholder="trans('global.marker.fields.address')"
-                                    required
                                 />
                                 <p class="help-block" v-if="form.errors?.address" v-text="form.errors?.address[0]"></p>
                             </div>
@@ -188,7 +197,6 @@
                                     class="form-control"
                                     v-model.trim="form.url"
                                     :placeholder="trans('global.marker.fields.url')"
-                                    required
                                 />
                                 <p class="help-block" v-if="form.errors.url" v-text="form.errors.url[0]"></p>
                             </div>
@@ -204,7 +212,6 @@
                                     class="form-control"
                                     v-model.trim="form.url_title"
                                     :placeholder="trans('global.marker.fields.url_title')"
-                                    required
                                 />
                                 <p class="help-block" v-if="form.errors.url_title" v-text="form.errors.url_title[0]"></p>
                             </div>
@@ -217,13 +224,15 @@
                 <div class="modal-footer justify-content-between">
                     <button type="button"
                         class="btn btn-default"
-                        data-dismiss="modal">
+                        data-dismiss="modal"
+                    >
                         {{ trans('global.cancel') }}
                     </button>
                     <button type="button"
                         class="btn btn-primary"
                         data-dismiss="modal"
-                        @click="submit()">
+                        @click="submit()"
+                    >
                         {{ trans('global.save') }}
                     </button>
                 </div>

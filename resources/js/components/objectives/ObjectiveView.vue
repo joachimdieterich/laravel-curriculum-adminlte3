@@ -90,7 +90,7 @@
                        :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_tab_media_'+objective.id)"
                        href="#tab_media"
                        data-toggle="tab"
-                       @click="loadMedia()">
+                    >
                         <i class="fa fa-folder-open pr-2"></i>
                         <span v-if="help">{{trans('global.media.title')}}</span>
                     </a>
@@ -376,9 +376,6 @@ export default {
             },
             loadPrerequisites() {
                 this.$refs.Prerequisites.loaderEvent();
-            },
-            loadMedia() {
-                this.$refs.Media.loaderEvent();
             },
             loadLmsPlugin() {
                 this.$refs.LmsPlugin.loaderEvent();

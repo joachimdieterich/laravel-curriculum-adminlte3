@@ -189,16 +189,18 @@
                      id="related_objectives" >
                     <span v-if="type === 'enabling'">
                         <ObjectiveBox type="terminal"
-                            :objective="objective.terminal_objective">
-                        </ObjectiveBox>
+                            :objective="objective.terminal_objective"
+                            :settings="settings"
+                        ></ObjectiveBox>
                     </span>
                     <span v-else>
                         <ObjectiveBox
                             v-for="enablingObjective in objective.enabling_objectives"
                             v-bind:key="'ena_'+enablingObjective.id"
                             type="enabling"
-                            :objective="enablingObjective">
-                        </ObjectiveBox>
+                            :objective="enablingObjective"
+                            :settings="settings"
+                        ></ObjectiveBox>
                     </span>
                 </div>
                 <!--                    1 Contents -->
@@ -271,7 +273,7 @@
                         ref="Achievements"
                         :objective="objective"
                         :type="type"
-                        :settings="setting">
+                        :settings="settings">
                     </Achievements>
                 </div>
 
@@ -347,7 +349,7 @@ export default {
                 help: true,
                 variant_order: {},
                 variant: {},
-                setting: {
+                settings: {
                     'last': null
                 },
                 model: '',
@@ -421,7 +423,7 @@ export default {
                 window.location.reload();
             });
 
-            this.variant_order = this.objective.curriculum.variants['order'];
+            this.variant_order = this.objective.curriculum.variants?.order ?? '';
 
         },
         computed: {

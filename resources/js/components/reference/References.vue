@@ -26,14 +26,14 @@
                     <div class="row pl-3">
                         <ObjectiveBox type="terminal"
                             :objective="(filtered_reference.referenceable_type == 'App\\TerminalObjective') ? filtered_reference.referenceable : filtered_reference.referenceable.terminal_objective"
-                            :setting="setting">
+                            :settings="settings">
                         </ObjectiveBox>
 
                         <ObjectiveBox
                             v-if="filtered_reference.referenceable_type === 'App\\EnablingObjective'"
                             type="enabling"
                             :objective="filtered_reference.referenceable"
-                            :setting="setting">
+                            :settings="settings">
                         </ObjectiveBox>
 
                         <div>
@@ -63,7 +63,7 @@ const ObjectiveBox =
         props: ['reference_subscriptions','curricula_list'],
         data: function() {
             return {
-              setting: {
+              settings: {
                     'last': null,
                 },
 

@@ -31,9 +31,9 @@
                                     {{ trans('global.marker.fields.title') }} *
                                 </label>
                                 <input
-                                    type="text"
                                     id="title"
                                     name="title"
+                                    type="text"
                                     class="form-control"
                                     v-model.trim="form.title"
                                     :placeholder="trans('global.marker.fields.title')"
@@ -48,9 +48,9 @@
                                     {{ trans('global.marker.fields.teaser_text') }}
                                 </label>
                                 <input
-                                    type="text"
                                     id="teaser_text"
                                     name="teaser_text"
+                                    type="text"
                                     class="form-control"
                                     v-model.trim="form.teaser_text"
                                     :placeholder="trans('global.marker.fields.teaser_text')"
@@ -73,9 +73,9 @@
                                     {{ trans('global.marker.fields.author') }}
                                 </label>
                                 <input
-                                    type="text"
                                     id="author"
                                     name="author"
+                                    type="text"
                                     class="form-control"
                                     v-model.trim="form.author"
                                     :placeholder="trans('global.marker.fields.author')"
@@ -86,9 +86,9 @@
                                     {{ trans('global.marker.fields.tags') }}
                                 </label>
                                 <input
-                                    type="text"
                                     id="tags"
                                     name="tags"
+                                    type="text"
                                     class="form-control"
                                     v-model.trim="form.tags"
                                     :placeholder="trans('global.marker.fields.tags')"
@@ -113,7 +113,7 @@
                                         {{ value.title }}
                                     </option>
                                 </select>
-                                <p v-if="errors.marker_type_id == true" class="error-block mt-0">
+                                <p v-if="errors.type_id == true" class="error-block mt-0">
                                     {{ trans('validation.required') }}
                                 </p>
                             </div>
@@ -136,7 +136,7 @@
                                         {{ value.title }}
                                     </option>
                                 </select>
-                                <p v-if="errors.marker_category_id == true" class="error-block mt-0">
+                                <p v-if="errors.category_id == true" class="error-block mt-0">
                                     {{ trans('validation.required') }}
                                 </p>
                             </div>
@@ -278,8 +278,8 @@ export default {
             mapMarkerCategories : {},
             errors: {
                 title: false,
-                marker_type_id: false,
-                marker_category_id: false,
+                type_id: false,
+                category_id: false,
                 latitude: false,
                 longitude: false,
             },
@@ -354,11 +354,11 @@ export default {
             // in this case they theoretically don't need to be checked, since they can't be empty
             // they also don't have a 'required' tag, because it could set 'filledOut' to 'false'
             let markerTypeIsSet = this.form.type_id !== '';
-            this.errors['marker_type_id'] = !markerTypeIsSet;
+            this.errors['type_id'] = !markerTypeIsSet;
             filledOut = markerTypeIsSet ? filledOut : false;
             
             let categoryIdIsSet = this.form.category_id !== '';
-            this.errors['marker_category_id'] = !categoryIdIsSet;
+            this.errors['category_id'] = !categoryIdIsSet;
             filledOut = categoryIdIsSet ? filledOut : false;
             
             return filledOut;

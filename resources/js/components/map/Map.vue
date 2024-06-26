@@ -116,10 +116,12 @@
                 </div>
 
                 <div v-if="typeof this.currentMarker.ARTIKEL == 'undefined'"
-                     class="sidebar-pane" id="ll-marker">
+                     class="sidebar-pane" id="ll-marker"
+                >
                     <MarkerView
                         :marker="this.currentMarker"
-                        :map="this.map"/>
+                        :map="this.map"
+                    />
                 </div>
                 <div v-else
                      class="sidebar-pane" id="ll-marker">

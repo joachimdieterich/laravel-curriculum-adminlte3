@@ -118,27 +118,6 @@
                                 <!--  ./Items -->
                             </transition-group>
                         </draggable>
-                        <KanbanItemCreate
-                            v-if="newItem === status.id"
-                            :id="'kanbanItemCreate_' + index"
-                            :status="status"
-                            :item="item"
-                            :width="itemWidth"
-                            v-on:item-added="handleItemAddedWithoutWebsocket"
-                            v-on:item-updated=""
-                            v-on:item-canceled="closeForm"
-                            style="z-index: 2"
-                        >
-                        </KanbanItemCreate>
-                        <div v-if="(editable == true) && (status.editable == true) || ( $userId == status.owner_id ) "
-                             v-show="newItem !== status.id"
-                             :id="'kanbanItemCreateButton_' + index"
-                             class="btn btn-flat py-0 w-100"
-                             style="margin-bottom: 1rem;"
-                             @click="openForm('item', status.id)"
-                        >
-                            <i class="text-white fa fa-2x fa-plus-circle"></i>
-                        </div>
                     </div>
                 </div>
                 <div v-if="editable"

@@ -23,8 +23,9 @@
                     </li>
                     <hr v-if="$userId == map.owner_id">
                     <li v-if="$userId == map.owner_id">
-                        <a role="tab"
-                        @click="createMarker()">
+                        <a role="button"
+                            @click="createMarker()"
+                        >
                             <i class="fa fa-plus"></i>
                         </a>
                     </li>
@@ -53,12 +54,14 @@
                         <li v-for="marker in this.markers">
                             <i class="fa fa-location-dot pr-2"></i>
                             <a @click="setCurrentMarker(marker)"
-                               class="text-decoration-none">
+                               class="text-decoration-none"
+                            >
                                 {{ marker.title }}
                             </a>
                             <div v-if="$userId == marker.owner_id || $userId == map.owner_id"
-                                 class="tools">
-                                <i class="fa fa-pencil-alt" @click="edit(marker)"></i>
+                                 class="tools user-select-none"
+                            >
+                                <i class="text-secondary fa fa-pencil-alt" @click="edit(marker)"></i>
                                 <i class="text-danger fa fa-trash ml-2" @click="confirmItemDelete(marker)"></i>
                             </div>
                         </li>
@@ -72,44 +75,53 @@
                     </h1>
 
                     <div v-if="mapMarkerTypes"
-                         class="form-group ">
+                         class="form-group"
+                    >
                         <label for="mapMarkerType">Typ</label>
                         <select
                             id="mapMarkerType"
                             v-model="form.type_id"
                             class="form-control select2"
-                            style="width:100%;">
-                            <option v-for="type in mapMarkerTypes"
-                                    :value="type.id">
-                                {{ type.title }}
+                            style="width:100%;"
+                        >
+                            <option v-for="markerType in mapMarkerTypes"
+                                    :value="markerType.id"
+                            >
+                                {{ markerType.title }}
                             </option>
                         </select>
                     </div> <!-- mapMarkerTypes -->
                     <div v-if="mapMarkerCategories"
-                         class="form-group ">
+                         class="form-group"
+                    >
                         <label for="mapMarkerCategory">Kategorie</label>
                         <select
                             id="mapMarkerCategory"
                             v-model="form.category_id"
                             class="form-control select2"
-                            style="width:100%;">
+                            style="width:100%;"
+                        >
                             <option v-for="category in mapMarkerCategories"
-                                    :value="category.id">
+                                    :value="category.id"
+                            >
                                 {{ category.title }}
                             </option>
                         </select>
                     </div> <!-- mapMarkerCategory -->
                     <button class="btn btn-primary pull-right"
-                            @click="loadMarkers()">
+                            @click="loadMarkers()"
+                    >
                         <i class="fa fa-check"></i>
                     </button>
                 </div>
 
                 <div v-if="typeof this.currentMarker.ARTIKEL == 'undefined'"
-                     class="sidebar-pane" id="ll-marker">
+                     class="sidebar-pane" id="ll-marker"
+                >
                     <MarkerView
                         :marker="this.currentMarker"
-                        :map="this.map"/>
+                        :map="this.map"
+                    />
                 </div>
                 <div v-else
                      class="sidebar-pane" id="ll-marker">
@@ -218,7 +230,7 @@ export default {
     components: {
         MarkerView,
         MarkerCreate,
-        Modal
+        Modal,
     },
     props: {
         map: {
@@ -271,11 +283,11 @@ export default {
                     console.log(err);
                 });
         },
-        createMarker(method = 'post'){
+        createMarker(method = 'post') {
             this.method = method;
             $('#modal-marker-form').modal('show');
         },
-        loadMarkers(){
+        loadMarkers() {
             axios.get('/mapMarkers?type_id=' + this.form.type_id + '&category_id=' + this.form.category_id)
                 .then(res => {
                     this.markers = res.data.markers;
@@ -292,7 +304,7 @@ export default {
                                 marker.teaser_text,
                                 'll-marker',
                                 this.getCss('type', marker.type_id)['css_icon'],
-                                this.getCss('type', marker.category_id)['color'],
+                                this.getCss('category', marker.category_id)['color'],
                                 this.getCss('category', marker.category_id)['shape'],
                                 'fa'
                             )
@@ -305,7 +317,7 @@ export default {
                     console.log(err);
                 });
         },
-        async markerSearch(){
+        async markerSearch() {
             $("#loading-events").show();
             try {
                 this.events = (await axios.post('/eventSubscriptions/getEvents', {
@@ -318,7 +330,6 @@ export default {
             }
             this.refreshMap();
         },
-
         getBorder() {
             axios.get(this.map.border_url)
                  .then(res => {
@@ -341,8 +352,7 @@ export default {
 
             this.mapCanvas.flyToBounds(countryBounds);
         },
-
-        refreshMap(){
+        refreshMap() {
             // parse property from Observer to JSON
             const eventsData = JSON.parse(JSON.stringify(this.events));
             //console.log(eventsData);
@@ -378,7 +388,7 @@ export default {
             });
             this.mapCanvas.addLayer(this.clusterGroup); // add clustergroup to the map
         },
-        getCss(type, id){
+        getCss(type, id) {
             switch(type) {
                 case 'type':
                     let type_index = this.mapMarkerTypes.findIndex(type => type.id === id);
@@ -398,7 +408,7 @@ export default {
                 // code block
             }
         },
-        generateMarker(lat, lon, entry, title, description, sidebar_target, icon, markerColor, shape, prefix){
+        generateMarker(lat, lon, entry, title, description, sidebar_target, icon, markerColor, shape, prefix) {
             var svgMarker = L.ExtraMarkers.icon({
                 icon: icon,
                 markerColor: markerColor,
@@ -423,29 +433,29 @@ export default {
                 return moment(begin).locale('de').format('LL') + " - " + moment(end).locale('de').format('LL');
             }
         },
-        setCurrentMarker(marker){
+        setCurrentMarker(marker) {
             this.currentMarker = marker;
             this.sidebar.open('ll-marker');
         },
-        syncSelect2(){
-            $("#type_id").select2({
-                dropdownParent: $("#type_id").parent(),
-                allowClear: false
+        syncSelect2() {
+            $("#mapMarkerType").select2({
+                dropdownParent: $("#mapMarkerType").parent(),
+                allowClear: false,
             }).on('select2:select', function (e) {
-                this.form.type_id = e.params.data.element.value
+                this.form.type_id = e.params.data.element.value;
             }.bind(this))
                 .val(this.form.type_id)
                 .trigger('change');
-            $("#category_id").select2({
-                dropdownParent: $("#category_id").parent(),
-                allowClear: false
+            $("#mapMarkerCategory").select2({
+                dropdownParent: $("#mapMarkerCategory").parent(),
+                allowClear: false,
             }).on('select2:select', function (e) {
-                this.form.category_id = e.params.data.element.value
+                this.form.category_id = e.params.data.element.value;
             }.bind(this))
                 .val(this.form.category_id)
                 .trigger('change');
         },
-        confirmItemDelete(marker){
+        confirmItemDelete(marker) {
             this.currentMarker = marker;
             $('#deleteMarkerModal').modal('show');
         },
@@ -467,7 +477,7 @@ export default {
             this.method = 'patch';
             $('#modal-marker-form').modal('show');
         },
-        initMap(){
+        initMap() {
             this.mapCanvas = L.map('map').setView([this.initialLatitude, this.initialLongitude], this.zoom);
 
             // default icon-url throws an error (apparently a common problem)

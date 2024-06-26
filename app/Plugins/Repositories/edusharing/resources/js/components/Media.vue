@@ -90,10 +90,10 @@
             class="box box-objective nav-item-box-image pointer my-1"
             style="min-width: 200px !important; border-style: dotted !important;"
         >
-            <div class="d-flex align-items-center nav-item-box-image-size user-select-none">
-                <img :src="'/media/' + subscription.medium_id" alt="preview" class="w-100 h-auto"/>
-            </div>
-
+            <render-usage
+                class="d-flex align-items-center nav-item-box-image-size user-select-none"
+                :medium="subscription.medium"
+            ></render-usage>
             <span class="text-center p-1 overflow-auto nav-item-box bg-gray-light">
                 <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
                     {{ subscription.medium.title }}
@@ -102,8 +102,8 @@
         </div>
 
         <!-- Add Media -->
-        <div
-            v-permission="'is_admin'"
+        <div v-if="model.curriculum.owner_id == $userId && model.curriculum.type_id !== 1"
+            v-can="'external_medium_create'"
             :id="'media-add'"
             class="box box-objective nav-item-box-image pointer my-1"
             style="min-width: 200px !important; border-style: dotted !important;"
@@ -145,6 +145,8 @@
 </template>
 
 <script>
+const renderUsage = () => import('./RenderUsage.vue');
+
 export default {
     props: {
         'model': {},
@@ -258,6 +260,9 @@ export default {
         media: function (value, oldValue) {
             $("#loading").hide();
         }
+    },
+    components: {
+        renderUsage,
     },
 }
 </script>

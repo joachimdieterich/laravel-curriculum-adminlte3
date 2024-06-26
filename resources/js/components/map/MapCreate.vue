@@ -3,42 +3,47 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <b  v-if="form.id == ''"
-                        class="modal-title">
+                    <b v-if="form.id == ''"
+                        class="modal-title"
+                    >
                         {{ trans('global.map.create') }}
                     </b>
-                    <b  v-else
-                        class="modal-title">
+                    <b v-else
+                        class="modal-title"
+                    >
                         {{ trans('global.map.edit') }}
                     </b>
-                <button
-                    type="button"
-                    class="close"
-                    data-dismiss="modal"
-                    aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                    <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close"
+                    >
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
 
                 <div class="modal-body p-0">
                     <div class="card mb-0">
                         <div class="card-body pb-0">
                             <div class="input-group pb-1">
-                            <color-picker-input
-                              class="input-group-prepend"
-                              v-model="form.color">
-                            </color-picker-input>
-                            <input
-                            type="text"
-                            id="title"
-                            name="title"
-                            class="form-control ml-3"
-                            style="height:42px"
-                            v-model.trim="form.title"
-                            :placeholder="trans('global.map.fields.title')"
-                            required
-                            />
-                            <p class="help-block" v-if="form.errors?.title" v-text="form.errors?.title[0]"></p>
+                                <color-picker-input
+                                    class="input-group-prepend"
+                                    v-model="form.color"
+                                ></color-picker-input>
+                                <input
+                                    id="title"
+                                    name="title"
+                                    type="text"
+                                    class="form-control ml-3"
+                                    style="height:42px"
+                                    v-model.trim="form.title"
+                                    :placeholder="trans('global.map.fields.title') + ' *'"
+                                    required
+                                />
+                                <p v-if="errors.title == true" class="error-block mt-0">
+                                    {{ trans('validation.required') }}
+                                </p>
                             </div>
 
                             <div class="form-group">
@@ -52,10 +57,9 @@
                                     class="form-control"
                                     v-model.trim="form.subtitle"
                                     :placeholder="trans('global.map.fields.subtitle')"
-                                    required
                                 />
-                                <p class="help-block" v-if="form.errors?.subtitle" v-text="form.errors?.subtitle[0]"></p>
                             </div>
+
                             <div class="form-group">
                                 <label for="description">
                                     {{ trans('global.map.fields.description') }}
@@ -68,6 +72,7 @@
                                     v-model.trim="form.description"
                                 ></textarea>
                             </div>
+
                             <div class="form-group">
                                 <label for="subtitle">
                                     {{ trans('global.map.fields.tags') }}
@@ -79,43 +84,53 @@
                                     class="form-control"
                                     v-model.trim="form.tags"
                                     :placeholder="trans('global.map.fields.tags')"
-                                    required
                                 />
-                                <p class="help-block" v-if="form.errors?.tags" v-text="form.errors?.tags[0]"></p>
                             </div>
 
-                            <div v-if="this.mapMarkerTypes?.length !== null"
-                                 class="form-group">
+                            <div v-if="mapMarkerTypes?.length !== null"
+                                 class="form-group"
+                            >
                                 <label for="map_marker_type_id">
-                                    {{ trans('global.marker.fields.type') }}
+                                    {{ trans('global.marker.fields.type') }} *
                                 </label>
                                 <select
                                     id="map_marker_type_id"
-                                    v-model="this.mapMarkerTypes[form.type_id]"
+                                    v-model="form.type_id"
                                     class="form-control select2"
-                                    style="width:100%;">
-                                    <option v-for="(value,index) in this.mapMarkerTypes"
-                                            :value="value.id">
+                                    style="width:100%;"
+                                >
+                                    <option v-for="value in mapMarkerTypes"
+                                            :value="value.id"
+                                    >
                                         {{ value.title }}
                                     </option>
                                 </select>
+                                <p v-if="errors.type_id == true" class="error-block mt-0">
+                                    {{ trans('validation.required') }}
+                                </p>
                             </div>
 
-                            <div v-if="this.mapMarkerCategories?.length !== null"
-                                class="form-group">
+                            <div v-if="mapMarkerCategories?.length !== null"
+                                class="form-group"
+                            >
                                 <label for="map_marker_category_id">
-                                    {{ trans('global.category.title_singular') }}
+                                    {{ trans('global.category.title_singular') }} *
                                 </label>
                                 <select
                                     id="map_marker_category_id"
-                                    v-model="this.mapMarkerCategories[form.category_id]"
+                                    v-model="form.category_id"
                                     class="form-control select2"
-                                    style="width:100%;">
-                                    <option v-for="(value,index) in this.mapMarkerCategories"
-                                            :value="value.id">
+                                    style="width:100%;"
+                                >
+                                    <option v-for="value in mapMarkerCategories"
+                                            :value="value.id"
+                                    >
                                         {{ value.title }}
                                     </option>
                                 </select>
+                                <p v-if="errors.category_id == true" class="error-block mt-0">
+                                    {{ trans('validation.required') }}
+                                </p>
                             </div>
 
                             <div class="form-group">
@@ -129,64 +144,72 @@
                                     class="form-control"
                                     v-model.trim="form.border_url"
                                     :placeholder="trans('global.map.fields.border_url')"
-                                    required
                                 />
-                                <p class="help-block" v-if="form.errors?.border_url" v-text="form.errors?.border_url[0]"></p>
                             </div>
 
                             <div class="form-group">
                                 <label for="latitude">
-                                    {{ trans('global.marker.fields.latitude') }}
+                                    {{ trans('global.marker.fields.latitude') }} *
                                 </label>
                                 <input
-                                    type="text"
                                     id="latitude"
                                     name="latitude"
+                                    type="number"
+                                    step="any"
                                     class="form-control"
                                     v-model.trim="form.latitude"
                                     :placeholder="trans('global.marker.fields.latitude')"
                                 />
-                                <p class="help-block" v-if="form.errors?.latitude" v-text="form.errors?.latitude[0]"></p>
+                                <p v-if="errors.latitude == true" class="error-block mt-0">
+                                    {{ trans('validation.required') }}
+                                </p>
                             </div>
 
                             <div class="form-group">
                                 <label for="longitude">
-                                    {{ trans('global.marker.fields.longitude') }}
+                                    {{ trans('global.marker.fields.longitude') }} *
                                 </label>
                                 <input
-                                    type="text"
                                     id="longitude"
                                     name="longitude"
+                                    type="number"
+                                    step="any"
                                     class="form-control"
                                     v-model.trim="form.longitude"
                                     :placeholder="trans('global.marker.fields.longitude')"
                                 />
-                                <p class="help-block" v-if="form.errors?.longitude" v-text="form.errors?.longitude[0]"></p>
+                                <p v-if="errors.longitude == true" class="error-block mt-0">
+                                    {{ trans('validation.required') }}
+                                </p>
                             </div>
 
                             <div class="form-group">
-                                <label for="longitude">
-                                    {{ trans('global.map.fields.zoom') }}
+                                <label for="zoom">
+                                    {{ trans('global.map.fields.zoom') }} *
                                 </label>
                                 <input
-                                    type="number"
                                     id="zoom"
                                     name="zoom"
+                                    type="number"
                                     class="form-control"
                                     v-model.trim="form.zoom"
                                     :placeholder="trans('global.map.fields.zoom')"
                                     required
                                 />
-                                <p class="help-block" v-if="form.errors.zoom" v-text="form.errors.zoom[0]"></p>
+                                <p v-if="errors.zoom == true" class="error-block mt-0">
+                                    {{ trans('validation.required') }}
+                                </p>
                             </div>
 
                             <div v-if="form.id"
-                                 class="form-group">
+                                 class="form-group"
+                            >
                                 <MediumForm
                                     :form="form"
                                     :id="component_id"
                                     :medium_id="form.medium_id"
-                                    accept="image/*"/>
+                                    accept="image/*"
+                                />
                             </div>
                         </div>
                         <!-- /.card-body -->
@@ -196,13 +219,14 @@
                 <div class="modal-footer justify-content-between">
                     <button type="button"
                         class="btn btn-default"
-                        data-dismiss="modal">
+                        data-dismiss="modal"
+                    >
                         {{ trans('global.cancel') }}
                     </button>
                     <button type="button"
                         class="btn btn-primary"
-                        data-dismiss="modal"
-                        @click="submit()">
+                        @click="submit()"
+                    >
                         {{ trans('global.save') }}
                     </button>
                 </div>
@@ -242,8 +266,16 @@ export default {
                 'color': '#F2C511',
                 'medium_id': '',
             }),
-            mapMarkerTypes : {},
-            mapMarkerCategories : {}
+            mapMarkerTypes: {},
+            mapMarkerCategories: {},
+            errors: {
+                title: false,
+                type_id: false,
+                category_id: false,
+                longitude: false,
+                latitude: false,
+                zoom: false,
+            },
         };
     },
     watch: {
@@ -271,13 +303,15 @@ export default {
         }
 
     },
-    computed:{
-        textColor: function(){
+    computed: {
+        textColor: function() {
             return this.$textcolor(this.form.color, '#333333');
         }
     },
     methods: {
         submit() {
+            if (!this.checkRequired()) return;
+
             let method = this.method.toLowerCase();
             this.form.description = tinyMCE.get('map_description').getContent();
             if (method === 'patch') {
@@ -297,8 +331,35 @@ export default {
                         console.log(error)
                     });
             }
+
+            $('#modal-map-form').modal('hide');
         },
-        syncSelect2(){
+        checkRequired() {
+            let filledOut = true;
+            const fields = this.$el.querySelectorAll('[required]');
+
+            for (const field of fields) {
+                if (field.value.trim() === '') { // activate error-helper
+                    this.errors[field.id] = true;
+                    filledOut = false;
+                } else { // deactivate error-helper
+                    this.errors[field.id] = false;
+                }
+            }
+            // select2 fields need to be checked separately
+            // in this case they theoretically don't need to be checked, since they can't be empty
+            // they also don't have a 'required' tag, because it could set 'filledOut' to 'false'
+            let markerTypeIsSet = this.form.type_id !== '';
+            this.errors['type_id'] = !markerTypeIsSet;
+            filledOut = markerTypeIsSet ? filledOut : false;
+            
+            let categoryIdIsSet = this.form.category_id !== '';
+            this.errors['category_id'] = !categoryIdIsSet;
+            filledOut = categoryIdIsSet ? filledOut : false;
+            
+            return filledOut;
+        },
+        syncSelect2() {
             $("#map_marker_type_id").select2({
                 dropdownParent: $("#map_marker_type_id").parent(),
                 allowClear: false
@@ -317,14 +378,12 @@ export default {
                 .val(this.form.category_id)
                 .trigger('change');
         },
-
         decodeHTMLEntities(text) {
             return $("<textarea/>")
                 .html(text)
                 .text();
         }
     },
-
     mounted() {
         this.$initTinyMCE([
             "autolink link"
@@ -349,6 +408,5 @@ export default {
             });
 
     }
-
 }
 </script>

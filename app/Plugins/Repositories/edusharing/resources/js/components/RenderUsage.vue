@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="d-flex align-items-center">
         <div @click="show()">
             <img :src="'/media/'+this.medium.id+'?preview=true'" class="p-0 w-100" >
 
@@ -27,7 +27,7 @@
                @click="show()"></i>
         </div>-->
 
-        <div :id="'loading_'+this.medium.id" class="overlay text-center" style="width:100% !important;">
+        <div :id="'loading_'+this.medium.id" class="overlay text-center" style="width:100% !important; height: 0px; position: absolute;">
             <i class="fa fa-spinner fa-pulse fa-fw"></i>
             <span class="sr-only">Loading...</span>
         </div>

@@ -135,7 +135,7 @@
                 v-can="'map_create'"/>
         </div>
         <Modal
-            :id="'mapModal'"
+            id="mapModal"
             css="danger"
             :title="trans('global.map.delete')"
             :text="trans('global.map.delete_helper')"

@@ -3,42 +3,45 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <b  v-if="form.id == ''"
-                        class="modal-title">
+                    <b v-if="form.id == ''"
+                        class="modal-title"
+                    >
                         {{ trans('global.map.create') }}
                     </b>
-                    <b  v-else
-                        class="modal-title">
+                    <b v-else
+                        class="modal-title"
+                    >
                         {{ trans('global.map.edit') }}
                     </b>
-                <button
-                    type="button"
-                    class="close"
-                    data-dismiss="modal"
-                    aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                    <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close"
+                    >
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
 
                 <div class="modal-body p-0">
                     <div class="card mb-0">
                         <div class="card-body pb-0">
                             <div class="input-group pb-1">
-                            <color-picker-input
-                              class="input-group-prepend"
-                              v-model="form.color">
-                            </color-picker-input>
-                            <input
-                            type="text"
-                            id="title"
-                            name="title"
-                            class="form-control ml-3"
-                            style="height:42px"
-                            v-model.trim="form.title"
-                            :placeholder="trans('global.map.fields.title')"
-                            required
-                            />
-                            <p class="help-block" v-if="form.errors?.title" v-text="form.errors?.title[0]"></p>
+                                <color-picker-input
+                                    class="input-group-prepend"
+                                    v-model="form.color"
+                                ></color-picker-input>
+                                <input
+                                    type="text"
+                                    id="title"
+                                    name="title"
+                                    class="form-control ml-3"
+                                    style="height:42px"
+                                    v-model.trim="form.title"
+                                    :placeholder="trans('global.map.fields.title')"
+                                    required
+                                />
+                                <p class="help-block" v-if="form.errors?.title" v-text="form.errors?.title[0]"></p>
                             </div>
 
                             <div class="form-group">
@@ -84,35 +87,41 @@
                                 <p class="help-block" v-if="form.errors?.tags" v-text="form.errors?.tags[0]"></p>
                             </div>
 
-                            <div v-if="this.mapMarkerTypes?.length !== null"
-                                 class="form-group">
+                            <div v-if="mapMarkerTypes?.length !== null"
+                                 class="form-group"
+                            >
                                 <label for="map_marker_type_id">
                                     {{ trans('global.marker.fields.type') }}
                                 </label>
                                 <select
                                     id="map_marker_type_id"
-                                    v-model="this.mapMarkerTypes[form.type_id]"
+                                    v-model="form.type_id"
                                     class="form-control select2"
-                                    style="width:100%;">
-                                    <option v-for="(value,index) in this.mapMarkerTypes"
-                                            :value="value.id">
+                                    style="width:100%;"
+                                >
+                                    <option v-for="value in mapMarkerTypes"
+                                            :value="value.id"
+                                    >
                                         {{ value.title }}
                                     </option>
                                 </select>
                             </div>
 
-                            <div v-if="this.mapMarkerCategories?.length !== null"
-                                class="form-group">
+                            <div v-if="mapMarkerCategories?.length !== null"
+                                class="form-group"
+                            >
                                 <label for="map_marker_category_id">
                                     {{ trans('global.category.title_singular') }}
                                 </label>
                                 <select
                                     id="map_marker_category_id"
-                                    v-model="this.mapMarkerCategories[form.category_id]"
+                                    v-model="form.category_id"
                                     class="form-control select2"
-                                    style="width:100%;">
-                                    <option v-for="(value,index) in this.mapMarkerCategories"
-                                            :value="value.id">
+                                    style="width:100%;"
+                                >
+                                    <option v-for="value in mapMarkerCategories"
+                                            :value="value.id"
+                                    >
                                         {{ value.title }}
                                     </option>
                                 </select>
@@ -181,12 +190,14 @@
                             </div>
 
                             <div v-if="form.id"
-                                 class="form-group">
+                                 class="form-group"
+                            >
                                 <MediumForm
                                     :form="form"
                                     :id="component_id"
                                     :medium_id="form.medium_id"
-                                    accept="image/*"/>
+                                    accept="image/*"
+                                />
                             </div>
                         </div>
                         <!-- /.card-body -->
@@ -196,13 +207,15 @@
                 <div class="modal-footer justify-content-between">
                     <button type="button"
                         class="btn btn-default"
-                        data-dismiss="modal">
+                        data-dismiss="modal"
+                    >
                         {{ trans('global.cancel') }}
                     </button>
                     <button type="button"
                         class="btn btn-primary"
                         data-dismiss="modal"
-                        @click="submit()">
+                        @click="submit()"
+                    >
                         {{ trans('global.save') }}
                     </button>
                 </div>
@@ -242,8 +255,8 @@ export default {
                 'color': '#F2C511',
                 'medium_id': '',
             }),
-            mapMarkerTypes : {},
-            mapMarkerCategories : {}
+            mapMarkerTypes: {},
+            mapMarkerCategories: {},
         };
     },
     watch: {
@@ -271,8 +284,8 @@ export default {
         }
 
     },
-    computed:{
-        textColor: function(){
+    computed: {
+        textColor: function() {
             return this.$textcolor(this.form.color, '#333333');
         }
     },
@@ -298,7 +311,7 @@ export default {
                     });
             }
         },
-        syncSelect2(){
+        syncSelect2() {
             $("#map_marker_type_id").select2({
                 dropdownParent: $("#map_marker_type_id").parent(),
                 allowClear: false
@@ -317,14 +330,12 @@ export default {
                 .val(this.form.category_id)
                 .trigger('change');
         },
-
         decodeHTMLEntities(text) {
             return $("<textarea/>")
                 .html(text)
                 .text();
         }
     },
-
     mounted() {
         this.$initTinyMCE([
             "autolink link"
@@ -349,6 +360,5 @@ export default {
             });
 
     }
-
 }
 </script>

@@ -9,20 +9,20 @@
                     <span v-else> {{ trans('global.terminalObjective.title_singular') }}</span>
 
                     <div v-can="'task_edit'" class="card-tools pr-2">
-                        <a @click.prevent="editObjective()" >
+                        <a @click.prevent="editObjective()">
                             <i class="fa fa-pencil-alt"></i>
                         </a>
                     </div>
                 </div>
                 <div class="card-body row">
                     <span class="col-12">
-                         <variants
-                             :model="objective"
-                             :referenceable_type="model"
-                             :referenceable_id="objective.id"
-                             :variant_order="variant_order"
-                             field="title"
-                         />
+                        <variants
+                            :model="objective"
+                            :referenceable_type="model"
+                            :referenceable_id="objective.id"
+                            :variant_order="variant_order"
+                            field="title"
+                        />
                     </span>
                 </div>
                 <div class="card-footer">
@@ -45,7 +45,8 @@
                     <a class="nav-link show link-muted"
                        :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_description_'+objective.id, 'active', true)"
                        href="#description"
-                       data-toggle="tab">
+                       data-toggle="tab"
+                    >
                         <i class="fa fa-info pr-1"></i>
                         <span v-if="help">{{ trans('global.description') }}</span>
                     </a>
@@ -57,12 +58,13 @@
                     <a class="nav-link small link-muted"
                        :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_related_objectives_'+objective.id)"
                        href="#related_objectives"
-                       data-toggle="tab">
+                       data-toggle="tab"
+                    >
                         <i class="fa fa-sitemap pr-1"></i>
                         <span v-if="type === 'terminal'" >
                             <span v-if="help">{{ trans('global.subordinate_element') }}</span>
                         </span>
-                        <span v-else >
+                        <span v-else>
                             <span v-if="help">{{ trans('global.superordinate_element_singular') }}</span>
                         </span>
                     </a>
@@ -78,14 +80,16 @@
                        role="tab"
                        aria-controls="content_tab"
                        aria-selected="true"
-                       @click="loaderEvent()">
+                       @click="loaderEvent()"
+                    >
                         <i class="fa fa-align-justify pr-2"></i>
                         <span v-if="help">{{trans('global.content.index_alt')}}</span>
                     </a>
                 </li>
 
                 <li class="nav-item"
-                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_tab_media_'+objective.id)">
+                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_tab_media_'+objective.id)"
+                >
                     <a class="nav-link small link-muted"
                        :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_tab_media_'+objective.id)"
                        href="#tab_media"
@@ -97,11 +101,13 @@
                 </li>
 
                 <li class="nav-item"
-                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_references_'+objective.id)">
+                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_references_'+objective.id)"
+                >
                     <a class="nav-link small link-muted"
                        :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_references_'+objective.id)"
                        href="#references"
-                       data-toggle="tab">
+                       data-toggle="tab"
+                    >
                         <i class="fa fa-project-diagram pr-1"></i>
                         <span v-if="help">{{trans('global.referenceable_types.objective')}}</span>
                     </a>
@@ -110,12 +116,14 @@
                 <li v-can="'achievement_access'"
                     v-if="this.type === 'enabling'"
                     class="nav-item"
-                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_achievements_'+objective.id)">
+                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_achievements_'+objective.id)"
+                >
                     <a class="nav-link small link-muted"
                        :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_achievements_'+objective.id)"
                        href="#achievements"
                        data-toggle="tab"
-                       @click="loadAchievements()">
+                       @click="loadAchievements()"
+                    >
                         <i class="far fa-check-circle pr-1"></i>
                         <span v-if="help">{{trans('global.objective_tab')}}</span>
                     </a>
@@ -123,30 +131,35 @@
 
                 <li v-can="'prerequisite_access'"
                     class="nav-item"
-                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_prerequisites_'+objective.id)">
+                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_prerequisites_'+objective.id)"
+                >
                     <a class="nav-link small link-muted"
                        :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_prerequisites_'+objective.id)"
                        href="#prerequisites"
                        data-toggle="tab"
-                       @click="loadPrerequisites()">
+                       @click="loadPrerequisites()"
+                    >
                         <i class="fa fa-puzzle-piece pr-1"></i>
                         <span v-if="help">{{trans('global.prerequisite.title')}}</span>
                     </a>
                 </li>
 
                 <li class="nav-item"
-                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_events_'+objective.id)">
+                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_events_'+objective.id)"
+                >
                     <a class="nav-link small link-muted"
                        :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_events_'+objective.id)"
                        href="#events"
-                       data-toggle="tab">
+                       data-toggle="tab"
+                    >
                         <i class="fa fa-user-graduate pr-1"></i>
                         <span v-if="help">{{ trans('global.eventSubscription.title_alt') }}</span>
                     </a>
                 </li>
                 <li v-can="'lms_access'"
                     class="nav-item"
-                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_lms_'+objective.id)">
+                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_lms_'+objective.id)"
+                >
                     <a class="nav-link small link-muted"
                        :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_lms_'+objective.id)"
                        href="#lms"
@@ -159,7 +172,8 @@
                 </li>
                 <li class="nav-item ml-auto pull-right">
                     <a class="nav-link small link-muted pointer"
-                       @click="help = !help">
+                       @click="help = !help"
+                    >
                         <i class="fa fa-question pr-1"></i>
                     </a>
                 </li>
@@ -171,22 +185,23 @@
                      v-if="objective.description !== ''"
                      :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_description_'+objective.id, 'active', true)"
                      id="description"
-                     >
+                >
 <!--                    <div class="card-body" v-html="objective.description"></div>-->
 
-                        <variants
-                            :model="objective"
-                            :variant_order="variant_order"
-                            :showTitle=false
-                            field="description"
-                            css_size="col-12"
-                            css_form=""
-                        />
+                    <variants
+                        :model="objective"
+                        :variant_order="variant_order"
+                        :showTitle=false
+                        field="description"
+                        css_size="col-12"
+                        css_form=""
+                    />
                 </div>
                 <!-- /.tab-pane -->
                 <div class="tab-pane pt-2"
                      :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_related_objectives_'+objective.id)"
-                     id="related_objectives" >
+                     id="related_objectives"
+                >
                     <span v-if="type === 'enabling'">
                         <ObjectiveBox type="terminal"
                             :objective="objective.terminal_objective"
@@ -208,35 +223,41 @@
                      :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_content_tab_'+objective.id)"
                      id="content_tab"
                      role="tab"
-                     aria-labelledby="content-nav-tab">
+                     aria-labelledby="content-nav-tab"
+                >
                     <span v-if="type === 'enabling'">
                         <contents
                             ref="Contents"
                             subscribable_type="App\EnablingObjective"
-                            :subscribable_id="objective.id"></contents>
+                            :subscribable_id="objective.id"
+                        ></contents>
                     </span>
                     <span v-else>
                         <contents
                             ref="Contents"
                             subscribable_type="App\TerminalObjective"
-                            :subscribable_id="objective.id"></contents>
+                            :subscribable_id="objective.id"
+                        ></contents>
                     </span>
                 </div>
                 <!--                    1 Files -->
                 <div class="tab-pane"
                      :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_tab_media_'+objective.id)"
-                     id="tab_media">
+                     id="tab_media"
+                >
                     <div class="row">
                         <div class="col-12">
-                             <div
+                            <div
                                 class="tab-pane active show"
-                                id="sub_medium">
-                                 <objectiveMedia
-                                     ref="Media"
-                                     :model="model"
-                                     :objective="objective"
-                                     :repository="repository"
-                                     :type="type"/>
+                                id="sub_medium"
+                            >
+                                <objectiveMedia
+                                    ref="Media"
+                                    :model="model"
+                                    :objective="objective"
+                                    :repository="repository"
+                                    :type="type"
+                                />
                             </div>
                         </div>
                     </div>

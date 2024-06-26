@@ -63,14 +63,15 @@
                  v-bind:class="[(currentTab === 2) ? 'active' : '']"
                  id="objective-media-external"
                  role="tabpanel"
-                 aria-labelledby="curriculum-nav-tab">
+                 aria-labelledby="curriculum-nav-tab"
+            >
                 <div class="row">
                     <repository
                         v-if="repository"
                         :repository="repository"
                         ref="repositoryPlugin"
-                        :model="objective">
-                    </repository>
+                        :model="objective"
+                    ></repository>
                 </div>
             </div>
             <!-- <div v-can="'artefact_access'"

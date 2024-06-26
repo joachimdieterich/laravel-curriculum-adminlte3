@@ -59,7 +59,7 @@
                                 {{ marker.title }}
                             </a>
                             <div v-if="$userId == marker.owner_id || $userId == map.owner_id"
-                                 class="tools"
+                                 class="tools user-select-none"
                             >
                                 <i class="text-secondary fa fa-pencil-alt" @click="edit(marker)"></i>
                                 <i class="text-danger fa fa-trash ml-2" @click="confirmItemDelete(marker)"></i>

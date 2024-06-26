@@ -39,7 +39,9 @@
                                     :placeholder="trans('global.marker.fields.title')"
                                     required
                                 />
-                                <p class="help-block" v-if="form.errors?.title" v-text="form.errors?.title[0]"></p>
+                                <p v-if="errors.title == true" class="error-block mt-0">
+                                    {{ trans('validation.required') }}
+                                </p>
                             </div>
                             <div class="form-group">
                                 <label for="teaser_text">
@@ -52,13 +54,11 @@
                                     class="form-control"
                                     v-model.trim="form.teaser_text"
                                     :placeholder="trans('global.marker.fields.teaser_text')"
-                                    required
                                 />
-                                <p class="help-block" v-if="form.errors?.teaser_text" v-text="form.errors?.teaser_text[0]"></p>
                             </div>
                             <div class="form-group">
                                 <label for="marker_description">
-                                    {{ trans('global.marker.fields.description') }} *
+                                    {{ trans('global.marker.fields.description') }}
                                 </label>
                                 <textarea
                                     id="marker_description"
@@ -66,7 +66,6 @@
                                     :placeholder="trans('global.marker.fields.description')"
                                     class="form-control description my-editor "
                                     v-model.trim="form.description"
-                                    required
                                 ></textarea>
                             </div>
                             <div class="form-group">
@@ -81,7 +80,6 @@
                                     v-model.trim="form.author"
                                     :placeholder="trans('global.marker.fields.author')"
                                 />
-                                <p class="help-block" v-if="form.errors?.author" v-text="form.errors?.author[0]"></p>
                             </div>
                             <div class="form-group">
                                 <label for="tags">
@@ -95,7 +93,6 @@
                                     v-model.trim="form.tags"
                                     :placeholder="trans('global.marker.fields.tags')"
                                 />
-                                <p class="help-block" v-if="form.errors?.tags" v-text="form.errors?.tags[0]"></p>
                             </div>
 
                             <div v-if="this.mapMarkerTypes?.length != null"
@@ -109,7 +106,6 @@
                                     v-model="this.mapMarkerTypes[form.type_id]"
                                     class="form-control select2"
                                     style="width:100%;"
-                                    required
                                 >
                                     <option v-for="value in this.mapMarkerTypes"
                                             :value="value.id"
@@ -117,6 +113,9 @@
                                         {{ value.title }}
                                     </option>
                                 </select>
+                                <p v-if="errors.marker_type_id == true" class="error-block mt-0">
+                                    {{ trans('validation.required') }}
+                                </p>
                             </div>
 
                             <div v-if="this.mapMarkerCategories?.length != null"
@@ -137,6 +136,9 @@
                                         {{ value.title }}
                                     </option>
                                 </select>
+                                <p v-if="errors.marker_category_id == true" class="error-block mt-0">
+                                    {{ trans('validation.required') }}
+                                </p>
                             </div>
 
                             <div class="form-group">
@@ -144,15 +146,18 @@
                                     {{ trans('global.marker.fields.latitude') }} *
                                 </label>
                                 <input
-                                    type="text"
                                     id="latitude"
                                     name="latitude"
+                                    type="number"
+                                    step="any"
                                     class="form-control"
                                     v-model.trim="form.latitude"
                                     :placeholder="trans('global.marker.fields.latitude')"
                                     required
                                 />
-                                <p class="help-block" v-if="form.errors?.latitude" v-text="form.errors?.latitude[0]"></p>
+                                <p v-if="errors.latitude == true" class="error-block mt-0">
+                                    {{ trans('validation.required') }}
+                                </p>
                             </div>
 
                             <div class="form-group">
@@ -160,15 +165,18 @@
                                     {{ trans('global.marker.fields.longitude') }} *
                                 </label>
                                 <input
-                                    type="text"
                                     id="longitude"
                                     name="longitude"
+                                    type="number"
+                                    step="any"
                                     class="form-control"
                                     v-model.trim="form.longitude"
                                     :placeholder="trans('global.marker.fields.longitude')"
                                     required
                                 />
-                                <p class="help-block" v-if="form.errors?.longitude" v-text="form.errors?.longitude[0]"></p>
+                                <p v-if="errors.longitude == true" class="error-block mt-0">
+                                    {{ trans('validation.required') }}
+                                </p>
                             </div>
 
                             <div class="form-group">
@@ -183,7 +191,6 @@
                                     v-model.trim="form.address"
                                     :placeholder="trans('global.marker.fields.address')"
                                 />
-                                <p class="help-block" v-if="form.errors?.address" v-text="form.errors?.address[0]"></p>
                             </div>
 
                             <div class="form-group">
@@ -198,7 +205,6 @@
                                     v-model.trim="form.url"
                                     :placeholder="trans('global.marker.fields.url')"
                                 />
-                                <p class="help-block" v-if="form.errors.url" v-text="form.errors.url[0]"></p>
                             </div>
 
                             <div class="form-group">
@@ -213,7 +219,6 @@
                                     v-model.trim="form.url_title"
                                     :placeholder="trans('global.marker.fields.url_title')"
                                 />
-                                <p class="help-block" v-if="form.errors.url_title" v-text="form.errors.url_title[0]"></p>
                             </div>
 
                         </div>
@@ -230,7 +235,6 @@
                     </button>
                     <button type="button"
                         class="btn btn-primary"
-                        data-dismiss="modal"
                         @click="submit()"
                     >
                         {{ trans('global.save') }}
@@ -271,7 +275,14 @@ export default {
                 'url_title': '',
             }),
             mapMarkerTypes : {},
-            mapMarkerCategories : {}
+            mapMarkerCategories : {},
+            errors: {
+                title: false,
+                marker_type_id: false,
+                marker_category_id: false,
+                latitude: false,
+                longitude: false,
+            },
         };
     },
     watch: {
@@ -301,6 +312,8 @@ export default {
     },
     methods: {
         submit() {
+            if (!this.checkRequired()) return;
+
             let method = this.method.toLowerCase();
             this.form.description = tinyMCE.get('marker_description').getContent();
             if (method === 'patch') {
@@ -322,8 +335,35 @@ export default {
                         console.log(error)
                     });
             }
+
+            $('#modal-marker-form').modal('hide');
         },
-        syncSelect2(){
+        checkRequired() {
+            let filledOut = true;
+            const fields = this.$el.querySelectorAll('[required]');
+
+            for (const field of fields) {
+                if (field.value.trim() === '') { // activate error-helper
+                    this.errors[field.id] = true;
+                    filledOut = false;
+                } else { // deactivate error-helper
+                    this.errors[field.id] = false;
+                }
+            }
+            // select2 fields need to be checked separately
+            // in this case they theoretically don't need to be checked, since they can't be empty
+            // they also don't have a 'required' tag, because it could set 'filledOut' to 'false'
+            let markerTypeIsSet = this.form.type_id !== '';
+            this.errors['marker_type_id'] = !markerTypeIsSet;
+            filledOut = markerTypeIsSet ? filledOut : false;
+            
+            let categoryIdIsSet = this.form.category_id !== '';
+            this.errors['marker_category_id'] = !categoryIdIsSet;
+            filledOut = categoryIdIsSet ? filledOut : false;
+            
+            return filledOut;
+        },
+        syncSelect2() {
             $("#marker_type_id").select2({
                 dropdownParent: $("#marker_type_id").parent(),
                 allowClear: false
@@ -348,7 +388,6 @@ export default {
                 .text();
         }
     },
-
     mounted() {
         $('#modal-marker-form').on('shown.bs.modal', function () {
             this.syncSelect2();
@@ -377,6 +416,5 @@ export default {
             });
 
     }
-
 }
 </script>

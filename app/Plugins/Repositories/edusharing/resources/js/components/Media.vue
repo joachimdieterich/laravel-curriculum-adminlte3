@@ -96,7 +96,7 @@
             ></render-usage>
             <span class="text-center p-1 overflow-auto nav-item-box bg-gray-light">
                 <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                    {{ subscription.medium.title }}
+                    {{ subscription.medium.title ?? subscription.medium.name }}
                 </h1>
             </span>
         </div>

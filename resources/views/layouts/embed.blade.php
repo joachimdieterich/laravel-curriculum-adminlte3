@@ -6,7 +6,7 @@
         <div id="app" class="wrapper">
             <div class="pl-2 pr-2" style="padding-bottom:50px">
                 @yield('content')
-                <input id="medium_id" class="invisible"> <!-- DONT REMOVE - used by TINYMCE -->
+                <input id="medium_id" class="d-none"> <!-- DONT REMOVE - used by TINYMCE -->
             </div>
         </div>
 

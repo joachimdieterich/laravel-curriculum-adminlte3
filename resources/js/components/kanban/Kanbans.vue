@@ -52,14 +52,14 @@
             <table id="kanban-datatable" style="display: none;"></table>
             <div id="kanban-content">
                 <div class="py-2">
+                    <KanbanIndexAddWidget
+                        v-if="((this.filter == 'all' && typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined') || this.filter == 'owner')"
+                        v-can="'kanban_create'"
+                    />
                     <KanbanIndexWidget
                         v-for="(kanban,index) in kanbans"
                         :key="index+'_kanban_'+kanban.id"
                         :kanban="kanban"
-                    />
-                    <KanbanIndexAddWidget
-                        v-if="((this.filter == 'all' && typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined') || this.filter == 'owner')"
-                        v-can="'kanban_create'"
                     />
                 </div>
 

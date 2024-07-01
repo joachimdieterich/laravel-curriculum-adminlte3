@@ -260,7 +260,7 @@ export default {
             bordersGroup: {},
             namesGroup: {},
             markers: {},
-            currentMarker:{},
+            currentMarker: undefined,
             clusterGroup: {},
             mapMarkerTypes: {},
             mapMarkerCategories: {},

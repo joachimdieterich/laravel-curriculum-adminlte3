@@ -250,7 +250,6 @@ export default {
     },
     mounted() {
         this.$eventHub.$on('reload_objective', (e) => {
-            console.warn('reload event', e);
             if (this.model.id == e.id) {
                 this.loader();
             }

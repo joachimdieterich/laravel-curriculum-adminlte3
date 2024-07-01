@@ -1,6 +1,6 @@
 <template>
     <div class="d-flex align-items-center">
-        <div @click="show()">
+        <div @click="enableClick && show()">
             <img :src="'/media/'+this.medium.id+'?preview=true'" class="p-0 w-100" >
 
 
@@ -41,7 +41,11 @@
             medium: {},
             downloadable: {
                 type: Boolean,
-                default: true
+                default: true,
+            },
+            enableClick: {
+                type: Boolean,
+                default: true,
             }
         },
 

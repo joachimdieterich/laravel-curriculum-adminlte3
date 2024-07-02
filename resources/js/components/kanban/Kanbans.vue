@@ -150,6 +150,7 @@ export default {
 
         let dt = $('#kanban-datatable').DataTable({
             dom: 'tilpr',
+            ajax: '/kanbans/list?filter=all',
             columns: [ // only gets attributes used in this component
                 { title: 'id', data: 'id', searchable: false },
                 { title: 'title', data: 'title', searchable: true },
@@ -162,13 +163,12 @@ export default {
                 { title: 'auto_refresh', data: 'auto_refresh', searchable: false },
                 { title: 'only_edit_owned_items', data: 'only_edit_owned_items', searchable: false },
             ],
+            order: [[1, 'asc']],
             //pageLength: 6, // TODO: maybe set per variable based on window-width (mobile/tablet etc.)
         }).on('draw.dt', () => {  // checks if the datatable-data changes, to update the kanban-data
             parent.kanbans = $('#kanban-datatable').DataTable().rows({ page: 'current' }).data().toArray();
             $('#kanban-content').insertBefore('#kanban-datatable');
         });
-
-        this.loaderEvent();
 
         this.$eventHub.$on('filter', (filter) => {
             dt.search(filter).draw();

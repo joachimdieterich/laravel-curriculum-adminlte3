@@ -53,10 +53,11 @@
             </button>
         </div>
         <div v-else-if="newStatus == true"
-              :id="'kanbanStatusCreate_'+form.id">
-            <strong
-                class="text-secondary btn px-1 py-0"
-                @click="edit()">
+            :id="'kanbanStatusCreate_'+form.id"
+            type="button"
+            @click="edit()"
+        >
+            <strong class="text-secondary btn px-1 py-0">
                 <i class="fa fa-plus"></i> {{ trans('global.kanbanStatus.create') }}
             </strong>
         </div>

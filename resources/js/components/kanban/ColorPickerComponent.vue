@@ -23,7 +23,7 @@ export default {
     methods: {
         getColor() {
             if(this.id){
-                axios.get('/kanban/getColor/' + this.id).then(res => {
+                axios.get('/kanbans/getColor/' + this.id).then(res => {
                     this.hex_color = res.data.hex
                     this.rgba_color = res.data.rgba
                     $(function () {
@@ -34,7 +34,7 @@ export default {
         },
         updateColor(value) {
             let that = this;
-            axios.post('/kanban/setColor', {
+            axios.post('/kanbans/setColor', {
                 'id': this.id,
                 'color': value
             }).then(

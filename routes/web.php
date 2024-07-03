@@ -143,8 +143,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('tokens', 'ShareTokenController@create');
 
-    Route::get('kanban/getColor/{id}', 'KanbanController@getColor');
-    Route::post('kanban/setColor', 'KanbanController@setColor');
+    Route::get('kanbans/getColor/{id}', 'KanbanController@getColor');
+    Route::post('kanbans/setColor', 'KanbanController@setColor');
 
     Route::resource('kanbanSubscriptions', 'KanbanSubscriptionController');
 

@@ -134,6 +134,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('kanbanItems/{kanbanItem}/react', 'KanbanItemController@reaction')->name('kanbanItems.react');
     Route::get('kanbanItems/{kanbanItem}/editors', 'KanbanItemController@editors')->name('kanbanItems.editors');
+    Route::get('kanbanItems/{kanbanItem}/copy', 'KanbanItemController@copyKanbanItem');
     Route::put('kanbanItems/sync', 'KanbanItemController@sync')->name('kanbanItems.sync');
     Route::resource('kanbanItems', 'KanbanItemController');
 

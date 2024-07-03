@@ -18,18 +18,26 @@
 
                     <div class="dropdown-menu" x-placement="top-start">
                         <button :name="'kanbanItemEdit_'+index"
-                                class="dropdown-item text-secondary  py-1"
-                                @click="edit()">
+                                class="dropdown-item text-secondary py-1"
+                                @click="edit()"
+                        >
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.kanbanItem.edit') }}
                         </button>
                         <button
                             v-can="'external_medium_create'"
                             :name="'kanbanItemAddMedia_'+index"
-                            class="dropdown-item text-secondary  py-1"
-                            @click="addMedia()">
+                            class="dropdown-item text-secondary py-1"
+                            @click="addMedia()"
+                        >
                             <i class="fa fa-folder-open mr-2"></i>
                             {{ trans('global.media.title_singular') }}
+                        </button>
+                        <button :name="'kanbanItemCopy_' + index"
+                            class="dropdown-item text-secondary py-1"
+                            @click="copyItem()"
+                        >
+
                         </button>
                         <div v-if="(item.editable == 1 && $userId == item.owner_id) || ($userId == kanban_owner_id)">
                             <hr class="my-1">
@@ -297,6 +305,7 @@ const Reaction =
 const Comments =
     () => import('./Comments');
 import moment from 'moment';
+import axios from "axios";
 
 export default {
     props: {
@@ -391,12 +400,12 @@ export default {
             this.editor = false;
 
         },
-
+        copyItem() {
+            axios.post('/kanbanItem/' + this.item.id + '/copy');
+        },
         openComments(){
             this.show_comments = !this.show_comments;
         },
-
-
         open(modal) {
             this.$modal.show(modal, {
                 'modelUrl': 'kanbanItem',

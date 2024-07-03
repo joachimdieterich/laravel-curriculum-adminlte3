@@ -216,7 +216,7 @@ class KanbanController extends Controller
         $kanban->delete();
     }
 
-    public function updateKanbansColor(Request $request)
+    public function setColor(Request $request)
     {
         $kanban = Kanban::where('id', $request->id)->first();
         abort_unless((\Gate::allows('kanban_create') and $kanban->isAccessible()), 403);
@@ -240,7 +240,7 @@ class KanbanController extends Controller
         }
     }
 
-    public function getKanbansColor($id)
+    public function getColor($id)
     {
         $kanban = Kanban::where('id', $id)->first();
         if ($kanban->color != null && $kanban->color != '#F4F4F4') {

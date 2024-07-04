@@ -79,7 +79,7 @@
         </div>
 
         <!-- Media linked from Edusharing -->
-        <span v-for="media_subscription in externalMedia">
+        <span :class="currentTab !== 1 && 'd-none'" v-for="media_subscription in externalMedia">
             <div v-for="medium in media_subscription"
                  :id="medium.node_id"
                  style="border: 1px solid #d2d6de;"
@@ -157,7 +157,7 @@ export default {
             media: null,
             externalMedia: null,
             page: 0,
-            maxItems: 20,
+            maxItems: 50,
             errors: {},
             currentTab: 1,
         }

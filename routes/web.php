@@ -272,7 +272,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('repositorySubscriptions/destroySubscription', 'RepositorySubscriptionController@destroySubscription')->name('repositorySubscriptions.destroySubscription');
     Route::post('repositorySubscriptions/searchRepository', 'RepositorySubscriptionController@searchRepository')->name('repositorySubscriptions.searchRepository');
-    Route::post('repositorySubscriptions/getMedia', 'RepositorySubscriptionController@getMedia')->name('repositorySubscriptions.getMedia');
+    Route::get('repositorySubscriptions/getMedia', 'RepositorySubscriptionController@getMedia')->name('repositorySubscriptions.getMedia');
     Route::resource('repositorySubscriptions', 'RepositorySubscriptionController');
     /* Roles */
     Route::get('roles/list', 'RolesController@list')->name('roles.list');

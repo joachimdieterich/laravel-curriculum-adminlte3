@@ -43,64 +43,6 @@
             <span class="sr-only">Loading...</span>
         </div>
 
-        <!-- <span v-for="media_subscription in media">
-            <div v-for="medium in media_subscription"
-                 :id="medium.node_id"
-                 style="border: 1px solid #d2d6de;"
-                 class="box box-objective edusharing-box pointer my-1"
-                 @click="show(medium)"
-            >
-                <div class="bg-white text-center edusharing-box-bg p-1 overflow-auto "
-                     :style="{'background-image':'url('+href(medium)+')'}"
-                >
-                    <div class="symbol"
-                        :style="{'background':'white url('+iconUrl(medium)+') no-repeat center', 'background-size': '24px'}"
-                    ></div>
-                </div> -->
-<!--            <span
-                    v-can="'medium_delete'"
-                    class="p-1 pointer_hand"
-                    accesskey="" style="position:absolute; top:0px; height: 30px; width:100%;">
-                        <button
-                            id="delete-navigator-item"
-                            type="submit"
-                            class="btn btn-danger btn-sm pull-right"
-                            @click.stop="unlinkMedium(medium.node_id, medium.value);">
-                            <small><i class="fa fa-unlink"></i></small>
-                        </button>
-                </span>-->
-
-                <!-- <span class="bg-white text-center p-1 overflow-auto "
-                      style="position:absolute; bottom:0px; height: 150px; width:100%;"
-                >
-                    <h6 class="events-heading pt-1 hyphens" v-html="medium.title"></h6>
-                    <p class=" text-muted small" v-html="medium.description"></p>
-                </span>
-                <span style="position:absolute; bottom:5px; left:5px; ">
-                    <img
-                        style="height: 16px; "
-                        :src="medium.license.icon"
-                    />
-                </span>
-            </div>
-        </span> -->
-
-        <!-- Edusharing Media -->
-        <div v-for="subscription in media"
-            class="box box-objective nav-item-box-image pointer my-1"
-            style="min-width: 200px !important; border-style: dotted !important;"
-        >
-            <render-usage
-                class="d-flex align-items-center nav-item-box-image-size user-select-none"
-                :medium="subscription.medium"
-            ></render-usage>
-            <span class="text-center p-1 overflow-auto nav-item-box bg-gray-light">
-                <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                    {{ subscription.medium.title }}
-                </h1>
-            </span>
-        </div>
-
         <!-- Add Media -->
         <div v-if="model.curriculum.owner_id == $userId && model.curriculum.type_id !== 1"
             v-can="'external_medium_create'"
@@ -119,6 +61,65 @@
                 </h1>
             </span>
         </div>
+        
+        <!-- Media uploaded from Curriculum -->
+        <div v-for="subscription in media"
+            class="box box-objective nav-item-box-image pointer my-1"
+            style="min-width: 200px !important; border-style: dotted !important;"
+        >
+            <render-usage
+                class="d-flex align-items-center nav-item-box-image-size user-select-none"
+                :medium="subscription.medium"
+            ></render-usage>
+            <span class="text-center p-1 overflow-auto nav-item-box bg-gray-light">
+                <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
+                    {{ subscription.medium.title }}
+                </h1>
+            </span>
+        </div>
+
+        <!-- Media linked from Edusharing -->
+        <span :class="currentTab !== 1 && 'd-none'" v-for="media_subscription in externalMedia">
+            <div v-for="medium in media_subscription"
+                 :id="medium.node_id"
+                 style="border: 1px solid #d2d6de;"
+                 class="box box-objective edusharing-box pointer my-1"
+                 @click="show(medium)"
+            >
+                <div class="bg-white text-center edusharing-box-bg p-1 overflow-auto "
+                     :style="{'background-image':'url('+href(medium)+')'}"
+                >
+                    <div class="symbol"
+                        :style="{'background':'white url('+iconUrl(medium)+') no-repeat center', 'background-size': '24px'}"
+                    ></div>
+                </div>
+<!--            <span
+                    v-can="'medium_delete'"
+                    class="p-1 pointer_hand"
+                    accesskey="" style="position:absolute; top:0px; height: 30px; width:100%;">
+                        <button
+                            id="delete-navigator-item"
+                            type="submit"
+                            class="btn btn-danger btn-sm pull-right"
+                            @click.stop="unlinkMedium(medium.node_id, medium.value);">
+                            <small><i class="fa fa-unlink"></i></small>
+                        </button>
+                </span>-->
+
+                <span class="bg-white text-center p-1 overflow-auto "
+                      style="position:absolute; bottom:0px; height: 150px; width:100%;"
+                >
+                    <h6 class="events-heading pt-1 hyphens" v-html="medium.title"></h6>
+                    <p class=" text-muted small" v-html="medium.description"></p>
+                </span>
+                <span style="position:absolute; bottom:5px; left:5px; ">
+                    <img
+                        style="height: 16px; "
+                        :src="medium.license.icon"
+                    />
+                </span>
+            </div>
+        </span>
 
         <div v-if="media !== null" class="row pt-1" style="width:100% !important;">
             <span v-if="[0].length > maxItems">
@@ -154,8 +155,9 @@ export default {
     data() {
         return {
             media: null,
+            externalMedia: null,
             page: 0,
-            maxItems: 20,
+            maxItems: 50,
             errors: {},
             currentTab: 1,
         }
@@ -164,18 +166,23 @@ export default {
         async loader() {
             $("#loading").show();
             try {
+                if (this.currentTab === 1) { // all media
+                    this.externalMedia = (await axios.get('/repositorySubscriptions/getMedia', {
+                        params: {
+                            subscribable_type: this.subscribable_type(),
+                            subscribable_id: this.model.id,
+                            search: this.model.title,
+                            page: this.page,
+                            maxItems: this.maxItems,
+                            repository: 'edusharing',
+                            filter: this.currentTab,
+                        },
+                    })).data.message;
+                }
+                // 'my media' is always shown
                 this.media = (await axios.get(
                     '/mediumSubscriptions?subscribable_type=' + this.subscribable_type() + '&subscribable_id=' + this.model.id
                 )).data.message;
-                // this.media = (await axios.get('/repositorySubscriptions/getMedia', {
-                //     subscribable_type: this.subscribable_type(),
-                //     subscribable_id: this.model.id,
-                //     search: this.model.title,
-                //     page: this.page,
-                //     maxItems: this.maxItems,
-                //     repository: 'edusharing',
-                //     filter: this.currentTab
-                // })).data.message;
                 if (this.media == null){
                     $("#loading").hide();
                 }

@@ -35,7 +35,7 @@
                         </button>
                         <button :name="'kanbanItemCopy_' + index"
                             class="dropdown-item text-secondary py-1"
-                            @click="copyItem()"
+                            @click="confirmCopy()"
                         >
 
                         </button>
@@ -400,8 +400,8 @@ export default {
             this.editor = false;
 
         },
-        copyItem() {
-            axios.post('/kanbanItem/' + this.item.id + '/copy');
+        confirmCopy() {
+            $('#kanbanItemCopyModal').modal('show');
         },
         openComments(){
             this.show_comments = !this.show_comments;

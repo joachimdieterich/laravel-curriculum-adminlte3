@@ -148,6 +148,14 @@
             :visible="false"
             v-can="'kanban_create'"
         />
+        <Modal
+            :id="'kanbanItemCopyModal'"
+            css="primary"
+            :title="'Pinnwand-Karte kopieren'"
+            :text="'Wollen Sie die Pinnwand-Karte kopieren?'"
+            ok_label="OK"
+            v-on:ok="copyItem()"
+        />
     </div>
 </template>
 
@@ -160,6 +168,8 @@ const KanbanItemCreate =
     () => import('./KanbanItemCreate');
 const KanbanStatus =
     () => import('./KanbanStatus');
+const Modal =
+    () => import('./../uiElements/Modal');
 import KanbanIndexAddWidget from "./KanbanIndexAddWidget";
 //import draggable from "vuedraggable";
 export default {
@@ -535,8 +545,10 @@ export default {
                 return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+', 0.7)';
             }
             throw new Error('Bad Hex');
-        }
+        },
+        copyItem() {
 
+        },
     },
     mounted() {
         // Listen for the 'Kanban' event in the 'Presence.App.Kanban' presence channel
@@ -605,7 +617,8 @@ export default {
         draggable,
         KanbanItem,
         KanbanItemCreate,
-        KanbanIndexAddWidget
+        KanbanIndexAddWidget,
+        Modal
     }
 }
 </script>

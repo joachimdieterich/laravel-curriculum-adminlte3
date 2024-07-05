@@ -44,8 +44,8 @@
         </div>
 
         <!-- Add Media -->
-        <div v-if="model.curriculum.owner_id == $userId && model.curriculum.type_id !== 1"
-            v-can="'external_medium_create'"
+        <div v-if="model.curriculum.type_id !== 1"
+            v-permission="'external_medium_create, is_teacher'"
             :id="'media-add'"
             class="box box-objective nav-item-box-image pointer my-1"
             style="min-width: 200px !important; border-style: dotted !important;"

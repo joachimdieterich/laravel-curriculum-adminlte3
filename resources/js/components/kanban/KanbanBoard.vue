@@ -151,8 +151,8 @@
         <Modal
             :id="'kanbanItemCopyModal'"
             css="primary"
-            :title="'Pinnwand-Karte kopieren'"
-            :text="'Wollen Sie die Pinnwand-Karte kopieren?'"
+            :title="trans('global.kanbanItem.copy')"
+            :text="trans('global.kanbanItem.copy_helper')"
             ok_label="OK"
             v-on:ok="copyItem()"
         />
@@ -205,6 +205,7 @@ export default {
             autoRefresh: false,
             refreshRate: 5000,
             usersOnline:[],
+            copyId: undefined,
         };
     },
     methods: {
@@ -547,7 +548,8 @@ export default {
             throw new Error('Bad Hex');
         },
         copyItem() {
-
+            axios.get('/kanbanItems/' + this.copyId + '/copy')
+                .then(response => this.handleItemAdded(response.data.message));
         },
     },
     mounted() {
@@ -561,6 +563,9 @@ export default {
         });
         this.$eventHub.$on('item-updated', (item) => {
             this.handleItemUpdated(item);
+        });
+        this.$eventHub.$on('copy-item', (id) => {
+            this.copyId = id;
         });
     },
     created () {

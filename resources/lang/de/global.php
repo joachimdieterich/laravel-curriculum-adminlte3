@@ -924,6 +924,8 @@ return [
         'title_singular' => 'Karte',
         'create' => 'Karte erstellen',
         'edit' => 'Karte bearbeiten',
+        'copy' => 'Karte kopieren',
+        'copy_helper' => 'Wollen Sie die Karte kopieren?',
         'delete' => 'Karte löschen',
         'delete_helper' => 'Soll die Karte sowie die zugehörigen Daten gelöscht werden?',
         'due_date' => 'Fälligkeitsdatum',

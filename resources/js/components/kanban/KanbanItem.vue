@@ -37,7 +37,8 @@
                             class="dropdown-item text-secondary py-1"
                             @click="confirmCopy()"
                         >
-
+                            <i class="fa fa-copy mr-2"></i>
+                            {{ trans('global.kanbanItem.copy') }}
                         </button>
                         <div v-if="(item.editable == 1 && $userId == item.owner_id) || ($userId == kanban_owner_id)">
                             <hr class="my-1">
@@ -401,6 +402,7 @@ export default {
 
         },
         confirmCopy() {
+            this.$eventHub.$emit('copy-item', this.item.id);
             $('#kanbanItemCopyModal').modal('show');
         },
         openComments(){

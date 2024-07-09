@@ -63,7 +63,7 @@
         </div>
         
         <!-- Media uploaded from Curriculum -->
-        <div v-for="subscription in media"
+        <div v-for="subscription in filteredMedia"
             class="box box-objective nav-item-box-image pointer my-1"
             style="min-width: 200px !important; border-style: dotted !important;"
         >
@@ -79,47 +79,45 @@
         </div>
 
         <!-- Media linked from Edusharing -->
-        <span :class="currentTab !== 1 && 'd-none'" v-for="media_subscription in externalMedia">
-            <div v-for="medium in media_subscription"
-                 :id="medium.node_id"
-                 style="border: 1px solid #d2d6de;"
-                 class="box box-objective edusharing-box pointer my-1"
-                 @click="show(medium)"
+        <div v-for="medium in filteredExternalMedia"
+            :id="medium.node_id"
+            style="border: 1px solid #d2d6de;"
+            class="box box-objective edusharing-box pointer my-1"
+            @click="show(medium)"
+        >
+            <div class="bg-white text-center edusharing-box-bg p-1 overflow-auto "
+                :style="{'background-image':'url('+href(medium)+')'}"
             >
-                <div class="bg-white text-center edusharing-box-bg p-1 overflow-auto "
-                     :style="{'background-image':'url('+href(medium)+')'}"
-                >
-                    <div class="symbol"
-                        :style="{'background':'white url('+iconUrl(medium)+') no-repeat center', 'background-size': '24px'}"
-                    ></div>
-                </div>
-<!--            <span
-                    v-can="'medium_delete'"
-                    class="p-1 pointer_hand"
-                    accesskey="" style="position:absolute; top:0px; height: 30px; width:100%;">
-                        <button
-                            id="delete-navigator-item"
-                            type="submit"
-                            class="btn btn-danger btn-sm pull-right"
-                            @click.stop="unlinkMedium(medium.node_id, medium.value);">
-                            <small><i class="fa fa-unlink"></i></small>
-                        </button>
-                </span>-->
-
-                <span class="bg-white text-center p-1 overflow-auto "
-                      style="position:absolute; bottom:0px; height: 150px; width:100%;"
-                >
-                    <h6 class="events-heading pt-1 hyphens" v-html="medium.title"></h6>
-                    <p class=" text-muted small" v-html="medium.description"></p>
-                </span>
-                <span style="position:absolute; bottom:5px; left:5px; ">
-                    <img
-                        style="height: 16px; "
-                        :src="medium.license.icon"
-                    />
-                </span>
+                <div class="symbol"
+                    :style="{'background':'white url('+iconUrl(medium)+') no-repeat center', 'background-size': '24px'}"
+                ></div>
             </div>
-        </span>
+<!--            <span
+                v-can="'medium_delete'"
+                class="p-1 pointer_hand"
+                accesskey="" style="position:absolute; top:0px; height: 30px; width:100%;">
+                    <button
+                        id="delete-navigator-item"
+                        type="submit"
+                        class="btn btn-danger btn-sm pull-right"
+                        @click.stop="unlinkMedium(medium.node_id, medium.value);">
+                        <small><i class="fa fa-unlink"></i></small>
+                    </button>
+            </span>-->
+
+            <span class="bg-white text-center p-1 overflow-auto "
+                style="position:absolute; bottom:0px; height: 150px; width:100%;"
+            >
+                <h6 class="events-heading pt-1 hyphens" v-html="medium.title"></h6>
+                <p class=" text-muted small" v-html="medium.description"></p>
+            </span>
+            <span style="position:absolute; bottom:5px; left:5px; ">
+                <img
+                    style="height: 16px; "
+                    :src="medium.license.icon"
+                />
+            </span>
+        </div>
 
         <div v-if="media !== null" class="row pt-1" style="width:100% !important;">
             <span v-if="[0].length > maxItems">
@@ -156,6 +154,7 @@ export default {
         return {
             media: null,
             externalMedia: null,
+            commonName: null,
             page: 0,
             maxItems: 50,
             errors: {},
@@ -166,6 +165,11 @@ export default {
         async loader() {
             $("#loading").show();
             try {
+                // 'my media' is always shown
+                axios.get(
+                    '/mediumSubscriptions?subscribable_type=' + this.subscribable_type() + '&subscribable_id=' + this.model.id
+                ).then(response => this.media = response.data.message);
+
                 if (this.currentTab === 1) { // all media
                     this.externalMedia = (await axios.get('/repositorySubscriptions/getMedia', {
                         params: {
@@ -177,20 +181,14 @@ export default {
                             repository: 'edusharing',
                             filter: this.currentTab,
                         },
-                    })).data.message;
+                    })).data.message[0];
                 }
-                // 'my media' is always shown
-                this.media = (await axios.get(
-                    '/mediumSubscriptions?subscribable_type=' + this.subscribable_type() + '&subscribable_id=' + this.model.id
-                )).data.message;
-                if (this.media == null){
-                    $("#loading").hide();
-                }
-
             } catch(error) {
                 $("#loading").hide();
                 //this.errors = error.response.data.errors;
             }
+
+            $("#loading").hide();
         },
         async unlinkMedium(id, value) { //id of external reference and value in db
             try {
@@ -261,11 +259,20 @@ export default {
                 this.loader();
             }
         });
+        // common_name is needed to check if externalMedia are connected from the same user
+        axios.get('/users/current').then(response => this.commonName = response.data.user.common_name);
     },
-    watch: {
-        media: function (value, oldValue) {
-            $("#loading").hide();
-        }
+    computed: {
+        filteredMedia: function() {
+            return this.currentTab === 1
+                ? this.media
+                : this.media.filter(subscription => subscription.owner_id == this.$userId);
+        },
+        filteredExternalMedia: function() {
+            return this.currentTab === 1
+                ? this.externalMedia
+                : this.externalMedia?.filter(subscription => subscription.value == this.commonName);
+        },
     },
     components: {
         renderUsage,

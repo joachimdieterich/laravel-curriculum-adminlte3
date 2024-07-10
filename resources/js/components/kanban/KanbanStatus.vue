@@ -84,7 +84,7 @@
                                 {{ trans('global.kanbanStatus.edit') }}
                             </button>
                         </div>
-                        <div>
+                        <div v-if="kanban.allow_copy">
                             <button
                                 name="kanbanStatusCopy"
                                 class="dropdown-item py-1"

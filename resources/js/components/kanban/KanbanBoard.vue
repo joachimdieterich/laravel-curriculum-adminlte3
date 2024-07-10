@@ -102,6 +102,7 @@
                                         :editable="(status.editable == false && $userId != kanban.owner_id) ? false : editable"
                                         :commentable="kanban.commentable"
                                         :onlyEditOwnedItems="kanban.only_edit_owned_items"
+                                        :allowCopy="kanban.allow_copy"
                                         :ref="'kanbanItemId' + item.id"
                                         :index="index + '_' + itemIndex"
                                         :item="item"

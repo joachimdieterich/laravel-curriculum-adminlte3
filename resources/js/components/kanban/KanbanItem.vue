@@ -33,7 +33,8 @@
                             <i class="fa fa-folder-open mr-2"></i>
                             {{ trans('global.media.title_singular') }}
                         </button>
-                        <button :name="'kanbanItemCopy_' + index"
+                        <button v-if="allowCopy"
+                            :name="'kanbanItemCopy_' + index"
                             class="dropdown-item text-secondary py-1"
                             @click="confirmCopy()"
                         >
@@ -317,6 +318,7 @@ export default {
         'onlyEditOwnedItems': false,
         'likable': true,
         'editable': true,
+        'allowCopy': false,
         'kanban_owner_id': {
             type: Number,
             default: null

@@ -74,13 +74,26 @@
                 <div class="dropdown-menu"
                      x-placement="top-start">
                     <div>
-                        <button
-                            name="kanbanStatusEdit"
-                            class="dropdown-item py-1"
-                            @click="edit()">
-                            <i class="fa fa-pencil-alt mr-4"></i>
-                            {{ trans('global.kanbanStatus.edit') }}
-                        </button>
+                        <div>
+                            <button
+                                name="kanbanStatusEdit"
+                                class="dropdown-item py-1"
+                                @click="edit()"
+                            >
+                                <i class="fa fa-pencil-alt mr-4"></i>
+                                {{ trans('global.kanbanStatus.edit') }}
+                            </button>
+                        </div>
+                        <div>
+                            <button
+                                name="kanbanStatusCopy"
+                                class="dropdown-item py-1"
+                                @click="confirmCopy()"
+                            >
+                                <i class="fa fa-copy mr-4"></i>
+                                {{ trans('global.kanbanStatus.copy') }}
+                            </button>
+                        </div>
                         <div v-if="($userId == status_owner_id) || (editable == 1 && $userId == kanban.owner_id)">
                             <hr class="my-1">
                             <button
@@ -190,6 +203,10 @@ export default {
                 .catch(err => {
                     console.log(err.response);
                 });
+        },
+        confirmCopy() {
+            this.$eventHub.$emit('copy-id', this.status.id);
+            $('#kanbanStatusCopyModal').modal('show');
         },
     },
     mounted() {

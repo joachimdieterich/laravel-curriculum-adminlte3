@@ -402,7 +402,7 @@ export default {
 
         },
         confirmCopy() {
-            this.$eventHub.$emit('copy-item', this.item.id);
+            this.$eventHub.$emit('copy-id', this.item.id);
             $('#kanbanItemCopyModal').modal('show');
         },
         openComments(){

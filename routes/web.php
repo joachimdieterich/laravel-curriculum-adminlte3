@@ -134,12 +134,13 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('kanbanItems/{kanbanItem}/react', 'KanbanItemController@reaction')->name('kanbanItems.react');
     Route::get('kanbanItems/{kanbanItem}/editors', 'KanbanItemController@editors')->name('kanbanItems.editors');
-    Route::get('kanbanItems/{kanbanItem}/copy', 'KanbanItemController@copyItem');
+    Route::get('kanbanItems/{item}/copy', 'KanbanItemController@copyItem');
     Route::put('kanbanItems/sync', 'KanbanItemController@sync')->name('kanbanItems.sync');
     Route::resource('kanbanItems', 'KanbanItemController');
 
     Route::get('kanbanStatuses/{kanban}/checkSync', 'KanbanStatusController@checkSync');
     Route::put('kanbanStatuses/sync', 'KanbanStatusController@sync')->name('kanbanStatuses.sync');
+    Route::get('kanbanStatuses/{status}/copy', 'KanbanStatusController@copyStatus');
     Route::resource('kanbanStatuses', 'KanbanStatusController');
 
     Route::post('tokens', 'ShareTokenController@create');

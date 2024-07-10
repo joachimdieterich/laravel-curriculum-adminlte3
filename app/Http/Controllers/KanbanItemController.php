@@ -207,8 +207,8 @@ class KanbanItemController extends Controller
         }
     }
 
-    public function copyItem(int $id, Request $request) {
-        $item = KanbanItem::Find($id);
+    public function copyItem(KanbanItem $item, Request $request)
+    {
         $order_id = DB::table('kanban_items')
             ->where('kanban_id', $item->kanban_id)
             ->where('kanban_status_id', $item->kanban_status_id)
@@ -221,7 +221,6 @@ class KanbanItemController extends Controller
             'kanban_id'         => $item->kanban_id,
             'kanban_status_id'  => $item->kanban_status_id,
             'color'             => $item->color,
-            'due_date'          => $item->due_date,
             'owner_id'          => auth()->user()->id,
         ]);
 

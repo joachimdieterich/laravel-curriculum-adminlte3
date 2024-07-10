@@ -156,6 +156,14 @@
             ok_label="OK"
             v-on:ok="copyItem()"
         />
+        <Modal
+            :id="'kanbanStatusCopyModal'"
+            css="primary"
+            :title="trans('global.kanbanStatus.copy')"
+            :text="trans('global.kanbanStatus.copy_helper')"
+            ok_label="OK"
+            v-on:ok="copyStatus()"
+        />
     </div>
 </template>
 
@@ -307,7 +315,7 @@ export default {
             /*if (this.statuses.findIndex(s => s.title = newStatus.title) != -1){
                 this.infoNotification('Status existiert.');
             }*/
-            newStatus['items'] = [];            //add items to prevent error if item is created without reloading page
+            newStatus['items'] = newStatus['items'] ?? []; // add items to prevent error if item is created without reloading page
             this.statuses.push(newStatus);
             //this.closeForm();
         },
@@ -551,6 +559,10 @@ export default {
             axios.get('/kanbanItems/' + this.copyId + '/copy')
                 .then(response => this.handleItemAdded(response.data.message));
         },
+        copyStatus() {
+            axios.get('/kanbanStatuses/' + this.copyId + '/copy')
+                .then(response => this.handleStatusAdded(response.data.message));
+        },
     },
     mounted() {
         // Listen for the 'Kanban' event in the 'Presence.App.Kanban' presence channel
@@ -564,7 +576,7 @@ export default {
         this.$eventHub.$on('item-updated', (item) => {
             this.handleItemUpdated(item);
         });
-        this.$eventHub.$on('copy-item', (id) => {
+        this.$eventHub.$on('copy-id', (id) => {
             this.copyId = id;
         });
     },

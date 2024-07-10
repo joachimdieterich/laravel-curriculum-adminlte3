@@ -928,6 +928,8 @@ return [
         'title_singular' => 'Status',
         'create' => 'Create status ',
         'edit' => 'Edit status ',
+        'copy' => 'Copy status',
+        'copy_helper' => 'Do you want to copy this status and its associated items?',
         'delete' => 'Delete status',
         'delete_helper' => 'Should the status and the associated items be deleted?',
         'fields' => [

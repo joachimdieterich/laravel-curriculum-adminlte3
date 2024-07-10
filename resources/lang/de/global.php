@@ -946,6 +946,8 @@ return [
         'title_singular' => 'Status',
         'create' => 'Status erstellen',
         'edit' => 'Status bearbeiten',
+        'copy' => 'Status kopieren',
+        'copy_helper' => 'Wollen Sie den Status sowie die zugehörigen Karten kopieren?',
         'delete' => 'Status löschen',
         'delete_helper' => 'Soll der Status sowie die zugehörigen Karten gelöscht werden?',
         'fields' => [

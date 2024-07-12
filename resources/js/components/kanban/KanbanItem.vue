@@ -422,7 +422,7 @@ export default {
             this.$modal.show(
                 'medium-create-modal',
                 {
-                    'referenceable_type': 'App\\\KanbanItem',
+                    'referenceable_type': 'App\\KanbanItem',
                     'referenceable_id': this.item.id,
                     'eventHubCallbackFunction': 'reload_kanban_item',
                     'eventHubCallbackFunctionParams': this.item.id,

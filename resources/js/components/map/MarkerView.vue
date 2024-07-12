@@ -28,7 +28,7 @@
             v-html="marker.description"
         ></div>
 
-        <h5 class="pt-3">{{ trans('global.media.title') }}</h5>
+        <!-- <h5 class="pt-3">{{ trans('global.media.title') }}</h5>
         <div v-if="marker.id != null"
              v-bind:id="'map_marker_media_'+marker.id"
         >
@@ -38,7 +38,7 @@
                 :can_add_media="$userId == marker.owner_id || $userId == map.owner_id"
                format="list"
             />
-        </div>
+        </div> -->
 
         <h5 v-if="marker.address !== ''" class="pt-3">{{ trans('global.marker.fields.address') }}</h5>
         <div v-html="marker.address"></div>
@@ -55,13 +55,13 @@
     </div>
 </template>
 <script>
-import Media from '../media/Media';
+// import Media from '../media/Media';
 
 export default {
     name: 'MarkerView',
-    components: {
-        Media,
-    },
+    // components: {
+    //     Media,
+    // },
     props: {
         marker: {
             default: null

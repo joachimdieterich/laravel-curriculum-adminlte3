@@ -134,17 +134,19 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('kanbanItems/{kanbanItem}/react', 'KanbanItemController@reaction')->name('kanbanItems.react');
     Route::get('kanbanItems/{kanbanItem}/editors', 'KanbanItemController@editors')->name('kanbanItems.editors');
+    Route::get('kanbanItems/{item}/copy', 'KanbanItemController@copyItem');
     Route::put('kanbanItems/sync', 'KanbanItemController@sync')->name('kanbanItems.sync');
     Route::resource('kanbanItems', 'KanbanItemController');
 
     Route::get('kanbanStatuses/{kanban}/checkSync', 'KanbanStatusController@checkSync');
     Route::put('kanbanStatuses/sync', 'KanbanStatusController@sync')->name('kanbanStatuses.sync');
+    Route::get('kanbanStatuses/{status}/copy', 'KanbanStatusController@copyStatus');
     Route::resource('kanbanStatuses', 'KanbanStatusController');
 
     Route::post('tokens', 'ShareTokenController@create');
 
-    Route::get('get_kanbans_color/{id}', 'KanbanController@getKanbansColor');
-    Route::post('update_kanbans_color', 'KanbanController@updateKanbansColor');
+    Route::get('kanbans/getColor/{id}', 'KanbanController@getColor');
+    Route::post('kanbans/setColor', 'KanbanController@setColor');
 
     Route::resource('kanbanSubscriptions', 'KanbanSubscriptionController');
 

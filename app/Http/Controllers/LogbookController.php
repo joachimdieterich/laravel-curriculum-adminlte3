@@ -42,6 +42,7 @@ class LogbookController extends Controller
                 break;
         }
 
+        $logbooks = $logbooks->orderBy('title', 'asc');
 
         $edit_gate = \Gate::allows('logbook_edit');
         $delete_gate = \Gate::allows('logbook_delete');

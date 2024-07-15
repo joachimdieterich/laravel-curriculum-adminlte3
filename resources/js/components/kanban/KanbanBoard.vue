@@ -102,6 +102,7 @@
                                         :editable="(status.editable == false && $userId != kanban.owner_id) ? false : editable"
                                         :commentable="kanban.commentable"
                                         :onlyEditOwnedItems="kanban.only_edit_owned_items"
+                                        :allowCopy="kanban.allow_copy"
                                         :ref="'kanbanItemId' + item.id"
                                         :index="index + '_' + itemIndex"
                                         :item="item"
@@ -148,6 +149,22 @@
             :visible="false"
             v-can="'kanban_create'"
         />
+        <Modal
+            :id="'kanbanItemCopyModal'"
+            css="primary"
+            :title="trans('global.kanbanItem.copy')"
+            :text="trans('global.kanbanItem.copy_helper')"
+            ok_label="OK"
+            v-on:ok="copyItem()"
+        />
+        <Modal
+            :id="'kanbanStatusCopyModal'"
+            css="primary"
+            :title="trans('global.kanbanStatus.copy')"
+            :text="trans('global.kanbanStatus.copy_helper')"
+            ok_label="OK"
+            v-on:ok="copyStatus()"
+        />
     </div>
 </template>
 
@@ -160,6 +177,8 @@ const KanbanItemCreate =
     () => import('./KanbanItemCreate');
 const KanbanStatus =
     () => import('./KanbanStatus');
+const Modal =
+    () => import('./../uiElements/Modal');
 import KanbanIndexAddWidget from "./KanbanIndexAddWidget";
 //import draggable from "vuedraggable";
 export default {
@@ -195,6 +214,7 @@ export default {
             autoRefresh: false,
             refreshRate: 5000,
             usersOnline:[],
+            copyId: undefined,
         };
     },
     methods: {
@@ -296,7 +316,7 @@ export default {
             /*if (this.statuses.findIndex(s => s.title = newStatus.title) != -1){
                 this.infoNotification('Status existiert.');
             }*/
-            newStatus['items'] = [];            //add items to prevent error if item is created without reloading page
+            newStatus['items'] = newStatus['items'] ?? []; // add items to prevent error if item is created without reloading page
             this.statuses.push(newStatus);
             //this.closeForm();
         },
@@ -535,8 +555,15 @@ export default {
                 return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+', 0.7)';
             }
             throw new Error('Bad Hex');
-        }
-
+        },
+        copyItem() {
+            axios.get('/kanbanItems/' + this.copyId + '/copy')
+                .then(response => this.handleItemAdded(response.data.message));
+        },
+        copyStatus() {
+            axios.get('/kanbanStatuses/' + this.copyId + '/copy')
+                .then(response => this.handleStatusAdded(response.data.message));
+        },
     },
     mounted() {
         // Listen for the 'Kanban' event in the 'Presence.App.Kanban' presence channel
@@ -549,6 +576,9 @@ export default {
         });
         this.$eventHub.$on('item-updated', (item) => {
             this.handleItemUpdated(item);
+        });
+        this.$eventHub.$on('copy-id', (id) => {
+            this.copyId = id;
         });
     },
     created () {
@@ -605,7 +635,8 @@ export default {
         draggable,
         KanbanItem,
         KanbanItemCreate,
-        KanbanIndexAddWidget
+        KanbanIndexAddWidget,
+        Modal
     }
 }
 </script>

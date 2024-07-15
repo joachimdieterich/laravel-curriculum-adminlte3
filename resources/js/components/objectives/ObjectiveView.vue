@@ -8,9 +8,9 @@
                     <span v-if="type === 'enabling'">{{ trans('global.enablingObjective.title_singular') }}</span>
                     <span v-else> {{ trans('global.terminalObjective.title_singular') }}</span>
 
-                    <div v-can="'task_edit'" class="card-tools pr-2">
-                        <a @click.prevent="editObjective()">
-                            <i class="fa fa-pencil-alt"></i>
+                    <div v-can="'task_edit'" class="card-tools">
+                        <a @click.prevent="editObjective()" class="px-1" role="button">
+                            <i class="fa fa-pencil-alt text-secondary"></i>
                         </a>
                     </div>
                 </div>

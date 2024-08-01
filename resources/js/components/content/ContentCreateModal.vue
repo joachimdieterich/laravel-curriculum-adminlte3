@@ -128,11 +128,14 @@
                 }
             },
             opened() {
+                const plugins = "autolink link table lists" + (this.method === 'patch' ? ' example' : '');
                 this.$initTinyMCE([
-                        "autolink link example table lists"
+                        plugins
                     ],
                     {
                         height: 300,
+                        'referencable_type': this.form.referenceable_type,
+                        'referencable_id': this.form.referenceable_id,
                         'eventHubCallbackFunction': 'insertContent',
                         'eventHubCallbackFunctionParams': this.component_id,
                     }

@@ -61,18 +61,20 @@ class OrganizationsController extends Controller
             })
             ->addColumn('action', function ($organizations) use ($edit_gate, $delete_gate, $organization_id_field) {
                 $actions = '';
-                if ($edit_gate) {
-                    $actions .= '<a href="'.route('organizations.edit', $organizations->id).'"'
-                                    .'id="edit-organization-'.$organizations->$organization_id_field.'" '
-                                    .'class="btn p-1">'
-                                    .'<i class="fa fa-pencil-alt"></i>'
-                                    .'</a>';
-                }
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                                .'class="btn text-danger" '
-                                .'onclick="destroyDataTableEntry(\'organizations\','.$organizations->$organization_id_field.')">'
-                                .'<i class="fa fa-trash"></i></button>';
+                if ($organizations->role_id == 4 || is_admin()) { // only show edit/delete in orgs where the user is a schooladmin
+                    if ($edit_gate) {
+                        $actions .= '<a href="'.route('organizations.edit', $organizations->id).'"'
+                        .'id="edit-organization-'.$organizations->$organization_id_field.'" '
+                        .'class="btn p-1">'
+                        .'<i class="fa fa-pencil-alt"></i>'
+                        .'</a>';
+                    }
+                    if ($delete_gate) {
+                        $actions .= '<button type="button" '
+                        .'class="btn text-danger" '
+                        .'onclick="destroyDataTableEntry(\'organizations\','.$organizations->$organization_id_field.')">'
+                        .'<i class="fa fa-trash"></i></button>';
+                    }
                 }
 
                 return $actions;

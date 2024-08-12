@@ -143,6 +143,9 @@
             loader() { //todo: remove duplicate in beforMount.
                 axios.get(this.url + '?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id).then(response => {
                     this.subscriptions = response.data.message;
+                    if (this.subscriptions.length === 0 && this.subscribable_type == 'App\\MapMarker') {
+                        this.$parent.hideMedia();
+                    }
                 }).catch(e => {
                     console.log(e);
                 });

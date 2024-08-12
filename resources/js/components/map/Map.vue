@@ -11,7 +11,7 @@
                             <i class="fa fa-layer-group"></i>
                         </a>
                     </li>
-                    <li>
+                    <li v-if="currentMarker">
                         <a href="#ll-marker" role="tab">
                             <i class="fa fa-location-dot"></i>
                         </a>
@@ -46,8 +46,8 @@
                     </span>
 
                     <p class="pt-2"
-                    v-html="this.map.description">
-                    </p>
+                        v-html="this.map.description"
+                    ></p>
 
                     <h5 class="pt-2">{{ trans('global.entries') }}</h5>
                     <ul class="todo-list">
@@ -115,36 +115,44 @@
                     </button>
                 </div>
 
-                <div v-if="typeof this.currentMarker.ARTIKEL == 'undefined'"
-                     class="sidebar-pane" id="ll-marker"
+                <div v-if="typeof currentMarker?.ARTIKEL == 'undefined'"
+                     id="ll-marker"
+                     class="sidebar-pane"
+                     :class="currentMarker === undefined && 'd-none'"
                 >
-                    <MarkerView
+                    <MarkerView v-if="currentMarker !== undefined"
                         :marker="this.currentMarker"
                         :map="this.map"
                     />
                 </div>
-                <div v-else
-                     class="sidebar-pane" id="ll-marker">
+                <div v-else-if="currentMarker?.ARTIKEL !== undefined"
+                     class="sidebar-pane" id="ll-marker"
+                >
                     <h1 class="sidebar-header  mb-3">
                         {{ this.currentMarker.ARTIKEL }}
                     </h1>
 
                     <div class="py-0 pt-2"
-                         v-if="this.currentMarker.BEZ_1_2.length > 2">
-                        <strong>Untertitel</strong></div>
+                         v-if="this.currentMarker.BEZ_1_2.length > 2"
+                    >
+                        <strong>Untertitel</strong>
+                    </div>
                     <div class="py-0 pre-formatted"
                          v-if="this.currentMarker.BEZ_1_2.length > 2"
-                         v-html="this.currentMarker.BEZ_1_2"></div>
+                         v-html="this.currentMarker.BEZ_1_2"
+                    ></div>
 
                     <div class="py-0 pt-2">
-                        <strong>Beschreibung</strong></div>
+                        <strong>Beschreibung</strong>
+                    </div>
                     <div class="py-0 pre-formatted"
                          style="text-align:justify;"
-                         v-html="this.currentMarker.BEMERKUNG"></div>
+                         v-html="this.currentMarker.BEMERKUNG"
+                    ></div>
 
                     <div class="py-0 pt-2"><strong>Termine</strong></div>
                     <div class="py-0 pre-formatted">
-                        <div v-for="termin in this.currentMarker.termine" >
+                        <div v-for="termin in this.currentMarker.termine">
                             {{ dateforHumans(termin.DATUM) }}, {{ termin.BEGINN }} - {{ termin.ENDE }}
                             <br/>
                             {{ termin.VO_ORT }}
@@ -157,14 +165,16 @@
                     <div class="py-0 pt-2">
                         <a :href="this.currentMarker.LINK_DETAIL"
                            class="btn btn-default"
-                           target="_blank">
+                           target="_blank"
+                        >
                             <i class="fa fa-info"></i> Details/Anmeldung
                         </a>
 
                         <a :href="this.currentMarker.LINK_DETAIL+'&print=1'"
                            onclick="return !window.open(this.href, 'Drucken', 'width=800,scrollbars=1')"
                            class="btn btn-default"
-                           target="_blank">
+                           target="_blank"
+                        >
                             <i class="fa fa-print"></i> Drucken
                         </a>
                     </div>
@@ -172,11 +182,12 @@
 
                 <div class="sidebar-pane" id="ll-search">
                     <h1 class="sidebar-header  mb-3">
-                        {{ this.currentMarker.title }}
+                        {{ this.currentMarker?.title ?? '' }}
                     </h1>
 
-                    <div class="form-group "
-                         :class="form.errors.search ? 'has-error' : ''">
+                    <div class="form-group"
+                         :class="form.errors.search ? 'has-error' : ''"
+                    >
                         <label for="ll-search">{{ trans('global.search') }}</label>
                         <input
                             type="text" id="ll-search"
@@ -184,7 +195,8 @@
                             class="form-control"
                             v-model="search"
                             @keyup.enter="markerSearch"
-                            placeholder="Suchbegriff..."/>
+                            placeholder="Suchbegriff..."
+                        />
                         <p class="help-block" v-if="form.errors.search" v-text="form.errors.search[0]"></p>
                     </div>
                 </div>
@@ -248,7 +260,7 @@ export default {
             bordersGroup: {},
             namesGroup: {},
             markers: {},
-            currentMarker:{},
+            currentMarker: undefined,
             clusterGroup: {},
             mapMarkerTypes: {},
             mapMarkerCategories: {},

@@ -11,14 +11,14 @@
         @endcan
     @endif--}}
     <small>{{ $kanban->title }} </small>
-    @if(Auth::user()->id == $kanban->owner_id)
+    @if(Auth::user()->id == $kanban->owner_id or is_admin())
         <a class="btn btn-flat"
            onclick="app.__vue__.$eventHub.$emit('edit_kanban', {{$kanban->toJson()}})"
            >
             <i class="fa fa-pencil-alt text-secondary"></i>
         </a>
         @can('kanban_create')
-            @if(!$is_shared)
+            @if(!$is_shared or is_admin())
                 <button class="btn btn-flat"
                         onclick="app.__vue__.$modal.show('subscribe-modal',  {'modelId': {{ $kanban->id }}, 'modelUrl': 'kanban','shareWithToken': true });">
                     <i class="fa fa-share-alt text-secondary"></i>

@@ -156,7 +156,7 @@ export default {
         },
         opened() {
             this.$initTinyMCE([
-                "autolink link example"
+                "autolink link example code"
             ], {
                 'public': 1,
                 'referenceable_type': 'App\\\Logbook',

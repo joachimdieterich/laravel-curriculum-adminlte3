@@ -128,7 +128,7 @@
                 }
             },
             opened() {
-                const plugins = "autolink link table lists" + (this.method === 'patch' ? ' example' : '');
+                const plugins = "autolink link table lists code" + (this.method === 'patch' ? ' example' : '');
                 this.$initTinyMCE([
                         plugins
                     ],

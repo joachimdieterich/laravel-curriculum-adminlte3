@@ -70,8 +70,8 @@
                                     :form="form"
                                     :id="component_id"
                                     :medium_id="form.medium_id"
-                                    :referencable_type="'App\\Logbook'"
-                                    :referencable_id="form.id"
+                                    :referenceable_type="'App\\Logbook'"
+                                    :referenceable_id="form.id"
                                     accept="image/*"
                                 />
                                 <div class="dropdown">

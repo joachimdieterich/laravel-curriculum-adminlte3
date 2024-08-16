@@ -187,7 +187,7 @@ export default {
         }
         this.$initTinyMCE(
             [
-                "autolink link"
+                "autolink link code"
             ]
         );
     },

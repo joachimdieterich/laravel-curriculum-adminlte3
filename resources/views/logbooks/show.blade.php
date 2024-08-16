@@ -3,7 +3,7 @@
 @section('title')
     <small>{{ $logbook->title }}</small>
     @can('logbook_create')
-        @if (Auth::user()->id ==  $logbook->owner_id)
+        @if (Auth::user()->id ==  $logbook->owner_id or is_admin())
             <a class="btn btn-flat"
                 onclick="app.__vue__.$eventHub.$emit('edit_logbook', {{$logbook->toJson()}})"
             >

@@ -204,8 +204,9 @@
                          v-bind:id="'logbook_media_'+entry.id">
                         <media subscribable_type="App\LogbookEntry"
                                :subscribable_id="entry.id"
-                               format="list">
-                        </media>
+                               format="list"
+                               :can_add_media="$userId == logbook.owner_id"
+                        ></media>
                     </div>
                     <!-- /.tab-pane -->
                     <div class="tab-pane"

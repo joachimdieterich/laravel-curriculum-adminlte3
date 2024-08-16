@@ -381,7 +381,7 @@ export default {
             this.$nextTick(() => {
                 this.$initTinyMCE(
                     [
-                        "autolink link"
+                        "autolink link code"
                     ]
                 );
             });

@@ -240,8 +240,8 @@ export default {
             this.$modal.show('content-create-modal', {
                 'id': contentSubscription.content_id,
                 'method': 'patch',
-                'referenceable_type': contentSubscription.subscribable_type,
-                'referenceable_id': contentSubscription.subscribable_id
+                'referenceable_type': 'App\\Content',
+                'referenceable_id': contentSubscription.content_id,
             });
         },
         async deleteSubscription(contentSubscription) {

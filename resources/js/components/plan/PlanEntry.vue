@@ -87,8 +87,8 @@
                         <MediumForm :form="form"
                                     :id="component_id"
                                     :medium_id="form.medium_id"
-                                    :referencable_type="'App\\PlanEntry'"
-                                    :referencable_id="form.id"
+                                    :referenceable_type="'App\\PlanEntry'"
+                                    :referenceable_id="form.id"
                                     accept="image/*"/>
                     </div>
                     <button :name="'planEntrySave'"

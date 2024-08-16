@@ -12,9 +12,9 @@
                 class="nav-item-box-image-size"
             >
                 <render-usage
-                    class="d-flex align-items-center nav-item-box-image-size user-select-none"
+                    class="d-flex align-items-center user-select-none"
                     :medium="{ id: kanban.medium_id }"
-                    :style="{ backgroundColor: kanban.color + ' !important' }"
+                    :style="{ backgroundColor: kanban.color + ' !important', minHeight: '150px', borderTopLeftRadius: '.2rem' }"
                     :enableClick="false"
                 ></render-usage>
             </div>

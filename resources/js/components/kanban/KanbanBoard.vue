@@ -653,12 +653,12 @@ export default {
 }
 .content-only .kanban_board_container { width: calc(100vw - 1rem); }
 .kanban_board_wrapper {
-    position:absolute;
+    position: absolute;
     height: 100%;
     width: 100%;
     padding: 2rem;
-    overflow-y:clip;
-    overflow-x: scroll;
+    overflow-y: clip;
+    overflow-x: overlay;
 }
 @media (max-width: 991px) {
     .kanban_board_container { width: calc(100vw - 30px) !important; }

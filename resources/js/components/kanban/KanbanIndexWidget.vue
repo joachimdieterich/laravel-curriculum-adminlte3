@@ -10,11 +10,13 @@
         >
             <div v-if="kanban.medium_id"
                 class="nav-item-box-image-size"
-                :style="{'background': 'url(/media/' + kanban.medium_id + '?model=Kanban&model_id=' + kanban.id +') top center no-repeat', 'background-size': 'cover', }">
-                <div class="nav-item-box-image-size"
-                    style="width: 100% !important;"
-                    :style="{backgroundColor: kanban.color + ' !important',  'opacity': '0.5'}">
-                </div>
+            >
+                <render-usage
+                    class="d-flex align-items-center user-select-none"
+                    :medium="{ id: kanban.medium_id }"
+                    :style="{ backgroundColor: kanban.color + ' !important', minHeight: '150px', borderTopLeftRadius: '.2rem' }"
+                    :enableClick="false"
+                ></render-usage>
             </div>
             <div v-else
                 class="nav-item-box-image-size text-center"
@@ -86,6 +88,8 @@
     </div>
 </template>
 <script>
+const renderUsage = () => import('../../../../app/Plugins/Repositories/edusharing/resources/js/components/RenderUsage');
+
 export default {
     name: 'KanbanIndexWidget',
     props: {
@@ -100,10 +104,16 @@ export default {
             return '/media/'+ id;
         },
     },
+    components: {
+        renderUsage,
+    },
 }
 </script>
-<style scoped>
+<style>
 @media only screen and (max-width: 991px) {
     .fa-ellipsis-v { color: black !important; }
+}
+img.p-0.w-100 {
+    opacity: 0.75;
 }
 </style>

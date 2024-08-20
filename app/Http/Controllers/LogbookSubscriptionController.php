@@ -19,7 +19,7 @@ class LogbookSubscriptionController extends Controller
 
         if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
             $model = $input['subscribable_type']::find($input['subscribable_id']);
-            abort_unless((\Gate::allows('logbook_access') and $model->isAccessible()), 403);
+            abort_unless((\Gate::allows('logbook_access') and $model->isAccessible() or is_admin()), 403);
 
             $subscriptions = LogbookSubscription::where([
                 'subscribable_type' => $input['subscribable_type'],

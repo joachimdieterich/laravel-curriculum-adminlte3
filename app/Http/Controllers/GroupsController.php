@@ -41,7 +41,8 @@ class GroupsController extends Controller
         switch (auth()->user()->role()->id) {
             case 1:  $groups = Group::with(['grade', 'period', 'organization']);
                 break;
-            case 4:  $groups = Group::where('organization_id', auth()->user()->current_organization_id)->with(['grade', 'period', 'organization']);
+            case 4: // Schooladmins and Teachers should only see groups of current organization
+            case 5:  $groups = Group::where('organization_id', auth()->user()->current_organization_id)->with(['grade', 'period', 'organization']);
                 break;
 
             default: $groups = auth()->user()->groups()->with(['grade', 'period', 'organization']);

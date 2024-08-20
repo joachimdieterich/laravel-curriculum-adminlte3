@@ -229,10 +229,10 @@ Vue.prototype.$initTinyMCE = function (tinyMcePlugins, attr = null) {
 
         path_absolute : "/",
         selector: "textarea.my-editor",
-        branding:false,
+        branding: false,
         plugins: tinyMcePlugins ?? defaultPlugins,
         external_plugins: {'mathjax': '/node_modules/@dimakorotkov/tinymce-mathjax/plugin.min.js'},
-        toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | example mathjax link image media ",
+        toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | example mathjax link image media code",
         relative_urls: false,
         entity_encoding : "raw",
         language: 'de',

@@ -18,10 +18,10 @@
                     class="form-control"
                     v-model="search"
                     required
-                    @keyup.enter="loader()"
+                    @keyup.enter="loader(search, true)"
                 />
 
-                <div class="input-group-append" @click="loader()">
+                <div class="input-group-append" @click="loader(search, true)">
                     <span class="input-group-text"><i class="fas fa-search"></i></span>
                 </div>
             </div>

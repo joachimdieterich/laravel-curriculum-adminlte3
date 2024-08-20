@@ -32,15 +32,15 @@
         </div>
 
         <div class="col-md-12 py-2">
+            <LogbookIndexAddWidget
+                v-if="((this.filter == 'all' && typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined') || this.filter == 'owner')"
+                v-can="'logbook_create'"
+            />
             <LogbookIndexWidget
                 v-for="(logbook, index) in logbooks"
                 :key="index + '_logbook_' + logbook.id"
                 :logbook="logbook"
                 :search="search"
-            />
-            <LogbookIndexAddWidget
-                v-if="((this.filter == 'all' && typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined') || this.filter == 'owner')"
-                v-can="'logbook_create'"
             />
         </div>
         <Modal :id="'logbookModal'" css="danger" :title="trans('global.logbook.delete')"

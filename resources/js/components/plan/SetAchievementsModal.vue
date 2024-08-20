@@ -31,9 +31,9 @@
                     <thead>
                         <tr class="border-top-0">
                             <th style="width: 0px;"></th>
-                            <th>{{ trans('global.name') }}</th>
+                            <th class="sorting sorting_asc" @click="sortBy(1)">{{ trans('global.name') }}</th>
                             <th>{{ trans('global.notes') }}</th>
-                            <th class="sorting" @click="sortByStatus">Status</th>
+                            <th class="sorting" @click="sortBy(3)">Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -117,7 +117,7 @@ export default {
             objective: {},
             selectedUsers: [],
             checkAll: false,
-            ascending: true,
+            sortByAsc: false,
         };
     },
     mounted() {},
@@ -156,30 +156,41 @@ export default {
         beforeClose() {
             this.$parent.updateAchievements(this.objective.default.id);
         },
-        opened() {},
+        opened() {
+            this.sortByAsc = false;
+            this.sortBy(1);
+        },
         closed() {},
-        /**
-         * compares the full statuses <br>
-         * asc = teacher achievement priority from unset to best, no student priority <br>
-         * desc = student achievement priority from best to unset, no teacher priority
-         * @param {Event} e onclick event
-         */
-        sortByStatus(e) {
+        sortBy(columnNr = 1) {
             const table = document.querySelector('#achievements-table tbody');
-            const trs = table.querySelectorAll('tr:not(:nth-child(1))'); // first th is group-selection
+            const trs = table.querySelectorAll('tr:not(:nth-child(1))'); // first tr is the group-selection row
 
             Array.from(trs)
                 .sort((a, b) => {
-                    // compare the data-value attribute from the status-cells
-                    return this.ascending
-                        ? b.cells[3].getAttribute('data-value') - a.cells[3].getAttribute('data-value')
-                        : a.cells[3].getAttribute('data-value') - b.cells[3].getAttribute('data-value');
+                    switch (columnNr) {
+                        // TODO: 'Status'-sort needs overhaul
+                        case 3: // column 3 = 'Status'
+                            return this.sortByAsc
+                                ? b.cells[3].getAttribute('data-value') - a.cells[3].getAttribute('data-value')
+                                : a.cells[3].getAttribute('data-value') - b.cells[3].getAttribute('data-value');
+                        case 1: // column 1 = 'Name' => default
+                        default:
+                        return this.sortByAsc
+                            ? a.cells[1].innerText.localeCompare(b.cells[1].innerText) * -1 // reverse logic
+                            : a.cells[1].innerText.localeCompare(b.cells[1].innerText);
+                    }
                 }).forEach(tr => table.appendChild(tr));
             
-            // toggle arrow-up/arrow-down icon on th
-            e.target.classList.toggle('sorting_asc', this.ascending);
-            e.target.classList.toggle('sorting_desc', !this.ascending);
-            this.ascending = !this.ascending;
+                
+            // hide previous sorting indicicator
+            const previousSort = this.sortByAsc ? 'sorting_desc' : 'sorting_asc';
+            this.$el.querySelector('.' + previousSort).classList.remove(previousSort)
+            // show current sorting incdicator
+            const th = document.querySelector('#achievements-table').firstChild.firstChild.children[columnNr];
+            const currentSort = this.sortByAsc ? 'sorting_asc' : 'sorting_desc';
+            th.classList.add(currentSort);
+
+            this.sortByAsc = !this.sortByAsc;
         },
         /**
          * creates a new achievement with unset status </br>

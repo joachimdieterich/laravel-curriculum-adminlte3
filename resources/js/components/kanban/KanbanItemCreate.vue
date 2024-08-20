@@ -6,9 +6,10 @@
                 style="border-style: solid; border-width: 1px; border-radius: 15px; padding: 1px;"
                 :style="{borderColor: textColor }">
                 <color-picker-input
-                    :triggerStyle="{width: '24px', height: '18px'}"
-                    v-model="form.color">
-                </color-picker-input>
+                    :triggerStyle="{width: '24px', height: '24px'}"
+                    v-model="form.color"
+                    style="height: 24px;"
+                ></color-picker-input>
             </span>
             <input
                 :id="'title_' + component_id"
@@ -186,7 +187,7 @@ export default {
         }
         this.$initTinyMCE(
             [
-                "autolink link"
+                "autolink link code"
             ]
         );
     },

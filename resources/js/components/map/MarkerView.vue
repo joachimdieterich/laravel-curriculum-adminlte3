@@ -28,15 +28,15 @@
             v-html="marker.description"
         ></div>
 
-        <h5 class="pt-3">{{ trans('global.media.title') }}</h5>
-        <div v-if="marker.id != null"
+        <h5 class="pt-3" :class="!show_media && 'd-none'">{{ trans('global.media.title') }}</h5>
+        <div v-if="marker.id != null && show_media"
              v-bind:id="'map_marker_media_'+marker.id"
         >
             <media
                 subscribable_type="App\MapMarker"
-               :subscribable_id="marker.id"
+                :subscribable_id="marker.id"
                 :can_add_media="$userId == marker.owner_id || $userId == map.owner_id"
-               format="list"
+                format="list"
             />
         </div>
 
@@ -74,16 +74,22 @@ export default {
         return {
             component_id: this._uid,
             tag_array: {},
+            show_media: true,
         }
     },
     watch: { // reload if context change
         marker: function(newVal, oldVal) {
             this.tag_array = newVal.tags?.split(",");
+            this.show_media = true;
         },
     },
     methods: {
         editMarker(marker){
             this.$eventHub.$emit('edit_marker', marker);
+        },
+        hideMedia() {
+            if (this.$userId == this.marker.owner_id || this.$userId == this.map.owner_id) return;
+            this.show_media = false;
         },
     },
 }

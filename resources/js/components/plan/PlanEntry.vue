@@ -18,7 +18,7 @@
                             :class="entry.css_icon"></i>
                             {{ entry.title }}
                             <i class="fa fa-angle-up"></i>
-                            <div v-if="$userId == plan.owner_id"
+                            <div v-if="editable"
                                 class="card-tools">
                                 <i class="fa fa-pencil-alt mr-2 pointer link-muted"
                                    @click="edit()"></i>

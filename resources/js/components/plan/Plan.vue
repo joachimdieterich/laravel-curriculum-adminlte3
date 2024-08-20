@@ -5,7 +5,7 @@
                 <div class="card-header">
                     <div class="card-title">{{ plan.title }}</div>
                     <div
-                        v-if="$userId == plan.owner_id"
+                        v-if="editable"
                         v-can="'plan_edit'"
                         class="card-tools pr-2 no-print"
                     >
@@ -55,8 +55,8 @@
                     <PlanEntry
                         v-if="$userId == plan.owner_id"
                         :plan="plan"
-                        create="true">
-                    </PlanEntry>
+                        create="true"
+                    ></PlanEntry>
                 </div>
             </div>
             <!-- * REFERENCE: overlay button in bottom right corner * -->

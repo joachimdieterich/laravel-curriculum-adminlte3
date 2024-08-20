@@ -403,12 +403,13 @@ class PlanController extends Controller
                 },
             ])
             ->get();
-        return [
-            'achievements' => [
-                'terminal' => $terminal,
-                'enabling' => $enabling,
-            ]
-        ];
+
+        $user = User::find($userId);
+
+        return view('plans.userAchievements')
+            ->with(compact('terminal'))
+            ->with(compact('enabling'))
+            ->with(compact('user'));
     }
 
     protected function validateRequest()

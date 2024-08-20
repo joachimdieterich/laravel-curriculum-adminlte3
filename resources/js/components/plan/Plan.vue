@@ -10,13 +10,13 @@
                         class="card-tools pr-2 no-print"
                     >
                         <!-- users with edit-rights can see student-achievements -->
-                        <a v-if="this.editable" @click="openModal()" class="link-muted mr-3 px-1 pointer">
+                        <a v-if="this.editable" @click="openUserModal()" class="link-muted mr-3 px-1 pointer">
                             <i class="fa fa-chart-simple"></i>
                         </a>
                         <a onclick="window.print()" class="link-muted mr-3 px-1 pointer">
                             <i class="fa fa-print"></i>
                         </a>
-                        <a :href="plan.id + '/edit'" class="link-muted px-1">
+                        <a v-if="$userId == plan.owner_id" @click="openEditModal()" class="link-muted px-1 pointer">
                             <i class="fa fa-pencil-alt"></i>
                         </a>
                     </div>
@@ -77,20 +77,22 @@
                 title="plan.evaluate_user"
             ></select-users-modal>
         </div>
+        <PlanIndexAddWidget
+            :visible="false"
+        />
     </div>
 </template>
 
 <script>
 import draggable from 'vuedraggable';
 
-const Calendar =
-    () => import('../calendar/Calendar');
-const PlanEntry =
-    () => import('./PlanEntry');
+const Calendar = () => import('../calendar/Calendar');
+const PlanEntry = () => import('./PlanEntry');
+const PlanIndexAddWidget = () => import('./PlanIndexAddWidget.vue');
 
 export default {
     props: {
-        plan: [],
+        plan: null,
         editable: { // true => subscriber with edit-rights | plan-owner
             type: Boolean,
             default: false,
@@ -168,7 +170,10 @@ export default {
                 }
             });
         },
-        openModal() {
+        openEditModal() {
+            this.$eventHub.$emit('edit_plan', this.plan);
+        },
+        openUserModal() {
             this.$modal.show('select-users-modal', { users: this.users });
         },
         async handleUserModalClose(user) {
@@ -196,7 +201,6 @@ export default {
                     .then(response => this.users = response.data);
             });
         }
-
     },
     computed: {
         columnDragOptions() {
@@ -210,6 +214,7 @@ export default {
     components: {
         Calendar,
         PlanEntry,
+        PlanIndexAddWidget,
         draggable,
     },
 }

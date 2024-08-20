@@ -178,17 +178,7 @@ class PlanController extends Controller
      */
     public function edit(Plan $plan)
     {
-        abort_unless((\Gate::allows('plan_edit') and $plan->isAccessible()), 403);
-        $types = PlanType::whereIn('id',
-            explode(
-                ',',
-                \App\Config::where('key', 'availablePlanTypes')->get()->first()->value
-            )
-        )->get();
-
-        return view('plans.edit')
-                ->with(compact('plan'))
-                ->with(compact('types'));
+        abort(405);
     }
 
     /**

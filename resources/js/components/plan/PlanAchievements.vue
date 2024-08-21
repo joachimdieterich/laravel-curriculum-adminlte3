@@ -56,15 +56,25 @@ export default {
                 if (ena.achievements.length === 0) {
                     this.users.forEach(user => {
                         const user_td = document.createElement('td');
+                        const i = document.createElement('i');
+                        
                         user_td.classList.add('status-0');
+                        i.classList.add('fa', 'fa-circle');
+                        
+                        user_td.appendChild(i);
                         enabling_tr.appendChild(user_td);
                     });
                 } else {
                     this.users.forEach(user => {
                         const user_td = document.createElement('td');
+                        const i = document.createElement('i');
                         // find out if there's a set achievement and get the teacher's value | if not => 0
                         const status = ena.achievements.find(achievement => achievement.user_id === user.id)?.status[1] ?? '0';
+                        
                         user_td.classList.add('status-' + status);
+                        i.classList.add('fa', 'fa-circle');
+                        
+                        user_td.appendChild(i);
                         enabling_tr.appendChild(user_td);
                     });
                 }
@@ -97,7 +107,8 @@ export default {
 <style scoped>
 #show-achievements {
     & >>> p { margin: 0px; color: black; }
-    & >>> td { padding: 10px; }
+    & >>> td { padding: 10px; vertical-align: middle; }
+    & >>> td:not(:first-child) { text-align: center; font-size: 1.5rem; }
     & >>> tr:hover :not(.status) { background-color: unset; }
     & >>> tr:first-child,
     & >>> tr:first-child th { border-top: 0px; }
@@ -111,9 +122,9 @@ export default {
         border-top: 3px solid #dee2e6;
         border-bottom: 3px solid #dee2e6;
     }
-    & >>> .status-0 { background-color: #d2d6de !important; }
-    & >>> .status-1 { background-color: #00a65a !important; }
-    & >>> .status-2 { background-color: #fd7e14 !important; }
-    & >>> .status-3 { background-color: #dd4b39 !important; }
+    & >>> .status-0 { color: #d2d6de !important; }
+    & >>> .status-1 { color: #00a65a !important; }
+    & >>> .status-2 { color: #fd7e14 !important; }
+    & >>> .status-3 { color: #dd4b39 !important; }
 }
 </style>

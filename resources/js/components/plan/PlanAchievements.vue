@@ -1,16 +1,11 @@
 <template>
     <div id="show-achievements">
-        <h2 id="user-name"></h2>
-        <span class="custom-control custom-switch custom-switch-on-green">
-            <input id="toggleOnlySuccessful" class="custom-control-input" type="checkbox" v-model="toggleOnlySuccessful"/>
-            <label for="toggleOnlySuccessful" class="custom-control-label">Nur erfolgreiche anzeigen</label>
-        </span>
-        <span class="custom-control custom-switch custom-switch-on-green">
-            <input id="toggleUnassessed" class="custom-control-input" type="checkbox" v-model="toggleUnassessed"/>
-            <label for="toggleUnassessed" class="custom-control-label">Nicht eingesch&auml;tzte ausblenden</label>
-        </span>
-        <br/>
         <table class="table">
+            <thead>
+                <tr>
+                    <th>Ziele / Namen</th>
+                </tr>
+            </thead>
             <tbody></tbody>
         </table>
     </div>
@@ -20,66 +15,63 @@ export default {
     props: {
         terminal: {},
         enabling: {},
-        user: {},
+        users: [],
     },
-    data() {
-        return {
-            toggleOnlySuccessful: false,
-            toggleUnassessed: false,
-        }
-    },
-    async mounted() {
+    mounted() {
         const achievements = {
             terminal: this.terminal,
             enabling: this.enabling,
         };
 
-        const table = document.querySelector('#show-achievements tbody');
-        document.getElementById('user-name').innerText = `${this.user.firstname} ${this.user.lastname}`;
+        const table = document.querySelector('#show-achievements .table');
+        const thead = table.firstChild;
+        const tbody = table.lastChild;
 
-        // create a new row for each terminal-objective
-        achievements.terminal.forEach(terminal => {
-            const ter_obj = terminal.terminal_objective;
-            const tr = document.createElement('tr');
-
-            // the first cell should be the title of the terminal-objective
-            this.addCell(tr, ter_obj.title);
-
-            // every following cell in this row is an enabling-objective
-            ter_obj.enabling_objectives.forEach(enabling => {
-                this.addCell(tr, enabling.title, (enabling.achievements[0]?.status[1] ?? '0'));
-            });
-
-            table.appendChild(tr);
+        // list all names in the table-header
+        this.users.forEach(user => {
+            const th = document.createElement('th');
+            th.innerText = user.firstname + ' ' + user.lastname;
+            th.style.width = 'calc(100% / ' + (this.users.length + 1) + ')';
+            thead.firstChild.appendChild(th);
         });
+        // list each terminal-objective-title in its own row
+        achievements.terminal.forEach(ter => {
+            const terminal_tr = document.createElement('tr');
+            const terminal_td = document.createElement('td');
 
-        let objectives = {};
-        // first connect enabling-objectives with the same terminal-objective into the same category
-        achievements.enabling.forEach((enabling, index) => {
-            const terminal_id = enabling.enabling_objective.terminal_objective.id;
+            terminal_tr.classList.add('thick-line');
+            terminal_td.innerHTML = ter.terminal_objective.title;
 
-            if (objectives[terminal_id] === undefined) {
-                objectives[terminal_id] = [index];
-            } else {
-                objectives[terminal_id].push(index);
-            }
+            terminal_tr.appendChild(terminal_td);
+            tbody.appendChild(terminal_tr);
+
+            // list each enabling-objective with its given achievement status for the corresponding user
+            ter.terminal_objective.enabling_objectives.forEach(ena => {
+                const enabling_tr = document.createElement('tr');
+                const enabling_td = document.createElement('td');
+
+                enabling_td.innerHTML = ena.title;
+                enabling_tr.appendChild(enabling_td);
+
+                if (ena.achievements.length === 0) {
+                    this.users.forEach(user => {
+                        const user_td = document.createElement('td');
+                        user_td.classList.add('status-0');
+                        enabling_tr.appendChild(user_td);
+                    });
+                } else {
+                    this.users.forEach(user => {
+                        const user_td = document.createElement('td');
+                        // find out if there's a set achievement and get the teacher's value | if not => 0
+                        const status = ena.achievements.find(achievement => achievement.user_id === user.id)?.status[1] ?? '0';
+                        user_td.classList.add('status-' + status);
+                        enabling_tr.appendChild(user_td);
+                    });
+                }
+
+                tbody.appendChild(enabling_tr);
+            })
         });
-
-        for (const [terminal_id, enabling_indices] of Object.entries(objectives)) {
-            const ter_obj = achievements.enabling[enabling_indices[0]].enabling_objective.terminal_objective;
-            const tr = document.createElement('tr');
-
-            // the first cell should be the title of the terminal-objective
-            this.addCell(tr, ter_obj.title);
-
-            // add enabling-objectives from the response-data, based of the corresponding indices
-            enabling_indices.forEach(index => {
-                const enabling = achievements.enabling[index].enabling_objective;
-                this.addCell(tr, enabling.title, (enabling.achievements[0]?.status[1] ?? '0'));
-            });
-
-            table.appendChild(tr);
-        }
     },
     methods: {
         /**
@@ -100,36 +92,25 @@ export default {
             tr.appendChild(td);
         },
     },
-    watch: {
-        toggleOnlySuccessful(bool) {
-            if (bool) {
-                $('#show-achievements tr td:not(:first-child):not(.status-1)').hide();
-            } else {
-                let param = '#show-achievements td';
-                if (this.toggleUnassessed) param += ':not(.status-0)';
-                
-                $(param).show();
-            }
-        },
-        toggleUnassessed(bool) {
-            if (bool) {
-                $('#show-achievements td.status-0').hide();
-            } else if ($('#toggleOnlySuccessful')[0].checked === false) {
-                $('#show-achievements td.status-0').show();
-            }
-        },
-    },
 }
 </script>
 <style scoped>
 #show-achievements {
-    print-color-adjust: exact;
-
     & >>> p { margin: 0px; color: black; }
     & >>> td { padding: 10px; }
     & >>> tr:hover :not(.status) { background-color: unset; }
     & >>> tr:first-child,
-    & >>> tr:first-child td { border-top: 0px; }
+    & >>> tr:first-child th { border-top: 0px; }
+    & >>> th {
+        font-size: 1.25rem;
+        text-align: center;
+
+        &:first-child { min-width: 15%; max-width: 25%; text-align: left; }
+    }
+    & >>> .thick-line {
+        border-top: 3px solid #dee2e6;
+        border-bottom: 3px solid #dee2e6;
+    }
     & >>> .status-0 { background-color: #d2d6de !important; }
     & >>> .status-1 { background-color: #00a65a !important; }
     & >>> .status-2 { background-color: #fd7e14 !important; }

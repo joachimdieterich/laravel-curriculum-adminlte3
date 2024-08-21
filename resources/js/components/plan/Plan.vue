@@ -74,6 +74,7 @@
             <note-modal></note-modal>
             <select-users-modal
                 :users="users"
+                :multiple="true"
                 title="plan.evaluate_user"
             ></select-users-modal>
         </div>
@@ -176,8 +177,9 @@ export default {
         openUserModal() {
             this.$modal.show('select-users-modal', { users: this.users });
         },
-        async handleUserModalClose(user) {
-            window.open('/plans/' + this.plan.id + '/getUserAchievements/' + user.id);
+        async handleUserModalClose(users) {
+            const ids = users.map(user => user.id);
+            window.open('/plans/' + this.plan.id + '/getUserAchievements/' + ids);
         },
     },
     mounted() {

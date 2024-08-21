@@ -372,14 +372,16 @@ class PlanController extends Controller
         return ['entry_order' => $plan->entry_order];
     }
 
-    public function getUserAchievements(Plan $plan, $userId)
+    public function getUserAchievements(Plan $plan, $userIds)
     {
+        $ids = explode(',', $userIds);
+
         $terminal = TerminalObjectiveSubscriptions::where('subscribable_type', 'App\\PlanEntry')
             ->whereIn('subscribable_id', $plan->entry_order)
             ->with([
                 'terminalObjective.enablingObjectives',
-                'terminalObjective.enablingObjectives.achievements' => function ($query) use ($userId) {
-                    $query->where('user_id', $userId);
+                'terminalObjective.enablingObjectives.achievements' => function ($query) use ($ids) {
+                    $query->whereIn('user_id', $ids);
                 },
             ])
             ->get();
@@ -388,18 +390,18 @@ class PlanController extends Controller
             ->where('subscribable_id', $plan->entry_order)
             ->with([
                 'enablingObjective',
-                'enablingObjective.achievements'=> function ($query) use ($userId) {
-                    $query->where('user_id', $userId);
+                'enablingObjective.achievements'=> function ($query) use ($ids) {
+                    $query->whereIn('user_id', $ids);
                 },
             ])
             ->get();
 
-        $user = User::find($userId);
+        $users = User::find($ids);
 
         return view('plans.userAchievements')
             ->with(compact('terminal'))
             ->with(compact('enabling'))
-            ->with(compact('user'));
+            ->with(compact('users'));
     }
 
     protected function validateRequest()

@@ -44,11 +44,11 @@
                     <span :id="'subscription_link_'+item.token.id"
                           @click="copyToClipboard"
                           class="pointer text-muted text-xs"
-                          v-html="generateShareURL(item.token)"></span>
+                          v-dompurify-html="generateShareURL(item.token)"></span>
                 </div>
                 <div :id="'svgQrCode_'+item.token.id"
                     v-if="item.token.id == showQrCodeId"
-                     v-html="item.qr.image"
+                     v-dompurify-html="item.qr.image"
                      style="width: 49px;"
                      class="float-left"
 

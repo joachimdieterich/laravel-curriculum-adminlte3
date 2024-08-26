@@ -19,7 +19,7 @@
             </span>
         </div>-->
 
-<!--        <div v-html="this.detailsSnippet"
+<!--        <div v-dompurify-html="this.detailsSnippet"
         @click="show()"></div>-->
 <!--        <div style="width: 100%;display: block;height: 25px;">
             <i v-if="downloadable"

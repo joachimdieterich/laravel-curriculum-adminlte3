@@ -12,8 +12,8 @@
                 <div class="card-img-overlay d-flex flex-column justify-content-end"
                      style="padding:0 !important;min-height:50px">
                     <span class="p-3" style="background-color: rgba(0,0,0,0.5); ">
-                        <h5 class="card-title text-white" v-html="this.meeting.title"></h5>
-                        <p class="card-text text-white pb-2 pt-1" v-html="this.meeting.subtitle">
+                        <h5 class="card-title text-white" v-dompurify-html="this.meeting.title"></h5>
+                        <p class="card-text text-white pb-2 pt-1" v-dompurify-html="this.meeting.subtitle">
                         </p>
                         <a class="text-white" > {{postDate()}}</a>
                     </span>
@@ -54,14 +54,14 @@
                 <div class="card-body">
                     <div class="tab-content" id="custom-tabs-four-tabContent">
                         <div class="tab-pane fade show active" id="custom-tabs-four-home" role="tabpanel" aria-labelledby="custom-tabs-four-home-tab"
-                             v-html="this.meeting.description">
+                             v-dompurify-html="this.meeting.description">
                         </div>
                         <div class="tab-pane fade" id="custom-tabs-four-profile" role="tabpanel" aria-labelledby="custom-tabs-four-profile-tab"
-                             v-html="this.meeting.info">
+                             v-dompurify-html="this.meeting.info">
                         </div>
                         <div class="tab-pane fade" id="custom-tabs-four-messages"
                              role="tabpanel" aria-labelledby="custom-tabs-four-messages-tab"
-                             v-html="this.meeting.speakers">
+                             v-dompurify-html="this.meeting.speakers">
                         </div>
                     </div>
                 </div>

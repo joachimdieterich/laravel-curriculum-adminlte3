@@ -86,7 +86,7 @@
                        {{ videoconference.meetingName }}
                    </h1>
                    <p class="text-muted small"
-                      v-html="htmlToText(videoconference.welcomeMessage)">
+                      v-dompurify-html="htmlToText(videoconference.welcomeMessage)">
                    </p>
                 </span>
                     <div class="symbol"

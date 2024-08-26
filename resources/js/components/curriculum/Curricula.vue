@@ -97,7 +97,7 @@
                        {{ curriculum.title }}
                    </h1>
                    <p class="text-muted small"
-                      v-html="htmlToText(curriculum.description)">
+                      v-dompurify-html="htmlToText(curriculum.description)">
                    </p>
                 </span>
                     <div v-permission="'is_admin'"

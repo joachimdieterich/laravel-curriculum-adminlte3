@@ -34,7 +34,7 @@
 
                 <hr class="my-2">
 
-                <span v-html="task.description"></span>
+                <span v-dompurify-html="task.description"></span>
 
             </div>
             <!-- /.card-body -->

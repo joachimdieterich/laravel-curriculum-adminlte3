@@ -7,9 +7,9 @@
                 class="text-decoration-none text-black">
                     <div class="info-box elevation-1" :style="styles">
                         <div class="info-box-content">
-                            <span class="pull-right bg-gray-light" v-html="entry.action"></span>
+                            <span class="pull-right bg-gray-light" v-dompurify-html="entry.action"></span>
                             <span class="text-white">{{ entry.title }}</span><br>
-                            <span class="pt-2 text-white small" v-html="htmlToText(entry.description)"></span>
+                            <span class="pt-2 text-white small" v-dompurify-html="htmlToText(entry.description)"></span>
                         </div>
                     </div>
                 </a>
@@ -26,9 +26,9 @@
 
 
                         <div class="info-box-content">
-                            <span class="pull-right" v-html="entry.action"></span>
-                            <span class="info-box-text"><strong v-html="entry.title"></strong></span>
-                            <span class="pt-2 " v-html="htmlToText(entry.description)"></span>
+                            <span class="pull-right" v-dompurify-html="entry.action"></span>
+                            <span class="info-box-text"><strong v-dompurify-html="entry.title"></strong></span>
+                            <span class="pt-2 " v-dompurify-html="htmlToText(entry.description)"></span>
                         </div>
                     </div>
                 </a>

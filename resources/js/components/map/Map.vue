@@ -46,7 +46,7 @@
                     </span>
 
                     <p class="pt-2"
-                        v-html="this.map.description"
+                        v-dompurify-html="this.map.description"
                     ></p>
 
                     <h5 class="pt-2">{{ trans('global.entries') }}</h5>
@@ -139,7 +139,7 @@
                     </div>
                     <div class="py-0 pre-formatted"
                          v-if="this.currentMarker.BEZ_1_2.length > 2"
-                         v-html="this.currentMarker.BEZ_1_2"
+                         v-dompurify-html="this.currentMarker.BEZ_1_2"
                     ></div>
 
                     <div class="py-0 pt-2">
@@ -147,7 +147,7 @@
                     </div>
                     <div class="py-0 pre-formatted"
                          style="text-align:justify;"
-                         v-html="this.currentMarker.BEMERKUNG"
+                         v-dompurify-html="this.currentMarker.BEMERKUNG"
                     ></div>
 
                     <div class="py-0 pt-2"><strong>Termine</strong></div>
@@ -160,7 +160,7 @@
                     </div>
 
                     <div class="py-0 pt-2"><strong>VA-Nummer</strong></div>
-                    <div class="py-0 pre-formatted" v-html="this.currentMarker.ARTIKEL_NR"></div>
+                    <div class="py-0 pre-formatted" v-dompurify-html="this.currentMarker.ARTIKEL_NR"></div>
 
                     <div class="py-0 pt-2">
                         <a :href="this.currentMarker.LINK_DETAIL"

@@ -20,7 +20,7 @@
                 <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
                     {{ logbook.title }}
                 </h1>
-                <p class="text-muted small" v-html="htmlToText(logbook.description)"></p>
+                <p class="text-muted small" v-dompurify-html="htmlToText(logbook.description)"></p>
             </span>
             <div class="symbol"
                 :style="'color:' + $textcolor(logbook.color) + ' !important'"

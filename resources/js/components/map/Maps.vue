@@ -85,7 +85,7 @@
                        {{ map.title }}
                    </h1>
                    <p class="text-muted small"
-                      v-html="htmlToText(map.subtitle)">
+                      v-dompurify-html="htmlToText(map.subtitle)">
                    </p>
                 </span>
                     <div class="symbol"

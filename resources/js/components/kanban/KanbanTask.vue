@@ -1,23 +1,23 @@
 <template>
-    <div >                  
+    <div >
         <div v-for="task in tasks">
             <div class="py-1">
-                <input 
-                    type="checkbox" 
-                    value="" 
-                    name="todo1" 
-                    id="todoCheck1" 
+                <input
+                    type="checkbox"
+                    value=""
+                    name="todo1"
+                    id="todoCheck1"
                     class="pull-right my-2"
                     @click="complete(task.task.id)"
                     v-bind:checked="isCompleted(task)">
-                <a class="text-muted small " :href="'/tasks/'+task.task.id" v-html="task.task.title"></a>
+                <a class="text-muted small " :href="'/tasks/'+task.task.id" v-dompurify-html="task.task.title"></a>
             </div>
-           
+
             <small class="badge badge-primary pull-left mt-1 mb-2">
                 <i class="far fa-clock"></i>
-                <span v-html="date(task.task.due_date)"></span>
+                <span v-dompurify-html="date(task.task.due_date)"></span>
             </small>
-            
+
         </div>
 
     </div>
@@ -34,14 +34,14 @@
                 task: null
             };
         },
-        
+
         methods: {
             async complete(id) {
-                try {  
+                try {
                     this.status = (await axios.patch('/tasks/'+id+'/complete')).data.status;
                 } catch(error) {
                     this.errors = error.response.data.errors;
-                } 
+                }
                 //alert(this.status);
             },
              isCompleted(task) {
@@ -51,7 +51,7 @@
                         returnvalue = true;
                     }
                 }
-                
+
                 return returnvalue;
             },
             date(date) {
@@ -61,10 +61,10 @@
                 return value.toLocaleString([], dateFormat);
             },
         },
-        
+
         mounted(){
-            
+
         }
-        
+
     }
 </script>

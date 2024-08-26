@@ -43,7 +43,7 @@
                                    @click.prevent="open('reference-objective-modal', filtered_reference.reference)">
                                     <i class="fa fa-pencil-alt pl-2"></i></a>
                              </dt>
-                            <dd v-html="filtered_reference.reference.description"></dd>
+                            <dd v-dompurify-html="filtered_reference.reference.description"></dd>
                         </div>
                     </div>
                     <hr style="clear:both;">

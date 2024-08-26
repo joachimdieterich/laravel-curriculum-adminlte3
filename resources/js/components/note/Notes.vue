@@ -200,7 +200,7 @@
                                     </small>
                                 </div>
                             </div>
-                            <span class="note-content" v-html="item.content"></span>
+                            <span class="note-content" v-dompurify-html="item.content"></span>
                         </span>
                         <span :class="'note_editor_placeholder_'+item.id"></span>
                     </div>
@@ -304,7 +304,7 @@ export default {
                 const index = this.notes.findIndex(note => note.id === this.form.id);
                 this.notes.splice(index, 1);
             }
-            
+
             this.toggleEdit();
             // wait for request to be handled, because this.form will have empty values after
             await this.form.submit(method, this.requestUrl + currentPath)

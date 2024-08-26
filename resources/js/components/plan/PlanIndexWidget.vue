@@ -20,7 +20,9 @@
                 <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
                     {{ plan.title }}
                 </h1>
-                <p class="text-muted small" v-dompurify-html="htmlToText(plan.description)"></p>
+                <p class="text-muted small">
+                    {{ htmlToText(plan.description) }}
+                </p>
             </span>
             <div class="symbol"
                 :style="'color:' + $textcolor(plan.color) + ' !important'"

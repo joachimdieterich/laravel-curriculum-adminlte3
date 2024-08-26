@@ -28,9 +28,7 @@
                 <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
                     {{ kanban.title }}
                 </h1>
-                <p class="text-muted small">
-                    {{ htmlToText(kanban.description) }}
-                </p>
+                <p class="text-muted small" v-dompurify-html="kanban.description"></p>
             </span>
 
             <div class="symbol"

@@ -15,7 +15,7 @@
         "@fortawesome/free-brands-svg-icons": "^5.0.13",
         "@fortawesome/free-regular-svg-icons": "^5.0.13",
         "@fortawesome/free-solid-svg-icons": "^6.3.0",
-        "axios": "^1.6.0",
+        "axios": "^1.7.4",
         "bootstrap": "^4.6.1",
         "cross-env": "^7.0.3",
         "jquery": "^3.6.1",

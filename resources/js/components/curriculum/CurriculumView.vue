@@ -194,7 +194,7 @@
                  role="tab"
                  aria-labelledby="description-nav-tab">
                 <div class="card p-3"
-                     v-html="curriculum.description"></div>
+                     v-dompurify-html="curriculum.description"></div>
             </div>
 
         </div>

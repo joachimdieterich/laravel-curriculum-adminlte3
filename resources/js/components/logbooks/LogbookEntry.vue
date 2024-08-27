@@ -166,7 +166,7 @@
                     <div class="tab-pane p-2"
                          :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id, 'active', true)"
                          v-bind:id="'logbook_description_'+entry.id">
-                        <span v-html="entry.description"></span>
+                        <span v-dompurify-html="entry.description"></span>
                     </div>
 
                     <!-- tab-pane -->

@@ -26,7 +26,7 @@
             <button type="button"
                     class="btn btn-block btn-xs"
                     v-bind:class="objective.level.css_color"
-                    v-html="objective.level.title">
+                    v-dompurify-html="objective.level.title">
             </button>
         </span>
 

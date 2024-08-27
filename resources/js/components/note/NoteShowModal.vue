@@ -24,7 +24,7 @@
                  </div>
             </div>
 
-            <div v-html="note.content"
+            <div v-dompurify-html="note.content"
                 class="card-body overflow-auto"
             ></div>
 

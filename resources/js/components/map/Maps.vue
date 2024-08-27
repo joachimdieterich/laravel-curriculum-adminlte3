@@ -84,8 +84,8 @@
                    <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
                        {{ map.title }}
                    </h1>
-                   <p class="text-muted small"
-                      v-html="htmlToText(map.subtitle)">
+                   <p class="text-muted small">
+                    {{ htmlToText(map.description) }}
                    </p>
                 </span>
                     <div class="symbol"

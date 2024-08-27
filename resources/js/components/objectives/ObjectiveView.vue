@@ -186,7 +186,7 @@
                      :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_description_'+objective.id, 'active', true)"
                      id="description"
                 >
-<!--                    <div class="card-body" v-html="objective.description"></div>-->
+<!--                    <div class="card-body" v-dompurify-html="objective.description"></div>-->
 
                     <variants
                         :model="objective"

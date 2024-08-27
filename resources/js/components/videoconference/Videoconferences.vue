@@ -85,8 +85,8 @@
                    <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
                        {{ videoconference.meetingName }}
                    </h1>
-                   <p class="text-muted small"
-                      v-html="htmlToText(videoconference.welcomeMessage)">
+                   <p class="text-muted small">
+                    {{ htmlToText(videoconference.welcomeMessage) }}
                    </p>
                 </span>
                     <div class="symbol"

@@ -14,6 +14,10 @@ window.Vue = require('vue').default;
 
 window.moment = require('moment');
 
+//security
+import VueDompurifyHtml from 'vue-dompurify-html';
+Vue.use(VueDompurifyHtml);
+
 //broadcasting
 import VueEcho from 'vue-echo';
 if (process.env.MIX_PUSHER_APP_ACTIVE == 'true') {

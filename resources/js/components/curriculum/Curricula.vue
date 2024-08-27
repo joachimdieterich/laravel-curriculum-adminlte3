@@ -96,8 +96,8 @@
                    <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
                        {{ curriculum.title }}
                    </h1>
-                   <p class="text-muted small"
-                      v-html="htmlToText(curriculum.description)">
+                   <p class="text-muted small">
+                    {{ htmlToText(curriculum.description) }}
                    </p>
                 </span>
                     <div v-permission="'is_admin'"

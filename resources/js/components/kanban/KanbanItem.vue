@@ -96,7 +96,7 @@
             <div v-if="(editor == false)">
                 <div v-if="item.description !== null "
                      class="text-muted small px-3 py-2"
-                     v-html="form.description">
+                     v-dompurify-html="form.description">
                 </div>
             </div>
 

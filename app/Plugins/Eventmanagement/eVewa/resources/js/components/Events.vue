@@ -45,19 +45,19 @@
             <div :id="'navigator-item-content-'+event.ARTIKEL_NR" class="card-body collapse">
                 <div class="row">
                     <div class="col-2"><strong>VA-Nummer</strong></div>
-                    <div class="col-10" v-html="event.ARTIKEL_NR"></div>
+                    <div class="col-10" v-dompurify-html="event.ARTIKEL_NR"></div>
 
                     <div class="col-2"
                          v-if="event.BEZ_1_2.length > 2">
                         <strong>Untertitel</strong></div>
                     <div class="col-10 pre-formatted"
                          v-if="event.BEZ_1_2.length > 2"
-                         v-html="event.BEZ_1_2"></div>
+                         v-dompurify-html="event.BEZ_1_2"></div>
                     <div class="col-2"><strong>Beschreibung</strong></div>
-                    <div class="col-10 pre-formatted" v-html="event.BEMERKUNG"></div>
+                    <div class="col-10 pre-formatted" v-dompurify-html="event.BEMERKUNG"></div>
 
                     <div class="col-2"><strong>Veranstalter</strong></div>
-                    <div class="col-10" v-html="event.MANDANT"></div>
+                    <div class="col-10" v-dompurify-html="event.MANDANT"></div>
 
 
                     <div class="col-12 mt-2">

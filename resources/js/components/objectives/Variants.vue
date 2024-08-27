@@ -11,9 +11,9 @@
             <div v-if="model.curriculum.variants === null || (!enableDraggable && model.variants.length === 0)"
                  class="col-12 pb-2">
                 <div v-if="field === 'description'"
-                     v-html="model.description"></div>
+                     v-dompurify-html="model.description"></div>
                 <div v-else
-                     v-html="model.title"></div>
+                     v-dompurify-html="model.title"></div>
             </div>
 
             <!-- with variants -->
@@ -32,14 +32,14 @@
                     </p>
                     <div v-if="variant_definition.id === 0">
                         <div v-if="field === 'description' "
-                             v-html="model.description"></div>
-                        <div v-else v-html="model.title"></div>
+                             v-dompurify-html="model.description"></div>
+                        <div v-else v-dompurify-html="model.title"></div>
                     </div>
                     <div v-else>
                     <span v-if="filterVariant(variant_definition.id).length !== 0">
                         <div v-if="filterVariant(variant_definition.id)[0][field] != '' "
                              style="height:100%">
-                            <span v-html="filterVariant(variant_definition.id)[0][field]"></span>
+                            <span v-dompurify-html="filterVariant(variant_definition.id)[0][field]"></span>
                         </div>
                     </span>
 

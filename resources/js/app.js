@@ -112,7 +112,7 @@ Vue.prototype.checkPermission = (permission) => {
 Vue.prototype.htmlToText = (html) => {
     const doc = new DOMParser().parseFromString(html, 'text/html');
     // The replace here is needed because text-content un-escapes
-    return doc.body.textContent?.replace(/&/g, "&amp;")?.replace("<", "&lt;")?.replace(">", "&gt;") || "";
+    return doc.body.textContent?.replace(/&/g, "&amp;")?.replace(/</g, "&lt;")?.replace(/>/g, "&gt;") || "";
 }
 
 /**

@@ -102,10 +102,17 @@ Vue.prototype.checkPermission = (permission) => {
     return window.Laravel.permissions.indexOf(permission) !== -1;
 };
 
+/**
+ * Gets the text content of the HTML
+ * No HTML tags are included, but any text, including the text inside the tags, is included.
+ *
+ * @param {string} html Input HTML
+ * @returns The text content of the HTML
+ */
 Vue.prototype.htmlToText = (html) => {
-    var txt = document.createElement("textarea");
-    txt.innerHTML = html;
-    return txt.value.replace(/(&lt;|<)script.*?(&lt;|<)\/script(&gt;|>)|<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    // The replace here is needed because text-content un-escapes
+    return doc.body.textContent?.replace(/&/g, "&amp;")?.replace("<", "&lt;")?.replace(">", "&gt;") || "";
 }
 
 /**

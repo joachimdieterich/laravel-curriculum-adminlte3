@@ -231,7 +231,7 @@ export default {
             window.location = "/curricula/" + curriculum.id + "/editOwner";
         },
         shareCurriculum(curriculum){
-            this.$modal.show('subscribe-modal', { 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false});
+            this.$modal.show('subscribe-modal', { 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditLabel': ' ', 'canEditCheckbox': false});
         },
         loaderEvent(){
             if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){

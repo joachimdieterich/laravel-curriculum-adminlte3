@@ -29,8 +29,8 @@ const directive = buildVueDompurifyHTMLDirective({}, () => DOMPurify);
 Vue.directive(
     'dompurify-html',
     {
-        inserted: createWrapper(directive),
-        update: createWrapper(directive),
+        inserted: createWrapper(directive.inserted),
+        update: createWrapper(directive.update),
         unbind(el) {
             el.innerHTML = '';
         },

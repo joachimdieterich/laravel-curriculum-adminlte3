@@ -16,6 +16,8 @@
                 type="text"
                 v-model="form.title"
                 class="ml-2"
+                :class="{ 'missing-input': highlightTitleInput }"
+                @input="highlightTitleInput = false"
                 style="width: 235px !important;font-size: 1.1rem; font-weight: 400; border: 0; border-bottom: 1px; border-style:solid; margin: 0;"
                 :style="{ backgroundColor: form.color, color: textColor }"
             />
@@ -161,6 +163,7 @@ export default {
                 'visible_until': null,
             }),
             expand: false,
+            highlightTitleInput: false,
         };
     },
     created() {
@@ -221,6 +224,12 @@ export default {
             }
         },
         submit() {
+            if (this.form.title == null || this.form.title == ""){
+                const titleInput = document.getElementById('title_' + this.component_id);
+                titleInput.focus();
+                this.highlightTitleInput = true;
+                return;
+            }
             let method = this.method.toLowerCase();
             this.form.description = tinyMCE.get('description').getContent();
             if (method === 'patch') {
@@ -249,3 +258,9 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+.missing-input {
+    border-color: red !important;
+}
+</style>

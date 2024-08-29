@@ -129,9 +129,9 @@ Vue.prototype.checkPermission = (permission) => {
  * @returns The text content of the HTML
  */
 Vue.prototype.htmlToText = (html) => {
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    // The replace here is needed because text-content un-escapes
-    return doc.body.textContent?.replace(/&/g, "&amp;")?.replace(/</g, "&lt;")?.replace(/>/g, "&gt;") || "";
+    var txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value.replace(/(&lt;|<)script.*?(&lt;|<)\/script(&gt;|>)|<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
 }
 
 /**

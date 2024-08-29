@@ -15,8 +15,27 @@ window.Vue = require('vue').default;
 window.moment = require('moment');
 
 //security
-import VueDompurifyHtml from 'vue-dompurify-html';
-Vue.use(VueDompurifyHtml);
+import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
+import DOMPurify from 'dompurify';
+const createWrapper = (inner) => {
+    return (el, binding) => {
+        if (binding.value === undefined || binding.value === null) {
+            return;
+        }
+        inner(el, binding);
+    };
+};
+const directive = buildVueDompurifyHTMLDirective({}, () => DOMPurify);
+Vue.directive(
+    'dompurify-html',
+    {
+        inserted: createWrapper(directive),
+        update: createWrapper(directive),
+        unbind(el) {
+            el.innerHTML = '';
+        },
+    }
+);
 
 //broadcasting
 import VueEcho from 'vue-echo';

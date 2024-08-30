@@ -3,7 +3,8 @@
         <ul class="nav nav-tabs"
             role="tablist"
         >
-            <li class="btn btn-sm btn-outline-secondary m-2"
+            <li v-if="$userId != 8"
+                class="btn btn-sm btn-outline-secondary m-2"
                 v-bind:class="[(currentTab === 1) ? 'active' : '']"
                 id="edusharing_my_files-nav"
                 data-toggle="pill"

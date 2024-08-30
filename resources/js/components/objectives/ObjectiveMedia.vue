@@ -58,7 +58,8 @@
                     format="list">
                 </media>
             </div> -->
-            <div v-can="'external_medium_access'"
+
+            <div v-permission="'external_medium_access'"
                  class="tab-pane fade show "
                  v-bind:class="[(currentTab === 2) ? 'active' : '']"
                  id="objective-media-external"

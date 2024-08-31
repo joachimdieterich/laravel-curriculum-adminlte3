@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Group;
 use App\Logbook;
+use App\Organization;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -17,52 +19,67 @@ class LogbookController extends Controller
     {
         abort_unless(\Gate::allows('logbook_access'), 403);
 
-        return view('logbooks.index');
+        if (request()->wantsJson())
+        {
+            return getEntriesForSelect2ByCollection(
+                $this->getLogbooks(),
+                'logbooks.'
+            );
+        }
+        else
+        {
+            return view('logbooks.index');
+        }
+
     }
 
     public function list(Request $request)
     {
         abort_unless(\Gate::allows('logbook_access'), 403);
 
-       $logbooks = Logbook::with('subscriptions');
+        if (request()->has(['group_id']))
+        {
+            $request = request()->validate(
+                [
+                    'group_id' => 'required',
+                ]
+            );
+            $group_id = $request['group_id'];
+            $logbooks = Logbook::with('subscriptions')
+                ->whereHas('subscriptions', function ($query) use ($group_id){
+                    $query->where(
+                        function ($query) use ($group_id) {
+                            $query->where('subscribable_type', 'App\\Group')
+                                ->where('subscribable_id', $group_id);
+                        }
+                    );
+                });
+        }
+        else
+        {
+            $logbooks = Logbook::with('subscriptions');
 
-        switch ($request->filter) {
-            case 'owner':
-                $logbooks = $logbooks->where('owner_id', auth()->user()->id);
-                break;
-            case 'shared_with_me':
-                $logbooks = $this->getLogbooks(false);
-                break;
-            case 'shared_by_me':
-                $logbooks = $logbooks->where('owner_id', auth()->user()->id)->whereHas('subscriptions');
-                break;
-            case 'all':
-            default:
-                $logbooks = $this->getLogbooks();
-                break;
+            switch ($request->filter) {
+                case 'owner':
+                    $logbooks = $logbooks->where('owner_id', auth()->user()->id);
+                    break;
+                case 'shared_with_me':
+                    $logbooks = $this->getLogbooks(false);
+                    break;
+                case 'shared_by_me':
+                    $logbooks = $logbooks->where('owner_id', auth()->user()->id)->whereHas('subscriptions');
+                    break;
+                case 'all':
+                default:
+                    $logbooks = $this->getLogbooks();
+                    break;
+            }
         }
 
 
-        $edit_gate = \Gate::allows('logbook_edit');
-        $delete_gate = \Gate::allows('logbook_delete');
-
         return empty($logbooks) ? '' : DataTables::of($logbooks)
-            ->addColumn('action', function ($logbooks) use ($edit_gate, $delete_gate) {
-                $actions = '';
-                if ($edit_gate and $logbooks->owner_id == auth()->user()->id) {
-                    $actions .= '<a href="'.route('logbooks.edit', $logbooks->id).'" '
-                        .'id="edit-logbook-'.$logbooks->id.'" '
-                        .'class="px-2 text-black">'
-                        .'<i class="fa fa-pencil-alt"></i>'
-                        .'</a>';
-                }
-                if ($delete_gate and $logbooks->owner_id == auth()->user()->id) {
-                    $actions .= '<button type="button" class="btn text-danger" onclick="event.preventDefault();destroyDataTableEntry(\'logbooks\','.$logbooks->id.');"><i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
-            })
             ->addColumn('check', '')
+            //->addColumn('subscribable_id', $logbooks->subscriptions[0]->subscribable_id)
             ->setRowId('id')
             ->make(true);
     }
@@ -313,4 +330,5 @@ class LogbookController extends Controller
             'subscribable_id' => 'sometimes',
         ]);
     }
+
 }

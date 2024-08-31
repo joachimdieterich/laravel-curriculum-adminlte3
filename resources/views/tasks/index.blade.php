@@ -3,12 +3,14 @@
     {{ trans('global.task.title') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/"><i class="fa fa-home"></i></a></li>
-    <li class="breadcrumb-item active">{{ trans('global.task.title') }}</li>
-    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
+    <breadcrumbs
+        :entries="{{json_encode([
+            ['active'=> true, 'title'=> trans('global.task.title')]
+        ])}}"
+    ></breadcrumbs>
 @endsection
 @section('content')
-@can('user_create')
+{{--@can('user_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
             <a id="add-task"
@@ -19,11 +21,14 @@
             </a>
         </div>
     </div>
-@endcan
+@endcan--}}
 
+<tasks></tasks>
+{{--
 @include('tasks.tasklist', [
         "tasks" =>  $tasks,
     ])
+--}}
 
-<task-modal></task-modal>
+<!--<task-modal></task-modal>-->
 @endsection

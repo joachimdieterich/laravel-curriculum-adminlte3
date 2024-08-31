@@ -20,7 +20,7 @@
 
         <h5 class="pt-3">{{ trans('global.description') }}</h5>
         <div class="pb-2"
-             v-html="this.marker.description"></div>
+             v-dompurify-html="this.marker.description"></div>
 
         <h5 class="pt-3">{{ trans('global.media.title') }}</h5>
         <div v-if="marker.id != null"
@@ -33,7 +33,7 @@
         </div>
 
         <h5 class="pt-3">{{ trans('global.marker.fields.address') }}</h5>
-        <div v-html="this.marker.address"></div>
+        <div v-dompurify-html="this.marker.address"></div>
 
         <h5 class="pt-3">{{ trans('global.marker.fields.link') }}</h5>
         <div>

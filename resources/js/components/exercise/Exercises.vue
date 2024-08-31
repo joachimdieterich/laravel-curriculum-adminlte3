@@ -41,7 +41,7 @@
                     <div v-if="toggle_id == 'exercise_'+exercise.id"
                          :id="'exercise_'+exercise.id"
                          class="card-body"
-                        v-html="exercise.description">
+                        v-dompurify-html="exercise.description">
                     </div>
                 </div>
 

@@ -34,7 +34,7 @@ class Role extends Model
         'created_at',
         'updated_at',
         'deleted_at',
-    ];/*
+    ];*/
 
     protected $fillable = [
         'title',

@@ -20,16 +20,6 @@ class ContactDetailController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        return view('contactdetails.create');
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -40,19 +30,17 @@ class ContactDetailController extends Controller
         abort_unless(\Gate::allows('contactdetail_create'), 403);
 
         $input = $this->validateRequest();
-        $contactdetail = ContactDetail::firstOrCreate([
+        $contactDetail = ContactDetail::firstOrCreate([
             'email' => $input['email'],
             'phone' => $input['phone'],
             'mobile'=> $input['mobile'],
             'notes' => $input['notes'],
             'owner_id' => auth()->user()->id,
         ]);
-        // axios call?
-        if (request()->wantsJson()) {
-            return ['message' => $contactdetail->path()];
-        }
 
-        return redirect($contactdetail->path());
+        if (request()->wantsJson()) {
+            return $contactDetail;
+        }
     }
 
     /**
@@ -61,39 +49,9 @@ class ContactDetailController extends Controller
      * @param  \App\ContactDetail  $contactDetail
      * @return \Illuminate\Http\Response
      */
-    public function show(ContactDetail $contactdetail)
+    public function show(ContactDetail $contactDetail)
     {
-        abort_unless(\Gate::allows('contactdetail_show'), 403);
-        abort_unless(auth()->user()->mayAccessUser(User::find($contactdetail->owner_id)), 403);
-
-        $user = User::find($contactdetail->owner_id);
-        $organization = Organization::find(auth()->user()->current_organization_id);
-        // axios call?
-        if (request()->wantsJson()) {
-            return [
-                'contactdetail' => $contactdetail,
-            ];
-        }
-
-        return view('contactdetails.show')
-                ->with(compact('contactdetail'))
-                ->with(compact('user'))
-                ->with(compact('organization'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\ContactDetail  $contactDetail
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(ContactDetail $contactdetail)
-    {
-        abort_unless(\Gate::allows('contactdetail_edit'), 403);
-        abort_unless(($contactdetail->owner_id == auth()->user()->id), 403);
-
-        return view('contactdetails.edit')
-                ->with(compact('contactdetail'));
+        abort(403);
     }
 
     /**
@@ -103,14 +61,16 @@ class ContactDetailController extends Controller
      * @param  \App\ContactDetail  $contactDetail
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, ContactDetail $contactdetail)
+    public function update(Request $request, ContactDetail $contactDetail)
     {
         abort_unless(\Gate::allows('contactdetail_edit'), 403);
-        abort_unless(($contactdetail->owner_id == auth()->user()->id), 403);
+        abort_unless(($contactDetail->owner_id == auth()->user()->id), 403);
 
-        $contactdetail->update($this->validateRequest());
+        $contactDetail->update($this->validateRequest());
 
-        return redirect($contactdetail->path());
+        if (request()->wantsJson()) {
+            return $contactDetail;
+        }
     }
 
     /**
@@ -119,10 +79,12 @@ class ContactDetailController extends Controller
      * @param  \App\ContactDetail  $contactDetail
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ContactDetail $contactdetail)
+    public function destroy(ContactDetail $contactDetail)
     {
         abort_unless(\Gate::allows('contactdetail_delete'), 403);
-        abort_unless(($contactdetail->owner_id == auth()->user()->id), 403);
+        abort_unless(($contactDetail->owner_id == auth()->user()->id), 403);
+
+        return $contactDetail->delete();
     }
 
     protected function validateRequest()

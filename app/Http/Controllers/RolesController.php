@@ -36,44 +36,16 @@ class RolesController extends Controller
             'title',
         ]);
 
-        $edit_gate = \Gate::allows('role_edit');
-        $delete_gate = \Gate::allows('role_delete');
-
         return DataTables::of($roles)
-
-            ->addColumn('action', function ($roles) use ($edit_gate, $delete_gate) {
-                $actions = '';
-                if ($edit_gate) {
-                    $actions .= '<a href="'.route('roles.edit', $roles->id).'" '
-                                    .'class="btn">'
-                                    .'<i class="fa fa-pencil-alt"></i>'
-                                    .'</a>';
-                }
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                                .'class="btn text-danger" '
-                                .'onclick="destroyDataTableEntry(\'roles\','.$roles->id.')">'
-                                .'<i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
+            ->addColumn('permissions', function ($roles) {
+                return $roles->permissions->pluck('id')->toArray();
             })
-
             ->addColumn('check', '')
             ->setRowId('id')
             ->setRowAttr([
                 'color' => 'primary',
             ])
             ->make(true);
-    }
-
-    public function create()
-    {
-        abort_unless(\Gate::allows('role_create'), 403);
-
-        $permissions = Permission::all()->pluck('title', 'id');
-
-        return view('roles.create', compact('permissions'));
     }
 
     public function store(StoreRoleRequest $request)
@@ -85,19 +57,11 @@ class RolesController extends Controller
 
         Cache::forget('roles'); //cache should update next time
 
-        return redirect()->route('roles.index');
+        if (request()->wantsJson()) {
+            return $role;
+        }
     }
 
-    public function edit(Role $role)
-    {
-        abort_unless(\Gate::allows('role_edit'), 403);
-
-        $permissions = Permission::all()->pluck('title', 'id');
-
-        $role->load('permissions');
-
-        return view('roles.edit', compact('permissions', 'role'));
-    }
 
     public function update(UpdateRoleRequest $request, Role $role)
     {
@@ -108,7 +72,9 @@ class RolesController extends Controller
 
         Cache::forget('roles'); //cache should update next time
 
-        return redirect()->route('roles.index');
+        if (request()->wantsJson()) {
+            return $role;
+        }
     }
 
     public function show(Role $role)
@@ -117,15 +83,18 @@ class RolesController extends Controller
 
         $role->load('permissions');
 
-        return view('roles.show', compact('role'));
+        return view('roles.show')
+            ->with(compact('role'));
     }
 
     public function destroy(Role $role)
     {
         abort_unless(\Gate::allows('role_delete'), 403);
 
-        $role->delete();
+        $return = $role->delete();
 
-        return back();
+        if (request()->wantsJson()) {
+            return ['message' => $return];
+        }
     }
 }

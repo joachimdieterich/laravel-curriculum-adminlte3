@@ -3,7 +3,7 @@
 
         <ul class="nav nav-tabs"
             role="tablist">
-            <li v-can="'medium_access'"
+            <li v-permission="'medium_access'"
                 class="btn btn-sm btn-outline-secondary m-2"
                 v-bind:class="[(currentTab === 1) ? 'active' : '']"
                 id="objective-media-internal-nav"
@@ -15,7 +15,7 @@
                 @click="setCurrentTab(1);loaderEvent();">
                 <i class="fa fa-hdd"></i> lokal
             </li>
-            <li v-can="'external_medium_access'"
+            <li v-permission="'external_medium_access'"
                 class="btn btn-sm btn-outline-secondary m-2"
                 v-bind:class="[(currentTab === 2) ? 'active' : '']"
                 id="objective-media-external-nav"
@@ -27,7 +27,7 @@
                 @click="setCurrentTab(2)">
                 <i class="fa fa-cloud"></i> Mediathek
             </li>
-            <li v-can="'artefact_access'"
+            <li v-permission="'artefact_access'"
                 class="btn btn-sm btn-outline-secondary m-2 "
                 v-bind:class="[(currentTab === 3) ? 'active' : '']"
                 id="objective-media-artefacts-nav"
@@ -39,13 +39,12 @@
                 @click="setCurrentTab(3);loaderEvent()">
                 <i class="fa fa-graduation-cap"></i> {{ trans('global.artefact.title') }}
             </li>
-
         </ul>
 
         <div class="tab-content"
              id="custom-content-below-tabContent">
 
-            <div v-can="'medium_access'"
+            <div v-permission="'medium_access'"
                  class="tab-pane fade show "
                  v-bind:class="[(currentTab === 1) ? 'active' : '']"
                  id="objective-media-internal"
@@ -58,7 +57,7 @@
                     format="list">
                 </media>
             </div>
-            <div v-can="'external_medium_access'"
+            <div v-permission="'external_medium_access'"
                  class="tab-pane fade show "
                  v-bind:class="[(currentTab === 2) ? 'active' : '']"
                  id="objective-media-external"
@@ -73,7 +72,7 @@
                     </repository>
                 </div>
             </div>
-            <div v-can="'artefact_access'"
+            <div v-permission="'artefact_access'"
                  class="tab-pane fade show "
                  v-bind:class="[(currentTab === 3) ? 'active' : '']"
                  id="objective-media-artefacts"
@@ -88,18 +87,26 @@
                 </media>
             </div>
         </div>
+        <Teleport to="body">
+            <MediumModal
+                :show="this.mediumStore.getShowMediumModal"
+                @close="this.mediumStore.setShowMediumModal(false)"
+            ></MediumModal>
+        </Teleport>
 
     </div>
 </template>
 <script>
 
-//import Media from '../../../../app/Plugins/Repositories/resources/js/components/Media'
 import Media from '../media/Media'
 import Repository from '../../../../app/Plugins/Repositories/resources/js/components/Media'
+import MediumModal from "../media/MediumModal.vue";
+import {useMediumStore} from "../../store/media.js";
 
     export default {
         name: 'objectiveMedia',
         components: {
+            MediumModal,
             Media,
             Repository
         },
@@ -108,6 +115,12 @@ import Repository from '../../../../app/Plugins/Repositories/resources/js/compon
             repository: {},
             type: {},
             model: {}
+        },
+        setup () { //use database store
+            const mediumStore = useMediumStore();
+            return {
+                mediumStore
+            }
         },
         data() {
             return {

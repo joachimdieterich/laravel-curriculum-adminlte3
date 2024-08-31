@@ -33,11 +33,6 @@ class MapMarker extends Model
         'created_at'  => 'datetime',
     ];
 
-    /* protected $dates = [  --> change v.10
-         'updated_at',
-         'created_at',
-     ];*/
-
     /**
      * Prepare a date for array / JSON serialization.
      *
@@ -79,6 +74,18 @@ class MapMarker extends Model
     public function mediaSubscriptions()
     {
         return $this->morphMany('App\MediumSubscription', 'subscribable');
+    }
+
+    public function isAccessible()
+    {
+//Todo: how to check if marker is accessible
+        if (
+           is_admin() // or admin
+        ) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

@@ -57,18 +57,19 @@
             v-permission="'achievement_access'"
             class="form-group p-2"
         >
-            <label for="achievements_group">
-                {{ trans('global.group.title_singular') }}
-            </label>
-            <select name="achievements_group[]"
-                    id="achievements_group"
-                    class="form-control select2 "
-                    style="width:100%;"
-                    multiple=false
-                    v-model="groups"
+            <Select2
+                id="organization_type_id"
+                name="organization_type_id"
+                :list="groups"
+                model="group"
+                option_id="id"
+                option_label="title"
+                selected="null"
+                @selectedValue="(id) => {
+                    this.selectGroup(id);
+                }"
             >
-                <option v-for="(item,index) in groups" v-bind:value="item.id">{{ item.title }}</option>
-            </select>
+            </Select2>
         </div>
 
         <table class="table m-0 border-top-0"
@@ -107,7 +108,7 @@
                     <td v-if="currentUser(user.id).achievements[0]">
                         <i style="font-size:18px;"
                             class="far fa-sticky-note text-muted pointer"
-                            @click.prevent="$modal.show('note-modal', {'method': 'post', 'notable_type': 'App\\Achievement', 'notable_id': currentUser(user.id).achievements[0].id,'show_tabs': false}) ">
+                            @click.prevent="show(currentUser(user.id).achievements[0].id) ">
                         </i>
                     </td>
                     <td v-else></td>
@@ -123,15 +124,24 @@
                 </tr>
             </tbody>
         </table>
-        <note-modal></note-modal>
+        <Teleport to="body">
+            <NoteModal
+                :show="this.showNoteModal"
+                @close="this.showNoteModal = false"
+                :params="this.noteParams"
+            ></NoteModal>
+        </Teleport>
+
+
     </div>
 </template>
 
 
 <script>
-const AchievementIndicator =
-    () => import('./AchievementIndicator');
-    //import AchievementIndicator from './AchievementIndicator';
+import AchievementIndicator from './AchievementIndicator';
+import NoteModal from "../note/NoteModal.vue";
+import Select2 from "../forms/Select2.vue";
+import GradeModal from "../grade/GradeModal.vue";
 
 export default {
     props: {
@@ -141,15 +151,24 @@ export default {
     },
     data() {
         return {
+            showNoteModal: false,
             objectiveWithAchievement : {},
             groups: [],
             users: {},
             selectedGroup: null,
-            // currentUsersObjective: [],
+            noteParams: null,
             errors: {},
         }
     },
     methods: {
+        show(user_id){
+            this.noteParams = {
+                'notable_type': 'App\\Achievement',
+                'notable_id': user_id,
+                'show_tabs': false,
+            }
+            this.showNoteModal = true;
+        },
         loaderEvent(){
             axios.get('/enablingObjectives/' + this.objective.id + '/achievements/' + this.selectedGroup)
                 .then(response => {
@@ -170,7 +189,7 @@ export default {
             this.objectiveWithAchievement = response.data.objective;
             this.groups = response.data.groups;
             this.users  = response.data.users;
-            if (this.selectedGroup == null){
+            /*if (this.selectedGroup == null){
                 this.$nextTick(() => {
                     $("#achievements_group").select2({
                         dropdownParent: $("#achievements_group").parent(),
@@ -184,12 +203,19 @@ export default {
                         this.objectiveWithAchievement.achievements = [];
                     }.bind(this));
                 });
-            }
+            }*/
+        },
+        selectGroup(id){
+            this.selectedGroup = id;
+            this.loaderEvent();
         }
     },
     mounted() {},
     components: {
-        AchievementIndicator
+        GradeModal,
+        Select2,
+        AchievementIndicator,
+        NoteModal
     }
 }
 </script>

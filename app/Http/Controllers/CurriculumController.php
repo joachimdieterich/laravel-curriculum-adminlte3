@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Certificate;
 use App\Country;
 use App\Curriculum;
 use App\CurriculumSubscription;
@@ -27,7 +28,7 @@ class CurriculumController extends Controller
      */
     public function index()
     {
-        if (request()->wantsJson() AND request()->has(['term', 'page'])) {
+        if (request()->wantsJson()) {
             return $this->getEntriesForSelect2();
         }
 
@@ -39,6 +40,12 @@ class CurriculumController extends Controller
         abort_unless(Gate::allows('curriculum_access'), 403); //check here, cause json return should work for all users
 
         return view('curricula.index');
+    }
+
+    public function getTerminalObjectives(Curriculum $curriculum){
+        if (request()->wantsJson()) {
+            return getEntriesForSelect2ByCollection($curriculum->terminalObjectives());
+        }
     }
 
     public function types()
@@ -191,7 +198,6 @@ class CurriculumController extends Controller
             return ['curriculum' => $curriculum];
         }
 
-        return redirect($curriculum->path());
     }
 
     /**
@@ -202,7 +208,6 @@ class CurriculumController extends Controller
      */
     public function show(Curriculum $curriculum, $achievements = false)
     {
-
         abort_unless((Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
         LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
 
@@ -213,12 +218,12 @@ class CurriculumController extends Controller
             'glossar.contents',
         ])
         ->find($curriculum->id);
+
         $settings = json_encode([
             'edit' => (auth()->user()->id === $curriculum->owner_id) ? true : false,
             'cross_reference_curriculum_id' => false,
         ]);
 
-        //axios request?
         if (request()->wantsJson()) {
             return ['contents' => $curriculum->contents];
         }
@@ -255,7 +260,6 @@ class CurriculumController extends Controller
             ->find($curriculum->id);
         //todo: only get achievments of defined users
 
-        //  $curriculum = Curriculum::where('id', $curriculum->id)->with('terminalObjectives.enablingObjectives')->get()->first(); //replaced to use lazy loading on curriculum/courseview
         if (request()->wantsJson()) {
             return ['curriculum' => $curriculum];
         }
@@ -389,7 +393,10 @@ class CurriculumController extends Controller
             'owner_id'              => auth()->user()->id,
         ]);
 
-        return redirect($curriculum->path());
+        if (request()->wantsJson()) {
+            return ['curriculum' => $curriculum];
+        }
+        //return redirect($curriculum->path());
     }
 
     /**
@@ -637,6 +644,26 @@ class CurriculumController extends Controller
             ->update(['variants->order' => $input['variants']]);
     }
 
+    public function getCertificates(Curriculum $curriculum)
+    {
+        if (request()->wantsJson()) {
+            return getEntriesForSelect2ByCollection(
+                Certificate::where([
+                    ['curriculum_id', '=', $curriculum->id],
+                    ['organization_id', '=', auth()->user()->current_organization_id],
+                ])
+                    ->orWhere([
+                        ['curriculum_id', '=', $curriculum->id],
+                        ['global', '=', 1],
+                    ])
+                    ->orWhere([
+                        ['type', '=', 'group'],
+                        ['global', '=', 1],
+                    ])
+            );
+        }
+    }
+
     protected function validateRequest()
     {
         return request()->validate([
@@ -721,7 +748,7 @@ class CurriculumController extends Controller
     private function getEntriesForSelect2(): \Illuminate\Http\JsonResponse
     {
         $input = request()->validate([
-            'page' => 'required|integer',
+            'page' => 'sometimes|integer',
             'term' => 'sometimes|string|max:255|nullable',
         ]);
         if (is_admin() || is_creator())

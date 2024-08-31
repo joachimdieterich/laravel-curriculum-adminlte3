@@ -1,0 +1,195 @@
+<template>
+    <Transition name="modal">
+        <div v-if="show"
+             class="modal-mask">
+        <div class="modal-container">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <span v-if="method === 'post'">
+                        {{ trans('global.contactDetail.create') }}
+                    </span>
+                    <span v-if="method === 'patch'">
+                        {{ trans('global.contactDetail.edit') }}
+                    </span>
+                </h3>
+                <div class="card-tools">
+                    <button type="button"
+                            class="btn btn-tool"
+                            @click="$emit('close')">
+                        <i class="fa fa-times"></i>
+                    </button>
+                 </div>
+            </div>
+            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                <div class="form-group "
+                    :class="form.errors.email ? 'has-error' : ''"
+                      >
+                    <label for="title">{{ trans('global.contactDetail.fields.email') }} *</label>
+                    <input
+                        type="text"
+                        id="email"
+                        name="email"
+                        class="form-control"
+                        v-model="form.email"
+                        :placeholder="trans('global.contactDetail.fields.email')"
+                        required
+                        />
+                     <p class="help-block" v-if="form.errors.email" v-text="form.errors.email[0]"></p>
+                </div>
+                <div class="form-group "
+                     :class="form.errors.phone ? 'has-error' : ''">
+                    <label for="title">{{ trans('global.contactDetail.fields.phone') }} *</label>
+                    <input
+                        type="text"
+                        id="phone"
+                        name="phone"
+                        class="form-control"
+                        v-model="form.phone"
+                        :placeholder="trans('global.contactDetail.fields.phone')"
+                        required
+                    />
+                    <p class="help-block" v-if="form.errors.phone" v-text="form.errors.phone[0]"></p>
+                </div>
+                <div class="form-group "
+                     :class="form.errors.mobile ? 'has-error' : ''">
+                    <label for="title">{{ trans('global.contactDetail.fields.mobile') }} *</label>
+                    <input
+                        type="text"
+                        id="mobile"
+                        name="mobile"
+                        class="form-control"
+                        v-model="form.mobile"
+                        :placeholder="trans('global.contactDetail.fields.mobile')"
+                        required
+                    />
+                    <p class="help-block" v-if="form.errors.mobile" v-text="form.errors.mobile[0]"></p>
+                </div>
+
+                <div class="form-group ">
+                    <label for="notes">{{ trans('global.contactDetail.fields.notes') }}</label>
+                    <Editor
+                        id="notes"
+                        name="notes"
+                        class="form-control"
+                        :init="tinyMCE"
+                        :initial-value="form.notes"
+                    />
+                    <p class="help-block" v-if="form.errors.notes" v-text="form.errors.notes[0]"></p>
+                </div>
+            </div>
+            <div class="card-footer">
+                 <span class="pull-right">
+                     <button
+                         id="contactDetail-cancel"
+                         type="button"
+                         class="btn btn-default"
+                         @click="$emit('close')">
+                         {{ trans('global.cancel') }}
+                     </button>
+                     <button
+                         id="contactDetail-save"
+                         class="btn btn-primary"
+                         @click="submit(method)" >
+                         {{ trans('global.save') }}
+                     </button>
+                </span>
+            </div>
+        </div>
+    </div>
+    </Transition>
+</template>
+<script>
+    import Form from 'form-backend-validation';
+    import Editor from '@tinymce/tinymce-vue';
+
+    export default {
+        components:{
+            Editor,
+        },
+        props: {
+            show: {
+                type: Boolean
+            },
+            params: {
+                type: Object
+            },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
+        },
+        data() {
+            return {
+                component_id: this._uid,
+                method: 'post',
+                url: '/contactDetails',
+                form: new Form({
+                    'id':'',
+                    'email': '',
+                    'phone': '',
+                    'mobile': '',
+                    'notes': '',
+                }),
+                countries: [],
+                states: [],
+                tinyMCE: this.$initTinyMCE(
+                    [
+                        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+                        "searchreplace wordcount visualblocks visualchars code fullscreen",
+                        "insertdatetime media nonbreaking save table directionality",
+                        "emoticons template paste textpattern curriculummedia"
+                    ],
+                    {
+                        'eventHubCallbackFunction': 'insertContent',
+                        'eventHubCallbackFunctionParams': this.component_id,
+
+                    },
+                    " | customDateButton | insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | example link image media | insertFirstname insertLastname organizationTitle organizationStreet organizationPostcode organizationCity contactDetailDate | usersProgress",
+                    "span[id|class|style|name|reference_type|reference_id|min_value]",
+                ),
+
+                search: '',
+            }
+        },
+        watch: {
+            params: function(newVal, oldVal) {
+                if (typeof (newVal) == "undefined"){
+                    this.form.reset();
+                } else {
+                    this.form.populate(newVal);
+                    this.form.notes = this.$decodeHtml(this.form.notes)
+                }
+
+                if (typeof (newVal) != "undefined"){
+                    this.method = 'patch';
+                }
+            },
+        },
+        methods: {
+             submit(method) {
+                this.form.notes = tinyMCE.get('notes').getContent();
+
+                if (method === 'patch') {
+                    this.update();
+                } else {
+                    this.add();
+                }
+            },
+            add(){
+                axios.post(this.url, this.form)
+                    .then(r => {
+                        this.$eventHub.emit('contactDetail-added', r.data);
+                    })
+                    .catch(e => {
+                        console.log(e.response);
+                    });
+            },
+            update(){
+                axios.patch(this.url + '/' + this.form.id, this.form)
+                    .then(r => {
+                        this.$eventHub.emit('contactDetail-updated', r.data);
+                    })
+                    .catch(e => {
+                        console.log(e.response);
+                    });
+            }
+        },
+        mounted() {},
+    }
+</script>

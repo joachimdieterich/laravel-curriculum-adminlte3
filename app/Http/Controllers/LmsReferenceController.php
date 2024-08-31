@@ -18,8 +18,9 @@ class LmsReferenceController extends Controller
         $input = $this->validateRequest();
         $lms = new LmsPlugin();
 
+
         if (request()->wantsJson()) {
-            return ['message' => $lms->plugins[env('LMSPLUGIN')]->{$input['ws_function']}($input)];
+            return $lms->plugins[env('LMSPLUGIN')]->{$input['ws_function']}($input);
         }
     }
 

@@ -14,6 +14,12 @@ use Illuminate\Support\Facades\DB;
 
 class TerminalObjectiveController extends Controller
 {
+
+    public function getEnablingObjectives(TerminalObjective $terminalObjective){
+        if (request()->wantsJson()) {
+            return getEntriesForSelect2ByCollection($terminalObjective->enablingObjectives());
+        }
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -197,9 +203,8 @@ class TerminalObjectiveController extends Controller
         $this->resetOrderIds($curriculum_id, $objective_type_id, $order_id);
 
         if (request()->wantsJson()) {
-            return ['message' => $return];
+            return $return;
         }
-        //return $return;
     }
 
     public function referenceSubscriptionSiblings(TerminalObjective $terminalObjective)
@@ -244,11 +249,16 @@ class TerminalObjectiveController extends Controller
             return ['message' => 'no subscriptions'];
         }
 
-        foreach ($collection as $quote_subscriptions) {
-            $arr[$quote_subscriptions->quote_id] = ! is_null($quote_subscriptions->quote);
+        foreach ($collection as $quote_subscriptions)
+        {
+            //$arr[$quote_subscriptions->quote_id] = ! is_null($quote_subscriptions->quote);
 
-            if (! is_null($quote_subscriptions->quote)) {
-                $curricula_list[$quote_subscriptions->quote->content->subscriptions[0]->subscribable->id] = $quote_subscriptions->quote->content->subscriptions[0]->subscribable;
+            if (! is_null($quote_subscriptions->quote))
+            {
+                if (! is_null($quote_subscriptions->quote->content))
+                {
+                    $curricula_list[$quote_subscriptions->quote->content?->subscriptions[0]->subscribable->id] = $quote_subscriptions->quote->content?->subscriptions[0]->subscribable;
+                }
                 $quotes_subscriptions[] = $quote_subscriptions;
             }
         }

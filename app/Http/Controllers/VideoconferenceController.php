@@ -110,9 +110,7 @@ class VideoconferenceController extends Controller
      */
     public function create()
     {
-        abort_unless(/*\Gate::allows('videoconference_create') AND */is_admin(), 403);
-
-        return view('videoconference.create');
+        abort(403);
     }
 
     /**
@@ -167,11 +165,11 @@ class VideoconferenceController extends Controller
             'lockSettingsLockedLayout' => $input['lockSettingsLockedLayout'] ?? config('bigbluebutton.create.lockSettingsLockedLayout'),
             'lockSettingsLockOnJoin' => $input['lockSettingsLockOnJoin'] ?? config('bigbluebutton.create.lockSettingsLockOnJoin'),
             'lockSettingsLockOnJoinConfigurable' => $input['lockSettingsLockOnJoinConfigurable'] ?? config('bigbluebutton.create.lockSettingsLockOnJoinConfigurable'),
-            'guestPolicy' => $input['guestPolicy'] ?? config('bigbluebutton.create.guestPolicy'),
+            'guestPolicy' => format_select_input($input['guestPolicy']) ?? config('bigbluebutton.create.guestPolicy'),
             'meetingKeepEvents' => $input['meetingKeepEvents'] ?? config('bigbluebutton.create.meetingKeepEvents'),
             'endWhenNoModerator' => $input['endWhenNoModerator'] ?? config('bigbluebutton.create.endWhenNoModerator'),
             'endWhenNoModeratorDelayInMinutes' => $input['endWhenNoModeratorDelayInMinutes'] ?? config('bigbluebutton.create.endWhenNoModeratorDelayInMinutes'),
-            'meetingLayout' => $input['meetingLayout'] ?? config('bigbluebutton.create.meetingLayout'),
+            'meetingLayout' => format_select_input($input['meetingLayout']) ?? config('bigbluebutton.create.meetingLayout'),
             'learningDashboardCleanupDelayInMinutes' => $input['learningDashboardCleanupDelayInMinutes'] ?? config('bigbluebutton.create.learningDashboardCleanupDelayInMinutes'),
             'allowModsToEjectCameras' => $input['allowModsToEjectCameras'] ?? config('bigbluebutton.create.allowModsToEjectCameras'),
             'allowRequestsWithoutSession' => $input['allowRequestsWithoutSession'] ?? config('bigbluebutton.create.allowRequestsWithoutSession'),
@@ -196,10 +194,8 @@ class VideoconferenceController extends Controller
         }
 
         if (request()->wantsJson()) {
-            return ['videoconference' => $videoconference];
+            return $videoconference;
         }
-
-        return view('videoconference.index');
     }
 
     /**
@@ -446,10 +442,7 @@ class VideoconferenceController extends Controller
      */
     public function edit(Videoconference $videoconference)
     {
-        abort_unless((/*\Gate::allows('group_edit') and $videoconference->isAccessible() AND */is_admin()), 403);
-
-        return view('videoconference.edit')
-            ->with(compact('videoconference'));
+        abort(403);
     }
 
     /**
@@ -494,11 +487,11 @@ class VideoconferenceController extends Controller
             'lockSettingsLockedLayout' => $input['lockSettingsLockedLayout'] ?? $videoconference->lockSettingsLockedLayout,
             'lockSettingsLockOnJoin' => $input['lockSettingsLockOnJoin'] ?? $videoconference->lockSettingsLockOnJoin,
             'lockSettingsLockOnJoinConfigurable' => $input['lockSettingsLockOnJoinConfigurable'] ?? $videoconference->lockSettingsLockOnJoinConfigurable,
-            'guestPolicy' => $input['guestPolicy'] ?? $videoconference->guestPolicy,
+            'guestPolicy' => format_select_input($input['guestPolicy']) ?? $videoconference->guestPolicy,
             'meetingKeepEvents' => $input['meetingKeepEvents'] ?? $videoconference->meetingKeepEvents,
             'endWhenNoModerator' => $input['endWhenNoModerator'] ?? $videoconference->endWhenNoModerator,
             'endWhenNoModeratorDelayInMinutes' => $input['endWhenNoModeratorDelayInMinutes'] ?? $videoconference->endWhenNoModeratorDelayInMinutes,
-            'meetingLayout' => $input['meetingLayout'] ?? $videoconference->meetingLayout,
+            'meetingLayout' => format_select_input($input['meetingLayout']) ?? $videoconference->meetingLayout,
             'learningDashboardCleanupDelayInMinutes' => $input['learningDashboardCleanupDelayInMinutes'] ?? $videoconference->learningDashboardCleanupDelayInMinutes,
             'allowModsToEjectCameras' => $input['allowModsToEjectCameras'] ?? $videoconference->allowModsToEjectCameras,
             'allowRequestsWithoutSession' => $input['allowRequestsWithoutSession'] ?? $videoconference->allowRequestsWithoutSession,
@@ -555,7 +548,6 @@ class VideoconferenceController extends Controller
         }
 
         return $this->show($videoconference, $subscription->editable);
-
     }
 
     public function endCallback(Request $request)
@@ -577,13 +569,12 @@ class VideoconferenceController extends Controller
         {
             LogController::set(get_class($this).'@'.__FUNCTION__.'->participantCount', $videoconference->meetingID, $info['participantCount']);
         }
-
     }
 
     protected function validateRequest()
     {
         return request()->validate([
-            'id' => 'sometimes|integer',
+            'id' => 'sometimes|nullable|integer',
             'meetingID' => 'sometimes',
             'meetingName' => 'sometimes',
             'attendeePW' => 'sometimes',
@@ -618,11 +609,11 @@ class VideoconferenceController extends Controller
             'lockSettingsLockedLayout' => 'sometimes|boolean',
             'lockSettingsLockOnJoin' => 'sometimes|boolean',
             'lockSettingsLockOnJoinConfigurable' => 'sometimes|boolean',
-            'guestPolicy' => 'sometimes|string',
+            'guestPolicy' => 'sometimes',
             'meetingKeepEvents' => 'sometimes|boolean',
             'endWhenNoModerator' => 'sometimes|boolean',
             'endWhenNoModeratorDelayInMinutes' => 'sometimes|integer',
-            'meetingLayout' => 'sometimes|string',
+            'meetingLayout' => 'sometimes',
             'learningDashboardCleanupDelayInMinutes' => 'sometimes|integer',
             'allowModsToEjectCameras' => 'sometimes|boolean',
             'allowRequestsWithoutSession' => 'sometimes|boolean',
@@ -639,5 +630,4 @@ class VideoconferenceController extends Controller
             'server' => 'sometimes|string'
         ]);
     }
-
 }

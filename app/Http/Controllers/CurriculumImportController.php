@@ -26,6 +26,7 @@ class CurriculumImportController extends Controller
 {
     public function import()
     {
+        abort_unless(Gate::allows('curriculum_create'), 403);
         return view('curricula.import');
     }
 
@@ -34,6 +35,7 @@ class CurriculumImportController extends Controller
      */
     public function store()
     {
+        abort_unless(Gate::allows('curriculum_create'), 403);
         ini_set('max_file_uploads', 200);
         if (! request()->hasFile('imports')) {
             return redirect('/home');

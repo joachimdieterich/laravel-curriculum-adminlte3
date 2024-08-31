@@ -20,14 +20,17 @@ class EduSharingApiHelper extends EduSharingHelperAbstract  {
         $nodeId
     )
     {
-        $headers = $this->getSignatureHeaders($ticket);
-        $headers[] = $this->getRESTAuthenticationHeader($ticket);
+        if(!is_guest()){
+            $headers = $this->getSignatureHeaders($ticket);
+            $headers[] = $this->getRESTAuthenticationHeader($ticket);
+        }
+
         $curl = $this->base->handleCurlRequest(
             $this->repoUrl.'/rest/rendering/v1/details/'.$repository.'/'.$nodeId,
             [
                 CURLOPT_FAILONERROR => false,
                 CURLOPT_RETURNTRANSFER => 1,
-                CURLOPT_HTTPHEADER => $headers,
+                CURLOPT_HTTPHEADER => $headers ?? [],
                 CURLOPT_SSL_VERIFYHOST => env('EDUSHARING_CURLOPT_SSL_VERIFYHOST', 2),
                 CURLOPT_SSL_VERIFYPEER => env('EDUSHARING_CURLOPT_SSL_VERIFYPEER', 1),
             ]
@@ -166,8 +169,23 @@ class EduSharingApiHelper extends EduSharingHelperAbstract  {
         //dump(json_encode ( $postFields ));
         //dump($this->repoUrl . '/rest/search/v1/queries/' . $repository.'/-default-/curriculum?'.http_build_query($params));
 
-        $headers = $this->getSignatureHeaders($ticket);
-        $headers[] = $this->getRESTAuthenticationHeader($ticket);
+        if(!is_guest()) {
+            $headers = $this->getSignatureHeaders($ticket);
+            $headers[] = $this->getRESTAuthenticationHeader($ticket);
+        } else {
+            $ts = time() * 1000;
+            $toSign = $this->base->appId . $ticket . $ts;
+            $signature = $this->sign($toSign);
+            $headers = [
+                'Accept: application/json',
+                'Content-Type: application/json',
+                'X-Edu-App-Id: ' . $this->base->appId,
+                'X-Edu-App-Signed: ' . $toSign,
+                'X-Edu-App-Sig: ' . $signature,
+                'X-Edu-App-Ts: ' . $ts,
+            ];
+        }
+
         $curl = $this->base->handleCurlRequest(
             $this->base->baseUrl.'/rest/search/v1/queries/'.$repository.'/-default-/curriculum?'.http_build_query($params),
             [
@@ -175,7 +193,7 @@ class EduSharingApiHelper extends EduSharingHelperAbstract  {
                 CURLOPT_POSTFIELDS => json_encode($postFields),
                 CURLOPT_FAILONERROR => false,
                 CURLOPT_RETURNTRANSFER => 1,
-                CURLOPT_HTTPHEADER => $headers,
+                CURLOPT_HTTPHEADER => $headers ?? [],
                 CURLOPT_SSL_VERIFYHOST => env('EDUSHARING_CURLOPT_SSL_VERIFYHOST', 2),
                 CURLOPT_SSL_VERIFYPEER => env('EDUSHARING_CURLOPT_SSL_VERIFYPEER', 1),
             ]

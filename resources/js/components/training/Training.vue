@@ -15,7 +15,7 @@
                 </div>
             </div>
             <div class="card-body"
-                v-html="training.description">
+                v-dompurify-html="training.description">
             </div>
 <!--            <div class="card-footer">
                 <CalendarCreateEvent/>

@@ -10,6 +10,7 @@ class MediumSubscription extends Model
 
     protected $casts = [
         'additional_data' => 'array',
+        'editable' => 'boolean',
     ];
 
     public function medium()

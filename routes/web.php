@@ -51,7 +51,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('configs/models', 'ConfigController@models');
     Route::resource('configs', 'ConfigController');
 
-    Route::resource('contactdetails', 'ContactDetailController');
+    Route::resource('contactDetails', 'ContactDetailController');
 
     Route::post('contents/{content}/destroy', 'ContentController@destroy'); //has to be post (has parameters)
     Route::resource('contents', 'ContentController');
@@ -68,27 +68,33 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('countries', 'CountryController');
 
     /* curricula */
-    Route::get('curricula/{curriculum}/variantDefinitions', 'CurriculumController@getVariantDefinitions');
-    Route::put('curricula/{curriculum}/variantDefinitions', 'CurriculumController@setVariantDefinitions');
     Route::post('curricula/enrol', 'CurriculumController@enrol')->name('curricula.enrol');
     Route::delete('curricula/expel', 'CurriculumController@expel')->name('curricula.expel');
     Route::get('curricula/list', 'CurriculumController@list');
     Route::get('curricula/types', 'CurriculumController@types');
     Route::get('curricula/import', 'CurriculumImportController@import')->name('curricula.import');
     Route::post('curricula/import/store', 'CurriculumImportController@store')->name('curricula.import.store');
-    Route::get('curricula/{curriculum}/export', 'CurriculumExportController@export')->name('curricula.export');
     Route::get('curricula/references', 'CurriculumController@references');
     Route::get('curricula/{curriculum}/achievements', 'CurriculumController@showAchievements')->name('curricula.showAchievements');
     Route::post('curricula/{curriculum}/achievements', 'CurriculumController@getAchievements')->name('curricula.getAchievements');
-    Route::get('curricula/{curriculum}/objectives', 'CurriculumController@getObjectives')->name('curricula.getObjectives');
+    Route::get('curricula/{curriculum}/certificates', 'CurriculumController@getCertificates')->name('curricula.getCertificates');
     Route::get('curricula/{curriculum}/editOwner', 'CurriculumController@editOwner')->name('curricula.editOwner');
     Route::patch('curricula/{curriculum}/editOwner', 'CurriculumController@storeOwner')->name('curricula.storeOwner');
-    Route::patch('curricula/{curriculum}/resetOrderIds', 'CurriculumController@resetOrderIds')->name('curricula.resetOrderIds');
+    Route::get('curricula/{curriculum}/export', 'CurriculumExportController@export')->name('curricula.export');
+
+
+    Route::get('curricula/{curriculum}/objectives', 'CurriculumController@getObjectives')->name('curricula.getObjectives');
     Route::get('curricula/{curriculum}/print', 'CurriculumController@print')->name('curricula.print');
+    Route::patch('curricula/{curriculum}/resetOrderIds', 'CurriculumController@resetOrderIds')->name('curricula.resetOrderIds');
     Route::put('curricula/{curriculum}/syncObjectiveTypesOrder', 'CurriculumController@syncObjectiveTypesOrder')->name('curricula.syncObjectiveTypesOrder');
+    Route::get('curricula/{curriculum}/terminalObjectives', 'CurriculumController@getTerminalObjectives')->name('curricula.getTerminalObjectives');Route::get('curricula/{curriculum}/variantDefinitions', 'CurriculumController@getVariantDefinitions');
+    Route::put('curricula/{curriculum}/variantDefinitions', 'CurriculumController@setVariantDefinitions');
+
+
     Route::resource('curricula', 'CurriculumController');
     Route::resource('curriculumSubscriptions', 'CurriculumSubscriptionController');
 
+    Route::resource('curriculumTypes', 'CurriculumTypeController');
     /* enablingObjectives */
     Route::get('enablingObjectives/{enablingObjective}/referenceSubscriptionSiblings', 'EnablingObjectiveController@referenceSubscriptionSiblings');
     Route::get('enablingObjectives/{enablingObjective}/quoteSubscriptions', 'EnablingObjectiveController@quoteSubscriptions');
@@ -192,9 +198,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('navigators/list', 'NavigatorController@list');
     Route::resource('navigators', 'NavigatorController');
 
-    Route::get('navigators/{navigator}/{navigator_view}', 'NavigatorViewController@show')->name('navigator.view');
+    Route::get('navigators/{navigator}/list', 'NavigatorController@listViews')->name('navigator.views');
 
     /* Navigator Views */
+    Route::get('navigatorViews/{navigator_view}/list', 'NavigatorViewController@list')->name('navigator.list');
     Route::resource('navigatorViews', 'NavigatorViewController');
 
     /* Navigator Views */
@@ -231,9 +238,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('organizations', 'OrganizationsController');
 
     /* organizationtype */
-    Route::get('organizationtypes/list', 'OrganizationTypesController@list')->name('organizationtypes.list');
-    Route::delete('organizationtypes/destroy', 'OrganizationTypesController@massDestroy')->name('organizationtypes.massDestroy');
-    Route::resource('organizationtypes', 'OrganizationTypesController');
+    Route::get('organizationTypes/list', 'OrganizationTypesController@list')->name('organizationTypes.list');
+    Route::delete('organizationTypes/destroy', 'OrganizationTypesController@massDestroy')->name('organizationTypes.massDestroy');
+    Route::resource('organizationTypes', 'OrganizationTypesController');
 
     /* period */
     Route::get('periods/list', 'PeriodController@list')->name('periods.list');
@@ -262,6 +269,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('progresses', 'ProgressController');
 
+    Route::resource('qrCodes', 'QRCodeController');
+
     Route::post('repositorySubscriptions/destroySubscription', 'RepositorySubscriptionController@destroySubscription')->name('repositorySubscriptions.destroySubscription');
     Route::post('repositorySubscriptions/searchRepository', 'RepositorySubscriptionController@searchRepository')->name('repositorySubscriptions.searchRepository');
     Route::post('repositorySubscriptions/getMedia', 'RepositorySubscriptionController@getMedia')->name('repositorySubscriptions.getMedia');
@@ -283,12 +292,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('subjects', 'SubjectController');
 
     /* tasks */
+    Route::get('tasks/list', 'TaskController@list')->name('tasks.list');
+
     Route::patch('tasks/{task}/complete', 'TaskController@complete')->name('tasks.complete');
     Route::get('tasks/{task}/activity', 'TaskController@activity')->name('tasks.activity');
     Route::resource('tasks', 'TaskController');
     /* task(Subscriptions)*/
     Route::resource('taskSubscriptions', 'TaskSubscriptionController');
     /* terminalObjectives */
+    Route::get('terminalObjectives/{terminalObjective}/enablingObjectives', 'TerminalObjectiveController@getEnablingObjectives');
     Route::get('terminalObjectives/{terminalObjective}/referenceSubscriptionSiblings', 'TerminalObjectiveController@referenceSubscriptionSiblings');
     Route::get('terminalObjectives/{terminalObjective}/quoteSubscriptions', 'TerminalObjectiveController@quoteSubscriptions');
     Route::resource('terminalObjectives', 'TerminalObjectiveController');
@@ -313,7 +325,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('users/import', 'UsersController@createImport')->name('users.createImport');
     Route::post('users/import', 'UsersController@storeImport')->name('users.storeImport');
     Route::get('users/list', 'UsersController@list');
-    Route::get('users/current', 'UsersController@getCurrentUser')->name('users.getCurrentUser');
+    //Route::get('users/current', 'UsersController@getCurrentUser')->name('users.getCurrentUser');
     Route::get('users/{user}/avatar', 'UsersController@getAvatar');
     Route::delete('users/{user}/forceDestroy', 'UsersController@forceDestroy')->name('users.forceDestroy');
     Route::resource('users', 'UsersController');
@@ -334,6 +346,7 @@ Route::group(['middleware' => 'auth'], function () {
     /* Tests */
     Route::get('tests', 'Tests\TestController@index');
     /* Exams */
+    Route::get('exams/list', 'Tests\ExamController@list');
     Route::get('exams_subscribed', 'Tests\ExamController@authUserIndexExams')->name('exams.index');
     Route::get('exams', 'Tests\ExamController@index');
     Route::post('exams', 'Tests\ExamController@create');

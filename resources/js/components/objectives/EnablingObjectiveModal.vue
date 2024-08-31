@@ -1,77 +1,69 @@
 <template>
-    <modal
-        id="enabling-objective-modal"
-        name="enabling-objective-modal"
-        height="auto"
-        :adaptive=true
-        :scrollable=true
-        draggable=".draggable"
-        :resizable=true
-        @before-open="beforeOpen"
-        @opened="opened"
-        @before-close="beforeClose"
-        style="z-index: 1100">
-        <div class="card" style="margin-bottom: 0px !important">
+    <Transition name="modal">
+        <div v-if="show"
+             class="modal-mask"
+        >
+        <div class="modal-container">
             <div class="card-header">
                 <h3 class="card-title">
                     <span v-if="method === 'post'">
-                        {{ trans('global.enablingObjective.create')  }}
+                        {{ trans('global.enablingObjective.create') }}
                     </span>
-
                     <span v-if="method === 'patch'">
-                        {{ trans('global.enablingObjective.edit')  }}
+                        {{ trans('global.enablingObjective.edit') }}
                     </span>
                 </h3>
-
                 <div class="card-tools">
-                   <button type="button" class="btn btn-tool draggable" >
-                     <i class="fa fa-arrows-alt"></i>
-                   </button>
-                    <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
-                     <i class="fa fa-times"></i>
-                   </button>
-                 </div>
-            </div>
-            <form>
-            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                <div class="form-group "
-                    :class="form.errors.title ? 'has-error' : ''"
-                      >
-                    <label for="title">{{ trans('global.enablingObjective.fields.title') }} *</label>
-                    <textarea
-                    id="title"
-                    name="title"
-                    class="form-control description my-editor "
-                    v-model="form.title"
-                    ></textarea>
-                     <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                    <button type="button"
+                            class="btn btn-tool"
+                            @click="$emit('close')">
+                        <i class="fa fa-times"></i>
+                    </button>
                 </div>
-                <div class="form-group "
-                    :class="form.errors.description ? 'has-error' : ''"
-                    >
-                    <label for="description">{{ trans('global.enablingObjective.fields.description') }}</label>
-                    <textarea
-                    id="description"
-                    name="description"
-                    class="form-control description my-editor "
-                    v-model="form.description"
-                    ></textarea>
-                    <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
+            </div>
+
+            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                <div class="form-group">
+                    <label for="description">
+                        {{ trans('global.enablingObjective.fields.title') }}
+                    </label>
+                    <Editor
+                        id="title"
+                        name="title"
+                        :placeholder="trans('global.enablingObjective.fields.title')"
+                        class="form-control"
+                        :init="tinyMCE"
+                        :initial-value="form.title"
+                    ></Editor>
                 </div>
 
-                <div class="form-group ">
-                    <label for="level_id">
-                        {{ trans("global.objectiveType.title_singular") }}
+                <div class="form-group">
+                    <label for="description">
+                        {{ trans('global.map.fields.description') }}
                     </label>
-                    <select name="level_id"
-                            id="level_id"
-                            class="form-control select2 "
-                            style="width:100%;"
-                            >
-                        <option value="">-</option>
-                        <option v-for="(item,index) in levels" v-bind:value="item.id">{{ item.title }}</option>
-                    </select>
+                    <Editor
+                        id="description"
+                        name="description"
+                        :placeholder="trans('global.enablingObjective.fields.description')"
+                        class="form-control"
+                        :init="tinyMCE"
+                        :initial-value="form.description"
+                    ></Editor>
                 </div>
+
+                <Select2
+                    id="level_id"
+                    name="level_id"
+                    url="/levels"
+                    model="level"
+                    :selected="this.form.level_id"
+                    @selectedValue="(id) => {
+                        this.form.level_id = id;
+                    }"
+                >
+                </Select2>
+
+
                 <div class="form-group ">
                     <label for="time_approach">{{ trans('global.enablingObjective.fields.time_approach') }}</label>
                     <input
@@ -79,38 +71,70 @@
                         name="title"
                         class="form-control"
                         v-model="form.time_approach"
-                        />
+                    />
                     <p class="help-block" v-if="form.errors.time_approach" v-text="form.errors.time_approach[0]"></p>
                 </div>
                 <div class="form-group ">
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="visibility" v-model="form.visibility" >
-                        <label class="form-check-label" for="visibility">{{ trans('global.navigator_item.fields.visibility_show') }}</label>
-                    </div>
-                </div>
-            </div>
-                <div class="card-footer">
-                    <span class="pull-right">
-                         <button type="button" class="btn btn-info" data-widget="remove" @click="close()">{{ trans('global.cancel') }}</button>
-                         <button class="btn btn-primary" @click.prevent="submit()" >{{ trans('global.save') }}</button>
+                    <span class="custom-control custom-switch custom-switch-on-green">
+                        <input  v-model="form.visibility"
+                                type="checkbox"
+                                class="custom-control-input pt-1 "
+                                :id="'visibility_' + form.id">
+                        <label class="custom-control-label text-muted"
+                               :for="'visibility_' + form.id" >
+                            {{ trans('global.visibility') }}
+                        </label>
                     </span>
                 </div>
-            </form>
-        </div>
-    </modal>
-</template>
+            </div>
 
+            <div class="card-footer">
+                 <span class="pull-right">
+                     <button
+                         id="enablingObjective-cancel"
+                         type="button"
+                         class="btn btn-default"
+                         @click="$emit('close')">
+                         {{ trans('global.cancel') }}
+                     </button>
+                     <button
+                         id="enablingObjective-save"
+                         class="btn btn-primary"
+                         @click="submit(method)" >
+                         {{ trans('global.save') }}
+                     </button>
+                </span>
+            </div>
+        </div>
+    </div>
+    </Transition>
+</template>
 <script>
     import Form from 'form-backend-validation';
+    import MediumModal from "../media/MediumModal";
+    import axios from "axios";
+    import Editor from "@tinymce/tinymce-vue";
+    import Select2 from "../forms/Select2";
 
     export default {
+        components:{
+            Editor,
+            MediumModal,
+            Select2,
+        },
+        props: {
+            show: {
+                type: Boolean
+            },
+            params: {
+                type: Object
+            },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
+        },
         data() {
             return {
                 component_id: this._uid,
-                value: null,
-                levels: [],
                 method: 'post',
-                requestUrl: '/enablingObjectives',
+                url: '/enablingObjectives',
                 form: new Form({
                     'id': '',
                     'title': '',
@@ -121,96 +145,78 @@
                     'level_id': null,
                     'visibility': true,
                 }),
+                tinyMCE: this.$initTinyMCE(
+                    [
+                        "autolink link curriculummedia table lists"
+                    ],
+                    {
+                        'public': 1,
+                        'referenceable_type': 'App\\\Curriculum',
+                        'referenceable_id': this.form?.curriculum_id,
+                        'eventHubCallbackFunction': 'insertContent',
+                        'eventHubCallbackFunctionParams': this.component_id
+                    }
+                ),
             }
         },
+        watch: {
+            params: function(newVal, oldVal) {
+                this.form.reset();
+                this.form.populate(newVal);
+                this.form.title = this.$decodeHTMLEntities(newVal.title);
+                this.form.description = this.$decodeHTMLEntities(newVal.description);
 
-        methods: {
-            onChange(value) {
-                this.form.level_id = value.id;
-            },
-            findObjectByKey(array, key, value) {
-                for (var i = 0;
-                i < array.length; i++) {
-                    if (array[i][key] === value) {
-                        return array[i];
-                    }
-                }
-                return null;
-            },
-            beforeOpen(event) {
-                this.form.id = '';
-                this.form.title = '';
-                this.form.description = '';
-                if (event.params.objective){
-                    this.method = event.params.method;
-                    this.form.populate( event.params.objective );
-                    //set selected
-                    if (this.form.level_id != null){
-                        this.value = {
-                            'id': this.form.level_id,
-                            'title': this.findObjectByKey(this.levels, 'id', this.form.level_id).title
-                        };
-                    }
-                }
-            },
-            opened(){
-                this.$initTinyMCE([
-                    "autolink link example"
-                ], {
-                    'public': 1,
-                    'referenceable_type': 'App\\\Curriculum',
-                    'referenceable_id': this.form.curriculum_id,
-                    'eventHubCallbackFunction': 'insertContent',
-                    'eventHubCallbackFunctionParams': this.component_id
-                });
-                this.initSelect2();
-            },
-            initSelect2(){
-                $("#level_id").select2({
-                    dropdownParent: $(".v--modal-overlay"),
-                    allowClear: false
-                }).on('select2:select', function (e) {
-                    this.onChange(e.params.data);
-                }.bind(this))  //make onChange accessible!
-                .val(this.form.level_id).trigger('change'); //set value
-
-            },
-            beforeClose() {
-                //console.log('close')
-            },
-            loadData: function () {
-                axios.get('/levels').then(response => {
-                    this.levels = response.data;
-                }).catch(e => {
-                    console.log(e);
-                });
-            },
-            submit() {
-                var method = this.method.toLowerCase();
-                this.form.title = tinyMCE.get('title').getContent();
-                this.form.description = tinyMCE.get('description').getContent();
-                if (method === 'patch'){
-                    this.form.patch(this.requestUrl + '/' + this.form.id)
-                             .then(response => {
-                                 this.$eventHub.$emit("addEnablingObjective", response.message);
-                             });
+                if (this.form.id != ''){
+                    this.method = 'patch';
                 } else {
-                    this.form.post(this.requestUrl)
-                             .then(response => this.$eventHub.$emit('addEnablingObjective', response.message));
+                    this.method = 'post';
                 }
-
-                this.close();
             },
-            close(){
-                tinymce.remove()
-                this.$modal.hide('enabling-objective-modal');
+
+        },
+        computed:{
+            textColor: function(){
+                return this.$textcolor(this.form.color, '#333333');
             }
         },
-        created() {
-            this.loadData();
+        methods: {
+             submit(method) {
+                 this.form.title = tinyMCE.get('title').getContent();
+                 this.form.description = tinyMCE.get('description').getContent();
+                 if (method == 'patch') {
+                     this.update();
+                 } else {
+                     this.add();
+                 }
+            },
+            add(){
+                axios.post(this.url, this.form)
+                    .then(r => {
+                        this.$eventHub.emit('enablingObjective-added', r.data);
+                    })
+                    .catch(e => {
+                        console.log(e.response);
+                    });
+            },
+            update() {
+                console.log('update');
+                axios.patch(this.url + '/' + this.form.id, this.form)
+                    .then(r => {
+                        this.$eventHub.emit('enablingObjective-updated', r.data);
+                    })
+                    .catch(e => {
+                        console.log(e.response);
+                    });
+            },
+            decodeHTMLEntities(text) {
+                return $("<textarea/>")
+                    .html(text)
+                    .text();
+            }
+
         },
         mounted() {
-            //console.log('Component mounted.')
-        }
+        },
     }
 </script>
+

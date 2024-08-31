@@ -57,3 +57,16 @@ mix.copyDirectory('node_modules/@dimakorotkov/tinymce-mathjax', 'public/node_mod
 
 //mix.version();
 mix.vue({version: 3});
+mix.webpackConfig(webpack => {
+    return {
+        plugins: [
+            new webpack.DefinePlugin({
+                __VUE_OPTIONS_API__: true, // If you are using the options api.
+                __VUE_PROD_DEVTOOLS__: false, // If you don't want people sneaking around your components in production.
+                __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,
+            }),
+        ],
+    }
+})
+
+

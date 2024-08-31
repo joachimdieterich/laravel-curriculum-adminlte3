@@ -26,7 +26,8 @@ if (! function_exists('getEntriesForSelect2ByModel')) {
         if (request()->has('selected'))
         {
             //dump($input['selected']);
-            return response()->json($model::whereIn($id, (array)$input['selected'])->get()); //todo check for multiple selects
+            //dump($model::whereIn($id, (array)$input['selected'])->get());
+            return response()->json($model::whereIn($id, explode(",", $input['selected']))->get()); //todo check for multiple selects
         }
         else
         {
@@ -77,49 +78,57 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
     function getEntriesForSelect2ByCollection($collection, $table = '', $field = 'title', $oderby = 'title', $text = 'title', $id = 'id' )
     {
         $input = request()->validate([
-            'page' => 'required|integer',
+            'page' => 'sometimes|integer',
             'term' => 'sometimes|string|max:255|nullable',
+            'selected' => 'sometimes|nullable',
         ]);
-        $page = $input['page'];
-        $resultCount = 25;
 
-        $offset = ($page - 1) * $resultCount;
+        if (request()->has('selected'))
+        {
+            //dump($collection->whereIn($table . $id, (array)$input['selected'])->get());
+            return response()->json($collection->whereIn($table . $id, (array)$input['selected'])->get()); //todo check for multiple selects
+        }
+        else
+        {
+            $page = $input['page'];
+            $resultCount = 25;
 
-        $term = $input['term'];
+            $offset = ($page - 1) * $resultCount;
 
-        $count = Count($collection->where(  // count all enties FIRST with filter to get pagination working
-            function($query) use ($field, $term)
-            {
-                foreach ((array) $field as $f) {
-                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
-                }
-            })
-            ->get());
+            $term = $input['term'];
 
-        $entries = $collection->where(
-            function($query) use ($field, $term)
-            {
-                foreach ((array) $field as $f) {
-                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
-                }
-            })
-            ->orderBy($oderby)
-            ->skip($offset)
-            ->take($resultCount)
-            ->select([$table.$id, DB::raw($text . ' as text')])
-            ->get();
+            $count = Count($collection->where(  // count all enties FIRST with filter to get pagination working
+                function ($query) use ($field, $term) {
+                    foreach ((array)$field as $f) {
+                        $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                    }
+                })
+                ->get());
 
-        $endCount = $offset + $resultCount;
-        $morePages = $count > $endCount;
+            $entries = $collection->where(
+                function ($query) use ($field, $term) {
+                    foreach ((array)$field as $f) {
+                        $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                    }
+                })
+                ->orderBy($oderby)
+                ->skip($offset)
+                ->take($resultCount)
+                ->select([$table . $id, DB::raw($text . ' as text')])
+                ->get();
 
-        $results = array(
-            "results" => $entries,
-            "pagination" => array(
-                "more" => $morePages
-            )
-        );
+            $endCount = $offset + $resultCount;
+            $morePages = $count > $endCount;
 
-        return response()->json($results);
+            $results = array(
+                "results" => $entries,
+                "pagination" => array(
+                    "more" => $morePages
+                )
+            );
+
+            return response()->json($results);
+        }
     }
 }
 

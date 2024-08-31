@@ -30,47 +30,16 @@ class NavigatorController extends Controller
             'organization_id',
         ]);
 
-        $edit_gate = \Gate::allows('navigator_edit');
-        $delete_gate = \Gate::allows('navigator_delete');
-
         return DataTables::of($navigators)
             ->addColumn('organization', function ($navigators) {
                 return $navigators->organization()->first()->title;
             })
-            ->addColumn('action', function ($navigators) use ($edit_gate, $delete_gate) {
-                $actions = '';
-                if ($edit_gate) {
-                    $actions .= '<a href="'.route('navigators.edit', $navigators->id).'" '
-                                    .'id="edit-navigator-'.$navigators->id.'" '
-                                    .'class="btn">'
-                                    .'<i class="fa fa-pencil-alt"></i>'
-                                    .'</a>';
-                }
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                                .'class="btn text-danger" '
-                                .'onclick="destroyDataTableEntry(\'navigators\','.$navigators->id.')">'
-                                .'<i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
+            ->addColumn('url', function ($navigators)  {
+                return '/navigatorViews/' . $navigators->views()->first()?->id ;
             })
-
             ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        abort_unless(\Gate::allows('navigator_create'), 403);
-
-        return view('navigators.create');
     }
 
     /**
@@ -88,13 +57,15 @@ class NavigatorController extends Controller
             'title' => $new_navigator['title'],
             'organization_id' => format_select_input($new_navigator['organization_id']),
         ]);
+        $navigator_view =  NavigatorView::firstOrCreate([
+            'title' => $new_navigator['title'],
+            'description' => 'Home',
+            'navigator_id' => $navigator->id,
+        ]);
 
-        // axios call?
         if (request()->wantsJson()) {
-            return ['message' => $navigator->path()];
+            return $navigator;
         }
-
-        return redirect($navigator->path());
     }
 
     /**
@@ -105,35 +76,45 @@ class NavigatorController extends Controller
      */
     public function show(Navigator $navigator)
     {
-        $navigators = Navigator::where('id', $navigator->id)->get()->first();
-        $views = NavigatorView::where('navigator_id', $navigator->id)
-                                    ->with(['items'])
+        abort_unless(\Gate::allows('navigator_access'), 403);
+        $model = 'navigator'; //strtolower(class_basename( $navigator ));
+/*
+        return view('navigators.show')
+            ->with(compact('navigator'))
+            ->with(compact('model'));*/
+
+
+        $view = NavigatorView::where('navigator_id', $navigator->id)
+                                    /*->with(['items'])*/
                                     ->get()->first();
-        $breadcrumbs = $this->breadcrumbs($views);
+        $breadcrumbs = $this->breadcrumbs($view);
 
         LogController::set(get_class($this).'@'.__FUNCTION__, $navigator->id);
 
         return view('navigators.show')
-                ->with(compact('navigators'))
-                ->with(compact('views'))
-                ->with(compact('breadcrumbs'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Navigator  $navigator
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Navigator $navigator)
-    {
-        abort_unless(\Gate::allows('navigator_edit'), 403);
-        $organizations = \App\Organization::where('id', $navigator->organization_id)->first()->get();
-
-        return view('navigators.edit')
                 ->with(compact('navigator'))
-                ->with(compact('organizations'));
+                ->with(compact('view'))
+                ->with(compact('breadcrumbs'))
+                ->with(compact('model'));
     }
+
+    public function listViews(Navigator $navigator)
+    {
+        abort_unless(\Gate::allows('navigator_access'), 403);
+        $navigatorViews = NavigatorView::where('navigator_id', $navigator->id)
+            ->select([
+                'id',
+                'title',
+                'description',
+                'navigator_id',
+            ]);
+
+        return DataTables::of($navigatorViews)
+            ->addColumn('check', '')
+            ->setRowId('id')
+            ->make(true);
+    }
+
 
     /**
      * Update the specified resource in storage.
@@ -151,7 +132,7 @@ class NavigatorController extends Controller
             'organization_id' => format_select_input($request['organization_id']),
         ]);
 
-        return redirect()->route('navigators.index');
+        return $navigator;
     }
 
     /**
@@ -164,9 +145,7 @@ class NavigatorController extends Controller
     {
         abort_unless(\Gate::allows('navigator_delete'), 403);
 
-        $navigator->delete();
-
-        return back();
+        return $navigator->delete();
     }
 
     /**
@@ -188,7 +167,7 @@ class NavigatorController extends Controller
                 $current_view = NavigatorView::where('id', $current_item->navigator_view_id)
                                         ->where('navigator_id', $view->navigator->id)
                                         ->get()->first();
-                $entries[] = ['href' => '/navigators/'.$view->navigator->id.'/'.$current_view->id, 'title' => $current_view->title];
+                $entries[] = ['url' => '/navigators/'.$view->navigator->id.'/'.$current_view->id, 'title' => $current_view->title];
             }
         }
 

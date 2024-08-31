@@ -15,6 +15,9 @@ class MapMarkerController extends Controller
     public function index()
     {
         //abort_unless(\Gate::allows('map_access'), 403);
+
+
+
         if (request()->wantsJson() AND request()->has(['type_id', 'category_id'])) {
             $input = $this->validateRequest();
             return [

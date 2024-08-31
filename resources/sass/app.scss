@@ -242,3 +242,11 @@ tr:hover .vuehover {
     width: 100%;
     padding: 0px 15px;
 }
+
+/*
+TinyMCE
+ */
+.tox.tox-tinymce-aux,
+.tox-fullscreen .tox.tox-tinymce-aux {
+    z-index: 10000;
+}

@@ -3,22 +3,27 @@
         <ul class="nav nav-pills bg-gray-light"
             id="terminalObjectivesTopNav"
             style="position:sticky; top:56px; z-index: 100">
-            <draggable
+<!--            <draggable
                 class="nav nav-pills"
                 v-can="'curriculum_edit'"
                 v-model="typetabs"
-                @start="drag=true"
-                @end="handleTypeMoved">
-                <li v-for="typetab in typetabs"
-                    class="nav-item pl-0 pr-2 pb-2 pt-2">
-                    <a class="nav-link " :href="'#tab_' + typetab"
-                       :class="(activetab == typetab) ? 'active' : ''"
-                       @click="setActiveTab(typetab)"
-                       data-toggle="tab">
-                        {{ getTypeTitle(typetab)[0]['title'] }}
-                    </a>
-                </li>
-            </draggable>
+                v-bind="columnDragOptions"
+                @end="handleTypeMoved"
+                :move="isLocked"
+                itemKey="id">
+                <template
+                    #item="{ element: typetab , index }">-->
+                    <li v-for="typetab in typetabs"
+                        class="nav-item pl-0 pr-2 pb-2 pt-2">
+                        <a class="nav-link " :href="'#tab_' + typetab"
+                           :class="(activetab == typetab) ? 'active' : ''"
+                           @click="setActiveTab(typetab)"
+                           data-toggle="tab">
+                            {{ getTypeTitle(typetab)[0]['title'] }}
+                        </a>
+                    </li>
+<!--                </template>
+            </draggable>-->
             <li v-hide-if-permission="'curriculum_edit'"
                 v-for="typetab in typetabs"
                 class="nav-item pl-0 pr-2 pb-2 pt-2">
@@ -46,18 +51,28 @@
             </li>
         </ul>
         <hr class="mt-0">
-        <div v-for="typetab in typetabs" class="tab-content">
+        <div v-for="typetab in typetabs"
+             class="tab-content">
             <div class="tab-pane" :id="'tab_' + typetab"
                  :class="(activetab == typetab) ? 'active show' : ''">
-                 <div v-for="objective in filterTerminalObjectives(typetab)" :id="'terminalObjective_' + objective.id" >
+                 <div v-for="objective in filterTerminalObjectives(typetab)"
+                      :id="'terminalObjective_' + objective.id" >
                     <div class="row">
                         <div class="col-12 terminal-row">
-
                             <ObjectiveBox
                                 type="terminal"
                                 :objective="objective"
                                 :settings="settings"
-                                :max_id="max_ids[activetab]">
+                                :max_id="max_ids[activetab]"
+                                @createTerminalObjective="(createObjective) => {
+                                    this.createTerminalObjective(createObjective);
+                                }
+                                "
+                                @update="(objective) => {
+                                    this.currentTerminalObjective = objective;
+                                    this.showTerminalObjectiveModal = false;
+                                }"
+                            >
                             </ObjectiveBox>
 
                             <div class="ml-auto">
@@ -86,21 +101,27 @@
               ></ObjectiveBox>
             </div>
         </div>
-        <terminal-objective-modal></terminal-objective-modal>
-        <enabling-objective-modal></enabling-objective-modal>
+        <Teleport to="body">
+            <TerminalObjectiveModal
+                :show="this.showTerminalObjectiveModal"
+                @close="this.showTerminalObjectiveModal = false"
+                :params="currentTerminalObjective"
+            ></TerminalObjectiveModal>
+            <EnablingObjectiveModal
+                :show="this.showEnablingObjectiveModal"
+                @close="this.showEnablingObjectiveModal = false"
+                :params="currentEnablingObjective"
+            ></EnablingObjectiveModal>
+        </Teleport>
     </div>
 </template>
 
 <script>
-const ObjectiveBox =
-    () => import('./ObjectiveBox');
-const EnablingObjectives =
-    () => import('./EnablingObjectives');
-const draggable =
-    () => import('vuedraggable');
-  /*  import ObjectiveBox from './ObjectiveBox'
-    import EnablingObjectives from './EnablingObjectives'
-    import draggable from "vuedraggable"; // import the vuedraggable*/
+import ObjectiveBox from './ObjectiveBox';
+import EnablingObjectives from './EnablingObjectives';
+import TerminalObjectiveModal from "./TerminalObjectiveModal";
+import EnablingObjectiveModal from "./EnablingObjectiveModal";
+import draggable from "vuedraggable";
 
 export default {
     props: {
@@ -116,9 +137,14 @@ export default {
             typetabs: {},
             activetab: null,
             currentCurriculaEnrolments: null,
+            showTerminalObjectiveModal: false,
+            currentTerminalObjective: null,
+            currentEnablingObjective: null,
+            showEnablingObjectiveModal: false,
+
             errors: {},
 
-            terminal_objectives: Object
+            terminal_objectives: Object,
         }
     },
     methods: {
@@ -142,6 +168,7 @@ export default {
             axios.get('/curricula/' + this.curriculum.id + '/objectives' )
                 .then(response => {
                     this.terminal_objectives = response.data.curriculum.terminal_objectives;
+
                     if (this.terminal_objectives.length !== 0){
                         this.settings.last = this.terminal_objectives[this.terminal_objectives.length-1].id;
                         this.typetabs = [ ... new Set(this.terminal_objectives.map(t => t.objective_type_id))];
@@ -150,14 +177,13 @@ export default {
                                 this.typetabs = this.curriculum.objective_type_order;
                             }
                         }
-
                         if (objective_type_id === 0){
                             this.activetab = this.typetabs[0];
                         }
                     }
                 })
                 .catch(e => {
-                    this.errors = e.data.errors;
+                    console.log(e);
                 });
         },
         externalEvent: function(ids) {
@@ -166,8 +192,8 @@ export default {
         async reloadEnablingObjectives(ids) {
             try {
                 this.terminal_objectives = (await axios.post('/curricula/'+this.curriculum.id+'/achievements', {'user_ids' : ids})).data.curriculum.terminal_objectives;
-            } catch(error) {
-                consoloe.log(error);
+            } catch(e) {
+                console.log(e);
             }
         },
 
@@ -217,21 +243,63 @@ export default {
             });
 
         //eventlistener
+        //terminal Objectives
+        this.$eventHub.on('createTerminalObjectives', (createTerminalObjective) => {
+            //console.log(createTerminalObjective);
+            this.currentTerminalObjective = {
+                'curriculum_id': this.curriculum.id,
+                'objective_type_id': createTerminalObjective.objective_type_id
+            };
+            this.showTerminalObjectiveModal = true;
+        });
+        this.$eventHub.on('terminalObjective-added', function(newTerminalObjective) {
+            console.log(newTerminalObjective);
+            this.showTerminalObjectiveModal = false;
+            //this.activetab = newTerminalObjective.objective_type_id;
+            this.loadObjectives(this.activetab);
+        }.bind(this));
+        this.$eventHub.on('editTerminalObjectives', (objective) => {
+            this.currentTerminalObjective = objective;
+            this.showTerminalObjectiveModal = true;
+        });
+        this.$eventHub.on('terminalObjective-updated', () => {
+            this.showTerminalObjectiveModal = false;
+            this.loadObjectives(this.activetab);
+        });
 
-        this.$eventHub.$on('addTerminalObjective', function(newTerminalObjective) {
-            this.activetab = newTerminalObjective.objective_type_id;
+        //enabling Objectives
+        this.$eventHub.on('createEnablingObjectives', (createEnablingObjective) => {
+            console.log(createEnablingObjective.objective);
+            this.currentEnablingObjective = {
+                'curriculum_id': this.curriculum.id,
+                'terminal_objective_id': createEnablingObjective.objective.terminal_objective_id
+            };
+            this.showEnablingObjectiveModal = true;
+        });
+        this.$eventHub.on('enablingObjective-added', function(newEnablingObjective) {
+            this.showEnablingObjectiveModal = false;
             this.loadObjectives(this.activetab);
         }.bind(this));
-        this.$eventHub.$on('addEnablingObjective', function(newEnablingObjective) {
+        this.$eventHub.on('editEnablingObjectives', (objective) => {
+            this.currentEnablingObjective = objective;
+            this.showEnablingObjectiveModal = true;
+        });
+        this.$eventHub.on('enablingObjective-updated', () => {
+            this.showEnablingObjectiveModal = false;
             this.loadObjectives(this.activetab);
-        }.bind(this));
-        this.$eventHub.$on('deletedObjective', function(deletedObjective) {
+        });
+
+        this.$eventHub.on('objective-deleted', function(deletedObjective) {
+            console.log(deletedObjective);
             this.activetab = (deletedObjective.type === 'terminal') ? deletedObjective.objective.objective_type_id : deletedObjective.objective.terminal_objective.objective_type_id;
             this.loadObjectives(this.activetab);
         }.bind(this));
+
     },
 
     components: {
+        TerminalObjectiveModal,
+        EnablingObjectiveModal,
         ObjectiveBox,
         EnablingObjectives,
         draggable

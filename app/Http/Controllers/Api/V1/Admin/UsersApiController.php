@@ -73,7 +73,7 @@ class UsersApiController extends Controller
         }
     }
 
-    public function forceDestroy($id)
+            public function forceDestroy($id)
     {
         $user = User::withTrashed()->findOrFail($id);
 

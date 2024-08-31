@@ -26,39 +26,10 @@ class MetadatasetController extends Controller
             'created_at',
         ])->get();
 
-        $show_gate = \Gate::allows('metadataset_show');
-        $delete_gate = \Gate::allows('metadataset_delete');
-
         return DataTables::of($metadataset)
-            ->addColumn('action', function ($metadataset) use ($show_gate, $delete_gate) {
-                $actions = '';
-                if ($show_gate) {
-                    $actions .= '<a href="/metadatasets/'.$metadataset->id.'?csv=true" '
-                        .'id="show-user-'.$metadataset->id.'" '
-                        .'class="btn">'
-                        .'<i class="fa fa-file-csv"></i>'
-                        .'</a>';
-                }
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                        .'class="btn text-danger" '
-                        .'onclick="destroyDataTableEntry(\'metadatasets\','.$metadataset->id.')">'
-                        .'<i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
-            })
-
             ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
-    }
-
-    public function create()
-    {
-        abort_unless(\Gate::allows('metadataset_create'), 403);
-
-        return view('metadatasets.create');
     }
 
     public function store()
@@ -78,13 +49,15 @@ class MetadatasetController extends Controller
 
         $new_metadataset = $this->validateRequest();
 
-        Metadataset::create([
+        $metadataset = Metadataset::create([
             'version' => $new_metadataset['version'],
             'metadataset' => json_encode($metadata),
 
         ]);
-
-        return redirect()->route('metadatasets.index');
+        if (request()->wantsJson())
+        {
+            return $metadataset;
+        }
     }
 
     public function show(Metadataset $metadataset)
@@ -102,15 +75,16 @@ class MetadatasetController extends Controller
     {
         abort_unless(\Gate::allows('metadataset_delete'), 403);
 
-        $metadataset->delete();
-
-        return back();
+        if (request()->wantsJson())
+        {
+            return  $metadataset->delete();;
+        }
     }
 
     protected function validateRequest()
     {
         return request()->validate([
-            'id' => 'sometimes|required',
+            'id' => 'sometimes',
             'version' => 'sometimes|required',
         ]);
     }

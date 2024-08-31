@@ -7,7 +7,7 @@ require('./bootstrap');
 require('@activix/bootstrap-datetimepicker');
 
 //vue
-import { createApp } from 'vue';
+import { createApp, reactive } from 'vue';
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -15,7 +15,13 @@ import { createApp } from 'vue';
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 const app = createApp({});
-//window.Vue = app;
+import VueDOMPurifyHTML from 'vue-dompurify-html';
+app.use(VueDOMPurifyHTML);
+import { useGlobalStore} from "./store/global";
+import { createPinia } from "pinia";
+const pinia = createPinia();
+app.use(pinia);
+const globalStore = useGlobalStore();
 
 window.moment = require('moment');
 
@@ -45,7 +51,9 @@ app.config.globalProperties.trans = (key) => {
     return _.get(window.trans, key, _.get(window.trans, 'global.' + key.split(".").splice(-1), key) );
 };
 
-import "vue-swatches/dist/vue-swatches.css";
+import VSwatches from 'vue3-swatches';
+import 'vue3-swatches/dist/style.css';
+app.use(VSwatches);
 
 app.config.globalProperties.$textcolor = (color, dark = '#000', light = '#fff') => {
     if (typeof(color) != 'string'){
@@ -66,34 +74,41 @@ app.config.globalProperties.$textcolor = (color, dark = '#000', light = '#fff') 
     }
 };
 
+app.config.globalProperties.$decodeHTMLEntities = (text) => {
+    return $("<textarea/>")
+        .html(text)
+        .text();
+};
+
 
 /**
- * Store current ab in browser storage
- * example @click="setLocalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id)"
+ * Store current ab in global storage
+ * example @click="setGlobalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id)"
  * @param key
  * @param value
  */
-app.config.globalProperties.setLocalStorage = (key, value) => {
-    localStorage.setItem(key, value);
+app.config.globalProperties.setGlobalStorage = (key, value) => {
+    globalStore.setItem(key, value);
 };
 
 /**
- * check if current value is set in browser storage
- * example: :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id)"
+ * check if current value is set in global storage
+ * example: :class="getGlobalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id)"
  * @param key
  * @param value
  * @param class_string
  * @param is_default_element
  * @returns {string}
  */
-app.config.globalProperties.checkLocalStorage = (key, value, class_string = "active", is_default_element = false) => {
-    if (localStorage.getItem(key) === value) {
+app.config.globalProperties.getGlobalStorage = (key, value, class_string = "active", is_default_element = false) => {
+    if (globalStore.getItem(key) === value) {
         return class_string;
     }
-    if (localStorage.getItem(key) === null && is_default_element === true) {
+    if (globalStore.getItem(key) === null && is_default_element === true) {
         return class_string;
     }
 };
+
 
 //-> use permission in vue3 templates, use checkPermission in scripts
 app.config.globalProperties.checkPermission = (permission) => {
@@ -103,7 +118,29 @@ app.config.globalProperties.checkPermission = (permission) => {
 app.config.globalProperties.htmlToText = (html) => {
     var txt = document.createElement("textarea");
     txt.innerHTML = html;
-    return txt.value.replace(/(&lt;|<)script.*?(&lt;|<)\/script(&gt;|>)|<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
+    let map =
+        {
+            '&amp;': '&',
+            '&lt;': '<',
+            '&gt;': '>',
+            '&quot;': '"',
+            '&#039;': "'",
+            '&nbsp;': " ",
+            '&szlig;': "ß",
+            '&Auml;': 'Ä',
+            '&auml;': 'ä',
+            '&Uuml;': 'Ü',
+            '&uuml;': 'ü',
+            '&Ouml;': 'Ö',
+            '&ouml;': 'ö',
+            '&copy;': '©',
+        };
+
+    txt =  txt.value.replace(/&amp;|&lt;|&gt;|&quot;|&#039;|&nbsp;|&szlig;|&Auml;|&auml;|&Uuml;|&uuml;|&Ouml;|&ouml;|&copy;/g, function(m) {return map[m];})
+        .replace(/(?:\r\n|\r|\n)/g, '<br>')
+        .replace('<br>', ' ');
+
+    return txt.replace(/(&lt;|<)script.*?(&lt;|<)\/script(&gt;|>)|<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, ' ');
 };
 
 /**
@@ -114,19 +151,14 @@ if (document.querySelector("meta[name='user-id']")){
     app.config.globalProperties.$userId = document.querySelector("meta[name='user-id']").getAttribute('content');
 }
 
-/*import VModal from 'vue-js-modal';
-app.use(VModal, {dynamic: true});*/
-
-
-/*import DataTable from 'laravel-vue-datatable';
-app.use(DataTable);*/
-
 import Sticky from 'vue-sticky-directive';
 
 app.use(Sticky);
 
-import Toast from 'vue-toastification';
+/*
 
+ */
+import Toast from 'vue-toastification';
 import 'vue-toastification/dist/index.css';
 
 app.use(Toast, {
@@ -143,72 +175,107 @@ app.use(Toast, {
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
 
-import { defineAsyncComponent } from 'vue';
+import { defineAsyncComponent } from 'vue';  //use asyncComponents to reduce payload for users
 
 app.component('absence-modal',  defineAsyncComponent(() => import('./components/absence/AbsenceModal.vue')));
 app.component('admin-view',  defineAsyncComponent(() => import('./components/admin/AdminView.vue')));
+app.component('breadcrumbs',  defineAsyncComponent(() => import('./components/uiElements/Breadcrumbs.vue')));
 app.component('certificate-generate-modal', defineAsyncComponent(() => import('./components/certificate/GenerateCertificateModal.vue')));
-app.component('curricula',  defineAsyncComponent(() => import('./components/curriculum/Curricula.vue')));
-app.component('curriculum-view', defineAsyncComponent(() => import('./components/curriculum/CurriculumView.vue')));
+app.component('certificates', defineAsyncComponent(() => import('./components/certificate/Certificates.vue')));
+app.component('certificate', defineAsyncComponent(() => import('./components/certificate/Certificate.vue')));
 
+app.component('config', defineAsyncComponent(() => import('./components/config/Config.vue')));
+app.component('configs', defineAsyncComponent(() => import('./components/config/Configs.vue')));
 app.component('content-modal', defineAsyncComponent(() => import('./components/content/ContentModal.vue')));
-app.component('content-create-modal', defineAsyncComponent(() => import('./components/content/ContentCreateModal.vue')));
-app.component('content-subscription-modal', defineAsyncComponent(() => import('./components/content/ContentSubscriptionModal.vue')));
-app.component('organization-modal', defineAsyncComponent(() => import('./components/organization/OrganizationModal.vue')));
-app.component('group-modal', defineAsyncComponent(() => import('./components/group/GroupModal.vue')));
+app.component('curriculum',  defineAsyncComponent(() => import('./components/curriculum/Curriculum.vue')));
+app.component('curricula',  defineAsyncComponent(() => import('./components/curriculum/Curricula.vue')));
 
-app.component('group-view', defineAsyncComponent(() => import('./components/group/GroupView.vue')));
-app.component('terminal-objective-modal', defineAsyncComponent(() => import('./components/objectives/TerminalObjectiveModal.vue')));
-app.component('data-table-widgets', defineAsyncComponent(() => import('./components/uiElements/DataTableWidgets.vue')));
+
+
 app.component('enabling-objective-modal', defineAsyncComponent(() => import('./components/objectives/EnablingObjectiveModal.vue')));
 app.component('events', defineAsyncComponent(() => import('../../app/Plugins/Eventmanagement/eVewa/resources/js/components/embedEvents')));
-app.component('objective-view', defineAsyncComponent(() => import('./components/objectives/ObjectiveView.vue')));
-app.component('objective-box', defineAsyncComponent(() => import('./components/objectives/ObjectiveBox.vue')));
-app.component('dropdown-button', defineAsyncComponent(() => import('./components/uiElements/DropdownButton.vue')));
+app.component('exam', defineAsyncComponent(() => import('./components/exam/Exam.vue')));
+app.component('exams', defineAsyncComponent(() => import('./components/exam/Exams.vue')));
+app.component('grades', defineAsyncComponent(() => import('./components/grade/Grades.vue')));
+app.component('grade', defineAsyncComponent(() => import('./components/grade/Grade.vue')));
+
+app.component('groups', defineAsyncComponent(() => import('./components/group/Groups.vue')));
+app.component('group', defineAsyncComponent(() => import('./components/group/Group.vue')));
+app.component('group-modal', defineAsyncComponent(() => import('./components/group/GroupModal.vue')));
+
+app.component('terminal-objective-modal', defineAsyncComponent(() => import('./components/objectives/TerminalObjectiveModal.vue')));
 app.component('model-limiter', defineAsyncComponent(() => import('./components/config/ModelLimiter.vue')));
 
 app.component('reference-objective-modal', defineAsyncComponent(() => import('./components/reference/ReferenceObjectiveModal.vue')));
+app.component('leaflet-map', defineAsyncComponent(() => import('./components/map/Map.vue'))); //name map is reserved
 app.component('maps', defineAsyncComponent(() => import('./components/map/Maps.vue')));
 app.component('media-renderer', defineAsyncComponent(() => import('./components/media/MediaRenderer.vue')));
 app.component('medium-modal', defineAsyncComponent(() => import('./components/media/MediumModal.vue')));
-app.component('medium-create-modal', defineAsyncComponent(() => import('./components/media/MediumCreateModal.vue')));
 app.component('medium-export-modal', defineAsyncComponent(() => import('./components/media/MediumExportModal.vue')));
 app.component('meeting', defineAsyncComponent(() => import('./components/meeting/Meeting.vue')));
+app.component('metadatasets', defineAsyncComponent(() => import('./components/metadataset/Metadatasets.vue')));
+
+app.component('navigators', defineAsyncComponent(() => import('./components/navigator/Navigators.vue')));
+app.component('navigator', defineAsyncComponent(() => import('./components/navigator/Navigator.vue')));
+
 app.component('note-modal', defineAsyncComponent(() => import('./components/note/NoteModal.vue')));
-app.component('notes', defineAsyncComponent(() => import('./components/note/Notes.vue')));
+//app.component('notes', defineAsyncComponent(() => import('./components/note/Notes.vue')));
+
+app.component('objective', defineAsyncComponent(() => import('./components/objectives/Objective.vue')));
+app.component('objective-box', defineAsyncComponent(() => import('./components/objectives/ObjectiveBox.vue')));
+app.component('objective-progress-subscription-modal', defineAsyncComponent(() => import('./components/objectives/ObjectiveProgressSubscriptionModal.vue')));
+
 app.component('organizations', defineAsyncComponent(() => import('./components/organization/Organizations.vue')));
 app.component('organization', defineAsyncComponent(() => import('./components/organization/Organization.vue')));
+app.component('organization-modal', defineAsyncComponent(() => import('./components/organization/OrganizationModal.vue')));
 
-app.component('logbook', defineAsyncComponent(() => import('./components/logbooks/Logbook.vue')));
-app.component('logbooks', defineAsyncComponent(() => import('./components/logbooks/Logbooks.vue')));
-app.component('logbook-entry-modal', defineAsyncComponent(() => import('./components/logbooks/LogbookEntryModal.vue')));
-app.component('logbook-entry-subject-modal', defineAsyncComponent(() => import('./components/logbooks/LogbookEntrySubjectModal.vue')));
+app.component('organization-types', defineAsyncComponent(() => import('./components/organizationType/OrganizationTypes.vue')));
+app.component('organization-type', defineAsyncComponent(() => import('./components/organizationType/OrganizationType.vue')));
+
+
+app.component('periods', defineAsyncComponent(() => import('./components/period/Periods.vue')));
+app.component('period', defineAsyncComponent(() => import('./components/period/Period.vue')));
+
+app.component('link-item', defineAsyncComponent(() => import('./components/uiElements/LinkItem.vue')));
+app.component('logbook', defineAsyncComponent(() => import('./components/logbook/Logbook.vue')));
+app.component('logbooks', defineAsyncComponent(() => import('./components/logbook/Logbooks.vue')));
+app.component('logbook-entry-modal', defineAsyncComponent(() => import('./components/logbook/LogbookEntryModal.vue')));
+app.component('logbook-entry-subject-modal', defineAsyncComponent(() => import('./components/logbook/LogbookEntrySubjectModal.vue')));
 app.component('plan', defineAsyncComponent(() => import('./components/plan/Plan.vue')));
 app.component('subscribe-objective-modal', defineAsyncComponent(() => import('./components/objectives/SubscribeObjectiveModal.vue')));
 app.component('set-achievements-modal', defineAsyncComponent(() => import('./components/plan/SetAchievementsModal.vue')));
-app.component('objective-progress-subscription-modal', defineAsyncComponent(() => import('./components/objectives/ObjectiveProgressSubscriptionModal.vue')));
-app.component('task-modal', defineAsyncComponent(() => import('./components/tasks/TaskModal.vue')));
-app.component('task', defineAsyncComponent(() => import('./components/tasks/Task.vue')));
-app.component('task-timeline', defineAsyncComponent(() => import('./components/tasks/Timeline.vue')));
+app.component('title-component', defineAsyncComponent(() => import('./components/uiElements/Title.vue')));
+
+app.component('task-modal', defineAsyncComponent(() => import('./components/task/TaskModal.vue')));
+app.component('task', defineAsyncComponent(() => import('./components/task/Task.vue')));
+app.component('tasks', defineAsyncComponent(() => import('./components/task/Tasks.vue')));
+
+//app.component('task-timeline', defineAsyncComponent(() => import('./components/task/Timeline.vue')));
+
 app.component('training', defineAsyncComponent(() => import('./components/training/Training')));
 app.component('kanbans', defineAsyncComponent(() => import('./components/kanban/Kanbans.vue')));
-app.component('kanban-board', defineAsyncComponent(() => import('./components/kanban/KanbanBoard.vue')));
+app.component('kanban', defineAsyncComponent(() => import('./components/kanban/Kanban.vue')));
 //app.component('subscribe-modal', defineAsyncComponent(() => import('./components/subscription/SubscribeModal.vue')));
 app.component('sidebar', defineAsyncComponent(() => import('./components/uiElements/Sidebar.vue')));
 app.component('move-terminal-objective-modal', defineAsyncComponent(() => import('./components/objectives/MoveTerminalObjectiveModal.vue')));
 app.component('prerequisite-modal', defineAsyncComponent(() => import('./components/prerequisites/PrerequisiteObjectiveModal.vue')));
-app.component('lms-modal', defineAsyncComponent(() => import('./../../app/Plugins/Lms/resources/js/components/Create.vue')));
-app.component('color-picker-component', defineAsyncComponent(() => import('./components/kanban/ColorPickerComponent.vue')));
+//app.component('lms-modal', defineAsyncComponent(() => import('./../../app/Plugins/Lms/resources/js/components/Create.vue')));
+//app.component('color-picker-component', defineAsyncComponent(() => import('./components/kanban/ColorPickerComponent.vue')));
 app.component('color-picker-input', defineAsyncComponent(() => import('./components/kanban/ColorPickerInput.vue')));
-app.component('leaflet-map', defineAsyncComponent(() => import('./components/map/Map.vue')));
 app.component('searchbar', defineAsyncComponent(() => import('./components/uiElements/Searchbar.vue')));
-app.component('date-picker-wrapper', defineAsyncComponent(() => import('./components/uiElements/DatePickerWrapper.vue')));
+//app.component('date-picker-wrapper', defineAsyncComponent(() => import('./components/uiElements/DatePickerWrapper.vue')));
 app.component('videoconference', defineAsyncComponent(() => import('./components/videoconference/Videoconference.vue')));
 app.component('videoconferences', defineAsyncComponent(() => import('./components/videoconference/Videoconferences.vue')));
 app.component('tests-table', defineAsyncComponent(() => import('./components/tests/TestsTable.vue')));
 
+app.component('permissions', defineAsyncComponent(() => import('./components/permission/Permissions.vue')));
+app.component('permission', defineAsyncComponent(() => import('./components/permission/Permission.vue')));
+app.component('roles', defineAsyncComponent(() => import('./components/role/Roles.vue')));
+app.component('role', defineAsyncComponent(() => import('./components/role/Role.vue')));
+app.component('user', defineAsyncComponent(() => import('./components/user/User.vue')));
+app.component('users', defineAsyncComponent(() => import('./components/user/Users.vue')));
 
-app.config.globalProperties.$initTinyMCE = function (tinyMcePlugins, attr = null) {
+app.config.globalProperties.$initTinyMCE = function (tinyMcePlugins, attr = null, customToolbar = null, extended_valid_elements = null) {
 
     const defaultPlugins = [
         "advlist autolink lists link image charmap print preview hr anchor pagebreak",
@@ -216,7 +283,6 @@ app.config.globalProperties.$initTinyMCE = function (tinyMcePlugins, attr = null
         "insertdatetime media nonbreaking save table directionality",
         "emoticons template paste textpattern curriculummedia"
     ];
-
 
     return {// allows adding additional attributes for specific cases
         // attributes can be overwritten if they are set BEFORE this line
@@ -227,15 +293,109 @@ app.config.globalProperties.$initTinyMCE = function (tinyMcePlugins, attr = null
         branding:false,
         plugins: tinyMcePlugins ?? defaultPlugins,
         external_plugins: {'mathjax': '/node_modules/@dimakorotkov/tinymce-mathjax/plugin.min.js'},
-        toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | curriculummedia mathjax link image media ",
+        toolbar: customToolbar ?? "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | curriculummedia mathjax link image media ",
+        extended_valid_elements: extended_valid_elements ?? '',
         relative_urls: false,
         entity_encoding : "raw",
         language: 'de',
 
         mathjax: {
             lib: '/node_modules/mathjax/es5/tex-mml-chtml.js', // path to mathjax
-        }};
+        },
+        setup: function (editor) {
+            editor.ui.registry.addButton('insertFirstname', {
+                text: window.trans.global.firstname,
+                onAction: function (_) {
+                    editor.insertContent('<span id="firstname" style="background-color: lightgray;">'+ window.trans.global.firstname + '</span>&nbsp;');
+                }
+            });
+            editor.ui.registry.addButton('insertLastname', {
+                text: window.trans.global.lastname,
+                onAction: function (_) {
+                    editor.insertContent('<span id="lastname" style="background-color: lightgray;">'+ window.trans.global.lastname + '</span>&nbsp;');
+                }
+            });
+            editor.ui.registry.addButton('organizationTitle', {
+                text: window.trans.global.organization.title_singular,
+                onAction: function (_) {
+                    editor.insertContent('<span id="organization_title" style="background-color: lightgray;">'+ window.trans.global.organization.title_singular + '</span>&nbsp;');
+                }
+            });
+            editor.ui.registry.addButton('organizationStreet', {
+                text: window.trans.global.organization.fields.street,
+                onAction: function (_) {
+                    editor.insertContent('<span id="organization_street" style="background-color: lightgray;">'+ window.trans.global.organization.fields.street + '</span>&nbsp;');
+                }
+            });
+            editor.ui.registry.addButton('organizationPostcode', {
+                text: window.trans.global.organization.fields.postcode,
+                onAction: function (_) {
+                    editor.insertContent('<span id="organization_postcode" style="background-color: lightgray;">'+ window.trans.global.organization.fields.postcode + '</span>&nbsp;');
+                }
+            });
+            editor.ui.registry.addButton('organizationCity', {
+                text: window.trans.global.organization.fields.city,
+                onAction: function (_) {
+                    editor.insertContent('<span id="organization_city" style="background-color: lightgray;">'+ window.trans.global.organization.fields.city + '</span>&nbsp;');
+                }
+            });
+            editor.ui.registry.addButton('certificateDate', {
+                text: window.trans.global.date,
+                onAction: function (_) {
+                    editor.insertContent('<span id="date" style="background-color: lightgray;">'+ window.trans.global.date + '</span>&nbsp;');
+                }
+            });
+            editor.ui.registry.addButton('usersProgress', {
+                text: window.trans.global.progress.title_singular,
+                onAction: function (_) {
+                    document.querySelector("#app").__vue__.$modal.show('objective-progress-subscription-modal');
+                    $('#progress_reference').on('change', function() {
+                        const progress_reference = JSON.parse(document.getElementById('progress_reference').value);
+                        editor.selection.setContent('<span reference_type="' + progress_reference['referenceable_type'] + '" reference_id="'+ ( Array.isArray(progress_reference['referenceable_id']) ? progress_reference['referenceable_id'].join() : progress_reference['referenceable_id']) +'" min_value="'+ progress_reference['percentage'] +'"/>'   +  tinymce.activeEditor.selection.getContent() + '</span>', {format: 'raw'});
+                    });
+                }
+            });
+
+        },
+    };
+
 };
+
+/**
+ * Global Datatable options
+ */
+app.config.globalProperties.$dtOptions = {
+    dom: 'tilpr',
+    pageLength: 10,
+    language: {
+        url: '/datatables/i18n/German.json',
+        paginate: {
+            "first":      '<i class="fa fa-angle-double-left"></id>',
+            "last":       '<i class="fa fa-angle-double-right"></id>',
+            "next":       '<i class="fa fa-angle-right"></id>',
+            "previous":   '<i class="fa fa-angle-left"></id>',
+        },
+    },
+    select: true
+};
+
+/**
+ * Medium Modal Params
+ */
+/*app.config.globalProperties.$mediumModalParams  = {
+    accept: '',
+    callbackFunction: null,
+    callbackParentComponent: null,
+    callbackComponent: null,
+    eventHubCallbackFunction: null,
+    eventHubCallbackFunctionParams: null,
+    public: 0,
+    repository: 'local',
+    subscribable_type: null,
+    subscribable_id: null,
+    subscribeSelected: false,
+    target: 'medium_id',
+},*/
 /**
  * Custom Vue directive "can" to check against permissions.
  * If permission is not given element gets style display:none
@@ -270,7 +430,7 @@ app.directive('hide-if-permission', function (el, binding) {
  * ! Always check permissions in the backend.
  * This directive enables shorter syntax on vue.
  *
- * Example:
+ * Examples:
  * <element v-permission="'curriculum_edit'" ><element>
  * <element v-permission="'content_create, ' + subscribable_type + '_content_create'" ><element>
  *  ! you have to use 'App\\Curriculum_content_create' to get 'App\Curriculum_content_create'
@@ -294,6 +454,10 @@ app.directive('permission', function (el, binding, vnode) {
 
 });
 
+app.directive("inline", (element) => {
+    element.replaceWith(...element.children);
+});
+
 /**
  *
  * global eventHub
@@ -311,6 +475,26 @@ app.directive('permission', function (el, binding, vnode) {
  */
 import mitt from 'mitt';
 app.config.globalProperties.$eventHub = mitt();
+
+/**
+* Decodes html entities (used in datatable/list-results)
+**/
+app.config.globalProperties.$decodeHtml = (str) =>  {
+    let map =
+        {
+            '&amp;': '&',
+            '&lt;': '<',
+            '&gt;': '>',
+            '&quot;': '"',
+            '&#039;': "'"
+        };
+    if (str !== null) {
+        return str.replace(/&amp;|&lt;|&gt;|&quot;|&#039;/g, function(m) {return map[m];});
+    } else {
+        return '';
+    }
+
+};
 
 //mount vue
 app.mount('#app');
@@ -362,3 +546,89 @@ $(document).ready(function () {
         }
     });
 });
+
+function Favicon(alt) {
+    /**
+     * Fetches the default favicon URL.
+     * @return {string} An absolute or relative URL.
+     */
+    this.getAlt = function() { return alt; };
+
+    /**
+     * Mungs the default favicon URL.
+     * @param  {string}  alt An absolute or relative URL.
+     * @return {Favicon}     The favicon object.
+     */
+    this.setAlt = function(newAlt) {
+        alt = newAlt;
+        return this;
+    };
+
+    /**
+     * Finds a favicon URL.
+     * @param  {string}           url      A website’s absolute URL or hostname.
+     * @param  {function(string)} callback A continuation, to execute when the
+     *                                     method completes, that takes a favicon
+     *                                     URL.
+     * @return {Favicon}                   The favicon object.
+     */
+    this.get = function(url, callback) {
+        var favicon = this.getAlt();
+        if (typeof favicon != undeclared) callback(favicon);
+
+        var id = setInterval(function() {
+            if (typeof jQuery != undeclared) {
+                clearInterval(id);
+
+                if (url.indexOf('/') + 1) {
+                    anchor.href = url;
+                    url = anchor.hostname;
+                }
+
+                var domain = url.slice(url.indexOf('.') + 1);
+                var successful;
+
+                for (var i = 0; i < protocolCount; i++) {
+                    for (var j = -1; j < subdomainCount; j++) {
+                        for (var k = 0; k < pathCount; k++) {
+                            favicon =
+                                protocols[i] + (j + 1 ? subdomains[j] + domain : url) +
+                                paths[k];
+
+                            jQuery.get(favicon, function(data, status, xhr) {
+                                var type = xhr.getResponseHeader('Content-Type');
+
+                                if (!successful && type && type.indexOf('image/') + 1 && data) {
+                                    successful = true;
+                                    callback(favicon);
+                                }
+                            }).bind(favicon);
+                        }
+                    }
+                }
+            }
+        }, 100);
+
+        return this;
+    };
+
+    var version = '1.3.0';
+    var protocols = ['http://'];
+    var subdomains = ['', 'www.'];
+    var paths = ['/favicon.ico'];
+    var protocolCount = protocols.length;
+    var subdomainCount = subdomains.length;
+    var pathCount = paths.length;
+    var anchor = document.createElement('a');
+    var undeclared = 'undefined';
+
+    if (typeof jQuery == undeclared) {
+        var script = document.createElement('script');
+        script.setAttribute('type', 'text/javascript');
+        script.setAttribute('src', 'vendor/jquery.js');
+        script.onload = function() { jQuery.noConflict(); };
+        document.head.appendChild(script);
+    }
+
+    return this;
+}

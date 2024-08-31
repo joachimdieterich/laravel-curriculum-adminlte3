@@ -127,7 +127,6 @@ class NavigatorItemController extends Controller
             $medium->subscribe($navigator_item);
         }
 
-        // axios call?
         if (request()->wantsJson()) {
             return ['message' => $navigator_item->path()];
         }

@@ -391,7 +391,7 @@ return [
             'external_end_helper' => '',
         ],
     ],
-    'organizationtype' => [
+    'organizationType' => [
         'title' => 'Organization Types',
         'title_singular' => 'Organization Type',
         'create' => 'Create Organisation-Typ',
@@ -558,6 +558,7 @@ return [
         'create' => 'Create Media',
         'edit' => 'Edit Media',
         'upload' => 'Upload Media',
+        'upload_helper' => 'Drag your file(s) here to begin<br> or click to browse',
         'link' => 'Link',
         'no_media' => 'Nothing here yet.',
         'fields' => [
@@ -866,7 +867,7 @@ return [
             'iterations' => 'Iterations'
         ]
     ],
-    'contactdetail' => [
+    'contactDetail' => [
         'title' => 'Contact',
         'title_singular' => 'Contact',
         'create' => 'Create contact',
@@ -1063,5 +1064,13 @@ return [
             'link' => 'Link',
             'link_helper' => '',
         ],
+    ],
+    'level' => [
+        'title' => 'Levels',
+        'title_singular' => 'Level',
+        'create' => 'Create level',
+        'edit' => 'Edit level',
+        'delete' => 'Delete level',
+        'delete_helper' => 'Should level be deleted?',
     ],
 ];

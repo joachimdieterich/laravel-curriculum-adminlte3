@@ -23,7 +23,6 @@ class TaskSubscription extends Model
     {
         $this->update(['completion_date' => date('Y-m-d H:i:s')]);
         LogController::set(get_class($this).'@'.__FUNCTION__);
-        // $this->recordActivity('completed_task');
     }
 
     /**

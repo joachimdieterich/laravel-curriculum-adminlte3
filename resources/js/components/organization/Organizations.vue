@@ -3,6 +3,14 @@
         <div id="organization-content"
              class="col-md-12 m-0">
                 <IndexWidget
+                    v-permission="'organization_create'"
+                    key="'organizationCreate'"
+                    modelName="Organization"
+                    url="/organizations"
+                    :create=true
+                    :createLabel="trans('global.organization.create')">
+                </IndexWidget>
+                <IndexWidget
                     v-for="organization in organizations"
                     :key="'organizationIndex'+organization.id"
                     :model="organization"
@@ -13,13 +21,13 @@
                 </template>
 
                 <template
-                    v-permission="'organization-edit, organization-delete'"
+                    v-permission="'organization_edit, organization_delete'"
                     v-slot:dropdown>
                     <div class="dropdown-menu dropdown-menu-right"
                          style="z-index: 1050;"
                          x-placement="left-start">
                         <button
-                            v-permission="'organization-edit'"
+                            v-permission="'organization_edit'"
                             :name="'edit-organization-' + organization.id"
                                 class="dropdown-item text-secondary"
                                 @click.prevent="editOrganization(organization)">
@@ -28,7 +36,7 @@
                         </button>
                         <hr class="my-1">
                         <button
-                            v-permission="'organization-delete'"
+                            v-permission="'organization_delete'"
                             :id="'delete-organization-' + organization.id"
                             type="submit"
                             class="dropdown-item py-1 text-red"
@@ -38,14 +46,6 @@
                         </button>
                     </div>
                 </template>
-            </IndexWidget>
-            <IndexWidget
-                v-permission="'organization-create'"
-                key="'organizationCreate'"
-                modelName="Organization"
-                url="/organizations"
-                :create=true
-                :createLabel="trans('global.organization.create')">
             </IndexWidget>
         </div>
         <div id="organization-datatable-wrapper"
@@ -67,6 +67,21 @@
                 @close="this.showOrganizationModal = false"
                 :params="currentOrganization"
                 ></OrganizationModal>
+            <ConfirmModal
+                :showConfirm="this.showConfirm"
+                :title="trans('global.organization.delete')"
+                :description="trans('global.organization.delete_helper')"
+                css= 'danger'
+                :ok_label="trans('trans.global.ok')"
+                :cancel_label="trans('trans.global.cancel')"
+                @close="() => {
+                    this.showConfirm = false;
+                }"
+                @confirm="() => {
+                    this.showConfirm = false;
+                    this.destroy();
+                }"
+            ></ConfirmModal>
         </Teleport>
     </div>
 </template>
@@ -74,6 +89,7 @@
 
 <script>
 import OrganizationModal from "../organization/OrganizationModal";
+import ConfirmModal from "../uiElements/ConfirmModal";
 import IndexWidget from "../uiElements/IndexWidget";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
@@ -85,9 +101,11 @@ export default {
     },
     data() {
         return {
+            component_id: this._uid,
             organizations: null,
             search: '',
             showOrganizationModal: false,
+            showConfirm: false,
             url: '/organizations/list',
             errors: {},
             currentOrganization: {},
@@ -98,21 +116,8 @@ export default {
                 { title: 'postcode', data: 'postcode', searchable: true},
                 { title: 'city', data: 'city', searchable: true},
                 { title: 'status', data: 'status', searchable: true},
-               /* { title: 'action', data: 'action'},*/
             ],
-            options : {
-                dom: 'tilpr',
-                pageLength: 10,
-                language: {
-                    url: '/datatables/i18n/German.json',
-                    paginate: {
-                        "first":      '<i class="fa fa-angle-double-left"></id>',
-                        "last":       '<i class="fa fa-angle-double-right"></id>',
-                        "next":       '<i class="fa fa-angle-right"></id>',
-                        "previous":   '<i class="fa fa-angle-left"></id>',
-                    },
-                },
-            },
+            options : this.$dtOptions,
             modalMode: 'edit'
         }
     },
@@ -122,16 +127,19 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('organization-added', (organization) => {
-            this.loaderEvent();
+            this.showOrganizationModal = false;
+            this.organizations.push(organization);
         });
 
         this.$eventHub.on('organization-updated', (organization) => {
-
+            this.showOrganizationModal = false;
+            this.update(organization);
         });
         this.$eventHub.on('createOrganization', () => {
             this.currentOrganization = {};
             this.showOrganizationModal = true;
         });
+
     },
     methods: {
         editOrganization(organization){
@@ -143,14 +151,18 @@ export default {
             dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
                 this.organizations = dt.rows({page: 'current'}).data().toArray();
 
-                $('#curriculum-content').insertBefore('#organization-datatable-wrapper');
+                $('#organization-content').insertBefore('#organization-datatable-wrapper');
             });
             this.$eventHub.on('filter', (filter) => {
                 dt.search(filter).draw();
             });
         },
+        confirmItemDelete(organization){
+            this.showConfirm = true;
+            this.currentOrganization = organization;
+        },
         destroy() {
-            axios.delete('/organization/' + this.currentOrganization.id)
+            axios.delete('/organizations/' + this.currentOrganization.id)
                 .then(res => {
                     let index = this.organizations.indexOf(this.currentOrganization);
                     this.organizations.splice(index, 1);
@@ -172,7 +184,8 @@ export default {
     components: {
         DataTable,
         OrganizationModal,
-        IndexWidget
+        IndexWidget,
+        ConfirmModal
     },
 }
 </script>

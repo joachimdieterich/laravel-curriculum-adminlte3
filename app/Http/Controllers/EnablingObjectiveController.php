@@ -34,10 +34,9 @@ class EnablingObjectiveController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         if (request()->wantsJson()) {
-            return ['message' => $enablingObjective];
+            return $enablingObjective;
         }
 
-        return back();
     }
 
     /**

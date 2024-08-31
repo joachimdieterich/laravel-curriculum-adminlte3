@@ -9,7 +9,7 @@
         </h1>
 
         <div style="text-align: center; padding: 25px; font-size:100px;"
-             @click.prevent="showModal('terminal-objective-modal', )">
+             @click.prevent="createTerminalObjective()">
             +
         </div>
     </div>
@@ -24,7 +24,7 @@
         </h1>
 
         <div style="text-align: center; padding: 25px; font-size:100px;"
-             @click.prevent="showModal('enabling-objective-modal')">
+             @click.prevent="createEnablingObjective()">
             +
         </div>
     </div>
@@ -35,7 +35,7 @@
          v-bind:style="{ 'background-color': backgroundcolor, 'border-color': bordercolor, 'opacity': opacity, 'filter': filter }"
     >
         <!-- don't load Header if it isn't needed -->
-        <Header v-if="settings.edit == true" 
+        <Header v-if="settings?.edit == true"
             :objective="objective"
             :type="type"
             :menuEntries="menuEntries"
@@ -52,7 +52,7 @@
                  v-bind:style="{'background': background, 'background-color': backgroundcolor, 'border-color': objective.color }">
                 <div class="boxcontent"
                      v-bind:style="{ 'color': textcolor }"
-                     v-html="objective.title">
+                     v-dompurify-html="objective.title">
                 </div>
             </div>
         </div>
@@ -67,19 +67,17 @@
 
 
 <script>
-const Header =
-    () => import('./Header');
-const Footer =
-    () => import('./Footer');
-/*    import Header from './Header';
-    import Footer from './Footer';*/
+    import Header from './Header';
+    import Footer from './Footer';
 
 export default {
     props: {
         objective: {},
         objective_type_id: {},
         type: {},
-        settings: {},
+        settings: {
+
+        },
         editable: {
             default: false
         },
@@ -117,17 +115,20 @@ export default {
         }
     },
     methods: {
-        showModal(modal) {
-            this.$modal.show(modal, { 'objective': this.objective, 'method': 'post' , 'objective_type_id': this.objective_type_id});
+        createTerminalObjective(){
+            this.$eventHub.emit('createTerminalObjectives', { 'objective': this.objective, 'method': 'post' , 'objective_type_id': this.objective_type_id});
         },
-        async deleteEvent(){
-            try {
-                this.location = (await axios.delete('/'+this.type+'Objectives/'+this.objective.id)).data.message
-            }
-            catch(error) {
-                this.formerrors = error.response.data.errors;
-            }
-            this.$eventHub.$emit('deletedObjective', {'objective': this.objective, 'type': this.type});
+        createEnablingObjective(){
+            this.$eventHub.emit('createEnablingObjectives', { 'objective': this.objective, 'method': 'post' });
+        },
+         deleteEvent(){
+             axios.delete('/'+this.type+'Objectives/'+this.objective.id)
+                 .then(res => {
+                     this.$eventHub.emit('objective-deleted', {'objective': this.objective, 'type': this.type});
+                 })
+                 .catch(err => {
+                     console.log(err.response);
+                 });
         },
 
         async sortEvent(amount) {
@@ -144,10 +145,10 @@ export default {
             window.location = this.location;
         },
         showDetails() {
-            if (this.settings.achievements === undefined || !this.editable) {
+            if (this.settings?.achievements === undefined || !this.editable) {
                 location.href= '/'+this.type+'Objectives/'+this.objective.id;
             } else {
-                this.$modal.show('set-achievements-modal', { 'objective': this.objective });
+                //todo: change -> this.$modal.show('set-achievements-modal', { 'objective': this.objective });
             }
         },
 
@@ -179,7 +180,6 @@ export default {
             } else {
                 return this.visibility/100;
             }
-
         },
         filter: function () {
             return "alpha(opacity="+this.visibility+")";
@@ -205,22 +205,19 @@ export default {
                         }
                     }
                 }
-
 //                    if (typeof this.objective.quote_subscriptions !== "undefined"){
 //                        let check = this.objective.quote_subscriptions.find(c => c.siblings.find(s => s.quotable.curriculum_id == this.settings.cross_reference_curriculum_id))
 //                        if (typeof check !== "undefined"){
 //                              this.visibility = 100;
 //                        }
 //                    }
-
             } else {
                 this.visibility = 100;
             }
-
         }
     },
     created: function () {
-        this.$eventHub.$on('deleteObjective', function(deletedObjective) {
+        this.$eventHub.on('deleteObjective', function(deletedObjective) {
             if (this.objective === deletedObjective){
                 this.deleteEvent()
             }
@@ -243,4 +240,3 @@ export default {
     },
 }
 </script>
-

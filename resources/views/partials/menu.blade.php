@@ -143,8 +143,7 @@
                     </li>
                 @endcan
 
-
-{{--                @can('assignment_show')--}}
+                @can('test_access')
                     <li class="nav-item"
                         role="menuitem">
                             <a href="{{ route("exams.index") }}"
@@ -155,7 +154,20 @@
                             </p>
                         </a>
                     </li>
-{{--                @endcan--}}
+                @endcan
+
+                @can('videoconference_access')
+                    <li class="nav-item"
+                        role="menuitem">
+                        <a href="{{ route("videoconferences.index") }}"
+                           class="nav-link {{ request()->is('videoconferences') || request()->is('videoconferences/*') ? 'active' : '' }}">
+                            <i class="fa fa-chalkboard-teacher"></i>
+                            <p>
+                                <span>{{ trans('global.videoconference.title') }}</span>
+                            </p>
+                        </a>
+                    </li>
+                @endcan
 
                 @can('user_access')
                     <li class="nav-header"
@@ -257,12 +269,12 @@
                     @can('organization_type_access')
                         <li class="nav-item"
                             role="menuitem">
-                            <a href="{{ route("organizationtypes.index") }}"
-                               class="nav-link {{ request()->is('organizationtypes') || request()->is('organizationtypes/*') ? 'active' : '' }}">
+                            <a href="{{ route("organizationTypes.index") }}"
+                               class="nav-link {{ request()->is('organizationTypes') || request()->is('organizationTypes/*') ? 'active' : '' }}">
                                 <i class="fas fa-city"
                                    aria-hidden="true"></i>
                                 <p>
-                                    <span>{{ trans('global.organizationtype.title') }}</span>
+                                    <span>{{ trans('global.organizationType.title') }}</span>
                                 </p>
                             </a>
                         </li>

@@ -1,110 +1,165 @@
 <template>
-    <modal
-        id="content-modal"
-        name="content-modal"
-        height="auto"
-        width="100%"
-        :maxWidth=900
-        :adaptive=true
-        draggable=".draggable"
-        :resizable=true
-        @before-open="beforeOpen"
-        @opened="opened"
-        @before-close="beforeClose"
-        style="z-index: 1200">
-        <div class="card"
-             style="margin-bottom: 0 !important">
+    <Transition name="modal">
+        <div v-if="show"
+             class="modal-mask"
+        >
+        <div class="modal-container">
             <div class="card-header">
-                 <h3 class="card-title">
-                    {{ content.title }}
-                 </h3>
-
-                 <div class="card-tools">
-                     <button v-can="'curriculum_edit'"
-                             type="button"
-                             class="btn btn-tool"
-                             @click="del()">
-                        <i class="fa fa-trash text-danger"></i>
-                     </button>
-                     <button v-can="'curriculum_edit'"
-                             type="button"
-                             class="btn btn-tool"
-                             @click="edit('content-create-modal')">
-                        <i class="fa fa-edit"></i>
-                     </button>
-                     <button type="button" class="btn btn-tool draggable" >
-                        <i class="fa fa-arrows-alt"></i>
-                     </button>
-                     <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
+                <h3 class="card-title">
+                    <span v-if="method === 'post'">
+                        {{ trans('global.content.create') }}
+                    </span>
+                    <span v-if="method === 'patch'">
+                        {{ trans('global.content.edit') }}
+                    </span>
+                </h3>
+                <div class="card-tools">
+                    <button type="button"
+                            class="btn btn-tool"
+                            @click="$emit('close')">
                         <i class="fa fa-times"></i>
-                     </button>
-                 </div>
-
+                    </button>
+                </div>
             </div>
 
-            <div class="card-body" style="max-height: 80vh; overflow-y: auto;"
-                 v-html="content.content">
-            </div>
-            <div class="card-footer">
-                <span class="pull-right">
-                     <button type="button" class="btn btn-primary" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
-                </span>
-            </div>
+            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                <div class="form-group "
+                    :class="form.errors.title ? 'has-error' : ''"
+                      >
+                    <label for="title">{{ trans('global.content.fields.title') }} *</label>
+                    <input
+                        type="text" id="title"
+                        name="title"
+                        class="form-control"
+                        v-model="form.title"
+                        :placeholder="trans('global.content.fields.title')"
+                        required
+                        />
+                     <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                </div>
 
+                <div class="form-group">
+                    <label for="content">
+                        {{ trans('global.content.fields.content') }}
+                    </label>
+                    <Editor
+                        id="content"
+                        name="content"
+                        :placeholder="trans('global.content.fields.content')"
+                        class="form-control"
+                        :init="tinyMCE"
+                        :initial-value="form.content"
+                    ></Editor>
+                </div>
+            </div>
+                <div class="card-footer">
+                     <span class="pull-right">
+                         <button
+                             id="content-cancel"
+                             type="button"
+                             class="btn btn-default mr-2"
+                             @click="$emit('close')">
+                             {{ trans('global.cancel') }}
+                         </button>
+                         <button
+                             id="content-save"
+                             class="btn btn-primary"
+                             @click="submit(method)" >
+                             {{ trans('global.save') }}
+                         </button>
+                    </span>
+                </div>
         </div>
-    </modal>
+    </div>
+    </Transition>
 </template>
-
 <script>
+    import Form from 'form-backend-validation';
+    import Editor from '@tinymce/tinymce-vue';
+
 
     export default {
+        components:{
+            Editor,
+        },
+        props: {
+            show: {
+                type: Boolean
+            },
+            params: {
+                type: Object
+            },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
+
+        },
         data() {
             return {
-                content: [],
-                quote: null,
-                subscribable: null,
-                errors: {}
+                component_id: this._uid,
+                method: 'post',
+                url: '/contents',
+                form: new Form({
+                    'id':'',
+                    'title': '',
+                    'content': '',
+                    'subscribable_type': null,
+                    'subscribable_type': null,
+                }),
+                tinyMCE: this.$initTinyMCE(
+                    [
+                        "autolink link curriculummedia table lists"
+                    ],
+                    {
+                        'eventHubCallbackFunction': 'insertContent',
+                        'eventHubCallbackFunctionParams': this.component_id,
+                    }
+                ),
+                search: '',
             }
+        },
+        watch: {
+            params: function(newVal, oldVal) {
+                this.form.reset();
+                this.form.subscribable_type = newVal.subscribable_type;
+                this.form.subscribable_id = newVal.subscribable_id;
+                this.form.populate(newVal);
+                if (this.form.id != ''){
+                    this.method = 'patch';
+                } else {
+                    this.method = 'post';
+                }
+            },
+
         },
         methods: {
-            beforeOpen(event) {
-                if (event.params.content) {
-                    this.content = event.params.content;
-                    //console.log(event.params.quote);
-                    if (event.params.quote) {
-                        this.quote = event.params.quote;
-                    }
-                    if (event.params.subscribable) {
-                        this.subscribable = event.params.subscribable;
-                    }
-                }
+             submit(method) {
+                 this.form.content = tinyMCE.get('content').getContent();
+                 if (method == 'patch') {
+                     this.update();
+                 } else {
+                     this.add();
+                 }
             },
-            opened(){
-                this.$nextTick(function () {
-                    document.getElementById('quote_'+this.quote).scrollIntoView({ block: 'start', behavior: 'smooth' })
-                });
-
+            add(){
+                axios.post(this.url, this.form)
+                    .then(r => {
+                        this.$eventHub.emit('content-added', r.data);
+                    })
+                    .catch(e => {
+                        console.log(e.response);
+                    });
             },
-            beforeClose() {
-            },
-            edit(modal){
-                 this.$modal.show(modal, { 'id': this.content.id, 'method': 'patch' });
-            },
-            async del(){
-                try {
-                    await axios.post('/contents/'+this.content.id+'/destroy',  { 'subscribable': this.subscribable } );
-                }
-                catch(error) {
-                    this.errors = response.data.errors;
-                }
-               location.reload();
-            },
-            close(){
-                this.$modal.hide('content-modal');
+            update() {
+                axios.patch(this.url + '/' + this.form.id, this.form)
+                    .then(r => {
+                        this.$eventHub.emit('content-updated', r.data);
+                        // vorher: this.$parent.$emit('addContent', this.form);
+                    })
+                    .catch(e => {
+                        console.log(e.response);
+                    });
             }
         },
-
-
-
+        mounted() {
+        },
     }
 </script>
+

@@ -56,7 +56,9 @@ return [
     'save' => 'Speichern',
     'open' => 'Öffnen',
     'cancel' => 'Abbrechen',
+    'ok' => 'OK',
     'close' => 'Schließen',
+    'preview' => 'Vorschau',
     'generate' => 'erzeugen',
     'share' => 'Teilen',
     'pleaseSelect' => 'Bitte wählen ',
@@ -70,6 +72,8 @@ return [
     'youAreLoggedIn' => 'Sie sind eingeloggt!',
     'user_name' => 'Benutzername',
     'reset_password' => 'Passwort zurücksetzen',
+    'reset_password_success' => 'Passwort erfolgreich geändert.',
+    'reset_password_error' => 'Passwortänderung fehlgeschlagen.',
     'login' => 'Anmelden',
     'login_text' => 'Melden Sie sich an',
     'login_guest' => 'Gastzugang',
@@ -119,6 +123,7 @@ return [
         'online' => 'online',
         'now_online' => 'jetzt online',
     ],
+    'extendedSettings' => 'Erweiterte Einstellungen',
     'about' => 'Über',
     'information' => 'Informationen',
     'documentation' => 'Dokumentation',
@@ -155,13 +160,17 @@ return [
             'data_type_helper' => '',
         ],
         'model_limiter_title' => 'Limiter konfigurieren',
-        'model_limiter_description' => 'Hier kann ein Limit für die maximal erstellbare Anzahl an Objekten (z. B. Logbücher) festgelegt werden.',
+        'model_limiter_description' => 'Limit für die maximal erstellbare Anzahl an Objekten (z. B. Logbücher) festlegen.',
     ],
     'metadataset' => [
         'title' => 'Metadatensets',
         'title_singular' => 'Metadatenset',
         'create' => 'Metadatenset erstellen',
         'edit' => 'Metadatenset bearbeiten',
+        'delete' => 'Metadatenset löschen',
+        'delete_success' => 'Metadatenset gelöscht.',
+        'delete_error' => 'Metadatensetlöschung fehlgeschlagen.',
+        'delete_helper' => 'Soll das Metadatenset gelöscht werden?',
         'fields' => [
             'version' => 'Version',
             'version_helper' => '',
@@ -206,6 +215,8 @@ return [
         'title_singular' => 'Rolle',
         'create' => 'Rolle erstellen',
         'edit' => 'Rolle bearbeiten',
+        'enrol' => 'Rolle zuweisen',
+        'expel' => 'Rolle entziehen/ausschreiben',
         'fields' => [
             'permissions' => 'Berechtigungen',
             'permissions_helper' => '',
@@ -219,7 +230,20 @@ return [
         'add' => 'Benutzer hinzufügen',
         'create' => 'Benutzer erstellen',
         'edit' => 'Benutzer bearbeiten',
+        'delete' => 'Benutzer löschen',
+        'delete_success' => 'Benutzer gelöscht.',
+        'delete_error' => 'Benutzerlöschung fehlgeschlagen.',
+        'delete_helper' => 'Soll der Benutzer sowie die zugehörigen Daten gelöscht werden?',
         'import' => 'Benutzer importieren',
+        'set_status' => 'Benutzerstatus ändern.',
+        'set_status_success' => 'Benutzerstatus geändern.',
+        'set_status_error' => 'Benutzerstatusänderung fehlgeschlagen.',
+        'enrol' => 'Benutzer einschreiben',
+        'expel' => 'Benutzer ausschreiben',
+        'expel_helper' => 'Soll der Benutzer aus der Gruppe ausgeschrieben werden?',
+        'enrol_success' => 'Benutzer erfolgreich ausgeschrieben.',
+        'enrol_error' => 'Benutzerausschreibung fehlgeschlagen.',
+        'no_selection' => 'Es wurden keine Benutzer ausgewählt.',
         'import_helper' => 'Die CSV-Datei muss folgendes Format haben:
                 <ul>
                     <li>Die ersten Zeile muss die Schlüsselwerte enthalten (z.B.:username, password, firstname, lastname, email, role_id, confirmed, postalcode, city, state, country).</li>
@@ -333,6 +357,7 @@ return [
     'if_you_are_having_trouble' => 'Wenn Sie Probleme beim Klicken auf die',
     'copy_paste_url_bellow' => 'kopieren Sie die untenstehende URL und fügen Sie sie in Ihren Webbrowser ein:',
     'registration' => 'Registrierung',
+    'registration_confirme' => 'Registrierung bestätigen',
     'not_approved_title' => 'Sie sind nicht berechtigt',
     'not_approved_p' => 'Ihr Benutzerkonto ist immer noch nicht vom Administrator freigegeben. Bitte, haben Sie Geduld und versuchen Sie es später noch einmal.',
     'there_were_problems_with_input' => 'Es gab Probleme bei der Eingabe',
@@ -344,6 +369,7 @@ return [
     'import_data' => 'Importiere Daten',
     'imported_rows_to_table' => ':rows Zeilen in Tabelle :table importiert',
     'import' => 'Import',
+    'select' => 'Auswählen',
     'select_all' => 'Alle auswählen',
     'deselect_all' => 'Alle abwählen',
     'team-management' => 'Teams',
@@ -363,6 +389,8 @@ return [
         'title_singular' => 'Organisation',
         'create' => 'Organisation erstellen',
         'edit' => 'Organisation bearbeiten',
+        'delete' => 'Organisation löschen',
+        'delete_helper' => 'Soll die Organisation sowie die zugehörigen Daten gelöscht werden?',
         'fields' => [
             'title' => 'Name',
             'street' => 'Straße',
@@ -386,12 +414,22 @@ return [
         'title_singular' => 'Gruppe',
         'create' => 'Gruppe erstellen',
         'edit' => 'Gruppe bearbeiten',
+        'delete' => 'Gruppe löschen',
+        'delete_helper' => 'Soll die Gruppe sowie die zugehörigen Daten gelöscht werden?',
+        'enrol' => 'Gruppe einschreiben',
+        'expel' => 'Gruppe ausschreiben',
+        'enrol_success' => 'Gruppe(n) einschreiben',
+        'enrol_success_error' => 'Gruppe(n) einschreiben',
+        'expel_success' => 'Gruppe(n) ausgeschreiben',
+        'expel_success_error' => 'Gruppe(n)ausschreibung fehlgeschlagen',
+
     ],
     'grade' => [
         'title' => 'Klassen-/Lernstufen',
         'title_singular' => 'Klassen-/Lernstufe',
         'create' => 'Klassen-/Lernstufe erstellen',
         'edit' => 'Klassen-/Lernstufe bearbeiten',
+        'delete_helper' => 'Soll die Klassen-/Lernstufe sowie die zugehörigen Daten gelöscht werden?',
         'fields' => [
             'external_begin' => 'Anfang',
             'external_begin_helper' => '',
@@ -399,7 +437,7 @@ return [
             'external_end_helper' => '',
         ],
     ],
-    'organizationtype' => [
+    'organizationType' => [
         'title' => 'Organisations-Typen',
         'title_singular' => 'Organisation-Typ',
         'create' => 'Organisation-Typ erstellen',
@@ -458,6 +496,7 @@ return [
         'title_singular' => 'Lernzeitraum',
         'create' => 'Lernzeitraum erstellen',
         'edit' => 'Lernzeitraum bearbeiten',
+        'delete_helper' => 'Soll der Lernzeitraum sowie die zugehörigen Daten gelöscht werden?',
         'fields' => [
             'begin_helper' => '',
             'end_helper' => '',
@@ -563,13 +602,14 @@ return [
         'edit' => 'Glossar bearbeiten',
         'print' => 'Glossar drucken',
     ],
-    'media' => [
+    'medium' => [
         'title' => 'Medien',
         'title_singular' => 'Medium',
         'add' => 'Medien hinzufügen',
         'create' => 'Medium erstellen',
         'edit' => 'Medium bearbeiten',
-        'upload' => 'Medium hochladen',
+        'upload' => 'Medien/Medium hochladen',
+        'upload_helper' => 'Zum Hochladen Datei(en) hierher ziehen<br> oder  klicken um Datei(en) auszuwählen',
         'no_media' => 'Es wurden noch keine Medien verknüpft.',
         'link' => 'Link',
         'fields' => [
@@ -602,6 +642,7 @@ return [
         'title_singular' => 'Navigator',
         'create' => 'Navigator erstellen',
         'edit' => 'Navigator bearbeiten',
+        'delete_helper' => 'Soll der Navigator entfernt werden?',
     ],
     'navigator_view' => [
         'title' => 'Navigator-Views',
@@ -639,7 +680,8 @@ return [
     'course' => [
         'title' => 'Kurse',
         'title_singular' => 'Kurs',
-        'create' => 'Curriculum verknüpfen'
+        'create' => 'Curriculum verknüpfen',
+        'delete_helper' => 'Soll Kurseinschreibung entfernt werden?',
     ],
     'achievement' => [
         'title' => 'Leistungen',
@@ -679,6 +721,8 @@ return [
         'create' => 'Zertifkat-Vorlage erstellen',
         'edit' => 'Zertifkat-Vorlage bearbeiten',
         'generate' => 'Zertifkat(e) erstellen',
+        'delete' => 'Zertifkat löschen',
+        'delete_helper' => 'Soll das Zertifkat sowie die zugehörigen Daten gelöscht werden?',
         'fields' => [
             'body' => 'Zertifikat-Template',
             'body_helper' => '',
@@ -718,6 +762,8 @@ return [
         'title_singular' => 'Aufgabe',
         'create' => 'Aufgabe erstellen',
         'edit' => 'Aufgabe bearbeiten',
+        'delete' => 'Aufgabe löschen',
+        'delete_helper' => 'Soll die Aufgabe sowie die dazugehörigen Daten gelöscht werden?',
         'subscriptions' => 'Zuordnungen',
         'fields' => [
             'start_date' => 'Startdatum',
@@ -880,7 +926,7 @@ return [
             'iterations' => 'Wiederholungen'
         ]
     ],
-    'contactdetail' => [
+    'contactDetail' => [
         'title' => 'Kontaktdaten',
         'title_singular' => 'Kontaktdaten',
         'create' => 'Kontaktdaten erstellen',
@@ -1109,6 +1155,7 @@ return [
             'allJoinAsModerator_helper' => '',
             'anyoneCanStart' => 'Teilnehmende dürfen die Konferenz ohne Moderator:in starten',
             'anyoneCanStart_helper' => '',
+            'server' => 'Server',
         ],
         'ALWAYS_ACCEPT' => 'Gäste erlauben',
         'ALWAYS_DENY' => 'Gäste haben keinen Zugriff',
@@ -1137,7 +1184,7 @@ return [
             'zoom_helper' => '',
         ],
     ],
-    'marker' => [
+    'mapMarker' => [
         'title' => 'Marker',
         'title_singular' => 'Marker',
         'create' => 'Marker erstellen',
@@ -1152,8 +1199,25 @@ return [
             'link_helper' => '',
         ],
     ],
+    'mapMarkerType'=> [
+        'title_singular' => 'Marker-Typ'
+    ],
+    'mapMarkerCategory'=> [
+        'title_singular' => 'Marker-Kategorie'
+    ],
+
     'global' => [
         'title_singular'        => 'global verfügbar',
-    ]
-
+    ],
+    'statusdefinition' => [
+        'title_singular'        => 'Status',
+    ],
+    'level' => [
+        'title' => 'Niveaus',
+        'title_singular' => 'Niveau',
+        'create' => 'Niveau erstellen',
+        'edit' => 'Niveau bearbeiten',
+        'delete' => 'Niveau löschen',
+        'delete_helper' => 'Soll das Niveau gelöscht werden?',
+    ],
 ];

@@ -17,6 +17,10 @@ class KanbanSubscription extends Model
         'title'
     ];
 
+    protected $casts = [
+        'editable' => 'boolean',
+    ];
+
     /**
      * Get the subscriber model.
      */

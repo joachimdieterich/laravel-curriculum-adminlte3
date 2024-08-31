@@ -8,7 +8,7 @@
             <tr v-for="subscription in subscriptions">
                 <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100px;"
                     class="link-muted text-sm px-2 pointer"
-                    @click="show('medium', subscription.medium)"
+                    @click="show(subscription.medium)"
                 >
 
                     <i class="pr-2"
@@ -16,16 +16,22 @@
                     ></i>
                     {{ subscription.medium.title }}
 
-                    <i class="pull-right fa fa-graduation-cap text-muted"
-                       v-if="subscription.visibility && currentUser.id === subscription.owner_id"
+                    <i v-if="$userId == subscription.owner_id"
+                       v-permission="'medium_delete'"
+                       class="pull-right fa fa-trash text-danger"
+                       @click.stop="destroy(subscription)"
+                    ></i>
+<!--                    <i class="pull-right fa fa-graduation-cap text-muted"
+                       v-if="subscription.visibility && ($userId == subscription.owner_id)"
                        v-permission="'artefact_create'"
                        @click.stop="setArtefact(subscription.medium.id)"
                     ></i>
-                    <i v-else-if="currentUser.id === subscription.user_id"
+
+                    <i v-else-if="$userId == subscription.owner_id"
                        v-permission="'artefact_delete'"
                        class="pull-right fa fa-trash text-danger"
                        @click.stop="destroyArtefact(subscription.medium.id)"
-                    ></i>
+                    ></i>-->
 
                     <license class="pull-right pr-2"
                              :licenseId="subscription.medium.license_id"
@@ -37,7 +43,7 @@
                     class="py-2 link-muted text-sm pointer"
                     v-permission="'medium_create'"
                     v-if="url == '/mediumSubscriptions'"
-                    @click="show('medium-create', subscription)"
+                    @click="addMedia()"
                 >
                     <i class="fa fa-plus px-2 "></i> {{ trans('global.media.add')}}
                 </td>
@@ -52,7 +58,7 @@
         class="box box-objective pointer my-1"
         style="height: 300px !important; min-width: 200px !important; padding: 0; background-size: 100%,50%;"
         :style="{'background-image':'url('+href(subscription.medium.id)+')'}"
-        @click="show('medium', subscription.medium)"
+        @click="show(subscription.medium)"
     >
         <div class="symbol"
             style="position: absolute;
@@ -96,19 +102,32 @@
         <span class="bg-white text-center p-1 overflow-auto "
             style="position:absolute; bottom:0px; height: 150px; width:100%;"
         >
-            <h6 class="events-heading pt-1 hyphens" v-html="subscription.medium.title"></h6>
-            <p class=" text-muted small" v-html="subscription.medium.description"></p>
+            <h6 class="events-heading pt-1 hyphens" v-dompurify-html="subscription.medium.title"></h6>
+            <p class=" text-muted small" v-dompurify-html="subscription.medium.description"></p>
         </span>
 
     </div>
+    <Teleport to="body">
+<!--        <MediumModal
+            :show="this.mediumStore.getShowMediumModal"
+            @close="this.mediumStore.setShowMediumModal(false)"
+        ></MediumModal> todo: has to be one level higher, sometimes media is used multiple times-->
+        <MediumPreviewModal
+            :show="this.showMediumPreviewModal"
+            @close="this.showMediumPreviewModal = false"
+            :params="this.currentMedium"
+        ></MediumPreviewModal>
+    </Teleport>
 </div>
-
 </template>
 
 
 <script>
+    import License from '../uiElements/License';
+    import {useMediumStore} from "../../store/media.js";
+    import MediumPreviewModal from "./MediumPreviewModal";
+    import MediumModal from "./MediumModal.vue";
 
-    import License from '../uiElements/License'
     export default {
         props: {
             subscription: {},
@@ -120,6 +139,12 @@
             url: {
                 type: String,
                 default: '/mediumSubscriptions'
+            },
+        },
+        setup () { //use database store
+            const mediumStore = useMediumStore();
+            return {
+                mediumStore
             }
         },
         data() {
@@ -127,7 +152,9 @@
                 component_id: this._uid,
                 subscriptions: {},
                 errors: {},
-                currentUser: {}
+                currentUser: {},
+                currentMedium: null,
+                showMediumPreviewModal: false,
             }
         },
         watch: { // reload if context change
@@ -146,15 +173,19 @@
                     console.log(e);
                 });
             },
-            show(model, entry) {
-                this.$modal.show(model.toLowerCase() + '-modal', {
-                    'content': entry,
+            show(mediumObject) {
+                this.currentMedium = mediumObject;
+                this.showMediumPreviewModal = true;
+            },
+            addMedia() {
+                this.mediumStore.setMediumModalParams(
+                    {
+                    'show': true,
                     'subscribeSelected': true,
                     'subscribable_type': this.subscribable_type,
                     'subscribable_id': this.subscribable_id,
                     'public': this.public,
-                    'eventHubCallbackFunction': 'addMedia',
-                    'eventHubCallbackFunctionParams': this.component_id
+                    'callbackId': this.component_id
                 });
             },
             async unlinkMedium(subscription) { //id of external reference and value in db
@@ -196,7 +227,19 @@
                 });
 
             },
-            destroyArtefact(medium_id) {
+            destroy(subscription) {
+                axios.post('/media/'+subscription.medium.id+'/destroy', {
+                        'subscribable_type': this.subscribable_type,
+                        'subscribable_id': this.subscribable_id
+                    })
+                    .then((response) => {
+                        this.loader();
+                    })
+                    .catch((e) => {
+                        console.log(e)
+                    });
+            },
+            /*destroyArtefact(medium_id) {
                 axios.post('/artefacts/destroy', {
                     subscribable_type: this.subscribable_type,
                     subscribable_id: this.subscribable_id,
@@ -205,26 +248,32 @@
                 .then((response) => {
                     this.loader();
                 });
-
-
+            },*/
+            loadModal() {
+                this.mediumStore.setMediumModalParams(
+                    {
+                        'show': true,
+                        'subscribeSelected': false,
+                        'public': this.public,
+                        'callbackId': this.component_id
+                    });
             }
         },
         beforeMount() {
-            axios.get('/users/current').then(response => {
-                this.currentUser =  response.data.user
-            })
             if (this.subscribable_type  != ''){
                 this.loader();
             }
         },
         mounted() {
-            this.$eventHub.on('addMedia', (e) => {
+            this.$eventHub.on('medium-added', (e) => {
                 if (this.component_id == e.id) {
                     this.loader();
                 }
             });
         },
         components: {
+            MediumModal,
+            MediumPreviewModal,
             License
         }
 

@@ -150,7 +150,7 @@
                 }
             },
             close() {
-                this.$modal.hide('content-create-modal');
+                //this.$modal.hide('content-create-modal');
             }
         },
         mounted() {

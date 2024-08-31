@@ -1,54 +1,59 @@
 <template>
     <div>
-
-        <draggable
-            class="row px-1"
-            :disabled='!enableDraggable'
-            v-model="definitions"
-            @start="drag=true"
-            @end="handleVariantMoved">
             <!-- no variantdefinitions in curriculum OR no variants on objective -->
             <div v-if="model.curriculum.variants === null || (!enableDraggable && model.variants.length === 0)"
                  class="col-12 pb-2">
                 <div v-if="field === 'description'"
-                     v-html="model.description"></div>
+                     v-dompurify-html="model.description"></div>
                 <div v-else
-                     v-html="model.title"></div>
+                     v-dompurify-html="model.title"></div>
             </div>
 
             <!-- with variants -->
             <div v-else
-                 v-for="variant_definition in definitions"
-                 :class="width_css"
-                 class="px-2">
-                <div style="height:100%"
-                     :class="css_form">
-                    <i v-if="field !== 'description' && variant_definition.id !== 0"
-                       v-can="'curriculum_edit'"
-                       class="fa fa-pencil-alt pointer pull-right"
-                       @click="togglEdit(variant_definition.id)"></i>
-                    <p class="text-bold" v-if="showTitle">
-                        {{ variant_definition.title }}
-                    </p>
-                    <div v-if="variant_definition.id === 0">
-                        <div v-if="field === 'description' "
-                             v-html="model.description"></div>
-                        <div v-else v-html="model.title"></div>
-                    </div>
-                    <div v-else>
-                    <span v-if="filterVariant(variant_definition.id).length !== 0">
-                        <div v-if="filterVariant(variant_definition.id)[0][field] != '' "
-                             style="height:100%">
-                            <span v-html="filterVariant(variant_definition.id)[0][field]"></span>
-                        </div>
-                    </span>
+                 >
+                <draggable
+                    :disabled='!enableDraggable'
+                    v-model="definitions"
+                    @start="drag=true"
+                    @end="handleVariantMoved"
+                    class="row px-2"
+                    itemKey="id">
+                    <template
+                        #item="{ element: variant_definition , index }">
+                            <div
+                                :class="width_css"
+                                 >
+                                <div :class="css_form"
+                                     style="height:100%">
+                                    <i v-if="field !== 'description' && variant_definition.id !== 0"
+                                       v-can="'curriculum_edit'"
+                                       class="fa fa-pencil-alt pointer pull-right"
+                                       @click="togglEdit(variant_definition.id)"></i>
+                                    <p class="text-bold" v-if="showTitle">
+                                        {{ variant_definition.title }}
+                                    </p>
+                                    <div v-if="variant_definition.id === 0">
+                                        <div v-if="field === 'description' "
+                                             v-dompurify-html="model.description"></div>
+                                        <div v-else v-dompurify-html="model.title"></div>
+                                    </div>
+                                    <div v-else>
+                                    <span v-if="filterVariant(variant_definition.id).length !== 0">
+                                        <div v-if="filterVariant(variant_definition.id)[0][field] != '' "
+                                             style="height:100%">
+                                            <span v-dompurify-html="filterVariant(variant_definition.id)[0][field]"></span>
+                                        </div>
+                                    </span>
 
-                    </div>
+                                    </div>
+                                </div>
 
-                </div>
-
+                            </div>
+                    </template>
+                </draggable>
             </div>
-        </draggable>
+
 
         <div v-if="edit"
              class="row pt-2 ">
@@ -57,27 +62,31 @@
                     <div class="form-group "
                          :class="form.errors.title ? 'has-error' : ''">
                         <label for="title">{{ trans('global.terminalObjective.fields.title') }} *</label>
-                        <textarea
+                        <Editor
                             id="title"
                             name="title"
-                            class="form-control description my-editor"
-                            v-model="form.title"
-                        ></textarea>
+                            :placeholder="trans('global.terminalObjective.fields.title')"
+                            class="form-control"
+                            :init="tinyMCE"
+                            :initial-value="form.title"
+                        ></Editor>
                         <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
                     </div>
                     <div class="form-group "
                          :class="form.errors.description ? 'has-error' : ''">
                         <label for="description">{{ trans('global.terminalObjective.fields.description') }}</label>
-                        <textarea
+                        <Editor
                             id="description"
                             name="description"
-                            class="form-control description my-editor"
-                            v-model="form.description"
-                        ></textarea>
+                            :placeholder="trans('global.terminalObjective.fields.description')"
+                            class="form-control"
+                            :init="tinyMCE"
+                            :initial-value="form.description"
+                        ></Editor>
                         <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
                     </div>
                     <span class="">
-                         <button type="button" class="btn btn-info" @click="edit = !edit;">{{ trans('global.cancel') }}</button>
+                         <button type="button" class="btn btn-info mr-2" @click="edit = !edit;">{{ trans('global.cancel') }}</button>
                          <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
                     </span>
                 </div>
@@ -89,9 +98,9 @@
 </template>
 <script>
 import Form from 'form-backend-validation';
-const draggable =
-    () => import('vuedraggable');
-/*import draggable from "vuedraggable";*/
+import draggable from "vuedraggable";
+import Editor from "@tinymce/tinymce-vue";
+
 
 
 export default {
@@ -129,7 +138,19 @@ export default {
                 'referenceable_id': '',
                 'variant_definition_id': '',
             }),
-            variants:{},
+            tinyMCE: this.$initTinyMCE(
+                [
+                    "autolink link curriculummedia table lists"
+                ],
+                {
+                    'public': 1,
+                    'referenceable_type': 'App\\\Curriculum',
+                    'referenceable_id': this.model?.curriculum_id,
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id
+                }
+            ),
+            variants: {},
             definitions: null,
             edit: false,
         }
@@ -252,6 +273,8 @@ export default {
     },
     components: {
         draggable,
+        Editor,
+
     }
 }
 </script>

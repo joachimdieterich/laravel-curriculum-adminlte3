@@ -9,7 +9,9 @@
            @click="createNewItem()"
         >
             <div class="nav-item-box-image-size text-center">
-                <i class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
+                <slot name="itemIcon" >
+                    <i class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
+                </slot>
             </div>
             <span class="text-center p-1 overflow-auto nav-item-box bg-gray-light">
                    <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
@@ -18,33 +20,42 @@
             </span>
         </a>
         <a v-else
-            :href="url + '/' + item.DT_RowId"
            class="text-decoration-none text-black"
+           :style="isSelected(item) ? 'filter: brightness(80%); width:100%;  height:100%;  position:absolute;  top:0;left:0;' :  ''"
         >
             <div v-if="item.medium_id"
+                 @click="clickEvent(item)"
                  class="nav-item-box-image-size"
                  :style="{'background': 'url(/media/' + item.medium_id + '?model='+modelName+'&model_id=' + item.DT_RowId +') top center no-repeat', 'background-size': 'cover', }">
                 <div class="nav-item-box-image-size"
                      style="width: 100% !important;"
-                     :style="{backgroundColor: item.color + ' !important',  'opacity': '0.5'}">
+                     :style="{backgroundColor: item.color + ' !important',  'opacity': '0.25'}">
                 </div>
             </div>
             <div v-else
+                 @click="clickEvent(item)"
                  class="nav-item-box-image-size text-center"
                  :style="{backgroundColor: item.color + ' !important'}">
             </div>
-            <span class="bg-white text-center p-1 overflow-auto nav-item-box">
-               <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                   {{ item.title }}
-               </h1>
-               <p class="text-muted small"
-                  v-html="htmlToText(item.description)">
-               </p>
+            <span @click="clickEvent(item)">
+                <slot name="content">
+                    <span class="bg-white text-center p-1 overflow-auto nav-item-box">
+                       <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
+                           {{ item[this.titleField] }}
+                       </h1>
+                       <p class="text-muted small">
+                           {{ htmlToText(item[this.descriptionField])}}
+                       </p>
+                    </span>
+                </slot>
             </span>
+
+
 
             <slot name="owner"></slot>
 
-            <div class="symbol"
+            <div @click="clickEvent(item)"
+                 class="symbol"
                  :style="'color:' + $textcolor(item.color) + '!important'"
                  style="position: absolute; width: 30px; height: 40px;">
                 <slot name="icon"></slot>
@@ -55,6 +66,7 @@
                  style="position:absolute; top:0; right: 0; background-color: transparent;"
                  data-toggle="dropdown"
                  aria-expanded="false"
+
             >
                 <i class="fas fa-ellipsis-v"
                    :style="'color:' + $textcolor(item.color)"></i>
@@ -65,36 +77,73 @@
 </template>
 
 <script>
+import { storeToRefs } from 'pinia';
+import { useDatatableStore } from "../../store/datatables";
 export default {
     props: {
         model: {},
         modelName: String,
         url: String,
+        titleField: {
+            type: String,
+            default: 'title'
+        },
+        descriptionField: {
+            type: String,
+            default: 'description'
+        },
+        urlOnly: false,
         create: false,
         createLabel: String,
+        storeTitle: String, //data store
+        color: {
+            type: String,
+            default: '#27AE60'
+        },
+    },
+    setup () { //use database store
+        const store = useDatatableStore();
+        const { getDatatable } = storeToRefs(store);
+        const { isSelected } = storeToRefs(store);
+        return {
+            store
+        }
     },
     data() {
         return {
             name: "IndexWidget",
             item: {},
+            href: "",
         }
     },
 
     mounted() {
         if (!this.create) {
             this.item = this.model;
-            this.item.color = this.item.color ?? '#27AE60'; //fallback
+            this.item.description = this.model.description ?? ''; //fallback
+            this.item.color = this.item.color ?? this.color; //fallback
             this.item.medium_id = this.item.medium_id ?? null; //fallback
         }
     },
+
     methods: {
+        isSelected(item){
+            return (this.store.isSelected(this.storeTitle, item));
+        },
         createNewItem(){
             this.$eventHub.emit('create'+this.modelName, true);
+        },
+        clickEvent(item){
+            if (this.store.getDatatable(this.storeTitle)?.select){ // selectMode
+                this.store.addSelectItems(this.storeTitle, item);
+            } else {
+                if (this.urlOnly){
+                    window.location = this.url
+                } else {
+                    window.location = this.url + '/' + item.id; //item.DT_RowId ? -> will not work for new entries
+                }
+            }
         }
     }
 }
 </script>
-
-<style scoped>
-
-</style>

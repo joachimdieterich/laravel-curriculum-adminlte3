@@ -1,76 +1,82 @@
 <template>
-    <modal
-        id="note-modal"
-        name="note-modal"
-        height="auto"
-        :adaptive=true
-        draggable=".draggable"
-        :resizable=true
-        @before-open="beforeOpen"
-        style="z-index: 1200">
-        <div class="card"
-             style="margin-bottom: 0 !important">
+    <Transition name="modal">
+        <div v-if="show"
+             class="modal-mask"
+        >
+        <div class="modal-container">
             <div class="card-header">
-                 <h3 class="card-title">
-                    {{ trans('global.notes') }}
-                 </h3>
-
-                 <div class="card-tools">
-                     <button type="button" class="btn btn-tool draggable" >
-                        <i class="fa fa-arrows-alt"></i>
-                     </button>
-                     <button type="button"
-                             class="btn btn-tool"
-                             data-widget="remove"
-                             @click="close()">
+                <h3 class="card-title">
+                    <span v-if="method === 'post'">
+                        {{ trans('global.note.create') }}
+                    </span>
+                    <span v-if="method === 'patch'">
+                        {{ trans('global.note.edit') }}
+                    </span>
+                </h3>
+                <div class="card-tools">
+                    <button type="button"
+                            class="btn btn-tool"
+                            @click="$emit('close')">
                         <i class="fa fa-times"></i>
-                     </button>
-                 </div>
+                    </button>
+                </div>
             </div>
 
-            <notes :notable_type="notable_type"
-                   :notable_id="notable_id"
-                   :show_tabs="show_tabs"></notes>
+            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                <Notes :notable_type="this.form.notable_type"
+                       :notable_id="this.form.notable_id"
+                       :show_tabs="this.form.show_tabs"></Notes>
+            </div>
 
             <div class="card-footer">
-                <span class="pull-right">
-                     <button type="button"
-                             class="btn btn-default"
-                             data-widget="remove"
-                             @click="close()">
+                 <span class="pull-right">
+                     <button
+                         id="note-save"
+                         class="btn btn-primary"
+                         @click="$emit('close')" >
                          {{ trans('global.close') }}
                      </button>
                 </span>
             </div>
         </div>
-    </modal>
+    </div>
+    </Transition>
 </template>
-
 <script>
-const Notes =
-    () => import('../note/Notes');
-    //import Notes from '../note/Notes'
+    import Notes from "./Notes.vue";
+    import Form from 'form-backend-validation';
 
     export default {
+        components:{
+            Notes,
+        },
+        props: {
+            show: {
+                type: Boolean
+            },
+            params: {
+                type: Object
+            },
+        },
         data() {
             return {
-                notable_type: { type: Boolean, default: false },
-                notable_id: { type: Boolean, default: false },
-                show_tabs: { type: Boolean, default: true }
+                component_id: this._uid,
+                form: new Form({
+                    'notable_type': false,
+                    'notable_id': false,
+                    'show_tabs': true,
+                }),
             }
         },
-        methods: {
-            beforeOpen(event) {
-                this.notable_type = event.params.notable_type;
-                this.notable_id = event.params.notable_id;
-                this.show_tabs = event.params.show_tabs;
+        watch: {
+            params: function(newVal, oldVal) {
+                this.form.reset();
+                this.form.populate(newVal);
             },
-            close(){
-                this.$modal.hide('note-modal');
-            },
+
         },
-        components: {
-            Notes,
-        }
+        methods: {},
+        mounted() {},
     }
 </script>
+

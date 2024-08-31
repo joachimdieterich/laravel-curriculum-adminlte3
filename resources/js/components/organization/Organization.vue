@@ -6,13 +6,13 @@
                     <div class="card-title">
                         <h5 class="m-0">
                             <i class="fa fa-university mr-1"></i>
-                            {{ this.organization.title }}
+                            {{ this.currentOrganization.title }}
                         </h5>
                     </div>
                     <div
                         v-permission="'organization_edit'"
                         class="card-tools pr-2">
-                        <a  @click="editOrganization(organization, false, false)">
+                        <a  @click="editOrganization(false, false)">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
                     </div>
@@ -21,11 +21,11 @@
 
                 <div class="card-body">
                     <strong>
-                        <i class="fas fa-signal mr-1"></i>
-                        {{ trans('global.organizationtype.title_singular') }}
+                        <i class="fas fa-city mr-1"></i>
+                        {{ trans('global.organizationType.title_singular') }}
                     </strong>
                     <p class="text-muted">
-                        {{ organization.type.title }}
+                        {{ this.currentOrganization.type?.title }}
                     </p>
                     <hr>
 
@@ -35,13 +35,13 @@
                     </strong>
                     <a v-permission="'organization_edit_address'"
                         class="pull-right link-muted"
-                       @click="editOrganization(organization, true, false)" >
+                       @click="editOrganization(true, false)" >
                         <i class="fas fa-pencil-alt"></i>
                     </a>
                     <p class="text-muted">
-                        {{ organization.street }}<br>
-                        {{ organization.postcode }} {{ organization.city }}<br>
-                        {{ organization.state.lang_de }}, {{ organization.country.lang_de }}
+                        {{ this.currentOrganization.street }}<br>
+                        {{ this.currentOrganization.postcode }} {{ this.currentOrganization.city }}<br>
+                        {{ this.currentOrganization.state?.lang_de }}, {{ this.currentOrganization.country?.lang_de }}
                     </p>
                     <hr>
 
@@ -49,8 +49,8 @@
                         {{ trans('global.contactdetail.title_singular') }}
                     </strong>
                     <p class="text-muted">
-                        {{ trans('global.organization.fields.phone') }}: {{ organization.phone }}<br>
-                        {{ trans('global.organization.fields.email') }}: {{ organization.email }}
+                        {{ trans('global.organization.fields.phone') }}: {{ this.currentOrganization.phone }}<br>
+                        {{ trans('global.organization.fields.email') }}: {{ this.currentOrganization.email }}
                     </p>
                     <hr>
 
@@ -59,11 +59,11 @@
                     </strong>
                     <a v-permission="'organization_edit_address'"
                         class="pull-right link-muted"
-                       @click="editOrganization(organization, false, true)" >
+                       @click="editOrganization(false, true)" >
                         <i class="fas fa-pencil-alt"></i>
                     </a>
                     <p class="text-muted">
-                        {{ organization.lms_url }}
+                        {{ this.currentOrganization.lms_url }}
                     </p>
                     <hr>
 
@@ -71,18 +71,18 @@
                         {{ trans('global.organization.fields.description') }}
                     </strong>
                     <p class="text-muted"
-                        v-html="organization.description"></p>
+                        v-dompurify-html="this.currentOrganization.description"></p>
                 </div>
 
                 <div class="card-footer">
                     <div class="float-left">
                     <span
                         class="btn-xs btn-block pull-right">
-                        {{ status_definitions[organization.status_id].lang_de }}
+                        {{ status_definitions[this.currentOrganization.status_id]?.lang_de }}
                     </span>
                     </div>
                     <small class="float-right">
-                        {{ organization.updated_at }}
+                        {{ this.currentOrganization.updated_at }}
                     </small>
                 </div>
             </div>
@@ -140,7 +140,7 @@
                 @close="this.showOrganizationModal = false"
                 :onlyAddress="this.onlyAddress"
                 :onlyLmsUrl="this.onlyLmsUrl"
-                :params="currentOrganization"
+                :params="this.currentOrganization"
             ></OrganizationModal>
         </Teleport>
     </div>
@@ -171,20 +171,20 @@ export default {
             onlyLmsUrl: false,
         }
     },
-    mounted() {},
-    methods: {
-        editOrganization(organization, onlyAddress, onlyLmsUrl){
+    mounted() {
+        this.currentOrganization = this.organization;
+        this.$eventHub.on('organization-updated', (organization) => {
             this.currentOrganization = organization;
+            this.showOrganizationModal = false;
+        });
+
+    },
+    methods: {
+        editOrganization(onlyAddress, onlyLmsUrl){
             this.onlyAddress = onlyAddress ?? this.onlyAddress;
             this.onlyLmsUrl = onlyLmsUrl ?? this.onlyLmsUrl;
             this.showOrganizationModal = true;
         },
-        editAddress(){}
     }
-
 }
 </script>
-
-<style scoped>
-
-</style>

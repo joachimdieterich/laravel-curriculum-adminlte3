@@ -26,7 +26,7 @@
                     type="button" class="btn btn-tool "
                     role="button"
                     :aria-label="trans('global.add')"
-                    @click="show('content-create-modal')">
+                    @click="this.showContentModal = true">
                 <i class="fa fa-plus"></i>
             </button>
             <button v-permission="'content_create, ' + subscribable_type + '_content_create'"
@@ -34,7 +34,7 @@
                     type="button" class="btn btn-tool "
                     role="button"
                     :aria-label="trans('global.paste')"
-                    @click="show('content-subscription-modal')">
+                    @click="this.showContentSubscriptionModal = true">
                 <i class="fa fa-paste"></i>
             </button>
             <button v-permission="'content_create, ' + subscribable_type + '_content_create'"
@@ -64,7 +64,8 @@
         </div>
     </div>
 
-    <div class="card-content"  v-if="subscriptions.length !== 0">
+    <div v-if="subscriptions.length !== 0"
+         class="card-content">
         <div :id="'contentCarousel_'+uid" class="carousel slide" data-interval="false">
             <ol class="carousel-indicators">
                 <li :data-target="'#contentCarousel_'+uid"
@@ -127,8 +128,8 @@
                                  <small class="text-muted"
                                         :data-target="'#contentCarousel_'+uid"
                                         :data-slide-to="index+1"
-                                        @click="setSlide(index+1)">
-                                    {{item.content.content }}
+                                        @click="setSlide(index+1)"
+                                 v-dompurify-html="item.content.content">
                                  </small>
                              </span>
                          </li>
@@ -138,21 +139,53 @@
                 <div v-for="item in subscriptions"
                      class="carousel-item" :title="item.content.title">
                     <div class="p-3"
-                         v-html="item.content.content"
+                         v-dompurify-html="item.content.content"
                     ></div>
                 </div>
             </div>
         </div>
     </div>
-    <content-subscription-modal
-        :subscribable_type="subscribable_type"
-        :subscribable_id="subscribable_id"
-    ></content-subscription-modal>
-    <content-create-modal></content-create-modal>
+
+
+    <Teleport to="body">
+        <ContentSubscriptionModal
+            :show="this.showContentSubscriptionModal"
+            @close="this.showContentSubscriptionModal = false"
+            :params="{
+                'subscribable_type': subscribable_type,
+                'subscribable_id': subscribable_id,
+            }"
+        ></ContentSubscriptionModal>
+        <ContentModal
+            :show="this.showContentModal"
+            @close="this.showContentModal = false"
+            :params="currentContent"
+        ></ContentModal>
+
+        <ConfirmModal
+            :showConfirm="this.showConfirm"
+            :title="trans('global.content.delete')"
+            :description="trans('global.content.delete_helper')"
+            css= 'danger'
+            :ok_label="trans('trans.global.ok')"
+            :cancel_label="trans('trans.global.cancel')"
+            @close="() => {
+                    this.showConfirm = false;
+                }"
+            @confirm="() => {
+                    this.showConfirm = false;
+                    this.destroy();
+                }"
+        ></ConfirmModal>
+    </Teleport>
     </div>
 </template>
 
 <script>
+import ContentSubscriptionModal from "./ContentSubscriptionModal.vue";
+import ConfirmModal from "../uiElements/ConfirmModal";
+import ContentModal from "./ContentModal";
+
     export default {
         props: {
             subscription: {},
@@ -161,13 +194,21 @@
             medium: {},
             format: ''
         },
+        components: {
+            ContentSubscriptionModal,
+            ConfirmModal,
+            ContentModal
+        },
         data() {
             return {
                 uid: null,
-                subscriptions: {},
+                subscriptions: [],
                 errors: {},
                 currentSlide: 0,
-                currentContent: 'Index'
+                currentContent: {},
+                showConfirm: false,
+                showContentModal: false,
+                showContentSubscriptionModal: false
             }
         },
         methods: {
@@ -190,13 +231,7 @@
                 }
                 $('#contentCarousel_' + this.uid).carousel(this.currentSlide);
             },
-            show(modal) {
-                this.$modal.show(modal, {
-                    'referenceable_type': this.subscribable_type,
-                    'referenceable_id': this.subscribable_id,
-                    'method': 'post'
-                });
-            },
+
             async sortEvent(contentSubscription,amount) {
                 let subscription = {
                     'subscribable_type': contentSubscription.subscribable_type,
@@ -224,23 +259,27 @@
                 }
             },
             edit(contentSubscription) {
-                this.$modal.show('content-create-modal', {
+                /*this.$modal.show('content-create-modal', {
                     'id': contentSubscription.content_id,
                     'method': 'patch',
                     'referenceable_type': contentSubscription.subscribable_type,
                     'referenceable_id': contentSubscription.subscribable_id
-                });
+                });*/
             },
-            async deleteSubscription(contentSubscription) {
-                try {
-                    await axios.post('/contents/'+contentSubscription.content_id+'/destroy',  { 'referenceable_type': contentSubscription.subscribable_type, 'referenceable_id': contentSubscription.subscribable_id } );
-                    // remove on page
-                    let index = this.subscriptions.indexOf(contentSubscription);
-                    this.subscriptions.splice(index, 1);
-                }
-                catch(error) {
-                    this.errors = error.response.data.errors;
-                }
+            deleteSubscription(contentSubscription) {
+                axios.post('/contents/'+contentSubscription.content_id+'/destroy',
+                        {
+                            'subscribable_type': contentSubscription.subscribable_type,
+                            'subscribable_id': contentSubscription.subscribable_id
+                        }
+                    )
+                    .then(res => {
+                        let index = this.subscriptions.indexOf(contentSubscription);
+                        this.subscriptions.splice(index, 1);
+                    })
+                    .catch(e => {
+                        console.log(e.response);
+                    });
             },
             loaderEvent() {
                 axios.get('/contentSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id)
@@ -255,9 +294,16 @@
         mounted() {
             this.uid = this._uid;
             this.currentSlide = 0;
-            this.$on('addContent', function(newContent) {
+
+            this.$eventHub.on('content-added', function(newContent) {
+                this.showContentModal = false;
                 this.loaderEvent();
-            });
+            }.bind(this));
+
+            this.currentContent = {
+                'subscribable_type': this.subscribable_type,
+                'subscribable_id': this.subscribable_id,
+            }
             MathJax.startup.defaultReady();
         }
 

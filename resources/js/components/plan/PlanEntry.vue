@@ -30,7 +30,7 @@
                             <img v-if="Number.isInteger(entry.medium_id)"
                                  class="pull-right"
                                  :src="'/media/' + entry.medium_id + '/thumb'"/>
-                            <span v-html="entry.description"></span>
+                            <span v-dompurify-html="entry.description"></span>
 
                             <objectives
                                 referenceable_type="App\PlanEntry"

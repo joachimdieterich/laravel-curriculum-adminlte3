@@ -86,7 +86,7 @@
                                 v-can="'kanban_delete'"
                                 name="kanbanStatusDelete"
                                 class="dropdown-item py-1 text-red "
-                                @click="confirmStatusDelete()">
+                                @click="confirmItemDelete()">
                                 <i class="fa fa-trash mr-4"></i>
                                 {{ trans('global.delete') }}
                             </button>
@@ -96,27 +96,38 @@
             </div>
             <div v-if="(!status.locked || $userId == status.owner_id) || $userId == kanban.owner_id"
                  class="pull-right handle pointer">
-                <i class="fa fa-arrows-up-down-left-right text-muted"></i>
+                <span class="fa-stack fa-1x">
+                  <i class="fa-solid fa-arrows-up-down-left-right fa-stack-1x"></i>
+                  <i v-if="status.locked"
+                     class="fa-solid fa-lock fa-stack-1x text-muted" style="left:10px;top:10px"></i>
+                </span>
             </div>
 
         </div>
 
-        <Modal
-            :id="'statusModal_'+form.id"
-            css="danger"
-            :title="trans('global.kanbanStatus.delete')"
-            :text="trans('global.kanbanStatus.delete_helper')"
-            :ok_label="trans('global.kanbanStatus.delete')"
-            v-on:ok="deleteStatus"
-        />
+        <Teleport to="body">
+            <ConfirmModal
+                :showConfirm="this.showConfirm"
+                :title="trans('global.kanbanStatus.delete')"
+                :description="trans('global.kanbanStatus.delete_helper')"
+                css= 'danger'
+                :ok_label="trans('trans.global.ok')"
+                :cancel_label="trans('trans.global.cancel')"
+                @close="() => {
+                    this.showConfirm = false;
+                }"
+                @confirm="() => {
+                    this.showConfirm = false;
+                    this.destroy();
+                }"
+            ></ConfirmModal>
+        </Teleport>
+
     </div>
 </template>
 <script>
 import Form from "form-backend-validation";
-
-const Modal =
-    () => import('./../uiElements/Modal');
-//import Modal from "./../uiElements/Modal";
+import ConfirmModal from "../uiElements/ConfirmModal";
 
 export default {
     name: 'KanbanStatus',
@@ -130,6 +141,9 @@ export default {
     },
     data() {
       return {
+          component_id: this._uid,
+          showConfirm: false,
+          currentStatus : {},
           editor: false,
           form: new Form({
               'id': '',
@@ -178,10 +192,11 @@ export default {
                 });
             this.editor = false;
         },
-        confirmStatusDelete(){
-            $('#statusModal_'+ this.form.id).modal('show');
+        confirmItemDelete(status){
+            this.currentStatus = status;
+            this.showConfirm = true;
         },
-        deleteStatus(){
+        destroy(){
             axios.delete("/kanbanStatuses/"+this.form.id)
                 .then(() => {
                     this.$emit("status-destroyed", this.status);
@@ -209,7 +224,7 @@ export default {
         },
     },
     components: {
-        Modal,
+        ConfirmModal
     }
 }
 </script>

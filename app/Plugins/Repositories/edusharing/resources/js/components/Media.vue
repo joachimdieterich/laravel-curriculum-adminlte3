@@ -2,7 +2,8 @@
     <div class="col-12">
         <ul class="nav nav-tabs"
             role="tablist">
-            <li class="btn btn-sm btn-outline-secondary m-2"
+            <li v-if="$userId != 8"
+                class="btn btn-sm btn-outline-secondary m-2"
                 v-bind:class="[(currentTab === 1) ? 'active' : '']"
                 id="edusharing_my_files-nav"
                 data-toggle="pill"
@@ -127,6 +128,8 @@
 
 <script>
 
+    import {useMediumStore} from "../../../../../../../resources/js/store/media";
+
     export default {
         props: {
                 'model': {},
@@ -138,6 +141,12 @@
                 maxItems: 20,
                 errors:  {},
                 currentTab: 1,
+            }
+        },
+        setup () { //use database store
+            const mediumStore = useMediumStore();
+            return {
+                mediumStore,
             }
         },
         methods: {
@@ -217,22 +226,36 @@
                 this.currentTab = id;
             },
             addMedia() {
-                this.$modal.show(
+                this.mediumStore.setMediumModalParams(
+                    {
+                        'show': true,
+                        'subscribeSelected': true,
+                        'subscribable_type': this.subscribable_type(),
+                        'subscribable_id': this.model.id,
+                        'public': this.public,
+                        'callbackId': this.model.id
+                    });
+                /*this.$modal.show(
                     'medium-create-modal',
                     {
                         'referenceable_type': this.subscribable_type(),
                         'referenceable_id': this.model.id,
                         'eventHubCallbackFunction': 'reload_objective',
                         'eventHubCallbackFunctionParams': this.model.id,
-                    });
+                    });*/
             },
         },
         mounted() {
-            this.$eventHub.on('reload_objective', (e) => {
+            this.$eventHub.on('medium-added', (e) => {
                 if (this.model.id == e.id) {
                     this.loader();
                 }
             });
+            /*this.$eventHub.on('reload_objective', (e) => {
+                if (this.model.id == e.id) {
+                    this.loader();
+                }
+            });*/
         },
         watch: {
             media: function (value, oldValue) {

@@ -21,7 +21,7 @@ class ContentController extends Controller
     {
         $input = $this->validateRequest();
 
-        $this->permissionCheck($input['referenceable_type'], $input['referenceable_id']); //check context permission
+        $this->permissionCheck($input['subscribable_type'], $input['subscribable_id']); //check context permission
 
         $content = Content::Create([
             'title' => $input['title'],
@@ -32,16 +32,15 @@ class ContentController extends Controller
         $this->checkForEmbeddedMedia($content);
 
         //subscribe to model
-        if (isset($input['referenceable_type']) and isset($input['referenceable_id'])) {
-            $model = $input['referenceable_type']::find($input['referenceable_id']);
+        if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
+            $model = $input['subscribable_type']::find($input['subscribable_id']);
             $content->subscribe($model);
         }
 
         if (request()->wantsJson()) {
-            return ['message' => $content];
+            return $content;
         }
-
-        return redirect($content->path());
+        //return redirect($content->path());
     }
 
     /**
@@ -55,9 +54,7 @@ class ContentController extends Controller
         abort_unless($content->isAccessible(), 403);
 
         if (request()->wantsJson()) {
-            return [
-                'message' => $content,
-            ];
+            return $content;
         }
     }
 
@@ -72,7 +69,7 @@ class ContentController extends Controller
     {
         $input = $this->validateRequest();
 
-        $this->permissionCheck($input['referenceable_type'], $input['referenceable_id'], 'edit');
+        $this->permissionCheck($input['subscribable_type'], $input['subscribable_id'], 'edit');
 
         $content->update([
             'title' => $input['title'],
@@ -97,9 +94,9 @@ class ContentController extends Controller
     {
         $input = $this->validateRequest();
 
-        if (isset($input['referenceable_id']) and isset($input['referenceable_type'])) {
-            $subscribable_type = $input['referenceable_type'];
-            $subscribable_id = $input['referenceable_id'];
+        if (isset($input['subscribable_id']) and isset($input['subscribable_type'])) {
+            $subscribable_type = $input['subscribable_type'];
+            $subscribable_id = $input['subscribable_id'];
         }
 
         $this->permissionCheck($subscribable_type, $subscribable_id, 'delete');
@@ -130,7 +127,7 @@ class ContentController extends Controller
                 (new QuoteController)->destroy($quote); // delete and unsubscribe related objects
             }
 
-            //todo? delete unused categories
+            //todo? delete unused categories, not used anymore?
             $content->delete();
         } else {
             $subscription = ContentSubscription::where('subscribable_type', $subscribable_type)
@@ -188,31 +185,31 @@ class ContentController extends Controller
         return request()->validate([
             'title' => 'sometimes',
             'content' => 'sometimes|required',
-            'categorie_ids' => 'sometimes',
-            'referenceable_id' => 'sometimes',
-            'referenceable_type' => 'sometimes',
+            //'categorie_ids' => 'sometimes',
+            'subscribable_id' => 'sometimes',
+            'subscribable_type' => 'sometimes',
         ]);
     }
 
     /**
      * check if user is owner of curricula if creation context is curricula
      *
-     * @param $referenceable_type
-     * @param $referenceable_id
+     * @param $subscribable_type
+     * @param $subscribable_id
      * @return mixed
      */
-    private function permissionCheck($referenceable_type, $referenceable_id, $action = 'create')
+    private function permissionCheck($subscribable_type, $subscribable_id, $action = 'create')
     {
         abort_unless((\Gate::allows('content_'.$action) or
-            \Gate::allows($referenceable_type.'_content_'.$action)), 403);
+            \Gate::allows($subscribable_type.'_content_'.$action)), 403);
 
-        $model = $referenceable_type::find($referenceable_id);
+        $model = $subscribable_type::find($subscribable_id);
 
         if (is_admin()) {        //admin can edit every model
             return $model;
         }
 
-        switch ($referenceable_type) {
+        switch ($subscribable_type) {
             case "App\Curriculum":
                 abort_unless(($model->owner_id === auth()->user()->id), 403);
                 break;

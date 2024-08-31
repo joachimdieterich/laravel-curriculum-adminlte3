@@ -75,14 +75,21 @@
         },
         methods: {
             editObjective(entry) {
-                this.$modal.show(entry.value, {'objective': this.objective, 'method': 'PATCH' });
+                switch (entry.model) {
+                    case 'terminalObjectives':
+                        this.$eventHub.emit('editTerminalObjectives', this.objective);
+                        break;
+                    case 'enablingObjectives':
+                        this.$eventHub.emit('editEnablingObjectives', this.objective);
+                        break;
+                    default: console.log(entry);
+                }
             },
             moveObjective(entry) {
                 this.$modal.show(entry.value, {'objective': this.objective, 'method': 'PATCH' });
             },
             emitDeleteEvent() {
-                this.$eventHub.emit('deleteObjective', this.objective);
-                //this.$parent.$emit('eventDelete', this.objective)
+                this.$parent.$emit('eventDelete', this.objective)
             },
             action(entry) {
                 this.$modal.show(entry.value);

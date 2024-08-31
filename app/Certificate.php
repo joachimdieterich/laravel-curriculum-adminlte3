@@ -18,11 +18,6 @@ class Certificate extends Model
         'created_at'  => 'datetime',
     ];
 
-    /* protected $dates = [  --> change v.10
-         'updated_at',
-         'created_at',
-     ];*/
-
     /**
      * Prepare a date for array / JSON serialization.
      *

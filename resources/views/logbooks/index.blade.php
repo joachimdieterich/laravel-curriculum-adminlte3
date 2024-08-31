@@ -4,36 +4,15 @@
     {{ trans('global.logbook.title') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item">
-        @if (Auth::user()->id == env('GUEST_USER'))
-            <a href="/navigators/{{Auth::user()->organizations()->where('organization_id', '=',  Auth::user()->current_organization_id)->first()->navigators()->first()->id}}">Home</a>
-        @else
-            <a href="/"><i class="fa fa-home"></i></a>
-        @endif
-    </li>
-    <li class="breadcrumb-item active">{{ trans('global.logbook.title') }}</li>
-    <li class="breadcrumb-item ">
-        <a href="{{ env('DOCUMENTATION', '/documentation') }}"
-            class="text-black-50"
-            aria-label="{{ trans('global.documentation') }}"
-        >
-            <i class="fas fa-question-circle"></i>
-        </a>
-    </li>
+    <breadcrumbs
+        :entries="{{json_encode([
+            ['active'=> true, 'title'=> trans('global.logbook.title')]
+        ])}}"
+    ></breadcrumbs>
 @endsection
 @section('content')
-    <logbooks></logbooks>
+    <logbooks create_label_field="create"></logbooks>
     <medium-create-modal></medium-create-modal>
-    {{-- <table id="logbooks-datatable" class="table table-hover datatable">
-        <thead>
-        <tr>
-            <th width="10"></th>
-            <th>{{ trans('global.logbook.fields.title') }}</th>
-            <th>{{ trans('global.datatables.action') }}</th>
-        </tr>
-        </thead>
-    </table> --}}
-    {{--<data-table-widgets model-url="logbooks"></data-table-widgets>--}}
 @endsection
 
 @section('scripts')

@@ -52,6 +52,8 @@ class MapController extends Controller
         {
             case 'owner':            $maps = Map::where('owner_id', auth()->user()->id)->get();
                 break;
+            case 'by_organization':  $maps = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->maps;
+                break;
             case 'shared_with_me':   $maps = $this->userMaps(false);
                 break;
             case 'shared_by_me':     $maps = Map::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();

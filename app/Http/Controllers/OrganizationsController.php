@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Country;
 use App\Http\Requests\MassDestroyOrganizationRequest;
 use App\Organization;
 use App\OrganizationRoleUser;
-use App\OrganizationType;
-use App\State;
 use App\StatusDefinition;
 use App\User;
 use Yajra\DataTables\DataTables;
@@ -22,7 +19,7 @@ class OrganizationsController extends Controller
     public function index()
     {
 
-        if (request()->wantsJson() and request()->has(['term', 'page'])) {
+        if (request()->wantsJson()) {
             if (is_admin()) {
                 return  getEntriesForSelect2ByModel(
                     "App\Organization"
@@ -64,26 +61,6 @@ class OrganizationsController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        abort_unless(\Gate::allows('organization_create'), 403);
-        $status_definitions = StatusDefinition::all();
-        $organization_types = OrganizationType::all();
-        $countries = Country::all();
-        $states = State::where('country', 'DE')->get();
-
-        return view('organizations.create')
-            ->with(compact('status_definitions'))
-            ->with(compact('countries'))
-            ->with(compact('states'))
-            ->with(compact('organization_types'));
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -105,9 +82,8 @@ class OrganizationsController extends Controller
         );
 
         if (request()->wantsJson()) {
-            return ['message' => $organization->path()];
+            return $organization;
         }
-        //return redirect($organization->path());
     }
 
     /**
@@ -156,7 +132,7 @@ class OrganizationsController extends Controller
 
         $organization->update($clean_data);
 
-        return redirect($organization->path());
+        return $organization;
     }
 
     /**
@@ -170,18 +146,16 @@ class OrganizationsController extends Controller
         abort_unless(\Gate::allows('organization_delete'), 403);
         abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
 
-        $organization->delete();
-
-        return back();
+        return $organization->delete();
     }
 
-    public function massDestroy(MassDestroyOrganizationRequest $request)
+   /* public function massDestroy(MassDestroyOrganizationRequest $request)
     {
         abort_unless(\Gate::allows('organization_delete'), 403);
         Organization::whereIn('id', request('ids'))->delete();
 
         return response(null, 204);
-    }
+    }*/
 
     public function enrol()
     {
@@ -208,8 +182,9 @@ class OrganizationsController extends Controller
                 }
             }
         }
-
-        return $return;
+        if (request()->wantsJson()) {
+            return $return ?? null;
+        }
     }
 
     public function expel()
@@ -232,7 +207,9 @@ class OrganizationsController extends Controller
             }
         }
 
-        return $return;
+        if (request()->wantsJson()) {
+            return $return ?? null;
+        }
     }
 
     protected function validateRequest()

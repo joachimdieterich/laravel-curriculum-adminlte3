@@ -14,8 +14,8 @@
         <form action="{{ route("objectiveTypes.store") }}"
               method="POST"
               enctype="multipart/form-data">
-            @include ('objectivetypes.form', [
-                'objectivetype' => new App\ObjectiveType,
+            @include ('objectiveTypes.form', [
+                'objectiveType' => new App\ObjectiveType,
                 'buttonText' => trans('global.objectiveType.create')
             ])
         </form>

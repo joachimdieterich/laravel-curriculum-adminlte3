@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Role;
 use App\StatusDefinition;
 use App\Task;
+use App\TaskSubscription;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class TaskController extends Controller
 {
@@ -20,6 +23,24 @@ class TaskController extends Controller
 
         return view('tasks.index')
                 ->with(compact('tasks'));
+    }
+
+    public function list()
+    {
+        abort_unless(\Gate::allows('task_access'), 403);
+        $tasks = Task::with(['subscriptions' => function ($query) {
+                $query->where('subscribable_type', 'App\User');
+                $query->where('subscribable_id', auth()->user()->id);
+            },
+        ]);
+
+        return DataTables::of($tasks)
+            ->addColumn('check', '')
+            ->setRowId('id')
+            ->setRowAttr([
+                'color' => 'primary',
+            ])
+            ->make(true);
     }
 
     /**
@@ -138,13 +159,14 @@ class TaskController extends Controller
 
         //subscribe to model if not already subscribed
         $subscription = $task->subscribe(auth()->user());
+        //dump($subscription);
         ($subscription->completion_date == null) ? $subscription->complete() : $subscription->incomplete();
-
+        //dump($subscription);
         if (request()->wantsJson()) {
-            return ['status' => $task->path()];
+            return $subscription;
         }
 
-        return redirect($task->path());
+        //return redirect($task->path());
     }
 
     public function activity(Request $request, Task $task)
@@ -157,7 +179,7 @@ class TaskController extends Controller
             return ['activity' => $activity];
         }
 
-        return redirect($activity);
+        //return redirect($activity);
     }
 
     protected function validateRequest()

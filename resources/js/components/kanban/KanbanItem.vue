@@ -29,7 +29,7 @@
                             class="dropdown-item text-secondary  py-1"
                             @click="addMedia()">
                             <i class="fa fa-folder-open mr-2"></i>
-                            {{ trans('global.media.title_singular') }}
+                            {{ trans('global.medium.title_singular') }}
                         </button>
                         <div v-if="(item.editable == 1 && $userId == item.owner_id) || ($userId == kanban_owner_id)">
                             <hr class="my-1">
@@ -67,6 +67,8 @@
                         :id="'title_'+index"
                         type="text"
                         class="ml-2"
+                        :class="{ 'missing-input': highlightTitleInput }"
+                        @input="highlightTitleInput = false"
                         v-model="form.title"
                         style="width: 235px !important;font-size: 1.1rem; font-weight: 400; border: 0; border-bottom: 1px; border-style:solid; margin: 0;"
                         :style="{ backgroundColor: item.color, color: textColor }"
@@ -85,21 +87,27 @@
         <div class="card-body p-0">
             <div v-if="(editor == false)">
                 <div v-if="item.description !== null "
-                     class="text-muted small px-3 py-2"
-                     v-html="form.description">
+                     class="text-muted small px-3 py-2">
+                    <span v-if="item.replace_links">
+                        <HtmlRenderer
+                            :html-content="item.description">
+                        </HtmlRenderer>
+                    </span>
+                    <span v-if="!item.replace_links"
+                          v-dompurify-html="item.description"></span>
                 </div>
             </div>
 
             <div v-if="(editor !== false)"
             class="p-2">
                 <div class="pb-2">
-                    <textarea
+                    <Editor
                         :id="'description_' + item.id"
                         :name="'description_' + index"
-                        :placeholder="trans('global.kanbanItem.fields.description')"
-                        class="form-control description my-editor "
-                        v-model.trim="form.description"
-                    ></textarea>
+                        class="form-control"
+                        :init="tinyMCE"
+                        :initial-value="form.description"
+                    />
                 </div>
                 <div>
                     <b class="pt-2 pointer"
@@ -146,6 +154,16 @@
                             <label class="custom-control-label  font-weight-light"
                                    :for="'editable_'+ form.id" >
                                 {{ trans('global.editable') }}
+                            </label>
+                        </span>
+                        <span class="custom-control custom-switch custom-switch-on-green">
+                            <input  v-model="form.replace_links"
+                                    type="checkbox"
+                                    class="custom-control-input pt-1 "
+                                    :id="'replace_links_'+ form.id">
+                            <label class="custom-control-label  font-weight-light"
+                                   :for="'replace_links_'+ form.id" >
+                                {{ trans('global.replace_links') }}
                             </label>
                         </span>
                         <span class="custom-control custom-switch custom-switch-on-green">
@@ -230,7 +248,7 @@
                     class="contacts-list-img"
                     data-toggle="tooltip"
                 ></avatar>
-                <avatar
+<!--                <avatar
                     v-for="(editor_user, index) in editors"
                     v-if="editor_user != '' && $userId != 8"
                     :key="item.id + '_editor_' + index"
@@ -241,7 +259,7 @@
                     :size="25"
                     class="contacts-list-img"
                     data-toggle="tooltip"
-                ></avatar>
+                ></avatar>-->
 
                 <span class="d-flex flex-fill"></span>
                 <div v-if="commentable"
@@ -268,32 +286,38 @@
             :kanban_owner_id="kanban_owner_id"
             url="/kanbanItemComment"
         />
-        <Modal
-            :id="'itemModal_' + index"
-            css="danger"
-            :title="trans('global.kanbanItem.delete')"
-            :text="trans('global.kanbanItem.delete_helper')"
-            :ok_label="trans('global.kanbanItem.delete')"
-            v-on:ok="deleteItem"
-        />
+
+        <Teleport to="body">
+            <ConfirmModal
+                :showConfirm="this.showConfirm"
+                :title="trans('global.kanbanItem.delete')"
+                :description="trans('global.kanbanItem.delete_helper')"
+                css= 'danger'
+                :ok_label="trans('trans.global.ok')"
+                :cancel_label="trans('trans.global.cancel')"
+                @close="() => {
+                    this.showConfirm = false;
+                }"
+                @confirm="() => {
+                    this.showConfirm = false;
+                    this.destroy();
+                }"
+            ></ConfirmModal>
+        </Teleport>
     </div>
 </template>
 
 <script>
 import Form from "form-backend-validation";
 import DatePicker from 'vue3-datepicker';
-
-const mediaCarousel =
-    () => import('../media/MediaCarousel');
-const avatar =
-    () => import('../uiElements/Avatar');
-const Modal =
-    () => import('./../uiElements/Modal');
-const Reaction =
-    () => import('../reaction/Reaction');
-const Comments =
-    () => import('./Comments');
+import mediaCarousel from '../media/MediaCarousel';
+import avatar from '../uiElements/Avatar';
+import Reaction from '../reaction/Reaction';
+import Comments from './Comments';
 import moment from 'moment';
+import ConfirmModal from "../uiElements/ConfirmModal";
+import HtmlRenderer from "../uiElements/HtmlRenderer.vue";
+import Editor from "@tinymce/tinymce-vue";
 
 export default {
     props: {
@@ -303,7 +327,8 @@ export default {
         'commentable': false,
         'onlyEditOwnedItems': false,
         'likable': true,
-        'editable': true,
+        'editable': false,
+        'replace_links': true,
         'kanban_owner_id': {
             type: Number,
             default: null
@@ -311,6 +336,9 @@ export default {
     },
     data() {
         return {
+            component_id: this._uid,
+            showConfirm: false,
+            currentItem : {},
             new_media: null,
             show_comments: false,
             editor: false,
@@ -326,12 +354,23 @@ export default {
                 'due_date': null,
                 'locked': false,
                 'editable': true,
+                'replace_links': false,
                 'visibility': true,
                 'visible_from': null,
                 'visible_until': null,
             }),
             expand: false,
-            editors: {}
+            editors: {},
+            highlightTitleInput: false,
+            tinyMCE: this.$initTinyMCE(
+                [
+                    "autolink link lists table"
+                ],
+                {
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id,
+                }
+            ),
         };
     },
     computed:{
@@ -348,10 +387,11 @@ export default {
                 return moment(date).locale('de').fromNow();
             }
         },
-        confirmItemDelete(){
-            $('#itemModal_'+ this.index).modal('show');
+        confirmItemDelete(item){
+            this.currentItem = item;
+            this.showConfirm = true;
         },
-        deleteItem() {
+        destroy() {
             axios.delete("/kanbanItems/" + this.item.id)
                 .then(() => {
                     this.$emit("item-destroyed", this.item);
@@ -373,6 +413,12 @@ export default {
 
         },
         submit() {
+            if (this.form.title == null || this.form.title == ""){
+                const titleInput = document.getElementById('title_' + this.component_id);
+                titleInput.focus();
+                this.highlightTitleInput = true;
+                return;
+            }
             this.form.description = tinyMCE.get('description_'+this.item.id).getContent();
 
             axios.patch('/kanbanItems/' + this.form.id, this.form)
@@ -449,9 +495,11 @@ export default {
 
             return date.toLocaleString([], dateFormat);
         },
+
     },
     mounted() {
         this.form = this.item;
+
         this.getEditors();
         //this.due_date = this.item.due_date;
         this.$eventHub.on('reload_kanban_item', (e) => {
@@ -481,13 +529,15 @@ export default {
     },
 
     components: {
+        HtmlRenderer,
         Comments,
         Reaction,
         /*kanbanTask,*/
         mediaCarousel,
         avatar,
-        Modal,
-        DatePicker
+        DatePicker,
+        ConfirmModal,
+        Editor
     }
 }
 </script>
@@ -504,5 +554,8 @@ export default {
     font-size: 10px;
     line-height: 11px;
     vertical-align: middle;
+}
+.missing-input {
+    border-color: red !important;
 }
 </style>

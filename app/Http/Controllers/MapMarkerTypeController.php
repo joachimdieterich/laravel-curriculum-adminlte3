@@ -16,9 +16,12 @@ class MapMarkerTypeController extends Controller
     {
         //abort_unless(\Gate::allows('map_access'), 403);
         if (request()->wantsJson()) {
-            return [
+            return  getEntriesForSelect2ByModel(
+                "App\MapMarkerType"
+            );
+            /*return [
                 'mapMarkerTypes' => MapMarkerType::all()
-            ];
+            ];*/
         }
     }
 

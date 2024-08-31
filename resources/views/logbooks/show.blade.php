@@ -5,7 +5,9 @@
     @can('logbook_create')
         @if (Auth::user()->id ==  $logbook->owner_id)
             <a class="btn btn-flat"
-               href="/logbooks/{{ $logbook->id }}/edit">
+               href="/logbooks/{{ $logbook->id }}/edit"
+               onclick="this.$eventHub.emit('showSearchbar');"
+            >
                 <i class="fa fa-pencil-alt text-secondary"></i>
             </a>
             <button class="btn btn-flat"
@@ -17,16 +19,12 @@
     <p class="h6 pb-1">{{trans('global.owner')}}: {{ $logbook->owner->fullname() }}</p>
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item">
-        @if (Auth::user()->id == env('GUEST_USER'))
-            <a href="/navigators/{{Auth::user()->organizations()->where('organization_id', '=',  Auth::user()->current_organization_id)->first()->navigators()->first()->id}}">Home</a>
-        @else
-            <a href="/"><i class="fa fa-home"></i></a>
-        @endif
-    </li>
-    <li class="breadcrumb-item active">{{ trans('global.logbook.title_singular') }}</li>
-    <li class="breadcrumb-item "><a href="{{ env('DOCUMENTATION', '/documentation') }}" class="text-black-50"                                    aria-label="{{ trans('global.documentation') }}"><i
-                class="fas fa-question-circle"></i></a></li>
+    <breadcrumbs
+        :entries="{{json_encode([
+            ['active'=> true, 'title'=> trans('global.logbook.title_singular'), 'url' => "/logbooks"],
+            ['active'=> true, 'title'=> $logbook->title]
+        ])}}"
+    ></breadcrumbs>
 @endsection
 
 @section('content')
@@ -35,13 +33,13 @@
     <logbook :logbook="{{ $logbook }}"
              :period="{{App\Period::find(auth()->user()->current_period_id)}}"></logbook>
 
-    <medium-modal></medium-modal>
-    <medium-create-modal></medium-create-modal>
-    <subscribe-objective-modal></subscribe-objective-modal>
+<!--    <medium-modal></medium-modal>-->
+<!--    <medium-create-modal></medium-create-modal>-->
+<!--    <subscribe-objective-modal></subscribe-objective-modal>
     <logbook-entry-subject-modal></logbook-entry-subject-modal>
     <task-modal></task-modal>
     <absence-modal></absence-modal>
     @can('logbook_create')
         <subscribe-modal></subscribe-modal>
-    @endcan
+    @endcan-->
 @endsection

@@ -35,22 +35,7 @@ class LocalMediaAdapter implements MediaInterface
         abort_unless(\Gate::allows('medium_access'), 403);
         $media = (auth()->user()->role()->id == 1) ? Medium::all() : auth()->user()->media()->get();
 
-        $delete_gate = \Gate::allows('medium_delete');
-
         return DataTables::of($media)
-            ->addColumn('action', function ($media) use ($delete_gate) {
-                $actions = '';
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                        .'class="btn text-danger" '
-                        .'onclick="destroyDataTableEntry(\'media\','.$media->id.')">'
-                        .'<i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
-            })
-
-            ->addColumn('check', '')
             ->setRowId('id')
             ->setRowAttr([
                 'color' => 'primary',
@@ -70,7 +55,7 @@ class LocalMediaAdapter implements MediaInterface
 
     public function store(Request $request)
     {
-        if ($request->hasFile('file')) {
+        if ($request->hasFile('file')) { //if size == 0 increase upload_max_filesize in php.ini
             $input = $this->validateRequest();
 
             $files = $request->file('file');

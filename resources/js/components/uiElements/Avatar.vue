@@ -27,7 +27,7 @@
             <img v-if="typeof avatar_medium_id === 'number'"
                  class="direct-chat-img"
                  :class="css"
-                 :style="'width:'+size+'px !important;height:'+size+'px !important;'"
+                 :style="'width:'+size+'px !important; height:'+size+'px !important; float:none !important'"
                  :src="'/media/'+avatar_medium_id"/>
             <canvas
                 v-else

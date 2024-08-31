@@ -99,15 +99,19 @@
             },*/
             show() {
                 $("#loading_"+this.medium.id).show();
-                axios.get('/media/' + this.medium.id + '?content=true')
-                    .then((response) => {
-                        window.location.assign(response.data.url);
-                        $("#loading_"+this.medium.id).hide();
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        $("#loading_"+this.medium.id).hide();
-                    });
+                if (this.medium.adapter == 'local'){
+                    window.location.assign('/media/' + this.medium.id + '?download=true');
+                } else {
+                    axios.get('/media/' + this.medium.id + '?content=true')
+                        .then((response) => {
+                            window.location.assign(response.data.url);
+                            $("#loading_" + this.medium.id).hide();
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            $("#loading_" + this.medium.id).hide();
+                        });
+                }
             },
         },
         mounted(){

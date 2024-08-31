@@ -41,6 +41,20 @@ class ExamController extends Controller
         return getExamsJob::getFilteredExams($examListRequest);
     }
 
+    public function list()
+    {
+        abort_unless(\Gate::allows('test_access'), 403);
+        $exams = Exam::whereIn('group_id', auth()->user()->groups->pluck('id'));
+
+        return DataTables::of($exams)
+            ->addColumn('check', '')
+            ->setRowId('id')
+            ->setRowAttr([
+                'color' => 'primary',
+            ])
+            ->make(true);
+    }
+
     public function show(Exam $exam)
     {
         abort_unless(\Gate::allows('test_access'), 403);

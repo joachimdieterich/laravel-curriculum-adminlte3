@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Group;
 use App\Http\Requests\MassDestroyUserRequest;
 use App\Http\Requests\MassUpdateUserRequest;
 use App\Http\Requests\StoreUserRequest;
@@ -29,70 +30,50 @@ class UsersController extends Controller
             abort(403);
         }
         //every user should share with users of current org.
-        if (request()->wantsJson() and request()->has(['term', 'page'])) {
+        if (request()->wantsJson() /*and request()->has(['term', 'page'])*/) {
             return  getEntriesForSelect2ByCollection(
-                Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->noSharing(),
+                Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users(), //->noSharing(),
                 'users.',
-                ['username', 'firstname', 'lastname'],
+                ['username', 'firstname', 'lastname', 'medium_id'],
                 'lastname',
                 "CONCAT(firstname, ' ' ,lastname)",
             );
         }
-
-        abort_unless(\Gate::allows('user_access'), 403);
-        // todo check: is the following condition used anymore (-> used only by user-tab on group/{id}?) --> change to top condition
-        if (request()->wantsJson()) {
-            /*if (auth()->user()->role()->id == 1) {
-                $users = json_encode(User::withTrashed()
-                    ->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get());
-
-                return ['users' => $users];
-            } else {*/
-                return ['users' => json_encode(Organization::where('id', auth()->user()->current_organization_id)
-                    ->get()->first()->users()->get())];
-          /*  }*/
+        else
+        {
+            return view('users.index');
         }
 
-        return view('users.index');
+      /*  abort_unless(\Gate::allows('user_access'), 403);
+        // todo check: is the following condition used anymore (-> used only by user-tab on group/{id}?) --> change to top condition
+        if (request()->wantsJson()) {
+            return ['users' => json_encode(Organization::where('id', auth()->user()->current_organization_id)
+                ->get()->first()->users()->get())];
+        }*/
+
+
     }
 
     public function list()
     {
-        $users = (auth()->user()->role()->id == 1)
-            ? User::noSharing()->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')
-            : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->noSharing();
+        if (request()->has(['group_id']))
+        {
+            $request = request()->validate(
+                [
+                    'group_id' => 'required',
+                ]
+            );
+            $users = Group::where('id',$request['group_id'])->first()->users;
+        }
+        else
+        {
+            $users = (auth()->user()->role()->id == 1)
+                ? User::noSharing()->select('id', 'username', 'firstname', 'lastname', 'email', 'medium_id', 'deleted_at')
+                : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->noSharing();
 
-        $show_gate = \Gate::allows('user_show');
-        $edit_gate = \Gate::allows('user_edit');
-        $delete_gate = \Gate::allows('user_delete');
+        }
 
         return DataTables::of($users)
-            ->addColumn('action', function ($users) use ($show_gate, $edit_gate, $delete_gate) {
-                $actions = '';
-                if ($show_gate) {
-                    $actions .= '<a href="'.route('users.show', $users->id).'" '
-                                    .'id="show-user-'.$users->id.'" '
-                                    .'class="btn">'
-                                    .'<i class="fa fa-list-alt"></i>'
-                                    .'</a>';
-                }
-                if ($edit_gate) {
-                    $actions .= '<a href="'.route('users.edit', $users->id).'" '
-                                    .'id="edit-user-'.$users->id.'" '
-                                    .'class="btn">'
-                                    .'<i class="fa fa-pencil-alt"></i>'
-                                    .'</a>';
-                }
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                                .'class="btn text-danger" '
-                                .'onclick="destroyDataTableEntry(\'users\','.$users->id.')">'
-                                .'<i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
-            })
-
             ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
@@ -109,7 +90,6 @@ class UsersController extends Controller
     {
         abort_unless(\Gate::allows('user_create'), 403);
         //todo: users should only be created in accessible organizations/roles
-        //
         if (User::withTrashed()->where('email', request()->email)->exists()) {
             User::withTrashed()->where('email', request()->email)->restore();
             $user = User::where('email', request()->email)->get()->first();
@@ -191,7 +171,9 @@ class UsersController extends Controller
 
         $status_definitions = StatusDefinition::all();
         $user->load('roles');
-        $user->load('organizations');
+        $user->load(['organizations.state', 'organizations.country']);
+        $user->load('groups');
+        $user->load('contactDetail.owner');
 
         return view('users.show')
                 ->with(compact('user'))
@@ -213,12 +195,12 @@ class UsersController extends Controller
         }
     }
 
-    public function getCurrentUser()
+   /* public function getCurrentUser()
     {
         if (request()->wantsJson()) {
             return ['user' => auth()->user()];
         }
-    }
+    }*/
 
     /**
      * ! No soft delete !

@@ -3,10 +3,10 @@
         <ul class="nav nav-tabs ">
             <li v-if="show_tabs === true"
                 class="nav-item small"
-                @click="setLocalStorage('#note_view', '#note_view_all')"
+                @click="setGlobalStorage('#note_view', '#note_view_all')"
             >
                 <a class="nav-link show link-muted"
-                   :class="checkLocalStorage('#note_view', '#note_view_all', 'active', true)"
+                   :class="getGlobalStorage('#note_view', '#note_view_all', 'active', true)"
                    href="#all"
                    @click="loadNotes('all')"
                    data-toggle="tab">
@@ -16,10 +16,10 @@
             </li>
             <li v-if="show_tabs === true"
                 class="nav-item small"
-                @click="setLocalStorage('#note_view', '#note_view_users')"
+                @click="setGlobalStorage('#note_view', '#note_view_users')"
             >
                 <a class="nav-link show link-muted"
-                   :class="checkLocalStorage('#note_view', '#note_view_users')"
+                   :class="getGlobalStorage('#note_view', '#note_view_users')"
                    href="#users"
                    @click="loadNotes('User')"
                    data-toggle="tab">
@@ -29,10 +29,10 @@
             </li>
             <li v-if="show_tabs === true"
                 class="nav-item small"
-                @click="setLocalStorage('#note_view', '#note_view_groups')"
+                @click="setGlobalStorage('#note_view', '#note_view_groups')"
             >
                 <a class="nav-link show link-muted"
-                   :class="checkLocalStorage('#note_view', '#note_view_groups')"
+                   :class="getGlobalStorage('#note_view', '#note_view_groups')"
                    href="#users"
                    @click="loadNotes('Group')"
                    data-toggle="tab">
@@ -42,10 +42,10 @@
             </li>
             <li v-if="show_tabs === true"
                 class="nav-item small"
-                @click="setLocalStorage('#note_view', '#note_view_achievements')"
+                @click="setGlobalStorage('#note_view', '#note_view_achievements')"
             >
                 <a class="nav-link show link-muted"
-                   :class="checkLocalStorage('#note_view', '#note_view_achievements')"
+                   :class="getGlobalStorage('#note_view', '#note_view_achievements')"
                    href="#achievements"
                    @click="loadNotes('Achievement')"
                    data-toggle="tab">
@@ -105,12 +105,13 @@
                     </div>
                     <div class="form-group ">
                         <label for="note_content">{{ trans('global.note_text') }}</label>
-                        <textarea
+                        <Editor
                             id="note_content"
                             name="note_content"
-                            class="form-control content my-editor "
-                            v-model="form.content"
-                        ></textarea>
+                            class="form-control"
+                            :init="tinyMCE"
+                            :initial-value="form.content"
+                        />
                         <p class="help-block" v-if="form.errors.content" v-text="form.errors.content[0]"></p>
                     </div>
                     <button
@@ -173,7 +174,7 @@
                                 </a>
                             </small>
                             </span>
-                            <span v-html="item.content"></span>
+                            <span v-dompurify-html="item.content"></span>
                         </span>
                         <span :class="'note_editor_placeholder_'+item.id"></span>
                     </div>
@@ -186,12 +187,14 @@
 
 <script>
 import Form from 'form-backend-validation';
+import Editor from '@tinymce/tinymce-vue';
 
-const moment =
-    () => import('moment');
-//import moment from 'moment';
+import moment from 'moment';
 
 export default {
+    components:{
+        Editor,
+    },
     props: {
         notable_type: { type: String },
         notable_id: { type: Number },
@@ -213,6 +216,15 @@ export default {
             edit: false,
             hover: '',
             help: false,
+            tinyMCE: this.$initTinyMCE(
+                [
+                    "autolink link curriculummedia"
+                ],
+                {
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id,
+                }
+            ),
             search: '',
             timeFormatDiffForHumans: true,
             notables: {},
@@ -225,8 +237,8 @@ export default {
 
             try {
                 this.notes = (await axios.get('/notes'+params)).data;
-            } catch(error) {
-                //console.log('loading failed')
+            } catch(e) {
+                console.log(e)
             }
         },
         async loadNotables() {
@@ -366,14 +378,14 @@ export default {
         showNote(item) {
             let show = false;
 
-            if (item.title.toLowerCase().indexOf(this.search.toLowerCase()) !== -1
+            if (item?.title.toLowerCase().indexOf(this.search.toLowerCase()) !== -1
                 || item.content.toLowerCase().indexOf(this.search.toLowerCase()) !== -1
                 || this.search.length < 3){
                 show = true;
             }
 
-            if (typeof(item.notable) !== 'undefined'){
-                if (item.notable !== null){
+            if (typeof(item?.notable) !== 'undefined'){
+                if (item?.notable !== null){
                     if (item.notable_type === 'App\\User'){
                         if (item.notable.firstname.toLowerCase().indexOf(this.search.toLowerCase()) !== -1
                             || item.notable.lastname.toLowerCase().indexOf(this.search.toLowerCase()) !== -1){

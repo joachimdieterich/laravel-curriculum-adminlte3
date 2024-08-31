@@ -106,8 +106,10 @@ class moodle extends LmsPlugin
                 'wsfunction' => 'core_course_get_courses_by_field',
             ]
         );
+        //dump(json_decode($this->call($params)));
+        $result = json_decode($this->call($params))->courses;
+        return collect($result)->select(['id', 'fullname']);
 
-        return json_decode($this->call($params));
     }
 
     public function core_course_get_courses()
@@ -128,16 +130,19 @@ class moodle extends LmsPlugin
             $this->queryParams,
             [
                 'wsfunction' => 'core_course_get_contents',
-                'courseid' => $params['course_id'],
+                'courseid' => format_select_input($params['course_id']),
             ]
         );
 
         return json_decode($this->call($params));
     }
+    private function addTrailingSlash($str){
+        return rtrim($str,"/").'/';
+    }
 
     private function call($params, $httpMethod = '', $additionalHeaders = [], $postFields = [])
     {
-        $url = $this->lmsUrl.$this->wsPath.http_build_query($params); //build url
+        $url = $this->addTrailingSlash($this->lmsUrl) . $this->wsPath.http_build_query($params); //build url
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);

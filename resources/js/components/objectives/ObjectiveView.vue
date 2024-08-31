@@ -40,10 +40,10 @@
             <ul class="nav nav-tabs ">
                 <li v-if="objective.description !== ''"
                     class="nav-item small"
-                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_description_'+objective.id)"
+                    @click="setGlobalStorage('#objective_view_'+objective.id, '#objective_view_description_'+objective.id)"
                 >
                     <a class="nav-link show link-muted"
-                       :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_description_'+objective.id, 'active', true)"
+                       :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_description_'+objective.id, 'active', true)"
                        href="#description"
                        data-toggle="tab">
                         <i class="fa fa-info pr-1"></i>
@@ -52,10 +52,10 @@
                 </li>
 
                 <li class="nav-item"
-                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_related_objectives_'+objective.id)"
+                    @click="setGlobalStorage('#objective_view_'+objective.id, '#objective_view_related_objectives_'+objective.id)"
                 >
                     <a class="nav-link small link-muted"
-                       :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_related_objectives_'+objective.id)"
+                       :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_related_objectives_'+objective.id)"
                        href="#related_objectives"
                        data-toggle="tab">
                         <i class="fa fa-sitemap pr-1"></i>
@@ -69,10 +69,10 @@
                 </li>
 
                 <li class="nav-item"
-                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_content_tab_'+objective.id)"
+                    @click="setGlobalStorage('#objective_view_'+objective.id, '#objective_view_content_tab_'+objective.id)"
                 >
                     <a class="nav-link small link-muted"
-                       :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_content_tab_'+objective.id)"
+                       :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_content_tab_'+objective.id)"
                        data-toggle="tab"
                        href="#content_tab"
                        role="tab"
@@ -85,9 +85,9 @@
                 </li>
 
                 <li class="nav-item"
-                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_tab_media_'+objective.id)">
+                    @click="setGlobalStorage('#objective_view_'+objective.id, '#objective_view_tab_media_'+objective.id)">
                     <a class="nav-link small link-muted"
-                       :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_tab_media_'+objective.id)"
+                       :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_tab_media_'+objective.id)"
                        href="#tab_media"
                        data-toggle="tab"
                        @click="loadMedia()">
@@ -97,9 +97,9 @@
                 </li>
 
                 <li class="nav-item"
-                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_references_'+objective.id)">
+                    @click="setGlobalStorage('#objective_view_'+objective.id, '#objective_view_references_'+objective.id)">
                     <a class="nav-link small link-muted"
-                       :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_references_'+objective.id)"
+                       :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_references_'+objective.id)"
                        href="#references"
                        data-toggle="tab">
                         <i class="fa fa-project-diagram pr-1"></i>
@@ -110,9 +110,9 @@
                 <li v-can="'achievement_access'"
                     v-if="this.type === 'enabling'"
                     class="nav-item"
-                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_achievements_'+objective.id)">
+                    @click="setGlobalStorage('#objective_view_'+objective.id, '#objective_view_achievements_'+objective.id)">
                     <a class="nav-link small link-muted"
-                       :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_achievements_'+objective.id)"
+                       :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_achievements_'+objective.id)"
                        href="#achievements"
                        data-toggle="tab"
                        @click="loadAchievements()">
@@ -123,9 +123,9 @@
 
                 <li v-can="'prerequisite_access'"
                     class="nav-item"
-                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_prerequisites_'+objective.id)">
+                    @click="setGlobalStorage('#objective_view_'+objective.id, '#objective_view_prerequisites_'+objective.id)">
                     <a class="nav-link small link-muted"
-                       :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_prerequisites_'+objective.id)"
+                       :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_prerequisites_'+objective.id)"
                        href="#prerequisites"
                        data-toggle="tab"
                        @click="loadPrerequisites()">
@@ -135,9 +135,9 @@
                 </li>
 
                 <li class="nav-item"
-                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_events_'+objective.id)">
+                    @click="setGlobalStorage('#objective_view_'+objective.id, '#objective_view_events_'+objective.id)">
                     <a class="nav-link small link-muted"
-                       :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_events_'+objective.id)"
+                       :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_events_'+objective.id)"
                        href="#events"
                        data-toggle="tab">
                         <i class="fa fa-user-graduate pr-1"></i>
@@ -146,9 +146,9 @@
                 </li>
                 <li v-can="'lms_access'"
                     class="nav-item"
-                    @click="setLocalStorage('#objective_view_'+objective.id, '#objective_view_lms_'+objective.id)">
+                    @click="setGlobalStorage('#objective_view_'+objective.id, '#objective_view_lms_'+objective.id)">
                     <a class="nav-link small link-muted"
-                       :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_lms_'+objective.id)"
+                       :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_lms_'+objective.id)"
                        href="#lms"
                        data-toggle="tab"
                        @click="loadLmsPlugin()"
@@ -169,10 +169,10 @@
                 <!-- 1 Description -->
                 <div class="tab-pane show p-2"
                      v-if="objective.description !== ''"
-                     :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_description_'+objective.id, 'active', true)"
+                     :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_description_'+objective.id, 'active', true)"
                      id="description"
                      >
-<!--                    <div class="card-body" v-html="objective.description"></div>-->
+<!--                    <div class="card-body" v-dompurify-html="objective.description"></div>-->
 
                         <variants
                             :model="objective"
@@ -185,7 +185,7 @@
                 </div>
                 <!-- /.tab-pane -->
                 <div class="tab-pane pt-2"
-                     :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_related_objectives_'+objective.id)"
+                     :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_related_objectives_'+objective.id)"
                      id="related_objectives" >
                     <span v-if="type === 'enabling'">
                         <ObjectiveBox type="terminal"
@@ -203,7 +203,7 @@
                 </div>
                 <!--                    1 Contents -->
                 <div class="tab-pane fade "
-                     :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_content_tab_'+objective.id)"
+                     :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_content_tab_'+objective.id)"
                      id="content_tab"
                      role="tab"
                      aria-labelledby="content-nav-tab">
@@ -222,7 +222,7 @@
                 </div>
                 <!--                    1 Files -->
                 <div class="tab-pane"
-                     :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_tab_media_'+objective.id)"
+                     :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_tab_media_'+objective.id)"
                      id="tab_media">
                     <div class="row">
                         <div class="col-12">
@@ -241,7 +241,7 @@
                 </div><!-- /.tab-pane -->
                 <!--                References -->
                 <div class="tab-pane pt-2"
-                     :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_references_'+objective.id)"
+                     :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_references_'+objective.id)"
                      id="references">
                     <div class="card-tools"
                          v-permission="'objective_edit'">
@@ -264,7 +264,7 @@
 
                 <div v-can="'achievement_access'"
                      class="tab-pane pt-2 box"
-                     :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_achievements_'+objective.id)"
+                     :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_achievements_'+objective.id)"
                      id="achievements">
                     <Achievements
                         v-if="this.type === 'enabling'"
@@ -276,7 +276,7 @@
                 </div>
 
                 <div class="tab-pane pt-2"
-                     :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_prerequisites_'+objective.id)"
+                     :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_prerequisites_'+objective.id)"
                      id="prerequisites"
                      v-can="'prerequisite_access'">
                     <div class="card-tools"
@@ -295,7 +295,7 @@
                 </div>
 
                 <div class="tab-pane pt-2"
-                     :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_events_'+objective.id)"
+                     :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_events_'+objective.id)"
                      id="events">
                     <eventmanagement ref="eventPlugin"
                                      :model="objective"
@@ -304,7 +304,7 @@
 
                 <div v-can="'lms_access'"
                      class="tab-pane pt-0"
-                     :class="checkLocalStorage('#objective_view_'+objective.id, '#objective_view_lms_'+objective.id)"
+                     :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_lms_'+objective.id)"
                      id="lms">
                     <lms ref="LmsPlugin"
                          :referenceable_type="model"
@@ -323,12 +323,13 @@ import References from '../reference/References';
 import Quotes from '../quote/Quotes';
 import Contents from '../content/Contents';
 import Eventmanagement from '../../../../app/Plugins/Eventmanagement/resources/js/components/Events';
-import Lms from '../../../../app/Plugins/Lms/resources/js/components/Lms';
+import Lms from '../lms/Lms.vue';
 import ObjectiveBox from './ObjectiveBox'
 import Achievements from './Achievements'
 import ObjectiveMedia from "./ObjectiveMedia";
 import Prerequisites from "../prerequisites/Prerequisites";
 import Variants from "./Variants";
+import SubscribeModal from "../subscription/SubscribeModal.vue";
 
 export default {
         props: {
@@ -354,62 +355,8 @@ export default {
                 errors: {}
             }
         },
-        methods: {
-            editObjective() {
-                this.$modal.show(this.type+'-objective-modal', {'objective': this.objective, 'method': 'PATCH' });
-            },
-            open(modal) {
-                if (modal === 'reference-objective-modal'){
-                    this.$modal.show(modal, {'referenceable_type': this.model, 'referenceable_id': this.objective.id, 'requestUrl': '/referenceSubscriptions'});
-                } else {
-                    this.$modal.show(modal, {'referenceable_type': this.model, 'referenceable_id': this.objective.id});
-                }
-            },
-
-            loaderEvent: function() {
-                this.$refs.Contents.loaderEvent();
-            },
-            loadAchievements() {
-                this.$refs.Achievements.loaderEvent();
-            },
-            loadPrerequisites() {
-                this.$refs.Prerequisites.loaderEvent();
-            },
-            loadMedia() {
-                this.$refs.Media.loaderEvent();
-            },
-            loadLmsPlugin() {
-                this.$refs.LmsPlugin.loaderEvent();
-            },
-
-        },
+        methods: {},
         mounted() {
-            if (typeof this.objective.terminal_objective === 'object'){
-                this.type = 'enabling';
-                this.model = 'App\\EnablingObjective';
-            } else {
-                this.type = 'terminal';
-                this.model = 'App\\TerminalObjective';
-            }
-
-            axios.get('/'+this.type+'Objectives/' + this.objective.id + '/referenceSubscriptionSiblings').then(response => {
-                if (response.data.siblings.length !== 0) {
-                    this.reference_subscriptions = response.data.siblings;
-                    this.curricula_list = response.data.curricula_list;
-                }
-            }).catch(e => {
-                console.log(e)
-                //this.errors = response.data.errors;
-            });
-
-            axios.get('/' + this.type + 'Objectives/' + this.objective.id + '/quoteSubscriptions').then(response => {
-                if (typeof (response.data.quotes_subscriptions)  !== 'undefined') {
-                    this.quote_subscriptions = response.data.quotes_subscriptions;
-                    this.quote_curricula_list = response.data.curricula_list;
-                }
-            }).catch(e => {
-                console.log(e)
-            });
             //register events
             this.$root.$on('lmsUpdate', () => {
                 this.$refs.LmsPlugin.loaderEvent();
@@ -430,6 +377,7 @@ export default {
             },
         },
         components: {
+            SubscribeModal,
             Variants,
             Prerequisites,
             ObjectiveMedia,
@@ -441,6 +389,5 @@ export default {
             Achievements,
             Lms
         }
-
     }
     </script>

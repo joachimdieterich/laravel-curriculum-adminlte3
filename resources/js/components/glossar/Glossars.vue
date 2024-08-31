@@ -89,13 +89,13 @@
                 <div v-for="(item,index) in subscriptions"
                      class="carousel-item" :title="item.content.title">
                     <div class="p-3"
-                         v-html="item.content.content"></div>
+                         v-dompurify-html="item.content.content"></div>
                 </div>
 
             </div>
         </div>
     </div>
-    <content-create-modal></content-create-modal>
+<!--    <content-create-modal></content-create-modal>-->
 </div>
 </template>
 
@@ -173,7 +173,7 @@
         },
         mounted() {
             this.currentSlide = 0;
-            this.$on('addContent', function (newContent) {
+            this.$eventHub.on('content-added', function (newContent) {
                 this.loaderEvent();
             });
         }

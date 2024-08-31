@@ -112,9 +112,8 @@ class KanbanController extends Controller
         ]);
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
-        // axios call?
         if (request()->wantsJson()) {
-            return ['message' => $kanban->path()];
+            return $kanban;
         }
 
         return redirect($kanban->path());
@@ -130,7 +129,6 @@ class KanbanController extends Controller
     public function show(Kanban $kanban, $token = null)
     {
 
-        //abort_unless((\Gate::allows('kanban_show') and $this->userKanbans()->contains($kanban->id)), 403);
         abort_unless(/*\Gate::allows('kanban_show') and*/ $kanban->isAccessible(), 403); // don't use kanban_show -> bugfix for 403 problem on tokens.
 
         $kanban = $this->getKanbanWithRelations($kanban);
@@ -213,9 +211,7 @@ class KanbanController extends Controller
         $kanban->statuses()->delete();
         $kanban->subscriptions()->delete();
 
-        if ($kanban->delete()) {
-            return $this->list();
-        }
+        return $kanban->delete();
     }
 
     public function updateKanbansColor(Request $request)

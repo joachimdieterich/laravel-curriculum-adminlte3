@@ -21,13 +21,13 @@ class GroupsController extends Controller
     {
         abort_unless(\Gate::allows('group_access'), 403);
         // select2 request
-        if (request()->wantsJson() AND request()->has(['term', 'page'])) {
+        if (request()->wantsJson() ) {
             return $this->getEntriesForSelect2();
         }
-
+/*
         if (request()->wantsJson()) {
             return ['groups' => json_encode(auth()->user()->groups)];
-        }
+        }*/
 
         return view('groups.index');
     }
@@ -49,9 +49,9 @@ class GroupsController extends Controller
                 break;
         }
 
-        $show_gate = \Gate::allows('group_show');
+       /* $show_gate = \Gate::allows('group_show');
         $edit_gate = \Gate::allows('group_edit');
-        $delete_gate = \Gate::allows('group_delete');
+        $delete_gate = \Gate::allows('group_delete');*/
 
         return DataTables::of($groups)
             ->addColumn('grade', function ($groups) {
@@ -63,55 +63,13 @@ class GroupsController extends Controller
             ->addColumn('organization', function ($groups) {
                 return $groups->organization->title;
             })
-            ->addColumn('action', function ($groups) use ($show_gate, $edit_gate, $delete_gate, $group_id_field) {
-                $actions = '';
-                if ($show_gate) {
-                    $actions .= '<a href="'.route('groups.show', $groups->$group_id_field).'" '
-                        .'id="show-group-'.$groups->$group_id_field.'" '
-                        .'class="btn p-1">'
-                        .'<i class="fa fa-list-alt"></i>'
-                        .'</a>';
-                }
-                if ($edit_gate) {
-                    $actions .= '<a href="'.route('groups.edit', $groups->$group_id_field).'" '
-                        .'id="edit-group-'.$groups->$group_id_field.'" '
-                        .'class="btn p-1">'
-                        .'<i class="fa fa-pencil-alt"></i> '
-                        .'</a>';
-                }
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                        .'class="btn text-danger" '
-                        .'onclick="destroyDataTableEntry(\'groups\','.$groups->$group_id_field.')">'
-                        .'<i class="fa fa-trash"></i></button>';
-                }
 
-                return $actions;
-            })
 
             ->addColumn('check', '')
             ->setRowId($group_id_field)
             ->make(true);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        abort_unless(\Gate::allows('group_create'), 403);
-
-        $grades = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->type->grades()->get(); //Grade::all();
-        $periods = Period::all(); //Organization::where('id',auth()->user()->current_organization_id)->get()->first()->periods;
-        $organizations = (auth()->user()->role()->id == 1) ? Organization::all() : auth()->user()->organizations()->get();
-
-        return view('groups.create')
-                ->with(compact('grades'))
-                ->with(compact('periods'))
-                ->with(compact('organizations'));
-    }
 
     public function store()
     {
@@ -125,12 +83,10 @@ class GroupsController extends Controller
             'organization_id' => format_select_input($new_group['organization_id']),
         ]);
 
-        // axios call?
         if (request()->wantsJson()) {
-            return ['message' => $group->path()];
+            return $group;
         }
 
-        return redirect($group->path());
     }
 
     /**
@@ -144,7 +100,7 @@ class GroupsController extends Controller
         abort_unless((\Gate::allows('group_show') and $group->isAccessible()), 403);
 
         LogController::set(get_class($this).'@'.__FUNCTION__, $group->id);
-        // axios call?
+
         if (request()->wantsJson()) {
             return ['users' => json_encode($group->users)];
         }
@@ -155,20 +111,6 @@ class GroupsController extends Controller
                 ->with(compact('group'));
     }
 
-    public function edit(Group $group)
-    {
-        abort_unless((\Gate::allows('group_edit') and $group->isAccessible()), 403);
-
-        $grades = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->type->grades()->get(); //Grade::all();
-        $periods = Period::all(); //Organization::where('id',auth()->user()->current_organization_id)->get()->first()->periods;
-        $organizations = (auth()->user()->role()->id == 1) ? Organization::all() : auth()->user()->organizations()->get();
-
-        return view('groups.edit')
-                ->with(compact('group'))
-                ->with(compact('grades'))
-                ->with(compact('periods'))
-                ->with(compact('organizations'));
-    }
 
     public function update(UpdateGroupRequest $request, Group $group)
     {
@@ -181,7 +123,7 @@ class GroupsController extends Controller
             'organization_id' => format_select_input($request['organization_id']),
         ]);
 
-        return redirect()->route('groups.index');
+        return $group;
     }
 
     /**
@@ -204,9 +146,7 @@ class GroupsController extends Controller
 
         //todo: delete subscriptions ( eg. kanban), yet no relation in Group.php
 
-        $group->delete();
-
-        return back();
+        return $group->delete();
     }
 
     public function massDestroy(MassDestroyGroupRequest $request)
@@ -239,22 +179,28 @@ class GroupsController extends Controller
                     or (Group::find($enrolment['group_id'])->first()->organization_id == auth()->user()->current_organization_id)
                 ), 403);
 
-            $group = Group::findOrFail($enrolment['group_id']);
-            $user = User::findOrFail($enrolment['user_id']);
-            //if user isn't enrolled to organization, enrol with student role
-            OrganizationRoleUser::firstOrCreate(['user_id' => $user->id,
-                'organization_id' => $group->first()->organization_id, ],
-                ['role_id' => 6]
-            );
+            foreach ((array) $enrolment['user_id'] as $user_id) //iterate over user_ids
+            {
+                $user = User::findOrFail($user_id);
+                foreach ((array) $enrolment['group_id'] as $group_id) //iterate over group_ids
+                {
+                    $group = Group::findOrFail($group_id);
+                    //if user isn't enrolled to organization, enrol with student role
+                    OrganizationRoleUser::firstOrCreate(['user_id' => $user->id,
+                        'organization_id' => $group->first()->organization_id, ],
+                        ['role_id' => 6]
+                    );
+                    //$return[] = $user->groups()->syncWithoutDetaching($group_id);
+                }
 
-            $return[] = $user->groups()->syncWithoutDetaching($enrolment['group_id']);
+            }
         }
 
         if (request()->wantsJson()) {
-            return ['users' => $group->users];
-        } else {
+            return $user ?? false;
+        } /*else {
             return $return;
-        }
+        }*/
     }
 
     public function expel()
@@ -266,72 +212,88 @@ class GroupsController extends Controller
                 or is_admin()
                 or (Group::find($expel['group_id'])->first()->organization_id == auth()->user()->current_organization_id)), 403);
 
-            $user = User::find($expel['user_id']);
-            $return[] = $user->groups()->detach($expel['group_id']);
+            foreach ((array) $expel['user_id'] as $user_id)
+            {
+                $user = User::find($user_id);
+
+            }
+            //$return[] = $user->groups()->detach($expel['group_id']);
+
         }
 
         if (request()->wantsJson()) {
-            return ['users' => Group::findOrFail($expel['group_id'])->users];
-        } else {
+            return $user ?? false; // todo: return multiple users if array is given
+        } /*else {
             return $return;
-        }
+        }*/
     }
 
     protected function select2RequestWithOptGroup($collection, $field = 'title' )
     {
         $input = request()->validate([
-            'page' => 'required|integer',
+            'page' => 'sometimes|integer',
             'term' => 'sometimes|string|max:255|nullable',
+            'selected' => 'sometimes|nullable',
         ]);
-        $page = $input['page'];
-        $term = $input['term'];
-
-        $resultCount = 25;
-        $offset = ($page - 1) * $resultCount;
-
-        $count = count($collection->where(
-            function($query) use ($field, $term)
-            {
-                $query->whereHas('groups', function ($query) use ($term) {
-                    $query->where('title', 'like', '%' . $term . '%'); }
-                );
-            })
-            ->get());
-
-        $entries = $collection->where(
-            function($query) use ($field, $term)
-            {
-                $query->whereHas('groups', function ($query) use ($term) {
-                    $query->where('title', 'like', '%' . $term . '%'); }
-                );
-            })
-            ->orderBy('title')
-            ->skip($offset)
-            ->take($resultCount)
-            ->select(['organizations.id', DB::raw('title as text')])
-            ->get();
-
-        $endCount = $offset + $resultCount;
-        $morePages = $count > $endCount;
-
-        $select2entries = array();
-        foreach($entries as $entry){
-            $select2entries[] = array(
-                "text" => $entry['text'],
-                "children" => Group::where('organization_id', $entry['id'])
-                    ->select(['id', DB::raw('title as text')])
-                    ->where('title', 'like', '%' . $term . '%')
-                    ->get()
-            );
+        if (request()->has('selected'))
+        {
+            //dump($input['selected']);
+            //dump($model::whereIn($id, (array)$input['selected'])->get());
+            return response()->json(Group::whereIn('id', explode(",", $input['selected']))->get()); //todo check for multiple selects
         }
-        $results = array(
-            "results" => $select2entries,
-            "pagination" => array(
-                "more" => $morePages
-            )
-        );
+        else
+        {
+            $page = $input['page'];
+            $term = $input['term'];
 
-        return response()->json($results);
+            $resultCount = 25;
+            $offset = ($page - 1) * $resultCount;
+
+            $count = count($collection->where(
+                function($query) use ($field, $term)
+                {
+                    $query->whereHas('groups', function ($query) use ($term) {
+                        $query->where('title', 'like', '%' . $term . '%'); }
+                    );
+                })
+                ->get());
+
+            $entries = $collection->where(
+                function($query) use ($field, $term)
+                {
+                    $query->whereHas('groups', function ($query) use ($term) {
+                        $query->where('title', 'like', '%' . $term . '%'); }
+                    );
+                })
+                ->orderBy('title')
+                ->skip($offset)
+                ->take($resultCount)
+                ->select(['organizations.id', DB::raw('title as text')])
+                ->get();
+
+            $endCount = $offset + $resultCount;
+            $morePages = $count > $endCount;
+
+            $select2entries = array();
+            foreach($entries as $entry){
+                $select2entries[] = array(
+                    "text" => $entry['text'],
+                    "children" => Group::where('organization_id', $entry['id'])
+                        ->select(['id', DB::raw('title as text')])
+                        ->where('title', 'like', '%' . $term . '%')
+                        ->get()
+                );
+            }
+            $results = array(
+                "results" => $select2entries,
+                "pagination" => array(
+                    "more" => $morePages
+                )
+            );
+
+            return response()->json($results);
+        }
+
     }
 
     protected function validateRequest()
@@ -349,11 +311,11 @@ class GroupsController extends Controller
      */
     private function getEntriesForSelect2(): \Illuminate\Http\JsonResponse
     {
-        if (is_admin()) {
+       /* if (is_admin()) {
             return $this->select2RequestWithOptGroup(
                 Organization::select(['id', 'title'])
             );
-        } elseif (is_schooladmin() OR is_teacher()) {
+        } else*/if (is_admin() OR is_schooladmin() OR is_teacher()) {
             return $this->select2RequestWithOptGroup(
                 auth()->user()->organizations()->select(['organizations.id', 'organizations.title'])
                 //Organization::where('id', auth()->user()->current_organization_id)->select(['id', 'title'])

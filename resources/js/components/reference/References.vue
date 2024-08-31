@@ -43,7 +43,7 @@
                                    @click.prevent="open('reference-objective-modal', filtered_reference.reference)">
                                     <i class="fa fa-pencil-alt pl-2"></i></a>
                              </dt>
-                            <dd v-html="filtered_reference.reference.description"></dd>
+                            <dd v-dompurify-html="filtered_reference.reference.description"></dd>
                         </div>
                     </div>
                     <hr style="clear:both;">
@@ -55,21 +55,39 @@
 
 
 <script>
-const ObjectiveBox =
-    () => import('../objectives/ObjectiveBox');
-    //import ObjectiveBox from '../objectives/ObjectiveBox';
+import ObjectiveBox from '../objectives/ObjectiveBox';
 
     export default {
-        props: ['reference_subscriptions','curricula_list'],
+        props: {
+            objective: {
+                type: Object
+            },
+            type: {
+                type: String
+            }
+        },
         data: function() {
             return {
+                reference_subscriptions: [],
+                curricula_list: [],
               setting: {
                     'last': null,
                 },
-
             }
         },
         methods: {
+            loaderEvent(){
+                axios.get('/'+this.type+'Objectives/' + this.objective.id + '/referenceSubscriptionSiblings')
+                    .then(response => {
+                        if (response.data.siblings.length !== 0) {
+                            this.reference_subscriptions = response.data.siblings;
+                            this.curricula_list = response.data.curricula_list;
+                        }
+                    })
+                    .catch(e => {
+                        console.log(e)
+                    });
+            },
             filterReferences(curriculum_id) {
 
                 let filteredReferences = this.reference_subscriptions;
@@ -90,7 +108,7 @@ const ObjectiveBox =
                 return 'curriculum_'+i;
             },
             open(modal, reference){
-                this.$modal.show(modal, {'id': reference.id, 'description': reference.description});
+                //this.$modal.show(modal, {'id': reference.id, 'description': reference.description});
             },
 
         },

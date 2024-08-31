@@ -29,8 +29,10 @@
                 :class="[(typeof this.classRight != 'undefined') ? this.classRight : 'col-sm-12' ]"
                 :style="this.styles"
                 :multiple="this.multiple"
-                :disabled="this.readOnly">
-                <option v-for="(item,index) in list"
+                :disabled="this.readOnly"
+                :placeholder="this.placeholder">
+                <option v-if="list"
+                        v-for="(item,index) in list"
                         :value="item[this.option_id]"
                         :data-icon="this.option_icon">
                     <span>
@@ -42,6 +44,8 @@
     </div>
 </template>
 <script>
+    import {nextTick} from "vue";
+
     export default {
         props: {
             id: {
@@ -50,13 +54,12 @@
                 required: true
             },
             list: {
-                type: Array,
+                type: [Array, Object],
                 default: null
             },
             url: {
                 type: String,
                 default: '',
-                required: true
             },
             model: {
                 type: String,
@@ -129,66 +132,96 @@
         data() {
             return {
                 componentId: this._uid,
-                componentInstance: null
+                componentInstance: null,
+                currentSelection: []
             }
         },
         watch: {
           selected:    function(newVal, oldVal) {
               this.loader();
-          }
+          },
+
         },
         created () {
         },
         methods: {
-            /*getItem(item){
-                if (this.optionKey){
-                    return item[this.optionKey];
-                }
-                return item;
-            },*/
             formatText(icon) {
                 return $('<span class="' + $(icon.element).data('class') + '"><i class="fas ' + $(icon.element).data('icon') + '"></i> ' + icon.text + '</span>');
             },
-            loader(){
-                this.componentInstance = $('#' + this.id).select2({
-                    placeholder: this.placeholder,
-                    dropdownParent: $('#' + this.id).parent(),
-                    allowClear: this.allowClear,
-                    ajax: {
-                        delay: 250,
-                        url: this.url,
-                        dataType: 'json',
-                        data: function(params) {
-                            return {
-                                term: params.term || this.term ,
-                                page: params.page || 1
-                            }
-                        }.bind(this),
-                        cache: true,
-                    },
-                    templateSelection: this.formatText,
-                    templateResult: this.formatText,
-                }).on("select2:select", function(e){
-                    //this.selected = e.params.data.id;
-                    this.$emit("selectedValue", e.params.data.id);
-                }.bind(this))
-                    .val(this.selected).trigger('change'); //wont work for ajax -> data isn't present yet
 
-                if(this.selected){
+            loader(){
+                if (this.list === null){ // ajax
+                    this.componentInstance = $('#' + this.id).select2({
+                        placeholder: this.placeholder,
+                        dropdownParent: $('#' + this.id).parent(),
+                        allowClear: this.allowClear,
+                        ajax: {
+                            delay: 250,
+                            url: this.url,
+                            dataType: 'json',
+                            data: function(params) {
+                                return {
+                                    term: params.term || this.term ,
+                                    page: params.page || 1
+                                }
+                            }.bind(this),
+                            cache: true,
+                        },
+
+                        templateSelection: this.formatText,
+                        templateResult: this.formatText,
+                    })
+                } else { // this.list is set
+                    this.componentInstance = $('#' + this.id).select2({
+                        placeholder: this.placeholder,
+                        dropdownParent: $('#' + this.id).parent(),
+                        allowClear: this.allowClear,
+                    });
+                }
+
+                this.componentInstance.on("select2:select", function(e){
+                    this.$emit("selectedValue", this.componentInstance.select2("data").map(i =>i[this.option_id]));
+                }.bind(this))
+                .on("select2:unselect", function(e){
+                    this.$emit("selectedValue", this.componentInstance.select2("data").map(i =>i[this.option_id]));
+                }.bind(this))
+                    //.val(this.selected).trigger('change'); //wont work for ajax -> data isn't present yet
+
+                if(typeof this.selected === 'object' || this.selected !== false){
+                    let selectedParam = '';
                     this.componentInstance.val(null).trigger('change'); //reset selection
-                    let selectedParam =  encodeURIComponent(JSON.stringify(this.selected));
-                    if (typeof (this.selected) == 'string'){
-                        selectedParam =  encodeURIComponent(this.selected);
+                    switch (typeof (this.selected)) {
+                        case 'string':
+                        case 'number': selectedParam =  encodeURIComponent(this.selected);
+                            break;
+                        case 'array': selectedParam =  encodeURIComponent(this.selected.join());
+                            break;
+                        case 'object': selectedParam =  encodeURIComponent(this.selected);
+                        break;
+                        default: console.log(typeof this.selected);
+                                 console.log(this.selected);
+                            break;
                     }
-                    axios.get(this.url + "?selected=" + selectedParam)
-                        .then( (res) => {
-                            res.data.forEach((entry) => {
-                                //console.log(entry[this.option_label] +'('+this.option_label + ') _' + entry[this.option_id]);
-                                let option = new Option(entry[this.option_label], entry[this.option_id], true, true);
-                                this.componentInstance.append(option).trigger('change');
-                            });
-                        })
-                        .catch( (e) => { console.log(e); })
+
+                    if (this.url !== ''){
+                        axios.get(this.url + "?selected=" + selectedParam)
+                            .then( (res) => {
+                                //console.log(res);
+                                res.data.forEach((entry) => {
+                                    let label = entry[this.option_label];
+                                    //console.log(this.option_label);
+                                    if ((typeof label) === 'undefined'){
+                                        label = entry['firstname'] + ' ' + entry['lastname'];
+                                    }
+                                    //console.log(label +'('+this.option_label + ') _' + entry[this.option_id] +' '+label);
+                                    let option = new Option(label, entry[this.option_id], true, true);
+                                    this.componentInstance.append(option).trigger('change');
+                                });
+                            })
+                            .catch( (e) => { console.log(e); })
+                    } else {
+                        this.componentInstance.val(this.selected).trigger('change');
+                    }
                 }
             },
         },
@@ -197,3 +230,19 @@
         }
     }
 </script>
+<style>
+.select2-container .select2-selection--single {
+    min-height: 38px;
+    height: auto!important;
+    padding: auto;
+}
+.select2-selection__rendered {
+    margin-top: 0 !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: normal!important;
+}
+.select2-container .select2-selection--single .select2-selection__rendered {
+    white-space: normal!important;
+}
+</style>

@@ -1,86 +1,128 @@
 <template>
-    <modal
-        id="prerequisite-modal"
-        name="prerequisite-modal"
-        height="auto"
-        :adaptive=true
-        draggable=".draggable"
-        :resizable=true
-        @before-open="beforeOpen"
-        @opened="opened"
-        @before-close="beforeClose"
-        style="z-index: 1100">
-        <div class="card"
-             style="margin-bottom: 0 !important">
+    <Transition name="modal">
+        <div v-if="this.globalStore.modals['prerequisite-objective-modal']?.show"
+             class="modal-mask"
+        >
+        <div class="modal-container">
             <div class="card-header">
-                 <h3 class="card-title">
-                    {{ trans('global.prerequisite.title') }}
-                 </h3>
-                 <div class="card-tools">
-                     <button type="button" class="btn btn-tool draggable" >
+                <h3 class="card-title">
+                    {{ trans('global.prerequisite.create') }}
+                </h3>
+                <div class="card-tools">
+                    <button v-permission="'objective_delete'"
+                            v-if="method !== 'post'"
+                            type="button"
+                            class="btn btn-tool"
+                            @click="del()">
+                        <i class="fa fa-trash text-danger"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool draggable" >
                         <i class="fa fa-arrows-alt"></i>
-                     </button>
-                     <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
+                    </button>
+                    <button type="button"
+                            class="btn btn-tool"
+                            @click="this.globalStore?.closeModal('prerequisite-objective-modal')">
                         <i class="fa fa-times"></i>
-                     </button>
-                 </div>
+                    </button>
+                </div>
             </div>
 
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-
                 <div v-if="method === 'post'" class="form-group ">
-                    <label for="curricula">
-                        {{ trans('global.curriculum.title_singular') }}
-                    </label>
-                    <select name="curricula"
-                            id="curricula"
-                            class="form-control select2 "
-                            style="width:100%;">
-                         <option></option>
-                         <option v-for="item in curricula" v-bind:value="item.id">{{ item.title }}</option>
-                    </select>
+                    <Select2
+                        id="curriculum_id"
+                        name="curriculum_id"
+                        url="/curricula"
+                        model="curriculum"
+                        option_id="id"
+                        option_label="title"
+                        :selected="this.form.curriculum_id"
+                        @selectedValue="(id) => {
+                            this.form.curriculum_id = id;
+                        }"
+                    >
+                    </Select2>
                 </div>
-                <div v-if="method === 'post'" class="form-group ">
-                    <label for="terminalObjectives">
-                        {{ trans('global.terminalObjective.title_singular') }}
-                    </label>
-                    <select name="terminalObjectives"
-                            id="terminalObjectives"
-                            class="form-control select2 "
-                            style="width:100%;">
-                         <option></option>
-                         <option v-for="item in terminalObjectives" v-bind:value="item.id">{{ item.title }}</option>
-                    </select>
+                    <div v-if="this.form.curriculum_id"
+                     class="form-group ">
+                    <Select2
+                        id="terminalObjectives_id"
+                        name="terminalObjectives_id"
+                        :url="'/curricula/' + this.form.curriculum_id + '/terminalObjectives'"
+                        model="terminalObjective"
+                        option_id="id"
+                        option_label="title"
+                        :selected="null"
+                        @selectedValue="(id) => {
+                            this.form.terminal_objective_id = id;
+                        }"
+                    >
+                    </Select2>
                 </div>
-                <div v-if="method === 'post'" class="form-group ">
-                    <label for="enablingObjectives">
-                        {{ trans('global.enablingObjective.title_singular') }}
-                    </label>
-                    <select name="enablingObjectives"
-                            id="enablingObjectives"
-                            class="form-control select2 "
-                            style="width:100%;">
-                         <option></option>
-                         <option v-for="item in enablingObjectives" v-bind:value="item.id">{{ item.title }}</option>
-                    </select>
+                <div v-if="this.form.terminal_objective_id"
+                class="form-group ">
+                    <Select2
+                        id="enablingObjectives_id"
+                        name="enablingObjectives_id"
+                        :url="'/terminalObjectives/' + this.form.terminal_objective_id + '/enablingObjectives'"
+                        model="enablingObjective"
+                        option_id="id"
+                        option_label="title"
+                        selected="null"
+                        @selectedValue="(id) => {
+                            this.form.enabling_objective_id = id;
+                        }"
+                    >
+                    </Select2>
                 </div>
             </div>
 
-            <div class="card-footer">
-                <span class="pull-right">
-                     <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
-                </span>
-            </div>
+                <div class="card-footer">
+                     <span class="pull-right">
+                         <button
+                             id="grade-cancel"
+                             type="button"
+                             class="btn btn-default"
+                             @click="this.globalStore?.closeModal('prerequisite-objective-modal')">
+                             {{ trans('global.cancel') }}
+                         </button>
+                         <button
+                             id="grade-save"
+                             class="btn btn-primary"
+                             @click="submit(method)" >
+                             {{ trans('global.save') }}
+                         </button>
+                    </span>
+                </div>
         </div>
-    </modal>
+    </div>
+    </Transition>
 </template>
-
 <script>
     import Form from 'form-backend-validation';
+    import Select2 from "../forms/Select2";
+    import {useGlobalStore} from "../../store/global";
+
     export default {
+        components:{
+            Select2,
+        },
+        props: {
+            params: {
+                type: Object
+            },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
+        },
+        setup () { //use database store
+            const globalStore = useGlobalStore();
+            return {
+                globalStore
+            }
+        },
         data() {
             return {
+                component_id: this._uid,
                 method: 'post',
+                url: '/prerequisites',
                 form: new Form({
                     'id': null,
                     'successor_type': null,
@@ -89,121 +131,52 @@
                     'terminal_objective_id': null,
                     'enabling_objective_id': null,
                 }),
-
-                curricula: {},
-                curriculum: {},
-                terminalObjectives: {},
-                terminalObjective: {},
-                enablingObjectives: {},
-                enablingObjective: {},
-                requestUrl: '/prerequisites',
             }
         },
+        watch: {
+            params: function(newVal, oldVal) {
+                this.form.reset();
+                this.form.populate(newVal);
+                this.url = newVal.url;
+
+                if (this.form.id != null){
+                    this.method = 'patch';
+                } else {
+                    this.method = 'post';
+                }
+            },
+
+        },
         methods: {
-
-            async loadCurricula() {
-                try {
-                    this.curricula = (await axios.get('/curricula')).data.curricula;
-                } catch(error) {
-                    this.errors = error.response.data.errors;
-                }
-                this.form.terminal_objective_id = null; //reset selection
-                this.form.enabling_objective_id = null;
+             submit(method) {
+                 if (method == 'patch') {
+                     this.update();
+                 } else {
+                     this.add();
+                 }
             },
-
-            async loadObjectives(id) {
-                this.form.curriculum_id = parseInt(id)
-                try {
-                   this.terminalObjectives = (await axios.get('/curricula/'+this.form.curriculum_id+'/objectives')).data.curriculum.terminal_objectives;
-                   this.removeHtmlTags(this.terminalObjectives);
-                   this.form.terminal_objective_id = null;
-                   this.loadEnabling(this.form.terminal_objective_id);
-                } catch(error) {
-                   this.errors = error.response.data.errors;
-                }
+            add(){
+                axios.post(this.url, this.form)
+                    .then(r => {
+                        this.$eventHub.emit('prerequisite-added', r.data);
+                    })
+                    .catch(e => {
+                        console.log(e.response);
+                    });
             },
-            loadEnabling(id){
-                let terminal = [].concat(...this.terminalObjectives.filter(ena => ena.enabling_objectives.find(e => e.terminal_objective_id === parseInt(id))));
-                this.enablingObjectives = terminal[0].enabling_objectives;
-                this.removeHtmlTags(this.enablingObjectives);
-                this.form.terminal_objective_id = parseInt(id);
-                this.initSelect2();
-            },
-            setEnabling(id){
-                this.form.enabling_objective_id = parseInt(id);
-                this.initSelect2();
-            },
-            async submit() {
-                try {
-                    if (this.method === 'patch'){
-                        this.location = (await axios.patch(this.requestUrl + '/' + this.form.id, )).data.message;
-                    } else {
-                        this.location = (await axios.post(this.requestUrl, {
-                            'curriculum_id':         this.form.curriculum_id,
-                            'terminal_objective_id': this.form.terminal_objective_id,
-                            'enabling_objective_id': this.form.enabling_objective_id,
-                            'successor_type':        this.form.successor_type,
-                            'successor_id':          this.form.successor_id,
-                        })).data.message;
-                    }
-                    location.reload(true);
-                } catch(error) {
-                    //
-                }
-            },
-
-            beforeOpen(event) {
-                this.loadCurricula();
-                if (event.params.referenceable_type){
-                    this.form.successor_type = event.params.referenceable_type;
-                    this.form.successor_id   = event.params.referenceable_id;
-                }
-             },
-            beforeClose() {
-            },
-            opened(){
-                this.initSelect2();
-                this.curricula = {};
-                this.terminalObjectives = {};
-                this.enablingObjectives = {};
-            },
-            initSelect2(){
-                $("#curricula").select2({
-                    dropdownParent: $(".v--modal-overlay"),
-                    allowClear: false
-                }).on('select2:select', function (e) {
-                    this.loadObjectives(e.params.data.id);
-                    this.terminalObjectives = {};
-                    this.enablingObjectives = {};
-                }.bind(this)) //make loadObjectives accessible!
-                .val(this.form.curriculum_id).trigger('change'); //set value
-
-                $("#terminalObjectives").select2({
-                    dropdownParent: $(".v--modal-overlay"),
-                    allowClear: false
-                }).on('select2:select', function (e) {
-                    this.loadEnabling(e.params.data.id);
-                }.bind(this)) //make loadEnabling accessible!
-                .val(this.form.terminal_objective_id).trigger('change'); //set value
-
-                $("#enablingObjectives").select2({
-                    dropdownParent: $(".v--modal-overlay"),
-                    allowClear: false
-                }).on('select2:select', function (e) {
-                    this.setEnabling(e.params.data.id);
-                }.bind(this)) //make setEnabling accessible!
-               .val(this.form.enabling_objective_id).trigger('change'); //set value
-            },
-            close(){
-                this.$modal.hide('prerequisite-modal');
-            },
-            removeHtmlTags(array){
-                var i;
-                for (i = 0; i < array.length; i++) {
-                    array[i].title = array[i].title.replace(/(<([^>]+)>)/ig,"");
-                }
+            update() {
+                axios.patch(this.url + '/' + this.form.id, this.form)
+                    .then(r => {
+                        this.$eventHub.emit('prerequisite-updated', r.data);
+                    })
+                    .catch(e => {
+                        console.log(e.response);
+                    });
             }
-        }
+        },
+        mounted() {
+            this.globalStore.registerModal('prerequisite-objective-modal');
+        },
     }
 </script>
 

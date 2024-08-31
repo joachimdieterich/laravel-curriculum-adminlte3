@@ -68,7 +68,7 @@ export default {
             let data = event.data.data;
 
             if(event.data.event === 'APPLY_NODE') {
-                //console.log(data);
+                console.log(data);
                 setTimeout(() => {  this.emitEvent(data); }, 2000); //
 
                 window.removeEventListener("message", this.receiveMessage);
@@ -91,7 +91,6 @@ export default {
                 repository:         'edusharing',
                 public:             1,
             });
-
         },
         getAuthor(owner){
           let author = '';

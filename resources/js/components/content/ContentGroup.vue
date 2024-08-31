@@ -6,7 +6,7 @@
             <li v-for="(item,index) in contents"
                 class="content-index-list-item ">
                 <span @click="scrollTo('content_'+category.id+'_'+item.content.id)"
-                   v-html="item.content.title"></span>
+                   v-dompurify-html="item.content.title"></span>
             </li>
         </ul>
 
@@ -15,7 +15,7 @@
              class="content-group">
             <h5 v-bind:id="'content_'+category.id+'_'+item.content.id"
                 v-bind:name="'content_'+category.id+'_'+item.content.id"
-                ><span v-html="item.content.title"></span>
+                ><span v-dompurify-html="item.content.title"></span>
                 <span class="pull-right text-gray">
                     <i :class="{ 'fa fa-angle-up': index !== 0 }"
                         @click="scrollTo('content_'+category.id)"></i>
@@ -29,7 +29,7 @@
                         @click="destroy(item)"></i></small>
                 </span>
             </h5>
-            <div v-html="item.content.content"></div>
+            <div v-dompurify-html="item.content.content"></div>
             <hr>
         </div>
     </div>
@@ -53,7 +53,7 @@
                 $('html, body').animate({scrollTop: $('#'+id).offset().top -70 }, 'fast');
             },
             edit(content){
-                this.$modal.show('content-create-modal', {'method': 'patch', 'id': content.content_id, 'referenceable_type': content.subscribable_type, 'referenceable_id': content.subscribable_id, 'categorie_ids': content.content.categories.map(category => category.id)});
+                //this.$modal.show('content-create-modal', {'method': 'patch', 'id': content.content_id, 'referenceable_type': content.subscribable_type, 'referenceable_id': content.subscribable_id, 'categorie_ids': content.content.categories.map(category => category.id)});
             },
             destroy(content){
                 axios.delete("/contents/"+content.content_id, {

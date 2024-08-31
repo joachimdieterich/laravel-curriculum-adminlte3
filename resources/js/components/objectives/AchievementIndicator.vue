@@ -27,8 +27,9 @@
 
 </template>
 
-
 <script>
+import {useDatatableStore} from "../../store/datatables";
+
 export default {
     props: {
         objective: {},
@@ -37,6 +38,12 @@ export default {
         users:{
             type: Array,
             default: () => []
+        }
+    },
+    setup () { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters
+        const store = useDatatableStore();
+        return {
+            store
         }
     },
     data() {
@@ -60,7 +67,8 @@ export default {
         async achieve(status){
             let selected = this.users;
             if (selected.length === 0){
-                selected = localStorage.getItem('user-datatable-selection')?.split(",");
+                selected = this.store.getSelectedIds('curriculum-user-datatable');
+                //selected = localStorage.getItem('user-datatable-selection')?.split(",");
             }
             if (selected[0] == ''){ // if no user is in localStorage, set empty array!
                 selected = [];

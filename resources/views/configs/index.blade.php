@@ -4,13 +4,16 @@
 
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/"><i class="fa fa-home"></i></a></li>
-    <li class="breadcrumb-item active">{{ trans('global.config.title') }}</li>
-    <li class="breadcrumb-item "><a href="{{ env('DOCUMENTATION', '/documentation') }}" class="text-black-50"                                    aria-label="{{ trans('global.documentation') }}"><i
-                class="fas fa-question-circle"></i></a></li>
+    <breadcrumbs
+        :entries="{{json_encode([
+            ['active'=> true, 'title'=> trans('global.config.title')],
+            ])}}"
+    ></breadcrumbs>
 @endsection
 @section('content')
+<configs></configs>
 
+{{--
     @if(auth()->user()->role()->id == 1)
         <div style="margin-bottom: 10px;" class="row">
             <div class="col-lg-12">
@@ -19,33 +22,10 @@
                     class="btn btn-success"
                     href="{{ route("configs.create") }}">
                 {{ trans('global.config.create') }}
-            </a>
-        </div>
-    </div>
-@endif
-<div class="row">
-    <div class="col-sm-6 col-12">
-        <div class="info-box">
-
-            <span class="info-box-icon bg-info">
-               <a href="/configs/models" class="link-muted">
-                   <i class="fa fa-tachometer-alt"></i>
-               </a>
-            </span>
-            <div class="info-box-content">
-                <a href="/configs/models" class="link-muted">
-                    <span class="info-box-text">{{ trans('global.config.model_limiter_title') }}</span>
-                    <small>
-                        <span class="">{{ trans('global.config.model_limiter_description')  }}</span>
-                    </small>
                 </a>
             </div>
-
-            <!-- /.info-box-content -->
         </div>
-        <!-- /.info-box -->
-    </div>
-</div>
+   @endif
 
 
 <table id="configs-datatable" class="table table-hover datatable">
@@ -60,11 +40,13 @@
             <th>{{ trans('global.datatables.action') }}</th>
         </tr>
     </thead>
-</table>
+</table>--}}
 
 @endsection
 @section('scripts')
 @parent
+{{--
+
 <script>
 $(document).ready( function () {
 
@@ -129,5 +111,6 @@ $(document).ready( function () {
 
  });
 </script>
+--}}
 
 @endsection

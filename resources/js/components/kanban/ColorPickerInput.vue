@@ -15,14 +15,8 @@
 
 
 <script>
-const VSwatches =
-    () => import('vue-swatches');
-//import VSwatches from 'vue-swatches'
-import "vue-swatches/dist/vue-swatches.css"
-
-
 export default {
-    components: {VSwatches},
+    components: {},
     name: "ColorPickerInput",
     props: {
         current: {

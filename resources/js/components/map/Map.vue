@@ -87,7 +87,7 @@
                         </select>
                     </div> <!-- mapMarkerCategory -->
                     <button class="btn btn-primary pull-right"
-                            @click="loadMarkers()">
+                            @click="loader()">
                         <i class="fa fa-check"></i>
                     </button>
                 </div>
@@ -107,13 +107,13 @@
                         <strong>Untertitel</strong></div>
                     <div class="py-0 pre-formatted"
                          v-if="this.currentMarker.BEZ_1_2.length > 2"
-                         v-html="this.currentMarker.BEZ_1_2"></div>
+                         v-dompurify-html="this.currentMarker.BEZ_1_2"></div>
 
                     <div class="py-0 pt-2">
                         <strong>Beschreibung</strong></div>
                     <div class="py-0 pre-formatted"
                          style="text-align:justify;"
-                         v-html="this.currentMarker.BEMERKUNG"></div>
+                         v-dompurify-html="this.currentMarker.BEMERKUNG"></div>
 
                     <div class="py-0 pt-2"><strong>Termine</strong></div>
                     <div class="py-0 pre-formatted">
@@ -125,7 +125,7 @@
                     </div>
 
                     <div class="py-0 pt-2"><strong>VA-Nummer</strong></div>
-                    <div class="py-0 pre-formatted" v-html="this.currentMarker.ARTIKEL_NR"></div>
+                    <div class="py-0 pre-formatted" v-dompurify-html="this.currentMarker.ARTIKEL_NR"></div>
 
                     <div class="py-0 pt-2">
                         <a :href="this.currentMarker.LINK_DETAIL"
@@ -163,27 +163,41 @@
                         <p class="help-block" v-if="form.errors.search" v-text="form.errors.search[0]"></p>
                     </div>
                 </div>
-
             </div>
         </div>
 
         <div id="map" class="sidebar-map"></div>
 
-        <!-- Create Modal -->
-        <MarkerCreate
-            v-can="'marker_create'"
-            id="modal-marker-form"
-            :method="method"
-            :marker="marker"
-        />
-        <Modal
-            :id="'deleteMarkerModal'"
-            css="danger"
-            :title="trans('global.marker.delete')"
-            :text="trans('global.marker.delete_helper')"
-            :ok_label="trans('global.marker.delete')"
-            v-on:ok="deleteMarker"
-        />
+        <Teleport to="body">
+            <MarkerModal
+                :show="this.showMapMarkerModal"
+                @close="this.showMapMarkerModal = false"
+                :params="currentMarker"
+                :map="this.map"
+            >
+            </MarkerModal>
+            <MediumModal
+                subscribable_type="App\\Map"
+                :subscribable_id="map.id"
+                :show="this.mediumStore.getShowMediumModal"
+                @close="this.mediumStore.setShowMediumModal(false)"
+            ></MediumModal>
+            <ConfirmModal
+                :showConfirm="this.showConfirm"
+                :title="trans('global.marker.delete')"
+                :description="trans('global.role.marker')"
+                css= 'danger'
+                :ok_label="trans('trans.global.ok')"
+                :cancel_label="trans('trans.global.cancel')"
+                @close="() => {
+                    this.showConfirm = false;
+                }"
+                @confirm="() => {
+                    this.showConfirm = false;
+                    this.destroy();
+                }"
+            ></ConfirmModal>
+        </Teleport>
     </div>
 </template>
 <script>
@@ -195,22 +209,30 @@ import "sidebar-v2/js/leaflet-sidebar.js";
 import "leaflet.markercluster/dist/leaflet.markercluster.js";
 import Form from "form-backend-validation";
 import "leaflet-extra-markers/dist/js/leaflet.extra-markers.js"
-import MarkerCreate from "./MarkerCreate";
 import moment from "moment/moment";
 import MarkerView from "./MarkerView";
-const Modal =
-    () => import('./../uiElements/Modal');
+import ConfirmModal from "../uiElements/ConfirmModal";
+import MediumModal from "../media/MediumModal";
+import MarkerModal from "./MarkerModal";
+import {useMediumStore} from "../../store/media.js";
 
 export default {
     components: {
+        MarkerModal,
         MarkerView,
-        MarkerCreate,
-        Modal
+        ConfirmModal,
+        MediumModal
     },
     props: {
         map: {
             default: null
         },
+    },
+    setup () { //use database store
+        const mediumStore = useMediumStore();
+        return {
+            mediumStore
+        }
     },
     data() {
         return {
@@ -237,37 +259,22 @@ export default {
             method: {
                 type: String,
                 default: 'post'
-            }
+            },
+            showConfirm: false,
+            //showMediumModal: false, //now in mediumStore
+            showMapMarkerModal: false,
         }
     },
     methods: {
-        loader() {
-            axios.get('/mapMarkerTypes')
-                .then(res => {
-                    this.mapMarkerTypes = res.data.mapMarkerTypes;
-                })
-                .catch(err => {
-                    console.log(err);
-                });
-
-            axios.get('/mapMarkerCategories')
-                .then(res => {
-                    this.mapMarkerCategories = res.data.mapMarkerCategories;
-                })
-                .catch(err => {
-                    console.log(err);
-                });
-            this.syncSelect2();
-            this.loadMarkers();
-        },
         createMarker(method = 'post'){
-            this.method = method;
-            $('#modal-marker-form').modal('show');
+            this.currentMarker = null;
+            this.showMapMarkerModal = true;
         },
-        loadMarkers(){
+        loader(){
             axios.get('/mapMarkers?type_id=' + this.form.type_id + '&category_id=' + this.form.category_id)
                 .then(res => {
                     this.markers = res.data.markers;
+                    this.currentMarker = this.markers[0];
                     //console.log(this.markers);
                     this.clusterGroup = L.markerClusterGroup(); // create the new clustergroup
 
@@ -436,9 +443,9 @@ export default {
         },
         confirmItemDelete(marker){
             this.currentMarker = marker;
-            $('#deleteMarkerModal').modal('show');
+            this.showConfirm = true;
         },
-        deleteMarker() {
+        destroy() {
             axios.delete("/mapMarkers/" + this.currentMarker.id)
                 .then(() => {
                     let index = this.markers.findIndex(
@@ -451,9 +458,8 @@ export default {
                 });
         },
         edit(marker) {
-            this.marker = marker;
-            this.method = 'patch';
-            $('#modal-marker-form').modal('show');
+            this.currentMarker = marker;
+            this.showMapMarkerModal = true;
         },
     },
     mounted() {

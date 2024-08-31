@@ -22,9 +22,7 @@
 </template>
 
 <script>
-const ObjectiveBox =
-    () => import('./ObjectiveBox');
-   // import ObjectiveBox from './ObjectiveBox'
+import ObjectiveBox from './ObjectiveBox';
 
 export default {
     props: {
@@ -43,7 +41,7 @@ export default {
         }
     },
     mounted() {
-        this.settings = this.settings;
+        //this.settings = this.settings;
 
         if (this.objectives.length != 0) {
             this.localSettings.last = this.objectives[this.objectives.length-1].id;

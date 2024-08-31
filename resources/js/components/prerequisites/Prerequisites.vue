@@ -4,18 +4,20 @@
         <div v-if="prerequisites.model"
              class="row" >
             <div class="col-4">
-                <h4>{{trans('global.prerequisite.title')}}</h4>
+                <h4>{{trans('global.prerequisite.title')}}
+                    <i class="pull-right fa fa-2 fa-arrow-right"></i>
+                </h4>
                 <div v-for="item in this.prerequisites.children">
-                        <objective-box v-if="item.model.predecessor_type ==='App\\TerminalObjective'"
+                        <ObjectiveBox v-if="item.model.predecessor_type ==='App\\TerminalObjective'"
                                        :objective="item.model.predecessor"
                                        :settings="settings"
                                        type="terminal">
-                        </objective-box>
-                        <objective-box v-else-if="item.model.predecessor_type ==='App\\EnablingObjective'"
+                        </ObjectiveBox>
+                        <ObjectiveBox v-else-if="item.model.predecessor_type ==='App\\EnablingObjective'"
                                        :objective="item.model.predecessor"
                                        :settings="settings"
                                        type="enabling">
-                        </objective-box>
+                        </ObjectiveBox>
                 </div>
 
                 <hr class="clearfix">
@@ -23,7 +25,6 @@
                     <li v-for="item in this.prerequisites.children"
                         v-can="'prerequisite_delete'">
                         {{ item.name }}<br><small>{{ item.description }}</small>
-
                         <i class="fa fa-trash text-danger pull-right pointer"
                            @click="destroyPrerequisite(item.prerequisite_id)"></i>
                     </li>
@@ -31,15 +32,17 @@
             </div>
 
             <div class="col-4">
-                <h4 >
+                <h4>
+                    <span>&nbsp;</span>
+                    <i class="pull-right fa fa-2 fa-arrow-right"></i>
                 </h4>
                 <div class="d-flex justify-content-center">
-                    <objective-box
+                    <ObjectiveBox
                         class="clearfix"
                         :objective="prerequisites.model"
                         :settings="settings"
                         type="terminal">
-                    </objective-box>
+                    </ObjectiveBox>
                 </div>
 
             </div>
@@ -50,16 +53,16 @@
                 </h4>
                 <div v-for="item in this.prerequisites.parents"
                     class="clearfix pull-right">
-                        <objective-box v-if="item.model.successor_type ==='App\\TerminalObjective'"
-                                       :objective="item.model.successor"
-                                       :settings="settings"
-                                       type="terminal">
-                        </objective-box>
-                        <objective-box v-else-if="item.model.successor_type ==='App\\EnablingObjective'"
-                                       :objective="item.model.successor"
-                                       :settings="settings"
-                                       type="enabling">
-                        </objective-box>
+                    <objective-box v-if="item.model.successor_type ==='App\\TerminalObjective'"
+                                   :objective="item.model.successor"
+                                   :settings="settings"
+                                   type="terminal">
+                    </objective-box>
+                    <objective-box v-else-if="item.model.successor_type ==='App\\EnablingObjective'"
+                                   :objective="item.model.successor"
+                                   :settings="settings"
+                                   type="enabling">
+                    </objective-box>
                 </div>
             </div>
         </div>
@@ -69,8 +72,7 @@
 
 </template>
 <script>
-const ObjectiveBox =
-    () => import('../objectives/ObjectiveBox');
+import ObjectiveBox from "../objectives/ObjectiveBox.vue";
     export default {
         name: 'prerequisites',
         props: {

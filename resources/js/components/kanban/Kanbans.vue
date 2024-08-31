@@ -1,20 +1,32 @@
-<template>
+<template >
     <div class="row">
-        <div class="col-md-12 py-2">
+        <div class="col-md-12 ">
             <ul v-if="typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined'"
-                class="nav nav-pills" role="tablist">
+                class="nav nav-pills py-2" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link "
                        :class="filter === 'all' ? 'active' : ''"
-                       id="kanban-filter-all"
+                       id="curriculum-filter-all"
                        @click="setFilter('all')"
                        data-toggle="pill"
                        role="tab"
-                       >
-                       <i class="fa fa-columns pr-2"></i>Alle Pinnwände
+                    >
+                        <i class="fas fa-th pr-2"></i>{{ trans('global.all') }} {{ trans('global.curriculum.title') }}
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link"
+                       :class="filter === 'by_organization' ? 'active' : ''"
+                       id="custom-filter-by-organization"
+                       @click="setFilter('by_organization')"
+                       data-toggle="pill"
+                       role="tab"
+                    >
+                        <i class="fas fa-university pr-2"></i>{{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
+                    </a>
+                </li>
+                <li v-can="'curriculum_create'"
+                    class="nav-item">
                     <a class="nav-link"
                        :class="filter === 'owner' ? 'active' : ''"
                        id="custom-filter-owner"
@@ -22,7 +34,7 @@
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fa fa-user  pr-2"></i>Meine Pinnwände
+                        <i class="fa fa-user pr-2"></i>{{ trans('global.my') }} {{ trans('global.curriculum.title') }}
                     </a>
                 </li>
                 <li class="nav-item">
@@ -32,65 +44,142 @@
                        @click="setFilter('shared_with_me')"
                        data-toggle="pill"
                        role="tab"
-                       >
-                        <i class="fa fa-paper-plane pr-2"></i>Für mich freigegeben
+                    >
+                        <i class="fa fa-paper-plane pr-2"></i>{{ trans('global.shared_with_me') }}
                     </a>
                 </li>
-                <li class="nav-item">
+                <li v-can="'curriculum_create'"
+                    class="nav-item">
                     <a class="nav-link"
                        :class="filter === 'shared_by_me' ? 'active' : ''"
                        id="custom-tabs-shared-by-me"
                        @click="setFilter('shared_by_me')"
                        data-toggle="pill"
                        role="tab"
-                       >
-                        <i class="fa fa-share-nodes  pr-2"></i>Von mir freigegeben
+                    >
+                        <i class="fa fa-share-nodes  pr-2"></i>{{ trans('global.shared_by_me') }}
                     </a>
                 </li>
             </ul>
-
-            <table id="kanban-datatable" style="display: none;"></table>
-            <div id="kanban-content">
-                <div class="py-2">
-                    <KanbanIndexWidget
-                        v-for="(kanban,index) in kanbans"
-                        :key="index+'_kanban_'+kanban.id"
-                        :kanban="kanban"
-                    />
-                    <KanbanIndexAddWidget
-                        v-if="((this.filter == 'all' && typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined') || this.filter == 'owner')"
-                        v-can="'kanban_create'"
-                    />
-                </div>
-
-                <Modal
-                    :id="'kanbanModal'"
-                    css="danger"
-                    :title="trans('global.kanban.delete')"
-                    :text="trans('global.kanban.delete_helper')"
-                    :ok_label="trans('global.kanban.delete')"
-                    v-on:ok="destroy()"
-                />
-                <Modal
-                    :id="'kanbanCopyModal'"
-                    css="primary"
-                    :title="trans('global.kanban.copy')"
-                    :text="trans('global.kanban.copy_helper')"
-                    ok_label="OK"
-                    v-on:ok="copy()"
-                />
-
-            </div>
         </div>
+
+        <div id="kanban-content"
+             class="col-md-12 m-0">
+            <IndexWidget
+                v-permission="'kanban_create'"
+                key="'kanbanCreate'"
+                modelName="Kanban"
+                url="/kanbans"
+                :create=true
+                :createLabel="trans('global.kanban.create')">
+            </IndexWidget>
+            <IndexWidget
+                v-for="kanban in kanbans"
+                :key="'kanbanIndex'+kanban.id"
+                :model="kanban"
+                modelName= "kanban"
+                url="/kanbans">
+                <template v-slot:icon>
+                    <i class="fa fa-kanban-location-dot pt-2"></i>
+                </template>
+
+                <template
+                    v-permission="'kanban_edit, kanban_delete'"
+                    v-slot:dropdown>
+                    <div class="dropdown-menu dropdown-menu-right"
+                         style="z-index: 1050;"
+                         x-placement="left-start">
+                        <button
+                            v-permission="'kanban_edit'"
+                            :name="'edit-kanban-' + kanban.id"
+                            class="dropdown-item text-secondary"
+                            @click.prevent="editKanban(kanban)">
+                            <i class="fa fa-pencil-alt mr-2"></i>
+                            {{ trans('global.kanban.edit') }}
+                        </button>
+                        <button
+                            v-if="kanban.allow_copy"
+                            :name="'copy-kanban-'+kanban.id"
+                            class="dropdown-item text-secondary"
+                            @click.prevent="confirmKanbanCopy(kanban)">
+                            <i class="fa fa-copy mr-2"></i>
+                            {{ trans('global.kanban.copy') }}
+                        </button>
+                        <hr class="my-1">
+                        <button
+                            v-permission="'kanban_delete'"
+                            :id="'delete-kanban-' + kanban.id"
+                            type="submit"
+                            class="dropdown-item py-1 text-red"
+                            @click.prevent="confirmItemDelete(kanban)">
+                            <i class="fa fa-trash mr-2"></i>
+                            {{ trans('global.kanban.delete') }}
+                        </button>
+                    </div>
+                </template>
+            </IndexWidget>
+        </div>
+        <div id="kanban-datatable-wrapper"
+             class="w-100 dataTablesWrapper">
+            <DataTable
+                id="kanban-datatable"
+                :columns="columns"
+                :options="options"
+                :ajax="url"
+                :search="search"
+                width="100%"
+                style="display:none; "
+            ></DataTable>
+        </div>
+
+        <Teleport to="body">
+            <KanbanModal
+                :show="this.showKanbanModal"
+                @close="this.showKanbanModal = false"
+                :params="currentKanban"
+            ></KanbanModal>
+            <ConfirmModal
+                :showConfirm="this.showConfirm"
+                :title="trans('global.kanban.delete')"
+                :description="trans('global.kanban.delete_helper')"
+                css= 'danger'
+                :ok_label="trans('trans.global.ok')"
+                :cancel_label="trans('trans.global.cancel')"
+                @close="() => {
+                    this.showConfirm = false;
+                }"
+                @confirm="() => {
+                    this.showConfirm = false;
+                    this.destroy();
+                }"
+            ></ConfirmModal>
+            <ConfirmModal
+                :showConfirm="this.showCopy"
+                :title="trans('global.kanban.copy')"
+                :description="trans('global.kanban.copy_helper')"
+                css= 'primary'
+                :ok_label="trans('trans.global.ok')"
+                :cancel_label="trans('trans.global.cancel')"
+                @close="() => {
+                    this.showCopy = false;
+                }"
+                @confirm="() => {
+                    this.showCopy = false;
+                    this.copy();
+                }"
+            ></ConfirmModal>
+        </Teleport>
     </div>
 </template>
 
-<script>
-import KanbanIndexWidget from "./KanbanIndexWidget";
-import KanbanIndexAddWidget from "./KanbanIndexAddWidget";
 
-const Modal = () => import('./../uiElements/Modal');
-//import Modal from "./../uiElements/Modal";
+<script>
+import KanbanModal from "../kanban/KanbanModal";
+import IndexWidget from "../uiElements/IndexWidget";
+import DataTable from 'datatables.net-vue3';
+import DataTablesCore from 'datatables.net-bs5';
+import ConfirmModal from "../uiElements/ConfirmModal";
+DataTable.use(DataTablesCore);
 
 export default {
     props: {
@@ -99,111 +188,106 @@ export default {
     },
     data() {
         return {
-            kanbans: [],
-            subscriptions: {},
+            component_id: this._uid,
+            kanbans: null,
+            search: '',
+            showKanbanModal: false,
+            showConfirm: false,
+            showCopy: false,
             url: '/kanbans/list',
             errors: {},
-            tempId: Number,
-            filter: 'all'
+            currentKanban: {},
+            columns: [
+                { title: 'id', data: 'id' },
+                { title: 'title', data: 'title', searchable: true},
+            ],
+            options : this.$dtOptions,
+            filter: 'all',
+            dt: null
         }
     },
-    methods: {
-        confirmItemDelete(kanbanId){
-            $('#kanbanModal').modal('show');
-            this.tempId = kanbanId;
-        },
-        confirmKanbanCopy(kanbanId){
-            $('#kanbanCopyModal').modal('show');
-            this.tempId = kanbanId;
-        },
-        editKanban(kanban){
-            this.$eventHub.emit('edit_kanban', kanban);
-            // window.location = "/kanbans/" + id + "/edit";
-        },
-        copy(){
-            window.location = "/kanbans/" + this.tempId + "/copy";
-        },
-        loaderEvent(){
-            if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
-                this.url = '/kanbanSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id;
-            } else {
-                this.url = '/kanbans/list?filter=' + this.filter;
-            }
-
-            $('#kanban-datatable').DataTable().ajax.url(this.url).load();
-        },
-        setFilter(filter){
-            this.filter = filter;
-            this.loaderEvent();
-        },
-        async destroy() {
-            try {
-                this.kanbans = (await axios.delete('/kanbans/' + this.tempId)).data.data;
-            } catch (error) {
-                console.log(error);
-            }
-            window.location = "/kanbans";
-        },
-    },
     mounted() {
-        this.$eventHub.emit('showSearchbar');
-
-        const parent = this;
-
-        let dt = $('#kanban-datatable').DataTable({
-            dom: 'tilpr',
-            columns: [ // only gets attributes used in this component
-                { title: 'id', data: 'id', searchable: false },
-                { title: 'title', data: 'title', searchable: true },
-                { title: 'description', data: 'description', searchable: true },
-                { title: 'color', data: 'color', searchable: false },
-                { title: 'owner_id', data: 'owner_id', searchable: false },
-                { title: 'medium_id', data: 'medium_id', searchable: false },
-                { title: 'allow_copy', data: 'allow_copy', searchable: false },
-                { title: 'commentable', data: 'commentable', searchable: false },
-                { title: 'auto_refresh', data: 'auto_refresh', searchable: false },
-                { title: 'only_edit_owned_items', data: 'only_edit_owned_items', searchable: false },
-            ],
-            //pageLength: 6, // TODO: maybe set per variable based on window-width (mobile/tablet etc.)
-        }).on('draw.dt', () => {  // checks if the datatable-data changes, to update the kanban-data
-            parent.kanbans = $('#kanban-datatable').DataTable().rows({ page: 'current' }).data().toArray();
-            $('#kanban-content').insertBefore('#kanban-datatable');
-        });
+        this.$eventHub.emit('showSearchbar', true);
 
         this.loaderEvent();
 
-        this.$eventHub.on('filter', (filter) => {
-            dt.search(filter).draw();
+        this.$eventHub.on('kanban-added', (kanban) => {
+            this.showKanbanModal = false;
+            this.kanbans.push(kanban);
         });
+
         this.$eventHub.on('kanban-updated', (kanban) => {
+            this.showKanbanModal = false;
+            this.update(kanban);
+        });
+        this.$eventHub.on('createKanban', () => {
+            this.currentKanban = {};
+            this.showKanbanModal = true;
+        });
+    },
+    methods: {
+        setFilter(filter){
+            this.filter = filter;
+            if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
+                this.url = '/kanbanSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
+            } else {
+                this.url = '/kanbans/list?filter=' + this.filter
+            }
+
+            this.dt.ajax.url(this.url).load();
+        },
+        editKanban(kanban){
+            this.currentKanban = kanban;
+            this.showKanbanModal = true;
+        },
+        loaderEvent(){
+            this.dt = $('#kanban-datatable').DataTable();
+
+            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
+                this.kanbans = this.dt.rows({page: 'current'}).data().toArray();
+
+                $('#kanban-content').insertBefore('#kanban-datatable-wrapper');
+            });
+            this.$eventHub.on('filter', (filter) => {
+                this.dt.search(filter).draw();
+            });
+        },
+        confirmItemDelete(kanban){
+            this.currentKanban = kanban;
+            this.showConfirm = true;
+        },
+        confirmKanbanCopy(kanban){
+            this.currentKanban = kanban;
+            this.showCopy = true;
+        },
+        copy(){
+            window.location = "/kanbans/" + this.currentKanban.id + "/copy";
+        },
+        destroy() {
+            axios.delete('/kanbans/' + this.currentKanban.id)
+                .then(res => {
+                    let index = this.kanbans.indexOf(this.currentKanban);
+                    this.kanbans.splice(index, 1);
+                })
+                .catch(err => {
+                    console.log(err.response);
+                });
+        },
+        update(kanban) {
             const index = this.kanbans.findIndex(
-                k => k.id === kanban.id
+                vc => vc.id === kanban.id
             );
 
             for (const [key, value] of Object.entries(kanban)) {
                 this.kanbans[index][key] = value;
             }
-        });
+        }
     },
     components: {
-        KanbanIndexWidget,
-        KanbanIndexAddWidget,
-        Modal
+        ConfirmModal,
+        DataTable,
+        KanbanModal,
+        IndexWidget
     },
 }
 </script>
-<style>
-#kanban-datatable_wrapper { width: 100%; }
-
-</style>
-<style scoped>
-.nav-link:hover {
-    cursor: default;
-    user-select: none;
-}
-
-.nav-item:hover .nav-link:not(.active) {
-    background-color: rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-}
-</style>

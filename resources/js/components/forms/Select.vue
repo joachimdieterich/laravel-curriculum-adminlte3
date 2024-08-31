@@ -53,12 +53,7 @@
         created () {
         },
         methods: {
-            getItem(item){
-                if (this.optionKey){
-                    return item[this.optionKey];
-                }
-                return item;
-            }
+
         }
     }
 </script>

@@ -29,33 +29,6 @@
                     </div>
                 </div>
             </div>
-            <!-- enablingObjective -->
-            <!-- <div v-else
-                 class="row">
-                <div class="col-12">
-                    <div class="card-tools pull-right">
-                        <span v-if="is_owner()">
-                            <a @click="destroy(subscription)" >
-                                <i class="fas fa-trash text-danger"></i>
-                            </a>
-                        </span>
-                    </div>
-                    <ObjectiveBox
-                          type="terminal"
-                          :objective="subscription.enabling_objective.terminal_objective"
-                          :settings="settings">
-                    </ObjectiveBox>
-
-                    <div class="ml-auto">
-                        <ObjectiveBox
-                            type="enabling"
-                            :objective="subscription.enabling_objective"
-                            :settings="settings">
-                        </ObjectiveBox>
-                    </div>
-                </div>
-            </div> -->
-
         </div>
         <div v-if="is_owner()"
              class="card-footer pointer"
@@ -115,7 +88,7 @@ export default {
                 })
                 .catch(e => {
                     console.log(e);
-                });      
+                });
 
             this.checkSubscriptions();
         },
@@ -127,14 +100,14 @@ export default {
 
             if (this.terminalSubscriptions.length > 0) {
                 subObj = this.terminalSubscriptions;
-                
+
                 // reverse-loop, since removing an item while counting up messes with the index
                 for (let i = this.enablingSubscriptions.length - 1; i >= 0; i--) {
                     const subscription = this.enablingSubscriptions[i];
                     const parent = this.terminalSubscriptions.find(
                         terminal => terminal.terminal_objective_id === subscription.enabling_objective.terminal_objective_id
                     );
-                    
+
                     // if a terminalObjective is already subscribed,
                     // enablingSubscriptions from this terminalObjective aren't needed
                     if (parent !== undefined) {
@@ -194,11 +167,11 @@ export default {
                      * which creates a JSON-loop, which throws an error when trying to do an axios-call.
                      * by removing the reference, the original value also gets removed
                      * INFO: the 'enablingSubscriptions'-data sent by the server in 'loaderEvent()'
-                     *       doesn't have this reference when checking the response from the network-tab, 
+                     *       doesn't have this reference when checking the response from the network-tab,
                      *       but for some magical reason, when outputing 'response.data' it's there in the [0]-index
                      */
                     if (i === 0) enablingSubscription.enabling_objective.terminal_objective.enabling_objectives = [];
-                    
+
                     axios.post('/enablingObjectiveSubscriptions/destroy', enablingSubscription)
                         .catch((error) => {
                             console.log(error);

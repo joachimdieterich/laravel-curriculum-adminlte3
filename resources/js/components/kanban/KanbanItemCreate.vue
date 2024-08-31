@@ -1,33 +1,41 @@
 <template>
-    <div class="card mr-3">
+    <div class="card">
         <div class="card-header px-3 py-2" :style="{ backgroundColor: form.color, color: textColor }">
             <span
                 class="pull-left"
                 style="border-style: solid; border-width: 1px; border-radius: 15px; padding: 1px;"
                 :style="{borderColor: textColor }">
-                <color-picker-input
+                <v-swatches
+                    :swatch-size="49"
                     :triggerStyle="{width: '24px', height: '18px'}"
-                    v-model="form.color">
-                </color-picker-input>
+                    popover-to="right"
+                    v-model="this.form.color"
+                    @input="(id) => {
+                                this.form.color = id;
+                            }"
+                    :max-height="300"
+                ></v-swatches>
             </span>
             <input
                 :id="'title_' + component_id"
                 type="text"
                 v-model="form.title"
                 class="ml-2"
+                :class="{ 'missing-input': highlightTitleInput }"
+                @input="highlightTitleInput = false"
                 style="width: 235px !important;font-size: 1.1rem; font-weight: 400; border: 0; border-bottom: 1px; border-style:solid; margin: 0;"
                 :style="{ backgroundColor: form.color, color: textColor }"
             />
         </div>
         <div class="card-body p-2">
             <div class="pb-2">
-                <textarea
-                    id="description"
-                    name="description"
-                    :placeholder="trans('global.kanbanItem.fields.description')"
-                    class="form-control description my-editor "
-                    v-model.trim="form.description"
-                ></textarea>
+                <Editor
+                    :id="'description_' + component_id"
+                    :name="'description_' + component_id"
+                    class="form-control"
+                    :init="tinyMCE"
+                    :initial-value="form.description"
+                />
             </div>
             <div class="pb-2">
                 <b class="pt-2 pointer"
@@ -72,6 +80,16 @@
                             <label class="custom-control-label  font-weight-light"
                                    :for="'editable_'+ form.id" >
                                 {{ trans('global.editable') }}
+                            </label>
+                        </span>
+                        <span class="custom-control custom-switch custom-switch-on-green">
+                            <input  v-model="form.replace_links"
+                                    type="checkbox"
+                                    class="custom-control-input pt-1 "
+                                    :id="'replace_links_'+ form.id">
+                            <label class="custom-control-label  font-weight-light"
+                                   :for="'replace_links_'+ form.id" >
+                                {{ trans('global.replace_links') }}
                             </label>
                         </span>
                         <span class="custom-control custom-switch custom-switch-on-green">
@@ -129,6 +147,8 @@
 <script>
 import Form from 'form-backend-validation';
 import DatePicker from 'vue3-datepicker';
+import Editor from '@tinymce/tinymce-vue';
+
 /*import kanbanTask from "./KanbanTask";*/
 
 export default {
@@ -154,11 +174,22 @@ export default {
                 'due_date': null,
                 'locked': false,
                 'editable': true,
+                'replace_links': false,
                 'visibility': true,
                 'visible_from': null,
                 'visible_until': null,
             }),
+            tinyMCE: this.$initTinyMCE(
+                [
+                    "autolink link lists table"
+                ],
+                {
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id,
+                }
+            ),
             expand: false,
+            highlightTitleInput: false,
         };
     },
     created() {
@@ -182,6 +213,7 @@ export default {
             this.form.order_id = this.status.items.length;
             this.form.locked = this.status.locked;
             this.form.editable = this.status.editable;
+            this.form.replace_links = this.status.replace_links;
         }
         this.$initTinyMCE(
             [
@@ -219,8 +251,14 @@ export default {
             }
         },
         submit() {
+            if (this.form.title == null || this.form.title == ""){
+                const titleInput = document.getElementById('title_' + this.component_id);
+                titleInput.focus();
+                this.highlightTitleInput = true;
+                return;
+            }
             let method = this.method.toLowerCase();
-            this.form.description = tinyMCE.get('description').getContent();
+            this.form.description = tinyMCE.get('description_'+ this.component_id).getContent();
             if (method === 'patch') {
                     axios.patch(this.requestUrl + '/' + this.form.id, this.form)
                      .then(res => { // Tell the parent component we've updated a task
@@ -243,7 +281,14 @@ export default {
 
     },
     components: {
-        DatePicker
+        DatePicker,
+        Editor
     },
 };
 </script>
+
+<style scoped>
+.missing-input {
+    border-color: red !important;
+}
+</style>

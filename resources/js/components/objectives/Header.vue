@@ -26,7 +26,7 @@
             <button type="button"
                     class="btn btn-block btn-xs"
                     v-bind:class="objective.level.css_color"
-                    v-html="objective.level.title">
+                    v-dompurify-html="objective.level.title">
             </button>
         </span>
 
@@ -47,15 +47,11 @@
 </template>
 
 <script>
-const DropdownButton =
-    () => import('./DropdownButton');
-    //import DropdownButton from './DropdownButton'
+import DropdownButton from './DropdownButton';
     export default {
         props: ['objective', 'type', 'menuEntries', 'settings', 'textcolor', 'max_id'],
 
-        methods: {
-
-        },
+        methods: {},
         computed: {
             edit_settings: function() {
                 if (typeof this.settings !== "undefined"){
@@ -65,10 +61,7 @@ const DropdownButton =
                 }
             }
         },
-        mounted() {
-            //console.log(this.settings);
-        },
-
+        mounted() {},
         components: {
             DropdownButton,
         },

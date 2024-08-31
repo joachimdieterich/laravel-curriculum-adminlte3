@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Certificate;
 use App\Course;
 use App\CurriculumSubscription;
-use App\Group;
 use App\Curriculum;
 use App\ObjectiveType;
 use App\User;
@@ -21,10 +20,22 @@ class CourseController extends Controller
 
         $courses= CurriculumSubscription::where('subscribable_type', "App\Group")
             ->where('subscribable_id', $input['group_id'])
-            ->with(['curriculum'])->get();
+            ->with(['curriculum']);
 
         return empty($courses) ? '' : DataTables::of($courses)
+            ->addColumn('title', function ($courses) {
+                return $courses->curriculum->title;
+            })
+            ->addColumn('description', function ($courses) {
+                return $courses->curriculum->description;
+            })
+            ->addColumn('medium_id', function ($courses) {
+                return $courses->curriculum->medium_id;
+            })
             ->setRowId('id')
+            ->setRowAttr([
+                'color' => 'primary',
+            ])
             ->make(true);
 
     }
@@ -87,15 +98,16 @@ class CourseController extends Controller
 
     public function list()
     {
+        $request = $this->validateRequest();
         abort_unless(\Gate::allows('curriculum_show'), 403);                            //check if user is enrolled or admin -> else 403
         abort_unless((auth()->user()
-                            ->with(['groups.courses' => function ($query) {               //user enrolled
-                                $query->where('id', request()->course_id);
+                            ->with(['groups.courses' => function ($query, $request) {               //user enrolled
+                                $query->where('id', $request['course_id']);
                             }])
                             or (auth()->user()->currentRole()->first()->id == 1)), 403); // or admin
 
-        $course = CurriculumSubscription::where('id', request()->course_id)->get()->first();
-        //$course = Course::where('id', request()->course_id)->get()->first();
+        $course = CurriculumSubscription::where('id', $request['course_id'])->get()->first();
+
 
         $users = User::select([
             'users.id',
@@ -132,7 +144,6 @@ class CourseController extends Controller
                                     ->where('referenceable_id', $course->curriculum_id)
                                     ->first()->value : 0;
                     })
-            ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
     }
@@ -141,6 +152,7 @@ class CourseController extends Controller
     {
         return request()->validate([
             'group_id' => 'sometimes|integer',
+            'course_id' => 'sometimes|integer',
         ]);
     }
 }

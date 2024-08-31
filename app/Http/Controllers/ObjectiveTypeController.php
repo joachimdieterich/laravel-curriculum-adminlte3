@@ -15,12 +15,16 @@ class ObjectiveTypeController extends Controller
      */
     public function index()
     {
-        if (request()->wantsJson()) {
-            return ObjectiveType::all()->toJson();
-        }
-        abort_unless(\Gate::allows('objectivetype_access'), 403);
 
-        return view('objectivetypes.index');
+        if (request()->wantsJson()) {
+
+            return getEntriesForSelect2ByModel(
+                "App\ObjectiveType"
+            );
+        } else {
+            abort_unless(\Gate::allows('objectivetype_access'), 403);
+            return view('objectivetypes.index');
+        }
     }
 
     public function list()

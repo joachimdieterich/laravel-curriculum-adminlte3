@@ -4,9 +4,9 @@
         <div class="w-full flex-1 p-2">
             {{ this.title }}
             <Doughnut
-                :chart-options="chartOptions"
-                :chart-data="chartData"
-                :chart-id="chartId"
+                :options="chartOptions"
+                :data="chartData"
+                :id="chartId"
                 :dataset-id-key="datasetIdKey"
                 :plugins="plugins"
                 :css-classes="cssClasses"
@@ -48,18 +48,17 @@
     </div>
 </template>
 <script>
-import { Doughnut } from 'vue-chartjs/legacy'
-
 import {
     Chart as ChartJS,
-    Title,
+    ArcElement,
     Tooltip,
     Legend,
-    ArcElement,
+    Title,
     CategoryScale
 } from 'chart.js'
+import { Doughnut } from 'vue-chartjs';
 
-ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
+ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
 export default {
     name: 'DoughnutChart',
@@ -82,7 +81,7 @@ export default {
         },
         width: {
             type: Number,
-            default: 400
+            default: 200
         },
         height: {
             type: Number,
@@ -94,7 +93,7 @@ export default {
         },
         styles: {
             type: Object,
-            default: () => {}
+
         },
         plugins: {
             type: Array,
@@ -116,8 +115,7 @@ export default {
             },
             chartOptions: {
                 responsive: true,
-                maintainAspectRatio: false,
-                borderRadius: 10,
+                maintainAspectRatio: true,
             },
             legend: {
                 onHover: this.handleHover,
@@ -140,6 +138,7 @@ export default {
             legend.chart.update();
         },
         loaderEvent() {
+
             axios.get('/statistics?chart=' + this.chart + '&date_begin=' + this.date_begin + '&date_end=' + this.date_end)
                 .then(response => {
 

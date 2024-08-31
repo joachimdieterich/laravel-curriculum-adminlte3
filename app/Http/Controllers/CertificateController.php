@@ -31,15 +31,7 @@ class CertificateController extends Controller
     public function list()
     {
         abort_unless(\Gate::allows('certificate_access'), 403);
-        $certificates = Certificate::select([
-            'id',
-            'title',
-            'description',
-            'body',
-            'curriculum_id',
-            'organization_id',
-            'owner_id',
-        ])->with(['organization', 'curriculum', 'owner'])->where('owner_id', auth()->user()->id);
+        $certificates = Certificate::where('owner_id', auth()->user()->id)->with(['organization', 'curriculum', 'owner']);
 
         return DataTables::of($certificates)
             ->addColumn('organization', function ($certificates) {
@@ -51,27 +43,6 @@ class CertificateController extends Controller
             ->addColumn('owner', function ($certificates) {
                 return $certificates->owner->firstname.' '.$certificates->owner->lastname;
             })
-            ->addColumn('action', function ($certificates) {
-                $actions = '';
-                if (\Gate::allows('certificate_show')) {
-                    $actions .= '<a href="'.route('certificates.show', $certificates->id).'" '
-                                    .'class="btn">'
-                                    .'<i class="fa fa-list-alt"></i>'
-                                    .'</a>';
-                }
-                if (\Gate::allows('certificate_edit')) {
-                    $actions .= '<a href="'.route('certificates.edit', $certificates->id).'" '
-                                    .'class="btn">'
-                                    .'<i class="fa fa-pencil-alt"></i>'
-                                    .'</a>';
-                }
-                if (\Gate::allows('certificate_delete')) {
-                    $actions .= '<button type="button" class="btn text-danger" onclick="destroyCertificate('.$certificates->id.')"><i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
-            })
-
             ->addColumn('check', '')
             ->setRowId('id')
             ->setRowAttr([
@@ -87,19 +58,7 @@ class CertificateController extends Controller
      */
     public function create(Request $request)
     {
-        abort_unless(\Gate::allows('certificate_create'), 403);
-
-        $curricula = Curriculum::where('id', $request->query('curriculum_id'))->get();
-        $organisations = auth()->user()->organizations()->get();
-
-        $certificate = new Certificate();
-        $certificate->curriculum_id = $request->query('curriculum_id');
-        $certificate->organization_id = auth()->user()->current_organization_id;
-
-        return view('certificates.create')
-                ->with(compact('curricula'))
-                ->with(compact('certificate'))
-                ->with(compact('organisations'));
+        abort(403);
     }
 
     /**
@@ -123,12 +82,9 @@ class CertificateController extends Controller
             'global'          => isset($input['global']) ? 1 : '0',
         ]);
 
-        // axios call?
         if (request()->wantsJson()) {
-            return ['message' => $certificate->path()];
+            return $certificate;
         }
-
-        return redirect($certificate->path());
     }
 
     /**
@@ -151,14 +107,7 @@ class CertificateController extends Controller
      */
     public function edit(Certificate $certificate)
     {
-        abort_unless(\Gate::allows('certificate_edit'), 403);
-        $curricula = Curriculum::where('owner_id', auth()->user()->id)->get();
-        $organisations = auth()->user()->organizations()->get();
-
-        return view('certificates.edit')
-            ->with(compact('certificate'))
-            ->with(compact('curricula'))
-            ->with(compact('organisations'));
+        abort(403);
     }
 
     /**
@@ -183,7 +132,9 @@ class CertificateController extends Controller
             'global' => isset($input['global']) ? 1 : '0',
         ]);
 
-        return redirect()->route('certificates.index');
+        if (request()->wantsJson()) {
+            return $certificate;
+        }
     }
 
     /**
@@ -196,9 +147,7 @@ class CertificateController extends Controller
     {
         abort_unless(\Gate::allows('certificate_delete'), 403);
 
-        $certificate->delete();
-
-        return back();
+        return $certificate->delete();
     }
 
     /**
@@ -210,11 +159,11 @@ class CertificateController extends Controller
     public function generate(Request $request)
     {
         abort_unless(\Gate::allows('certificate_access'), 403);
-        $user_ids = explode(',', request()->user_ids);
-        $certificate = Certificate::find(request()->certificate_id);
+
+        $certificate = Certificate::find(format_select_input(request()->certificate_id));
 
         switch ($certificate->type) {
-            case 'user':            LogController::set(get_class($this).'@'.__FUNCTION__, request()->certificate_id, (is_array($user_ids)) ? count($user_ids) : 1);
+            case 'user':
                                     return $this->generateForUsers($certificate);
                 break;
             case 'group':           return $this->generateForGroup($certificate);
@@ -235,7 +184,8 @@ class CertificateController extends Controller
      */
     protected function generateForUsers($certificate)
     {
-        $user_ids = explode(',', request()->user_ids);
+        $user_ids =  request()->user_ids;
+        LogController::set(get_class($this).'@'.__FUNCTION__, $certificate->id, (is_array($user_ids)) ? count($user_ids) : 1);
         $generated_files = [];
         if(str_contains($certificate->body, '[accomplished_objectives]') || str_contains($certificate->body, '[accomplished_objectives_without_terminal_objectives]') )
         {
@@ -263,7 +213,6 @@ class CertificateController extends Controller
             {
                 $html = $this->generateAccomplishedObjectiveList($html, $id, $curriculum, '[accomplished_objectives_without_terminal_objectives]', false); //generate list if "[accomplished_objectives]" is in certificate
             }
-
 
             $html = preg_replace_callback(
                 '/<span\s+[^>]*reference_type="(.*?)"\s+[^>]*reference_id="(.*?)"\s+[^>]*min_value="(.*?)"[^>]*>(.*?)<\/span>/mis',
@@ -364,7 +313,7 @@ class CertificateController extends Controller
      */
     protected function generateForGroup($certificate)
     {
-        $user_ids = explode(',', request()->user_ids);
+        $user_ids =  request()->user_ids;
 
         $td_style = 'style="border-bottom: 1px solid silver;border-right: 1px solid silver;"';
 

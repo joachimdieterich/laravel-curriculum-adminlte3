@@ -17,6 +17,7 @@ class KanbanItem extends Model
         'created_at' => 'datetime:d.m.Y H:i',
         'locked' => 'boolean',
         'editable' => 'boolean',
+        'replace_links' => 'boolean',
         'visibility' => 'boolean',
         'updated_at' => 'datetime',
         'created_at'  => 'datetime',

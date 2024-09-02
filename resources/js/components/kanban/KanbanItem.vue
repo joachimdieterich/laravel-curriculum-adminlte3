@@ -77,6 +77,8 @@
                         :id="'title_'+index"
                         type="text"
                         class="ml-2"
+                        :class="{ 'missing-input': highlightTitleInput }"
+                        @input="highlightTitleInput = false"
                         v-model="form.title"
                         style="width: 235px !important;font-size: 1.1rem; font-weight: 400; border: 0; border-bottom: 1px; border-style:solid; margin: 0;"
                         :style="{ backgroundColor: item.color, color: textColor }"
@@ -96,7 +98,7 @@
             <div v-if="(editor == false)">
                 <div v-if="item.description !== null "
                      class="text-muted small px-3 py-2"
-                     v-html="form.description">
+                     v-dompurify-html="form.description">
                 </div>
             </div>
 
@@ -346,7 +348,8 @@ export default {
                 'visible_until': null,
             }),
             expand: false,
-            editors: {}
+            editors: {},
+            highlightTitleInput: false,
         };
     },
     computed:{
@@ -388,6 +391,13 @@ export default {
 
         },
         submit() {
+            if (this.form.title == null || this.form.title == ""){
+                const titleInput = document.getElementById('title_' + this.component_id);
+                titleInput.focus();
+                this.highlightTitleInput = true;
+                return;
+            }
+
             this.form.description = tinyMCE.get('description_'+this.item.id).getContent();
 
             axios.patch('/kanbanItems/' + this.form.id, this.form)
@@ -520,5 +530,9 @@ export default {
     font-size: 10px;
     line-height: 11px;
     vertical-align: middle;
+}
+
+.missing-input {
+    border-color: red !important;
 }
 </style>

@@ -63,11 +63,11 @@
                             <strong>Untertitel</strong></div>
                         <div class="col-10 pre-formatted"
                              v-if="event.BEZ_1_2.length > 2"
-                             v-html="event.BEZ_1_2"></div>
+                             v-dompurify-html="event.BEZ_1_2"></div>
 
                         <div class="col-2">
                             <strong>Beschreibung</strong></div>
-                        <div class="col-10 pre-formatted" v-html="event.BEMERKUNG"></div>
+                        <div class="col-10 pre-formatted" v-dompurify-html="event.BEMERKUNG"></div>
 
                         <div class="col-2"><strong>Termine</strong></div>
                         <div class="col-10">
@@ -89,7 +89,7 @@
                         </div>
 
                         <div class="col-2 pt-2"><strong>VA-Nummer</strong></div>
-                        <div class="col-10 pt-2" v-html="event.ARTIKEL_NR"></div>
+                        <div class="col-10 pt-2" v-dompurify-html="event.ARTIKEL_NR"></div>
 
                         <div class="col-12 mt-2">
                             <a :href="event.LINK_DETAIL"

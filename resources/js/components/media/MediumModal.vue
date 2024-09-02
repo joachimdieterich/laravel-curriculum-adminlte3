@@ -64,7 +64,7 @@
                              v-model="medium.description"/>
                 </div>
                 <div v-else-if="medium.description != ''"
-                    v-html="medium.description"
+                    v-dompurify-html="medium.description"
                     class="text-muted text-sm p-2"></div>
                 <mediumRenderer
                     :medium="medium"

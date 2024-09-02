@@ -14,6 +14,29 @@ window.Vue = require('vue').default;
 
 window.moment = require('moment');
 
+//security
+import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
+import DOMPurify from 'dompurify';
+const createWrapper = (inner) => {
+    return (el, binding) => {
+        if (binding.value === undefined || binding.value === null) {
+            return;
+        }
+        inner(el, binding);
+    };
+};
+const directive = buildVueDompurifyHTMLDirective({}, () => DOMPurify);
+Vue.directive(
+    'dompurify-html',
+    {
+        inserted: createWrapper(directive.inserted),
+        update: createWrapper(directive.update),
+        unbind(el) {
+            el.innerHTML = '';
+        },
+    }
+);
+
 //broadcasting
 import VueEcho from 'vue-echo';
 if (process.env.MIX_PUSHER_APP_ACTIVE == 'true') {
@@ -98,6 +121,13 @@ Vue.prototype.checkPermission = (permission) => {
     return window.Laravel.permissions.indexOf(permission) !== -1;
 };
 
+/**
+ * Gets the text content of the HTML
+ * No HTML tags are included, but any text, including the text inside the tags, is included.
+ *
+ * @param {string} html Input HTML
+ * @returns The text content of the HTML
+ */
 Vue.prototype.htmlToText = (html) => {
     var txt = document.createElement("textarea");
     txt.innerHTML = html;

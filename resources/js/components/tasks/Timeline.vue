@@ -34,7 +34,7 @@
                 </a>
             </span>
             <!-- Time -->
-            <span class="pull-right "><i class="fa fa-link pr-1"></i> <span v-html="subscription.created_at"></span></span>
+            <span class="pull-right "><i class="fa fa-link pr-1"></i> <span v-dompurify-html="subscription.created_at"></span></span>
         </div>
     </div>
 

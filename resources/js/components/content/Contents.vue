@@ -147,7 +147,7 @@
                      class="carousel-item" :title="item.content.title"
                 >
                     <div class="p-3"
-                         v-html="item.content.content"
+                         v-dompurify-html="item.content.content"
                     ></div>
                 </div>
             </div>

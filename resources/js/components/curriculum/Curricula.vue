@@ -96,8 +96,8 @@
                    <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
                        {{ curriculum.title }}
                    </h1>
-                   <p class="text-muted small"
-                      v-html="htmlToText(curriculum.description)">
+                   <p class="text-muted small">
+                    {{ htmlToText(curriculum.description) }}
                    </p>
                 </span>
                     <div v-permission="'is_admin'"
@@ -231,7 +231,7 @@ export default {
             window.location = "/curricula/" + curriculum.id + "/editOwner";
         },
         shareCurriculum(curriculum){
-            this.$modal.show('subscribe-modal', { 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false});
+            this.$modal.show('subscribe-modal', { 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditLabel': ' ', 'canEditCheckbox': false});
         },
         loaderEvent(){
             if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){

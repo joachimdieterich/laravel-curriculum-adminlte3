@@ -25,7 +25,7 @@
         <h5 v-if="marker.description !== ''" class="pt-3">{{ trans('global.description') }}</h5>
         <div v-if="marker.description !== ''"
             class="pb-2"
-            v-html="marker.description"
+            v-dompurify-html="marker.description"
         ></div>
 
         <h5 class="pt-3" :class="!show_media && 'd-none'">{{ trans('global.media.title') }}</h5>
@@ -41,7 +41,7 @@
         </div>
 
         <h5 v-if="marker.address !== ''" class="pt-3">{{ trans('global.marker.fields.address') }}</h5>
-        <div v-html="marker.address"></div>
+        <div v-dompurify-html="marker.address"></div>
 
         <h5 v-if="marker.url" class="pt-3">{{ trans('global.marker.fields.link') }}</h5>
         <div v-if="marker.url">

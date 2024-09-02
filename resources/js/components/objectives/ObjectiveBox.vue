@@ -35,7 +35,7 @@
          v-bind:style="{ 'background-color': backgroundcolor, 'border-color': bordercolor, 'opacity': opacity, 'filter': filter }"
     >
         <!-- don't load Header if it isn't needed -->
-        <Header v-if="settings.edit == true" 
+        <Header v-if="settings.edit == true"
             :objective="objective"
             :type="type"
             :menuEntries="menuEntries"
@@ -52,7 +52,7 @@
                  v-bind:style="{'background': background, 'background-color': backgroundcolor, 'border-color': objective.color }">
                 <div class="boxcontent"
                      v-bind:style="{ 'color': textcolor }"
-                     v-html="objective.title">
+                     v-dompurify-html="objective.title">
                 </div>
             </div>
         </div>

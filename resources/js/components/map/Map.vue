@@ -5,7 +5,8 @@
             <!-- navigation tabs -->
             <div class="sidebar-tabs">
                 <ul role="tablist">
-                    <li><a href="#ll-home" role="tab"><i class="fa fa-bars"></i></a></li>
+                    <li><a href="#ll-home" role="tab">
+                        <i class="fa fa-home"></i></a></li>
                     <li v-if="$userId == map.owner_id">
                         <a href="#ll-layer" role="tab">
                             <i class="fa fa-layer-group"></i>
@@ -46,12 +47,12 @@
                     </span>
 
                     <p class="pt-2"
-                        v-html="this.map.description"
+                        v-dompurify-html="this.map.description"
                     ></p>
 
                     <h5 class="pt-2">{{ trans('global.entries') }}</h5>
                     <ul class="todo-list">
-                        <li v-for="marker in this.markers">
+                        <li v-for="marker in this.selectedMarkers">
                             <i class="fa fa-location-dot pr-2"></i>
                             <a @click="setCurrentMarker(marker)"
                                class="text-decoration-none"
@@ -139,7 +140,7 @@
                     </div>
                     <div class="py-0 pre-formatted"
                          v-if="this.currentMarker.BEZ_1_2.length > 2"
-                         v-html="this.currentMarker.BEZ_1_2"
+                         v-dompurify-html="this.currentMarker.BEZ_1_2"
                     ></div>
 
                     <div class="py-0 pt-2">
@@ -147,7 +148,7 @@
                     </div>
                     <div class="py-0 pre-formatted"
                          style="text-align:justify;"
-                         v-html="this.currentMarker.BEMERKUNG"
+                         v-dompurify-html="this.currentMarker.BEMERKUNG"
                     ></div>
 
                     <div class="py-0 pt-2"><strong>Termine</strong></div>
@@ -160,7 +161,7 @@
                     </div>
 
                     <div class="py-0 pt-2"><strong>VA-Nummer</strong></div>
-                    <div class="py-0 pre-formatted" v-html="this.currentMarker.ARTIKEL_NR"></div>
+                    <div class="py-0 pre-formatted" v-dompurify-html="this.currentMarker.ARTIKEL_NR"></div>
 
                     <div class="py-0 pt-2">
                         <a :href="this.currentMarker.LINK_DETAIL"
@@ -260,6 +261,7 @@ export default {
             bordersGroup: {},
             namesGroup: {},
             markers: {},
+            selectedMarkers: {},
             currentMarker: undefined,
             clusterGroup: {},
             mapMarkerTypes: {},
@@ -303,31 +305,36 @@ export default {
             axios.get('/mapMarkers?type_id=' + this.form.type_id + '&category_id=' + this.form.category_id)
                 .then(res => {
                     this.markers = res.data.markers;
+                    this.selectedMarkers = this.markers;
                     //console.log(this.markers);
-                    this.clusterGroup = L.markerClusterGroup(); // create the new clustergroup
-
-                    this.markers.forEach((marker) => {
-                        this.clusterGroup.addLayer(
-                            this.generateMarker(
-                                marker.latitude,
-                                marker.longitude,
-                                marker,
-                                marker.title,
-                                marker.teaser_text,
-                                'll-marker',
-                                this.getCss('type', marker.type_id)['css_icon'],
-                                this.getCss('category', marker.category_id)['color'],
-                                this.getCss('category', marker.category_id)['shape'],
-                                'fa'
-                            )
-                        ); // add marker to the clustergroup
-                    });
-                    this.mapCanvas.addLayer(this.clusterGroup); // add clustergroup to the map
-                    this.currentMarker = this.markers[0];
+                    this.refreshMarker();
                 })
                 .catch(err => {
                     console.log(err);
                 });
+        },
+        refreshMarker(){
+            this.mapCanvas.removeLayer(this.clusterGroup);
+            this.clusterGroup = L.markerClusterGroup(); // create the new clustergroup
+
+            this.selectedMarkers.forEach((marker) => {
+                this.clusterGroup.addLayer(
+                    this.generateMarker(
+                        marker.latitude,
+                        marker.longitude,
+                        marker,
+                        marker.title,
+                        marker.teaser_text,
+                        'll-marker',
+                        this.getCss('type', marker.type_id)['css_icon'],
+                        this.getCss('category', marker.category_id)['color'],
+                        this.getCss('category', marker.category_id)['shape'],
+                        'fa'
+                    )
+                ); // add marker to the clustergroup
+            });
+            this.mapCanvas.addLayer(this.clusterGroup); // add clustergroup to the map
+            this.currentMarker = this.markers[0];
         },
         async markerSearch() {
             $("#loading-events").show();
@@ -523,6 +530,13 @@ export default {
         }
     },
     mounted() {
+        this.$eventHub.$emit('showSearchbar');
+        this.$eventHub.$on('filter', (filter) => {
+            //console.log(this.markers.filter(m => m.title.toLowerCase().indexOf(filter) > -1));
+            this.selectedMarkers = this.markers.filter(m => m.title.toLowerCase().indexOf(filter.toLowerCase()) > -1);
+            this.refreshMarker();
+        });
+
         this.$eventHub.$on('edit_marker', (marker) => {
             this.edit(marker);
         });

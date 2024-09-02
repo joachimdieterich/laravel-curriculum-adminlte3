@@ -96,8 +96,8 @@
         <span class="bg-white text-center p-1 overflow-auto "
             style="position:absolute; bottom:0px; height: 150px; width:100%;"
         >
-            <h6 class="events-heading pt-1 hyphens" v-html="subscription.medium.title"></h6>
-            <p class=" text-muted small" v-html="subscription.medium.description"></p>
+            <h6 class="events-heading pt-1 hyphens" v-dompurify-html="subscription.medium.title"></h6>
+            <p class=" text-muted small" v-dompurify-html="subscription.medium.description"></p>
         </span>
 
     </div>

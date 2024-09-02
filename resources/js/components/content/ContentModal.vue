@@ -43,7 +43,7 @@
             </div>
 
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;"
-                 v-html="content.content">
+                 v-dompurify-html="content.content">
             </div>
             <div class="card-footer">
                 <span class="pull-right">

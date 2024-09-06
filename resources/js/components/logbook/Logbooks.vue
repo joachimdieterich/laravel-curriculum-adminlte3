@@ -169,7 +169,7 @@ import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal";
 import SubscribeLogbookModal from "./SubscribeLogbookModal";
-
+DataTable.use(DataTablesCore);
 
 
 export default {

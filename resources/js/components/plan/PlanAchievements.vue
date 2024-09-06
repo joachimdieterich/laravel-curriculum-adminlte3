@@ -53,53 +53,30 @@ export default {
                 enabling_td.innerHTML = ena.title;
                 enabling_tr.appendChild(enabling_td);
 
-                if (ena.achievements.length === 0) {
-                    this.users.forEach(user => {
-                        const user_td = document.createElement('td');
-                        const i = document.createElement('i');
-                        
-                        user_td.classList.add('status-0');
-                        i.classList.add('fa', 'fa-circle');
-                        
-                        user_td.appendChild(i);
-                        enabling_tr.appendChild(user_td);
-                    });
-                } else {
-                    this.users.forEach(user => {
-                        const user_td = document.createElement('td');
-                        const i = document.createElement('i');
-                        // find out if there's a set achievement and get the teacher's value | if not => 0
-                        const status = ena.achievements.find(achievement => achievement.user_id === user.id)?.status[1] ?? '0';
-                        
-                        user_td.classList.add('status-' + status);
-                        i.classList.add('fa', 'fa-circle');
-                        
-                        user_td.appendChild(i);
-                        enabling_tr.appendChild(user_td);
-                    });
-                }
+                this.addAchievementCells(enabling_tr, ena.achievements);
 
                 tbody.appendChild(enabling_tr);
             })
         });
     },
     methods: {
-        /**
-         * creates a td-element and appends it to the given tr-element
-         * @param {HTMLTableRowElement} tr tr-element of which the td-cell should be appended to
-         * @param {String} title text for innerHTML
-         * @param {String} status status-number of the achievement
-         */
-        addCell(tr, title, status = false) {
-            const td = document.createElement('td');
-            td.innerHTML = title; // title is wrapped around a p-tag
+        addAchievementCells(tr, achievements) {
+            this.users.forEach(user => {
+                const td = document.createElement('td');
+                const i = document.createElement('i');
+                let status = '0';
 
-            if (status !== false) {
-                // the background should be colored based on the teacher-side of the achievement
-                td.classList.add('status-' + status); // classname => status-0/1/2/3
-            }
+                if (achievements.length > 0) {
+                    // find out if there's a set achievement and get the teacher's value | if not => 0
+                    status = achievements.find(achievement => achievement.user_id === user.id)?.status[1] ?? '0';
+                }
 
-            tr.appendChild(td);
+                td.classList.add('status-' + status);
+                i.classList.add('fa', 'fa-circle');
+
+                td.appendChild(i);
+                tr.appendChild(td);
+            });
         },
     },
 }

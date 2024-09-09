@@ -92,7 +92,7 @@
                        data-toggle="tab"
                        @click="loadMedia()">
                         <i class="fa fa-folder-open pr-2"></i>
-                        <span v-if="help">{{trans('global.media.title')}}</span>
+                        <span v-if="help">{{trans('global.medium.title')}}</span>
                     </a>
                 </li>
 

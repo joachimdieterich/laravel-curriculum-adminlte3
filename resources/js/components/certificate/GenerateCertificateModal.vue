@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="show"
+        <div v-if="this.globalStore.modals['generate-certificate-modal']?.show"
              class="modal-mask"
         >
         <div class="modal-container">
@@ -11,7 +11,7 @@
                 <div class="card-tools">
                     <button type="button"
                             class="btn btn-tool"
-                            @click="$emit('close')">
+                            @click="this.globalStore?.closeModal('generate-certificate-modal')">
                         <i class="fa fa-times"></i>
                     </button>
                  </div>
@@ -46,30 +46,31 @@
                          id="certificate-cancel"
                          type="button"
                          class="btn btn-default"
-                         @click="$emit('close')">
+                         @click="this.globalStore?.closeModal('generate-certificate-modal')">
                          {{ trans('global.cancel') }}
                      </button>
-                     <button v-if="!download_url"
-                             id="btn_generate"
-                             class="btn btn-primary"
-                             @click="submit()" >
-                             <div v-if="download_url === false"
-                                  class="text-center text-white">
-                                    <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
-                                    <span class="sr-only">Loading...</span>
-                            </div>
-                             <span v-else> {{ trans('global.generate') }} </span>
-                         </button>
+                     <button
+                         v-if="!download_url"
+                         id="btn_generate"
+                         class="btn btn-primary"
+                         @click="submit()" >
+                         <div v-if="download_url === false"
+                              class="text-center text-white">
+                                <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                                <span class="sr-only">Loading...</span>
+                        </div>
+                         <span v-else> {{ trans('global.generate') }} </span>
+                     </button>
 
-                         <a v-if="download_url"
-                            id="btn_download"
-                            class="btn btn-primary hidden"
-                            :href="download_url"
-                            target="_blank"
-                            @click="$modal.hide('certificate-generate-modal')">
-                             <i class="fa fa-download"></i>
-                             {{ trans('global.downloadFile') }}
-                         </a>
+                     <a v-if="download_url"
+                        id="btn_download"
+                        class="btn btn-primary hidden"
+                        :href="download_url"
+                        target="_blank"
+                        @click="$modal.hide('certificate-generate-modal')">
+                         <i class="fa fa-download"></i>
+                         {{ trans('global.downloadFile') }}
+                     </a>
                 </span>
             </div>
         </div>
@@ -80,6 +81,7 @@
     import Form from 'form-backend-validation';
     import Select2 from "../forms/Select2";
     import {useDatatableStore} from "../../store/datatables";
+    import {useGlobalStore} from "../../store/global";
 
     export default {
         components:{
@@ -95,13 +97,15 @@
         },
         setup () { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters
             const store = useDatatableStore();
+            const globalStore = useGlobalStore();
             return {
-                store
+                store,
+                globalStore,
             }
         },
         data() {
             return {
-                component_id: this._uid,
+                component_id: this.$.uid,
                 method: 'post',
                 url: '/certificates/generate',
                 form: new Form({
@@ -113,11 +117,6 @@
                 search: '',
                 download_url: null
             }
-        },
-        watch: {
-            params: function(newVal, oldVal) {
-                this.form.populate(newVal);
-            },
         },
         methods: {
              submit(method) {
@@ -133,6 +132,21 @@
                      });
             },
         },
-        mounted() {},
+        mounted() {
+            this.globalStore.registerModal('generate-certificate-modal');
+            this.globalStore.$subscribe((mutation, state) => {
+
+                const params = state.modals['generate-certificate-modal'].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined'){
+                    this.form.populate(params);
+                    if (this.form.id != ''){
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
+                    }
+                }
+            });
+        },
     }
 </script>

@@ -164,7 +164,7 @@ export default {
     },
     data() {
         return {
-            componentId: this._uid,
+            componentId: this.$.uid,
             showOrganizationModal: false,
             currentOrganization: {},
             onlyAddress: false,

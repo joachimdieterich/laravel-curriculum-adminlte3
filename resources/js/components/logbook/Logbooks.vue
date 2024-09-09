@@ -157,8 +157,6 @@
                 }"
             ></ConfirmModal>
         </Teleport>
-
-
    </div>
 </template>
 <script>
@@ -170,7 +168,6 @@ import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal";
 import SubscribeLogbookModal from "./SubscribeLogbookModal";
 DataTable.use(DataTablesCore);
-
 
 export default {
     props: {
@@ -193,7 +190,7 @@ export default {
 
     data() {
         return {
-            component_id: this._uid,
+            component_id: this.$.uid,
             logbooks: [],
             subscriptions: {},
             search: '',

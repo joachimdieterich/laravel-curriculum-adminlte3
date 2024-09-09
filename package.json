@@ -74,7 +74,7 @@
         "vue": "^3.4.33",
         "vue-chartjs": "^5.3.1",
         "vue-color": "^2.8.1",
-        "vue-dompurify-html": "^4.1.4",
+        "vue-dompurify-html": "^5.1.0",
         "vue-echo": "^1.0.2",
         "vue-multiselect": "^3.0.0",
         "vue-sticky-directive": "0.0.10",

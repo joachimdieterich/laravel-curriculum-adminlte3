@@ -91,11 +91,10 @@
             params: {
                 type: Object
             },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
-
         },
         data() {
             return {
-                component_id: this._uid,
+                component_id: this.$.uid,
                 method: 'post',
                 url: '/periods',
                 form: new Form({
@@ -130,7 +129,6 @@
                     this.method = 'post';
                 }
             },
-
         },
         methods: {
              submit(method) {

@@ -154,7 +154,7 @@ export default {
     },
     data() {
         return {
-            componentId: this._uid,
+            componentId: this.$.uid,
             showUserModal: false,
             currentUser: {},
         }

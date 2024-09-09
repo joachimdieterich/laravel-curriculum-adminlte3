@@ -15,12 +15,13 @@
                        v-bind:class="[iconCss(subscription.medium.mime_type)]"
                     ></i>
                     {{ subscription.medium.title }}
-
-                    <i v-if="$userId == subscription.owner_id"
-                       v-permission="'medium_delete'"
-                       class="pull-right fa fa-trash text-danger"
-                       @click.stop="destroy(subscription)"
-                    ></i>
+                    <span class="pull-right">
+                        <i v-if="$userId == subscription.owner_id"
+                           v-permission="'medium_delete'"
+                           class="fa fa-trash text-danger"
+                           @click.stop="destroy(subscription)"
+                        ></i>
+                    </span>
 <!--                    <i class="pull-right fa fa-graduation-cap text-muted"
                        v-if="subscription.visibility && ($userId == subscription.owner_id)"
                        v-permission="'artefact_create'"
@@ -32,8 +33,7 @@
                        class="pull-right fa fa-trash text-danger"
                        @click.stop="destroyArtefact(subscription.medium.id)"
                     ></i>-->
-
-                    <license class="pull-right pr-2"
+                    <license class="pull-right pr-4"
                              :licenseId="subscription.medium.license_id"
                     ></license>
                 </td>
@@ -45,12 +45,11 @@
                     v-if="url == '/mediumSubscriptions'"
                     @click="addMedia()"
                 >
-                    <i class="fa fa-plus px-2 "></i> {{ trans('global.media.add')}}
+                    <i class="fa fa-plus px-2 "></i> {{ trans('global.medium.add')}}
                 </td>
             </tr>
         </table>
     </div>
-
 
     <div v-else
         v-for="subscription in subscriptions"
@@ -107,17 +106,6 @@
         </span>
 
     </div>
-    <Teleport to="body">
-<!--        <MediumModal
-            :show="this.mediumStore.getShowMediumModal"
-            @close="this.mediumStore.setShowMediumModal(false)"
-        ></MediumModal> todo: has to be one level higher, sometimes media is used multiple times-->
-        <MediumPreviewModal
-            :show="this.showMediumPreviewModal"
-            @close="this.showMediumPreviewModal = false"
-            :params="this.currentMedium"
-        ></MediumPreviewModal>
-    </Teleport>
 </div>
 </template>
 
@@ -125,8 +113,7 @@
 <script>
     import License from '../uiElements/License';
     import {useMediumStore} from "../../store/media.js";
-    import MediumPreviewModal from "./MediumPreviewModal";
-    import MediumModal from "./MediumModal.vue";
+    import {useGlobalStore} from "../../store/global";
 
     export default {
         props: {
@@ -143,18 +130,19 @@
         },
         setup () { //use database store
             const mediumStore = useMediumStore();
+            const globalStore = useGlobalStore();
             return {
-                mediumStore
+                mediumStore,
+                globalStore
             }
         },
         data() {
             return {
-                component_id: this._uid,
+                component_id: this.$.uid,
                 subscriptions: {},
                 errors: {},
                 currentUser: {},
                 currentMedium: null,
-                showMediumPreviewModal: false,
             }
         },
         watch: { // reload if context change
@@ -163,7 +151,6 @@
                     this.loader();
                 }
             },
-
         },
         methods: {
             loader() { //todo: remove duplicate in beforMount.
@@ -174,8 +161,7 @@
                 });
             },
             show(mediumObject) {
-                this.currentMedium = mediumObject;
-                this.showMediumPreviewModal = true;
+                this.globalStore?.showModal('medium-preview-modal', mediumObject);
             },
             addMedia() {
                 this.mediumStore.setMediumModalParams(
@@ -272,10 +258,7 @@
             });
         },
         components: {
-            MediumModal,
-            MediumPreviewModal,
             License
         }
-
     }
 </script>

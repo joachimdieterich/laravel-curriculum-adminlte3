@@ -4,7 +4,8 @@
             <div v-if="model.curriculum.variants === null || (!enableDraggable && model.variants.length === 0)"
                  class="col-12 pb-2">
                 <div v-if="field === 'description'"
-                     v-dompurify-html="model.description"></div>
+                     v-dompurify-html="model.description">
+                </div>
                 <div v-else
                      v-dompurify-html="model.title"></div>
             </div>
@@ -129,7 +130,7 @@ export default {
     },
     data() {
         return {
-            component_id: this._uid,
+            component_id: this.$.uid,
             form: new Form({
                 'id': '',
                 'title': '',

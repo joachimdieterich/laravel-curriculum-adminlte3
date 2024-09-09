@@ -57,7 +57,7 @@
                         <a class="nav-link link-muted"
                            v-bind:href="'#task_media_'+task.id"
                            data-toggle="tab">
-                            <i class="fa fa-folder-open pr-2"></i>{{ trans('global.media.title') }}
+                            <i class="fa fa-folder-open pr-2"></i>{{ trans('global.medium.title') }}
                         </a>
                     </li>
                     <li class="nav-item small">
@@ -160,7 +160,7 @@ export default {
     },
     data() {
         return {
-            componentId: this._uid,
+            componentId: this.$.uid,
             showTaskModal: false,
             currentTask: {},
         }

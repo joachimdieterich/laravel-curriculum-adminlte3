@@ -70,17 +70,14 @@
             </div>
 
         <Teleport to="body">
-            <CertificateModal
-                :show="this.showCertificateModal"
-                @close="this.showCertificateModal = false"
-                :params="this.currentCertificate"
-            ></CertificateModal>
+            <CertificateModal></CertificateModal>
         </Teleport>
     </div>
 </template>
 
 <script>
 import CertificateModal from "../certificate/CertificateModal";
+import {useGlobalStore} from "../../store/global";
 
 export default {
     name: "Certificate",
@@ -95,23 +92,26 @@ export default {
             default: null
         },
     },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore
+        }
+    },
     data() {
         return {
-            componentId: this._uid,
-            showCertificateModal: false,
-            currentCertificate: {},
+            componentId: this.$.uid,
         }
     },
     mounted() {
         this.$eventHub.on('certificate-updated', (certificate) => {
-            this.showCertificateModal = false;
+            this.globalStore?.closeModal('certificate-modal');
             window.location.reload();
         });
     },
     methods: {
         editCertificate(certificate){
-            this.currentCertificate = certificate;
-            this.showCertificateModal = true;
+            this.globalStore?.showModal('certificate-modal', certificate);
         },
     }
 }

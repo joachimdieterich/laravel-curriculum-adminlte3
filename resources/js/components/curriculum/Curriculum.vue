@@ -54,7 +54,7 @@
                            id="medium-nav-tab"
                            data-toggle="pill"
                            href="#medium-tab">
-                            <i class="fa fa-folder-open pr-2"></i>{{ trans('global.media.title') }}
+                            <i class="fa fa-folder-open pr-2"></i>{{ trans('global.medium.title') }}
                         </a>
                     </li>
                     <li class="nav-item "
@@ -83,7 +83,7 @@
                         class="nav-item ml-auto"
                     >
                         <a class="nav-link link-muted"
-                           @click.prevent="this.showGenerateCertificateModal = true"
+                           @click.prevent="generateCertificate()"
                            id="certificate-nav-tab">
                             <i class="fa fa-certificate pr-2"></i>{{ trans('global.certificate.generate') }}
                         </a>
@@ -203,11 +203,7 @@
                 @close="this.showCertificateModal = false"
                 :params="{'curriculum_id': this.curriculum.id}"
             ></CertificateModal>
-            <GenerateCertificateModal
-                :show="this.showGenerateCertificateModal"
-                @close="this.showGenerateCertificateModal = false"
-                :params="{'curriculum_id': this.curriculum.id}">
-            </GenerateCertificateModal>
+            <GenerateCertificateModal></GenerateCertificateModal>
         </Teleport>
     </div>
 </template>
@@ -222,14 +218,12 @@ import Contents from '../content/Contents';
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import 'datatables.net-select-bs5';
-import { storeToRefs } from 'pinia';
 import {useDatatableStore} from "../../store/datatables";
 import CertificateModal from "../certificate/CertificateModal.vue";
 import GenerateCertificateModal from "../certificate/GenerateCertificateModal.vue";
+import {useGlobalStore} from "../../store/global";
 
 DataTable.use(DataTablesCore);
-
-
 
 export default {
     name: "curriculum",
@@ -266,16 +260,17 @@ export default {
     },
     setup () { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters
         const store = useDatatableStore();
+        const globalStore = useGlobalStore();
         return {
-            store
+            store,
+            globalStore,
         }
     },
     data() {
         return {
-            componentId: this._uid,
+            componentId: this.$.uid,
             showCurriculumModal: false,
             currentCurriculum: {},
-            showGenerateCertificateModal: false,
             showCertificateModal: false,
             columns: [
                 { title: window.trans.global.user.fields.username, data: 'username', searchable: true},
@@ -322,6 +317,9 @@ export default {
         setCrossReferenceCurriculumId: function(curriculum_id) { //can be called external
             this.settings.cross_reference_curriculum_id = curriculum_id;
         },
+        generateCertificate(){
+            this.globalStore?.showModal('generate-certificate-modal', {'curriculum_id': this.curriculum.id});
+        }
         /*externalEvent: function(ids) {
             this.reloadEnablingObjectives(ids);
         },

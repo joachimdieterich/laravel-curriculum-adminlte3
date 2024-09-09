@@ -78,7 +78,7 @@ export default {
         }
     },
     mounted() {
-        this.id = 'carousel_' + this._uid
+        this.id = 'carousel_' + this.$.uid
     },
     methods: {
         setSlide(id) {

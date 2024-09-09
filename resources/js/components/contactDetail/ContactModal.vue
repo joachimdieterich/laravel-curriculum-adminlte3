@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="show"
+        <div v-if="this.globalStore.modals['contact-modal']?.show"
              class="modal-mask">
         <div class="modal-container">
             <div class="card-header">
@@ -15,7 +15,7 @@
                 <div class="card-tools">
                     <button type="button"
                             class="btn btn-tool"
-                            @click="$emit('close')">
+                            @click="this.globalStore?.closeModal('contact-modal')">
                         <i class="fa fa-times"></i>
                     </button>
                  </div>
@@ -24,7 +24,9 @@
                 <div class="form-group "
                     :class="form.errors.email ? 'has-error' : ''"
                       >
-                    <label for="title">{{ trans('global.contactDetail.fields.email') }} *</label>
+                    <label for="title">
+                        {{ trans('global.contactDetail.fields.email') }} *
+                    </label>
                     <input
                         type="text"
                         id="email"
@@ -38,7 +40,9 @@
                 </div>
                 <div class="form-group "
                      :class="form.errors.phone ? 'has-error' : ''">
-                    <label for="title">{{ trans('global.contactDetail.fields.phone') }} *</label>
+                    <label for="title">
+                        {{ trans('global.contactDetail.fields.phone') }} *
+                    </label>
                     <input
                         type="text"
                         id="phone"
@@ -52,7 +56,9 @@
                 </div>
                 <div class="form-group "
                      :class="form.errors.mobile ? 'has-error' : ''">
-                    <label for="title">{{ trans('global.contactDetail.fields.mobile') }} *</label>
+                    <label for="title">
+                        {{ trans('global.contactDetail.fields.mobile') }} *
+                    </label>
                     <input
                         type="text"
                         id="mobile"
@@ -66,7 +72,9 @@
                 </div>
 
                 <div class="form-group ">
-                    <label for="notes">{{ trans('global.contactDetail.fields.notes') }}</label>
+                    <label for="notes">
+                        {{ trans('global.contactDetail.fields.notes') }}
+                    </label>
                     <Editor
                         id="notes"
                         name="notes"
@@ -83,7 +91,7 @@
                          id="contactDetail-cancel"
                          type="button"
                          class="btn btn-default"
-                         @click="$emit('close')">
+                         @click="this.globalStore?.closeModal('contact-modal')">
                          {{ trans('global.cancel') }}
                      </button>
                      <button
@@ -101,6 +109,7 @@
 <script>
     import Form from 'form-backend-validation';
     import Editor from '@tinymce/tinymce-vue';
+    import {useGlobalStore} from "../../store/global";
 
     export default {
         components:{
@@ -114,9 +123,16 @@
                 type: Object
             },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
         },
+        setup () {
+            const globalStore = useGlobalStore();
+
+            return {
+                globalStore,
+            }
+        },
         data() {
             return {
-                component_id: this._uid,
+                component_id: this.$.uid,
                 method: 'post',
                 url: '/contactDetails',
                 form: new Form({
@@ -147,20 +163,6 @@
                 search: '',
             }
         },
-        watch: {
-            params: function(newVal, oldVal) {
-                if (typeof (newVal) == "undefined"){
-                    this.form.reset();
-                } else {
-                    this.form.populate(newVal);
-                    this.form.notes = this.$decodeHtml(this.form.notes)
-                }
-
-                if (typeof (newVal) != "undefined"){
-                    this.method = 'patch';
-                }
-            },
-        },
         methods: {
              submit(method) {
                 this.form.notes = tinyMCE.get('notes').getContent();
@@ -190,6 +192,22 @@
                     });
             }
         },
-        mounted() {},
+        mounted() {
+            this.globalStore.registerModal('contact-modal');
+            this.globalStore.$subscribe((mutation, state) => {
+                console.log(mutation);
+                const params = state.modals['contact-modal'].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined'){
+                    this.form.populate(params);
+                    this.form.notes = this.$decodeHtml(this.form.notes)
+                    if (this.form.id != ''){
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
+                    }
+                }
+            });
+        },
     }
 </script>

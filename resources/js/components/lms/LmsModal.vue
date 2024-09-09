@@ -74,6 +74,7 @@
                                 }"
                          >
                         </Select2>
+
                     </div>
 
 <!--                    <div v-if="this.form.course_content_id"
@@ -129,6 +130,8 @@
     import Select2 from "../forms/Select2";
     import {useGlobalStore} from "../../store/global";
     import Token from "./Token.vue";
+    import {useToast} from "vue-toastification";
+
 
     export default {
         components:{
@@ -140,15 +143,17 @@
                 type: Object
             },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
         },
-        setup () { //use database store
+        setup () {
+            const toast = useToast();
             const globalStore = useGlobalStore();
             return {
-                globalStore
+                globalStore,
+                toast
             }
         },
         data() {
             return {
-                component_id: this._uid,
+                component_id: this.$.uid,
                 method: 'post',
                 url: '/lmsReferences',
                 form: new Form({
@@ -168,19 +173,6 @@
                 sharing_levels: [],
                 loading: false
             }
-        },
-        watch: {
-            params: function(newVal, oldVal) {
-                this.form.reset();
-                this.form.populate(newVal);
-                this.url = newVal.url;
-
-                if (this.form.id != null){
-                    this.method = 'patch';
-                } else {
-                    this.method = 'post';
-                }
-            },
         },
         methods: {
              loader() {
@@ -252,11 +244,16 @@
             },
 
              submit(method) {
-                 if (method == 'patch') {
-                     this.update();
+                 if (this.form.course_item != null) {
+                     if (method == 'patch') {
+                         this.update();
+                     } else {
+                         this.add();
+                     }
                  } else {
-                     this.add();
+                     this.errorNotification('Bitte alle Felder auswählen.');
                  }
+
             },
             add(){
                 axios.post(this.url, {
@@ -310,58 +307,41 @@
                 this.token = token;
                 this.loadCourses();
             },
-
-            /*initSelect2() {
-               /!* $("#courses").select2({
-                    dropdownParent: $(".v--modal-overlay"),
-                    allowClear: false,
-                }).on('select2:select', function (e) {
-
-                    this.loadCourseContents(e.params.data.id);
-                }.bind(this))
-                    .val(this.form.course_id).trigger('change'); //set value*!/
-
-                $("#course_contents").select2({
-                    dropdownParent: $(".v--modal-overlay"),
-                    allowClear: false,
-                }).on('select2:select', function (e) {
-                    this.form.course_content_id = parseInt(e.params.data.id)
-                    const index = this.course_contents.findIndex(            // Find the index of the status where we should replace the item
-                        c => c.id === parseInt(e.params.data.id)
-                    );
-                    this.course_content_items = this.course_contents[index].modules
-                }.bind(this))
-                    .val(this.form.course_content_id).trigger('change'); //set value
-
-                $("#course_items").select2({
-                    dropdownParent: $(".v--modal-overlay"),
-                    allowClear: false,
-                }).on('select2:select', function (e) {
-
-                    const index = this.course_content_items.findIndex(            // Find the index of the status where we should replace the item
-                        i => i.id === parseInt(e.params.data.id)
-                    );
-                    this.form.course_item = this.course_content_items[index]
-                }.bind(this))
-                    .val(this.form.course_content_id).trigger('change'); //set value
-
-                /!* $("#sharing_level").select2({
-                     dropdownParent: $(".v--modal-overlay"),
-                     allowClear: false,
-                 });*!/
-            },*/
+            errorNotification(message) {
+                this.toast.error(message, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                });
+            },
         },
         mounted() {
             this.globalStore.registerModal('lms-modal');
+            this.globalStore.$subscribe((mutation, state) => {
+                //console.log(mutation);
+                const params = state.modals['lms-modal'].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined'){
+                    this.form.populate(params);
+                    if (this.form.id != ''){
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
+                    }
+                }
+            });
 
             this.loader();
             this.loadCourses();
-
-           /* axios.get('/sharingLevels').then(response => {
-                this.sharing_levels = response.data.sharingLevel;
-            }).catch(e => {
-                console.log(e);
-            });*/ // not used
         },
     }
 </script>

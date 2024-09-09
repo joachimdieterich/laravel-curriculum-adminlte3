@@ -53,11 +53,7 @@
         </div>
 
         <Teleport to="body">
-            <CourseModal
-                :show="this.showCourseModal"
-                @close="this.showCourseModal = false"
-                :params="this.group"
-            ></CourseModal>
+            <CourseModal></CourseModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.course.delete')"
@@ -84,18 +80,24 @@ import CourseModal from "./CourseModal";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal";
+import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
     props: {
         group: Object,
     },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
     data() {
         return {
-            component_id: this._uid,
+            component_id: this.$.uid,
             courses: null,
             search: '',
-            showCourseModal: false,
             showConfirm: false,
             url: '/courses/?group_id=' + this.group.id,
             errors: {},
@@ -118,20 +120,18 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('createCourse', () => {
-            this.currentCourse = {};
-            this.showCourseModal = true;
+            this.globalStore?.showModal('course-modal', {});
         });
 
         this.$eventHub.on('course-added', (course) => {
-            this.showCourseModal = false;
+            this.globalStore?.closeModal('course-modal');
             this.dt.ajax.reload();
         });
 
     },
     methods: {
-        editCourse(course){
-            this.currentCourse = course;
-            this.showCourseModal = true;
+        editCourse(course){ //todo: Not used?
+            this.globalStore?.showModal('course-modal', course);
         },
         loaderEvent(){
             this.dt = $('#course-datatable').DataTable();

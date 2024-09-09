@@ -62,11 +62,7 @@
         </div>
 
         <Teleport to="body">
-            <CertificateModal
-                :show="this.showCertificateModal"
-                @close="this.showCertificateModal = false"
-                :params="currentCertificate"
-                ></CertificateModal>
+            <CertificateModal></CertificateModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.certificate.delete')"
@@ -93,10 +89,17 @@ import ConfirmModal from "../uiElements/ConfirmModal";
 import IndexWidget from "../uiElements/IndexWidget";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
+import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
     props: {},
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
     data() {
         return {
             certificates: null,
@@ -127,22 +130,20 @@ export default {
 
         this.$eventHub.on('certificate-added', (certificate) => {
             this.certificates.push(certificate);
-            this.showCertificateModal = false;
+            this.globalStore?.closeModal('certificate-modal');
         });
 
         this.$eventHub.on('certificate-updated', (certificate) => {
             this.update(certificate);
-            this.showCertificateModal = false;
+            this.globalStore?.closeModal('certificate-modal');
         });
         this.$eventHub.on('createCertificate', () => {
-            this.currentCertificate = {};
-            this.showCertificateModal = true;
+            this.globalStore?.showModal('certificate-modal', {});
         });
     },
     methods: {
         editCertificate(certificate){
-            this.currentCertificate = certificate;
-            this.showCertificateModal = true;
+            this.globalStore?.showModal('certificate-modal', certificate);
         },
         loaderEvent(){
             const dt = $('#certificate-datatable').DataTable();

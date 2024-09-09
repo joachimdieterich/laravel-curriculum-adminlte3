@@ -93,11 +93,7 @@
 
 
         <Teleport to="body">
-            <ConfigModal
-                :show="this.showConfigModal"
-                @close="this.showConfigModal = false"
-                :params="currentConfig"
-            ></ConfigModal>
+            <ConfigModal></ConfigModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.config.delete')"
@@ -124,11 +120,18 @@ import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 DataTable.use(DataTablesCore);
 import ConfigModal from "./ConfigModal";
+import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
         subscribable_type: '',
         subscribable_id: '',
+    },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
@@ -159,8 +162,7 @@ export default {
             this.showConfirm = true;
         },
         editConfig(config){
-            this.currentConfig = config;
-            this.showConfigModal = true;
+            this.globalStore?.showModal('config-modal', config);
         },
         setOwner(config){
             window.location = "/configs/" + config.id + "/editOwner";
@@ -207,19 +209,18 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('config-added', (config) => {
-            this.showConfigModal = false;
+            this.globalStore?.closeModal('config-modal');
             this.configs.push(config); //todo -> use global widget to get add working
         });
 
         this.$eventHub.on('config-updated', (config) => {
-            this.showConfigModal = false;
+            this.globalStore?.closeModal('config-modal');
             this.loaderEvent();
             this.update(config); //todo -> use global widget to get update working
         });
 
         this.$eventHub.on('createConfig', () => {
-            this.currentConfig = {};
-            this.showConfigModal = true;
+            this.globalStore?.showModal('config-modal', {});
         });
     },
 

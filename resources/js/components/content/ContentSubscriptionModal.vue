@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="show"
+        <div v-if="this.globalStore.modals['content-subscription-modal']?.show"
              class="modal-mask"
         >
         <div class="modal-container">
@@ -11,7 +11,7 @@
                 <div class="card-tools">
                     <button type="button"
                             class="btn btn-tool"
-                            @click="$emit('close')">
+                            @click="this.globalStore?.closeModal('content-subscription-modal')">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
@@ -65,7 +65,7 @@
                          id="content-cancel"
                          type="button"
                          class="btn btn-default"
-                         @click="$emit('close')">
+                         @click="this.globalStore?.closeModal('content-subscription-modal')">
                          {{ trans('global.cancel') }}
                      </button>
                      <button
@@ -84,6 +84,7 @@
     import Form from 'form-backend-validation';
     import Editor from '@tinymce/tinymce-vue';
     import Select2 from "../forms/Select2";
+    import {useGlobalStore} from "../../store/global";
 
 
     export default {
@@ -98,11 +99,16 @@
             params: {
                 type: Object
             },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
-
+        },
+        setup () {
+            const globalStore = useGlobalStore();
+            return {
+                globalStore,
+            }
         },
         data() {
             return {
-                component_id: this._uid,
+                component_id: this.$.uid,
                 url: '/contents',
                 curriculum_id: null,
                 form: new Form({
@@ -112,7 +118,7 @@
                 }),
             }
         },
-        watch: {
+        /*watch: {
             params: function(newVal, oldVal) {
                 this.form.reset();
                 this.form.subscribable_type = newVal.subscribable_type;
@@ -124,7 +130,7 @@
                     this.method = 'post';
                 }
             },
-        },
+        },*/
         methods: {
              submit() {
                  axios.post('/contentSubscriptions', this.form)
@@ -138,6 +144,20 @@
             },
         },
         mounted() {
+            this.globalStore.registerModal('content-subscription-modal');
+            this.globalStore.$subscribe((mutation, state) => {
+                //console.log(mutation);
+                const params = state.modals['content-subscription-modal'].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined'){
+                    this.form.populate(params);
+                    if (this.form.id != ''){
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
+                    }
+                }
+            });
         },
     }
 </script>

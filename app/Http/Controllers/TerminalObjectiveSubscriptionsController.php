@@ -24,7 +24,7 @@ class TerminalObjectiveSubscriptionsController extends Controller
             abort_unless((\Gate::allows('curriculum_show') and $modal->isAccessible()), 403);
 
             $user_ids = [];
-            
+
             if ($input['subscribable_type'] == 'App\PlanEntry' and $modal->plan->isEditable()) {
                 $subscriptions = $modal->plan->subscriptions;
 
@@ -92,7 +92,7 @@ class TerminalObjectiveSubscriptionsController extends Controller
             'owner_id' => auth()->user()->id,
         ]);
         if (request()->wantsJson()) {
-            return ['message' => 'ok'];
+            return $subscription;
         }
     }
 

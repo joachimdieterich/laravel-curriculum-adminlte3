@@ -74,7 +74,7 @@ export default {
     },
     data() {
         return {
-            componentId: this._uid,
+            componentId: this.$.uid,
             showOrganizationTypeModal: false,
             currentOrganizationType: {},
         }

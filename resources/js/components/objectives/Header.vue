@@ -25,8 +25,8 @@
         <span v-if="(type == 'enabling' && objective.level != null)">
             <button type="button"
                     class="btn btn-block btn-xs"
-                    v-bind:class="objective.level.css_color"
-                    v-dompurify-html="objective.level.title">
+                    v-bind:class="objective.level.css_color">
+                {{ objective.level.title }}
             </button>
         </span>
 

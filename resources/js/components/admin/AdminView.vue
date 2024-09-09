@@ -71,7 +71,7 @@
                                    :date_end="date_end">
                         </pie-chart>
                     </span>
-                  <span class="col-6 mt-1">
+                    <span class="col-6 mt-1">
                        <pie-chart id="organizations_chart"
                                    :title="trans('global.active')+ ' ' + trans('global.organization.title')"
                                    chart="organizations"
@@ -87,102 +87,86 @@
                                    :date_end="date_end">
                         </pie-chart>
                     </span>
-                   <span class="col-6 mt-1">
+                     <span class="col-6 mt-1">
                        <pie-chart id="achievements_chart"
                                   :title="trans('global.achievement.title')"
                                   chart="achievements"
                                   :date_begin="date_begin"
                                   :date_end="date_end">
                        </pie-chart>
-                   </span>
-                   <span class="col-6 mt-1">
-                       <pie-chart id="certificates_chart"
-                                  :title=" trans('global.certificate.title')"
-                                  chart="certificates"
-                                  :date_begin="date_begin"
-                                  :date_end="date_end">
-                       </pie-chart>
-                   </span>
-                   <span class="col-6 mt-1">
+                    </span>
+                    <span class="col-6 mt-1">
+                           <pie-chart id="certificates_chart"
+                                      :title=" trans('global.certificate.title')"
+                                      chart="certificates"
+                                      :date_begin="date_begin"
+                                      :date_end="date_end">
+                           </pie-chart>
+                    </span>
+                    <span class="col-6 mt-1">
                        <pie-chart id="kanbans_chart"
                                   :title=" trans('global.kanban.title')"
                                   chart="kanbans"
                                   :date_begin="date_begin"
                                   :date_end="date_end">
                        </pie-chart>
-                   </span>
-                   <span class="col-6 mt-1">
+                    </span>
+                     <span class="col-6 mt-1">
                        <pie-chart id="curricula_chart"
                                   :title="trans('global.active')+ ' ' + trans('global.curriculum.title')"
                                   chart="curricula"
                                   :date_begin="date_begin"
                                   :date_end="date_end">
                        </pie-chart>
-                   </span>
-                   <span class="col-6 mt-1">
+                     </span>
+                     <span class="col-6 mt-1">
                        <pie-chart id="courses_chart"
                                   :title="trans('global.active')+ ' ' + trans('global.course.title')"
                                   chart="courses"
                                   :date_begin="date_begin"
                                   :date_end="date_end">
                        </pie-chart>
-                   </span>
-                   <span class="col-6 mt-1">
+                    </span>
+                     <span class="col-6 mt-1">
                        <pie-chart id="eventSubscription_chart"
                                   :title="trans('global.eventSubscription.title')"
                                   chart="eventPlugin"
                                   :date_begin="date_begin"
                                   :date_end="date_end">
                        </pie-chart>
-                   </span>
-                   <span class="col-6 mt-1">
+                      </span>
+                      <span class="col-6 mt-1">
                        <pie-chart id="repositoryPlugin_chart"
                                   :title="trans('global.externalRepositorySubscription.title')"
                                   chart="repositoryPlugin"
                                   :date_begin="date_begin"
                                   :date_end="date_end">
                        </pie-chart>
-                   </span>
-                   <span class="col-6 mt-1">
+                     </span>
+                     <span class="col-6 mt-1">
                        <pie-chart id="bbbPlugin_chart"
                                   :title="trans('global.videoconference.title')"
                                   chart="bbbPlugin"
                                   :date_begin="date_begin"
                                   :date_end="date_end">
                        </pie-chart>
-                   </span>
-                   <span class="col-6 mt-1">
+                    </span>
+                    <span class="col-6 mt-1">
                        <pie-chart id="bbbPlugin_chart"
                                   :title="trans('global.videoconference.title')"
                                   chart="bbbPluginParticipants"
                                   :date_begin="date_begin"
                                   :date_end="date_end">
                        </pie-chart>
-                   </span>
-                              <span class="col-12 mt-1">
-                                <logins id="login_chart"
-                                        :date_begin="date_begin"
-                                        :date_end="date_end"></logins>
-                            </span>
-
+                    </span>
+                    <span class="col-12 mt-1">
+                        <logins id="login_chart"
+                                :date_begin="date_begin"
+                                :date_end="date_end"></logins>
+                    </span>
                 </div>
-
             </div>
-
-<!--            <div class="tab-pane fade pt-2"
-                 id="admin-tab"
-                 role="tabpanel"
-                 aria-labelledby="curriculum-nav-tab">
-                admintab
-            </div>
-            <div class="tab-pane fade "
-                 id="metadata-tab"
-                 role="tab"
-                 aria-labelledby="metadata-nav-tab">
-                metadata
-            </div>-->
         </div>
-
     </div>
 </template>
 
@@ -205,20 +189,14 @@ import PieChart from "../statistic/PieChart";
             loaderEvent: function(func) {
                 //alert(func);
             }
-
         },
-        mounted() {
-
-        },
+        mounted() {},
         components: {
             PieChart,
             Logins,
         }
-
     }
 </script>
 <style>
-@media print {
-
-}
+@media print { }
 </style>

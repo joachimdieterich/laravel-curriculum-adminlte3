@@ -15,8 +15,33 @@ import { createApp, reactive } from 'vue';
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 const app = createApp({});
+
+/**
+ *
+ * global eventHub
+ *
+ * How to add a receiver:
+ * created() {
+ *     this.$eventHub.$on('reload_agenda', (params) => {
+ *         // do something
+ *     });
+ * },
+ *
+ * how to add a sender
+ * this.$eventHub.$emit('reload_agenda', params);
+ * @type {Vue}
+ */
+import mitt from 'mitt';
+app.config.globalProperties.$eventHub = mitt();
+
 import VueDOMPurifyHTML from 'vue-dompurify-html';
-app.use(VueDOMPurifyHTML);
+app.use(VueDOMPurifyHTML, {
+    namedConfigurations: {
+        plaintext: {
+            USE_PROFILES: { html: false },
+        },
+    },
+});
 import { useGlobalStore} from "./store/global";
 import { createPinia } from "pinia";
 const pinia = createPinia();
@@ -457,24 +482,6 @@ app.directive('permission', function (el, binding, vnode) {
 app.directive("inline", (element) => {
     element.replaceWith(...element.children);
 });
-
-/**
- *
- * global eventHub
- *
- * How to add a receiver:
- * created() {
- *     this.$eventHub.$on('reload_agenda', (params) => {
- *         // do something
- *     });
- * },
- *
- * how to add a sender
- * this.$eventHub.$emit('reload_agenda', params);
- * @type {Vue}
- */
-import mitt from 'mitt';
-app.config.globalProperties.$eventHub = mitt();
 
 /**
 * Decodes html entities (used in datatable/list-results)

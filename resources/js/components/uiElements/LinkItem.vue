@@ -34,7 +34,7 @@
         },
         data() {
             return {
-                component_id: this._uid,
+                component_id: this.$.uid,
                 src: '',
                 link: '',
                 qrCode: false

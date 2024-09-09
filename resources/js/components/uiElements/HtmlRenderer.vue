@@ -25,7 +25,7 @@ import Html from "./html.vue";
         },
         data() {
             return {
-                componentId: this._uid,
+                componentId: this.$.uid,
             }
         },
         computed: {

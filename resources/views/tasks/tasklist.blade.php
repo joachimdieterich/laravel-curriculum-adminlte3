@@ -21,7 +21,6 @@
                 >
 
             <label for="todoCheck1"></label>
-
         </div>
         <!-- todo text -->
         <span class="text"><a class="link-muted" href="{{ route('tasks.show', $task->id) }}" >{{ $task->title }} </a></span>

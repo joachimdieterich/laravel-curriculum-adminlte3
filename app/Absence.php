@@ -12,12 +12,8 @@ class Absence extends Model
     protected $casts = [
         'updated_at' => 'datetime',
         'created_at'  => 'datetime',
+        'done' => 'boolean',
     ];
-
-    /* protected $dates = [  --> change v.10
-         'updated_at',
-         'created_at',
-     ];*/
 
     /**
      * Prepare a date for array / JSON serialization.

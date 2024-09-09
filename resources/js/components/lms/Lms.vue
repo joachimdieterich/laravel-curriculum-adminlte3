@@ -32,7 +32,7 @@
                 <td
                     class="py-2 link-muted text-sm pointer"
                     v-permission="'lms_create'"
-                    @click.prevent="this.globalStore?.showModal('lms-modal');">
+                    @click.prevent="create()">
                     <i class="fa fa-plus px-2 "></i> {{ trans('global.lms.add') }}
                 </td>
             </tr>
@@ -48,7 +48,7 @@ export default {
         'referenceable_type': String,
         'referenceable_id': Number,
     },
-    setup () { //use database store
+    setup () {
         const globalStore = useGlobalStore();
         return {
             globalStore
@@ -76,6 +76,12 @@ export default {
              });
 
         },
+        create(){
+            this.globalStore?.showModal('lms-modal',{
+                'referenceable_type': this.referenceable_type,
+                'referenceable_id': this.referenceable_id
+            })
+        },
         del(id) {
             axios.delete('/lmsReferences/' + id)
                 .then(res => {
@@ -95,7 +101,16 @@ export default {
             return (id == this.$userId) ? true : false;
         }
     },
-    mounted() {},
-    computed: {},
+    mounted() {
+        this.$eventHub.on('lms-added', function(newContent) {
+            this.globalStore?.closeModal('lms-modal');
+            this.loaderEvent();
+        }.bind(this));
+
+        this.$eventHub.on('lms-updated', function(newContent) {
+            this.globalStore?.closeModal('lms-modal');
+            this.loaderEvent();
+        }.bind(this));
+    },
 }
 </script>

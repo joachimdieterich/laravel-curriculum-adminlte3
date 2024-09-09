@@ -67,7 +67,7 @@
                 v-permission="'contactdetail_create'"
                 id="contactDetail-create"
                 class="btn btn-primary"
-                @click="this.showContactModal = true" >
+                @click="create()">
                 {{ trans('global.contactdetail.create') }}
             </button>
         </div>
@@ -98,11 +98,7 @@
             </p>
         </div>
         <Teleport to="body">
-            <ContactModal
-                :show="this.showContactModal"
-                @close="this.showContactModal = false"
-                :params="currentContactDetail">
-            </ContactModal>
+            <ContactModal></ContactModal>
         </Teleport>
     </div>
 </template>
@@ -110,6 +106,7 @@
 <script>
 import ContactModal from "./ContactModal.vue";
 import KanbanModal from "../kanban/KanbanModal.vue";
+import {useGlobalStore} from "../../store/global";
 
 export default {
     name: "ContactDetail",
@@ -129,28 +126,35 @@ export default {
         }
 
     },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
     data() {
         return {
-            componentId: this._uid,
-            showContactModal: false,
+            componentId: this.$.uid,
             currentContactDetail: {},
         }
     },
     mounted() {
         this.currentContactDetail = this.contactDetail;
         this.$eventHub.on('contactDetail-added', (contact) => {
-            this.showContactModal = false;
-            //this.currentContactDetail = contact;
+            this.globalStore?.closeModal('contact-modal');
             window.location.reload();
         });
         this.$eventHub.on('contactDetail-updated', (contact) => {
-            this.showContactModal = false;
+            this.globalStore?.closeModal('contact-modal');
             window.location.reload();
         });
     },
     methods: {
+        create(){
+            this.globalStore?.showModal('contact-modal', {});
+        },
         edit(){
-            this.showContactModal = true;
+            this.globalStore?.showModal('contact-modal', this.currentContactDetail);
         },
         destroy(){
             axios.delete('/contactDetails/' + this.currentContactDetail.id)
@@ -165,7 +169,3 @@ export default {
 }
 
 </script>
-
-<style scoped>
-
-</style>

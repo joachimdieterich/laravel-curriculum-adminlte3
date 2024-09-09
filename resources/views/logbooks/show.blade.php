@@ -1,5 +1,10 @@
 @extends((Auth::user()->id == env('GUEST_USER')) ? 'layouts.contentonly' : 'layouts.master')
 
+
+@section('title')
+    <title-component></title-component>
+@endsection
+
 @section('title')
     <small>{{ $logbook->title }}</small>
     @can('logbook_create')
@@ -35,7 +40,7 @@
 
 <!--    <medium-modal></medium-modal>-->
 <!--    <medium-create-modal></medium-create-modal>-->
-<!--    <subscribe-objective-modal></subscribe-objective-modal>
+<!--
     <logbook-entry-subject-modal></logbook-entry-subject-modal>
     <task-modal></task-modal>
     <absence-modal></absence-modal>

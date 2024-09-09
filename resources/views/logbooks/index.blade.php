@@ -12,9 +12,9 @@
 @endsection
 @section('content')
     <logbooks create_label_field="create"></logbooks>
-    <medium-create-modal></medium-create-modal>
+    {{--<medium-create-modal></medium-create-modal>--}}
 @endsection
-
+{{--
 @section('scripts')
     @parent
     <script>
@@ -51,4 +51,4 @@
         })
 
     </script>
-@endsection
+@endsection--}}

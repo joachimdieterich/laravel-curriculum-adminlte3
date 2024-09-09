@@ -336,7 +336,7 @@ export default {
     },
     data() {
         return {
-            component_id: this._uid,
+            component_id: this.$.uid,
             showConfirm: false,
             currentItem : {},
             new_media: null,

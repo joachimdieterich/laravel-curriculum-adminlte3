@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="show"
+        <div v-if="this.globalStore.modals['config-modal']?.show"
              class="modal-mask"
         >
         <div class="modal-container">
@@ -16,7 +16,7 @@
                 <div class="card-tools">
                     <button type="button"
                             class="btn btn-tool"
-                            @click="$emit('close')">
+                            @click="this.globalStore?.closeModal('config-modal')">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
@@ -104,7 +104,7 @@
                          id="config-cancel"
                          type="button"
                          class="btn btn-default"
-                         @click="$emit('close')">
+                         @click="this.globalStore?.closeModal('config-modal')">
                          {{ trans('global.cancel') }}
                      </button>
                      <button
@@ -122,7 +122,7 @@
 <script>
     import Form from 'form-backend-validation';
     import axios from "axios";
-
+    import {useGlobalStore} from "../../store/global";
 
     export default {
         components:{},
@@ -135,9 +135,16 @@
             },  //{ 'modelId': config.id, 'modelUrl': 'config' , 'shareWithToken': true, 'canEditCheckbox': false}
 
         },
+        setup () {
+            const globalStore = useGlobalStore();
+
+            return {
+                globalStore,
+            }
+        },
         data() {
             return {
-                component_id: this._uid,
+                component_id: this.$.uid,
                 method: 'post',
                 url: '/configs',
                 form: new Form({
@@ -150,17 +157,6 @@
                 }),
                 search: '',
             }
-        },
-        watch: {
-            params: function(newVal, oldVal) {
-                this.form.reset();
-                this.form.populate(newVal);
-                if (this.form.id != ''){
-                    this.method = 'patch';
-                } else {
-                    this.method = 'post';
-                }
-            },
         },
         methods: {
             submit(method) {
@@ -190,6 +186,21 @@
 
             }
         },
-        mounted() {},
+        mounted() {
+            this.globalStore.registerModal('config-modal');
+            this.globalStore.$subscribe((mutation, state) => {
+                console.log(mutation);
+                const params = state.modals['config-modal'].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined'){
+                    this.form.populate(params);
+                    if (this.form.id != ''){
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
+                    }
+                }
+            });
+        },
     }
 </script>

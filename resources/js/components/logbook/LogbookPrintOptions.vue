@@ -63,7 +63,7 @@
                                 true-value="true"
                                 false-value="false"
                             >
-                            <label class="form-check-label">{{ trans('global.media.title') }}</label>
+                            <label class="form-check-label">{{ trans('global.medium.title') }}</label>
                         </div>
                         <div class="form-check"
                              v-permission="'reference_access'">

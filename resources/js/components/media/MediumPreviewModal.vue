@@ -1,5 +1,5 @@
 <template>
-    <div v-if="show"
+    <div v-if="this.globalStore.modals['medium-preview-modal']?.show"
          class="modal-mask">
         <div class="modal-container">
             <div class="card-header">
@@ -42,7 +42,7 @@
                     </button>
                     <button type="button"
                             class="btn btn-tool"
-                            @click="$emit('close')">
+                            @click="this.globalStore?.closeModal('medium-preview-modal')">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
@@ -86,7 +86,7 @@
                      <button type="button"
                              class="btn btn-info mr-2"
                              data-widget="remove"
-                             @click="$emit('close')">
+                             @click="this.globalStore?.closeModal('medium-preview-modal')">
                          {{ trans('global.close') }}
                      </button>
                      <button
@@ -123,6 +123,7 @@
 <script>
 import License from '../uiElements/License'
 import RenderUsage from "../../../../app/Plugins/Repositories/edusharing/resources/js/components/RenderUsage";
+import {useGlobalStore} from "../../store/global";
     export default {
         props:{
             show: Boolean,
@@ -130,6 +131,13 @@ import RenderUsage from "../../../../app/Plugins/Repositories/edusharing/resourc
                 type: Object
             },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
 
+        },
+        setup () { //use database store
+            const globalStore = useGlobalStore();
+
+            return {
+                globalStore,
+            }
         },
         data() {
             return {
@@ -141,33 +149,21 @@ import RenderUsage from "../../../../app/Plugins/Repositories/edusharing/resourc
                 errors: {}
             }
         },
-        watch: {
-            params: function(newVal, oldVal) {
-                this.medium = newVal;
-                this.subscribable = event.params.subscribable;
-
-            },
-        },
         mounted() {
-
+            this.globalStore.registerModal('medium-preview-modal');
+            this.globalStore.$subscribe((mutation, state) => {
+                const params = state.modals['medium-preview-modal'].params;
+                console.log(params);
+                if (typeof (params) !== 'undefined'){
+                    this.medium = params;
+                   /* this.subscribable= event.params.subscribable;
+                    this.subscribable_type = event.params.subscribable_type;
+                    this.subscribable_id = event.params.subscribable_id;*/
+                }
+            });
         },
         methods: {
-            beforeOpen(event) {
-                if (event.params.content) {
-                    this.medium = event.params.content;
-                }
-                if (event.params.subscribable) {
-
-                }
-                if (event.params.subscribable_type) {
-                    this.subscribable_type = event.params.subscribable_type;
-                }
-                if (event.params.subscribable_id) {
-                    this.subscribable_id = event.params.subscribable_id;
-                }
-            },
             mime(type) {
-
                 switch (type) {
                     //Images use <img>
                     case 'image/jpg' :
@@ -181,8 +177,6 @@ import RenderUsage from "../../../../app/Plugins/Repositories/edusharing/resourc
                     case 'edusharing':
                         return 'img';
                         break;
-                    // default use <embed>
-
                     default:
                         return 'embed';
                         break;
@@ -192,8 +186,8 @@ import RenderUsage from "../../../../app/Plugins/Repositories/edusharing/resourc
                 try {
                     var response =  await axios.post('/media/'+this.medium.id+'/destroy',  { 'subscribable': this.subscribable, 'subscribable_type': this.subscribable_type,'subscribable_id': this.subscribable_id } );
                 }
-                catch(error) {
-                    this.errors = response.data.errors;
+                catch(e) {
+                    console.log(e);
                 }
                 location.reload();
             },
@@ -206,9 +200,8 @@ import RenderUsage from "../../../../app/Plugins/Repositories/edusharing/resourc
                     this.medium = response.data.message;
                     this.edit_title();
                 })
-                .catch(error => {
-                    //alert(error.response.data.errors);
-                    this.errors = error.response.data.errors;
+                .catch(e => {
+                    console.log(e);
                 });
             },
            download(){
@@ -220,7 +213,7 @@ import RenderUsage from "../../../../app/Plugins/Repositories/edusharing/resourc
                         .then((response) => {
                             window.location.assign(response.data.url);
                             $("#loading_spinner").hide();
-                            this.$emit('close');
+                            this.globalStore?.closeModal('medium-preview-modal');
                         })
                         .catch((error) => {
                             console.log(error);

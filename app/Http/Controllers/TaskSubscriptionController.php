@@ -23,10 +23,15 @@ class TaskSubscriptionController extends Controller
                 'subscribable_id' => $input['subscribable_id'],
             ]);
 
-            if (request()->wantsJson()) {
+            return empty($curriculum) ? '' : DataTables::of($curriculum)
+                ->setRowId('id')
+                ->make(true);
+
+           /* if (request()->wantsJson()) {
                 return ['subscriptions' => $subscriptions->with(['task'])->get()];
-            }
+            }*/
         }
+        //todo -> make it subscibable?
     }
 
     protected function validateRequest()

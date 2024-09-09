@@ -122,7 +122,7 @@ export default {
         },
     },
     mounted() {
-        this.uid = this._uid;
+        this.uid = this.$.uid;
         this.loadItems();
     },
     created() {

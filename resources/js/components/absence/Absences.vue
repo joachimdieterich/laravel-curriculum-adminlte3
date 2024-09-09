@@ -12,8 +12,8 @@
             <tr>
                 <td
                     class="py-2 link-muted text-sm pointer"
-                    v-permission="'lms_create'"
-                    @click.prevent="open('absence-modal', 'referenceable');">
+                    v-permission="'absence_create'"
+                    @click.prevent="open();">
                     <i class="fa fa-plus px-2 "></i> {{ trans('global.absences.create') }}
                 </td>
             </tr>
@@ -22,42 +22,59 @@
 </template>
 
 <script>
-const Absence =
-    () => import('../absence/Absence.vue');
-    //import Absence from '../absence/Absence.vue'
+import Absence from '../absence/Absence.vue'
+import {useGlobalStore} from "../../store/global";
     export default {
         props: {
-            'absences': Array,
+
             'subscribable_type': String,
             'subscribable_id': Number,
             'logbook': {},
             'entry': {},
         },
+        setup () {
+            const globalStore = useGlobalStore();
+
+            return {
+                globalStore,
+            }
+        },
         data() {
             return {
-                errors: {}
+                errors: {},
+                absences: Array,
             }
         },
 
         methods: {
-            open(modal, relationKey) {
-                if (modal === 'absence-modal'){
-                    this.$modal.show(modal, JSON.stringify(_.merge({ 'referenceable_type': 'App\\LogbookEntry', 'referenceable_id': this.entry.id}, this.logbook)));
-                }
-
+            open() {
+                this.globalStore?.showModal('absence-modal',{
+                    'referenceable_type': this.subscribable_type,
+                    'referenceable_id': this.subscribable_id
+                })
             },
-            /*loaderEvent(){
-                axios.get('/absences?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id)
+
+            loaderEvent(){
+                axios.get('/absences?referenceable_type='+this.subscribable_type + '&referenceable_id='+this.subscribable_id)
                     .then(response => {
-                        this.subscriptions = response.data.message;
+                        this.absences = response.data;
                     })
                     .catch(e => {
-                        //this.errors = e.data.errors;
+                        console.log(e);
                     });
-            }*/
+            }
         },
 
         mounted(){
+            this.$eventHub.on('absence-added', function(newContent) {
+                this.globalStore?.closeModal('absence-modal');
+                this.loaderEvent();
+            }.bind(this));
+
+            this.$eventHub.on('absence-updated', function(newContent) {
+                this.globalStore?.closeModal('absence-modal');
+                this.loaderEvent();
+            }.bind(this));
 
         },
         components: {

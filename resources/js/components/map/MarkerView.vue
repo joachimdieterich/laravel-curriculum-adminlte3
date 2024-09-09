@@ -22,7 +22,7 @@
         <div class="pb-2"
              v-dompurify-html="this.marker.description"></div>
 
-        <h5 class="pt-3">{{ trans('global.media.title') }}</h5>
+        <h5 class="pt-3">{{ trans('global.medium.title') }}</h5>
         <div v-if="marker.id != null"
              v-permission="'medium_access'"
              v-bind:id="'map_marker_media_'+marker.id">
@@ -63,7 +63,7 @@ export default {
     },
     data() {
         return {
-            component_id: this._uid,
+            component_id: this.$.uid,
             tag_array: {},
         }
     },

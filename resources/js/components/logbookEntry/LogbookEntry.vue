@@ -21,12 +21,12 @@
                       v-permission="'logbook_entry_edit'"
                       v-if="this.$userId == logbook.owner_id || this.isEditable === true"
                 >
-<!--                    <button
+                    <button
                         type="button"
                         class="btn btn-tool pt-3"
                         @click.stop="print()">
                         <i class="fa fa-print "></i>
-                    </button>-->
+                    </button>
                     <button
                         type="button"
                         class="btn btn-tool pt-3"
@@ -62,10 +62,8 @@
             <span class="clearfix"></span>
 
             <ul class="nav nav-pills">
-                <li class="nav-item small"
-                    @click="setGlobalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id)">
-                    <a class="nav-link show"
-                       :class="getGlobalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id, 'active', true)"
+                <li class="nav-item small">
+                    <a class="nav-link show active"
                        v-bind:href="'#logbook_description_'+entry.id"
                        data-toggle="tab">
                         <i class="fa fa-info pr-1"></i>
@@ -73,10 +71,8 @@
                     </a>
                 </li>
                 <li v-permission="'content_access'"
-                    class="nav-item small"
-                    @click="setGlobalStorage('#logbook_'+entry.id, '#logbook_contents_'+entry.id)">
+                    class="nav-item small">
                     <a class="nav-link"
-                       :class="getGlobalStorage('#logbook_'+entry.id, '#logbook_contents_'+entry.id)"
                        v-bind:href="'#logbook_contents_'+entry.id"
                        data-toggle="tab"
                        @click="loaderEvent()">
@@ -85,11 +81,8 @@
                     </a>
                 </li>
                 <li v-permission="'task_access'"
-                    class="nav-item small"
-
-                    @click="setGlobalStorage('#logbook_'+entry.id, '#logbook_tasks_'+entry.id)">
+                    class="nav-item small">
                     <a class="nav-link"
-                       :class="getGlobalStorage('#logbook_'+entry.id, '#logbook_tasks_'+entry.id)"
                        v-bind:href="'#logbook_tasks_'+entry.id"
                        data-toggle="tab">
                         <i class="fa fa-tasks pr-1"></i>
@@ -97,21 +90,17 @@
                     </a>
                 </li>
                 <li class="nav-item small"
-                    v-permission="'medium_access'"
-                    @click="setGlobalStorage('#logbook_'+entry.id, '#logbook_media_'+entry.id)">
+                    v-permission="'medium_access'">
                     <a class="nav-link"
-                       :class="getGlobalStorage('#logbook_'+entry.id, '#logbook_media_'+entry.id)"
                        v-bind:href="'#logbook_media_'+entry.id"
                        data-toggle="tab">
                         <i class="fa fa-photo-video pr-1"></i>
-                        <span v-if="help">{{ trans('global.media.title') }}</span>
+                        <span v-if="help">{{ trans('global.medium.title') }}</span>
                     </a>
                 </li>
                 <li class="nav-item small"
-                    v-permission="'reference_access'"
-                    @click="setGlobalStorage('#logbook_'+entry.id, '#logbook_objectives_'+entry.id)">
+                    v-permission="'reference_access'">
                     <a class="nav-link"
-                       :class="getGlobalStorage('#logbook_'+entry.id, '#logbook_objectives_'+entry.id)"
                        v-bind:href="'#logbook_objectives_'+entry.id"
                        data-toggle="tab">
                         <i class="fa fa-sitemap pr-1"></i>
@@ -123,10 +112,8 @@
 
                 <li v-permission="'absence_access'"
                     v-if="displayAbsences()"
-                    class="nav-item small"
-                    @click="setGlobalStorage('#logbook_'+entry.id, '#logbook_userStatuses_'+entry.id)">
+                    class="nav-item small">
                     <a class="nav-link"
-                       :class="getGlobalStorage('#logbook_'+entry.id, '#logbook_userStatuses_'+entry.id)"
                        v-bind:href="'#logbook_userStatuses_'+entry.id"
                        data-toggle="tab"
                        @click="loaderAbsences()">
@@ -136,10 +123,8 @@
                 </li>
 
                 <li v-permission="'lms_access'"
-                    class="nav-item"
-                    @click="setGlobalStorage('#logbook_'+entry.id, '#logbook_lms_'+entry.id)">
+                    class="nav-item">
                     <a class="nav-link small link-muted"
-                       :class="getGlobalStorage('#logbook_view_'+entry.id, '#logbook_lms_'+entry.id)"
                        v-bind:href="'#lms_'+entry.id"
                        data-toggle="tab"
                        @click="loadLmsPlugin()">
@@ -159,20 +144,19 @@
             <span class="clearfix"></span>
             <hr class="m-1">
 
-
             <div class="pb-2 px-1">
                 <div class="tab-content">
                     <!-- tab-pane -->
-                    <div class="tab-pane p-2"
-                         :class="getGlobalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id, 'active', true)"
-                         v-bind:id="'logbook_description_'+entry.id">
-                        <span v-dompurify-html="entry.description"></span>
+                    <div class="tab-pane p-2 active"
+                         v-bind:id="'logbook_description_'+entry.id"
+                    >
+                        <span v-if="entry.description"
+                              v-dompurify-html="entry.description"></span>
                     </div>
 
                     <!-- tab-pane -->
                     <div v-permission="'content_access'"
                          class="tab-pane "
-                         :class="getGlobalStorage('#logbook_'+entry.id, '#logbook_contents_'+entry.id)"
                          v-bind:id="'logbook_contents_'+entry.id"
                     >
                         <contents
@@ -180,68 +164,54 @@
                             ref="Contents"
                             subscribable_type="App\LogbookEntry"
                             :subscribable_id="entry.id">
-
                         </contents>
                     </div>
-                    <!-- /.tab-pane -->
-                    <!-- tab-pane -->
+
                     <div v-permission="'task_access'"
                          class="tab-pane"
-                         :class="getGlobalStorage('#logbook_'+entry.id, '#logbook_tasks_'+entry.id)"
                          v-bind:id="'logbook_tasks_'+entry.id">
-                        <task-list
+                        <Tasks
                             class="pb-2"
-                            :tasks="entry.task_subscription"
                             :subscribable_id="entry.id"
                             subscribable_type="App\LogbookEntry">
-                        </task-list>
+                        </Tasks>
                     </div>
-                    <!-- /.tab-pane -->
-                    <!-- /.tab-pane -->
-                    <div v-permission="'medium_access'"
-                         class="tab-pane"
-                         :class="getGlobalStorage('#logbook_'+entry.id, '#logbook_media_'+entry.id)"
-                         v-bind:id="'logbook_media_'+entry.id">
-                        <media subscribable_type="App\LogbookEntry"
-                               :subscribable_id="entry.id"
-                               format="list">
-                        </media>
-                    </div>
-                    <!-- /.tab-pane -->
-                    <div class="tab-pane"
-                         v-permission="'reference_access'"
-                         :class="getGlobalStorage('#logbook_'+entry.id, '#logbook_objectives_'+entry.id)"
-                         v-bind:id="'logbook_objectives_'+entry.id">
 
-                        <reference-list
-                            subscribable_type="App\LogbookEntry"
-                            :subscribable_id="entry.id"
-                            :entry="entry"
-                        />
+                   <div v-permission="'medium_access'"
+                        class="tab-pane"
+                        v-bind:id="'logbook_media_'+entry.id">
+                       <media subscribable_type="App\LogbookEntry"
+                              :subscribable_id="entry.id"
+                              format="list">
+                       </media>
+                   </div>
 
-                    </div>
-                    <!-- /.tab-pane -->
+                     <div class="tab-pane"
+                        v-permission="'reference_access'"
+                        v-bind:id="'logbook_objectives_'+entry.id">
 
-                    <!-- tab-pane -->
+                       <reference-list
+                           subscribable_type="App\LogbookEntry"
+                           :subscribable_id="entry.id"
+                           :entry="entry"
+                       />
+                   </div>
+
                     <div  v-permission="'absence_access'"
                           v-if="displayAbsences()"
                           class="tab-pane "
-                          :class="getGlobalStorage('#logbook_'+entry.id, '#logbook_userStatuses_'+entry.id)"
-                         v-bind:id="'logbook_userStatuses_'+entry.id"  >
+                          v-bind:id="'logbook_userStatuses_'+entry.id"  >
                         <absences
                             class="pb-2"
                             ref="Absences"
+                            :subscribable_id="entry.id"
+                            :subscribable_type="model"
                             :entry="entry"
-                            :logbook="logbook"
-                            :absences="entry.absences">
+                            :logbook="logbook">
                         </absences>
-
                     </div>
-                    <!-- /.tab-pane -->
-
                     <div v-permission="'lms_access'"
                          class="tab-pane"
-                         :class="getGlobalStorage('#logbook_'+entry.id, '#logbook_lms_'+entry.id)"
                          v-bind:id="'lms_'+entry.id">
                         <lms ref="LmsPlugin"
                              :referenceable_type="model"
@@ -252,14 +222,13 @@
             </div>
         </div>
     </div>
-    <!-- END timeline item -->
 </template>
 
 <script>
 
 import Absences from '../absence/Absences';
 import Contents from '../content/Contents';
-import TaskList from '../uiElements/TaskList';
+import Tasks from '../task/Tasks';
 import Media from '../media/Media';
 import Lms from '../lms/Lms.vue';
 import ReferenceList from "../reference/ReferenceList";
@@ -275,7 +244,7 @@ export default {
     },
     data() {
         return {
-            component_id: this._uid,
+            component_id: this.$.uid,
             media: {},
             active: true,
             timePeriod: '',
@@ -286,10 +255,10 @@ export default {
     },
     methods: {
         edit() {
-            this.$modal.show('logbook-entry-modal', { 'id': this.entry.id, 'method': 'patch'});
+            //this.$modal.show('logbook-entry-modal', { 'id': this.entry.id, 'method': 'patch'});
         },
         editSubject() {
-            this.$modal.show('logbook-entry-subject-modal', { 'id': this.entry.id, 'subject': this.entry.subject?.title });
+            //this.$modal.show('logbook-entry-subject-modal', { 'id': this.entry.id, 'subject': this.entry.subject?.title });
         },
         async destroy(){
             try {
@@ -411,7 +380,7 @@ export default {
         Avatar,
         Media,
         Contents,
-        TaskList,
+        Tasks,
         Lms
     }
 }

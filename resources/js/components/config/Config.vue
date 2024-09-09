@@ -63,11 +63,7 @@
         </div>
 
         <Teleport to="body">
-            <ConfigModal
-                :show="this.showConfigModal"
-                @close="this.showConfigModal = false"
-                :params="this.currentConfig"
-            ></ConfigModal>
+            <ConfigModal></ConfigModal>
         </Teleport>
     </div>
 </template>
@@ -90,21 +86,19 @@ export default {
     },
     data() {
         return {
-            componentId: this._uid,
-            showConfigModal: false,
+            componentId: this.$.uid,
             currentConfig: {},
         }
     },
     mounted() {
         this.$eventHub.on('config-updated', (config) => {
-            this.showConfigModal = false;
+            this.globalStore?.closeModal('config-modal');
             window.location.reload();
         });
     },
     methods: {
         editConfig(config){
-            this.currentConfig = config;
-            this.showConfigModal = true;
+            this.globalStore?.showModal('config-modal',config);
         },
     }
 }

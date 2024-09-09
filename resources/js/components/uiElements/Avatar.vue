@@ -119,7 +119,7 @@
             }
         },
         mounted() {
-            this.id = 'user-avatar' + this._uid;
+            this.id = 'user-avatar' + this.$.uid;
             this.avatar_medium_id =  this.medium_id;
 
             if (this.user_id == null) {

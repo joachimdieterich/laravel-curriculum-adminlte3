@@ -79,7 +79,7 @@ import DatePicker from 'vue3-datepicker';
     export default {
         data() {
             return {
-                component_id: this._uid,
+                component_id: this.$.uid,
                 method: 'post',
                 requestUrl: '/logbookEntries',
                 categories: {},

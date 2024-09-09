@@ -61,7 +61,7 @@ export default {
     },
     data() {
         return {
-            componentId: this._uid,
+            componentId: this.$.uid,
             showPeriodModal: false,
             currentPeriod: {},
         }

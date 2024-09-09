@@ -53,7 +53,7 @@
 <!--                        <li v-if="this.form.referenceable_type = 'App\\Medium'"
                             class="nav-item">
                             <a class="nav-link" href="#token_subscription" data-toggle="tab">
-                                <i class="fa fa-photo-video mr-2"></i>{{ trans('global.media.title_singular') }}
+                                <i class="fa fa-photo-video mr-2"></i>{{ trans('global.medium.title_singular') }}
                             </a>
                         </li>-->
                     </ul>
@@ -236,7 +236,7 @@ export default {
     },
     data() {
         return {
-            component_id: this._uid,
+            component_id: this.$.uid,
             method: 'post',
             url: '/navigatorItems',
             currentTab: 'NavigatorView',

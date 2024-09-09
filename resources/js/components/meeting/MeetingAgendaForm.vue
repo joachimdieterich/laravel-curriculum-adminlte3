@@ -57,7 +57,7 @@ export default {
     },
     data() {
         return {
-            component_id: this._uid,
+            component_id: this.$.uid,
             method: 'post',
             requestUrl: '/agendas',
             form: new Form({

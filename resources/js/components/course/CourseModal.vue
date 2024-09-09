@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="show"
+        <div v-if="this.globalStore.modals['course-modal']?.show"
              class="modal-mask"
         >
             <div class="modal-container">
@@ -16,13 +16,12 @@
                     <div class="card-tools">
                         <button type="button"
                                 class="btn btn-tool"
-                                @click="$emit('close')">
+                                @click="this.globalStore?.closeModal('course-modal')">
                             <i class="fa fa-times"></i>
                         </button>
                     </div>
                 </div>
                 <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-
                     <Select2
                         id="curricula"
                         name="curricula"
@@ -43,7 +42,7 @@
                          id="course-cancel"
                          type="button"
                          class="btn btn-default"
-                         @click="$emit('close')">
+                         @click="this.globalStore?.closeModal('course-modal')">
                          {{ trans('global.cancel') }}
                      </button>
                      <button
@@ -61,6 +60,7 @@
 <script>
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2";
+import {useGlobalStore} from "../../store/global";
 
 
 export default {
@@ -75,9 +75,15 @@ export default {
             type: Object
         },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
     },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
     data() {
         return {
-            component_id: this._uid,
+            component_id: this.$.uid,
             method: 'post',
             url: '/curricula/enrol',
             form: new Form({
@@ -87,12 +93,6 @@ export default {
             }),
             search: '',
         }
-    },
-    watch: {
-        params: function(newVal, oldVal) {
-            this.form.reset();
-            this.form.populate(newVal);
-        },
     },
     methods: {
         submit(method) {
@@ -122,6 +122,21 @@ export default {
         },
 
     },
-    mounted() {},
+    mounted() {
+        this.globalStore.registerModal('course-modal');
+        this.globalStore.$subscribe((mutation, state) => {
+            //console.log(mutation);
+            const params = state.modals['course-modal'].params;
+            this.form.reset();
+            if (typeof (params) !== 'undefined'){
+                this.form.populate(params);
+                if (this.form.id != ''){
+                    this.method = 'patch';
+                } else {
+                    this.method = 'post';
+                }
+            }
+        });
+    },
 }
 </script>

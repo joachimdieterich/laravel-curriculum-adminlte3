@@ -103,7 +103,7 @@ export default {
     },
     data() {
         return {
-            component_id: this._uid,
+            component_id: this.$.uid,
             exams: null,
             search: '',
             showExamModal: false,

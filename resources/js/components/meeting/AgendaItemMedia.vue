@@ -24,7 +24,7 @@
         <div class="bg-light pointer"
              v-if="showAddBtn"
              @click="addMedia()">
-            <i class="fas fa-plus m-3 text-muted"></i> {{ trans('global.media.add') }}
+            <i class="fas fa-plus m-3 text-muted"></i> {{ trans('global.medium.add') }}
 
         </div>
 

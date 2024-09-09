@@ -123,7 +123,7 @@
         },
         data() {
             return {
-                component_id: this._uid,
+                component_id: this.$.uid,
                 method: 'post',
                 url: '/grades',
                 form: new Form({

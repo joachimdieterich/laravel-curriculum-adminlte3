@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="show"
+        <div v-if="this.globalStore.modals['certificate-modal']?.show"
              class="modal-mask"
         >
         <div class="modal-container">
@@ -16,7 +16,7 @@
                 <div class="card-tools">
                     <button type="button"
                             class="btn btn-tool"
-                            @click="$emit('close')">
+                            @click="this.globalStore?.closeModal('certificate-modal')">
                         <i class="fa fa-times"></i>
                     </button>
                  </div>
@@ -115,7 +115,7 @@
                          id="certificate-cancel"
                          type="button"
                          class="btn btn-default"
-                         @click="$emit('close')">
+                         @click="this.globalStore?.closeModal('certificate-modal')">
                          {{ trans('global.cancel') }}
                      </button>
                      <button
@@ -135,6 +135,7 @@
     import Editor from '@tinymce/tinymce-vue';
     import Select2 from "../forms/Select2";
     import Switch from "../forms/Switch";
+    import {useGlobalStore} from "../../store/global";
 
     export default {
         components:{
@@ -150,9 +151,15 @@
                 type: Object
             },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
         },
+        setup () {
+            const globalStore = useGlobalStore();
+            return {
+                globalStore,
+            }
+        },
         data() {
             return {
-                component_id: this._uid,
+                component_id: this.$.uid,
                 method: 'post',
                 url: '/certificates',
                 form: new Form({
@@ -185,19 +192,6 @@
                 search: '',
             }
         },
-        watch: {
-            params: function(newVal, oldVal) {
-                if (typeof (newVal.id) == 'undefined'){
-                    this.form.reset();
-                }
-                this.form.populate(newVal);
-                this.form.body = this.$decodeHtml(this.form.body)
-
-                if (this.form.id != ''){
-                    this.method = 'patch';
-                }
-            },
-        },
         methods: {
              submit(method) {
                 this.form.body = tinyMCE.get('body').getContent();
@@ -227,6 +221,22 @@
                     });
             }
         },
-        mounted() {},
+        mounted() {
+            this.globalStore.registerModal('certificate-modal');
+            this.globalStore.$subscribe((mutation, state) => {
+                //console.log(mutation);
+                const params = state.modals['certificate-modal'].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined'){
+                    this.form.populate(params);
+                    if (this.form.id != ''){
+                        this.form.body = this.$decodeHtml(this.form.body)
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
+                    }
+                }
+            });
+        },
     }
 </script>

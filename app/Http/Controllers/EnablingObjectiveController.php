@@ -6,14 +6,13 @@ use App\Config;
 use App\Curriculum;
 use App\EnablingObjective;
 use App\Group;
-use App\Http\Requests\StoreEnablingObjectiveRequest;
-use App\Http\Requests\UpdateEnablingObjectiveRequest;
 use App\Medium;
 use App\QuoteSubscription;
 use App\ReferenceSubscription;
 use App\TerminalObjective;
 use App\User;
 use DB;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 class EnablingObjectiveController extends Controller
@@ -24,19 +23,28 @@ class EnablingObjectiveController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreEnablingObjectiveRequest $request)
+    public function store(Request $request)
     {
-        abort_unless(TerminalObjective::find(request('terminal_objective_id'))->isAccessible(), 403);
+        $input = $this->validateRequest();
+        abort_unless(TerminalObjective::find($input['terminal_objective_id'])->isAccessible(), 403);
 
-        $order_id = $this->getMaxOrderId(request('terminal_objective_id'));
-        $enablingObjective = EnablingObjective::create(array_merge($request->all(), ['order_id' => $order_id]));
+        $order_id = $this->getMaxOrderId($input['terminal_objective_id']);
+        $enablingObjective = EnablingObjective::create([
+            'title'                 => $input['title'],
+            'description'           => $input['description'],
+            'time_approach'         => $input['time_approach'],
+            'curriculum_id'         => $input['curriculum_id'],
+            'terminal_objective_id' => $input['terminal_objective_id'],
+            'level_id'              => format_select_input($input['level_id']),
+            'visibility'            => $input['visibility'],
+            'order_id'              => $order_id
+        ]);
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         if (request()->wantsJson()) {
             return $enablingObjective;
         }
-
     }
 
     /**
@@ -72,20 +80,30 @@ class EnablingObjectiveController extends Controller
      * @param  \App\EnablingObjective  $enablingObjective
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateEnablingObjectiveRequest $request, EnablingObjective $enablingObjective)
+    public function update(Request $request, EnablingObjective $enablingObjective)
     {
         abort_unless($enablingObjective->isAccessible(), 403);
 
+        $input = $this->validateRequest();
+
         //first get existing data to later adjust order_id
-        $old_objective = EnablingObjective::find(request('id'));
+        $old_objective = EnablingObjective::find($input['id']);
 
         if ($request->has('order_id')) {
             if (request()->wantsJson()) {
-                return ['message' => $this->toggleOrderId($old_objective, request('order_id'))];
+                return ['message' => $this->toggleOrderId($old_objective,$input['order_id'])];
             }
         }
         if (request()->wantsJson()) {
-            return ['message' => $enablingObjective->update($request->all())];
+            return ['message' => $enablingObjective->update([
+                'title'                 => $input['title'],
+                'description'           => $input['description'],
+                'time_approach'         => $input['time_approach'],
+                'curriculum_id'         => $input['curriculum_id'],
+                'terminal_objective_id' => $input['terminal_objective_id'],
+                'level_id'              => format_select_input($input['level_id']),
+                'visibility'            => $input['visibility']
+            ])];
         }
     }
 
@@ -319,5 +337,19 @@ class EnablingObjectiveController extends Controller
         if (request()->wantsJson()) {
             return $result;
         }
+    }
+
+    protected function validateRequest()
+    {
+        return request()->validate([
+            'id'                    => 'sometimes',
+            'title'                 => 'sometimes',
+            'description'           => 'sometimes',
+            'time_approach'         => 'sometimes',
+            'curriculum_id'         => 'sometimes',
+            'terminal_objective_id' => 'sometimes',
+            'level_id'              => 'sometimes',
+            'visibility'            => 'sometimes',
+        ]);
     }
 }

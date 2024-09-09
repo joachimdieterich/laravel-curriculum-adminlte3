@@ -271,7 +271,7 @@ export default {
     },
     data() {
         return {
-            component_id: this._uid,
+            component_id: this.$.uid,
             form: new Form({
                 'id':'',
                 'username': '',

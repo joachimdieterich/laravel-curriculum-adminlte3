@@ -131,7 +131,7 @@
         },
         data() {
             return {
-                componentId: this._uid,
+                componentId: this.$.uid,
                 componentInstance: null,
                 currentSelection: []
             }

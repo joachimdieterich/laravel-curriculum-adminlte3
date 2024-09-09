@@ -60,7 +60,7 @@
         },
         data() {
             return {
-                component_id: this._uid,
+                component_id: this.$.uid,
                 form: new Form({
                     'notable_type': false,
                     'notable_id': false,

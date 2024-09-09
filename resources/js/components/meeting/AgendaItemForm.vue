@@ -61,7 +61,7 @@
                     type="button"
                     class="btn btn-info py-2"
                     @click="addMedia()">
-                    {{ trans('global.media.add') }}
+                    {{ trans('global.medium.add') }}
                 </button>
             </div>
         </div>

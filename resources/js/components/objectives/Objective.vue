@@ -37,7 +37,7 @@
             </div>
 
             <ul class="nav nav-tabs ">
-                <li v-if="objective.description !== ''"
+                <li v-if="objective.description"
                     class="nav-item small"
                     @click="setGlobalStorage('#objective_view_'+objective.id, '#objective_view_description_'+objective.id)"
                 >
@@ -168,7 +168,7 @@
             <div class="tab-content ">
                 <!-- 1 Description -->
                 <div class="tab-pane show p-2"
-                     v-if="objective.description !== ''"
+                     v-if="objective.description"
                      :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_description_'+objective.id, 'active', true)"
                      id="description"
                 >
@@ -419,7 +419,7 @@ export default {
     },
     data() {
         return {
-            componentId: this._uid,
+            componentId: this.$.uid,
             type: null,
             currentEnablingObjective: {},
             currentTerminalObjective: {},

@@ -26,7 +26,7 @@
                     type="button" class="btn btn-tool "
                     role="button"
                     :aria-label="trans('global.add')"
-                    @click="this.showContentModal = true">
+                    @click="create()">
                 <i class="fa fa-plus"></i>
             </button>
             <button v-permission="'content_create, ' + subscribable_type + '_content_create'"
@@ -156,11 +156,6 @@
                 'subscribable_id': subscribable_id,
             }"
         ></ContentSubscriptionModal>
-        <ContentModal
-            :show="this.showContentModal"
-            @close="this.showContentModal = false"
-            :params="currentContent"
-        ></ContentModal>
 
         <ConfirmModal
             :showConfirm="this.showConfirm"
@@ -185,6 +180,7 @@
 import ContentSubscriptionModal from "./ContentSubscriptionModal.vue";
 import ConfirmModal from "../uiElements/ConfirmModal";
 import ContentModal from "./ContentModal";
+import {useGlobalStore} from "../../store/global";
 
     export default {
         props: {
@@ -199,6 +195,12 @@ import ContentModal from "./ContentModal";
             ConfirmModal,
             ContentModal
         },
+        setup () {
+            const globalStore = useGlobalStore();
+            return {
+                globalStore,
+            }
+        },
         data() {
             return {
                 uid: null,
@@ -207,7 +209,6 @@ import ContentModal from "./ContentModal";
                 currentSlide: 0,
                 currentContent: {},
                 showConfirm: false,
-                showContentModal: false,
                 showContentSubscriptionModal: false
             }
         },
@@ -231,7 +232,6 @@ import ContentModal from "./ContentModal";
                 }
                 $('#contentCarousel_' + this.uid).carousel(this.currentSlide);
             },
-
             async sortEvent(contentSubscription,amount) {
                 let subscription = {
                     'subscribable_type': contentSubscription.subscribable_type,
@@ -258,13 +258,20 @@ import ContentModal from "./ContentModal";
                     this.errors = error.response.data.errors;
                 }
             },
-            edit(contentSubscription) {
-                /*this.$modal.show('content-create-modal', {
-                    'id': contentSubscription.content_id,
-                    'method': 'patch',
-                    'referenceable_type': contentSubscription.subscribable_type,
-                    'referenceable_id': contentSubscription.subscribable_id
-                });*/
+            create(){
+                this.globalStore?.showModal('content-modal',{
+                    'subscribable_type': this.subscribable_type,
+                    'subscribable_id': this.subscribable_id
+                });
+            },
+            edit(item) {
+                this.globalStore?.showModal('content-modal', {
+                    'id': item.content.id,
+                    'title': item.content.title,
+                    'content': item.content.content,
+                    'subscribable_type': item.subscribable_type,
+                    'subscribable_id': item.subscribable_id
+                });
             },
             deleteSubscription(contentSubscription) {
                 axios.post('/contents/'+contentSubscription.content_id+'/destroy',
@@ -292,11 +299,16 @@ import ContentModal from "./ContentModal";
             }
         },
         mounted() {
-            this.uid = this._uid;
+            this.uid = this.$.uid;
             this.currentSlide = 0;
 
             this.$eventHub.on('content-added', function(newContent) {
-                this.showContentModal = false;
+                this.globalStore?.closeModal('content-modal');
+                this.loaderEvent();
+            }.bind(this));
+
+            this.$eventHub.on('content-updated', function(newContent) {
+                this.globalStore?.closeModal('content-modal');
                 this.loaderEvent();
             }.bind(this));
 

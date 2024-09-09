@@ -19,10 +19,8 @@ class TaskController extends Controller
     public function index()
     {
         abort_unless(\Gate::allows('task_access'), 403);
-        $tasks = auth()->user()->tasks;
 
-        return view('tasks.index')
-                ->with(compact('tasks'));
+        return view('tasks.index');
     }
 
     public function list()
@@ -70,12 +68,9 @@ class TaskController extends Controller
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
-        // axios call?
         if (request()->wantsJson()) {
-            return ['message' => $task->path()];
+            return $task;
         }
-
-        return redirect($task->path());
     }
 
     /**
@@ -127,10 +122,8 @@ class TaskController extends Controller
         ]);
 
         if (request()->wantsJson()) {
-            return ['message' => $task->path()];
+            return $task;
         }
-
-        return redirect($task->path());
     }
 
     /**

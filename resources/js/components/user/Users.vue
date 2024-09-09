@@ -141,7 +141,6 @@ import IndexWidget from "../uiElements/IndexWidget";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal";
-import { storeToRefs } from 'pinia';
 import { useDatatableStore } from "../../store/datatables";
 import UserOptions from "./UserOptions";
 DataTable.use(DataTablesCore);
@@ -174,7 +173,7 @@ export default {
     },
     data() {
         return {
-            component_id: this._uid,
+            component_id: this.$.uid,
             users: null,
             search: '',
             showUserModal: false,

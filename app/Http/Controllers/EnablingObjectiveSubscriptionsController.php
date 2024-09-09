@@ -24,7 +24,7 @@ class EnablingObjectiveSubscriptionsController extends Controller
             abort_unless((\Gate::allows('curriculum_show') and $modal->isAccessible()), 403);
 
             $user_ids = [];
-            
+
             if ($input['subscribable_type'] == 'App\PlanEntry' and $modal->plan->isEditable()) {
                 $subscriptions = $modal->plan->subscriptions;
 
@@ -73,7 +73,7 @@ class EnablingObjectiveSubscriptionsController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     *
      */
     public function store(Request $request)
     {
@@ -91,7 +91,7 @@ class EnablingObjectiveSubscriptionsController extends Controller
             'owner_id' => auth()->user()->id,
         ]);
         if (request()->wantsJson()) {
-            return ['message' => 'ok'];
+            return $subscription;
         }
     }
 

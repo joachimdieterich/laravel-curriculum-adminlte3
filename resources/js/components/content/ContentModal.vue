@@ -1,7 +1,7 @@
 <template>
-    <Transition name="modal">
-        <div v-if="show"
-             class="modal-mask"
+    <Transition name="modal" >
+        <div v-if="this.globalStore.modals['content-modal']?.show"
+             class="modal-mask "
         >
         <div class="modal-container">
             <div class="card-header">
@@ -16,7 +16,7 @@
                 <div class="card-tools">
                     <button type="button"
                             class="btn btn-tool"
-                            @click="$emit('close')">
+                            @click="this.globalStore?.closeModal('content-modal')">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
@@ -52,23 +52,23 @@
                     ></Editor>
                 </div>
             </div>
-                <div class="card-footer">
-                     <span class="pull-right">
-                         <button
-                             id="content-cancel"
-                             type="button"
-                             class="btn btn-default mr-2"
-                             @click="$emit('close')">
-                             {{ trans('global.cancel') }}
-                         </button>
-                         <button
-                             id="content-save"
-                             class="btn btn-primary"
-                             @click="submit(method)" >
-                             {{ trans('global.save') }}
-                         </button>
-                    </span>
-                </div>
+            <div class="card-footer">
+                 <span class="pull-right">
+                     <button
+                         id="content-cancel"
+                         type="button"
+                         class="btn btn-default mr-2"
+                         @click="this.globalStore?.closeModal('content-modal')">
+                         {{ trans('global.cancel') }}
+                     </button>
+                     <button
+                         id="content-save"
+                         class="btn btn-primary"
+                         @click="submit(method)" >
+                         {{ trans('global.save') }}
+                     </button>
+                </span>
+            </div>
         </div>
     </div>
     </Transition>
@@ -76,7 +76,7 @@
 <script>
     import Form from 'form-backend-validation';
     import Editor from '@tinymce/tinymce-vue';
-
+    import {useGlobalStore} from "../../store/global";
 
     export default {
         components:{
@@ -89,18 +89,24 @@
             params: {
                 type: Object
             },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
+        },
+        setup () { //use database store
+            const globalStore = useGlobalStore();
 
+            return {
+                globalStore,
+            }
         },
         data() {
             return {
-                component_id: this._uid,
+                component_id: this.$.uid,
                 method: 'post',
                 url: '/contents',
                 form: new Form({
                     'id':'',
                     'title': '',
                     'content': '',
-                    'subscribable_type': null,
+                    'subscribable_id': null,
                     'subscribable_type': null,
                 }),
                 tinyMCE: this.$initTinyMCE(
@@ -114,20 +120,6 @@
                 ),
                 search: '',
             }
-        },
-        watch: {
-            params: function(newVal, oldVal) {
-                this.form.reset();
-                this.form.subscribable_type = newVal.subscribable_type;
-                this.form.subscribable_id = newVal.subscribable_id;
-                this.form.populate(newVal);
-                if (this.form.id != ''){
-                    this.method = 'patch';
-                } else {
-                    this.method = 'post';
-                }
-            },
-
         },
         methods: {
              submit(method) {
@@ -151,15 +143,33 @@
                 axios.patch(this.url + '/' + this.form.id, this.form)
                     .then(r => {
                         this.$eventHub.emit('content-updated', r.data);
-                        // vorher: this.$parent.$emit('addContent', this.form);
                     })
                     .catch(e => {
                         console.log(e.response);
                     });
-            }
+            },
         },
         mounted() {
+            this.globalStore.registerModal('content-modal');
+            this.globalStore.$subscribe((mutation, state) => {
+
+                const params = state.modals['content-modal'].params;
+                console.log(mutation);
+                this.form.reset();
+                if (typeof (params) !== 'undefined'){
+                    this.form.subscribable_type = params.subscribable_type;
+                    this.form.subscribable_id = params.subscribable_id;
+                    this.form.populate(params);
+                    if (this.form.id != ''){
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
+                    }
+                }
+            });
         },
     }
 </script>
+<style scoped>
 
+</style>

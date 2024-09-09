@@ -159,7 +159,7 @@
                        role="tab"
                        aria-controls="medium-tab"
                        aria-selected="true">
-                        <i class="fa fa-folder-open pr-2"></i>{{trans('global.media.title')}}
+                        <i class="fa fa-folder-open pr-2"></i>{{trans('global.medium.title')}}
                     </a>
                 </li>-->
 
@@ -385,7 +385,7 @@ export default {
     },
     data() {
         return {
-            componentId: this._uid,
+            componentId: this.$.uid,
             showGroupModal: false,
             currentGroup: {},
             help: true,

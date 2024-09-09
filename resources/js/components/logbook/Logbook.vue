@@ -47,8 +47,13 @@
         <logbook-entry-modal></logbook-entry-modal>
         <lms-modal></lms-modal>
 -->
-
         <Teleport to="body">
+            <AbsenceModal></AbsenceModal>
+            <ContentModal></ContentModal>
+            <TaskModal></TaskModal>
+            <MediumPreviewModal></MediumPreviewModal>
+            <subscribe-objective-modal></subscribe-objective-modal>
+            <lms-modal></lms-modal>
             <MediumModal
                 subscribable_type="App\\Logboook"
                 :subscribable_id="logbook.id"
@@ -60,7 +65,29 @@
                 @close="this.showLogbookModal = false"
                 :params="this.currentLogbook"
             ></LogbookModal>
+            <SubscribeModal
+                :params="this.showSubscribeParams"
+                :show="this.showSubscribeModal"
+                @close="this.showSubscribeModal = false"
+            ></SubscribeModal>
         </Teleport>
+        <teleport
+            v-if="$userId == logbook.owner_id"
+            to="#customTitle">
+            <small>{{ logbook.title }} </small>
+            <a class="btn btn-flat"
+               @click="editLogbook(logbook)"
+            >
+                <i class="fa fa-pencil-alt text-secondary"></i>
+            </a>
+            <button
+                v-permission="'kanban_create'"
+                v-if="$userId == logbook.owner_id"
+                class="btn btn-flat"
+                @click="share()">
+                <i class="fa fa-share-alt text-secondary"></i>
+            </button>
+        </teleport>
     </div>
 </template>
 
@@ -69,15 +96,31 @@ import MediumModal from "../media/MediumModal"
 import LogbookModal from "../logbook/LogbookModal";
 import LogbookEntry from '../logbookEntry/LogbookEntry.vue';
 import LogbookPrintOptions from "./LogbookPrintOptions";
+import TaskModal from "../task/TaskModal.vue";
+import SubscribeModal from "../subscription/SubscribeModal";
+
 import {useMediumStore} from "../../store/media";
+import LmsModal from "../lms/LmsModal.vue";
+import ContentModal from "../content/ContentModal.vue";
+import {useGlobalStore} from "../../store/global";
+import MediumPreviewModal from "../media/MediumPreviewModal.vue";
+import SubscribeObjectiveModal from "../objectives/SubscribeObjectiveModal.vue";
+import AbsenceModal from "../absence/AbsenceModal.vue";
 
 export default {
     name: "Logbook",
     components:{
+        AbsenceModal,
+        SubscribeObjectiveModal,
+        MediumPreviewModal,
+        ContentModal,
+        LmsModal,
         LogbookModal,
         LogbookPrintOptions,
         LogbookEntry,
-        MediumModal
+        MediumModal,
+        SubscribeModal,
+        TaskModal
     },
     props: {
         logbook: {
@@ -89,14 +132,19 @@ export default {
     },
     setup () { //use database store
         const mediumStore = useMediumStore();
+        const globalStore = useGlobalStore();
+
         return {
+            globalStore,
             mediumStore
         }
     },
     data() {
         return {
-            componentId: this._uid,
+            componentId: this.$.uid,
             showLogbookModal: false,
+            showSubscribeParams: {},
+            showSubscribeModal: false,
             currentLogbook: {},
             entries: [],
             search: '',
@@ -149,17 +197,28 @@ export default {
             let index = this.entries.indexOf(deletedEntry);
             this.entries.splice(index, 1);
         });
-        // End Entries
-
-
     },
     methods: {
-        editLogbook(){
+        editLogbook(logbook){
+            this.currentKanban = logbook;
             this.showLogbookModal = true;
         },
         togglePrintOptions() {
             this.showPrintOptions = !this.showPrintOptions;
-        }
+        },
+        share(){
+            this.showSubscribeParams =
+                {
+                    'modelId': this.logbook.id,
+                    'modelUrl': 'logbook',
+                    'shareWithUsers': true,
+                    'shareWithGroups': true,
+                    'shareWithOrganizations': true,
+                    'shareWithToken': true,
+                    'canEditCheckbox': true
+                };
+            this.showSubscribeModal = true;
+        },
     }
 }
 </script>

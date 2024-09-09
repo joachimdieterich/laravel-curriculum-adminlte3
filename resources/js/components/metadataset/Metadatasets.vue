@@ -109,7 +109,7 @@ export default {
     },
     data() {
         return {
-            component_id: this._uid,
+            component_id: this.$.uid,
             metadatasets: null,
             search: '',
             showMetadatasetModal: false,

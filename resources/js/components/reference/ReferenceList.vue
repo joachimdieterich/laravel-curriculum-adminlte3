@@ -42,7 +42,7 @@
                 <td
                     class="py-2 link-muted text-sm pointer"
                     v-permission="'lms_create'"
-                    @click.prevent="open('subscribe-objective-modal')">
+                    @click.prevent="create()">
                     <i class="fa fa-plus px-2 "></i> {{
                         trans('global.terminalObjective.title')
                     }}/{{ trans('global.enablingObjective.title') }}
@@ -52,9 +52,8 @@
     </div>
 </template>
 <script>
-const ObjectiveBox =
-    () => import('../objectives/ObjectiveBox');
-//import ObjectiveBox from '../objectives/ObjectiveBox'
+import ObjectiveBox from '../objectives/ObjectiveBox'
+import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'reference-list',
@@ -64,6 +63,12 @@ export default {
         'subscribable_type': String,
         'subscribable_id': Number,
     },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
     data() {
         return {
             settings: {
@@ -72,11 +77,11 @@ export default {
         }
     },
     methods: {
-        open(modal) {
-            this.$modal.show(modal, {
-                'referenceable_type': this.subscribable_type,
-                'referenceable_id': this.subscribable_id
-            });
+        create(){
+            this.globalStore?.showModal('subscribe-objective-modal',{
+                'subscribable_type': this.subscribable_type,
+                'subscribable_id': this.subscribable_id
+            })
         },
 
         del(type, subscription) { //id of external reference and value in db
@@ -89,7 +94,11 @@ export default {
                 });
 
         },
-
+    },
+    mounted() {
+        this.$eventHub.on('subscriptions_added', (subscription) => {
+            this.globalStore?.closeModal('subscribe-objective-modall');
+        });
     }
 }
 </script>

@@ -202,7 +202,7 @@ export default {
     },
     data() {
         return {
-            component_id: this._uid,
+            component_id: this.$.uid,
             method: 'post',
             requestUrl: '/notes',
             notes: {},
@@ -379,20 +379,20 @@ export default {
             let show = false;
 
             if (item?.title.toLowerCase().indexOf(this.search.toLowerCase()) !== -1
-                || item.content.toLowerCase().indexOf(this.search.toLowerCase()) !== -1
+                || item?.content.toLowerCase().indexOf(this.search.toLowerCase()) !== -1
                 || this.search.length < 3){
                 show = true;
             }
 
             if (typeof(item?.notable) !== 'undefined'){
                 if (item?.notable !== null){
-                    if (item.notable_type === 'App\\User'){
-                        if (item.notable.firstname.toLowerCase().indexOf(this.search.toLowerCase()) !== -1
-                            || item.notable.lastname.toLowerCase().indexOf(this.search.toLowerCase()) !== -1){
+                    if (item?.notable_type === 'App\\User'){
+                        if (item?.notable.firstname.toLowerCase().indexOf(this.search.toLowerCase()) !== -1
+                            || item?.notable.lastname.toLowerCase().indexOf(this.search.toLowerCase()) !== -1){
                             show = true;
                         }
-                    } else if (item.notable_type === 'App\\Group'){
-                        if (item.notable.title.toLowerCase().indexOf(this.search.toLowerCase()) !== -1){
+                    } else if (item?.notable_type === 'App\\Group'){
+                        if (item?.notable.title.toLowerCase().indexOf(this.search.toLowerCase()) !== -1){
                             show = true;
                         }
                     }

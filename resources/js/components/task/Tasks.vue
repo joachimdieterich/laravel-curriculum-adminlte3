@@ -5,8 +5,8 @@
 
             <ul class="todo-list pb-1"
                 data-widget="todo-list">
-                <li class="bg-gray-light text-muted"
-                @click="this.$eventHub.emit('createTask', true);">
+                <li class="bg-gray-light text-muted pointer"
+                @click="create()">
                     <i class="fa fa-plus pr-2"></i>
                     {{ trans('global.task.create') }}
                 </li>
@@ -39,9 +39,8 @@
                         {{ task.due_date }}
                     </small>
 
-
                     <div class="tools">
-                        <a @click.prevent="editTask(task)">
+                        <a @click.prevent="edit(task)">
                             <i class="fa fa-pencil-alt mr-3 text-muted"></i>
                         </a>
                         <a @click.prevent="confirmItemDelete(task)" >
@@ -54,7 +53,7 @@
         <div id="task-datatable-wrapper"
              class="w-100 dataTablesWrapper">
             <DataTable
-                id="task-datatable"
+                :id="'task-datatable_' + this.component_id"
                 :columns="columns"
                 :options="options"
                 :ajax="url"
@@ -65,11 +64,6 @@
         </div>
 
         <Teleport to="body">
-            <TaskModal
-                :show="this.showTaskModal"
-                @close="this.showTaskModal = false"
-                :params="currentTask"
-            ></TaskModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.task.delete')"
@@ -91,20 +85,27 @@
 
 
 <script>
-import TaskModal from "../task/TaskModal";
 import IndexWidget from "../uiElements/IndexWidget";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal";
+import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
     props: {
-
+        subscribable_type: '',
+        subscribable_id: '',
+    },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
-            component_id: this._uid,
+            component_id: this.$.uid,
             tasks: null,
             search: '',
             showTaskModal: false,
@@ -137,18 +138,26 @@ export default {
             this.update(task);
         });
         this.$eventHub.on('createTask', () => {
-            console.log('ddd');
             this.currentTask = {};
-            this.showTaskModal = true;
         });
     },
     methods: {
-        editTask(task){
-            this.currentTask = task;
-            this.showTaskModal = true;
+        create(){
+            this.globalStore?.showModal('task-modal',{})
+        },
+        edit(task){
+            //console.log(task);
+            this.globalStore?.showModal('content-modal', task);
+
         },
         loaderEvent(){
-            const dt = $('#task-datatable').DataTable();
+            if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
+                this.url = '/tasksSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
+            } else {
+                this.url = '/tasks/list?filter=' + this.filter;
+            }
+
+            const dt = $('#task-datatable_' + this.component_id).DataTable();
             dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
                 this.tasks = dt.rows({page: 'current'}).data().toArray();
 
@@ -197,12 +206,10 @@ export default {
             let subscription = task.subscriptions
             return ( subscription[0]?.completion_date != null && typeof (subscription[0]?.completion_date) !== 'undefined' ) ? true : false;
         }
-
     },
     components: {
         ConfirmModal,
         DataTable,
-        TaskModal,
         IndexWidget
     },
 }

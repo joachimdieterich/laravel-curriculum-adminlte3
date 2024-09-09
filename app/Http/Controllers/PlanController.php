@@ -12,6 +12,7 @@ use App\EnablingObjectiveSubscriptions;
 use App\TerminalObjectiveSubscriptions;
 use App\Training;
 use App\TrainingSubscription;
+use App\Exercise;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -220,8 +221,14 @@ class PlanController extends Controller
         foreach ($plan->entries as $entry) {
             $entry->enablingObjectiveSubscriptions()->delete();
             $entry->terminalObjectiveSubscriptions()->delete();
-            $entry->trainingSubscriptions()->delete();
+            
+            // trainings need to be deleted separately
+            foreach ($entry->trainings as $training) {
+                $training->exercises()->delete();
+                (new TrainingController())->destroy($training);
+            }
         }
+
         $plan->entries()->delete();
         $plan->subscriptions()->delete();
         //? if media-subscriptions can be added in the future, they need to be deleted too
@@ -313,6 +320,16 @@ class PlanController extends Controller
                     'editable' => 1,
                     'owner_id' => $owner_id,
                 ]);
+
+                foreach ($training->exercises as $exercise) {
+                    Exercise::Create([
+                        'training_id' => $newTraining->id,
+                        'title' => $exercise->title,
+                        'description' => $exercise->description,
+                        'recommended_iterations' => $exercise->recommended_iterations,
+                        'owner_id' => $owner_id,
+                    ]);
+                }
             }
         }
 

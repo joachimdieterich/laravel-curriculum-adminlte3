@@ -35,7 +35,7 @@
          v-bind:style="{ 'background-color': backgroundcolor, 'border-color': bordercolor, 'opacity': opacity, 'filter': filter }"
     >
         <!-- don't load Header if it isn't needed -->
-        <Header v-if="settings.edit == true"
+        <Header
             :objective="objective"
             :type="type"
             :menuEntries="menuEntries"

@@ -54,14 +54,14 @@
         <table id="plan-datatable" style="display: none;"></table>
         <div id="plan-content">
             <div class="py-2">
+                <PlanIndexAddWidget
+                    v-if="((this.filter == 'all' && typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined') || this.filter == 'owner')"
+                    v-can="'plan_create'"
+                />
                 <PlanIndexWidget
                     v-for="(plan,index) in plans"
                     :key="index+'_plan_'+plan.id"
                     :plan="plan"
-                />
-                <PlanIndexAddWidget
-                    v-if="((this.filter == 'all' && typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined') || this.filter == 'owner')"
-                    v-can="'plan_create'"
                 />
 
                 <Modal

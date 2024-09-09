@@ -4,7 +4,8 @@
             <div class="card">
                 <div v-if="create">
                     <div class="card-header pointer"
-                         @click="edit()">
+                         @click="edit()"
+                    >
                         <i class="fas fa-add pr-1"></i>
                         {{ trans('global.planEntry.create') }}
                     </div>
@@ -48,7 +49,8 @@
                     </div>
                 </div>
                 <div v-if="editor"
-                     class="card-body">
+                     class="card-body"
+                >
                     <color-picker-input
                         v-model="form.color"
                     ></color-picker-input>
@@ -93,7 +95,8 @@
                     </div>
                     <button :name="'planEntrySave'"
                             class="btn btn-primary p-2 m-2"
-                            @click="submit()">
+                            @click="submit()"
+                    >
                         {{ trans('global.save') }}
                     </button>
                 </div>
@@ -179,8 +182,8 @@ export default {
             this.form.css_icon = 'fa fa-'+  selectedIcon.className;
         },
         edit() {
-            this.editor = !this.editor ;
-            if ( this.entry !== null ) {
+            this.editor = !this.editor;
+            if (this.entry !== null) {
                 this.form.color = this.entry.color;
                 this.form.css_icon = this.entry.css_icon;
                 this.form.order_id = this.plan.entries?.length ;
@@ -214,6 +217,7 @@ export default {
                 axios.post(this.requestUrl, this.form)
                     .then(res => { // Tell the parent component we've added a new task and include it
                         this.$eventHub.$emit("plan_entry_added", res.data.entry);
+                        this.form.reset(); // clear input-fields
                     })
                     .catch(error => { // Handle the error returned from our request
                         console.log(error);

@@ -252,6 +252,9 @@ export default {
             this.form.only_edit_owned_items = data.only_edit_owned_items;
             this.form.allow_copy = data.allow_copy;
         },
+        removeMedium() {
+            this.form.medium_id = null;
+        },
     },
     mounted() {
         // Set eventlistener for Media

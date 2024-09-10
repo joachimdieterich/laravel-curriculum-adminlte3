@@ -110,6 +110,12 @@ class MediumSubscriptionController extends Controller
     {
         abort_unless(\Gate::allows('medium_delete'), 403);
         $subscription = $this->validateRequest();
+        $model = $subscription['subscribable_type'];
+        //! CHANGE IN NEW VERSION
+        // temporary solution to remove mediaSubscriptions for Logbooks/Kanbans
+        if ($model == 'App\\Logbook' || $model == 'App\\Kanban') {
+            app($model)::find($subscription['subscribable_id'])->update(['medium_id' => null]);
+        }
 
         return MediumSubscription::where([
             'medium_id' => $subscription['medium_id'],

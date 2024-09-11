@@ -3,7 +3,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 
 /**
 * @OA\Get(
-*      path="/v1/kanbans?cn={owner_cn}",
+*      path="/v1/kanbans?owner_cn={owner_cn}",
 *      operationId="getUserKanbans",
 *      tags={"Kanban v1"},
 *      summary="Get user kanbans",

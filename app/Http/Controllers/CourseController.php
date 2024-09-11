@@ -26,7 +26,6 @@ class CourseController extends Controller
         return empty($courses) ? '' : DataTables::of($courses)
             ->setRowId('id')
             ->make(true);
-
     }
 
     public function show(Course $course)

@@ -109,7 +109,6 @@
                 } catch(error) {
                     this.errors = error.response.data.errors;
                 }
-
             },
             onChange(value){
                 this.certificate_id = value.id;

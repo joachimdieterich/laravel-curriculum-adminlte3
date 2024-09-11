@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  *   @OA\Schema(
  *      required={"id", "title"},
- *      @OA\Xml(name="Grade"),
+ *      @OA\Xml(name="Kanban"),
  *
  *      @OA\Property( property="id", type="integer"),
  *      @OA\Property( property="title", type="string"),
@@ -20,7 +20,8 @@ use Illuminate\Database\Eloquent\Model;
  *      @OA\Property( property="updated_at", type="string"),
  *      @OA\Property( property="commentable", type="integer"),
  *      @OA\Property( property="auto_refresh", type="integer"),
- *      @OA\Property( property="only_edit_owned_items", type="integer")
+ *      @OA\Property( property="only_edit_owned_items", type="integer"),
+ *      @OA\Property( property="allow_copy", type="integer")
  *   ),
  */
 class Kanban extends Model

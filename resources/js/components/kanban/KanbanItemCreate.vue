@@ -193,8 +193,8 @@ export default {
                 "autolink link lists table"
             ],
             null,
-            "bold underline italic | alignleft aligncenter alignright | bullist numlist outdent indent |  table mathjax link ",
-
+            "bold underline italic | alignleft aligncenter alignright ",
+            "bullist numlist outdent indent |  table mathjax link ",
         );
     },
     computed:{

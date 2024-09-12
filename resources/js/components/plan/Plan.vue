@@ -75,7 +75,8 @@
             <select-users-modal
                 :users="users"
                 :multiple="true"
-                title="plan.evaluate_user"
+                title="global.plan.evaluate_user"
+                submitText="global.open"
             ></select-users-modal>
         </div>
         <PlanIndexAddWidget

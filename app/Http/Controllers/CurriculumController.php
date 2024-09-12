@@ -202,7 +202,6 @@ class CurriculumController extends Controller
      */
     public function show(Curriculum $curriculum, $achievements = false)
     {
-
         abort_unless((Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
         LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
 
@@ -218,7 +217,6 @@ class CurriculumController extends Controller
             'cross_reference_curriculum_id' => false,
         ]);
 
-        //axios request?
         if (request()->wantsJson()) {
             return ['contents' => $curriculum->contents];
         }

@@ -242,7 +242,7 @@ Vue.component('videoconferences', () => import('./components/videoconference/Vid
 
 Vue.component('tests-table', () => import('./components/tests/TestsTable.vue'));
 
-Vue.prototype.$initTinyMCE = function (tinyMcePlugins, attr = null, customToolbar = null, extended_valid_elements = null) {
+Vue.prototype.$initTinyMCE = function (tinyMcePlugins, attr = null, customToolbar1 = null, customToolbar2 = null, extended_valid_elements = null) {
 
     const defaultPlugins = [
         "advlist autolink lists link image charmap print preview hr anchor pagebreak",
@@ -263,7 +263,8 @@ Vue.prototype.$initTinyMCE = function (tinyMcePlugins, attr = null, customToolba
         plugins: tinyMcePlugins ?? defaultPlugins,
         external_plugins: {'mathjax': '/node_modules/@dimakorotkov/tinymce-mathjax/plugin.min.js'},
         menubar: "edit format",
-        toolbar: customToolbar ?? "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | example mathjax link image media code",
+        toolbar1: customToolbar1 ?? "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify",
+        toolbar2: customToolbar2 ?? "bullist numlist outdent indent | example mathjax link image media code",
         extended_valid_elements: extended_valid_elements ?? '',
         font_size_input_default_unit: "pt",
         relative_urls: false,

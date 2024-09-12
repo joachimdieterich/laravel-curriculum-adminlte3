@@ -387,8 +387,8 @@ export default {
                         "autolink link lists table code"
                     ],
                     null,
-                    "bold underline italic | alignleft aligncenter alignright ",
-                    "bullist numlist outdent indent |  table mathjax link code",
+                    "bold underline italic | alignleft aligncenter alignright | table",
+                    "bullist numlist outdent indent | mathjax link code",
                 );
             });
 

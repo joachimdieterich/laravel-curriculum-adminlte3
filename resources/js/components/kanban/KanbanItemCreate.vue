@@ -190,10 +190,10 @@ export default {
         }
         this.$initTinyMCE(
             [
-                "autolink link lists table"
+                "autolink link lists table code"
             ],
             null,
-            "bold underline italic | alignleft aligncenter alignright | bullist numlist outdent indent |  table mathjax link ",
+            "bold underline italic | alignleft aligncenter alignright | bullist numlist outdent indent | table mathjax link code",
 
         );
     },

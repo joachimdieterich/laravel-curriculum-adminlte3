@@ -388,7 +388,7 @@ export default {
                     ],
                     null,
                     "bold underline italic | alignleft aligncenter alignright ",
-                    "bullist numlist outdent indent |  table mathjax link ",
+                    "bullist numlist outdent indent |  table mathjax link code",
                 );
             });
 

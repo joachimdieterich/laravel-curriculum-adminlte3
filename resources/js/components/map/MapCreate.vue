@@ -61,14 +61,14 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="description">
+                                <label for="map_description">
                                     {{ trans('global.map.fields.description') }}
                                 </label>
                                 <textarea
                                     id="map_description"
                                     name="map_description"
                                     :placeholder="trans('global.map.fields.description')"
-                                    class="form-control description my-editor "
+                                    class="form-control description"
                                     v-model.trim="form.description"
                                 ></textarea>
                             </div>
@@ -283,7 +283,7 @@ export default {
             this.form.id = newVal.id;
             this.form.title = newVal.title;
             this.form.subtitle = newVal.subtitle;
-            this.form.description = newVal.description;
+            this.form.description = this.htmlToText(newVal.description);
             this.form.tags = newVal.tags;
             this.form.type_id = newVal.type_id;
             this.form.category_id = newVal.category_id;
@@ -293,7 +293,6 @@ export default {
             this.form.zoom = newVal.zoom;
             this.form.color = newVal.color;
             this.form.medium_id = newVal.medium_id;
-            tinyMCE.get('map_description').setContent(this.form.description);
             this.syncSelect2();
         },
         method: function (newVal, oldVal) {
@@ -313,7 +312,6 @@ export default {
             if (!this.checkRequired()) return;
 
             let method = this.method.toLowerCase();
-            this.form.description = tinyMCE.get('map_description').getContent();
             if (method === 'patch') {
                 axios.patch(this.requestUrl + '/' + this.form.id, this.form)
                     .then(res => { // Tell the parent component we've updated a task
@@ -385,10 +383,6 @@ export default {
         }
     },
     mounted() {
-        this.$initTinyMCE([
-            "autolink link"
-        ] );
-
         axios.get('/mapMarkerTypes')
             .then(res => {
                 this.mapMarkerTypes = res.data.mapMarkerTypes;
@@ -406,7 +400,6 @@ export default {
             .catch(err => {
                 console.log(err);
             });
-
     }
 }
 </script>

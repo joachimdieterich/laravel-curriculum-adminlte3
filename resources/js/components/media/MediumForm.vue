@@ -3,6 +3,13 @@
         <div class="btn-group"
              @click="loadModal()"
         >
+            <span v-if="medium_id !== null && (referenceable_type == 'App\\Logbook' || referenceable_type == 'App\\Kanban')"
+                class="d-flex align-items-center"
+            >
+                <a class="text-danger px-2" style="height: 26px;" role="button" @click.stop="removeSubscription()">
+                    <i class="fa fa-trash"></i>
+                </a>
+            </span>
             <button type="button" class="btn btn-default">
                 <img  v-if="this.thumbnail_medium_id"
                       alt="preview"
@@ -76,7 +83,19 @@ export default {
                     'eventHubCallbackFunction': 'addMedia',
                     'eventHubCallbackFunctionParams': this.id,
                 });
-        }
+        },
+        removeSubscription() {
+            //! temporary solution to remove media for Logbooks/Kanbans
+            this.$parent.removeMedium();
+            axios.post('mediumSubscriptions/destroy', {
+                'medium_id': this.medium_id,
+                'subscribable_id': this.referenceable_id,
+                'subscribable_type': this.referenceable_type,
+                // since we don't have those values, only allow default values
+                'sharing_level_id': 1,
+                'visibility': 1,
+            });
+        },
     }
 }
 </script>

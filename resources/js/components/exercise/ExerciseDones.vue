@@ -127,7 +127,7 @@ export default {
             this.editor = id;
             this.form.iterations = value;
             this.$nextTick(() => {
-                this.$refs[id][0].focus();
+                this.$refs[id].focus();
             });
 
         },

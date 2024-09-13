@@ -49,7 +49,7 @@ return [
     'delete' => 'Delete dataset finally',
     'forceDelete' => '.',
     'save' => 'Save',
-    'open' => 'open',
+    'open' => 'Open',
     'cancel' => 'Cancel',
     'close' => 'Close',
     'generate' => 'Generate',

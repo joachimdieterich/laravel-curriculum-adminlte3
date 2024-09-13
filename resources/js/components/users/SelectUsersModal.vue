@@ -18,7 +18,7 @@
             style="margin-bottom: 0px !important; height: 100%;"
         >
             <div class="card-header">
-                <h3 class="card-title">{{ trans('global.' + title) }}</h3>
+                <h3 class="card-title">{{ trans(title) }}</h3>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool draggable">
                         <i class="fa fa-arrows-alt"></i>
@@ -67,7 +67,7 @@
             <div class="card-footer">
                 <span class="d-flex justify-content-between">
                     <button type="button" class="btn btn-default" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
-                    <button class="btn btn-primary" @click="submit()" :disabled="selectedUsers.length === 0">{{ trans('global.save') }}</button>
+                    <button class="btn btn-primary" @click="submit()" :disabled="selectedUsers.length === 0">{{ trans(submitText) }}</button>
                 </span>
             </div>
         </div>
@@ -83,8 +83,12 @@ export default {
         },
         title: { // needs to be a translation-string
             type: String,
-            default: 'select_users',
+            default: 'global.select_users',
         },
+        submitText: {
+            type: String,
+            default: 'global.save',
+        }
     },
     data() {
         return {

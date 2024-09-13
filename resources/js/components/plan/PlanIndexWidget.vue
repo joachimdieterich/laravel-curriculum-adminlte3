@@ -34,7 +34,7 @@
             <div v-if="$userId == plan.owner_id || plan.allow_copy"
                 class="btn btn-flat pull-right "
                 :id="'planDropdown_' + plan.id"
-                style="position:absolute; top:0; right: 0; background-color: transparent; z-index: 1050;"
+                style="position:absolute; top:0; right: 0; background-color: transparent;"
                 data-toggle="dropdown"
                 aria-expanded="false"
             >

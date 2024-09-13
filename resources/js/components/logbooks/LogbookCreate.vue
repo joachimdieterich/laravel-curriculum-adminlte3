@@ -188,6 +188,9 @@ export default {
             this.form.color = data.color;
             this.form.css_icon = data.css_icon;
         },
+        removeMedium() {
+            this.form.medium_id = null;
+        },
     },
     mounted() {
         // Set eventlistener for Media

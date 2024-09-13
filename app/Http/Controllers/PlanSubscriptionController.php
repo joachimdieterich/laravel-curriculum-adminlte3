@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Plan;
 use App\PlanSubscription;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class PlanSubscriptionController extends Controller
 {
@@ -21,14 +22,14 @@ class PlanSubscriptionController extends Controller
             $model = $input['subscribable_type']::find($input['subscribable_id']);
             abort_unless($model->isAccessible(), 403);
 
-            $subscriptions = PlanSubscription::where([
+            $planIds = PlanSubscription::where([
                 'subscribable_type' => $input['subscribable_type'],
                 'subscribable_id' => $input['subscribable_id'],
-            ]);
+            ])->pluck('plan_id')->toArray();
 
-            if (request()->wantsJson()) {
-                return ['subscriptions' => $subscriptions->with(['plan'])->get()];
-            }
+            return DataTables::of(Plan::find($planIds))
+                ->setRowId('id')
+                ->make(true);
         } else {
             if (request()->wantsJson()) {
                 return [

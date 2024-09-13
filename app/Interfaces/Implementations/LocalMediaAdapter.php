@@ -123,6 +123,7 @@ class LocalMediaAdapter implements MediaInterface
         $params = $this->validateRequest();
         if (isset($params['model'])) {
             switch ($params['model']){
+                case 'Curriculum':
                 case 'Videoconference':
                 case 'Kanban':
                 case 'Map':

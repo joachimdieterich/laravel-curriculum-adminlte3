@@ -209,9 +209,9 @@
 </template>
 <script>
 import Form from 'form-backend-validation';
-import Select2 from "../forms/Select2";
+import Select2 from "../forms/Select2.vue";
 import Editor from '@tinymce/tinymce-vue';
-import MediumForm from "../media/MediumForm";
+import MediumForm from "../media/MediumForm.vue";
 import {useMediumStore} from "../../store/media";
 
 

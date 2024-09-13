@@ -171,8 +171,8 @@
 </template>
 
 <script>
-import Logins from '../statistic/Logins';
-import PieChart from "../statistic/PieChart";
+import Logins from '../statistic/Logins.vue';
+import PieChart from "../statistic/PieChart.vue";
 
     export default {
         props: {

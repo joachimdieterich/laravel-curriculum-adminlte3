@@ -33,7 +33,7 @@
 </template>
 <script>
 const Medium =
-    () => import('../media/Medium');
+    () => import('../media/Medium.vue');
 //import Medium from "../media/Medium";
 export default {
     name: 'AgendaItemMedia',

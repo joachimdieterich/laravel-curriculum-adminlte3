@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import AchievementIndicator from './AchievementIndicator';
+import AchievementIndicator from './AchievementIndicator.vue';
     export default {
         props: {
                 objective: {},

@@ -363,8 +363,8 @@
 </template>
 
 <script>
-import Media from "../media/Media";
-import Contents from '../content/Contents';
+import Media from "../media/Media.vue";
+import Contents from '../content/Contents.vue';
 import TerminalObjectiveModal from "./TerminalObjectiveModal.vue";
 import EnablingObjectiveModal from "./EnablingObjectiveModal.vue";
 import Achievements from "./Achievements.vue";

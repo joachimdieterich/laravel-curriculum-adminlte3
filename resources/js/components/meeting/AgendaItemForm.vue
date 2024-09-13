@@ -85,7 +85,7 @@
 <script>
 import Form from "form-backend-validation";
 const Select2 =
-    () => import('../forms/Select2');
+    () => import('../forms/Select2.vue');
 const DatePicker =
     () => import('vue3-datepicker');
 

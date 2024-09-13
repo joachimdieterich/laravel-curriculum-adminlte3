@@ -173,11 +173,11 @@
 
 <script>
 import draggable from "vuedraggable";
-import KanbanItem from "./KanbanItem";
-import KanbanItemCreate from "./KanbanItemCreate";
-import KanbanStatus from "./KanbanStatus";
-import SubscribeModal from "../subscription/SubscribeModal";
-import KanbanModal from "../kanban/KanbanModal";
+import KanbanItem from "./KanbanItem.vue";
+import KanbanItemCreate from "./KanbanItemCreate.vue";
+import KanbanStatus from "./KanbanStatus.vue";
+import SubscribeModal from "../subscription/SubscribeModal.vue";
+import KanbanModal from "../kanban/KanbanModal.vue";
 
 export default {
     props: {

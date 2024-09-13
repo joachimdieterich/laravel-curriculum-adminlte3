@@ -42,9 +42,9 @@
 
 <script>
 const ObjectiveBox =
-    () => import('./ObjectiveBox');
+    () => import('./ObjectiveBox.vue');
 const EnablingObjectives =
-    () => import('./EnablingObjectives');
+    () => import('./EnablingObjectives.vue');
 
 export default {
     props: {

@@ -111,7 +111,7 @@
 
 
 <script>
-    import License from '../uiElements/License';
+    import License from '../uiElements/License.vue';
     import {useMediumStore} from "../../store/media.js";
     import {useGlobalStore} from "../../store/global";
 

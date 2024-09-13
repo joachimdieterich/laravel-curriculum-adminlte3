@@ -121,8 +121,8 @@
 </template>
 
 <script>
-import License from '../uiElements/License'
-import RenderUsage from "../../../../app/Plugins/Repositories/edusharing/resources/js/components/RenderUsage";
+import License from '../uiElements/License.vue'
+import RenderUsage from "../../../../app/Plugins/Repositories/edusharing/resources/js/components/RenderUsage.vue";
 import {useGlobalStore} from "../../store/global";
     export default {
         props:{

@@ -112,12 +112,12 @@
 
 
 <script>
-import NavigatorItemModal from "../navigator/NavigatorItemModal";
-import IndexWidget from "../uiElements/IndexWidget";
+import NavigatorItemModal from "../navigator/NavigatorItemModal.vue";
+import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
-import ConfirmModal from "../uiElements/ConfirmModal";
-import Content from "../content/Content";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import Content from "../content/Content.vue";
 DataTable.use(DataTablesCore);
 
 export default {

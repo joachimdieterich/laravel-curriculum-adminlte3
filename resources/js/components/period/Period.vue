@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import PeriodModal from "../period/PeriodModal";
+import PeriodModal from "../period/PeriodModal.vue";
 
 export default {
     name: "period",

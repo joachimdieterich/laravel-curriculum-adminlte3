@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import GradeModal from "../grade/GradeModal";
+import GradeModal from "../grade/GradeModal.vue";
 
 export default {
     name: "grade",

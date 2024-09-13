@@ -112,8 +112,8 @@
 </template>
 <script>
 import Form from "form-backend-validation";
-import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker";
-import MediumForm from "../media/MediumForm";
+import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker.vue";
+import MediumForm from "../media/MediumForm.vue";
 
 export default {
     name: 'LogbookCreate',

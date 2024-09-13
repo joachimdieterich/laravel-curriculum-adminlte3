@@ -255,7 +255,7 @@ import { storeToRefs } from 'pinia';
 import { useDatatableStore } from "../../store/datatables";
 import Form from "form-backend-validation";
 import { useToast } from "vue-toastification";
-import Select2 from "../forms/Select2";
+import Select2 from "../forms/Select2.vue";
 export default {
     props: {
 

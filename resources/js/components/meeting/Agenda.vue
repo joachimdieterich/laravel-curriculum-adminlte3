@@ -46,11 +46,11 @@
 import Form from "form-backend-validation";
 
 const MeetingAgendaForm =
-    () => import('./MeetingAgendaForm');
+    () => import('./MeetingAgendaForm.vue');
 const AgendaItemForm =
-    () => import('./AgendaItemForm');
+    () => import('./AgendaItemForm.vue');
 const AgendaItem =
-    () => import('./AgendaItem');
+    () => import('./AgendaItem.vue');
 //import MeetingAgendaForm from "./MeetingAgendaForm";
 /*
 import AgendaItemForm from "./AgendaItemForm";

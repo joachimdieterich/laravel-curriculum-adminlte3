@@ -25,7 +25,7 @@
     </div>
 </template>
 <script>
-import LogbookCreate from "./LogbookCreate";
+import LogbookCreate from "./LogbookCreate.vue";
 
 export default {
     name: 'LogbookIndexAddWidget',

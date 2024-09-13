@@ -78,9 +78,9 @@
 <script>
 import Form from 'form-backend-validation';
 const Avatar =
-    () => import('../uiElements/Avatar');
+    () => import('../uiElements/Avatar.vue');
 const Reaction =
-    () => import('../reaction/Reaction');
+    () => import('../reaction/Reaction.vue');
 //import Avatar from "../uiElements/Avatar"
 //import Reaction from "../reaction/Reaction";
 

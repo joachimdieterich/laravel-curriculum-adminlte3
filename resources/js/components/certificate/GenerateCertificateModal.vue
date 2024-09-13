@@ -79,7 +79,7 @@
 </template>
 <script>
     import Form from 'form-backend-validation';
-    import Select2 from "../forms/Select2";
+    import Select2 from "../forms/Select2.vue";
     import {useDatatableStore} from "../../store/datatables";
     import {useGlobalStore} from "../../store/global";
 

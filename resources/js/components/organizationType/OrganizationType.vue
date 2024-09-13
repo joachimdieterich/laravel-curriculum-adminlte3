@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import OrganizationTypeModal from "../organizationType/OrganizationTypeModal";
+import OrganizationTypeModal from "../organizationType/OrganizationTypeModal.vue";
 
 
 export default {

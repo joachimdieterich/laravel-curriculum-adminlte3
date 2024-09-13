@@ -243,9 +243,9 @@
 <script>
     import Form from 'form-backend-validation';
     import Editor from '@tinymce/tinymce-vue';
-    import MediumModal from "../media/MediumModal";
-    import MediumForm from "../media/MediumForm";
-    import Select2 from "../forms/Select2";
+    import MediumModal from "../media/MediumModal.vue";
+    import MediumForm from "../media/MediumForm.vue";
+    import Select2 from "../forms/Select2.vue";
     import VueDatePicker from '@vuepic/vue-datepicker';
     import axios from "axios";
 

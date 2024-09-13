@@ -88,11 +88,11 @@
 
 
 <script>
-import RoleModal from "../role/RoleModal";
-import IndexWidget from "../uiElements/IndexWidget";
+import RoleModal from "../role/RoleModal.vue";
+import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
-import ConfirmModal from "../uiElements/ConfirmModal";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
 DataTable.use(DataTablesCore);
 
 export default {

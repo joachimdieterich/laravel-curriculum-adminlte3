@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import PermissionModal from "../permission/PermissionModal";
+import PermissionModal from "../permission/PermissionModal.vue";
 
 export default {
     name: "permission",

@@ -226,13 +226,13 @@
 
 <script>
 
-import Absences from '../absence/Absences';
-import Contents from '../content/Contents';
-import Tasks from '../task/Tasks';
-import Media from '../media/Media';
+import Absences from '../absence/Absences.vue';
+import Contents from '../content/Contents.vue';
+import Tasks from '../task/Tasks.vue';
+import Media from '../media/Media.vue';
 import Lms from '../lms/Lms.vue';
-import ReferenceList from "../reference/ReferenceList";
-import Avatar from "../uiElements/Avatar";
+import ReferenceList from "../reference/ReferenceList.vue";
+import Avatar from "../uiElements/Avatar.vue";
 
 export default {
     props: {

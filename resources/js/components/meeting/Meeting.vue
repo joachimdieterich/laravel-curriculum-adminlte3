@@ -131,8 +131,8 @@
 </template>
 
 <script>
-import MeetingDates from "./MeetingDates";
-import Livestream from "./Livestream";
+import MeetingDates from "./MeetingDates.vue";
+import Livestream from "./Livestream.vue";
 
 export default {
     props: {

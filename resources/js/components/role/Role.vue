@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import RoleModal from "../role/RoleModal";
+import RoleModal from "../role/RoleModal.vue";
 
 export default {
     name: "role",

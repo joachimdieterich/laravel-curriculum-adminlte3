@@ -106,12 +106,12 @@
     () => import('../calendar/Calendar');*/
 
 import Form from "form-backend-validation";
-import MediumForm from "../media/MediumForm";
-import Objectives from "../objectives/Objectives";
-import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker";
+import MediumForm from "../media/MediumForm.vue";
+import Objectives from "../objectives/Objectives.vue";
+import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker.vue";
 
 const Trainings =
-    () => import('../training/Trainings');
+    () => import('../training/Trainings.vue');
 
 export default {
     props: {

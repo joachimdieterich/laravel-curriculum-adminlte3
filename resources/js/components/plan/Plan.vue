@@ -7,10 +7,31 @@
                     <div
                         v-if="editable"
                         v-can="'plan_edit'"
-                        class="card-tools pr-2 no-print"
+                        class="card-tools pr-2 no-print user-select-none"
                     >
-                        <!-- users with edit-rights can see student-achievements -->
-                        <a v-if="this.editable" @click="openUserModal()" class="link-muted mr-3 px-1 pointer">
+                        <span class="mr-3">
+                            <span>
+                                <button
+                                    @click="openUserModal()"
+                                    class="btn btn-tool text-dark p-0"
+                                    :class="mode_toggle ? 'disabled' : ''"
+                                    style="margin-top: -15px;"
+                                >
+                                    Kein Benutzer ausgew&auml;hlt
+                                </button>
+                            </span>
+                            <a class="link-muted pl-1" style="padding-right: 2px;">
+                                <i class="fa fa-user"></i>
+                            </a>
+                            <span class="custom-switch custom-switch-on-green" style="margin-right: -6px;">
+                                <input type="checkbox" id="mode_toggle" class="custom-control-input" v-model="mode_toggle">
+                                <label for="mode_toggle" class="custom-control-label pointer"></label>
+                            </span>
+                            <a class="link-muted pr-1">
+                                <i class="fa fa-users"></i>
+                            </a>
+                        </span>
+                        <a @click="openUserModal(!mode_toggle)" class="link-muted mr-3 px-1 pointer">
                             <i class="fa fa-chart-simple"></i>
                         </a>
                         <a onclick="window.print()" class="link-muted mr-3 px-1 pointer">
@@ -60,23 +81,24 @@
                 </div>
             </div>
             <!-- * REFERENCE: overlay button in bottom right corner * -->
-            <!-- <div
+            <div
                 id="corner-button"
                 class="position-sticky d-flex justify-content-center align-items-center float-right mb-3"
+                :style="mode_toggle ? 'display: none !important' : ''"
                 role="button"
-                @click="open()"
+                @click="openUserModal()"
             >
-                <i class="fa fa-users"></i>
-            </div> -->
+                <i class="fa fa-user"></i>
+            </div>
             <set-achievements-modal
                 :users="users"
             ></set-achievements-modal>
             <note-modal></note-modal>
             <select-users-modal
                 :users="users"
-                :multiple="true"
-                title="global.plan.evaluate_user"
-                submitText="global.open"
+                :multiple="mode_toggle"
+                :title="mode_toggle ? 'global.plan.evaluate_user' : 'global.select_users'"
+                :submitText="mode_toggle ? 'global.open' : 'global.save'"
             ></select-users-modal>
         </div>
         <PlanIndexAddWidget
@@ -106,8 +128,9 @@ export default {
             entries: [],
             entry_order: [],
             subscriptions: {},
-            search: '',
             disabled: true, // false => only plan-owner
+            mode_toggle: true, // true => all users | false => single user
+            selected_user: null,
             errors: {},
         }
     },
@@ -175,12 +198,23 @@ export default {
         openEditModal() {
             this.$eventHub.$emit('edit_plan', this.plan);
         },
-        openUserModal() {
-            this.$modal.show('select-users-modal', { users: this.users });
+        openUserModal(showAchievements) {
+            // if the user-modal should be skipped and only one user is selected
+            if (showAchievements && this.selected_user !== null) {
+                // instantly open the achievements-overview tab
+                this.handleUserModalClose([this.selected_user], true);
+            // EDGE CASE: on show-achievements and no selected user, the select-user modal still opens without opening the overview-tab
+            } else {
+                this.$modal.show('select-users-modal');
+            }
         },
-        async handleUserModalClose(users) {
-            const ids = users.map(user => user.id);
-            window.open('/plans/' + this.plan.id + '/getUserAchievements/' + ids);
+        async handleUserModalClose(users, skip = false) {
+            if (!this.mode_toggle && !skip) {
+                this.selected_user = users;
+            } else {
+                const ids = users.map(user => user.id);
+                window.open('/plans/' + this.plan.id + '/getUserAchievements/' + ids);
+            }
         },
     },
     mounted() {
@@ -223,12 +257,12 @@ export default {
 }
 </script>
 <style scoped>
-/* #corner-button {
+#corner-button {
     color: white;
     background-color: #333;
     border-radius: 50%;
     width: 50px;
     height: 50px;
     bottom: 25px;
-} */
+}
 </style>

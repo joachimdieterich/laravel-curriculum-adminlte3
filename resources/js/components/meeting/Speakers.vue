@@ -73,9 +73,9 @@
 <script>
 import Form from "form-backend-validation";
 const Avatar =
-    () => import('../uiElements/Avatar');
+    () => import('../uiElements/Avatar.vue');
 const Select2 =
-    () => import('../forms/Select2');
+    () => import('../forms/Select2.vue');
 /*import Avatar from "../uiElements/Avatar"
 import Select2 from "../forms/Select2";*/
 

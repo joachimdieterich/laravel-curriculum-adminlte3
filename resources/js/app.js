@@ -218,7 +218,7 @@ app.component('curricula',  defineAsyncComponent(() => import('./components/curr
 
 
 app.component('enabling-objective-modal', defineAsyncComponent(() => import('./components/objectives/EnablingObjectiveModal.vue')));
-app.component('events', defineAsyncComponent(() => import('../../app/Plugins/Eventmanagement/eVewa/resources/js/components/embedEvents')));
+app.component('events', defineAsyncComponent(() => import('../../app/Plugins/Eventmanagement/eVewa/resources/js/components/embedEvents.vue')));
 app.component('exam', defineAsyncComponent(() => import('./components/exam/Exam.vue')));
 app.component('exams', defineAsyncComponent(() => import('./components/exam/Exams.vue')));
 app.component('grades', defineAsyncComponent(() => import('./components/grade/Grades.vue')));
@@ -277,7 +277,7 @@ app.component('tasks', defineAsyncComponent(() => import('./components/task/Task
 
 //app.component('task-timeline', defineAsyncComponent(() => import('./components/task/Timeline.vue')));
 
-app.component('training', defineAsyncComponent(() => import('./components/training/Training')));
+app.component('training', defineAsyncComponent(() => import('./components/training/Training.vue')));
 app.component('kanbans', defineAsyncComponent(() => import('./components/kanban/Kanbans.vue')));
 app.component('kanban', defineAsyncComponent(() => import('./components/kanban/Kanban.vue')));
 //app.component('subscribe-modal', defineAsyncComponent(() => import('./components/subscription/SubscribeModal.vue')));

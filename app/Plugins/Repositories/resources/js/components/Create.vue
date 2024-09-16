@@ -5,7 +5,7 @@
 
 
 <script>
-    import create from '../../../edusharing/resources/js/components/Create';
+    import create from '../../../edusharing/resources/js/components/Create.vue';
     export default {
         props: {
                 model: {},

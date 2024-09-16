@@ -161,12 +161,12 @@
 </template>
 <script>
 import { nextTick } from 'vue';
-import IndexWidget from "../uiElements/IndexWidget";
-import LogbookModal from "./LogbookModal";
+import IndexWidget from "../uiElements/IndexWidget.vue";
+import LogbookModal from "./LogbookModal.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
-import ConfirmModal from "../uiElements/ConfirmModal";
-import SubscribeLogbookModal from "./SubscribeLogbookModal";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import SubscribeLogbookModal from "./SubscribeLogbookModal.vue";
 DataTable.use(DataTablesCore);
 
 export default {

@@ -6,7 +6,7 @@
 </template>
 
 <script>
-    import media from '../../../edusharing/resources/js/components/Media';
+    import media from '../../../edusharing/resources/js/components/Media.vue';
     export default {
         props: {
             model: {},

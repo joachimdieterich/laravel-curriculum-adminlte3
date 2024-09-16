@@ -98,8 +98,8 @@
 </template>
 <script>
 
-import Media from '../media/Media'
-import Repository from '../../../../app/Plugins/Repositories/resources/js/components/Media'
+import Media from '../media/Media.vue'
+import Repository from '../../../../app/Plugins/Repositories/resources/js/components/Media.vue'
 import MediumModal from "../media/MediumModal.vue";
 import {useMediumStore} from "../../store/media.js";
 

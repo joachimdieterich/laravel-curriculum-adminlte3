@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import ConfigModal from "../config/ConfigModal";
+import ConfigModal from "../config/ConfigModal.vue";
 
 export default {
     name: "Config",

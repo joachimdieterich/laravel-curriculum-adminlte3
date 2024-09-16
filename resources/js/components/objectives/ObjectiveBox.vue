@@ -67,8 +67,8 @@
 
 
 <script>
-    import Header from './Header';
-    import Footer from './Footer';
+    import Header from './Header.vue';
+    import Footer from './Footer.vue';
 
 export default {
     props: {

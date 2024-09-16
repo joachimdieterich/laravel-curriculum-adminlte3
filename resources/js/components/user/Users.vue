@@ -135,14 +135,14 @@
 </template>
 
 <script>
-import SubscribeUserModal from "./SubscribeUserModal";
-import UserModal from "../user/UserModal";
-import IndexWidget from "../uiElements/IndexWidget";
+import SubscribeUserModal from "./SubscribeUserModal.vue";
+import UserModal from "../user/UserModal.vue";
+import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
-import ConfirmModal from "../uiElements/ConfirmModal";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import { useDatatableStore } from "../../store/datatables";
-import UserOptions from "./UserOptions";
+import UserOptions from "./UserOptions.vue";
 DataTable.use(DataTablesCore);
 
 

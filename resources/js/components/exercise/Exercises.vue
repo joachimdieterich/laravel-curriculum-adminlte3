@@ -113,7 +113,7 @@
 <script>
 import Form from "form-backend-validation";
 import moment from "moment/moment";
-import ExerciseDones from "./ExerciseDones";
+import ExerciseDones from "./ExerciseDones.vue";
 
 export default {
     props: {

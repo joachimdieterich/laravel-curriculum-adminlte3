@@ -213,7 +213,7 @@
 <script>
     import Form from 'form-backend-validation';
     import Editor from '@tinymce/tinymce-vue';
-    import Select2 from "../forms/Select2";
+    import Select2 from "../forms/Select2.vue";
 
 
     export default {

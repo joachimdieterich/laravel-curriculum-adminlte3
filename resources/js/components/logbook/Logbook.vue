@@ -92,12 +92,12 @@
 </template>
 
 <script>
-import MediumModal from "../media/MediumModal"
-import LogbookModal from "../logbook/LogbookModal";
+import MediumModal from "../media/MediumModal.vue"
+import LogbookModal from "../logbook/LogbookModal.vue";
 import LogbookEntry from '../logbookEntry/LogbookEntry.vue';
-import LogbookPrintOptions from "./LogbookPrintOptions";
+import LogbookPrintOptions from "./LogbookPrintOptions.vue";
 import TaskModal from "../task/TaskModal.vue";
-import SubscribeModal from "../subscription/SubscribeModal";
+import SubscribeModal from "../subscription/SubscribeModal.vue";
 
 import {useMediumStore} from "../../store/media";
 import LmsModal from "../lms/LmsModal.vue";

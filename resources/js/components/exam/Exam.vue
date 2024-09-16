@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import ExamModal from "../exam/ExamModal";
+import ExamModal from "../exam/ExamModal.vue";
 
 export default {
     name: "exam",

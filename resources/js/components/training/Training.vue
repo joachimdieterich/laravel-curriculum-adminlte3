@@ -28,8 +28,8 @@
 </template>
 
 <script>
-import Exercises from "../exercise/Exercises";
-import CalendarCreateEvent from "../calendar/CalendarCreateEvent";
+import Exercises from "../exercise/Exercises.vue";
+import CalendarCreateEvent from "../calendar/CalendarCreateEvent.vue";
 
 export default {
     name: "Training.vue",

@@ -70,9 +70,9 @@
 import draggable from 'vuedraggable';
 
 const Calendar =
-    () => import('../calendar/Calendar');
+    () => import('../calendar/Calendar.vue');
 const PlanEntry =
-    () => import('./PlanEntry');
+    () => import('./PlanEntry.vue');
 
 export default {
     props: {

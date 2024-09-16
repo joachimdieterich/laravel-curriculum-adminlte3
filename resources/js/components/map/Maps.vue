@@ -151,11 +151,11 @@
 
 
 <script>
-import MapModal from "../map/MapModal";
-import IndexWidget from "../uiElements/IndexWidget";
+import MapModal from "../map/MapModal.vue";
+import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
-import ConfirmModal from "../uiElements/ConfirmModal";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
 DataTable.use(DataTablesCore);
 
 export default {

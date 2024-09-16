@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import CertificateModal from "../certificate/CertificateModal";
+import CertificateModal from "../certificate/CertificateModal.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {

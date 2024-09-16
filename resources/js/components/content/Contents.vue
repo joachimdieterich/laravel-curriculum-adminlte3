@@ -178,8 +178,8 @@
 
 <script>
 import ContentSubscriptionModal from "./ContentSubscriptionModal.vue";
-import ConfirmModal from "../uiElements/ConfirmModal";
-import ContentModal from "./ContentModal";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import ContentModal from "./ContentModal.vue";
 import {useGlobalStore} from "../../store/global";
 
     export default {

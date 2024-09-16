@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import ObjectiveBox from './ObjectiveBox';
+import ObjectiveBox from './ObjectiveBox.vue';
 
 export default {
     props: {

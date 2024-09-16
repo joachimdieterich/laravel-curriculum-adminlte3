@@ -121,11 +121,11 @@
 
 <script>
 const Agenda =
-    () => import('./Agenda');
+    () => import('./Agenda.vue');
 const MeetingDateForm =
-    () => import('./MeetingDateForm');
+    () => import('./MeetingDateForm.vue');
 const MeetingAgendaForm =
-    () => import('./MeetingAgendaForm');
+    () => import('./MeetingAgendaForm.vue');
 /*import Agenda from "./Agenda";
 import MeetingDateForm from "./MeetingDateForm";
 import MeetingAgendaForm from "./MeetingAgendaForm";*/

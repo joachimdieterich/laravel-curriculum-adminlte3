@@ -310,12 +310,12 @@
 <script>
 import Form from "form-backend-validation";
 import DatePicker from 'vue3-datepicker';
-import mediaCarousel from '../media/MediaCarousel';
-import avatar from '../uiElements/Avatar';
-import Reaction from '../reaction/Reaction';
-import Comments from './Comments';
+import mediaCarousel from '../media/MediaCarousel.vue';
+import avatar from '../uiElements/Avatar.vue';
+import Reaction from '../reaction/Reaction.vue';
+import Comments from './Comments.vue';
 import moment from 'moment';
-import ConfirmModal from "../uiElements/ConfirmModal";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import HtmlRenderer from "../uiElements/HtmlRenderer.vue";
 import Editor from "@tinymce/tinymce-vue";
 

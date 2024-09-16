@@ -55,7 +55,7 @@
 
 
 <script>
-import ObjectiveBox from '../objectives/ObjectiveBox';
+import ObjectiveBox from '../objectives/ObjectiveBox.vue';
 
     export default {
         props: {

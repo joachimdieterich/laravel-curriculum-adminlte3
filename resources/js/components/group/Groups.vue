@@ -106,12 +106,12 @@
 
 
 <script>
-import GroupModal from "../group/GroupModal";
-import GroupOptions from "../group/GroupOptions";
-import IndexWidget from "../uiElements/IndexWidget";
+import GroupModal from "../group/GroupModal.vue";
+import GroupOptions from "../group/GroupOptions.vue";
+import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
-import ConfirmModal from "../uiElements/ConfirmModal";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useDatatableStore} from "../../store/datatables";
 DataTable.use(DataTablesCore);
 

@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import DropdownButton from './DropdownButton';
+import DropdownButton from './DropdownButton.vue';
     export default {
         props: ['objective', 'type', 'menuEntries', 'settings', 'textcolor', 'max_id'],
 

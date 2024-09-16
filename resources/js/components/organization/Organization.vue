@@ -147,7 +147,7 @@
 </template>
 
 <script>
-import OrganizationModal from "../organization/OrganizationModal";
+import OrganizationModal from "../organization/OrganizationModal.vue";
 
 export default {
     name: "Organization",

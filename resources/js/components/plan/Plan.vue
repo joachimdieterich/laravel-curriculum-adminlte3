@@ -13,11 +13,15 @@
                             <span>
                                 <button
                                     @click="openUserModal()"
-                                    class="btn btn-tool text-dark p-0"
+                                    class="btn btn-tool text-dark px-0"
                                     :class="mode_toggle ? 'disabled' : ''"
                                     style="margin-top: -15px;"
                                 >
-                                    Kein Benutzer ausgew&auml;hlt
+                                    {{
+                                        this.selected_user == null
+                                            ? 'Kein Benutzer ausgew&auml;hlt'
+                                            : this.selected_user?.firstname + ' ' + this.selected_user?.lastname
+                                    }}
                                 </button>
                             </span>
                             <a class="link-muted pl-1" style="padding-right: 2px;">
@@ -211,6 +215,7 @@ export default {
         async handleUserModalClose(users, skip = false) {
             if (!this.mode_toggle && !skip) {
                 this.selected_user = users;
+                localStorage.setItem('user-datatable-selection', [users.id]); // used by AchievementIndicator.vue
             } else {
                 const ids = users.map(user => user.id);
                 window.open('/plans/' + this.plan.id + '/getUserAchievements/' + ids);

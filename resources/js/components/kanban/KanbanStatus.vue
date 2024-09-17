@@ -124,7 +124,7 @@
 </template>
 <script>
 import Form from "form-backend-validation";
-import ConfirmModal from "../uiElements/ConfirmModal";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
 
 export default {
     name: 'KanbanStatus',

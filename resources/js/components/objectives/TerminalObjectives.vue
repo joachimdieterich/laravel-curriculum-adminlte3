@@ -117,10 +117,10 @@
 </template>
 
 <script>
-import ObjectiveBox from './ObjectiveBox';
-import EnablingObjectives from './EnablingObjectives';
-import TerminalObjectiveModal from "./TerminalObjectiveModal";
-import EnablingObjectiveModal from "./EnablingObjectiveModal";
+import ObjectiveBox from './ObjectiveBox.vue';
+import EnablingObjectives from './EnablingObjectives.vue';
+import TerminalObjectiveModal from "./TerminalObjectiveModal.vue";
+import EnablingObjectiveModal from "./EnablingObjectiveModal.vue";
 import draggable from "vuedraggable";
 
 export default {

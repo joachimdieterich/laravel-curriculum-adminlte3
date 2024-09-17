@@ -158,12 +158,12 @@
 </template>
 
 <script>
-import VideoconferenceModal from "../videoconference/VideoconferenceModal";
-import IndexWidget from "../uiElements/IndexWidget";
+import VideoconferenceModal from "../videoconference/VideoconferenceModal.vue";
+import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
-import ConfirmModal from "../uiElements/ConfirmModal";
-import SubscribeModal from "../subscription/SubscribeModal";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import SubscribeModal from "../subscription/SubscribeModal.vue";
 import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 

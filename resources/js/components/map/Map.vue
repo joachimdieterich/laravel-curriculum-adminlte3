@@ -207,10 +207,10 @@ import "leaflet.markercluster/dist/leaflet.markercluster.js";
 import Form from "form-backend-validation";
 import "leaflet-extra-markers/dist/js/leaflet.extra-markers.js"
 import moment from "moment/moment";
-import MarkerView from "./MarkerView";
-import ConfirmModal from "../uiElements/ConfirmModal";
-import MediumModal from "../media/MediumModal";
-import MarkerModal from "./MarkerModal";
+import MarkerView from "./MarkerView.vue";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import MediumModal from "../media/MediumModal.vue";
+import MarkerModal from "./MarkerModal.vue";
 import {useMediumStore} from "../../store/media.js";
 
 export default {
@@ -525,11 +525,11 @@ export default {
 
 </script>
 <style scoped>
-@import "~leaflet/dist/leaflet.css";
-@import "~sidebar-v2/css/leaflet-sidebar.css";
-@import "~leaflet.markercluster/dist/MarkerCluster.css";
-@import "~leaflet.markercluster/dist/MarkerCluster.Default.css";
-@import "~leaflet-extra-markers/dist/css/leaflet.extra-markers.min.css";
+@import "leaflet/dist/leaflet.css";
+@import "sidebar-v2/css/leaflet-sidebar.css";
+@import "leaflet.markercluster/dist/MarkerCluster.css";
+@import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+@import "leaflet-extra-markers/dist/css/leaflet.extra-markers.min.css";
 #map, #outermap {
     height: 100%;
 }

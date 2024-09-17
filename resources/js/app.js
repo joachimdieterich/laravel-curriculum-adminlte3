@@ -203,25 +203,20 @@ app.use(Toast, {
 import { defineAsyncComponent } from 'vue';  //use asyncComponents to reduce payload for users
 
 app.component('absence-modal',  defineAsyncComponent(() => import('./components/absence/AbsenceModal.vue')));
-
 app.component('admin-view',  defineAsyncComponent(() => import('./components/admin/AdminView.vue')));
-
 app.component('breadcrumbs',  defineAsyncComponent(() => import('./components/uiElements/Breadcrumbs.vue')));
-
 app.component('certificate-generate-modal', defineAsyncComponent(() => import('./components/certificate/GenerateCertificateModal.vue')));
 app.component('certificates', defineAsyncComponent(() => import('./components/certificate/Certificates.vue')));
 app.component('certificate', defineAsyncComponent(() => import('./components/certificate/Certificate.vue')));
 
 app.component('config', defineAsyncComponent(() => import('./components/config/Config.vue')));
 app.component('configs', defineAsyncComponent(() => import('./components/config/Configs.vue')));
-
 app.component('content-modal', defineAsyncComponent(() => import('./components/content/ContentModal.vue')));
-
 app.component('curriculum',  defineAsyncComponent(() => import('./components/curriculum/Curriculum.vue')));
 app.component('curricula',  defineAsyncComponent(() => import('./components/curriculum/Curricula.vue')));
 
 app.component('enabling-objective-modal', defineAsyncComponent(() => import('./components/objectives/EnablingObjectiveModal.vue')));
-app.component('events', defineAsyncComponent(() => import('../../app/Plugins/Eventmanagement/eVewa/resources/js/components/embedEvents')));
+app.component('events', defineAsyncComponent(() => import('../../app/Plugins/Eventmanagement/eVewa/resources/js/components/embedEvents.vue')));
 app.component('exam', defineAsyncComponent(() => import('./components/exam/Exam.vue')));
 app.component('exams', defineAsyncComponent(() => import('./components/exam/Exams.vue')));
 app.component('grades', defineAsyncComponent(() => import('./components/grade/Grades.vue')));

@@ -140,8 +140,8 @@
 </template>
 
 <script>
-import TaskModal from "../task/TaskModal";
-import Contents from '../content/Contents';
+import TaskModal from "../task/TaskModal.vue";
+import Contents from '../content/Contents.vue';
 import TaskTimeline from '../task/Timeline.vue';
 import Media from '../media/Media.vue';
 

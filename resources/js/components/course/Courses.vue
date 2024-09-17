@@ -78,11 +78,11 @@
 
 
 <script>
-import IndexWidget from "../uiElements/IndexWidget";
-import CourseModal from "./CourseModal";
+import IndexWidget from "../uiElements/IndexWidget.vue";
+import CourseModal from "./CourseModal.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
-import ConfirmModal from "../uiElements/ConfirmModal";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 

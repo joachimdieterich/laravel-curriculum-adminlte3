@@ -33,7 +33,7 @@
 
 <script>
 const renderUsage =
-    () => import('../../../../app/Plugins/Repositories/edusharing/resources/js/components/RenderUsage');
+    () => import('../../../../app/Plugins/Repositories/edusharing/resources/js/components/RenderUsage.vue');
 //import renderUsage from "../../../../app/Plugins/Repositories/edusharing/resources/js/components/RenderUsage";
     export default {
         props: {

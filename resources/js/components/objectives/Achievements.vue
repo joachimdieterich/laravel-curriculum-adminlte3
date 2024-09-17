@@ -138,7 +138,7 @@
 
 
 <script>
-import AchievementIndicator from './AchievementIndicator';
+import AchievementIndicator from './AchievementIndicator.vue';
 import NoteModal from "../note/NoteModal.vue";
 import Select2 from "../forms/Select2.vue";
 import GradeModal from "../grade/GradeModal.vue";

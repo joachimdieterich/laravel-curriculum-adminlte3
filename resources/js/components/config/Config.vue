@@ -69,8 +69,8 @@
 </template>
 
 <script>
-import ConfigModal from "../config/ConfigModal";
 import {useGlobalStore} from "../../store/global";
+import ConfigModal from "../config/ConfigModal.vue";
 
 export default {
     name: "Config",

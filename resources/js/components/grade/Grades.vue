@@ -81,12 +81,12 @@
 
 
 <script>
-import GradeModal from "../grade/GradeModal";
-import IndexWidget from "../uiElements/IndexWidget";
+import GradeModal from "../grade/GradeModal.vue";
+import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
-import ConfirmModal from "../uiElements/ConfirmModal";
 import {useGlobalStore} from "../../store/global";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
 DataTable.use(DataTablesCore);
 
 
@@ -126,7 +126,6 @@ export default {
 
         this.$eventHub.on('grade-added', (grade) => {
             this.globalStore?.closeModal('grade-modal');
-            this.showGradeModal = false;
             this.grades.push(grade);
         });
 

@@ -68,7 +68,7 @@
 
 <script>
 import Form from "form-backend-validation";
-import Sparkline from "../statistic/Sparkline";
+import Sparkline from "../statistic/Sparkline.vue";
 
 export default {
     props: {

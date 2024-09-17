@@ -102,14 +102,14 @@
 </template>
 
 <script>
-import Calendar from '../calendar/Calendar';
+import Calendar from '../calendar/Calendar.vue';
 
 import Form from "form-backend-validation";
-import MediumForm from "../media/MediumForm";
-import Objectives from "../objectives/Objectives";
-import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker";
+import MediumForm from "../media/MediumForm.vue";
+import Objectives from "../objectives/Objectives.vue";
+import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker.vue";
 
-import Trainings from '../training/Trainings';
+import Trainings from '../training/Trainings.vue';
 
 export default {
     props: {

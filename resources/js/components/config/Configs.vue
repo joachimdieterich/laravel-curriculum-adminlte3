@@ -111,12 +111,12 @@
 </template>
 
 <script>
-import IndexWidget from "../uiElements/IndexWidget";
-import ConfirmModal from "../uiElements/ConfirmModal";
+import IndexWidget from "../uiElements/IndexWidget.vue";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 DataTable.use(DataTablesCore);
-import ConfigModal from "./ConfigModal";
+import ConfigModal from "./ConfigModal.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {

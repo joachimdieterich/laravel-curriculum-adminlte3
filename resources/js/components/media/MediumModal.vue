@@ -197,7 +197,7 @@
     import 'datatables.net-select-bs5'
 
     DataTable.use(DataTablesCore);
-    import RepositoryPluginCreate from '../../../../app/Plugins/Repositories/edusharing/resources/js/components/Create';
+    import RepositoryPluginCreate from '../../../../app/Plugins/Repositories/edusharing/resources/js/components/Create.vue';
 
     const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
 

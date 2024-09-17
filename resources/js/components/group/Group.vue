@@ -349,18 +349,18 @@
 </template>
 
 <script>
-import GroupModal from "../group/GroupModal";
-import Videoconferences from "../videoconference/Videoconferences";
-import Courses from "../course/Courses";
-import Glossars from "../glossar/Glossars";
-import Media from "../media/Media";
-import Contents from "../content/Contents";
-import Users from "../user/Users";
-import Logbooks from "../logbook/Logbooks";
-import Kanbans from "../kanban/Kanbans";
-import Tasks from "../task/Tasks";
-import Plans from "../plan/Plans";
-import Tests from "../tests/Tests_Exams_View";
+import GroupModal from "../group/GroupModal.vue";
+import Videoconferences from "../videoconference/Videoconferences.vue";
+import Courses from "../course/Courses.vue";
+import Glossars from "../glossar/Glossars.vue";
+import Media from "../media/Media.vue";
+import Contents from "../content/Contents.vue";
+import Users from "../user/Users.vue";
+import Logbooks from "../logbook/Logbooks.vue";
+import Kanbans from "../kanban/Kanbans.vue";
+import Tasks from "../task/Tasks.vue";
+import Plans from "../plan/Plans.vue";
+import Tests from "../tests/Tests_Exams_View.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {

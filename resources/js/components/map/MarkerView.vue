@@ -49,7 +49,7 @@
 </template>
 <script>
 
-import Media from '../media/Media';
+import Media from '../media/Media.vue';
 
 export default {
     name: 'MarkerView',

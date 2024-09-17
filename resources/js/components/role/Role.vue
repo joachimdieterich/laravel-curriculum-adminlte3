@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import RoleModal from "../role/RoleModal";
+import RoleModal from "../role/RoleModal.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {

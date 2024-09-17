@@ -52,7 +52,7 @@
     </div>
 </template>
 <script>
-import ObjectiveBox from '../objectives/ObjectiveBox'
+import ObjectiveBox from '../objectives/ObjectiveBox.vue'
 import {useGlobalStore} from "../../store/global";
 
 export default {

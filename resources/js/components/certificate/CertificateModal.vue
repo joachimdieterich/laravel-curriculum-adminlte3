@@ -133,8 +133,8 @@
 <script>
     import Form from 'form-backend-validation';
     import Editor from '@tinymce/tinymce-vue';
-    import Select2 from "../forms/Select2";
-    import Switch from "../forms/Switch";
+    import Select2 from "../forms/Select2.vue";
+    import Switch from "../forms/Switch.vue";
     import {useGlobalStore} from "../../store/global";
 
     export default {

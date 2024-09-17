@@ -206,11 +206,11 @@
 </template>
 
 <script>
-import CurriculumModal from "../curriculum/CurriculumModal";
-import Media from "../media/Media";
-import TerminalObjectives from '../objectives/TerminalObjectives'
-import Glossars from '../glossar/Glossars';
-import Contents from '../content/Contents';
+import CurriculumModal from "../curriculum/CurriculumModal.vue";
+import Media from "../media/Media.vue";
+import TerminalObjectives from '../objectives/TerminalObjectives.vue'
+import Glossars from '../glossar/Glossars.vue';
+import Contents from '../content/Contents.vue';
 
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';

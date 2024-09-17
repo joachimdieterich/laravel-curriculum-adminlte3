@@ -254,7 +254,7 @@
 import { useDatatableStore } from "../../store/datatables";
 import Form from "form-backend-validation";
 import { useToast } from "vue-toastification";
-import Select2 from "../forms/Select2";
+import Select2 from "../forms/Select2.vue";
 export default {
     props: {},
     setup () { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters

@@ -106,14 +106,15 @@
 
 <script>
 import Form from "form-backend-validation";
-import MediumForm from "../media/MediumForm";
-import VideoconferenceModal from "../videoconference/VideoconferenceModal";
+import MediumForm from "../media/MediumForm.vue";
+import VideoconferenceModal from "../videoconference/VideoconferenceModal.vue";
 import {useToast} from "vue-toastification";
 import Media from "../media/Media.vue";
 import MediumModal from "../media/MediumModal.vue";
 import {useMediumStore} from "../../store/media";
-import SubscribeModal from "../subscription/SubscribeModal";
+import SubscribeModal from "../subscription/SubscribeModal.vue";
 import {useGlobalStore} from "../../store/global";
+
 
 export default {
     props: {

@@ -171,16 +171,15 @@
 </template>
 
 <script>
-import IndexWidget from "../uiElements/IndexWidget";
-import ConfirmModal from "../uiElements/ConfirmModal";
+import IndexWidget from "../uiElements/IndexWidget.vue";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
 
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 DataTable.use(DataTablesCore);
-import MediumModal from "../media/MediumModal";
-import SubscribeModal from "../subscription/SubscribeModal";
-import CurriculumModal from "./CurriculumModal";
-import {useGlobalStore} from "../../store/global";
+import MediumModal from "../media/MediumModal.vue";
+import SubscribeModal from "../subscription/SubscribeModal.vue";
+import CurriculumModal from "./CurriculumModal.vue";
 
 export default {
     props: {

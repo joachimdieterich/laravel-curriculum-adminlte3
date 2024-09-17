@@ -81,9 +81,9 @@
 
 
 <script>
-import CertificateModal from "../certificate/CertificateModal";
-import ConfirmModal from "../uiElements/ConfirmModal";
-import IndexWidget from "../uiElements/IndexWidget";
+import CertificateModal from "../certificate/CertificateModal.vue";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import {useGlobalStore} from "../../store/global";

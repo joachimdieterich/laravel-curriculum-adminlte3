@@ -126,7 +126,7 @@
 </template>
 
 <script>
-import UserModal from "../user/UserModal";
+import UserModal from "../user/UserModal.vue";
 import Avatar from "../uiElements/Avatar.vue";
 import Notes from "../note/Notes.vue";
 import ContactDetail from "../contactDetail/ContactDetail.vue";

@@ -28,7 +28,7 @@
     </div>
 </template>
 <script>
-import MediumModal from "../media/MediumModal";
+import MediumModal from "../media/MediumModal.vue";
 import {useMediumStore} from "../../store/media";
 export default {
   name: 'MediumForm',

@@ -106,8 +106,8 @@
 </template>
 <script>
     import Form from 'form-backend-validation';
-    import Select2 from "../forms/Select2";
     import {useGlobalStore} from "../../store/global";
+    import Select2 from "../forms/Select2.vue";
 
     export default {
         name: 'grade-modal',

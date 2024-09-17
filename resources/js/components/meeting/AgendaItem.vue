@@ -85,13 +85,13 @@
 </template>
 <script>
 const AgendaItemForm =
-    () => import('./AgendaItemForm');
+    () => import('./AgendaItemForm.vue');
 const AgendaItemMedia =
-    () => import('./AgendaItemMedia');
+    () => import('./AgendaItemMedia.vue');
 const Speakers =
-    () => import('./Speakers');
+    () => import('./Speakers.vue');
 const VideoConference =
-    () => import('./VideoConference');
+    () => import('./VideoConference.vue');
 /*import AgendaItemForm from "./AgendaItemForm";
 import AgendaItemMedia from "./AgendaItemMedia";
 import Speakers from "./Speakers";

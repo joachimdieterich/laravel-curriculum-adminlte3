@@ -41,8 +41,8 @@
 </template>
 
 <script>
-import ObjectiveBox from './ObjectiveBox';
-import EnablingObjectives from './EnablingObjectives';
+import ObjectiveBox from './ObjectiveBox.vue';
+import EnablingObjectives from './EnablingObjectives.vue';
 
 export default {
     props: {

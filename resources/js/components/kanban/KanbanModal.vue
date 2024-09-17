@@ -152,11 +152,11 @@
 </template>
 <script>
     import Form from 'form-backend-validation';
-    import MediumModal from "../media/MediumModal";
-    import MediumForm from "../media/MediumForm";
+    import MediumModal from "../media/MediumModal.vue";
+    import MediumForm from "../media/MediumForm.vue";
     import axios from "axios";
     import Editor from "@tinymce/tinymce-vue";
-    import Select2 from "../forms/Select2";
+    import Select2 from "../forms/Select2.vue";
     import {useGlobalStore} from "../../store/global";
 
     export default {

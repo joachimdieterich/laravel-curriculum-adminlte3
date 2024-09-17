@@ -319,16 +319,16 @@
 </template>
 
 <script>
-import References from '../reference/References';
-import Quotes from '../quote/Quotes';
-import Contents from '../content/Contents';
-import Eventmanagement from '../../../../app/Plugins/Eventmanagement/resources/js/components/Events';
+import References from '../reference/References.vue';
+import Quotes from '../quote/Quotes.vue';
+import Contents from '../content/Contents.vue';
+import Eventmanagement from '../../../../app/Plugins/Eventmanagement/resources/js/components/Events.vue';
 import Lms from '../lms/Lms.vue';
-import ObjectiveBox from './ObjectiveBox'
-import Achievements from './Achievements'
-import ObjectiveMedia from "./ObjectiveMedia";
-import Prerequisites from "../prerequisites/Prerequisites";
-import Variants from "./Variants";
+import ObjectiveBox from './ObjectiveBox.vue'
+import Achievements from './Achievements.vue'
+import ObjectiveMedia from "./ObjectiveMedia.vue";
+import Prerequisites from "../prerequisites/Prerequisites.vue";
+import Variants from "./Variants.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 
 export default {

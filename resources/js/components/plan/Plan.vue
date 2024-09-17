@@ -87,11 +87,18 @@
             <!-- * REFERENCE: overlay button in bottom right corner * -->
             <div
                 id="corner-button"
-                class="position-sticky d-flex justify-content-center align-items-center float-right mb-3"
+                class="position-sticky d-flex align-items-center float-right px-3"
                 :style="mode_toggle ? 'display: none !important' : ''"
                 role="button"
                 @click="openUserModal()"
             >
+                <span class="pr-2">
+                    {{
+                        this.selected_user == null
+                            ? trans('global.select_users')
+                            : this.selected_user?.firstname + ' ' + this.selected_user?.lastname
+                    }}
+                </span>
                 <i class="fa fa-user"></i>
             </div>
             <set-achievements-modal
@@ -265,8 +272,8 @@ export default {
 #corner-button {
     color: white;
     background-color: #333;
-    border-radius: 50%;
-    width: 50px;
+    border-radius: 25px;
+    min-width: 50px;
     height: 50px;
     bottom: 25px;
 }

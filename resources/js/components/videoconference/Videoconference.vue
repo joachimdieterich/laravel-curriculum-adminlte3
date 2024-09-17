@@ -11,10 +11,7 @@
                                @click="share()"
                             ></i>
                             <a class="pointer"
-                                @click="() => {
-                                    this.currentVideoconference = this.videoconference;
-                                    this.showVideoconferenceModal = true;
-                                }">
+                                @click="editVideoconference(videoconference)">
                                 <i class="fa fa-pencil-alt text-secondary pull-right"></i>
                             </a>
                         </span>
@@ -94,22 +91,14 @@
             </div>
         </div>
         <Teleport to="body">
-            <VideoconferenceModal
-                :show="this.showVideoconferenceModal"
-                @close="this.showVideoconferenceModal = false"
-                :params="this.currentVideoconference"
-            ></VideoconferenceModal>
+            <VideoconferenceModal></VideoconferenceModal>
             <MediumModal
                 :show="this.mediumStore.getShowMediumModal"
                 @close="() =>{
                      this.mediumStore.setShowMediumModal(false);
                 }"
             ></MediumModal>
-            <SubscribeModal
-                :params="this.showSubscribeParams"
-                :show="this.showSubscribeModal"
-                @close="this.showSubscribeModal = false"
-            ></SubscribeModal>
+            <SubscribeModal></SubscribeModal>
         </Teleport>
 
     </div>
@@ -124,8 +113,7 @@ import Media from "../media/Media.vue";
 import MediumModal from "../media/MediumModal.vue";
 import {useMediumStore} from "../../store/media";
 import SubscribeModal from "../subscription/SubscribeModal";
-
-
+import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
@@ -143,9 +131,11 @@ export default {
     setup () { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters
         const toast = useToast();
         const mediumStore = useMediumStore();
+        const globalStore = useGlobalStore();
         return {
             toast,
-            mediumStore
+            mediumStore,
+            globalStore
         }
     },
     data() {
@@ -166,8 +156,6 @@ export default {
             urlParamAttendeePW: '',
             currentVideoconference: {},
             servers:{},
-            showSubscribeModal: false,
-            showSubscribeParams: {},
         }
     },
     mounted() {
@@ -222,18 +210,19 @@ export default {
                 rtl: false
             });
         },
+        editVideoconference(videoconference){
+            this.globalStore?.showModal('videoconference-modal', videoconference);
+        },
         share(){
-            this.showSubscribeParams =
-                {
-                    'modelId': this.videoconference.id,
-                    'modelUrl': 'videoconference',
-                    'shareWithUsers': true,
-                    'shareWithGroups': true,
-                    'shareWithOrganizations': true,
-                    'shareWithToken': true,
-                    'canEditCheckbox': true
-                };
-            this.showSubscribeModal = true;
+            this.globalStore?.showModal('subscribe-modal', {
+                'modelId': this.videoconference.id,
+                'modelUrl': 'videoconference',
+                'shareWithUsers': true,
+                'shareWithGroups': true,
+                'shareWithOrganizations': true,
+                'shareWithToken': true,
+                'canEditCheckbox': true
+            });
         },
         toggleTimer(){
             this.loading = false;

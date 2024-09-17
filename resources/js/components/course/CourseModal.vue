@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="this.globalStore.modals['course-modal']?.show"
+        <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
         >
             <div class="modal-container">
@@ -16,7 +16,7 @@
                     <div class="card-tools">
                         <button type="button"
                                 class="btn btn-tool"
-                                @click="this.globalStore?.closeModal('course-modal')">
+                                @click="globalStore?.closeModal($options.name)">
                             <i class="fa fa-times"></i>
                         </button>
                     </div>
@@ -42,7 +42,7 @@
                          id="course-cancel"
                          type="button"
                          class="btn btn-default"
-                         @click="this.globalStore?.closeModal('course-modal')">
+                         @click="globalStore?.closeModal($options.name)">
                          {{ trans('global.cancel') }}
                      </button>
                      <button
@@ -64,13 +64,11 @@ import {useGlobalStore} from "../../store/global";
 
 
 export default {
+    name: 'course-modal',
     components:{
         Select2
     },
     props: {
-        show: {
-            type: Boolean
-        },
         params: {
             type: Object
         },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
@@ -104,36 +102,36 @@ export default {
         },
         add(){
             axios.post(this.url, {
-                    'enrollment_list' : {
-                        0: {
-                            'group_id' : this.params.id, // == group_id
-                            'curriculum_id': {
-                                0 : this.form.curriculum_id
-                            }
+                'enrollment_list' : {
+                    0: {
+                        'group_id' : this.params.id, // == group_id
+                        'curriculum_id': {
+                            0 : this.form.curriculum_id
                         }
                     }
-                })
-                .then(r => {
-                    this.$eventHub.emit('course-added', r.data);
-                })
-                .catch(e => {
-                    console.log(e.response);
-                });
+                }
+            })
+            .then(r => {
+                this.$eventHub.emit('course-added', r.data);
+            })
+            .catch(e => {
+                console.log(e.response);
+            });
         },
-
     },
     mounted() {
-        this.globalStore.registerModal('course-modal');
+        this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            //console.log(mutation);
-            const params = state.modals['course-modal'].params;
-            this.form.reset();
-            if (typeof (params) !== 'undefined'){
-                this.form.populate(params);
-                if (this.form.id != ''){
-                    this.method = 'patch';
-                } else {
-                    this.method = 'post';
+            if (mutation.events.key === this.$options.name){
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined'){
+                    this.form.populate(params);
+                    if (this.form.id != ''){
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
+                    }
                 }
             }
         });

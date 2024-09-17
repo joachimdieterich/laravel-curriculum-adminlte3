@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="this.globalStore.modals['lms-modal']?.show"
+        <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
         >
         <div class="modal-container">
@@ -15,7 +15,7 @@
                     </button>
                     <button type="button"
                             class="btn btn-tool"
-                            @click="this.globalStore?.closeModal('lms-modal')">
+                            @click="globalStore?.closeModal($options.name)">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
@@ -110,7 +110,7 @@
                              id="grade-cancel"
                              type="button"
                              class="btn btn-default"
-                             @click="this.globalStore?.closeModal('lms-modal')">
+                             @click="globalStore?.closeModal($options.name)">
                              {{ trans('global.cancel') }}
                          </button>
                          <button
@@ -134,6 +134,7 @@
 
 
     export default {
+        name: 'lms-modal',
         components:{
             Token,
             Select2,
@@ -325,17 +326,18 @@
             },
         },
         mounted() {
-            this.globalStore.registerModal('lms-modal');
+            this.globalStore.registerModal(this.$options.name);
             this.globalStore.$subscribe((mutation, state) => {
-                //console.log(mutation);
-                const params = state.modals['lms-modal'].params;
-                this.form.reset();
-                if (typeof (params) !== 'undefined'){
-                    this.form.populate(params);
-                    if (this.form.id != ''){
-                        this.method = 'patch';
-                    } else {
-                        this.method = 'post';
+                if (mutation.events.key === this.$options.name){
+                    const params = state.modals[this.$options.name].params;
+                    this.form.reset();
+                    if (typeof (params) !== 'undefined'){
+                        this.form.populate(params);
+                        if (this.form.id != ''){
+                            this.method = 'patch';
+                        } else {
+                            this.method = 'post';
+                        }
                     }
                 }
             });

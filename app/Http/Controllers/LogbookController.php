@@ -129,12 +129,9 @@ class LogbookController extends Controller
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
-        // axios call?
         if (request()->wantsJson()) {
-            return ['message' => $logbook->path()];
+            return $logbook;
         }
-
-        return redirect($logbook->path());
     }
 
     /**
@@ -204,7 +201,7 @@ class LogbookController extends Controller
             'css_icon' => $input['css_icon'],
         ]);
 
-        return ['logbook' => $logbook];
+        return $logbook;
     }
 
     /**

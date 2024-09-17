@@ -70,6 +70,7 @@
 
 <script>
 import ConfigModal from "../config/ConfigModal";
+import {useGlobalStore} from "../../store/global";
 
 export default {
     name: "Config",
@@ -83,6 +84,12 @@ export default {
         status_definitions: {
             default: null
         },
+    },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {

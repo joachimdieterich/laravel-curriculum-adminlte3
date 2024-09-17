@@ -138,7 +138,6 @@ export default {
             legend.chart.update();
         },
         loaderEvent() {
-
             axios.get('/statistics?chart=' + this.chart + '&date_begin=' + this.date_begin + '&date_end=' + this.date_end)
                 .then(response => {
 

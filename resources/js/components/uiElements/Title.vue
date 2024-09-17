@@ -8,32 +8,14 @@
 </template>
 
 <script>
-import { storeToRefs } from 'pinia';
-import { useDatatableStore } from "../../store/datatables";
 export default {
-    props: {
-
-    },
-    setup () { //use database store
-        const store = useDatatableStore();
-        const { getDatatable } = storeToRefs(store);
-        const { isSelected } = storeToRefs(store);
-        return {
-            store
-        }
-    },
+    props: {},
     data() {
         return {
             component_id: this.$.uid,
         }
     },
-
-    mounted() {
-
-    },
-
-    methods: {
-
-    }
+    mounted() {},
+    methods: {}
 }
 </script>

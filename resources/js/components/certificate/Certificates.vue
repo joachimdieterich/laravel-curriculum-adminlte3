@@ -67,9 +67,6 @@
                 :showConfirm="this.showConfirm"
                 :title="trans('global.certificate.delete')"
                 :description="trans('global.certificate.delete_helper')"
-                css= 'danger'
-                :ok_label="trans('trans.global.ok')"
-                :cancel_label="trans('trans.global.cancel')"
                 @close="() => {
                     this.showConfirm = false;
                 }"
@@ -104,7 +101,6 @@ export default {
         return {
             certificates: null,
             search: '',
-            showCertificateModal: false,
             showConfirm: false,
             url: '/certificates/list',
             errors: {},

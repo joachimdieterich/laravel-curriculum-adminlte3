@@ -193,11 +193,8 @@
         </div>
 
         <Teleport to="body">
-            <CurriculumModal
-                :show="this.showCurriculumModal"
-                @close="this.showCurriculumModal = false"
-                :params="this.currentCurriculum"
-            ></CurriculumModal>
+            <CurriculumModal></CurriculumModal>
+            <ContentModal></ContentModal>
             <CertificateModal
                 :show="this.showCertificateModal"
                 @close="this.showCertificateModal = false"
@@ -222,12 +219,14 @@ import {useDatatableStore} from "../../store/datatables";
 import CertificateModal from "../certificate/CertificateModal.vue";
 import GenerateCertificateModal from "../certificate/GenerateCertificateModal.vue";
 import {useGlobalStore} from "../../store/global";
+import ContentModal from "../content/ContentModal.vue";
 
 DataTable.use(DataTablesCore);
 
 export default {
     name: "curriculum",
     components:{
+        ContentModal,
         GenerateCertificateModal,
         CertificateModal,
         CurriculumModal,
@@ -269,7 +268,6 @@ export default {
     data() {
         return {
             componentId: this.$.uid,
-            showCurriculumModal: false,
             currentCurriculum: {},
             showCertificateModal: false,
             columns: [
@@ -302,14 +300,14 @@ export default {
 
         this.$eventHub.on('curriculum-updated', (curriculum) => {
             this.currentCurriculum = curriculum;
-            this.showCurriculumModal = false;
+            this.globalStore?.closeModal('curriculum-modal');
         });
 
 
     },
     methods: {
-        editCurriculum(){
-            this.showCurriculumModal = true;
+        edit(){
+            this.globalStore?.showModal('curriculum-modal', this.curriculum);
         },
         loaderEvent: function() {
             this.$refs.Contents.loaderEvent();

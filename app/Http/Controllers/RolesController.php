@@ -82,7 +82,6 @@ class RolesController extends Controller
         abort_unless(\Gate::allows('role_show'), 403);
 
         $role->load('permissions');
-
         return view('roles.show')
             ->with(compact('role'));
     }

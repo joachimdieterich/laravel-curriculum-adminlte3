@@ -9,13 +9,13 @@
                             {{ this.currentRole.title }}
                         </h5>
                     </div>
-<!--                    <div
+                    <div
                         v-permission="'organization_edit'"
                         class="card-tools pr-2">
-                        <a  @click="editRole()">
+                        <a  @click="editRole(this.currentRole)">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
-                    </div>-->
+                    </div>
                 </div>
 
                 <div class="card-body">
@@ -55,20 +55,15 @@
             </div>
         </div>
 
-
-
         <Teleport to="body">
-            <RoleModal
-                :show="this.showRoleModal"
-                @close="this.showRoleModal = false"
-                :params="this.currentRole"
-            ></RoleModal>
+            <RoleModal></RoleModal>
         </Teleport>
     </div>
 </template>
 
 <script>
 import RoleModal from "../role/RoleModal";
+import {useGlobalStore} from "../../store/global";
 
 export default {
     name: "role",
@@ -80,24 +75,30 @@ export default {
             default: null
         },
     },
+    setup () { //use database store
+        const globalStore = useGlobalStore();
+
+        return {
+            globalStore,
+        }
+    },
     data() {
         return {
             componentId: this.$.uid,
-            showRoleModal: false,
             currentRole: {},
         }
     },
     mounted() {
         this.currentRole = this.role;
+
         this.$eventHub.on('role-updated', (role) => {
             this.currentRole = role;
-            this.showRoleModal = false;
+            this.globalStore?.closeModal('role-modal');
         });
-
     },
     methods: {
-        editRole(){
-            this.showRoleModal = true;
+        editRole(role){
+            this.globalStore?.showModal('role-modal', role);
         },
     }
 }

@@ -13,7 +13,6 @@
 
                 <li  v-for="task in tasks"
                      class="bg-light">
-
                     <div class="icheck-primary d-inline ml-2">
                         <input
                             type="checkbox"
@@ -68,9 +67,6 @@
                 :showConfirm="this.showConfirm"
                 :title="trans('global.task.delete')"
                 :description="trans('global.task.delete_helper')"
-                css= 'danger'
-                :ok_label="trans('trans.global.ok')"
-                :cancel_label="trans('trans.global.cancel')"
                 @close="() => {
                     this.showConfirm = false;
                 }"

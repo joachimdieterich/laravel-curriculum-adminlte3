@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="show"
+        <div v-if="this.globalStore.modals['videoconference-modal']?.show"
              class="modal-mask"
         >
         <div class="modal-container">
@@ -17,7 +17,7 @@
                 <div class="card-tools">
                     <button type="button"
                             class="btn btn-tool"
-                            @click="$emit('close')">
+                            @click="this.globalStore?.closeModal('videoconference-modal')">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
@@ -494,7 +494,7 @@
                          id="videoconference-cancel"
                          type="button"
                          class="btn btn-default mr-2"
-                         @click="$emit('close')">
+                         @click="this.globalStore?.closeModal('videoconference-modal')">
                          {{ trans('global.cancel') }}
                      </button>
                      <button
@@ -516,6 +516,7 @@
     import axios from "axios";
     import Editor from "@tinymce/tinymce-vue";
     import Select2 from "../forms/Select2";
+    import {useGlobalStore} from "../../store/global";
 
     export default {
         components:{
@@ -525,13 +526,16 @@
             MediumForm
         },
         props: {
-            show: {
-                type: Boolean
-            },
             params: {
                 type: Object
             },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
 
+        },
+        setup () {
+            const globalStore = useGlobalStore();
+            return {
+                globalStore,
+            }
         },
         data() {
             return {
@@ -632,23 +636,6 @@
                 }
             }
         },
-        watch: {
-            params: function(newVal, oldVal) {
-                this.form.reset();
-                this.form.populate(newVal);
-                this.form.welcomeMessage = this.$decodeHtml(this.form.welcomeMessage);
-                this.form.moderatorOnlyMessage = this.$decodeHtml(this.form.moderatorOnlyMessage);
-
-                this.form.guestPolicy = newVal.guestPolicy == 'ASK_MODERATOR';
-                this.askModerator = (newVal.guestPolicy == 'ASK_MODERATOR') ? true : false;
-
-                if (this.form.id != ''){
-                    this.method = 'patch';
-                } else {
-                    this.method = 'post';
-                }
-            },
-        },
         computed:{
             textColor: function(){
                 return this.$textcolor(this.form.color, '#333333');
@@ -692,6 +679,28 @@
             },
         },
         mounted() {
+            this.globalStore.registerModal('videoconference-modal');
+            this.globalStore.$subscribe((mutation, state) => {
+                if (mutation.events.key === 'videoconference-modal'){
+                    const params = state.modals['videoconference-modal'].params;
+
+                    this.form.reset();
+                    if (typeof (params) !== 'undefined'){
+                        this.form.populate(params);
+                        this.form.guestPolicy = params.guestPolicy == 'ASK_MODERATOR';
+                        this.askModerator = (params.guestPolicy == 'ASK_MODERATOR') ? true : false;
+
+                        if (this.form.id != ''){
+                            this.form.welcomeMessage = this.$decodeHtml(this.form.welcomeMessage);
+                            this.form.moderatorOnlyMessage = this.$decodeHtml(this.form.moderatorOnlyMessage);
+                            this.method = 'patch';
+                        } else {
+                            this.method = 'post';
+                        }
+                    }
+                }
+            });
+
             axios.get('/videoconferences/servers')
                 .then(response => {
                     this.servers = response.data;

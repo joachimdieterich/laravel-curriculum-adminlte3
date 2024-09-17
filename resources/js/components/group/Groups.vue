@@ -74,18 +74,11 @@
             </div>
 
             <Teleport to="body">
-                <GroupModal
-                    :show="this.showGroupModal"
-                    @close="this.showGroupModal = false"
-                    :params="currentGroup"
-                ></GroupModal>
+                <GroupModal></GroupModal>
                 <ConfirmModal
                     :showConfirm="this.showConfirm"
                     :title="trans('global.group.delete')"
                     :description="trans('global.group.delete_helper')"
-                    css= 'danger'
-                    :ok_label="trans('trans.global.ok')"
-                    :cancel_label="trans('trans.global.cancel')"
                     @close="() => {
                     this.showConfirm = false;
                 }"
@@ -113,6 +106,7 @@ import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal";
 import {useDatatableStore} from "../../store/datatables";
+import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -124,7 +118,6 @@ export default {
             component_id: this.$.uid,
             groups: null,
             search: '',
-            showGroupModal: false,
             showConfirm: false,
             url: '/groups/list',
             errors: {},
@@ -142,9 +135,11 @@ export default {
         }
     },
     setup () {
+        const globalStore = useGlobalStore();
         const store = useDatatableStore();
         return {
-            store
+            store,
+            globalStore
         }
     },
     mounted() {
@@ -153,17 +148,16 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('group-added', (group) => {
-            this.showGroupModal = false;
+            this.globalStore?.closeModal('group-modal');
             this.groups.push(group);
         });
 
         this.$eventHub.on('group-updated', (group) => {
-            this.showGroupModal = false;
+            this.globalStore?.closeModal('group-modal');
             this.update(group);
         });
         this.$eventHub.on('createGroup', () => {
-            this.currentGroup = {};
-            this.showGroupModal = true;
+            this.globalStore?.showModal('group-modal', {});
         });
     },
     methods: {
@@ -177,8 +171,7 @@ export default {
             )
         },
         editGroup(group){
-            this.currentGroup = group;
-            this.showGroupModal = true;
+            this.globalStore?.showModal('group-modal', group);
         },
         loaderEvent(){
             const dt = $('#group-datatable').DataTable();

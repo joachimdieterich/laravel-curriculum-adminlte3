@@ -22,7 +22,7 @@
             <button v-permission="'content_create, ' + subscribable_type + '_content_create'"
                     type="button" class="btn btn-tool "
                     role="button"
-                    @click="show('content-create-modal')">
+                    @click="show()">
                 <i class="fa fa-plus"></i>
             </button>
             <button type="button" class="btn btn-tool draggable"
@@ -77,8 +77,9 @@
                                          </span>
                                      </span>
                                      <br>
-                                     <small class="text-muted">
-                                        {{item.content.content }}
+                                     <small
+                                         class="text-muted"
+                                         v-dompurify-html="item.content.content">>
                                      </small>
                                  </span>
                              </li>
@@ -95,16 +96,23 @@
             </div>
         </div>
     </div>
-<!--    <content-create-modal></content-create-modal>-->
 </div>
 </template>
 
 <script>
+    import {useGlobalStore} from "../../store/global";
+
     export default {
         props: {
             subscribable_type: String,
             subscription: {},
             glossar: {},
+        },
+        setup () {
+            const globalStore = useGlobalStore();
+            return {
+                globalStore,
+            }
         },
         data() {
             return {
@@ -114,8 +122,11 @@
             }
         },
         methods: {
-            show(modal){
-                this.$modal.show(modal, { 'referenceable_type': 'App\\Glossar', 'referenceable_id': this.glossar.id/*, 'method': 'patch' */ });
+            show(){
+                this.globalStore?.showModal('content-modal',{
+                    'subscribable_type': 'App\\Glossar',
+                    'subscribable_id': this.glossar.id
+                });
             },
             setSlide(id){
                 this.currentSlide = id;
@@ -143,8 +154,8 @@
                     let index = this.subscriptions.indexOf(contentSubscription);
                     this.subscriptions.splice(index, 1);
                 }
-                catch(error) {
-                    this.errors = error.response.data.errors;
+                catch(e) {
+                    console.log(e);
                 }
             },
             async deleteGlossar(){

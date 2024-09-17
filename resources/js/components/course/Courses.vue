@@ -9,6 +9,12 @@
                 url="/courses"
                 :create=true
                 :createLabel="trans('global.course.create')">
+                <template v-slot:itemIcon>
+                    <i v-if="create_label_field == 'enrol'"
+                       class="fa fa-2x p-5 fa-link nav-item-text text-muted"></i>
+                    <i v-else
+                       class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
+                </template>
             </IndexWidget>
             <IndexWidget
                 v-for="course in courses"
@@ -58,9 +64,6 @@
                 :showConfirm="this.showConfirm"
                 :title="trans('global.course.delete')"
                 :description="trans('global.course.delete_helper')"
-                css= 'danger'
-                :ok_label="trans('trans.global.ok')"
-                :cancel_label="trans('trans.global.cancel')"
                 @close="() => {
                     this.showConfirm = false;
                 }"
@@ -86,6 +89,14 @@ DataTable.use(DataTablesCore);
 export default {
     props: {
         group: Object,
+        create_label_field: {
+            type: String,
+            default: 'create'
+        },
+        delete_label_field: {
+            type: String,
+            default: 'delete'
+        },
     },
     setup () {
         const globalStore = useGlobalStore();

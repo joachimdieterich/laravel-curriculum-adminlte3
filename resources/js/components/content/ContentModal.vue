@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal" >
-        <div v-if="this.globalStore.modals['content-modal']?.show"
+        <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask "
         >
         <div class="modal-container">
@@ -16,7 +16,7 @@
                 <div class="card-tools">
                     <button type="button"
                             class="btn btn-tool"
-                            @click="this.globalStore?.closeModal('content-modal')">
+                            @click="globalStore?.closeModal($options.name)">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
@@ -58,7 +58,7 @@
                          id="content-cancel"
                          type="button"
                          class="btn btn-default mr-2"
-                         @click="this.globalStore?.closeModal('content-modal')">
+                         @click="globalStore?.closeModal($options.name)">
                          {{ trans('global.cancel') }}
                      </button>
                      <button
@@ -79,13 +79,11 @@
     import {useGlobalStore} from "../../store/global";
 
     export default {
+        name: 'content-modal',
         components:{
             Editor,
         },
         props: {
-            show: {
-                type: Boolean
-            },
             params: {
                 type: Object
             },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
@@ -111,13 +109,14 @@
                 }),
                 tinyMCE: this.$initTinyMCE(
                     [
-                        "autolink link curriculummedia table lists"
+                        "autolink link curriculummedia table lists code"
                     ],
                     {
                         'eventHubCallbackFunction': 'insertContent',
                         'eventHubCallbackFunctionParams': this.component_id,
                     }
                 ),
+
                 search: '',
             }
         },
@@ -150,20 +149,21 @@
             },
         },
         mounted() {
-            this.globalStore.registerModal('content-modal');
+            this.globalStore.registerModal(this.$options.name);
             this.globalStore.$subscribe((mutation, state) => {
+                if (mutation.events.key === this.$options.name){
+                    const params = state.modals[this.$options.name].params;
 
-                const params = state.modals['content-modal'].params;
-                console.log(mutation);
-                this.form.reset();
-                if (typeof (params) !== 'undefined'){
-                    this.form.subscribable_type = params.subscribable_type;
-                    this.form.subscribable_id = params.subscribable_id;
-                    this.form.populate(params);
-                    if (this.form.id != ''){
-                        this.method = 'patch';
-                    } else {
-                        this.method = 'post';
+                    this.form.reset();
+                    if (typeof (params) !== 'undefined'){
+                        this.form.subscribable_type = params.subscribable_type;
+                        this.form.subscribable_id = params.subscribable_id;
+                        this.form.populate(params);
+                        if (this.form.id != ''){
+                            this.method = 'patch';
+                        } else {
+                            this.method = 'post';
+                        }
                     }
                 }
             });

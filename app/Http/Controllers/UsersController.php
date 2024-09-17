@@ -12,7 +12,6 @@ use App\Medium;
 use App\Organization;
 use App\OrganizationRoleUser;
 use App\Role;
-use App\Scopes\NoSharingUsers;
 use App\StatusDefinition;
 use App\User;
 use Illuminate\Support\Facades\DB;
@@ -113,8 +112,9 @@ class UsersController extends Controller
         $user->current_organization_id = auth()->user()->current_organization_id; //set default org
         $user->save();
 
-        //$user->roles()->sync($request->input('roles', []));
-        return redirect($user->path());
+        if (request()->wantsJson()) {
+            return $user;
+        }
     }
 
     public function edit(User $user)
@@ -137,7 +137,9 @@ class UsersController extends Controller
         $user->update($request->all());
         //$user->roles()->sync($request->input('roles', []));
 
-        return redirect()->route('users.index');
+        if (request()->wantsJson()) {
+            return $user;
+        }
     }
 
     public function massUpdate(MassUpdateUserRequest $request)
@@ -221,7 +223,7 @@ class UsersController extends Controller
 
     public function setCurrentOrganization()
     {
-        abort_if(is_guest(), 403); // guest users should not change current Organization
+        abort_if( auth()->user()->id == 8 , 403); // only official guest user should not change current Organization
 
         User::where('id', auth()->user()->id)->update([
             'current_period_id' => (request('current_period_id')) ? request('current_period_id') : 1,

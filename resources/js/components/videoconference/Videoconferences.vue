@@ -146,20 +146,13 @@
                 :showConfirm="this.showConfirm"
                 :title="trans('global.videoconference.delete')"
                 :description="trans('global.videoconference.delete_helper')"
-                css= 'danger'
-                :ok_label="trans('trans.global.ok')"
-                :cancel_label="trans('trans.global.cancel')"
                 @close="this.showConfirm = false;"
                 @confirm="() => {
                     this.showConfirm = false;
                     this.destroy();
                 }"
             ></ConfirmModal>
-            <SubscribeModal
-                :params="this.showSubscribeParams"
-                :show="this.showSubscribeModal"
-                @close="this.showSubscribeModal = false"
-            ></SubscribeModal>
+            <SubscribeModal></SubscribeModal>
         </Teleport>
     </div>
 </template>
@@ -171,12 +164,19 @@ import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal";
 import SubscribeModal from "../subscription/SubscribeModal";
+import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
     props: {
         subscribable_type: '',
         subscribable_id: '',
+    },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
@@ -197,8 +197,6 @@ export default {
             options : this.$dtOptions,
             filter: 'all',
             dt: null,
-            showSubscribeModal: false,
-            showSubscribeParams: {},
         }
     },
 
@@ -272,17 +270,15 @@ export default {
             }
         },
         share(videoconference){
-            this.showSubscribeParams =
-                {
-                    'modelId': videoconference.id,
-                    'modelUrl': 'videoconference',
-                    'shareWithUsers': true,
-                    'shareWithGroups': true,
-                    'shareWithOrganizations': true,
-                    'shareWithToken': true,
-                    'canEditCheckbox': true
-                };
-            this.showSubscribeModal = true;
+            this.globalStore?.showModal('subscribe-modal', {
+                'modelId': videoconference.id,
+                'modelUrl': 'videoconference',
+                'shareWithUsers': true,
+                'shareWithGroups': true,
+                'shareWithOrganizations': true,
+                'shareWithToken': true,
+                'canEditCheckbox': true
+            });
         },
     },
     components: {

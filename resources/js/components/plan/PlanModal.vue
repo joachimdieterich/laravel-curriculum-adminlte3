@@ -7,10 +7,10 @@
             <div class="card-header">
                 <h3 class="card-title">
                     <span v-if="method === 'post'">
-                        {{ trans('global.grade.create') }}
+                        {{ trans('global.plan.create') }}
                     </span>
                     <span v-if="method === 'patch'">
-                        {{ trans('global.grade.edit') }}
+                        {{ trans('global.plan.edit') }}
                     </span>
                 </h3>
                 <div class="card-tools">
@@ -26,7 +26,7 @@
                     <div class="form-group "
                         :class="form.errors.title ? 'has-error' : ''"
                           >
-                        <label for="title">{{ trans('global.grade.fields.title') }} *</label>
+                        <label for="title">{{ trans('global.plan.fields.title') }} *</label>
                         <input
                             type="text" id="title"
                             name="title"
@@ -41,7 +41,7 @@
                     <div class="form-group "
                          :class="form.errors.external_begin ? 'has-error' : ''"
                     >
-                        <label for="external_begin">{{ trans('global.grade.fields.external_begin') }} *</label>
+                        <label for="external_begin">{{ trans('global.plan.fields.external_begin') }} *</label>
                         <input
                             type="text" id="external_begin"
                             name="external_begin"
@@ -56,7 +56,7 @@
                     <div class="form-group "
                          :class="form.errors.external_end ? 'has-error' : ''"
                     >
-                        <label for="external_end">{{ trans('global.grade.fields.external_end') }} *</label>
+                        <label for="external_end">{{ trans('global.plan.fields.external_end') }} *</label>
                         <input
                             type="text" id="external_end"
                             name="external_end"
@@ -86,14 +86,14 @@
                 <div class="card-footer">
                      <span class="pull-right">
                          <button
-                             id="grade-cancel"
+                             id="plan-cancel"
                              type="button"
                              class="btn btn-default"
                              @click="globalStore?.closeModal($options.name)">
                              {{ trans('global.cancel') }}
                          </button>
                          <button
-                             id="grade-save"
+                             id="plan-save"
                              class="btn btn-primary"
                              @click="submit(method)" >
                              {{ trans('global.save') }}
@@ -110,7 +110,7 @@
     import {useGlobalStore} from "../../store/global";
 
     export default {
-        name: 'grade-modal',
+        name: 'plan-modal',
         components:{
             Select2,
         },
@@ -125,7 +125,7 @@
             return {
                 component_id: this.$.uid,
                 method: 'post',
-                url: '/grades',
+                url: '/plans',
                 form: new Form({
                     'id':'',
                     'title': '',
@@ -161,7 +161,7 @@
             add(){
                 axios.post(this.url, this.form)
                     .then(r => {
-                        this.$eventHub.emit('grade-added', r.data);
+                        this.$eventHub.emit('plan-added', r.data);
                     })
                     .catch(e => {
                         console.log(e.response);
@@ -170,7 +170,7 @@
             update() {
                 axios.patch(this.url + '/' + this.form.id, this.form)
                     .then(r => {
-                        this.$eventHub.emit('grade-updated', r.data);
+                        this.$eventHub.emit('plan-updated', r.data);
                     })
                     .catch(e => {
                         console.log(e.response);

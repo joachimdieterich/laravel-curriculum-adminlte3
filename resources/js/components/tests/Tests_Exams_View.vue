@@ -298,7 +298,7 @@ export default {
             tableProps.dir = this.sortOrders[key] === 1 ? 'desc' : 'asc';
         },
         successNotification(message) {
-            this.$toast.success(message, {
+            this.toast.success(message, {
                 position: "top-right",
                 timeout: 3000,
                 closeOnClick: true,
@@ -314,7 +314,7 @@ export default {
             });
         },
         failedNotification(message) {
-            this.$toast.error(message, {
+            this.toast.error(message, {
                 position: "top-right",
                 timeout: 3000,
                 closeOnClick: true,

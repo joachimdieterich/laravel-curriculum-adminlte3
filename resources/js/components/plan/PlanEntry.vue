@@ -84,10 +84,10 @@
                     </div>
 
                     <div class="form-group">
-                        <MediumForm :form="form"
+<!--                        <MediumForm :form="form"
                                     :id="component_id"
                                     :medium_id="form.medium_id"
-                                    accept="image/*"/>
+                                    accept="image/*"/>-->
                     </div>
                     <button :name="'planEntrySave'"
                             class="btn btn-primary p-2 m-2"
@@ -102,16 +102,14 @@
 </template>
 
 <script>
-/*const Calendar =
-    () => import('../calendar/Calendar');*/
+import Calendar from '../calendar/Calendar';
 
 import Form from "form-backend-validation";
 import MediumForm from "../media/MediumForm";
 import Objectives from "../objectives/Objectives";
 import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker";
 
-const Trainings =
-    () => import('../training/Trainings');
+import Trainings from '../training/Trainings';
 
 export default {
     props: {
@@ -121,7 +119,9 @@ export default {
         create: {
             default: false
         },
-        plan: [],
+        plan: {
+            type: Object
+        },
         editable: {
             default: false
         },
@@ -227,6 +227,7 @@ export default {
     },
 
     components: {
+        Calendar,
         FontAwesomePicker,
         Objectives,
         MediumForm,

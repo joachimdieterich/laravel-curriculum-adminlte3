@@ -10,15 +10,5 @@
     ></breadcrumbs>
 @endsection
 @section('content')
-
-<exams></exams>
-
-@include('exams.examlist', [
-        "exams" =>  $exams,
-    ])
-
-<!--
-<task-modal></task-modal>
--->
-
+    <exams></exams>
 @endsection

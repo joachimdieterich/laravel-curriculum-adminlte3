@@ -50,37 +50,8 @@ class PlanController extends Controller
         abort_unless(\Gate::allows('plan_access'), 403);
         $plans = (auth()->user()->role()->id == 1) ? Plan::all() : $this->userPlans();
 
-        $edit_gate = \Gate::allows('plan_edit');
-        $delete_gate = \Gate::allows('plan_delete');
-
         return DataTables::of($plans)
-            ->addColumn('action', function ($plans) use ($edit_gate, $delete_gate) {
-                // actions should only be visible to owner. admin has all rights
-                if ($plans->owner_id != auth()->user()->id && !is_admin()) return '';
-
-                $actions = '';
-                if ($edit_gate) {
-                    $actions .= '<a href="'.route('plans.edit', $plans->id).'"'
-                                    .'id="edit-plan-'.$plans->id.'" '
-                                    .'class="btn p-1">'
-                                    .'<i class="fa fa-pencil-alt"></i>'
-                                    .'</a>';
-                }
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                                .'class="btn text-danger" '
-                                .'onclick="destroyDataTableEntry(\'plans\','.$plans->id.')">'
-                                .'<i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
-            })
-
-            ->addColumn('check', '')
             ->setRowId('id')
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
             ->make(true);
     }
 
@@ -149,7 +120,7 @@ class PlanController extends Controller
         abort_unless((\Gate::allows('plan_show') and $plan->isAccessible()), 403);
         $editable = $plan->isEditable();
         $users = [];
-        
+
         if ($editable) {
             $subscriptions = $plan->subscriptions()->get()->toArray();
             // get every user-id through all subscriptions
@@ -185,7 +156,7 @@ class PlanController extends Controller
                 'editable' => $editable,
             ];
         }
-        
+
         return view('plans.show')
             ->with(compact('plan', 'users', 'editable'));
     }

@@ -186,9 +186,6 @@
                 :showConfirm="this.showConfirm"
                 :title="trans('global.marker.delete')"
                 :description="trans('global.role.marker')"
-                css= 'danger'
-                :ok_label="trans('trans.global.ok')"
-                :cancel_label="trans('trans.global.cancel')"
                 @close="() => {
                     this.showConfirm = false;
                 }"

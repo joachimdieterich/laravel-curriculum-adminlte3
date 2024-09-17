@@ -249,8 +249,6 @@
                     <!-- /.contacts-list -->
                 </div>
                 <!-- /.direct-chat-pane -->
-
-
             </div>
             <!-- /.card-body -->
 
@@ -261,13 +259,9 @@
 </template>
 
 <script>
-const moment =
-    () => import('moment');
 import Form from 'form-backend-validation';
-const Avatar =
-    () => import('../uiElements/Avatar');
- /*   import moment from 'moment';
-    import Avatar from "../uiElements/Avatar";*/
+import moment from 'moment';
+import Avatar from "../uiElements/Avatar";
 
     export default {
         props: ['user'],

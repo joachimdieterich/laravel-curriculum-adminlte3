@@ -134,9 +134,6 @@
                 :showConfirm="this.showConfirm"
                 :title="trans('global.map.delete')"
                 :description="trans('global.map.delete_helper')"
-                css= 'danger'
-                :ok_label="trans('trans.global.ok')"
-                :cancel_label="trans('trans.global.cancel')"
                 @close="() => {
                     this.showConfirm = false;
                 }"

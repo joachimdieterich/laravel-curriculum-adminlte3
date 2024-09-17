@@ -8,14 +8,27 @@ export const useGlobalStore = defineStore('global', {
             'absence-modal' : {},
             'certificate-modal' : {},
             'config-modal': {},
+            'confirm-modal': {},
             'contact-modal' : {},
             'content-modal' : {},
             'content-subscription-modal' : {}, //todo: check if used
             'course-modal' : {},
+            'curriculum-modal' : {},
+            'grade-modal' : {},
+            'group-modal' : {},
+            'kanban-modal' : {},
             'lms-modal' : {},
+            'logbook-modal' : {},
+            'logbook-entry-modal' : {},
             'medium-preview-modal' : {},
+            'period-modal' : {},
+            'role-modal' : {},
+            'subscribe-logbook-modal' : {},
+            'subscribe-modal' : {},
             'subscribe-objective-modal' : {},
-            'task-modal' : {}
+            'subscribe-user-modal' : {},
+            'task-modal' : {},
+            'user-modal' : {},
         }
     }),
     actions: {
@@ -31,9 +44,11 @@ export const useGlobalStore = defineStore('global', {
             //console.log(this.modals);
         },
         showModal(title, params = null){
-            this.modals[title].show = true;
-            this.modals[title].params = params;
-            console.log(this.modals[title]);
+            this.modals[title] = {
+                show: true,
+                params: params
+            };
+            //console.log(this.modals[title]);
         },
         closeModal(title){
             //console.log(title);

@@ -17,9 +17,25 @@
                 titleField="test_name"
                 descriptionField="subject"
                 modelName= "exam"
-                url="/exams">
+                :url="exam.login_url"
+                url-only="true"
+                urlTarget="_blank"
+                :active="isActive(exam.pivot.exam_completed_at)"
+                info_deactivated="Test wurde bereits abgeschlossen."
+            >
                 <template v-slot:icon>
-                    <i class="fa-solid fa-ranking-star pt-2"></i>
+                    <div>
+                        <i class="fa-solid fa-ranking-star pt-2"></i>
+                    </div>
+                </template>
+
+                <template v-slot:owner>
+                    <div v-if="!isActive(exam.pivot.exam_completed_at)"
+                        style="position:absolute; top:100px; left: 0;"
+                         class="badge-primary px-2">
+                        <i class="fa fa-calendar-check"></i>
+                        {{ exam.pivot.exam_completed_at }}
+                    </div>
                 </template>
 
                 <template
@@ -48,6 +64,16 @@
                         </button>
                     </div>
                 </template>
+                <template v-slot:content>
+                    <span class="bg-white text-center p-1 overflow-auto nav-item-box">
+                       <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
+                           {{ exam.test_name }}
+                       </h1>
+                       <p class="text-muted small">
+                           {{ exam.group.title }}
+                       </p>
+                    </span>
+                </template>
             </IndexWidget>
         </div>
         <div id="exam-datatable-wrapper"
@@ -73,9 +99,6 @@
                 :showConfirm="this.showConfirm"
                 :title="trans('global.exam.delete')"
                 :description="trans('global.exam.delete_helper')"
-                css= 'danger'
-                :ok_label="trans('trans.global.ok')"
-                :cancel_label="trans('trans.global.cancel')"
                 @close="() => {
                     this.showConfirm = false;
                 }"
@@ -177,6 +200,14 @@ export default {
 
             for (const [key, value] of Object.entries(exam)) {
                 this.exams[index][key] = value;
+            }
+        },
+        isActive(completed){
+            //console.log(completed);
+            if (!completed){
+                return true;
+            } else {
+                return false;
             }
         }
     },

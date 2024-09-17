@@ -22,7 +22,6 @@ class getExamsJob
                 $q->orWhere('tool', 'like', "%$examListRequest->search%")
                     ->orWhere('test_name', 'like', "%$examListRequest->search%");
             })->paginate($examListRequest->length);*/
-
         return new DataTableCollectionResource($exams);
     }
 }

@@ -292,9 +292,6 @@
                 :showConfirm="this.showConfirm"
                 :title="trans('global.kanbanItem.delete')"
                 :description="trans('global.kanbanItem.delete_helper')"
-                css= 'danger'
-                :ok_label="trans('trans.global.ok')"
-                :cancel_label="trans('trans.global.cancel')"
                 @close="() => {
                     this.showConfirm = false;
                 }"
@@ -369,7 +366,9 @@ export default {
                 {
                     'eventHubCallbackFunction': 'insertContent',
                     'eventHubCallbackFunctionParams': this.component_id,
-                }
+                },
+                "bold underline italic | alignleft aligncenter alignright | table",
+                "bullist numlist outdent indent | mathjax link code",
             ),
         };
     },

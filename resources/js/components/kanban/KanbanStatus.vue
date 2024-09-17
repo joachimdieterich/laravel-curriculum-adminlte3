@@ -110,9 +110,6 @@
                 :showConfirm="this.showConfirm"
                 :title="trans('global.kanbanStatus.delete')"
                 :description="trans('global.kanbanStatus.delete_helper')"
-                css= 'danger'
-                :ok_label="trans('trans.global.ok')"
-                :cancel_label="trans('trans.global.cancel')"
                 @close="() => {
                     this.showConfirm = false;
                 }"

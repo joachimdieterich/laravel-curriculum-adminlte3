@@ -97,28 +97,18 @@
 
             <Teleport to="body">
                 <SubscribeUserModal
-                    v-if="subscribable"
-                    :show="this.showUserModal"
-                    @close="this.showUserModal = false"
-                    :params="reference"
-                >
+                    v-if="subscribable">
                 </SubscribeUserModal>
                 <UserModal
                     v-if="!subscribable"
-                    :show="this.showUserModal"
-                    @close="this.showUserModal = false"
-                    :params="currentUser"
                 ></UserModal>
                 <ConfirmModal
                     :showConfirm="this.showConfirm"
                     :title="trans('global.user.' + delete_label_field)"
                     :description="trans('global.user.' + delete_label_field +'_helper')"
-                    css= 'danger'
-                    :ok_label="trans('trans.global.ok')"
-                    :cancel_label="trans('trans.global.cancel')"
                     @close="() => {
-                    this.showConfirm = false;
-                }"
+                        this.showConfirm = false;
+                    }"
                     @confirm="() => {
                     this.showConfirm = false;
                     this.destroy();
@@ -143,6 +133,7 @@ import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal";
 import { useDatatableStore } from "../../store/datatables";
 import UserOptions from "./UserOptions";
+import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 
@@ -167,8 +158,10 @@ export default {
     },
     setup () { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters
         const store = useDatatableStore();
+        const globalStore = useGlobalStore();
         return {
-            store
+            store,
+            globalStore
         }
     },
     data() {
@@ -176,7 +169,6 @@ export default {
             component_id: this.$.uid,
             users: null,
             search: '',
-            showUserModal: false,
             showConfirm: false,
             url: (this.subscribable_id) ? '/users/list?group_id=' + this.reference.id : '/users/list', // if subscibable == true get enrolled users
             errors: {},
@@ -198,22 +190,25 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('user-added', (user) => {
-            this.showUserModal = false;
+            this.globalStore?.closeModal('user-modal');
             this.users.push(user);
         });
 
         this.$eventHub.on('user-updated', (user) => {
-            this.showUserModal = false;
+            this.globalStore?.closeModal('user-modal');
             this.update(user);
         });
         this.$eventHub.on('createUser', () => {
-            this.currentUser = {};
-            this.showUserModal = true;
+            if (!this.subscribable) {
+                this.globalStore?.showModal('user-modal', {});
+            } else {
+                this.globalStore?.showModal('subscribe-user-modal', this.reference);
+            }
+
         });
     },
     methods: {
         setMode(){
-            //console.log(this.store);
             console.log(this.store.getDatatable('users'));
             this.store.addToDatatables(
                 {
@@ -226,8 +221,7 @@ export default {
 
         },
         editUser(user){
-            this.currentUser = user;
-            this.showUserModal = true;
+            this.globalStore?.showModal('user-modal', user);
         },
         loaderEvent(){
             const dt = $('#user-datatable').DataTable();

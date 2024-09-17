@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="this.globalStore.modals['certificate-modal']?.show"
+        <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
         >
         <div class="modal-container">
@@ -16,7 +16,7 @@
                 <div class="card-tools">
                     <button type="button"
                             class="btn btn-tool"
-                            @click="this.globalStore?.closeModal('certificate-modal')">
+                            @click="globalStore?.closeModal($options.name)">
                         <i class="fa fa-times"></i>
                     </button>
                  </div>
@@ -115,7 +115,7 @@
                          id="certificate-cancel"
                          type="button"
                          class="btn btn-default"
-                         @click="this.globalStore?.closeModal('certificate-modal')">
+                         @click="globalStore?.closeModal($options.name)">
                          {{ trans('global.cancel') }}
                      </button>
                      <button
@@ -138,15 +138,13 @@
     import {useGlobalStore} from "../../store/global";
 
     export default {
+        name: 'certificate-modal',
         components:{
             Switch,
             Editor,
             Select2
         },
         props: {
-            show: {
-                type: Boolean
-            },
             params: {
                 type: Object
             },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
@@ -222,18 +220,19 @@
             }
         },
         mounted() {
-            this.globalStore.registerModal('certificate-modal');
+            this.globalStore.registerModal(this.$options.name);
             this.globalStore.$subscribe((mutation, state) => {
-                //console.log(mutation);
-                const params = state.modals['certificate-modal'].params;
-                this.form.reset();
-                if (typeof (params) !== 'undefined'){
-                    this.form.populate(params);
-                    if (this.form.id != ''){
-                        this.form.body = this.$decodeHtml(this.form.body)
-                        this.method = 'patch';
-                    } else {
-                        this.method = 'post';
+                if (mutation.events.key === this.$options.name){
+                    const params = state.modals[this.$options.name].params;
+                    this.form.reset();
+                    if (typeof (params) !== 'undefined'){
+                        this.form.populate(params);
+                        if (this.form.id != ''){
+                            this.form.body = this.$decodeHtml(this.form.body)
+                            this.method = 'patch';
+                        } else {
+                            this.method = 'post';
+                        }
                     }
                 }
             });

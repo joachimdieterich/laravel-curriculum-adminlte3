@@ -85,10 +85,8 @@ class LogbookEntryController extends Controller
         ])->where('id', $entry->id)->get()->first();
 
         if (request()->wantsJson()) {
-            return ['message' => $entry];
+            return $entry;
         }
-
-        return back();
     }
 
     /**
@@ -124,7 +122,7 @@ class LogbookEntryController extends Controller
         $logbookEntry->update($this->validateRequest());
 
         if (request()->wantsJson()) {
-            return ['message' => $logbookEntry];
+            return $logbookEntry;
         }
     }
 
@@ -173,10 +171,9 @@ class LogbookEntryController extends Controller
             ->where('referenceable_type', '=', 'App\LogbookEntry')
             ->where('referenceable_id', '=', $logbookEntry->id)
             ->delete();
-        $return = $logbookEntry->delete();
 
         if (request()->wantsJson()) {
-            return ['message' => $return];
+            return $logbookEntry->delete();
         }
     }
 

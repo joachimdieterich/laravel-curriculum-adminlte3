@@ -181,12 +181,14 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link lists table"
+                    "autolink link lists table code"
                 ],
                 {
                     'eventHubCallbackFunction': 'insertContent',
                     'eventHubCallbackFunctionParams': this.component_id,
-                }
+                },
+                "bold underline italic | alignleft aligncenter alignright | table",
+                "bullist numlist outdent indent | mathjax link code",
             ),
             expand: false,
             highlightTitleInput: false,

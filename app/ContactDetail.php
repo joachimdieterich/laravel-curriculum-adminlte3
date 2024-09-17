@@ -16,7 +16,7 @@ class ContactDetail extends Model
 
     public function path()
     {
-        return route('contactdetails.show', $this->id);
+        //return route('contactdetails.show', $this->id);
     }
 
     public function subscriptions()

@@ -13,7 +13,9 @@ class ExamListRequest extends FormRequest
      */
     public function authorize()
     {
+
         abort_unless(\Gate::allows('test_access'), 403);
+        dump('test');
         return true;
     }
 

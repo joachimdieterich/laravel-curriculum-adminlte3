@@ -39,6 +39,7 @@ export default {
             const terminal_tr = document.createElement('tr');
             const terminal_td = document.createElement('td');
 
+            terminal_tr.id = 'terminal_' + ter.terminal_objective_id;
             terminal_tr.classList.add('thick-line');
             terminal_td.innerHTML = ter.terminal_objective.title;
 
@@ -57,6 +58,40 @@ export default {
 
                 tbody.appendChild(enabling_tr);
             })
+        });
+
+        achievements.enabling.forEach(ena => {
+            let terminal_tr = document.getElementById('terminal_' + ena.enabling_objective.terminal_objective_id);
+            const enabling_tr = document.createElement('tr');
+            const enabling_td = document.createElement('td');
+
+            // if terminal-objective doesn't exist, create a new terminal-row
+            if (terminal_tr === null) {
+                const tr = document.createElement('tr');
+                const td = document.createElement('td');
+
+                tr.id = 'terminal_' + ena.enabling_objective.terminal_objective_id;
+                tr.classList.add('thick-line');
+                td.innerHTML = ena.enabling_objective.terminal_objective.title;
+
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+
+                terminal_tr = tr; // save newly created terminal-tr to append the enabling-tr
+            }
+            
+            // create an enabling-row
+            enabling_td.innerHTML = ena.enabling_objective.title;
+            enabling_tr.appendChild(enabling_td);
+
+            this.addAchievementCells(enabling_tr, ena.enabling_objective.achievements);
+
+            // find its last enabling-objective tr
+            const last_enabling =
+                $(terminal_tr).closest('tr').nextAll('.thick-line')[0]?.previousElementSibling // search next terminal-tr
+                ?? terminal_tr.parentElement.lastElementChild; // if there's no next terminal-tr, get last tr of table
+            // and add the new enabling-row
+            last_enabling.after(enabling_tr);
         });
     },
     methods: {

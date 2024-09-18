@@ -11,21 +11,19 @@ class LogbookEntryController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        //
+        abort(403);
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function create()
     {
-        //
+        abort(403);
     }
 
     /**
@@ -40,7 +38,6 @@ class LogbookEntryController extends Controller
         if (request()->wantsJson()) {
             return $logbookEntry->subject;
         }
-
     }
 
     /**

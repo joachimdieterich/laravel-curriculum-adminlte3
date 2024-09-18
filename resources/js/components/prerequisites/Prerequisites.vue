@@ -102,10 +102,10 @@ import ObjectiveBox from "../objectives/ObjectiveBox.vue";
             },
             destroyPrerequisite(id){
                 axios.delete("/prerequisites/" + id )
-                    .then(response => {
+                    .then(res => {
                         this.loaderEvent();
                     }).catch(e => {
-                    this.errors = e.response.data.errors;
+                    console.log(e);
                 });
             },
             processResponse(response){

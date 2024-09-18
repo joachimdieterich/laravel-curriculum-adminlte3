@@ -309,7 +309,7 @@
         methods: {
             submit(method) {
                 this.form.description = tinyMCE.get('description').getContent();
-                if (method == 'patch') {
+                if (method === 'patch') {
                     this.update();
                 } else {
                     this.add();
@@ -342,7 +342,7 @@
                     this.form.reset();
                     if (typeof (params) !== 'undefined'){
                         this.form.populate(params);
-                        if (this.form.id != ''){
+                        if (this.form.id !== ''){
                             this.form.description = this.$decodeHTMLEntities(this.form.body);
                             this.method = 'patch';
                         } else {

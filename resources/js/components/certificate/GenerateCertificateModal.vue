@@ -112,7 +112,7 @@
             }
         },
         methods: {
-             submit(method) {
+             submit() {
                  this.download_url = false;
                  this.form.user_ids = this.store.getSelectedIds('curriculum-user-datatable');
 
@@ -133,7 +133,7 @@
                 this.form.reset();
                 if (typeof (params) !== 'undefined'){
                     this.form.populate(params);
-                    if (this.form.id != ''){
+                    if (this.form.id !== ''){
                         this.method = 'patch';
                     } else {
                         this.method = 'post';

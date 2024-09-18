@@ -223,7 +223,7 @@
                     this.form.reset();
                     if (typeof (params) !== 'undefined'){
                         this.form.populate(params);
-                        if (this.form.id != ''){
+                        if (this.form.id !== ''){
                             this.form.body = this.$decodeHtml(this.form.body)
                             this.method = 'patch';
                         } else {

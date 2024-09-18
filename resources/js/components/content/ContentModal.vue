@@ -154,7 +154,7 @@
                         this.form.subscribable_type = params.subscribable_type;
                         this.form.subscribable_id = params.subscribable_id;
                         this.form.populate(params);
-                        if (this.form.id != ''){
+                        if (this.form.id !== ''){
                             this.method = 'patch';
                         } else {
                             this.method = 'post';

@@ -389,7 +389,7 @@ app.config.globalProperties.$initTinyMCE = function (
                     document.querySelector("#app").__vue__.$modal.show('objective-progress-subscription-modal');
                     $('#progress_reference').on('change', function() {
                         const progress_reference = JSON.parse(document.getElementById('progress_reference').value);
-                        editor.selection.setContent('<span reference_type="' + progress_reference['referenceable_type'] + '" reference_id="'+ ( Array.isArray(progress_reference['referenceable_id']) ? progress_reference['referenceable_id'].join() : progress_reference['referenceable_id']) +'" min_value="'+ progress_reference['percentage'] +'"/>'   +  tinymce.activeEditor.selection.getContent() + '</span>', {format: 'raw'});
+                        editor.selection.setContent('<span reference_type="' + progress_reference.referenceable_type + '" reference_id="'+ ( Array.isArray(progress_reference.referenceable_id) ? progress_reference.referenceable_id.join() : progress_reference.referenceable_id) +'" min_value="'+ progress_reference.percentage +'"/>'   +  tinymce.activeEditor.selection.getContent() + '</span>', {format: 'raw'});
                     });
                 }
             });

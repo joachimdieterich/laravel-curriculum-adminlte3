@@ -195,7 +195,7 @@
                     if (typeof (params) !== 'undefined'){
                         this.form.populate(params);
                         this.form.notes = this.$decodeHtml(this.form.notes)
-                        if (this.form.id != ''){
+                        if (this.form.id !== ''){
                             this.method = 'patch';
                         } else {
                             this.method = 'post';

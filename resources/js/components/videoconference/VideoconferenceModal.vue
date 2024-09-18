@@ -649,12 +649,12 @@
                      this.form.moderatorOnlyMessage = tinyMCE.get('moderatorOnlyMessage').getContent();
                  }
 
-                 if (this.askModerator == true) {
+                 if (this.askModerator === true) {
                      this.form.guestPolicy = 'ASK_MODERATOR';
                  } else {
                      this.form.guestPolicy = 'ALWAYS_ACCEPT';
                  }
-                 if (method == 'patch') {
+                 if (method === 'patch') {
                      this.update();
                  } else {
                      this.add();
@@ -688,10 +688,10 @@
                     this.form.reset();
                     if (typeof (params) !== 'undefined'){
                         this.form.populate(params);
-                        this.form.guestPolicy = params.guestPolicy == 'ASK_MODERATOR';
-                        this.askModerator = (params.guestPolicy == 'ASK_MODERATOR') ? true : false;
+                        this.form.guestPolicy = params.guestPolicy === 'ASK_MODERATOR';
+                        this.askModerator = (params.guestPolicy === 'ASK_MODERATOR') ? true : false;
 
-                        if (this.form.id != ''){
+                        if (this.form.id !== ''){
                             this.form.welcomeMessage = this.$decodeHtml(this.form.welcomeMessage);
                             this.form.moderatorOnlyMessage = this.$decodeHtml(this.form.moderatorOnlyMessage);
                             this.method = 'patch';

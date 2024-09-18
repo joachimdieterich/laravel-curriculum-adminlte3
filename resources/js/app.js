@@ -269,10 +269,11 @@ app.component('prerequisite-modal', defineAsyncComponent(() => import('./compone
 app.component('color-picker-input', defineAsyncComponent(() => import('./components/kanban/ColorPickerInput.vue')));
 
 app.component('searchbar', defineAsyncComponent(() => import('./components/uiElements/Searchbar.vue')));
-app.component('set-achievements-modal', defineAsyncComponent(() => import('./components/plan/SetAchievementsModal.vue')));
+//app.component('set-achievements-modal', defineAsyncComponent(() => import('./components/plan/SetAchievementsModal.vue')));
 app.component('sidebar', defineAsyncComponent(() => import('./components/uiElements/Sidebar.vue')));
 
 app.component('subscribe-objective-modal', defineAsyncComponent(() => import('./components/objectives/SubscribeObjectiveModal.vue')));
+app.component('subjects', defineAsyncComponent(() => import('./components/subject/Subjects.vue')));
 
 app.component('tests-table', defineAsyncComponent(() => import('./components/tests/TestsTable.vue')));
 app.component('title-component', defineAsyncComponent(() => import('./components/uiElements/Title.vue')));
@@ -307,7 +308,8 @@ app.config.globalProperties.$initTinyMCE = function (
     tinyMcePlugins, attr = null,
     customToolbar1 = null,
     customToolbar2 = null,
-    extended_valid_elements = null
+    extended_valid_elements = null,
+    height = 300,
 ) {
 
     const defaultPlugins = [
@@ -333,6 +335,7 @@ app.config.globalProperties.$initTinyMCE = function (
         relative_urls: false,
         entity_encoding : "raw",
         language: 'de',
+        height: height ?? 350,
 
         mathjax: {
             lib: '/node_modules/mathjax/es5/tex-mml-chtml.js', // path to mathjax

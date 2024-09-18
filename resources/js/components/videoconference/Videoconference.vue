@@ -144,7 +144,6 @@ export default {
             component_id: this.$.uid,
             method: 'post',
             url: '/videoconferences',
-            showVideoconferenceModal: false,
             form: new Form({
                 'userName': '',
             }),
@@ -182,7 +181,7 @@ export default {
             });
 
         this.$eventHub.on('videoconference-updated', (videoconference) => {
-            this.showVideoconferenceModal = false;
+            this.globalStore?.closeModal('videoconference-modal');
             window.location.reload();
         });
     },

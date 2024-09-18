@@ -7,10 +7,10 @@
             <div class="card-header">
                 <h3 class="card-title">
                     <span v-if="method === 'post'">
-                        {{ trans('global.role.create') }}
+                        {{ trans('global.subject.create') }}
                     </span>
                     <span v-if="method === 'patch'">
-                        {{ trans('global.role.edit') }}
+                        {{ trans('global.subject.edit') }}
                     </span>
                 </h3>
                 <div class="card-tools">
@@ -27,9 +27,10 @@
                 <div class="form-group "
                     :class="form.errors.title ? 'has-error' : ''"
                       >
-                    <label for="title">{{ trans('global.role.fields.title') }} *</label>
+                    <label for="title">{{ trans('global.subject.fields.title') }} *</label>
                     <input
-                        type="text" id="title"
+                        type="text"
+                        id="title"
                         name="title"
                         class="form-control"
                         v-model="form.title"
@@ -38,31 +39,37 @@
                         />
                      <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
                 </div>
-                <Select2
-                    id="permissions"
-                    name="permissions"
-                    url="/permissions"
-                    model="permission"
-                    :multiple="true"
-                    :selected="getSelected()"
-                    @selectedValue="(id) => {
-                    this.form.permissions = id;
-                }"
+                <div class="form-group "
+                     :class="form.errors.title_short ? 'has-error' : ''"
                 >
-                </Select2>
+                    <label for="title">{{ trans('global.subject.fields.title_short') }} *</label>
+                    <input
+                        type="text"
+                        id="title_short"
+                        name="title_short"
+                        class="form-control"
+                        v-model="form.title_short"
+                        placeholder="title_short"
+                        required
+                    />
+                    <p class="help-block"
+                       v-if="form.errors.title_short"
+                       v-text="form.errors.title_short[0]"></p>
+                </div>
+
             </div>
 
             <div class="card-footer">
                  <span class="pull-right">
                      <button
-                         id="role-cancel"
+                         id="subject-cancel"
                          type="button"
                          class="btn btn-default"
                          @click="globalStore?.closeModal($options.name)">
                          {{ trans('global.cancel') }}
                      </button>
                      <button
-                         id="role-save"
+                         id="subject-save"
                          class="btn btn-primary"
                          @click="submit(method)" >
                          {{ trans('global.save') }}
@@ -75,20 +82,11 @@
 </template>
 <script>
     import Form from 'form-backend-validation';
-    import Select2 from "../forms/Select2.vue";
     import {useGlobalStore} from "../../store/global";
 
     export default {
-        name: 'role-modal',
-        components:{
-            Select2
-        },
-        props: {
-            params: {
-                type: Object
-            },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
-
-        },
+        name: 'subject-modal',
+        props: {},
         setup () { //use database store
             const globalStore = useGlobalStore();
 
@@ -100,11 +98,11 @@
             return {
                 component_id: this.$.uid,
                 method: 'post',
-                url: '/roles',
+                url: '/subjects',
                 form: new Form({
                     'id':'',
                     'title': '',
-                    'permissions': '',
+                    'title_short': '',
                 }),
                 search: '',
             }
@@ -120,7 +118,7 @@
             add(){
                 axios.post(this.url, this.form)
                     .then(r => {
-                        this.$eventHub.emit('role-added', r.data);
+                        this.$eventHub.emit('subject-added', r.data);
                     })
                     .catch(e => {
                         console.log(e.response);
@@ -130,7 +128,7 @@
                 console.log('update');
                 axios.patch(this.url + '/' + this.form.id, this.form)
                     .then(r => {
-                        this.$eventHub.emit('role-updated', r.data);
+                        this.$eventHub.emit('subject-updated', r.data);
                     })
                     .catch(e => {
                         console.log(e.response);
@@ -164,4 +162,3 @@
         },
     }
 </script>
-

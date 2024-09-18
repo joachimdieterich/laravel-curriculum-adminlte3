@@ -127,12 +127,7 @@
     export default {
         name: 'config-modal',
         components:{},
-        props: {
-            params: {
-                type: Object
-            },  //{ 'modelId': config.id, 'modelUrl': 'config' , 'shareWithToken': true, 'canEditCheckbox': false}
-
-        },
+        props: {},
         setup () {
             const globalStore = useGlobalStore();
 
@@ -181,7 +176,6 @@
                     .catch(error => { // Handle the error returned from our request
                         console.log(error);
                     });
-
             }
         },
         mounted() {

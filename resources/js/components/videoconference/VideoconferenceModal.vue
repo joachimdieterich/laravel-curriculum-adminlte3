@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="this.globalStore.modals['videoconference-modal']?.show"
+        <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
         >
         <div class="modal-container">
@@ -17,7 +17,7 @@
                 <div class="card-tools">
                     <button type="button"
                             class="btn btn-tool"
-                            @click="this.globalStore?.closeModal('videoconference-modal')">
+                            @click="globalStore?.closeModal($options.name)">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
@@ -494,7 +494,7 @@
                          id="videoconference-cancel"
                          type="button"
                          class="btn btn-default mr-2"
-                         @click="this.globalStore?.closeModal('videoconference-modal')">
+                         @click="globalStore?.closeModal($options.name)">
                          {{ trans('global.cancel') }}
                      </button>
                      <button
@@ -519,6 +519,7 @@
     import {useGlobalStore} from "../../store/global";
 
     export default {
+        name: 'videoconference-modal',
         components:{
             Editor,
             MediumModal,
@@ -679,10 +680,10 @@
             },
         },
         mounted() {
-            this.globalStore.registerModal('videoconference-modal');
+            this.globalStore.registerModal(this.$options.name);
             this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === 'videoconference-modal'){
-                    const params = state.modals['videoconference-modal'].params;
+                if (mutation.events.key === this.$options.name){
+                    const params = state.modals[this.$options.name].params;
 
                     this.form.reset();
                     if (typeof (params) !== 'undefined'){

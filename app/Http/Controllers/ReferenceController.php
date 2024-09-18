@@ -63,9 +63,9 @@ class ReferenceController extends Controller
         DB::table('reference_subscriptions')
             ->where('reference_id', $reference->id)
             ->delete(); //delete individual subscriptions
-        $reference->delete();
+
         if (request()->wantsJson()) {
-            return ['message' =>'deleted'];
+            return $reference->delete();;
         }
     }
 

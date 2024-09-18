@@ -66,12 +66,17 @@
         >
             <i class="fa fa-users"></i>
         </div> -->
+        <Teleport to="body">
+            <SetAchievementsModal
+                :users="users">
+            </SetAchievementsModal>
+        </Teleport>
     </div>
 </template>
 
 <script>
 import draggable from "vuedraggable";
-
+import SetAchievementsModal from "./SetAchievementsModal.vue";
 /*const Calendar =
     () => import('../calendar/Calendar.vue');*/
 import PlanEntry from './PlanEntry.vue';
@@ -85,6 +90,10 @@ export default {
             type: Boolean,
             default: false,
         },
+        users: {
+            type: Object,
+            default: null
+        }
     },
     data() {
         return {
@@ -169,6 +178,7 @@ export default {
     },
     components: {
         //Calendar,
+        SetAchievementsModal,
         PlanEntry,
         draggable
     },

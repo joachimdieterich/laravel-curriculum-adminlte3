@@ -62,19 +62,7 @@ class PlanController extends Controller
      */
     public function create()
     {
-        abort_unless(\Gate::allows('plan_create'), 403);
-
-        $plan = new Plan();
-        $types = PlanType::whereIn('id',
-                explode(
-                    ',',
-                    \App\Config::where('key', 'availablePlanTypes')->get()->first()->value
-                )
-            )->get();
-
-        return view('plans.create')
-                ->with(compact('types'))
-                ->with(compact('plan'));
+        abort( 403);
     }
 
     /**
@@ -98,15 +86,11 @@ class PlanController extends Controller
             'owner_id'          => auth()->user()->id,
         ]);
 
-        // subscribe embedded media
-        checkForEmbeddedMedia($plan, 'description');
+        checkForEmbeddedMedia($plan, 'description'); // subscribe embedded media
 
-        // axios call?
         if (request()->wantsJson()) {
-            return ['message' => $plan->path()];
+            return $plan;
         }
-
-        return redirect('/plans');
     }
 
     /**
@@ -142,8 +126,7 @@ class PlanController extends Controller
                 }
             }
 
-            // duplicates have to be removed, because SQL will return the same entry multiple times
-            $users = array_unique($users, SORT_NUMERIC);
+            $users = array_unique($users, SORT_NUMERIC); // duplicates have to be removed, because SQL will return the same entry multiple times
 
             // get needed user-data through their ID
             $users = User::select('id', 'firstname', 'lastname')->whereIn('id', $users)->get()->toArray();
@@ -169,17 +152,8 @@ class PlanController extends Controller
      */
     public function edit(Plan $plan)
     {
-        abort_unless((\Gate::allows('plan_edit') and $plan->isAccessible()), 403);
-        $types = PlanType::whereIn('id',
-            explode(
-                ',',
-                \App\Config::where('key', 'availablePlanTypes')->get()->first()->value
-            )
-        )->get();
+        abort( 403);
 
-        return view('plans.edit')
-                ->with(compact('plan'))
-                ->with(compact('types'));
     }
 
     /**
@@ -199,10 +173,11 @@ class PlanController extends Controller
 
         $plan->update($clean_data);
 
-        // subscribe embedded media
-        checkForEmbeddedMedia($plan, 'description');
+        checkForEmbeddedMedia($plan, 'description');// subscribe embedded media
 
-        return redirect($plan->path());
+        if (request()->wantsJson()) {
+            return $plan;
+        }
     }
 
     /**

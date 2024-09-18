@@ -24,7 +24,8 @@
         @case(4)
             <plan
                 :plan="{{ $plan }}"
-                :editable="{{ $editable ? 'true' : 'false' }}"></plan>
+                :editable="{{ $editable ? 'true' : 'false' }}"
+                :users="{{ json_encode($users) }}"></plan>
            {{-- @can('medium_create')
                 <medium-create-modal></medium-create-modal>
             @endcan
@@ -33,7 +34,7 @@
                 @if ($editable)
                {{--     <subscribe-modal></subscribe-modal>
                     <subscribe-objective-modal></subscribe-objective-modal>
-                    <set-achievements-modal :users="{{ json_encode($users) }}"></set-achievements-modal>--}}
+---}}
                 @endif
             @endcan
 

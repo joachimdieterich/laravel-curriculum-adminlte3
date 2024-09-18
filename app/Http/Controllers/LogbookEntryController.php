@@ -31,17 +31,16 @@ class LogbookEntryController extends Controller
     /**
      * Update the subject_id of a specific entry
      */
-    public function setSubject(Request $request) {
+    public function setSubject(LogbookEntry $logbookEntry) {
         $input = $this->validateRequest();
 
-        $update = LogbookEntry::updateOrCreate([
-            'id' => $request->id,
-        ], [
-            'subject_id' => $input['subject_id'],
-        ]);
-        $update->save();
+        $logbookEntry->update([
+                'subject_id' => format_select_input($input['subject_id']),
+            ]);
+        if (request()->wantsJson()) {
+            return $logbookEntry->subject;
+        }
 
-        return true;
     }
 
     /**

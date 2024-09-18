@@ -1,93 +1,114 @@
 <template>
-    <modal
-        id="logbook-entry-subject-modal"
-        name="logbook-entry-subject-modal"
-        :adaptive=true
-        draggable=".draggable"
-        :resizable=true
-        @before-open="beforeOpen"
-        @opened="opened"
-        @before-close="beforeClose"
-        height="auto"
-        style="z-index: 1100;">
-        <div class="card" style="margin-bottom: 0px !important">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <span>{{ trans("global.logbookEntry.subject") }}</span>
-                </h3>
-                <div class="card-tools">
-                     <button type="button" class="btn btn-tool draggable" >
-                        <i class="fa fa-arrows-alt"></i>
+    <Transition name="modal">
+        <div v-if="globalStore.modals[$options.name]?.show"
+             class="modal-mask"
+        >
+            <div class="modal-container">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        {{ trans('global.logbookEntry.subject') }}
+                    </h3>
+                    <div class="card-tools">
+                        <button type="button"
+                                class="btn btn-tool"
+                                @click="globalStore?.closeModal($options.name)">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                    <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                        <Select2
+                            :id="'subject_' + component_id "
+                            :name="'subject_' + component_id "
+                            option_id="id"
+                            url="/subjects"
+                            model="subject"
+                            :selected="this.form.subject_id"
+                            @selectedValue="(id) => {
+                            this.form.subject_id = id;
+                        }"
+                        >
+                        </Select2>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                 <span class="pull-right">
+                     <button
+                         id="logbook-cancel"
+                         type="button"
+                         class="btn btn-default"
+                         @click="globalStore?.closeModal($options.name)">
+                         {{ trans('global.cancel') }}
                      </button>
-                     <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
-                        <i class="fa fa-times"></i>
+                     <button
+                         id="logbook-save"
+                         class="btn btn-primary"
+                         @click="submit(method)" >
+                         {{ trans('global.save') }}
                      </button>
-                 </div>
-            </div>
-            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                <label for="subjects">{{ trans("global.logbookEntry.fields.subject") }}</label>
-                <select :id="'subject_' + id"
-                        name="subjects"
-                        class="form-control"
-                        @click="initSelect2()"
-                >
-                    <option default>{{ subject }}</option>
-                </select>
+                </span>
+                </div>
             </div>
         </div>
-    </modal>
+    </Transition>
 </template>
 <script>
+import Form from 'form-backend-validation';
+import Select2 from "../forms/Select2";
+import {useGlobalStore} from "../../store/global";
+
 export default {
+    name: 'logbook-entry-subject-modal',
+    components:{
+        Select2
+    },
+    props: {},
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
     data() {
         return {
-            id: Number,
-            subject: String,
-        };
+            component_id: this.$.uid,
+            method: 'post',
+            url: '/logbookEntries',
+            form: new Form({
+                'id': '',
+                'subject_id':'',
+                'title': '',
+            }),
+        }
     },
     methods: {
-        initSelect2() {
-            $('#subject_' + this.id).select2({
-                dropdownParent: $(".v--modal-overlay"),
-                allowClear: false,
-                ajax: {
-                    url: "/subjects",
-                    dataType: 'json',
-                    data: function (params) {
-                        return {
-                            term: params.term || '',
-                            page: params.page || 1
-                        }
-                    },
-                    cache: true
-                },
-            }).on('select2:open', () => {
-                document.querySelector('.select2-search__field').focus();
-            }).on('select2:select', (e) => {
-                axios.post('/logbookEntries/setSubject?id=' + this.id, {
-                    'subject_id' : e.params.data.id,
+        submit(){
+            axios.patch(this.url + '/' + this.form.id + '/setSubject', this.form)
+                .then(r => {
+                    this.$eventHub.emit('updateSubjectBadge', {
+                        entry_id: this.form.id,
+                        subject_id:  r.data.id,
+                        title:  r.data.title,
+                    });
+                })
+                .catch(e => {
+                    console.log(e.response);
                 });
-
-                this.$eventHub.emit('updateSubjectBadge', {
-                    entry_id: this.id,
-                    subject_id: e.params.data.id,
-                    title: e.params.data.text,
-                });
-                this.$modal.hide('logbook-entry-subject-modal');
-            });
         },
-        beforeOpen(event) {
-            this.id = event.params.id;
-            this.subject = event.params.subject ?? '';
-        },
-        opened() {
-            // select-element always throws error on first click, so click it instantly on popup
-            $('#subject_' + this.id).click();
-        },
-        beforeClose() {},
-        close() {
-            this.$modal.hide('logbook-entry-subject-modal');
-        },
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (mutation.events.key === this.$options.name){
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined'){
+                    this.form.populate(params);
+                }
+            }
+        });
     },
 }
 </script>

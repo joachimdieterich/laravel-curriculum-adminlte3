@@ -1,6 +1,5 @@
 <template>
-
-    <div >
+    <div>
         <div v-if="prerequisites.model"
              class="row" >
             <div class="col-4">
@@ -8,23 +7,27 @@
                     <i class="pull-right fa fa-2 fa-arrow-right"></i>
                 </h4>
                 <div v-for="item in this.prerequisites.children">
-                        <ObjectiveBox v-if="item.model.predecessor_type ==='App\\TerminalObjective'"
-                                       :objective="item.model.predecessor"
-                                       :settings="settings"
-                                       type="terminal">
-                        </ObjectiveBox>
-                        <ObjectiveBox v-else-if="item.model.predecessor_type ==='App\\EnablingObjective'"
-                                       :objective="item.model.predecessor"
-                                       :settings="settings"
-                                       type="enabling">
-                        </ObjectiveBox>
+                    <ObjectiveBox
+                        v-if="item.model.predecessor_type ==='App\\TerminalObjective'"
+                       :objective="item.model.predecessor"
+                       :settings="settings"
+                       type="terminal">
+                    </ObjectiveBox>
+                    <ObjectiveBox
+                        v-else-if="item.model.predecessor_type ==='App\\EnablingObjective'"
+                       :objective="item.model.predecessor"
+                       :settings="settings"
+                       type="enabling">
+                    </ObjectiveBox>
                 </div>
 
                 <hr class="clearfix">
                 <ul>
                     <li v-for="item in this.prerequisites.children"
                         v-can="'prerequisite_delete'">
-                        {{ item.name }}<br><small>{{ item.description }}</small>
+                        {{ item.name }}
+                        <br>
+                        <small>{{ item.description }}</small>
                         <i class="fa fa-trash text-danger pull-right pointer"
                            @click="destroyPrerequisite(item.prerequisite_id)"></i>
                     </li>

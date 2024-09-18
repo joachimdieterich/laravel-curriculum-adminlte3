@@ -118,7 +118,6 @@ export default {
                     console.log(e.response);
                 });
         },
-
     },
     mounted() {
         this.globalStore.registerModal(this.$options.name);

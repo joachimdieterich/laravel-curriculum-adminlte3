@@ -14,9 +14,10 @@
                     </span>
                 </h3>
                 <div class="card-tools">
-                    <button type="button"
-                            class="btn btn-tool"
-                            @click="globalStore?.closeModal($options.name)">
+                    <button
+                        type="button"
+                        class="btn btn-tool"
+                        @click="globalStore?.closeModal($options.name)">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
@@ -87,42 +88,50 @@
                     </div>
                     <div class="card-body pb-0">
                         <span class="custom-control custom-switch custom-switch-on-green">
-                            <input  v-model="form.commentable"
-                                    type="checkbox"
-                                    class="custom-control-input pt-1 "
-                                    :id="'commentable_' + form.id">
-                            <label class="custom-control-label text-muted"
-                                   :for="'commentable_' + form.id" >
+                            <input
+                                v-model="form.commentable"
+                                type="checkbox"
+                                class="custom-control-input pt-1 "
+                                :id="'commentable_' + form.id">
+                            <label
+                                class="custom-control-label text-muted"
+                               :for="'commentable_' + form.id" >
                                 {{ trans('global.commentable') }}
                             </label>
                         </span>
                         <span class="custom-control custom-switch custom-switch-on-green">
-                            <input  v-model="form.auto_refresh"
-                                    type="checkbox"
-                                    class="custom-control-input pt-1 "
-                                    :id="'auto_refresh_' + form.id">
-                            <label class="custom-control-label text-muted"
-                                   :for="'auto_refresh_' + form.id" >
+                            <input
+                                v-model="form.auto_refresh"
+                                type="checkbox"
+                                class="custom-control-input pt-1 "
+                                :id="'auto_refresh_' + form.id">
+                            <label
+                                class="custom-control-label text-muted"
+                               :for="'auto_refresh_' + form.id" >
                                 {{ trans('global.auto_refresh') }}
                             </label>
                         </span>
                         <span class=" custom-control custom-switch custom-switch-on-green">
-                            <input  v-model="form.only_edit_owned_items"
-                                    type="checkbox"
-                                    class="custom-control-input pt-1 "
-                                    :id="'only_edit_owned_items_' + form.id">
-                            <label class="custom-control-label text-muted"
-                                   :for="'only_edit_owned_items_' + form.id" >
+                            <input
+                                v-model="form.only_edit_owned_items"
+                                type="checkbox"
+                                class="custom-control-input pt-1 "
+                                :id="'only_edit_owned_items_' + form.id">
+                            <label
+                                class="custom-control-label text-muted"
+                               :for="'only_edit_owned_items_' + form.id" >
                                 {{ trans('global.kanban.only_edit_owned_items') }}
                             </label>
                         </span>
                         <span class="custom-control custom-switch custom-switch-on-green">
-                            <input  v-model="form.allow_copy"
-                                    type="checkbox"
-                                    class="custom-control-input pt-1 "
-                                    :id="'allow_copy_' + form.id">
-                            <label class="custom-control-label text-muted"
-                                   :for="'allow_copy_' + form.id" >
+                            <input
+                                v-model="form.allow_copy"
+                                type="checkbox"
+                                class="custom-control-input pt-1 "
+                                :id="'allow_copy_' + form.id">
+                            <label
+                                class="custom-control-label text-muted"
+                               :for="'allow_copy_' + form.id" >
                                 {{ trans('global.kanban.allow_copy') }}
                             </label>
                         </span>
@@ -146,8 +155,8 @@
                          </button>
                     </span>
                 </div>
+            </div>
         </div>
-    </div>
     </Transition>
 </template>
 <script>
@@ -242,7 +251,6 @@
                     .html(text)
                     .text();
             }
-
         },
         mounted() {
             this.globalStore.registerModal(this.$options.name);

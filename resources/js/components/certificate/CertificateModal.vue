@@ -144,11 +144,7 @@
             Editor,
             Select2
         },
-        props: {
-            params: {
-                type: Object
-            },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
-        },
+        props: {},
         setup () {
             const globalStore = useGlobalStore();
             return {

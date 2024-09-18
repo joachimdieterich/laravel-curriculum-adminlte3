@@ -18,9 +18,7 @@
                     </div>
                 </div>
 
-                <div class="card-body">
-
-                </div>
+                <div class="card-body"></div>
 
                 <div class="card-footer">
                     <small class="float-right">
@@ -55,20 +53,15 @@
             </div>
         </div>
 
-
-
         <Teleport to="body">
-            <PermissionModal
-                :show="this.showPermissionModal"
-                @close="this.showPermissionModal = false"
-                :params="this.currentPermission"
-            ></PermissionModal>
+            <PermissionModal></PermissionModal>
         </Teleport>
     </div>
 </template>
 
 <script>
 import PermissionModal from "../permission/PermissionModal.vue";
+import {useGlobalStore} from "../../store/global";
 
 export default {
     name: "permission",
@@ -80,10 +73,15 @@ export default {
             default: null
         },
     },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
     data() {
         return {
             componentId: this.$.uid,
-            showPermissionModal: false,
             currentPermission: {},
         }
     },
@@ -91,13 +89,13 @@ export default {
         this.currentPermission = this.permission;
         this.$eventHub.on('permission-updated', (permission) => {
             this.currentPermission = permission;
-            this.showPermissionModal = false;
+            this.globalStore?.closeModal('permission-modal');
         });
 
     },
     methods: {
         editPermission(){
-            this.showPermissionModal = true;
+            this.globalStore?.showModal('permission-modal', this.currentPermission);
         },
     }
 }

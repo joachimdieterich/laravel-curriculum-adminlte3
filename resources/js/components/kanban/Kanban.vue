@@ -169,8 +169,8 @@
 
 <script>
 import draggable from "vuedraggable";
-import KanbanItem from "./KanbanItem.vue";
-import KanbanItemCreate from "./KanbanItemCreate.vue";
+import KanbanItem from "../kanbanItem/KanbanItem.vue";
+import KanbanItemCreate from "../kanbanItem/KanbanItemCreate.vue";
 import KanbanStatus from "./KanbanStatus.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import KanbanModal from "../kanban/KanbanModal.vue";

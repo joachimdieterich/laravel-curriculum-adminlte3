@@ -83,11 +83,7 @@
         components:{
             Editor,
         },
-        props: {
-            params: {
-                type: Object
-            },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
-        },
+        props: {},
         setup () { //use database store
             const globalStore = useGlobalStore();
 
@@ -116,7 +112,6 @@
                         'eventHubCallbackFunctionParams': this.component_id,
                     }
                 ),
-
                 search: '',
             }
         },
@@ -170,6 +165,3 @@
         },
     }
 </script>
-<style scoped>
-
-</style>

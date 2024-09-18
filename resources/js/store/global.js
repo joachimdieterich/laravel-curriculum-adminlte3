@@ -1,11 +1,10 @@
 import {defineStore} from "pinia";
 
 export const useGlobalStore = defineStore('global', {
-            'generate-certificate-modal': {},
     state: () => ({
         global: [],
         modals: {
-            'absence-modal' : {},
+           /* 'absence-modal' : {},
             'certificate-modal' : {},
             'config-modal': {},
             'confirm-modal': {},
@@ -14,6 +13,8 @@ export const useGlobalStore = defineStore('global', {
             'content-subscription-modal' : {}, //todo: check if used
             'course-modal' : {},
             'curriculum-modal' : {},
+            'exam-modal' : {},
+            'generate-certificate-modal' : {},
             'grade-modal' : {},
             'group-modal' : {},
             'kanban-modal' : {},
@@ -22,13 +23,20 @@ export const useGlobalStore = defineStore('global', {
             'logbook-entry-modal' : {},
             'medium-preview-modal' : {},
             'period-modal' : {},
+            'permission-modal' : {},
+            'plan-modal' : {},
+            'prerequisite-objective-modal' : {},
+            'reference-objective-modal' : {},
             'role-modal' : {},
+            'set-achievements-modal':{}
             'subscribe-logbook-modal' : {},
             'subscribe-modal' : {},
             'subscribe-objective-modal' : {},
             'subscribe-user-modal' : {},
             'task-modal' : {},
             'user-modal' : {},
+            'videoconference-modal' : {},
+            */
         }
     }),
     actions: {

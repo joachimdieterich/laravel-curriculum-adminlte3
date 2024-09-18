@@ -137,11 +137,7 @@
         </div>
 
         <Teleport to="body">
-            <VideoconferenceModal
-                :show="this.showVideoconferenceModal"
-                @close="this.showVideoconferenceModal = false"
-                :params="currentVideoconference"
-            ></VideoconferenceModal>
+            <VideoconferenceModal></VideoconferenceModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.videoconference.delete')"
@@ -183,7 +179,6 @@ export default {
             component_id: this.$.uid,
             videoconferences: null,
             search: '',
-            showVideoconferenceModal: false,
             showConfirm: false,
             url: '/videoconferences/list',
             errors: {},
@@ -206,17 +201,16 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('videoconference-added', (videoconference) => {
-            this.showVideoconferenceModal = false;
+            this.globalStore?.closeModal('videoconference-modal');
             this.videoconferences.push(videoconference);
         });
 
         this.$eventHub.on('videoconference-updated', (videoconference) => {
-            this.showVideoconferenceModal = false;
+            this.globalStore?.closeModal('videoconference-modal');
             this.update(videoconference);
         });
         this.$eventHub.on('createVideoconference', () => {
-            this.currentVideoconference = {};
-            this.showVideoconferenceModal = true;
+            this.globalStore?.showModal('videoconference-modal', {});
         });
     },
     methods: {
@@ -231,8 +225,7 @@ export default {
             this.dt.ajax.url(this.url).load();
         },
         editVideoconference(videoconference){
-            this.currentVideoconference = videoconference;
-            this.showVideoconferenceModal = true;
+            this.globalStore?.showModal('videoconference-modal', videoconference);
         },
         loaderEvent(){
             this.dt = $('#videoconference-datatable').DataTable();

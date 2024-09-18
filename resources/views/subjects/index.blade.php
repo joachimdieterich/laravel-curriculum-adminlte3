@@ -3,12 +3,15 @@
     {{ trans('global.subject.title') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/"><i class="fa fa-home"></i></a></li>
-    <li class="breadcrumb-item active">{{ trans('global.subject.title') }}</li>
-    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
+    <breadcrumbs
+        :entries="{{json_encode([
+            ['active'=> true, 'title'=> trans('global.subject.title')]
+        ])}}"
+    ></breadcrumbs>
 @endsection
 @section('content')
-@can('subject_create')
+    <subjects></subjects>
+{{--@can('subject_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
             <a id="add-subject"
@@ -29,8 +32,8 @@
     </thead>
 </table>
 
-<subject-modal></subject-modal>
-@endsection
+<subject-modal></subject-modal>--}}
+@endsection{{--
 @section('scripts')
 @parent
 <script>
@@ -68,4 +71,4 @@
 })
 
 </script>
-@endsection
+@endsection--}}

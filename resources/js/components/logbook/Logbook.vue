@@ -62,6 +62,7 @@
             ></MediumModal>
             <LogbookModal></LogbookModal>
             <LogbookEntryModal></LogbookEntryModal>
+            <LogbookEntrySubjectModal></LogbookEntrySubjectModal>
             <SubscribeModal></SubscribeModal>
         </Teleport>
         <teleport
@@ -100,10 +101,12 @@ import MediumPreviewModal from "../media/MediumPreviewModal.vue";
 import SubscribeObjectiveModal from "../objectives/SubscribeObjectiveModal.vue";
 import AbsenceModal from "../absence/AbsenceModal.vue";
 import LogbookEntryModal from "../logbookEntry/LogbookEntryModal.vue";
+import LogbookEntrySubjectModal from "../logbookEntry/LogbookEntrySubjectModal.vue";
 
 export default {
     name: "Logbook",
     components:{
+        LogbookEntrySubjectModal,
         LogbookEntryModal,
         AbsenceModal,
         SubscribeObjectiveModal,
@@ -185,13 +188,17 @@ export default {
             this.entries[index].end = updatedEntry.end;
         });
         this.$eventHub.on('updateSubjectBadge', (updatedEntry) => {
+            console.log(updatedEntry);
+            this.globalStore?.closeModal('logbook-entry-subject-modal');
             const index = this.entries.findIndex(
                 entry => entry.id === updatedEntry.entry_id
             );
+            //console.log(this.entries[index]);
             this.entries[index].subject = {
                 id: updatedEntry.subject_id,
-                title: updatedEntry.title,
-            }
+                title: updatedEntry.title
+            };
+            this.entries[index].subject_id = updatedEntry.subject_id;
         });
 
         this.$eventHub.on('deleteLogbookEntry', function (deletedEntry) {

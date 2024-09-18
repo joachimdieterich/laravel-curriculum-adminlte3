@@ -37,7 +37,6 @@
                                 <i class="px-1 fas fa-trash text-danger"></i>
                             </a>
                         </span>
-
                     </div>
                 </div>
 
@@ -96,9 +95,10 @@
                             :cancel-text="trans('global.close')"
                         ></VueDatePicker>
                     </div>
-                    <button :name="'trainingSave'"
-                            class="btn btn-primary p-2 m-2"
-                            @click="submit">
+                    <button
+                        :name="'trainingSave'"
+                        class="btn btn-primary p-2 m-2"
+                        @click="submit">
                         {{ trans('global.save') }}
                     </button>
                 </div>

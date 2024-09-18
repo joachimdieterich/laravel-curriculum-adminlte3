@@ -75,9 +75,7 @@ export default {
         exercise: {
             default: null
         },
-        done:{
-
-        }
+        done:{}
     },
     data() {
         return {

@@ -265,7 +265,13 @@ export default {
             this.globalStore?.showModal('logbook-entry-modal', entry);
         },
         editSubject() {
-            //this.$modal.show('logbook-entry-subject-modal', { 'id': this.entry.id, 'subject': this.entry.subject?.title });
+            this.globalStore?.showModal(
+                'logbook-entry-subject-modal',
+                {
+                    'id': this.entry.id,
+                    'subject_id': this.entry.subject_id,
+                    'title': this.entry.subject?.title
+                });
         },
         async destroy(){
             try {

@@ -69,6 +69,7 @@
 <script>
     import Header from './Header.vue';
     import Footer from './Footer.vue';
+    import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
@@ -82,6 +83,12 @@ export default {
             default: false
         },
         max_id: Number,
+    },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
@@ -148,7 +155,7 @@ export default {
             if (this.settings?.achievements === undefined || !this.editable) {
                 location.href= '/'+this.type+'Objectives/'+this.objective.id;
             } else {
-                //todo: change -> this.$modal.show('set-achievements-modal', { 'objective': this.objective });
+                this.globalStore?.showModal('set-achievements-modal', { 'objective': this.objective });
             }
         },
 

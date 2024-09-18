@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="this.globalStore.modals['generate-certificate-modal']?.show"
+        <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
         >
         <div class="modal-container">
@@ -11,13 +11,12 @@
                 <div class="card-tools">
                     <button type="button"
                             class="btn btn-tool"
-                            @click="this.globalStore?.closeModal('generate-certificate-modal')">
+                            @click="globalStore?.closeModal($options.name)">
                         <i class="fa fa-times"></i>
                     </button>
                  </div>
             </div>
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-
                 <Select2
                     id="certificate_id"
                     name="certificate_id"
@@ -46,7 +45,7 @@
                          id="certificate-cancel"
                          type="button"
                          class="btn btn-default"
-                         @click="this.globalStore?.closeModal('generate-certificate-modal')">
+                         @click="globalStore?.closeModal($options.name)">
                          {{ trans('global.cancel') }}
                      </button>
                      <button
@@ -58,7 +57,7 @@
                               class="text-center text-white">
                                 <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                                 <span class="sr-only">Loading...</span>
-                        </div>
+                         </div>
                          <span v-else> {{ trans('global.generate') }} </span>
                      </button>
 
@@ -84,18 +83,12 @@
     import {useGlobalStore} from "../../store/global";
 
     export default {
+        name: 'generate-certificate-modal',
         components:{
             Select2
         },
-        props: {
-            show: {
-                type: Boolean
-            },
-            params: {
-                type: Object
-            },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
-        },
-        setup () { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters
+        props: {},
+        setup () {
             const store = useDatatableStore();
             const globalStore = useGlobalStore();
             return {
@@ -133,10 +126,10 @@
             },
         },
         mounted() {
-            this.globalStore.registerModal('generate-certificate-modal');
+            this.globalStore.registerModal(this.$options.name);
             this.globalStore.$subscribe((mutation, state) => {
 
-                const params = state.modals['generate-certificate-modal'].params;
+                const params = state.modals[this.$options.name].params;
                 this.form.reset();
                 if (typeof (params) !== 'undefined'){
                     this.form.populate(params);

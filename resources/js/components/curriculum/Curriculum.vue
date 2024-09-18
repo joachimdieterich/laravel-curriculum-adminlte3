@@ -91,7 +91,7 @@
                     <li v-permission="'certificate_create'"
                         class="nav-item ml-auto">
                         <a class="nav-link link-muted"
-                           @click.prevent="this.showCertificateModal = true"
+                           @click.prevent="createCertificate()"
                            id="certificate-nav-tab">
                             <i class="fa fa-certificate pr-2"></i>{{trans('global.certificate.create')}}
                         </a>
@@ -195,11 +195,7 @@
         <Teleport to="body">
             <CurriculumModal></CurriculumModal>
             <ContentModal></ContentModal>
-            <CertificateModal
-                :show="this.showCertificateModal"
-                @close="this.showCertificateModal = false"
-                :params="{'curriculum_id': this.curriculum.id}"
-            ></CertificateModal>
+            <CertificateModal></CertificateModal>
             <GenerateCertificateModal></GenerateCertificateModal>
         </Teleport>
     </div>
@@ -269,7 +265,6 @@ export default {
         return {
             componentId: this.$.uid,
             currentCurriculum: {},
-            showCertificateModal: false,
             columns: [
                 { title: window.trans.global.user.fields.username, data: 'username', searchable: true},
                 { title: window.trans.global.lastname, data: 'lastname', searchable: true},
@@ -306,6 +301,11 @@ export default {
 
     },
     methods: {
+        createCertificate(){
+            this.globalStore?.showModal('certificate-modal', {
+                    'curriculum_id': this.curriculum.id
+                });
+        },
         edit(){
             this.globalStore?.showModal('curriculum-modal', this.curriculum);
         },

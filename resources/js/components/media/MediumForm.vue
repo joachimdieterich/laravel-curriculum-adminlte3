@@ -87,7 +87,7 @@ export default {
         removeSubscription() {
             //! temporary solution to remove media for Logbooks/Kanbans
             this.$parent.removeMedium();
-            axios.post('mediumSubscriptions/destroy', {
+            axios.post('/mediumSubscriptions/destroy', {
                 'medium_id': this.medium_id,
                 'subscribable_id': this.referenceable_id,
                 'subscribable_type': this.referenceable_type,

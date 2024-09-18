@@ -7,7 +7,7 @@
                 class="row">  <!-- terminalObjective -->
                 <div class="col-12">
                     <div class="card-tools pull-right">
-                        <span v-if="is_owner()">
+                        <span v-if="is_owner() && editable">
                             <a @click="destroy(subscription)" >
                                 <i class="fas fa-trash text-danger pointer"></i>
                             </a>

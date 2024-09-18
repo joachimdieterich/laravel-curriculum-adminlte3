@@ -9,7 +9,10 @@
                         v-can="'plan_edit'"
                         class="card-tools pr-2 no-print user-select-none"
                     >
-                        <span class="mr-3">
+                        <span
+                            class="mr-3"
+                            :title="mode_toggle ? 'Kompetenz anklicken um mehrere Personen einzuschätzen' : 'Einschätzungen für einzelne Person abgeben'"
+                        >
                             <span>
                                 <button
                                     @click="openUserModal()"
@@ -41,8 +44,12 @@
                         <a onclick="window.print()" class="link-muted mr-3 px-1 pointer">
                             <i class="fa fa-print"></i>
                         </a>
-                        <a v-if="$userId == plan.owner_id" @click="openEditModal()" class="link-muted px-1 pointer">
+                        <a v-if="editable" class="link-muted px-1">
                             <i class="fa fa-pencil-alt"></i>
+                            <span class="custom-switch custom-switch-on-green pull-right" style="margin-right: -6px;">
+                                <input type="checkbox" id="edit_toggle" class="custom-control-input" v-model="edit_toggle">
+                                <label for="edit_toggle" class="custom-control-label pointer"></label>
+                            </span>
                         </a>
                     </div>
                 </div>
@@ -68,7 +75,7 @@
                         <PlanEntry
                             v-for="(entry, index) in entries"
                             :key="entries[index].id"
-                            :editable="editable"
+                            :editable="editable && edit_toggle"
                             :entry="entry"
                             :plan="plan"
                         ></PlanEntry>
@@ -141,6 +148,7 @@ export default {
             subscriptions: {},
             disabled: true, // false => only plan-owner
             mode_toggle: true, // true => all users | false => single user
+            edit_toggle: true,
             selected_user: null,
             errors: {},
         }
@@ -205,9 +213,6 @@ export default {
                     }
                 }
             });
-        },
-        openEditModal() {
-            this.$eventHub.$emit('edit_plan', this.plan);
         },
         openUserModal(showAchievements) {
             // if the user-modal should be skipped and only one user is selected

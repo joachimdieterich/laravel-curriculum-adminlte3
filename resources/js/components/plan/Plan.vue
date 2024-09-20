@@ -83,7 +83,6 @@
                 </div>
 
                 <div class="col-12">
-                    <!--<Calendar></Calendar>-->
                     <PlanEntry
                         v-if="$userId == plan.owner_id"
                         :plan="plan"
@@ -128,7 +127,6 @@
 <script>
 import draggable from 'vuedraggable';
 
-const Calendar = () => import('../calendar/Calendar');
 const PlanEntry = () => import('./PlanEntry');
 const PlanIndexAddWidget = () => import('./PlanIndexAddWidget.vue');
 
@@ -266,7 +264,6 @@ export default {
         },
     },
     components: {
-        Calendar,
         PlanEntry,
         PlanIndexAddWidget,
         draggable,

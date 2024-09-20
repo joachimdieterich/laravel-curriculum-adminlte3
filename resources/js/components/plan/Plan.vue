@@ -9,10 +9,7 @@
                         v-can="'plan_edit'"
                         class="card-tools pr-2 no-print user-select-none"
                     >
-                        <span
-                            class="mr-3"
-                            :title="mode_toggle ? 'Kompetenz anklicken um mehrere Personen einzuschätzen' : 'Einschätzungen für einzelne Person abgeben'"
-                        >
+                        <span class="mr-3">
                             <span>
                                 <button
                                     @click="openUserModal()"
@@ -27,16 +24,23 @@
                                     }}
                                 </button>
                             </span>
-                            <a class="link-muted pl-1" style="padding-right: 2px;">
-                                <i class="fa fa-user"></i>
-                            </a>
-                            <span class="custom-switch custom-switch-on-green" style="margin-right: -6px;">
-                                <input type="checkbox" id="mode_toggle" class="custom-control-input" v-model="mode_toggle">
-                                <label for="mode_toggle" class="custom-control-label pointer"></label>
+                            <span class="tooltip-container">
+                                <span class="tooltip-wrapper">
+                                    <span class="tooltip-text">
+                                        {{ mode_toggle ? 'Kompetenz anklicken um mehrere Personen einzuschätzen' : 'Einschätzungen für einzelne Person abgeben' }}
+                                    </span>
+                                </span>
+                                <a class="link-muted" style="padding-left: 6px; margin-right: -4px">
+                                    <i class="fa fa-user"></i>
+                                </a>
+                                <span class="custom-switch custom-switch-on-green" style="padding-left: 44px;">
+                                    <input type="checkbox" id="mode_toggle" class="custom-control-input" v-model="mode_toggle">
+                                    <label for="mode_toggle" class="custom-control-label pointer"></label>
+                                </span>
+                                <a class="link-muted" style="margin-left: -4px;">
+                                    <i class="fa fa-users"></i>
+                                </a>
                             </span>
-                            <a class="link-muted pr-1">
-                                <i class="fa fa-users"></i>
-                            </a>
                         </span>
                         <a @click="openUserModal(!mode_toggle)" class="link-muted mr-3 px-1 pointer">
                             <i class="fa fa-chart-simple"></i>
@@ -292,6 +296,40 @@ export default {
 }
 </script>
 <style scoped>
+.tooltip-container {
+    position: relative;
+
+    & .tooltip-wrapper {
+        position: absolute;
+        bottom: 40px;
+        left: 50%;
+        width: max-content;
+        z-index: 1;
+
+
+        & .tooltip-text {
+            visibility: hidden;
+            position: relative;
+            margin-left: -50%;
+            background-color: #555;
+            color: #fff;
+            border-radius: 6px;
+            padding: 5px;
+            
+            &::after {
+                content: "";
+                position: absolute;
+                top: 100%;
+                left: 50%;
+                margin-left: -5px;
+                border-width: 5px;
+                border-style: solid;
+                border-color: #555 transparent transparent transparent;
+            }
+        }
+    }
+    &:hover .tooltip-wrapper .tooltip-text { visibility: visible; }
+}
 #corner-button {
     color: white;
     background-color: #333;

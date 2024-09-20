@@ -17,7 +17,7 @@
                                 <button
                                     @click="openUserModal()"
                                     class="btn btn-tool text-dark px-0"
-                                    :class="mode_toggle ? 'disabled' : ''"
+                                    :disabled="mode_toggle"
                                     style="margin-top: -15px;"
                                 >
                                     {{

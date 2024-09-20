@@ -22,7 +22,7 @@
                                 >
                                     {{
                                         this.selected_user == null
-                                            ? 'Kein Benutzer ausgew&auml;hlt'
+                                            ? trans('global.no_user_selected')
                                             : this.selected_user?.firstname + ' ' + this.selected_user?.lastname
                                     }}
                                 </button>
@@ -121,12 +121,21 @@
         <PlanIndexAddWidget
             :visible="false"
         />
+        <Modal
+            :id="'entryDeleteModal'"
+            css="danger"
+            :title="trans('global.planEntry.delete')"
+            :text="trans('global.planEntry.delete_helper')"
+            :ok_label="trans('global.planEntry.delete')"
+            v-on:ok="deleteEntry()"
+        />
     </div>
 </template>
 
 <script>
 import draggable from 'vuedraggable';
 
+const Modal = () => import('./../uiElements/Modal');
 const PlanEntry = () => import('./PlanEntry');
 const PlanIndexAddWidget = () => import('./PlanIndexAddWidget.vue');
 
@@ -144,6 +153,7 @@ export default {
             entries: [],
             entry_order: [],
             subscriptions: {},
+            temp_id: Number,
             disabled: true, // false => only plan-owner
             mode_toggle: true, // true => all users | false => single user
             edit_toggle: true,
@@ -170,13 +180,26 @@ export default {
                     console.log(e);
                 });
         },
+        confirmEntryDelete(id) {
+            $('#entryDeleteModal').modal('show');
+            this.temp_id = id;
+        },
+        deleteEntry() {
+            axios.delete('/planEntries/' + this.temp_id)
+                .then(response => {
+                    this.handleEntryDeleted();
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        },
         handleEntryAdded(entry) {
             this.entries.push(entry);
             this.entry_order.push(entry.id);
             this.updateEntryOrder();
         },
-        handleEntryDeleted(entry) {
-            let index = this.entries.indexOf(entry);
+        handleEntryDeleted() {
+            let index = this.entries.findIndex(entry => entry.id == this.temp_id);
             this.entries.splice(index, 1);
             this.entry_order.splice(index, 1);
             this.updateEntryOrder();
@@ -245,9 +268,6 @@ export default {
             this.$eventHub.$on('plan_entry_updated', (e) => {
                 this.loaderEvent();
             });
-            this.$eventHub.$on('plan_entry_deleted', (entry) => {
-                this.handleEntryDeleted(entry);
-            });
             this.$eventHub.$on('update_users', () => {
                 axios.get('/plans/' + this.plan.id + '/getUsers')
                     .then(response => this.users = response.data);
@@ -267,6 +287,7 @@ export default {
         PlanEntry,
         PlanIndexAddWidget,
         draggable,
+        Modal,
     },
 }
 </script>

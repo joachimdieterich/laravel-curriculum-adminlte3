@@ -214,6 +214,7 @@ return [
     'user_management' => 'Benutzerverwaltung',
     'users' => 'Benutzer',
     'select_users' => 'Benutzer auswählen',
+    'no_user_selected' => 'Kein Benutzer ausgewählt',
     'user' => [
         'title' => 'Benutzer',
         'title_singular' => 'Benutzer',
@@ -867,7 +868,8 @@ return [
         'create' => 'Eintrag erstellen',
         'search' => 'Eintrag suchen',
         'edit' => 'Eintrag bearbeiten',
-
+        'delete' => 'Eintrag löschen',
+        'delete_helper' => 'Soll der Eintrag sowie die zugehörigen Daten gelöscht werden?',
     ],
     'training' => [
         'title' => 'Trainings',

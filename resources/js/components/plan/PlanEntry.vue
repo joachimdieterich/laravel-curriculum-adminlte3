@@ -24,7 +24,7 @@
                                 <i class="fa fa-pencil-alt mr-2 pointer link-muted"
                                    @click="edit()"></i>
                                 <i class="fas fa-trash pointer text-danger"
-                                   @click="destroy(entry)"></i>
+                                   @click.stop="$parent.$parent.confirmEntryDelete(entry.id)"></i>
                             </div>
                         </div>
                         <div class="card-body py-2 collapse">
@@ -192,15 +192,6 @@ export default {
             this.$nextTick(() => {
                 this.$initTinyMCE("autolink link");
             });
-        },
-        destroy(entry){
-            axios.delete('/planEntries/'+entry.id)
-                .then(response => {
-                    this.$eventHub.$emit("plan_entry_deleted", entry);
-                })
-                .catch(e => {
-                    console.log(e);
-                });
         },
         submit() {
             let method = this.method.toLowerCase();

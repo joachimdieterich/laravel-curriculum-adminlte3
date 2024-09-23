@@ -1,5 +1,5 @@
 <template>
-    <div :id="'kanban-item-' + item.id" class="card">
+    <div :id="'kanban-item-' + item.id" class="card" :class="editor ? 'editor' : ''">
         <div
             class="card-header px-3 py-2"
             :style="{ backgroundColor: item.color, color: textColor }"
@@ -527,6 +527,9 @@ export default {
 }
 </script>
 <style scoped>
+:not(.editor) > .card-header:hover {
+    background-color: #e0e0e0 !important;
+}
 .due-date {
     color: #6c757d;
     font-size: 12px;

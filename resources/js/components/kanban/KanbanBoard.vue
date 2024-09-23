@@ -654,7 +654,7 @@ export default {
 .kanban_board_wrapper {
     position: absolute;
     height: 100%;
-    width: 100%;
+    width: 100% !important;
     padding: 2rem;
     overflow-y: clip;
     overflow-x: overlay;

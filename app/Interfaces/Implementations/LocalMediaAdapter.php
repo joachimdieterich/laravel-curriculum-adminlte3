@@ -268,21 +268,18 @@ class LocalMediaAdapter implements MediaInterface
                 }
                 break;
             case "App\Plan":
-                if ($subscription->subscribable->isAccessible()) {
-                    return true;
-                }
-                break;
             case "App\PlanEntry":
-                if ($subscription->subscribable->isAccessible()) {
-                    return true;
-                }
-                break;
+            case "App\Training":
             case "App\MapMarker":
                 if ($subscription->subscribable->isAccessible()) {
                     return true;
                 }
                 break;
-
+            case "App\Exercise":
+                if ($subscription->subscribable->training->subscriptions[0]->subscribable->plan->isAccessible()) {
+                    return true;
+                }
+                break;
 
             default: return false;
                 break;

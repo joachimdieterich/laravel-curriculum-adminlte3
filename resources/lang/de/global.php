@@ -883,12 +883,12 @@ return [
         'search' => 'Übung suchen',
         'edit' => 'Übung bearbeiten',
         'fields' => [
-            'recommended_iterations' => 'Wie oft soll die Übung wiederholt werden?'
+            'recommended_iterations' => 'Wie oft soll die Übung wiederholt werden? / Wie viele Zeit soll geübt werden?'
         ]
     ],
     'exercisedone' => [
         'fields' => [
-            'iterations' => 'Wiederholungen'
+            'iterations' => 'Wiederholungen / Zeit'
         ]
     ],
     'contactdetail' => [

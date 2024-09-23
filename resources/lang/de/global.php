@@ -313,7 +313,6 @@ return [
     'inbox' => 'Posteingang',
     'recipient' => 'Empfänger',
     'message_subject' => 'Betreff',
-    'message' => 'Nachricht',
     'comment' => 'Kommentar',
     'commentable' => 'Kommentare aktivieren',
     'send' => 'Senden',

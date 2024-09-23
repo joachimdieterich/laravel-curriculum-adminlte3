@@ -1,6 +1,12 @@
 <template>
-    <div class="card">
-        <div class="card-header px-3 py-2" :style="{ backgroundColor: item.color, color: textColor }">
+    <div :id="'kanban-item-' + item.id" class="card">
+        <div
+            class="card-header px-3 py-2"
+            :style="{ backgroundColor: item.color, color: textColor }"
+            data-toggle="collapse"
+            :data-target="'#kanban-item-' + item.id + ' > .card-body:not(.editor)'"
+            aria-expanded="true"
+        >
             <div class="card-tools">
                 <div v-if="
                         (editable == true && item.editable == true && editor == false && onlyEditOwnedItems != true) ||
@@ -94,12 +100,12 @@
             </div>
 
         </div>
-        <div class="card-body p-0">
+        <div class="card-body p-0 collapse show" :class="editor ? 'editor' : ''">
             <div v-if="(editor == false)">
-                <div v-if="item.description !== null "
+                <div
                      class="text-muted small px-3 py-2"
-                     v-dompurify-html="form.description">
-                </div>
+                     v-dompurify-html="form.description ?? '<p>&#8288;</p>'"
+                ></div>
             </div>
 
             <div v-if="(editor !== false)"

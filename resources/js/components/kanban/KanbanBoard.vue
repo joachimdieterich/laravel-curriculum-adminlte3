@@ -108,7 +108,6 @@
                                         :item="item"
                                         :width="itemWidth"
                                         :kanban_owner_id="kanban.owner_id"
-                                        style="min-height: 150px"
                                         v-on:item-destroyed="handleItemDestroyedWithoutWebsocket"
                                         v-on:item-updated="handleItemUpdatedWithoutWebsocket"
                                         v-on:item-edit=""

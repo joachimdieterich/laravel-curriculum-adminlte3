@@ -6,6 +6,7 @@ use App\Http\Controllers\LogController;
 use App\Interfaces\MediaInterface;
 use App\Medium;
 use App\MediumSubscription;
+use Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
@@ -21,7 +22,7 @@ class LocalMediaAdapter implements MediaInterface
      */
     public function index(Request $request)
     {
-        abort_unless(\Gate::allows('medium_access'), 403);
+        abort_unless(Gate::allows('medium_access'), 403);
 
         if (request()->wantsJson()) {
             return Medium::where('owner_id', auth()->user()->id)->orderBy('created_at', 'DESC')->paginate($request->input('per_page'));
@@ -32,10 +33,10 @@ class LocalMediaAdapter implements MediaInterface
 
     public function list()
     {
-        abort_unless(\Gate::allows('medium_access'), 403);
+        abort_unless(Gate::allows('medium_access'), 403);
         $media = (auth()->user()->role()->id == 1) ? Medium::all() : auth()->user()->media()->get();
 
-        $delete_gate = \Gate::allows('medium_delete');
+        $delete_gate = Gate::allows('medium_delete');
 
         return DataTables::of($media)
             ->addColumn('action', function ($media) use ($delete_gate) {
@@ -194,7 +195,7 @@ class LocalMediaAdapter implements MediaInterface
 
     public function update(Request $request, Medium $medium)
     {
-        abort_unless(\Gate::allows('medium_edit'), 403);
+        abort_unless(Gate::allows('medium_edit'), 403);
 
         if ($medium->owner_id === auth()->user()->id) {
             $medium->update($this->validateRequest());
@@ -207,7 +208,7 @@ class LocalMediaAdapter implements MediaInterface
 
     public function destroy(Medium $medium, mixed $subscribable_type, mixed $subscribable_id)
     {
-        abort_unless(\Gate::allows('medium_delete'), 403);
+        abort_unless(Gate::allows('medium_delete'), 403);
         /**
          * check if medium is subscribed only by deleting reference
          * - if yes -> delete medium_subscription and medium
@@ -268,21 +269,18 @@ class LocalMediaAdapter implements MediaInterface
                 }
                 break;
             case "App\Plan":
-                if ($subscription->subscribable->isAccessible()) {
-                    return true;
-                }
-                break;
             case "App\PlanEntry":
-                if ($subscription->subscribable->isAccessible()) {
-                    return true;
-                }
-                break;
+            case "App\Training":
             case "App\MapMarker":
                 if ($subscription->subscribable->isAccessible()) {
                     return true;
                 }
                 break;
-
+            case "App\Exercise":
+                if ($subscription->subscribable->training->subscriptions[0]->subscribable->plan->isAccessible()) {
+                    return true;
+                }
+                break;
 
             default: return false;
                 break;

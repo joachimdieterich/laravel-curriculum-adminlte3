@@ -302,7 +302,7 @@ export default {
     & .tooltip-wrapper {
         position: absolute;
         bottom: 40px;
-        left: 50%;
+        right: 50%;
         width: max-content;
         z-index: 1;
 
@@ -310,7 +310,7 @@ export default {
         & .tooltip-text {
             visibility: hidden;
             position: relative;
-            margin-left: -50%;
+            right: -50%;
             background-color: #555;
             color: #fff;
             border-radius: 6px;

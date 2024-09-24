@@ -204,6 +204,7 @@ return [
     'user_management' => 'Users',
     'users' => 'Users',
     'select_users' => 'Select users',
+    'no_user_selected' => 'No user selected',
     'user' => [
         'title' => 'Users',
         'title_singular' => 'User',
@@ -853,28 +854,29 @@ return [
         'create' => 'Create entry',
         'search' => 'Search entries',
         'edit' => 'Edit entry',
-
+        'delete' => 'Delete Entry',
+        'delete_helper' => 'Should this entry and all its corresponding data be deleted?',
     ],
     'training' => [
         'title' => 'Trainings',
         'title_singular' => 'Training',
-        'create' => 'Training erstellen',
-        'search' => 'Training suchen',
-        'edit' => 'Training bearbeiten',
+        'create' => 'Create training',
+        'search' => 'Search training',
+        'edit' => 'Edit training',
     ],
     'exercise' => [
-        'title' => 'exercises',
-        'title_singular' => 'exercise',
-        'create' => 'create exercise',
-        'search' => 'search exercise',
-        'edit' => 'edit exerciese',
+        'title' => 'Exercises',
+        'title_singular' => 'Exercise',
+        'create' => 'Create exercise',
+        'search' => 'Search exercise',
+        'edit' => 'Edit exerciese',
         'fields' => [
-            'recommended_iterations' => 'Wie oft soll die Übung wiederholt werden?'
+            'recommended_iterations' => 'How often should this exercise be repeated? / How much time should be exercised?'
         ]
     ],
     'exercisedone' => [
         'fields' => [
-            'iterations' => 'Iterations'
+            'iterations' => 'Iterations / Time'
         ]
     ],
     'contactdetail' => [

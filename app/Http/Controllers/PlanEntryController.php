@@ -123,7 +123,15 @@ class PlanEntryController extends Controller
      */
     public function destroy(PlanEntry $planEntry)
     {
-        abort_unless(\Gate::allows('plan_delete'), 403);
+        abort_unless((\Gate::allows('plan_delete') and $planEntry->isAccessible()), 403);
+
+        $planEntry->enablingObjectiveSubscriptions()->delete();
+        $planEntry->terminalObjectiveSubscriptions()->delete();
+        // trainings need to be deleted separately
+        foreach ($planEntry->trainings as $training) {
+            $training->exercises()->delete();
+            (new TrainingController())->destroy($training);
+        }
 
         $planEntry->delete();
 

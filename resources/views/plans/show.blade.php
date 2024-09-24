@@ -4,6 +4,11 @@
     {{ $plan->title }}
     @can('plan_create')
         @if (Auth::user()->id ==  $plan->owner_id)
+            <a class="btn btn-flat"
+                onclick="app.__vue__.$eventHub.$emit('edit_plan', {{ $plan->toJson() }})"
+            >
+                <i class="fa fa-pencil-alt text-secondary"></i>
+            </a>
             <button class="btn btn-flat"
                     onclick="app.__vue__.$modal.show('subscribe-modal',  {'modelId': {{ $plan->id }}, 'modelUrl': 'plan' });">
                 <i class="fa fa-share-alt text-secondary"></i>

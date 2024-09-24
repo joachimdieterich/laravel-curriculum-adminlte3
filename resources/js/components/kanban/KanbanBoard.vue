@@ -108,7 +108,6 @@
                                         :item="item"
                                         :width="itemWidth"
                                         :kanban_owner_id="kanban.owner_id"
-                                        style="min-height: 150px"
                                         v-on:item-destroyed="handleItemDestroyedWithoutWebsocket"
                                         v-on:item-updated="handleItemUpdatedWithoutWebsocket"
                                         v-on:item-edit=""
@@ -655,7 +654,7 @@ export default {
 .kanban_board_wrapper {
     position: absolute;
     height: 100%;
-    width: 100%;
+    width: 100% !important;
     padding: 2rem;
     overflow-y: clip;
     overflow-x: overlay;

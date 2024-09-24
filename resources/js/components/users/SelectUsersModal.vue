@@ -107,6 +107,11 @@ export default {
         beforeClose() {},
         opened() {},
         beforeOpen() {},
+    },
+    watch: {
+        multiple() {
+            this.selectedUsers = [];
+        },
     }
 }
 </script>

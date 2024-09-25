@@ -16,7 +16,7 @@ class PlanSubscriptionController extends Controller
      */
     public function index()
     {
-        abort_unless(\Gate::allows('plan_create'), 403);
+        abort_unless(\Gate::allows('plan_access'), 403);
         $input = $this->validateRequest();
         if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
             $model = $input['subscribable_type']::find($input['subscribable_id']);

@@ -133,7 +133,6 @@
                         plugins
                     ],
                     {
-                        height: 300,
                         'referenceable_type': this.form.referenceable_type,
                         'referenceable_id': this.form.referenceable_id,
                         'eventHubCallbackFunction': 'insertContent',

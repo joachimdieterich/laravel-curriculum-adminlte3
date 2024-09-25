@@ -380,7 +380,7 @@ export default {
             this.getFiles(); // move to beforeOpen from mounted to reduce unused requests
             this.selectedFiles = [];
             this.message = ''; // == no previous upload was made, if so message == OK
-            //console.log(event.params);
+            console.log(event.params);
             if (event.params.referenceable_type){
                 this.form.subscribable_type = event.params.referenceable_type;
             }

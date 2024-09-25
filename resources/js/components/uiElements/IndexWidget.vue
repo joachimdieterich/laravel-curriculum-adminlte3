@@ -27,7 +27,7 @@
             <div v-if="item.medium_id"
                  @click="clickEvent(item)"
                  class="nav-item-box-image-size"
-                 :style="{'background': 'url(/media/' + item.medium_id + '?model='+modelName+'&model_id=' + item.DT_RowId +') top center no-repeat', 'background-size': 'cover', }">
+                 :style="{'background': 'url(/media/' + item.medium_id + '?model='+modelName+'&model_id=' + item.DT_RowId +') top center no-repeat'}">
                 <div class="nav-item-box-image-size"
                      style="width: 100% !important;"
                      :style="{backgroundColor: item.color + ' !important',  'opacity': '0.25'}">

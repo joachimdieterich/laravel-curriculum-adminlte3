@@ -225,7 +225,8 @@
                 ></kanbans>
             </div>
            <div v-if="checkPermission('task_access')"
-                class="tab-pane fade "
+                class="tab-pane"
+                :class="checkLocalStorage('#group_'+group.id, '#group_tasks_'+group.id)"
                  id="task-tab"
                  role="tab"
                  aria-labelledby="content-nav-tab">
@@ -256,7 +257,8 @@
                     :subscribable_id="group.id"></videoconferences>
             </div>
             <div v-if="checkPermission('plan_access')"
-                 class="tab-pane fade "
+                 class="tab-pane"
+                 :class="checkLocalStorage('#group_'+group.id, '#group_plans_'+group.id)"
                  id="plan-tab"
                  role="tab"
                  aria-labelledby="content-nav-tab">

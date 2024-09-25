@@ -92,7 +92,7 @@ class PlanEntryController extends Controller
 
         $planEntry->update([
             'title' => $update_entry['title'] ?? $planEntry->title,
-            'description' => $update_entry['description'] ?? $planEntry->description,
+            'description' => $update_entry['description'],
             'plan_id' => $planEntry->plan_id,
 
             'css_icon' => $update_entry['css_icon'] ?? $planEntry->css_icon,

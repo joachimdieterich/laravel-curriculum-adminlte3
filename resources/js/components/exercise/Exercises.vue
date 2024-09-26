@@ -144,11 +144,14 @@ export default {
     },
     mounted() {
         this.loaderEvent();
+        const plugins = "autolink link" + (this.method === 'patch' ? ' example' : '');
         this.$initTinyMCE(
             [
-                "autolink link"
+                plugins
             ],
             {
+                'referenceable_type': 'App\\Exercise',
+                'referenceable_id': this.form.id,
                 'eventHubCallbackFunction': 'insertContent',
                 'eventHubCallbackFunctionParams': this.component_id,
             }
@@ -179,11 +182,14 @@ export default {
             this.editor = !this.editor;
 
             this.$nextTick(() => {
+                const plugins = "autolink link" + (this.method === 'patch' ? ' example' : '');
                 this.$initTinyMCE(
                     [
-                        "autolink link example"
+                        plugins
                     ],
                     {
+                        'referenceable_type': 'App\\Exercise',
+                        'referenceable_id': this.form.id,
                         'eventHubCallbackFunction': 'insertContent',
                         'eventHubCallbackFunctionParams': this.component_id,
                     }

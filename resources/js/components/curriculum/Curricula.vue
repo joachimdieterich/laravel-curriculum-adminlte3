@@ -81,7 +81,7 @@
                 >
                     <div v-if="curriculum.medium_id"
                          class="nav-item-box-image-size"
-                         :style="{'background': 'url(/media/' + curriculum.medium_id + '?model=Curriculum&model_id=' + curriculum.id +') top center no-repeat', 'background-size': 'cover', }">
+                         :style="{'background': 'url(/media/' + curriculum.medium_id + '?model=Curriculum&model_id=' + curriculum.id +') top center no-repeat' }">
                         <div class="nav-item-box-image-size"
                              style="width: 100% !important;"
                              :style="{backgroundColor: curriculum.color + ' !important',  'opacity': '0.5'}">

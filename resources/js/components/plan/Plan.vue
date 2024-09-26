@@ -27,7 +27,7 @@
                             <span class="tooltip-container">
                                 <span class="tooltip-wrapper">
                                     <span class="tooltip-text">
-                                        {{ mode_toggle ? 'Kompetenz anklicken um mehrere Personen einzuschätzen' : 'Einschätzungen für einzelne Person abgeben' }}
+                                        {{ mode_toggle ? 'Kompetenz anklicken um mehrere Personen einzuschätzen' : 'Person auswählen und direkt einschätzen' }}
                                     </span>
                                 </span>
                                 <a class="link-muted" style="padding-left: 6px; margin-right: -4px">
@@ -302,7 +302,7 @@ export default {
     & .tooltip-wrapper {
         position: absolute;
         bottom: 40px;
-        left: 50%;
+        right: 50%;
         width: max-content;
         z-index: 1;
 
@@ -310,7 +310,7 @@ export default {
         & .tooltip-text {
             visibility: hidden;
             position: relative;
-            margin-left: -50%;
+            right: -50%;
             background-color: #555;
             color: #fff;
             border-radius: 6px;
@@ -328,7 +328,7 @@ export default {
             }
         }
     }
-    &:hover .tooltip-wrapper .tooltip-text { visibility: visible; }
+    &:hover .tooltip-wrapper:not(:hover) .tooltip-text { visibility: visible; }
 }
 #corner-button {
     color: white;

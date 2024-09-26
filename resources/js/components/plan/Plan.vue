@@ -60,8 +60,8 @@
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="row">
-                        <span class="col-12">
-                            {{ htmlToText(plan.description) }}
+                        <span class="col-12"
+                        v-dompurify-html="plan.description">
                         </span>
                     </div>
                 </div>
@@ -315,7 +315,7 @@ export default {
             color: #fff;
             border-radius: 6px;
             padding: 5px;
-            
+
             &::after {
                 content: "";
                 position: absolute;

@@ -159,7 +159,7 @@ if (! function_exists('relativeToAbsolutePaths')) {
             function ($match) {
                 $media = App\Medium::find($match[2]);
 
-                if (! file_exists($media->absolutePath())) {
+                if (! file_exists($media?->absolutePath())) {
                     return ''; //"<!--File does not exist-->"; //todo: remove from db?
                 }
                 if ($media !== null) {

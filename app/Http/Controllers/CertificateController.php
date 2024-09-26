@@ -237,7 +237,12 @@ class CertificateController extends Controller
     {
         $user_ids = explode(',', request()->user_ids);
         $generated_files = [];
-        if(str_contains($certificate->body, '[accomplished_objectives]') || str_contains($certificate->body, '[accomplished_objectives_without_terminal_objectives]') )
+        if
+        (
+            str_contains($certificate->body, '[accomplished_objectives]')
+            || str_contains($certificate->body, '[accomplished_objectives_without_terminal_objectives]')
+            || str_contains($certificate->body, '[accomplished_objectives_with_indicator]')
+        )
         {
             $curriculum = Curriculum::with([
                 'terminalObjectives',
@@ -262,6 +267,10 @@ class CertificateController extends Controller
             if(str_contains($certificate->body, '[accomplished_objectives_without_terminal_objectives]'))
             {
                 $html = $this->generateAccomplishedObjectiveList($html, $id, $curriculum, '[accomplished_objectives_without_terminal_objectives]', false); //generate list if "[accomplished_objectives]" is in certificate
+            }
+            if(str_contains($certificate->body, '[accomplished_objectives_with_indicator]'))
+            {
+                $html = $this->generateAccomplishedObjectiveListWithIndicator($html, $id, $curriculum); //generate list if "[accomplished_objectives]" is in certificate
             }
 
 
@@ -289,10 +298,10 @@ class CertificateController extends Controller
                                 ->where('associable_type', $associable_type)
                                 ->where('associable_id', $associable_id)
                                 ->get();
-                    //dump($progress->avg('value').'_'.$progress->avg('value').'_'.$match[3]);
+
                     return ($progress->avg('value') != null and $progress->avg('value') >= (int) $match[3])
                             ? $match[4]
-                            : '<div style="opacity: .5;">'.$match[4].'</div>';
+                            : '<div style="opacity: 0.5;">'.$match[4].'</div>';
                 },
 
                 $html
@@ -357,6 +366,53 @@ class CertificateController extends Controller
         return str_replace($replace, $accomplished_list,$html);
     }
 
+    protected function generateAccomplishedObjectiveListWithIndicator($html, $user_id, $curriculum, $replace = "[accomplished_objectives_with_indicator]", $with_terminal_objectives = true)
+    {
+        abort_unless(auth()->user()->mayAccessUser(User::find($user_id)), 403);
+        $td_style = 'style="border-bottom: 1px solid silver;border-right: 1px solid silver;"';
+
+        $accomplished_list = '<table repeat_header="1" style="width: 100%;padding-bottom: 10px;" border="0"><tbody>'
+            .'<thead><tr><td style="border-bottom: 1px solid silver;" colspan="3"><strong>'.$curriculum->terminalObjectives[0]->type->title.'</strong></td>'
+            .'</tr></thead>';
+
+        $current_ter_value = '';
+        foreach ($curriculum->terminalObjectives as $ter_value) {
+
+            foreach ($ter_value->enablingObjectives as $ena) {
+                $status = optional(\App\Achievement::where(
+                    [
+                        'referenceable_type' => 'App\EnablingObjective',
+                        'referenceable_id'   => $ena->id,
+                        'user_id'            => $user_id,
+                    ])->get()->first())->status;
+
+                switch ($status) {
+                    case '01':
+                    case '11':
+                    case '21':
+                    case '31':
+                        if($current_ter_value != $ter_value->title)
+                        {
+                            $accomplished_list .= '<tr><td '.$td_style.' colspan="3"><strong>'.strip_tags($current_ter_value).'</strong></td></tr>';
+                            $current_ter_value = $ter_value->title;
+                        }
+                        $accomplished_list .= '<tr><td style="width: 75%;border-bottom: 1px solid silver;border-right: 1px solid silver;">'.strip_tags($ena->title).'</td>';
+                        $accomplished_list .= '<td style="text-align: center; border-bottom: 1px solid silver;border-right: 1px solid silver;">'.strip_tags($ena->level?->title).'</td>';
+
+                        $accomplished_list .= '<td style="text-align: center; border-bottom: 1px solid silver;border-right: 1px solid silver;">';
+                        $accomplished_list .= $this->achievementIndicator($status);//.'<'.$status;
+                        $accomplished_list .= '</td></tr>';
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+        }
+        $html .= '</tbody></table>';
+        return str_replace($replace, $accomplished_list, $html);
+    }
+
     /**
      * Generate certificate for group
      *
@@ -389,7 +445,7 @@ class CertificateController extends Controller
             foreach ($ter_value->enablingObjectives as $ena) {
                 $html .= '<tr><td style="width: 25%;border-bottom: 1px solid silver;border-right: 1px solid silver;">'.strip_tags($ena->title).'</td>';
                 foreach ($user_ids as $user_id) {
-                    $html .= '<td style="text-align: center; border-bottom: 1px solid silver;border-right: 1px solid silver;">';
+                    $html .= '<td style="text-align: center; border-bottom: 1px solid silver;border-right: 1px solid silver;"> ';
                     $html .= $this->achievementIndicator(optional(\App\Achievement::where(
                             [
                                 'referenceable_type' => 'App\EnablingObjective',

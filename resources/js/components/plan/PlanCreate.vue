@@ -70,10 +70,10 @@
 
                             <div class="form-group">
                                 <textarea
-                                    id="description"
-                                    name="description"
+                                    :id="'description'+component_id"
+                                    :name="'description'+component_id"
                                     :placeholder="trans('global.description')"
-                                    class="form-control description "
+                                    class="form-control description my-editor"
                                     v-model.trim="form.description"
                                 ></textarea>
                             </div>
@@ -220,7 +220,7 @@ export default {
             }
 
             let method = this.method.toLowerCase();
-
+            this.form.description = tinyMCE.get('description'+this.component_id).getContent();
             if (method === 'patch') {
                 axios.patch(this.requestUrl + '/' + this.form.id, this.form)
                     .then(res => { // Tell the parent component we've updated a plan
@@ -270,12 +270,29 @@ export default {
             this.form.type_id = 4;
             // this.form.type_id = data.type_id;
             this.form.title = data.title;
-            this.form.description = this.htmlToText(data.description);
+            this.form.description = data.description;
+            //this.form.description = this.htmlToText(data.description);
             this.form.begin = data.begin;
             this.form.end = data.end;
             this.form.duration = data.duration;
             this.form.color = data.color;
             this.form.allow_copy = data.allow_copy;
+
+            this.$nextTick(() => {
+                const plugins = "autolink link" + (this.method === 'patch' ? ' example' : '');
+                this.$initTinyMCE(
+                    [
+                        plugins
+                    ],
+                    {
+                        'referenceable_type': 'App\\Plan',
+                        'referenceable_id': this.form.id,
+                        'eventHubCallbackFunction': 'insertContent',
+                        'eventHubCallbackFunctionParams': this.component_id,
+                    }
+                );
+            });
+
         },
     },
     mounted() {

@@ -330,24 +330,10 @@ class EdusharingMediaAdapter implements MediaInterface
             case "App\KanbanItem":
                 return $subscription->subscribable->kanban->isAccessible();
                 break;
-            case "App\Plan":
-            case "App\PlanEntry":
-            case "App\Training":
-            case "App\Curriculum":
-            case "App\Kanban":
-            case "App\Logbook":
-            case "App\Map":
-            case "App\MapMarker":
-            case "App\EnablingObjective":
-            case "App\TerminalObjective":
-                return $subscription->subscribable->isAccessible();
-                break;
             case "App\Exercise":
-                if ($subscription->subscribable->training->subscriptions[0]->subscribable->plan->isAccessible()) {
-                    return true;
-                }
+                return $subscription->subscribable->training->subscriptions[0]->subscribable->plan->isAccessible();
                 break;
-            default: return false;
+            default: return $subscription->subscribable->isAccessible();
                 break;
         }
     }

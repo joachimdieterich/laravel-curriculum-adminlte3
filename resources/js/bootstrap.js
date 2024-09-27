@@ -15,6 +15,9 @@ try {
 
 } catch (e) {}
 
+import select2 from 'select2/dist/js/select2.full';
+select2();
+
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
  * to our Laravel back-end. This library automatically handles sending the

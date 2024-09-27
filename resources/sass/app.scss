@@ -1,21 +1,21 @@
 // Font Awesome
-@import '~@fortawesome/fontawesome-free/scss/fontawesome';
-@import '~@fortawesome/fontawesome-free/scss/regular';
-@import '~@fortawesome/fontawesome-free/scss/solid';
-@import '~@fortawesome/fontawesome-free/scss/brands';
+@import '@fortawesome/fontawesome-free/scss/fontawesome.scss';
+@import '@fortawesome/fontawesome-free/scss/regular.scss';
+@import '@fortawesome/fontawesome-free/scss/solid.scss';
+@import '@fortawesome/fontawesome-free/scss/brands.scss';
 
 // DataTables
-@import '~datatables.net-bs5/css/dataTables.bootstrap5.css';
+@import 'datatables.net-bs5/css/dataTables.bootstrap5.css';
 //@import '~datatables.net-buttons-bs5/css/buttons.bootstrap5.css';
 //@import '~datatables.net-select-bs5/css/select.bootstrap5.css';
 
 // Bootstrap
-@import '~bootstrap/scss/bootstrap';
+@import 'bootstrap/scss/bootstrap';
 
-@import '~@activix/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css';
+@import '@activix/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css';
 
 // Select2
-@import '~select2/dist/css/select2.min.css';
+@import 'select2/dist/css/select2.min.css';
 
 // to update adminLTE copy "~admin-lte/build/scss" to "adminLTE";
 @import "rlp/AdminLTE-raw";
@@ -26,7 +26,7 @@
 // Text
 @import 'text.scss';
 // Fonts - Open Sans
-@import "~open-sans-all/scss/open-sans";
+@import "open-sans-all/scss/open-sans.scss";
 
 
 body {

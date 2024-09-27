@@ -283,7 +283,7 @@ app.component('task', defineAsyncComponent(() => import('./components/task/Task.
 app.component('tasks', defineAsyncComponent(() => import('./components/task/Tasks.vue')));
 
 app.component('terminal-objective-modal', defineAsyncComponent(() => import('./components/objectives/TerminalObjectiveModal.vue')));
-app.component('training', defineAsyncComponent(() => import('./components/training/Training')));
+app.component('training', defineAsyncComponent(() => import('./components/training/Training.vue')));
 
 
 app.component('permissions', defineAsyncComponent(() => import('./components/permission/Permissions.vue')));

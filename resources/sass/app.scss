@@ -1,4 +1,5 @@
 // Font Awesome
+$fa-font-path: '@fortawesome/fontawesome-free/webfonts';
 @import '@fortawesome/fontawesome-free/scss/fontawesome.scss';
 @import '@fortawesome/fontawesome-free/scss/regular.scss';
 @import '@fortawesome/fontawesome-free/scss/solid.scss';
@@ -26,6 +27,7 @@
 // Text
 @import 'text.scss';
 // Fonts - Open Sans
+$OpenSansFontPath: 'open-sans-all/fonts';
 @import "open-sans-all/scss/open-sans.scss";
 
 

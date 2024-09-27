@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="this.globalStore.modals['subscribe-objective-modal']?.show"
+        <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
         >
             <div class="modal-container">
@@ -21,7 +21,7 @@
                         </button>
                         <button type="button"
                                 class="btn btn-tool"
-                                @click="this.globalStore?.closeModal('subscribe-objective-modal')">
+                                @click="globalStore?.closeModal($options.name)">
                             <i class="fa fa-times"></i>
                         </button>
                     </div>
@@ -83,7 +83,7 @@
                              id="grade-cancel"
                              type="button"
                              class="btn btn-default"
-                             @click="this.globalStore?.closeModal('subscribe-objective-modall')">
+                             @click="globalStore?.closeModal($options.name)">
                              {{ trans('global.cancel') }}
                          </button>
                          <button
@@ -104,6 +104,7 @@ import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {
+    name: 'subscribe-objective-modal',
     components:{
         Select2,
     },
@@ -187,17 +188,18 @@ export default {
         },
     },
     mounted() {
-        this.globalStore.registerModal('subscribe-objective-modal');
+        this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            //console.log(mutation);
-            const params = state.modals['subscribe-objective-modal'].params;
-            this.form.reset();
-            if (typeof (params) !== 'undefined'){
-                this.form.populate(params);
-                if (this.form.id != ''){
-                    this.method = 'patch';
-                } else {
-                    this.method = 'post';
+            if (mutation.events.key === this.$options.name){
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined'){
+                    this.form.populate(params);
+                    if (this.form.id != ''){
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
+                    }
                 }
             }
         });

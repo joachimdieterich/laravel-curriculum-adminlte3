@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="this.globalStore.modals['task-modal']?.show"
+        <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
         >
         <div class="modal-container">
@@ -14,9 +14,10 @@
                     </span>
                 </h3>
                 <div class="card-tools">
-                    <button type="button"
-                            class="btn btn-tool"
-                            @click="this.globalStore?.closeModal('task-modal')">
+                    <button
+                        type="button"
+                        class="btn btn-tool"
+                        @click="globalStore?.closeModal($options.name)">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
@@ -98,7 +99,7 @@
                          id="task-cancel"
                          type="button"
                          class="btn btn-default"
-                         @click="this.globalStore?.closeModal('task-modal')">
+                         @click="globalStore?.closeModal($options.name)">
                          {{ trans('global.cancel') }}
                      </button>
                      <button
@@ -121,14 +122,12 @@
     import {useGlobalStore} from "../../store/global";
 
     export default {
+        name: 'task-modal',
         components:{
             Editor,
             VueDatePicker
         },
         props: {
-            show: {
-                type: Boolean
-            },
             params: {
                 type: Object
             },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
@@ -162,18 +161,6 @@
                     }
                 ),
             }
-        },
-        watch: {
-            params: function(newVal, oldVal) {
-                this.form.reset();
-                this.form.populate(newVal);
-                this.form.description = this.decodeHTMLEntities(newVal.description);
-                if (this.form.id != ''){
-                    this.method = 'patch';
-                } else {
-                    this.method = 'post';
-                }
-            },
         },
         methods: {
              submit(method) {
@@ -209,17 +196,19 @@
             }
         },
         mounted() {
-            this.globalStore.registerModal('task-modal');
+            this.globalStore.registerModal(this.$options.name);
             this.globalStore.$subscribe((mutation, state) => {
-                //console.log(mutation);
-                const params = state.modals['task-modal'].params;
-                this.form.reset();
-                if (typeof (params) !== 'undefined'){
-                    this.form.populate(params);
-                    if (this.form.id != ''){
-                        this.method = 'patch';
-                    } else {
-                        this.method = 'post';
+                if (mutation.events.key === this.$options.name){
+                    const params = state.modals[this.$options.name].params;
+                    this.form.reset();
+                    if (typeof (params) !== 'undefined'){
+                        this.form.populate(params);
+                        this.form.description = this.decodeHTMLEntities(params.description);
+                        if (this.form.id != ''){
+                            this.method = 'patch';
+                        } else {
+                            this.method = 'post';
+                        }
                     }
                 }
             });

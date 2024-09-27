@@ -27,7 +27,6 @@
                         <i class="fas fa-pencil-alt"></i>
                     </a>
                 </div>
-
             </div>
 
             <div class="card-body">
@@ -124,7 +123,6 @@ export default {
         organization: {
             default:null
         }
-
     },
     setup () {
         const globalStore = useGlobalStore();

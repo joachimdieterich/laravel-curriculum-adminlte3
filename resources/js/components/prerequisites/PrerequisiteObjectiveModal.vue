@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="this.globalStore.modals['prerequisite-objective-modal']?.show"
+        <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
         >
         <div class="modal-container">
@@ -9,19 +9,23 @@
                     {{ trans('global.prerequisite.create') }}
                 </h3>
                 <div class="card-tools">
-                    <button v-permission="'objective_delete'"
-                            v-if="method !== 'post'"
-                            type="button"
-                            class="btn btn-tool"
-                            @click="del()">
+                    <button
+                        v-permission="'objective_delete'"
+                        v-if="method !== 'post'"
+                        type="button"
+                        class="btn btn-tool"
+                        @click="del()">
                         <i class="fa fa-trash text-danger"></i>
                     </button>
-                    <button type="button" class="btn btn-tool draggable" >
+                    <button
+                        type="button"
+                        class="btn btn-tool draggable" >
                         <i class="fa fa-arrows-alt"></i>
                     </button>
-                    <button type="button"
-                            class="btn btn-tool"
-                            @click="this.globalStore?.closeModal('prerequisite-objective-modal')">
+                    <button
+                        type="button"
+                        class="btn btn-tool"
+                        @click="globalStore?.closeModal($options.name)">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
@@ -77,23 +81,23 @@
                 </div>
             </div>
 
-                <div class="card-footer">
-                     <span class="pull-right">
-                         <button
-                             id="grade-cancel"
-                             type="button"
-                             class="btn btn-default"
-                             @click="this.globalStore?.closeModal('prerequisite-objective-modal')">
-                             {{ trans('global.cancel') }}
-                         </button>
-                         <button
-                             id="grade-save"
-                             class="btn btn-primary"
-                             @click="submit(method)" >
-                             {{ trans('global.save') }}
-                         </button>
-                    </span>
-                </div>
+            <div class="card-footer">
+                 <span class="pull-right">
+                     <button
+                         id="grade-cancel"
+                         type="button"
+                         class="btn btn-default"
+                         @click="this.globalStore?.closeModal('prerequisite-objective-modal')">
+                         {{ trans('global.cancel') }}
+                     </button>
+                     <button
+                         id="grade-save"
+                         class="btn btn-primary"
+                         @click="submit(method)" >
+                         {{ trans('global.save') }}
+                     </button>
+                </span>
+            </div>
         </div>
     </div>
     </Transition>
@@ -104,6 +108,7 @@
     import {useGlobalStore} from "../../store/global";
 
     export default {
+        name: 'prerequisite-objective-modal',
         components:{
             Select2,
         },
@@ -133,20 +138,6 @@
                 }),
             }
         },
-        watch: {
-            params: function(newVal, oldVal) {
-                this.form.reset();
-                this.form.populate(newVal);
-                this.url = newVal.url;
-
-                if (this.form.id != null){
-                    this.method = 'patch';
-                } else {
-                    this.method = 'post';
-                }
-            },
-
-        },
         methods: {
              submit(method) {
                  if (method == 'patch') {
@@ -175,7 +166,21 @@
             }
         },
         mounted() {
-            this.globalStore.registerModal('prerequisite-objective-modal');
+            this.globalStore.registerModal(this.$options.name);
+            this.globalStore.$subscribe((mutation, state) => {
+                if (mutation.events.key === this.$options.name){
+                    const params = state.modals[this.$options.name].params;
+                    this.form.reset();
+                    if (typeof (params) !== 'undefined'){
+                        this.form.populate(params);
+                        if (this.form.id !== ''){
+                            this.method = 'patch';
+                        } else {
+                            this.method = 'post';
+                        }
+                    }
+                }
+            });
         },
     }
 </script>

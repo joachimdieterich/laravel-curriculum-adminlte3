@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="show"
+        <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
         >
         <div class="modal-container">
@@ -16,7 +16,7 @@
                 <div class="card-tools">
                     <button type="button"
                             class="btn btn-tool"
-                            @click="$emit('close')">
+                            @click="globalStore?.closeModal($options.name)">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
@@ -89,7 +89,7 @@
                              id="grade-cancel"
                              type="button"
                              class="btn btn-default"
-                             @click="$emit('close')">
+                             @click="globalStore?.closeModal($options.name)">
                              {{ trans('global.cancel') }}
                          </button>
                          <button
@@ -106,20 +106,20 @@
 </template>
 <script>
     import Form from 'form-backend-validation';
+    import {useGlobalStore} from "../../store/global";
     import Select2 from "../forms/Select2.vue";
 
     export default {
+        name: 'grade-modal',
         components:{
             Select2,
         },
-        props: {
-            show: {
-                type: Boolean
-            },
-            params: {
-                type: Object
-            },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
-
+        props: {},
+        setup () {
+            const globalStore = useGlobalStore();
+            return {
+                globalStore,
+            }
         },
         data() {
             return {
@@ -146,19 +146,6 @@
                 ),
                 search: '',
             }
-        },
-        watch: {
-            params: function(newVal, oldVal) {
-                this.form.reset();
-                this.form.populate(newVal);
-                this.form.date = [this.form.begin, this.form.end];
-                if (this.form.id != ''){
-                    this.method = 'patch';
-                } else {
-                    this.method = 'post';
-                }
-            },
-
         },
         methods: {
              submit(method) {
@@ -191,6 +178,23 @@
             }
         },
         mounted() {
+            this.globalStore.registerModal(this.$options.name);
+            this.globalStore.$subscribe((mutation, state) => {
+                if (mutation.events.key === this.$options.name){
+                    const params = state.modals[this.$options.name].params;
+                    this.form.reset();
+                    if (typeof (params) !== 'undefined'){
+                        this.form.populate(params);
+                        this.form.date = [this.form.begin, this.form.end];
+                        if (this.form.id != ''){
+                            this.method = 'patch';
+                        } else {
+                            this.method = 'post';
+                        }
+                    }
+                }
+            });
+
             const startDate = new Date();
             const endDate = new Date(new Date().setDate(startDate.getDate() + 7));
             this.form.date = [startDate, endDate];

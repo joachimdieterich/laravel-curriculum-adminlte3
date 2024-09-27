@@ -62,18 +62,11 @@
         </div>
 
         <Teleport to="body">
-            <GradeModal
-                :show="this.showGradeModal"
-                @close="this.showGradeModal = false"
-                :params="currentGrade"
-            ></GradeModal>
+            <GradeModal></GradeModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.grade.delete')"
                 :description="trans('global.grade.delete_helper')"
-                css= 'danger'
-                :ok_label="trans('trans.global.ok')"
-                :cancel_label="trans('trans.global.cancel')"
                 @close="() => {
                     this.showConfirm = false;
                 }"
@@ -92,20 +85,24 @@ import GradeModal from "../grade/GradeModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
+import {useGlobalStore} from "../../store/global";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 DataTable.use(DataTablesCore);
 
 
 export default {
-    props: {
-
+    props: {},
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
             component_id: this.$.uid,
             grades: null,
             search: '',
-            showGradeModal: false,
             showConfirm: false,
             url: '/grades/list',
             errors: {},
@@ -128,23 +125,21 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('grade-added', (grade) => {
-            this.showGradeModal = false;
+            this.globalStore?.closeModal('grade-modal');
             this.grades.push(grade);
         });
 
         this.$eventHub.on('grade-updated', (grade) => {
-            this.showGradeModal = false;
+            this.globalStore?.closeModal('grade-modal');
             this.update(grade);
         });
         this.$eventHub.on('createGrade', () => {
-            this.currentGrade = {};
-            this.showGradeModal = true;
+            this.globalStore?.showModal('grade-modal', {});
         });
     },
     methods: {
         editGrade(grade){
-            this.currentGrade = grade;
-            this.showGradeModal = true;
+            this.globalStore?.showModal('grade-modal', grade);
         },
         loaderEvent(){
             const dt = $('#grade-datatable').DataTable();

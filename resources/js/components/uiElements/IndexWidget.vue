@@ -2,6 +2,7 @@
     <div  :id="item.DT_RowId"
          v-bind:value="item.DT_RowId"
          class="box box-objective nav-item-box-image pointer my-1 "
+          :class="active === false ? 'not-allowed' : ''"
          style="min-width: 200px !important;"
          :style="'border-bottom: 5px solid ' + item.color"
     >
@@ -50,8 +51,6 @@
                 </slot>
             </span>
 
-
-
             <slot name="owner"></slot>
 
             <div @click="clickEvent(item)"
@@ -79,6 +78,8 @@
 <script>
 import { storeToRefs } from 'pinia';
 import { useDatatableStore } from "../../store/datatables";
+import { useToast } from "vue-toastification";
+
 export default {
     props: {
         model: {},
@@ -93,6 +94,7 @@ export default {
             default: 'description'
         },
         urlOnly: false,
+        urlTarget: '_self',
         create: false,
         createLabel: String,
         storeTitle: String, //data store
@@ -100,13 +102,23 @@ export default {
             type: String,
             default: '#27AE60'
         },
+        active: {
+            type: Boolean,
+            default: true
+        },
+        info_deactivated:  {
+            type: String,
+            default: 'Zugriff nicht möglich'
+        },
     },
     setup () { //use database store
         const store = useDatatableStore();
         const { getDatatable } = storeToRefs(store);
         const { isSelected } = storeToRefs(store);
+        const toast = useToast();
         return {
-            store
+            store,
+            toast
         }
     },
     data() {
@@ -134,16 +146,48 @@ export default {
             this.$eventHub.emit('create'+this.modelName, true);
         },
         clickEvent(item){
-            if (this.store.getDatatable(this.storeTitle)?.select){ // selectMode
-                this.store.addSelectItems(this.storeTitle, item);
-            } else {
-                if (this.urlOnly){
-                    window.location = this.url
+            if (this.active){
+                if (this.store.getDatatable(this.storeTitle)?.select){ // selectMode
+                    this.store.addSelectItems(this.storeTitle, item);
                 } else {
-                    window.location = this.url + '/' + item.id; //item.DT_RowId ? -> will not work for new entries
+                    if (this.urlOnly){
+                        window.open( this.url + '/' + item.id, this.urlTarget);
+                    } else {
+                        window.location = this.url + '/' + item.id; //item.DT_RowId ? -> will not work for new entries
+                    }
                 }
+            } else {
+                this.infoNotification(this.info_deactivated);
             }
-        }
+        },
+        infoNotification(message) {
+            this.toast.info(message, {
+                position: "top-right",
+                timeout: 3000,
+                closeOnClick: true,
+                pauseOnFocusLoss: true,
+                pauseOnHover: true,
+                draggable: true,
+                draggablePercent: 0.6,
+                showCloseButtonOnHover: false,
+                hideProgressBar: true,
+                closeButton: "button",
+                icon: true,
+                rtl: false
+            });
+        },
     }
 }
 </script>
+<style>
+
+.not-allowed {
+    cursor: not-allowed;
+    filter: opacity(50%);
+    width:100%;
+    height:100%;
+    position:absolute;
+    top:0;
+    left:0;
+}
+</style>

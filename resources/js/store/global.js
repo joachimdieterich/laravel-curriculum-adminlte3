@@ -1,21 +1,42 @@
 import {defineStore} from "pinia";
 
 export const useGlobalStore = defineStore('global', {
-            'generate-certificate-modal': {},
     state: () => ({
         global: [],
         modals: {
-            'absence-modal' : {},
+           /* 'absence-modal' : {},
             'certificate-modal' : {},
             'config-modal': {},
+            'confirm-modal': {},
             'contact-modal' : {},
             'content-modal' : {},
             'content-subscription-modal' : {}, //todo: check if used
             'course-modal' : {},
+            'curriculum-modal' : {},
+            'exam-modal' : {},
+            'generate-certificate-modal' : {},
+            'grade-modal' : {},
+            'group-modal' : {},
+            'kanban-modal' : {},
             'lms-modal' : {},
+            'logbook-modal' : {},
+            'logbook-entry-modal' : {},
             'medium-preview-modal' : {},
+            'period-modal' : {},
+            'permission-modal' : {},
+            'plan-modal' : {},
+            'prerequisite-objective-modal' : {},
+            'reference-objective-modal' : {},
+            'role-modal' : {},
+            'set-achievements-modal':{}
+            'subscribe-logbook-modal' : {},
+            'subscribe-modal' : {},
             'subscribe-objective-modal' : {},
-            'task-modal' : {}
+            'subscribe-user-modal' : {},
+            'task-modal' : {},
+            'user-modal' : {},
+            'videoconference-modal' : {},
+            */
         }
     }),
     actions: {
@@ -31,9 +52,11 @@ export const useGlobalStore = defineStore('global', {
             //console.log(this.modals);
         },
         showModal(title, params = null){
-            this.modals[title].show = true;
-            this.modals[title].params = params;
-            console.log(this.modals[title]);
+            this.modals[title] = {
+                show: true,
+                params: params
+            };
+            //console.log(this.modals[title]);
         },
         closeModal(title){
             //console.log(title);

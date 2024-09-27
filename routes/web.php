@@ -172,7 +172,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     /* logbook entries */
     Route::resource('logbookEntries', 'LogbookEntryController');
-    Route::post('logbookEntries/setSubject', 'LogbookEntryController@setSubject');
+    Route::patch('logbookEntries/{logbookEntry}/setSubject', 'LogbookEntryController@setSubject');
 
     Route::get('maps/list', 'MapController@list');
     Route::resource('mapSubscriptions', 'MapSubscriptionController');

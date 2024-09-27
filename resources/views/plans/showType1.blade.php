@@ -84,7 +84,7 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
                 ])
                 @can('plan_edit')
                 <div class="text-muted"
-                     onclick="app.__vue__.$modal.show('task-modal',  { 'subscribable_type': 'App\\Plan', 'subscribable_id':  {{ $plan->id }} , 'start_date': '{{ $day }}',  'due_date': '{{ $plan->end }}'});">
+                     {{--onclick="app.__vue__.$modal.show('task-modal',  { 'subscribable_type': 'App\\Plan', 'subscribable_id':  {{ $plan->id }} , 'start_date': '{{ $day }}',  'due_date': '{{ $plan->end }}'});"--}}>
                     <i class="fa fa-plus p-2"></i>{{ trans('global.task.create') }}
                 </div>
                 @endcan

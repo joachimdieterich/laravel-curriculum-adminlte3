@@ -62,18 +62,11 @@
         </div>
 
         <Teleport to="body">
-            <PermissionModal
-                :show="this.showPermissionModal"
-                @close="this.showPermissionModal = false"
-                :params="currentPermission"
-            ></PermissionModal>
+            <PermissionModal></PermissionModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.permission.delete')"
                 :description="trans('global.permission.delete_helper')"
-                css= 'danger'
-                :ok_label="trans('trans.global.ok')"
-                :cancel_label="trans('trans.global.cancel')"
                 @close="() => {
                     this.showConfirm = false;
                 }"
@@ -86,25 +79,28 @@
     </div>
 </template>
 
-
 <script>
 import PermissionModal from "../permission/PermissionModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    props: {
-
+    props: {},
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
             component_id: this.$.uid,
             permissions: null,
             search: '',
-            showPermissionModal: false,
             showConfirm: false,
             url: '/permissions/list',
             errors: {},
@@ -124,23 +120,21 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('permission-added', (permission) => {
-            this.showPermissionModal = false;
+            this.globalStore?.closeModal('permission-modal');
             this.permissions.push(permission);
         });
 
         this.$eventHub.on('permission-updated', (permission) => {
-            this.showPermissionModal = false;
+            this.globalStore?.closeModal('permission-modal');
             this.update(permission);
         });
         this.$eventHub.on('createPermission', () => {
-            this.currentPermission = {};
-            this.showPermissionModal = true;
+            this.globalStore?.showModal('permission-modal', {});
         });
     },
     methods: {
         editPermission(permission){
-            this.currentPermission = permission;
-            this.showPermissionModal = true;
+            this.globalStore?.showModal('permission-modal', permission);
         },
         loaderEvent(){
             const dt = $('#permission-datatable').DataTable();

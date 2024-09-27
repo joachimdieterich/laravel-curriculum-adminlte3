@@ -36,7 +36,7 @@
                     <button
                          type="button"
                          class="btn btn-tool pt-3"
-                         @click.stop="edit()">
+                         @click.stop="edit(entry)">
                         <i class="fa fa-pencil-alt "></i>
                     </button>
                 </span>
@@ -233,6 +233,7 @@ import Media from '../media/Media.vue';
 import Lms from '../lms/Lms.vue';
 import ReferenceList from "../reference/ReferenceList.vue";
 import Avatar from "../uiElements/Avatar.vue";
+import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
@@ -241,6 +242,12 @@ export default {
         'search': '',
         'first': false,
         'editable': false,
+    },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
@@ -254,11 +261,17 @@ export default {
         };
     },
     methods: {
-        edit() {
-            //this.$modal.show('logbook-entry-modal', { 'id': this.entry.id, 'method': 'patch'});
+        edit(entry) {
+            this.globalStore?.showModal('logbook-entry-modal', entry);
         },
         editSubject() {
-            //this.$modal.show('logbook-entry-subject-modal', { 'id': this.entry.id, 'subject': this.entry.subject?.title });
+            this.globalStore?.showModal(
+                'logbook-entry-subject-modal',
+                {
+                    'id': this.entry.id,
+                    'subject_id': this.entry.subject_id,
+                    'title': this.entry.subject?.title
+                });
         },
         async destroy(){
             try {
@@ -266,7 +279,7 @@ export default {
             } catch (error) {
                 console.log(error);
             }
-            this.$parent.$emit('deleteLogbookEntry', this.entry);
+            this.$eventHub.emit('deleteLogbookEntry',this.entry);
         },
         postDate() {
             const start = new Date(this.entry.begin.replace(/-/g, "/"));

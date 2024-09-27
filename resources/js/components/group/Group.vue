@@ -67,7 +67,7 @@
                         <span v-if="help">{{ trans('global.kanban.title') }}</span>
                     </a>
                 </li>
-                <li class="nav-item"
+<!--                <li class="nav-item"
                     v-permission="'task_access'"
                     @click="setGlobalStorage('#group_'+group.id, '#group_tasks_'+group.id);">
                     <a class="nav-link link-muted"
@@ -81,7 +81,7 @@
                         <i class="fas fa-tasks"></i>
                         <span v-if="help">{{ trans('global.task.title') }}</span>
                     </a>
-                </li>
+                </li>-->
                 <li class="nav-item"
                     v-permission="'plan_access'"
                     @click="setGlobalStorage('#group_'+group.id, '#group_plans_'+group.id);">
@@ -129,7 +129,7 @@
                         <span v-if="help">{{ trans('global.videoconference.title') }}</span>
                     </a>
                 </li>
-                <li class="nav-item ">
+<!--                <li class="nav-item ">
                     <a v-if="group.glossar != null"
                        class="nav-link link-muted"
                        id="glossar-nav-tab"
@@ -150,7 +150,7 @@
                     >
                         <i class="fa fa-book-open pr-2"></i>{{ trans('global.glossar.create') }}
                     </a>
-                </li>
+                </li>-->
                 <!-- <li class="nav-item ">
                     <a class="nav-link link-muted"
                        id="medium-nav-tab"
@@ -189,7 +189,8 @@
                      aria-labelledby="curriculum-nav-tab">
                     <courses
                         ref="Courses"
-                        :group="group"></courses>
+                        :group="group"
+                        create_label_field="enrol"></courses>
 
                 </div>
                <div v-permission="'group_enrolment'"
@@ -202,9 +203,10 @@
                         ref="Users"
                         :reference="group"
                         delete_label_field="expel"
-                        :subscribable="true"
                         subscribable_type="App\Group"
-                        :subscribable_id="group.id"></users>
+                        :subscribable_id="group.id"
+                        :subscribable="true"
+                        create_label_field="enrol"></users>
                </div>
                <div v-permission="'logbook_access'"
                     class="tab-pane "
@@ -215,44 +217,47 @@
                    <logbooks
                        ref="Logbooks"
                        :reference="group"
+                       delete_label_field="expel"
                        subscribable_type="App\Group"
                        :subscribable_id="group.id"
                        :subscribable="true"
                    ></logbooks>
                </div>
-                <!--                 <div v-if="checkPermission('kanban_access')"
+               <div v-permission="'kanban_access'"
+                    :class="getGlobalStorage('#group_'+group.id, '#group_kanbans_'+group.id)"
+                      class="tab-pane "
+                      id="kanban-tab"
+                      role="tab"
+                      aria-labelledby="kanban-nav-tab">
+                     <kanbans
+                         ref="Kanbans"
+                         delete_label_field="expel"
+                         subscribable_type="App\Group"
+                         :subscribable_id="group.id"
+                         :subscribable="true"
+                         create_label_field="enrol"
+                     ></kanbans>
+                 </div>
+                <!--                   <div v-if="checkPermission('task_access')"
+                                    class="tab-pane fade "
+                                    id="task-tab"
+                                    role="tab"
+                                    aria-labelledby="content-nav-tab">
+                                   <tasks
+                                       ref="Tasks"
+                                       subscribable_type="App\Group"
+                                       :subscribable_id="group.id"></tasks>
+                               </div> -->
+<!--                                 <div v-if="checkPermission('test_access')"
                                       class="tab-pane "
-                                      :class="getGlobalStorage('#group_'+group.id, '#group_kanbans_'+group.id)"
-                                      id="kanban-tab"
-                                      role="tab"
-                                      aria-labelledby="kanban-nav-tab">
-                                     <kanbans
-                                         ref="Kanbans"
-                                         subscribable_type="App\Group"
-                                         :subscribable_id="group.id"
-                                     ></kanbans>
-                                 </div>
-                                 <div v-if="checkPermission('task_access')"
-                                      class="tab-pane fade "
-                                      id="task-tab"
-                                      role="tab"
-                                      aria-labelledby="content-nav-tab">
-                                     <tasks
-                                         ref="Tasks"
-                                         subscribable_type="App\Group"
-                                         :subscribable_id="group.id"></tasks>
-                                 </div>
-                                 <div v-if="checkPermission('test_access')"
-                                      class="tab-pane "
-                                      :class="getGlobalStorage('#group_'+group.id, '#group_tests_'+group.id)"
                                       id="tests-tab"
                                       role="tab"
                                       aria-labelledby="tests-nav-tab">
                                      <tests
                                          ref="Tests"
                                          :group_id="group.id"></tests>
-                                 </div>
-                                 <div v-permission="'videoconference_access'"
+                                 </div>-->
+                <!--                    <div v-permission="'videoconference_access'"
                                       class="tab-pane "
                                       :class="getGlobalStorage('#group_'+group.id, '#group_videoconference_'+group.id)"
                                       id="videoconference-tab"
@@ -338,11 +343,7 @@
         </div>
 
         <Teleport to="body">
-            <GroupModal
-                :show="this.showGroupModal"
-                @close="this.showGroupModal = false"
-                :params="this.currentGroup"
-            ></GroupModal>
+            <GroupModal></GroupModal>
         </Teleport>
     </div>
 </template>
@@ -360,6 +361,7 @@ import Kanbans from "../kanban/Kanbans.vue";
 import Tasks from "../task/Tasks.vue";
 import Plans from "../plan/Plans.vue";
 import Tests from "../tests/Tests_Exams_View.vue";
+import {useGlobalStore} from "../../store/global";
 
 export default {
     name: "group",
@@ -377,6 +379,12 @@ export default {
         Plans,
         Tests
     },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
     props: {
         group: {
             default: null
@@ -386,7 +394,6 @@ export default {
     data() {
         return {
             componentId: this.$.uid,
-            showGroupModal: false,
             currentGroup: {},
             help: true,
         }
@@ -396,7 +403,7 @@ export default {
         this.currentGroup = this.group;
         this.$eventHub.on('group-updated', (group) => {
             this.currentGroup = group;
-            this.showGroupModal = false;
+            this.globalStore?.closeModal('group-modal');
         });
         this.$eventHub.on('course-updated', () => {
             this.loaderCourses()
@@ -405,7 +412,7 @@ export default {
     },
     methods: {
         editGroup(){
-            this.showGroupModal = true;
+            this.globalStore?.showModal('group-modal', this.currentGroup);
         },
         loaderCourses: function() {
             //this.$refs.Courses.loaderEvent();

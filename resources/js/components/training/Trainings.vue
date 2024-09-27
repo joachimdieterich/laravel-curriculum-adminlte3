@@ -37,7 +37,6 @@
                                 <i class="px-1 fas fa-trash text-danger"></i>
                             </a>
                         </span>
-
                     </div>
                 </div>
 
@@ -74,46 +73,50 @@
                     </div>
 
                     <div class="form-group">
-                        <date-picker
+                        <VueDatePicker
                             v-if="editor !== false"
-                            class="w-100 mt-3"
                             v-model="form.begin"
-                            type="date"
-                            valueType="YYYY-MM-DD HH:mm:ss"
-                            :placeholder="trans('global.training.begin')">
-                        </date-picker>
+                            :teleport="true"
+                            format="dd.MM.yyy HH:mm"
+                            locale="de"
+                            :placeholder="trans('global.training.begin')"
+                            :select-text="trans('global.ok')"
+                            :cancel-text="trans('global.close')"
+                        ></VueDatePicker>
 
-                        <date-picker
+                        <VueDatePicker
                             v-if="editor !== false"
-                            class="w-100 mt-3"
                             v-model="form.end"
-                            type="date"
-                            valueType="YYYY-MM-DD HH:mm:ss"
-                            :placeholder="trans('global.training.end')">
-                        </date-picker>
+                            :teleport="true"
+                            format="dd.MM.yyy HH:mm"
+                            locale="de"
+                            :placeholder="trans('global.training.end')"
+                            :select-text="trans('global.ok')"
+                            :cancel-text="trans('global.close')"
+                        ></VueDatePicker>
                     </div>
-                    <button :name="'trainingSave'"
-                            class="btn btn-primary p-2 m-2"
-                            @click="submit">
+                    <button
+                        :name="'trainingSave'"
+                        class="btn btn-primary p-2 m-2"
+                        @click="submit">
                         {{ trans('global.save') }}
                     </button>
                 </div>
-
             </div>
-
         </div>
-
     </div>
-
-
-
 </template>
 
 <script>
 import Form from "form-backend-validation";
 import moment from "moment/moment";
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {
+    components: {
+        VueDatePicker
+    },
     props: {
         subscribable_type: {
             default: null
@@ -121,7 +124,9 @@ export default {
         subscribable_id: {
             default: null
         },
-        plan: []
+        plan: {
+            type: Object
+        }
     },
     data() {
         return {

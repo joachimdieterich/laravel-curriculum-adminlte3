@@ -42,7 +42,6 @@
             </li>
         </template>
     </ul>
-
 </template>
 
 <script>

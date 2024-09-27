@@ -20,7 +20,6 @@ class ContentController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-
         $this->permissionCheck($input['subscribable_type'], $input['subscribable_id']); //check context permission
 
         $content = Content::Create([
@@ -40,7 +39,6 @@ class ContentController extends Controller
         if (request()->wantsJson()) {
             return $content;
         }
-        //return redirect($content->path());
     }
 
     /**

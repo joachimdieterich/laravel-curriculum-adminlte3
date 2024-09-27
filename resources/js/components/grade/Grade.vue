@@ -20,7 +20,6 @@
                 </div>
 
                 <div class="card-body">
-
                     <p class="text-muted">
                         {{ trans('global.grade.fields.external_begin') }}: {{ this.currentGrade.external_begin }}<br>
                         {{ trans('global.grade.fields.external_end') }}: {{ this.currentGrade.external_end }}
@@ -46,16 +45,13 @@
         </div>
 
         <Teleport to="body">
-            <GradeModal
-                :show="this.showGradeModal"
-                @close="this.showGradeModal = false"
-                :params="this.currentGrade"
-            ></GradeModal>
+            <GradeModal></GradeModal>
         </Teleport>
     </div>
 </template>
 
 <script>
+import {useGlobalStore} from "../../store/global";
 import GradeModal from "../grade/GradeModal.vue";
 
 export default {
@@ -68,10 +64,15 @@ export default {
             default: null
         },
     },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
     data() {
         return {
             componentId: this.$.uid,
-            showGradeModal: false,
             currentGrade: {},
         }
     },
@@ -79,13 +80,13 @@ export default {
         this.currentGrade = this.grade;
         this.$eventHub.on('grade-updated', (grade) => {
             this.currentGrade = grade;
-            this.showGradeModal = false;
+            this.globalStore?.closeModal('grade-modal');
         });
 
     },
     methods: {
         editGrade(){
-            this.showGradeModal = true;
+            this.globalStore?.showModal('grade-modal', this.currentGrade);
         },
     }
 }

@@ -21,7 +21,6 @@
                 </span>
                 <span class="description">{{ this.subtitle }}</span>
             </div>
-
         </span>
         <span v-else :style="'width:'+size+'px !important; height:'+size+'px !important;'">
             <img v-if="typeof avatar_medium_id === 'number'"
@@ -42,7 +41,6 @@
 </template>
 
 <script>
-
     export default {
         props: {
             user_id: null,
@@ -63,7 +61,8 @@
         },
         data() {
             return {
-                id: null,
+                component_id: this.$.uid,
+                id: this.$.uid,
                 avatar_medium_id: null,
                 colours: ["#1abc9c", "#2ecc71", "#3498db", "#9b59b6", "#34495e", "#16a085", "#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f1c40f", "#e67e22", "#e74c3c", "#95a5a6", "#f39c12", "#d35400", "#c0392b", "#bdc3c7", "#7f8c8d"],
                 user: null,
@@ -94,7 +93,7 @@
                 let colourIndex = charIndex % 19;
                 this.$nextTick(() => {
                     let canvas = document.getElementById(this.id);
-                    let context = canvas.getContext("2d");
+                    let context = canvas?.getContext("2d");
 
                     let canvasWidth = this.size,
                         canvasHeight = this.size,
@@ -122,20 +121,18 @@
             this.id = 'user-avatar' + this.$.uid;
             this.avatar_medium_id =  this.medium_id;
 
-            if (this.user_id == null) {
+            if (this.user_id == null  && this.medium_id  == null || this.user_id === undefined) {
                 this.setData();
             } else {
-                axios.get('/users/'+this.user_id)
+                axios.get('/users/' + this.user_id)
                     .then(response => {
                         this.user = response.data.user;
-
                         this.setData();
                     })
                     .catch(e => {
                         console.log(e);
                     });
             }
-
         },
 
     }

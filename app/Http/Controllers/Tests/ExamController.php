@@ -44,7 +44,20 @@ class ExamController extends Controller
     public function list()
     {
         abort_unless(\Gate::allows('test_access'), 403);
-        $exams = Exam::whereIn('group_id', auth()->user()->groups->pluck('id'));
+        //$exams = Exam::whereIn('group_id', auth()->user()->groups->pluck('id'));
+        $exams = auth()->user()->exams;
+
+        foreach ($exams as $exam) {
+            $this->getToolExamStatus($exam);
+        }
+
+        $exams = auth()->user()->fresh()->exams;
+
+        foreach($exams as $exam){
+            $exam->login_url = config('test_tools.tools')[$exam->tool]['adapter']->getExamLoginUrl($exam);
+        }
+        $exams->load('group');
+        //$exams = $exams->groupBy('group.title');
 
         return DataTables::of($exams)
             ->addColumn('check', '')

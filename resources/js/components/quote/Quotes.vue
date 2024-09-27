@@ -92,7 +92,6 @@
             show(content, quote) {
                 //this.$modal.show('content-modal', {'content': content, 'quote': quote});
             },
-
         },
 
         components: {

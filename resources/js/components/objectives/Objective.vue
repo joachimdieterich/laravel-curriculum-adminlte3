@@ -317,13 +317,7 @@
 
 
         <Teleport to="body">
-            <ReferenceObjectiveModal
-                :params="{
-                    'subscribable_type': this.model,
-                    'subscribable_id': this.objective.id,
-                    'url': '/referenceSubscriptions'
-                }"
-            ></ReferenceObjectiveModal>
+            <ReferenceObjectiveModal ></ReferenceObjectiveModal>
             <PrerequisiteObjectiveModal
                 :params="{
                     'successor_type': this.model,
@@ -465,6 +459,10 @@ export default {
             this.globalStore?.closeModal('reference-objective-modal');
             this.loadReferences();
         });
+        this.$eventHub.on('reference-deleted', () => {
+            this.globalStore?.closeModal('reference-objective-modal');
+            this.loadReferences();
+        });
         this.$eventHub.on('prerequisite-added', () => {
             this.globalStore?.closeModal('prerequisite-objective-modal');
             this.loadPrerequisites();
@@ -495,7 +493,12 @@ export default {
     },
     methods: {
         show(){
-            this.globalStore?.showModal('reference-objective-modal');
+            this.globalStore?.showModal('reference-objective-modal',
+                {
+                'subscribable_type': this.model,
+                'subscribable_id': this.objective.id,
+                'url': '/referenceSubscriptions'
+            });
         },
         editObjective() {
             switch (this.type) {

@@ -177,9 +177,7 @@ export default {
         editTask(){
             this.showTaskModal = true;
         },
-        destroy(){
-
-        },
+        destroy(){},
         loadContents(){
             this.$refs.Contents.loaderEvent();
         }

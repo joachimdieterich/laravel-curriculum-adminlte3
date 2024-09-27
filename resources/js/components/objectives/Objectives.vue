@@ -41,10 +41,8 @@
 </template>
 
 <script>
-const ObjectiveBox =
-    () => import('./ObjectiveBox.vue');
-const EnablingObjectives =
-    () => import('./EnablingObjectives.vue');
+import ObjectiveBox from './ObjectiveBox.vue';
+import EnablingObjectives from './EnablingObjectives.vue';
 
 export default {
     props: {
@@ -96,7 +94,7 @@ export default {
          * combine enablingObjectives into their terminalObjective
          */
         checkSubscriptions() {
-            let subObj = {};
+            let subObj = [];
 
             if (this.terminalSubscriptions.length > 0) {
                 subObj = this.terminalSubscriptions;
@@ -193,7 +191,7 @@ export default {
     },
     mounted() {
         this.loaderEvent();
-        this.$eventHub.$on('subscriptions_added', id => {
+        this.$eventHub.on('subscriptions_added', id => {
             if (id === this.referenceable_id) this.loaderEvent();
         });
     },

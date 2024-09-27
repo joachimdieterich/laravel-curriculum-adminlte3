@@ -171,7 +171,7 @@ export default {
                 });
         },
         successNotification(message) {
-            this.toast.success(message, {
+            this.toast.success(message/*, {
                 position: "top-right",
                 timeout: 3000,
                 closeOnClick: true,
@@ -184,10 +184,10 @@ export default {
                 closeButton: "button",
                 icon: true,
                 rtl: false
-            });
+            }*/);
         },
         errorNotification(message) {
-            this.toast.error(message, {
+            this.toast.error(message/*, {
                 position: "top-right",
                 timeout: 3000,
                 closeOnClick: true,
@@ -200,10 +200,8 @@ export default {
                 closeButton: "button",
                 icon: true,
                 rtl: false
-            });
+            }*/);
         },
-    },
-    computed: {
     },
     components: {
         Select2

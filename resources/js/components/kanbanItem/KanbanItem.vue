@@ -248,9 +248,9 @@
                     class="contacts-list-img"
                     data-toggle="tooltip"
                 ></avatar>
-<!--                <avatar
+                <avatar
                     v-for="(editor_user, index) in editors"
-                    v-if="editor_user != '' && $userId != 8"
+                    v-if="editors != null && $userId != 8"
                     :key="item.id + '_editor_' + index"
                     :title="editor_user.firstname + ' ' + editor_user.lastname"
                     :username="editor_user.username"
@@ -259,7 +259,7 @@
                     :size="25"
                     class="contacts-list-img"
                     data-toggle="tooltip"
-                ></avatar>-->
+                ></avatar>
 
                 <span class="d-flex flex-fill"></span>
                 <div v-if="commentable"
@@ -292,9 +292,6 @@
                 :showConfirm="this.showConfirm"
                 :title="trans('global.kanbanItem.delete')"
                 :description="trans('global.kanbanItem.delete_helper')"
-                css= 'danger'
-                :ok_label="trans('trans.global.ok')"
-                :cancel_label="trans('trans.global.cancel')"
                 @close="() => {
                     this.showConfirm = false;
                 }"
@@ -313,7 +310,7 @@ import DatePicker from 'vue3-datepicker';
 import mediaCarousel from '../media/MediaCarousel.vue';
 import avatar from '../uiElements/Avatar.vue';
 import Reaction from '../reaction/Reaction.vue';
-import Comments from './Comments.vue';
+import Comments from '../kanban/Comments.vue';
 import moment from 'moment';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import HtmlRenderer from "../uiElements/HtmlRenderer.vue";
@@ -360,7 +357,7 @@ export default {
                 'visible_until': null,
             }),
             expand: false,
-            editors: {},
+            editors: null,
             highlightTitleInput: false,
             tinyMCE: this.$initTinyMCE(
                 [
@@ -369,7 +366,11 @@ export default {
                 {
                     'eventHubCallbackFunction': 'insertContent',
                     'eventHubCallbackFunctionParams': this.component_id,
-                }
+                },
+                "bold underline italic | alignleft aligncenter alignright | table",
+                "bullist numlist outdent indent | mathjax link code",
+                null,
+                400
             ),
         };
     },

@@ -40,7 +40,7 @@
                             <dt>
                                 {{ trans("global.curricula_cross_references_description") }}
                                 <a v-can="'reference_edit'" class="pull-right pr-2 link-muted pointer"
-                                   @click.prevent="open('reference-objective-modal', filtered_reference.reference)">
+                                   @click.prevent="open(filtered_reference.reference)">
                                     <i class="fa fa-pencil-alt pl-2"></i></a>
                              </dt>
                             <dd v-dompurify-html="filtered_reference.reference.description"></dd>
@@ -56,6 +56,7 @@
 
 <script>
 import ObjectiveBox from '../objectives/ObjectiveBox.vue';
+import {useGlobalStore} from "../../store/global";
 
     export default {
         props: {
@@ -64,6 +65,12 @@ import ObjectiveBox from '../objectives/ObjectiveBox.vue';
             },
             type: {
                 type: String
+            }
+        },
+        setup () { //use database store
+            const globalStore = useGlobalStore();
+            return {
+                globalStore
             }
         },
         data: function() {
@@ -107,10 +114,13 @@ import ObjectiveBox from '../objectives/ObjectiveBox.vue';
             tagName: function(i){
                 return 'curriculum_'+i;
             },
-            open(modal, reference){
-                //this.$modal.show(modal, {'id': reference.id, 'description': reference.description});
+            open(reference){
+                this.globalStore?.showModal('reference-objective-modal', {
+                    'id': reference.id,
+                    'description': reference.description,
+                    'url': '/references'
+                });
             },
-
         },
 
         components: {

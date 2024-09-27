@@ -71,7 +71,13 @@
                 modelName="Kanban"
                 url="/kanbans"
                 :create=true
-                :createLabel="trans('global.kanban.create')">
+                :createLabel="trans('global.kanban.' + create_label_field)">
+                <template v-slot:itemIcon>
+                    <i v-if="create_label_field == 'enrol'"
+                       class="fa fa-2x p-5 fa-link nav-item-text text-muted"></i>
+                    <i v-else
+                       class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
+                </template>
             </IndexWidget>
             <IndexWidget
                 v-for="kanban in kanbans"
@@ -112,8 +118,14 @@
                             type="submit"
                             class="dropdown-item py-1 text-red"
                             @click.prevent="confirmItemDelete(kanban)">
-                            <i class="fa fa-trash mr-2"></i>
-                            {{ trans('global.kanban.delete') }}
+                             <span v-if="create_label_field == 'enrol'">
+                                 <i class="fa fa-unlink mr-2"></i>
+                                {{ trans('global.kanban.expel') }}
+                            </span>
+                            <span v-else>
+                                 <i class="fa fa-trash mr-2"></i>
+                                {{ trans('global.kanban.delete') }}
+                            </span>
                         </button>
                     </div>
                 </template>
@@ -133,18 +145,11 @@
         </div>
 
         <Teleport to="body">
-            <KanbanModal
-                :show="this.showKanbanModal"
-                @close="this.showKanbanModal = false"
-                :params="currentKanban"
-            ></KanbanModal>
+            <KanbanModal></KanbanModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
-                :title="trans('global.kanban.delete')"
-                :description="trans('global.kanban.delete_helper')"
-                css= 'danger'
-                :ok_label="trans('trans.global.ok')"
-                :cancel_label="trans('trans.global.cancel')"
+                :title="trans('global.kanban.' + delete_label_field)"
+                :description="trans('global.kanban.' + delete_label_field +'_helper')"
                 @close="() => {
                     this.showConfirm = false;
                 }"
@@ -157,9 +162,7 @@
                 :showConfirm="this.showCopy"
                 :title="trans('global.kanban.copy')"
                 :description="trans('global.kanban.copy_helper')"
-                css= 'primary'
-                :ok_label="trans('trans.global.ok')"
-                :cancel_label="trans('trans.global.cancel')"
+                css='primary'
                 @close="() => {
                     this.showCopy = false;
                 }"
@@ -179,19 +182,37 @@ import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
     props: {
+        subscribable: {
+            type: Boolean,
+            default: false
+        },
+        create_label_field: {
+            type: String,
+            default: 'create'
+        },
+        delete_label_field: {
+            type: String,
+            default: 'delete'
+        },
         subscribable_type: '',
         subscribable_id: '',
+    },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
             component_id: this.$.uid,
             kanbans: null,
             search: '',
-            showKanbanModal: false,
             showConfirm: false,
             showCopy: false,
             url: '/kanbans/list',
@@ -212,17 +233,16 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('kanban-added', (kanban) => {
-            this.showKanbanModal = false;
+            this.globalStore?.closeModal('kanban-modal');
             this.kanbans.push(kanban);
         });
 
         this.$eventHub.on('kanban-updated', (kanban) => {
-            this.showKanbanModal = false;
+            this.globalStore?.closeModal('kanban-modal');
             this.update(kanban);
         });
         this.$eventHub.on('createKanban', () => {
-            this.currentKanban = {};
-            this.showKanbanModal = true;
+            this.globalStore?.showModal('kanban-modal', {});
         });
     },
     methods: {
@@ -237,8 +257,7 @@ export default {
             this.dt.ajax.url(this.url).load();
         },
         editKanban(kanban){
-            this.currentKanban = kanban;
-            this.showKanbanModal = true;
+            this.globalStore?.showModal('kanban-modal', kanban);
         },
         loaderEvent(){
             this.dt = $('#kanban-datatable').DataTable();

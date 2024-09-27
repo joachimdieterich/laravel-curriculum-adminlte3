@@ -40,7 +40,7 @@
                 url="/logbooks"
                 :create=true
                 :createLabel="trans('global.logbook.' + create_label_field)">
-            <template v-slot:itemIcon>
+                <template v-slot:itemIcon>
                     <i v-if="create_label_field == 'enrol'"
                        class="fa fa-2x p-5 fa-link nav-item-text text-muted"></i>
                     <i v-else
@@ -109,7 +109,6 @@
                 </span>
                 </template>
             </IndexWidget>
-
         </div>
 
         <div id="logbook-datatable-wrapper"
@@ -128,8 +127,6 @@
         <Teleport to="body">
             <SubscribeLogbookModal
                 v-if="subscribable"
-                :show="this.showLogbookModal"
-                @close="this.showLogbookModal = false"
                 :params="reference"
                 :subscribable_type="this.subscribable_type"
                 :subscribable_id="this.subscribable_id"
@@ -137,15 +134,12 @@
             </SubscribeLogbookModal>
             <LogbookModal
                 v-if="!subscribable"
-                :show="this.showLogbookModal"
-                @close="this.showLogbookModal = false"
-                :params="currentLogbook"
-            ></LogbookModal>
+               ></LogbookModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.logbook.' + delete_label_field)"
                 :description="trans('global.logbook.' + delete_label_field +'_helper')"
-                css= 'danger'
+
                 :ok_label="trans('trans.global.ok')"
                 :cancel_label="trans('trans.global.cancel')"
                 @close="() => {
@@ -167,6 +161,8 @@ import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import SubscribeLogbookModal from "./SubscribeLogbookModal.vue";
+import {useDatatableStore} from "../../store/datatables";
+import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -187,14 +183,18 @@ export default {
         subscribable_type: '',
         subscribable_id: '',
     },
-
+    setup () { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters
+        const globalStore = useGlobalStore();
+        return {
+            globalStore
+        }
+    },
     data() {
         return {
             component_id: this.$.uid,
             logbooks: [],
             subscriptions: {},
             search: '',
-            showLogbookModal: false,
             showConfirm: false,
             url: (this.subscribable_id) ? '/logbooks/list?group_id=' + this.reference.id : '/logbooks/list', // if subscibable == true get enrolled logbooks
             errors: {},
@@ -217,21 +217,27 @@ export default {
 
         this.$eventHub.on('filter', (filter) => {
             this.search = filter;
-            this.searchContent();
         });
         this.$eventHub.on('logbook-added', (logbook) => {
-            this.showUserModal = false;
+            this.globalStore?.closeModal('logbook-modal');
             this.logbooks.push(logbook);
         });
-
+        this.$eventHub.on('logbook-updated', (logbook) => {
+            this.globalStore?.closeModal('logbook-modal');
+            //this.loaderEvent();
+            this.update(logbook); //todo -> use global widget to get update working
+        });
 
         this.$eventHub.on('logbook-subscription-added', () => {
-            this.showLogbookModal = false;
+            this.globalStore?.closeModal('subscribe-logbook-modal');
             this.loaderEvent();
         });
         this.$eventHub.on('createLogbook', () => {
-            this.currentLogbook = {};
-            this.showLogbookModal = true;
+            if (!this.subscribable) {
+                this.globalStore?.showModal('logbook-modal', {});
+            } else {
+                this.globalStore?.showModal('subscribe-logbook-modal', this.reference);
+            }
         });
     },
     methods: {
@@ -247,8 +253,7 @@ export default {
             });
         },
         editLogbook(logbook){
-            this.currentLogbook = logbook;
-            this.showLogbookModal = true;
+            this.globalStore?.showModal('logbook-modal', logbook);
         },
         confirmItemDelete(logbook){
             this.currentLogbook = logbook;
@@ -268,7 +273,7 @@ export default {
             }
             else
             {
-                axios.delete('/logbooks/' + this.currentLogbook)
+                axios.delete('/logbooks/' + this.currentLogbook.id)
                     .then(() => {
                         let index = this.logbooks.indexOf(this.currentLogbook);
                         this.logbooks.splice(index, 1);
@@ -279,39 +284,19 @@ export default {
             }
 
         },
+        update(logbook) {
+            const index = this.logbooks.findIndex(
+                c => c.id === logbook.id
+            );
 
-
-
-        /*loaderEvent() {
-            axios.get('/logbooks/list?filter=' + this.filter)
-                .then(async response => {
-                    this.logbooks = response.data.data;
-
-                    /!*await nextTick();
-                    if (this.search != '') this.searchContent();*!/
-                })
-                .catch(e => {
-                    this.errors = e.data.errors;
-                });
-        },*/
+            for (const [key, value] of Object.entries(logbook)) {
+                this.logbooks[index][key] = value;
+            }
+        },
         setFilter(filter) {
             this.filter = filter;
             this.loaderEvent();
         },
-        /*searchContent() {
-            // always case insensitive
-            const elements = this.$el.getElementsByClassName('box');
-            const search = this.search.toLowerCase();
-            for (let i = 0; i < elements.length - 1; i++) {
-                const element = elements[i];
-                const content = element.innerText.toLowerCase();
-
-                element.style.display = content.includes(search)
-                    ? 'block'
-                    : 'none';
-            }
-        },*/
-
     },
 
     components: {

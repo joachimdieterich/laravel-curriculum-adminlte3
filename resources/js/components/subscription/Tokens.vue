@@ -56,12 +56,9 @@
             </div>
         </li>
     </ul>
-
 </template>
 
-
 <script>
-
 import moment from 'moment';
 
 export default {

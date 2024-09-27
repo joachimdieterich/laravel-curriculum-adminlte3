@@ -120,11 +120,7 @@
         </div>
 
         <Teleport to="body">
-            <UserModal
-                :show="this.showUserModal"
-                @close="this.showUserModal = false"
-                :params="this.currentUser"
-            ></UserModal>
+            <UserModal ></UserModal>
         </Teleport>
     </div>
 </template>
@@ -134,6 +130,8 @@ import UserModal from "../user/UserModal.vue";
 import Avatar from "../uiElements/Avatar.vue";
 import Notes from "../note/Notes.vue";
 import ContactDetail from "../contactDetail/ContactDetail.vue";
+import {useDatatableStore} from "../../store/datatables";
+import {useGlobalStore} from "../../store/global";
 
 
 export default {
@@ -152,23 +150,26 @@ export default {
             default: null
         },
     },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore
+        }
+    },
     data() {
         return {
             componentId: this.$.uid,
-            showUserModal: false,
-            currentUser: {},
         }
     },
     mounted() {
         this.$eventHub.on('user-updated', (user) => {
-            this.showUserModal = false;
+            this.globalStore?.closeModal('user-modal');
             window.location.reload();
         });
     },
     methods: {
         editUser(user){
-            this.currentUser = user;
-            this.showUserModal = true;
+            this.globalStore?.showModal('user-modal', user);
         },
         getRoleInOrganization(organization){
             //console.log(this.user.roles.filter((r) => r.pivot.organization_id == organization.id));

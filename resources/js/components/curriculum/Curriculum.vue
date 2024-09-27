@@ -91,7 +91,7 @@
                     <li v-permission="'certificate_create'"
                         class="nav-item ml-auto">
                         <a class="nav-link link-muted"
-                           @click.prevent="this.showCertificateModal = true"
+                           @click.prevent="createCertificate()"
                            id="certificate-nav-tab">
                             <i class="fa fa-certificate pr-2"></i>{{trans('global.certificate.create')}}
                         </a>
@@ -193,16 +193,9 @@
         </div>
 
         <Teleport to="body">
-            <CurriculumModal
-                :show="this.showCurriculumModal"
-                @close="this.showCurriculumModal = false"
-                :params="this.currentCurriculum"
-            ></CurriculumModal>
-            <CertificateModal
-                :show="this.showCertificateModal"
-                @close="this.showCertificateModal = false"
-                :params="{'curriculum_id': this.curriculum.id}"
-            ></CertificateModal>
+            <CurriculumModal></CurriculumModal>
+            <ContentModal></ContentModal>
+            <CertificateModal></CertificateModal>
             <GenerateCertificateModal></GenerateCertificateModal>
         </Teleport>
     </div>
@@ -222,12 +215,14 @@ import {useDatatableStore} from "../../store/datatables";
 import CertificateModal from "../certificate/CertificateModal.vue";
 import GenerateCertificateModal from "../certificate/GenerateCertificateModal.vue";
 import {useGlobalStore} from "../../store/global";
+import ContentModal from "../content/ContentModal.vue";
 
 DataTable.use(DataTablesCore);
 
 export default {
     name: "curriculum",
     components:{
+        ContentModal,
         GenerateCertificateModal,
         CertificateModal,
         CurriculumModal,
@@ -269,9 +264,7 @@ export default {
     data() {
         return {
             componentId: this.$.uid,
-            showCurriculumModal: false,
             currentCurriculum: {},
-            showCertificateModal: false,
             columns: [
                 { title: window.trans.global.user.fields.username, data: 'username', searchable: true},
                 { title: window.trans.global.lastname, data: 'lastname', searchable: true},
@@ -302,14 +295,19 @@ export default {
 
         this.$eventHub.on('curriculum-updated', (curriculum) => {
             this.currentCurriculum = curriculum;
-            this.showCurriculumModal = false;
+            this.globalStore?.closeModal('curriculum-modal');
         });
 
 
     },
     methods: {
-        editCurriculum(){
-            this.showCurriculumModal = true;
+        createCertificate(){
+            this.globalStore?.showModal('certificate-modal', {
+                    'curriculum_id': this.curriculum.id
+                });
+        },
+        edit(){
+            this.globalStore?.showModal('curriculum-modal', this.curriculum);
         },
         loaderEvent: function() {
             this.$refs.Contents.loaderEvent();

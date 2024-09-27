@@ -4,7 +4,7 @@
              class="col-md-12 pl-3 pt-0 pb-2">
             <button id="add-logbook-entry"
                     class="btn btn-success"
-                    @click.prevent="open('logbook-entry-modal')">
+                    @click.prevent="add()">
                 {{ trans('global.logbookEntry.create') }}
             </button>
             <button
@@ -60,16 +60,10 @@
                 :show="this.mediumStore.getShowMediumModal"
                 @close="this.mediumStore.setShowMediumModal(false)"
             ></MediumModal>
-            <LogbookModal
-                :show="this.showLogbookModal"
-                @close="this.showLogbookModal = false"
-                :params="this.currentLogbook"
-            ></LogbookModal>
-            <SubscribeModal
-                :params="this.showSubscribeParams"
-                :show="this.showSubscribeModal"
-                @close="this.showSubscribeModal = false"
-            ></SubscribeModal>
+            <LogbookModal></LogbookModal>
+            <LogbookEntryModal></LogbookEntryModal>
+            <LogbookEntrySubjectModal></LogbookEntrySubjectModal>
+            <SubscribeModal></SubscribeModal>
         </Teleport>
         <teleport
             v-if="$userId == logbook.owner_id"
@@ -106,10 +100,14 @@ import {useGlobalStore} from "../../store/global";
 import MediumPreviewModal from "../media/MediumPreviewModal.vue";
 import SubscribeObjectiveModal from "../objectives/SubscribeObjectiveModal.vue";
 import AbsenceModal from "../absence/AbsenceModal.vue";
+import LogbookEntryModal from "../logbookEntry/LogbookEntryModal.vue";
+import LogbookEntrySubjectModal from "../logbookEntry/LogbookEntrySubjectModal.vue";
 
 export default {
     name: "Logbook",
     components:{
+        LogbookEntrySubjectModal,
+        LogbookEntryModal,
         AbsenceModal,
         SubscribeObjectiveModal,
         MediumPreviewModal,
@@ -142,9 +140,6 @@ export default {
     data() {
         return {
             componentId: this.$.uid,
-            showLogbookModal: false,
-            showSubscribeParams: {},
-            showSubscribeModal: false,
             currentLogbook: {},
             entries: [],
             search: '',
@@ -157,9 +152,18 @@ export default {
 
         this.currentLogbook = this.logbook;
 
+        this.$eventHub.on('logbookEntry-added', (entry) => {
+            this.globalStore?.closeModal('logbook-entry-modal');
+            //todo: reload
+        });
+        this.$eventHub.on('logbookEntry-updated', (entry) => {
+            this.globalStore?.closeModal('logbook-entry-modal');
+            //todo: reload
+        });
+
         this.$eventHub.on('logbook-updated', (logbook) => {
+            this.globalStore?.closeModal('logbook-modal');
             this.currentLogbook = logbook;
-            this.showLogbookModal = false;
         });
 
         // Entries
@@ -184,13 +188,17 @@ export default {
             this.entries[index].end = updatedEntry.end;
         });
         this.$eventHub.on('updateSubjectBadge', (updatedEntry) => {
+            console.log(updatedEntry);
+            this.globalStore?.closeModal('logbook-entry-subject-modal');
             const index = this.entries.findIndex(
                 entry => entry.id === updatedEntry.entry_id
             );
+            //console.log(this.entries[index]);
             this.entries[index].subject = {
                 id: updatedEntry.subject_id,
-                title: updatedEntry.title,
-            }
+                title: updatedEntry.title
+            };
+            this.entries[index].subject_id = updatedEntry.subject_id;
         });
 
         this.$eventHub.on('deleteLogbookEntry', function (deletedEntry) {
@@ -199,15 +207,20 @@ export default {
         });
     },
     methods: {
+        add(){
+            this.globalStore?.showModal('logbook-entry-modal',
+                {
+                    'logbook_id': this.logbook.id
+                });
+        },
         editLogbook(logbook){
-            this.currentKanban = logbook;
-            this.showLogbookModal = true;
+            this.globalStore?.showModal('logbook-modal', logbook);
         },
         togglePrintOptions() {
             this.showPrintOptions = !this.showPrintOptions;
         },
         share(){
-            this.showSubscribeParams =
+            this.globalStore?.showModal('subscribe-modal',
                 {
                     'modelId': this.logbook.id,
                     'modelUrl': 'logbook',
@@ -216,8 +229,7 @@ export default {
                     'shareWithOrganizations': true,
                     'shareWithToken': true,
                     'canEditCheckbox': true
-                };
-            this.showSubscribeModal = true;
+                });
         },
     }
 }

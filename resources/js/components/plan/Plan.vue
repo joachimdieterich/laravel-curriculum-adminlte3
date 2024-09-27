@@ -29,19 +29,22 @@
         <div class="row ">
             <div class="col-12 pt-2">
                 <draggable
-                    :disabled="this.disabled"
-                    v-bind="columnDragOptions"
                     v-model="entries"
+                    v-bind="columnDragOptions"
+                    :disabled="this.disabled"
                     @start="drag=true"
                     @end="handleEntryOrder"
-                >
+                    itemKey="id"
+                > <template
+                    #item="{ element: entry , index }">
                     <PlanEntry
-                        v-for="(entry, index) in entries"
-                        :key="entries[index].id"
+                        :key="entry.id"
                         :editable="editable"
                         :entry="entry"
                         :plan="plan"
                     ></PlanEntry>
+                </template>
+
                 </draggable>
             </div>
 
@@ -63,24 +66,34 @@
         >
             <i class="fa fa-users"></i>
         </div> -->
+        <Teleport to="body">
+            <SetAchievementsModal
+                :users="users">
+            </SetAchievementsModal>
+        </Teleport>
     </div>
 </template>
 
 <script>
-import draggable from 'vuedraggable';
-
-const Calendar =
-    () => import('../calendar/Calendar.vue');
-const PlanEntry =
-    () => import('./PlanEntry.vue');
+import draggable from "vuedraggable";
+import SetAchievementsModal from "./SetAchievementsModal.vue";
+/*const Calendar =
+    () => import('../calendar/Calendar.vue');*/
+import PlanEntry from './PlanEntry.vue';
 
 export default {
     props: {
-        plan: [],
+        plan: {
+            type: Object
+        },
         editable: {
             type: Boolean,
             default: false,
         },
+        users: {
+            type: Object,
+            default: null
+        }
     },
     data() {
         return {
@@ -156,23 +169,18 @@ export default {
                 animation: 200,
                 // checks if a mobile-browser is used and if true, add delay
                 ...(/Mobi/i.test(window.navigator.userAgent) && {delay: 200}),
+                group: "columns",
+                dragClass: "status-drag",
+                fallbackTolerance: 5,
+                disabled: !this.editable
             };
         },
     },
     components: {
-        Calendar,
+        //Calendar,
+        SetAchievementsModal,
         PlanEntry,
         draggable
     },
 }
 </script>
-<!-- <style scoped>
-#corner-button {
-    color: white;
-    background-color: #333;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    bottom: 25px;
-}
-</style> -->

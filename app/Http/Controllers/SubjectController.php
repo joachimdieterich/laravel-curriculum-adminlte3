@@ -11,22 +11,10 @@ class SubjectController extends Controller
     public function index()
     {
         // select2 request
-        if (request()->wantsJson() and request()->has(['term', 'page'])) {
-            if (is_admin()) {
-                abort_unless(\Gate::allows('subject_access'), 403);
-
-                return getEntriesForSelect2ByModel(
-                    "App\Subject"
-                );
-            } else { // TODO: only get subjects in reference with teacher(?)
-                return getEntriesForSelect2ByModel(
-                    "App\Subject"
-                );
-            }
-        } else {
-            if (request()->wantsJson()) {
-                return Subject::all();
-            }
+        if (request()->wantsJson()) {
+            return getEntriesForSelect2ByModel(
+                "App\Subject"
+            );
         }
         abort_unless(\Gate::allows('subject_access'), 403);
 
@@ -42,30 +30,7 @@ class SubjectController extends Controller
             'title_short',
         ])->get();
 
-        $edit_gate = \Gate::allows('subject_edit');
-        $delete_gate = \Gate::allows('subject_delete');
-
         return DataTables::of($subject)
-            ->addColumn('action', function ($subject) use ($edit_gate, $delete_gate) {
-                $actions = '';
-                if ($edit_gate) {
-                    $actions .= '<a href="'.route('subjects.edit', $subject->id).'" '
-                        .'id="edit-subject-'.$subject->id.'" '
-                        .'class="btn">'
-                        .'<i class="fa fa-pencil-alt"></i>'
-                        .'</a>';
-                }
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                        .'class="btn text-danger" '
-                        .'onclick="destroyDataTableEntry(\'subjects\','.$subject->id.');">'
-                        .'<i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
-            })
-
-            ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
     }

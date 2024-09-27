@@ -152,18 +152,11 @@
         </div>
 
         <Teleport to="body">
-            <CurriculumModal
-                :show="this.showCurriculumModal"
-                @close="this.showCurriculumModal = false"
-                :params="currentCurriculum"
-            ></CurriculumModal>
+            <CurriculumModal></CurriculumModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.curriculum.delete')"
                 :description="trans('global.curriculum.delete_helper')"
-                css= 'danger'
-                :ok_label="trans('trans.global.ok')"
-                :cancel_label="trans('trans.global.cancel')"
                 @close="() => {
                     this.showConfirm = false;
                 }"
@@ -172,11 +165,7 @@
                     this.destroy();
                 }"
             ></ConfirmModal>
-            <SubscribeModal
-                :params="this.showSubscribeParams"
-                :show="this.showSubscribeModal"
-                @close="this.showSubscribeModal = false"
-            ></SubscribeModal>
+            <SubscribeModal></SubscribeModal>
         </Teleport>
     </div>
 </template>
@@ -184,28 +173,31 @@
 <script>
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
-
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
-DataTable.use(DataTablesCore);
 import MediumModal from "../media/MediumModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import CurriculumModal from "./CurriculumModal.vue";
+import {useGlobalStore} from "../../store/global";
+DataTable.use(DataTablesCore);
 
 export default {
     props: {
         subscribable_type: '',
         subscribable_id: '',
     },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
     data() {
         return {
             curricula: [],
             subscriptions: {},
             search: '',
-            showCurriculumModal: false,
             showConfirm: false,
-            showSubscribeModal: false,
-            showSubscribeParams: {},
             url: '/curricula/list',
             errors: {},
             currentCurriculum: {},
@@ -223,15 +215,13 @@ export default {
             this.showConfirm = true;
         },
         editCurriculum(curriculum){
-            this.currentCurriculum = curriculum;
-            this.showCurriculumModal = true;
+            this.globalStore?.showModal('curriculum-modal', curriculum);
         },
         setOwner(curriculum){
             window.location = "/curricula/" + curriculum.id + "/editOwner";
         },
         shareCurriculum(curriculum){
-            this.showSubscribeParams = { 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false};
-            this.showSubscribeModal = true;
+            this.globalStore?.showModal('subscribe-modal', { 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false});
         },
         loaderEvent(){
             if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
@@ -279,19 +269,18 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('curriculum-added', (curriculum) => {
-            this.showCurriculumModal = false;
+            this.globalStore?.closeModal('curriculum-modal');
             this.curricula.push(curriculum); //todo -> use global widget to get add working
         });
 
         this.$eventHub.on('curriculum-updated', (curriculum) => {
-            this.showCurriculumModal = false;
+            this.globalStore?.closeModal('curriculum-modal');
             this.loaderEvent();
             this.update(curriculum); //todo -> use global widget to get update working
         });
 
         this.$eventHub.on('createCurriculum', () => {
-            this.currentCurriculum = {};
-            this.showCurriculumModal = true;
+            this.globalStore?.showModal('curriculum-modal', {});
         });
     },
 

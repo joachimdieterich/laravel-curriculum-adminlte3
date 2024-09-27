@@ -1,6 +1,5 @@
 <template :id="this.id">
     <div class="card">
-
         <div v-if="show"
              class="w-full flex-1 p-2">
             <Line
@@ -43,7 +42,6 @@
                 :height="height"
             />
         </div>
-
     </div>
 </template>
 <script>
@@ -198,6 +196,5 @@ export default {
     components: {
         Line
     },
-
 };
 </script>

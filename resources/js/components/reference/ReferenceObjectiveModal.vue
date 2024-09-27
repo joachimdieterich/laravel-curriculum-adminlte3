@@ -1,93 +1,97 @@
 <template>
     <Transition name="modal">
-        <div v-if="this.globalStore.modals['reference-objective-modal']?.show"
+        <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
         >
-        <div class="modal-container">
-            <div class="card-header">
-                <h3 class="card-title">
-                    {{ trans('global.referenceable_types.objective') }}
-                </h3>
-                <div class="card-tools">
-                    <button v-permission="'objective_delete'"
+            <div class="modal-container">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        {{ trans('global.referenceable_types.objective') }}
+                    </h3>
+                    <div class="card-tools">
+                        <button
+                            v-permission="'objective_delete'"
                             v-if="method !== 'post'"
                             type="button"
                             class="btn btn-tool"
-                            @click="del()">
-                        <i class="fa fa-trash text-danger"></i>
-                    </button>
-                    <button type="button" class="btn btn-tool draggable" >
-                        <i class="fa fa-arrows-alt"></i>
-                    </button>
-                    <button type="button"
+                            @click="destroy()">
+                            <i class="fa fa-trash text-danger"></i>
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-tool draggable" >
+                            <i class="fa fa-arrows-alt"></i>
+                        </button>
+                        <button
+                            type="button"
                             class="btn btn-tool"
-                            @click="this.globalStore?.closeModal('reference-objective-modal')">
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                <div v-if="method === 'post'" class="form-group ">
-                    <Select2
-                        id="curriculum_id"
-                        name="curriculum_id"
-                        url="/curricula"
-                        model="curriculum"
-                        option_id="id"
-                        option_label="title"
-                        :selected="this.form.curriculum_id"
-                        @selectedValue="(id) => {
-                            this.form.curriculum_id = id;
-                        }"
-                    >
-                    </Select2>
-                </div>
-                    <div v-if="this.form.curriculum_id"
-                     class="form-group ">
-                    <Select2
-                        id="terminalObjectives_id"
-                        name="terminalObjectives_id"
-                        :url="'/curricula/' + this.form.curriculum_id + '/terminalObjectives'"
-                        model="terminalObjective"
-                        option_id="id"
-                        option_label="title"
-                        :selected="null"
-                        @selectedValue="(id) => {
-                            this.form.terminal_objective_id = id;
-                        }"
-                    >
-                    </Select2>
-                </div>
-                <div v-if="this.form.terminal_objective_id"
-                class="form-group ">
-                    <Select2
-                        id="enablingObjectives_id"
-                        name="enablingObjectives_id"
-                        :url="'/terminalObjectives/' + this.form.terminal_objective_id + '/enablingObjectives'"
-                        model="enablingObjective"
-                        option_id="id"
-                        option_label="title"
-                        selected="null"
-                        @selectedValue="(id) => {
-                            this.form.enabling_objective_id = id;
-                        }"
-                    >
-                    </Select2>
+                            @click="globalStore?.closeModal($options.name)">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
                 </div>
 
-                <div class="form-group ">
-                    <label for="description">
-                        {{ trans('global.description') }}
-                    </label>
-                    <textarea
-                        id="description"
-                        name="description"
-                        class="form-control description my-editor "
-                        v-model="form.description"
-                    ></textarea>
+                <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                    <div class="form-group ">
+                        <Select2
+                            id="curriculum_id"
+                            name="curriculum_id"
+                            url="/curricula"
+                            model="curriculum"
+                            option_id="id"
+                            option_label="title"
+                            :selected="this.form.curriculum_id"
+                            @selectedValue="(id) => {
+                                this.form.curriculum_id = id;
+                            }"
+                        >
+                        </Select2>
+                    </div>
+                        <div v-if="this.form.curriculum_id"
+                         class="form-group ">
+                        <Select2
+                            id="terminalObjectives_id"
+                            name="terminalObjectives_id"
+                            :url="'/curricula/' + this.form.curriculum_id + '/terminalObjectives'"
+                            model="terminalObjective"
+                            option_id="id"
+                            option_label="title"
+                            :selected="null"
+                            @selectedValue="(id) => {
+                                this.form.terminal_objective_id = id;
+                            }"
+                        >
+                        </Select2>
+                    </div>
+                    <div v-if="this.form.terminal_objective_id"
+                    class="form-group ">
+                        <Select2
+                            id="enablingObjectives_id"
+                            name="enablingObjectives_id"
+                            :url="'/terminalObjectives/' + this.form.terminal_objective_id + '/enablingObjectives'"
+                            model="enablingObjective"
+                            option_id="id"
+                            option_label="title"
+                            selected="null"
+                            @selectedValue="(id) => {
+                                this.form.enabling_objective_id = id;
+                            }"
+                        >
+                        </Select2>
+                    </div>
+
+                    <div class="form-group ">
+                        <label for="description">
+                            {{ trans('global.description') }}
+                        </label>
+                        <textarea
+                            id="description"
+                            name="description"
+                            class="form-control description my-editor "
+                            v-model="form.description"
+                        ></textarea>
+                    </div>
                 </div>
-            </div>
 
                 <div class="card-footer">
                      <span class="pull-right">
@@ -95,7 +99,7 @@
                              id="grade-cancel"
                              type="button"
                              class="btn btn-default"
-                             @click="this.globalStore?.closeModal('reference-objective-modal')">
+                             @click="globalStore?.closeModal($options.name)">
                              {{ trans('global.cancel') }}
                          </button>
                          <button
@@ -116,6 +120,7 @@
     import {useGlobalStore} from "../../store/global";
 
     export default {
+        name: 'reference-objective-modal',
         components:{
             Select2,
         },
@@ -146,20 +151,6 @@
                 }),
             }
         },
-        watch: {
-            params: function(newVal, oldVal) {
-                this.form.reset();
-                this.form.populate(newVal);
-                this.url = newVal.url;
-
-                if (this.form.id != null){
-                    this.method = 'patch';
-                } else {
-                    this.method = 'post';
-                }
-            },
-
-        },
         methods: {
              submit(method) {
                  if (method == 'patch') {
@@ -185,10 +176,32 @@
                     .catch(e => {
                         console.log(e.response);
                     });
+            },
+            destroy(){
+                axios.delete(this.url + '/' + this.form.id)
+                    .then(r => {this.$eventHub.emit('reference-deleted', r.data );})
+                    .catch(e => {
+                        console.log(e.response);
+                    });
             }
         },
         mounted() {
-            this.globalStore.registerModal('reference-objective-modal');
+            this.globalStore.registerModal(this.$options.name);
+            this.globalStore.$subscribe((mutation, state) => {
+                if (mutation.events.key === this.$options.name){
+                    const params = state.modals[this.$options.name].params;
+                    this.form.reset();
+                    if (typeof (params) !== 'undefined'){
+                        this.form.populate(params);
+                        this.url = params.url;
+                        if (this.form.id != null){
+                            this.method = 'patch';
+                        } else {
+                            this.method = 'post';
+                        }
+                    }
+                }
+            });
         },
     }
 </script>

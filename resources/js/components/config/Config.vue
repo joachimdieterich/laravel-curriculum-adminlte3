@@ -69,6 +69,7 @@
 </template>
 
 <script>
+import {useGlobalStore} from "../../store/global";
 import ConfigModal from "../config/ConfigModal.vue";
 
 export default {
@@ -83,6 +84,12 @@ export default {
         status_definitions: {
             default: null
         },
+    },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {

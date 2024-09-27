@@ -58,8 +58,6 @@ import Html from "./html.vue";
                                 });
                             }
                         } else {
-                          /*  console.log('else');
-                            console.log(match);*/
                             parts.push( match[0]);
                         }
                     });

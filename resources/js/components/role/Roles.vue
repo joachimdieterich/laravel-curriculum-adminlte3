@@ -62,18 +62,11 @@
         </div>
 
         <Teleport to="body">
-            <RoleModal
-                :show="this.showRoleModal"
-                @close="this.showRoleModal = false"
-                :params="currentRole"
-            ></RoleModal>
+            <RoleModal></RoleModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.role.delete')"
                 :description="trans('global.role.delete_helper')"
-                css= 'danger'
-                :ok_label="trans('trans.global.ok')"
-                :cancel_label="trans('trans.global.cancel')"
                 @close="() => {
                     this.showConfirm = false;
                 }"
@@ -86,25 +79,28 @@
     </div>
 </template>
 
-
 <script>
 import RoleModal from "../role/RoleModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    props: {
-
+    props: {},
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
             component_id: this.$.uid,
             roles: null,
             search: '',
-            showRoleModal: false,
             showConfirm: false,
             url: '/roles/list',
             errors: {},
@@ -125,23 +121,21 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('role-added', (role) => {
-            this.showRoleModal = false;
+            this.globalStore?.closeModal('role-modal');
             this.roles.push(role);
         });
 
         this.$eventHub.on('role-updated', (role) => {
-            this.showRoleModal = false;
+            this.globalStore?.closeModal('role-modal');
             this.update(role);
         });
         this.$eventHub.on('createRole', () => {
-            this.currentRole = {};
-            this.showRoleModal = true;
+            this.globalStore?.showModal('role-modal', {});
         });
     },
     methods: {
         editRole(role){
-            this.currentRole = role;
-            this.showRoleModal = true;
+            this.globalStore?.showModal('role-modal', role);
         },
         loaderEvent(){
             const dt = $('#role-datatable').DataTable();

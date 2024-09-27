@@ -251,18 +251,14 @@
 
 
 <script>
-import { storeToRefs } from 'pinia';
 import { useDatatableStore } from "../../store/datatables";
 import Form from "form-backend-validation";
 import { useToast } from "vue-toastification";
 import Select2 from "../forms/Select2.vue";
 export default {
-    props: {
-
-    },
+    props: {},
     setup () { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters
         const store = useDatatableStore();
-        //const { getDatatable } = storeToRefs(store);
         const toast = useToast();
         return {
             store,

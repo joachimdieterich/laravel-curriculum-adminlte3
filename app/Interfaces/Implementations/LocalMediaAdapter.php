@@ -113,7 +113,7 @@ class LocalMediaAdapter implements MediaInterface
                     $class = 'App\\'.$params['model'];
                     $model = (new $class)::where('id',$params['model_id'] )->get()->first();
 
-                    if ($model->isAccessible()){
+                    if ($model->isAccessible() && ($model->medium_id == $medium->id)){
                         return ($medium->mime_type != 'url') ? response()->file($path) : redirect($medium->path); //return file or url
                     }
                 break;

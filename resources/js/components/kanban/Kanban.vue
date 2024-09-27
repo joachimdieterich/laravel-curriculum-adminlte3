@@ -134,11 +134,7 @@
             @close="this.showKanbanModal = false"
             :params="this.currentKanban"
         ></KanbanModal>
-        <SubscribeModal
-            :params="this.showSubscribeParams"
-            :show="this.showSubscribeModal"
-            @close="this.showSubscribeModal = false"
-        ></SubscribeModal>
+        <SubscribeModal></SubscribeModal>
     </Teleport>
     <teleport
         v-if="$userId == kanban.owner_id"
@@ -173,11 +169,12 @@
 
 <script>
 import draggable from "vuedraggable";
-import KanbanItem from "./KanbanItem.vue";
-import KanbanItemCreate from "./KanbanItemCreate.vue";
+import KanbanItem from "../kanbanItem/KanbanItem.vue";
+import KanbanItemCreate from "../kanbanItem/KanbanItemCreate.vue";
 import KanbanStatus from "./KanbanStatus.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import KanbanModal from "../kanban/KanbanModal.vue";
+import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
@@ -200,6 +197,12 @@ export default {
             }
         },
     },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
     data() {
         return {
             kanbanColor: '',
@@ -211,8 +214,6 @@ export default {
             autoRefresh: false,
             refreshRate: 5000,
             usersOnline:[],
-            showSubscribeParams: {},
-            showSubscribeModal: false,
             showKanbanModal: false,
             currentKanban: {}
         };
@@ -230,17 +231,15 @@ export default {
             }
         },
         share(){
-            this.showSubscribeParams =
-                {
-                    'modelId': this.kanban.id,
-                    'modelUrl': 'kanban',
-                    'shareWithUsers': true,
-                    'shareWithGroups': true,
-                    'shareWithOrganizations': true,
-                    'shareWithToken': true,
-                    'canEditCheckbox': true
-                };
-            this.showSubscribeModal = true;
+            this.globalStore?.showModal('subscribe-modal', {
+                'modelId': this.kanban.id,
+                'modelUrl': 'kanban',
+                'shareWithUsers': true,
+                'shareWithGroups': true,
+                'shareWithOrganizations': true,
+                'shareWithToken': true,
+                'canEditCheckbox': true
+            });
         },
         visiblefrom_to(visible_from, visible_until){
             const now = moment().format("YYYY-MM-DD HH:mm:ss");

@@ -37,12 +37,9 @@
             <span class="pull-right "><i class="fa fa-link pr-1"></i> <span v-dompurify-html="subscription.created_at"></span></span>
         </div>
     </div>
-
 </template>
 
-
 <script>
-
     export default {
         props: ['task'],
         data: function() {
@@ -62,7 +59,5 @@
         created() {
             this.loadData();
         },
-
-
-        }
+    }
 </script>

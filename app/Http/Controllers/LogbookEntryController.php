@@ -11,37 +11,33 @@ class LogbookEntryController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        //
+        abort(403);
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function create()
     {
-        //
+        abort(403);
     }
 
     /**
      * Update the subject_id of a specific entry
      */
-    public function setSubject(Request $request) {
+    public function setSubject(LogbookEntry $logbookEntry) {
         $input = $this->validateRequest();
 
-        $update = LogbookEntry::updateOrCreate([
-            'id' => $request->id,
-        ], [
-            'subject_id' => $input['subject_id'],
-        ]);
-        $update->save();
-
-        return true;
+        $logbookEntry->update([
+                'subject_id' => format_select_input($input['subject_id']),
+            ]);
+        if (request()->wantsJson()) {
+            return $logbookEntry->subject;
+        }
     }
 
     /**
@@ -85,10 +81,8 @@ class LogbookEntryController extends Controller
         ])->where('id', $entry->id)->get()->first();
 
         if (request()->wantsJson()) {
-            return ['message' => $entry];
+            return $entry;
         }
-
-        return back();
     }
 
     /**
@@ -124,7 +118,7 @@ class LogbookEntryController extends Controller
         $logbookEntry->update($this->validateRequest());
 
         if (request()->wantsJson()) {
-            return ['message' => $logbookEntry];
+            return $logbookEntry;
         }
     }
 
@@ -173,10 +167,9 @@ class LogbookEntryController extends Controller
             ->where('referenceable_type', '=', 'App\LogbookEntry')
             ->where('referenceable_id', '=', $logbookEntry->id)
             ->delete();
-        $return = $logbookEntry->delete();
 
         if (request()->wantsJson()) {
-            return ['message' => $return];
+            return $logbookEntry->delete();
         }
     }
 

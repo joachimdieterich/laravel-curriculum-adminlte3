@@ -3,14 +3,7 @@
     {{ trans('global.home') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item active"><a href="/"><i class="fa fa-home"></i></a></li>
-    <li class="breadcrumb-item ">
-        <a href="/documentation"
-           class="text-black-50"
-           aria-label="{{ trans('global.documentation') }}">
-            <i class="fas fa-question-circle"></i>
-        </a>
-    </li>
+    <breadcrumbs></breadcrumbs>
 @endsection
 @section('content')
     <div class="content">

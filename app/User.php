@@ -3,7 +3,6 @@
 namespace App;
 
 use App\Domains\Exams\Models\Exam;
-use App\Scopes\NoSharingUsers;
 use Carbon\Carbon;
 use Cmgmyr\Messenger\Models\Thread;
 use Cmgmyr\Messenger\Traits\Messagable;
@@ -80,7 +79,7 @@ class User extends Authenticatable
 
     protected static function booted()
     {
-        //static::addGlobalScope(new NoSharingUsers());
+
     }
 
 

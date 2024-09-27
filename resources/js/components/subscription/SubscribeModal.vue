@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="show"
+        <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
         >
             <div class="modal-container">
@@ -16,7 +16,7 @@
                             <button type="button"
                                     class="btn btn-tool"
                                     data-widget="remove"
-                                    @click="$emit('close')">
+                                    @click="globalStore?.closeModal($options.name)">
                                 <i class="fa fa-times"></i>
                             </button>
                         </div>
@@ -193,7 +193,7 @@
                             type="button"
                             class="btn btn-default"
                             data-widget="remove"
-                            @click="$emit('close')">
+                            @click="globalStore?.closeModal($options.name)">
                             {{ trans('global.close') }}
                         </button>
                     </span>
@@ -211,15 +211,20 @@ import tokens from "./Tokens.vue";
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import Select2 from "../forms/Select2.vue";
+import {useGlobalStore} from "../../store/global";
 
 export default {
+    name: 'subscribe-modal',
     props: {
-        show: {
-            type: Boolean
-        },
         params: {
             type: Object
         }  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
+    },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
@@ -237,25 +242,9 @@ export default {
             shareWithToken:  false,
             nameToken: '',
             canEditLabel: window.trans.global.can_edit,
-            myValue: '',
-            myOptions: ['op1', 'op2', 'op3'] // or [{id: key, text: value}, {id: key,
-
+           // myValue: '',
+           // myOptions: ['op1', 'op2', 'op3'] // or [{id: key, text: value}, {id: key,
         };
-    },
-    watch: {
-        params: function(newVal, oldVal) {
-            //console.log(newVal);
-            this.resetComponent();
-            this.modelUrl = newVal.modelUrl;
-            this.modelId = newVal.modelId;
-            this.shareWithUsers = newVal.shareWithUsers;
-            this.shareWithGroups = newVal.shareWithGroups;
-            this.shareWithOrganizations = newVal.shareWithOrganizations;
-            this.shareWithToken = newVal.shareWithToken;
-            this.canEditLabel = newVal.canEditLabel;
-            this.canEditCheckbox = newVal.canEditCheckbox;
-            this.loadSubscribers();
-        },
     },
     methods: {
         resetComponent() {
@@ -303,7 +292,27 @@ export default {
             }).then( () => this.loadSubscribers())
         }
     },
-    mounted() {},
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (mutation.events.key === this.$options.name){
+                const params = state.modals[this.$options.name].params;
+
+                if (typeof (params) !== 'undefined'){
+                    this.resetComponent();
+                    this.modelUrl = params.modelUrl;
+                    this.modelId = params.modelId;
+                    this.shareWithUsers = params.shareWithUsers;
+                    this.shareWithGroups = params.shareWithGroups;
+                    this.shareWithOrganizations = params.shareWithOrganizations;
+                    this.shareWithToken = params.shareWithToken;
+                    this.canEditLabel = params.canEditLabel;
+                    this.canEditCheckbox = params.canEditCheckbox;
+                    this.loadSubscribers();
+                }
+            }
+        });
+    },
     components: {
         subscribers,
         tokens,

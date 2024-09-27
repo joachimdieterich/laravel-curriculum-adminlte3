@@ -1,5 +1,5 @@
 <template>
-    <div v-if="this.globalStore.modals['medium-preview-modal']?.show"
+    <div v-if="globalStore.modals[$options.name]?.show"
          class="modal-mask">
         <div class="modal-container">
             <div class="card-header">
@@ -42,7 +42,7 @@
                     </button>
                     <button type="button"
                             class="btn btn-tool"
-                            @click="this.globalStore?.closeModal('medium-preview-modal')">
+                            @click="globalStore?.closeModal($options.name)">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
@@ -86,14 +86,14 @@
                      <button type="button"
                              class="btn btn-info mr-2"
                              data-widget="remove"
-                             @click="this.globalStore?.closeModal('medium-preview-modal')">
+                             @click="globalStore?.closeModal($options.name)">
                          {{ trans('global.close') }}
                      </button>
                      <button
                          v-if="medium.mime_type == 'url'"
                          class="btn btn-primary"
                          data-widget="remove"
-                         @click="$emit('close')">
+                         @click="globalStore?.closeModal($options.name)">
                          <a :href="scr"
                             class="text-white text-decoration-none"
                             target="_blank">
@@ -125,6 +125,7 @@ import License from '../uiElements/License.vue'
 import RenderUsage from "../../../../app/Plugins/Repositories/edusharing/resources/js/components/RenderUsage.vue";
 import {useGlobalStore} from "../../store/global";
     export default {
+        name: 'medium-preview-modal',
         props:{
             show: Boolean,
             params: {
@@ -148,19 +149,6 @@ import {useGlobalStore} from "../../store/global";
                 edit: false,
                 errors: {}
             }
-        },
-        mounted() {
-            this.globalStore.registerModal('medium-preview-modal');
-            this.globalStore.$subscribe((mutation, state) => {
-                const params = state.modals['medium-preview-modal'].params;
-                console.log(params);
-                if (typeof (params) !== 'undefined'){
-                    this.medium = params;
-                   /* this.subscribable= event.params.subscribable;
-                    this.subscribable_type = event.params.subscribable_type;
-                    this.subscribable_id = event.params.subscribable_id;*/
-                }
-            });
         },
         methods: {
             mime(type) {
@@ -222,6 +210,21 @@ import {useGlobalStore} from "../../store/global";
                 }
            }
 
+        },
+        mounted() {
+            this.globalStore.registerModal(this.$options.name);
+            this.globalStore.$subscribe((mutation, state) => {
+                if (mutation.events.key === this.$options.name){
+                    const params = state.modals[this.$options.name].params;
+                    //console.log(params);
+                    if (typeof (params) !== 'undefined'){
+                        this.medium = params;
+                        /* this.subscribable= event.params.subscribable;
+                         this.subscribable_type = event.params.subscribable_type;
+                         this.subscribable_id = event.params.subscribable_id;*/
+                    }
+                }
+            });
         },
         computed: {
             scr: function () {

@@ -63,9 +63,6 @@
                 :showConfirm="this.showConfirm"
                 :title="trans('global.metadataset.delete')"
                 :description="trans('global.metadataset.delete_helper')"
-                css= 'danger'
-                :ok_label="trans('trans.global.ok')"
-                :cancel_label="trans('trans.global.cancel')"
                 @close="() => {
                     this.showConfirm = false;
                 }"
@@ -79,8 +76,6 @@
                 :title="trans('global.metadataset.copy')"
                 :description="trans('global.metadataset.copy_helper')"
                 css= 'primary'
-                :ok_label="trans('trans.global.ok')"
-                :cancel_label="trans('trans.global.cancel')"
                 @close="() => {
                     this.showCopy = false;
                 }"

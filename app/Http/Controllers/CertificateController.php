@@ -301,7 +301,7 @@ class CertificateController extends Controller
 
                     return ($progress->avg('value') != null and (int) $progress->avg('value') >= (int) $match[3])
                             ? '<div style="opacity: 1;">'.$match[4].'</div>'
-                            : '<div style="opacity: 0.5;">'.$match[4].'</div>';
+                            : '<div style="opacity: 0.3;">'.$match[4].'</div>';
                 },
 
                 $html

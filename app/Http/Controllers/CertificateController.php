@@ -299,13 +299,14 @@ class CertificateController extends Controller
                                 ->where('associable_id', $associable_id)
                                 ->get();
 
-                    return ($progress->avg('value') != null and $progress->avg('value') >= (int) $match[3])
-                            ? $match[4]
+                    return ($progress->avg('value') != null and (int) $progress->avg('value') >= (int) $match[3])
+                            ? '<div style="opacity: 1;">'.$match[4].'</div>'
                             : '<div style="opacity: 0.5;">'.$match[4].'</div>';
                 },
 
                 $html
             );
+            //dump($html);
             //end progress
             $filename = date('Y-m-d_H-i-s').str_replace_special_chars($user->lastname.'_'.$user->firstname).'.pdf'; //Username escape german umlaute
             $path = 'users/'.auth()->user()->id.'/';

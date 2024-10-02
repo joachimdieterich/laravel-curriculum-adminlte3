@@ -370,9 +370,9 @@ class CertificateController extends Controller
     protected function generateAccomplishedObjectiveListWithIndicator($html, $user_id, $curriculum, $replace = "[accomplished_objectives_with_indicator]", $with_terminal_objectives = true)
     {
         abort_unless(auth()->user()->mayAccessUser(User::find($user_id)), 403);
-        $td_style = 'style="border-bottom: 1px solid silver;border-right: 1px solid silver;"';
+        $td_style = 'style="padding-top:15px; border-bottom: 1px solid silver;border-right: 0;"';
 
-        $accomplished_list = '<table repeat_header="1" style="width: 100%;padding-bottom: 10px;" border="0"><tbody>'
+        $accomplished_list = '<table repeat_header="1" style="width: 100%;padding-bottom: 10px;"><tbody>'
             .'<thead><tr><td style="border-bottom: 1px solid silver;" colspan="3"><strong>'.$curriculum->terminalObjectives[0]->type->title.'</strong></td>'
             .'</tr></thead>';
 
@@ -392,15 +392,19 @@ class CertificateController extends Controller
                     case '11':
                     case '21':
                     case '31':
-                        if($current_ter_value != $ter_value->title)
+                    case '02':
+                    case '12':
+                    case '22':
+                    case '32':
+                        if($current_ter_value != $ter_value->id)
                         {
-                            $accomplished_list .= '<tr><td '.$td_style.' colspan="3"><strong>'.strip_tags($current_ter_value).'</strong></td></tr>';
-                            $current_ter_value = $ter_value->title;
+                            $accomplished_list .= '<tr><td '.$td_style.' colspan="3"><strong>'.strip_tags($ter_value->title).'</strong></td></tr>';
+                            $current_ter_value = $ter_value->id;
                         }
                         $accomplished_list .= '<tr><td style="width: 75%;border-bottom: 1px solid silver;border-right: 1px solid silver;">'.strip_tags($ena->title).'</td>';
                         $accomplished_list .= '<td style="text-align: center; border-bottom: 1px solid silver;border-right: 1px solid silver;">'.strip_tags($ena->level?->title).'</td>';
 
-                        $accomplished_list .= '<td style="text-align: center; border-bottom: 1px solid silver;border-right: 1px solid silver;">';
+                        $accomplished_list .= '<td style="text-align: center; border-bottom: 1px solid silver;border-right: 0;">';
                         $accomplished_list .= $this->achievementIndicator($status);//.'<'.$status;
                         $accomplished_list .= '</td></tr>';
                         break;
@@ -501,21 +505,39 @@ class CertificateController extends Controller
 
     protected function achievementIndicator($status)
     {
-        $span_style = 'style="text-align: center; font-family: DejaVu Sans;"';
+
+        $svg_check_green = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="green" d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z"/></svg>';
+        $svg_circle_green = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="green" d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/></svg>';
+
+        $svg_check_orange = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="orange" d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z"/></svg>';
+        $svg_circle_orange = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="orange" d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/></svg>';
+
+        $svg_check_red = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="red" d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z"/></svg>';
+        $svg_circle_red = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="red" d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/></svg>';
 
         switch (true) {
-            case in_array($status, ['01', '11', '21', '31']): $html = '<span '.$span_style.'>&#10004;</span>';
+            case in_array($status, ['01', '11', '21', '31']):
+                $icons=  '<img src="data:image/svg+xml;base64,'.base64_encode($svg_check_green).'"  width="18" height="18" style="margin:5px;"/>'
+                        .'<img src="data:image/svg+xml;base64,'.base64_encode($svg_circle_orange).'"  width="18" height="18" style="margin:5px;"/>'
+                        .'<img src="data:image/svg+xml;base64,'.base64_encode($svg_circle_red).'"  width="18" height="18" style="margin:5px;"/>';
                 break;
-            case in_array($status, ['02', '12', '22', '32']): $html = '<span '.$span_style.'>(&#10004;)</span>';
+            case in_array($status, ['02', '12', '22', '32']):
+                $icons=  '<img src="data:image/svg+xml;base64,'.base64_encode($svg_circle_green).'"  width="18" height="18" style="margin:5px;"/>'
+                    .'<img src="data:image/svg+xml;base64,'.base64_encode($svg_check_orange).'"  width="18" height="18" style="margin:5px;"/>'
+                    .'<img src="data:image/svg+xml;base64,'.base64_encode($svg_circle_red).'"  width="18" height="18" style="margin:5px;"/>';
                 break;
-            case in_array($status, ['03', '13', '23', '33']): $html = '<span '.$span_style.'>&#10007;</span>';
+            case in_array($status, ['03', '13', '23', '33']):
+                $icons =  '<img src="data:image/svg+xml;base64,'.base64_encode($svg_circle_green).'"  width="18" height="18" style="margin:5px;"/>'
+                    .'<img src="data:image/svg+xml;base64,'.base64_encode($svg_circle_orange).'"  width="18" height="18" style="margin:5px;"/>'
+                    .'<img src="data:image/svg+xml;base64,'.base64_encode($svg_check_red).'"  width="18" height="18" style="margin:5px;"/>';
                 break;
-
-            default:  $html = '<span '.$span_style.'></span>';
+            default:   $icons =  '<img src="data:image/svg+xml;base64,'.base64_encode($svg_circle_green).'"  width="18" height="18" style="margin:5px;"/>'
+                .'<img src="data:image/svg+xml;base64,'.base64_encode($svg_circle_orange).'"  width="18" height="18" style="margin:5px;"/>'
+                .'<img src="data:image/svg+xml;base64,'.base64_encode($svg_circle_red).'"  width="18" height="18" style="margin:5px;"/>';
                 break;
         }
-
-        return $html;
+        $style = 'style="text-align: center; margin-top:5px;"';
+        return '<div '.$style.'>'.$icons.'</span>';
     }
 
     /**
@@ -533,7 +555,9 @@ class CertificateController extends Controller
         /* replace relative media links with absolute paths to get snappy working */
         $html = relativeToAbsolutePaths($html);
 
-        $pdf = Pdf::loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'.$html)
+        $pdf = Pdf::loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <defs>
+                    <style>path{fill: #000000;}</style>
+            </defs>'.$html)
             ->setPaper('a4')
             //->setOrientation($orientation)
             ->setOption('margin-bottom', 0)

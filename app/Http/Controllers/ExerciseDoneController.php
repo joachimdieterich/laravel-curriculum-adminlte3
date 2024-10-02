@@ -34,7 +34,7 @@ class ExerciseDoneController extends Controller
      */
     public function store(Request $request)
     {
-        abort_unless(\Gate::allows('plan_create'), 403);
+        abort_unless(\Gate::allows('achievement_create_self_assessment'), 403);
         $new_iteration = $this->validateRequest();
 
         $entry = ExerciseDone::create([
@@ -71,7 +71,7 @@ class ExerciseDoneController extends Controller
      */
     public function update(Request $request, ExerciseDone $exerciseDone)
     {
-        abort_unless(\Gate::allows('plan_edit'), 403);
+        abort_unless(\Gate::allows('achievement_create_self_assessment'), 403);
         $update_iteration = $this->validateRequest();
 
         $exerciseDone->update([
@@ -92,7 +92,7 @@ class ExerciseDoneController extends Controller
      */
     public function destroy(ExerciseDone $exerciseDone)
     {
-        abort_unless(\Gate::allows('plan_delete'), 403);
+        abort_unless(\Gate::allows('achievement_create_self_assessment'), 403);
 
         $exerciseDone->delete();
 

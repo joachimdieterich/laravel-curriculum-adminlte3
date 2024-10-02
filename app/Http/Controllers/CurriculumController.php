@@ -387,7 +387,7 @@ class CurriculumController extends Controller
             'owner_id'              => auth()->user()->id,
         ]);
 
-        return redirect($curriculum->path());
+        return view('curricula.index');//return redirect($curriculum->path());
     }
 
     /**

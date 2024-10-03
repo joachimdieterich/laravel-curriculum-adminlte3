@@ -9,9 +9,7 @@ class SubjectsApiController extends Controller
 {
     public function index()
     {
-        $subjects = Subject::all();
-
-        return $subjects;
+        return Subject::all();
     }
 
     public function show(Subject $subject)

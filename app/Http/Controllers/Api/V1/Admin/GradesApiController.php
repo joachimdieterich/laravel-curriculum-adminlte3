@@ -9,9 +9,7 @@ class GradesApiController extends Controller
 {
     public function index()
     {
-        $grades = Grade::all();
-
-        return $grades;
+        return Grade::all();
     }
 
     public function show(Grade $grade)

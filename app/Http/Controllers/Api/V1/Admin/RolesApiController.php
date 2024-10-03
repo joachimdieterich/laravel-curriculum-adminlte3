@@ -9,9 +9,7 @@ class RolesApiController extends Controller
 {
     public function index()
     {
-        $roles = Role::all();
-
-        return $roles;
+        return Role::all();
     }
 
     public function show(Role $role)

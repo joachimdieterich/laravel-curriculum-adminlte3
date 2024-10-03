@@ -14,9 +14,7 @@ class GroupsApiController extends Controller
 {
     public function index()
     {
-        $groups = Group::all();
-
-        return $groups;
+        return Group::all();
     }
 
     public function store()

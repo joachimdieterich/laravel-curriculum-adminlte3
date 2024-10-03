@@ -11,9 +11,7 @@ class OrganizationsApiController extends Controller
 {
     public function index()
     {
-        $organizations = Organization::all();
-
-        return $organizations;
+        return Organization::all();
     }
 
     public function store()

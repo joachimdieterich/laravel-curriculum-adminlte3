@@ -19,9 +19,7 @@ class UsersApiController extends Controller
         }
         else
         {
-            $users = User::all();
-
-            return $users;
+            return User::all();
         }
 
     }

@@ -203,6 +203,7 @@ return [
     ],
     'user_management' => 'Users',
     'users' => 'Users',
+    'users_selected' => 'User/s selected',
     'select_users' => 'Select users',
     'no_user_selected' => 'No user selected',
     'user' => [

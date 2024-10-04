@@ -214,6 +214,7 @@ return [
     'user_management' => 'Benutzerverwaltung',
     'users' => 'Benutzer',
     'select_users' => 'Benutzer auswählen',
+    'users_selected' => 'Benutzer ausgewählt',
     'no_user_selected' => 'Kein Benutzer ausgewählt',
     'user' => [
         'title' => 'Benutzer',

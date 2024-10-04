@@ -47,7 +47,7 @@
                                 />
                             </td>
                             <td colspan="2">
-                                {{ selectedUsers.length }} Benutzer ausgewählt
+                                {{ selectedUsers.length  + ' ' + trans('global.users_selected')}}
                             </td>
                             <td>
                                 <i

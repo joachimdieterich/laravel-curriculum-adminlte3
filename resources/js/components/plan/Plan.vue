@@ -14,7 +14,7 @@
                                 <button
                                     @click="openUserModal()"
                                     class="btn btn-tool text-dark px-0"
-                                    :disabled="mode_toggle"
+                                    :disabled="modeToggle"
                                     style="margin-top: -15px;"
                                 >
                                     {{
@@ -27,14 +27,14 @@
                             <span class="tooltip-container">
                                 <span class="tooltip-wrapper">
                                     <span class="tooltip-text">
-                                        {{ mode_toggle ? 'Kompetenz anklicken um mehrere Personen einzuschätzen' : 'Person auswählen und direkt einschätzen' }}
+                                        {{ modeToggle ? 'Kompetenz anklicken um mehrere Personen einzuschätzen' : 'Person auswählen und direkt einschätzen' }}
                                     </span>
                                 </span>
                                 <a class="link-muted" style="padding-left: 6px; margin-right: -4px">
                                     <i class="fa fa-user"></i>
                                 </a>
                                 <span class="custom-switch custom-switch-on-green" style="padding-left: 44px;">
-                                    <input type="checkbox" id="mode_toggle" class="custom-control-input" v-model="mode_toggle">
+                                    <input type="checkbox" id="mode_toggle" class="custom-control-input" v-model="modeToggle">
                                     <label for="mode_toggle" class="custom-control-label pointer"></label>
                                 </span>
                                 <a class="link-muted" style="margin-left: -4px;">
@@ -42,7 +42,7 @@
                                 </a>
                             </span>
                         </span>
-                        <a @click="openUserModal(!mode_toggle)" class="link-muted mr-3 px-1 pointer">
+                        <a @click="openUserModal(!modeToggle)" class="link-muted mr-3 px-1 pointer">
                             <i class="fa fa-chart-simple"></i>
                         </a>
                         <a onclick="window.print()" class="link-muted mr-3 px-1 pointer">
@@ -51,7 +51,7 @@
                         <a v-if="editable" class="link-muted px-1">
                             <i class="fa fa-pencil-alt"></i>
                             <span class="custom-switch custom-switch-on-green pull-right" style="margin-right: -6px;">
-                                <input type="checkbox" id="edit_toggle" class="custom-control-input" v-model="edit_toggle">
+                                <input type="checkbox" id="edit_toggle" class="custom-control-input" v-model="showToolsToggle">
                                 <label for="edit_toggle" class="custom-control-label pointer"></label>
                             </span>
                         </a>
@@ -79,7 +79,8 @@
                         <PlanEntry
                             v-for="(entry, index) in entries"
                             :key="entries[index].id"
-                            :editable="editable && edit_toggle"
+                            :editable="editable"
+                            :showTools="showToolsToggle"
                             :entry="entry"
                             :plan="plan"
                         ></PlanEntry>
@@ -98,7 +99,7 @@
             <div
                 id="corner-button"
                 class="position-sticky d-flex align-items-center float-right px-3"
-                :style="mode_toggle ? 'display: none !important' : ''"
+                :style="modeToggle ? 'display: none !important' : ''"
                 role="button"
                 @click="openUserModal()"
             >
@@ -117,9 +118,9 @@
             <note-modal></note-modal>
             <select-users-modal
                 :users="users"
-                :multiple="mode_toggle"
-                :title="mode_toggle ? 'global.plan.evaluate_user' : 'global.select_users'"
-                :submitText="mode_toggle ? 'global.open' : 'global.save'"
+                :multiple="modeToggle"
+                :title="modeToggle ? 'global.plan.evaluate_user' : 'global.select_users'"
+                :submitText="modeToggle ? 'global.open' : 'global.save'"
             ></select-users-modal>
         </div>
         <PlanIndexAddWidget
@@ -159,8 +160,8 @@ export default {
             subscriptions: {},
             temp_id: Number,
             disabled: true, // false => only plan-owner
-            mode_toggle: true, // true => all users | false => single user
-            edit_toggle: true,
+            modeToggle: true, // true => all users | false => single user
+            showToolsToggle: true,
             selected_user: null,
             errors: {},
         }
@@ -250,7 +251,7 @@ export default {
             }
         },
         async handleUserModalClose(users, skip = false) {
-            if (!this.mode_toggle && !skip) {
+            if (!this.modeToggle && !skip) {
                 this.selected_user = users;
                 localStorage.setItem('user-datatable-selection', [users.id]); // used by AchievementIndicator.vue
             } else {

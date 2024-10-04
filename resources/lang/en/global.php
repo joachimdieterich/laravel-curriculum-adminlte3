@@ -823,6 +823,8 @@ return [
         'delete' => 'Should this plan and all its corresponding data be deleted?',
         'select_users' => 'Select users',
         'evaluate_user' => 'Evaluate user',
+        'tooltip_user' => 'Select user and assess directly',
+        'tooltip_group' => 'Click objective to assess multiple people',
         'fields' => [
             'type' => 'Type',
             'type_helper' => '',

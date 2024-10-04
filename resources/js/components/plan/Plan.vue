@@ -27,7 +27,7 @@
                             <span class="tooltip-container">
                                 <span class="tooltip-wrapper">
                                     <span class="tooltip-text">
-                                        {{ modeToggle ? 'Kompetenz anklicken um mehrere Personen einzuschätzen' : 'Person auswählen und direkt einschätzen' }}
+                                        {{ modeToggle ? trans('global.plan.tooltip_group') : trans('global.plan.tooltip_user') }}
                                     </span>
                                 </span>
                                 <a class="link-muted" style="padding-left: 6px; margin-right: -4px">

@@ -836,6 +836,8 @@ return [
         'delete_helper' => 'Soll der Lern-/Arbeitsplan sowie die zugehörigen Daten gelöscht werden?',
         'select_users' => 'Benutzer auswählen',
         'evaluate_user' => 'Benutzer auswerten',
+        'tooltip_user' => 'Person auswählen und direkt einschätzen',
+        'tooltip_group' => 'Kompetenz anklicken um mehrere Personen einzuschätzen',
         'fields' => [
             'type' => 'Typ',
             'type_helper' => '',

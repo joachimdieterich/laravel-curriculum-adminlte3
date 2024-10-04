@@ -31,9 +31,10 @@
                     <thead>
                         <tr class="border-top-0">
                             <th style="width: 0px;"></th>
-                            <th class="sorting sorting_asc" @click="sortBy(1)">{{ trans('global.name') }}</th>
+                            <th class="sorting sorting_asc" @click="sortBy(1)">{{ trans('global.firstname') }}</th>
+                            <th class="sorting" @click="sortBy(2)">{{ trans('global.lastname') }}</th>
                             <th>{{ trans('global.notes') }}</th>
-                            <th class="sorting" @click="sortBy(3)">Status</th>
+                            <th class="sorting" @click="sortBy(4)">Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,7 +46,7 @@
                                     @change="toggleUsers()"
                                 />
                             </td>
-                            <td>
+                            <td colspan="2">
                                 {{ selectedUsers.length }} Benutzer ausgewählt
                             </td>
                             <td>
@@ -76,7 +77,8 @@
                                     v-model="selectedUsers"
                                 />
                             </td>
-                            <td>{{ user.firstname }} {{ user.lastname }}</td>
+                            <td>{{ user.firstname }}</td>
+                            <td>{{ user.lastname }}</td>
                             <td>
                                 <i style="font-size: 18px; margin: -0.25rem" 
                                     class="far fa-sticky-note text-muted pointer p-1"
@@ -167,25 +169,27 @@ export default {
 
             Array.from(trs)
                 .sort((a, b) => {
+                    // TODO: if two rows have the same value, further sort by other column
                     switch (columnNr) {
                         // TODO: 'Status'-sort needs overhaul
-                        case 3: // column 3 = 'Status'
+                        case 4: // column 4 = 'Status'
                             return this.sortByAsc
-                                ? b.cells[3].getAttribute('data-value') - a.cells[3].getAttribute('data-value')
-                                : a.cells[3].getAttribute('data-value') - b.cells[3].getAttribute('data-value');
-                        case 1: // column 1 = 'Name' => default
+                                ? b.cells[columnNr].getAttribute('data-value') - a.cells[columnNr].getAttribute('data-value')
+                                : a.cells[columnNr].getAttribute('data-value') - b.cells[columnNr].getAttribute('data-value');
+                        case 1: // column 1 = 'Firstname' => default
+                        case 2: // column 2 = 'Lastname'
                         default:
                         return this.sortByAsc
-                            ? a.cells[1].innerText.localeCompare(b.cells[1].innerText) * -1 // reverse logic
-                            : a.cells[1].innerText.localeCompare(b.cells[1].innerText);
+                            ? a.cells[columnNr].innerText.localeCompare(b.cells[columnNr].innerText) * -1 // reverse logic
+                            : a.cells[columnNr].innerText.localeCompare(b.cells[columnNr].innerText);
                     }
                 }).forEach(tr => table.appendChild(tr));
-            
-                
-            // hide previous sorting indicicator
+
+
+            // hide previous sorting indicator
             const previousSort = this.sortByAsc ? 'sorting_desc' : 'sorting_asc';
             this.$el.querySelector('.' + previousSort).classList.remove(previousSort)
-            // show current sorting incdicator
+            // show current sorting indicator
             const th = document.querySelector('#achievements-table').firstChild.firstChild.children[columnNr];
             const currentSort = this.sortByAsc ? 'sorting_asc' : 'sorting_desc';
             th.classList.add(currentSort);

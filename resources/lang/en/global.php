@@ -203,6 +203,7 @@ return [
     ],
     'user_management' => 'Users',
     'users' => 'Users',
+    'users_selected' => 'User/s selected',
     'select_users' => 'Select users',
     'no_user_selected' => 'No user selected',
     'user' => [
@@ -254,8 +255,8 @@ return [
     'website' => 'Website',
     'contacts' => 'Contacts',
     'contact' => 'Contact',
-    'first_name' => 'First name',
-    'last_name' => 'Last name',
+    'firstname' => 'Firstname',
+    'lastname' => 'Lastname',
     'phone' => 'Phone',
     'tags' => 'Tags',
     'tag' => 'Tag',
@@ -823,6 +824,8 @@ return [
         'delete' => 'Should this plan and all its corresponding data be deleted?',
         'select_users' => 'Select users',
         'evaluate_user' => 'Evaluate user',
+        'tooltip_user' => 'Select user and assess directly',
+        'tooltip_group' => 'Click objective to assess multiple people',
         'fields' => [
             'type' => 'Type',
             'type_helper' => '',

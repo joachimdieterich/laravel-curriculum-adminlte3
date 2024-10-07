@@ -70,46 +70,40 @@
 
                             <div class="form-group">
                                 <textarea
-                                    :id="'description'+component_id"
-                                    :name="'description'+component_id"
+                                    id="description"
+                                    name="description"
                                     :placeholder="trans('global.description')"
-                                    class="form-control description my-editor"
+                                    class="form-control description"
                                     v-model.trim="form.description"
                                 ></textarea>
                             </div>
 
                             <div class="form-group">
                                 <label for="begin">
-                                    {{ trans('global.plan.fields.begin') + ' *' }}
+                                    {{ trans('global.plan.fields.begin') }}
                                 </label>
                                 <date-picker
                                     v-model="form.begin"
-                                    :input-attr="{ id: 'begin', required: true }"
+                                    :input-attr="{ id: 'begin' }"
                                     class="w-100"
                                     type="datetime"
                                     value-type="YYYY-MM-DD HH:mm:ss"
                                     :placeholder="trans('global.plan.fields.begin')"
                                 ></date-picker>
-                                <p v-if="errors.begin == true" class="error-block">
-                                    {{ trans('validation.required') }}
-                                </p>
                             </div>
 
                             <div class="form-group pb-2">
                                 <label for="end">
-                                    {{ trans('global.plan.fields.end') + ' *' }}
+                                    {{ trans('global.plan.fields.end') }}
                                 </label>
                                 <date-picker
                                     v-model="form.end"
-                                    :input-attr="{ id: 'end', required: true }"
+                                    :input-attr="{ id: 'end' }"
                                     class="w-100"
                                     type="datetime"
                                     value-type="YYYY-MM-DD HH:mm:ss"
                                     :placeholder="trans('global.plan.fields.end')"
                                 ></date-picker>
-                                <p v-if="errors.end == true" class="error-block">
-                                    {{ trans('validation.required') }}
-                                </p>
                             </div>
 
                             <div class="form-group">
@@ -180,7 +174,7 @@ import Form from "form-backend-validation";
 import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker";
 import DatePicker from 'vue2-datepicker';
 import 'vue2-datepicker/index.css';
-import { list } from "postcss";
+
 const Select2 =
     () => import('../forms/Select2');
 
@@ -220,7 +214,7 @@ export default {
             }
 
             let method = this.method.toLowerCase();
-            this.form.description = tinyMCE.get('description'+this.component_id).getContent();
+
             if (method === 'patch') {
                 axios.patch(this.requestUrl + '/' + this.form.id, this.form)
                     .then(res => { // Tell the parent component we've updated a plan
@@ -277,22 +271,6 @@ export default {
             this.form.duration = data.duration;
             this.form.color = data.color;
             this.form.allow_copy = data.allow_copy;
-
-            this.$nextTick(() => {
-                const plugins = "autolink link" + (this.method === 'patch' ? ' example' : '');
-                this.$initTinyMCE(
-                    [
-                        plugins
-                    ],
-                    {
-                        'referenceable_type': 'App\\Plan',
-                        'referenceable_id': this.form.id,
-                        'eventHubCallbackFunction': 'insertContent',
-                        'eventHubCallbackFunctionParams': this.component_id,
-                    }
-                );
-            });
-
         },
     },
     mounted() {

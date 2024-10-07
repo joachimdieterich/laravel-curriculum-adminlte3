@@ -19,7 +19,7 @@
                             :class="entry.css_icon"></i>
                             {{ entry.title }}
                             <i class="fa fa-angle-up"></i>
-                            <div v-if="editable"
+                            <div v-if="showTools"
                                 class="card-tools">
                                 <i class="fa fa-pencil-alt mr-2 pointer link-muted"
                                    @click="edit()"></i>
@@ -38,6 +38,7 @@
                                 :referenceable_id="entry.id"
                                 :owner_id="entry.owner_id"
                                 :editable="editable"
+                                :showTools="showTools"
                             ></objectives>
 
                             <Trainings
@@ -128,6 +129,9 @@ export default {
         },
         plan: [],
         editable: {
+            default: false
+        },
+        showTools: {
             default: false
         },
     },

@@ -214,6 +214,7 @@ return [
     'user_management' => 'Benutzerverwaltung',
     'users' => 'Benutzer',
     'select_users' => 'Benutzer auswählen',
+    'users_selected' => 'Benutzer ausgewählt',
     'no_user_selected' => 'Kein Benutzer ausgewählt',
     'user' => [
         'title' => 'Benutzer',
@@ -836,6 +837,8 @@ return [
         'delete_helper' => 'Soll der Lern-/Arbeitsplan sowie die zugehörigen Daten gelöscht werden?',
         'select_users' => 'Benutzer auswählen',
         'evaluate_user' => 'Benutzer auswerten',
+        'tooltip_user' => 'Person auswählen und direkt einschätzen',
+        'tooltip_group' => 'Kompetenz anklicken um mehrere Personen einzuschätzen',
         'fields' => [
             'type' => 'Typ',
             'type_helper' => '',

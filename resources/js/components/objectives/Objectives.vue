@@ -6,7 +6,7 @@
             <div v-if="typeof (subscription.enabling_objective) == 'undefined'"
                 class="row">  <!-- terminalObjective -->
                 <div class="col-12">
-                    <div v-if="is_owner() && editable" class="card-tools text-right">
+                    <div v-if="is_owner() && showTools" class="card-tools text-right">
                         <span>
                             <a @click="destroy(subscription)" >
                                 <i class="fas fa-trash text-danger pointer"></i>
@@ -79,6 +79,9 @@ export default {
             default: false
         },
         editable: {
+            default: false
+        },
+        showTools: {
             default: false
         },
         referenceable_type: {},

@@ -7,7 +7,7 @@
     <meta name="user-id" content="{{ Auth::user()->id }}">
 
     <title>{{ trans('global.site_title') }}</title>
-    <link href="{{ mix('css/app.css') }}" rel="stylesheet"/>
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
     @include('layouts.partials.favicon')
 

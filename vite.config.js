@@ -1,10 +1,13 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
+import commonjs from 'vite-plugin-commonjs'
 
 export default defineConfig({
     plugins: [
-        laravel(['resources/js/app.js']),
+        laravel({
+            input: ['resources/sass/app.scss', 'resources/js/app.js'],
+        }),
         vue({
             template: {
                 transformAssetUrls: {
@@ -23,5 +26,11 @@ export default defineConfig({
                 },
             },
         }),
+        commonjs(),
     ],
+    resolve: {
+        alias: {
+          vue: 'vue/dist/vue.esm-bundler.js',
+        },
+    },
 });

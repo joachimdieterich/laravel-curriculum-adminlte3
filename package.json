@@ -1,14 +1,11 @@
 {
     "private": true,
+    "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite buildnode",
-        "development": "mix",
-        "watch": "mix watch",
-        "watch-poll": "mix watch -- --watch-options-poll=1000",
-        "hot": "mix watch --hot",
-        "prod": "npm run production",
-        "production": "mix --production",
+        "build": "vite build",
+        "preview": "vite build & vite preview",
+        "production": "vite build",
         "test:cypress": "php artisan serve --env=cypress --port=8001 & cypress open"
     },
     "devDependencies": {

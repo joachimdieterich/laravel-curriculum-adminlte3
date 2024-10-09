@@ -186,11 +186,11 @@
 
 <script>
 import SubscribePlanModal from "../plan/SubscribePlanModal.vue";
-import PlanModal from "../plan/PlanModal";
-import IndexWidget from "../uiElements/IndexWidget";
+import PlanModal from "../plan/PlanModal.vue";
+import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
-import ConfirmModal from "../uiElements/ConfirmModal";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useGlobalStore} from "../../store/global";
 import KanbanModal from "../kanban/KanbanModal.vue";
 DataTable.use(DataTablesCore);

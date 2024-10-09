@@ -38,8 +38,14 @@
                             type="submit"
                             class="dropdown-item py-1 text-red"
                             @click.prevent="confirmItemDelete(course)">
-                            <i class="fa fa-trash mr-2"></i>
-                            {{ trans('global.course.delete') }}
+                            <span v-if="create_label_field == 'enrol'">
+                                     <i class="fa fa-unlink mr-2"></i>
+                                    {{ trans('global.course.expel') }}
+                                </span>
+                            <span v-else>
+                                 <i class="fa fa-trash mr-2"></i>
+                                {{ trans('global.course.delete') }}
+                            </span>
                         </button>
                     </div>
                 </template>
@@ -131,7 +137,7 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('createCourse', () => {
-            this.globalStore?.showModal('course-modal', {});
+            this.globalStore?.showModal('course-modal', {'group_id' : this.group.id});
         });
 
         this.$eventHub.on('course-added', (course) => {

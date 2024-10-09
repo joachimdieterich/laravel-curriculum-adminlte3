@@ -5,66 +5,62 @@
                 <div class="card-header">
                     <div class="card-title">
                         <h5 class="m-0">
-                            <i class="fa fa-university mr-1"></i>
-                            {{ organizationType.title }}
+                            <i class="fa fa-swatchbook mr-1"></i>
+                            {{ this.currentSubject.title }}
                         </h5>
                     </div>
                     <div
-                        v-permission="'organizationType_edit'"
+                        v-permission="'organization_edit'"
                         class="card-tools pr-2">
-                        <a  @click="editOrganizationType(organizationType)">
+                        <a  @click="editSubject()">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
                     </div>
-
                 </div>
 
                 <div class="card-body">
                     <strong>
-                        <i class="fas fa-link mr-1"></i>
-                        {{ trans('global.organizationType.fields.external_id') }}
+                    {{ trans('global.subject.title_singular') }}
                     </strong>
-                    <p class="text-muted">
-                        {{ organizationType.external_id }}
-                    </p>
-                    <hr>
 
+                    <p class="text-muted">
+                        {{ subject.title }}
+                    </p>
+
+                    <hr>
                     <strong>
-                        <i class="fa fa-map-marker mr-1"></i>
-                        {{ trans('global.place') }}
+                        {{ trans('global.subject.fields.title_short') }}
                     </strong>
                     <p class="text-muted">
-                        {{ organizationType.state.lang_de }}
-                        {{ organizationType.country.lang_de }}
+                        {{ subject.title_short }}
                     </p>
                 </div>
 
                 <div class="card-footer">
                     <small class="float-right">
-                        {{ organizationType.updated_at }}
+                        {{ this.currentSubject.updated_at }}
                     </small>
                 </div>
             </div>
         </div>
 
         <Teleport to="body">
-            <OrganizationTypeModal></OrganizationTypeModal>
+            <SubjectModal></SubjectModal>
         </Teleport>
     </div>
 </template>
 
 <script>
-import OrganizationTypeModal from "../organizationType/OrganizationTypeModal.vue";
+import SubjectModal from "../subject/SubjectModal.vue";
 import {useGlobalStore} from "../../store/global";
 
-
 export default {
-    name: "OrganizationType",
+    name: "subject",
     components:{
-        OrganizationTypeModal
+        SubjectModal
     },
     props: {
-        organizationType: {
+        subject: {
             default: null
         },
     },
@@ -77,17 +73,21 @@ export default {
     data() {
         return {
             componentId: this.$.uid,
-            currentOrganizationType: {},
+            currentSubject: {},
         }
     },
-    mounted() {},
-    methods: {
-        editOrganizationType(organizationType){
-            this.currentOrganizationType = organizationType;
-            this.globalStore?.showModal('organization-type-modal', this.currentOrganizationType);
+    mounted() {
+        this.currentSubject = this.subject;
+        this.$eventHub.on('subject-updated', (subject) => {
+            this.globalStore?.closeModal('subject-modal');
+            this.currentSubject = subject;
+        });
 
+    },
+    methods: {
+        editSubject(){
+            this.globalStore?.showModal('subject-modal', this.currentSubject);
         },
     }
-
 }
 </script>

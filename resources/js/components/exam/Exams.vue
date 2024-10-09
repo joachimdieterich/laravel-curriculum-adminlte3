@@ -2,13 +2,48 @@
     <div class="row">
         <div id="exam-content"
              class="col-md-12 m-0">
+            <ul
+                class="nav nav-pills py-2" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link "
+                       :class="filter === 'all' ? 'active' : ''"
+                       id="curriculum-filter-all"
+                       @click="setFilter('all')"
+                       data-toggle="pill"
+                       role="tab"
+                    >
+                        <i class="fas fa-th pr-2"></i>
+                        {{ trans('global.all') }} {{ trans('global.exam.title') }}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                       :class="filter === 'student' ? 'active' : ''"
+                       id="custom-filter-by-student"
+                       @click="setFilter('student')"
+                       data-toggle="pill"
+                       role="tab"
+                    >
+                        <i class="fas fa-university pr-2"></i>
+                        {{ trans('global.my') }} {{ trans('global.exam.title_singular') }}
+                    </a>
+                </li>
+            </ul>
+
+
             <IndexWidget
                 v-permission="'exam_create'"
                 key="'examCreate'"
                 modelName="Exam"
                 url="/exams"
                 :create=true
-                :createLabel="trans('global.exam.create')">
+                :createLabel="trans('global.exam.' + create_label_field)">
+                <template v-slot:itemIcon>
+                    <i v-if="create_label_field == 'enrol'"
+                       class="fa fa-2x p-5 fa-link nav-item-text text-muted"></i>
+                    <i v-else
+                       class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
+                </template>
             </IndexWidget>
             <IndexWidget
                 v-for="exam in exams"
@@ -20,7 +55,7 @@
                 :url="exam.login_url"
                 url-only="true"
                 urlTarget="_blank"
-                :active="isActive(exam.pivot.exam_completed_at)"
+                :active="isActive(exam)"
                 info_deactivated="Test wurde bereits abgeschlossen."
             >
                 <template v-slot:icon>
@@ -30,7 +65,7 @@
                 </template>
 
                 <template v-slot:owner>
-                    <div v-if="!isActive(exam.pivot.exam_completed_at)"
+                    <div v-if="!isActive(exam)"
                         style="position:absolute; top:100px; left: 0;"
                          class="badge-primary px-2">
                         <i class="fa fa-calendar-check"></i>
@@ -45,6 +80,7 @@
                          style="z-index: 1050;"
                          x-placement="left-start">
                         <button
+                            v-if="!subscribable"
                             v-permission="'exam_edit'"
                             :name="'edit-exam-' + exam.id"
                             class="dropdown-item text-secondary"
@@ -52,15 +88,22 @@
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.exam.edit') }}
                         </button>
-                        <hr class="my-1">
+                        <hr v-if="!subscribable"
+                            class="my-1">
                         <button
                             v-permission="'exam_delete'"
                             :id="'delete-exam-' + exam.id"
                             type="submit"
                             class="dropdown-item py-1 text-red"
                             @click.prevent="confirmItemDelete(exam)">
-                            <i class="fa fa-trash mr-2"></i>
-                            {{ trans('global.exam.delete') }}
+                            <span v-if="create_label_field == 'enrol'">
+                                 <i class="fa fa-unlink mr-2"></i>
+                                {{ trans('global.kanban.expel') }}
+                            </span>
+                            <span v-else>
+                                 <i class="fa fa-trash mr-2"></i>
+                                {{ trans('global.kanban.delete') }}
+                            </span>
                         </button>
                     </div>
                 </template>
@@ -70,7 +113,7 @@
                            {{ exam.test_name }}
                        </h1>
                        <p class="text-muted small">
-                           {{ exam.group.title }}
+                           {{ exam.group?.title }}
                        </p>
                     </span>
                 </template>
@@ -90,7 +133,12 @@
         </div>
 
         <Teleport to="body">
+            <SubscribeExamModal
+                v-if="subscribable"
+            >
+            </SubscribeExamModal>
             <ExamModal
+                v-if="!subscribable"
                 :show="this.showExamModal"
                 @close="this.showExamModal = false"
                 :params="currentExam"
@@ -118,11 +166,32 @@ import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import SubscribeExamModal from "../exam/SubscribeExamModal.vue";
+import {useGlobalStore} from "../../store/global.js";
 DataTable.use(DataTablesCore);
 
 export default {
     props: {
-
+        subscribable: {
+            type: Boolean,
+            default: false
+        },
+        create_label_field: {
+            type: String,
+            default: 'create'
+        },
+        delete_label_field: {
+            type: String,
+            default: 'delete'
+        },
+        subscribable_type: '',
+        subscribable_id: '',
+    },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
@@ -131,7 +200,7 @@ export default {
             search: '',
             showExamModal: false,
             showConfirm: false,
-            url: '/exams/list',
+            url: (this.subscribable_id) ? '/exams/list?group_id=' + this.subscribable_id +'&filter=' + this.subscribable_id : '/exams/list',
             errors: {},
             currentExam: {},
             columns: [
@@ -141,7 +210,9 @@ export default {
                 { title: 'subject', data: 'subject', searchable: true},
             ],
             options : this.$dtOptions,
-            modalMode: 'edit'
+            modalMode: 'edit',
+            filter: 'all',
+            dt: null
         }
     },
     mounted() {
@@ -150,17 +221,35 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('exam-added', (exam) => {
-            this.showExamModal = false;
+            if (!this.subscribable) {
+                this.globalStore?.closeModal('exam-modal');
+            } else {
+                this.globalStore?.closeModal('subscribe-exam-modal');
+            }
             this.exams.push(exam);
         });
 
         this.$eventHub.on('exam-updated', (exam) => {
-            this.showExamModal = false;
+            this.globalStore?.closeModal('exam-modal');
             this.update(exam);
         });
+
+        this.$eventHub.on('exam-subscription-added', () => {
+            this.globalStore?.closeModal('subscribe-exam-modal');
+            this.loaderEvent();
+        });
+
         this.$eventHub.on('createExam', () => {
-            this.currentExam = {};
-            this.showExamModal = true;
+            if (!this.subscribable) {
+                this.globalStore?.showModal('exam-modal', {});
+            } else {
+                this.globalStore?.showModal('subscribe-exam-modal', {
+                    'reference': {},
+                    'subscribable_type': this.subscribable_type,
+                    'subscribable_id': this.subscribable_id,
+                });
+            }
+
         });
     },
     methods: {
@@ -169,14 +258,14 @@ export default {
             this.showExamModal = true;
         },
         loaderEvent(){
-            const dt = $('#exam-datatable').DataTable();
-            dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.exams = dt.rows({page: 'current'}).data().toArray();
+            this.dt = $('#exam-datatable').DataTable();
+            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
+                this.exams = this.dt.rows({page: 'current'}).data().toArray();
 
                 $('#exam-content').insertBefore('#exam-datatable-wrapper');
             });
             this.$eventHub.on('filter', (filter) => {
-                dt.search(filter).draw();
+                this.dt.search(filter).draw();
             });
         },
         confirmItemDelete(exam){
@@ -184,14 +273,33 @@ export default {
             this.showConfirm = true;
         },
         destroy() {
-            axios.delete('/exams/' + this.currentExam.id)
-                .then(res => {
-                    let index = this.exams.indexOf(this.currentExam);
-                    this.exams.splice(index, 1);
+            if (this.subscribable === true)
+            {
+                axios.post('/examSubscriptions/expel', {
+                    'model_id' : this.currentExam.id,
+                    'subscribable_type' : this.subscribable_type,
+                    'subscribable_id' : this.subscribable_id,
                 })
-                .catch(err => {
-                    console.log(err.response);
-                });
+                    .then(r => {
+                        let index = this.exams.indexOf(this.currentExam);
+                        this.exams.splice(index, 1);
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    });
+            }
+            else
+            {
+                axios.delete('/exams/' + this.currentExam.id)
+                    .then(res => {
+                        let index = this.exams.indexOf(this.currentExam);
+                        this.exams.splice(index, 1);
+                    })
+                    .catch(err => {
+                        console.log(err.response);
+                    });
+            }
+
         },
         update(exam) {
             const index = this.exams.findIndex(
@@ -204,14 +312,20 @@ export default {
         },
         isActive(completed){
             //console.log(completed);
-            if (!completed){
+
+            if (!completed.pivot?.exam_completed_at){
                 return true;
             } else {
                 return false;
             }
-        }
+        },
+        setFilter(filter){
+            this.url = '/exams/list?group_id=' + this.subscribable_id +'&filter=' + filter;
+            this.dt.ajax.url(this.url).load();
+        },
     },
     components: {
+        SubscribeExamModal,
         ConfirmModal,
         DataTable,
         ExamModal,

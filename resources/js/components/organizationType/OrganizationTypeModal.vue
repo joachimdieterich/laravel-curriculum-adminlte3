@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="show"
+        <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
         >
         <div class="modal-container">
@@ -16,7 +16,7 @@
                 <div class="card-tools">
                     <button type="button"
                             class="btn btn-tool"
-                            @click="$emit('close')">
+                            @click="globalStore?.closeModal($options.name)">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
@@ -26,7 +26,9 @@
                     <div class="form-group "
                         :class="form.errors.title ? 'has-error' : ''"
                           >
-                        <label for="title">{{ trans('global.organizationType.fields.title') }} *</label>
+                        <label for="title">
+                            {{ trans('global.organizationType.fields.title') }} *
+                        </label>
                         <input
                             type="text" id="title"
                             name="title"
@@ -35,11 +37,15 @@
                             placeholder="Title"
                             required
                             />
-                         <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                         <p class="help-block"
+                            v-if="form.errors.title"
+                            v-text="form.errors.title[0]"></p>
                     </div>
 
                     <div class="form-group ">
-                        <label for="external_id">{{ trans('global.organizationType.fields.external_id') }}</label>
+                        <label for="external_id">
+                            {{ trans('global.organizationType.fields.external_id') }}
+                        </label>
                         <input
                             type="text" id="external_id"
                             name="external_id"
@@ -47,7 +53,9 @@
                             v-model="form.external_id"
                             placeholder="external_id"
                             />
-                        <p class="help-block" v-if="form.errors.external_id" v-text="form.errors.external_id[0]"></p>
+                        <p class="help-block"
+                           v-if="form.errors.external_id"
+                           v-text="form.errors.external_id[0]"></p>
                     </div>
 
                     <Select2
@@ -84,7 +92,7 @@
                              id="organization-cancel"
                              type="button"
                              class="btn btn-default"
-                             @click="$emit('close')">
+                             @click="globalStore?.closeModal($options.name)">
                              {{ trans('global.cancel') }}
                          </button>
                          <button
@@ -104,21 +112,20 @@
     import Form from 'form-backend-validation';
     import Editor from '@tinymce/tinymce-vue';
     import Select2 from "../forms/Select2.vue";
-
+    import {useGlobalStore} from "../../store/global";
 
     export default {
+        name: 'organization-type-modal',
         components:{
             Editor,
             Select2
         },
-        props: {
-            show: {
-                type: Boolean
-            },
-            params: {
-                type: Object
-            },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
-
+        props: {},
+        setup () {
+            const globalStore = useGlobalStore();
+            return {
+                globalStore,
+            }
         },
         data() {
             return {
@@ -146,17 +153,6 @@
                 search: '',
             }
         },
-        watch: {
-            params: function(newVal, oldVal) {
-                if (typeof (newVal.id) == 'undefined'){
-                    this.form.reset();
-                }
-                this.form.populate(newVal);
-                if (this.form.id != ''){
-                    this.method = 'patch';
-                }
-            },
-        },
         methods: {
 
             async submit(method) {
@@ -171,6 +167,22 @@
                 }
             },
         },
-        mounted() {},
+        mounted() {
+            this.globalStore.registerModal(this.$options.name);
+            this.globalStore.$subscribe((mutation, state) => {
+                if (mutation.events.key === this.$options.name){
+                    const params = state.modals[this.$options.name].params;
+                    this.form.reset();
+                    if (typeof (params) !== 'undefined'){
+                        this.form.populate(params);
+                        if (this.form.id !== ''){
+                            this.method = 'patch';
+                        } else {
+                            this.method = 'post';
+                        }
+                    }
+                }
+            });
+        },
     }
 </script>

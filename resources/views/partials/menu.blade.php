@@ -168,6 +168,18 @@
                         </a>
                     </li>
                 @endcan
+                @can('meeting_access')
+                    <li class="nav-item"
+                        role="menuitem">
+                        <a href="{{ route("meetings.index") }}"
+                           class="nav-link {{ request()->is('meetings') || request()->is('meetings/*') ? 'active' : '' }}">
+                            <i class="fa-solid fa-users-line"></i>
+                            <p>
+                                <span>{{ trans('global.meeting.title') }}</span>
+                            </p>
+                        </a>
+                    </li>
+                @endcan
 
                 @can('user_access')
                     <li class="nav-header"
@@ -266,6 +278,18 @@
                             </a>
                         </li>
                     @endcan
+                        @can('subject_access')
+                            <li class="nav-item"
+                                role="menuitem">
+                                <a href="{{ route("subjects.index") }}"
+                                   class="nav-link {{ request()->is('subjects') || request()->is('subjects/*') ? 'active' : '' }}">
+                                    <i class="fa fa-swatchbook"></i>
+                                    <p>
+                                        <span>{{ trans('global.subject.title') }}</span>
+                                    </p>
+                                </a>
+                            </li>
+                        @endcan
                     @can('organization_type_access')
                         <li class="nav-item"
                             role="menuitem">

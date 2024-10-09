@@ -64,9 +64,7 @@
             }
         },
         data() {
-            return {
-
-            }
+            return {}
         },
 
         methods: {
@@ -74,7 +72,7 @@
                 try {
                     this.absence.done = (await axios.patch('/absences/'+absence_id, {'done': (1 - this.absence.done)})).data.done;
                 } catch(error) {
-                    this.errors = error.response.data.errors;
+                    console.log(error);
                 }
            },
             edit(){
@@ -84,7 +82,7 @@
                 try {
                     this.location = (await axios.delete('/absences/'+this.absence.id)).data.message;
                 } catch(error) {
-                    this.errors = error.response.data.errors;
+                    console.log(error);
                 }
                 location.reload(true);
             },

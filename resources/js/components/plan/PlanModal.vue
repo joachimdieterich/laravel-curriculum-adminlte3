@@ -22,66 +22,147 @@
                 </div>
             </div>
 
-                <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                    <div class="form-group "
-                        :class="form.errors.title ? 'has-error' : ''"
-                          >
-                        <label for="title">{{ trans('global.plan.fields.title') }} *</label>
-                        <input
-                            type="text" id="title"
-                            name="title"
-                            class="form-control"
-                            v-model="form.title"
-                            placeholder="Title"
-                            required
+            <div class="modal-body p-0">
+                <div class="card mb-0">
+                    <div class="card-header border-bottom"
+                         data-card-widget="collapse"
+                    >
+                        <h5 class="card-title">
+                            Allgemein
+                        </h5>
+                    </div>
+                    <div class="card-body pb-0">
+                        <div class="form-group">
+                            <Select2
+                                id="type_id"
+                                :label="trans('global.plan.fields.type') + ' *'"
+                                model="PlanType"
+                                :selected="this.form.type_id"
+                                url="/planTypes"
+                                style="width: 100%;"
+                                :placeholder="trans('global.pleaseSelect')"
+                                :readOnly="(method == 'patch')"
+                                @selectedValue="(id) => this.form.type_id = id"
+                            ></Select2>
+                            <p v-if="errors.type_id == true"
+                               class="error-block"
+                               style="margin-top: -0.75rem;">
+                                {{ trans('validation.required') }}
+                            </p>
+                        </div>
+
+                        <div class="form-group input-group">
+                            <v-swatches
+                                :swatch-size="49"
+                                :trigger-style="{}"
+                                popover-to="right"
+                                v-model="form.color"
+                                @input="(id) => {
+                                this.form.color = id;
+                            }"
+                                :max-height="300"
+                            ></v-swatches>
+
+                            <input
+                                type="text"
+                                id="title"
+                                name="title"
+                                class="form-control ml-3"
+                                style="height:42px"
+                                v-model.trim="form.title"
+                                :placeholder="trans('global.title') + ' *'"
+                                required
                             />
-                         <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
-                    </div>
+                            <p v-if="errors.title == true" class="error-block">
+                                {{ trans('validation.required') }}
+                            </p>
+                        </div>
 
-                    <div class="form-group "
-                         :class="form.errors.external_begin ? 'has-error' : ''"
-                    >
-                        <label for="external_begin">{{ trans('global.plan.fields.external_begin') }} *</label>
-                        <input
-                            type="text" id="external_begin"
-                            name="external_begin"
+                        <Editor
+                            :id="'description_' + component_id"
+                            :name="'description_' + component_id"
                             class="form-control"
-                            v-model="form.external_begin"
-                            placeholder="external_begin"
-                            required
+                            :init="tinyMCE"
+                            :initial-value="form.description"
                         />
-                        <p class="help-block" v-if="form.errors.external_begin" v-text="form.errors.external_begin[0]"></p>
-                    </div>
 
-                    <div class="form-group "
-                         :class="form.errors.external_end ? 'has-error' : ''"
-                    >
-                        <label for="external_end">{{ trans('global.plan.fields.external_end') }} *</label>
-                        <input
-                            type="text" id="external_end"
-                            name="external_end"
-                            class="form-control"
-                            v-model="form.external_end"
-                            placeholder="external_end"
-                            required
-                        />
-                        <p class="help-block" v-if="form.errors.external_end" v-text="form.errors.external_end[0]"></p>
-                    </div>
+                        <div class="form-group ">
+                            <label for="begin">
+                                {{ trans('global.task.fields.begin') }}
+                            </label>
+                            <VueDatePicker
+                                v-model="form.begin"
+                                :teleport="true"
+                                locale="de"
+                                format="dd.MM.yyy HH:mm"
+                                :select-text="trans('global.ok')"
+                                :cancel-text="trans('global.close')"
+                            ></VueDatePicker>
+                            <p class="help-block"
+                               v-if="form.errors.begin"
+                               v-text="form.errors.begin[0]"></p>
+                        </div>
 
-                    <Select2
-                        id="organization_type_id"
-                        name="organization_type_id"
-                        url="/organizationTypes"
-                        model="organizationType"
-                        option_id="id"
-                        option_label="title"
-                        :selected="this.form.organization_type_id"
-                        @selectedValue="(id) => {
-                        this.form.organization_type_id = id;
-                    }"
-                    >
-                    </Select2>
+                        <div class="form-group ">
+                            <label for="end">
+                                {{ trans('global.task.fields.end') }}
+                            </label>
+                            <VueDatePicker
+                                v-model="form.end"
+                                :teleport="true"
+                                locale="de"
+                                format="dd.MM.yyy HH:mm"
+                                :select-text="trans('global.ok')"
+                                :cancel-text="trans('global.close')"
+                            ></VueDatePicker>
+                            <p class="help-block"
+                               v-if="form.errors.end"
+                               v-text="form.errors.end[0]"></p>
+                        </div>
+
+                        <div class="form-group">
+                            <input
+                                type="text"
+                                id="duration"
+                                name="duration"
+                                class="form-control"
+                                style="height:42px"
+                                v-model.trim="form.duration"
+                                :placeholder="trans('global.plan.fields.duration')"
+                            />
+                            <p class="help-block">
+                                {{ trans('global.plan.fields.duration_helper') }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
+
+                <div class="card mb-0">
+                    <div class="card-header  border-bottom"
+                         data-card-widget="collapse"
+                    >
+                        <h5 class="card-title">
+                            Berechtigungen
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                            <span class="custom-control custom-switch custom-switch-on-green">
+                                <input
+                                    id="allow_copy"
+                                    v-model="form.allow_copy"
+                                    type="checkbox"
+                                    class="custom-control-input pt-1 "
+                                />
+                                <label class="custom-control-label font-weight-light"
+                                       for="allow_copy"
+                                >
+                                    {{ trans('global.plan.allow_copy') }}
+                                </label>
+                            </span>
+                    </div>
+                </div>
+            </div>
+
 
                 <div class="card-footer">
                      <span class="pull-right">
@@ -108,10 +189,15 @@
     import Form from 'form-backend-validation';
     import Select2 from "../forms/Select2";
     import {useGlobalStore} from "../../store/global";
+    import Editor from "@tinymce/tinymce-vue";
+    import VueDatePicker from "@vuepic/vue-datepicker";
+    import '@vuepic/vue-datepicker/dist/main.css';
 
     export default {
         name: 'plan-modal',
         components:{
+            VueDatePicker,
+            Editor,
             Select2,
         },
         props: {},
@@ -127,28 +213,41 @@
                 method: 'post',
                 url: '/plans',
                 form: new Form({
-                    'id':'',
-                    'title': '',
-                    'external_begin': null,
-                    'external_end': null,
-                    'organization_type_id': 1
+                    'id': '',
+                    'type_id': 4,
+                    'title':  '',
+                    'description':  '',
+                    'begin': '',
+                    'end': '',
+                    'duration': '',
+                    'color':'#27AF60',
+                    'allow_copy': true,
                 }),
-                countries: [],
-                states: [],
+                errors: { // required fields need to be initialised
+                    type_id: false,
+                    title: false,
+                    begin: false,
+                    end: false,
+                },
                 tinyMCE: this.$initTinyMCE(
                     [
-                        "autolink link curriculummedia"
+                        "autolink link lists table code"
                     ],
                     {
                         'eventHubCallbackFunction': 'insertContent',
                         'eventHubCallbackFunctionParams': this.component_id,
-                    }
+                    },
+                    "bold underline italic | alignleft aligncenter alignright | table",
+                    "bullist numlist outdent indent | mathjax link code",
                 ),
                 search: '',
             }
         },
         methods: {
              submit(method) {
+                 if (!this.checkRequired()) {
+                     return;
+                 }
                  this.form.begin = this.form.date[0];
                  this.form.end = this.form.date[1];
 
@@ -175,7 +274,29 @@
                     .catch(e => {
                         console.log(e.response);
                     });
-            }
+            },
+            checkRequired() {
+                let filledOut = true;
+                const fields = this.$el.querySelectorAll('[required]');
+
+                for (const field of fields) {
+                    if (field.value.trim() === '') { // activate error-helper
+                        this.errors[field.id] = true;
+                        filledOut = false;
+                    } else { // deactivate error-helper
+                        this.errors[field.id] = false;
+                    }
+                }
+                // needs to be set separately, because select2
+                if (this.form.type_id == '') {
+                    this.errors['type_id'] = true;
+                    filledOut = false;
+                } else {
+                    this.errors["type_id"] = false;
+                }
+
+                return filledOut;
+            },
         },
         mounted() {
             this.globalStore.registerModal(this.$options.name);
@@ -185,7 +306,8 @@
                     this.form.reset();
                     if (typeof (params) !== 'undefined'){
                         this.form.populate(params);
-                        this.form.date = [this.form.begin, this.form.end];
+                        this.form.description = this.$decodeHTMLEntities(params.description);
+
                         if (this.form.id != ''){
                             this.method = 'patch';
                         } else {

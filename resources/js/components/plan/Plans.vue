@@ -149,7 +149,11 @@
         </div>
 
         <Teleport to="body">
-            <PlanModal></PlanModal>
+            <SubscribePlanModal
+                v-if="subscribable"
+            >
+            </SubscribePlanModal>
+            <PlanModal v-if="!subscribable"></PlanModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.plan.' + delete_label_field)"
@@ -181,12 +185,14 @@
 
 
 <script>
+import SubscribePlanModal from "../plan/SubscribePlanModal.vue";
 import PlanModal from "../plan/PlanModal";
 import IndexWidget from "../uiElements/IndexWidget";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal";
 import {useGlobalStore} from "../../store/global";
+import KanbanModal from "../kanban/KanbanModal.vue";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -237,7 +243,12 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('plan-added', (plan) => {
-            this.globalStore?.closeModal('plan-modal');
+            if (!this.subscribable) {
+                this.globalStore?.closeModal('plan-modal');
+            } else {
+                this.globalStore?.closeModal('subscribe-plan-modal');
+            }
+
             this.plans.push(plan);
         });
 
@@ -245,8 +256,22 @@ export default {
             this.globalStore?.closeModal('plan-modal');
             this.update(plan);
         });
+
+        this.$eventHub.on('plan-subscription-added', () => {
+            this.globalStore?.closeModal('subscribe-plan-modal');
+            this.loaderEvent();
+        });
+
         this.$eventHub.on('createPlan', () => {
-            this.globalStore?.showModal('plan-modal', {});
+            if (!this.subscribable) {
+                this.globalStore?.showModal('plan-modal', {});
+            } else {
+                this.globalStore?.showModal('subscribe-plan-modal', {
+                    'reference': {},
+                    'subscribable_type': this.subscribable_type,
+                    'subscribable_id': this.subscribable_id,
+                });
+            }
         });
     },
     methods: {
@@ -307,6 +332,7 @@ export default {
         }
     },
     components: {
+        SubscribePlanModal,
         ConfirmModal,
         DataTable,
         PlanModal,

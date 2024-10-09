@@ -45,15 +45,26 @@
                 <span v-else>Link zum Projekt</span>
             </a>
         </div>
+
+        ...
+        <SubscribableList
+            v-if="typeof this.marker.id != 'undefined'"
+            url="/mapMarkerSubscriptions?map_marker_id"
+            :model_id="this.marker.id"
+        ></SubscribableList>
     </div>
 </template>
 <script>
 
 import Media from '../media/Media.vue';
+import SubscribableList from "../subscription/SubscribableList.vue";
+import tokens from "../subscription/Tokens.vue";
 
 export default {
     name: 'MarkerView',
     components: {
+        tokens,
+        SubscribableList,
         Media,
     },
     props: {
@@ -65,19 +76,23 @@ export default {
         return {
             component_id: this.$.uid,
             tag_array: {},
+            subscribers: {}
         }
     },
     watch: { // reload if context change
         marker: function(newVal, oldVal) {
             this.tag_array = newVal.tags.split(",");
         },
-
     },
     methods: {
         editMarker(marker){
             this.$eventHub.emit('edit_marker', marker);
         },
+
     },
+    mounted() {
+
+    }
 
 }
 </script>

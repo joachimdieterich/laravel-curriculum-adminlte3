@@ -70,7 +70,7 @@
                                 "
                                 @update="(objective) => {
                                     this.currentTerminalObjective = objective;
-                                    this.showTerminalObjectiveModal = false;
+                                    this.globalStore?.closeModal('terminal-objective-modal');
                                 }"
                             >
                             </ObjectiveBox>
@@ -102,16 +102,8 @@
             </div>
         </div>
         <Teleport to="body">
-            <TerminalObjectiveModal
-                :show="this.showTerminalObjectiveModal"
-                @close="this.showTerminalObjectiveModal = false"
-                :params="currentTerminalObjective"
-            ></TerminalObjectiveModal>
-            <EnablingObjectiveModal
-                :show="this.showEnablingObjectiveModal"
-                @close="this.showEnablingObjectiveModal = false"
-                :params="currentEnablingObjective"
-            ></EnablingObjectiveModal>
+            <TerminalObjectiveModal></TerminalObjectiveModal>
+            <EnablingObjectiveModal></EnablingObjectiveModal>
         </Teleport>
     </div>
 </template>
@@ -122,11 +114,18 @@ import EnablingObjectives from './EnablingObjectives.vue';
 import TerminalObjectiveModal from "./TerminalObjectiveModal.vue";
 import EnablingObjectiveModal from "./EnablingObjectiveModal.vue";
 import draggable from "vuedraggable";
+import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
         'curriculum': Object,
         'objectivetypes': Array,
+    },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
@@ -137,11 +136,8 @@ export default {
             typetabs: {},
             activetab: null,
             currentCurriculaEnrolments: null,
-            showTerminalObjectiveModal: false,
             currentTerminalObjective: null,
             currentEnablingObjective: null,
-            showEnablingObjectiveModal: false,
-
             errors: {},
 
             terminal_objectives: Object,
@@ -250,20 +246,19 @@ export default {
                 'curriculum_id': this.curriculum.id,
                 'objective_type_id': createTerminalObjective.objective_type_id
             };
-            this.showTerminalObjectiveModal = true;
+            this.globalStore?.showModal('terminal-objective-modal', this.currentTerminalObjective);
         });
         this.$eventHub.on('terminalObjective-added', function(newTerminalObjective) {
             console.log(newTerminalObjective);
-            this.showTerminalObjectiveModal = false;
+            this.globalStore?.closeModal('terminal-objective-modal');
             //this.activetab = newTerminalObjective.objective_type_id;
             this.loadObjectives(this.activetab);
         }.bind(this));
         this.$eventHub.on('editTerminalObjectives', (objective) => {
-            this.currentTerminalObjective = objective;
-            this.showTerminalObjectiveModal = true;
+            this.globalStore?.showModal('terminal-objective-modal', objective);
         });
         this.$eventHub.on('terminalObjective-updated', () => {
-            this.showTerminalObjectiveModal = false;
+            this.globalStore?.closeModal('terminal-objective-modal');
             this.loadObjectives(this.activetab);
         });
 
@@ -274,18 +269,18 @@ export default {
                 'curriculum_id': this.curriculum.id,
                 'terminal_objective_id': createEnablingObjective.objective.terminal_objective_id
             };
-            this.showEnablingObjectiveModal = true;
+            this.globalStore?.showModal('enabling-objective-modal', this.currentEnablingObjective);
+
         });
         this.$eventHub.on('enablingObjective-added', function(newEnablingObjective) {
-            this.showEnablingObjectiveModal = false;
+            this.globalStore?.closeModal('enabling-objective-modal');
             this.loadObjectives(this.activetab);
         }.bind(this));
         this.$eventHub.on('editEnablingObjectives', (objective) => {
-            this.currentEnablingObjective = objective;
-            this.showEnablingObjectiveModal = true;
+            this.globalStore?.showModal('enabling-objective-modal', objective);
         });
         this.$eventHub.on('enablingObjective-updated', () => {
-            this.showEnablingObjectiveModal = false;
+            this.globalStore?.closeModal('enabling-objective-modal');
             this.loadObjectives(this.activetab);
         });
 

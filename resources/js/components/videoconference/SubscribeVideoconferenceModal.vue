@@ -7,10 +7,10 @@
                 <div class="card-header">
                     <h3 class="card-title">
                     <span v-if="method === 'post'">
-                        {{ trans('global.user.create') }}
+                        {{ trans('global.videoconference.create') }}
                     </span>
                         <span v-if="method === 'patch'">
-                        {{ trans('global.user.edit') }}
+                        {{ trans('global.videoconference.edit') }}
                     </span>
                     </h3>
                     <div class="card-tools">
@@ -23,15 +23,13 @@
                 </div>
                 <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                     <Select2
-                        id="users_subscription"
-                        name="users_subscription"
-                        url="/users"
-                        model="user"
-                        option_id="id"
-                        option_label="text"
-                        :selected="this.form.user_id"
+                        id="videoconferences_subscription"
+                        name="videoconferences_subscription"
+                        url="/videoconferences"
+                        model="videoconference"
+                        :selected="this.form.videoconference_id"
                         @selectedValue="(id) => {
-                            this.form.user_id = id;
+                            this.form.videoconference_id = id;
                         }"
                     >
                     </Select2>
@@ -39,14 +37,14 @@
                 <div class="card-footer">
                  <span class="pull-right">
                      <button
-                         id="user-cancel"
+                         id="videoconference-cancel"
                          type="button"
                          class="btn btn-default"
                          @click="globalStore?.closeModal($options.name)">
                          {{ trans('global.cancel') }}
                      </button>
                      <button
-                         id="user-save"
+                         id="videoconference-save"
                          class="btn btn-primary"
                          @click="submit(method)" >
                          {{ trans('global.save') }}
@@ -60,70 +58,57 @@
 <script>
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
-import {useDatatableStore} from "../../store/datatables";
 import {useGlobalStore} from "../../store/global";
 
 export default {
-    name: 'subscribe-user-modal',
+    name: 'subscribe-videoconference-modal',
     components:{
         Select2
     },
-    props: {
-        params: {
-            type: Object
-        },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
-    },
-    setup () { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters
+    props: {},
+    setup () {
         const globalStore = useGlobalStore();
         return {
-            globalStore
+            globalStore,
         }
     },
     data() {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/groups/enrol',
+            url: '/videoconferenceSubscriptions',
             form: new Form({
                 'id': '',
-                'user_id': '',
+                'videoconference_id': '',
             }),
+            subscribable_type: '',
+            subscribable_id: '',
             search: '',
         }
     },
     methods: {
-        submit(method) {
-            if (method === 'patch') {
-                this.update();
-            } else {
-                this.add();
-            }
-        },
-        add(){
+        submit() {
             axios.post(this.url, {
-                    'enrollment_list' : {
-                        0: {
-                            'group_id' : this.form.id,
-                            'user_id': {
-                                0 : this.form.user_id
-                            }
-                        }
-                    }
-                })
-                .then(r => {
-                    console.log(r);
-                    this.$eventHub.emit('user-added', r.data);
-                })
-                .catch(e => {
-                    console.log(e.response);
-                });
+                'model_id': this.form.videoconference_id,
+                'subscribable_type': this.subscribable_type,
+                'subscribable_id': this.subscribable_id
+            })
+            .then(r => {
+                this.$eventHub.emit('videoconference-subscription-added', r.data);
+                //console.log(r.data);
+            })
+            .catch(err => {
+                console.log(err.response);
+            });
         },
     },
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
             if (mutation.events.key === this.$options.name){
-                const params = state.modals[this.$options.name].params;
+                const params = state.modals[this.$options.name].params.reference;
+                this.subscribable_type = state.modals[this.$options.name].params.subscribable_type;
+                this.subscribable_id = state.modals[this.$options.name].params.subscribable_id;
                 this.form.reset();
                 if (typeof (params) !== 'undefined'){
                     this.form.populate(params);

@@ -94,6 +94,10 @@ class Group extends Model
         return $this->hasMany('App\Course', 'group_id', 'id');
     }
 
+    public function exams()
+    {
+        return $this->hasMany('App\Domains\Exams\Models\Exam', 'group_id', 'id');
+    }
     public function kanbans()
     {
         return $this->hasManyThrough(

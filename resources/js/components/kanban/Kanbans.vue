@@ -96,6 +96,7 @@
                          style="z-index: 1050;"
                          x-placement="left-start">
                         <button
+                            v-if="!subscribable"
                             v-permission="'kanban_edit'"
                             :name="'edit-kanban-' + kanban.id"
                             class="dropdown-item text-secondary"
@@ -104,14 +105,15 @@
                             {{ trans('global.kanban.edit') }}
                         </button>
                         <button
-                            v-if="kanban.allow_copy"
+                            v-if="kanban.allow_copy && !subscribable"
                             :name="'copy-kanban-'+kanban.id"
                             class="dropdown-item text-secondary"
                             @click.prevent="confirmKanbanCopy(kanban)">
                             <i class="fa fa-copy mr-2"></i>
                             {{ trans('global.kanban.copy') }}
                         </button>
-                        <hr class="my-1">
+                        <hr v-if="!subscribable"
+                            class="my-1">
                         <button
                             v-permission="'kanban_delete'"
                             :id="'delete-kanban-' + kanban.id"
@@ -145,7 +147,11 @@
         </div>
 
         <Teleport to="body">
-            <KanbanModal></KanbanModal>
+            <SubscribeKanbanModal
+                v-if="subscribable"
+            >
+            </SubscribeKanbanModal>
+            <KanbanModal v-if="!subscribable"></KanbanModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.kanban.' + delete_label_field)"
@@ -177,6 +183,7 @@
 
 
 <script>
+import SubscribeKanbanModal from "../kanban/SubscribeKanbanModal.vue";
 import KanbanModal from "../kanban/KanbanModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
@@ -215,7 +222,8 @@ export default {
             search: '',
             showConfirm: false,
             showCopy: false,
-            url: '/kanbans/list',
+            url: (this.subscribable_id) ? '/kanbans/list?group_id=' + this.subscribable_id : '/kanbans/list',
+
             errors: {},
             currentKanban: {},
             columns: [
@@ -233,7 +241,12 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('kanban-added', (kanban) => {
-            this.globalStore?.closeModal('kanban-modal');
+            if (!this.subscribable) {
+                this.globalStore?.closeModal('kanban-modal');
+            } else {
+                this.globalStore?.closeModal('subscribe-kanban-modal');
+            }
+
             this.kanbans.push(kanban);
         });
 
@@ -241,8 +254,22 @@ export default {
             this.globalStore?.closeModal('kanban-modal');
             this.update(kanban);
         });
+
+        this.$eventHub.on('kanban-subscription-added', () => {
+            this.globalStore?.closeModal('subscribe-kanban-modal');
+            this.loaderEvent();
+        });
+
         this.$eventHub.on('createKanban', () => {
-            this.globalStore?.showModal('kanban-modal', {});
+            if (!this.subscribable) {
+                this.globalStore?.showModal('kanban-modal', {});
+            } else {
+                this.globalStore?.showModal('subscribe-kanban-modal', {
+                    'reference': {},
+                    'subscribable_type': this.subscribable_type,
+                    'subscribable_id': this.subscribable_id,
+                });
+            }
         });
     },
     methods: {
@@ -283,14 +310,32 @@ export default {
             window.location = "/kanbans/" + this.currentKanban.id + "/copy";
         },
         destroy() {
-            axios.delete('/kanbans/' + this.currentKanban.id)
-                .then(res => {
-                    let index = this.kanbans.indexOf(this.currentKanban);
-                    this.kanbans.splice(index, 1);
+            if (this.subscribable === true)
+            {
+                axios.post('/kanbanSubscriptions/expel', {
+                    'model_id' : this.currentKanban.id,
+                    'subscribable_type' : this.subscribable_type,
+                    'subscribable_id' : this.subscribable_id,
                 })
-                .catch(err => {
-                    console.log(err.response);
-                });
+                    .then(r => {
+                        let index = this.kanbans.indexOf(this.currentKanban);
+                        this.kanbans.splice(index, 1);
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    });
+            }
+            else
+            {
+                axios.delete('/kanbans/' + this.currentKanban.id)
+                    .then(res => {
+                        let index = this.kanbans.indexOf(this.currentKanban);
+                        this.kanbans.splice(index, 1);
+                    })
+                    .catch(err => {
+                        console.log(err.response);
+                    });
+            }
         },
         update(kanban) {
             const index = this.kanbans.findIndex(
@@ -303,6 +348,7 @@ export default {
         }
     },
     components: {
+        SubscribeKanbanModal,
         ConfirmModal,
         DataTable,
         KanbanModal,

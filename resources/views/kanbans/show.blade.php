@@ -30,15 +30,3 @@
             :kanban="{{ $kanban }}"></kanban>
     </div>
 @endsection
-
-@section('scripts')
-    @parent
-    <script>
-        $(function () {
-            if (localStorage.getItem('menu_toggle_class') === 'sidebar-collapse') {
-                const wrapper = $("#kanban_board_wrapper");
-                wrapper.width(wrapper.width() + 170);
-            }
-        });
-    </script>
-@endsection

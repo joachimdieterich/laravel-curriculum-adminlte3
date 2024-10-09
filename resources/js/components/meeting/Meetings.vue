@@ -11,7 +11,8 @@
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fas fa-th pr-2"></i>{{ trans('global.all') }} {{ trans('global.curriculum.title') }}
+                        <i class="fas fa-th pr-2"></i>
+                        {{ trans('global.all') }} {{ trans('global.meeting.title') }}
                     </a>
                 </li>
                 <li class="nav-item">
@@ -22,7 +23,8 @@
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fas fa-university pr-2"></i>{{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
+                        <i class="fas fa-university pr-2"></i>
+                        {{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
                     </a>
                 </li>
                 <li v-can="'curriculum_create'"
@@ -34,7 +36,8 @@
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fa fa-user pr-2"></i>{{ trans('global.my') }} {{ trans('global.curriculum.title') }}
+                        <i class="fa fa-user pr-2"></i>
+                        {{ trans('global.my') }} {{ trans('global.meeting.title') }}
                     </a>
                 </li>
                 <li class="nav-item">
@@ -45,7 +48,8 @@
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fa fa-paper-plane pr-2"></i>{{ trans('global.shared_with_me') }}
+                        <i class="fa fa-paper-plane pr-2"></i>
+                        {{ trans('global.shared_with_me') }}
                     </a>
                 </li>
                 <li v-can="'curriculum_create'"
@@ -57,64 +61,85 @@
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fa fa-share-nodes  pr-2"></i>{{ trans('global.shared_by_me') }}
+                        <i class="fa fa-share-nodes  pr-2"></i>
+                        {{ trans('global.shared_by_me') }}
                     </a>
                 </li>
             </ul>
         </div>
 
-        <div id="map-content"
+        <div id="meeting-content"
              class="col-md-12 m-0">
             <IndexWidget
-                v-permission="'map_create'"
-                key="'mapCreate'"
-                modelName="Map"
-                url="/maps"
+                v-permission="'meeting_create'"
+                key="'meetingCreate'"
+                modelName="Meeting"
+                url="/meetings"
                 :create=true
-                :createLabel="trans('global.map.create')">
+                :createLabel="trans('global.meeting.' + create_label_field)">
+                <template v-slot:itemIcon>
+                    <i v-if="create_label_field == 'enrol'"
+                       class="fa fa-2x p-5 fa-link nav-item-text text-muted"></i>
+                    <i v-else
+                       class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
+                </template>
             </IndexWidget>
             <IndexWidget
-                v-for="map in maps"
-                :key="'mapIndex'+map.id"
-                :model="map"
-                modelName= "map"
-                url="/maps">
+                v-for="meeting in meetings"
+                :key="'meetingIndex'+meeting.id"
+                :model="meeting"
+                modelName= "meeting"
+                url="/meetings">
                 <template v-slot:icon>
-                    <i class="fa fa-map-location-dot pt-2"></i>
+                    <i class="fa fa-meeting-location-dot pt-2"></i>
                 </template>
 
                 <template
-                    v-permission="'map_edit, map_delete'"
+                    v-permission="'meeting_edit, meeting_delete'"
                     v-slot:dropdown>
                     <div class="dropdown-menu dropdown-menu-right"
                          style="z-index: 1050;"
                          x-placement="left-start">
                         <button
-                            v-permission="'map_edit'"
-                            :name="'edit-map-' + map.id"
+                            v-permission="'meeting_edit'"
+                            :name="'edit-meeting-' + meeting.id"
                             class="dropdown-item text-secondary"
-                            @click.prevent="editMap(map)">
+                            @click.prevent="editMeeting(meeting)">
                             <i class="fa fa-pencil-alt mr-2"></i>
-                            {{ trans('global.map.edit') }}
+                            {{ trans('global.meeting.edit') }}
+                        </button>
+                        <button
+                            v-if="meeting.allow_copy"
+                            :name="'copy-meeting-'+meeting.id"
+                            class="dropdown-item text-secondary"
+                            @click.prevent="confirmMeetingCopy(meeting)">
+                            <i class="fa fa-copy mr-2"></i>
+                            {{ trans('global.meeting.copy') }}
                         </button>
                         <hr class="my-1">
                         <button
-                            v-permission="'map_delete'"
-                            :id="'delete-map-' + map.id"
+                            v-permission="'meeting_delete'"
+                            :id="'delete-meeting-' + meeting.id"
                             type="submit"
                             class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(map)">
-                            <i class="fa fa-trash mr-2"></i>
-                            {{ trans('global.map.delete') }}
+                            @click.prevent="confirmItemDelete(meeting)">
+                             <span v-if="create_label_field == 'enrol'">
+                                 <i class="fa fa-unlink mr-2"></i>
+                                {{ trans('global.meeting.expel') }}
+                            </span>
+                            <span v-else>
+                                 <i class="fa fa-trash mr-2"></i>
+                                {{ trans('global.meeting.delete') }}
+                            </span>
                         </button>
                     </div>
                 </template>
             </IndexWidget>
         </div>
-        <div id="map-datatable-wrapper"
+        <div id="meeting-datatable-wrapper"
              class="w-100 dataTablesWrapper">
             <DataTable
-                id="map-datatable"
+                id="meeting-datatable"
                 :columns="columns"
                 :options="options"
                 :ajax="url"
@@ -125,11 +150,11 @@
         </div>
 
         <Teleport to="body">
-            <MapModal></MapModal>
+            <MeetingModal></MeetingModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
-                :title="trans('global.map.delete')"
-                :description="trans('global.map.delete_helper')"
+                :title="trans('global.meeting.' + delete_label_field)"
+                :description="trans('global.meeting.' + delete_label_field +'_helper')"
                 @close="() => {
                     this.showConfirm = false;
                 }"
@@ -138,13 +163,26 @@
                     this.destroy();
                 }"
             ></ConfirmModal>
+            <ConfirmModal
+                :showConfirm="this.showCopy"
+                :title="trans('global.meeting.copy')"
+                :description="trans('global.meeting.copy_helper')"
+                css='primary'
+                @close="() => {
+                    this.showCopy = false;
+                }"
+                @confirm="() => {
+                    this.showCopy = false;
+                    this.copy();
+                }"
+            ></ConfirmModal>
         </Teleport>
     </div>
 </template>
 
 
 <script>
-import MapModal from "../map/MapModal.vue";
+import MeetingModal from "../meeting/MeetingModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
@@ -154,6 +192,18 @@ DataTable.use(DataTablesCore);
 
 export default {
     props: {
+        subscribable: {
+            type: Boolean,
+            default: false
+        },
+        create_label_field: {
+            type: String,
+            default: 'create'
+        },
+        delete_label_field: {
+            type: String,
+            default: 'delete'
+        },
         subscribable_type: '',
         subscribable_id: '',
     },
@@ -166,18 +216,20 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            maps: null,
+            meetings: null,
             search: '',
             showConfirm: false,
-            url: '/maps/list',
+            showCopy: false,
+            url: '/meetings/list',
             errors: {},
-            currentMap: {},
+            currentMeeting: {},
             columns: [
                 { title: 'id', data: 'id' },
+                { title: 'uid', data: 'uid' },
                 { title: 'title', data: 'title', searchable: true},
+                { title: 'description', data: 'description', searchable: true},
             ],
             options : this.$dtOptions,
-            modalMode: 'edit',
             filter: 'all',
             dt: null
         }
@@ -187,73 +239,80 @@ export default {
 
         this.loaderEvent();
 
-        this.$eventHub.on('map-added', (map) => {
-            this.globalStore?.closeModal('map-modal');
-            this.maps.push(map);
+        this.$eventHub.on('meeting-added', (meeting) => {
+            this.globalStore?.closeModal('meeting-modal');
+            this.meetings.push(meeting);
         });
 
-        this.$eventHub.on('map-updated', (map) => {
-            this.globalStore?.closeModal('map-modal');
-            this.update(map);
+        this.$eventHub.on('meeting-updated', (meeting) => {
+            this.globalStore?.closeModal('meeting-modal');
+            this.update(meeting);
         });
-        this.$eventHub.on('createMap', () => {
-            this.globalStore?.showModal('map-modal', {});
+        this.$eventHub.on('createMeeting', () => {
+            this.globalStore?.showModal('meeting-modal', {});
         });
     },
     methods: {
         setFilter(filter){
             this.filter = filter;
             if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
-                this.url = '/mapSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
+                this.url = '/meetingSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
             } else {
-                this.url = '/maps/list?filter=' + this.filter
+                this.url = '/meetings/list?filter=' + this.filter
             }
 
             this.dt.ajax.url(this.url).load();
         },
-        editMap(map){
-            this.globalStore?.showModal('map-modal', map);
+        editMeeting(meeting){
+            this.globalStore?.showModal('meeting-modal', meeting);
         },
         loaderEvent(){
-            this.dt = $('#map-datatable').DataTable();
+            this.dt = $('#meeting-datatable').DataTable();
 
             this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.maps = this.dt.rows({page: 'current'}).data().toArray();
+                this.meetings = this.dt.rows({page: 'current'}).data().toArray();
 
-                $('#map-content').insertBefore('#map-datatable-wrapper');
+                $('#meeting-content').insertBefore('#meeting-datatable-wrapper');
             });
             this.$eventHub.on('filter', (filter) => {
                 this.dt.search(filter).draw();
             });
         },
-        confirmItemDelete(map){
-            this.currentMap = map;
+        confirmItemDelete(meeting){
+            this.currentMeeting = meeting;
             this.showConfirm = true;
         },
+        confirmMeetingCopy(meeting){
+            this.currentMeeting = meeting;
+            this.showCopy = true;
+        },
+        copy(){
+            window.location = "/meetings/" + this.currentMeeting.id + "/copy";
+        },
         destroy() {
-            axios.delete('/maps/' + this.currentMap.id)
+            axios.delete('/meetings/' + this.currentMeeting.id)
                 .then(res => {
-                    let index = this.maps.indexOf(this.currentMap);
-                    this.maps.splice(index, 1);
+                    let index = this.meetings.indexOf(this.currentMeeting);
+                    this.meetings.splice(index, 1);
                 })
                 .catch(err => {
                     console.log(err.response);
                 });
         },
-        update(map) {
-            const index = this.maps.findIndex(
-                vc => vc.id === map.id
+        update(meeting) {
+            const index = this.meetings.findIndex(
+                vc => vc.id === meeting.id
             );
 
-            for (const [key, value] of Object.entries(map)) {
-                this.maps[index][key] = value;
+            for (const [key, value] of Object.entries(meeting)) {
+                this.meetings[index][key] = value;
             }
         }
     },
     components: {
         ConfirmModal,
         DataTable,
-        MapModal,
+        MeetingModal,
         IndexWidget
     },
 }

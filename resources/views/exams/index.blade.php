@@ -10,5 +10,5 @@
     ></breadcrumbs>
 @endsection
 @section('content')
-    <exams></exams>
+    <exams_list></exams_list>
 @endsection

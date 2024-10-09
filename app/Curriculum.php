@@ -38,14 +38,11 @@ class Curriculum extends Model
     protected $casts = [
         'objective_type_order' => 'array',
         'variants' => 'array',
+        'date'  => 'datetime',
         'updated_at' => 'datetime',
         'created_at'  => 'datetime',
-    ];
 
-    /* protected $dates = [  --> change v.10
-         'updated_at',
-         'created_at',
-     ];*/
+    ];
 
     protected $attributes = [
         'state_id' => 'DE-RP',

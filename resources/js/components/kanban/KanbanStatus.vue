@@ -125,6 +125,7 @@
 <script>
 import Form from "form-backend-validation";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'KanbanStatus',
@@ -135,6 +136,12 @@ export default {
         },
         'editable': true,
         'newStatus': false,
+    },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
       return {
@@ -159,6 +166,7 @@ export default {
     },
     methods: {
         edit() {
+            this.globalStore?.showModal('kanban-status-modal', {});
             this.editor = true;
             if (this.newStatus === true) {
                 this.form.id =  0;

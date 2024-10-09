@@ -65,13 +65,7 @@ export default {
     components:{
         Select2
     },
-    props: {
-        params: {
-            type: Object
-        },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
-        subscribable_type: '',
-        subscribable_id: '',
-    },
+    props: {},
     setup () {
         const globalStore = useGlobalStore();
         return {
@@ -87,6 +81,8 @@ export default {
                 'id': '',
                 'logbook_id': '',
             }),
+            subscribable_type: '',
+            subscribable_id: '',
             search: '',
         }
     },
@@ -110,15 +106,13 @@ export default {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
             if (mutation.events.key === this.$options.name){
-                const params = state.modals[this.$options.name].params;
+                const params = state.modals[this.$options.name].params.reference;
+                this.subscribable_type = state.modals[this.$options.name].params.subscribable_type;
+                this.subscribable_id = state.modals[this.$options.name].params.subscribable_id;
                 this.form.reset();
                 if (typeof (params) !== 'undefined'){
                     this.form.populate(params);
-                    if (this.form.id != ''){
-                        this.method = 'patch';
-                    } else {
-                        this.method = 'post';
-                    }
+                    this.method = 'post';
                 }
             }
         });

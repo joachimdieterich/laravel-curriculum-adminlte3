@@ -77,11 +77,11 @@ class KanbanSubscriptionController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        $model = Kanban::find($input['model_id']);
+        $model = Kanban::find(format_select_input($input['model_id']));
         abort_unless((\Gate::allows('kanban_create') and $model->isAccessible()), 403);
 
         $subscribe = KanbanSubscription::updateOrCreate([
-            'kanban_id' => $input['model_id'],
+            'kanban_id' => $model->id,
             'subscribable_type' => $input['subscribable_type'],
             'subscribable_id' => $input['subscribable_id'],
         ], [
@@ -91,8 +91,7 @@ class KanbanSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return ['subscription' => Kanban::find($input['model_id'])
-                    ->subscriptions()
+            return ['subscription' => $model->subscriptions()
                 ->with('subscribable')
                 ->whereHasMorph('subscribable', '*', function ($q, $type) {
                     if ($type == 'App\\User') {
@@ -149,12 +148,36 @@ class KanbanSubscriptionController extends Controller
         }
     }
 
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function expel(Request $request)
+    {
+        $input = $this->validateRequest();
+        $model = Kanban::find(format_select_input($input['model_id']));
+        abort_unless((\Gate::allows('kanban_create') and $model->isAccessible()), 403);
+
+        $subscription = KanbanSubscription::where([
+            'kanban_id' => $model->id,
+            'subscribable_type' => $input['subscribable_type'],
+            'subscribable_id' => $input['subscribable_id'],
+        ]);
+        ;
+
+        if ($subscription->delete()) {
+            return trans('global.curriculum.expel');
+        }
+    }
+
     protected function validateRequest()
     {
         return request()->validate([
             'subscribable_type' => 'sometimes|string',
             'subscribable_id'   => 'sometimes|integer',
-            'model_id'          => 'sometimes|integer',
+            'model_id'          => 'sometimes',
             'editable'          => 'sometimes',
         ]);
     }

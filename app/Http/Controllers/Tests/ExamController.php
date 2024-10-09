@@ -38,7 +38,24 @@ class ExamController extends Controller
 
     public function index(ExamListRequest $examListRequest)
     {
-        return getExamsJob::getFilteredExams($examListRequest);
+        if (request()->wantsJson()) {
+           /* $tests = [];
+            foreach (config('test_tools.tools') as $tool)
+            {
+                $tests = array_merge($tool['adapter']->getTests(), $tests);
+            }
+
+            $tests = collect($tests);
+
+            return  getEntriesForSelect2ByCollection(
+                $tests
+            );*/
+        }
+        else
+        {
+            return getExamsJob::getFilteredExams($examListRequest);
+        }
+
     }
 
     public function list()
@@ -56,7 +73,36 @@ class ExamController extends Controller
         foreach($exams as $exam){
             $exam->login_url = config('test_tools.tools')[$exam->tool]['adapter']->getExamLoginUrl($exam);
         }
-        $exams->load('group');
+
+        if (request()->has(['group_id']))
+        {
+            $request = request()->validate([
+                'group_id' => 'required',
+                'filter' => 'sometimes',
+            ]);
+            $group_id = $request['group_id'];
+
+            switch ($request['filter'])
+            {
+                case 'student': $list = [];
+                                foreach($exams as $exam)
+                                {
+                                    $list[] =  $exam->id;
+                                }
+                                $exams = Exam::where('group_id', $group_id)
+                                    ->whereIn('id', $list)
+                                    ->with(['group', 'users']);
+                    break;
+                case 'all':
+                default:        $exams = Exam::where('group_id', $group_id);
+                    break;
+            }
+        }
+        else
+        {
+            $exams->load('group');
+        }
+
         //$exams = $exams->groupBy('group.title');
 
         return DataTables::of($exams)

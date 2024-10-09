@@ -63,11 +63,7 @@
         </div>
 
         <Teleport to="body">
-            <NavigatorModal
-                :show="this.showNavigatorModal"
-                @close="this.showNavigatorModal = false"
-                :params="currentNavigator"
-            ></NavigatorModal>
+            <NavigatorModal></NavigatorModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.navigator.delete')"
@@ -91,18 +87,22 @@ import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    props: {
-
+    props: {},
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
             component_id: this.$.uid,
             navigators: null,
             search: '',
-            showNavigatorModal: false,
             showConfirm: false,
             url: '/navigators/list',
             errors: {},
@@ -124,23 +124,21 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('navigator-added', (navigator) => {
-            this.showNavigatorModal = false;
+            this.globalStore?.closeModal('navigator-modal');
             this.navigators.push(navigator);
         });
 
         this.$eventHub.on('navigator-updated', (navigator) => {
-            this.showNavigatorModal = false;
+            this.globalStore?.closeModal('navigator-modal');
             this.update(navigator);
         });
         this.$eventHub.on('createNavigator', () => {
-            this.currentNavigator = {};
-            this.showNavigatorModal = true;
+            this.globalStore?.showModal('navigator-modal', {});
         });
     },
     methods: {
         editNavigator(navigator){
-            this.currentNavigator = navigator;
-            this.showNavigatorModal = true;
+            this.globalStore?.showModal('navigator-modal', navigator);
         },
         loaderEvent(){
             const dt = $('#navigator-datatable').DataTable();

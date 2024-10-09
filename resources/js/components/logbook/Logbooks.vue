@@ -64,6 +64,7 @@
                          style="z-index: 1050;"
                          x-placement="left-start">
                         <button
+                            v-if="!subscribable"
                             v-permission="'logbook_edit'"
                             :name="'edit-logbook-' + logbook.id"
                             class="dropdown-item text-secondary"
@@ -71,7 +72,8 @@
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.logbook.edit') }}
                         </button>
-                        <hr class="my-1">
+                        <hr v-if="!subscribable"
+                            class="my-1">
                         <button
                             v-if="subscribable"
                             v-permission="'logbook_delete'"
@@ -127,9 +129,6 @@
         <Teleport to="body">
             <SubscribeLogbookModal
                 v-if="subscribable"
-                :params="reference"
-                :subscribable_type="this.subscribable_type"
-                :subscribable_id="this.subscribable_id"
             >
             </SubscribeLogbookModal>
             <LogbookModal
@@ -219,7 +218,11 @@ export default {
             this.search = filter;
         });
         this.$eventHub.on('logbook-added', (logbook) => {
-            this.globalStore?.closeModal('logbook-modal');
+            if (!this.subscribable) {
+                this.globalStore?.closeModal('logbook-modal');
+            } else {
+                this.globalStore?.closeModal('subscribe-logbook-modal');
+            }
             this.logbooks.push(logbook);
         });
         this.$eventHub.on('logbook-updated', (logbook) => {
@@ -236,7 +239,11 @@ export default {
             if (!this.subscribable) {
                 this.globalStore?.showModal('logbook-modal', {});
             } else {
-                this.globalStore?.showModal('subscribe-logbook-modal', this.reference);
+                this.globalStore?.showModal('subscribe-logbook-modal', {
+                    'reference': this.reference,
+                    'subscribable_type': this.subscribable_type,
+                    'subscribable_id': this.subscribable_id,
+                });
             }
         });
     },
@@ -262,13 +269,18 @@ export default {
         destroy() {
             if (this.subscribable === true)
             {
-                axios.delete('/logbookSubscriptions/' + this.currentLogbook.id)
+                axios.post('/logbookSubscriptions/expel', {
+                        'model_id' : this.currentLogbook.id,
+                        'subscribable_type' : this.subscribable_type,
+                        'subscribable_id' : this.subscribable_id,
+                    })
                     .then(r => {
                         let index = this.logbooks.indexOf(this.currentLogbook);
                         this.logbooks.splice(index, 1);
+                        //this.toast.success(r);
                     })
-                    .catch(err => {
-                        console.log(err.response);
+                    .catch(e => {
+                        //this.toast.error(e);
                     });
             }
             else

@@ -6,35 +6,48 @@
         <div class="modal-container">
             <div class="card-header">
                 <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.note.create') }}
-                    </span>
-                    <span v-if="method === 'patch'">
-                        {{ trans('global.note.edit') }}
-                    </span>
+                    {{ trans('global.curriculum.edit_owner') }}
                 </h3>
                 <div class="card-tools">
-                    <button type="button"
-                            class="btn btn-tool"
-                            @click="globalStore?.closeModal($options.name)">
+                    <button
+                        type="button"
+                        class="btn btn-tool"
+                        @click="globalStore?.closeModal($options.name)">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
             </div>
 
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                <Notes :notable_type="this.form.notable_type"
-                       :notable_id="this.form.notable_id"
-                       :show_tabs="this.form.show_tabs"></Notes>
+                <Select2
+                    id="owner_id"
+                    name="owner_id"
+                    url="/users"
+                    model="user"
+                    option_id="id"
+                    option_label="text"
+                    :selected="this.form.owner_id"
+                    @selectedValue="(id) => {
+                        this.form.owner_id = id;
+                    }"
+                >
+                </Select2>
             </div>
 
             <div class="card-footer">
                  <span class="pull-right">
                      <button
-                         id="note-save"
-                         class="btn btn-primary"
+                         id="subject-cancel"
+                         type="button"
+                         class="btn btn-default"
                          @click="globalStore?.closeModal($options.name)">
-                         {{ trans('global.close') }}
+                         {{ trans('global.cancel') }}
+                     </button>
+                     <button
+                         id="subject-save"
+                         class="btn btn-primary"
+                         @click="submit()" >
+                         {{ trans('global.save') }}
                      </button>
                 </span>
             </div>
@@ -43,14 +56,14 @@
     </Transition>
 </template>
 <script>
-    import Notes from "./Notes.vue";
     import Form from 'form-backend-validation';
     import {useGlobalStore} from "../../store/global";
+    import Select2 from "../forms/Select2.vue";
 
     export default {
-        name: 'note-modal',
-        components:{
-            Notes,
+        name: 'owner-modal',
+        components: {
+            Select2
         },
         props: {},
         setup () {
@@ -62,15 +75,25 @@
         data() {
             return {
                 component_id: this.$.uid,
-                method: 'post',
                 form: new Form({
-                    'notable_type': false,
-                    'notable_id': false,
-                    'show_tabs': true,
+                    'model_id':'',
+                    'model': '',
+                    'model_url': '',
+                    'owner_id': '',
                 }),
             }
         },
-        methods: {},
+        methods: {
+             submit() {
+                 axios.patch(this.form.model_url + '/' + this.form.model_id + '/editOwner', this.form)
+                     .then(r => {
+                         this.$eventHub.emit('owner-updated', r.data);
+                     })
+                     .catch(e => {
+                         console.log(e.response);
+                     });
+            },
+        },
         mounted() {
             this.globalStore.registerModal(this.$options.name);
             this.globalStore.$subscribe((mutation, state) => {
@@ -79,15 +102,9 @@
                     this.form.reset();
                     if (typeof (params) !== 'undefined'){
                         this.form.populate(params);
-                        if (this.form.id !== ''){
-                            this.method = 'patch';
-                        } else {
-                            this.method = 'post';
-                        }
                     }
                 }
             });
         },
     }
 </script>
-

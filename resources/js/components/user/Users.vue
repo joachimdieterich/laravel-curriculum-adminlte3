@@ -47,6 +47,7 @@
                              style="z-index: 1050;"
                              x-placement="left-start">
                             <button
+                                v-if="!subscribable"
                                 v-permission="'user_edit'"
                                 :name="'edit-user-' + user.id"
                                 class="dropdown-item text-secondary"
@@ -54,7 +55,8 @@
                                 <i class="fa fa-pencil-alt mr-2"></i>
                                 {{ trans('global.user.edit') }}
                             </button>
-                            <hr class="my-1">
+                            <hr  v-if="!subscribable"
+                                 class="my-1">
                             <button
                                 v-permission="'user_delete'"
                                 :id="'delete-user-' + user.id"
@@ -118,7 +120,8 @@
 
 
         </div>
-        <div class="row mt-4">
+        <div v-if="!subscribable"
+             class="row mt-4">
             <user-options></user-options>
         </div>
     </div>
@@ -190,7 +193,11 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('user-added', (user) => {
-            this.globalStore?.closeModal('user-modal');
+            if (!this.subscribable) {
+                this.globalStore?.closeModal('user-modal');
+            } else {
+                this.globalStore?.closeModal('subscribe-user-modal');
+            }
             this.users.push(user);
         });
 

@@ -25,7 +25,9 @@
                     <div class="form-group "
                          :class="form.errors.title ? 'has-error' : ''"
                     >
-                        <label for="title">{{ trans('global.group.fields.title') }} *</label>
+                        <label for="title">
+                            {{ trans('global.group.fields.title') }} *
+                        </label>
                         <input
                             type="text" id="title"
                             name="title"
@@ -34,7 +36,9 @@
                             placeholder="Title"
                             required
                         />
-                        <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                        <p class="help-block"
+                           v-if="form.errors.title"
+                           v-text="form.errors.title[0]"></p>
                     </div>
 
                     <Select2
@@ -111,7 +115,7 @@ export default {
         Select2
     },
     props: {},
-    setup () { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters
+    setup () {
         const globalStore = useGlobalStore();
         return {
             globalStore

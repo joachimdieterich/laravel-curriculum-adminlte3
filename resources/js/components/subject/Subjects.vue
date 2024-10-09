@@ -17,7 +17,7 @@
                 modelName= "subject"
                 url="/subjects">
                 <template v-slot:icon>
-                    <i class="fas fa-user-tag pt-2"></i>
+                    <i class="fa fa-swatchbook pt-2"></i>
                 </template>
 
                 <template
@@ -30,7 +30,7 @@
                             v-permission="'subject_edit'"
                             :name="'edit-subject-' + subject.id"
                             class="dropdown-item text-secondary"
-                            @click.prevent="editRole(subject)">
+                            @click.prevent="editSubject(subject)">
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.subject.edit') }}
                         </button>
@@ -132,7 +132,7 @@ export default {
         });
     },
     methods: {
-        editRole(subject){
+        editSubject(subject){
             this.globalStore?.showModal('subject-modal', subject);
         },
         loaderEvent(){

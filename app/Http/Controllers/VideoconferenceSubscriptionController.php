@@ -7,6 +7,7 @@ use App\Videoconference;
 use App\VideoconferenceSubscription;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use function Laravel\Prompts\form;
 
 class VideoconferenceSubscriptionController extends Controller
 {
@@ -76,11 +77,11 @@ class VideoconferenceSubscriptionController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        $videoconference = Videoconference::find($input['model_id']);
+        $videoconference = Videoconference::find(format_select_input($input['model_id']));
         abort_unless((\Gate::allows('videoconference_create') and $videoconference->isAccessible()), 403);
 
         $subscribe = VideoconferenceSubscription::updateOrCreate([
-            'videoconference_id' => $input['model_id'],
+            'videoconference_id' => $videoconference->id,
             'subscribable_type' => $input['subscribable_type'],
             'subscribable_id' => $input['subscribable_id'],
         ], [
@@ -136,7 +137,7 @@ class VideoconferenceSubscriptionController extends Controller
         return request()->validate([
             'subscribable_type' => 'sometimes|string',
             'subscribable_id'   => 'sometimes|integer',
-            'model_id'          => 'sometimes|integer',
+            'model_id'          => 'sometimes',
             'editable'          => 'sometimes',
             'videoconference_id'=> 'sometimes',
         ]);

@@ -107,21 +107,25 @@
                     <div class="dropdown-menu dropdown-menu-right"
                          style="z-index: 1050;"
                          x-placement="left-start">
-                        <button :name="'curriculum-edit_' + curriculum.id"
-                                class="dropdown-item text-secondary"
-                                @click.prevent="editCurriculum(curriculum)">
+                        <button
+                            :name="'curriculum-edit_' + curriculum.id"
+                            class="dropdown-item text-secondary"
+                            @click.prevent="editCurriculum(curriculum)">
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.curriculum.edit') }}
                         </button>
-                        <button :name="'curriculum-set_owner_' + curriculum.id"
-                                class="dropdown-item text-secondary"
-                                @click.prevent="setOwner(curriculum)">
+                        <button
+                            v-if="$userId == curriculum.owner_id"
+                            :name="'curriculum-set_owner_' + curriculum.id"
+                            class="dropdown-item text-secondary"
+                            @click.prevent="setOwner(curriculum)">
                             <i class="fa fa-user mr-2"></i>
                             {{ trans('global.curriculum.edit_owner') }}
                         </button>
-                        <button :name="'curriculum-share_' + curriculum.id"
-                                class="dropdown-item text-secondary"
-                                @click.prevent="shareCurriculum(curriculum)">
+                        <button
+                            :name="'curriculum-share_' + curriculum.id"
+                            class="dropdown-item text-secondary"
+                            @click.prevent="shareCurriculum(curriculum)">
                             <i class="fa fa-share-alt mr-2"></i>
                             {{ trans('global.curriculum.share') }}
                         </button>
@@ -153,6 +157,7 @@
 
         <Teleport to="body">
             <CurriculumModal></CurriculumModal>
+            <OwnerModal></OwnerModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.curriculum.delete')"
@@ -179,6 +184,8 @@ import MediumModal from "../media/MediumModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import CurriculumModal from "./CurriculumModal.vue";
 import {useGlobalStore} from "../../store/global";
+import OwnerModal from "../user/OwnerModal.vue";
+import {useToast} from "vue-toastification";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -187,9 +194,11 @@ export default {
         subscribable_id: '',
     },
     setup () {
+        const toast = useToast();
         const globalStore = useGlobalStore();
         return {
             globalStore,
+            toast
         }
     },
     data() {
@@ -218,7 +227,13 @@ export default {
             this.globalStore?.showModal('curriculum-modal', curriculum);
         },
         setOwner(curriculum){
-            window.location = "/curricula/" + curriculum.id + "/editOwner";
+            this.globalStore?.showModal('owner-modal', {
+                'model_id': curriculum.id,
+                'model': 'curriculum',
+                'model_url': 'curricula',
+                'owner_id': curriculum.owner_id,
+            });
+            //window.location = "/curricula/" + curriculum.id + "/editOwner";
         },
         shareCurriculum(curriculum){
             this.globalStore?.showModal('subscribe-modal', { 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false});
@@ -244,14 +259,31 @@ export default {
             this.loaderEvent();
         },
         destroy() {
-            axios.delete('/curricula/' + this.currentCurriculum.id)
-                .then(res => {
-                    let index = this.curricula.indexOf(this.currentCurriculum);
-                    this.curricula.splice(index, 1);
+            if (this.subscribable){
+                axios.delete('/curriculumSubscriptions/expel', {
+                    data: {
+                        'model_id' : this.currentCurriculum.id,
+                        'subscribable_type' : this.subscribable_type,
+                        'subscribable_id' : this.subscribable_id,
+                    }
                 })
-                .catch(err => {
-                    console.log(err.response);
-                });
+                    .then(r => {
+                        this.toast.success(r)
+                    })
+                    .catch(e => {
+                        this.toast.error(e)
+                    });
+            } else {
+                axios.delete('/curricula/' + this.currentCurriculum.id)
+                    .then(res => {
+                        let index = this.curricula.indexOf(this.currentCurriculum);
+                        this.curricula.splice(index, 1);
+                    })
+                    .catch(err => {
+                        console.log(err.response);
+                    });
+            }
+
         },
         update(curriculum) {
             const index = this.curricula.findIndex(
@@ -261,7 +293,7 @@ export default {
             for (const [key, value] of Object.entries(curriculum)) {
                 this.curricula[index][key] = value;
             }
-        }
+        },
     },
     mounted() {
         this.$eventHub.emit('showSearchbar', true);
@@ -270,7 +302,12 @@ export default {
 
         this.$eventHub.on('curriculum-added', (curriculum) => {
             this.globalStore?.closeModal('curriculum-modal');
-            this.curricula.push(curriculum); //todo -> use global widget to get add working
+            //this.curricula.push(curriculum); //todo -> use global widget to get add working
+            this.loaderEvent();
+        });
+        this.$eventHub.on('curriculum-imported', (curricula) => {
+            this.globalStore?.closeModal('curriculum-modal');
+            this.loaderEvent(); //todo -> use global widget to get add working
         });
 
         this.$eventHub.on('curriculum-updated', (curriculum) => {
@@ -282,9 +319,15 @@ export default {
         this.$eventHub.on('createCurriculum', () => {
             this.globalStore?.showModal('curriculum-modal', {});
         });
+
+        this.$eventHub.on('owner-updated', (owner) => {
+            this.globalStore?.closeModal('owner-modal');
+            this.loaderEvent();
+        });
     },
 
     components: {
+        OwnerModal,
         IndexWidget,
         MediumModal,
         DataTable,

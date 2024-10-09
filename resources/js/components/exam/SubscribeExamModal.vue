@@ -7,10 +7,10 @@
                 <div class="card-header">
                     <h3 class="card-title">
                     <span v-if="method === 'post'">
-                        {{ trans('global.user.create') }}
+                        {{ trans('global.exam.create') }}
                     </span>
                         <span v-if="method === 'patch'">
-                        {{ trans('global.user.edit') }}
+                        {{ trans('global.exam.edit') }}
                     </span>
                     </h3>
                     <div class="card-tools">
@@ -23,15 +23,14 @@
                 </div>
                 <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                     <Select2
-                        id="users_subscription"
-                        name="users_subscription"
-                        url="/users"
-                        model="user"
-                        option_id="id"
-                        option_label="text"
-                        :selected="this.form.user_id"
+                        id="exams_subscription"
+                        name="exams_subscription"
+                        :list="options"
+                        model="exam"
+                        option_label="name"
+                        :selected="this.form.exam_id"
                         @selectedValue="(id) => {
-                            this.form.user_id = id;
+                            this.form.exam_id = id;
                         }"
                     >
                     </Select2>
@@ -39,14 +38,14 @@
                 <div class="card-footer">
                  <span class="pull-right">
                      <button
-                         id="user-cancel"
+                         id="exam-cancel"
                          type="button"
                          class="btn btn-default"
                          @click="globalStore?.closeModal($options.name)">
                          {{ trans('global.cancel') }}
                      </button>
                      <button
-                         id="user-save"
+                         id="exam-save"
                          class="btn btn-primary"
                          @click="submit(method)" >
                          {{ trans('global.save') }}
@@ -60,70 +59,60 @@
 <script>
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
-import {useDatatableStore} from "../../store/datatables";
 import {useGlobalStore} from "../../store/global";
 
 export default {
-    name: 'subscribe-user-modal',
+    name: 'subscribe-exam-modal',
     components:{
         Select2
     },
-    props: {
-        params: {
-            type: Object
-        },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
-    },
-    setup () { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters
+    props: {},
+    setup () {
         const globalStore = useGlobalStore();
         return {
-            globalStore
+            globalStore,
         }
     },
     data() {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/groups/enrol',
+            url: '/examSubscriptions',
             form: new Form({
                 'id': '',
-                'user_id': '',
+                'exam_id': '',
             }),
+            subscribable_type: '',
+            subscribable_id: '', //== group_id
             search: '',
+            options: []
         }
     },
     methods: {
-        submit(method) {
-            if (method === 'patch') {
-                this.update();
-            } else {
-                this.add();
-            }
+        submit() {
+            let test = this.options.filter((t) => t.id == this.form.exam_id);
+            console.log(test[0]);
+            this.SendCreateExamRequest(test[0].tool, test[0].id, test[0].nameLong, this.subscribable_id);
         },
-        add(){
-            axios.post(this.url, {
-                    'enrollment_list' : {
-                        0: {
-                            'group_id' : this.form.id,
-                            'user_id': {
-                                0 : this.form.user_id
-                            }
-                        }
-                    }
+        async SendCreateExamRequest(tool, test_id, test_name, group_id) {
+            console.log({'tool': tool, 'test_id': test_id, 'test_name': test_name, 'group_id': group_id})
+            await axios.post('/exams', {'tool': tool, 'test_id': test_id, 'test_name': test_name, 'group_id': group_id})
+                .then(response => {
+                    this.$eventHub.emit('exam-added', response.data)
                 })
-                .then(r => {
-                    console.log(r);
-                    this.$eventHub.emit('user-added', r.data);
+                .catch(errors => {
+                    this.$emit('failedNotification', errors)
                 })
-                .catch(e => {
-                    console.log(e.response);
-                });
-        },
+        }
     },
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
+            console.log(mutation.events.key);
             if (mutation.events.key === this.$options.name){
-                const params = state.modals[this.$options.name].params;
+                const params = state.modals[this.$options.name].params.reference;
+                this.subscribable_type = state.modals[this.$options.name].params.subscribable_type;
+                this.subscribable_id = state.modals[this.$options.name].params.subscribable_id;
                 this.form.reset();
                 if (typeof (params) !== 'undefined'){
                     this.form.populate(params);
@@ -131,6 +120,16 @@ export default {
                 }
             }
         });
+
+        axios.get('/tests')
+            .then(response => {
+                this.options = response.data
+            })
+            .catch(errors => {
+                if (errors.response.status !== 403) {
+                    this.$emit('failedNotification', Vue.prototype.trans('global.exam.error_messages.get_tests'))
+                }
+            })
     },
 }
 </script>

@@ -1,19 +1,20 @@
 <template>
     <div class="row">
 
-        <div class="col-sm-12 col-md-8">
-            <div class="card mb-2 bg-gradient-dark">
-                <img v-if ="this.meeting.medium_id"
-                     class="card-img-top"
-                     :src="'/media/'+this.meeting.medium_id"
-                     style="height: 200px !important"
-                     alt="image"
-                >
+        <div class="col-sm-12 col-md-7">
+
+            <div class="card mb-2"
+                style="height:100%"
+                 :style="{ 'background': 'url(/media/' + meeting.medium_id + '?model=meeting&model_id=' + meeting.id +') top center no-repeat', 'background-size': 'cover', }">
                 <div class="card-img-overlay d-flex flex-column justify-content-end"
-                     style="padding:0 !important;min-height:50px">
-                    <span class="p-3" style="background-color: rgba(0,0,0,0.5); ">
-                        <h5 class="card-title text-white" v-dompurify-html="this.meeting.title"></h5>
-                        <p class="card-text text-white pb-2 pt-1" v-dompurify-html="this.meeting.subtitle">
+                     style="padding:0 !important;min-height: 230px !important">
+                    <span class="p-3"
+                          style="background-color: rgba(0,0,0,0.5); "
+                          :style="{backgroundColor: meeting.color + ' !important'}">
+                        <h5 class="card-title text-white"
+                            v-dompurify-html="this.meeting.title"></h5>
+                        <p class="card-text text-white pb-2 pt-1"
+                           v-dompurify-html="this.meeting.subtitle">
                         </p>
                         <a class="text-white" > {{postDate()}}</a>
                     </span>
@@ -21,11 +22,12 @@
             </div>
         </div>
 
-        <div class="col-sm-12 col-md-4"
-             style="height: 200px !important">
+        <div class="col-sm-12 col-md-5">
             <Livestream
             :meeting="meeting"/>
         </div>
+    </div>
+    <div class="row">
 <!--        Details-->
         <div class="col-12 pt-2">
             <div class="card card-primary card-outline card-outline-tabs">
@@ -126,17 +128,48 @@
             </div>
         </div>
     </div>-->
+        <Teleport to="body">
+            <MeetingModal></MeetingModal>
+            <SubscribeModal></SubscribeModal>
+        </Teleport>
+        <teleport
+            v-if="$userId == meeting.owner_id"
+            to="#customTitle">
+            <small>{{ trans('global.meeting.title_singular') }} </small>
 
+            <a class="btn btn-flat"
+               @click="editMeeting(meeting)"
+            >
+                <i class="fa fa-pencil-alt text-secondary"></i>
+            </a>
+
+            <button
+                v-permission="'meeting_create'"
+                v-if="$userId == meeting.owner_id"
+                class="btn btn-flat"
+                @click="share()">
+                <i class="fa fa-share-alt text-secondary"></i>
+            </button>
+        </teleport>
     </div>
 </template>
 
 <script>
 import MeetingDates from "./MeetingDates.vue";
 import Livestream from "./Livestream.vue";
+import MeetingModal from "./MeetingModal.vue";
+import {useGlobalStore} from "../../store/global";
+import SubscribeModal from "../subscription/SubscribeModal.vue";
 
 export default {
     props: {
         'meeting': Object,
+    },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data () {
         return {
@@ -167,12 +200,28 @@ export default {
                 return start.toLocaleString([], dateFormat) + " - " + end.toLocaleString([], dateFormat);
             }
         },
+        editMeeting(meeting){
+            this.globalStore?.showModal('meeting-modal', meeting);
+        },
+        share(){
+            this.globalStore?.showModal('subscribe-modal', {
+                'modelId': this.meeting.id,
+                'modelUrl': 'meeting',
+                'shareWithUsers': true,
+                'shareWithGroups': true,
+                'shareWithOrganizations': true,
+                'shareWithToken': true,
+                'canEditCheckbox': true
+            });
+        },
 
     },
     mounted() {
 
     },
     components: {
+        SubscribeModal,
+        MeetingModal,
         Livestream,
         MeetingDates
     }

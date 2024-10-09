@@ -245,6 +245,23 @@ class User extends Authenticatable
         return $this->morphMany('App\KanbanSubscription', 'subscribable');
     }
 
+    public function meetings(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    {
+        return $this->hasManyThrough(
+            'App\Meeting',
+            'App\MeetingSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'meeting_id'
+        )->where('subscribable_type', get_class($this));
+    }
+
+    public function meetingSubscription()
+    {
+        return $this->morphMany('App\MeetingSubscription', 'subscribable');
+    }
+
     public function kanbans()
     {
         return $this->hasManyThrough(

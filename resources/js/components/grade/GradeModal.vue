@@ -3,30 +3,32 @@
         <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
         >
-        <div class="modal-container">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.grade.create') }}
-                    </span>
-                    <span v-if="method === 'patch'">
-                        {{ trans('global.grade.edit') }}
-                    </span>
-                </h3>
-                <div class="card-tools">
-                    <button type="button"
-                            class="btn btn-tool"
-                            @click="globalStore?.closeModal($options.name)">
-                        <i class="fa fa-times"></i>
-                    </button>
+            <div class="modal-container">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span v-if="method === 'post'">
+                            {{ trans('global.grade.create') }}
+                        </span>
+                        <span v-if="method === 'patch'">
+                            {{ trans('global.grade.edit') }}
+                        </span>
+                    </h3>
+                    <div class="card-tools">
+                        <button type="button"
+                                class="btn btn-tool"
+                                @click="globalStore?.closeModal($options.name)">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
 
                 <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                     <div class="form-group "
                         :class="form.errors.title ? 'has-error' : ''"
                           >
-                        <label for="title">{{ trans('global.grade.fields.title') }} *</label>
+                        <label for="title">
+                            {{ trans('global.grade.fields.title') }} *
+                        </label>
                         <input
                             type="text" id="title"
                             name="title"
@@ -35,13 +37,17 @@
                             placeholder="Title"
                             required
                             />
-                         <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                         <p class="help-block"
+                            v-if="form.errors.title"
+                            v-text="form.errors.title[0]"></p>
                     </div>
 
                     <div class="form-group "
                          :class="form.errors.external_begin ? 'has-error' : ''"
                     >
-                        <label for="external_begin">{{ trans('global.grade.fields.external_begin') }} *</label>
+                        <label for="external_begin">
+                            {{ trans('global.grade.fields.external_begin') }} *
+                        </label>
                         <input
                             type="text" id="external_begin"
                             name="external_begin"
@@ -50,13 +56,17 @@
                             placeholder="external_begin"
                             required
                         />
-                        <p class="help-block" v-if="form.errors.external_begin" v-text="form.errors.external_begin[0]"></p>
+                        <p class="help-block"
+                           v-if="form.errors.external_begin"
+                           v-text="form.errors.external_begin[0]"></p>
                     </div>
 
                     <div class="form-group "
                          :class="form.errors.external_end ? 'has-error' : ''"
                     >
-                        <label for="external_end">{{ trans('global.grade.fields.external_end') }} *</label>
+                        <label for="external_end">
+                            {{ trans('global.grade.fields.external_end') }} *
+                        </label>
                         <input
                             type="text" id="external_end"
                             name="external_end"
@@ -65,7 +75,9 @@
                             placeholder="external_end"
                             required
                         />
-                        <p class="help-block" v-if="form.errors.external_end" v-text="form.errors.external_end[0]"></p>
+                        <p class="help-block"
+                           v-if="form.errors.external_end"
+                           v-text="form.errors.external_end[0]"></p>
                     </div>
 
                     <Select2

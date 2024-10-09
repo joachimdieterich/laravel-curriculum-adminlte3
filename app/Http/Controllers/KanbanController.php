@@ -6,6 +6,7 @@ use App\Kanban;
 use App\KanbanItem;
 use App\KanbanStatus;
 use App\KanbanSubscription;
+use App\Logbook;
 use App\Medium;
 use App\MediumSubscription;
 use App\Organization;
@@ -26,13 +27,53 @@ class KanbanController extends Controller
     public function index()
     {
         abort_unless(\Gate::allows('kanban_access'), 403);
-
-        return view('kanbans.index');
+        if (request()->wantsJson())
+        {
+            return getEntriesForSelect2ByCollection(
+                $this->getKanbans(),
+                'kanbans.'
+            );
+        }
+        else
+        {
+            return view('kanbans.index');
+        }
     }
+
+    public function getKanbans($withOwned = true)
+    {
+        $kanbans = Kanban::with('subscriptions')
+            ->whereHas('subscriptions', function ($query) {
+            $query->where(
+                function ($query) {
+                    $query->where('subscribable_type', 'App\\Organization')->where('subscribable_id', auth()->user()->current_organization_id);
+                }
+            )->orWhere(
+                function ($query) {
+                    $query->where('subscribable_type', 'App\\Group')->whereIn('subscribable_id', auth()->user()->groups->pluck('id'));
+                }
+            )->orWhere(
+                function ($query) {
+                    $query->where('subscribable_type', 'App\\User')->where('subscribable_id', auth()->user()->id);
+                }
+            )->orWhere(
+                function ($query) {
+                    $query->where('subscribable_type', 'App\\User')->where('subscribable_id', auth()->user()->id);
+                }
+            );
+        })->orWhere('owner_id', auth()->user()->id);
+
+        if ($withOwned) {
+            $kanbans = $kanbans->orWhere('owner_id', auth()->user()->id);
+        }
+
+        return $kanbans;
+    }
+
+
 
     public function userKanbans($withOwned = true)
     {
-
         $userCanSee = auth()->user()->kanbans;
 
         if (auth()->user()->sharing_token !== null)  //tokenuser? only return subscriptions
@@ -50,7 +91,6 @@ class KanbanController extends Controller
         {
             $owned = Kanban::where('owner_id', auth()->user()->id)->get();
             $userCanSee = $userCanSee->merge($owned);
-
         }
 
         return $userCanSee->unique();
@@ -59,19 +99,40 @@ class KanbanController extends Controller
     public function list(Request $request)
     {
         abort_unless(\Gate::allows('kanban_access'), 403);
-
-        switch ($request->filter)
+        if (request()->has(['group_id']))
         {
-            case 'owner':            $kanbans = Kanban::where('owner_id', auth()->user()->id)->get();
-                break;
-            case 'shared_with_me':   $kanbans = $this->userKanbans(false);
-                break;
-            case 'shared_by_me':     $kanbans = Kanban::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
-                break;
-            case 'all':
-            default:                $kanbans = $this->userKanbans();
-                break;
+            $request = request()->validate(
+                [
+                    'group_id' => 'required',
+                ]
+            );
+            $group_id = $request['group_id'];
+            $kanbans = Kanban::with('subscriptions')
+                ->whereHas('subscriptions', function ($query) use ($group_id){
+                    $query->where(
+                        function ($query) use ($group_id) {
+                            $query->where('subscribable_type', 'App\\Group')
+                                ->where('subscribable_id', $group_id);
+                        }
+                    );
+                });
         }
+        else
+        {
+            switch ($request->filter)
+            {
+                case 'owner':            $kanbans = Kanban::where('owner_id', auth()->user()->id)->get();
+                    break;
+                case 'shared_with_me':   $kanbans = $this->userKanbans(false);
+                    break;
+                case 'shared_by_me':     $kanbans = Kanban::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
+                    break;
+                case 'all':
+                default:                $kanbans = $this->userKanbans();
+                    break;
+            }
+        }
+
 
         return empty($kanbans) ? '' : DataTables::of($kanbans)
             ->setRowId('id')

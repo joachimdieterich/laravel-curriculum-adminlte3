@@ -3,8 +3,8 @@
         <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
         >
-        <div class="modal-container">
-            <div class="card-header">
+        <div class="modal-container ">
+            <div class="card-header ">
                 <h3 class="card-title">
                     <span v-if="method === 'post'">
                         {{ trans('global.kanban.create') }}
@@ -34,7 +34,9 @@
                         :placeholder="trans('global.kanbanItem.fields.title')"
                         required
                     />
-                    <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                    <p class="help-block"
+                       v-if="form.errors.title"
+                       v-text="form.errors.title[0]"></p>
                 </div>
 
                 <div class="form-group">
@@ -45,7 +47,9 @@
                          class="form-control description "
                          v-model.trim="form.description"
                      ></textarea>
-                    <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
+                    <p class="help-block"
+                       v-if="form.errors.description"
+                       v-text="form.errors.description[0]"></p>
                 </div>
 
                     <div class="card-header border-bottom"
@@ -246,15 +250,11 @@
                         console.log(e.response);
                     });
             },
-            decodeHTMLEntities(text) {
-                return $("<textarea/>")
-                    .html(text)
-                    .text();
-            }
         },
         mounted() {
             this.globalStore.registerModal(this.$options.name);
             this.globalStore.$subscribe((mutation, state) => {
+
                 if (mutation.events.key === this.$options.name){
                     const params = state.modals[this.$options.name].params;
                     this.form.reset();
@@ -271,4 +271,3 @@
         },
     }
 </script>
-

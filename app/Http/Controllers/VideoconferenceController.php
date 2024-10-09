@@ -55,8 +55,53 @@ class VideoconferenceController extends Controller
     {
         abort_unless(\Gate::allows('videoconference_access'), 403);
 
-        return view('videoconference.index');
+        if (request()->wantsJson())
+        {
+            return getEntriesForSelect2ByCollection(
+                $this->getVideoconferences(),
+                'videoconferences.',
+                        ['meetingName', 'medium_id'],
+                'meetingName',
+                "meetingName",
+            );
+        }
+        else
+        {
+            return view('videoconference.index');
+        }
+
     }
+
+    public function getVideoconferences($withOwned = true)
+    {
+        $videoconferences = Videoconference::with('subscriptions')
+            ->whereHas('subscriptions', function ($query) {
+                $query->where(
+                    function ($query) {
+                        $query->where('subscribable_type', 'App\\Organization')->where('subscribable_id', auth()->user()->current_organization_id);
+                    }
+                )->orWhere(
+                    function ($query) {
+                        $query->where('subscribable_type', 'App\\Group')->whereIn('subscribable_id', auth()->user()->groups->pluck('id'));
+                    }
+                )->orWhere(
+                    function ($query) {
+                        $query->where('subscribable_type', 'App\\User')->where('subscribable_id', auth()->user()->id);
+                    }
+                )->orWhere(
+                    function ($query) {
+                        $query->where('subscribable_type', 'App\\User')->where('subscribable_id', auth()->user()->id);
+                    }
+                );
+            })->orWhere('owner_id', auth()->user()->id);
+
+        if ($withOwned) {
+            $videoconferences = $videoconferences->orWhere('owner_id', auth()->user()->id);
+        }
+
+        return $videoconferences;
+    }
+
 
     public function userVideoconferences($withOwned = true, $user = null)
     {
@@ -85,18 +130,42 @@ class VideoconferenceController extends Controller
     {
         abort_unless(\Gate::allows('videoconference_access'), 403);
 
-        switch ($request->filter)
+        if (request()->has(['group_id']))
         {
-            case 'owner':            $videoconferences = Videoconference::where('owner_id', auth()->user()->id)->get();
-                break;
-            case 'shared_with_me':   $videoconferences = $this->userVideoconferences(false);
-                break;
-            case 'shared_by_me':     $videoconferences = Videoconference::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
-                break;
-            case 'all':
-            default:                 $videoconferences = $this->userVideoconferences();
-                break;
+            $request = request()->validate(
+                [
+                    'group_id' => 'required',
+                ]
+            );
+            $group_id = $request['group_id'];
+            $videoconferences = Videoconference::with('subscriptions')
+                ->whereHas('subscriptions', function ($query) use ($group_id){
+                    $query->where(
+                        function ($query) use ($group_id) {
+                            $query->where('subscribable_type', 'App\\Group')
+                                ->where('subscribable_id', $group_id);
+                        }
+                    );
+                });
         }
+        else
+        {
+            switch ($request->filter)
+            {
+                case 'owner':            $videoconferences = Videoconference::where('owner_id', auth()->user()->id)->get();
+                    break;
+                case 'shared_with_me':   $videoconferences = $this->userVideoconferences(false);
+                    break;
+                case 'shared_by_me':     $videoconferences = Videoconference::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
+                    break;
+                case 'all':
+                default:                 $videoconferences = $this->userVideoconferences();
+                    break;
+            }
+        }
+
+
+
 
         return empty($videoconferences) ? '' : DataTables::of($videoconferences)
             ->setRowId('id')

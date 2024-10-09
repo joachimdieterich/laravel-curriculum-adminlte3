@@ -137,6 +137,10 @@
         </div>
 
         <Teleport to="body">
+            <SubscribeVideoconferenceModal
+                v-if="subscribable"
+            >
+            </SubscribeVideoconferenceModal>
             <VideoconferenceModal></VideoconferenceModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
@@ -161,10 +165,23 @@ import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import {useGlobalStore} from "../../store/global";
+import SubscribeVideoconferenceModal from "./SubscribeVideoconferenceModal.vue";
 DataTable.use(DataTablesCore);
 
 export default {
     props: {
+        subscribable: {
+            type: Boolean,
+            default: false
+        },
+        create_label_field: {
+            type: String,
+            default: 'create'
+        },
+        delete_label_field: {
+            type: String,
+            default: 'delete'
+        },
         subscribable_type: '',
         subscribable_id: '',
     },
@@ -180,7 +197,7 @@ export default {
             videoconferences: null,
             search: '',
             showConfirm: false,
-            url: '/videoconferences/list',
+            url: (this.subscribable_id) ? '/videoconferences/list?group_id=' + this.subscribable_id : '/videoconferences/list',
             errors: {},
             currentVideoconference: {},
             columns: [
@@ -201,7 +218,12 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('videoconference-added', (videoconference) => {
-            this.globalStore?.closeModal('videoconference-modal');
+            if (!this.subscribable) {
+                this.globalStore?.closeModal('videoconference-modal');
+            } else {
+                this.globalStore?.closeModal('subscribe-videoconference-modal');
+            }
+
             this.videoconferences.push(videoconference);
         });
 
@@ -209,8 +231,23 @@ export default {
             this.globalStore?.closeModal('videoconference-modal');
             this.update(videoconference);
         });
+
+        this.$eventHub.on('videoconference-subscription-added', () => {
+            this.globalStore?.closeModal('subscribe-videoconference-modal');
+            this.loaderEvent();
+        });
+
         this.$eventHub.on('createVideoconference', () => {
-            this.globalStore?.showModal('videoconference-modal', {});
+            if (!this.subscribable) {
+                this.globalStore?.showModal('videoconference-modal', {});
+            } else {
+                this.globalStore?.showModal('subscribe-videoconference-modal', {
+                    'reference': {},
+                    'subscribable_type': this.subscribable_type,
+                    'subscribable_id': this.subscribable_id,
+                });
+            }
+
         });
     },
     methods: {
@@ -275,6 +312,7 @@ export default {
         },
     },
     components: {
+        SubscribeVideoconferenceModal,
         ConfirmModal,
         DataTable,
         VideoconferenceModal,

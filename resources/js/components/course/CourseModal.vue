@@ -62,7 +62,6 @@ import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
 
-
 export default {
     name: 'course-modal',
     components:{
@@ -82,6 +81,7 @@ export default {
             url: '/curricula/enrol',
             form: new Form({
                 'id': '',
+                'group_id': '',
                 'curriculum_id': '',
                 'enrollment_list': {},
             }),
@@ -100,7 +100,7 @@ export default {
             axios.post(this.url, {
                 'enrollment_list' : {
                     0: {
-                        'group_id' : this.params.id, // == group_id
+                        'group_id' : this.form.group_id,
                         'curriculum_id': {
                             0 : this.form.curriculum_id
                         }
@@ -123,11 +123,7 @@ export default {
                 this.form.reset();
                 if (typeof (params) !== 'undefined'){
                     this.form.populate(params);
-                    if (this.form.id !== ''){
-                        this.method = 'patch';
-                    } else {
-                        this.method = 'post';
-                    }
+                    this.method = 'post';
                 }
             }
         });

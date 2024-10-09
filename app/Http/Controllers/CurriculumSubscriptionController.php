@@ -135,7 +135,7 @@ class CurriculumSubscriptionController extends Controller
             'subscribable_id'   => 'sometimes|integer',
             'model_id'          => 'sometimes|integer',
             'editable'          => 'sometimes',
-            'curriculum_id'=> 'sometimes',
+            'curriculum_id'     => 'sometimes',
         ]);
     }
 }

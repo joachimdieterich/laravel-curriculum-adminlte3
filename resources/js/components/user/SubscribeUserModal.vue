@@ -22,7 +22,6 @@
                     </div>
                 </div>
                 <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-
                     <Select2
                         id="users_subscription"
                         name="users_subscription"
@@ -104,7 +103,7 @@ export default {
             axios.post(this.url, {
                     'enrollment_list' : {
                         0: {
-                            'group_id' : this.params.id, // == group_id
+                            'group_id' : this.form.id,
                             'user_id': {
                                 0 : this.form.user_id
                             }
@@ -112,6 +111,7 @@ export default {
                     }
                 })
                 .then(r => {
+                    console.log(r);
                     this.$eventHub.emit('user-added', r.data);
                 })
                 .catch(e => {
@@ -127,11 +127,7 @@ export default {
                 this.form.reset();
                 if (typeof (params) !== 'undefined'){
                     this.form.populate(params);
-                    if (this.form.id !== ''){
-                        this.method = 'patch';
-                    } else {
-                        this.method = 'post';
-                    }
+                    this.method = 'post';
                 }
             }
         });

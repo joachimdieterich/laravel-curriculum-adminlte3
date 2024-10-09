@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Controllers\KanbanController;
+use App\Helpers\QRCodeHelper;
+use App\Http\Controllers\Api\V1\OpenApiDefinitions\Organization;
 use App\Kanban;
 use App\Http\Controllers\Controller;
+use App\KanbanSubscription;
 use App\OrganizationRoleUser;
 use App\Period;
 use App\User;
@@ -79,12 +81,72 @@ class KanbansApiController extends Controller
         return $return;
     }
 
+    public function enrolToKanban(Kanban $kanban){
+        $model = $this->resolveModel(request()->input('subscribable_type'));
+
+        $subscribe = KanbanSubscription::updateOrCreate([
+            'kanban_id' => $kanban->id,
+            'subscribable_type' => request()->input('subscribable_type'),
+            'subscribable_id' => $model->id,
+        ], [
+            'editable' => request()->input('editable') ? 1 : 0,
+            'owner_id' => auth()->user()->id ?? 1,
+        ]);
+        return $subscribe->save();
+    }
+
     public function expel()
     {
         $user = User::find(request()->input('user_id'));
         if ($user->kanbans()->detach(['kanban_id' => request()->input('kanban_id')])) {
             return ['message' => 'Successful expelled'];
         }
+    }
+
+    public function expelFromKanban(Kanban $kanban){
+        $model = $this->resolveModel(request()->input('subscribable_type'));
+
+        $subscribe = KanbanSubscription::where([
+            'kanban_id' => $kanban->id,
+            'subscribable_type' => request()->input('subscribable_type'),
+            'subscribable_id' => $model->id,
+        ]);
+        return $subscribe->delete();
+    }
+
+    public function subscriptions(Kanban $kanban)
+    {
+        $tokens = null;
+        $tokenscodes = KanbanSubscription::where('kanban_id', request('kanban_id'))
+            ->where('sharing_token', "!=", null)
+            ->get();
+
+        foreach ($tokenscodes as $token)
+        {
+            $tokens[] = [
+                "token" => $token,
+                "qr"    => (new QRCodeHelper())
+                    ->generateQRCodeByString(
+                        env("APP_URL"). "/kanbans/" . request('kanban_id') ."/token?sharing_token=" .$token->sharing_token
+                    )
+            ];
+        }
+
+        return [
+            'subscribers' => [
+                'tokens' => $tokens ?? [],
+                'subscriptions' => optional(
+                    optional(
+                        Kanban::find($kanban->id)
+                    )->subscriptions()
+                )->with('subscribable')
+                    ->whereHasMorph('subscribable', '*', function ($q, $type) {
+                        if ($type == 'App\\User') {
+                            $q->whereNot('id', env('GUEST_USER'));
+                        }
+                    })->get(),
+            ],
+        ];
     }
 
     protected function filteredRequest()
@@ -113,6 +175,22 @@ class KanbansApiController extends Controller
             return Period::find(request()->input('period_id'));
         } else {
             return Period::find(1); //fallback
+        }
+    }
+
+    private function resolveModel($model)
+    {
+        switch ($model) {
+            case 'App\Organization':
+                return Organization::where('common_name', request()->input('common_name'))->firstOrFail();
+                break;
+            case 'App\Group':
+                return Group::where('common_name', request()->input('common_name'))->firstOrFail();
+                break;
+            case 'App\User':
+                return User::where('common_name', request()->input('common_name'))->firstOrFail();
+                break;
+            default: return false;
         }
     }
 }

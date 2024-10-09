@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="show"
+        <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
         >
         <div class="modal-container">
@@ -16,7 +16,7 @@
                 <div class="card-tools">
                     <button type="button"
                             class="btn btn-tool"
-                            @click="$emit('close')">
+                            @click="globalStore?.closeModal($options.name)">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
@@ -35,7 +35,9 @@
                         placeholder="Title"
                         required
                     />
-                    <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                    <p class="help-block"
+                       v-if="form.errors.title"
+                       v-text="form.errors.title[0]"></p>
                 </div>
                 <div class="form-group">
                     <label for="teaser_text">
@@ -50,7 +52,9 @@
                         :placeholder="trans('global.mapMarker.fields.teaser_text')"
                         required
                     />
-                    <p class="help-block" v-if="form.errors?.teaser_text" v-text="form.errors?.teaser_text[0]"></p>
+                    <p class="help-block"
+                       v-if="form.errors?.teaser_text"
+                       v-text="form.errors?.teaser_text[0]"></p>
                 </div>
                 <div class="form-group">
                     <label for="description">
@@ -78,7 +82,9 @@
                         :placeholder="trans('global.mapMarker.fields.author')"
                         required
                     />
-                    <p class="help-block" v-if="form.errors?.author" v-text="form.errors?.author[0]"></p>
+                    <p class="help-block"
+                       v-if="form.errors?.author"
+                       v-text="form.errors?.author[0]"></p>
                 </div>
                 <div class="form-group">
                     <label for="tags">
@@ -93,7 +99,9 @@
                         :placeholder="trans('global.mapMarker.fields.tags')"
                         required
                     />
-                    <p class="help-block" v-if="form.errors?.tags" v-text="form.errors?.tags[0]"></p>
+                    <p class="help-block"
+                       v-if="form.errors?.tags"
+                       v-text="form.errors?.tags[0]"></p>
                 </div>
 
                 <Select2
@@ -132,7 +140,9 @@
                         :placeholder="trans('global.mapMarker.fields.latitude')"
                         required
                     />
-                    <p class="help-block" v-if="form.errors?.latitude" v-text="form.errors?.latitude[0]"></p>
+                    <p class="help-block"
+                       v-if="form.errors?.latitude"
+                       v-text="form.errors?.latitude[0]"></p>
                 </div>
                 <div class="form-group">
                     <label for="longitude">
@@ -147,7 +157,9 @@
                         :placeholder="trans('global.mapMarker.fields.longitude')"
                         required
                     />
-                    <p class="help-block" v-if="form.errors?.longitude" v-text="form.errors?.longitude[0]"></p>
+                    <p class="help-block"
+                       v-if="form.errors?.longitude"
+                       v-text="form.errors?.longitude[0]"></p>
                 </div>
 
                 <div class="form-group">
@@ -163,7 +175,9 @@
                         :placeholder="trans('global.mapMarker.fields.address')"
                         required
                     />
-                    <p class="help-block" v-if="form.errors?.address" v-text="form.errors?.address[0]"></p>
+                    <p class="help-block"
+                       v-if="form.errors?.address"
+                       v-text="form.errors?.address[0]"></p>
                 </div>
 
                 <div class="form-group">
@@ -178,7 +192,9 @@
                         v-model.trim="form.url"
                         :placeholder="trans('global.mapMarker.fields.url')"
                     />
-                    <p class="help-block" v-if="form.errors?.url" v-text="form.errors?.url[0]"></p>
+                    <p class="help-block"
+                       v-if="form.errors?.url"
+                       v-text="form.errors?.url[0]"></p>
                 </div>
 
                 <div class="form-group">
@@ -193,7 +209,9 @@
                         v-model.trim="form.url_title"
                         :placeholder="trans('global.mapMarker.fields.url_title')"
                     />
-                    <p class="help-block" v-if="form.errors?.url_title" v-text="form.errors?.url_title[0]"></p>
+                    <p class="help-block"
+                       v-if="form.errors?.url_title"
+                       v-text="form.errors?.url_title[0]"></p>
                 </div>
             </div>
 
@@ -203,7 +221,7 @@
                          id="marker-cancel"
                          type="button"
                          class="btn btn-default"
-                         @click="$emit('close')">
+                         @click="globalStore?.closeModal($options.name)">
                          {{ trans('global.cancel') }}
                      </button>
                      <button
@@ -224,22 +242,24 @@
     import axios from "axios";
     import Editor from "@tinymce/tinymce-vue";
     import Select2 from "../forms/Select2.vue";
+    import {useGlobalStore} from "../../store/global";
 
     export default {
+        name: 'map-marker-modal',
         components:{
             Editor,
             MediumModal,
             Select2
         },
         props: {
-            show: {
-                type: Boolean
-            },
-            params: {
-                type: Object
-            },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
             map: {
                 type: Object
+            }
+        },
+        setup () {
+            const globalStore = useGlobalStore();
+            return {
+                globalStore,
             }
         },
         data() {
@@ -274,21 +294,6 @@
                 ),
             }
         },
-        watch: {
-            params: function(newVal, oldVal) {
-                this.form.reset();
-                this.form.populate(newVal);
-
-                this.form.map_id = this.map.id;
-                this.form.url = this.decodeHTMLEntities(newVal.url);
-
-                if (this.form.id != ''){
-                    this.method = 'patch';
-                } else {
-                    this.method = 'post';
-                }
-            },
-        },
         methods: {
              submit(method) {
                  if (method == 'patch') {
@@ -301,7 +306,7 @@
                 axios.post(this.url, this.form)
                     .then(r => {
                         this.$eventHub.emit('marker-added', r.data.marker);
-                        this.$emit('close');
+                        this.globalStore?.closeModal(this.$options.name)
                     })
                     .catch(e => {
                         console.log(e.response);
@@ -312,20 +317,30 @@
                 axios.patch(this.url + '/' + this.form.id, this.form)
                     .then(r => {
                         this.$eventHub.emit('marker-updated', r.data.marker);
-                        this.$emit('close');
+                        this.globalStore?.closeModal(this.$options.name)
                     })
                     .catch(e => {
                         console.log(e.response);
                     });
             },
-            decodeHTMLEntities(text) {
-                return $("<textarea/>")
-                    .html(text)
-                    .text();
-            }
-
         },
         mounted() {
+            this.globalStore.registerModal(this.$options.name);
+            this.globalStore.$subscribe((mutation, state) => {
+                if (mutation.events.key === this.$options.name){
+                    const params = state.modals[this.$options.name].params;
+                    this.form.reset();
+                    if (typeof (params) !== 'undefined'){
+                        this.form.populate(params);
+                        this.form.url = this.$decodeHTMLEntities(params.url);
+                        if (this.form.id !== ''){
+                            this.method = 'patch';
+                        } else {
+                            this.method = 'post';
+                        }
+                    }
+                }
+            });
         },
     }
 </script>

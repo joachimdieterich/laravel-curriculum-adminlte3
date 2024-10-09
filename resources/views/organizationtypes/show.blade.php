@@ -11,8 +11,7 @@
     ></breadcrumbs>
 @endsection
 @section('content')
-
-    <organization-types
+    <organization-type
         :organizationType="{{ $organizationType }}"
-    ></organization-types>
+    ></organization-type>
 @endsection

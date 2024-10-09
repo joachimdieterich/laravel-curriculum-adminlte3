@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="show"
+        <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
         >
         <div class="modal-container">
@@ -16,7 +16,7 @@
                 <div class="card-tools">
                     <button type="button"
                             class="btn btn-tool"
-                            @click="$emit('close')">
+                            @click="globalStore?.closeModal($options.name)">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
@@ -33,7 +33,7 @@
                      <button
                          id="note-save"
                          class="btn btn-primary"
-                         @click="$emit('close')" >
+                         @click="globalStore?.closeModal($options.name)">
                          {{ trans('global.close') }}
                      </button>
                 </span>
@@ -45,22 +45,24 @@
 <script>
     import Notes from "./Notes.vue";
     import Form from 'form-backend-validation';
+    import {useGlobalStore} from "../../store/global";
 
     export default {
+        name: 'note-modal',
         components:{
             Notes,
         },
-        props: {
-            show: {
-                type: Boolean
-            },
-            params: {
-                type: Object
-            },
+        props: {},
+        setup () {
+            const globalStore = useGlobalStore();
+            return {
+                globalStore,
+            }
         },
         data() {
             return {
                 component_id: this.$.uid,
+                method: 'post',
                 form: new Form({
                     'notable_type': false,
                     'notable_id': false,
@@ -68,15 +70,24 @@
                 }),
             }
         },
-        watch: {
-            params: function(newVal, oldVal) {
-                this.form.reset();
-                this.form.populate(newVal);
-            },
-
-        },
         methods: {},
-        mounted() {},
+        mounted() {
+            this.globalStore.registerModal(this.$options.name);
+            this.globalStore.$subscribe((mutation, state) => {
+                if (mutation.events.key === this.$options.name){
+                    const params = state.modals[this.$options.name].params;
+                    this.form.reset();
+                    if (typeof (params) !== 'undefined'){
+                        this.form.populate(params);
+                        if (this.form.id !== ''){
+                            this.method = 'patch';
+                        } else {
+                            this.method = 'post';
+                        }
+                    }
+                }
+            });
+        },
     }
 </script>
 

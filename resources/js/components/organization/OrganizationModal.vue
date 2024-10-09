@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="show"
+        <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
         >
         <div class="modal-container">
@@ -16,12 +16,27 @@
                 <div class="card-tools">
                     <button type="button"
                             class="btn btn-tool"
-                            @click="$emit('close')">
+                            @click="globalStore?.closeModal($options.name)">
                         <i class="fa fa-times"></i>
                     </button>
                  </div>
             </div>
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                <div v-permission="'is_admin'"
+                    v-if="(!onlyAddress && !onlyLmsUrl)"
+                     class="form-group "
+                     :class="form.errors.common_name ? 'has-error' : ''"
+                >
+                    <label for="title">{{ trans('global.organization.fields.common_name') }}</label>
+                    <input
+                        type="text" id="common_name"
+                        name="common_name"
+                        class="form-control"
+                        v-model="form.common_name"
+                        readonly
+                    />
+                    <p class="help-block" v-if="form.errors.common_name" v-text="form.errors.common_name[0]"></p>
+                </div>
                 <div v-if="(!onlyAddress && !onlyLmsUrl)"
                      class="form-group "
                     :class="form.errors.title ? 'has-error' : ''"
@@ -195,7 +210,7 @@
                          id="organization-cancel"
                          type="button"
                          class="btn btn-default"
-                         @click="$emit('close')">
+                         @click="globalStore?.closeModal($options.name)">
                          {{ trans('global.cancel') }}
                      </button>
                      <button
@@ -214,27 +229,19 @@
     import Form from 'form-backend-validation';
     import Editor from '@tinymce/tinymce-vue';
     import Select2 from "../forms/Select2.vue";
-
+    import {useGlobalStore} from "../../store/global";
 
     export default {
+        name: 'organization-modal',
         components:{
             Editor,
             Select2
         },
-        props: {
-            show: {
-                type: Boolean
-            },
-            params: {
-                type: Object
-            },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
-            onlyAddress: {
-                type: Boolean,
-                default: false
-            },
-            onlyLmsUrl: {
-                type: Boolean,
-                default: false
+        props: {},
+        setup () {
+            const globalStore = useGlobalStore();
+            return {
+                globalStore,
             }
         },
         data() {
@@ -244,20 +251,19 @@
                 url: '/organizations',
                 form: new Form({
                     'id':'',
+                    'common_name':'',
                     'title':'',
-                    'teaser_tesxt':'',
                     'description': '',
-                    'author': '',
-                    'type_id': 1,
-                    'category_id': 1,
-                    'country_id': 'DE',
+                    'street': '',
+                    'postcode': '',
+                    'city': '',
                     'state_id': 'DE-RP',
-                    'tags': '',
-                    'latitude': null,
-                    'longitude': null,
-                    'address': '',
-                    'url': '',
-                    'url_title': '',
+                    'country_id': 'DE',
+                    'organization_type_id': 1,
+                    'phone': null,
+                    'email': null,
+                    'status_id': 1,
+                    'lms_url': '',
                 }),
                 countries: [],
                 states: [],
@@ -270,22 +276,16 @@
                         'eventHubCallbackFunctionParams': this.component_id,
                     }
                 ),
+                onlyAddress: {
+                    type: Boolean,
+                    default: false
+                },
+                onlyLmsUrl: {
+                    type: Boolean,
+                    default: false
+                },
                 search: '',
             }
-        },
-        watch: {
-            params: function(newVal, oldVal) {
-                if (typeof (newVal.id) == 'undefined'){
-                    this.form.reset();
-                }
-                this.form.populate(newVal);
-                console.log(this.form);
-                this.form.description = this.$decodeHtml(this.form.description)
-                //this.form.description = $("<div/>").html(this.form.description).text(); //convert jsonformatted html to raw html
-                if (this.form.id != ''){
-                    this.method = 'patch';
-                }
-            },
         },
         methods: {
              submit(method) {
@@ -317,6 +317,25 @@
                     });
             }
         },
-        mounted() {},
+        mounted() {
+            this.globalStore.registerModal(this.$options.name);
+            this.globalStore.$subscribe((mutation, state) => {
+                if (mutation.events.key === this.$options.name){
+                    const params = state.modals[this.$options.name].params;
+                    this.form.reset();
+                    if (typeof (params) !== 'undefined'){
+                        this.form.populate(params);
+                        this.form.description = this.$decodeHtml(this.form.description);
+                        this.onlyAddress = params.onlyAdress ?? false;
+                        this.onlyLmsUrl = params.onlyLmsUrl ?? false;
+                        if (this.form.id !== ''){
+                            this.method = 'patch';
+                        } else {
+                            this.method = 'post';
+                        }
+                    }
+                }
+            });
+        },
     }
 </script>

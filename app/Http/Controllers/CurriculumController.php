@@ -136,7 +136,8 @@ class CurriculumController extends Controller
      */
     public function create()
     {
-        abort_unless(Gate::allows('curriculum_create'), 403);
+        abort(403);
+      /*  abort_unless(Gate::allows('curriculum_create'), 403);
 
         $grades = Grade::all();
         $subjects = Subject::all();
@@ -153,7 +154,7 @@ class CurriculumController extends Controller
                 ->with(compact('states'))
                 ->with(compact('organization_types'))
                 ->with(compact('variant_definitions'))
-                ->with(compact('curriculum_types'));
+                ->with(compact('curriculum_types'));*/
     }
 
     /**
@@ -304,7 +305,8 @@ class CurriculumController extends Controller
      */
     public function edit(Curriculum $curriculum)
     {
-        $grades = Grade::all();
+        abort(403);
+       /* $grades = Grade::all();
         $subjects = Subject::all();
         $organization_types = OrganizationType::all();
         $curriculum_types = CurriculumType::all();
@@ -320,7 +322,7 @@ class CurriculumController extends Controller
                 ->with(compact('countries'))
                 ->with(compact('states'))
                 ->with(compact('variant_definitions'))
-                ->with(compact('curriculum'));
+                ->with(compact('curriculum'));*/
     }
 
     /**
@@ -331,11 +333,13 @@ class CurriculumController extends Controller
      */
     public function editOwner(Curriculum $curriculum)
     {
-        $users = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->get();
+        abort(403);
+       /* $users = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->get();
+
 
         return view('curricula.owner')
                 ->with(compact('curriculum'))
-                ->with(compact('users'));
+                ->with(compact('users'));*/
     }
 
     /**
@@ -353,7 +357,10 @@ class CurriculumController extends Controller
             'owner_id' => format_select_input($input['owner_id']),
         ]);
 
-        return redirect('/curricula');
+        if (request()->wantsJson()) {
+            return $curriculum;
+        }
+        //return redirect('/curricula');
     }
 
     /**
@@ -415,10 +422,10 @@ class CurriculumController extends Controller
             {
                 foreach ($enrolment['curriculum_id'] as $curriculum_id)
                 {
-                    $this->subscribe($curriculum_id, $enrolment['group_id']);
+                    $this->subscribe(format_select_input($curriculum_id), $enrolment['group_id']);
                 }
             } else {
-                $this->subscribe($enrolment['curriculum_id'], $enrolment['group_id']);
+                $this->subscribe(format_select_input($enrolment['curriculum_id']), $enrolment['group_id']);
             }
         }
 

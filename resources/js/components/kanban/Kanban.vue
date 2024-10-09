@@ -129,11 +129,9 @@
         </div>
     </div>
     <Teleport to="body">
-        <KanbanModal
-            :show="this.showKanbanModal"
-            @close="this.showKanbanModal = false"
-            :params="this.currentKanban"
-        ></KanbanModal>
+        <KanbanModal></KanbanModal>
+        <KanbanStatusModal
+        :kanban="kanban"></KanbanStatusModal>
         <SubscribeModal></SubscribeModal>
     </Teleport>
     <teleport
@@ -172,6 +170,7 @@ import draggable from "vuedraggable";
 import KanbanItem from "../kanbanItem/KanbanItem.vue";
 import KanbanItemCreate from "../kanbanItem/KanbanItemCreate.vue";
 import KanbanStatus from "./KanbanStatus.vue";
+import KanbanStatusModal from "./KanbanStatusModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import KanbanModal from "../kanban/KanbanModal.vue";
 import {useGlobalStore} from "../../store/global";
@@ -214,14 +213,11 @@ export default {
             autoRefresh: false,
             refreshRate: 5000,
             usersOnline:[],
-            showKanbanModal: false,
-            currentKanban: {}
         };
     },
     methods: {
         editKanban(kanban){
-            this.currentKanban = kanban;
-            this.showKanbanModal = true;
+            this.globalStore?.showModal('kanban-modal', kanban);
         },
         toggleFullscreen(){
             if (document.fullscreenElement) {
@@ -642,6 +638,7 @@ export default {
         KanbanItemCreate,
         SubscribeModal,
         KanbanModal,
+        KanbanStatusModal
     }
 }
 </script>

@@ -126,11 +126,24 @@ class EdusharingMediaAdapter implements MediaInterface
         /*if (($medium->public == true) or ($medium->owner_id == auth()->user()->id)) {
             return request('download') ? redirect($medium->path) : redirect($medium->thumb_path);
         }*/
+        $params = $this->validateRequest();
+        if (isset($params['model'])) {
+            $class = 'App\\'.$params['model'];
+            $model = (new $class)::where('id', $params['model_id'] )->get()->first();
+
+            if ($model->isAccessible() && ($model->medium_id == $medium->id)){
+                $subscriptions = MediumSubscription::where('subscribable_type','App\\'.$params['model'])
+                    ->where('subscribable_id',$params['model_id'])
+                    ->where('medium_id', $medium->id)->get();
+            }
+        } else {
+            $subscriptions = $medium->subscriptions;
+        }
 
         /* checkIfUserHasSubscription and visibility*/
-        if ($medium->subscriptions())
+        if (count($subscriptions) > 0)
         {
-            foreach ($medium->subscriptions as $subscription)
+            foreach ($subscriptions as $subscription)
             {
                 if ($this->checkIfUserHasSubscription($subscription))
                 {
@@ -340,7 +353,9 @@ class EdusharingMediaAdapter implements MediaInterface
             'repository' => 'sometimes',
             'artefact' => 'sometimes',
             'file.*' => 'sometimes|mimes:jpg,jpeg,png,gif,bmp,tiff,tif,ico,svg,mov,mp4,m4v,mpeg,mpg,mp3,m4a,m4b,wav,mid,avi,ppt,pps,pptx,doc,docx,pdf,xls,xlsx,xps,odt,odp,ods,odg,odc,odb,odf,key,numbers,pages,csv,txt,rtx,rtf,zip,psd,xcf',
-
+            'model' => 'sometimes',
+            'model_id' => 'sometimes',
+            
             'title' => 'sometimes',
             'size' => 'sometimes',
             'mime_type' => 'sometimes',

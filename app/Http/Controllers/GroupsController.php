@@ -24,10 +24,6 @@ class GroupsController extends Controller
         if (request()->wantsJson() ) {
             return $this->getEntriesForSelect2();
         }
-/*
-        if (request()->wantsJson()) {
-            return ['groups' => json_encode(auth()->user()->groups)];
-        }*/
 
         return view('groups.index');
     }
@@ -181,26 +177,30 @@ class GroupsController extends Controller
 
             foreach ((array) $enrolment['user_id'] as $user_id) //iterate over user_ids
             {
-                $user = User::findOrFail($user_id);
+                $user = User::findOrFail(format_select_input($user_id));
                 foreach ((array) $enrolment['group_id'] as $group_id) //iterate over group_ids
                 {
+                   // dump($group_id);
                     $group = Group::findOrFail($group_id);
+                    //dump($group);
                     //if user isn't enrolled to organization, enrol with student role
-                    OrganizationRoleUser::firstOrCreate(['user_id' => $user->id,
-                        'organization_id' => $group->first()->organization_id, ],
-                        ['role_id' => 6]
+                    OrganizationRoleUser::firstOrCreate([
+                            'user_id' => $user->id,
+                            'organization_id' => $group->first()->organization_id,
+                        ],
+                        [
+                            'role_id' => 6
+                        ]
                     );
-                    //$return[] = $user->groups()->syncWithoutDetaching($group_id);
-                }
 
+                    $user->groups()->syncWithoutDetaching($group->id);
+                }
             }
         }
 
         if (request()->wantsJson()) {
             return $user ?? false;
-        } /*else {
-            return $return;
-        }*/
+        }
     }
 
     public function expel()
@@ -215,17 +215,13 @@ class GroupsController extends Controller
             foreach ((array) $expel['user_id'] as $user_id)
             {
                 $user = User::find($user_id);
-
+                $return[] = $user->groups()->detach($expel['group_id']);
             }
-            //$return[] = $user->groups()->detach($expel['group_id']);
-
         }
 
         if (request()->wantsJson()) {
             return $user ?? false; // todo: return multiple users if array is given
-        } /*else {
-            return $return;
-        }*/
+        }
     }
 
     protected function select2RequestWithOptGroup($collection, $field = 'title' )

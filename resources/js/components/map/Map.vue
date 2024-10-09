@@ -26,14 +26,23 @@
                 >
                     <h1 class="sidebar-header mb-3">
                         {{ this.map.title }}
+                        <a v-if="map.owner_id == this.$userId"
+                            v-permission="'map_edit'"
+                           class="pull-right link-muted"
+                           @click="editMap(this.map)" >
+                            <i class="fas fa-pencil-alt text-white"></i>
+                        </a>
                     </h1>
                     <span class="pb-2">
                         <h5 >{{ this.map.subtitle }}</h5>
-                        <span class="right badge badge-primary">{{ this.map.type.title }}</span>
+                        <span class="right badge badge-primary">
+                            {{ this.map.type.title }}
+                        </span>
                     </span>
 
-                    <p class="pt-2">
-                        {{ this.map.description}}
+                    <p  v-if="this.map.description != ''"
+                        class="pt-2"
+                        v-dompurify-html="this.map.description">
                     </p>
 
                     <h5 class="pt-2">{{ trans('global.entries') }}</h5>
@@ -50,7 +59,6 @@
                             </div>
                         </li>
                     </ul>
-
                 </div>
 
                 <div class="sidebar-pane" id="ll-layer">
@@ -58,34 +66,28 @@
                         Ebenen
                     </h1>
 
-                    <div v-if="mapMarkerTypes"
-                         class="form-group ">
-                        <label for="mapMarkerType">Typ</label>
-                        <select
-                            id="mapMarkerType"
-                            v-model="form.type_id"
-                            class="form-control select2"
-                            style="width:100%;">
-                            <option v-for="type in mapMarkerTypes"
-                                    :value="type.id">
-                                {{ type.title }}
-                            </option>
-                        </select>
-                    </div> <!-- mapMarkerTypes -->
-                    <div v-if="mapMarkerCategories"
-                         class="form-group ">
-                        <label for="mapMarkerCategory">Kategorie</label>
-                        <select
-                            id="mapMarkerCategory"
-                            v-model="form.category_id"
-                            class="form-control select2"
-                            style="width:100%;">
-                            <option v-for="category in mapMarkerCategories"
-                                    :value="category.id">
-                                {{ category.title }}
-                            </option>
-                        </select>
-                    </div> <!-- mapMarkerCategory -->
+                    <Select2
+                        :id="'mapMarkerType' + component_id"
+                        :name="'mapMarkerType' + component_id"
+                        url="/mapMarkerTypes"
+                        model="mapMarkerType"
+                        :selected="this.form.type_id"
+                        @selectedValue="(id) => {
+                            this.form.type_id = id;
+                        }"
+                    >
+                    </Select2>
+                    <Select2
+                        :id="'mapMarkerCategory' + component_id"
+                        :name="'mapMarkerCategory' + component_id"
+                        url="/mapMarkerCategories"
+                        model="mapMarkerCategory"
+                        :selected="this.form.category_id"
+                        @selectedValue="(id) => {
+                            this.form.category_id = id;
+                        }"
+                    >
+                    </Select2>
                     <button class="btn btn-primary pull-right"
                             @click="loader()">
                         <i class="fa fa-check"></i>
@@ -169,10 +171,8 @@
         <div id="map" class="sidebar-map"></div>
 
         <Teleport to="body">
+            <MapModal></MapModal>
             <MarkerModal
-                :show="this.showMapMarkerModal"
-                @close="this.showMapMarkerModal = false"
-                :params="currentMarker"
                 :map="this.map"
             >
             </MarkerModal>
@@ -212,9 +212,14 @@ import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import MediumModal from "../media/MediumModal.vue";
 import MarkerModal from "./MarkerModal.vue";
 import {useMediumStore} from "../../store/media.js";
+import {useGlobalStore} from "../../store/global";
+import MapModal from "./MapModal.vue";
+import Select2 from "../forms/Select2.vue";
 
 export default {
     components: {
+        Select2,
+        MapModal,
         MarkerModal,
         MarkerView,
         ConfirmModal,
@@ -227,8 +232,10 @@ export default {
     },
     setup () { //use database store
         const mediumStore = useMediumStore();
+        const globalStore = useGlobalStore();
         return {
-            mediumStore
+            mediumStore,
+            globalStore
         }
     },
     data() {
@@ -243,8 +250,6 @@ export default {
             markers: {},
             currentMarker:{},
             clusterGroup: {},
-            mapMarkerTypes: {},
-            mapMarkerCategories: {},
             form: new Form({
                 'type_id': '',
                 'category_id': '',
@@ -258,14 +263,11 @@ export default {
                 default: 'post'
             },
             showConfirm: false,
-            //showMediumModal: false, //now in mediumStore
-            showMapMarkerModal: false,
         }
     },
     methods: {
         createMarker(method = 'post'){
-            this.currentMarker = null;
-            this.showMapMarkerModal = true;
+            this.globalStore?.showModal('map-marker-modal', {});
         },
         loader(){
             axios.get('/mapMarkers?type_id=' + this.form.type_id + '&category_id=' + this.form.category_id)
@@ -284,9 +286,9 @@ export default {
                                 marker.title,
                                 marker.teaser_text,
                                 'll-marker',
-                                this.getCss('type', marker.type_id)['css_icon'],
-                                this.getCss('type', marker.category_id)['color'],
-                                this.getCss('category', marker.category_id)['shape'],
+                                marker.type.css_icon,
+                                marker.type.color,
+                                marker.category.shape,
                                 'fa'
                             )
                         ); // add marker to the clustergroup
@@ -370,27 +372,6 @@ export default {
             });
             this.mapCanvas.addLayer(this.clusterGroup); // add clustergroup to the map
         },
-        getCss(type, id){
-
-            switch(type) {
-                case 'type':
-                    let type_index = this.mapMarkerTypes.findIndex(type => type.id === id);
-                    return {
-                        'color' : this.mapMarkerTypes[type_index].color,
-                        'css_icon' : this.mapMarkerTypes[type_index].css_icon,
-                    }
-                    break;
-                case 'category':
-                    let category_index = this.mapMarkerCategories.findIndex(category => category.id === id);
-                    return {
-                        'color' : this.mapMarkerCategories[category_index].color,
-                        'shape' : this.mapMarkerCategories[category_index].shape
-                    }
-                    break;
-                default: return '#000';
-                // code block
-            }
-        },
         generateMarker(lat, lon, entry, title, description, sidebar_target, icon, markerColor, shape, prefix){
             var svgMarker = L.ExtraMarkers.icon({
                 icon: icon,
@@ -454,9 +435,11 @@ export default {
                     console.log(err.response);
                 });
         },
+        editMap(currentMap){
+            this.globalStore?.showModal('map-modal', currentMap);
+        },
         edit(marker) {
-            this.currentMarker = marker;
-            this.showMapMarkerModal = true;
+            this.globalStore?.showModal('map-marker-modal', marker);
         },
     },
     mounted() {
@@ -470,6 +453,11 @@ export default {
             );
             this.markers.splice(index, 1);
             this.markers[index] = marker;
+        });
+
+        this.$eventHub.on('map-updated', (map) => {
+            this.globalStore?.closeModal('map-modal');
+            window.location.reload();
         });
 
         if (this.map.initialLatitude){

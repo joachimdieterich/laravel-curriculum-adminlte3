@@ -53,7 +53,7 @@
                     option_label="title"
                     :selected="this.form.absent_user_id"
                     @selectedValue="(id) => {
-                        this.form.user_id = id;
+                        this.form.absent_user_id = id;
                     }"
                 >
                 </Select2>
@@ -120,10 +120,9 @@
             Editor,
             VueDatePicker
         },
-        props: { },
+        props: {},
         setup () {
             const globalStore = useGlobalStore();
-
             return {
                 globalStore,
             }

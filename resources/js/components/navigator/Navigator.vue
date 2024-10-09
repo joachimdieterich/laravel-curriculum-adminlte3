@@ -86,10 +86,7 @@
 
         <Teleport to="body">
             <NavigatorItemModal
-                :show="this.showNavigatorItemModal"
-                @close="this.showNavigatorItemModal = false"
                 :navigator="navigator"
-                :params="currentNavigatorItem"
             ></NavigatorItemModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
@@ -131,7 +128,6 @@ export default {
             component_id: this.$.uid,
             navigatorItems: null,
             search: '',
-            showNavigatorItemModal: false,
             showConfirm: false,
             errors: {},
             currentNavigatorItem: {},
@@ -157,23 +153,22 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('navigatorItem-added', (navigatorItem) => {
-            this.showNavigatorItemModal = false;
+            this.globalStore?.closeModal('navigator-item-modal');
             this.navigatorItems.push(navigatorItem);
         });
 
         this.$eventHub.on('navigatorItem-updated', (navigatorView) => {
-            this.showNavigatorItemModal = false;
+            this.globalStore?.closeModal('navigator-item-modal');
             this.update(navigatorView);
         });
         this.$eventHub.on('createNavigatorItem', () => {
-            this.currentNavigatorItem = {};
-            this.showNavigatorItemModal = true;
+            this.globalStore?.showModal('navigator-item-modal', {});
         });
     },
     methods: {
         editNavigatorItem(navigatorItem){
             this.currentNavigatorItem = navigatorItem;
-            this.showNavigatorItemModal = true;
+            this.globalStore?.showModal('navigator-item-modal', navigatorItem);
         },
         loaderEvent(){
             const dt = $('#navigatorItem-datatable').DataTable();

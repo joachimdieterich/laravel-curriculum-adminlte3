@@ -54,11 +54,7 @@
         </div>
 
         <Teleport to="body">
-            <MetadatasetModal
-                :show="this.showMetadatasetModal"
-                @close="this.showMetadatasetModal = false"
-                :params="currentMetadataset"
-            ></MetadatasetModal>
+            <MetadatasetModal></MetadatasetModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.metadataset.delete')"
@@ -88,13 +84,13 @@
     </div>
 </template>
 
-
 <script>
 import MetadatasetModal from "../metadataset/MetadatasetModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -102,12 +98,17 @@ export default {
         subscribable_type: '',
         subscribable_id: '',
     },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore
+        }
+    },
     data() {
         return {
             component_id: this.$.uid,
             metadatasets: null,
             search: '',
-            showMetadatasetModal: false,
             showConfirm: false,
             showCopy: false,
             url: '/metadatasets/list',
@@ -127,12 +128,15 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('metadataset-added', (metadataset) => {
-            this.showMetadatasetModal = false;
+            this.globalStore?.closeModal('metadataset-modal');
             this.metadatasets.push(metadataset);
         });
+        this.$eventHub.on('metadataset-updated', (metadataset) => {
+            this.globalStore?.closeModal('metadataset-modal');
+            this.update(metadataset);
+        });
         this.$eventHub.on('createMetadataset', () => {
-            this.currentMetadataset = {};
-            this.showMetadatasetModal = true;
+            this.globalStore?.showModal('metadataset-modal', {});
         });
     },
     methods: {
@@ -151,6 +155,15 @@ export default {
         confirmItemDelete(metadataset){
             this.currentMetadataset = metadataset;
             this.showConfirm = true;
+        },
+        update(logbook) {
+            const index = this.metadatasets.findIndex(
+                c => c.id === logbook.id
+            );
+
+            for (const [key, value] of Object.entries(logbook)) {
+                this.metadatasets[index][key] = value;
+            }
         },
         destroy() {
             axios.delete('/metadatasets/' + this.currentMetadataset.id)

@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="show"
+        <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
         >
             <div class="modal-container">
@@ -16,7 +16,7 @@
                     <div class="card-tools">
                         <button type="button"
                                 class="btn btn-tool"
-                                @click="$emit('close')">
+                                @click="globalStore?.closeModal($options.name)">
                             <i class="fa fa-times"></i>
                         </button>
                     </div>
@@ -192,7 +192,7 @@
                          id="navigator-cancel"
                          type="button"
                          class="btn btn-default"
-                         @click="$emit('close')">
+                         @click="globalStore?.closeModal($options.name)">
                          {{ trans('global.cancel') }}
                      </button>
                      <button
@@ -213,10 +213,12 @@ import Select2 from "../forms/Select2.vue";
 import Editor from '@tinymce/tinymce-vue';
 import MediumForm from "../media/MediumForm.vue";
 import {useMediumStore} from "../../store/media";
+import {useGlobalStore} from "../../store/global";
 
 
 
 export default {
+    name: 'navigator-item-modal',
     components:{
         MediumForm,
 
@@ -233,6 +235,12 @@ export default {
         params: {
             type: Object
         },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
+    },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {

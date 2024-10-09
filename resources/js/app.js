@@ -218,7 +218,7 @@ app.component('curricula',  defineAsyncComponent(() => import('./components/curr
 app.component('enabling-objective-modal', defineAsyncComponent(() => import('./components/objectives/EnablingObjectiveModal.vue')));
 app.component('events', defineAsyncComponent(() => import('../../app/Plugins/Eventmanagement/eVewa/resources/js/components/embedEvents.vue')));
 app.component('exam', defineAsyncComponent(() => import('./components/exam/Exam.vue')));
-app.component('exams', defineAsyncComponent(() => import('./components/exam/Exams.vue')));
+app.component('exams_list', defineAsyncComponent(() => import('./components/exam/Exams.vue')));
 app.component('grades', defineAsyncComponent(() => import('./components/grade/Grades.vue')));
 app.component('grade', defineAsyncComponent(() => import('./components/grade/Grade.vue')));
 
@@ -226,7 +226,7 @@ app.component('groups', defineAsyncComponent(() => import('./components/group/Gr
 app.component('group', defineAsyncComponent(() => import('./components/group/Group.vue')));
 app.component('group-modal', defineAsyncComponent(() => import('./components/group/GroupModal.vue')));
 
-app.component('leaflet-map', defineAsyncComponent(() => import('./components/map/Map.vue'))); //name map is reserved
+app.component('leaflet-map', defineAsyncComponent(() => import('./components/map/Map.vue'))); //cannot be "map" -> name map is reserved
 app.component('link-item', defineAsyncComponent(() => import('./components/uiElements/LinkItem.vue')));
 app.component('logbook', defineAsyncComponent(() => import('./components/logbook/Logbook.vue')));
 app.component('logbooks', defineAsyncComponent(() => import('./components/logbook/Logbooks.vue')));
@@ -240,6 +240,7 @@ app.component('media-renderer', defineAsyncComponent(() => import('./components/
 app.component('medium-modal', defineAsyncComponent(() => import('./components/media/MediumModal.vue')));
 app.component('medium-export-modal', defineAsyncComponent(() => import('./components/media/MediumExportModal.vue')));
 app.component('meeting', defineAsyncComponent(() => import('./components/meeting/Meeting.vue')));
+app.component('meetings', defineAsyncComponent(() => import('./components/meeting/Meetings.vue')));
 app.component('metadatasets', defineAsyncComponent(() => import('./components/metadataset/Metadatasets.vue')));
 app.component('model-limiter', defineAsyncComponent(() => import('./components/config/ModelLimiter.vue')));
 
@@ -274,6 +275,7 @@ app.component('sidebar', defineAsyncComponent(() => import('./components/uiEleme
 
 app.component('subscribe-objective-modal', defineAsyncComponent(() => import('./components/objectives/SubscribeObjectiveModal.vue')));
 app.component('subjects', defineAsyncComponent(() => import('./components/subject/Subjects.vue')));
+app.component('subject', defineAsyncComponent(() => import('./components/subject/Subject.vue')));
 
 app.component('tests-table', defineAsyncComponent(() => import('./components/tests/TestsTable.vue')));
 app.component('title-component', defineAsyncComponent(() => import('./components/uiElements/Title.vue')));

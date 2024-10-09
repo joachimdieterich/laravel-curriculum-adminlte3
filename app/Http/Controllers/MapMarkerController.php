@@ -23,6 +23,7 @@ class MapMarkerController extends Controller
             return [
                 'markers' => MapMarker::where('type_id',  $input['type_id'])
                                 ->where('category_id', $input['category_id'])
+                    ->with(['type', 'category'])
                                 ->orderBy('type_id')
                                 ->get()];
         } else {
@@ -132,7 +133,7 @@ class MapMarkerController extends Controller
             'author' => 'sometimes|nullable',
             'type_id' => 'sometimes|integer',
             'category_id' => 'sometimes|integer',
-            'map_id' => 'sometimes|integer',
+            'map_id' => 'sometimes|integer|nullable',
             'tags' => 'sometimes|nullable|string',
             'latitude' => 'sometimes|nullable',
             'longitude' => 'sometimes|nullable',

@@ -20,8 +20,47 @@ class PlanController extends Controller
     public function index()
     {
         abort_unless(\Gate::allows('plan_access'), 403);
+        if (request()->wantsJson())
+        {
+            return getEntriesForSelect2ByCollection(
+                $this->getPlans(),
+                'plans.'
+            );
+        }
+        else
+        {
+            return view('plans.index');
+        }
+    }
 
-        return view('plans.index');
+    public function getPlans($withOwned = true)
+    {
+        $plans = Plan::with('subscriptions')
+            ->whereHas('subscriptions', function ($query) {
+                $query->where(
+                    function ($query) {
+                        $query->where('subscribable_type', 'App\\Organization')->where('subscribable_id', auth()->user()->current_organization_id);
+                    }
+                )->orWhere(
+                    function ($query) {
+                        $query->where('subscribable_type', 'App\\Group')->whereIn('subscribable_id', auth()->user()->groups->pluck('id'));
+                    }
+                )->orWhere(
+                    function ($query) {
+                        $query->where('subscribable_type', 'App\\User')->where('subscribable_id', auth()->user()->id);
+                    }
+                )->orWhere(
+                    function ($query) {
+                        $query->where('subscribable_type', 'App\\User')->where('subscribable_id', auth()->user()->id);
+                    }
+                );
+            })->orWhere('owner_id', auth()->user()->id);
+
+        if ($withOwned) {
+            $plans = $plans->orWhere('owner_id', auth()->user()->id);
+        }
+
+        return $plans;
     }
 
     protected function userPlans($withOwned = true)

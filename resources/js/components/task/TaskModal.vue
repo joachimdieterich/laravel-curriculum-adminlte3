@@ -189,11 +189,6 @@
                         console.log(e.response);
                     });
             },
-            decodeHTMLEntities(text) {
-                return $("<textarea/>")
-                    .html(text)
-                    .text();
-            }
         },
         mounted() {
             this.globalStore.registerModal(this.$options.name);
@@ -203,7 +198,7 @@
                     this.form.reset();
                     if (typeof (params) !== 'undefined'){
                         this.form.populate(params);
-                        this.form.description = this.decodeHTMLEntities(params.description);
+                        this.form.description = this.$decodeHTMLEntities(params.description);
                         if (this.form.id != ''){
                             this.method = 'patch';
                         } else {

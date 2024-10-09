@@ -79,7 +79,9 @@ class OrganizationTypesController extends Controller
             'country_id' => $input_state->country,
         ]);
 
-        return redirect()->route('organizationtypes.index');
+        if (request()->wantsJson()) {
+            return $organizationType;
+        }
     }
 
     public function show(OrganizationType $organizationType)
@@ -97,9 +99,7 @@ class OrganizationTypesController extends Controller
     {
         abort_unless(\Gate::allows('organization_type_delete'), 403);
 
-        $organizationType->delete();
-
-        return back();
+        return $organizationType->delete();
     }
 
     protected function validateRequest()

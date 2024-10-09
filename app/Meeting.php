@@ -29,17 +29,13 @@ class Meeting extends Model
         'medium_id',
         'owner_id',
         'livestream',
+        'color'
     ];
 
     protected $casts = [
         'updated_at' => 'datetime',
         'created_at'  => 'datetime',
     ];
-
-    /* protected $dates = [  --> change v.10
-         'updated_at',
-         'created_at',
-     ];*/
 
     /**
      * Prepare a date for array / JSON serialization.
@@ -69,6 +65,29 @@ class Meeting extends Model
     public function owner()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(MeetingSubscription::class);
+    }
+
+    public function userSubscriptions()
+    {
+        return $this->hasMany(MeetingSubscription::class)
+            ->where('subscribable_type', 'App\User');
+    }
+
+    public function groupSubscriptions()
+    {
+        return $this->hasMany(MeetingSubscription::class)
+            ->where('subscribable_type', 'App\Group');
+    }
+
+    public function organizationSubscriptions()
+    {
+        return $this->hasMany(MeetingSubscription::class)
+            ->where('subscribable_type', 'App\Organization');
     }
 
 }

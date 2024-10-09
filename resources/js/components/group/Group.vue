@@ -238,6 +238,51 @@
                          create_label_field="enrol"
                      ></kanbans>
                  </div>
+                <div v-if="checkPermission('plan_access')"
+                     class="tab-pane fade "
+                     id="plan-tab"
+                     role="tab"
+                     aria-labelledby="content-nav-tab">
+                    <plans
+                        ref="Plans"
+                        delete_label_field="expel"
+                        subscribable_type="App\Group"
+                        :subscribable_id="group.id"
+                        :subscribable="true"
+                        create_label_field="enrol"
+                    ></plans>
+                </div>
+
+                <div v-permission="'test_access'"
+                     class="tab-pane "
+                     id="tests-tab"
+                     role="tab"
+                     aria-labelledby="tests-nav-tab">
+                    <Exams
+                        ref="Exams"
+                        delete_label_field="expel"
+                        subscribable_type="App\Group"
+                        :subscribable_id="group.id"
+                        :subscribable="true"
+                        create_label_field="enrol"
+                    ></Exams>
+                </div>
+
+                <div v-permission="'videoconference_access'"
+                     class="tab-pane "
+                     :class="getGlobalStorage('#group_'+group.id, '#group_videoconference_'+group.id)"
+                     id="videoconference-tab"
+                     role="tab"
+                     aria-labelledby="tests-nav-tab">
+                    <videoconferences
+                        ref="Videoconference"
+                        subscribable_type="App\Group"
+                        :subscribable_id="group.id"
+                        :subscribable="true"
+                        create_label_field="enrol"
+                        delete_label_field="expel"
+                    ></videoconferences>
+                </div>
                 <!--                   <div v-if="checkPermission('task_access')"
                                     class="tab-pane fade "
                                     id="task-tab"
@@ -248,36 +293,7 @@
                                        subscribable_type="App\Group"
                                        :subscribable_id="group.id"></tasks>
                                </div> -->
-<!--                                 <div v-if="checkPermission('test_access')"
-                                      class="tab-pane "
-                                      id="tests-tab"
-                                      role="tab"
-                                      aria-labelledby="tests-nav-tab">
-                                     <tests
-                                         ref="Tests"
-                                         :group_id="group.id"></tests>
-                                 </div>-->
-                <!--                    <div v-permission="'videoconference_access'"
-                                      class="tab-pane "
-                                      :class="getGlobalStorage('#group_'+group.id, '#group_videoconference_'+group.id)"
-                                      id="videoconference-tab"
-                                      role="tab"
-                                      aria-labelledby="tests-nav-tab">
-                                     <videoconferences
-                                         ref="Videoconference"
-                                         subscribable_type="App\Group"
-                                         :subscribable_id="group.id"></videoconferences>
-                                 </div>
-                                 <div v-if="checkPermission('plan_access')"
-                                      class="tab-pane fade "
-                                      id="plan-tab"
-                                      role="tab"
-                                      aria-labelledby="content-nav-tab">
-                                     <plans
-                                         ref="Plans"
-                                         subscribable_type="App\Group"
-                                         :subscribable_id="group.id"></plans>
-                                 </div>
+                <!--
                                  <div v-if="group.glossar !== null"
                                       class="tab-pane fade"
                                       id="glossar-tab"
@@ -360,7 +376,8 @@ import Logbooks from "../logbook/Logbooks.vue";
 import Kanbans from "../kanban/Kanbans.vue";
 import Tasks from "../task/Tasks.vue";
 import Plans from "../plan/Plans.vue";
-import Tests from "../tests/Tests_Exams_View.vue";
+import Exams from "../exam/Exams.vue";
+//import Tests from "../tests/Tests_Exams_View.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {
@@ -377,7 +394,8 @@ export default {
         Kanbans,
         Tasks,
         Plans,
-        Tests
+        Exams
+        //Tests
     },
     setup () {
         const globalStore = useGlobalStore();

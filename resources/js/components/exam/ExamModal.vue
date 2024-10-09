@@ -3,24 +3,24 @@
         <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
         >
-        <div class="modal-container">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.exam.create') }}
-                    </span>
-                    <span v-if="method === 'patch'">
-                        {{ trans('global.exam.edit') }}
-                    </span>
-                </h3>
-                <div class="card-tools">
-                    <button type="button"
-                            class="btn btn-tool"
-                            @click="globalStore?.closeModal($options.name)">
-                        <i class="fa fa-times"></i>
-                    </button>
+            <div class="modal-container">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span v-if="method === 'post'">
+                            {{ trans('global.exam.create') }}
+                        </span>
+                        <span v-if="method === 'patch'">
+                            {{ trans('global.exam.edit') }}
+                        </span>
+                    </h3>
+                    <div class="card-tools">
+                        <button type="button"
+                                class="btn btn-tool"
+                                @click="globalStore?.closeModal($options.name)">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
 
                 <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                     <div class="form-group "

@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'common_name' => 'Common Name',
     'author' => 'Autor',
     'author_helper' => '',
     'code_401' => 'Sie sind nicht authentifiziert oder verfügen nicht über die notwendigen Berechtigungen.',
@@ -739,6 +740,8 @@ return [
         'title_singular' => 'Logbuch',
         'create' => 'Logbuch erstellen',
         'edit' => 'Logbuch bearbeiten',
+        'enrol' => 'Logbuch verknüpfen',
+        'expel_helper' => 'Gruppe aus Logbuch ausschreiben.',
         'print' => 'Logbuch drucken',
         'delete' => 'Logbuch löschen',
         'delete_helper' => 'Soll das Logbuch sowie die zugehörigen Daten gelöscht werden?',
@@ -781,6 +784,8 @@ return [
         'title_singular' => 'Lernstandsanalyse',
         'create' => 'Lernstandsanalyse erstellen',
         'edit' => 'Lernstandsanalyse bearbeiten',
+        'enrol' => 'Lernstandsanalyse vernküpfen',
+        'expel' => 'Gruppe aus Lernstandsanalyse ausschreiben.',
         'login_key' => 'Anmeldeschlüssel',
         'select_tests' => 'Testheft(e) auswählen',
         'fields' => [
@@ -873,7 +878,14 @@ return [
         'create' => 'Lern-/Arbeitsplan erstellen',
         'search' => 'Lern-/Arbeitsplan suchen',
         'edit' => 'Lern-/Arbeitsplan bearbeiten',
+        'enrol' => 'Lern-/Arbeitsplan vernküpfen',
+        'copy' => 'Lern-/Arbeitsplan kopieren',
+        'copy_helper' => 'Wollen Sie den Lern-/Arbeitsplan kopieren?',
+        'allow_copy' => 'Lern-/Arbeitsplan darf kopiert werden',
+        'delete' => 'Lern-/Arbeitsplan löschen',
+        'delete_helper' => 'Soll der Lern-/Arbeitsplan sowie die zugehörigen Daten gelöscht werden?',
         'select_users' => 'Benutzer auswählen',
+        'evaluate_user' => 'Benutzer auswerten',
         'fields' => [
             'type' => 'Typ',
             'type_helper' => '',
@@ -883,6 +895,9 @@ return [
             'end_helper' => '',
             'duration' => 'Zeitansatz',
             'duration_helper' => 'Geben Sie an, wie viel Zeit (in Minuten) zur Erledigung des Lern-/Arbeitsplans eingeplant werden soll.',
+        ],
+        'types' => [
+            'Trainingsplan' => 'Trainingsplan',
         ],
     ],
     'planItem' => [
@@ -948,6 +963,7 @@ return [
         'create' => 'Pinnwand erstellen',
         'edit' => 'Pinnwand bearbeiten',
         'copy' => 'Pinnwand kopieren',
+        'enrol' => 'Pinnwand vernküpfen',
         'copy_helper' => 'Wollen Sie die Pinnwand kopieren?',
         'only_edit_owned_items' => 'Nutzer können nur selbst erstellte Status/Karten bearbeiten.',
         'allow_copy' => 'Pinnwand darf kopiert werden.',

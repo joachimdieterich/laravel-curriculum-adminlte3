@@ -127,7 +127,6 @@
                 type: String,
                 default: ''
             },
-
         },
         data() {
             return {
@@ -138,7 +137,7 @@
         },
         watch: {
           selected:    function(newVal, oldVal) {
-              this.loader();
+              //this.loader(); //needed?
           },
 
         },
@@ -185,7 +184,7 @@
                 .on("select2:unselect", function(e){
                     this.$emit("selectedValue", this.componentInstance.select2("data").map(i =>i[this.option_id]));
                 }.bind(this))
-                    //.val(this.selected).trigger('change'); //wont work for ajax -> data isn't present yet
+                   // .val(this.selected).trigger('change'); //wont work for ajax -> data isn't present yet
 
                 if(typeof this.selected === 'object' || this.selected !== false){
                     let selectedParam = '';
@@ -203,7 +202,7 @@
                             break;
                     }
 
-                    if (this.url !== ''){
+                    if (this.url !== '' && selectedParam != ''){
                         axios.get(this.url + "?selected=" + selectedParam)
                             .then( (res) => {
                                 //console.log(res);

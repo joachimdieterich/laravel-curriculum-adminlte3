@@ -6,7 +6,7 @@
                     <div class="card-title">
                         <h5 class="m-0">
                             <i class="fa fa-university mr-1"></i>
-                            {{ this.organizationType.title }}
+                            {{ organizationType.title }}
                         </h5>
                     </div>
                     <div
@@ -48,18 +48,14 @@
         </div>
 
         <Teleport to="body">
-            <OrganizationTypeModal
-                :show="this.showOrganizationTypeModal"
-                @close="this.showOrganizationTypeModal = false"
-                :params="currentOrganizationType"
-            ></OrganizationTypeModal>
-
+            <OrganizationTypeModal></OrganizationTypeModal>
         </Teleport>
     </div>
 </template>
 
 <script>
 import OrganizationTypeModal from "../organizationType/OrganizationTypeModal.vue";
+import {useGlobalStore} from "../../store/global";
 
 
 export default {
@@ -72,10 +68,15 @@ export default {
             default: null
         },
     },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
     data() {
         return {
             componentId: this.$.uid,
-            showOrganizationTypeModal: false,
             currentOrganizationType: {},
         }
     },
@@ -83,7 +84,8 @@ export default {
     methods: {
         editOrganizationType(organizationType){
             this.currentOrganizationType = organizationType;
-            this.showOrganizationTypeModal = true;
+            this.globalStore?.showModal('organization-type-modal', this.currentOrganizationType);
+
         },
     }
 

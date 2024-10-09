@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="show"
+        <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
         >
         <div class="modal-container">
@@ -16,7 +16,7 @@
                 <div class="card-tools">
                     <button type="button"
                             class="btn btn-tool"
-                            @click="$emit('close')">
+                            @click="globalStore?.closeModal($options.name)">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
@@ -189,7 +189,7 @@
                              id="map-cancel"
                              type="button"
                              class="btn btn-default"
-                             @click="$emit('close')">
+                             @click="globalStore?.closeModal($options.name)">
                              {{ trans('global.cancel') }}
                          </button>
                          <button
@@ -210,21 +210,21 @@
     import axios from "axios";
     import Editor from "@tinymce/tinymce-vue";
     import Select2 from "../forms/Select2.vue";
+    import {useGlobalStore} from "../../store/global";
 
     export default {
+        name: 'map-modal',
         components:{
             Editor,
             MediumModal,
             Select2
         },
-        props: {
-            show: {
-                type: Boolean
-            },
-            params: {
-                type: Object
-            },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
-
+        props: {},
+        setup () { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters
+            const globalStore = useGlobalStore();
+            return {
+                globalStore
+            }
         },
         data() {
             return {
@@ -258,20 +258,6 @@
                 ),
             }
         },
-        watch: {
-            params: function(newVal, oldVal) {
-                this.form.reset();
-                this.form.populate(newVal);
-                this.form.border_url = this.$decodeHTMLEntities(newVal.border_url);
-
-                if (this.form.id != ''){
-                    this.method = 'patch';
-                } else {
-                    this.method = 'post';
-                }
-            },
-
-        },
         computed:{
             textColor: function(){
                 return this.$textcolor(this.form.color, '#333333');
@@ -304,14 +290,25 @@
                         console.log(e.response);
                     });
             },
-            decodeHTMLEntities(text) {
-                return $("<textarea/>")
-                    .html(text)
-                    .text();
-            }
-
         },
         mounted() {
+            this.globalStore.registerModal(this.$options.name);
+            this.globalStore.$subscribe((mutation, state) => {
+                if (mutation.events.key === this.$options.name){
+                    const params = state.modals[this.$options.name].params;
+                    this.form.reset();
+                    if (typeof (params) !== 'undefined'){
+                        this.form.populate(params);
+                        this.form.border_url = this.$decodeHTMLEntities(params.border_url);
+
+                        if (this.form.id !== ''){
+                            this.method = 'patch';
+                        } else {
+                            this.method = 'post';
+                        }
+                    }
+                }
+            });
         },
     }
 </script>

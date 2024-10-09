@@ -86,7 +86,6 @@
     import Select2 from "../forms/Select2.vue";
     import {useGlobalStore} from "../../store/global";
 
-
     export default {
         name: 'content-subscription-modal',
         components:{

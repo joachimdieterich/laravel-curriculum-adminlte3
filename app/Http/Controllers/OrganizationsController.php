@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\MassDestroyOrganizationRequest;
 use App\Organization;
 use App\OrganizationRoleUser;
 use App\StatusDefinition;
@@ -18,7 +17,6 @@ class OrganizationsController extends Controller
      */
     public function index()
     {
-
         if (request()->wantsJson()) {
             if (is_admin()) {
                 return  getEntriesForSelect2ByModel(
@@ -132,7 +130,9 @@ class OrganizationsController extends Controller
 
         $organization->update($clean_data);
 
-        return $organization;
+        if (request()->wantsJson()) {
+            return $organization;
+        }
     }
 
     /**
@@ -148,14 +148,6 @@ class OrganizationsController extends Controller
 
         return $organization->delete();
     }
-
-   /* public function massDestroy(MassDestroyOrganizationRequest $request)
-    {
-        abort_unless(\Gate::allows('organization_delete'), 403);
-        Organization::whereIn('id', request('ids'))->delete();
-
-        return response(null, 204);
-    }*/
 
     public function enrol()
     {
@@ -215,6 +207,7 @@ class OrganizationsController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
+            'common_name' => 'sometimes',
             'title' => 'sometimes|required',
             'description' => 'sometimes',
             'street' => 'sometimes',
@@ -226,7 +219,7 @@ class OrganizationsController extends Controller
             'phone' => 'sometimes',
             'email' => 'sometimes',
             'status_id' => 'sometimes',
-            'lms_url' => 'sometimes|url',
+            'lms_url' => 'sometimes',
         ]);
     }
 }

@@ -4,6 +4,23 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ *   @OA\Schema(
+ *      @OA\Xml(name="KanbanSubscription"),
+ *
+ *      @OA\Property( property="id", type="integer"),
+ *      @OA\Property( property="kanban_id", type="integer"),
+ *      @OA\Property( property="subscribable_type", type="string"),
+ *      @OA\Property( property="subscribable_id", type="integer"),
+ *      @OA\Property( property="editable", type="boolean"),
+ *      @OA\Property( property="owner_id", type="integer"),
+ *      @OA\Property( property="created_at", type="string"),
+ *      @OA\Property( property="updated_at", type="string"),
+ *      @OA\Property( property="due_date", type="date"),
+ *      @OA\Property( property="sharing_token", type="string"),
+ *      @OA\Property( property="title", type="string"),
+ *   ),
+ */
 class KanbanSubscription extends Model
 {
     protected $fillable = [

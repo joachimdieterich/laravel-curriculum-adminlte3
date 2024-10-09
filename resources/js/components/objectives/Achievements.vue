@@ -125,23 +125,17 @@
             </tbody>
         </table>
         <Teleport to="body">
-            <NoteModal
-                :show="this.showNoteModal"
-                @close="this.showNoteModal = false"
-                :params="this.noteParams"
-            ></NoteModal>
+            <NoteModal></NoteModal>
         </Teleport>
-
-
     </div>
 </template>
-
 
 <script>
 import AchievementIndicator from './AchievementIndicator.vue';
 import NoteModal from "../note/NoteModal.vue";
 import Select2 from "../forms/Select2.vue";
 import GradeModal from "../grade/GradeModal.vue";
+import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
@@ -149,9 +143,14 @@ export default {
         type:{},
         settings:{}
     },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
     data() {
         return {
-            showNoteModal: false,
             objectiveWithAchievement : {},
             groups: [],
             users: {},
@@ -162,12 +161,11 @@ export default {
     },
     methods: {
         show(user_id){
-            this.noteParams = {
+            this.globalStore?.showModal('note-modal', {
                 'notable_type': 'App\\Achievement',
                 'notable_id': user_id,
                 'show_tabs': false,
-            }
-            this.showNoteModal = true;
+            });
         },
         loaderEvent(){
             axios.get('/enablingObjectives/' + this.objective.id + '/achievements/' + this.selectedGroup)
@@ -189,21 +187,6 @@ export default {
             this.objectiveWithAchievement = response.data.objective;
             this.groups = response.data.groups;
             this.users  = response.data.users;
-            /*if (this.selectedGroup == null){
-                this.$nextTick(() => {
-                    $("#achievements_group").select2({
-                        dropdownParent: $("#achievements_group").parent(),
-                        allowClear: false
-                    }).on('select2:select', function () {
-                        this.selectedGroup = $("#achievements_group").val();
-                        this.loaderEvent();
-                    }.bind(this))
-                    .on('select2:unselect', function () {
-                        this.selectedGroup = null;
-                        this.objectiveWithAchievement.achievements = [];
-                    }.bind(this));
-                });
-            }*/
         },
         selectGroup(id){
             this.selectedGroup = id;

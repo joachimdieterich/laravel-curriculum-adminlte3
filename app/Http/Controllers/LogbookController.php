@@ -12,8 +12,6 @@ class LogbookController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -291,19 +289,23 @@ class LogbookController extends Controller
         $logbooks = Logbook::with('subscriptions')->whereHas('subscriptions', function ($query) {
             $query->where(
                 function ($query) {
-                    $query->where('subscribable_type', 'App\\Course')->whereIn('subscribable_id', auth()->user()->currentGroupEnrolments->pluck('course_id'));
+                    $query->where('subscribable_type', 'App\\Course')
+                        ->whereIn('subscribable_id', auth()->user()->currentGroupEnrolments->pluck('course_id'));
                 }
             )->orWhere(
                 function ($query) {
-                    $query->where('subscribable_type', 'App\\Organization')->where('subscribable_id', auth()->user()->current_organization_id);
+                    $query->where('subscribable_type', 'App\\Organization')
+                        ->where('subscribable_id', auth()->user()->current_organization_id);
                 }
             )->orWhere(
                 function ($query) {
-                    $query->where('subscribable_type', 'App\\Group')->whereIn('subscribable_id', auth()->user()->groups->pluck('id'));
+                    $query->where('subscribable_type', 'App\\Group')
+                        ->whereIn('subscribable_id', auth()->user()->groups->pluck('id'));
                 }
             )->orWhere(
                 function ($query) {
-                    $query->where('subscribable_type', 'App\\User')->where('subscribable_id', auth()->user()->id);
+                    $query->where('subscribable_type', 'App\\User')
+                        ->where('subscribable_id', auth()->user()->id);
                 }
             );
         });

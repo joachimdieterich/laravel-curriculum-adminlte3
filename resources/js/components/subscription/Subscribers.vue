@@ -35,7 +35,9 @@
 
                 <span class="pull-right pr-2" ></span>
 
-                <button class="btn btn-flat py-0 pull-right"
+                <button
+                    v-if="$userId == subscription.owner_id"
+                    class="btn btn-flat py-0 pull-right"
                         @click="unsubscribe(subscription.id)">
                     <i class="fa fa-trash text-danger vuehover" ></i>
                 </button>

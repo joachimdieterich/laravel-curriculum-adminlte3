@@ -1,0 +1,217 @@
+<template>
+    <Transition name="modal">
+        <div v-if="globalStore.modals[$options.name]?.show"
+             class="modal-mask"
+        >
+        <div class="modal-container ">
+            <div class="card-header ">
+                <h3 class="card-title">
+                    <span v-if="method === 'post'">
+                        {{ trans('global.kanban.create') }}
+                    </span>
+                    <span v-if="method === 'patch'">
+                        {{ trans('global.kanban.edit') }}
+                    </span>
+                </h3>
+                <div class="card-tools">
+                    <button
+                        type="button"
+                        class="btn btn-tool"
+                        @click="globalStore?.closeModal($options.name)">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                <div class="form-group">
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        class="form-control"
+                        v-model.trim="form.title"
+                        :placeholder="trans('global.kanbanItem.fields.title')"
+                        required
+                    />
+                    <p class="help-block"
+                       v-if="form.errors.title"
+                       v-text="form.errors.title[0]"></p>
+                </div>
+
+                    <div class="card-header border-bottom"
+                         data-card-widget="collapse">
+                        <h5 class="card-title">
+                            Darstellung
+                        </h5>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body pb-0">
+                        <v-swatches
+                            :swatch-size="49"
+                            :trigger-style="{}"
+                            popover-to="right"
+                            v-model="this.form.color"
+                            @input="(id) => {
+                                this.form.color = id;
+                            }"
+                            :max-height="300"
+                        ></v-swatches>
+                    </div>
+
+                    <div class="card-header border-bottom"
+                         data-card-widget="collapse">
+                        <h5 class="card-title">
+                            Berechtigung
+                        </h5>
+                    </div>
+                    <div class="card-body pb-0">
+                        <div class="form-group "
+                             v-if="($userId == this.form.owner_id) || ($userId == kanban.owner_id) ">
+                             <span class="custom-control custom-switch custom-switch-on-green">
+                                <input  v-model="form.editable"
+                                        type="checkbox"
+                                        class="custom-control-input pt-1 "
+                                        :id="'editable_'+ form.id">
+                                <label class="custom-control-label  font-weight-light"
+                                       :for="'editable_'+ form.id" >
+                                    {{ trans('global.editable') }}
+                                </label>
+                            </span>
+                                        <span class="custom-control custom-switch custom-switch-on-green">
+                                <input  v-model="form.locked"
+                                        type="checkbox"
+                                        class="custom-control-input pt-1 "
+                                        :id="'locked_'+ form.id">
+                                <label class="custom-control-label  font-weight-light"
+                                       :for="'locked_'+ form.id" >
+                                    {{ trans('global.locked') }}
+                                </label>
+                            </span>
+                                        <span class="custom-control custom-switch custom-switch-on-green">
+                                <input
+                                    v-model="form.visibility"
+                                    type="checkbox"
+                                    class="custom-control-input pt-1 "
+                                    :id="'visibility_'+ form.id">
+                                <label class="custom-control-label font-weight-light"
+                                       :for="'visibility_'+ form.id" >
+                                    {{ trans('global.visibility') }}
+                                </label>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                     <span class="pull-right">
+                         <button
+                             id="kanban-cancel"
+                             type="button"
+                             class="btn btn-default"
+                             @click="globalStore?.closeModal($options.name)">
+                             {{ trans('global.cancel') }}
+                         </button>
+                         <button
+                             id="kanban-save"
+                             class="btn btn-primary"
+                             @click="submit(method)" >
+                             {{ trans('global.save') }}
+                         </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </Transition>
+</template>
+<script>
+    import Form from 'form-backend-validation';
+    import axios from "axios";
+    import {useGlobalStore} from "../../store/global";
+
+    export default {
+        name: 'kanban-status-modal',
+        components:{},
+        props: {
+            kanban: Object,
+            params: {
+                type: Object
+            },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
+        },
+        setup () {
+            const globalStore = useGlobalStore();
+            return {
+                globalStore,
+            }
+        },
+        data() {
+            return {
+                component_id: this.$.uid,
+                method: 'post',
+                url: '/kanbanStatuses',
+                form: new Form({
+                    'id': '',
+                    'title': '',
+                    'kanban_id': '',
+                    'locked': false,
+                    'editable': true,
+                    'visibility': true,
+                    'visible_from': null,
+                    'visible_until': null,
+                    'color':'#27AF60',
+                }),
+            }
+        },
+        computed:{
+            textColor: function(){
+                return this.$textcolor(this.form.color, '#333333');
+            }
+        },
+        methods: {
+             submit(method) {
+                 if (method == 'patch') {
+                     this.update();
+                 } else {
+                     this.add();
+                 }
+            },
+            add(){
+                axios.post(this.url, this.form)
+                    .then(r => {
+                        this.$eventHub.emit('kanban-status-added', r.data);
+                    })
+                    .catch(e => {
+                        console.log(e.response);
+                    });
+            },
+            update() {
+                console.log('update');
+                axios.patch(this.url + '/' + this.form.id, this.form)
+                    .then(r => {
+                        this.$eventHub.emit('kanban-status-updated', r.data);
+                    })
+                    .catch(e => {
+                        console.log(e.response);
+                    });
+            },
+        },
+        mounted() {
+            this.globalStore.registerModal(this.$options.name);
+            this.globalStore.$subscribe((mutation, state) => {
+
+                if (mutation.events.key === this.$options.name){
+                    const params = state.modals[this.$options.name].params;
+                    this.form.reset();
+                    if (typeof (params) !== 'undefined'){
+                        this.form.populate(params);
+                        if (this.form.id !== ''){
+                            this.method = 'patch';
+                        } else {
+                            this.method = 'post';
+                        }
+                    }
+                }
+            });
+        },
+    }
+</script>

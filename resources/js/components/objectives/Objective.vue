@@ -4,8 +4,12 @@
             <div class="card">
                 <div class="card-header">
                     <i class="fa fa-bullseye mr-2"></i>
-                    <span v-if="type === 'enabling'">{{ trans('global.enablingObjective.title_singular') }}</span>
-                    <span v-else> {{ trans('global.terminalObjective.title_singular') }}</span>
+                    <span v-if="type === 'enabling'">
+                        {{ trans('global.enablingObjective.title_singular') }}
+                    </span>
+                    <span v-else>
+                        {{ trans('global.terminalObjective.title_singular') }}
+                    </span>
 
                     <div v-can="'task_edit'" class="card-tools pr-2">
                         <a @click.prevent="editObjective()" >
@@ -219,102 +223,101 @@
                     </span>
                 </div>
 <!--                       1 Files-->
-                           <div class="tab-pane"
-                                 :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_tab_media_'+objective.id)"
-                                 id="tab_media">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div
-                                            class="tab-pane active show"
-                                            id="sub_medium">
-                                            <objectiveMedia
-                                                ref="Media"
-                                                :model="model"
-                                                :objective="objective"
-                                                :repository="repository"
-                                                :type="type"/>
-                                        </div>
+                       <div class="tab-pane"
+                             :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_tab_media_'+objective.id)"
+                             id="tab_media">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div
+                                        class="tab-pane active show"
+                                        id="sub_medium">
+                                        <objectiveMedia
+                                            ref="Media"
+                                            :model="model"
+                                            :objective="objective"
+                                            :repository="repository"
+                                            :type="type"/>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
 <!--                            References-->
-                            <div class="tab-pane pt-2"
-                                 :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_references_'+objective.id)"
-                                 id="references">
-                                <div class="card-tools"
-                                     v-permission="'objective_edit'">
-                                    <button
-                                        class="dropdown-item "
-                                        @click.prevent="show()">
-                                        <i class="fa fa-plus pull-right"></i>
-                                    </button>
-                                </div>
-
-                                <References
-                                    ref="References"
-                                    :objective="objective"
-                                    :type="type"
-                                ></References>
-                                <Quotes
-                                    ref="Quotes"
-                                    :objective="objective"
-                                    :type="type"
-                                ></Quotes>
+                        <div class="tab-pane pt-2"
+                             :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_references_'+objective.id)"
+                             id="references">
+                            <div class="card-tools"
+                                 v-permission="'objective_edit'">
+                                <button
+                                    class="dropdown-item "
+                                    @click.prevent="show()">
+                                    <i class="fa fa-plus pull-right"></i>
+                                </button>
                             </div>
-                <!--                            Achievements-->
-                         <div v-can="'achievement_access'"
-                              class="tab-pane pt-2 box"
-                              :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_achievements_'+objective.id)"
-                              id="achievements">
-                             <Achievements
-                                 v-if="this.type === 'enabling'"
-                                 ref="Achievements"
-                                 :objective="objective"
-                                 :type="type"
-                                 :settings="setting">
-                             </Achievements>
-                         </div>
 
-                       <div class="tab-pane pt-2"
-                            :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_prerequisites_'+objective.id)"
-                            id="prerequisites"
-                            v-can="'prerequisite_access'">
-                           <div class="card-tools"
-                                v-can="'prerequisite_create'">
-                               <button
-                                   v-can="'objective_edit'"
-                                   class="dropdown-item "
-                                   @click.prevent="this.globalStore?.showModal('prerequisite-objective-modal');">
-                                   <i class="fa fa-plus pull-right"></i>
-                               </button>
-                           </div>
-                           <prerequisites
-                               ref="Prerequisites"
-                               :successor_type="model"
-                               :successor_id="objective.id"/>
-                       </div>
+                            <References
+                                ref="References"
+                                :objective="objective"
+                                :type="type"
+                            ></References>
+                            <Quotes
+                                ref="Quotes"
+                                :objective="objective"
+                                :type="type"
+                            ></Quotes>
+                        </div>
+            <!--                            Achievements-->
+                     <div v-can="'achievement_access'"
+                          class="tab-pane pt-2 box"
+                          :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_achievements_'+objective.id)"
+                          id="achievements">
+                         <Achievements
+                             v-if="this.type === 'enabling'"
+                             ref="Achievements"
+                             :objective="objective"
+                             :type="type"
+                             :settings="setting">
+                         </Achievements>
+                     </div>
 
-                       <div class="tab-pane pt-2"
-                            :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_events_'+objective.id)"
-                            id="events">
-                           <eventmanagement
-                                ref="eventPlugin"
-                                :model="objective"
-                                :curriculum="objective.curriculum">
-                           </eventmanagement>
+                   <div class="tab-pane pt-2"
+                        :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_prerequisites_'+objective.id)"
+                        id="prerequisites"
+                        v-can="'prerequisite_access'">
+                       <div class="card-tools"
+                            v-can="'prerequisite_create'">
+                           <button
+                               v-can="'objective_edit'"
+                               class="dropdown-item "
+                               @click.prevent="this.globalStore?.showModal('prerequisite-objective-modal');">
+                               <i class="fa fa-plus pull-right"></i>
+                           </button>
                        </div>
-                       <div v-can="'lms_access'"
-                              class="tab-pane pt-0"
-                              :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_lms_'+objective.id)"
-                              id="lms">
-                             <lms ref="LmsPlugin"
-                                  :referenceable_type="model"
-                                  :referenceable_id="objective.id">
-                             </lms>
-                       </div>
+                       <prerequisites
+                           ref="Prerequisites"
+                           :successor_type="model"
+                           :successor_id="objective.id"/>
+                   </div>
+
+                   <div class="tab-pane pt-2"
+                        :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_events_'+objective.id)"
+                        id="events">
+                       <eventmanagement
+                            ref="eventPlugin"
+                            :model="objective"
+                            :curriculum="objective.curriculum">
+                       </eventmanagement>
+                   </div>
+                   <div v-can="'lms_access'"
+                          class="tab-pane pt-0"
+                          :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_lms_'+objective.id)"
+                          id="lms">
+                         <lms ref="LmsPlugin"
+                              :referenceable_type="model"
+                              :referenceable_id="objective.id">
+                         </lms>
+                   </div>
             </div>
-
 
         <Teleport to="body">
             <ReferenceObjectiveModal ></ReferenceObjectiveModal>
@@ -332,25 +335,13 @@
                     'url': '/lmsReferences'
                 }"
             ></LmsModal>
-            <SubscribeModal
-                :params="this.showSubscribeParams"
-                :show="this.showSubscribeModal"
-                @close="this.showSubscribeModal = false"
-            ></SubscribeModal>
+            <SubscribeModal></SubscribeModal>
             <MediumModal
                 :show="this.mediumStore.getShowMediumModal"
                 @close="this.mediumStore.setShowMediumModal(false)"
             ></MediumModal>
-            <TerminalObjectiveModal
-                :show="this.showTerminalObjectiveModal"
-                @close="this.showTerminalObjectiveModal = false"
-                :params="this.currentObjective"
-            ></TerminalObjectiveModal>
-            <EnablingObjectiveModal
-                :show="this.showEnablingObjectiveModal"
-                @close="this.showEnablingObjectiveModal = false"
-                :params="this.currentObjective"
-            ></EnablingObjectiveModal>
+            <TerminalObjectiveModal></TerminalObjectiveModal>
+            <EnablingObjectiveModal></EnablingObjectiveModal>
         </Teleport>
     </div>
     </div>
@@ -374,7 +365,6 @@ import Quotes from "../quote/Quotes.vue";
 import {useMediumStore} from "../../store/media";
 import {useGlobalStore} from "../../store/global";
 import MediumModal from "../media/MediumModal.vue";
-
 import ReferenceObjectiveModal from "../reference/ReferenceObjectiveModal.vue";
 import PrerequisiteObjectiveModal from "../prerequisites/PrerequisiteObjectiveModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
@@ -415,13 +405,6 @@ export default {
         return {
             componentId: this.$.uid,
             type: null,
-            currentEnablingObjective: {},
-            currentTerminalObjective: {},
-            currentObjective: {},
-            showTerminalObjectiveModal: false,
-            showEnablingObjectiveModal: false,
-            showSubscribeParams: {},
-            showSubscribeModal: false,
             media_subscriptions: [],
             categories: [],
             help: true,
@@ -446,12 +429,12 @@ export default {
 
         //event listener
         this.$eventHub.on('terminalObjective-updated', () => {
-            this.showTerminalObjectiveModal = false;
+            this.globalStore?.closeModal('terminal-objective-modal');
             this.loadObjectives(this.activetab);
         });
 
         this.$eventHub.on('enablingObjective-updated', () => {
-            this.showEnablingObjectiveModal = false;
+            this.globalStore?.closeModal('enabling-objective-modal');
             this.loadObjectives(this.activetab);
         });
 
@@ -478,8 +461,8 @@ export default {
         });
 
         this.$eventHub.on('shareLms', (id) => {
-            console.log(id);
-            this.showSubscribeParams = {
+            //console.log(id);
+            this.globalStore?.showModal('subscribe-modal', {
                 'modelId': id,
                 'modelUrl': 'lmsReference',
                 'shareWithUsers': true,
@@ -487,8 +470,7 @@ export default {
                 'shareWithOrganizations': true,
                 'shareWithToken': false,
                 'canEditCheckbox': false
-            };
-            this.showSubscribeModal = true;
+            });
         });
     },
     methods: {
@@ -502,11 +484,9 @@ export default {
         },
         editObjective() {
             switch (this.type) {
-                case "enabling":    this.currentObjective = this.objective;
-                                    this.showEnablingObjectiveModal = true;
+                case "enabling":    this.globalStore?.showModal('enabling-objective-modal', this.objective);
                     break;
-                case "terminal":    this.currentObjective = this.objective;
-                                    this.showTerminalObjectiveModal = true;
+                case "terminal":    this.globalStore?.showModal('terminal-objective-modal', this.objective);
                     break;
             }
         },

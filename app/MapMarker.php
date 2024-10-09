@@ -76,6 +76,11 @@ class MapMarker extends Model
         return $this->morphMany('App\MediumSubscription', 'subscribable');
     }
 
+    public function subscriptions()
+    {
+        return $this->hasMany(MapMarkerSubscription::class);
+    }
+
     public function isAccessible()
     {
 //Todo: how to check if marker is accessible

@@ -62,11 +62,7 @@
         </div>
 
         <Teleport to="body">
-            <OrganizationTypeModal
-                :show="this.showOrganizationTypeModal"
-                @close="this.showOrganizationTypeModal = false"
-                :params="currentOrganizationType"
-            ></OrganizationTypeModal>
+            <OrganizationTypeModal></OrganizationTypeModal>
         </Teleport>
     </div>
 </template>
@@ -78,18 +74,24 @@ import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
     props: {
 
     },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
     data() {
         return {
             component_id: this.$.uid,
             organizationTypes: null,
             search: '',
-            showOrganizationTypeModal: false,
             url: '/organizationTypes/list',
             errors: {},
             currentOrganizationType: {},
@@ -112,20 +114,20 @@ export default {
 
         this.$eventHub.on('organizationType-added', (organizationType) => {
             this.loaderEvent();
+            this.globalStore?.closeModal('organization-type-modal');
         });
 
         this.$eventHub.on('organizationType-updated', (organizationType) => {
-
+            this.globalStore?.closeModal('organization-type-modal');
         });
         this.$eventHub.on('createOrganizationType', () => {
-            this.currentOrganizationType = {};
-            this.showOrganizationTypeModal = true;
+            this.globalStore?.showModal('organization-type-modal', {});
         });
     },
     methods: {
         editOrganizationType(organizationType){
             this.currentOrganizationType = organizationType;
-            this.showOrganizationTypeModal = true;
+            this.globalStore?.showModal('organization-type-modal', this.currentOrganizationType);
         },
         loaderEvent(){
             const dt = $('#organization-type-datatable').DataTable();

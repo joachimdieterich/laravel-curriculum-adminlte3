@@ -70,7 +70,6 @@
                                 <i class="fa fa-copy"></i>
                                 Link für Moderator:innen
                             </a>
-
                         </div>
                     </div>
                 </div>

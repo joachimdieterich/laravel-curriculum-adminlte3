@@ -72,7 +72,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('curricula/expel', 'CurriculumController@expel')->name('curricula.expel');
     Route::get('curricula/list', 'CurriculumController@list');
     Route::get('curricula/types', 'CurriculumController@types');
-    Route::get('curricula/import', 'CurriculumImportController@import')->name('curricula.import');
+
     Route::post('curricula/import/store', 'CurriculumImportController@store')->name('curricula.import.store');
     Route::get('curricula/references', 'CurriculumController@references');
     Route::get('curricula/{curriculum}/achievements', 'CurriculumController@showAchievements')->name('curricula.showAchievements');
@@ -90,8 +90,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('curricula/{curriculum}/terminalObjectives', 'CurriculumController@getTerminalObjectives')->name('curricula.getTerminalObjectives');Route::get('curricula/{curriculum}/variantDefinitions', 'CurriculumController@getVariantDefinitions');
     Route::put('curricula/{curriculum}/variantDefinitions', 'CurriculumController@setVariantDefinitions');
 
-
     Route::resource('curricula', 'CurriculumController');
+    Route::post('curriculumSubscriptions/expel', 'CurriculumSubscriptionController@expel')->name('curriculumSubscriptions.expel');
     Route::resource('curriculumSubscriptions', 'CurriculumSubscriptionController');
 
     Route::resource('curriculumTypes', 'CurriculumTypeController');
@@ -151,6 +151,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('get_kanbans_color/{id}', 'KanbanController@getKanbansColor');
     Route::post('update_kanbans_color', 'KanbanController@updateKanbansColor');
 
+    Route::post('kanbanSubscriptions/expel', 'KanbanSubscriptionController@expel');
     Route::resource('kanbanSubscriptions', 'KanbanSubscriptionController');
 
     Route::resource('kanbanItemSubscriptions', 'KanbanItemSubscriptionController');
@@ -168,6 +169,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('logbooks/list', 'LogbookController@list');
     Route::get('logbooks/{logbook}/print', 'LogbookController@print')->name('logbooks.print');
     Route::resource('logbooks', 'LogbookController');
+    Route::post('logbookSubscriptions/expel', 'LogbookSubscriptionController@expel')->name('logbookSubscriptions.expel');
     Route::resource('logbookSubscriptions', 'LogbookSubscriptionController');
 
     /* logbook entries */
@@ -176,6 +178,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('maps/list', 'MapController@list');
     Route::resource('mapSubscriptions', 'MapSubscriptionController');
+    Route::resource('mapMarkerSubscriptions', 'MapMarkerSubscriptionController');
 
     Route::resource('maps', 'MapController');
     Route::resource('mapMarkers', 'MapMarkerController');
@@ -220,6 +223,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('media', 'MediumController');
 
     Route::get('meetings/list', 'MeetingController@list')->name('meetings.list');
+    Route::get('meetings/getImportDataByUid', 'MeetingController@getImportDataByUid')->name('meetings.getImportDataByUid');
     Route::resource('meetings', 'MeetingController');
 
     Route::resource('meetingDates', 'MeetingDateController');
@@ -255,6 +259,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('plans/list', 'PlanController@list');
     Route::put('plans/{plan}/syncEntriesOrder', 'PlanController@syncEntriesOrder')->name('plans.syncEntriesOrder');
     Route::resource('plans', 'PlanController');
+
+    Route::resource('planTypes', 'PlanTypeController');
+
 
     Route::resource('planSubscriptions', 'PlanSubscriptionController');
     Route::resource('planEntries', 'PlanEntryController');

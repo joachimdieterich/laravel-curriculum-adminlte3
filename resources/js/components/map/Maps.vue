@@ -125,11 +125,7 @@
         </div>
 
         <Teleport to="body">
-            <MapModal
-                :show="this.showMapModal"
-                @close="this.showMapModal = false"
-                :params="currentMap"
-            ></MapModal>
+            <MapModal></MapModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.map.delete')"
@@ -153,6 +149,7 @@ import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -160,12 +157,17 @@ export default {
         subscribable_type: '',
         subscribable_id: '',
     },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
     data() {
         return {
             component_id: this.$.uid,
             maps: null,
             search: '',
-            showMapModal: false,
             showConfirm: false,
             url: '/maps/list',
             errors: {},
@@ -186,17 +188,16 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('map-added', (map) => {
-            this.showMapModal = false;
+            this.globalStore?.closeModal('map-modal');
             this.maps.push(map);
         });
 
         this.$eventHub.on('map-updated', (map) => {
-            this.showMapModal = false;
+            this.globalStore?.closeModal('map-modal');
             this.update(map);
         });
         this.$eventHub.on('createMap', () => {
-            this.currentMap = {};
-            this.showMapModal = true;
+            this.globalStore?.showModal('map-modal', {});
         });
     },
     methods: {
@@ -211,8 +212,7 @@ export default {
             this.dt.ajax.url(this.url).load();
         },
         editMap(map){
-            this.currentMap = map;
-            this.showMapModal = true;
+            this.globalStore?.showModal('map-modal', map);
         },
         loaderEvent(){
             this.dt = $('#map-datatable').DataTable();

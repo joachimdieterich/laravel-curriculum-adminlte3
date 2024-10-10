@@ -407,7 +407,7 @@ class PlanController extends Controller
             ->get();
 
         $enabling = EnablingObjectiveSubscriptions::where('subscribable_type', 'App\\PlanEntry')
-            ->where('subscribable_id', $plan->entry_order)
+            ->whereIn('subscribable_id', $plan->entry_order)
             ->with([
                 'enablingObjective',
                 'enablingObjective.achievements'=> function ($query) use ($ids) {

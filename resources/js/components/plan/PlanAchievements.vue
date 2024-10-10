@@ -11,13 +11,15 @@
         <div id="achievements">
             <div v-for="ter in objectives">
                 <div
-                    class="terminal pointer collapsed"
+                    class="terminal pointer"
                     data-toggle="collapse"
                     :data-target="'#terminal_' + ter.terminal_objective.id"
                     aria-expanded="true"
                 >
-                    <span class="float-left mr-1" v-html="ter.terminal_objective.title"></span>
-                    <span class="fa fa-angle-up"></span>
+                    <span>
+                        {{ htmlToText(ter.terminal_objective.title) }}
+                        <span class="fa fa-angle-up"></span>
+                    </span>
                 </div>
                 <div :id="'terminal_' + ter.terminal_objective.id" class="collapse show">
                     <div v-for="ena in ter.terminal_objective.enabling_objectives"
@@ -89,7 +91,8 @@ export default {
     },
 }
 </script>
-<style scoped>
+<style>
+p { margin: 0px !important; }
 #show-achievements {
     & #header {
         padding: 8px 0px;
@@ -110,8 +113,8 @@ export default {
             border-bottom: 3px solid #dee2e6;
 
             &:hover { background-color: #e9ecef; }
-            & > .fa { transition: 0.3s transform; }
-            &:not(.collapsed) > .fa { transform: rotate(-180deg); }
+            & .fa { transition: 0.3s transform; }
+            &:not(.collapsed) .fa { transform: rotate(-180deg); }
         }
         & .enabling {
             padding: 10px 0px;
@@ -125,6 +128,5 @@ export default {
             & .status-3 { color: #dd4b39 !important; }
         }
     }
-
 }
 </style>

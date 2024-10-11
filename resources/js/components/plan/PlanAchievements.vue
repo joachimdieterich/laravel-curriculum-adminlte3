@@ -1,12 +1,14 @@
 <template>
     <div id="show-achievements">
-        <div id="header" class="d-flex w-100">
-            <span class="flex-fill">Ziele / Namen</span>
-            <span v-for="user in users"
-                class="flex-fill text-center"
-            >
-                {{ user.firstname }} {{ user.lastname }}
-            </span>
+        <div id="header" class="d-flex align-items-center py-4">
+            <div id="fixed-header" class="d-flex position-fixed w-100 px-3">    
+                <span class="flex-fill">Ziele / Namen</span>
+                    <span v-for="user in users"
+                    class="flex-fill text-center"
+                    >
+                    {{ user.firstname }} {{ user.lastname }}
+                </span>
+            </div>
         </div>
         <div id="achievements">
             <div v-for="ter in objectives">
@@ -26,12 +28,10 @@
                         class="d-flex w-100 enabling"
                     >
                         <span
-                            class="flex-fill pl-2"
+                            class="pl-2"
                             v-html="ena.title"
                         ></span>
-                        <span v-for="(user, index) in users"
-                            class="flex-fill"
-                        >
+                        <span v-for="(user, index) in users">
                             <span v-if="ena.achievements.length === users.length || ena.achievements.length === 0"
                                 class="d-flex justify-content-center align-items-center h-100"
                                 :class="'status-' + (ena.achievements[index]?.status[1] ?? '0')"
@@ -92,40 +92,53 @@ export default {
 }
 </script>
 <style>
-p { margin: 0px !important; }
 #show-achievements {
-    & #header {
-        padding: 8px 0px;
-
-        & > span {
-            font-size: 1.25rem;
-            font-weight: 700;
-            min-width: 17%;
-    
-            &:first-child { min-width: 15%; max-width: 25%; }
-        }
-    }
-    & #achievements {
-        & .terminal {
-            padding: 8px 0px;
-            font-size: 1.05rem;
-            border-top: 3px solid #dee2e6;
+    p { margin: 0px !important; }
+    #header {
+        margin: -12px -16px 0px;
+        
+        > #fixed-header {
+            padding: 9px 0px;
+            background-color: white;
+            z-index: 1;
             border-bottom: 3px solid #dee2e6;
 
-            &:hover { background-color: #e9ecef; }
-            & .fa { transition: 0.3s transform; }
-            &:not(.collapsed) .fa { transform: rotate(-180deg); }
+            > span {
+                font-size: 1.25rem;
+                font-weight: 700;
+                min-width: 17%;
+        
+                &:first-child { min-width: 25%; }
+            }
         }
-        & .enabling {
+    }
+    #achievements {
+        > div {
+            > .terminal {
+                padding: 8px 0px;
+                font-size: 1.05rem;
+                border-top: 3px solid #dee2e6;
+                border-bottom: 3px solid #dee2e6;
+    
+                &:hover { background-color: #e9ecef; }
+                .fa-angle-up { transition: 0.3s transform; }
+                &:not(.collapsed) .fa-angle-up { transform: rotate(-180deg); }
+            }
+            &:first-child > .terminal { border-top: none !important; }
+        }
+        .enabling {
             padding: 10px 0px;
 
             &:not(:first-child) { border-top: 1px solid #dee2e6; }
-            & > :first-child { min-width: 15%; max-width: 25%; }
-            & .fa { font-size: 1.5rem; }
-            & .status-0 { color: #d2d6de !important; }
-            & .status-1 { color: #00a65a !important; }
-            & .status-2 { color: #fd7e14 !important; }
-            & .status-3 { color: #dd4b39 !important; }
+            > span {
+                min-width: 25%;
+                flex: 1 1 0px;
+            }
+            .fa { font-size: 1.5rem; }
+            .status-0 { color: #d2d6de !important; }
+            .status-1 { color: #00a65a !important; }
+            .status-2 { color: #fd7e14 !important; }
+            .status-3 { color: #dd4b39 !important; }
         }
     }
 }

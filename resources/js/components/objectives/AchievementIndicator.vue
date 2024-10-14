@@ -1,6 +1,7 @@
 <template>
     <span v-if="type === 'enabling' && settings.edit === false"
-        style="cursor: default;"
+        class="d-flex align-items-center"
+        style="cursor: default; gap: 4px"
     >
         <i class="t-18 margin-r-5"
             v-bind:class="[green_css, fabadge, disabled ? 'text-gray' : 'text-green pointer']"
@@ -22,6 +23,9 @@
             v-bind:data-count="[white_count]"
             @click.prevent="achieve('0')">
         </i>
+        <span v-if="objective.achievements?.length === 1" style="line-height: 1; white-space: nowrap;">
+            {{ objective.achievements[0].updated_at?.substring(0, 10) }}
+        </span>
     </span>
 </template>
 

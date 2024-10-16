@@ -15,7 +15,6 @@ import { createApp, reactive } from 'vue';
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 const app = createApp({});
-
 /**
  *
  * global eventHub

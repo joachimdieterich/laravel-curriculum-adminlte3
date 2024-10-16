@@ -11,6 +11,8 @@ Route::get('/impressum', 'OpenController@impressum')->name('impressum');
 
 Route::get('/terms', 'OpenController@terms')->name('terms');
 
+Route::get('/localLogin', 'Auth\LoginController@localLogin');
+Route::get('/localLogout', 'Auth\LoginController@localLogout');
 Auth::routes(['register' => false]);
 
 Route::get('eventSubscriptions/embed', 'EventSubscriptionController@embed')->name('eventSubscriptions.embed'); //embeddable routes
@@ -81,7 +83,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('curricula/{curriculum}/editOwner', 'CurriculumController@editOwner')->name('curricula.editOwner');
     Route::patch('curricula/{curriculum}/editOwner', 'CurriculumController@storeOwner')->name('curricula.storeOwner');
     Route::get('curricula/{curriculum}/export', 'CurriculumExportController@export')->name('curricula.export');
-
 
     Route::get('curricula/{curriculum}/objectives', 'CurriculumController@getObjectives')->name('curricula.getObjectives');
     Route::get('curricula/{curriculum}/print', 'CurriculumController@print')->name('curricula.print');
@@ -358,13 +359,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('exams', 'Tests\ExamController@index');
     Route::post('exams', 'Tests\ExamController@create');
     Route::delete('exams/{exam}', 'Tests\ExamController@delete')->middleware('can:test_delete');
-    Route::get('exam/{exam}/edit', 'Tests\ExamController@show');
-    Route::get('exam/{exam}/list', 'Tests\ExamController@listExamUsers');
-    Route::get('exam/{exam}/users/list', 'Tests\ExamController@listAllUsers');
-    Route::post('exam/{exam}/status', 'Tests\ExamController@getExamStatus');
-    Route::post('exam/{exam}/users/enrol', 'Tests\ExamController@addUsers');
-    Route::delete('exam/{exam}/users/expel', 'Tests\ExamController@removeUsers');
-    Route::post('exam/{exam}/report', 'Tests\ExamController@getReport');
+    Route::get('exams/{exam}/edit', 'Tests\ExamController@show');
+    Route::get('exams/{exam}/list', 'Tests\ExamController@listExamUsers');
+    Route::get('exams/{exam}/users/list', 'Tests\ExamController@listAllUsers');
+    Route::post('exams/{exam}/status', 'Tests\ExamController@getExamStatus');
+    Route::post('exams/{exam}/users/enrol', 'Tests\ExamController@addUsers');
+    Route::delete('exams/{exam}/users/expel', 'Tests\ExamController@removeUsers');
+    Route::post('exams/{exam}/report', 'Tests\ExamController@getReport');
 });
 
 //if ((env('APP_ENV') == 'local')){

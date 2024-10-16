@@ -38,7 +38,7 @@ export const useDatatableStore = defineStore('datatable', {
         },
         setSelectedIds(title, selection){
             let datatable = this.datatables.find(dt => dt.datatable === title);
-            datatable.selectedItems = selection
+            datatable.selectedItems = selection;
         }
 
     },
@@ -66,6 +66,12 @@ export const useDatatableStore = defineStore('datatable', {
             return  (title) => {
                 let datatable = state.datatables.find(dt => dt.datatable === title);
                 return datatable?.selectedItems.map(i => i.id);
+            };
+        },
+        getSelectedValuesByField(state) {
+            return  (title, field) => {
+                let datatable = state.datatables.find(dt => dt.datatable === title);
+                return datatable?.selectedItems.map(i => i[field]);
             };
         }
     },

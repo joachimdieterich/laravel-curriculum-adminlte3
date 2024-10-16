@@ -87,7 +87,8 @@
                 <Select2
                     id="type"
                     name="type"
-                    model="typ"
+                    model="type"
+                    :label="trans('global.type')"
                     :list="[
                         {
                             'id':'group',

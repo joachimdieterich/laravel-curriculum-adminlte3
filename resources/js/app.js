@@ -324,7 +324,6 @@ app.config.globalProperties.$initTinyMCE = function (
     return {// allows adding additional attributes for specific cases
         // attributes can be overwritten if they are set BEFORE this line
         ...attr,
-
         path_absolute : "/",
         selector: "textarea.my-editor",
         branding:false,

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\LogController;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
-
 class LoginController extends Controller
 {
     /*
@@ -36,7 +35,33 @@ class LoginController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest')->except('logout');
+        //$this->middleware('guest')->except('logout');
+    }
+
+    public function showLoginForm(Request $request){
+        if (
+            (env('SAML2_RLP_IDP_SSO_URL') !== null)
+            and (! empty(env('SAML2_RLP_IDP_SSO_URL')))
+        )
+        {
+            return redirect(env('SAML2_RLP_IDP_SSO_URL'));
+        }
+        else
+        {
+            return view('auth.login');
+        }
+    }
+
+    public function localLogin(Request $request){
+         return view('auth.login');
+    }
+
+    public function localLogout(Request $request){
+        $this->guard()->logout();
+
+        $request->session()->invalidate();
+
+        return view('auth.login');
     }
 
     /**

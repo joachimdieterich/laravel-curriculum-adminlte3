@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Tests;
 
 use App\Domains\Exams\Jobs\getExamsJob;
+use App\Domains\Exams\Jobs\IleaPlusJobs\decodeTanJob;
 use App\Domains\Exams\Models\Exam;
 use App\Domains\Exams\Requests\ExamAddUsersRequest;
 use App\Domains\Exams\Requests\ExamCreateRequest;
@@ -60,19 +61,10 @@ class ExamController extends Controller
 
     public function list()
     {
-        abort_unless(\Gate::allows('test_access'), 403);
+        abort_unless(\Gate::allows('exam_access'), 403);
         //$exams = Exam::whereIn('group_id', auth()->user()->groups->pluck('id'));
+
         $exams = auth()->user()->exams;
-
-        foreach ($exams as $exam) {
-            $this->getToolExamStatus($exam);
-        }
-
-        $exams = auth()->user()->fresh()->exams;
-
-        foreach($exams as $exam){
-            $exam->login_url = config('test_tools.tools')[$exam->tool]['adapter']->getExamLoginUrl($exam);
-        }
 
         if (request()->has(['group_id']))
         {
@@ -84,26 +76,36 @@ class ExamController extends Controller
 
             switch ($request['filter'])
             {
-                case 'student': $list = [];
-                                foreach($exams as $exam)
-                                {
-                                    $list[] =  $exam->id;
-                                }
-                                $exams = Exam::where('group_id', $group_id)
-                                    ->whereIn('id', $list)
-                                    ->with(['group', 'users']);
+
+                case 'student': $exams = auth()->user()->fresh()->exams->where('group_id', $group_id);
+
+        break;
+    case 'all':
+    default:        $exams = Exam::where('group_id', $group_id)
+                            ->with(['group', 'users']);
                     break;
-                case 'all':
-                default:        $exams = Exam::where('group_id', $group_id);
-                    break;
+
+            }
+           // dump($exams);
+            foreach($exams as $exam){
+                $exam->login_url = config('test_tools.tools')[$exam->tool]['adapter']->getExamLoginUrl($exam);
             }
         }
         else
         {
+            foreach ($exams as $exam) {
+                $this->getToolExamStatus($exam);
+            }
+
+            $exams = auth()->user()->fresh()->exams;
+
+            foreach($exams as $exam){
+                $exam->login_url = config('test_tools.tools')[$exam->tool]['adapter']->getExamLoginUrl($exam);
+            }
             $exams->load('group');
         }
 
-        //$exams = $exams->groupBy('group.title');
+      //  $exams = $exams->groupBy('exams.test_name');
 
         return DataTables::of($exams)
             ->addColumn('check', '')
@@ -150,7 +152,9 @@ class ExamController extends Controller
 
     public function listAllUsers(Exam $exam)
     {
-        $users = Group::where('id', $exam->group_id)->get()->first()->users()->whereDoesntHave('exams', function ($query) use ($exam) {
+        $users = Group::where('id', $exam->group_id)
+            ->get()->first()->users()
+            ->whereDoesntHave('exams', function ($query) use ($exam) {
             $query->where('id', "=", $exam->id);
         });
 

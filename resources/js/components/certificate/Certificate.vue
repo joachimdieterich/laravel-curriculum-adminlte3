@@ -33,14 +33,6 @@
                     <p class="text-muted">
                         {{ certificate.type }}
                     </p>
-                    <hr>
-                    <strong>
-                        <i class="fas fa-magnifying-glass mr-1"></i>
-                        {{ trans('global.certificate.example') }}
-                    </strong>
-                    <p class="text-muted">
-                        Parameter
-                    </p>
                 </div>
 
                 <div class="card-footer">

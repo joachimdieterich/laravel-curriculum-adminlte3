@@ -17,13 +17,14 @@
             <div class="card-body"
                 v-dompurify-html="training.description">
             </div>
+
 <!--            <div class="card-footer">
                 <CalendarCreateEvent/>
             </div>-->
         </div>
-        <exercises
+        <Exercises
             :training="training">
-        </exercises>
+        </Exercises>
     </div>
 </template>
 

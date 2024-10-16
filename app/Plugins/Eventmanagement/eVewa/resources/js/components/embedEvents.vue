@@ -16,7 +16,7 @@
                     type="text" id="search"
                     name="eventId"
                     class="form-control"
-                    value="search"
+                    :value="search"
                     required
                     @keyup.enter="loader()"
                 />

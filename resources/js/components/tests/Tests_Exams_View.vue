@@ -59,7 +59,7 @@
                     <div>{{ exam.created_at }}</div>
                 </td>
                 <td>
-                    <a :href="'/exam/' + exam.exam_id + '/edit'" class="btn">
+                    <a :href="'/exams/' + exam.exam_id + '/edit'" class="btn">
                         <i class="fa fa-list-alt"></i>
                     </a>
                     <button v-permission="'test_edit'" type="button" class="btn text-danger"
@@ -225,7 +225,7 @@ export default {
             document.getElementById("status_sync_all").classList.remove("fa-spin");
         },
         getReport(exam) {
-            axios.post('/exam/' + exam.exam_id + '/report', {tool: exam.tool}, {responseType: 'arraybuffer'})
+            axios.post('/exams/' + exam.exam_id + '/report', {tool: exam.tool}, {responseType: 'arraybuffer'})
                 .then(response => {
                     var blob = new Blob([response.data]);
                     var link = document.createElement('a');
@@ -262,7 +262,7 @@ export default {
         getStatus(exam) {
             document.getElementById("status_sync_all").classList.add("fa-spin");
 
-            axios.post('/exam/' + exam.exam_id + '/status', {
+            axios.post('/exams/' + exam.exam_id + '/status', {
                 tool: exam.tool
             }).then(response => {
                 this.data.data.filter(function (item) {

@@ -285,7 +285,7 @@ export default {
                 'select': (this.store.getDatatable('curriculum-user-datatable')?.select) ? false : true,
                 'selectedItems': []
             }
-        )
+        );
         const dt = $('#curriculum-user-datatable').DataTable();
         dt.on('select', function(e, dt, type, indexes) {
             let selection = dt.rows('.selected').data().toArray()

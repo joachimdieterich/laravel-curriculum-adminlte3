@@ -89,7 +89,7 @@
                          class="btn btn-primary"
                          data-widget="remove"
                          @click="close();window.open(medium.path, '_blank');">
-                         <a :href="scr + '?download=true'" class="text-white text-decoration-none" target="_blank">{{ trans('global.downloadFile') }}/{{ trans('global.open') }}</a>
+                         <a :href="scr + '?content=true'" class="text-white text-decoration-none" target="_blank">{{ trans('global.downloadFile') }}/{{ trans('global.open') }}</a>
                      </button>
                 </span>
             </div>
@@ -105,7 +105,6 @@ const mediumRenderer =
     () => import('../media/MediaRenderer');
 //import License from '../uiElements/License'
     export default {
-
         data() {
             return {
                 medium: [],

@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use App\TerminalObjective;
 use App\TerminalObjectiveSubscriptions;
-use App\User;
-use App\Group;
-use App\Organization;
+use App\Plan;
 use Illuminate\Http\Request;
 
 class TerminalObjectiveSubscriptionsController extends Controller
@@ -26,27 +24,8 @@ class TerminalObjectiveSubscriptionsController extends Controller
             $user_ids = [];
             
             if ($input['subscribable_type'] == 'App\PlanEntry' and $modal->plan->isEditable()) {
-                $subscriptions = $modal->plan->subscriptions;
-
-                // get every user-id through all subscriptions
-                foreach ($subscriptions as $subscription) {
-                    switch ($subscription['subscribable_type']) {
-                        case 'App\User':
-                            array_push($user_ids, User::find($subscription['subscribable_id'])->id);
-                            break;
-                        case 'App\Group':
-                            $user_ids = array_merge($user_ids, Group::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray());
-                            break;
-                        case 'App\Organization':
-                            $user_ids = array_merge($user_ids, Organization::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray());
-                            break;
-                        default:
-                            break;
-                    }
-                }
-
-                // duplicates have to be removed, because SQL will return the same entry multiple times
-                $user_ids = array_unique($user_ids, SORT_NUMERIC);
+                $user_ids = app(PlanController::class)->getUsers(Plan::find($modal->plan->id));
+                $user_ids = array_column($user_ids, 'id');
             } else {
                 $user_ids = [auth()->user()->id];
             }

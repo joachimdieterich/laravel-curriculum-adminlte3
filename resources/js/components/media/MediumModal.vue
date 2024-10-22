@@ -88,8 +88,8 @@
                          v-else
                          class="btn btn-primary"
                          data-widget="remove"
-                         @click="close();window.open(medium.path, '_blank');">
-                         <a :href="scr + '?content=true'" class="text-white text-decoration-none" target="_blank">{{ trans('global.downloadFile') }}/{{ trans('global.open') }}</a>
+                         @click="close();window.open(medium.path, '_self');">
+                         <a :href="scr + '?content=true'" class="text-white text-decoration-none" target="_self">{{ trans('global.downloadFile') }}/{{ trans('global.open') }}</a>
                      </button>
                 </span>
             </div>

@@ -141,7 +141,6 @@
                </span>
             </span>
         </div>
-        <button class="d-none" @click="test()">+</button>
     </div>
 </template>
 
@@ -208,22 +207,6 @@ export default {
             }
 
             $("#loading").hide();
-        },
-        // JUST FOR TESTING
-        test() {
-            this.page++;
-            
-            this.externalMedia = (axios.get('/repositorySubscriptions/getMedia', {
-                params: {
-                    subscribable_type: this.subscribable_type(),
-                    subscribable_id: this.model.id,
-                    search: this.model.title,
-                    page: this.page,
-                    maxItems: this.maxItems,
-                    repository: 'edusharing',
-                    filter: 1,
-                },
-            })).data.message[0];
         },
         async unlinkMedium(id, value) { //id of external reference and value in db
             try {

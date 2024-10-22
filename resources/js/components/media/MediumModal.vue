@@ -178,13 +178,24 @@ const mediumRenderer =
             beforeClose() {
 
             },
-            close(external = false) {
-                if (external) {
-                    axios.get(this.scr + '?content=true')
-                        .then((response) => {
-                            window.location.assign(response.data.url);
-                        })
+            async close(image = false) {
+                if (image) {
+                    if (this.medium.adapter = 'local') {
+                        window.open(this.scr, '_blank');
+                    } else {
+                        $("#loading_" + this.medium.id).show();
+                        await axios.get(this.scr + '?content=true')
+                            .then((response) => {
+                                window.location.assign(response.data.url);
+                                $("#loading_" + this.medium.id).hide();
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                                $("#loading_"+this.medium.id).hide();
+                            });    
+                    }
                 }
+
 
                 this.$modal.hide('medium-modal');
             }

@@ -88,8 +88,8 @@
                          v-else
                          class="btn btn-primary"
                          data-widget="remove"
-                         @click="close();window.open(medium.path, '_self');">
-                         <a :href="scr + '?content=true'" class="text-white text-decoration-none" target="_self">{{ trans('global.downloadFile') }}/{{ trans('global.open') }}</a>
+                         @click="close(true)">
+                         <a class="text-white text-decoration-none" target="_self">{{ trans('global.downloadFile') }}/{{ trans('global.open') }}</a>
                      </button>
                 </span>
             </div>
@@ -178,7 +178,14 @@ const mediumRenderer =
             beforeClose() {
 
             },
-            close() {
+            close(external = false) {
+                if (external) {
+                    axios.get(this.scr + '?content=true')
+                        .then((response) => {
+                            window.location.assign(response.data.url);
+                        })
+                }
+
                 this.$modal.hide('medium-modal');
             }
 

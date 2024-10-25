@@ -374,7 +374,7 @@ class PlanController extends Controller
         // only get users that are students
         $users = User::select('users.id', 'users.firstname', 'users.lastname')->whereIn('users.id', $users)
             ->join('organization_role_users', 'users.id', '=', 'organization_role_users.user_id')->where('organization_role_users.role_id', 6)
-            ->get()->toArray();
+            ->distinct()->get()->toArray();
 
         return $users;
     }

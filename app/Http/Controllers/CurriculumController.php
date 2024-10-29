@@ -198,7 +198,6 @@ class CurriculumController extends Controller
         if (request()->wantsJson()) {
             return ['curriculum' => $curriculum];
         }
-
     }
 
     /**
@@ -306,7 +305,7 @@ class CurriculumController extends Controller
     public function edit(Curriculum $curriculum)
     {
         abort(403);
-       /* $grades = Grade::all();
+        /*$grades = Grade::all();
         $subjects = Subject::all();
         $organization_types = OrganizationType::all();
         $curriculum_types = CurriculumType::all();

@@ -215,6 +215,9 @@ import {useMediumStore} from "../../store/media.js";
 import {useGlobalStore} from "../../store/global";
 import MapModal from "./MapModal.vue";
 import Select2 from "../forms/Select2.vue";
+import markerIconUrl from "leaflet/dist/images/marker-icon.png";
+import markerIconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
+import markerShadowUrl from "leaflet/dist/images/marker-shadow.png";
 
 export default {
     components: {
@@ -480,12 +483,17 @@ export default {
 
         // default icon-url throws an error (apparently a common problem)
         // so we need to rebind the file-locations
-        delete Icon.Default.prototype._getIconUrl;
-        Icon.Default.mergeOptions({
-            iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-            iconUrl: require('leaflet/dist/images/marker-icon.png'),
-            shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
-        });
+       // delete Icon.Default.prototype._getIconUrl;
+       /* Icon.Default.mergeOptions({
+            iconRetinaUrl: '/leaflet/dist/images/marker-icon-2x.png',
+            iconUrl: '/leaflet/dist/images/marker-icon.png',
+            shadowUrl: '/leaflet/dist/images/marker-shadow.png',
+        });*/
+        L.Icon.Default.prototype.options.iconUrl = markerIconUrl;
+        L.Icon.Default.prototype.options.iconRetinaUrl = markerIconRetinaUrl;
+        L.Icon.Default.prototype.options.shadowUrl = markerShadowUrl;
+        L.Icon.Default.imagePath = ""; // necessary to avoid Leaflet adds some prefix to image path.
+
 
         // set OpenStreetMaps as tile-distributor
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -512,7 +520,7 @@ export default {
 }
 
 </script>
-<style scoped>
+<style >
 @import "leaflet/dist/leaflet.css";
 @import "sidebar-v2/css/leaflet-sidebar.css";
 @import "leaflet.markercluster/dist/MarkerCluster.css";

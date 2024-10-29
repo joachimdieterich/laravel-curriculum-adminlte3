@@ -108,7 +108,7 @@ export default {
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            console.log(mutation.events.key);
+
             if (mutation.events.key === this.$options.name){
                 const params = state.modals[this.$options.name].params.reference;
                 this.subscribable_type = state.modals[this.$options.name].params.subscribable_type;

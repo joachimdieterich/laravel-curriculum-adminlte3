@@ -786,18 +786,23 @@ return [
         'edit' => 'Lernstandsanalyse bearbeiten',
         'enrol' => 'Lernstandsanalyse vernküpfen',
         'expel' => 'Gruppe aus Lernstandsanalyse ausschreiben.',
+        'enrol_user' => 'Aus Lernstandsanalyse ausschreiben.',
+        'expel_user' => 'In Lernstandsanalyse einschreiben.',
+
         'login_key' => 'Anmeldeschlüssel',
         'select_tests' => 'Testheft(e) auswählen',
+        'download_report' => 'Bericht herunterladen',
+        'delete_helper' => 'Soll die Lernstandsanalyse sowie die dazugehörigen Daten gelöscht werden?',
         'fields' => [
             'tool' => 'Tool',
             'test_booklet' => 'Testhefte',
             'subject' => 'Subjekt',
             'status' => 'Status',
-            'completed_at' => 'Abgeschlossen Am',
+            'completed_at' => 'abgeschlossen am',
             'action' => 'Aktion',
         ],
         'add_remove_users' => [
-            'students_exam_title' => 'Schülerinnen und Schüler in der Lernstandsanalyse',
+            'students_exam_title' => 'Teilnehmerinnen und Teilnehmer in der Lernstandsanalyse',
             'users_group_title' => 'Benutzer in der Gruppe',
         ],
         'status_options' => [
@@ -814,8 +819,8 @@ return [
         ],
         'error_messages' => [
             'get_tests' => 'Testhefte konnten nicht abgerufen werden',
-            'remove_users' => 'Schülerinnen und Schüler mit Status bearbeitet oder fertiggestellt, können nicht entfernt werden.',
-            'remove_exam' => 'Diese Lernstandsanalyse wurde von einem oder mehreren Schülern begonnen und kann nicht entfernt werden',
+            'remove_users' => 'Teilnehmerinnen und Teilnehmer mit Status bearbeitet oder fertiggestellt, können nicht entfernt werden.',
+            'remove_exam' => 'Diese Lernstandsanalyse wurde von einem oder mehreren Teilnehmenden begonnen und kann nicht entfernt werden',
         ],
     ],
     'absences' => [

@@ -32,7 +32,6 @@
         "sass-loader": "^8.0.2",
         "vite": "^5.2.11",
         "vue-loader": "^17.3.1",
-        "vue-template-compiler": "^2.7.16",
         "vuedraggable": "^4.1.0"
     },
     "dependencies": {
@@ -46,8 +45,8 @@
         "@tinymce/tinymce-vue": "^6.0.1",
         "@vuepic/vue-datepicker": "^8.7.0",
         "admin-lte": "^3.2.0",
-        "babel-loader": "^8.2.5",
         "chart.js": "^4.0.0",
+        "cypress": "^13.15.0",
         "d3": "^7.6.1",
         "datatables.net-bs4": "^1.12.1",
         "datatables.net-bs5": "^2.0.6",
@@ -58,7 +57,6 @@
         "datatables.net-vue3": "^3.0.1",
         "dompurify": "^3.1.6",
         "form-backend-validation": "^2.4.0",
-        "laravel-vue-datatable": "^0.6.0",
         "leaflet": "^1.9.3",
         "leaflet-extra-markers": "^1.2.2",
         "leaflet.markercluster": "^1.5.3",
@@ -67,7 +65,6 @@
         "moment": "^2.29.4",
         "pinia": "^2.1.7",
         "sidebar-v2": "^0.4.0",
-        "tinymce": "^5.10.9",
         "vite-plugin-commonjs": "^0.10.3",
         "vue": "^3.4.33",
         "vue-chartjs": "^5.3.1",

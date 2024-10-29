@@ -1,7 +1,6 @@
 @extends('layouts.master')
 @section('title')
     {{ trans('global.config.title') }}
-
 @endsection
 @section('breadcrumb')
     <breadcrumbs

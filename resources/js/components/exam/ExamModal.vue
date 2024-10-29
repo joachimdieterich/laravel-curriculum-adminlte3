@@ -23,29 +23,27 @@
                 </div>
 
                 <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                    <div class="form-group "
-                        :class="form.errors.title ? 'has-error' : ''"
-                          >
-                        <label for="title">{{ trans('global.exam.fields.title') }} *</label>
-                        <input
-                            type="text" id="title"
-                            name="title"
-                            class="form-control"
-                            v-model="form.title"
-                            placeholder="Title"
-                            required
-                            />
-                         <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
-                    </div>
                     <Select2
-                        id="permissions"
-                        name="permissions"
-                        url="/permissions"
-                        model="permission"
-                        :multiple="true"
-                        :selected="this.form.permissions"
+                        id="exams_subscription"
+                        name="exams_subscription"
+                        :list="options"
+                        model="exam"
+                        option_label="name"
+                        :selected="this.form.exam_id"
                         @selectedValue="(id) => {
-                        this.form.permissions = id;
+                            this.form.exam_id = id;
+                        }"
+                    >
+                    </Select2>
+                    <Select2
+                        id="groups"
+                        name="groups"
+                        url="/groups"
+                        model="group"
+                        :multiple="false"
+                        :selected="this.form.group_id"
+                        @selectedValue="(id) => {
+                        this.form.group_id = id[0];
                     }"
                     >
                     </Select2>
@@ -95,39 +93,29 @@
                 method: 'post',
                 url: '/exams',
                 form: new Form({
-                    'id':'',
-                    'title': '',
-                    'permissions': '',
+                    'exam_id':'',
+                    'group_id': '',
                 }),
                 search: '',
+                options: []
             }
         },
         methods: {
-             submit(method) {
-                 if (method == 'patch') {
-                     this.update();
-                 } else {
-                     this.add();
-                 }
+
+            submit() {
+                let test = this.options.filter((t) => t.id == this.form.exam_id);
+                //console.log(test[0]);
+                this.SendCreateExamRequest(test[0].tool, test[0].id, test[0].nameLong, this.form.group_id);
             },
-            add(){
-                axios.post(this.url, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('exam-added', r.data);
+            async SendCreateExamRequest(tool, test_id, test_name, group_id) {
+                console.log({'tool': tool, 'test_id': test_id, 'test_name': test_name, 'group_id': group_id})
+                await axios.post('/exams', {'tool': tool, 'test_id': test_id, 'test_name': test_name, 'group_id': group_id})
+                    .then(response => {
+                        this.$eventHub.emit('exam-added', response.data)
                     })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-            update() {
-                console.log('update');
-                axios.patch(this.url + '/' + this.form.id, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('exam-updated', r.data);
+                    .catch(errors => {
+                        this.$emit('failedNotification', errors)
                     })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
             }
         },
         mounted() {
@@ -146,6 +134,16 @@
                     }
                 }
             });
+
+            axios.get('/tests')
+                .then(response => {
+                    this.options = response.data
+                })
+                .catch(errors => {
+                    if (errors.response.status !== 403) {
+                        this.$emit('failedNotification', Vue.prototype.trans('global.exam.error_messages.get_tests'))
+                    }
+                })
         },
     }
 </script>

@@ -81,7 +81,7 @@ export const useGlobalStore = defineStore('global', {
     getters: {
         getItem(state) {
             return  (key) => {
-                return global[key] ?? null;
+                return this.global[key] ?? null;
             };
         },
         getModalParams (state) {

@@ -65,7 +65,6 @@
                  style="position:absolute; top:0; right: 0; background-color: transparent;"
                  data-toggle="dropdown"
                  aria-expanded="false"
-
             >
                 <i class="fas fa-ellipsis-v"
                    :style="'color:' + $textcolor(item.color)"></i>
@@ -151,7 +150,7 @@ export default {
                     this.store.addSelectItems(this.storeTitle, item);
                 } else {
                     if (this.urlOnly){
-                        window.open( this.url + '/' + item.id, this.urlTarget);
+                        window.open( this.url /*+ '/' + item.id*/, this.urlTarget);
                     } else {
                         window.location = this.url + '/' + item.id; //item.DT_RowId ? -> will not work for new entries
                     }

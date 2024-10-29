@@ -193,6 +193,12 @@
         </div>
 
         <Teleport to="body">
+            <MediumModal
+                :show="this.mediumStore.getShowMediumModal"
+                @close="() =>{
+                     this.mediumStore.setShowMediumModal(false);
+                }"
+            ></MediumModal>
             <CurriculumModal></CurriculumModal>
             <ContentModal></ContentModal>
             <CertificateModal></CertificateModal>
@@ -216,12 +222,15 @@ import CertificateModal from "../certificate/CertificateModal.vue";
 import GenerateCertificateModal from "../certificate/GenerateCertificateModal.vue";
 import {useGlobalStore} from "../../store/global";
 import ContentModal from "../content/ContentModal.vue";
+import MediumModal from "../media/MediumModal.vue";
+import {useMediumStore} from "../../store/media.js";
 
 DataTable.use(DataTablesCore);
 
 export default {
     name: "curriculum",
     components:{
+        MediumModal,
         ContentModal,
         GenerateCertificateModal,
         CertificateModal,
@@ -256,9 +265,11 @@ export default {
     setup () { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters
         const store = useDatatableStore();
         const globalStore = useGlobalStore();
+        const mediumStore = useMediumStore();
         return {
             store,
             globalStore,
+            mediumStore
         }
     },
     data() {
@@ -285,7 +296,7 @@ export default {
                 'select': (this.store.getDatatable('curriculum-user-datatable')?.select) ? false : true,
                 'selectedItems': []
             }
-        )
+        );
         const dt = $('#curriculum-user-datatable').DataTable();
         dt.on('select', function(e, dt, type, indexes) {
             let selection = dt.rows('.selected').data().toArray()

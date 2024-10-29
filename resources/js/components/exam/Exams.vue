@@ -2,7 +2,7 @@
     <div class="row">
         <div id="exam-content"
              class="col-md-12 m-0">
-            <ul
+            <ul v-if="subscribable"
                 class="nav nav-pills py-2" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link "
@@ -30,7 +30,6 @@
                 </li>
             </ul>
 
-
             <IndexWidget
                 v-permission="'exam_create'"
                 key="'examCreate'"
@@ -52,7 +51,7 @@
                 titleField="test_name"
                 descriptionField="subject"
                 modelName= "exam"
-                :url="exam.login_url"
+                :url="getLoginUrl(exam)"
                 url-only="true"
                 urlTarget="_blank"
                 :active="isActive(exam)"
@@ -74,13 +73,13 @@
                 </template>
 
                 <template
+                    v-if="subscribable"
                     v-permission="'exam_edit, exam_delete'"
                     v-slot:dropdown>
                     <div class="dropdown-menu dropdown-menu-right"
                          style="z-index: 1050;"
                          x-placement="left-start">
                         <button
-                            v-if="!subscribable"
                             v-permission="'exam_edit'"
                             :name="'edit-exam-' + exam.id"
                             class="dropdown-item text-secondary"
@@ -88,8 +87,16 @@
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.exam.edit') }}
                         </button>
-                        <hr v-if="!subscribable"
-                            class="my-1">
+                        <button
+                            v-permission="'exam_edit'"
+                            v-if="exam.status !== 0"
+                            :name="'edit-exam-' + exam.id"
+                            class="dropdown-item text-secondary"
+                            @click.prevent="getReport(exam)">
+                            <i class="fa fa-download mr-2"></i>
+                            {{ trans('global.exam.download_report') }}
+                        </button>
+                        <hr class="my-1">
                         <button
                             v-permission="'exam_delete'"
                             :id="'delete-exam-' + exam.id"
@@ -115,6 +122,13 @@
                        <p class="text-muted small">
                            {{ exam.group?.title }}
                        </p>
+                        <progress
+                            id="status"
+                            :value="exam.status"
+                            max="100">
+                           {{ exam.status }}%
+                       </progress>
+
                     </span>
                 </template>
             </IndexWidget>
@@ -134,8 +148,7 @@
 
         <Teleport to="body">
             <SubscribeExamModal
-                v-if="subscribable"
-            >
+                v-if="subscribable">
             </SubscribeExamModal>
             <ExamModal
                 v-if="!subscribable"
@@ -168,6 +181,7 @@ import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import SubscribeExamModal from "../exam/SubscribeExamModal.vue";
 import {useGlobalStore} from "../../store/global.js";
+import {useToast} from "vue-toastification";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -188,9 +202,11 @@ export default {
         subscribable_id: '',
     },
     setup () {
+        const toast = useToast();
         const globalStore = useGlobalStore();
         return {
             globalStore,
+            toast
         }
     },
     data() {
@@ -200,7 +216,7 @@ export default {
             search: '',
             showExamModal: false,
             showConfirm: false,
-            url: (this.subscribable_id) ? '/exams/list?group_id=' + this.subscribable_id +'&filter=' + this.subscribable_id : '/exams/list',
+            url: (this.subscribable_id) ? '/exams/list?group_id=' + this.subscribable_id +'&filter=' + this.filter : '/exams/list',
             errors: {},
             currentExam: {},
             columns: [
@@ -253,6 +269,9 @@ export default {
         });
     },
     methods: {
+        getLoginUrl(exam){
+            return exam.login_url ?? '/exams/' +  exam.exam_id + '/edit';
+        },
         editExam(exam){
             this.currentExam = exam;
             this.showExamModal = true;
@@ -275,7 +294,19 @@ export default {
         destroy() {
             if (this.subscribable === true)
             {
-                axios.post('/examSubscriptions/expel', {
+                axios.delete('/exams/' + this.currentExam.exam_id + '?tool=' + this.currentExam.tool)
+                    .then(response => {
+                    if (response.status === 200) {
+                        //Vue.delete(this.data.data, key);
+                        this.toast.success(Vue.prototype.trans('global.exam.success_messages.exam_removed'))
+                    }
+                })
+                .catch(errors => {
+                    var message = errors.response.status === 403 ? Vue.prototype.trans('global.exam.error_messages.remove_exam') : errors.message
+                    this.toast.error(message);
+                })
+
+               /* axios.post('/examSubscriptions/expel', {
                     'model_id' : this.currentExam.id,
                     'subscribable_type' : this.subscribable_type,
                     'subscribable_id' : this.subscribable_id,
@@ -286,7 +317,7 @@ export default {
                     })
                     .catch(e => {
                         console.log(e);
-                    });
+                    });*/
             }
             else
             {
@@ -320,8 +351,21 @@ export default {
             }
         },
         setFilter(filter){
-            this.url = '/exams/list?group_id=' + this.subscribable_id +'&filter=' + filter;
+            this.url =  (this.subscribable_id) ? '/exams/list?group_id=' + this.subscribable_id +'&filter=' + filter: '/exams/list';
             this.dt.ajax.url(this.url).load();
+        },
+        getReport(exam) {
+            axios.post('/exams/' + exam.exam_id + '/report', {tool: exam.tool}, {responseType: 'arraybuffer'})
+                .then(response => {
+                    var blob = new Blob([response.data]);
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = exam.test_name+'.pdf';
+                    link.click();
+                })
+                .catch(errors => {
+                    console.log(errors)
+                })
         },
     },
     components: {

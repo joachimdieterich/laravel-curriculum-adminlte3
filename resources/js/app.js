@@ -15,7 +15,6 @@ import { createApp, reactive } from 'vue';
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 const app = createApp({});
-
 /**
  *
  * global eventHub
@@ -142,7 +141,7 @@ app.config.globalProperties.checkPermission = (permission) => {
 
 app.config.globalProperties.htmlToText = (html) => {
     var txt = document.createElement("textarea");
-    txt.innerHTML = html;
+    txt.innerHTML = html ?? '';
     let map =
         {
             '&amp;': '&',
@@ -324,7 +323,6 @@ app.config.globalProperties.$initTinyMCE = function (
     return {// allows adding additional attributes for specific cases
         // attributes can be overwritten if they are set BEFORE this line
         ...attr,
-
         path_absolute : "/",
         selector: "textarea.my-editor",
         branding:false,

@@ -53,10 +53,11 @@
         {{ csrf_field() }}
     </form>
     <script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script>
-    <script src="{{ mix('js/app.js') }}"></script>
     <script src="{{ asset('node_modules/mathjax/es5/tex-svg.js') }}"></script>
+    {{--
+    <script src="{{ mix('js/app.js') }}"></script>
     <script src="{{ asset('node_modules/moment/js/moment.min.js') }}"></script>
-    <script src="{{ asset('node_modules/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}"></script>
+    <script src="{{ asset('node_modules/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}"></script>--}}
     @yield('scripts')
 
 </body>

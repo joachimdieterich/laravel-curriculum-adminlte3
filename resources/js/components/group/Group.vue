@@ -1,7 +1,6 @@
 <template>
     <div class="row">
         <div class="col-12">
-
             <ul class="nav nav-tabs"
                 role="tablist">
                 <li class="nav-item"
@@ -97,7 +96,7 @@
                         <span v-if="help">{{ trans('global.plan.title') }}</span>
                     </a>
                 </li>
-                <li v-permission="'test_access'"
+                <li v-permission="'exam_access'"
                     class="nav-item"
                     @click="setGlobalStorage('#group_'+group.id, '#group_tests_'+group.id);">
                     <a class="nav-link link-muted"
@@ -140,7 +139,6 @@
                        aria-selected="true">
                         <i class="fa fa-book-open pr-2"></i>
                         <span v-if="help"> {{ trans('global.glossar.title_singular') }}</span>
-
                     </a>
                     <a v-else
                        v-permission="'glossar_create'"
@@ -162,8 +160,6 @@
                         <i class="fa fa-folder-open pr-2"></i>{{trans('global.medium.title')}}
                     </a>
                 </li>-->
-
-
                 <li class="nav-item ml-auto pull-right">
                     <a class="nav-link small link-muted pointer" style="line-height: 24px;"
                        @click="help = !help">
@@ -178,7 +174,6 @@
                         <i class="fas fa-pencil-alt"></i>
                     </a>
                 </li>
-
             </ul>
             <div class="tab-content"
                  id="custom-content-below-tabContent">
@@ -237,12 +232,13 @@
                          :subscribable="true"
                          create_label_field="enrol"
                      ></kanbans>
-                 </div>
-                <div v-if="checkPermission('plan_access')"
-                     class="tab-pane fade "
+                </div>
+                <div v-permission="'plan_access'"
+                     :class="getGlobalStorage('#group_'+group.id, '#group_plans_'+group.id)"
+                     class="tab-pane"
                      id="plan-tab"
                      role="tab"
-                     aria-labelledby="content-nav-tab">
+                     aria-labelledby="plan-nav-tab">
                     <plans
                         ref="Plans"
                         delete_label_field="expel"
@@ -252,8 +248,8 @@
                         create_label_field="enrol"
                     ></plans>
                 </div>
-
-                <div v-permission="'test_access'"
+                <div v-permission="'exam_access'"
+                     :class="getGlobalStorage('#group_'+group.id, '#group_tests_'+group.id)"
                      class="tab-pane "
                      id="tests-tab"
                      role="tab"
@@ -267,7 +263,6 @@
                         create_label_field="enrol"
                     ></Exams>
                 </div>
-
                 <div v-permission="'videoconference_access'"
                      class="tab-pane "
                      :class="getGlobalStorage('#group_'+group.id, '#group_videoconference_'+group.id)"
@@ -283,26 +278,25 @@
                         delete_label_field="expel"
                     ></videoconferences>
                 </div>
-                <!--                   <div v-if="checkPermission('task_access')"
-                                    class="tab-pane fade "
-                                    id="task-tab"
-                                    role="tab"
-                                    aria-labelledby="content-nav-tab">
-                                   <tasks
-                                       ref="Tasks"
-                                       subscribable_type="App\Group"
-                                       :subscribable_id="group.id"></tasks>
-                               </div> -->
-                <!--
-                                 <div v-if="group.glossar !== null"
-                                      class="tab-pane fade"
-                                      id="glossar-tab"
-                                      role="tab"
-                                      aria-labelledby="glossar-nav-tab">
-                                     <glossars
-                                         :glossar="group.glossar">
-                                     </glossars>
-                                 </div>-->
+                <!-- <div v-permission="'task_access'"
+                        class="tab-pane fade "
+                        id="task-tab"
+                        role="tab"
+                        aria-labelledby="content-nav-tab">
+                       <tasks
+                           ref="Tasks"
+                           subscribable_type="App\Group"
+                           :subscribable_id="group.id"></tasks>
+                   </div> -->
+                <!-- <div v-if="group.glossar !== null"
+                          class="tab-pane fade"
+                          id="glossar-tab"
+                          role="tab"
+                          aria-labelledby="glossar-nav-tab">
+                         <glossars
+                             :glossar="group.glossar">
+                         </glossars>
+                     </div>-->
                 <!--<div class="tab-pane fade "
                     id="medium-tab"
                     role="tab"
@@ -313,49 +307,6 @@
                    </media>
                </div>-->
             </div>
-
-<!--            <div class="card card-primary">
-                <div class="card-header">
-                    <div class="card-title">
-                        <h5 class="m-0">
-                            <i class="fas fa-layer-group mr-1"></i>
-                            {{ this.currentGroup.title }}
-                        </h5>
-                    </div>
-                    <div
-                        v-permission="'organization_edit'"
-                        class="card-tools pr-2">
-                        <a  @click="editGroup()">
-                            <i class="fas fa-pencil-alt"></i>
-                        </a>
-                    </div>
-
-                </div>
-
-                <div class="card-body">
-
-                    <p class="text-muted">
-                        {{ trans('global.group.fields.external_begin') }}: {{ this.currentGroup.external_begin }}<br>
-                        {{ trans('global.group.fields.external_end') }}: {{ this.currentGroup.external_end }}
-                    </p>
-                    <hr>
-
-                    <strong>
-                        <i class="fas fa-city mr-1"></i>
-                        {{ trans('global.organizationType.title_singular') }}
-                    </strong>
-                    <p class="text-muted">
-                        {{ this.currentGroup.organization_type?.title }}
-                    </p>
-                    <hr>
-                </div>
-
-                <div class="card-footer">
-                    <small class="float-right">
-                        {{ this.currentGroup.updated_at }}
-                    </small>
-                </div>
-            </div>-->
         </div>
 
         <Teleport to="body">
@@ -368,13 +319,13 @@
 import GroupModal from "../group/GroupModal.vue";
 import Videoconferences from "../videoconference/Videoconferences.vue";
 import Courses from "../course/Courses.vue";
-import Glossars from "../glossar/Glossars.vue";
+//import Glossars from "../glossar/Glossars.vue";
 import Media from "../media/Media.vue";
 import Contents from "../content/Contents.vue";
 import Users from "../user/Users.vue";
 import Logbooks from "../logbook/Logbooks.vue";
 import Kanbans from "../kanban/Kanbans.vue";
-import Tasks from "../task/Tasks.vue";
+//import Tasks from "../task/Tasks.vue";
 import Plans from "../plan/Plans.vue";
 import Exams from "../exam/Exams.vue";
 //import Tests from "../tests/Tests_Exams_View.vue";
@@ -388,11 +339,11 @@ export default {
         Users,
         Courses,
         Media,
-        Glossars,
+        //Glossars,
         Contents,
         Logbooks,
         Kanbans,
-        Tasks,
+        //Tasks,
         Plans,
         Exams
         //Tests

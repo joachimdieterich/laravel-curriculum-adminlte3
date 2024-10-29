@@ -11,7 +11,7 @@
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fas fa-th pr-2"></i>{{ trans('global.all') }} {{ trans('global.curriculum.title') }}
+                        <i class="fas fa-th pr-2"></i>  {{ trans('global.all') }} {{ trans('global.curriculum.title') }}
                     </a>
                 </li>
                 <li class="nav-item">

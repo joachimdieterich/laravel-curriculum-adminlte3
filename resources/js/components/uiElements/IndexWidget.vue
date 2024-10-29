@@ -9,8 +9,8 @@
         <a v-if="this.create === true"
            @click="createNewItem()"
         >
-            <div class="nav-item-box-image-size text-center">
-                <slot name="itemIcon" >
+            <div class="d-flex align-items-center justify-content-center nav-item-box-image-size">
+                <slot name="itemIcon">
                     <i class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
                 </slot>
             </div>
@@ -35,8 +35,9 @@
             </div>
             <div v-else
                  @click="clickEvent(item)"
-                 class="nav-item-box-image-size text-center"
+                 class="d-flex align-items-center justify-content-center nav-item-box-image-size"
                  :style="{backgroundColor: item.color + ' !important'}">
+                <slot name="itemIcon"/>
             </div>
             <span @click="clickEvent(item)">
                 <slot name="content">

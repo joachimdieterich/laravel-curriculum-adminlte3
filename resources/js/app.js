@@ -141,7 +141,7 @@ app.config.globalProperties.checkPermission = (permission) => {
 
 app.config.globalProperties.htmlToText = (html) => {
     var txt = document.createElement("textarea");
-    txt.innerHTML = html;
+    txt.innerHTML = html ?? '';
     let map =
         {
             '&amp;': '&',

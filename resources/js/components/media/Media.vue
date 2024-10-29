@@ -104,7 +104,6 @@
             <h6 class="events-heading pt-1 hyphens" v-dompurify-html="subscription.medium.title"></h6>
             <p class=" text-muted small" v-dompurify-html="subscription.medium.description"></p>
         </span>
-
     </div>
 </div>
 </template>

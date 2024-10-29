@@ -53,7 +53,7 @@
                 modelName="logbook"
                 url="/logbooks">
                 <template v-slot:itemIcon>
-                    <i class="fa fa-2x fa-book"></i>
+                    <i class="fa-2x" :class="logbook.css_icon"></i>
                 </template>
                 <template
                     v-permission="'logbook_edit, logbook_delete'"
@@ -119,11 +119,10 @@
         <Teleport to="body">
             <SubscribeLogbookModal
                 v-if="subscribable"
-            >
-            </SubscribeLogbookModal>
+            ></SubscribeLogbookModal>
             <LogbookModal
                 v-if="!subscribable"
-               ></LogbookModal>
+            ></LogbookModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.logbook.' + delete_label_field)"
@@ -143,7 +142,6 @@
    </div>
 </template>
 <script>
-import { nextTick } from 'vue';
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import LogbookModal from "./LogbookModal.vue";
 import DataTable from 'datatables.net-vue3';

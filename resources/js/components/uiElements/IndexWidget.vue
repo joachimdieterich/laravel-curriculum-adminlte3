@@ -21,6 +21,7 @@
             </span>
         </a>
         <a v-else
+           class="text-decoration-none"
            :style="'color: ' + $textcolor(item.color) + ' !important; ' + (isSelected(item) ? 'filter: brightness(80%); width:100%; height:100%; position:absolute; top:0; left:0;' : '')"
         >
             <div v-if="item.medium_id"

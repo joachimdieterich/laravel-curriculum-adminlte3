@@ -49,7 +49,7 @@
                             name="description"
                             class="form-control"
                             :init="tinyMCE"
-                            :initial-value="form.description"
+                            v-model="form.description"
                         />
                         <p class="help-block"
                            v-if="form.errors.description"
@@ -135,7 +135,6 @@ import Editor from "@tinymce/tinymce-vue";
 import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker.vue";
 import MediumForm from "../media/MediumForm.vue";
 
-
 export default {
     name: 'logbook-modal',
     components:{
@@ -182,7 +181,7 @@ export default {
                 this.add();
             }
         },
-        add(){
+        add() {
             axios.post(this.url, this.form)
                 .then(r => {
                     this.$eventHub.emit('logbook-added', r.data);
@@ -191,7 +190,7 @@ export default {
                     console.log(e.response);
                 });
         },
-        update(){
+        update() {
             axios.patch(this.url + '/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('logbook-updated', r.data);

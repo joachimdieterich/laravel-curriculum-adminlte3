@@ -9,7 +9,7 @@
         <a v-if="this.create === true"
            @click="createNewItem()"
         >
-            <div class="d-flex align-items-center justify-content-center nav-item-box-image-size">
+            <div class="d-flex align-items-center justify-content-center nav-item-box-image-size h-50">
                 <slot name="itemIcon">
                     <i class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
                 </slot>
@@ -26,16 +26,16 @@
         >
             <div v-if="item.medium_id"
                  @click="clickEvent(item)"
-                 class="nav-item-box-image-size"
-                 :style="{'background': 'url(/media/' + item.medium_id + '?model='+modelName+'&model_id=' + item.DT_RowId +') top center no-repeat'}">
-                <div class="nav-item-box-image-size"
-                     style="width: 100% !important;"
-                     :style="{backgroundColor: item.color + ' !important',  'opacity': '0.25'}">
+                 class="nav-item-box-image-size h-50"
+                 :style="{backgroundColor: item.color + ' !important'}">
+                 <div class="nav-item-box-image-size h-100"
+                    style="width: 100% !important;"
+                    :style="{'background': 'url(/media/' + item.medium_id + '?model='+modelName+'&model_id=' + item.DT_RowId +') center no-repeat'}">
                 </div>
             </div>
             <div v-else
                  @click="clickEvent(item)"
-                 class="d-flex align-items-center justify-content-center nav-item-box-image-size"
+                 class="d-flex align-items-center justify-content-center nav-item-box-image-size h-50"
                  :style="{backgroundColor: item.color + ' !important'}">
                 <slot name="itemIcon"/>
             </div>

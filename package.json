@@ -6,7 +6,7 @@
         "build": "vite build",
         "preview": "vite build & vite preview",
         "production": "vite build",
-        "test:cypress": "php artisan serve --env=cypress --port=8001 & cypress open"
+        "cypress": "start php artisan serve --env=cypress --port=8001 && start npx cypress open"
     },
     "devDependencies": {
         "@fortawesome/fontawesome-free": "^6.3.0",

@@ -642,12 +642,10 @@
         height: 300px !important;
     }
     .nav-item-box-image-size {
-        min-height: 150px !important;
-        min-width: 197px !important;
         padding: 0;
         border-top-left-radius: 0.2rem;
         border-top-right-radius: 0.2rem;
-        background-size: cover !important;
+        background-size: contain !important;
     }
     .nav-item-box {
         position:absolute;

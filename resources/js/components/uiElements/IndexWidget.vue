@@ -11,24 +11,23 @@
         >
             <div class="d-flex align-items-center justify-content-center nav-item-box-image-size h-50">
                 <slot name="itemIcon">
-                    <i class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
+                    <i class="fa fa-2x fa-plus text-muted"></i>
                 </slot>
             </div>
             <span class="text-center p-1 overflow-auto nav-item-box bg-gray-light">
-                   <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                       {{ createLabel }}
-                   </h1>
+                <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
+                    {{ createLabel }}
+                </h1>
             </span>
         </a>
         <a v-else
-           class="text-decoration-none text-black"
-           :style="isSelected(item) ? 'filter: brightness(80%); width:100%;  height:100%;  position:absolute;  top:0;left:0;' :  ''"
+           :style="'color: ' + $textcolor(item.color) + ' !important; ' + (isSelected(item) ? 'filter: brightness(80%); width:100%; height:100%; position:absolute; top:0; left:0;' : '')"
         >
             <div v-if="item.medium_id"
                  @click="clickEvent(item)"
                  class="nav-item-box-image-size h-50"
                  :style="{backgroundColor: item.color + ' !important'}">
-                 <div class="nav-item-box-image-size h-100"
+                <div class="nav-item-box-image-size h-100"
                     style="width: 100% !important;"
                     :style="{'background': 'url(/media/' + item.medium_id + '?model='+modelName+'&model_id=' + item.DT_RowId +') center no-repeat'}">
                 </div>
@@ -42,12 +41,12 @@
             <span @click="clickEvent(item)">
                 <slot name="content">
                     <span class="bg-white text-center p-1 overflow-auto nav-item-box">
-                       <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
+                        <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
                            {{ item[this.titleField] }}
-                       </h1>
-                       <p class="text-muted small">
+                        </h1>
+                        <p class="text-muted small">
                            {{ htmlToText(item[this.descriptionField])}}
-                       </p>
+                        </p>
                     </span>
                 </slot>
             </span>
@@ -56,9 +55,12 @@
 
             <div @click="clickEvent(item)"
                  class="symbol"
-                 :style="'color:' + $textcolor(item.color) + '!important'"
                  style="position: absolute; width: 30px; height: 40px;">
-                <slot name="icon"></slot>
+                <slot name="icon">
+                    <i class="fa pt-2"
+                        :class="item.owner_id == $userId ? 'fa-user' : 'fa-share-nodes'"
+                    ></i>
+                </slot>
             </div>
             <div v-permission="'is_admin'"
                  class="btn btn-flat pull-right"
@@ -67,7 +69,7 @@
                  data-toggle="dropdown"
                  aria-expanded="false"
             >
-                <i class="fas fa-ellipsis-v"
+                <i class="fa fa-ellipsis-v"
                    :style="'color:' + $textcolor(item.color)"></i>
                 <slot name="dropdown"></slot>
             </div>

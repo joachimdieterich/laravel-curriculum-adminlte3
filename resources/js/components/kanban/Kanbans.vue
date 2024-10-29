@@ -67,16 +67,15 @@
              class="col-md-12 m-0">
             <IndexWidget
                 v-permission="'kanban_create'"
-                key="'kanbanCreate'"
+                key="kanbanCreate"
                 modelName="Kanban"
                 url="/kanbans"
                 :create=true
                 :createLabel="trans('global.kanban.' + create_label_field)">
                 <template v-slot:itemIcon>
                     <i v-if="create_label_field == 'enrol'"
-                       class="fa fa-2x p-5 fa-link nav-item-text text-muted"></i>
-                    <i v-else
-                       class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
+                       class="fa fa-2x fa-link text-muted"
+                    ></i>
                 </template>
             </IndexWidget>
             <IndexWidget
@@ -85,8 +84,8 @@
                 :model="kanban"
                 modelName= "kanban"
                 url="/kanbans">
-                <template v-slot:icon>
-                    <i class="fa fa-kanban-location-dot pt-2"></i>
+                <template v-slot:itemIcon>
+                    <i class="fa fa-2x fa-columns"></i>
                 </template>
 
                 <template

@@ -35,28 +35,26 @@
         <div class="col-md-12 py-2">
             <IndexWidget
                 v-permission="'logbook_create'"
-                key="'logbookCreate'"
+                key="logbookCreate"
                 modelName="Logbook"
                 url="/logbooks"
                 :create=true
                 :createLabel="trans('global.logbook.' + create_label_field)">
                 <template v-slot:itemIcon>
                     <i v-if="create_label_field == 'enrol'"
-                       class="fa fa-2x p-5 fa-link nav-item-text text-muted"></i>
-                    <i v-else
-                       class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
+                       class="fa fa-2x fa-link text-muted"
+                    ></i>
                 </template>
             </IndexWidget>
             <IndexWidget
                 v-for="logbook in logbooks"
                 :key="'logbookIndex'+logbook.id"
                 :model="logbook"
-                modelName= "logbook"
+                modelName="logbook"
                 url="/logbooks">
-                <template v-slot:icon>
-                    <i class="fas fa-logbook pt-2"></i>
+                <template v-slot:itemIcon>
+                    <i class="fa fa-2x fa-book"></i>
                 </template>
-
                 <template
                     v-permission="'logbook_edit, logbook_delete'"
                     v-slot:dropdown>
@@ -101,14 +99,6 @@
                             </span>
                         </button>
                     </div>
-                </template>
-                <template v-slot:content>
-                    <span class="bg-white text-center p-1 overflow-auto nav-item-box">
-                   <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                       {{ logbook.title }}
-                   </h1>
-                   <p class="text-muted small"></p>
-                </span>
                 </template>
             </IndexWidget>
         </div>

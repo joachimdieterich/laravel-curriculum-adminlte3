@@ -67,7 +67,7 @@
              class="col-md-12 m-0">
             <IndexWidget
                 v-permission="'map_create'"
-                key="'mapCreate'"
+                key="mapCreate"
                 modelName="Map"
                 url="/maps"
                 :create=true

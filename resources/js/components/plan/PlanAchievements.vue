@@ -2,10 +2,17 @@
     <div id="show-achievements">
         <div id="header" class="d-flex align-items-center py-4">
             <div id="fixed-header" class="d-flex position-fixed w-100 px-3">    
-                <span class="flex-fill">Ziele / Namen</span>
-                    <span v-for="user in users"
-                    class="flex-fill text-center"
-                    >
+                <span class="d-flex align-items-center">
+                    Ziele / Namen
+                    <i
+                        class="fa fa-gear text-secondary ml-1 p-1 pointer"
+                        style="font-size: 1rem;"
+                        @click="$modal.show('plan-achievements-options-modal');"
+                    ></i>
+                </span>
+                <span v-for="user in users"
+                    class="text-center"
+                >
                     {{ user.firstname }} {{ user.lastname }}
                 </span>
             </div>
@@ -32,9 +39,14 @@
                             v-html="ena.title"
                         ></span>
                         <span v-for="(user, index) in users">
-                            <span v-if="ena.achievements.length === users.length || ena.achievements.length === 0"
+                            <span v-if="ena.achievements.length === 0"
+                                class="d-flex justify-content-center align-items-center h-100 status-0"
+                            >
+                                <i class="fa fa-circle"></i>
+                            </span>
+                            <span v-else-if="ena.achievements.length === users.length"
                                 class="d-flex justify-content-center align-items-center h-100"
-                                :class="'status-' + (ena.achievements[index]?.status[1] ?? '0')"
+                                :class="'status-' + ena.achievements[index].status[1]"
                             >
                                 <i class="fa fa-circle"></i>
                             </span>
@@ -49,6 +61,7 @@
                 </div>
             </div>
         </div>
+        <plan-achievements-options-modal></plan-achievements-options-modal>
     </div>
 </template>
 <script>
@@ -89,6 +102,58 @@ export default {
         }
         this.objectives = this.terminal.concat(obj);
     },
+    methods: {
+        toggleUnset(bool) {
+            if (!bool) { // show competencies
+                [...document.getElementsByClassName('enabling d-none')].forEach(elem => {
+                    elem.classList.add('d-flex');
+                    elem.classList.remove('d-none');
+                });
+            } else { // hide competencies
+                let unsetElem = [...document.getElementsByClassName('status-0')].map(elem => elem.parentElement.parentElement);
+                let parentElem = [];
+                // if only one user is selected, the achievements-per-competence ratio is 1:1
+                if (this.users.length === 1) {
+                    parentElem = unsetElem;
+                } else { // else it's n:1
+                    let counter = 0;
+                    // only get elements which are listed n times
+                    while (counter < unsetElem.length) {
+                        const first = unsetElem[counter];
+                        let equal = true;
+                        // if there are x users, check if the next (x-1) elements are the same
+                        for (let i = 1; i < this.users.length; i++) {
+                            counter++; // get next index
+                            const next = unsetElem[counter];
+                            // compare its first listed element with the next listed one
+                            if (first != next) { // if they're not the same, stop the loop
+                                equal = false;
+                                break;
+                            }
+                        }
+                        // if this element appears n times, it should be hidden
+                        if (equal) {
+                            parentElem.push(first);
+                            counter++; // needs +1, since current counter-index would refer to this element
+                        }
+                    }
+                }
+                // hide all needed elements
+                for (let i = 0; i < parentElem.length; i++) {
+                    const element = parentElem[i];
+                    element.classList.add('d-none');
+                    element.classList.remove('d-flex');
+                }
+            }
+        },
+        toggleObjectives(bool) {
+            if (bool) { // collapse all unfolded objectives
+                $('.terminal:not(.collapsed)').trigger('click');
+            } else { // unfold all collapsed objectives
+                $('.terminal.collapsed').trigger('click');
+            }
+        }
+    },
 }
 </script>
 <style>
@@ -106,9 +171,8 @@ export default {
             > span {
                 font-size: 1.25rem;
                 font-weight: 700;
-                min-width: 17%;
-        
-                &:first-child { min-width: 25%; }
+                min-width: 25%;
+                flex: 1 1 0px;
             }
         }
     }

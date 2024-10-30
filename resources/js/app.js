@@ -219,6 +219,7 @@ Vue.component('plans', () => import('./components/plan/Plans.vue'));
 Vue.component('plan-achievements', () => import('./components/plan/PlanAchievements.vue'));
 Vue.component('subscribe-objective-modal', () => import('./components/objectives/SubscribeObjectiveModal.vue'));
 Vue.component('set-achievements-modal', () => import('./components/plan/SetAchievementsModal.vue'));
+Vue.component('plan-achievements-options-modal', () => import('./components/plan/PlanAchievementsOptionsModal.vue'));
 Vue.component('select-users-modal', () => import('./components/users/SelectUsersModal.vue'));
 Vue.component('objective-progress-subscription-modal', () => import('./components/objectives/ObjectiveProgressSubscriptionModal.vue'));
 Vue.component('task-modal', () => import('./components/tasks/TaskModal.vue'));

@@ -63,15 +63,16 @@
                     ></i>
                 </slot>
             </div>
-            <div v-permission="'is_admin'"
-                 class="btn btn-flat pull-right"
+            <div v-if="item.owner_id == $userId"
                  :id="model+'Dropdown_' + item.DT_RowId"
+                 class="btn btn-flat pull-right"
                  style="position:absolute; top:0; right: 0; background-color: transparent;"
                  data-toggle="dropdown"
                  aria-expanded="false"
             >
                 <i class="fa fa-ellipsis-v"
-                   :style="'color:' + $textcolor(item.color)"></i>
+                   :style="'color:' + $textcolor(item.color)"
+                ></i>
                 <slot name="dropdown"></slot>
             </div>
         </a>

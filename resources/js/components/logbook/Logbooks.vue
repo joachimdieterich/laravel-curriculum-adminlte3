@@ -6,13 +6,13 @@
                 <li class="nav-item">
                     <a class="nav-link " :class="filter === 'all' ? 'active' : ''" id="logbook-filter-all"
                        @click="setFilter('all')" data-toggle="pill" role="tab">
-                        <i class="fa fa-columns pr-2"></i>Alle Logb&uuml;cher
+                        <i class="fa fa-book pr-2"></i>Alle Logb&uuml;cher
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" :class="filter === 'owner' ? 'active' : ''" id="custom-filter-owner"
                        @click="setFilter('owner')" data-toggle="pill" role="tab">
-                        <i class="fa fa-logbook  pr-2"></i>Meine Logb&uuml;cher
+                        <i class="fa fa-user pr-2"></i>Meine Logb&uuml;cher
                     </a>
                 </li>
                 <li class="nav-item">
@@ -57,7 +57,9 @@
                 </template>
                 <template
                     v-permission="'logbook_edit, logbook_delete'"
-                    v-slot:dropdown>
+                    v-if="logbook.owner_id == $userId"
+                    v-slot:dropdown
+                >
                     <div class="dropdown-menu dropdown-menu-right"
                          style="z-index: 1050;"
                          x-placement="left-start">

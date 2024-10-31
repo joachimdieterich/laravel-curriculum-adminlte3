@@ -6,12 +6,12 @@
                 <li class="nav-item">
                     <a class="nav-link "
                        :class="filter === 'all' ? 'active' : ''"
-                       id="curriculum-filter-all"
+                       id="kanban-filter-all"
                        @click="setFilter('all')"
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fas fa-th pr-2"></i>{{ trans('global.all') }} {{ trans('global.curriculum.title') }}
+                        <i class="fas fa-columns pr-2"></i>{{ trans('global.all') }} {{ trans('global.kanban.title') }}
                     </a>
                 </li>
                 <li class="nav-item">
@@ -25,7 +25,7 @@
                         <i class="fas fa-university pr-2"></i>{{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
                     </a>
                 </li>
-                <li v-can="'curriculum_create'"
+                <li v-can="'kanban_create'"
                     class="nav-item">
                     <a class="nav-link"
                        :class="filter === 'owner' ? 'active' : ''"
@@ -34,7 +34,7 @@
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fa fa-user pr-2"></i>{{ trans('global.my') }} {{ trans('global.curriculum.title') }}
+                        <i class="fa fa-user pr-2"></i>{{ trans('global.my') }} {{ trans('global.kanban.title') }}
                     </a>
                 </li>
                 <li class="nav-item">
@@ -48,7 +48,7 @@
                         <i class="fa fa-paper-plane pr-2"></i>{{ trans('global.shared_with_me') }}
                     </a>
                 </li>
-                <li v-can="'curriculum_create'"
+                <li v-can="'kanban_create'"
                     class="nav-item">
                     <a class="nav-link"
                        :class="filter === 'shared_by_me' ? 'active' : ''"
@@ -57,7 +57,7 @@
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fa fa-share-nodes  pr-2"></i>{{ trans('global.shared_by_me') }}
+                        <i class="fa fa-share-nodes pr-2"></i>{{ trans('global.shared_by_me') }}
                     </a>
                 </li>
             </ul>
@@ -272,7 +272,7 @@ export default {
         });
     },
     methods: {
-        setFilter(filter){
+        setFilter(filter) {
             this.filter = filter;
             if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
                 this.url = '/kanbanSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
@@ -282,13 +282,13 @@ export default {
 
             this.dt.ajax.url(this.url).load();
         },
-        editKanban(kanban){
+        editKanban(kanban) {
             this.globalStore?.showModal('kanban-modal', kanban);
         },
-        loaderEvent(){
+        loaderEvent() {
             this.dt = $('#kanban-datatable').DataTable();
 
-            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
+            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the kanban-data
                 this.kanbans = this.dt.rows({page: 'current'}).data().toArray();
 
                 $('#kanban-content').insertBefore('#kanban-datatable-wrapper');
@@ -297,15 +297,15 @@ export default {
                 this.dt.search(filter).draw();
             });
         },
-        confirmItemDelete(kanban){
+        confirmItemDelete(kanban) {
             this.currentKanban = kanban;
             this.showConfirm = true;
         },
-        confirmKanbanCopy(kanban){
+        confirmKanbanCopy(kanban) {
             this.currentKanban = kanban;
             this.showCopy = true;
         },
-        copy(){
+        copy() {
             window.location = "/kanbans/" + this.currentKanban.id + "/copy";
         },
         destroy() {

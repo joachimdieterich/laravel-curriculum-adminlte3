@@ -5,11 +5,10 @@
     >
         <img
             v-if="kanban.medium_id !== null"
-            class="kanban_board_wrapper p-0"
-            alt="background image"
+            class="kanban_board_wrapper position-absolute p-0"
+            style="object-fit: cover;"
             :src="'/media/'+ kanban.medium_id + '?model=Kanban&model_id=' + kanban.id"
-            style="object-fit: cover;
-            position:absolute;"
+            alt="background image"
         />
         <div
             id="kanban_board_wrapper"
@@ -27,17 +26,17 @@
                 <i class="fa fa-expand"></i>
             </div>
             <div
-                :style="kanbanWidth "
+                :style="kanbanWidth"
                 class="m-0"
             >
                 <!-- Columns (Statuses) -->
                 <draggable
-                    :list="statuses"
+                    v-model="statuses"
                     v-bind="columnDragOptions"
                     :move="isLocked"
                     @end="syncStatusMoved"
                     handle=".handle"
-                    itemKey="id"
+                    item-key="id"
                     :emptyInsertThreshold="500"
                 >
                     <template
@@ -46,13 +45,14 @@
                         <span
                             v-if="(status.visibility) || ($userId == status.owner_id)"
                             :key="'drag_status_' + status.id"
-                            class=" no-border pr-3"
-                            :style="'float:left; width:' + itemWidth + 'px;'"
+                            class="no-border float-left pr-3"
+                            :style="'width:' + itemWidth + 'px;'"
                         >
                             <KanbanStatus
                                 :kanban="kanban"
                                 :status="status"
                                 :editable="editable"
+                                :key="status.id"
                                 v-on:kanban-status-updated="handleStatusUpdatedWithoutWebsocket"
                                 v-on:kanban-status-deleted="handleStatusDestroyedWithoutWebsocket"
                                 filter=".ignore"
@@ -69,13 +69,12 @@
                                     @end="syncItemMoved"
                                     handle=".handle"
                                     item-key="kanban_status_id"
-                                    :component-data="{name:'fade'}"
+                                    :component-data="{ name: 'fade' }"
                                 >
                                     <template
                                         #item="{ element: item, itemIndex }"
-                                        style="display:flex; flex-direction: column;"
                                         :style="'width:' + itemWidth + 'px;'"
-                                        class="pr-3"
+                                        class="d-flex flex-column pr-3"
                                     >
                                         <span :key="'item_' + item.id">
                                             <KanbanItem
@@ -93,7 +92,7 @@
                                                 :kanban_owner_id="kanban.owner_id"
                                                 style="min-height: 150px"
                                                 v-on:item-destroyed="handleItemDestroyedWithoutWebsocket"
-                                                v-on:item-updated="handleItemUpdatedWithoutWebsocket"
+                                                v-on:kanban-item-updated="handleItemUpdatedWithoutWebsocket"
                                                 v-on:item-edit=""
                                                 v-on:sync="sync"
                                                 filter=".ignore"
@@ -109,26 +108,28 @@
                                     :item="item"
                                     :width="itemWidth"
                                     v-on:item-added="handleItemAddedWithoutWebsocket"
-                                    v-on:item-updated=""
+                                    v-on:kanban-item-updated=""
                                     v-on:item-canceled="closeForm"
-                                    style="z-index: 2">
-                                </KanbanItemCreate>
-                                <div v-if="(editable == true) && (status.editable == true) || ($userId == status.owner_id)"
-                                     v-show="newItem !== status.id"
-                                     :id="'kanbanItemCreateButton_' + index"
-                                     class="btn btn-flat py-0 w-100"
-                                     style="margin-bottom: 1rem;"
-                                     @click="openForm('item', status.id)">
+                                    style="z-index: 2"
+                                ></KanbanItemCreate>
+                                <div
+                                    v-if="(editable == true) && (status.editable == true) || ($userId == status.owner_id)"
+                                    v-show="newItem !== status.id"
+                                    :id="'kanbanItemCreateButton_' + index"
+                                    class="btn btn-flat mb-3 py-0 w-100"
+                                    @click="openForm('item', status.id)"
+                                >
                                     <i class="text-white fa fa-2x fa-plus-circle"></i>
                                 </div>
                             </div>
                         </span>
                     </template>
                     <template #footer>
-                        <div v-if="editable"
-                             class=" no-border  pr-2"
-                             style="float:left;"
-                             :style="'width:' + itemWidth + 'px;'">
+                        <div
+                            v-if="editable"
+                            class=" no-border float-left pr-2"
+                            :style="'width:' + itemWidth + 'px;'"
+                        >
                             <KanbanStatus
                                 :kanban="kanban"
                                 :editable="editable"
@@ -190,24 +191,16 @@ import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
-        'kanban': Object,
-        'editable': {
+        kanban: Object,
+        editable: {
             type: Boolean,
             default: true
         },
-        'pusher': {
+        pusher: {
             type: Boolean,
             default: false
         },
-        'search': ''
-    },
-    watch: {
-        statuses: {
-            deep: true,
-            handler() {
-                //console.log('changed');
-            }
-        },
+        search: ''
     },
     setup() {
         const globalStore = useGlobalStore();
@@ -380,13 +373,16 @@ export default {
                 this.handleItemAdded(newItem);
             }
         },
-        handleItemAdded(newItem) {      // add an item to the correct column in our list
-            const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should replace the item
+        handleItemAdded(newItem) {
+            // add an item to the correct column in our list
+            const statusIndex = this.statuses.findIndex(
                 status => status.id === newItem.kanban_status_id
             );
-            this.statuses[statusIndex].items.push(newItem);       // Add newly created item to our column
+            // Add newly created item to our column
+            this.statuses[statusIndex].items.push(newItem);
 
-            this.closeForm();                                     // Reset and close the AddItemForm
+            // Reset and close the AddItemForm
+            this.closeForm();
         },
         handleItemMoved(columns) {
             let newStatusOrder = [];
@@ -606,7 +602,6 @@ export default {
         } else {
             this.kanbanColor = this.kanban.color;
         }
-
 
         if (this.kanban.auto_refresh === true) {
             this.autoRefresh = true;

@@ -67,18 +67,20 @@
         </Teleport>
         <teleport
             v-if="$userId == logbook.owner_id"
-            to="#customTitle">
-            <small>{{ logbook.title }} </small>
+            to="#customTitle"
+        >
+            <small>{{ logbook.title }}</small>
             <a class="btn btn-flat"
                @click="editLogbook(logbook)"
             >
                 <i class="fa fa-pencil-alt text-secondary"></i>
             </a>
             <button
-                v-permission="'kanban_create'"
+                v-permission="'logbook_create'"
                 v-if="$userId == logbook.owner_id"
                 class="btn btn-flat"
-                @click="share()">
+                @click="share()"
+            >
                 <i class="fa fa-share-alt text-secondary"></i>
             </button>
         </teleport>

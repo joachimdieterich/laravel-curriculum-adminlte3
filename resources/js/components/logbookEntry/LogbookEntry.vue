@@ -31,7 +31,7 @@
                         type="button"
                         class="btn btn-tool pt-3"
                         @click.stop="destroy()">
-                        <i class="fa fa-trash "></i>
+                        <i class="fa fa-trash text-danger"></i>
                     </button>
                     <button
                          type="button"

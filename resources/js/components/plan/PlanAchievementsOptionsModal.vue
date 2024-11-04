@@ -33,7 +33,8 @@
                         format="DD.MM.YYYY"
                         value-type="YYYY-MM-DD"
                         :placeholder="trans('global.selectDateRange')"
-                        @clear="options.timespan = ['', '']"
+                        @input="setTimespan()"
+                        @clear="() => { options.timespan = ['', '']; options.hideUnset = false; }"
                     ></date-picker>
                 </div>
                 <div class="custom-switch custom-switch-on-green mb-2">
@@ -45,7 +46,7 @@
                     <label for="student_toggle" class="custom-control-label pointer" style="cursor: not-allowed">{{ trans('global.plan.options.toggle_student') }}</label>
                 </div>
                 <div class="custom-switch custom-switch-on-green mb-2">
-                    <input type="checkbox" id="unset_toggle" class="custom-control-input" v-model="options.showUnset">
+                    <input type="checkbox" id="unset_toggle" class="custom-control-input" v-model="options.hideUnset">
                     <label for="unset_toggle" class="custom-control-label pointer" @click="toggleUnset()">{{ trans('global.plan.options.toggle_unset') }}</label>
                 </div>
                 <div class="custom-switch custom-switch-on-green">
@@ -78,10 +79,19 @@ export default {
         }
     },
     methods: {
+        setTimespan() {
+            this.$parent.filterByTimespan(this.options.timespan);
+            // if timespan got set, wait for the calendar-overlay to disappear and turn-on the 'hide-unset-achievements' toggle
+            if (this.options.timespan[0] !== null && this.options.timespan[1] !== null) {
+                setTimeout(() => {
+                    this.options.hideUnset = true; // don't call the toggleUnset() function
+                }, 200);
+            }
+        },
         toggleUnset() {
             // setTimeout is needed because of race condition
             setTimeout(() => {
-                this.$parent.toggleUnset(this.options.showUnset);
+                this.$parent.toggleUnset(this.options.hideUnset);
             }, 50);
         },
         toggleObjectives() {

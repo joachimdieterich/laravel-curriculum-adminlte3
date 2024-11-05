@@ -129,6 +129,12 @@
         </div>
     </div>
     <Teleport to="body">
+        <MediumModal
+            subscribable_type="App\\Kanban"
+            :subscribable_id="kanban.id"
+            :show="this.mediumStore.getShowMediumModal"
+            @close="this.mediumStore.setShowMediumModal(false)"
+        ></MediumModal>
         <KanbanModal></KanbanModal>
         <KanbanStatusModal
         :kanban="kanban"></KanbanStatusModal>
@@ -174,6 +180,8 @@ import KanbanStatusModal from "./KanbanStatusModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import KanbanModal from "../kanban/KanbanModal.vue";
 import {useGlobalStore} from "../../store/global";
+import MediumModal from "../media/MediumModal.vue";
+import {useMediumStore} from "../../store/media.js";
 
 export default {
     props: {
@@ -198,8 +206,10 @@ export default {
     },
     setup () {
         const globalStore = useGlobalStore();
+        const mediumStore = useMediumStore();
         return {
             globalStore,
+            mediumStore
         }
     },
     data() {
@@ -632,6 +642,7 @@ export default {
         },
     },
     components: {
+        MediumModal,
         KanbanStatus,
         draggable,
         KanbanItem,

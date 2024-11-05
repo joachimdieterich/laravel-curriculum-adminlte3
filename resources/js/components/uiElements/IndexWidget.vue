@@ -53,6 +53,8 @@
 
             <slot name="owner"></slot>
 
+            <slot name="badges"></slot>
+
             <div @click="clickEvent(item)"
                  class="symbol"
                  :style="'color:' + $textcolor(item.color) + '!important'"

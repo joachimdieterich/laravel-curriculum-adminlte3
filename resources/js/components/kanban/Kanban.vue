@@ -302,12 +302,12 @@ export default {
                         if (url == '/kanbanStatuses/sync'){
                             this.handleStatusMoved(res.data.message.statuses);
                         } else {
-                            this.handleItemMoved(res.data.message.statuses);
+                            this.handleItemMoved(res.data.message);
                         }
                     }
                 })
                 .catch(err => {
-                    console.log(err.response);
+                    console.log(err);
                 });
         },
         openForm(type, value = 1) {

@@ -58,6 +58,17 @@
                             </button>
                         </div>
                     </template>
+
+                    <template
+                        v-slot:badges>
+                        <p class="text-muted small">
+                               <span class="btn btn-info btn-xs select-all pull-right mr-1"
+                                     style="position: absolute;bottom: 0;margin: 5px 40px 8px 0;width: max-content;right: 5px;">
+                               <i class="fa fa-university"></i> {{ group.organization }}
+                           </span>
+                        </p>
+                    </template>
+
                 </IndexWidget>
             </div>
             <div id="group-datatable-wrapper"

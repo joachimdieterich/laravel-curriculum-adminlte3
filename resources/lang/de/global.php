@@ -128,6 +128,7 @@ return [
     'curricula_cross_references_description' => 'Anregung zur Unterrichtsgestaltung',
     'myProfile' => 'Nutzerprofil',
     'settings' => 'Einstellungen',
+    'options' => 'Optionen',
     'minutes' => 'Minuten',
     'sum' => 'Summe',
     'active' => 'Aktive',
@@ -848,6 +849,13 @@ return [
             'end_helper' => '',
             'duration' => 'Zeitansatz',
             'duration_helper' => 'Geben Sie an, wie viel Zeit (in Minuten) zur Erledigung des Lern-/Arbeitsplans eingeplant werden soll.',
+        ],
+        'options' => [
+            'timespan' => 'Einschätzungen anzeigen, die im angegebenen Zeitraum erstellt wurden',
+            'toggle_unset' => 'Nicht eingeschätzte Kompetenzen ausblenden',
+            'toggle_teacher' => 'Lehrer Einschätzungen anzeigen',
+            'toggle_student' => 'Schüler Einschätzungen anzeigen',
+            'toggle_objectives' => 'Bereiche ein-/ausklappen',
         ],
         'types' => [
             'Trainingsplan' => 'Trainingsplan',

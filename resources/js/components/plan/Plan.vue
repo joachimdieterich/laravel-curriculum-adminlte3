@@ -89,7 +89,7 @@
 
                 <div class="col-12">
                     <PlanEntry
-                        v-if="$userId == plan.owner_id"
+                        v-if="$userId == plan.owner_id && showToolsToggle"
                         :plan="plan"
                         create="true"
                     ></PlanEntry>

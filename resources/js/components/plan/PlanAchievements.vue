@@ -2,10 +2,17 @@
     <div id="show-achievements">
         <div id="header" class="d-flex align-items-center py-4">
             <div id="fixed-header" class="d-flex position-fixed w-100 px-3">    
-                <span class="flex-fill">Ziele / Namen</span>
-                    <span v-for="user in users"
-                    class="flex-fill text-center"
-                    >
+                <span class="d-flex align-items-center">
+                    Ziele / Namen
+                    <i
+                        class="fa fa-gear text-secondary ml-1 p-1 pointer"
+                        style="font-size: 1rem;"
+                        @click="$modal.show('plan-achievements-options-modal');"
+                    ></i>
+                </span>
+                <span v-for="user in users"
+                    class="text-center"
+                >
                     {{ user.firstname }} {{ user.lastname }}
                 </span>
             </div>
@@ -32,15 +39,23 @@
                             v-html="ena.title"
                         ></span>
                         <span v-for="(user, index) in users">
-                            <span v-if="ena.achievements.length === users.length || ena.achievements.length === 0"
+                            <span v-if="ena.achievements.length === 0"
+                                class="d-flex justify-content-center align-items-center h-100 status-0"
+                                data-date="0"
+                            >
+                                <i class="fa fa-circle"></i>
+                            </span>
+                            <span v-else-if="ena.achievements.length === users.length"
                                 class="d-flex justify-content-center align-items-center h-100"
-                                :class="'status-' + (ena.achievements[index]?.status[1] ?? '0')"
+                                :class="'status-' + ena.achievements[index].status[1]"
+                                :data-date="Date.parse(ena.achievements[index].updated_at)"
                             >
                                 <i class="fa fa-circle"></i>
                             </span>
                             <span v-else
                                 class="d-flex justify-content-center align-items-center h-100"
                                 :class="'status-' + (ena.achievements.find(ach => ach.user_id === user.id)?.status[1] ?? '0')"
+                                :data-date="Date.parse(ena.achievements.find(ach => ach.user_id === user.id)?.updated_at ?? 1970)"
                             >
                                 <i class="fa fa-circle"></i>
                             </span>
@@ -49,6 +64,7 @@
                 </div>
             </div>
         </div>
+        <plan-achievements-options-modal></plan-achievements-options-modal>
     </div>
 </template>
 <script>
@@ -65,7 +81,7 @@ export default {
     },
     mounted() {
         let obj = [];
-        // preset needed attributes to terminal-objective placeholder
+        // set needed attributes to terminal-objective as placeholder
         let ter = { terminal_objective: this.enabling[0]?.enabling_objective.terminal_objective };
         let objectives = [];
 
@@ -89,6 +105,94 @@ export default {
         }
         this.objectives = this.terminal.concat(obj);
     },
+    methods: {
+        filterByTimespan(date) {
+            const elements = $('[data-date]');
+            // if timespan got cleared, show all objectives again
+            if (date[0] == null || date[1] == null) {
+                for (const element of elements) {
+                    element.parentElement.parentElement.classList.add('d-flex');
+                    element.parentElement.parentElement.classList.remove('d-none');
+                }
+                return;
+            }
+
+            const begin = Date.parse(date[0]);
+            const end = Date.parse(date[1] + ' 23:59:59');
+            
+            if (this.users.length === 1) { // only 1 user is listed
+                for (const element of elements) {
+                    const updated = element.dataset.date;
+                    // check if achievement's last updated date is inside the timespan
+                    if (begin > updated || end < updated) {
+                        element.parentElement.parentElement.classList.add('d-none');
+                        element.parentElement.parentElement.classList.remove('d-flex');
+                    }
+                }
+            } else { // when multiple users are listed
+                for (let i = 0; i < elements.length; i += this.users.length) {
+                    let hide = true;
+                    // check each objective's achievements
+                    for (let j = 0; j < this.users.length; j++) {
+                        const element = elements[i + j];
+                        const updated = element.dataset.date;
+                        // if at least one achievement was last updated inside the timespan
+                        if (begin <= updated && end >= updated) {
+                            hide = false; // don't hide the parent-element
+                            break;
+                        }
+                    }
+                    // if all achievements are outside of the timespan, hide the parent-element
+                    if (hide) {
+                        elements[i].parentElement.parentElement.classList.add('d-none');
+                        elements[i].parentElement.parentElement.classList.remove('d-flex');
+                    }
+                }
+            }
+        },
+        toggleUnset(hide) {
+            if (this.users.length === 1) {
+                const elements = document.getElementsByClassName('status-0');
+                const add = hide ? 'd-none' : 'd-flex';
+                const remove = hide ? 'd-flex' : 'd-none';
+
+                for (const element of elements) {
+                    element.parentElement.parentElement.classList.add(add);
+                    element.parentElement.parentElement.classList.remove(remove);
+                }
+            } else {
+                this.toggleMultipleUnset(hide);
+            }
+        },
+        toggleMultipleUnset(hide) {
+            const elements = document.getElementsByClassName('status-0');
+            const users_amount = this.users.length; // => n
+            const add = hide ? 'd-none' : 'd-flex';
+            const remove = hide ? 'd-flex' : 'd-none';
+
+            let counter = 0;
+
+            while (counter < elements.length) {
+                const parent = elements[counter].parentElement.parentElement;
+
+                // only hide elements which have n amount of 'status-0'-childs
+                if (parent.getElementsByClassName('status-0').length === users_amount) {
+                    parent.classList.add(add);
+                    parent.classList.remove(remove);
+                    counter += users_amount; // skip the next n amount of elements
+                } else {
+                    counter++; // check next element
+                }
+            }
+        },
+        toggleObjectives(bool) {
+            if (bool) { // collapse all unfolded objectives
+                $('.terminal:not(.collapsed)').trigger('click');
+            } else { // unfold all collapsed objectives
+                $('.terminal.collapsed').trigger('click');
+            }
+        }
+    },
 }
 </script>
 <style>
@@ -106,9 +210,8 @@ export default {
             > span {
                 font-size: 1.25rem;
                 font-weight: 700;
-                min-width: 17%;
-        
-                &:first-child { min-width: 25%; }
+                min-width: 25%;
+                flex: 1 1 0px;
             }
         }
     }

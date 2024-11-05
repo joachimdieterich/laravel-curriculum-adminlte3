@@ -71,16 +71,15 @@
              class="col-md-12 m-0">
             <IndexWidget
                 v-permission="'plan_create'"
-                key="'planCreate'"
+                key="planCreate"
                 modelName="Plan"
                 url="/plans"
                 :create=true
                 :createLabel="trans('global.plan.' + create_label_field)">
                 <template v-slot:itemIcon>
                     <i v-if="create_label_field == 'enrol'"
-                       class="fa fa-2x p-5 fa-link nav-item-text text-muted"></i>
-                    <i v-else
-                       class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
+                       class="fa fa-2x fa-link text-muted"
+                    ></i>
                 </template>
             </IndexWidget>
             <IndexWidget
@@ -89,8 +88,8 @@
                 :model="plan"
                 modelName= "plan"
                 url="/plans">
-                <template v-slot:icon>
-                    <i class="fa fa-plan-location-dot pt-2"></i>
+                <template v-slot:itemIcon>
+                    <i class="fa fa-2x fa-calendar-day"></i>
                 </template>
 
                 <template
@@ -192,7 +191,6 @@ import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useGlobalStore} from "../../store/global";
-import KanbanModal from "../kanban/KanbanModal.vue";
 DataTable.use(DataTablesCore);
 
 export default {

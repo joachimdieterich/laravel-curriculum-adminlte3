@@ -17,16 +17,15 @@
 
                 <IndexWidget
                     v-permission="'user_create'"
-                    key="'userCreate'"
+                    key="userCreate"
                     modelName="User"
                     url="/users"
                     :create=true
                     :createLabel="trans('global.user.' + create_label_field)">
                     <template v-slot:itemIcon>
                         <i v-if="create_label_field == 'enrol'"
-                           class="fa fa-2x p-5 fa-link nav-item-text text-muted"></i>
-                        <i v-else
-                           class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
+                           class="fa fa-2x fa-link text-muted"
+                        ></i>
                     </template>
                 </IndexWidget>
                 <IndexWidget
@@ -75,12 +74,11 @@
                         </div>
                     </template>
                     <template v-slot:content>
-                    <span class="bg-white text-center p-1 overflow-auto nav-item-box">
-                   <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                       {{ user.firstname }} {{ user.lastname }}
-                   </h1>
-                   <p class="text-muted small"></p>
-                </span>
+                        <span class="bg-white text-center p-1 overflow-auto nav-item-box">
+                            <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
+                                {{ user.firstname }} {{ user.lastname }}
+                            </h1>
+                        </span>
                     </template>
                 </IndexWidget>
             </div>

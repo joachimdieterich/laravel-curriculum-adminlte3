@@ -32,16 +32,15 @@
 
             <IndexWidget
                 v-permission="'exam_create'"
-                key="'examCreate'"
+                key="examCreate"
                 modelName="Exam"
                 url="/exams"
                 :create=true
                 :createLabel="trans('global.exam.' + create_label_field)">
                 <template v-slot:itemIcon>
                     <i v-if="create_label_field == 'enrol'"
-                       class="fa fa-2x p-5 fa-link nav-item-text text-muted"></i>
-                    <i v-else
-                       class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
+                       class="fa fa-2x fa-link text-muted"
+                    ></i>
                 </template>
             </IndexWidget>
             <IndexWidget
@@ -58,9 +57,7 @@
                 info_deactivated="Test wurde bereits abgeschlossen."
             >
                 <template v-slot:icon>
-                    <div>
-                        <i class="fa-solid fa-ranking-star pt-2"></i>
-                    </div>
+                    <i class="fa-solid fa-ranking-star pt-2"></i>
                 </template>
 
                 <template v-slot:owner>

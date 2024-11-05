@@ -2,7 +2,8 @@
     <div :id="component_id">
         <slot name="title"></slot>
         <slot id="titleToolbar"
-              name="toolbar"></slot>
+              name="toolbar"
+        ></slot>
         <div id="customTitle"></div>
     </div>
 </template>

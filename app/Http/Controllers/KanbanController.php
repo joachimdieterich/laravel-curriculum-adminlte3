@@ -165,10 +165,10 @@ class KanbanController extends Controller
             'description' => $new_kanban['description'],
             'color' => $new_kanban['color'] ?? '#2980B9',
             'medium_id' => $new_kanban['medium_id'] ?? null,
-            'commentable' => isset($input['commentable']) ? 1 : '0',
-            'auto_refresh' => isset($input['auto_refresh']) ? 1 : '0',
-            'only_edit_owned_items' => isset($input['only_edit_owned_items']) ? 1 : '0',
-            'allow_copy' => isset($input['allow_copy']) ? 1 : '0',
+            'commentable' => $new_kanban['commentable'],
+            'auto_refresh' => $new_kanban['auto_refresh'],
+            'only_edit_owned_items' => $new_kanban['only_edit_owned_items'],
+            'allow_copy' => $new_kanban['allow_copy'],
             'owner_id' => auth()->user()->id,
         ]);
 
@@ -239,10 +239,10 @@ class KanbanController extends Controller
             'description' => $input['description'] ?? $kanban->title,
             'color' => $input['color'] ?? $kanban->color,
             'medium_id' => $input['medium_id'] ?? $kanban->medium_id,
-            'commentable' => $input['commentable'] ? 1 : '0',
-            'auto_refresh' => $input['auto_refresh'] ? 1 : '0',
-            'only_edit_owned_items' => $input['only_edit_owned_items'] ? 1 : '0',
-            'allow_copy' => $input['allow_copy'] ? 1 : '0',
+            'commentable' => $input['commentable'],
+            'auto_refresh' => $input['auto_refresh'],
+            'only_edit_owned_items' => $input['only_edit_owned_items'],
+            'allow_copy' => $input['allow_copy'],
             'owner_id' => auth()->user()->id,
         ]);
 

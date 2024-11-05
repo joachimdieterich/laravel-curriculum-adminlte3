@@ -4,16 +4,15 @@
              class="col-md-12 m-0">
             <IndexWidget
                 v-permission="'group_enrolment'"
-                key="'courseCreate'"
+                key="courseCreate"
                 modelName="Course"
                 url="/courses"
                 :create=true
                 :createLabel="trans('global.course.create')">
                 <template v-slot:itemIcon>
                     <i v-if="create_label_field == 'enrol'"
-                       class="fa fa-2x p-5 fa-link nav-item-text text-muted"></i>
-                    <i v-else
-                       class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
+                       class="fa fa-2x fa-link text-muted"
+                    ></i>
                 </template>
             </IndexWidget>
             <IndexWidget
@@ -23,7 +22,7 @@
                 modelName= "course"
                 url="/courses">
                 <template v-slot:icon>
-                    <i class="fas fa-layer-course pt-2"></i>
+                    <i class="fa pt-2"></i>
                 </template>
 
                 <template

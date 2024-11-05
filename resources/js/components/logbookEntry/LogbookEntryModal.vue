@@ -40,7 +40,7 @@
                            v-text="form.errors.title[0]"></p>
                     </div>
 
-                    <div class="form-group ">
+                    <div class="form-group">
                         <label for="description">
                             {{ trans('global.logbook.logbookEntry.description') }}
                         </label>
@@ -49,20 +49,21 @@
                             name="description"
                             class="form-control"
                             :init="tinyMCE"
-                            :initial-value="form.description"
+                            v-model="form.description"
                         />
                         <p class="help-block"
                            v-if="form.errors.description"
                            v-text="form.errors.description[0]">
                         </p>
                     </div>
-                    <div class="form-group ">
+                    <div class="form-group">
                         <VueDatePicker
                             v-model="form.date"
                             :range="{ partialRange: false }"
                             format="dd.MM.yyy HH:mm"
                             :teleport="true"
                             locale="de"
+                            @cleared="form.date = ['', '']"
                             :select-text="trans('global.ok')"
                             :cancel-text="trans('global.close')"
                         ></VueDatePicker>
@@ -99,7 +100,6 @@ import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker.vue"
 import MediumForm from "../media/MediumForm.vue";
 import VueDatePicker from "@vuepic/vue-datepicker";
 
-
 export default {
     name: 'logbook-entry-modal',
     components:{
@@ -126,8 +126,8 @@ export default {
                 'title': '',
                 'description': '',
                 'date': null,
-                'begin':  new Date(),
-                'end': null
+                'begin': '',
+                'end': '',
             }),
             tinyMCE: this.$initTinyMCE(
                 [
@@ -151,7 +151,7 @@ export default {
                 this.add();
             }
         },
-        add(){
+        add() {
             axios.post(this.url, this.form)
                 .then(r => {
                     this.$eventHub.emit('logbookEntry-added', r.data);
@@ -160,7 +160,7 @@ export default {
                     console.log(e.response);
                 });
         },
-        update(){
+        update() {
             axios.patch(this.url + '/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('logbookEntry-updated', r.data);
@@ -181,7 +181,7 @@ export default {
                 this.form.reset();
                 if (typeof (params) !== 'undefined'){
                     this.form.populate(params);
-                    this.form.date = [this.form.begin, this.form.end];
+                    this.form.date = [this.form.begin ?? '', this.form.end ?? ''];
                     this.form.description = this.htmlToText(params.description);
                     this.form.logbook_id = params.logbook_id;
                     if (this.form.id != ''){

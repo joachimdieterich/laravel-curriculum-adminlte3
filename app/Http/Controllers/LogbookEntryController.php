@@ -58,7 +58,7 @@ class LogbookEntryController extends Controller
             'description' => $new_entry['description'],
             'begin' => $new_entry['begin'],
             'end' => $new_entry['end'],
-            'subject_id' => null, // TODO: there's no option to choose a subject on LogbookEntryModal
+            'subject_id' => null,
             'owner_id' => auth()->user()->id,
         ]);
 

@@ -82,7 +82,7 @@
                                     }"
                                 ></Select2>
                                 <subscribers
-                                    v-if="typeof subscribers.subscriptions != 'undefined'"
+                                    v-if="subscribers.subscriptions != undefined"
                                     :modelUrl="modelUrl"
                                     :subscriptions="subscribers.subscriptions"
                                     :subscribing_model="'App\\User'"
@@ -105,7 +105,7 @@
                                     }"
                                 ></Select2>
                                 <subscribers
-                                    v-if="typeof subscribers.subscriptions != 'undefined'"
+                                    v-if="subscribers.subscriptions != undefined"
                                     :modelUrl="modelUrl"
                                     :subscriptions="subscribers.subscriptions"
                                     :subscribing_model="'App\\Group'"
@@ -129,7 +129,7 @@
                                     ></Select2>
                                 </div>
                                 <subscribers
-                                    v-if="typeof subscribers.subscriptions != 'undefined'"
+                                    v-if="subscribers.subscriptions != undefined"
                                     :modelUrl="modelUrl"
                                     :subscriptions="subscribers.subscriptions"
                                     :subscribing_model="'App\\Organization'"
@@ -177,26 +177,28 @@
 
                                 <div>
                                     <tokens
-                                        v-if="typeof subscribers.subscriptions != 'undefined'"
+                                        v-if="subscribers.tokens != undefined"
                                         :modelUrl="modelUrl"
                                         :canEditLabel="canEditLabel"
                                         :canEditCheckbox="canEditCheckbox"
-                                        :subscriptions="subscribers.tokens"/>
+                                        :subscriptions="subscribers.tokens"
+                                    />
                                 </div>
                             </div>
 
                         </div>
                     </div>
                     <div class="card-footer">
-                    <span class="pull-right">
-                        <button
-                            type="button"
-                            class="btn btn-default"
-                            data-widget="remove"
-                            @click="globalStore?.closeModal($options.name)">
-                            {{ trans('global.close') }}
-                        </button>
-                    </span>
+                        <span class="pull-right">
+                            <button
+                                type="button"
+                                class="btn btn-default"
+                                data-widget="remove"
+                                @click="globalStore?.closeModal($options.name)"
+                            >
+                                {{ trans('global.close') }}
+                            </button>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -266,19 +268,19 @@ export default {
                     console.log(err.response);
                 });
         },
-         subscribe(subscribable_type, subscribable_id) {
-             axios.post('/' + this.modelUrl + 'Subscriptions', {
-                 'model_id':  this.modelId,
-                 'subscribable_type': subscribable_type,
-                 'subscribable_id': subscribable_id
-                 })
-                 .then(res => {
-                     this.subscribers.subscriptions = res.data.subscription;
-                 })
-                 .catch(err => {
-                     console.log(err.response);
-                 });
-         },
+        subscribe(subscribable_type, subscribable_id) {
+            axios.post('/' + this.modelUrl + 'Subscriptions', {
+                'model_id':  this.modelId,
+                'subscribable_type': subscribable_type,
+                'subscribable_id': subscribable_id
+            })
+            .then(res => {
+                this.subscribers.subscriptions = res.data.subscription;
+            })
+            .catch(err => {
+                console.log(err.response);
+            });
+        },
         changeCanEditTokenValue(value) {
             this.canEditToken = !value;
         },
@@ -295,10 +297,10 @@ export default {
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            if (mutation.events.key === this.$options.name){
+            if (mutation.events.key === this.$options.name) {
                 const params = state.modals[this.$options.name].params;
 
-                if (typeof (params) !== 'undefined'){
+                if (typeof (params) !== 'undefined') {
                     this.resetComponent();
                     this.modelUrl = params.modelUrl;
                     this.modelId = params.modelId;

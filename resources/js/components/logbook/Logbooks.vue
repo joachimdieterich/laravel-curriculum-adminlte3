@@ -6,13 +6,13 @@
                 <li class="nav-item">
                     <a class="nav-link " :class="filter === 'all' ? 'active' : ''" id="logbook-filter-all"
                        @click="setFilter('all')" data-toggle="pill" role="tab">
-                        <i class="fa fa-columns pr-2"></i>Alle Logb&uuml;cher
+                        <i class="fa fa-book pr-2"></i>Alle Logb&uuml;cher
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" :class="filter === 'owner' ? 'active' : ''" id="custom-filter-owner"
                        @click="setFilter('owner')" data-toggle="pill" role="tab">
-                        <i class="fa fa-logbook  pr-2"></i>Meine Logb&uuml;cher
+                        <i class="fa fa-user pr-2"></i>Meine Logb&uuml;cher
                     </a>
                 </li>
                 <li class="nav-item">
@@ -35,31 +35,31 @@
         <div class="col-md-12 py-2">
             <IndexWidget
                 v-permission="'logbook_create'"
-                key="'logbookCreate'"
+                key="logbookCreate"
                 modelName="Logbook"
                 url="/logbooks"
                 :create=true
                 :createLabel="trans('global.logbook.' + create_label_field)">
                 <template v-slot:itemIcon>
                     <i v-if="create_label_field == 'enrol'"
-                       class="fa fa-2x p-5 fa-link nav-item-text text-muted"></i>
-                    <i v-else
-                       class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
+                       class="fa fa-2x fa-link text-muted"
+                    ></i>
                 </template>
             </IndexWidget>
             <IndexWidget
                 v-for="logbook in logbooks"
                 :key="'logbookIndex'+logbook.id"
                 :model="logbook"
-                modelName= "logbook"
+                modelName="logbook"
                 url="/logbooks">
-                <template v-slot:icon>
-                    <i class="fas fa-logbook pt-2"></i>
+                <template v-slot:itemIcon>
+                    <i class="fa-2x" :class="logbook.css_icon"></i>
                 </template>
-
                 <template
                     v-permission="'logbook_edit, logbook_delete'"
-                    v-slot:dropdown>
+                    v-if="logbook.owner_id == $userId"
+                    v-slot:dropdown
+                >
                     <div class="dropdown-menu dropdown-menu-right"
                          style="z-index: 1050;"
                          x-placement="left-start">
@@ -102,14 +102,6 @@
                         </button>
                     </div>
                 </template>
-                <template v-slot:content>
-                    <span class="bg-white text-center p-1 overflow-auto nav-item-box">
-                   <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                       {{ logbook.title }}
-                   </h1>
-                   <p class="text-muted small"></p>
-                </span>
-                </template>
             </IndexWidget>
         </div>
 
@@ -129,11 +121,10 @@
         <Teleport to="body">
             <SubscribeLogbookModal
                 v-if="subscribable"
-            >
-            </SubscribeLogbookModal>
+            ></SubscribeLogbookModal>
             <LogbookModal
                 v-if="!subscribable"
-               ></LogbookModal>
+            ></LogbookModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.logbook.' + delete_label_field)"
@@ -153,7 +144,6 @@
    </div>
 </template>
 <script>
-import { nextTick } from 'vue';
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import LogbookModal from "./LogbookModal.vue";
 import DataTable from 'datatables.net-vue3';

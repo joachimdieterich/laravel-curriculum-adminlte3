@@ -68,7 +68,7 @@
             <IndexWidget
                 v-permission="'curriculum_create'"
                 v-if="((this.filter == 'all' && typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined')|| this.filter  == 'owner') "
-                key="'CurriculumCreate'"
+                key="curriculumCreate"
                 modelName="Curriculum"
                 url="/curricula"
                 :create=true

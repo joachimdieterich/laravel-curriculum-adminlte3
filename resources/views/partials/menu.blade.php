@@ -224,13 +224,13 @@
                     @endcan
                 @endcan
 
-                @canany(['organization_access', 'navigator_access', 'group_access', 'grade_access', 'period_access', 'organization_type_access', 'certificate_edit'] )
+                @canany(['organization_access', 'is_admin', 'group_access', 'grade_access', 'period_access', 'organization_type_access', 'certificate_edit'] )
                     <li class="nav-header"
                         role="menuitem">
                         {{ trans('global.organization_management') }}
                     </li>
 
-                    @can(['is_admin'])
+                    @can('is_admin')
                         <li class="nav-item"
                             role="menuitem">
                             <a href="{{ route("navigators.index") }}"

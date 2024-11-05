@@ -230,7 +230,7 @@
                         {{ trans('global.organization_management') }}
                     </li>
 
-                    @can('navigator_access')
+                    @can(['is_admin'])
                         <li class="nav-item"
                             role="menuitem">
                             <a href="{{ route("navigators.index") }}"

@@ -136,11 +136,6 @@
 
         <Teleport to="body">
             <OrganizationModal
-                :show="this.showOrganizationModal"
-                @close="this.showOrganizationModal = false"
-                :onlyAddress="this.onlyAddress"
-                :onlyLmsUrl="this.onlyLmsUrl"
-                :params="this.currentOrganization"
             ></OrganizationModal>
         </Teleport>
     </div>
@@ -148,6 +143,7 @@
 
 <script>
 import OrganizationModal from "../organization/OrganizationModal.vue";
+import {useGlobalStore} from "../../store/global.js";
 
 export default {
     name: "Organization",
@@ -162,6 +158,12 @@ export default {
             default: null
         },
     },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
     data() {
         return {
             componentId: this.$.uid,
@@ -175,15 +177,30 @@ export default {
         this.currentOrganization = this.organization;
         this.$eventHub.on('organization-updated', (organization) => {
             this.currentOrganization = organization;
-            this.showOrganizationModal = false;
+            this.globalStore?.closeModal('organization-modal');
         });
 
     },
     methods: {
         editOrganization(onlyAddress, onlyLmsUrl){
-            this.onlyAddress = onlyAddress ?? this.onlyAddress;
-            this.onlyLmsUrl = onlyLmsUrl ?? this.onlyLmsUrl;
-            this.showOrganizationModal = true;
+            this.globalStore?.showModal('organization-modal', {
+                'id': this.currentOrganization.id,
+                'common_name':this.currentOrganization.common_name,
+                'title': this.currentOrganization.title,
+                'description': this.currentOrganization.description,
+                'street': this.currentOrganization.street,
+                'postcode': this.currentOrganization.postcode,
+                'city': this.currentOrganization.city,
+                'state_id': this.currentOrganization.state_id,
+                'country_id': this.currentOrganization.country_id,
+                'organization_type_id': this.currentOrganization.organization_type_id,
+                'phone': this.currentOrganization.phone,
+                'email': this.currentOrganization.email,
+                'status_id': this.currentOrganization.status_id,
+                'lms_url': this.currentOrganization.lms_url,
+                'onlyAddress': onlyAddress ?? this.onlyAddress,
+                'onlyLmsUrl' : onlyLmsUrl ?? this.onlyLmsUrl
+            });
         },
     }
 }

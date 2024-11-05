@@ -43,8 +43,7 @@ class KanbanStatusController extends Controller
             if (!pusher_event(new \App\Events\Kanbans\KanbanStatusAddedEvent($kanbanStatus)))
             {
                 return [
-                    'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
-                    'message' =>  $kanbanStatus
+                    'data' => $kanbanStatus,
                 ];
             }
         }

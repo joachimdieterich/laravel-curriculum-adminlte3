@@ -72,16 +72,15 @@
              class="col-md-12 m-0">
             <IndexWidget
                 v-permission="'meeting_create'"
-                key="'meetingCreate'"
+                key="meetingCreate"
                 modelName="Meeting"
                 url="/meetings"
                 :create=true
                 :createLabel="trans('global.meeting.' + create_label_field)">
                 <template v-slot:itemIcon>
                     <i v-if="create_label_field == 'enrol'"
-                       class="fa fa-2x p-5 fa-link nav-item-text text-muted"></i>
-                    <i v-else
-                       class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
+                       class="fa fa-2x fa-link text-muted"
+                    ></i>
                 </template>
             </IndexWidget>
             <IndexWidget

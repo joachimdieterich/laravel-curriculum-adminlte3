@@ -1,26 +1,32 @@
 <template>
-    <div id="kanban_board_container"
-         class="kanban_board_container">
-
-        <img v-if="kanban.medium_id !== null"
-            class="kanban_board_wrapper p-0"
-             alt="background image"
-             :src="'/media/'+ kanban.medium_id + '?model=Kanban&model_id=' + kanban.id"
-             style="object-fit: cover;
-             position:absolute;"/>
-        <div id="kanban_board_wrapper"
-             class="kanban_board_wrapper"
-             :style="'background-color:' + kanbanColor">
-            <div class="pointer"
-                 :style="{ color: textColor }"
+    <div
+        id="kanban_board_container"
+        class="kanban_board_container"
+    >
+        <img
+            v-if="kanban.medium_id !== null"
+            class="kanban_board_wrapper position-absolute p-0"
+            style="object-fit: cover;"
+            :src="'/media/'+ kanban.medium_id + '?model=Kanban&model_id=' + kanban.id"
+            alt="background image"
+        />
+        <div
+            id="kanban_board_wrapper"
+            class="kanban_board_wrapper"
+            :style="'background-color:' + kanbanColor"
+        >
+            <div
+                class="pointer"
+                :style="{ color: textColor }"
                 style="float: left;
-                 margin-top: -25px;
-                 margin-left: -20px;"
-                 @click="toggleFullscreen">
+                margin-top: -25px;
+                margin-left: -20px;"
+                @click="toggleFullscreen"
+            >
                 <i class="fa fa-expand"></i>
             </div>
             <div
-                :style="kanbanWidth "
+                :style="kanbanWidth"
                 class="m-0"
             >
                 <!-- Columns (Statuses) -->
@@ -30,27 +36,32 @@
                     :move="isLocked"
                     @end="syncStatusMoved"
                     handle=".handle"
-                    itemKey="id"
+                    item-key="id"
                     :emptyInsertThreshold="500"
                 >
                     <template
-                        #item="{ element: status , index }">
+                        #item="{ element: status , index }"
+                    >
                         <span
-                            v-if="(status.visibility == true) || ($userId == status.owner_id )"
+                            v-if="(status.visibility) || ($userId == status.owner_id)"
                             :key="'drag_status_' + status.id"
-                            class=" no-border pr-3"
-                            :style="'float:left; width:' + itemWidth + 'px;'">
+                            class="no-border float-left pr-3"
+                            :style="'width:' + itemWidth + 'px;'"
+                        >
                             <KanbanStatus
                                 :kanban="kanban"
                                 :status="status"
                                 :editable="editable"
-                                v-on:status-updated="handleStatusUpdatedWithoutWebsocket"
-                                v-on:status-destroyed="handleStatusDestroyedWithoutWebsocket"
+                                :key="status.id"
+                                v-on:kanban-status-updated="handleStatusUpdatedWithoutWebsocket"
+                                v-on:kanban-status-deleted="handleStatusDestroyedWithoutWebsocket"
                                 filter=".ignore"
                             />
-                            <div style="margin-top:15px; bottom:0;overflow-y:scroll; z-index: 1"
-                                 :style="'width:' + itemWidth + 'px;'"
-                                 class="hide-scrollbars pr-3">
+                            <div
+                                style="margin-top: 15px; bottom: 0; overflow-y: scroll; z-index: 1"
+                                :style="'width:' + itemWidth + 'px;'"
+                                class="hide-scrollbars pr-3"
+                            >
                                 <draggable
                                     :list="status.items"
                                     v-bind="itemDragOptions"
@@ -58,18 +69,19 @@
                                     @end="syncItemMoved"
                                     handle=".handle"
                                     item-key="kanban_status_id"
-                                    :component-data="{name:'fade'}">
+                                    :component-data="{ name: 'fade' }"
+                                >
                                     <template
                                         #item="{ element: item, itemIndex }"
-                                        style="display:flex; flex-direction: column;"
                                         :style="'width:' + itemWidth + 'px;'"
-                                        class="pr-3">
-                                        <span
-                                            :key="'item_' + item.id"
-                                        >
+                                        class="d-flex flex-column pr-3"
+                                    >
+                                        <span :key="'item_' + item.id">
                                             <KanbanItem
+                                                v-if=" (item.visibility && visiblefrom_to(item.visible_from, item.visible_until) == true)
+                                                    || ($userId == item.owner_id)
+                                                    || ($userId == kanban.owner_id)"
                                                 :key="item.id"
-                                                v-if="(item.visibility == true && visiblefrom_to(item.visible_from, item.visible_until) == true) || ($userId == item.owner_id ) || ($userId == kanban.owner_id )"
                                                 :editable="(status.editable == false && $userId != kanban.owner_id) ? false : editable"
                                                 :commentable="kanban.commentable"
                                                 :onlyEditOwnedItems="kanban.only_edit_owned_items"
@@ -80,7 +92,7 @@
                                                 :kanban_owner_id="kanban.owner_id"
                                                 style="min-height: 150px"
                                                 v-on:item-destroyed="handleItemDestroyedWithoutWebsocket"
-                                                v-on:item-updated="handleItemUpdatedWithoutWebsocket"
+                                                v-on:kanban-item-updated="handleItemUpdatedWithoutWebsocket"
                                                 v-on:item-edit=""
                                                 v-on:sync="sync"
                                                 filter=".ignore"
@@ -96,31 +108,33 @@
                                     :item="item"
                                     :width="itemWidth"
                                     v-on:item-added="handleItemAddedWithoutWebsocket"
-                                    v-on:item-updated=""
+                                    v-on:kanban-item-updated=""
                                     v-on:item-canceled="closeForm"
-                                    style="z-index: 2">
-                                </KanbanItemCreate>
-                                <div v-if="(editable == true) && (status.editable == true) || ( $userId == status.owner_id ) "
-                                     v-show="newItem !== status.id"
-                                     :id="'kanbanItemCreateButton_' + index"
-                                     class="btn btn-flat py-0 w-100"
-                                     style="margin-bottom: 1rem;"
-                                     @click="openForm('item', status.id)">
+                                    style="z-index: 2"
+                                ></KanbanItemCreate>
+                                <div
+                                    v-if="(editable == true) && (status.editable == true) || ($userId == status.owner_id)"
+                                    v-show="newItem !== status.id"
+                                    :id="'kanbanItemCreateButton_' + index"
+                                    class="btn btn-flat mb-3 py-0 w-100"
+                                    @click="openForm('item', status.id)"
+                                >
                                     <i class="text-white fa fa-2x fa-plus-circle"></i>
                                 </div>
                             </div>
                         </span>
                     </template>
                     <template #footer>
-                        <div v-if="editable"
-                             class=" no-border  pr-2"
-                             style="float:left;"
-                             :style="'width:' + itemWidth + 'px;'">
+                        <div
+                            v-if="editable"
+                            class=" no-border float-left pr-2"
+                            :style="'width:' + itemWidth + 'px;'"
+                        >
                             <KanbanStatus
                                 :kanban="kanban"
                                 :editable="editable"
                                 :newStatus=true
-                                v-on:status-added="handleStatusAddedWithoutWebsocket"
+                                v-on:kanban-status-added="handleStatusAddedWithoutWebsocket"
                             />
                         </div>
                     </template>
@@ -185,26 +199,18 @@ import {useMediumStore} from "../../store/media.js";
 
 export default {
     props: {
-        'kanban': Object,
-        'editable': {
+        kanban: Object,
+        editable: {
             type: Boolean,
             default: true
         },
-        'pusher': {
+        pusher: {
             type: Boolean,
             default: false
         },
-        'search': ''
+        search: ''
     },
-    watch: {
-        statuses:{
-            deep: true,
-            handler(){
-                //console.log('changed');
-            }
-        },
-    },
-    setup () {
+    setup() {
         const globalStore = useGlobalStore();
         const mediumStore = useMediumStore();
         return {
@@ -226,17 +232,17 @@ export default {
         };
     },
     methods: {
-        editKanban(kanban){
+        editKanban(kanban) {
             this.globalStore?.showModal('kanban-modal', kanban);
         },
-        toggleFullscreen(){
+        toggleFullscreen() {
             if (document.fullscreenElement) {
                 document.exitFullscreen();
             } else {
                 $('#kanban_board_container').get(0).requestFullscreen();
             }
         },
-        share(){
+        share() {
             this.globalStore?.showModal('subscribe-modal', {
                 'modelId': this.kanban.id,
                 'modelUrl': 'kanban',
@@ -247,7 +253,7 @@ export default {
                 'canEditCheckbox': true
             });
         },
-        visiblefrom_to(visible_from, visible_until){
+        visiblefrom_to(visible_from, visible_until) {
             const now = moment().format("YYYY-MM-DD HH:mm:ss");
 
             return (now >= visible_from && now <= visible_until) ||
@@ -255,21 +261,21 @@ export default {
                 (visible_from == null && now <= visible_until) ||
                 (visible_from == null && visible_until == null);
         },
-        sync(){
+        sync() {
             axios.get("/kanbanStatuses/" + this.kanban.id + "/checkSync")
                 .then(res => {
-                    if (res.data.message !== 'uptodate'){
+                    if (res.data.message !== 'uptodate') {
                         this.refreshRate = 5000;
                         this.statuses = res.data.message.statuses;
                     } else {
-                        this.refreshRate +=1000; //slow down refreshing, if nothing happens
+                        this.refreshRate += 1000; //slow down refreshing, if nothing happens
                     }
                 })
                 .catch(err => {
                     console.log(err.response);
                 });
         },
-        timer () {
+        timer() {
             setTimeout(() => {
                 if (this.autoRefresh){
                     this.sync();
@@ -306,12 +312,12 @@ export default {
                         if (url == '/kanbanStatuses/sync'){
                             this.handleStatusMoved(res.data.message.statuses);
                         } else {
-                            this.handleItemMoved(res.data.message.statuses);
+                            this.handleItemMoved(res.data.message);
                         }
                     }
                 })
                 .catch(err => {
-                    console.log(err.response);
+                    console.log(err);
                 });
         },
         openForm(type, value = 1) {
@@ -327,26 +333,23 @@ export default {
             this.newStatus = 0;
             this.newItem = 0;
         },
-        handleStatusAddedWithoutWebsocket(newStatus){
-            if (this.pusher === false){
+        handleStatusAddedWithoutWebsocket(newStatus) {
+            if (this.pusher === false) {
                 this.sync();
-                //this.handleStatusAdded(newStatus);
+                // this.handleStatusAdded(newStatus);
             }
         },
-        handleStatusAdded(newStatus){
-            /*if (this.statuses.findIndex(s => s.title = newStatus.title) != -1){
-                this.infoNotification('Status existiert.');
-            }*/
-            newStatus['items'] = [];            //add items to prevent error if item is created without reloading page
+        handleStatusAdded(newStatus) {
+            // add items to prevent error if item is created without reloading page
+            newStatus['items'] = [];
             this.statuses.push(newStatus);
-            //this.closeForm();
         },
-        handleStatusUpdatedWithoutWebsocket(newStatus){
-            if (this.pusher === false){
+        handleStatusUpdatedWithoutWebsocket(newStatus) {
+            if (this.pusher === false) {
                 this.handleStatusUpdated(newStatus);
             }
         },
-        handleStatusUpdated(newStatus){
+        handleStatusUpdated(newStatus) {
             const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should replace the item
                 status => status.id === newStatus.id
             );
@@ -355,12 +358,12 @@ export default {
                 this.statuses[statusIndex][key] = value;
             }
         },
-        handleStatusDestroyedWithoutWebsocket(status){
-            if (this.pusher === false){
+        handleStatusDestroyedWithoutWebsocket(status) {
+            if (this.pusher === false) {
                 this.handleStatusDestroyed(status);
             }
         },
-        handleStatusDestroyed(status){
+        handleStatusDestroyed(status) {
             let index = this.statuses.indexOf(status);
             this.statuses.splice(index, 1);
         },
@@ -375,18 +378,21 @@ export default {
             });
             this.statuses = newStatusesOrderTemp;
         },
-        handleItemAddedWithoutWebsocket(newItem){
-            if (this.pusher === false){
+        handleItemAddedWithoutWebsocket(newItem) {
+            if (this.pusher === false) {
                 this.handleItemAdded(newItem);
             }
         },
-        handleItemAdded(newItem) {      // add an item to the correct column in our list
-            const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should replace the item
+        handleItemAdded(newItem) {
+            // add an item to the correct column in our list
+            const statusIndex = this.statuses.findIndex(
                 status => status.id === newItem.kanban_status_id
             );
-            this.statuses[statusIndex].items.push(newItem);       // Add newly created item to our column
+            // Add newly created item to our column
+            this.statuses[statusIndex].items.push(newItem);
 
-            this.closeForm();                                     // Reset and close the AddItemForm
+            // Reset and close the AddItemForm
+            this.closeForm();
         },
         handleItemMoved(columns) {
             let newStatusOrder = [];
@@ -413,25 +419,26 @@ export default {
             })
             this.statuses = newStatusOrder;
         },
-        findItem(item){
-                let foundItem = []
-                this.statuses.forEach((status) => {
-                    status.items.forEach((i) => {
-                    if (i.id === item.id){
+        findItem(item) {
+            let foundItem = []
+            this.statuses.forEach((status) => {
+                status.items.forEach((i) => {
+                    if (i.id === item.id) {
                         foundItem = i;
                         return; //break early;
                     }
                 })
             });
-                return foundItem;
+            return foundItem;
         },
-        handleItemDestroyedWithoutWebsocket(item){
-            if (this.pusher === false){
+        handleItemDestroyedWithoutWebsocket(item) {
+            if (this.pusher === false) {
                 this.handleItemDestroyed(item);
             }
         },
-        handleItemDestroyed(item){
-            const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should add the item
+        handleItemDestroyed(item) {
+            // Find the index of the status where we should add the item
+            const statusIndex = this.statuses.findIndex(
                 status => status.id === item.kanban_status_id
             );
 
@@ -440,42 +447,47 @@ export default {
             );
             this.statuses[statusIndex].items.splice(index, 1);
         },
-        handleItemUpdatedWithoutWebsocket(updatedItem){
-            if (this.pusher === false){
+        handleItemUpdatedWithoutWebsocket(updatedItem) {
+            if (this.pusher === false) {
                 //console.log('update'+updatedItem);
                 this.handleItemUpdated(updatedItem);
             }
         },
-        handleItemUpdated(updatedItem){
-            const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should replace the item
+        handleItemUpdated(updatedItem) {
+            // Find the index of the status where we should replace the item
+            const statusIndex = this.statuses.findIndex(
                 status => status.id === updatedItem.kanban_status_id
             );
-            const itemIndex = this.statuses[statusIndex].items.findIndex(   // Find the index of the item where we should replace the item
+            // Find the index of the item where we should replace the item
+            const itemIndex = this.statuses[statusIndex].items.findIndex(
                 item => item.id === updatedItem.id
             );
 
             for (const [key, value] of Object.entries(updatedItem)) {
-                this.statuses[statusIndex].items[itemIndex][key] = value;       // Add updated item to our column
+                // Add updated item to our column
+                this.statuses[statusIndex].items[itemIndex][key] = value;
             }
         },
-        handleItemCommentUpdated(updatedItem){
-            const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should replace the item
+        handleItemCommentUpdated(updatedItem) {
+            // Find the index of the status where we should replace the item
+            const statusIndex = this.statuses.findIndex(
                 status => status.id === updatedItem.kanban_status_id
             );
-            const itemIndex = this.statuses[statusIndex].items.findIndex(   // Find the index of the item where we should replace the item
+            // Find the index of the item where we should replace the item
+            const itemIndex = this.statuses[statusIndex].items.findIndex(
                 item => item.id === updatedItem.id
             );
 
-            this.statuses[statusIndex].items[itemIndex]['comments'] = updatedItem.comments;       // Add updated item to our column
+            // Add updated item to our column
+            this.statuses[statusIndex].items[itemIndex]['comments'] = updatedItem.comments;
         },
-        handleKanbanColorUpdated(color){
+        handleKanbanColorUpdated(color) {
             this.kanbanColor = color;
         },
-
-        startPusher(){
-            if (this.pusher === true){
+        startPusher() {
+            if (this.pusher === true) {
                 this.$echo.join('Presence.App.Kanban.' + this.kanban.id)
-                    .here((users) =>{
+                    .here((users) => {
                         this.usersOnline = [...users];
                     })
                     .listen('.kanbanStatusAdded', (payload) => {
@@ -512,11 +524,11 @@ export default {
                         //console.log('kanbanItemCommentUpdated');
                         this.handleItemCommentUpdated(payload.message);
                     })
-                    .joining((user)=> {
+                    .joining((user) => {
                         this.usersOnline.push(user);
                         //console.log({user}, 'joined');
                     })
-                    .leaving((user)=> {
+                    .leaving((user) => {
                         //console.log({user}, 'leaving');
                         this.usersOnline.filter((userOnline) => userOnline.id !== user.id);
                     });
@@ -554,30 +566,25 @@ export default {
                 rtl: false
             });
         },
-        isLocked(value){
-            //console.log(value.draggedContext.element.locked );
+        isLocked(value) {
             if (value.draggedContext.element.locked == true && this.$userId != value.draggedContext.element.owner_id) { //locked and not owner
-                //console.log(false);
                 return false;
             } else {
-                //console.log(true);
                 return true;
             }
-
         },
         hexToRgbA(hex){
-            var c;
-            if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
-                c= hex.substring(1).split('');
-                if(c.length== 3){
-                    c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+            let c;
+            if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+                c = hex.substring(1).split('');
+                if (c.length == 3) {
+                    c = [c[0], c[0], c[1], c[1], c[2], c[2]];
                 }
-                c= '0x'+c.join('');
+                c = '0x'+c.join('');
                 return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+', 0.7)';
             }
             throw new Error('Bad Hex');
         }
-
     },
     mounted() {
         // Listen for the 'Kanban' event in the 'Presence.App.Kanban' presence channel
@@ -588,11 +595,18 @@ export default {
         this.$eventHub.on('kanban-updated', () => {
             window.location.href = '/kanbans/'+this.kanban.id;
         });
-        this.$eventHub.on('item-updated', (item) => {
+
+        this.$eventHub.on('kanban-status-added', (newStatus) => {
+            // TODO: adding status to this.statuses doesn't create a new element
+            // this.handleStatusAdded(newStatus);
+            window.location.reload();
+        });
+
+        this.$eventHub.on('kanban-item-updated', (item) => {
             this.handleItemUpdated(item);
         });
     },
-    created () {
+    created() {
         this.statuses = this.kanban.statuses;
 
         if (this.kanban.color.length < 8) {
@@ -601,8 +615,7 @@ export default {
             this.kanbanColor = this.kanban.color;
         }
 
-
-        if (this.kanban.auto_refresh === true){
+        if (this.kanban.auto_refresh === true) {
             this.autoRefresh = true;
             this.timer();
         } else {
@@ -612,8 +625,8 @@ export default {
         this.$eventHub.emit('showSearchbar');
     },
     computed: {
-        textColor: function(){
-            if(this.kanban.color == "" || this.kanban.color == null ) return;
+        textColor: function() {
+            if (this.kanban.color == "" || this.kanban.color == null) return;
             return this.$textcolor(this.kanban.color, '#333333');
         },
         columnDragOptions() {
@@ -653,7 +666,7 @@ export default {
     }
 }
 </script>
-<style> /* not scoped since '.content-only' and 'sidebar-collapse' are outside of of this component */
+<style> /* not scoped since '.content-only' and 'sidebar-collapse' are outside of this component */
 .status-drag {
     transition: transform 0.5s;
     transition-property: all;

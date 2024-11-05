@@ -15,7 +15,7 @@
                 </div>
                 <IndexWidget
                     v-permission="'group_create'"
-                    key="'groupCreate'"
+                    key="groupCreate"
                     modelName="Group"
                     url="/groups"
                     :create=true
@@ -29,7 +29,7 @@
                     storeTitle= "groups"
                     url="/groups">
                     <template v-slot:icon>
-                        <i class="fas fa-layer-group pt-2"></i>
+                        <i class="fa fa-layer-group pt-2"></i>
                     </template>
 
                     <template

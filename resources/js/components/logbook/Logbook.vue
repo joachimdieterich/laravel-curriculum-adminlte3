@@ -36,11 +36,11 @@
             <LogbookEntry
                 v-for="(entry, index) in entries"
                 v-bind:key="entry.id"
-                :first=" index === 0 "
+                :first="index === 0"
                 :entry="entry"
                 :search="search"
-                :logbook="logbook">
-            </LogbookEntry>
+                :logbook="logbook"
+            ></LogbookEntry>
         </div>
         <!-- /.col -->
 <!--
@@ -67,18 +67,20 @@
         </Teleport>
         <teleport
             v-if="$userId == logbook.owner_id"
-            to="#customTitle">
-            <small>{{ logbook.title }} </small>
+            to="#customTitle"
+        >
+            <small>{{ logbook.title }}</small>
             <a class="btn btn-flat"
                @click="editLogbook(logbook)"
             >
                 <i class="fa fa-pencil-alt text-secondary"></i>
             </a>
             <button
-                v-permission="'kanban_create'"
+                v-permission="'logbook_create'"
                 v-if="$userId == logbook.owner_id"
                 class="btn btn-flat"
-                @click="share()">
+                @click="share()"
+            >
                 <i class="fa fa-share-alt text-secondary"></i>
             </button>
         </teleport>
@@ -154,11 +156,16 @@ export default {
 
         this.$eventHub.on('logbookEntry-added', (entry) => {
             this.globalStore?.closeModal('logbook-entry-modal');
-            //todo: reload
+            this.entries.push(entry);
         });
-        this.$eventHub.on('logbookEntry-updated', (entry) => {
+        this.$eventHub.on('logbookEntry-updated', (updated) => {
             this.globalStore?.closeModal('logbook-entry-modal');
-            //todo: reload
+
+            const index = this.entries.findIndex(
+                entry => entry.id === updated.id
+            );
+            
+            Object.assign(this.entries[index], updated);
         });
 
         this.$eventHub.on('logbook-updated', (logbook) => {
@@ -166,27 +173,6 @@ export default {
             this.currentLogbook = logbook;
         });
 
-        // Entries
-        this.$eventHub.on('addLogbookEntry', (newEntry) => {
-            if (newEntry.subject == undefined) {
-                newEntry.subject = {
-                    id: null,
-                    title: null,
-                };
-            }
-            this.entries.unshift(newEntry);       // Add newly created entry
-        });
-        this.$eventHub.on('updateLogbookEntry', (updatedEntry) => {
-            const index = this.entries.findIndex(            // Find the index of the status where we should replace the item
-                entry => entry.id === updatedEntry.id
-            );
-            // only update entry, do not manipulate relations.
-            this.entries[index].title = updatedEntry.title;
-            this.entries[index].description = updatedEntry.description;
-            this.entries[index].updated_at = updatedEntry.updated_at;
-            this.entries[index].begin = updatedEntry.begin;
-            this.entries[index].end = updatedEntry.end;
-        });
         this.$eventHub.on('updateSubjectBadge', (updatedEntry) => {
             console.log(updatedEntry);
             this.globalStore?.closeModal('logbook-entry-subject-modal');
@@ -207,19 +193,19 @@ export default {
         });
     },
     methods: {
-        add(){
+        add() {
             this.globalStore?.showModal('logbook-entry-modal',
                 {
                     'logbook_id': this.logbook.id
                 });
         },
-        editLogbook(logbook){
+        editLogbook(logbook) {
             this.globalStore?.showModal('logbook-modal', logbook);
         },
         togglePrintOptions() {
             this.showPrintOptions = !this.showPrintOptions;
         },
-        share(){
+        share() {
             this.globalStore?.showModal('subscribe-modal',
                 {
                     'modelId': this.logbook.id,

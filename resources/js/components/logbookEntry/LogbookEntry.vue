@@ -31,7 +31,7 @@
                         type="button"
                         class="btn btn-tool pt-3"
                         @click.stop="destroy()">
-                        <i class="fa fa-trash "></i>
+                        <i class="fa fa-trash text-danger"></i>
                     </button>
                     <button
                          type="button"
@@ -282,6 +282,11 @@ export default {
             this.$eventHub.emit('deleteLogbookEntry',this.entry);
         },
         postDate() {
+            if (this.entry.begin == undefined || this.entry.end == undefined) {
+                this.timePeriod = '';
+                return;
+            }
+
             const start = new Date(this.entry.begin.replace(/-/g, "/"));
             const end = new Date(this.entry.end.replace(/-/g, "/"));
             const dateFormat = {
@@ -385,7 +390,7 @@ export default {
     },
     watch: {
         'entry.begin': function() { this.postDate(); },
-        'entry.end': function() { this.postDate(); }
+        'entry.end': function() { this.postDate(); },
     },
     components: {
         ReferenceList,

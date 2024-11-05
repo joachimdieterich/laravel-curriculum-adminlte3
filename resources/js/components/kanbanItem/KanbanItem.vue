@@ -297,7 +297,7 @@
                 }"
                 @confirm="() => {
                     this.showConfirm = false;
-                    this.destroy();
+                    this.delete();
                 }"
             ></ConfirmModal>
         </Teleport>
@@ -320,15 +320,15 @@ import {useMediumStore} from "../../store/media.js";
 
 export default {
     props: {
-        'item': Object,
-        'index': String,
-        'width': Number,
-        'commentable': false,
-        'onlyEditOwnedItems': false,
-        'likable': true,
-        'editable': false,
-        'replace_links': true,
-        'kanban_owner_id': {
+        item: Object,
+        index: String,
+        width: Number,
+        commentable: false,
+        onlyEditOwnedItems: false,
+        likable: true,
+        editable: false,
+        replace_links: true,
+        kanban_owner_id: {
             type: Number,
             default: null
         }
@@ -349,8 +349,8 @@ export default {
             editor: false,
             expired: false,
             form: new Form({
-                'id':'',
-                'title':'',
+                'id': '',
+                'title': '',
                 'description': '',
                 'kanban_id': '',
                 'kanban_status_id': '',
@@ -382,25 +382,25 @@ export default {
             ),
         };
     },
-    computed:{
-        textColor: function(){
-            if(this.item.color == "" || this.item.color == null ) return;
+    computed: {
+        textColor: function() {
+            if (this.item.color == "" || this.item.color == null) return;
             return this.$textcolor(this.item.color, '#333333');
-        }
-    },
-    methods: {
-        diffForHumans: function (date) {
-            if (date == null){
+        },
+        diffForHumans: function(date) {
+            if (date == null) {
                 return '\u221E';
             } else {
                 return moment(date).locale('de').fromNow();
             }
         },
-        confirmItemDelete(item){
+    },
+    methods: {
+        confirmItemDelete(item) {
             this.currentItem = item;
             this.showConfirm = true;
         },
-        destroy() {
+        delete() {
             axios.delete("/kanbanItems/" + this.item.id)
                 .then(() => {
                     this.$emit("item-destroyed", this.item);
@@ -422,7 +422,7 @@ export default {
 
         },
         submit() {
-            if (this.form.title == null || this.form.title == ""){
+            if (this.form.title == null || this.form.title == "") {
                 const titleInput = document.getElementById('title_' + this.component_id);
                 titleInput.focus();
                 this.highlightTitleInput = true;
@@ -432,23 +432,20 @@ export default {
 
             axios.patch('/kanbanItems/' + this.form.id, this.form)
                 .then(res => { // Tell the parent component we've updated an item
-                    tinyMCE.get('description_'+this.item.id).remove();
+                    tinyMCE.get('description_' + this.item.id).remove();
                     this.form = res.data.message; //selfUpdate
-                    this.$emit("item-updated", res.data.message);
+                    this.$emit("kanban-item-updated", res.data.message);
                     MathJax.startup.defaultReady();
                 })
                 .catch(error => { // Handle the error returned from our request
-                    this.form.errors = error.response.data.errors;
+                    // this.form.errors = error.response.data.errors;
+                    console.log(error)
                 });
             this.editor = false;
-
         },
-
-        openComments(){
+        openComments() {
             this.show_comments = !this.show_comments;
         },
-
-
         open(modal) {
             this.$modal.show(modal, {
                 'modelUrl': 'kanbanItem',
@@ -479,8 +476,7 @@ export default {
         reload() { //after media upload
             axios.get("/kanbanItems/" + this.item.id)
                 .then(res => {
-                    //this.$emit("item-updated", res.data.message);
-                    this.$eventHub.emit("item-updated", res.data.message);
+                    this.$eventHub.emit("kanban-item-updated", res.data.message);
                     //this.item = res.data.message;
                 })
                 .catch(err => {
@@ -513,7 +509,6 @@ export default {
 
             return date.toLocaleString([], dateFormat);
         },
-
     },
     mounted() {
         this.form = this.item;
@@ -543,19 +538,16 @@ export default {
         this.$nextTick(() => {
             MathJax.startup.defaultReady();
         });
-
     },
     watch: {
-        form: function (){
+        form: function () {
             MathJax.startup.defaultReady();
         },
     },
-
     components: {
         HtmlRenderer,
         Comments,
         Reaction,
-        /*kanbanTask,*/
         mediaCarousel,
         avatar,
         DatePicker,

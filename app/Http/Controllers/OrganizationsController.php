@@ -37,10 +37,11 @@ class OrganizationsController extends Controller
     public function list()
     {
         abort_unless(\Gate::allows('organization_access'), 403);
-        $organization_id_field = 'id'; // if auth()->user()->organizations() is used query uses organization_role_user table therefore organization_id field = organization_id
+
 
         if (auth()->user()->role()->id == 1) {
             $organizations = Organization::with(['status']);
+            $organization_id_field = 'id'; // if auth()->user()->organizations() is used query uses organization_role_user table therefore organization_id field = organization_id
         } else  {
             $organizations = auth()->user()->organizations()->with(['status']);
             $organization_id_field = 'organization_id';

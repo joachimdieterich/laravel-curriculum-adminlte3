@@ -395,6 +395,13 @@ class PlanController extends Controller
     public function getUserAchievements(Plan $plan, $userIds)
     {
         $ids = explode(',', $userIds);
+        $accessibleUserIds = array_map(function($user) { return $user['id']; }, $this->getUsers($plan));
+
+        foreach ($ids as $id) {
+            if (array_search($id, $accessibleUserIds) === false) {
+                abort(403);
+            }
+        }
 
         $terminal = TerminalObjectiveSubscriptions::where('subscribable_type', 'App\\PlanEntry')
             ->whereIn('subscribable_id', $plan->entry_order)

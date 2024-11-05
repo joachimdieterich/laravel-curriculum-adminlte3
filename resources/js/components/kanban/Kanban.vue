@@ -587,7 +587,9 @@ export default {
         });
 
         this.$eventHub.on('kanban-status-added', (newStatus) => {
-            this.handleStatusAdded(newStatus);
+            // TODO: adding status to this.statuses doesn't create a new element
+            // this.handleStatusAdded(newStatus);
+            window.location.reload();
         });
 
         this.$eventHub.on('kanban-item-updated', (item) => {

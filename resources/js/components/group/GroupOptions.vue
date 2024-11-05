@@ -171,36 +171,10 @@ export default {
                 });
         },
         successNotification(message) {
-            this.toast.success(message/*, {
-                position: "top-right",
-                timeout: 3000,
-                closeOnClick: true,
-                pauseOnFocusLoss: true,
-                pauseOnHover: true,
-                draggable: true,
-                draggablePercent: 0.6,
-                showCloseButtonOnHover: false,
-                hideProgressBar: false,
-                closeButton: "button",
-                icon: true,
-                rtl: false
-            }*/);
+            this.toast.success(message);
         },
         errorNotification(message) {
-            this.toast.error(message/*, {
-                position: "top-right",
-                timeout: 3000,
-                closeOnClick: true,
-                pauseOnFocusLoss: true,
-                pauseOnHover: true,
-                draggable: true,
-                draggablePercent: 0.6,
-                showCloseButtonOnHover: false,
-                hideProgressBar: false,
-                closeButton: "button",
-                icon: true,
-                rtl: false
-            }*/);
+            this.toast.error(message);
         },
     },
     components: {

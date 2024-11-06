@@ -186,141 +186,141 @@
     </Transition>
 </template>
 <script>
-    import Form from 'form-backend-validation';
-    import Select2 from "../forms/Select2.vue";
-    import {useGlobalStore} from "../../store/global";
-    import Editor from "@tinymce/tinymce-vue";
-    import VueDatePicker from "@vuepic/vue-datepicker";
-    import '@vuepic/vue-datepicker/dist/main.css';
+import Form from 'form-backend-validation';
+import Select2 from "../forms/Select2.vue";
+import {useGlobalStore} from "../../store/global";
+import Editor from "@tinymce/tinymce-vue";
+import VueDatePicker from "@vuepic/vue-datepicker";
+import '@vuepic/vue-datepicker/dist/main.css';
 
-    export default {
-        name: 'plan-modal',
-        components:{
-            VueDatePicker,
-            Editor,
-            Select2,
-        },
-        props: {},
-        setup () {
-            const globalStore = useGlobalStore();
-            return {
-                globalStore,
-            }
-        },
-        data() {
-            return {
-                component_id: this.$.uid,
-                method: 'post',
-                url: '/plans',
-                form: new Form({
-                    'id': '',
-                    'type_id': 4,
-                    'title':  '',
-                    'description':  '',
-                    'begin': '',
-                    'end': '',
-                    'duration': '',
-                    'color':'#27AF60',
-                    'allow_copy': true,
-                }),
-                errors: { // required fields need to be initialised
-                    type_id: false,
-                    title: false,
-                    begin: false,
-                    end: false,
+export default {
+    name: 'plan-modal',
+    components: {
+        VueDatePicker,
+        Editor,
+        Select2,
+    },
+    props: {},
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            url: '/plans',
+            form: new Form({
+                'id': '',
+                'type_id': 4,
+                'title':  '',
+                'description':  '',
+                'begin': '',
+                'end': '',
+                'duration': '',
+                'color':'#27AF60',
+                'allow_copy': true,
+            }),
+            errors: { // required fields need to be initialised
+                type_id: false,
+                title: false,
+                begin: false,
+                end: false,
+            },
+            tinyMCE: this.$initTinyMCE(
+                [
+                    "autolink link lists table code"
+                ],
+                {
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id,
                 },
-                tinyMCE: this.$initTinyMCE(
-                    [
-                        "autolink link lists table code"
-                    ],
-                    {
-                        'eventHubCallbackFunction': 'insertContent',
-                        'eventHubCallbackFunctionParams': this.component_id,
-                    },
-                    "bold underline italic | alignleft aligncenter alignright | table",
-                    "bullist numlist outdent indent | mathjax link code",
-                ),
-                search: '',
+                "bold underline italic | alignleft aligncenter alignright | table",
+                "bullist numlist outdent indent | mathjax link code",
+            ),
+            search: '',
+        }
+    },
+    methods: {
+        submit(method) {
+            if (!this.checkRequired()) {
+                return;
+            }
+            this.form.begin = this.form.date[0];
+            this.form.end = this.form.date[1];
+
+            if (method == 'patch') {
+                this.update();
+            } else {
+                this.add();
             }
         },
-        methods: {
-             submit(method) {
-                 if (!this.checkRequired()) {
-                     return;
-                 }
-                 this.form.begin = this.form.date[0];
-                 this.form.end = this.form.date[1];
+        add() {
+            axios.post(this.url, this.form)
+                .then(r => {
+                    this.$eventHub.emit('plan-added', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
+        },
+        update() {
+            axios.patch(this.url + '/' + this.form.id, this.form)
+                .then(r => {
+                    this.$eventHub.emit('plan-updated', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
+        },
+        checkRequired() {
+            let filledOut = true;
+            const fields = this.$el.querySelectorAll('[required]');
 
-                 if (method == 'patch') {
-                     this.update();
-                 } else {
-                     this.add();
-                 }
-            },
-            add(){
-                axios.post(this.url, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('plan-added', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-            update() {
-                axios.patch(this.url + '/' + this.form.id, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('plan-updated', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-            checkRequired() {
-                let filledOut = true;
-                const fields = this.$el.querySelectorAll('[required]');
-
-                for (const field of fields) {
-                    if (field.value.trim() === '') { // activate error-helper
-                        this.errors[field.id] = true;
-                        filledOut = false;
-                    } else { // deactivate error-helper
-                        this.errors[field.id] = false;
-                    }
-                }
-                // needs to be set separately, because select2
-                if (this.form.type_id == '') {
-                    this.errors['type_id'] = true;
+            for (const field of fields) {
+                if (field.value.trim() === '') { // activate error-helper
+                    this.errors[field.id] = true;
                     filledOut = false;
-                } else {
-                    this.errors["type_id"] = false;
+                } else { // deactivate error-helper
+                    this.errors[field.id] = false;
                 }
+            }
+            // needs to be set separately, because select2
+            if (this.form.type_id == '') {
+                this.errors['type_id'] = true;
+                filledOut = false;
+            } else {
+                this.errors["type_id"] = false;
+            }
 
-                return filledOut;
-            },
+            return filledOut;
         },
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === this.$options.name){
-                    const params = state.modals[this.$options.name].params;
-                    this.form.reset();
-                    if (typeof (params) !== 'undefined'){
-                        this.form.populate(params);
-                        this.form.description = this.$decodeHTMLEntities(params.description);
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    this.form.description = this.$decodeHTMLEntities(params.description);
 
-                        if (this.form.id != ''){
-                            this.method = 'patch';
-                        } else {
-                            this.method = 'post';
-                        }
+                    if (this.form.id != '') {
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
                     }
                 }
-            });
+            }
+        });
 
-            const startDate = new Date();
-            const endDate = new Date(new Date().setDate(startDate.getDate() + 7));
-            this.form.date = [startDate, endDate];
-        },
-    }
+        const startDate = new Date();
+        const endDate = new Date(new Date().setDate(startDate.getDate() + 7));
+        this.form.date = [startDate, endDate];
+    },
+}
 </script>
 

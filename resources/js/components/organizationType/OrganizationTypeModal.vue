@@ -109,80 +109,79 @@
     </Transition>
 </template>
 <script>
-    import Form from 'form-backend-validation';
-    import Editor from '@tinymce/tinymce-vue';
-    import Select2 from "../forms/Select2.vue";
-    import {useGlobalStore} from "../../store/global";
+import Form from 'form-backend-validation';
+import Editor from '@tinymce/tinymce-vue';
+import Select2 from "../forms/Select2.vue";
+import {useGlobalStore} from "../../store/global";
 
-    export default {
-        name: 'organization-type-modal',
-        components:{
-            Editor,
-            Select2
-        },
-        props: {},
-        setup () {
-            const globalStore = useGlobalStore();
-            return {
-                globalStore,
+export default {
+    name: 'organization-type-modal',
+    components: {
+        Editor,
+        Select2
+    },
+    props: {},
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            url: '/organizationTypes',
+            form: new Form({
+                'id':'',
+                'title': '',
+                'external_id': '',
+                'country_id': 'DE',
+                'state_id': 'DE-RP',
+            }),
+            countries: [],
+            states: [],
+            tinyMCE: this.$initTinyMCE(
+                [
+                    "autolink link curriculummedia"
+                ],
+                {
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id,
+                }
+            ),
+            search: '',
+        }
+    },
+    methods: {
+        async submit(method) {
+            try {
+                if (method === 'patch') {
+                    this.location = (await axios.patch(this.url + '/' + this.form.id, this.form)).data.message;
+                } else {
+                    this.location = (await axios.post(this.url, this.form)).data.message;
+                }
+            } catch (error) {
+                this.form.errors = error.response.data.form.errors;
             }
         },
-        data() {
-            return {
-                component_id: this.$.uid,
-                method: 'post',
-                url: '/organizationTypes',
-                form: new Form({
-                    'id':'',
-                    'title': '',
-                    'external_id': '',
-                    'country_id': 'DE',
-                    'state_id': 'DE-RP',
-                }),
-                countries: [],
-                states: [],
-                tinyMCE: this.$initTinyMCE(
-                    [
-                        "autolink link curriculummedia"
-                    ],
-                    {
-                        'eventHubCallbackFunction': 'insertContent',
-                        'eventHubCallbackFunctionParams': this.component_id,
-                    }
-                ),
-                search: '',
-            }
-        },
-        methods: {
-
-            async submit(method) {
-                try {
-                    if (method === 'patch') {
-                        this.location = (await axios.patch(this.url + '/' + this.form.id, this.form)).data.message;
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    if (this.form.id !== '') {
+                        this.method = 'patch';
                     } else {
-                        this.location = (await axios.post(this.url, this.form)).data.message;
-                    }
-                } catch (error) {
-                    this.form.errors = error.response.data.form.errors;
-                }
-            },
-        },
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === this.$options.name){
-                    const params = state.modals[this.$options.name].params;
-                    this.form.reset();
-                    if (typeof (params) !== 'undefined'){
-                        this.form.populate(params);
-                        if (this.form.id !== ''){
-                            this.method = 'patch';
-                        } else {
-                            this.method = 'post';
-                        }
+                        this.method = 'post';
                     }
                 }
-            });
-        },
-    }
+            }
+        });
+    },
+}
 </script>

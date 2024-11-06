@@ -285,128 +285,128 @@
     </Transition>
 </template>
 <script>
-    import Form from 'form-backend-validation';
-    import Editor from '@tinymce/tinymce-vue';
-    import MediumModal from "../media/MediumModal.vue";
-    import MediumForm from "../media/MediumForm.vue";
-    import Select2 from "../forms/Select2.vue";
-    import VueDatePicker from '@vuepic/vue-datepicker';
-    import axios from "axios";
-    import {useGlobalStore} from "../../store/global";
+import Form from 'form-backend-validation';
+import Editor from '@tinymce/tinymce-vue';
+import MediumModal from "../media/MediumModal.vue";
+import MediumForm from "../media/MediumForm.vue";
+import Select2 from "../forms/Select2.vue";
+import VueDatePicker from '@vuepic/vue-datepicker';
+import axios from "axios";
+import {useGlobalStore} from "../../store/global";
 
-    export default {
-        name: 'curriculum-modal',
-        components:{
-            Editor,
-            MediumModal,
-            MediumForm,
-            Select2,
-            VueDatePicker
-        },
-        props: {},
-        setup () {
-            const globalStore = useGlobalStore();
-            return {
-                globalStore,
-            }
-        },
-        data() {
-            return {
-                component_id: this.$.uid,
-                method: 'post',
-                url: '/curricula',
-                files: null,
-                form: new Form({
-                    'id':'',
-                    'title': '',
-                    'description': '',
-                    'author': '',
-                    'publisher': '',
-                    'city': '',
-                    'date': '',
-                    'color': '#F2C511',
-                    'grade_id': 1,
-                    'subject_id': 1,
-                    'organization_type_id': 1,
-                    'state_id': 'DE-RP',
-                    'country_id': 'DE',
-                    'medium_id': null,
-                    'owner_id': '',
-                    'type_id': 4,
-                }),
-                tinyMCE: this.$initTinyMCE(
-                    [
-                        "autolink link table lists"
-                    ],
-                    {
-                        'eventHubCallbackFunction': 'insertContent',
-                        'eventHubCallbackFunctionParams': this.component_id,
-                    }
-                ),
-                search: '',
-            }
-        },
-        computed:{
-            textColor: function(){
-                return this.$textcolor(this.form.color, '#333333');
-            }
-        },
-        methods: {
-            submit(method) {
-                this.form.description = tinyMCE.get('description').getContent();
-                if (method === 'patch') {
-                    this.update();
-                } else {
-                    this.add();
+export default {
+    name: 'curriculum-modal',
+    components:{
+        Editor,
+        MediumModal,
+        MediumForm,
+        Select2,
+        VueDatePicker
+    },
+    props: {},
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            url: '/curricula',
+            files: null,
+            form: new Form({
+                'id':'',
+                'title': '',
+                'description': '',
+                'author': '',
+                'publisher': '',
+                'city': '',
+                'date': '',
+                'color': '#F2C511',
+                'grade_id': 1,
+                'subject_id': 1,
+                'organization_type_id': 1,
+                'state_id': 'DE-RP',
+                'country_id': 'DE',
+                'medium_id': null,
+                'owner_id': '',
+                'type_id': 4,
+            }),
+            tinyMCE: this.$initTinyMCE(
+                [
+                    "autolink link table lists"
+                ],
+                {
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id,
                 }
-            },
-            add(){
-                axios.post(this.url, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('curriculum-added', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-            update() {
-                axios.patch(this.url + '/' + this.form.id, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('curriculum-updated', r.data);
-                    })
-                    .catch(error => { // Handle the error returned from our request
-                        console.log(error);
-                    });
-            },
-            onChange($events){
-                this.files = $events.target.files;
-                console.log(this.files);
-                axios.post('curricula/import/store', this.files)
-                    .then(r => {
-                        this.$eventHub.emit('curriculum-imported', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
+            ),
+            search: '',
+        }
+    },
+    computed: {
+        textColor: function() {
+            return this.$textcolor(this.form.color, '#333333');
+        }
+    },
+    methods: {
+        submit(method) {
+            this.form.description = tinyMCE.get('description').getContent();
+            if (method === 'patch') {
+                this.update();
+            } else {
+                this.add();
             }
         },
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === this.$options.name){
-                    const params = state.modals[this.$options.name].params;
-                    this.form.reset();
-                    if (typeof (params) !== 'undefined'){
-                        this.form.populate(params);
-                        if (this.form.id !== ''){
-                            this.form.description = this.$decodeHTMLEntities(this.form.body);
-                            this.method = 'patch';
-                        } else {
-                            this.method = 'post';
-                        }
+        add() {
+            axios.post(this.url, this.form)
+                .then(r => {
+                    this.$eventHub.emit('curriculum-added', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
+        },
+        update() {
+            axios.patch(this.url + '/' + this.form.id, this.form)
+                .then(r => {
+                    this.$eventHub.emit('curriculum-updated', r.data);
+                })
+                .catch(error => { // Handle the error returned from our request
+                    console.log(error);
+                });
+        },
+        onChange($events) {
+            this.files = $events.target.files;
+            console.log(this.files);
+            axios.post('curricula/import/store', this.files)
+                .then(r => {
+                    this.$eventHub.emit('curriculum-imported', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
+        }
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    if (this.form.id !== ''){
+                        this.form.description = this.$decodeHTMLEntities(this.form.body);
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
                     }
                 }
-            });
-        },
-    }
+            }
+        });
+    },
+}
 </script>

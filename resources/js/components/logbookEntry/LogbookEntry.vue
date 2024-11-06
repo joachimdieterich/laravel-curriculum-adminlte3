@@ -223,9 +223,7 @@
         </div>
     </div>
 </template>
-
 <script>
-
 import Absences from '../absence/Absences.vue';
 import Contents from '../content/Contents.vue';
 import Tasks from '../task/Tasks.vue';
@@ -243,7 +241,7 @@ export default {
         'first': false,
         'editable': false,
     },
-    setup () {
+    setup() {
         const globalStore = useGlobalStore();
         return {
             globalStore,
@@ -273,13 +271,10 @@ export default {
                     'title': this.entry.subject?.title
                 });
         },
-        async destroy(){
-            try {
-                this.location = (await axios.delete('/logbookEntries/' + this.entry.id)).data.message;
-            } catch (error) {
-                console.log(error);
-            }
-            this.$eventHub.emit('deleteLogbookEntry',this.entry);
+        destroy() {
+            axios.delete('/logbookEntries/' + this.entry.id)
+                .then(response => this.$eventHub.emit('logbook-entry-deleted', this.entry))
+                .catch(error => console.log(error));
         },
         postDate() {
             if (this.entry.begin == undefined || this.entry.end == undefined) {
@@ -308,7 +303,6 @@ export default {
             }
         },
         isEditableForUser() {
-
             const exists = this.logbook.subscriptions.findIndex(            // Is editable?
                 subscription => subscription.subscribable_type === "App\\User" && subscription.subscribable_id == this.$userId && subscription.editable === 1
             );

@@ -205,111 +205,111 @@
     </Transition>
 </template>
 <script>
-    import Form from 'form-backend-validation';
-    import MediumModal from "../media/MediumModal.vue";
-    import axios from "axios";
-    import Editor from "@tinymce/tinymce-vue";
-    import Select2 from "../forms/Select2.vue";
-    import {useGlobalStore} from "../../store/global";
+import Form from 'form-backend-validation';
+import MediumModal from "../media/MediumModal.vue";
+import axios from "axios";
+import Editor from "@tinymce/tinymce-vue";
+import Select2 from "../forms/Select2.vue";
+import {useGlobalStore} from "../../store/global";
 
-    export default {
-        name: 'map-modal',
-        components:{
-            Editor,
-            MediumModal,
-            Select2
-        },
-        props: {},
-        setup () { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters
-            const globalStore = useGlobalStore();
-            return {
-                globalStore
+export default {
+    name: 'map-modal',
+    components:{
+        Editor,
+        MediumModal,
+        Select2
+    },
+    props: {},
+    setup() { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters
+        const globalStore = useGlobalStore();
+        return {
+            globalStore
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            url: '/maps',
+            form: new Form({
+                'id':'',
+                'title':'',
+                'subtitle':'',
+                'description': '',
+                'tags': '',
+                'type_id': 2,
+                'category_id': 2,
+                'border_url': '',
+                'latitude': 49,
+                'longitude': 8,
+                'zoom': 10,
+                'color': '#F2C511',
+                'medium_id': '',
+            }),
+            search: '',
+            tinyMCE: this.$initTinyMCE(
+                [
+                    "autolink link curriculummedia"
+                ],
+                {
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id,
+                }
+            ),
+        }
+    },
+    computed: {
+        textColor: function() {
+            return this.$textcolor(this.form.color, '#333333');
+        }
+    },
+    methods: {
+        submit(method) {
+            this.form.description = tinyMCE.get('description').getContent();
+            if (method == 'patch') {
+                this.update();
+            } else {
+                this.add();
             }
         },
-        data() {
-            return {
-                component_id: this.$.uid,
-                method: 'post',
-                url: '/maps',
-                form: new Form({
-                    'id':'',
-                    'title':'',
-                    'subtitle':'',
-                    'description': '',
-                    'tags': '',
-                    'type_id': 2,
-                    'category_id': 2,
-                    'border_url': '',
-                    'latitude': 49,
-                    'longitude': 8,
-                    'zoom': 10,
-                    'color': '#F2C511',
-                    'medium_id': '',
-                }),
-                search: '',
-                tinyMCE: this.$initTinyMCE(
-                    [
-                        "autolink link curriculummedia"
-                    ],
-                    {
-                        'eventHubCallbackFunction': 'insertContent',
-                        'eventHubCallbackFunctionParams': this.component_id,
-                    }
-                ),
-            }
+        add() {
+            axios.post(this.url, this.form)
+                .then(r => {
+                    this.$eventHub.emit('map-added', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
         },
-        computed:{
-            textColor: function(){
-                return this.$textcolor(this.form.color, '#333333');
-            }
+        update() {
+            axios.patch(this.url + '/' + this.form.id, this.form)
+                .then(r => {
+                    this.$eventHub.emit('map-updated', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
         },
-        methods: {
-             submit(method) {
-                 this.form.description = tinyMCE.get('description').getContent();
-                 if (method == 'patch') {
-                     this.update();
-                 } else {
-                     this.add();
-                 }
-            },
-            add(){
-                axios.post(this.url, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('map-added', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-            update() {
-                axios.patch(this.url + '/' + this.form.id, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('map-updated', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-        },
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === this.$options.name){
-                    const params = state.modals[this.$options.name].params;
-                    this.form.reset();
-                    if (typeof (params) !== 'undefined'){
-                        this.form.populate(params);
-                        this.form.border_url = this.$decodeHTMLEntities(params.border_url);
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    this.form.border_url = this.$decodeHTMLEntities(params.border_url);
 
-                        if (this.form.id !== ''){
-                            this.method = 'patch';
-                        } else {
-                            this.method = 'post';
-                        }
+                    if (this.form.id !== '') {
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
                     }
                 }
-            });
-        },
-    }
+            }
+        });
+    },
+}
 </script>
 

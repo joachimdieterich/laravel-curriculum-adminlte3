@@ -132,107 +132,107 @@
     </Transition>
 </template>
 <script>
-    import Form from 'form-backend-validation';
-    import Editor from '@tinymce/tinymce-vue';
-    import Select2 from "../forms/Select2.vue";
-    import Switch from "../forms/Switch.vue";
-    import {useGlobalStore} from "../../store/global";
+import Form from 'form-backend-validation';
+import Editor from '@tinymce/tinymce-vue';
+import Select2 from "../forms/Select2.vue";
+import Switch from "../forms/Switch.vue";
+import {useGlobalStore} from "../../store/global";
 
-    export default {
-        name: 'certificate-modal',
-        components:{
-            Switch,
-            Editor,
-            Select2
-        },
-        props: {},
-        setup () {
-            const globalStore = useGlobalStore();
-            return {
-                globalStore,
+export default {
+    name: 'certificate-modal',
+    components:{
+        Switch,
+        Editor,
+        Select2
+    },
+    props: {},
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            url: '/certificates',
+            form: new Form({
+                'id':'',
+                'title': '',
+                'description': '',
+                'body': '',
+                'curriculum_id': '',
+                'organization_id': '',
+                'type': '',
+                'global': '',
+            }),
+            countries: [],
+            states: [],
+            tinyMCE: this.$initTinyMCE(
+                [
+                    "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+                    "searchreplace wordcount visualblocks visualchars code fullscreen",
+                    "insertdatetime media nonbreaking save table directionality",
+                    "emoticons template paste textpattern curriculummedia"
+                ],
+                {
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id,
+
+                },
+                " | customDateButton | insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | example link image media | insertFirstname insertLastname organizationTitle organizationStreet organizationPostcode organizationCity certificateDate | usersProgress",
+                "span[id|class|style|name|reference_type|reference_id|min_value]",
+            ),
+            search: '',
+        }
+    },
+    methods: {
+        submit(method) {
+            this.form.body = tinyMCE.get('body').getContent();
+
+            if (method === 'patch') {
+                this.update();
+            } else {
+                this.add();
             }
         },
-        data() {
-            return {
-                component_id: this.$.uid,
-                method: 'post',
-                url: '/certificates',
-                form: new Form({
-                    'id':'',
-                    'title': '',
-                    'description': '',
-                    'body': '',
-                    'curriculum_id': '',
-                    'organization_id': '',
-                    'type': '',
-                    'global': '',
-                }),
-                countries: [],
-                states: [],
-                tinyMCE: this.$initTinyMCE(
-                    [
-                        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-                        "searchreplace wordcount visualblocks visualchars code fullscreen",
-                        "insertdatetime media nonbreaking save table directionality",
-                        "emoticons template paste textpattern curriculummedia"
-                    ],
-                    {
-                        'eventHubCallbackFunction': 'insertContent',
-                        'eventHubCallbackFunctionParams': this.component_id,
-
-                    },
-                    " | customDateButton | insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | example link image media | insertFirstname insertLastname organizationTitle organizationStreet organizationPostcode organizationCity certificateDate | usersProgress",
-                    "span[id|class|style|name|reference_type|reference_id|min_value]",
-                ),
-                search: '',
-            }
+        add() {
+            axios.post(this.url, this.form)
+                .then(r => {
+                    this.$eventHub.emit('certificate-added', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
         },
-        methods: {
-             submit(method) {
-                this.form.body = tinyMCE.get('body').getContent();
-
-                if (method === 'patch') {
-                    this.update();
-                } else {
-                    this.add();
-                }
-            },
-            add(){
-                axios.post(this.url, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('certificate-added', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-            update(){
-                axios.patch(this.url + '/' + this.form.id, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('certificate-updated', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            }
-        },
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === this.$options.name){
-                    const params = state.modals[this.$options.name].params;
-                    this.form.reset();
-                    if (typeof (params) !== 'undefined'){
-                        this.form.populate(params);
-                        if (this.form.id !== ''){
-                            this.form.body = this.$decodeHtml(this.form.body)
-                            this.method = 'patch';
-                        } else {
-                            this.method = 'post';
-                        }
+        update() {
+            axios.patch(this.url + '/' + this.form.id, this.form)
+                .then(r => {
+                    this.$eventHub.emit('certificate-updated', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
+        }
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    if (this.form.id !== ''){
+                        this.form.body = this.$decodeHtml(this.form.body)
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
                     }
                 }
-            });
-        },
-    }
+            }
+        });
+    },
+}
 </script>

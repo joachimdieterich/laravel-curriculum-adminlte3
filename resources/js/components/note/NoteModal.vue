@@ -43,51 +43,51 @@
     </Transition>
 </template>
 <script>
-    import Notes from "./Notes.vue";
-    import Form from 'form-backend-validation';
-    import {useGlobalStore} from "../../store/global";
+import Notes from "./Notes.vue";
+import Form from 'form-backend-validation';
+import {useGlobalStore} from "../../store/global";
 
-    export default {
-        name: 'note-modal',
-        components:{
-            Notes,
-        },
-        props: {},
-        setup () {
-            const globalStore = useGlobalStore();
-            return {
-                globalStore,
-            }
-        },
-        data() {
-            return {
-                component_id: this.$.uid,
-                method: 'post',
-                form: new Form({
-                    'notable_type': false,
-                    'notable_id': false,
-                    'show_tabs': true,
-                }),
-            }
-        },
-        methods: {},
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === this.$options.name){
-                    const params = state.modals[this.$options.name].params;
-                    this.form.reset();
-                    if (typeof (params) !== 'undefined'){
-                        this.form.populate(params);
-                        if (this.form.id !== ''){
-                            this.method = 'patch';
-                        } else {
-                            this.method = 'post';
-                        }
+export default {
+    name: 'note-modal',
+    components: {
+        Notes,
+    },
+    props: {},
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            form: new Form({
+                'notable_type': false,
+                'notable_id': false,
+                'show_tabs': true,
+            }),
+        }
+    },
+    methods: {},
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    if (this.form.id !== '') {
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
                     }
                 }
-            });
-        },
-    }
+            }
+        });
+    },
+}
 </script>
 

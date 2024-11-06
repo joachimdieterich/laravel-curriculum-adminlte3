@@ -71,80 +71,79 @@
     </Transition>
 </template>
 <script>
-    import Form from 'form-backend-validation';
-    import Select2 from "../forms/Select2.vue";
-    import {useGlobalStore} from "../../store/global";
+import Form from 'form-backend-validation';
+import Select2 from "../forms/Select2.vue";
+import {useGlobalStore} from "../../store/global";
 
-    export default {
-        name: 'exam-modal',
-        components:{
-            Select2
+export default {
+    name: 'exam-modal',
+    components:{
+        Select2
+    },
+    props: {},
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            url: '/exams',
+            form: new Form({
+                'exam_id':'',
+                'group_id': '',
+            }),
+            search: '',
+            options: []
+        }
+    },
+    methods: {
+        submit() {
+            let test = this.options.filter((t) => t.id == this.form.exam_id);
+            //console.log(test[0]);
+            this.SendCreateExamRequest(test[0].tool, test[0].id, test[0].nameLong, this.form.group_id);
         },
-        props: {},
-        setup () {
-            const globalStore = useGlobalStore();
-            return {
-                globalStore,
-            }
-        },
-        data() {
-            return {
-                component_id: this.$.uid,
-                method: 'post',
-                url: '/exams',
-                form: new Form({
-                    'exam_id':'',
-                    'group_id': '',
-                }),
-                search: '',
-                options: []
-            }
-        },
-        methods: {
-
-            submit() {
-                let test = this.options.filter((t) => t.id == this.form.exam_id);
-                //console.log(test[0]);
-                this.SendCreateExamRequest(test[0].tool, test[0].id, test[0].nameLong, this.form.group_id);
-            },
-            async SendCreateExamRequest(tool, test_id, test_name, group_id) {
-                console.log({'tool': tool, 'test_id': test_id, 'test_name': test_name, 'group_id': group_id})
-                await axios.post('/exams', {'tool': tool, 'test_id': test_id, 'test_name': test_name, 'group_id': group_id})
-                    .then(response => {
-                        this.$eventHub.emit('exam-added', response.data)
-                    })
-                    .catch(errors => {
-                        this.$emit('failedNotification', errors)
-                    })
-            }
-        },
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === this.$options.name){
-                    const params = state.modals[this.$options.name].params;
-                    this.form.reset();
-                    if (typeof (params) !== 'undefined'){
-                        this.form.populate(params);
-                        if (this.form.id !== ''){
-                            this.method = 'patch';
-                        } else {
-                            this.method = 'post';
-                        }
-                    }
-                }
-            });
-
-            axios.get('/tests')
+        async SendCreateExamRequest(tool, test_id, test_name, group_id) {
+            console.log({'tool': tool, 'test_id': test_id, 'test_name': test_name, 'group_id': group_id})
+            await axios.post('/exams', {'tool': tool, 'test_id': test_id, 'test_name': test_name, 'group_id': group_id})
                 .then(response => {
-                    this.options = response.data
+                    this.$eventHub.emit('exam-added', response.data)
                 })
                 .catch(errors => {
-                    if (errors.response.status !== 403) {
-                        this.$emit('failedNotification', Vue.prototype.trans('global.exam.error_messages.get_tests'))
-                    }
+                    this.$emit('failedNotification', errors)
                 })
-        },
-    }
+        }
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    if (this.form.id !== '') {
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
+                    }
+                }
+            }
+        });
+
+        axios.get('/tests')
+            .then(response => {
+                this.options = response.data
+            })
+            .catch(errors => {
+                if (errors.response.status !== 403) {
+                    this.$emit('failedNotification', Vue.prototype.trans('global.exam.error_messages.get_tests'))
+                }
+            })
+    },
+}
 </script>
 

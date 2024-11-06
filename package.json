@@ -4,7 +4,7 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "preview": "vite build & vite preview",
+        "preview": "vite build && vite preview",
         "production": "vite build",
         "cypress": "start php artisan serve --env=cypress --port=8001 && start npx cypress open"
     },

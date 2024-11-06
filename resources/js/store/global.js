@@ -10,7 +10,7 @@ export const useGlobalStore = defineStore('global', {
             'confirm-modal': {},
             'contact-modal' : {},
             'content-modal' : {},
-            'content-subscription-modal' : {}, //todo: check if used
+            'content-subscription-modal' : {},
             'course-modal' : {},
             'curriculum-modal' : {},
             'exam-modal' : {},

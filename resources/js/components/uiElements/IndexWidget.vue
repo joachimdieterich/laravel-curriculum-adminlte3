@@ -54,6 +54,8 @@
 
             <slot name="owner"></slot>
 
+            <slot name="badges"></slot>
+
             <div @click="clickEvent(item)"
                  class="symbol"
                  style="position: absolute; width: 30px; height: 40px;">
@@ -157,7 +159,7 @@ export default {
                     if (this.urlOnly){
                         window.open( this.url /*+ '/' + item.id*/, this.urlTarget);
                     } else {
-                        window.location = this.url + '/' + item.id; //item.DT_RowId ? -> will not work for new entries
+                        window.location = this.url + '/' + (item.DT_RowId ?? item.id); // ? item.DT_RowId -> will not work for new entries
                     }
                 }
             } else {

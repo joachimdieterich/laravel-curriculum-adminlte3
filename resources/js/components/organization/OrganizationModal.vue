@@ -326,7 +326,7 @@
                     if (typeof (params) !== 'undefined'){
                         this.form.populate(params);
                         this.form.description = this.$decodeHtml(this.form.description);
-                        this.onlyAddress = params.onlyAdress ?? false;
+                        this.onlyAddress = params.onlyAddress ?? false;
                         this.onlyLmsUrl = params.onlyLmsUrl ?? false;
                         if (this.form.id !== ''){
                             this.method = 'patch';

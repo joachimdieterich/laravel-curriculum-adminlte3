@@ -10,6 +10,12 @@ $fa-font-path: '@fortawesome/fontawesome-free/webfonts';
 //@import '~datatables.net-buttons-bs5/css/buttons.bootstrap5.css';
 //@import '~datatables.net-select-bs5/css/select.bootstrap5.css';
 
+.dataTable tbody tr {
+    border-bottom: 1px solid lightgray;
+}
+.dt-bootstrap5 .select-info {
+    padding-left: 10px !important;
+}
 // Bootstrap
 @import 'bootstrap/scss/bootstrap';
 

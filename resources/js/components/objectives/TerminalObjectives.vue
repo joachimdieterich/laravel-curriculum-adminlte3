@@ -14,6 +14,7 @@
                 <template
                     #item="{ element: typetab , index }">-->
                     <li v-for="typetab in typetabs"
+                        v-can="'curriculum_edit'"
                         class="nav-item pl-0 pr-2 pb-2 pt-2">
                         <a class="nav-link " :href="'#tab_' + typetab"
                            :class="(activetab == typetab) ? 'active' : ''"

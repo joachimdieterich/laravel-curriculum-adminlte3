@@ -242,7 +242,8 @@ return [
         'enrol' => 'Benutzer einschreiben',
         'expel' => 'Benutzer ausschreiben',
         'expel_helper' => 'Soll der Benutzer aus der Gruppe ausgeschrieben werden?',
-        'enrol_success' => 'Benutzer erfolgreich ausgeschrieben.',
+        'enrol_success' => 'Benutzer erfolgreich eingeschrieben.',
+        'expel_success' => 'Benutzer erfolgreich ausgeschrieben.',
         'enrol_error' => 'Benutzerausschreibung fehlgeschlagen.',
         'no_selection' => 'Es wurden keine Benutzer ausgewählt.',
         'import_helper' => 'Die CSV-Datei muss folgendes Format haben:
@@ -358,7 +359,7 @@ return [
     'if_you_are_having_trouble' => 'Wenn Sie Probleme beim Klicken auf die',
     'copy_paste_url_bellow' => 'kopieren Sie die untenstehende URL und fügen Sie sie in Ihren Webbrowser ein:',
     'registration' => 'Registrierung',
-    'registration_confirme' => 'Registrierung bestätigen',
+    'registration_confirm' => 'Registrierung bestätigen',
     'not_approved_title' => 'Sie sind nicht berechtigt',
     'not_approved_p' => 'Ihr Benutzerkonto ist immer noch nicht vom Administrator freigegeben. Bitte, haben Sie Geduld und versuchen Sie es später noch einmal.',
     'there_were_problems_with_input' => 'Es gab Probleme bei der Eingabe',

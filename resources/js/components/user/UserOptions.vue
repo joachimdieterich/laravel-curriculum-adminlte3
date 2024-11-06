@@ -24,16 +24,16 @@
                             {{ trans('global.organization.title') }} / {{ trans('global.role.title') }}
                         </a>
                     </li>
-                    <li id="nav_tab_register" class="nav-item">
+                    <li v-permission="'is_admin'"
+                        id="nav_tab_register" class="nav-item">
                         <a href="#tab_register" class="nav-link" data-toggle="tab">
-                            {{ trans('global.registration_confirme') }}
+                            {{ trans('global.registration_confirm') }}
                         </a>
                     </li>
                     <li v-permission="'user_delete'"
                         id="nav_tab_delete" class="nav-item">
                         <a href="#tab_delete" class="nav-link" data-toggle="tab">
                             <span class="text">
-                                {{ trans('global.user.delete') }}
                                 {{ trans('global.user.delete') }}
                             </span>
                         </a>
@@ -300,9 +300,9 @@ export default {
                 console.log(e.response);
             });
         },
-        feedbackSuccess(r){
+        feedbackSuccess(r, message){
             if (r.data !== ''){
-                this.successNotification(window.trans.global.user.enrol_success);
+                this.successNotification(message);
             }
         },
         feedbackError(e){
@@ -314,7 +314,7 @@ export default {
             axios.post('/groups/enrol', {
                 'enrollment_list' : enrollment_list
             })
-                .then(r => { this.feedbackSuccess(r); })
+                .then(r => { this.feedbackSuccess(r, window.trans.global.user.enrol_success); })
                 .catch(e => { this.feedbackError(e); });
         },
         expelFromGroup(){
@@ -324,25 +324,25 @@ export default {
                         'expel_list' : expel_list
                     }
                 })
-                .then(r => { this.feedbackSuccess(r); })
+                .then(r => { this.feedbackSuccess(r, window.trans.global.user.expel_success); })
                 .catch(e => { this.feedbackError(e); });
         },
         enroleToOrganization(){
-            let enrollment_list = this.generateGroupProcessList();
+            let enrollment_list = this.generateOrganizationProcessList();
             axios.post('/organizations/enrol', {
                 'enrollment_list' : enrollment_list
                 })
-                .then(r => { this.feedbackSuccess(r); })
+                .then(r => { this.feedbackSuccess(r, window.trans.global.user.enrol_success); })
                 .catch(e => { this.feedbackError(e); });
         },
         expelFromOrganization(){
-            let expel_list = this.generateGroupProcessList();
+            let expel_list = this.generateOrganizationProcessList();
             axios.delete('/organizations/expel', {
                     data: {
                         'expel_list' : expel_list
                     }
                 })
-                .then(r => { this.feedbackSuccess(r); })
+                .then(r => { this.feedbackSuccess(r, window.trans.global.user.expel_success); })
                 .catch(e => { this.feedbackError(e); });
         },
         generateGroupProcessList(){

@@ -4,13 +4,13 @@ export const useGlobalStore = defineStore('global', {
     state: () => ({
         global: [],
         modals: {
-           /* 'absence-modal' : {},
+            'absence-modal' : {},
             'certificate-modal' : {},
             'config-modal': {},
             'confirm-modal': {},
             'contact-modal' : {},
             'content-modal' : {},
-            'content-subscription-modal' : {}, //todo: check if used
+            'content-subscription-modal' : {},
             'course-modal' : {},
             'curriculum-modal' : {},
             'exam-modal' : {},
@@ -36,17 +36,16 @@ export const useGlobalStore = defineStore('global', {
             'prerequisite-objective-modal' : {},
             'reference-objective-modal' : {},
             'role-modal' : {},
-            'set-achievements-modal':{}
+            'set-achievements-modal':{},
             'subscribe-exam-modal' : {},
             'subscribe-logbook-modal' : {},
             'subscribe-modal' : {},
             'subscribe-objective-modal' : {},
             'subscribe-user-modal' : {},
-            'terminal-objective-modal' : {}
+            'terminal-objective-modal' : {},
             'task-modal' : {},
             'user-modal' : {},
             'videoconference-modal' : {},
-            */
         }
     }),
     actions: {

@@ -315,6 +315,8 @@ import moment from 'moment';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import HtmlRenderer from "../uiElements/HtmlRenderer.vue";
 import Editor from "@tinymce/tinymce-vue";
+import {useMediumStore} from "../../store/media.js";
+
 
 export default {
     props: {
@@ -329,6 +331,12 @@ export default {
         kanban_owner_id: {
             type: Number,
             default: null
+        }
+    },
+    setup () { //use database store
+        const mediumStore = useMediumStore();
+        return {
+            mediumStore,
         }
     },
     data() {
@@ -447,14 +455,23 @@ export default {
             });
         },
         addMedia() {
-            this.$modal.show(
+            this.mediumStore.setMediumModalParams(
+                {
+                    'show': true,
+                    'subscribeSelected': true,
+                    'subscribable_type': 'App\\\KanbanItem',
+                    'subscribable_id': this.item.id,
+                    'public': 0,
+                    'callbackId': this.component_id
+                });
+            /*this.$modal.show(
                 'medium-create-modal',
                 {
                     'referenceable_type': 'App\\\KanbanItem',
                     'referenceable_id': this.item.id,
                     'eventHubCallbackFunction': 'reload_kanban_item',
                     'eventHubCallbackFunctionParams': this.item.id,
-                });
+                });*/
         },
         reload() { //after media upload
             axios.get("/kanbanItems/" + this.item.id)
@@ -513,6 +530,11 @@ export default {
                 : 'none';
         });
 
+        this.$eventHub.on('medium-added', (e) => {
+            if (this.component_id == e.id) {
+                this.reload();
+            }
+        });
         this.$nextTick(() => {
             MathJax.startup.defaultReady();
         });

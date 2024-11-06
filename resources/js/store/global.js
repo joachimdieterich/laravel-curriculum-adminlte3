@@ -36,13 +36,13 @@ export const useGlobalStore = defineStore('global', {
             'prerequisite-objective-modal' : {},
             'reference-objective-modal' : {},
             'role-modal' : {},
-            'set-achievements-modal':{}
+            'set-achievements-modal':{},
             'subscribe-exam-modal' : {},
             'subscribe-logbook-modal' : {},
             'subscribe-modal' : {},
             'subscribe-objective-modal' : {},
             'subscribe-user-modal' : {},
-            'terminal-objective-modal' : {}
+            'terminal-objective-modal' : {},
             'task-modal' : {},
             'user-modal' : {},
             'videoconference-modal' : {},

@@ -154,11 +154,12 @@ export default {
 
         this.currentLogbook = this.logbook;
 
-        this.$eventHub.on('logbookEntry-added', (entry) => {
+        this.$eventHub.on('logbook-entry-added', (entry) => {
             this.globalStore?.closeModal('logbook-entry-modal');
             this.entries.push(entry);
         });
-        this.$eventHub.on('logbookEntry-updated', (updated) => {
+
+        this.$eventHub.on('logbook-entry-updated', (updated) => {
             this.globalStore?.closeModal('logbook-entry-modal');
 
             const index = this.entries.findIndex(
@@ -168,28 +169,27 @@ export default {
             Object.assign(this.entries[index], updated);
         });
 
+        this.$eventHub.on('logbook-entry-deleted', (deletedEntry) => {
+            let index = this.entries.indexOf(deletedEntry);
+            this.entries.splice(index, 1);
+        });
+
         this.$eventHub.on('logbook-updated', (logbook) => {
             this.globalStore?.closeModal('logbook-modal');
             this.currentLogbook = logbook;
         });
 
-        this.$eventHub.on('updateSubjectBadge', (updatedEntry) => {
-            console.log(updatedEntry);
+        this.$eventHub.on('update-subject-badge', (updatedEntry) => {
             this.globalStore?.closeModal('logbook-entry-subject-modal');
             const index = this.entries.findIndex(
                 entry => entry.id === updatedEntry.entry_id
             );
-            //console.log(this.entries[index]);
+
             this.entries[index].subject = {
                 id: updatedEntry.subject_id,
                 title: updatedEntry.title
             };
             this.entries[index].subject_id = updatedEntry.subject_id;
-        });
-
-        this.$eventHub.on('deleteLogbookEntry', function (deletedEntry) {
-            let index = this.entries.indexOf(deletedEntry);
-            this.entries.splice(index, 1);
         });
     },
     methods: {

@@ -62,11 +62,11 @@ import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'subscribe-videoconference-modal',
-    components:{
+    components: {
         Select2
     },
     props: {},
-    setup () {
+    setup() {
         const globalStore = useGlobalStore();
         return {
             globalStore,
@@ -105,12 +105,12 @@ export default {
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            if (mutation.events.key === this.$options.name){
+            if (state.modals[this.$options.name].show) {
                 const params = state.modals[this.$options.name].params.reference;
                 this.subscribable_type = state.modals[this.$options.name].params.subscribable_type;
                 this.subscribable_id = state.modals[this.$options.name].params.subscribable_id;
                 this.form.reset();
-                if (typeof (params) !== 'undefined'){
+                if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
                     this.method = 'post';
                 }

@@ -106,90 +106,89 @@
     </Transition>
 </template>
 <script>
-    import Form from 'form-backend-validation';
-    import Editor from '@tinymce/tinymce-vue';
-    import VueDatePicker from '@vuepic/vue-datepicker';
-    import '@vuepic/vue-datepicker/dist/main.css';
-    import {useGlobalStore} from "../../store/global";
-    import Select2 from "../forms/Select2.vue";
+import Form from 'form-backend-validation';
+import Editor from '@tinymce/tinymce-vue';
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
+import {useGlobalStore} from "../../store/global";
+import Select2 from "../forms/Select2.vue";
 
-    export default {
-        name: 'absence-modal',
-        components:{
-            Select2,
-            Editor,
-            VueDatePicker
-        },
-        props: {},
-        setup () {
-            const globalStore = useGlobalStore();
-            return {
-                globalStore,
+export default {
+    name: 'absence-modal',
+    components: {
+        Select2,
+        Editor,
+        VueDatePicker
+    },
+    props: {},
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            url: '/absences',
+            form: new Form({
+                'id':'',
+                'reason': '',
+                'absent_user_id': '',
+                'referenceable_type': null,
+                'referenceable_id': null,
+                'done': false,
+                'time': 0
+            }),
+        }
+    },
+    methods: {
+        submit(method) {
+            if (method == 'patch') {
+                this.update();
+            } else {
+                this.add();
             }
         },
-        data() {
-            return {
-                component_id: this.$.uid,
-                method: 'post',
-                url: '/absences',
-                form: new Form({
-                    'id':'',
-                    'reason': '',
-                    'absent_user_id': '',
-                    'referenceable_type': null,
-                    'referenceable_id': null,
-                    'done': false,
-                    'time': 0
-                }),
-            }
+        add() {
+            axios.post(this.url, this.form)
+                .then(r => {
+                    this.$eventHub.emit('absence-added', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
         },
-
-        methods: {
-             submit(method) {
-                 if (method == 'patch') {
-                     this.update();
-                 } else {
-                     this.add();
-                 }
-            },
-            add(){
-                axios.post(this.url, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('absence-added', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-            update() {
-                axios.patch(this.url + '/' + this.form.id, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('absence-updated', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
+        update() {
+            axios.patch(this.url + '/' + this.form.id, this.form)
+                .then(r => {
+                    this.$eventHub.emit('absence-updated', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
         },
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === this.$options.name){
-                    const params = state.modals[this.$options.name].params;
-                    this.form.reset();
-                    if (typeof (params) !== 'undefined'){
-                        this.form.populate(params);
-                        if (this.form.id !== ''){
-                            this.method = 'patch';
-                        } else {
-                            this.method = 'post';
-                        }
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    if (this.form.id !== '') {
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
                     }
                 }
-            });
+            }
+        });
 
-            this.form.start_date = new Date();
-        },
-    }
+        this.form.start_date = new Date();
+    },
+}
 </script>
 

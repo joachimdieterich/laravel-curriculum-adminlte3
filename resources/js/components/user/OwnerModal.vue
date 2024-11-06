@@ -56,55 +56,55 @@
     </Transition>
 </template>
 <script>
-    import Form from 'form-backend-validation';
-    import {useGlobalStore} from "../../store/global";
-    import Select2 from "../forms/Select2.vue";
+import Form from 'form-backend-validation';
+import {useGlobalStore} from "../../store/global";
+import Select2 from "../forms/Select2.vue";
 
-    export default {
-        name: 'owner-modal',
-        components: {
-            Select2
+export default {
+    name: 'owner-modal',
+    components: {
+        Select2
+    },
+    props: {},
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            form: new Form({
+                'model_id':'',
+                'model': '',
+                'model_url': '',
+                'owner_id': '',
+            }),
+        }
+    },
+    methods: {
+        submit() {
+            axios.patch(this.form.model_url + '/' + this.form.model_id + '/editOwner', this.form)
+                .then(r => {
+                    this.$eventHub.emit('owner-updated', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
         },
-        props: {},
-        setup () {
-            const globalStore = useGlobalStore();
-            return {
-                globalStore,
-            }
-        },
-        data() {
-            return {
-                component_id: this.$.uid,
-                form: new Form({
-                    'model_id':'',
-                    'model': '',
-                    'model_url': '',
-                    'owner_id': '',
-                }),
-            }
-        },
-        methods: {
-             submit() {
-                 axios.patch(this.form.model_url + '/' + this.form.model_id + '/editOwner', this.form)
-                     .then(r => {
-                         this.$eventHub.emit('owner-updated', r.data);
-                     })
-                     .catch(e => {
-                         console.log(e.response);
-                     });
-            },
-        },
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === this.$options.name){
-                    const params = state.modals[this.$options.name].params;
-                    this.form.reset();
-                    if (typeof (params) !== 'undefined'){
-                        this.form.populate(params);
-                    }
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
                 }
-            });
-        },
-    }
+            }
+        });
+    },
+}
 </script>

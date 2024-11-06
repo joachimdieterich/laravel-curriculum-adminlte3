@@ -120,80 +120,80 @@
     </Transition>
 </template>
 <script>
-    import Form from 'form-backend-validation';
-    import axios from "axios";
-    import {useGlobalStore} from "../../store/global";
+import Form from 'form-backend-validation';
+import axios from "axios";
+import {useGlobalStore} from "../../store/global";
 
-    export default {
-        name: 'config-modal',
-        components:{},
-        props: {},
-        setup () {
-            const globalStore = useGlobalStore();
+export default {
+    name: 'config-modal',
+    components:{},
+    props: {},
+    setup() {
+        const globalStore = useGlobalStore();
 
-            return {
-                globalStore,
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            url: '/configs',
+            form: new Form({
+                'id':'',
+                'key': '',
+                'value': '',
+                'referenceable_type': '',
+                'referenceable_id': '',
+                'data_type': '',
+            }),
+            search: '',
+        }
+    },
+    methods: {
+        submit(method) {
+            if (method == 'patch') {
+                this.update();
+            } else {
+                this.add();
             }
         },
-        data() {
-            return {
-                component_id: this.$.uid,
-                method: 'post',
-                url: '/configs',
-                form: new Form({
-                    'id':'',
-                    'key': '',
-                    'value': '',
-                    'referenceable_type': '',
-                    'referenceable_id': '',
-                    'data_type': '',
-                }),
-                search: '',
-            }
+        add() {
+            axios.post(this.url, this.form)
+                .then(r => {
+                    this.$eventHub.emit('config-added', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
         },
-        methods: {
-            submit(method) {
-                if (method == 'patch') {
-                    this.update();
-                } else {
-                    this.add();
-                }
-            },
-            add(){
-                axios.post(this.url, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('config-added', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-            update() {
-                axios.patch(this.url + '/' + this.form.id, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('config-updated', r.data);
-                    })
-                    .catch(error => { // Handle the error returned from our request
-                        console.log(error);
-                    });
-            }
-        },
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === this.$options.name){
-                    const params = state.modals[this.$options.name].params;
-                    this.form.reset();
-                    if (typeof (params) !== 'undefined'){
-                        this.form.populate(params);
-                        if (this.form.id !== ''){
-                            this.method = 'patch';
-                        } else {
-                            this.method = 'post';
-                        }
+        update() {
+            axios.patch(this.url + '/' + this.form.id, this.form)
+                .then(r => {
+                    this.$eventHub.emit('config-updated', r.data);
+                })
+                .catch(error => { // Handle the error returned from our request
+                    console.log(error);
+                });
+        }
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    if (this.form.id !== ''){
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
                     }
                 }
-            });
-        },
-    }
+            }
+        });
+    },
+}
 </script>

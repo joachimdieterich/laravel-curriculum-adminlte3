@@ -510,205 +510,203 @@
     </Transition>
 </template>
 <script>
-    import Form from 'form-backend-validation';
-    import MediumModal from "../media/MediumModal.vue";
-    import MediumForm from "../media/MediumForm.vue";
-    import axios from "axios";
-    import Editor from "@tinymce/tinymce-vue";
-    import Select2 from "../forms/Select2.vue";
-    import {useGlobalStore} from "../../store/global";
+import Form from 'form-backend-validation';
+import MediumModal from "../media/MediumModal.vue";
+import MediumForm from "../media/MediumForm.vue";
+import axios from "axios";
+import Editor from "@tinymce/tinymce-vue";
+import Select2 from "../forms/Select2.vue";
+import {useGlobalStore} from "../../store/global";
 
-    export default {
-        name: 'videoconference-modal',
-        components:{
-            Editor,
-            MediumModal,
-            Select2,
-            MediumForm
-        },
-        props: {
-            params: {
-                type: Object
-            },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
-
-        },
-        setup () {
-            const globalStore = useGlobalStore();
-            return {
-                globalStore,
-            }
-        },
-        data() {
-            return {
-                component_id: this.$.uid,
-                method: 'post',
-                url: '/videoconferences',
-                form: new Form({
-                    'id': '',
-                    'meetingID': '',
-                    'meetingName': '',
-                    'attendeePW': '',
-                    'moderatorPW': '',
-                    'endCallbackUrl': '',
-                    'welcomeMessage': '',
-                    'dialNumber': null,
-                    'maxParticipants': 0,
-                    'logoutUrl': '',
-                    'record': false,
-                    'duration': 0,
-                    'isBreakout': false,
-                    'moderatorOnlyMessage': '',
-                    'autoStartRecording': false,
-                    'allowStartStopRecording': true,
-                    'bannerText': '',
-                    'bannerColor': '#F2C511',
-                    'logo': null,
-                    'copyright': '',
-                    'muteOnStart': false,
-                    'allowModsToUnmuteUsers': false,
-                    'lockSettingsDisableCam': false,
-                    'lockSettingsDisableMic': false,
-                    'lockSettingsDisablePrivateChat': false,
-                    'lockSettingsDisablePublicChat': false,
-                    'lockSettingsDisableNote': false,
-                    'lockSettingsLockedLayout': false,
-                    'lockSettingsLockOnJoin': false,
-                    'lockSettingsLockOnJoinConfigurable': false,
-                    'guestPolicy': 'ALWAYS_ACCEPT',
-                    'userName': '',
-                    'meetingKeepEvents': false,
-                    'endWhenNoModerator': false,
-                    'endWhenNoModeratorDelayInMinutes': 1,
-                    'meetingLayout': 'SMART_LAYOUT',
-                    'learningDashboardCleanupDelayInMinutes': 2,
-                    'allowModsToEjectCameras': false,
-                    'allowRequestsWithoutSession': false,
-                    'userCameraCap': 3,
-                    'allJoinAsModerator': false,
-                    'medium_id': null,
-                    'webcamsOnlyForModerator': false,
-                    'anyoneCanStart': false,
-                    'server': 'server1'
-                }),
-                askModerator: true,
-                servers: {},
-
-                tinyMCE: this.$initTinyMCE(
-                    [
-                        "autolink link table lists"
-                    ],
-                    {
-                        'eventHubCallbackFunction': 'insertContent',
-                        'eventHubCallbackFunctionParams': this.component_id,
-                    }
-                ),
-                showExtendedSettings: false,
-                guestPolicyConstants: {
-                    0: {
-                        'id': 'ALWAYS_ACCEPT',
-                        'text': window.trans.global.videoconference.ALWAYS_ACCEPT,
-                    },
-                    1: {
-                        'id': 'ALWAYS_DENY',
-                        'text': window.trans.global.videoconference.ALWAYS_DENY,
-                    },
-                    2: {
-                        'id': 'ASK_MODERATOR',
-                        'text': window.trans.global.videoconference.ASK_MODERATOR
-                    }
+export default {
+    name: 'videoconference-modal',
+    components: {
+        Editor,
+        MediumModal,
+        Select2,
+        MediumForm
+    },
+    props: {
+        params: {
+            type: Object
+        },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
+    },
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            url: '/videoconferences',
+            form: new Form({
+                'id': '',
+                'meetingID': '',
+                'meetingName': '',
+                'attendeePW': '',
+                'moderatorPW': '',
+                'endCallbackUrl': '',
+                'welcomeMessage': '',
+                'dialNumber': null,
+                'maxParticipants': 0,
+                'logoutUrl': '',
+                'record': false,
+                'duration': 0,
+                'isBreakout': false,
+                'moderatorOnlyMessage': '',
+                'autoStartRecording': false,
+                'allowStartStopRecording': true,
+                'bannerText': '',
+                'bannerColor': '#F2C511',
+                'logo': null,
+                'copyright': '',
+                'muteOnStart': false,
+                'allowModsToUnmuteUsers': false,
+                'lockSettingsDisableCam': false,
+                'lockSettingsDisableMic': false,
+                'lockSettingsDisablePrivateChat': false,
+                'lockSettingsDisablePublicChat': false,
+                'lockSettingsDisableNote': false,
+                'lockSettingsLockedLayout': false,
+                'lockSettingsLockOnJoin': false,
+                'lockSettingsLockOnJoinConfigurable': false,
+                'guestPolicy': 'ALWAYS_ACCEPT',
+                'userName': '',
+                'meetingKeepEvents': false,
+                'endWhenNoModerator': false,
+                'endWhenNoModeratorDelayInMinutes': 1,
+                'meetingLayout': 'SMART_LAYOUT',
+                'learningDashboardCleanupDelayInMinutes': 2,
+                'allowModsToEjectCameras': false,
+                'allowRequestsWithoutSession': false,
+                'userCameraCap': 3,
+                'allJoinAsModerator': false,
+                'medium_id': null,
+                'webcamsOnlyForModerator': false,
+                'anyoneCanStart': false,
+                'server': 'server1'
+            }),
+            askModerator: true,
+            servers: {},
+            tinyMCE: this.$initTinyMCE(
+                [
+                    "autolink link table lists"
+                ],
+                {
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id,
+                }
+            ),
+            showExtendedSettings: false,
+            guestPolicyConstants: {
+                0: {
+                    'id': 'ALWAYS_ACCEPT',
+                    'text': window.trans.global.videoconference.ALWAYS_ACCEPT,
                 },
-                meetingLayoutConstants: {
-                    0: {
-                        'id': 'SMART_LAYOUT',
-                        'text': window.trans.global.videoconference.SMART_LAYOUT,
-                    },
-                    1: {
-                        'id': 'CUSTOM_LAYOUT',
-                        'text': window.trans.global.videoconference.CUSTOM_LAYOUT,
-                    },
-                    2: {
-                        'id': 'PRESENTATION_FOCUS',
-                        'text': window.trans.global.videoconference.PRESENTATION_FOCUS,
-                    },
-                    3: {
-                        'id': 'VIDEO_FOCUS',
-                        'text': window.trans.global.videoconference.VIDEO_FOCUS
-                    },
+                1: {
+                    'id': 'ALWAYS_DENY',
+                    'text': window.trans.global.videoconference.ALWAYS_DENY,
+                },
+                2: {
+                    'id': 'ASK_MODERATOR',
+                    'text': window.trans.global.videoconference.ASK_MODERATOR
                 }
+            },
+            meetingLayoutConstants: {
+                0: {
+                    'id': 'SMART_LAYOUT',
+                    'text': window.trans.global.videoconference.SMART_LAYOUT,
+                },
+                1: {
+                    'id': 'CUSTOM_LAYOUT',
+                    'text': window.trans.global.videoconference.CUSTOM_LAYOUT,
+                },
+                2: {
+                    'id': 'PRESENTATION_FOCUS',
+                    'text': window.trans.global.videoconference.PRESENTATION_FOCUS,
+                },
+                3: {
+                    'id': 'VIDEO_FOCUS',
+                    'text': window.trans.global.videoconference.VIDEO_FOCUS
+                },
+            }
+        }
+    },
+    computed: {
+        textColor: function() {
+            return this.$textcolor(this.form.color, '#333333');
+        }
+    },
+    methods: {
+        submit(method) {
+            if (this.showExtendedSettings === true) {
+                this.form.welcomeMessage = tinyMCE.get('welcomeMessage').getContent();
+                this.form.moderatorOnlyMessage = tinyMCE.get('moderatorOnlyMessage').getContent();
+            }
+
+            if (this.askModerator === true) {
+                this.form.guestPolicy = 'ASK_MODERATOR';
+            } else {
+                this.form.guestPolicy = 'ALWAYS_ACCEPT';
+            }
+            if (method === 'patch') {
+                this.update();
+            } else {
+                this.add();
             }
         },
-        computed:{
-            textColor: function(){
-                return this.$textcolor(this.form.color, '#333333');
-            }
-        },
-        methods: {
-             submit(method) {
-                 if (this.showExtendedSettings === true){
-                     this.form.welcomeMessage = tinyMCE.get('welcomeMessage').getContent();
-                     this.form.moderatorOnlyMessage = tinyMCE.get('moderatorOnlyMessage').getContent();
-                 }
-
-                 if (this.askModerator === true) {
-                     this.form.guestPolicy = 'ASK_MODERATOR';
-                 } else {
-                     this.form.guestPolicy = 'ALWAYS_ACCEPT';
-                 }
-                 if (method === 'patch') {
-                     this.update();
-                 } else {
-                     this.add();
-                 }
-            },
-            add(){
-                axios.post(this.url, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('videoconference-added', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-            update() {
-                axios.patch(this.url + '/' + this.form.id, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('videoconference-updated', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-        },
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === this.$options.name){
-                    const params = state.modals[this.$options.name].params;
-
-                    this.form.reset();
-                    if (typeof (params) !== 'undefined'){
-                        this.form.populate(params);
-                        this.form.guestPolicy = params.guestPolicy === 'ASK_MODERATOR';
-                        this.askModerator = (params.guestPolicy === 'ASK_MODERATOR') ? true : false;
-
-                        if (this.form.id !== ''){
-                            this.form.welcomeMessage = this.$decodeHtml(this.form.welcomeMessage);
-                            this.form.moderatorOnlyMessage = this.$decodeHtml(this.form.moderatorOnlyMessage);
-                            this.method = 'patch';
-                        } else {
-                            this.method = 'post';
-                        }
-                    }
-                }
-            });
-
-            axios.get('/videoconferences/servers')
-                .then(response => {
-                    this.servers = response.data;
+        add() {
+            axios.post(this.url, this.form)
+                .then(r => {
+                    this.$eventHub.emit('videoconference-added', r.data);
                 })
                 .catch(e => {
-                    console.log(e);
+                    console.log(e.response);
                 });
         },
-    }
+        update() {
+            axios.patch(this.url + '/' + this.form.id, this.form)
+                .then(r => {
+                    this.$eventHub.emit('videoconference-updated', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
+        },
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    this.form.guestPolicy = params.guestPolicy === 'ASK_MODERATOR';
+                    this.askModerator = (params.guestPolicy === 'ASK_MODERATOR') ? true : false;
+
+                    if (this.form.id !== '') {
+                        this.form.welcomeMessage = this.$decodeHtml(this.form.welcomeMessage);
+                        this.form.moderatorOnlyMessage = this.$decodeHtml(this.form.moderatorOnlyMessage);
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
+                    }
+                }
+            }
+        });
+
+        axios.get('/videoconferences/servers')
+            .then(response => {
+                this.servers = response.data;
+            })
+            .catch(e => {
+                console.log(e);
+            });
+    },
+}
 </script>

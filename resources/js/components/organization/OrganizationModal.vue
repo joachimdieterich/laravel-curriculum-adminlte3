@@ -226,116 +226,116 @@
     </Transition>
 </template>
 <script>
-    import Form from 'form-backend-validation';
-    import Editor from '@tinymce/tinymce-vue';
-    import Select2 from "../forms/Select2.vue";
-    import {useGlobalStore} from "../../store/global";
+import Form from 'form-backend-validation';
+import Editor from '@tinymce/tinymce-vue';
+import Select2 from "../forms/Select2.vue";
+import {useGlobalStore} from "../../store/global";
 
-    export default {
-        name: 'organization-modal',
-        components:{
-            Editor,
-            Select2
-        },
-        props: {},
-        setup () {
-            const globalStore = useGlobalStore();
-            return {
-                globalStore,
-            }
-        },
-        data() {
-            return {
-                component_id: this.$.uid,
-                method: 'post',
-                url: '/organizations',
-                form: new Form({
-                    'id':'',
-                    'common_name':'',
-                    'title':'',
-                    'description': '',
-                    'street': '',
-                    'postcode': '',
-                    'city': '',
-                    'state_id': 'DE-RP',
-                    'country_id': 'DE',
-                    'organization_type_id': 1,
-                    'phone': null,
-                    'email': null,
-                    'status_id': 1,
-                    'lms_url': '',
-                }),
-                countries: [],
-                states: [],
-                tinyMCE: this.$initTinyMCE(
-                    [
-                        "autolink link curriculummedia"
-                    ],
-                    {
-                        'eventHubCallbackFunction': 'insertContent',
-                        'eventHubCallbackFunctionParams': this.component_id,
-                    }
-                ),
-                onlyAddress: {
-                    type: Boolean,
-                    default: false
-                },
-                onlyLmsUrl: {
-                    type: Boolean,
-                    default: false
-                },
-                search: '',
-            }
-        },
-        methods: {
-             submit(method) {
-                 if(tinyMCE.get('description')){
-                     this.form.description = tinyMCE.get('description').getContent();
-                 }
-                 if (method === 'patch') {
-                    this.update();
-                 } else {
-                    this.add();
-                 }
+export default {
+    name: 'organization-modal',
+    components: {
+        Editor,
+        Select2
+    },
+    props: {},
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            url: '/organizations',
+            form: new Form({
+                'id':'',
+                'common_name':'',
+                'title':'',
+                'description': '',
+                'street': '',
+                'postcode': '',
+                'city': '',
+                'state_id': 'DE-RP',
+                'country_id': 'DE',
+                'organization_type_id': 1,
+                'phone': null,
+                'email': null,
+                'status_id': 1,
+                'lms_url': '',
+            }),
+            countries: [],
+            states: [],
+            tinyMCE: this.$initTinyMCE(
+                [
+                    "autolink link curriculummedia"
+                ],
+                {
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id,
+                }
+            ),
+            onlyAddress: {
+                type: Boolean,
+                default: false
             },
-            add(){
-                axios.post(this.url, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('organization-added', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
+            onlyLmsUrl: {
+                type: Boolean,
+                default: false
             },
-            update(){
-                axios.patch(this.url + '/' + this.form.id, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('organization-updated', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
+            search: '',
+        }
+    },
+    methods: {
+        submit(method) {
+            if(tinyMCE.get('description')){
+                this.form.description = tinyMCE.get('description').getContent();
+            }
+            if (method === 'patch') {
+            this.update();
+            } else {
+            this.add();
             }
         },
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === this.$options.name){
-                    const params = state.modals[this.$options.name].params;
-                    this.form.reset();
-                    if (typeof (params) !== 'undefined'){
-                        this.form.populate(params);
-                        this.form.description = this.$decodeHtml(this.form.description);
-                        this.onlyAddress = params.onlyAddress ?? false;
-                        this.onlyLmsUrl = params.onlyLmsUrl ?? false;
-                        if (this.form.id !== ''){
-                            this.method = 'patch';
-                        } else {
-                            this.method = 'post';
-                        }
+        add() {
+            axios.post(this.url, this.form)
+                .then(r => {
+                    this.$eventHub.emit('organization-added', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
+        },
+        update() {
+            axios.patch(this.url + '/' + this.form.id, this.form)
+                .then(r => {
+                    this.$eventHub.emit('organization-updated', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
+        }
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    this.form.description = this.$decodeHtml(this.form.description);
+                    this.onlyAddress = params.onlyAddress ?? false;
+                    this.onlyLmsUrl = params.onlyLmsUrl ?? false;
+                    if (this.form.id !== '') {
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
                     }
                 }
-            });
-        },
-    }
+            }
+        });
+    },
+}
 </script>

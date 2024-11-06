@@ -74,94 +74,94 @@
     </Transition>
 </template>
 <script>
-    import Form from 'form-backend-validation';
-    import Editor from '@tinymce/tinymce-vue';
-    import {useGlobalStore} from "../../store/global";
+import Form from 'form-backend-validation';
+import Editor from '@tinymce/tinymce-vue';
+import {useGlobalStore} from "../../store/global";
 
-    export default {
-        name: 'content-modal',
-        components:{
-            Editor,
-        },
-        props: {},
-        setup () { //use database store
-            const globalStore = useGlobalStore();
+export default {
+    name: 'content-modal',
+    components:{
+        Editor,
+    },
+    props: {},
+    setup() { //use database store
+        const globalStore = useGlobalStore();
 
-            return {
-                globalStore,
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            url: '/contents',
+            form: new Form({
+                'id':'',
+                'title': '',
+                'content': '',
+                'subscribable_id': null,
+                'subscribable_type': null,
+            }),
+            tinyMCE: this.$initTinyMCE(
+                [
+                    "autolink link curriculummedia table lists code"
+                ],
+                {
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id,
+                }
+            ),
+            search: '',
+        }
+    },
+    methods: {
+        submit(method) {
+            this.form.content = tinyMCE.get('content').getContent();
+            if (method == 'patch') {
+                this.update();
+            } else {
+                this.add();
             }
         },
-        data() {
-            return {
-                component_id: this.$.uid,
-                method: 'post',
-                url: '/contents',
-                form: new Form({
-                    'id':'',
-                    'title': '',
-                    'content': '',
-                    'subscribable_id': null,
-                    'subscribable_type': null,
-                }),
-                tinyMCE: this.$initTinyMCE(
-                    [
-                        "autolink link curriculummedia table lists code"
-                    ],
-                    {
-                        'eventHubCallbackFunction': 'insertContent',
-                        'eventHubCallbackFunctionParams': this.component_id,
-                    }
-                ),
-                search: '',
-            }
+        add() {
+            axios.post(this.url, this.form)
+                .then(r => {
+                    this.$eventHub.emit('content-added', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
         },
-        methods: {
-             submit(method) {
-                 this.form.content = tinyMCE.get('content').getContent();
-                 if (method == 'patch') {
-                     this.update();
-                 } else {
-                     this.add();
-                 }
-            },
-            add(){
-                axios.post(this.url, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('content-added', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-            update() {
-                axios.patch(this.url + '/' + this.form.id, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('content-updated', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
+        update() {
+            axios.patch(this.url + '/' + this.form.id, this.form)
+                .then(r => {
+                    this.$eventHub.emit('content-updated', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
         },
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === this.$options.name){
-                    const params = state.modals[this.$options.name].params;
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
 
-                    this.form.reset();
-                    if (typeof (params) !== 'undefined'){
-                        this.form.subscribable_type = params.subscribable_type;
-                        this.form.subscribable_id = params.subscribable_id;
-                        this.form.populate(params);
-                        if (this.form.id !== ''){
-                            this.method = 'patch';
-                        } else {
-                            this.method = 'post';
-                        }
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.subscribable_type = params.subscribable_type;
+                    this.form.subscribable_id = params.subscribable_id;
+                    this.form.populate(params);
+                    if (this.form.id !== '') {
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
                     }
                 }
-            });
-        },
-    }
+            }
+        });
+    },
+}
 </script>

@@ -252,129 +252,129 @@
     </Transition>
 </template>
 <script>
-    import Form from 'form-backend-validation';
-    import MediumModal from "../media/MediumModal.vue";
-    import MediumForm from "../media/MediumForm.vue";
-    import axios from "axios";
-    import Editor from "@tinymce/tinymce-vue";
-    import Select2 from "../forms/Select2.vue";
-    import {useGlobalStore} from "../../store/global";
+import Form from 'form-backend-validation';
+import MediumModal from "../media/MediumModal.vue";
+import MediumForm from "../media/MediumForm.vue";
+import axios from "axios";
+import Editor from "@tinymce/tinymce-vue";
+import Select2 from "../forms/Select2.vue";
+import {useGlobalStore} from "../../store/global";
 
-    export default {
-        name: 'meeting-modal',
-        components:{
-            Editor,
-            MediumModal,
-            Select2,
-            MediumForm
-        },
-        props: {},
-        setup () {
-            const globalStore = useGlobalStore();
-            return {
-                globalStore,
+export default {
+    name: 'meeting-modal',
+    components: {
+        Editor,
+        MediumModal,
+        Select2,
+        MediumForm
+    },
+    props: {},
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            url: '/meetings',
+            form: new Form({
+                'id': '',
+                'uid': '',
+                'title':  '',
+                'description':  '',
+                'info': '',
+                'speakers': '',
+                'livestream': '',
+                'color':'#27AF60',
+                'medium_id': null,
+            }),
+            tinyMCE: this.$initTinyMCE(
+                [
+                    "autolink link curriculummedia table lists"
+                ],
+                {
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id,
+                }
+            ),
+            activetab: 'create_meeting',
+        }
+    },
+    computed: {
+        textColor: function() {
+            return this.$textcolor(this.form.color, '#333333');
+        }
+    },
+    methods: {
+        submit(method) {
+            if (method == 'patch') {
+                this.update();
+            } else {
+                this.add();
             }
         },
-        data() {
-            return {
-                component_id: this.$.uid,
-                method: 'post',
-                url: '/meetings',
-                form: new Form({
-                    'id': '',
-                    'uid': '',
-                    'title':  '',
-                    'description':  '',
-                    'info': '',
-                    'speakers': '',
-                    'livestream': '',
-                    'color':'#27AF60',
-                    'medium_id': null,
-                }),
-                tinyMCE: this.$initTinyMCE(
-                    [
-                        "autolink link curriculummedia table lists"
-                    ],
-                    {
-                        'eventHubCallbackFunction': 'insertContent',
-                        'eventHubCallbackFunctionParams': this.component_id,
-                    }
-                ),
-                activetab: 'create_meeting',
-            }
+        add() {
+            axios.post(this.url, this.form)
+                .then(r => {
+                    this.$eventHub.emit('meeting-added', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
         },
-        computed:{
-            textColor: function(){
-                return this.$textcolor(this.form.color, '#333333');
-            }
+        update() {
+            console.log('update');
+            axios.patch(this.url + '/' + this.form.id, this.form)
+                .then(r => {
+                    this.$eventHub.emit('meeting-updated', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
         },
-        methods: {
-             submit(method) {
-                 if (method == 'patch') {
-                     this.update();
-                 } else {
-                     this.add();
-                 }
-            },
-            add(){
-                axios.post(this.url, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('meeting-added', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-            update() {
-                console.log('update');
-                axios.patch(this.url + '/' + this.form.id, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('meeting-updated', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-            loadImportData(){
-                $("#loading-event_import").show();
-                axios.get('/meetings/getImportDataByUid?uid=' + this.form.uid)
-                    .then(response => {
-                        this.form.populate(response.data);
-                        tinyMCE.get('description').setContent(this.form.description);
-                        tinyMCE.get('info').setContent(this.form.info);
-                        tinyMCE.get('speakers').setContent(this.form.speakers);
-                        tinyMCE.get('livestream').setContent(this.form.livestream);
+        loadImportData() {
+            $("#loading-event_import").show();
+            axios.get('/meetings/getImportDataByUid?uid=' + this.form.uid)
+                .then(response => {
+                    this.form.populate(response.data);
+                    tinyMCE.get('description').setContent(this.form.description);
+                    tinyMCE.get('info').setContent(this.form.info);
+                    tinyMCE.get('speakers').setContent(this.form.speakers);
+                    tinyMCE.get('livestream').setContent(this.form.livestream);
 
+                    this.method = 'patch';
+                    this.activetab = 'create_meeting';
+                    $("#loading-event_import").hide();
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        }
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    this.form.description = this.htmlToText(params.description);
+                    this.form.info = this.htmlToText(params.info);
+                    this.form.speakers = this.htmlToText(params.speakers);
+                    this.form.livestream = this.htmlToText(params.livestream);
+                    if (this.form.id !== '') {
                         this.method = 'patch';
-                        this.activetab = 'create_meeting';
-                        $("#loading-event_import").hide();
-                    })
-                    .catch(e => {
-                       console.log(e);
-                    });
-            }
-        },
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === this.$options.name){
-                    const params = state.modals[this.$options.name].params;
-                    this.form.reset();
-                    if (typeof (params) !== 'undefined'){
-                        this.form.populate(params);
-                        this.form.description = this.htmlToText(params.description);
-                        this.form.info = this.htmlToText(params.info);
-                        this.form.speakers = this.htmlToText(params.speakers);
-                        this.form.livestream = this.htmlToText(params.livestream);
-                        if (this.form.id !== ''){
-                            this.method = 'patch';
-                        } else {
-                            this.method = 'post';
-                        }
+                    } else {
+                        this.method = 'post';
                     }
                 }
-            });
-        },
-    }
+            }
+        });
+    },
+}
 </script>
 

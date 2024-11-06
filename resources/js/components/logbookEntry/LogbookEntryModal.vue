@@ -109,7 +109,7 @@ export default {
         Select2
     },
     props: {},
-    setup () {
+    setup() {
         const globalStore = useGlobalStore();
         return {
             globalStore,
@@ -154,7 +154,7 @@ export default {
         add() {
             axios.post(this.url, this.form)
                 .then(r => {
-                    this.$eventHub.emit('logbookEntry-added', r.data);
+                    this.$eventHub.emit('logbook-entry-added', r.data);
                 })
                 .catch(e => {
                     console.log(e.response);
@@ -163,7 +163,7 @@ export default {
         update() {
             axios.patch(this.url + '/' + this.form.id, this.form)
                 .then(r => {
-                    this.$eventHub.emit('logbookEntry-updated', r.data);
+                    this.$eventHub.emit('logbook-entry-updated', r.data);
                 })
                 .catch(e => {
                     console.log(e.response);
@@ -176,10 +176,10 @@ export default {
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            if (mutation.events.key === this.$options.name){
+            if (state.modals[this.$options.name].show) {
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
-                if (typeof (params) !== 'undefined'){
+                if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
                     this.form.date = [this.form.begin ?? '', this.form.end ?? ''];
                     this.form.description = this.htmlToText(params.description);

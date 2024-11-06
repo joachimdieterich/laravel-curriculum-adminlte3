@@ -223,7 +223,7 @@ export default {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
 
-            if (mutation.events.key === this.$options.name) {
+            if (state.modals[this.$options.name].show) {
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {

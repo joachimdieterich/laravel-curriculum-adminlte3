@@ -95,98 +95,98 @@
     </Transition>
 </template>
 <script>
-    import Form from 'form-backend-validation';
-    import axios from "axios";
-    import Editor from "@tinymce/tinymce-vue";
-    import {useGlobalStore} from "../../store/global";
+import Form from 'form-backend-validation';
+import axios from "axios";
+import Editor from "@tinymce/tinymce-vue";
+import {useGlobalStore} from "../../store/global";
 
-    export default {
-        name: 'exercise-modal',
-        components:{
-            Editor
-        },
-        props: {
-            map: {
-                type: Object
+export default {
+    name: 'exercise-modal',
+    components:{
+        Editor
+    },
+    props: {
+        map: {
+            type: Object
+        }
+    },
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            url: '/exercises',
+            form: new Form({
+                'id':'',
+                'training_id':'',
+                'title': '',
+                'description': '',
+                'recommended_iterations': '',
+                'order_id': 0,
+            }),
+            tinyMCE: this.$initTinyMCE(
+                [
+                    "autolink link curriculummedia"
+                ],
+                {
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id,
+                }
+            ),
+        }
+    },
+    methods: {
+        submit(method) {
+            if (method == 'patch') {
+                this.update();
+            } else {
+                this.add();
             }
         },
-        setup () {
-            const globalStore = useGlobalStore();
-            return {
-                globalStore,
-            }
+        add() {
+            axios.post(this.url, this.form)
+                .then(r => {
+                    this.$eventHub.emit('exercise-added', r.data.exercise);
+                    this.globalStore?.closeModal(this.$options.name)
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
         },
-        data() {
-            return {
-                component_id: this.$.uid,
-                method: 'post',
-                url: '/exercises',
-                form: new Form({
-                    'id':'',
-                    'training_id':'',
-                    'title': '',
-                    'description': '',
-                    'recommended_iterations': '',
-                    'order_id': 0,
-                }),
-                tinyMCE: this.$initTinyMCE(
-                    [
-                        "autolink link curriculummedia"
-                    ],
-                    {
-                        'eventHubCallbackFunction': 'insertContent',
-                        'eventHubCallbackFunctionParams': this.component_id,
-                    }
-                ),
-            }
+        update() {
+            console.log('update');
+            axios.patch(this.url + '/' + this.form.id, this.form)
+                .then(r => {
+                    this.$eventHub.emit('exercise-updated', r.data.exercise);
+                    this.globalStore?.closeModal(this.$options.name)
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
         },
-        methods: {
-             submit(method) {
-                 if (method == 'patch') {
-                     this.update();
-                 } else {
-                     this.add();
-                 }
-            },
-            add(){
-                axios.post(this.url, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('exercise-added', r.data.exercise);
-                        this.globalStore?.closeModal(this.$options.name)
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-            update() {
-                console.log('update');
-                axios.patch(this.url + '/' + this.form.id, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('exercise-updated', r.data.exercise);
-                        this.globalStore?.closeModal(this.$options.name)
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-        },
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === this.$options.name){
-                    const params = state.modals[this.$options.name].params;
-                    this.form.reset();
-                    if (typeof (params) !== 'undefined'){
-                        this.form.populate(params);
-                        if (this.form.id !== ''){
-                            this.method = 'patch';
-                        } else {
-                            this.method = 'post';
-                        }
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    if (this.form.id !== '') {
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
                     }
                 }
-            });
-        },
-    }
+            }
+        });
+    },
+}
 </script>
 

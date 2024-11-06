@@ -154,7 +154,7 @@ export default {
         add() {
             axios.post(this.url, this.form)
                 .then(r => {
-                    this.$eventHub.emit('logbookEntry-added', r.data);
+                    this.$eventHub.emit('logbook-entry-added', r.data);
                 })
                 .catch(e => {
                     console.log(e.response);
@@ -163,7 +163,7 @@ export default {
         update() {
             axios.patch(this.url + '/' + this.form.id, this.form)
                 .then(r => {
-                    this.$eventHub.emit('logbookEntry-updated', r.data);
+                    this.$eventHub.emit('logbook-entry-updated', r.data);
                 })
                 .catch(e => {
                     console.log(e.response);

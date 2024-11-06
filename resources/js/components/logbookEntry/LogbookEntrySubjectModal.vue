@@ -87,7 +87,7 @@ export default {
         submit(){
             axios.patch(this.url + '/' + this.form.id + '/setSubject', this.form)
                 .then(r => {
-                    this.$eventHub.emit('updateSubjectBadge', {
+                    this.$eventHub.emit('update-subject-badge', {
                         entry_id: this.form.id,
                         subject_id:  r.data.id,
                         title:  r.data.title,

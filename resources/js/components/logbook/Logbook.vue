@@ -180,12 +180,11 @@ export default {
         });
 
         this.$eventHub.on('update-subject-badge', (updatedEntry) => {
-            console.log(updatedEntry);
             this.globalStore?.closeModal('logbook-entry-subject-modal');
             const index = this.entries.findIndex(
                 entry => entry.id === updatedEntry.entry_id
             );
-            //console.log(this.entries[index]);
+
             this.entries[index].subject = {
                 id: updatedEntry.subject_id,
                 title: updatedEntry.title

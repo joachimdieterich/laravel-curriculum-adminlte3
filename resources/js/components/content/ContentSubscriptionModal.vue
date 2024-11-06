@@ -81,64 +81,64 @@
     </Transition>
 </template>
 <script>
-    import Form from 'form-backend-validation';
-    import Editor from '@tinymce/tinymce-vue';
-    import Select2 from "../forms/Select2.vue";
-    import {useGlobalStore} from "../../store/global";
+import Form from 'form-backend-validation';
+import Editor from '@tinymce/tinymce-vue';
+import Select2 from "../forms/Select2.vue";
+import {useGlobalStore} from "../../store/global";
 
-    export default {
-        name: 'content-subscription-modal',
-        components:{
-            Editor,
-            Select2
+export default {
+    name: 'content-subscription-modal',
+    components: {
+        Editor,
+        Select2
+    },
+    props: {},
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            url: '/contents',
+            curriculum_id: null,
+            form: new Form({
+                'content_id': [],
+                'subscribable_type': null,
+                'subscribable_id': null,
+            }),
+        }
+    },
+    methods: {
+        submit() {
+            axios.post('/contentSubscriptions', this.form)
+                .then(r => {
+                    this.$eventHub.emit('content-added', r.data);
+                    // vorher: this.$parent.$emit('addContent', this.form);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
         },
-        props: {},
-        setup () {
-            const globalStore = useGlobalStore();
-            return {
-                globalStore,
-            }
-        },
-        data() {
-            return {
-                component_id: this.$.uid,
-                url: '/contents',
-                curriculum_id: null,
-                form: new Form({
-                    'content_id': [],
-                    'subscribable_type': null,
-                    'subscribable_id': null,
-                }),
-            }
-        },
-        methods: {
-             submit() {
-                 axios.post('/contentSubscriptions', this.form)
-                     .then(r => {
-                         this.$eventHub.emit('content-added', r.data);
-                         // vorher: this.$parent.$emit('addContent', this.form);
-                     })
-                     .catch(e => {
-                         console.log(e.response);
-                     });
-            },
-        },
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === this.$options.name){
-                    const params = state.modals[this.$options.name].params;
-                    this.form.reset();
-                    if (typeof (params) !== 'undefined'){
-                        this.form.populate(params);
-                        if (this.form.id !== ''){
-                            this.method = 'patch';
-                        } else {
-                            this.method = 'post';
-                        }
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    if (this.form.id !== ''){
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
                     }
                 }
-            });
-        },
-    }
+            }
+        });
+    },
+}
 </script>

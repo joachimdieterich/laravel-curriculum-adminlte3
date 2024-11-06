@@ -115,101 +115,101 @@
     </Transition>
 </template>
 <script>
-    import Form from 'form-backend-validation';
-    import Editor from '@tinymce/tinymce-vue';
-    import VueDatePicker from '@vuepic/vue-datepicker';
-    import '@vuepic/vue-datepicker/dist/main.css';
-    import {useGlobalStore} from "../../store/global";
+import Form from 'form-backend-validation';
+import Editor from '@tinymce/tinymce-vue';
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
+import {useGlobalStore} from "../../store/global";
 
-    export default {
-        name: 'task-modal',
-        components:{
-            Editor,
-            VueDatePicker
-        },
-        props: {
-            params: {
-                type: Object
-            },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
-        },
-        setup () { //use database store
-            const globalStore = useGlobalStore();
+export default {
+    name: 'task-modal',
+    components: {
+        Editor,
+        VueDatePicker
+    },
+    props: {
+        params: {
+            type: Object
+        },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
+    },
+    setup() { //use database store
+        const globalStore = useGlobalStore();
 
-            return {
-                globalStore,
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            url: '/tasks',
+            form: new Form({
+                'id':'',
+                'title': '',
+                'description': '',
+                'start_date': new Date(),
+                'due_date': null,
+            }),
+            tinyMCE: this.$initTinyMCE(
+                [
+                    "autolink link"
+                ],
+                {
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id,
+                }
+            ),
+        }
+    },
+    methods: {
+        submit(method) {
+            this.form.description = tinyMCE.get('description').getContent();
+            if (method == 'patch') {
+                this.update();
+            } else {
+                this.add();
             }
         },
-        data() {
-            return {
-                component_id: this.$.uid,
-                method: 'post',
-                url: '/tasks',
-                form: new Form({
-                    'id':'',
-                    'title': '',
-                    'description': '',
-                    'start_date': new Date(),
-                    'due_date': null,
-                }),
-                tinyMCE: this.$initTinyMCE(
-                    [
-                        "autolink link"
-                    ],
-                    {
-                        'eventHubCallbackFunction': 'insertContent',
-                        'eventHubCallbackFunctionParams': this.component_id,
-                    }
-                ),
-            }
+        add() {
+            axios.post(this.url, this.form)
+                .then(r => {
+                    this.$eventHub.emit('task-added', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
         },
-        methods: {
-             submit(method) {
-                 this.form.description = tinyMCE.get('description').getContent();
-                 if (method == 'patch') {
-                     this.update();
-                 } else {
-                     this.add();
-                 }
-            },
-            add(){
-                axios.post(this.url, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('task-added', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-            update() {
-                axios.patch(this.url + '/' + this.form.id, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('task-updated', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
+        update() {
+            axios.patch(this.url + '/' + this.form.id, this.form)
+                .then(r => {
+                    this.$eventHub.emit('task-updated', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
         },
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === this.$options.name){
-                    const params = state.modals[this.$options.name].params;
-                    this.form.reset();
-                    if (typeof (params) !== 'undefined'){
-                        this.form.populate(params);
-                        this.form.description = this.$decodeHTMLEntities(params.description);
-                        if (this.form.id != ''){
-                            this.method = 'patch';
-                        } else {
-                            this.method = 'post';
-                        }
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    this.form.description = this.$decodeHTMLEntities(params.description);
+                    if (this.form.id != '') {
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
                     }
                 }
-            });
+            }
+        });
 
-            this.form.start_date = new Date();
-        },
-    }
+        this.form.start_date = new Date();
+    },
+}
 </script>
 

@@ -113,7 +113,7 @@ export default {
             type: Object
         },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
     },
-    setup () { //use database store
+    setup() { //use database store
         const globalStore = useGlobalStore();
         return {
             globalStore
@@ -140,7 +140,7 @@ export default {
             this.form.populate(newVal);
             this.url = newVal.url;
 
-            if (this.form.id != null){
+            if (this.form.id != null) {
                 this.method = 'patch';
             } else {
                 this.method = 'post';
@@ -148,7 +148,7 @@ export default {
         },
     },
     methods: {
-        submit(){
+        submit() {
             if (this.form.enabling_objective_id == null) {
                 this.url = '/terminalObjectiveSubscriptions';
                 this.form.terminal_objective_id.forEach( id => {
@@ -190,10 +190,10 @@ export default {
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            if (mutation.events.key === this.$options.name){
+            if (state.modals[this.$options.name].show) {
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
-                if (typeof (params) !== 'undefined'){
+                if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
                     if (this.form.id != ''){
                         this.method = 'patch';

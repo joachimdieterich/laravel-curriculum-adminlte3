@@ -74,95 +74,93 @@
     </Transition>
 </template>
 <script>
-    import Form from 'form-backend-validation';
-    import Select2 from "../forms/Select2.vue";
-    import {useGlobalStore} from "../../store/global";
+import Form from 'form-backend-validation';
+import Select2 from "../forms/Select2.vue";
+import {useGlobalStore} from "../../store/global";
 
-    export default {
-        name: 'role-modal',
-        components:{
-            Select2
-        },
-        props: {
-            params: {
-                type: Object
-            },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
+export default {
+    name: 'role-modal',
+    components: {
+        Select2
+    },
+    props: {
+        params: {
+            type: Object
+        },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
 
-        },
-        setup () { //use database store
-            const globalStore = useGlobalStore();
+    },
+    setup() { //use database store
+        const globalStore = useGlobalStore();
 
-            return {
-                globalStore,
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            url: '/roles',
+            form: new Form({
+                'id':'',
+                'title': '',
+                'permissions': '',
+            }),
+            search: '',
+        }
+    },
+    methods: {
+        submit(method) {
+            if (method == 'patch') {
+                this.update();
+            } else {
+                this.add();
             }
         },
-        data() {
-            return {
-                component_id: this.$.uid,
-                method: 'post',
-                url: '/roles',
-                form: new Form({
-                    'id':'',
-                    'title': '',
-                    'permissions': '',
-                }),
-                search: '',
+        add() {
+            axios.post(this.url, this.form)
+                .then(r => {
+                    this.$eventHub.emit('role-added', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
+        },
+        update() {
+            console.log('update');
+            axios.patch(this.url + '/' + this.form.id, this.form)
+                .then(r => {
+                    this.$eventHub.emit('role-updated', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
+        },
+        getSelected() {
+            if (this.form.permissions[0]?.title){
+                return this.form.permissions.map(p => p.id);
+            } else {
+                return this.form.permissions;
             }
         },
-        methods: {
-             submit(method) {
-                 if (method == 'patch') {
-                     this.update();
-                 } else {
-                     this.add();
-                 }
-            },
-            add(){
-                axios.post(this.url, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('role-added', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-            update() {
-                console.log('update');
-                axios.patch(this.url + '/' + this.form.id, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('role-updated', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-            getSelected(){
-                 if (this.form.permissions[0]?.title){
-                     return this.form.permissions.map(p => p.id);
-                 } else {
-                     return this.form.permissions;
-                 }
-
-            }
-        },
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                console.log(mutation.events);
-                if (mutation.events?.key === this.$options.name){
-                    const params = state.modals[this.$options.name].params;
-                    this.form.reset();
-                    if (typeof (params) !== 'undefined'){
-                        this.form.populate(params);
-                        if (this.form.id !== ''){
-                            this.method = 'patch';
-                        } else {
-                            this.method = 'post';
-                        }
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    if (this.form.id !== '') {
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
                     }
                 }
-            });
-        },
-    }
+            }
+        });
+    },
+}
 </script>
 

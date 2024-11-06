@@ -74,57 +74,57 @@
     </Transition>
 </template>
 <script>
-    import AchievementIndicator from './../objectives/AchievementIndicator.vue';
-    import {useGlobalStore} from "../../store/global";
+import AchievementIndicator from './../objectives/AchievementIndicator.vue';
+import {useGlobalStore} from "../../store/global";
 
-    export default {
-        name: 'set-achievements-modal',
-        components:{
-            AchievementIndicator
+export default {
+    name: 'set-achievements-modal',
+    components: {
+        AchievementIndicator
+    },
+    props: {
+        users:{},
+    },
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            objective: {},
+            search: '',
+        }
+    },
+    methods: {
+        submit() {
+            this.globalStore?.closeModal($options.name)
         },
-        props: {
-            users:{},
-        },
-        setup () {
-            const globalStore = useGlobalStore();
-            return {
-                globalStore,
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+
+                const params = state.modals[this.$options.name].params;
+                console.log(params);
+                const eventObj = params.objective;
+                const obj = {}; // if we add attributes directly to 'this.objective' it won't work
+                obj.default = { id: eventObj.id };
+
+                eventObj.achievements.forEach(achievement => {
+                    // only add attributes that are actually needed
+                    obj[achievement.user_id] = {
+                        id: eventObj.id,
+                        achievements: [achievement],
+                    };
+                });
+
+                this.objective = obj;
             }
-        },
-        data() {
-            return {
-                component_id: this.$.uid,
-                objective: {},
-                search: '',
-            }
-        },
-        methods: {
-             submit() {
-                 this.globalStore?.closeModal($options.name)
-            },
-        },
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === this.$options.name){
-
-                    const params = state.modals[this.$options.name].params;
-                    console.log(params);
-                    const eventObj = params.objective;
-                    const obj = {}; // if we add attributes directly to 'this.objective' it won't work
-                    obj.default = { id: eventObj.id };
-
-                    eventObj.achievements.forEach(achievement => {
-                        // only add attributes that are actually needed
-                        obj[achievement.user_id] = {
-                            id: eventObj.id,
-                            achievements: [achievement],
-                        };
-                    });
-
-                    this.objective = obj;
-                }
-            });
-        },
-    }
+        });
+    },
+}
 </script>

@@ -124,119 +124,118 @@
 import License from '../uiElements/License.vue'
 import RenderUsage from "../../../../app/Plugins/Repositories/edusharing/resources/js/components/RenderUsage.vue";
 import {useGlobalStore} from "../../store/global";
-    export default {
-        name: 'medium-preview-modal',
-        props:{
-            show: Boolean,
-            params: {
-                type: Object
-            },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
 
-        },
-        setup () { //use database store
-            const globalStore = useGlobalStore();
+export default {
+    name: 'medium-preview-modal',
+    props:{
+        show: Boolean,
+        params: {
+            type: Object
+        },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
+    },
+    setup() { //use database store
+        const globalStore = useGlobalStore();
 
-            return {
-                globalStore,
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            medium: [],
+            subscribable: null,
+            subscribable_type: null,
+            subscribable_id: null,
+            edit: false,
+            errors: {}
+        }
+    },
+    methods: {
+        mime(type) {
+            switch (type) {
+                //Images use <img>
+                case 'image/jpg' :
+                case 'image/jpeg':
+                case 'image/png':
+                case 'image/gif':
+                case 'image/bmp':
+                case 'image/tiff':
+                case 'image/ico':
+                case 'image/svg':
+                case 'edusharing':
+                    return 'img';
+                    break;
+                default:
+                    return 'embed';
+                    break;
             }
         },
-        data() {
-            return {
-                medium: [],
-                subscribable: null,
-                subscribable_type: null,
-                subscribable_id: null,
-                edit: false,
-                errors: {}
+        async del() {
+            try {
+                var response =  await axios.post('/media/'+this.medium.id+'/destroy',  { 'subscribable': this.subscribable, 'subscribable_type': this.subscribable_type,'subscribable_id': this.subscribable_id } );
             }
+            catch(e) {
+                console.log(e);
+            }
+            location.reload();
         },
-        methods: {
-            mime(type) {
-                switch (type) {
-                    //Images use <img>
-                    case 'image/jpg' :
-                    case 'image/jpeg':
-                    case 'image/png':
-                    case 'image/gif':
-                    case 'image/bmp':
-                    case 'image/tiff':
-                    case 'image/ico':
-                    case 'image/svg':
-                    case 'edusharing':
-                        return 'img';
-                        break;
-                    default:
-                        return 'embed';
-                        break;
-                }
-            },
-            async del(){
-                try {
-                    var response =  await axios.post('/media/'+this.medium.id+'/destroy',  { 'subscribable': this.subscribable, 'subscribable_type': this.subscribable_type,'subscribable_id': this.subscribable_id } );
-                }
-                catch(e) {
-                    console.log(e);
-                }
-                location.reload();
-            },
-            edit_title: function() {
-                this.edit = !this.edit;
-            },
-            async saveMedium(){
-                await axios.patch('/media/' + this.medium.id, {'title': this.medium.title, 'description': this.medium.description})
-                .then(response =>{
-                    this.medium = response.data.message;
-                    this.edit_title();
-                })
-                .catch(e => {
-                    console.log(e);
-                });
-            },
-           download(){
-               $("#loading_spinner").show();
-                if (this.medium.adapter == 'local'){
-                    window.location.assign(this.scr + '?download=true');
-                } else {
-                    axios.get('/media/' + this.medium.id + '?download=true')
-                        .then((response) => {
-                            window.location.assign(response.data.url);
-                            $("#loading_spinner").hide();
-                            this.globalStore?.closeModal('medium-preview-modal');
-                        })
-                        .catch((error) => {
-                            console.log(error);
-                            $("#loading_spinner").hide();
-                        });
-                }
-           }
-
+        edit_title: function() {
+            this.edit = !this.edit;
         },
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === this.$options.name){
-                    const params = state.modals[this.$options.name].params;
-                    //console.log(params);
-                    if (typeof (params) !== 'undefined'){
-                        this.medium = params;
-                        /* this.subscribable= event.params.subscribable;
-                         this.subscribable_type = event.params.subscribable_type;
-                         this.subscribable_id = event.params.subscribable_id;*/
-                    }
-                }
+        async saveMedium() {
+            await axios.patch('/media/' + this.medium.id, {'title': this.medium.title, 'description': this.medium.description})
+            .then(response => {
+                this.medium = response.data.message;
+                this.edit_title();
+            })
+            .catch(e => {
+                console.log(e);
             });
         },
-        computed: {
-            scr: function () {
-                return '/media/' + this.medium.id ;
-            },
+        download() {
+            $("#loading_spinner").show();
+            if (this.medium.adapter == 'local') {
+                window.location.assign(this.scr + '?download=true');
+            } else {
+                axios.get('/media/' + this.medium.id + '?download=true')
+                    .then((response) => {
+                        window.location.assign(response.data.url);
+                        $("#loading_spinner").hide();
+                        this.globalStore?.closeModal('medium-preview-modal');
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        $("#loading_spinner").hide();
+                    });
+            }
         },
-        components: {
-            RenderUsage,
-            License
-        }
-
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                //console.log(params);
+                if (typeof (params) !== 'undefined') {
+                    this.medium = params;
+                    /* this.subscribable= event.params.subscribable;
+                        this.subscribable_type = event.params.subscribable_type;
+                        this.subscribable_id = event.params.subscribable_id;*/
+                }
+            }
+        });
+    },
+    computed: {
+        scr: function () {
+            return '/media/' + this.medium.id ;
+        },
+    },
+    components: {
+        RenderUsage,
+        License
     }
+
+}
 </script>
 
 <style>

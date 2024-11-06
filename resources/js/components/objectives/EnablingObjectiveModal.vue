@@ -109,110 +109,110 @@
     </Transition>
 </template>
 <script>
-    import Form from 'form-backend-validation';
-    import MediumModal from "../media/MediumModal.vue";
-    import axios from "axios";
-    import Editor from "@tinymce/tinymce-vue";
-    import Select2 from "../forms/Select2.vue";
-    import {useGlobalStore} from "../../store/global";
+import Form from 'form-backend-validation';
+import MediumModal from "../media/MediumModal.vue";
+import axios from "axios";
+import Editor from "@tinymce/tinymce-vue";
+import Select2 from "../forms/Select2.vue";
+import {useGlobalStore} from "../../store/global";
 
-    export default {
-        name: 'enabling-objective-modal',
-        components:{
-            Editor,
-            MediumModal,
-            Select2,
-        },
-        props: {},
-        setup () {
-            const globalStore = useGlobalStore();
-            return {
-                globalStore,
+export default {
+    name: 'enabling-objective-modal',
+    components: {
+        Editor,
+        MediumModal,
+        Select2,
+    },
+    props: {},
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            url: '/enablingObjectives',
+            form: new Form({
+                'id': '',
+                'title': '',
+                'description': '',
+                'time_approach': '',
+                'curriculum_id': '',
+                'terminal_objective_id': '',
+                'level_id': null,
+                'visibility': true,
+            }),
+            tinyMCE: this.$initTinyMCE(
+                [
+                    "autolink link curriculummedia table lists"
+                ],
+                {
+                    'public': 1,
+                    'referenceable_type': 'App\\\Curriculum',
+                    'referenceable_id': this.form?.curriculum_id,
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id
+                }
+            ),
+        }
+    },
+    computed: {
+        textColor: function() {
+            return this.$textcolor(this.form.color, '#333333');
+        }
+    },
+    methods: {
+        submit(method) {
+            this.form.title = tinyMCE.get('title').getContent();
+            this.form.description = tinyMCE.get('description').getContent();
+            if (method == 'patch') {
+                this.update();
+            } else {
+                this.add();
             }
         },
-        data() {
-            return {
-                component_id: this.$.uid,
-                method: 'post',
-                url: '/enablingObjectives',
-                form: new Form({
-                    'id': '',
-                    'title': '',
-                    'description': '',
-                    'time_approach': '',
-                    'curriculum_id': '',
-                    'terminal_objective_id': '',
-                    'level_id': null,
-                    'visibility': true,
-                }),
-                tinyMCE: this.$initTinyMCE(
-                    [
-                        "autolink link curriculummedia table lists"
-                    ],
-                    {
-                        'public': 1,
-                        'referenceable_type': 'App\\\Curriculum',
-                        'referenceable_id': this.form?.curriculum_id,
-                        'eventHubCallbackFunction': 'insertContent',
-                        'eventHubCallbackFunctionParams': this.component_id
-                    }
-                ),
-            }
+        add() {
+            axios.post(this.url, this.form)
+                .then(r => {
+                    this.$eventHub.emit('enablingObjective-added', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
         },
-        computed:{
-            textColor: function(){
-                return this.$textcolor(this.form.color, '#333333');
-            }
+        update() {
+            console.log('update');
+            axios.patch(this.url + '/' + this.form.id, this.form)
+                .then(r => {
+                    this.$eventHub.emit('enablingObjective-updated', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
         },
-        methods: {
-             submit(method) {
-                 this.form.title = tinyMCE.get('title').getContent();
-                 this.form.description = tinyMCE.get('description').getContent();
-                 if (method == 'patch') {
-                     this.update();
-                 } else {
-                     this.add();
-                 }
-            },
-            add(){
-                axios.post(this.url, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('enablingObjective-added', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-            update() {
-                console.log('update');
-                axios.patch(this.url + '/' + this.form.id, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('enablingObjective-updated', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-        },
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === this.$options.name){
-                    const params = state.modals[this.$options.name].params;
-                    this.form.reset();
-                    if (typeof (params) !== 'undefined'){
-                        this.form.populate(params);
-                        this.form.title = this.$decodeHTMLEntities(this.form.title);
-                        this.form.description = this.$decodeHtml(this.form.description);
-                        if (this.form.id !== ''){
-                            this.method = 'patch';
-                        } else {
-                            this.method = 'post';
-                        }
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    this.form.title = this.$decodeHTMLEntities(this.form.title);
+                    this.form.description = this.$decodeHtml(this.form.description);
+                    if (this.form.id !== '') {
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
                     }
                 }
-            });
-        },
-    }
+            }
+        });
+    },
+}
 </script>
 

@@ -115,94 +115,94 @@
     </Transition>
 </template>
 <script>
-    import Form from 'form-backend-validation';
-    import Select2 from "../forms/Select2.vue";
-    import {useGlobalStore} from "../../store/global";
+import Form from 'form-backend-validation';
+import Select2 from "../forms/Select2.vue";
+import {useGlobalStore} from "../../store/global";
 
-    export default {
-        name: 'reference-objective-modal',
-        components:{
-            Select2,
-        },
-        props: {
-            params: {
-                type: Object
-            },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
-        },
-        setup () { //use database store
-            const globalStore = useGlobalStore();
-            return {
-                globalStore
+export default {
+    name: 'reference-objective-modal',
+    components: {
+        Select2,
+    },
+    props: {
+        params: {
+            type: Object
+        },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
+    },
+    setup() { //use database store
+        const globalStore = useGlobalStore();
+        return {
+            globalStore
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            url: '',
+            form: new Form({
+                'id': null,
+                'subscribable_type': null,
+                'subscribable_id': null,
+                'curriculum_id': null,
+                'terminal_objective_id': null,
+                'enabling_objective_id': null,
+                'description': null
+            }),
+        }
+    },
+    methods: {
+        submit(method) {
+            if (method == 'patch') {
+                this.update();
+            } else {
+                this.add();
             }
         },
-        data() {
-            return {
-                component_id: this.$.uid,
-                method: 'post',
-                url: '',
-                form: new Form({
-                    'id': null,
-                    'subscribable_type': null,
-                    'subscribable_id': null,
-                    'curriculum_id': null,
-                    'terminal_objective_id': null,
-                    'enabling_objective_id': null,
-                    'description': null
-                }),
-            }
+        add() {
+            axios.post(this.url, this.form)
+                .then(r => {
+                    this.$eventHub.emit('reference-added', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
         },
-        methods: {
-             submit(method) {
-                 if (method == 'patch') {
-                     this.update();
-                 } else {
-                     this.add();
-                 }
-            },
-            add(){
-                axios.post(this.url, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('reference-added', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-            update() {
-                axios.patch(this.url + '/' + this.form.id, this.form)
-                    .then(r => {
-                        this.$eventHub.emit('reference-updated', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-            destroy(){
-                axios.delete(this.url + '/' + this.form.id)
-                    .then(r => {this.$eventHub.emit('reference-deleted', r.data );})
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            }
+        update() {
+            axios.patch(this.url + '/' + this.form.id, this.form)
+                .then(r => {
+                    this.$eventHub.emit('reference-updated', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
         },
-        mounted() {
-            this.globalStore.registerModal(this.$options.name);
-            this.globalStore.$subscribe((mutation, state) => {
-                if (mutation.events.key === this.$options.name){
-                    const params = state.modals[this.$options.name].params;
-                    this.form.reset();
-                    if (typeof (params) !== 'undefined'){
-                        this.form.populate(params);
-                        this.url = params.url;
-                        if (this.form.id != null){
-                            this.method = 'patch';
-                        } else {
-                            this.method = 'post';
-                        }
+        destroy() {
+            axios.delete(this.url + '/' + this.form.id)
+                .then(r => {this.$eventHub.emit('reference-deleted', r.data );})
+                .catch(e => {
+                    console.log(e.response);
+                });
+        },
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    this.url = params.url;
+                    if (this.form.id != null) {
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
                     }
                 }
-            });
-        },
-    }
+            }
+        });
+    },
+}
 </script>
 

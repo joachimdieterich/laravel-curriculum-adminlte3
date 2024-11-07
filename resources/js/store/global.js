@@ -4,7 +4,7 @@ export const useGlobalStore = defineStore('global', {
     state: () => ({
         global: [],
         modals: {
-            'absence-modal' : {},
+            /*'absence-modal' : {},
             'certificate-modal' : {},
             'config-modal': {},
             'confirm-modal': {},
@@ -45,7 +45,7 @@ export const useGlobalStore = defineStore('global', {
             'terminal-objective-modal' : {},
             'task-modal' : {},
             'user-modal' : {},
-            'videoconference-modal' : {},
+            'videoconference-modal' : {},*/
         }
     }),
     actions: {

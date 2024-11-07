@@ -107,19 +107,11 @@ class LocalMediaAdapter implements MediaInterface
         /* check if User has access to model->medium_id*/
         $params = $this->validateRequest();
         if ($params['model']) {
-            switch ($params['model']){
-                case 'Videoconference':
-                case 'Kanban':
-                    $class = 'App\\'.$params['model'];
-                    $model = (new $class)::where('id',$params['model_id'] )->get()->first();
+            $class = 'App\\'.$params['model'];
+            $model = (new $class)::where('id',$params['model_id'] )->get()->first();
 
-                    if ($model->isAccessible() && ($model->medium_id == $medium->id)){
-                        return ($medium->mime_type != 'url') ? response()->file($path) : redirect($medium->path); //return file or url
-                    }
-                break;
-
-                default:
-                    break;
+            if ($model->isAccessible() && ($model->medium_id == $medium->id)){
+                return ($medium->mime_type != 'url') ? response()->file($path) : redirect($medium->path); //return file or url
             }
         }
 
@@ -249,21 +241,12 @@ class LocalMediaAdapter implements MediaInterface
                     return true;
                 }
                 break;
-            case "App\Plan":
-                if ($subscription->subscribable->isAccessible()) {
-                    return true;
-                }
-                break;
-            case "App\PlanEntry":
-                if ($subscription->subscribable->isAccessible()) {
-                    return true;
-                }
-                break;
-
-
-            default: return false;
+            default:
+                $subscription->subscribable->isAccessible();
+                return true;
                 break;
         }
+        return false;
     }
 
     public function subscribe($medium, $subscribable_type, $subscribable_id, $sharing_level_id = 1, $visibility = 1)

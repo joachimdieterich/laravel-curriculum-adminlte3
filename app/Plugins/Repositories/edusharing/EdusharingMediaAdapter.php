@@ -66,7 +66,7 @@ class EdusharingMediaAdapter implements MediaInterface
             'path'          => $input['path'],
             'thumb_path'    => $input['thumb_path'],
             'medium_name'   => $input['medium_name']    ?? '',
-            'title'         => $input['title']          ?? '',
+            'title'         => $input['title']          ?? $input['medium_name'],
             'description'   => $input['description']    ?? '',
             'author'        => $input['author']         ?? '',
             'publisher'     => $input['publisher']      ?? '',
@@ -327,16 +327,8 @@ class EdusharingMediaAdapter implements MediaInterface
                     return true;
                 }
                 break;
-            case "App\Curriculum":
+            default:
                 return $subscription->subscribable->isAccessible();
-                break;
-            case "App\Kanban":
-            case "App\Logbook":
-            case "App\Map":
-            case "App\MapMarker":
-                return $subscription->subscribable->isAccessible();
-                break;
-            default: return false;
                 break;
         }
     }
@@ -353,9 +345,10 @@ class EdusharingMediaAdapter implements MediaInterface
             'repository' => 'sometimes',
             'artefact' => 'sometimes',
             'file.*' => 'sometimes|mimes:jpg,jpeg,png,gif,bmp,tiff,tif,ico,svg,mov,mp4,m4v,mpeg,mpg,mp3,m4a,m4b,wav,mid,avi,ppt,pps,pptx,doc,docx,pdf,xls,xlsx,xps,odt,odp,ods,odg,odc,odb,odf,key,numbers,pages,csv,txt,rtx,rtf,zip,psd,xcf',
+            'medium_name' => 'sometimes|string',
             'model' => 'sometimes',
             'model_id' => 'sometimes',
-            
+
             'title' => 'sometimes',
             'size' => 'sometimes',
             'mime_type' => 'sometimes',

@@ -62,8 +62,7 @@
 </template>
 
 <script>
-const mediumRenderer =
-    () => import('../media/MediaRenderer.vue');
+import mediumRenderer from './MediaRenderer.vue';
 
 export default {
     props: {

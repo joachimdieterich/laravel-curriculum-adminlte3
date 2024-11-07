@@ -168,7 +168,8 @@
                 </div>
             </div>
 
-            <div class="card-footer">
+            <div v-if="tab !== 'external'"
+                 class="card-footer">
                  <span class="pull-right">
                      <button
                          id="medium-cancel"
@@ -340,7 +341,7 @@
                     this.subscribe();
                 }
                 this.$eventHub.emit(
-                    this.mediumStore.mediumModalParams.callback,
+                    this.mediumStore.mediumModalParams.callback, //default callback == 'medium-added'
                     {
                         'id': this.mediumStore.mediumModalParams.callbackId,
                         'selectedMedia':  this.mediumStore.selectedMedia,
@@ -349,6 +350,7 @@
                     }
                 );
                 this.reset();
+                this.$emit('close');
 
             },
             reset(){
@@ -381,7 +383,7 @@
                 axios.post('/media?repository=edusharing', form)
                     .then((response) => {
                         //console.log(response);
-                        this.mediumStore.setSelectedMedia(response.data);
+                        this.mediumStore.setSelectedMedia([response.data]);
                         this.add();
                     })
                     .catch((err) => {

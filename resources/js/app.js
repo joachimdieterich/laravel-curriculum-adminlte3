@@ -305,7 +305,7 @@ app.component('users', defineAsyncComponent(() => import('./components/user/User
 app.component('videoconference', defineAsyncComponent(() => import('./components/videoconference/Videoconference.vue')));
 app.component('videoconferences', defineAsyncComponent(() => import('./components/videoconference/Videoconferences.vue')));
 
-app.config.globalProperties.$initTinyMCE = function (
+app.config.globalProperties.$initTinyMCE = function(
     tinyMcePlugins, attr = null,
     customToolbar1 = null,
     customToolbar2 = null,
@@ -325,17 +325,17 @@ app.config.globalProperties.$initTinyMCE = function (
         ...attr,
         path_absolute : "/",
         selector: "textarea.my-editor",
-        branding:false,
+        branding: false,
         plugins: tinyMcePlugins ?? defaultPlugins,
-        external_plugins: {'mathjax': '/node_modules/@dimakorotkov/tinymce-mathjax/plugin.min.js'},
+        external_plugins: { mathjax: '/node_modules/@dimakorotkov/tinymce-mathjax/plugin.min.js' },
         menubar: "edit format",
-        toolbar1: customToolbar1 ?? "styleselect | bold underline italic | alignleft aligncenter alignright alignjustify ",
-        toolbar2:  customToolbar2 ?? " bullist numlist outdent indent | curriculummedia mathjax link image media",
+        toolbar1: customToolbar1 ?? "styleselect | bold underline italic | alignleft aligncenter alignright alignjustify",
+        toolbar2: customToolbar2 ?? "bullist numlist outdent indent | curriculummedia mathjax link image media",
         extended_valid_elements: extended_valid_elements ?? '',
         relative_urls: false,
-        entity_encoding : "raw",
+        entity_encoding: "raw",
         language: 'de',
-        height: height ?? 350,
+        height: height,
 
         mathjax: {
             lib: '/node_modules/mathjax/es5/tex-mml-chtml.js', // path to mathjax

@@ -4,47 +4,47 @@
             v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask"
         >
-        <div class="modal-container">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.kanban.create') }}
-                    </span>
-                    <span v-if="method === 'patch'">
-                        {{ trans('global.kanban.edit') }}
-                    </span>
-                </h3>
-                <div class="card-tools">
-                    <button
-                        type="button"
-                        class="btn btn-tool"
-                        @click="globalStore?.closeModal($options.name)"
-                    >
-                        <i class="fa fa-times"></i>
-                    </button>
+            <div class="modal-container">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span v-if="method === 'post'">
+                            {{ trans('global.kanbanStatus.create') }}
+                        </span>
+                        <span v-if="method === 'patch'">
+                            {{ trans('global.kanbanStatus.edit') }}
+                        </span>
+                    </h3>
+                    <div class="card-tools">
+                        <button
+                            type="button"
+                            class="btn btn-tool"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            <div
-                class="card-body"
-                style="max-height: 80vh; overflow-y: auto;"
-            >
-                <div class="form-group">
-                    <input
-                        type="text"
-                        id="title"
-                        name="title"
-                        class="form-control"
-                        v-model.trim="form.title"
-                        :placeholder="trans('global.kanbanItem.fields.title')"
-                        required
-                    />
-                    <p
-                        v-if="form.errors.title"
-                        class="help-block"
-                        v-text="form.errors.title[0]"
-                    ></p>
-                </div>
+                <div
+                    class="card-body"
+                    style="max-height: 80vh; overflow-y: auto;"
+                >
+                    <div class="form-group">
+                        <input
+                            type="text"
+                            id="title"
+                            name="title"
+                            class="form-control"
+                            v-model.trim="form.title"
+                            :placeholder="trans('global.kanbanItem.fields.title')"
+                            required
+                        />
+                        <p
+                            v-if="form.errors.title"
+                            class="help-block"
+                            v-text="form.errors.title[0]"
+                        ></p>
+                    </div>
                     <div
                         class="card-header border-bottom"
                         data-card-widget="collapse"
@@ -84,10 +84,10 @@
                         >
                              <span class="custom-control custom-switch custom-switch-on-green">
                                 <input
-                                    v-model="form.editable"
-                                    type="checkbox"
-                                    class="custom-control-input pt-1"
                                     :id="'editable_' + form.id"
+                                    class="custom-control-input pt-1"
+                                    type="checkbox"
+                                    v-model="form.editable"
                                 />
                                 <label
                                     class="custom-control-label font-weight-light"
@@ -97,23 +97,30 @@
                                 </label>
                             </span>
                                 <span class="custom-control custom-switch custom-switch-on-green">
-                                <input v-model="form.locked"
-                                       type="checkbox"
-                                       class="custom-control-input pt-1"
-                                       :id="'locked_' + form.id">
-                                <label class="custom-control-label font-weight-light"
-                                       :for="'locked_' + form.id" >
+                                <input
+                                    :id="'locked_' + form.id"
+                                    class="custom-control-input pt-1"
+                                    type="checkbox"
+                                    v-model="form.locked"
+                                />
+                                <label
+                                    class="custom-control-label font-weight-light"
+                                    :for="'locked_' + form.id"
+                                >
                                     {{ trans('global.locked') }}
                                 </label>
                             </span>
                                 <span class="custom-control custom-switch custom-switch-on-green">
                                 <input
-                                    v-model="form.visibility"
-                                    type="checkbox"
+                                    :id="'visibility_' + form.id"
                                     class="custom-control-input pt-1"
-                                    :id="'visibility_' + form.id">
-                                <label class="custom-control-label font-weight-light"
-                                       :for="'visibility_' + form.id" >
+                                    type="checkbox"
+                                    v-model="form.visibility"
+                                />
+                                <label
+                                    class="custom-control-label font-weight-light"
+                                    :for="'visibility_' + form.id"
+                                >
                                     {{ trans('global.visibility') }}
                                 </label>
                             </span>
@@ -124,7 +131,7 @@
                 <div class="card-footer">
                     <span class="pull-right">
                         <button
-                            id="kanban-cancel"
+                            id="kanban-status-cancel"
                             type="button"
                             class="btn btn-default"
                             @click="close()"
@@ -132,7 +139,7 @@
                             {{ trans('global.cancel') }}
                         </button>
                         <button
-                            id="kanban-save"
+                            id="kanban-status-save"
                             class="btn btn-primary"
                             @click="submit()"
                         >
@@ -151,12 +158,9 @@ import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'kanban-status-modal',
-    components:{},
+    components: {},
     props: {
         kanban: Object,
-        params: {
-            type: Object
-        },
     },
     setup() {
         const globalStore = useGlobalStore();
@@ -181,11 +185,6 @@ export default {
                 visible_until: null,
                 color:'#27AF60',
             }),
-        }
-    },
-    computed: {
-        textColor: function() {
-            return this.$textcolor(this.form.color, '#333333');
         }
     },
     methods: {

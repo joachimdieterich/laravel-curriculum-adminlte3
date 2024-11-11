@@ -51,6 +51,7 @@ return [
     'view' => 'Ansicht',
     'edit' => 'editieren',
     'locked' => 'verschieben verhindern',
+    'replace_links' => 'Links ersetzen',
     'editable' => 'editierbar',
     'delete' => 'löschen',
     'forceDelete' => 'Datensatz endgültig löschen.',
@@ -113,6 +114,7 @@ return [
     'lastYear' => 'Letztes Jahr',
     'currentPeriod' => 'Aktueller Lernzeitraum',
     'selectDateRange' => 'Zeitraum auswählen',
+    'visible_from_to' => 'sichtbar von/bis (Datum/Uhrzeit)',
     'invalid_form' => 'Bitte füllen Sie dieses Feld aus.',
     'dashboard' => [
         'title' => 'Dashboard',
@@ -987,13 +989,9 @@ return [
         'expired' => 'Abgelaufen',
         'fields' => [
             'order_id' => 'Order ID',
-            'order_id_helper' => '',
             'kanban_status_id' => 'Status ID',
-            'kanban_status_helper' => '',
             'visible_from' => 'sichtbar ab (Datum/Uhrzeit)',
-            'visible_from_helper' => '',
             'visible_until' => 'sichtbar bis (Datum/Uhrzeit)',
-            'visible_until_helper' => '',
         ],
     ],
     'kanbanStatus' => [
@@ -1005,9 +1003,7 @@ return [
         'delete_helper' => 'Soll der Status sowie die zugehörigen Karten gelöscht werden?',
         'fields' => [
             'order_id' => 'Order ID',
-            'order_id_helper' => '',
             'kanban_id' => 'Kanban ID',
-            'kanban_helper' => '',
         ],
     ],
     'prerequisite' => [

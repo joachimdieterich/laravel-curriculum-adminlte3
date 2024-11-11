@@ -101,23 +101,11 @@
 
                                     </template>
                                 </draggable>
-                                <KanbanItemCreate
-                                    v-if="newItem === status.id"
-                                    :id="'kanbanItemCreate_' + index"
-                                    :status="status"
-                                    :item="item"
-                                    :width="itemWidth"
-                                    v-on:item-added="handleItemAddedWithoutWebsocket"
-                                    v-on:kanban-item-updated=""
-                                    v-on:item-canceled="closeForm"
-                                    style="z-index: 2"
-                                ></KanbanItemCreate>
                                 <div
-                                    v-if="(editable == true) && (status.editable == true) || ($userId == status.owner_id)"
-                                    v-show="newItem !== status.id"
+                                    v-if="(editable && status.editable) || ($userId == status.owner_id)"
                                     :id="'kanbanItemCreateButton_' + index"
                                     class="btn btn-flat mb-3 py-0 w-100"
-                                    @click="openForm('item', status.id)"
+                                    @click="openItemModal()"
                                 >
                                     <i class="text-white fa fa-2x fa-plus-circle"></i>
                                 </div>
@@ -150,6 +138,7 @@
             @close="this.mediumStore.setShowMediumModal(false)"
         ></MediumModal>
         <KanbanModal></KanbanModal>
+        <KanbanItemModal></KanbanItemModal>
         <KanbanStatusModal
         :kanban="kanban"></KanbanStatusModal>
         <SubscribeModal></SubscribeModal>
@@ -188,7 +177,7 @@
 <script>
 import draggable from "vuedraggable";
 import KanbanItem from "../kanbanItem/KanbanItem.vue";
-import KanbanItemCreate from "../kanbanItem/KanbanItemCreate.vue";
+import KanbanItemModal from "../kanbanItem/KanbanItemModal.vue";
 import KanbanStatus from "./KanbanStatus.vue";
 import KanbanStatusModal from "./KanbanStatusModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
@@ -320,13 +309,11 @@ export default {
                     console.log(err);
                 });
         },
-        openForm(type, value = 1) {
-            this.item = null;
-            if (type === 'status'){
-                this.newStatus = value;
-            } else {
-                this.newItem = value;
-            }
+        openItemModal() {
+            this.globalStore?.showModal('kanban-item-modal', {
+                item: {},
+                method: 'post',
+            });
         },
         // reset the statusId and close form
         closeForm() {
@@ -602,8 +589,8 @@ export default {
             window.location.reload();
         });
 
-        this.$eventHub.on('kanban-item-updated', (item) => {
-            this.handleItemUpdated(item);
+        this.$eventHub.on('kanban-item-added', (item) => {
+            this.handleItemAdded(item);
         });
     },
     created() {
@@ -659,7 +646,7 @@ export default {
         KanbanStatus,
         draggable,
         KanbanItem,
-        KanbanItemCreate,
+        KanbanItemModal,
         SubscribeModal,
         KanbanModal,
         KanbanStatusModal

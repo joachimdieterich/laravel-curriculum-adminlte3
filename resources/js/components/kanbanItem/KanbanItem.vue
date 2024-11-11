@@ -93,7 +93,7 @@
                             :html-content="item.description">
                         </HtmlRenderer>
                     </span>
-                    <span v-if="!item.replace_links"
+                    <span v-else
                           v-dompurify-html="item.description"></span>
                 </div>
             </div>
@@ -333,7 +333,7 @@ export default {
             default: null
         }
     },
-    setup () { //use database store
+    setup() { //use database store
         const mediumStore = useMediumStore();
         return {
             mediumStore,
@@ -419,7 +419,6 @@ export default {
                     ]
                 );
             });
-
         },
         submit() {
             if (this.form.title == null || this.form.title == "") {

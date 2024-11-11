@@ -26,7 +26,7 @@
 
 <script>
 const AchievementIndicator =
-    () => import('./AchievementIndicator');
+    () => import('./AchievementIndicator.vue');
     //import AchievementIndicator from './AchievementIndicator';
     export default {
         props: {

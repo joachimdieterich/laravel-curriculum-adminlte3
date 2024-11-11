@@ -102,7 +102,7 @@ return [
     'lastMonth' => 'last month',
     'lastYear' => 'last year',
     'currentPeriod' => 'current learning period',
-    'selectDateRange' => 'Select range',
+    'selectDateRange' => 'Select time period',
     'invalid_form' => 'Please fill out this field.',
     'dashboard' => [
         'title' => 'Dashboard',
@@ -123,6 +123,7 @@ return [
     'curricula_cross_references_description' => 'Suggestions for lesson planning',
     'myProfile' => 'Userprofile',
     'settings' => 'Settings',
+    'options' => 'Options',
     'minutes' => 'Minutes',
     'sum' => 'Sum',
     'active' => 'Active',
@@ -835,6 +836,13 @@ return [
             'end_helper' => '',
             'duration' => 'Duration',
             'duration_helper' => 'Specify how much time (in minutes) should be scheduled to complete the learning/work schedule.',
+        ],
+        'options' => [
+            'timespan' => 'Show achievements made within specified time period',
+            'toggle_unset' => 'Hide competencies with unset achievements',
+            'toggle_teacher' => 'Show achievements made by teachers',
+            'toggle_student' => 'Show achievements made by students',
+            'toggle_objectives' => 'Fold/Unfold objectives',
         ],
         'types' => [
             'Trainingsplan' => 'Training plan',

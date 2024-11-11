@@ -6,11 +6,11 @@
             <li v-if="$userId != 8"
                 class="btn btn-sm btn-outline-secondary m-2"
                 v-bind:class="[(currentTab === 1) ? 'active' : '']"
-                id="edusharing_my_files-nav"
+                id="edusharing_mediathek-nav"
                 data-toggle="pill"
-                href="#edusharing_my_files"
+                href="#edusharing_mediathek"
                 role="tab"
-                aria-controls="edusharing_my_files"
+                aria-controls="edusharing_mediathek"
                 aria-selected="true"
                 @click="setCurrentTab(1);loader();">
                 <i class="fa fa-globe"></i>  {{ trans('global.public_files') }}
@@ -29,11 +29,11 @@
             <li
                 class="btn btn-sm btn-outline-secondary m-2 "
                 v-bind:class="[(currentTab === 3) ? 'active' : '']"
-                id="edusharing_mediathek-nav"
+                id="edusharing_my_files-nav"
                 data-toggle="pill"
-                href="#edusharing_mediathek"
+                href="#edusharing_my_files"
                 role="tab"
-                aria-controls="edusharing_mediathek"
+                aria-controls="edusharing_my_files"
                 aria-selected="true"
                 @click="setCurrentTab(3);loader()">
                 <i class="fa fa-user"></i> {{ trans('global.my_files') }}
@@ -155,6 +155,7 @@ export default {
         return {
             media: null,
             externalMedia: null,
+            externalMyMedia: null,
             commonName: null,
             page: 0,
             maxItems: 50,
@@ -166,12 +167,15 @@ export default {
         async loader() {
             $("#loading").show();
             try {
-                // 'my media' is always shown
-                axios.get(
-                    '/mediumSubscriptions?subscribable_type=' + this.subscribable_type() + '&subscribable_id=' + this.model.id
-                ).then(response => this.media = response.data.message);
-
-                if (this.currentTab === 1) { // all media
+                // only send request for media once
+                if (this.media == null) {
+                    axios.get(
+                        '/mediumSubscriptions?subscribable_type=' + this.subscribable_type() + '&subscribable_id=' + this.model.id
+                    ).then(response => this.media = response.data.message);
+                }
+                // only send request for external media once, to avoid having the long loading time again when switching between tabs
+                // TODO: when adding pagination, this behaviour needs to be reworked
+                if (this.currentTab === 1 && this.externalMedia == null) {
                     this.externalMedia = (await axios.get('/repositorySubscriptions/getMedia', {
                         params: {
                             subscribable_type: this.subscribable_type(),
@@ -180,7 +184,20 @@ export default {
                             page: this.page,
                             maxItems: this.maxItems,
                             repository: 'edusharing',
-                            filter: this.currentTab,
+                            filter: 1,
+                        },
+                    })).data.message[0];
+                // external my-media is separated, to avoid having the long loading time multiple times
+                } else if (this.currentTab === 3 && this.externalMyMedia == null) {
+                    this.externalMyMedia = (await axios.get('/repositorySubscriptions/getMedia', {
+                        params: {
+                            subscribable_type: this.subscribable_type(),
+                            subscribable_id: this.model.id,
+                            search: this.model.title,
+                            page: this.page,
+                            maxItems: this.maxItems,
+                            repository: 'edusharing',
+                            filter: 3,
                         },
                     })).data.message[0];
                 }
@@ -261,7 +278,7 @@ export default {
             }
         });
         // common_name is needed to check if externalMedia are connected from the same user
-        axios.get('/users/current').then(response => this.commonName = response.data.user.common_name);
+        // axios.get('/users/current').then(response => this.commonName = response.data.user.common_name);
     },
     computed: {
         filteredMedia: function() {
@@ -272,7 +289,7 @@ export default {
         filteredExternalMedia: function() {
             return this.currentTab === 1
                 ? this.externalMedia
-                : this.externalMedia?.filter(subscription => subscription.value == this.commonName);
+                : this.externalMyMedia;
         },
     },
     components: {

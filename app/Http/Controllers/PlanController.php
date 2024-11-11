@@ -350,6 +350,7 @@ class PlanController extends Controller
         $subscriptions = $plan->subscriptions()->get()->toArray();
         // get every user-id through all subscriptions
         foreach ($subscriptions as $subscription) {
+            if ($subscription['editable']) continue;
             switch ($subscription['subscribable_type']) {
                 case 'App\User':
                     array_push($users, $subscription['subscribable_id']);
@@ -370,8 +371,10 @@ class PlanController extends Controller
         // duplicates have to be removed, because SQL will return the same entry multiple times
         $users = array_unique($users, SORT_NUMERIC);
 
-        // get needed user-data through their ID
-        $users = User::select('id', 'firstname', 'lastname')->whereIn('id', $users)->get()->toArray();
+        // only get users that are students
+        $users = User::select('users.id', 'users.firstname', 'users.lastname')->whereIn('users.id', $users)
+            ->join('organization_role_users', 'users.id', '=', 'organization_role_users.user_id')->where('organization_role_users.role_id', 6)
+            ->distinct()->get()->toArray();
 
         return $users;
     }
@@ -392,6 +395,13 @@ class PlanController extends Controller
     public function getUserAchievements(Plan $plan, $userIds)
     {
         $ids = explode(',', $userIds);
+        $accessibleUserIds = array_map(function($user) { return $user['id']; }, $this->getUsers($plan));
+
+        foreach ($ids as $id) {
+            if (array_search($id, $accessibleUserIds) === false) {
+                abort(403);
+            }
+        }
 
         $terminal = TerminalObjectiveSubscriptions::where('subscribable_type', 'App\\PlanEntry')
             ->whereIn('subscribable_id', $plan->entry_order)
@@ -404,7 +414,7 @@ class PlanController extends Controller
             ->get();
 
         $enabling = EnablingObjectiveSubscriptions::where('subscribable_type', 'App\\PlanEntry')
-            ->where('subscribable_id', $plan->entry_order)
+            ->whereIn('subscribable_id', $plan->entry_order)
             ->with([
                 'enablingObjective',
                 'enablingObjective.achievements'=> function ($query) use ($ids) {

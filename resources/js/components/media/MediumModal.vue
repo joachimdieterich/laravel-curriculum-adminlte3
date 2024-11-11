@@ -88,8 +88,8 @@
                          v-else
                          class="btn btn-primary"
                          data-widget="remove"
-                         @click="close();window.open(medium.path, '_blank');">
-                         <a :href="scr + '?download=true'" class="text-white text-decoration-none" target="_blank">{{ trans('global.downloadFile') }}/{{ trans('global.open') }}</a>
+                         @click="close(true)">
+                         <a class="text-white text-decoration-none" target="_self">{{ trans('global.downloadFile') }}/{{ trans('global.open') }}</a>
                      </button>
                 </span>
             </div>
@@ -105,7 +105,6 @@ const mediumRenderer =
     () => import('../media/MediaRenderer');
 //import License from '../uiElements/License'
     export default {
-
         data() {
             return {
                 medium: [],
@@ -179,7 +178,21 @@ const mediumRenderer =
             beforeClose() {
 
             },
-            close() {
+            async close(image = false) {
+                if (image) {
+                    $("#loading_" + this.medium.id).show();
+                    await axios.get(this.scr + '?content=true')
+                        .then((response) => {
+                            window.location.assign(response.data.url);
+                            $("#loading_" + this.medium.id).hide();
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            $("#loading_"+this.medium.id).hide();
+                        });
+                }
+
+
                 this.$modal.hide('medium-modal');
             }
 

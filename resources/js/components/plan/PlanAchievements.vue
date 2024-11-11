@@ -1,142 +1,248 @@
 <template>
     <div id="show-achievements">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Ziele / Namen</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+        <div id="header" class="d-flex align-items-center py-4">
+            <div id="fixed-header" class="d-flex position-fixed w-100 px-3">    
+                <span class="d-flex align-items-center">
+                    Ziele / Namen
+                    <i
+                        class="fa fa-gear text-secondary ml-1 p-1 pointer"
+                        style="font-size: 1rem;"
+                        @click="$modal.show('plan-achievements-options-modal');"
+                    ></i>
+                </span>
+                <span v-for="user in users"
+                    class="text-center"
+                >
+                    {{ user.firstname }} {{ user.lastname }}
+                </span>
+            </div>
+        </div>
+        <div id="achievements">
+            <div v-for="ter in objectives">
+                <div
+                    class="terminal pointer"
+                    data-toggle="collapse"
+                    :data-target="'#terminal_' + ter.terminal_objective.id"
+                    aria-expanded="true"
+                >
+                    <span>
+                        {{ htmlToText(ter.terminal_objective.title) }}
+                        <span class="fa fa-angle-up"></span>
+                    </span>
+                </div>
+                <div :id="'terminal_' + ter.terminal_objective.id" class="collapse show">
+                    <div v-for="ena in ter.terminal_objective.enabling_objectives"
+                        class="d-flex w-100 enabling"
+                    >
+                        <span
+                            class="pl-2"
+                            v-html="ena.title"
+                        ></span>
+                        <span v-for="(user, index) in users">
+                            <span v-if="ena.achievements.length === 0"
+                                class="d-flex justify-content-center align-items-center h-100 status-0"
+                                data-date="0"
+                            >
+                                <i class="fa fa-circle"></i>
+                            </span>
+                            <span v-else-if="ena.achievements.length === users.length"
+                                class="d-flex justify-content-center align-items-center h-100"
+                                :class="'status-' + ena.achievements[index].status[1]"
+                                :data-date="Date.parse(ena.achievements[index].updated_at)"
+                            >
+                                <i class="fa fa-circle"></i>
+                            </span>
+                            <span v-else
+                                class="d-flex justify-content-center align-items-center h-100"
+                                :class="'status-' + (ena.achievements.find(ach => ach.user_id === user.id)?.status[1] ?? '0')"
+                                :data-date="Date.parse(ena.achievements.find(ach => ach.user_id === user.id)?.updated_at ?? 1970)"
+                            >
+                                <i class="fa fa-circle"></i>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <plan-achievements-options-modal></plan-achievements-options-modal>
     </div>
 </template>
 <script>
 export default {
     props: {
-        terminal: {},
-        enabling: {},
+        terminal: [],
+        enabling: [],
         users: [],
     },
+    data() {
+        return {
+            objectives: [],
+        }
+    },
     mounted() {
-        const achievements = {
-            terminal: this.terminal,
-            enabling: this.enabling,
-        };
+        let obj = [];
+        // set needed attributes to terminal-objective as placeholder
+        let ter = { terminal_objective: this.enabling[0]?.enabling_objective.terminal_objective };
+        let objectives = [];
 
-        const table = document.querySelector('#show-achievements .table');
-        const thead = table.firstChild;
-        const tbody = table.lastChild;
-
-        // list all names in the table-header
-        this.users.forEach(user => {
-            const th = document.createElement('th');
-            th.innerText = user.firstname + ' ' + user.lastname;
-            th.style.width = 'calc(100% / ' + (this.users.length + 1) + ')';
-            thead.firstChild.appendChild(th);
-        });
-        // list each terminal-objective-title in its own row
-        achievements.terminal.forEach(ter => {
-            const terminal_tr = document.createElement('tr');
-            const terminal_td = document.createElement('td');
-
-            terminal_tr.id = 'terminal_' + ter.terminal_objective_id;
-            terminal_tr.classList.add('thick-line');
-            terminal_td.innerHTML = ter.terminal_objective.title;
-
-            terminal_tr.appendChild(terminal_td);
-            tbody.appendChild(terminal_tr);
-
-            // list each enabling-objective with its given achievement status for the corresponding user
-            ter.terminal_objective.enabling_objectives.forEach(ena => {
-                const enabling_tr = document.createElement('tr');
-                const enabling_td = document.createElement('td');
-
-                enabling_td.innerHTML = ena.title;
-                enabling_tr.appendChild(enabling_td);
-
-                this.addAchievementCells(enabling_tr, ena.achievements);
-
-                tbody.appendChild(enabling_tr);
-            })
-        });
-
-        achievements.enabling.forEach(ena => {
-            let terminal_tr = document.getElementById('terminal_' + ena.enabling_objective.terminal_objective_id);
-            const enabling_tr = document.createElement('tr');
-            const enabling_td = document.createElement('td');
-
-            // if terminal-objective doesn't exist, create a new terminal-row
-            if (terminal_tr === null) {
-                const tr = document.createElement('tr');
-                const td = document.createElement('td');
-
-                tr.id = 'terminal_' + ena.enabling_objective.terminal_objective_id;
-                tr.classList.add('thick-line');
-                td.innerHTML = ena.enabling_objective.terminal_objective.title;
-
-                tr.appendChild(td);
-                tbody.appendChild(tr);
-
-                terminal_tr = tr; // save newly created terminal-tr to append the enabling-tr
-            }
+        this.enabling.forEach(ena => {
+            const ena_obj = ena.enabling_objective;
             
-            // create an enabling-row
-            enabling_td.innerHTML = ena.enabling_objective.title;
-            enabling_tr.appendChild(enabling_td);
-
-            this.addAchievementCells(enabling_tr, ena.enabling_objective.achievements);
-
-            // find its last enabling-objective tr
-            const last_enabling =
-                $(terminal_tr).closest('tr').nextAll('.thick-line')[0]?.previousElementSibling // search next terminal-tr
-                ?? terminal_tr.parentElement.lastElementChild; // if there's no next terminal-tr, get last tr of table
-            // and add the new enabling-row
-            last_enabling.after(enabling_tr);
+            // if current enabling-objective has the same terminal-objective as previous
+            if (ena_obj.terminal_objective_id === ter.terminal_objective.id) {
+                objectives.push(ena_obj);
+            } else { // push placeholder to obj and preset attributes again
+                ter.terminal_objective.enabling_objectives = objectives;
+                obj.push(structuredClone(ter));
+                ter.terminal_objective = ena_obj.terminal_objective;
+                objectives = [ena_obj];
+            }
         });
+        // if there's no enabling-objective, this value will be undefined
+        if (ter.terminal_objective !== undefined) {
+            ter.terminal_objective.enabling_objectives = objectives;
+            obj.push(ter);
+        }
+        this.objectives = this.terminal.concat(obj);
     },
     methods: {
-        addAchievementCells(tr, achievements) {
-            this.users.forEach(user => {
-                const td = document.createElement('td');
-                const i = document.createElement('i');
-                let status = '0';
-
-                if (achievements.length > 0) {
-                    // find out if there's a set achievement and get the teacher's value | if not => 0
-                    status = achievements.find(achievement => achievement.user_id === user.id)?.status[1] ?? '0';
+        filterByTimespan(date) {
+            const elements = $('[data-date]');
+            // if timespan got cleared, show all objectives again
+            if (date[0] == null || date[1] == null) {
+                for (const element of elements) {
+                    element.parentElement.parentElement.classList.add('d-flex');
+                    element.parentElement.parentElement.classList.remove('d-none');
                 }
+                return;
+            }
 
-                td.classList.add('status-' + status);
-                i.classList.add('fa', 'fa-circle');
-
-                td.appendChild(i);
-                tr.appendChild(td);
-            });
+            const begin = Date.parse(date[0]);
+            const end = Date.parse(date[1] + ' 23:59:59');
+            
+            if (this.users.length === 1) { // only 1 user is listed
+                for (const element of elements) {
+                    const updated = element.dataset.date;
+                    // check if achievement's last updated date is inside the timespan
+                    if (begin > updated || end < updated) {
+                        element.parentElement.parentElement.classList.add('d-none');
+                        element.parentElement.parentElement.classList.remove('d-flex');
+                    }
+                }
+            } else { // when multiple users are listed
+                for (let i = 0; i < elements.length; i += this.users.length) {
+                    let hide = true;
+                    // check each objective's achievements
+                    for (let j = 0; j < this.users.length; j++) {
+                        const element = elements[i + j];
+                        const updated = element.dataset.date;
+                        // if at least one achievement was last updated inside the timespan
+                        if (begin <= updated && end >= updated) {
+                            hide = false; // don't hide the parent-element
+                            break;
+                        }
+                    }
+                    // if all achievements are outside of the timespan, hide the parent-element
+                    if (hide) {
+                        elements[i].parentElement.parentElement.classList.add('d-none');
+                        elements[i].parentElement.parentElement.classList.remove('d-flex');
+                    }
+                }
+            }
         },
+        toggleUnset(hide) {
+            if (this.users.length === 1) {
+                const elements = document.getElementsByClassName('status-0');
+                const add = hide ? 'd-none' : 'd-flex';
+                const remove = hide ? 'd-flex' : 'd-none';
+
+                for (const element of elements) {
+                    element.parentElement.parentElement.classList.add(add);
+                    element.parentElement.parentElement.classList.remove(remove);
+                }
+            } else {
+                this.toggleMultipleUnset(hide);
+            }
+        },
+        toggleMultipleUnset(hide) {
+            const elements = document.getElementsByClassName('status-0');
+            const users_amount = this.users.length; // => n
+            const add = hide ? 'd-none' : 'd-flex';
+            const remove = hide ? 'd-flex' : 'd-none';
+
+            let counter = 0;
+
+            while (counter < elements.length) {
+                const parent = elements[counter].parentElement.parentElement;
+
+                // only hide elements which have n amount of 'status-0'-childs
+                if (parent.getElementsByClassName('status-0').length === users_amount) {
+                    parent.classList.add(add);
+                    parent.classList.remove(remove);
+                    counter += users_amount; // skip the next n amount of elements
+                } else {
+                    counter++; // check next element
+                }
+            }
+        },
+        toggleObjectives(bool) {
+            if (bool) { // collapse all unfolded objectives
+                $('.terminal:not(.collapsed)').trigger('click');
+            } else { // unfold all collapsed objectives
+                $('.terminal.collapsed').trigger('click');
+            }
+        }
     },
 }
 </script>
-<style scoped>
+<style>
 #show-achievements {
-    & >>> p { margin: 0px; color: black; }
-    & >>> td { padding: 10px; vertical-align: middle; }
-    & >>> td:not(:first-child) { text-align: center; font-size: 1.5rem; }
-    & >>> tr:hover :not(.status) { background-color: unset; }
-    & >>> tr:first-child,
-    & >>> tr:first-child th { border-top: 0px; }
-    & >>> th {
-        font-size: 1.25rem;
-        text-align: center;
+    p { margin: 0px !important; }
+    #header {
+        margin: -12px -16px 0px;
+        
+        > #fixed-header {
+            padding: 9px 0px;
+            background-color: white;
+            z-index: 1;
+            border-bottom: 3px solid #dee2e6;
 
-        &:first-child { min-width: 15%; max-width: 25%; text-align: left; }
+            > span {
+                font-size: 1.25rem;
+                font-weight: 700;
+                min-width: 25%;
+                flex: 1 1 0px;
+            }
+        }
     }
-    & >>> .thick-line {
-        border-top: 3px solid #dee2e6;
-        border-bottom: 3px solid #dee2e6;
+    #achievements {
+        > div {
+            > .terminal {
+                padding: 8px 0px;
+                font-size: 1.05rem;
+                border-top: 3px solid #dee2e6;
+                border-bottom: 3px solid #dee2e6;
+    
+                &:hover { background-color: #e9ecef; }
+                .fa-angle-up { transition: 0.3s transform; }
+                &:not(.collapsed) .fa-angle-up { transform: rotate(-180deg); }
+            }
+            &:first-child > .terminal { border-top: none !important; }
+        }
+        .enabling {
+            padding: 10px 0px;
+
+            &:not(:first-child) { border-top: 1px solid #dee2e6; }
+            > span {
+                min-width: 25%;
+                flex: 1 1 0px;
+            }
+            .fa { font-size: 1.5rem; }
+            .status-0 { color: #d2d6de !important; }
+            .status-1 { color: #00a65a !important; }
+            .status-2 { color: #fd7e14 !important; }
+            .status-3 { color: #dd4b39 !important; }
+        }
     }
-    & >>> .status-0 { color: #d2d6de !important; }
-    & >>> .status-1 { color: #00a65a !important; }
-    & >>> .status-2 { color: #fd7e14 !important; }
-    & >>> .status-3 { color: #dd4b39 !important; }
 }
 </style>

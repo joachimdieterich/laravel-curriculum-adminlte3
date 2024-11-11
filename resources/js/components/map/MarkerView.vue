@@ -25,7 +25,7 @@
         <h5 v-if="marker.description !== ''" class="pt-3">{{ trans('global.description') }}</h5>
         <div v-if="marker.description !== ''"
             class="pb-2"
-            v-dompurify-html="marker.description"
+            v-html="marker.description"
         ></div>
 
         <h5 class="pt-3" :class="!show_media && 'd-none'">{{ trans('global.media.title') }}</h5>

@@ -134,8 +134,8 @@
         <MediumModal
             subscribable_type="App\\Kanban"
             :subscribable_id="kanban.id"
-            :show="this.mediumStore.getShowMediumModal"
-            @close="this.mediumStore.setShowMediumModal(false)"
+            :show="mediumStore.getShowMediumModal"
+            @close="mediumStore.setShowMediumModal(false)"
         ></MediumModal>
         <KanbanModal></KanbanModal>
         <KanbanItemModal></KanbanItemModal>

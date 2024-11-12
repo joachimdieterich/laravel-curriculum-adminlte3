@@ -1,7 +1,6 @@
 <template>
     <Transition name="modal">
-        <div
-            v-if="globalStore.modals[$options.name]?.show"
+        <div v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask"
         >
             <div class="modal-container">
@@ -39,8 +38,7 @@
                             :placeholder="trans('global.kanbanItem.fields.title') + ' *'"
                             required
                         />
-                        <p
-                            v-if="form.errors.title"
+                        <p v-if="form.errors.title"
                             class="help-block"
                             v-text="form.errors.title[0]"
                         ></p>
@@ -51,7 +49,7 @@
                             :name="'description_' + component_id"
                             class="form-control"
                             :init="tinyMCE"
-                            :initial-value="form.description"
+                            v-model="form.description"
                         />
                     </div>
                     <div
@@ -102,12 +100,12 @@
                         <span class="custom-control custom-switch custom-switch-on-green">
                             <input
                                 :id="'locked_'+ form.id"
-                                class="custom-control-input pt-1 "
+                                class="custom-control-input pt-1"
                                 type="checkbox"
                                 v-model="form.locked"
                             />
                             <label
-                                class="custom-control-label  font-weight-light"
+                                class="custom-control-label font-weight-light pointer"
                                 :for="'locked_'+ form.id"
                             >
                                 {{ trans('global.locked') }}
@@ -116,12 +114,12 @@
                         <span class="custom-control custom-switch custom-switch-on-green">
                             <input
                                 :id="'editable_'+ form.id"
-                                class="custom-control-input pt-1 "
+                                class="custom-control-input pt-1"
                                 type="checkbox"
                                 v-model="form.editable"
                             />
                             <label
-                                class="custom-control-label  font-weight-light"
+                                class="custom-control-label font-weight-light pointer"
                                 :for="'editable_'+ form.id"
                             >
                                 {{ trans('global.editable') }}
@@ -135,7 +133,7 @@
                                 v-model="form.replace_links"
                             />
                             <label 
-                                class="custom-control-label  font-weight-light"
+                                class="custom-control-label font-weight-light pointer"
                                 :for="'replace_links_'+ form.id"
                             >
                                 {{ trans('global.replace_links') }}
@@ -149,7 +147,7 @@
                                 v-model="form.visibility"
                             />
                             <label
-                                class="custom-control-label font-weight-light"
+                                class="custom-control-label font-weight-light pointer"
                                 :for="'visibility_'+ form.id"
                             >
                                 {{ trans('global.visibility') }}
@@ -205,9 +203,6 @@ import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'kanban-item-modal',
-    props: {
-        kanban: Object,
-    },
     data() {
         return {
             component_id: this.$.uid,
@@ -259,7 +254,6 @@ export default {
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params.item);
                     this.form.visible_date = [this.form.visible_from ?? '', this.form.visible_until ?? ''];
-                    this.form.description = this.htmlToText(params.description);
                     this.method = params.method;
                 }
             }
@@ -286,7 +280,7 @@ export default {
                     this.$eventHub.emit('kanban-item-added', r.data);
                 })
                 .catch(e => {
-                    console.log(e.response);
+                    console.log(e);
                 });
         },
         update() {
@@ -295,7 +289,7 @@ export default {
                     this.$eventHub.emit('kanban-item-updated', r.data);
                 })
                 .catch(e => {
-                    console.log(e.response);
+                    console.log(e);
                 });
         },
     },

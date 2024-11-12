@@ -2,11 +2,9 @@
     <div class="card">
         <div class="card-header px-3 py-2" :style="{ backgroundColor: item.color, color: textColor }">
             <div class="card-tools">
-                <div v-if="
-                        (editable == true && item.editable == true && editor == false && onlyEditOwnedItems != true) ||
-                        (editable == true && item.editable == true && $userId == item.owner_id  && editor == false) ||
-                        (item.editable == true && $userId == kanban_owner_id  && editor == false) ||
-                        ($userId == kanban_owner_id  && editor == false)"
+                <div v-if="$userId == kanban_owner_id
+                        || (editable && $userId == item.owner_id)
+                        || (editable && item.editable && onlyEditOwnedItems == false)"
                     class="float-right py-0 px-2 pointer"
                     :id="'kanbanItemDropdown_'+index"
                     style="background-color: transparent;"
@@ -14,228 +12,102 @@
                     aria-expanded="false"
                 >
                     <i class="fas fa-ellipsis-v"
-                       :style="{ 'text-color': textColor }"></i>
-
+                       :style="{ 'text-color': textColor }"
+                    ></i>
                     <div class="dropdown-menu" x-placement="top-start">
-                        <button :name="'kanbanItemEdit_'+index"
-                                class="dropdown-item text-secondary  py-1"
-                                @click="edit()">
+                        <button
+                            :name="'kanbanItemEdit_'+index"
+                            class="dropdown-item text-secondary  py-1"
+                            @click="edit()"
+                        >
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.kanbanItem.edit') }}
                         </button>
                         <button
-                            v-can="'external_medium_create'"
+                            v-permission="'external_medium_create'"
+                            class="dropdown-item text-secondary py-1"
                             :name="'kanbanItemAddMedia_'+index"
-                            class="dropdown-item text-secondary  py-1"
-                            @click="addMedia()">
+                            @click="addMedia()"
+                        >
                             <i class="fa fa-folder-open mr-2"></i>
                             {{ trans('global.medium.title_singular') }}
                         </button>
-                        <div v-if="(item.editable == 1 && $userId == item.owner_id) || ($userId == kanban_owner_id)">
+                        <div v-if="$userId == item.owner_id || $userId == kanban_owner_id">
                             <hr class="my-1">
                             <button
-                                v-can="'kanban_delete'"
-                                :name="'kanbanItemDelete_'+index"
+                                v-permission="'kanban_delete'"
                                 class="dropdown-item py-1 text-red"
-                                @click="confirmItemDelete()">
+                                :name="'kanbanItemDelete_'+index"
+                                @click="confirmItemDelete()"
+                            >
                                 <i class="fa fa-trash mr-2"></i>
                                 {{ trans('global.kanbanItem.delete') }}
                             </button>
                         </div>
                     </div>
                 </div>
-                <div v-if="(!item.locked || $userId == item.owner_id) || $userId == kanban_owner_id "
-                    class="float-right  py-0 px-1 mx-1 handle pointer" >
+                <div v-if="(!item.locked || $userId == item.owner_id) || $userId == kanban_owner_id"
+                    class="float-right py-0 px-1 mx-1 handle pointer"
+                >
                     <i class="fa fa-arrows-up-down-left-right"
-                       :style="{ 'text-color': textColor }"></i>
+                       :style="{ 'text-color': textColor }"
+                    ></i>
                 </div>
             </div>
-            <div class="pb-0" >
-                <span v-if="editor !== false">
-                    <span
-                        class="pull-left"
-                        style="border-style: solid; border-width: 1px; border-radius: 15px; padding: 1px;"
-                        :style="{borderColor: textColor }">
-                        <color-picker-input
-                            :id="'colorPicker_'+index"
-                            :triggerStyle="{width: '24px', height: '18px'}"
-                            v-if="editor !== false"
-                            v-model="form.color">
-                        </color-picker-input>
-                    </span>
-                    <input
-                        :id="'title_'+index"
-                        type="text"
-                        class="ml-2"
-                        :class="{ 'missing-input': highlightTitleInput }"
-                        @input="highlightTitleInput = false"
-                        v-model="form.title"
-                        style="width: 235px !important;font-size: 1.1rem; font-weight: 400; border: 0; border-bottom: 1px; border-style:solid; margin: 0;"
-                        :style="{ backgroundColor: item.color, color: textColor }"
-                    />
-                </span>
-                <div v-else>
+            <div class="pb-0">
+                <div>
                     {{ item.title }}
-                    <div class="clearfix"
-                         style="font-size: .5rem">
+                    <div
+                        class="clearfix"
+                        style="font-size: .5rem"
+                    >
                         {{ item.created_at }}
                     </div>
                 </div>
             </div>
-
         </div>
+
         <div class="card-body p-0">
-            <div v-if="(editor == false)">
-                <div v-if="item.description !== null "
-                     class="text-muted small px-3 py-2">
+            <div>
+                <div v-if="item.description !== null"
+                    class="text-muted small px-3 py-2"
+                >
                     <span v-if="item.replace_links">
                         <HtmlRenderer
-                            :html-content="item.description">
-                        </HtmlRenderer>
+                            :html-content="item.description"
+                        ></HtmlRenderer>
                     </span>
-                    <span v-else
-                          v-dompurify-html="item.description"></span>
+                    <span v-else v-dompurify-html="item.description"></span>
                 </div>
             </div>
-
-            <div v-if="(editor !== false)"
-            class="p-2">
-                <div class="pb-2">
-                    <Editor
-                        :id="'description_' + item.id"
-                        :name="'description_' + index"
-                        class="form-control"
-                        :init="tinyMCE"
-                        :initial-value="form.description"
-                    />
-                </div>
-                <div>
-                    <b class="pt-2 pointer"
-                       @click="() => (expand = !expand)">
-                        {{ trans('global.settings')}}
-                        <span class="pull-right">
-                        <i v-if="expand == true"
-                           class="fa fa-caret-up"
-                        ></i>
-                        <i v-else
-                           class="fa fa-caret-down"
-                        ></i>
-                    </span>
-                    </b>
-                </div>
-                <div
-                    v-if="expand == true">
-                    <hr class="mt-0">
-                    <div class="form-group ">
-                        <date-picker
-                            v-if="editor !== false"
-                            class="w-100 mb-2"
-                            v-model="form.due_date"
-                            type="datetime"
-                            valueType="YYYY-MM-DD HH:mm:ss"
-                            :placeholder="trans('global.kanbanItem.due_date')">
-                        </date-picker>
-
-                         <span class="custom-control custom-switch custom-switch-on-green">
-                            <input  v-model="form.locked"
-                                    type="checkbox"
-                                    class="custom-control-input pt-1 "
-                                    :id="'locked_'+ form.id">
-                            <label class="custom-control-label  font-weight-light"
-                                   :for="'locked_'+ form.id" >
-                                {{ trans('global.locked') }}
-                            </label>
-                        </span>
-                        <span class="custom-control custom-switch custom-switch-on-green">
-                            <input  v-model="form.editable"
-                                    type="checkbox"
-                                    class="custom-control-input pt-1 "
-                                    :id="'editable_'+ form.id">
-                            <label class="custom-control-label  font-weight-light"
-                                   :for="'editable_'+ form.id" >
-                                {{ trans('global.editable') }}
-                            </label>
-                        </span>
-                        <span class="custom-control custom-switch custom-switch-on-green">
-                            <input  v-model="form.replace_links"
-                                    type="checkbox"
-                                    class="custom-control-input pt-1 "
-                                    :id="'replace_links_'+ form.id">
-                            <label class="custom-control-label  font-weight-light"
-                                   :for="'replace_links_'+ form.id" >
-                                {{ trans('global.replace_links') }}
-                            </label>
-                        </span>
-                        <span class="custom-control custom-switch custom-switch-on-green">
-                            <input
-                                v-model="form.visibility"
-                                type="checkbox"
-                                class="custom-control-input pt-1 "
-                                :id="'visibility_'+ form.id">
-                            <label class="custom-control-label font-weight-light"
-                                   :for="'visibility_'+ form.id" >
-                                {{ trans('global.visibility') }}:
-                            </label>
-                        </span>
-
-                        <date-picker
-                        v-if="form.visibility == 1"
-                            class="w-100 pt-2"
-                            v-model="form.visible_from"
-                            type="datetime"
-                            valueType="YYYY-MM-DD HH:mm:ss"
-                            :placeholder="trans('global.kanbanItem.fields.visible_from')">
-                        </date-picker>
-                        <date-picker
-                        v-if="form.visibility == 1"
-                            class="w-100 pt-2"
-                            v-model="form.visible_until"
-                            type="datetime"
-                            valueType="YYYY-MM-DD HH:mm:ss"
-                            :placeholder="trans('global.kanbanItem.fields.visible_until')">
-                        </date-picker>
-                    </div>
-                </div>
-            </div>
-            <button v-if="editor !== false"
-                :name="'kanbanItemSave_' + index"
-                class="btn btn-primary pull-right mb-2 mr-2"
-                @click="submit()">
-                {{ trans('global.save') }}
-            </button>
-            <!--          <kanbanTask
-                          class="mx-3 "
-                          :tasks="item.task_subscription">
-                      </kanbanTask>-->
-
             <mediaCarousel
-                class="clearfix"
                 v-if="item.media_subscriptions.length > 0"
+                class="clearfix"
                 :subscriptions="item.media_subscriptions"
                 :width="width -16"
             ></mediaCarousel>
         </div>
-        <div class="card-footer px-3 py-2"
-             v-if="(editor === false) && ((item.visible_from != null) || (item.visible_until != null)) && (item.due_date != null)"
-             :class="{'border-top-0':item.description === null}"
+        <div v-if="item.due_date != null
+                && (item.visible_from != null || item.visible_until != null)"
+            class="card-footer px-3 py-2"
+            :class="{ 'border-top-0': item.description === null }"
         >
-            <div class="w-100 ">
+            <div class="w-100">
                 <div class="due-date pull-left">{{ postDate() }}</div>
                 <span v-if="expired"
-                      class="pull-right badge badge-secondary">
+                    class="pull-right badge badge-secondary"
+                >
                     {{ trans('global.kanbanItem.expired') }}
                 </span>
-                <div v-if="(item.visible_from != null) || (item.visible_until != null)"
-                    class="due-date pull-left">
+                <div class="due-date pull-left">
                     {{ trans('global.visibility')}} {{ trans('global.timeFrom')}}:  {{ diffForHumans(item.visible_from)}} {{ trans('global.timeTo')}}: {{ diffForHumans(item.visible_until) }}
                 </div>
             </div>
-
         </div>
 
-        <div class="card-footer px-3 py-2"
-             v-if="editor === false"
-             :class="{'border-top-0':item.description === null}"
+        <div
+            class="card-footer px-3 py-2"
+            :class="{ 'border-top-0': item.description === null }"
         >
             <div class="d-flex align-items-center">
                <avatar
@@ -249,8 +121,8 @@
                     data-toggle="tooltip"
                 ></avatar>
                 <avatar
-                    v-for="(editor_user, index) in editors"
                     v-if="editors != null && $userId != 8"
+                    v-for="(editor_user, index) in editors"
                     :key="item.id + '_editor_' + index"
                     :title="editor_user.firstname + ' ' + editor_user.lastname"
                     :username="editor_user.username"
@@ -263,13 +135,15 @@
 
                 <span class="d-flex flex-fill"></span>
                 <div v-if="commentable"
-                     @click="openComments"
-                     class=" position-relative pull-right mr-2">
-                    <i  class="far fa-comments pointer with-comment-count"></i>
+                    class=" position-relative pull-right mr-2"
+                    @click="openComments"
+                >
+                    <i class="far fa-comments pointer with-comment-count"></i>
                     <span v-if="item.comments.length > 0"
-                          class="comment-count mt-1 small bg-success" >
-                      {{ item.comments.length }}
-                  </span>
+                        class="comment-count mt-1 small bg-success"
+                    >
+                        {{ item.comments.length }}
+                    </span>
                 </div>
                 <Reaction
                     :model="item"
@@ -305,7 +179,6 @@
 </template>
 
 <script>
-import Form from "form-backend-validation";
 import DatePicker from 'vue3-datepicker';
 import mediaCarousel from '../media/MediaCarousel.vue';
 import avatar from '../uiElements/Avatar.vue';
@@ -314,9 +187,8 @@ import Comments from '../kanban/Comments.vue';
 import moment from 'moment';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import HtmlRenderer from "../uiElements/HtmlRenderer.vue";
-import Editor from "@tinymce/tinymce-vue";
+import {useGlobalStore} from "../../store/global";
 import {useMediumStore} from "../../store/media.js";
-
 
 export default {
     props: {
@@ -334,8 +206,10 @@ export default {
         }
     },
     setup() { //use database store
+        const globalStore = useGlobalStore();
         const mediumStore = useMediumStore();
         return {
+            globalStore,
             mediumStore,
         }
     },
@@ -346,40 +220,8 @@ export default {
             currentItem : {},
             new_media: null,
             show_comments: false,
-            editor: false,
             expired: false,
-            form: new Form({
-                'id': '',
-                'title': '',
-                'description': '',
-                'kanban_id': '',
-                'kanban_status_id': '',
-                'order_id': 0,
-                'color': '#F4F4F4',
-                'due_date': null,
-                'locked': false,
-                'editable': true,
-                'replace_links': false,
-                'visibility': true,
-                'visible_from': null,
-                'visible_until': null,
-            }),
-            expand: false,
             editors: null,
-            highlightTitleInput: false,
-            tinyMCE: this.$initTinyMCE(
-                [
-                    "autolink link lists table"
-                ],
-                {
-                    'eventHubCallbackFunction': 'insertContent',
-                    'eventHubCallbackFunctionParams': this.component_id,
-                },
-                "bold underline italic | alignleft aligncenter alignright | table",
-                "bullist numlist outdent indent | mathjax link code",
-                null,
-                400
-            ),
         };
     },
     computed: {
@@ -403,55 +245,20 @@ export default {
         delete() {
             axios.delete("/kanbanItems/" + this.item.id)
                 .then(() => {
-                    this.$emit("item-destroyed", this.item);
+                    this.$eventHub.emit("kanban-item-deleted", this.item);
                 })
                 .catch(err => {
                     console.log(err.response);
                 });
         },
         edit() {
-            this.editor = true;
-            this.form = this.item;
-            this.$nextTick(() => {
-                this.$initTinyMCE(
-                    [
-                        "autolink link"
-                    ]
-                );
+            this.globalStore?.showModal('kanban-item-modal', {
+                item: this.item,
+                method: 'patch',
             });
-        },
-        submit() {
-            if (this.form.title == null || this.form.title == "") {
-                const titleInput = document.getElementById('title_' + this.component_id);
-                titleInput.focus();
-                this.highlightTitleInput = true;
-                return;
-            }
-            this.form.description = tinyMCE.get('description_'+this.item.id).getContent();
-
-            axios.patch('/kanbanItems/' + this.form.id, this.form)
-                .then(res => { // Tell the parent component we've updated an item
-                    tinyMCE.get('description_' + this.item.id).remove();
-                    this.form = res.data.message; //selfUpdate
-                    this.$emit("kanban-item-updated", res.data.message);
-                    MathJax.startup.defaultReady();
-                })
-                .catch(error => { // Handle the error returned from our request
-                    // this.form.errors = error.response.data.errors;
-                    console.log(error)
-                });
-            this.editor = false;
         },
         openComments() {
             this.show_comments = !this.show_comments;
-        },
-        open(modal) {
-            this.$modal.show(modal, {
-                'modelUrl': 'kanbanItem',
-                'modelId': this.item.id,
-                'shareWithGroups': false,
-                'shareWithOrganizations': false
-            });
         },
         addMedia() {
             this.mediumStore.setMediumModalParams(
@@ -463,14 +270,6 @@ export default {
                     'public': 0,
                     'callbackId': this.component_id
                 });
-            /*this.$modal.show(
-                'medium-create-modal',
-                {
-                    'referenceable_type': 'App\\\KanbanItem',
-                    'referenceable_id': this.item.id,
-                    'eventHubCallbackFunction': 'reload_kanban_item',
-                    'eventHubCallbackFunctionParams': this.item.id,
-                });*/
         },
         reload() { //after media upload
             axios.get("/kanbanItems/" + this.item.id)
@@ -492,9 +291,9 @@ export default {
                 });
         },
         postDate() {
-            if (this.form.due_date == null) return undefined;
+            if (this.item.due_date == null) return undefined;
 
-            const date = new Date(this.form.due_date.replace(/-/g, "/"));
+            const date = new Date(this.item.due_date.replace(/-/g, "/"));
             const dateFormat = {
                 weekday: 'short',
                 day: '2-digit',
@@ -510,8 +309,6 @@ export default {
         },
     },
     mounted() {
-        this.form = this.item;
-
         this.getEditors();
         //this.due_date = this.item.due_date;
         this.$eventHub.on('reload_kanban_item', (e) => {
@@ -534,14 +331,6 @@ export default {
                 this.reload();
             }
         });
-        this.$nextTick(() => {
-            MathJax.startup.defaultReady();
-        });
-    },
-    watch: {
-        form: function () {
-            MathJax.startup.defaultReady();
-        },
     },
     components: {
         HtmlRenderer,
@@ -551,7 +340,6 @@ export default {
         avatar,
         DatePicker,
         ConfirmModal,
-        Editor
     }
 }
 </script>
@@ -568,8 +356,5 @@ export default {
     font-size: 10px;
     line-height: 11px;
     vertical-align: middle;
-}
-.missing-input {
-    border-color: red !important;
 }
 </style>

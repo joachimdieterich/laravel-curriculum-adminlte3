@@ -42,9 +42,7 @@ class KanbanStatusController extends Controller
         if (request()->wantsJson()) {
             if (!pusher_event(new \App\Events\Kanbans\KanbanStatusAddedEvent($kanbanStatus)))
             {
-                return [
-                    'data' => $kanbanStatus,
-                ];
+                return $kanbanStatus;
             }
         }
     }
@@ -70,16 +68,13 @@ class KanbanStatusController extends Controller
             'visible_from' => $input['visible_from'],
             'visible_until' => $input['visible_until'],
             'owner_id' => $kanbanStatus->owner_id, //owner should not be updated
-            'editors_ids' => array_merge($kanbanStatus->editors_ids, [auth()->user()->id] )
+            'editors_ids' => array_merge($kanbanStatus->editors_ids, [auth()->user()->id])
         ]);
 
         if (request()->wantsJson()) {
             if (!pusher_event(new \App\Events\Kanbans\KanbanStatusUpdatedEvent($kanbanStatus)))
             {
-                return [
-                    'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
-                    'message' =>  $kanbanStatus
-                ];
+                return $kanbanStatus;
             }
         }
     }

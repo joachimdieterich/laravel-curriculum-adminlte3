@@ -161,7 +161,7 @@ export default {
             temp_id: Number,
             disabled: true, // false => only plan-owner
             modeToggle: true, // true => all users | false => single user
-            showToolsToggle: true,
+            showToolsToggle: false,
             selected_user: null,
             errors: {},
         }
@@ -180,6 +180,8 @@ export default {
                     } else {
                         this.entries = response.data.entries;
                     }
+                    // activate edit-mode when no entry exists
+                    if (this.entries.length === 0) this.showToolsToggle = true;
                 })
                 .catch(e => {
                     console.log(e);

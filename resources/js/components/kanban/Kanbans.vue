@@ -290,7 +290,6 @@ export default {
 
             this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the kanban-data
                 this.kanbans = this.dt.rows({page: 'current'}).data().toArray();
-
                 $('#kanban-content').insertBefore('#kanban-datatable-wrapper');
             });
             this.$eventHub.on('filter', (filter) => {

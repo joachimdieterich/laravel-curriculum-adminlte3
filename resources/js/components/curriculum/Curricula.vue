@@ -25,7 +25,7 @@
                         <i class="fas fa-university pr-2"></i>{{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
                     </a>
                 </li>
-                <li v-can="'curriculum_create'"
+                <li v-permission="'curriculum_create'"
                     class="nav-item">
                     <a class="nav-link"
                        :class="filter === 'owner' ? 'active' : ''"
@@ -48,14 +48,14 @@
                         <i class="fa fa-paper-plane pr-2"></i>{{ trans('global.shared_with_me') }}
                     </a>
                 </li>
-                <li v-can="'curriculum_create'"
+                <li v-permission="'curriculum_create'"
                     class="nav-item">
-                    <a class="nav-link"
+                    <a id="custom-tabs-shared-by-me"
                        :class="filter === 'shared_by_me' ? 'active' : ''"
-                       id="custom-tabs-shared-by-me"
-                       @click="setFilter('shared_by_me')"
+                       class="nav-link"
                        data-toggle="pill"
                        role="tab"
+                       @click="setFilter('shared_by_me')"
                     >
                         <i class="fa fa-share-nodes  pr-2"></i>{{ trans('global.shared_by_me') }}
                     </a>
@@ -67,7 +67,7 @@
              class="col-md-12 m-0">
             <IndexWidget
                 v-permission="'curriculum_create'"
-                v-if="((this.filter == 'all' && typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined')|| this.filter  == 'owner') "
+                v-if="((filter === 'all' && this.subscribable_type ===  null && this.subscribable_id ===  null) || filter  === 'owner')"
                 key="curriculumCreate"
                 modelName="Curriculum"
                 url="/curricula"
@@ -186,12 +186,13 @@ import CurriculumModal from "./CurriculumModal.vue";
 import {useGlobalStore} from "../../store/global";
 import OwnerModal from "../user/OwnerModal.vue";
 import {useToast} from "vue-toastification";
+import {nextTick} from "vue";
 DataTable.use(DataTablesCore);
 
 export default {
     props: {
-        subscribable_type: '',
-        subscribable_id: '',
+        subscribable_type: null, // has to be null ! to get filter condition for all roles working
+        subscribable_id: null,
     },
     setup () {
         const toast = useToast();
@@ -207,15 +208,16 @@ export default {
             subscriptions: {},
             search: '',
             showConfirm: false,
-            url: '/curricula/list',
+            url: (this.subscribable_id) ? '/curriculumSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id : '/curricula/list',
             errors: {},
             currentCurriculum: {},
-            filter: 'all',
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true},
             ],
             options : this.$dtOptions,
+            filter: 'all',
+            dt: null
         }
     },
     methods: {
@@ -238,25 +240,25 @@ export default {
         shareCurriculum(curriculum){
             this.globalStore?.showModal('subscribe-modal', { 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false});
         },
-        loaderEvent(){
+        setFilter(filter){
+            this.filter = filter;
             if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
                 this.url = '/curriculumSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
             } else {
                 this.url = '/curricula/list?filter=' + this.filter;
             }
+            this.dt.ajax.url(this.url).load();
+        },
+        loaderEvent(){
+            this.dt = $('#curriculum-datatable').DataTable();
 
-            const dt = $('#curriculum-datatable').DataTable();
-            dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.curricula = dt.rows({page: 'current'}).data().toArray();
+            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
+                this.curricula = this.dt.rows({page: 'current'}).data().toArray();
                 $('#curriculum-content').insertBefore('#curriculum-datatable-wrapper');
             });
             this.$eventHub.on('filter', (filter) => {
-                dt.search(filter).draw();
+                this.search(filter).draw();
             });
-        },
-        setFilter(filter){
-            this.filter = filter;
-            this.loaderEvent();
         },
         destroy() {
             if (this.subscribable){
@@ -283,7 +285,6 @@ export default {
                         console.log(err.response);
                     });
             }
-
         },
         update(curriculum) {
             const index = this.curricula.findIndex(

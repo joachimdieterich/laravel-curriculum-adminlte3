@@ -29,7 +29,7 @@
                  class="nav-item-box-image-size h-50"
                  :style="{backgroundColor: item.color + ' !important'}">
                 <div class="nav-item-box-image-size h-100"
-                    style="width: 100% !important;"
+                    style="width: 100% !important;opacity: 0.7;"
                     :style="{'background': 'url(/media/' + item.medium_id + '?model='+modelName+'&model_id=' + item.DT_RowId +') center no-repeat'}">
                 </div>
             </div>

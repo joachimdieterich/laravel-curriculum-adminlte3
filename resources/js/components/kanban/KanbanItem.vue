@@ -61,7 +61,9 @@
                     </div>
                 </div>
                 <div v-if="((!item.locked && editable)|| $userId == item.owner_id) || $userId == kanban_owner_id "
-                    class="float-right  py-0 px-1 mx-1 handle pointer" >
+                    class="float-right  py-0 px-1 mx-1 handle pointer"
+                    @click.stop
+                >
                     <i class="fa fa-arrows-up-down-left-right"
                        :style="{ 'text-color': textColor }"></i>
                 </div>
@@ -92,6 +94,7 @@
                 </span>
                 <div v-else>
                     {{ item.title }}
+                    <i class="fa fa-angle-up"></i>
                     <div class="clearfix"
                          style="font-size: .5rem">
                         {{ item.created_at }}
@@ -543,7 +546,12 @@ export default {
     line-height: 11px;
     vertical-align: middle;
 }
-
+.fa-angle-up {
+    transition: 0.3s transform;
+}
+.collapsed .fa-angle-up {
+    transform: rotate(-180deg);
+}
 .missing-input {
     border-color: red !important;
 }

@@ -46,6 +46,7 @@ return [
     'view' => 'View',
     'edit' => 'Edit',
     'locked' => 'locked',
+    'replace_links' => 'Replace links',
     'delete' => 'Delete dataset finally',
     'forceDelete' => '.',
     'save' => 'Save',
@@ -103,6 +104,7 @@ return [
     'lastYear' => 'last year',
     'currentPeriod' => 'current learning period',
     'selectDateRange' => 'Select range',
+    'visible_from_to' => 'visible from/to (date/time)',
     'invalid_form' => 'Please fill out this field.',
     'dashboard' => [
         'title' => 'Dashboard',
@@ -906,9 +908,9 @@ return [
         'expired' => 'Expired',
         'fields' => [
             'order_id' => 'Order ID',
-            'order_id_helper' => '',
             'kanban_status_id' => 'Status ID',
-            'kanban_status_helper' => '',
+            'visible_from' => 'visible from (date/time)',
+            'visible_until' => 'visible until (date/time)',
         ],
     ],
     'kanbanStatus' => [
@@ -920,9 +922,7 @@ return [
         'delete_helper' => 'Should the status and the associated items be deleted?',
         'fields' => [
             'order_id' => 'Order ID',
-            'order_id_helper' => '',
             'kanban_id' => 'Kanban ID',
-            'kanban_helper' => '',
         ],
     ],
     'prerequisite' => [

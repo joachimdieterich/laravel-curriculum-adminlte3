@@ -3,8 +3,7 @@
         id="kanban_board_container"
         class="kanban_board_container"
     >
-        <img
-            v-if="kanban.medium_id !== null"
+        <img v-if="kanban.medium_id !== null"
             class="kanban_board_wrapper position-absolute p-0"
             style="object-fit: cover;"
             :src="'/media/'+ kanban.medium_id + '?model=Kanban&model_id=' + kanban.id"
@@ -42,8 +41,7 @@
                     <template
                         #item="{ element: status , index }"
                     >
-                        <span
-                            v-if="(status.visibility) || ($userId == status.owner_id)"
+                        <span v-if="(status.visibility) || ($userId == status.owner_id)"
                             :key="'drag_status_' + status.id"
                             class="no-border float-left pr-3"
                             :style="'width:' + itemWidth + 'px;'"
@@ -53,8 +51,6 @@
                                 :status="status"
                                 :editable="editable"
                                 :key="status.id"
-                                v-on:kanban-status-updated="handleStatusUpdatedWithoutWebsocket"
-                                v-on:kanban-status-deleted="handleStatusDestroyedWithoutWebsocket"
                                 filter=".ignore"
                             />
                             <div
@@ -91,8 +87,6 @@
                                                 :width="itemWidth"
                                                 :kanban_owner_id="kanban.owner_id"
                                                 style="min-height: 150px"
-                                                v-on:item-destroyed="handleItemDestroyedWithoutWebsocket"
-                                                v-on:kanban-item-updated="handleItemUpdatedWithoutWebsocket"
                                                 v-on:item-edit=""
                                                 v-on:sync="sync"
                                                 filter=".ignore"
@@ -101,23 +95,10 @@
 
                                     </template>
                                 </draggable>
-                                <KanbanItemCreate
-                                    v-if="newItem === status.id"
-                                    :id="'kanbanItemCreate_' + index"
-                                    :status="status"
-                                    :item="item"
-                                    :width="itemWidth"
-                                    v-on:item-added="handleItemAddedWithoutWebsocket"
-                                    v-on:kanban-item-updated=""
-                                    v-on:item-canceled="closeForm"
-                                    style="z-index: 2"
-                                ></KanbanItemCreate>
-                                <div
-                                    v-if="(editable == true) && (status.editable == true) || ($userId == status.owner_id)"
-                                    v-show="newItem !== status.id"
+                                <div v-if="(editable && status.editable) || ($userId == status.owner_id)"
                                     :id="'kanbanItemCreateButton_' + index"
                                     class="btn btn-flat mb-3 py-0 w-100"
-                                    @click="openForm('item', status.id)"
+                                    @click="openItemModal(status.id)"
                                 >
                                     <i class="text-white fa fa-2x fa-plus-circle"></i>
                                 </div>
@@ -125,8 +106,7 @@
                         </span>
                     </template>
                     <template #footer>
-                        <div
-                            v-if="editable"
+                        <div v-if="editable"
                             class=" no-border float-left pr-2"
                             :style="'width:' + itemWidth + 'px;'"
                         >
@@ -134,7 +114,6 @@
                                 :kanban="kanban"
                                 :editable="editable"
                                 :newStatus=true
-                                v-on:kanban-status-added="handleStatusAddedWithoutWebsocket"
                             />
                         </div>
                     </template>
@@ -146,17 +125,18 @@
         <MediumModal
             subscribable_type="App\\Kanban"
             :subscribable_id="kanban.id"
-            :show="this.mediumStore.getShowMediumModal"
-            @close="this.mediumStore.setShowMediumModal(false)"
+            :show="mediumStore.getShowMediumModal"
+            @close="mediumStore.setShowMediumModal(false)"
         ></MediumModal>
         <KanbanModal></KanbanModal>
-        <KanbanStatusModal
-        :kanban="kanban"></KanbanStatusModal>
+        <KanbanItemModal></KanbanItemModal>
+        <KanbanStatusModal :kanban="kanban"></KanbanStatusModal>
         <SubscribeModal></SubscribeModal>
     </Teleport>
     <teleport
         v-if="$userId == kanban.owner_id"
-        to="#customTitle">
+        to="#customTitle"
+    >
         <small>{{ kanban.title }} </small>
             <a class="btn btn-flat"
                @click="editKanban(kanban)"
@@ -164,31 +144,33 @@
                 <i class="fa fa-pencil-alt text-secondary"></i>
             </a>
 
-            <button
+            <button v-if="$userId == kanban.owner_id"
                 v-permission="'kanban_create'"
-                v-if="$userId == kanban.owner_id"
                 class="btn btn-flat"
-                @click="share()">
+                @click="share()"
+            >
                 <i class="fa fa-share-alt text-secondary"></i>
             </button>
 
-            <a :href="'/export_csv/' + kanban.id"
-               class="btn p-0">
+            <a
+                :href="'/export_csv/' + kanban.id"
+                class="btn p-0"
+            >
                 <i class="fa fa-file-csv text-secondary"></i>
             </a>
 
-            <a :href="'/export_pdf/' + kanban.id"
-               class="btn p-0">
+            <a
+                :href="'/export_pdf/' + kanban.id"
+                class="btn p-0"
+            >
                 <i class="fa fa-file-pdf text-secondary"></i>
             </a>
     </teleport>
-
 </template>
-
 <script>
 import draggable from "vuedraggable";
 import KanbanItem from "../kanbanItem/KanbanItem.vue";
-import KanbanItemCreate from "../kanbanItem/KanbanItemCreate.vue";
+import KanbanItemModal from "../kanbanItem/KanbanItemModal.vue";
 import KanbanStatus from "./KanbanStatus.vue";
 import KanbanStatusModal from "./KanbanStatusModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
@@ -320,37 +302,23 @@ export default {
                     console.log(err);
                 });
         },
-        openForm(type, value = 1) {
-            this.item = null;
-            if (type === 'status'){
-                this.newStatus = value;
-            } else {
-                this.newItem = value;
-            }
-        },
-        // reset the statusId and close form
-        closeForm() {
-            this.newStatus = 0;
-            this.newItem = 0;
-        },
-        handleStatusAddedWithoutWebsocket(newStatus) {
-            if (this.pusher === false) {
-                this.sync();
-                // this.handleStatusAdded(newStatus);
-            }
+        openItemModal(status_id) {
+            this.globalStore?.showModal('kanban-item-modal', {
+                item: {
+                    kanban_id: this.kanban.id,
+                    kanban_status_id: status_id,
+                },
+                method: 'post',
+            });
         },
         handleStatusAdded(newStatus) {
             // add items to prevent error if item is created without reloading page
             newStatus['items'] = [];
             this.statuses.push(newStatus);
         },
-        handleStatusUpdatedWithoutWebsocket(newStatus) {
-            if (this.pusher === false) {
-                this.handleStatusUpdated(newStatus);
-            }
-        },
         handleStatusUpdated(newStatus) {
-            const statusIndex = this.statuses.findIndex(            // Find the index of the status where we should replace the item
+            // Find the index of the status where we should replace the item
+            const statusIndex = this.statuses.findIndex(
                 status => status.id === newStatus.id
             );
 
@@ -358,12 +326,7 @@ export default {
                 this.statuses[statusIndex][key] = value;
             }
         },
-        handleStatusDestroyedWithoutWebsocket(status) {
-            if (this.pusher === false) {
-                this.handleStatusDestroyed(status);
-            }
-        },
-        handleStatusDestroyed(status) {
+        handleStatusDeleted(status) {
             let index = this.statuses.indexOf(status);
             this.statuses.splice(index, 1);
         },
@@ -378,11 +341,6 @@ export default {
             });
             this.statuses = newStatusesOrderTemp;
         },
-        handleItemAddedWithoutWebsocket(newItem) {
-            if (this.pusher === false) {
-                this.handleItemAdded(newItem);
-            }
-        },
         handleItemAdded(newItem) {
             // add an item to the correct column in our list
             const statusIndex = this.statuses.findIndex(
@@ -390,9 +348,6 @@ export default {
             );
             // Add newly created item to our column
             this.statuses[statusIndex].items.push(newItem);
-
-            // Reset and close the AddItemForm
-            this.closeForm();
         },
         handleItemMoved(columns) {
             let newStatusOrder = [];
@@ -431,12 +386,7 @@ export default {
             });
             return foundItem;
         },
-        handleItemDestroyedWithoutWebsocket(item) {
-            if (this.pusher === false) {
-                this.handleItemDestroyed(item);
-            }
-        },
-        handleItemDestroyed(item) {
+        handleItemDeleted(item) {
             // Find the index of the status where we should add the item
             const statusIndex = this.statuses.findIndex(
                 status => status.id === item.kanban_status_id
@@ -446,12 +396,6 @@ export default {
                 i => i.id === item.id
             );
             this.statuses[statusIndex].items.splice(index, 1);
-        },
-        handleItemUpdatedWithoutWebsocket(updatedItem) {
-            if (this.pusher === false) {
-                //console.log('update'+updatedItem);
-                this.handleItemUpdated(updatedItem);
-            }
         },
         handleItemUpdated(updatedItem) {
             // Find the index of the status where we should replace the item
@@ -500,7 +444,7 @@ export default {
                         this.handleStatusMoved(payload.message.statuses);
                     })
                     .listen('.kanbanStatusDeleted', (payload) => {
-                        this.handleStatusDestroyed(payload.message);
+                        this.handleStatusDeleted(payload.message);
                     })
                     .listen('.kanbanItemAdded', (payload) => {
                         this.handleItemAdded(payload.message);
@@ -515,7 +459,7 @@ export default {
                         this.handleItemUpdated(payload.message);
                     })
                     .listen('.kanbanItemDeleted', (payload) => {
-                        this.handleItemDestroyed(payload.message);
+                        this.handleItemDeleted(payload.message);
                     })
                     .listen('.kanbanColorUpdated', (payload) => {
                         this.handleKanbanColorUpdated(payload.message);
@@ -595,15 +539,25 @@ export default {
         this.$eventHub.on('kanban-updated', () => {
             window.location.href = '/kanbans/'+this.kanban.id;
         });
-
-        this.$eventHub.on('kanban-status-added', (newStatus) => {
-            // TODO: adding status to this.statuses doesn't create a new element
-            // this.handleStatusAdded(newStatus);
-            window.location.reload();
+        // STATUS Events
+        this.$eventHub.on('kanban-status-added', (status) => {
+            this.handleStatusAdded(status);
         });
-
+        this.$eventHub.on('kanban-status-updated', (status) => {
+            this.handleStatusUpdated(status);
+        });
+        this.$eventHub.on('kanban-status-deleted', (status) => {
+            this.handleStatusDeleted(status);
+        });
+        // ITEM Events
+        this.$eventHub.on('kanban-item-added', (item) => {
+            this.handleItemAdded(item);
+        });
         this.$eventHub.on('kanban-item-updated', (item) => {
             this.handleItemUpdated(item);
+        });
+        this.$eventHub.on('kanban-item-deleted', (item) => {
+            this.handleItemDeleted(item);
         });
     },
     created() {
@@ -659,7 +613,7 @@ export default {
         KanbanStatus,
         draggable,
         KanbanItem,
-        KanbanItemCreate,
+        KanbanItemModal,
         SubscribeModal,
         KanbanModal,
         KanbanStatusModal

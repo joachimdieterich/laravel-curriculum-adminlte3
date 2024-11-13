@@ -284,7 +284,7 @@ export default {
                         if (url == '/kanbanStatuses/sync'){
                             this.handleStatusMoved(res.data.message.statuses);
                         } else {
-                            this.handleItemMoved(res.data.message.statuses);
+                            this.handleItemMoved(res.data.message);
                         }
                     }
                 })
@@ -366,20 +366,22 @@ export default {
 
             this.closeForm();                                     // Reset and close the AddItemForm
         },
-        handleItemMoved(columns) {
+        handleItemMoved(statuses) {
             let newStatusOrder = [];
 
-            columns.forEach((status) => {
+            statuses.forEach((status) => {
                 let statusIndex = this.statuses.findIndex(
                     s => s.id === status.id
                 );
 
                 let newItemsOrder = [];
                 status.items.forEach((item) => {
-                    newItemsOrder.push(this.findItem(item));
+                    let tempItem = this.findItem(item);
+                    tempItem.kanban_status_id = status.id;
+                    newItemsOrder.push(tempItem);
                 });
 
-                let tempStatus = [];
+                let tempStatus = {};
                 for (const [key, value] of Object.entries(this.statuses[statusIndex])) {
                     if (key !== 'items'){
                         tempStatus[key] = value;

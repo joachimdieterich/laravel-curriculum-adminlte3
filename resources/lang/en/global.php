@@ -46,7 +46,7 @@ return [
     'view' => 'View',
     'edit' => 'Edit',
     'locked' => 'locked',
-    'replace_links' => 'Replace links',
+    'replace_links' => 'Replace links with QR-Codes',
     'delete' => 'Delete dataset finally',
     'forceDelete' => '.',
     'save' => 'Save',

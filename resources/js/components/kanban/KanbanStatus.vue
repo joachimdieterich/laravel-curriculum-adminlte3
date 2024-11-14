@@ -1,7 +1,8 @@
 <template>
-    <div class="card-header border-bottom-0 p-0 kanban-header">
+    <div class="kanban-header">
         <div v-if="newStatus === true"
             id="kanbanStatusCreate"
+            class="d-flex align-items-center"
         >
             <strong
                 class="text-secondary btn px-1 py-0"
@@ -10,9 +11,7 @@
                 <i class="fa fa-plus"></i> {{ trans('global.kanbanStatus.create') }}
             </strong>
         </div>
-        
-        <div v-else>
-            <strong>{{ status.title }}</strong>
+        <div v-else class="d-flex align-items-center">
             <div v-if="($userId == kanban.owner_id)
                     || (editable && $userId == status.owner_id)
                     || (editable && status.editable && !kanban.only_edit_owned_items)"
@@ -50,17 +49,18 @@
                     </div>
                 </div>
             </div>
+            <strong>{{ status.title }}</strong>
             <div v-if="$userId == kanban.owner_id
                     || (!status.locked || $userId == status.owner_id)"
-                class="pull-right handle pointer"
+                class="handle ml-auto pointer"
             >
-                <span class="fa-stack fa-1x">
+                <span class="position-relative">
                     <i v-if="editable"
-                        class="fa-solid fa-arrows-up-down-left-right fa-stack-1x"
+                        class="fa fa-arrows-up-down-left-right"
                     ></i>
                     <i v-if="status.locked"
-                        class="fa-solid fa-lock fa-stack-1x text-muted"
-                        style="left: 10px; top: 10px;"
+                        class="fa fa-lock text-muted position-absolute"
+                        style="left: 8px; top: 10px;"
                     ></i>
                 </span>
             </div>

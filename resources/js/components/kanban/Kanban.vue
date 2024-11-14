@@ -104,7 +104,7 @@
                 </template>
                 <template #footer>
                     <div v-if="editable"
-                        class=" no-border float-left pr-2"
+                        class="no-border float-left pr-2"
                         :style="'width:' + itemWidth + 'px;'"
                     >
                         <KanbanStatus

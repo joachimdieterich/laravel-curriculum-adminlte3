@@ -33,7 +33,7 @@
                 handle=".handle"
                 item-key="id"
                 :emptyInsertThreshold="500"
-                class="d-flex m-0 h-100"
+                class="d-flex m-0 pr-4 h-100"
                 :style="kanbanWidth"
             >
                 <template

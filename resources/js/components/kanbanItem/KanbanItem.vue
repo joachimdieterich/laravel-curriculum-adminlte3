@@ -74,6 +74,7 @@
                 </div>
                 <div v-if="(!item.locked || $userId == item.owner_id) || $userId == kanban_owner_id"
                     class="float-right py-0 px-1 mx-1 handle pointer"
+                    @click.stop
                 >
                     <i class="fa fa-arrows-up-down-left-right"
                        :style="{ 'text-color': textColor }"

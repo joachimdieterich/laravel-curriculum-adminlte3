@@ -53,7 +53,7 @@
                         />
                         <div v-if="(editable && status.editable) || ($userId == status.owner_id)"
                             :id="'kanbanItemCreateButton_' + index"
-                            class="btn btn-flat py-2 w-100"
+                            class="btn btn-flat p-1 my-1 mx-auto"
                             @click="openItemModal(status.id)"
                         >
                             <i class="text-white fa fa-2x fa-plus-circle"></i>

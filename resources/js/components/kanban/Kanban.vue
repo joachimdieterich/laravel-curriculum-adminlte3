@@ -33,15 +33,15 @@
                 handle=".handle"
                 item-key="id"
                 :emptyInsertThreshold="500"
-                class="d-flex m-0 pr-4 h-100"
-                :style="kanbanWidth"
+                class="d-flex m-0 h-100"
+                style="width: max-content; gap: 16px; padding-right: 2rem"
             >
                 <template
                     #item="{ element: status , index }"
                 >
                     <span v-if="(status.visibility) || ($userId == status.owner_id)"
                         :key="'drag_status_' + status.id"
-                        class="d-flex flex-column pr-3 h-100"
+                        class="d-flex flex-column h-100"
                         :style="'width:' + itemWidth + 'px;'"
                     >
                         <KanbanStatus

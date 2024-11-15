@@ -17,7 +17,7 @@
                     <div class="dropdown-menu" x-placement="top-start">
                         <button
                             :name="'kanbanItemEdit_'+index"
-                            class="dropdown-item text-secondary  py-1"
+                            class="dropdown-item text-secondary py-1"
                             @click="edit()"
                         >
                             <i class="fa fa-pencil-alt mr-2"></i>

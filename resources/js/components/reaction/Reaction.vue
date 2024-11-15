@@ -1,7 +1,7 @@
 <template>
     <div
        @click="toggle()"
-       class="px-1 pointer"
+       class="position-relative px-1 pointer"
     >
         <i  v-if="userHasReaction()"
            class="fa fa-heart"
@@ -9,12 +9,10 @@
         <i v-else
            class="far fa-heart"
         ></i>
-        <span v-if=" this.likes  !== null">
-            <span v-if="likes_count > 0"
-                class="comment-count mt-1 small bg-success"
-            >
+        <span v-if="this.likes !== null && likes_count > 0"
+            class="comment-count bg-success"
+        >
             {{ this.likes_count }}
-            </span>
         </span>
     </div>
 </template>

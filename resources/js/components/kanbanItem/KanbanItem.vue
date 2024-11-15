@@ -149,12 +149,12 @@
 
                 <span class="d-flex flex-fill"></span>
                 <div v-if="commentable"
-                    class="mr-2 px-1 pointer"
+                    class="position-relative mr-2 px-1 pointer"
                     @click="openComments"
                 >
                     <i class="far fa-comments"></i>
                     <span v-if="item.comments.length > 0"
-                        class="comment-count mt-1 small bg-success"
+                        class="comment-count bg-success"
                     >
                         {{ item.comments.length }}
                     </span>

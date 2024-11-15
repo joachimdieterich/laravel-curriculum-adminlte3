@@ -91,7 +91,6 @@
                                             :item="item"
                                             :width="itemWidth"
                                             :kanban_owner_id="kanban.owner_id"
-                                            style="min-height: 150px"
                                             v-on:item-edit=""
                                             v-on:sync="sync"
                                             filter=".ignore"

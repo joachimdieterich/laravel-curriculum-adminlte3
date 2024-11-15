@@ -1,7 +1,30 @@
 <template>
-    <div class="card">
-        <div class="card-header px-3 py-2" :style="{ backgroundColor: item.color, color: textColor }">
-            <div class="card-tools">
+    <div
+        :id="'item-' + item.id"
+        class="card"
+    >
+        <div
+            class="card-header p-0"
+            :style="{ color: textColor }"
+            data-toggle="collapse"
+            :data-target="'#item-' + item.id + ' > .card-body'"
+            aria-expanded="true"
+        >
+            <div
+                class="card-header-title pl-3 py-2 w-100"
+                :style="{ backgroundColor: item.color }"
+                style="max-width: 100%; padding-right: 50px; border-top-left-radius: 0.25rem; border-top-right-radius: 0.25rem;"
+            >
+                {{ item.title }}
+                <i class="fa fa-angle-up"></i>
+                <div style="font-size: .5rem">
+                    {{ item.created_at }}
+                </div>
+            </div>
+            <div
+                class="card-tools position-absolute"
+                style="top: 8px; right: 16px;"
+            >
                 <div v-if="$userId == kanban_owner_id
                         || (editable && $userId == item.owner_id)
                         || (editable && item.editable && onlyEditOwnedItems == false)"
@@ -14,7 +37,10 @@
                     <i class="fas fa-ellipsis-v"
                        :style="{ 'text-color': textColor }"
                     ></i>
-                    <div class="dropdown-menu" x-placement="top-start">
+                    <div
+                        class="dropdown-menu"
+                        x-placement="top-start"
+                    >
                         <button
                             :name="'kanbanItemEdit_'+index"
                             class="dropdown-item text-secondary py-1"
@@ -54,30 +80,17 @@
                     ></i>
                 </div>
             </div>
-            <div class="pb-0">
-                <div>
-                    {{ item.title }}
-                    <div
-                        class="clearfix"
-                        style="font-size: .5rem"
-                    >
-                        {{ item.created_at }}
-                    </div>
-                </div>
-            </div>
         </div>
 
-        <div class="card-body p-0">
+        <div class="card-body p-0 collapse show">
             <div>
-                <div v-if="item.description !== null"
-                    class="text-muted small px-3 py-2"
-                >
+                <div class="text-muted small px-3 py-2">
                     <span v-if="item.replace_links">
                         <HtmlRenderer
-                            :html-content="item.description"
+                            :html-content="item.description ?? '</br>'"
                         ></HtmlRenderer>
                     </span>
-                    <span v-else v-dompurify-html="item.description"></span>
+                    <span v-else v-dompurify-html="item.description ?? '</br>'"></span>
                 </div>
             </div>
             <mediaCarousel
@@ -135,10 +148,10 @@
 
                 <span class="d-flex flex-fill"></span>
                 <div v-if="commentable"
-                    class=" position-relative pull-right mr-2"
+                    class="mr-2 px-1 pointer"
                     @click="openComments"
                 >
-                    <i class="far fa-comments pointer with-comment-count"></i>
+                    <i class="far fa-comments"></i>
                     <span v-if="item.comments.length > 0"
                         class="comment-count mt-1 small bg-success"
                     >
@@ -357,4 +370,7 @@ export default {
     line-height: 11px;
     vertical-align: middle;
 }
+.card-header-title:hover { filter: brightness(90%); }
+.fa-angle-up { transition: 0.4s transform; }
+.collapsed .fa-angle-up { transform: rotate(-180deg); }
 </style>

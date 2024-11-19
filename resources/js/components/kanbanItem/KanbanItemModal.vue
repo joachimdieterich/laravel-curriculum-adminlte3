@@ -215,7 +215,7 @@ export default {
                 kanban_id: '',
                 kanban_status_id: '',
                 order_id: 0,
-                color: '#27AF60',
+                color: '#f4f4f4',
                 due_date: '',
                 locked: false,
                 editable: true,

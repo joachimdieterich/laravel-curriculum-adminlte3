@@ -183,7 +183,7 @@ export default {
                 visibility: true,
                 visible_from: null,
                 visible_until: null,
-                color:'#27AF60',
+                color: '#f4f4f4',
             }),
         }
     },

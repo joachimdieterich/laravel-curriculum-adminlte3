@@ -77,10 +77,7 @@
                         </div>
                         <!-- /.left-menu -->
 
-                        <div
-                            class="p-1 flex-fill border-left"
-                            style="min-height: 550px"
-                        >
+                        <div class="p-1 flex-fill border-left">
                             <div class="tab-content p-2">
                                 <div
                                     v-permission="'medium_create'"

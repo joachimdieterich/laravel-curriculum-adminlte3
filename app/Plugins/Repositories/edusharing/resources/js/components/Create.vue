@@ -28,7 +28,7 @@
                     :src="this.uploadIframeUrl"
                     :width="this.width"
                     :height="this.height"
-                    style="height: 80vh;"
+                    style="height: 60vh;"
                     frameborder="0"
                 >
                 </iframe>

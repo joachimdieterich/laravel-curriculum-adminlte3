@@ -1,7 +1,6 @@
 <template>
     <div class="card-header border-bottom-0 p-0 kanban-header">
-        <div
-            v-if="newStatus === true"
+        <div v-if="newStatus === true"
             id="kanbanStatusCreate"
         >
             <strong
@@ -14,8 +13,7 @@
         
         <div v-else>
             <strong>{{ status.title }}</strong>
-            <div
-                v-if=" ($userId == kanban.owner_id)
+            <div v-if="($userId == kanban.owner_id)
                     || (editable && $userId == status.owner_id)
                     || (editable && status.editable && !kanban.only_edit_owned_items)"
                 :id="'kanbanStatusDropdown_' + status.id"
@@ -37,10 +35,10 @@
                             <i class="fa fa-pencil-alt mr-4"></i>
                             {{ trans('global.kanbanStatus.edit') }}
                         </button>
-                        <div v-if="($userId == status.owner_id) || (editable == 1 && $userId == kanban.owner_id)">
+                        <div v-if="($userId == status.owner_id) || (editable && $userId == kanban.owner_id)">
                             <hr class="my-1">
                             <button
-                                v-can="'kanban_delete'"
+                                v-permission="'kanban_delete'"
                                 name="kanbanStatusDelete"
                                 class="dropdown-item py-1 text-red"
                                 @click="confirmItemDelete()"
@@ -52,8 +50,7 @@
                     </div>
                 </div>
             </div>
-            <div
-                v-if=" $userId == kanban.owner_id
+            <div v-if="$userId == kanban.owner_id
                     || (!status.locked || $userId == status.owner_id)"
                 class="pull-right handle pointer"
             >
@@ -67,7 +64,6 @@
                     ></i>
                 </span>
             </div>
-
         </div>
 
         <Teleport to="body">
@@ -82,7 +78,6 @@
                 }"
             ></ConfirmModal>
         </Teleport>
-
     </div>
 </template>
 <script>
@@ -121,34 +116,13 @@ export default {
                 method: this.method,
             });
         },
-        submit() {
-            if (this.form.id === 0){
-                this.url = '/kanbanStatuses';
-                this.method = 'post';
-                this.form.kanban_id = this.kanban.id;
-                this.event = 'status-added';
-            } else {
-                this.url = '/kanbanStatuses/' + this.form.id;
-                this.method = 'patch';
-                this.event = 'status-updated';
-            }
-            axios[this.method](this.url, this.form)
-                .then(res => {
-                    this.$emit(this.event, res.data.message);
-                    this.form = res.data.message; //selfupdate
-                })
-                .catch(error => { // Handle the error returned from our request
-                    console.log(error);
-                });
-            this.editor = false;
-        },
         confirmItemDelete() {
             this.showConfirm = true;
         },
         delete() {
             axios.delete("/kanbanStatuses/" + this.status.id)
                 .then(() => {
-                    this.$emit("kanban-status-deleted", this.status);
+                    this.$eventHub.emit("kanban-status-deleted", this.status);
                 })
                 .catch(err => {
                     console.log(err.response);
@@ -159,7 +133,7 @@ export default {
         if (this.newStatus) this.method = 'post';
     },
     components: {
-        ConfirmModal
+        ConfirmModal,
     }
 }
 </script>

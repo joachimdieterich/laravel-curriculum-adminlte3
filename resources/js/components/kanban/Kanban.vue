@@ -24,101 +24,96 @@
             >
                 <i class="fa fa-expand"></i>
             </div>
-            <div
-                :style="kanbanWidth"
-                class="m-0"
+            <!-- Columns (Statuses) -->
+            <draggable
+                v-model="statuses"
+                v-bind="columnDragOptions"
+                :move="isLocked"
+                @end="syncStatusMoved"
+                handle=".handle"
+                item-key="id"
+                :emptyInsertThreshold="500"
+                class="d-flex m-0 h-100"
+                style="width: max-content; gap: 16px; padding-right: 2rem"
             >
-                <!-- Columns (Statuses) -->
-                <draggable
-                    v-model="statuses"
-                    v-bind="columnDragOptions"
-                    :move="isLocked"
-                    @end="syncStatusMoved"
-                    handle=".handle"
-                    item-key="id"
-                    :emptyInsertThreshold="500"
+                <template
+                    #item="{ element: status , index }"
                 >
-                    <template
-                        #item="{ element: status , index }"
+                    <span v-if="(status.visibility) || ($userId == status.owner_id)"
+                        :key="'drag_status_' + status.id"
+                        class="d-flex flex-column h-100"
+                        :style="'width:' + itemWidth + 'px;'"
                     >
-                        <span v-if="(status.visibility) || ($userId == status.owner_id)"
-                            :key="'drag_status_' + status.id"
-                            class="no-border float-left pr-3"
-                            :style="'width:' + itemWidth + 'px;'"
+                        <KanbanStatus
+                            :kanban="kanban"
+                            :status="status"
+                            :editable="editable"
+                            :key="status.id"
+                            filter=".ignore"
+                        />
+                        <div v-if="(editable && status.editable) || ($userId == status.owner_id)"
+                            :id="'kanbanItemCreateButton_' + index"
+                            class="btn btn-flat p-1 my-1 mx-auto"
+                            @click="openItemModal(status.id)"
                         >
-                            <KanbanStatus
-                                :kanban="kanban"
-                                :status="status"
-                                :editable="editable"
-                                :key="status.id"
-                                filter=".ignore"
-                            />
-                            <div
-                                style="margin-top: 15px; bottom: 0; overflow-y: scroll; z-index: 1"
-                                :style="'width:' + itemWidth + 'px;'"
-                                class="hide-scrollbars pr-3"
-                            >
-                                <draggable
-                                    :list="status.items"
-                                    v-bind="itemDragOptions"
-                                    :move="isLocked"
-                                    @end="syncItemMoved"
-                                    handle=".handle"
-                                    item-key="kanban_status_id"
-                                    :component-data="{ name: 'fade' }"
-                                >
-                                    <template
-                                        #item="{ element: item, itemIndex }"
-                                        :style="'width:' + itemWidth + 'px;'"
-                                        class="d-flex flex-column pr-3"
-                                    >
-                                        <span :key="'item_' + item.id">
-                                            <KanbanItem
-                                                v-if=" (item.visibility && visiblefrom_to(item.visible_from, item.visible_until) == true)
-                                                    || ($userId == item.owner_id)
-                                                    || ($userId == kanban.owner_id)"
-                                                :key="item.id"
-                                                :editable="(status.editable == false && $userId != kanban.owner_id) ? false : editable"
-                                                :commentable="kanban.commentable"
-                                                :onlyEditOwnedItems="kanban.only_edit_owned_items"
-                                                :ref="'kanbanItemId' + item.id"
-                                                :index="status.id + '_' + item.id"
-                                                :item="item"
-                                                :width="itemWidth"
-                                                :kanban_owner_id="kanban.owner_id"
-                                                style="min-height: 150px"
-                                                v-on:item-edit=""
-                                                v-on:sync="sync"
-                                                filter=".ignore"
-                                            />
-                                        </span>
-
-                                    </template>
-                                </draggable>
-                                <div v-if="(editable && status.editable) || ($userId == status.owner_id)"
-                                    :id="'kanbanItemCreateButton_' + index"
-                                    class="btn btn-flat mb-3 py-0 w-100"
-                                    @click="openItemModal(status.id)"
-                                >
-                                    <i class="text-white fa fa-2x fa-plus-circle"></i>
-                                </div>
-                            </div>
-                        </span>
-                    </template>
-                    <template #footer>
-                        <div v-if="editable"
-                            class=" no-border float-left pr-2"
-                            :style="'width:' + itemWidth + 'px;'"
-                        >
-                            <KanbanStatus
-                                :kanban="kanban"
-                                :editable="editable"
-                                :newStatus=true
-                            />
+                            <i class="text-white fa fa-2x fa-plus-circle"></i>
                         </div>
-                    </template>
-                </draggable>
-            </div>
+                        <div v-else class="py-2"></div>
+                        <div
+                            class="hide-scrollbars"
+                            style="overflow-y: scroll;"
+                        >
+                            <draggable
+                                :list="status.items"
+                                v-bind="itemDragOptions"
+                                :move="isLocked"
+                                @end="syncItemMoved"
+                                handle=".handle"
+                                item-key="kanban_status_id"
+                                :component-data="{ name: 'fade' }"
+                            >
+                                <template
+                                    #item="{ element: item, itemIndex }"
+                                    :style="'width:' + itemWidth + 'px;'"
+                                    class="d-flex flex-column pr-3"
+                                >
+                                    <span :key="'item_' + item.id">
+                                        <KanbanItem
+                                            v-if=" (item.visibility && visiblefrom_to(item.visible_from, item.visible_until) == true)
+                                                || ($userId == item.owner_id)
+                                                || ($userId == kanban.owner_id)"
+                                            :key="item.id"
+                                            :editable="(status.editable == false && $userId != kanban.owner_id) ? false : editable"
+                                            :commentable="kanban.commentable"
+                                            :onlyEditOwnedItems="kanban.only_edit_owned_items"
+                                            :ref="'kanbanItemId' + item.id"
+                                            :index="status.id + '_' + item.id"
+                                            :item="item"
+                                            :width="itemWidth"
+                                            :kanban_owner_id="kanban.owner_id"
+                                            v-on:item-edit=""
+                                            v-on:sync="sync"
+                                            filter=".ignore"
+                                        />
+                                    </span>
+                                </template>
+                            </draggable>
+                        </div>
+                    </span>
+                </template>
+                <template #footer>
+                    <div v-if="editable"
+                        class="no-border float-left pr-2"
+                        :style="'width:' + itemWidth + 'px;'"
+                    >
+                        <KanbanStatus
+                            :kanban="kanban"
+                            :editable="editable"
+                            :newStatus=true
+                        />
+                    </div>
+                </template>
+            </draggable>
         </div>
     </div>
     <Teleport to="body">
@@ -633,11 +628,12 @@ export default {
 }
 .content-only .kanban_board_container { width: calc(100vw - 1rem); }
 .kanban_board_wrapper {
-    position:absolute;
+    position: absolute;
     height: 100%;
     width: 100%;
     padding: 2rem;
-    overflow:auto;
+    overflow-x: overlay;
+    overflow-y: clip;
 }
 @media (max-width: 991px) {
     .kanban_board_container { width: calc(100vw - 30px) !important; }

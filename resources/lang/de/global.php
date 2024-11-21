@@ -51,7 +51,7 @@ return [
     'view' => 'Ansicht',
     'edit' => 'editieren',
     'locked' => 'verschieben verhindern',
-    'replace_links' => 'Links ersetzen',
+    'replace_links' => 'Links durch QR-Codes ersetzen',
     'editable' => 'editierbar',
     'delete' => 'löschen',
     'forceDelete' => 'Datensatz endgültig löschen.',

@@ -843,11 +843,9 @@ export default {
             this.timerEnabled = true;
 
             if (this.videoconference.owner_id == this.$userId ||
-                this.videoconference.anyoneCanStart === true ||
-                this.videoconference.editable === true ||
                 this.urlParamModeratorPW === this.videoconference.moderatorPW ||
-                this.urlParamAttendeePW === this.videoconference.attendeePW ){
-
+                this.videoconference.anyoneCanStart === true ||
+                this.videoconference.editable === true){
                 window.location = '/videoconferences/' + this.videoconference.id + '/start?userName=' + this.form.userName + '&moderatorPW=' + this.urlParamModeratorPW + '&attendeePW=' + this.urlParamAttendeePW;
             } else {
                 axios.get('/videoconferences/' + this.videoconference.id + '/getStatus')
@@ -856,7 +854,7 @@ export default {
                             this.loadingMessage = 'Konferenz ist noch nicht gestartet. Neuer Verbindungsversuch in ';
                         } else {
                             this.timerEnabled = false;
-                            window.location = response.data.videoconference + '/start?userName=' + this.form.userName;
+                            window.location = '/videoconferences/' + this.videoconference.id + '/start?userName=' + this.form.userName + '&moderatorPW=&attendeePW=' + this.urlParamAttendeePW;
                         }
                     })
                     .catch(e => {

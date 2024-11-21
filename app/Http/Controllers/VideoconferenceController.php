@@ -127,21 +127,13 @@ class VideoconferenceController extends Controller
 
         $input = $this->validateRequest();
 
-        $conference =  (new $this->adapter())->create([
-            'meetingID'     => $input['meetingID'] ?? Str::uuid(),
-            'meetingName'   => $input['meetingName'],
-            'attendeePW'    => $input['attendeePW'] ?? Hash::make(Str::random(8)),
-            'moderatorPW'   => $input['moderatorPW'] ??  Hash::make(Str::random(8)),
-            'logoutUrl'     => $input['logoutUrl'],
-            'server'        => $input['server'] ?? 'server1'
-        ]);
-
+        $meetingID = $input['meetingID'] ?? Str::uuid();
         $videoconference = Videoconference::updateOrCreate([
-            'meetingID'         => $conference['meetingID'],
+            'meetingID'         => $meetingID,
             'meetingName'       => $input['meetingName'],
-            'attendeePW'        => $conference['attendeePW'],
-            'moderatorPW'       => $conference['moderatorPW'],
-            'endCallbackUrl'    => env('APP_URL') . '/videoconferences/endCallback?meetingID=' . $conference['meetingID'],
+            'attendeePW'        => $input['attendeePW'] ?? Hash::make(Str::random(8)),
+            'moderatorPW'       => $input['moderatorPW'] ??  Hash::make(Str::random(8)),
+            'endCallbackUrl'    => env('APP_URL') . '/videoconferences/endCallback?meetingID=' . $meetingID,
             'owner_id'          => auth()->user()->id,
             'welcomeMessage'    => $input['welcomeMessage'] ?? config('bigbluebutton.create.welcomeMessage'),
             'dialNumber'        => $input['dialNumber'] ?? config('bigbluebutton.create.dialNumber'),
@@ -183,6 +175,10 @@ class VideoconferenceController extends Controller
             'server' => $input['server'] ?? 'server1',
         ]);
 
+        $createMeeting = \Bigbluebutton::server( $videoconference->server)->initCreateMeeting($videoconference->toArray());
+        $conf = \Bigbluebutton::server($videoconference->server)->create($createMeeting);
+        //dump($conf);
+
         if (isset($input['subscribable_type']) AND isset($input['subscribable_id']))
         {
             $subscribe = VideoconferenceSubscription::create([
@@ -208,7 +204,7 @@ class VideoconferenceController extends Controller
      * @param  \App\Videoconference  $videoconference
      * @return \Illuminate\Http\Response
      */
-    public function show(Videoconference $videoconference, $editable = null)
+    public function show(Videoconference $videoconference, $editable = false)
     {
         if (Auth::user() == null) {       //if no user is authenticated authenticate guest
             LogController::set('guestLogin');
@@ -228,7 +224,7 @@ class VideoconferenceController extends Controller
 
         $videoconference = $videoconference->withoutRelations(['subscriptions'])->load(['media.license', 'owner']);
 
-        if ($this->isModerator($videoconference) OR ($videoconference->moderatorPW == isset($input['moderatorPW']) ? $input['moderatorPW'] : null))
+        if ($this->isModerator($videoconference) OR ($videoconference->moderatorPW == (isset($input['moderatorPW']) ? $input['moderatorPW'] : null)))
         {
             $videoconference->editable= true; //hack moderation flag
         }
@@ -241,7 +237,7 @@ class VideoconferenceController extends Controller
             ->with(compact('videoconference'));
     }
 
-    private function isModerator(Videoconference $videoconference)
+    private function isModerator(Videoconference $videoconference) // todo: -> better wording canStart -> means not is moderator
     {
         if (
             $videoconference->subscriptions->where('subscribable_type', "App\User")
@@ -274,9 +270,9 @@ class VideoconferenceController extends Controller
         $moderatorPW =  $input['moderatorPW'] ?? '';
         $attendeePW = $input['attendeePW'] ?? $videoconference->attendeePW;
         abort_unless((
-                $videoconference->attendeePW == $attendeePW
+                $videoconference->attendeePW == $attendeePW                 // start with attendeePW
                 OR
-                $videoconference->moderatorPW == $moderatorPW
+                $videoconference->moderatorPW == $moderatorPW               // start with moderatorPW
             )
             OR
             $videoconference->isAccessible(),
@@ -284,9 +280,7 @@ class VideoconferenceController extends Controller
 
         $userName = auth()->user()->fullName();
 
-        if (
-            (auth()->user()->role()->id == 8) || ($input['userName'] != $userName)
-        )
+        if ((auth()->user()->role()->id == 8) || ($input['userName'] != $userName))
         {
             $userName = $input['userName'] ?? auth()->user()->fullName();
         }
@@ -300,64 +294,38 @@ class VideoconferenceController extends Controller
             . '</a>';
 
         $adapter = new $this->adapter();
-        if ((auth()->user()->id == $videoconference->owner_id) || ($videoconference->allJoinAsModerator == true) || $this->isModerator($videoconference) === true || $videoconference->moderatorPW == $moderatorPW)
-        {
-            return $adapter->start([
-                'meetingID'                             => $videoconference->meetingID,
-                'meetingName'                           => $videoconference->meetingName,
-                'attendeePW'                            => $videoconference->attendeePW,
-                'moderatorPW'                           => $videoconference->moderatorPW,
-                'presentation'                          => $this->getPresentations($videoconference),
-                'userName'                              => $userName,
-                'endCallbackUrl'                        => $videoconference->endCallbackUrl,
-                'welcomeMessage'                        => nl2br($videoconference->welcomeMessage),
-                'dialNumber'                            => $videoconference->dialNumber,
-                'maxParticipants'                       => $videoconference->maxParticipants,
-                'logoutUrl'                             => $videoconference->logoutUrl,
-                'record'                                => $videoconference->record,
-                'duration'                              => $videoconference->duration,
-                'isBreakout'                            => $videoconference->isBreakout,
-                'moderatorOnlyMessage'                  => nl2br($videoconference->moderatorOnlyMessage) . $moderatorTextPostfix,
-                'autoStartRecording'                    => $videoconference->autoStartRecording,
-                'allowStartStopRecording'               => $videoconference->allowStartStopRecording,
-                'bannerText'                            => $videoconference->bannerText ?? null,
-                'bannerColor'                           => $videoconference->bannerColor,
-                'logo'                                  => $videoconference->logo,
-                'copyright'                             => $videoconference->copyright,
-                'muteOnStart'                           => $videoconference->muteOnStart,
-                'allowModsToUnmuteUsers'                => $videoconference->allowModsToUnmuteUsers,
-                'lockSettingsDisableCam'                => $videoconference->lockSettingsDisableCam,
-                'lockSettingsDisableMic'                => $videoconference->lockSettingsDisableMic,
-                'lockSettingsDisablePrivateChat'        => $videoconference->lockSettingsDisablePrivateChat,
-                'lockSettingsDisablePublicChat'         => $videoconference->lockSettingsDisablePublicChat,
-                'lockSettingsDisableNote'               => $videoconference->lockSettingsDisableNote,
-                'lockSettingsLockedLayout'              => $videoconference->lockSettingsLockedLayout,
-                'lockSettingsLockOnJoin'                => $videoconference->lockSettingsLockOnJoin,
-                'lockSettingsLockOnJoinConfigurable'    => $videoconference->lockSettingsLockOnJoinConfigurable,
-                'guestPolicy'                           => $videoconference->guestPolicy,
-                'meetingKeepEvents'                     => $videoconference->meetingKeepEvents,
-                'endWhenNoModerator'                    => $videoconference->endWhenNoModerator,
-                'endWhenNoModeratorDelayInMinutes'      => $videoconference->endWhenNoModeratorDelayInMinutes,
-                'meetingLayout'                         => $videoconference->meetingLayout,
-                'learningDashboardCleanupDelayInMinutes' => $videoconference->learningDashboardCleanupDelayInMinutes,
-                'allowModsToEjectCameras'               => $videoconference->allowModsToEjectCameras,
-                'allowRequestsWithoutSession'           => $videoconference->allowRequestsWithoutSession,
-                'userCameraCap'                         => $videoconference->userCameraCap,
-                'server'                                => $videoconference->server ?? 'server1'
-            ]);
+
+        //set proper pw
+        if (
+            (auth()->user()->id == $videoconference->owner_id) ||
+            ($videoconference->allJoinAsModerator === true) ||
+            $this->isModerator($videoconference) === true ||
+            $videoconference->moderatorPW == $moderatorPW
+        ) {
+            $currentPW = $videoconference->moderatorPW;
         } else {
-            if (!$adapter->isMeetingRunning([
+            $currentPW = $videoconference->attendeePW;
+        }
+
+        if (!$adapter->isMeetingRunning([
                 'server' => $videoconference->server,
                 'meetingID' => $videoconference->meetingID
-                ])
+            ])
+        ) {
+
+            if (
+                (auth()->user()->id == $videoconference->owner_id) ||
+                ($videoconference->allJoinAsModerator === true) ||
+                $this->isModerator($videoconference) === true ||
+                $videoconference->moderatorPW == $currentPW ||
+                $videoconference->anyoneCanStart === true
             )
             {
-                //meeting not running, start
-                 $adapter->start([
+                 $conf =  $adapter->start([
                     'meetingID'                             => $videoconference->meetingID,
                     'meetingName'                           => $videoconference->meetingName,
                     'attendeePW'                            => $videoconference->attendeePW,
-                     'moderatorPW'                           => $videoconference->moderatorPW,
+                    'moderatorPW'                           => $currentPW , // not always moderator
                     'presentation'                          => $this->getPresentations($videoconference),
                     'userName'                              => $userName,
                     'endCallbackUrl'                        => $videoconference->endCallbackUrl,
@@ -368,7 +336,7 @@ class VideoconferenceController extends Controller
                     'record'                                => $videoconference->record,
                     'duration'                              => $videoconference->duration,
                     'isBreakout'                            => $videoconference->isBreakout,
-                    'moderatorOnlyMessage'                  => nl2br($videoconference->moderatorOnlyMessage),
+                    'moderatorOnlyMessage'                  => nl2br($videoconference->moderatorOnlyMessage) . $moderatorTextPostfix,
                     'autoStartRecording'                    => $videoconference->autoStartRecording,
                     'allowStartStopRecording'               => $videoconference->allowStartStopRecording,
                     'bannerText'                            => $videoconference->bannerText ?? null,
@@ -397,25 +365,25 @@ class VideoconferenceController extends Controller
                     'server'                                => $videoconference->server ?? 'server1'
                 ]);
             }
-            //join as guest
-            return $adapter->join([
-                'meetingID' => $videoconference->meetingID,
-                'userName'  => $userName,
-                'password'  => $videoconference->attendeePW,
-                'server'    => $videoconference->server ?? 'server1'
-            ]);
-
         }
+
+        return $adapter->join([
+            'meetingID' => $videoconference->meetingID,
+            'userName'  => $userName,
+            'password'  => $currentPW,
+            'server'    => $videoconference->server ?? 'server1'
+        ]);
     }
 
     public function getStatus(Videoconference $videoconference)
     {
         $adapter = new $this->adapter();
         if (request()->wantsJson()) {
-            if ($adapter->isMeetingRunning([
+            $isRunning = $adapter->isMeetingRunning([
+                'meetingID' => $videoconference->meetingID,
                 'server'    => $videoconference->server ?? 'server1',
-                'meetingID' => $videoconference->meetingID
-            ]))
+            ]);
+            if ($isRunning)
             {
                 return ['videoconference' => $videoconference->path()];
             } else
@@ -464,6 +432,7 @@ class VideoconferenceController extends Controller
         $input = $this->validateRequest();
         abort_unless((\Gate::allows('videoconference_edit') and $videoconference->isAccessible()), 403);
 
+        //todo: check if guestPolicy is changed. -> if not use initCreateMeeting() ?
         $videoconference->update([
             'meetingID' => $input['meetingID'] ?? $videoconference->meetingID,
             'meetingName' => $input['meetingName'] ?? $videoconference->meetingName,

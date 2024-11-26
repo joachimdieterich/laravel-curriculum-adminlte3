@@ -316,7 +316,16 @@ class UsersController extends Controller
         abort_unless(auth()->user()->role()->id == 1, 403); //only admins!
         abort_unless(\Gate::allows('user_access'), 403);
 
-        return User::where('id', auth()->user() - id())->with(['contactDetail', 'groups', 'roles', 'organizations', 'achievements'])->get()->first();
+        return User::where('id', auth()->user()->id)
+            ->with([
+                'contactDetail',
+                'comments',
+                'contents',
+                'groups',
+                'roles',
+                'organizations',
+                'achievements'
+            ])->get()->first();
     }
 
     protected function validateImportRequest()

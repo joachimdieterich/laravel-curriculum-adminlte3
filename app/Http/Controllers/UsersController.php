@@ -311,12 +311,12 @@ class UsersController extends Controller
         return view('users.import');
     }
 
-    public function dsgvoExport($id)
+    public function dsgvoExport(User $user)
     {
         abort_unless(auth()->user()->role()->id == 1, 403); //only admins!
         abort_unless(\Gate::allows('user_access'), 403);
 
-        return User::where('id', auth()->user()->id)
+        return User::where('id', $user->id)
             ->with([
                 'contactDetail',
                 'comments',

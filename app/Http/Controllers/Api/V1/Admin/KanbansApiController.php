@@ -11,6 +11,8 @@ use App\OrganizationRoleUser;
 use App\Period;
 use App\User;
 use Carbon\Carbon;
+use FontLib\TrueType\Collection;
+use Illuminate\Support\Str;
 
 class KanbansApiController extends Controller
 {
@@ -25,12 +27,35 @@ class KanbansApiController extends Controller
     {
         $user = User::where('common_name', request()->input('owner_cn'))->get()->first();
 
-        return Kanban::firstOrCreate([
+        $kanban = Kanban::firstOrCreate([
             'title'             => request()->input('title'),
             'description'       => request()->input('description'),
             'color'             => request()->input('color') ?? '#2980B9',
             'owner_id'          => $user->id,
         ]);
+
+        //create tokenLink
+        $token = Str::uuid();
+
+        $subscribe =  KanbanSubscription::updateOrCreate([
+            'kanban_id' => $kanban->id,
+            'subscribable_type' => "App\User",
+            'subscribable_id' => User::find(env('GUEST_USER'))->id,
+            'sharing_token' => $token,
+        ], [
+            'due_date' => NULL,
+            'title' => 'edusharing',
+            'editable' => request()->input('editable') ?? false,
+            'owner_id' => $user->id,
+        ]);
+        $subscribe->save();
+
+        // end create tokenLink
+        $collection = collect($kanban);
+        $collection->put('sharing_link',  env('APP_URL').'/kanbans/'.$kanban->id.'/token?sharing_token='.$token);
+        $collection->put('editable',  $subscribe->editable);
+
+        return $collection->all();
     }
 
     public function update(Kanban $kanban)

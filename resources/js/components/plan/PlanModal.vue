@@ -130,7 +130,7 @@
                                 v-model.trim="form.duration"
                                 :placeholder="trans('global.plan.fields.duration')"
                             />
-                            <p class="help-block">
+                            <p class="help-block" style="width: 0; min-width: 100%;">
                                 {{ trans('global.plan.fields.duration_helper') }}
                             </p>
                         </div>

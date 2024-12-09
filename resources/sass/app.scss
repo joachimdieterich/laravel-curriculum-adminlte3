@@ -108,6 +108,10 @@ textarea {
     min-height: 150px;
 }
 
+.modal-body {
+    max-height: 80svh;
+    overflow-y: auto;
+}
 
 .select2 {
     max-width: 100%;

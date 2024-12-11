@@ -240,6 +240,7 @@ return [
     ],
     'teacher' => 'Teacher',
     'remember_token' => 'Remember token',
+    'general' => 'General',
     'permissions' => 'Permissions',
     'user_actions' => 'User actions',
     'time' => 'Time',

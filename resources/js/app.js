@@ -40,6 +40,13 @@ app.use(VueDOMPurifyHTML, {
             USE_PROFILES: { html: false },
         },
     },
+    hooks: {
+        afterSanitizeAttributes: (currentNode) => {
+            if ('rel' in currentNode && currentNode.rel == 'noopener') {
+                currentNode.setAttribute('target', '_blank');
+            }
+        }   
+    }
 });
 import { useGlobalStore} from "./store/global";
 import { createPinia } from "pinia";

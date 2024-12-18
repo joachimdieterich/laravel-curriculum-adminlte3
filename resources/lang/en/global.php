@@ -846,23 +846,24 @@ return [
         'create' => 'Create entry',
         'search' => 'Search entries',
         'edit' => 'Edit entry',
-
+        'delete' => 'Delete entry',
+        'delete_helper' => 'Should this entry and its associated data be deleted?',
     ],
     'training' => [
         'title' => 'Trainings',
         'title_singular' => 'Training',
-        'create' => 'Training erstellen',
-        'search' => 'Training suchen',
-        'edit' => 'Training bearbeiten',
+        'create' => 'Create Training',
+        'search' => 'Search training',
+        'edit' => 'Edit Training',
     ],
     'exercise' => [
-        'title' => 'exercises',
-        'title_singular' => 'exercise',
-        'create' => 'create exercise',
-        'search' => 'search exercise',
-        'edit' => 'edit exerciese',
+        'title' => 'Exercises',
+        'title_singular' => 'Exercise',
+        'create' => 'Create exercise',
+        'search' => 'Search exercise',
+        'edit' => 'Edit exerciese',
         'fields' => [
-            'recommended_iterations' => 'Wie oft soll die Übung wiederholt werden?'
+            'recommended_iterations' => 'How often should this exercise be repeated?'
         ]
     ],
     'exercisedone' => [
@@ -904,7 +905,7 @@ return [
         'create' => 'Create item',
         'edit' => 'Edit item',
         'delete' => 'Delete item',
-        'delete_helper' => 'Should item be deleted?',
+        'delete_helper' => 'Should this item and its associated data be deleted?',
         'due_date' => 'Due-Date',
         'expired' => 'Expired',
         'fields' => [
@@ -920,7 +921,7 @@ return [
         'create' => 'Create status ',
         'edit' => 'Edit status ',
         'delete' => 'Delete status',
-        'delete_helper' => 'Should the status and the associated items be deleted?',
+        'delete_helper' => 'Should thiss status and its associated items be deleted?',
         'fields' => [
             'order_id' => 'Order ID',
             'kanban_id' => 'Kanban ID',

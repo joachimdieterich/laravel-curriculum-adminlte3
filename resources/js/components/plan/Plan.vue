@@ -1,18 +1,14 @@
-<template >
+<template>
     <div>
         <div class="card pb-3">
             <div class="card-header">
                 <div class="card-title">{{ plan.title }}</div>
-                <div
-                    v-if="$userId == plan.owner_id"
+                <div v-if="$userId == plan.owner_id"
                     v-can="'plan_edit'"
                     class="card-tools pr-2 no-print"
                 >
                     <a onclick="window.print()" class="link-muted mr-3 px-1 pointer">
                         <i class="fa fa-print"></i>
-                    </a>
-                    <a :href="plan.id + '/edit'" class="link-muted px-1">
-                        <i class="fa fa-pencil-alt"></i>
                     </a>
                 </div>
             </div>
@@ -26,7 +22,7 @@
             </div>
         </div>
 
-        <div class="row ">
+        <div class="row">
             <div class="col-12 pt-2">
                 <draggable
                     v-model="entries"
@@ -35,26 +31,24 @@
                     @start="drag=true"
                     @end="handleEntryOrder"
                     itemKey="id"
-                > <template
-                    #item="{ element: entry , index }">
-                    <PlanEntry
-                        :key="entry.id"
-                        :editable="editable"
-                        :entry="entry"
-                        :plan="plan"
-                    ></PlanEntry>
-                </template>
-
+                >
+                    <template #item="{ element: entry , index }">
+                        <PlanEntry
+                            :key="entry.id"
+                            :editable="editable"
+                            :entry="entry"
+                            :plan="plan"
+                        ></PlanEntry>
+                    </template>
                 </draggable>
             </div>
 
             <div class="col-12">
                 <!--<Calendar></Calendar>-->
-                <PlanEntry
-                    v-if="$userId == plan.owner_id"
+                <PlanEntry v-if="$userId == plan.owner_id"
                     :plan="plan"
-                    create="true">
-                </PlanEntry>
+                    create="true"
+                ></PlanEntry>
             </div>
         </div>
         <!-- overlay button in bottom right corner -->
@@ -68,8 +62,8 @@
         </div> -->
         <Teleport to="body">
             <SetAchievementsModal
-                :users="users">
-            </SetAchievementsModal>
+                :users="users"
+            ></SetAchievementsModal>
         </Teleport>
     </div>
 </template>
@@ -77,9 +71,8 @@
 <script>
 import draggable from "vuedraggable";
 import SetAchievementsModal from "./SetAchievementsModal.vue";
-/*const Calendar =
-    () => import('../calendar/Calendar.vue');*/
 import PlanEntry from './PlanEntry.vue';
+import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
@@ -93,6 +86,12 @@ export default {
         users: {
             type: Object,
             default: null
+        }
+    },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
         }
     },
     data() {
@@ -177,10 +176,9 @@ export default {
         },
     },
     components: {
-        //Calendar,
         SetAchievementsModal,
         PlanEntry,
-        draggable
+        draggable,
     },
 }
 </script>

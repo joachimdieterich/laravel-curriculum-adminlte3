@@ -1,7 +1,7 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -9,7 +9,7 @@
                         <span v-if="method === 'post'">
                             {{ trans('global.plan.create') }}
                         </span>
-                        <span v-if="method === 'patch'">
+                        <span v-else>
                             {{ trans('global.plan.edit') }}
                         </span>
                     </h3>
@@ -155,7 +155,6 @@
                     </div>
                 </div>
 
-
                 <div class="card-footer">
                     <span class="pull-right">
                         <button
@@ -243,8 +242,9 @@ export default {
             if (!this.checkRequired()) {
                 return;
             }
-            this.form.begin = this.form.date[0].toISOString().slice(0, -5).replace('T', ' ');
-            this.form.end = this.form.date[1].toISOString().slice(0, -5).replace('T', ' ');
+            // format dates as 'yyyy-mm-dd'
+            this.form.begin = this.form.date[0].toISOString().slice(0, 10);
+            this.form.end = this.form.date[1].toISOString().slice(0, 10);
 
             if (method == 'patch') {
                 this.update();

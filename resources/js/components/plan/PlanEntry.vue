@@ -254,6 +254,7 @@ export default {
         Objectives,
         MediumForm,
         Trainings,
+        ConfirmModal,
     },
 }
 </script>

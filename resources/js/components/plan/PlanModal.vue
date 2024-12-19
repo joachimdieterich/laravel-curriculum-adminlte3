@@ -251,6 +251,8 @@ export default {
             } else {
                 this.add();
             }
+
+            this.globalStore.closeModal(this.$options.name);
         },
         add() {
             axios.post(this.url, this.form)
@@ -302,7 +304,7 @@ export default {
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
-                    this.form.date = [this.form.begin ?? '', this.form.end ?? ''];
+                    this.form.date = [new Date(this.form.begin) ?? '', new Date(this.form.end) ?? ''];
                     this.form.description = this.$decodeHTMLEntities(params.description);
 
                     if (this.form.id != '') {

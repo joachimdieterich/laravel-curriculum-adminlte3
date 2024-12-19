@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    {{ $plan->title }}
+    <title-component></title-component>
 @endsection
 
 @section('breadcrumb')
@@ -12,6 +12,7 @@
         ])}}"
     ></breadcrumbs>
 @endsection
+
 @section('content')
     @switch($plan->type_id)
         @case(1)
@@ -25,19 +26,8 @@
             <plan
                 :plan="{{ $plan }}"
                 :editable="{{ $editable ? 'true' : 'false' }}"
-                :users="{{ json_encode($users) }}"></plan>
-           {{-- @can('medium_create')
-                <medium-create-modal></medium-create-modal>
-            @endcan
---}}
-            @can('plan_create')
-                @if ($editable)
-               {{--     <subscribe-modal></subscribe-modal>
-                    <subscribe-objective-modal></subscribe-objective-modal>
----}}
-                @endif
-            @endcan
-
+                :users="{{ json_encode($users) }}"
+            ></plan>
             @break
         @default
     @endswitch

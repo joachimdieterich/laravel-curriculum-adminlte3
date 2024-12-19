@@ -76,8 +76,6 @@
                 <i class="fa fa-pencil-alt text-secondary"></i>
             </a>
             <button
-                v-permission="'logbook_create'"
-                v-if="$userId == logbook.owner_id"
                 class="btn btn-flat"
                 @click="share()"
             >
@@ -214,7 +212,7 @@ export default {
                     'shareWithGroups': true,
                     'shareWithOrganizations': true,
                     'shareWithToken': true,
-                    'canEditCheckbox': true
+                    'canEditCheckbox': true,
                 });
         },
     }

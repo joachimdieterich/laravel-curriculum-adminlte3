@@ -2,7 +2,7 @@
     <div>
         <div class="card pb-3">
             <div class="card-header">
-                <div class="card-title">{{ plan.title }}</div>
+                <div class="card-title">{{ currentPlan.title }}</div>
                 <div v-if="$userId == plan.owner_id"
                     v-can="'plan_edit'"
                     class="card-tools pr-2 no-print"
@@ -16,7 +16,7 @@
             <div class="card-body">
                 <div class="row">
                     <span class="col-12">
-                        {{ htmlToText(plan.description) }}
+                        {{ htmlToText(currentPlan.description) }}
                     </span>
                 </div>
             </div>
@@ -61,9 +61,27 @@
             <i class="fa fa-users"></i>
         </div> -->
         <Teleport to="body">
+            <PlanModal/>
             <SetAchievementsModal
                 :users="users"
             ></SetAchievementsModal>
+        </Teleport>
+        <Teleport v-if="$userId == plan.owner_id"
+            to="#customTitle"
+        >
+            <small>{{ currentPlan.title }}</small>
+            <a
+                class="btn btn-flat"
+                @click="editPlan()"
+            >
+                <i class="fa fa-pencil-alt text-secondary"></i>
+            </a>
+            <button
+                class="btn btn-fla"
+                @click="share()"
+            >
+                <i class="fa fa-share-alt text-secondary"></i>
+            </button>
         </Teleport>
     </div>
 </template>
@@ -72,6 +90,7 @@
 import draggable from "vuedraggable";
 import SetAchievementsModal from "./SetAchievementsModal.vue";
 import PlanEntry from './PlanEntry.vue';
+import PlanModal from "./PlanModal.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {
@@ -96,6 +115,7 @@ export default {
     },
     data() {
         return {
+            currentPlan: this.plan,
             entries: [],
             entry_order: [],
             subscriptions: {},
@@ -123,10 +143,28 @@ export default {
                     console.log(e);
                 });
         },
+        editPlan() {
+            this.globalStore.showModal('plan-modal', this.currentPlan);
+        },
+        share() {
+            this.globalStore.showModal('subscribe-modal',
+                {
+                    'modelId': this.plan.id,
+                    'modelUrl': 'plan',
+                    'shareWithUsers': true,
+                    'shareWithGroups': true,
+                    'shareWithOrganizations': true,
+                    'shareWithToken': false,
+                    'canEditCheckbox': true,
+                });
+        },
         handleEntryAdded(entry) {
             this.entries.push(entry);
             this.entry_order.push(entry.id);
             this.updateEntryOrder();
+        },
+        handleEntryUpdated(entry) {
+            // TODO
         },
         handleEntryDeleted(entry){
             let index = this.entries.indexOf(entry);
@@ -152,11 +190,16 @@ export default {
         localStorage.removeItem('user-datatable-selection'); // reset selection to prevent wrong inputs
         this.disabled = this.$userId != this.plan.owner_id;
         this.loaderEvent();
+
+        this.$eventHub.on('plan-updated', (e) => {
+            this.currentPlan = e;
+        });
+        // ENTRY events
         this.$eventHub.on('plan_entry_added', (e) => {
             this.handleEntryAdded(e);
         });
         this.$eventHub.on('plan_entry_updated', (e) => {
-            this.loaderEvent();
+            this.handleEntryUpdated(e);
         });
         this.$eventHub.on('plan_entry_deleted', (e) => {
             this.handleEntryDeleted(e);
@@ -177,6 +220,7 @@ export default {
     },
     components: {
         SetAchievementsModal,
+        PlanModal,
         PlanEntry,
         draggable,
     },

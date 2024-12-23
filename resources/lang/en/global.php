@@ -507,6 +507,8 @@ return [
             'date_helper' => '',
             'color' => 'Color',
             'color_helper' => '',
+            'archived' => 'archived',
+            'archived_helper' => '',
             'variant_default_title' => 'Title (Standard Variant)',
             'variant_default_title_helper' => '',
             'variant_default_description' => 'Description (Standard Variant)',

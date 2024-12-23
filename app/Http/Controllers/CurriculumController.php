@@ -137,24 +137,6 @@ class CurriculumController extends Controller
     public function create()
     {
         abort(403);
-      /*  abort_unless(Gate::allows('curriculum_create'), 403);
-
-        $grades = Grade::all();
-        $subjects = Subject::all();
-        $organization_types = OrganizationType::all();
-        $curriculum_types = $this->getCurriculumTypesByPermission();
-        $variant_definitions = VariantDefinition::all();
-        $countries = Country::all();
-        $states = State::where('country', 'DE')->get();
-
-        return view('curricula.create')
-                ->with(compact('grades'))
-                ->with(compact('subjects'))
-                ->with(compact('countries'))
-                ->with(compact('states'))
-                ->with(compact('organization_types'))
-                ->with(compact('variant_definitions'))
-                ->with(compact('curriculum_types'));*/
     }
 
     /**
@@ -190,6 +172,7 @@ class CurriculumController extends Controller
                         $input['variant_default_title'] ?? NULL,
                         $input['variant_default_description'] ?? NULL
                                         ),
+            'archived'              =>  $input['archived'] ?? false,
             'owner_id'              => auth()->user()->id,
         ]);
 
@@ -305,23 +288,6 @@ class CurriculumController extends Controller
     public function edit(Curriculum $curriculum)
     {
         abort(403);
-        /*$grades = Grade::all();
-        $subjects = Subject::all();
-        $organization_types = OrganizationType::all();
-        $curriculum_types = CurriculumType::all();
-        $variant_definitions = VariantDefinition::all();
-        $countries = Country::all();
-        $states = State::all();
-
-        return view('curricula.edit')
-                ->with(compact('grades'))
-                ->with(compact('subjects'))
-                ->with(compact('organization_types'))
-                ->with(compact('curriculum_types'))
-                ->with(compact('countries'))
-                ->with(compact('states'))
-                ->with(compact('variant_definitions'))
-                ->with(compact('curriculum'));*/
     }
 
     /**
@@ -333,12 +299,6 @@ class CurriculumController extends Controller
     public function editOwner(Curriculum $curriculum)
     {
         abort(403);
-       /* $users = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->get();
-
-
-        return view('curricula.owner')
-                ->with(compact('curriculum'))
-                ->with(compact('users'));*/
     }
 
     /**
@@ -359,7 +319,6 @@ class CurriculumController extends Controller
         if (request()->wantsJson()) {
             return $curriculum;
         }
-        //return redirect('/curricula');
     }
 
     /**
@@ -396,6 +355,7 @@ class CurriculumController extends Controller
                                         $input['variant_default_title'] ?? NULL,
                                         $input['variant_default_description'] ?? NULL
                                        ),
+            'archived'              =>  $input['archived'] ?? false,
             'owner_id'              => auth()->user()->id,
         ]);
 
@@ -692,6 +652,7 @@ class CurriculumController extends Controller
             'variants'  => 'sometimes',
             'variant_default_title'  => 'sometimes',
             'variant_default_description'  => 'sometimes',
+            'archived' => 'sometimes'
         ]);
     }
 

@@ -560,6 +560,8 @@ return [
             'date_helper' => '',
             'color' => 'Farbe',
             'color_helper' => '',
+            'archived' => 'archiviert',
+            'archived_helper' => '',
             'variant_default_title' => 'Titel (Standard Variante)',
             'variant_default_title_helper' => '',
             'variant_default_description' => 'Beschreibung (Standard Variante)',

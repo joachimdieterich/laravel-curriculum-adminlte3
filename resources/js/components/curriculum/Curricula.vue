@@ -101,6 +101,16 @@
                     </div>
                 </template>
 
+                <template v-if="curriculum.archived === true"
+                    v-slot:badges>
+                    <p class="text-muted small">
+                           <span class="btn btn-info btn-xs select-all pull-right mr-1"
+                                 style="position: absolute;bottom: 0;margin: 5px 40px 8px 0;width: max-content;right: 5px;">
+                            <i class="fa fa-archive" aria-hidden="true"></i> {{ trans('global.curriculum.fields.archived') }}
+                       </span>
+                    </p>
+                </template>
+
                 <template
                     v-permission="'curriculum_edit, curriculum_delete'"
                     v-slot:dropdown>

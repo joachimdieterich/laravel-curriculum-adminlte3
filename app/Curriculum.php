@@ -41,7 +41,7 @@ class Curriculum extends Model
         'date'  => 'datetime',
         'updated_at' => 'datetime',
         'created_at'  => 'datetime',
-
+        'archived' => 'boolean',
     ];
 
     protected $attributes = [

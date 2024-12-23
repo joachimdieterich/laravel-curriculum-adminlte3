@@ -199,6 +199,7 @@
                      this.mediumStore.setShowMediumModal(false);
                 }"
             ></MediumModal>
+            <MediumExportModal></MediumExportModal>
             <CurriculumModal></CurriculumModal>
             <ContentModal></ContentModal>
             <CertificateModal></CertificateModal>
@@ -224,12 +225,14 @@ import {useGlobalStore} from "../../store/global";
 import ContentModal from "../content/ContentModal.vue";
 import MediumModal from "../media/MediumModal.vue";
 import {useMediumStore} from "../../store/media.js";
+import MediumExportModal from "../media/MediumExportModal.vue";
 
 DataTable.use(DataTablesCore);
 
 export default {
     name: "curriculum",
     components:{
+        MediumExportModal,
         MediumModal,
         ContentModal,
         GenerateCertificateModal,
@@ -328,6 +331,14 @@ export default {
         },
         generateCertificate(){
             this.globalStore?.showModal('generate-certificate-modal', {'curriculum_id': this.curriculum.id});
+        },
+        exportCurriculum(){
+            this.globalStore?.showModal('medium-export-modal',
+                {
+                    'id': this.curriculum.id,
+                    'url': '/curricula/' + this.curriculum.id + '/export',
+                    'header': window.trans.global.curriculum.export
+                });
         }
         /*externalEvent: function(ids) {
             this.reloadEnablingObjectives(ids);

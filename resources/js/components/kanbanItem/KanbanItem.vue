@@ -76,9 +76,16 @@
                     class="float-right py-0 px-1 mx-1 handle pointer"
                     @click.stop
                 >
-                    <i class="fa fa-arrows-up-down-left-right"
-                       :style="{ 'text-color': textColor }"
-                    ></i>
+                    <span class="position-relative"
+                          :style="{ 'text-color': textColor }">
+                        <i v-if="editable"
+                           class="fa fa-arrows-up-down-left-right"
+                        ></i>
+                        <i v-if="item.locked"
+                           class="fa fa-lock text-muted position-absolute"
+                           style="left: 8px; top: 10px; cursor: not-allowed;"
+                        ></i>
+                    </span>
                 </div>
             </div>
         </div>

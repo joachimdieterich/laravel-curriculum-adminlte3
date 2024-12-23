@@ -23,7 +23,21 @@
                 @click="toggleFullscreen"
             >
                 <i class="fa fa-expand"></i>
+
             </div>
+            <div
+                class="pointer"
+                :style="{ color: textColor }"
+                style="float: right;
+                margin-top: -25px;
+                margin-right: -20px;"
+                data-toggle="collapse"
+                data-target="#kanban_board_wrapper .card-body"
+                aria-expanded="true"
+            >
+                <i class="fa fa-angle-up"></i>
+            </div>
+
             <!-- Columns (Statuses) -->
             <draggable
                 v-model="statuses"
@@ -647,4 +661,6 @@ export default {
         margin-left: -1rem;
     }
 }
+.fa-angle-up { transition: 0.4s transform; }
+.collapsed .fa-angle-up { transform: rotate(-180deg); }
 </style>

@@ -63,7 +63,7 @@
                     ></i>
                     <i v-if="status.locked"
                         class="fa fa-lock text-muted position-absolute"
-                        style="left: 8px; top: 10px;"
+                        style="left: 8px; top: 10px; cursor: not-allowed;"
                     ></i>
                 </span>
             </div>

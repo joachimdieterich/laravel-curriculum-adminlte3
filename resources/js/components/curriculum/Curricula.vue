@@ -150,6 +150,7 @@
                 :columns="columns"
                 :options="options"
                 :ajax="url"
+                :search="search"
                 width="100%"
                 style="display:none; "
             ></DataTable>
@@ -257,8 +258,9 @@ export default {
                 $('#curriculum-content').insertBefore('#curriculum-datatable-wrapper');
             });
             this.$eventHub.on('filter', (filter) => {
-                this.search(filter).draw();
+                this.dt.search(filter).draw();
             });
+
         },
         destroy() {
             if (this.subscribable){
@@ -324,6 +326,9 @@ export default {
         this.$eventHub.on('owner-updated', (owner) => {
             this.globalStore?.closeModal('owner-modal');
             this.loaderEvent();
+        });
+        this.$eventHub.on('filter', (filter) => {
+            this.search = filter;
         });
     },
 

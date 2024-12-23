@@ -214,7 +214,7 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link curriculummedia table lists"
+                    "autolink link curriculummedia table lists autoresize"
                 ],
                 {
                     'eventHubCallbackFunction': 'insertContent',

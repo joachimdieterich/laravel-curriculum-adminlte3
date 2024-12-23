@@ -36,7 +36,7 @@
             </div>
             <div :id="'card_' + content.id"
                 class="card-body collapse"
-                v-dompurify-html="this.$decodeHtml(content.referenceable.content)">
+                v-html="this.$decodeHtml(content.referenceable.content)">
             </div>
 
         </div>

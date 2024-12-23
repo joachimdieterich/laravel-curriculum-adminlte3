@@ -129,7 +129,7 @@
                                         :data-target="'#contentCarousel_'+uid"
                                         :data-slide-to="index+1"
                                         @click="setSlide(index+1)"
-                                 v-dompurify-html="item.content.content">
+                                 v-html="item.content.content">
                                  </small>
                              </span>
                          </li>
@@ -139,7 +139,7 @@
                 <div v-for="item in subscriptions"
                      class="carousel-item" :title="item.content.title">
                     <div class="p-3"
-                         v-dompurify-html="item.content.content"
+                         v-html="item.content.content"
                     ></div>
                 </div>
             </div>

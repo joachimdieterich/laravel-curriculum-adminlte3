@@ -91,7 +91,7 @@
                             :html-content="item.description ?? '</br>'"
                         ></HtmlRenderer>
                     </span>
-                    <span v-else v-dompurify-html="item.description ?? '</br>'"></span>
+                    <span v-else v-html="item.description ?? '</br>'"></span>
                 </div>
             </div>
             <mediaCarousel

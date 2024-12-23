@@ -6,6 +6,7 @@ use DateTimeInterface;
 use Maize\Markable\Markable;
 use Maize\Markable\Models\Like;
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 
 class KanbanItem extends Model
 {
@@ -14,6 +15,7 @@ class KanbanItem extends Model
     protected $guarded = [];
 
     protected $casts = [
+        'description' => CleanHtml::class, // cleans both when getting and setting the value
         'created_at' => 'datetime:d.m.Y H:i',
         'locked' => 'boolean',
         'editable' => 'boolean',

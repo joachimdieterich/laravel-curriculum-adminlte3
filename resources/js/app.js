@@ -332,6 +332,7 @@ app.config.globalProperties.$initTinyMCE = function(
         toolbar1: customToolbar1 ?? "styleselect | bold underline italic | alignleft aligncenter alignright alignjustify",
         toolbar2: customToolbar2 ?? "bullist numlist outdent indent | curriculummedia mathjax link image media",
         extended_valid_elements: extended_valid_elements ?? '',
+        default_link_target:"_blank",
         relative_urls: false,
         entity_encoding: "raw",
         language: 'de',

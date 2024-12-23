@@ -1,5 +1,6 @@
 <template>
-    <div class="kanban-header">
+    <div class="kanban-header"
+         :style="{ backgroundColor: color }">
         <div v-if="newStatus === true"
             id="kanbanStatusCreate"
             class="d-flex align-items-center"
@@ -11,7 +12,8 @@
                 <i class="fa fa-plus"></i> {{ trans('global.kanbanStatus.create') }}
             </strong>
         </div>
-        <div v-else class="d-flex align-items-center">
+        <div v-else class="d-flex align-items-center"
+             :style="'color:' + $textcolor(status.color)">
             <div v-if="($userId == kanban.owner_id)
                     || (editable && $userId == status.owner_id)
                     || (editable && status.editable && !kanban.only_edit_owned_items)"
@@ -20,7 +22,8 @@
                 data-toggle="dropdown"
                 aria-expanded="false"
             >
-                <i class="text-muted fas fa-bars"></i>
+                <i class="fas fa-bars"
+                   :style="'color:' + $textcolor(status.color)"></i>
                 <div
                     class="dropdown-menu"
                     x-placement="top-start"
@@ -106,7 +109,8 @@ export default {
             showConfirm: false,
             url: '',
             method: 'patch',
-            event: ''
+            event: '',
+            color: this.status?.color ?? '#FFF'
         }
     },
     methods: {

@@ -212,6 +212,7 @@ return [
     'superordinate_element' => 'Übergeordnete Elemente',
     'subordinate_element_singular' => 'Untergeordnetes Element',
     'subordinate_element' => 'Untergeordnete Elemente',
+    'one_file' => 'Ausgabe in eine Datei',
     'roles' => 'Rollen',
     'role' => [
         'title' => 'Rollen',

@@ -192,6 +192,7 @@ return [
     'superordinate_element' => 'Superordinate Elements',
     'subordinate_element_singular' => 'Subordinate Element',
     'subordinate_element' => 'Subordinate Elements',
+    'one_file' => 'Export one PDF-file',
     'roles' => 'Roles',
     'role' => [
         'title' => 'Roles',

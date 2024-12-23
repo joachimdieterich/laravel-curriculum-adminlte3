@@ -194,8 +194,8 @@ class CertificateController extends Controller
                 'terminalObjectives.enablingObjectives',])
                 ->find((request()->curriculum_id != null) ? request()->curriculum_id : $certificate->curriculum_id);
         }
-
-        foreach ($user_ids as $id) {
+        $html_to_print = '';
+        foreach ($user_ids as $key => $id) {
             $user = User::where('id', $id)->get()->first();
             abort_unless(auth()->user()->mayAccessUser($user), 403);
             //replace placeholder
@@ -247,17 +247,28 @@ class CertificateController extends Controller
                 $html
             );
             //end progress
-            $filename = date('Y-m-d_H-i-s').str_replace_special_chars($user->lastname.'_'.$user->firstname).'.pdf'; //Username escape german umlaute
-            $path = 'users/'.auth()->user()->id.'/';
 
+            $path = 'users/'.auth()->user()->id.'/';
 
             if(!Storage::exists($path)){
                 Storage::makeDirectory($path);
             }
 
-            $pathOfNewFile = $this->buildPdf($html, $path, $filename);
-
-            array_push($generated_files, ['filename' => $filename, 'path' => Storage::disk('local')->path($path.$filename)]);
+            $input = $this->validateRequest();
+            // if oneFile == true
+            if ($input['oneFile'] === true){
+                if ($key === array_key_first($user_ids)) {
+                    $html_to_print = $html;
+                } else {
+                    $html_to_print = $html_to_print.'<p style="page-break-before: always;"></p>'.$html;
+                }
+                $filename = date('Y-m-d_H-i-s').'_Certificates.pdf';
+                $pathOfNewFile = $this->buildPdf($html_to_print, $path, $filename);
+            } else {
+                $filename = date('Y-m-d_H-i-s').str_replace_special_chars($user->lastname.'_'.$user->firstname).'.pdf'; //Username escape german umlaute
+                $pathOfNewFile = $this->buildPdf($html, $path, $filename);
+                array_push($generated_files, ['filename' => $filename, 'path' => Storage::disk('local')->path($path.$filename)]);
+            }
         }//end foreach
 
         if (request()->wantsJson()) {
@@ -496,6 +507,7 @@ class CertificateController extends Controller
             'curriculum_id'         => 'sometimes',
             'organization_id'       => 'sometimes',
             'global'                => 'sometimes',
+            'oneFile'                => 'sometimes',
         ]);
     }
 }

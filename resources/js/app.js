@@ -266,7 +266,7 @@ app.component('kanban', defineAsyncComponent(() => import('./components/kanban/K
 app.component('move-terminal-objective-modal', defineAsyncComponent(() => import('./components/objectives/MoveTerminalObjectiveModal.vue')));
 app.component('prerequisite-modal', defineAsyncComponent(() => import('./components/prerequisites/PrerequisiteObjectiveModal.vue')));
 //app.component('lms-modal', defineAsyncComponent(() => import('./../../app/Plugins/Lms/resources/js/components/Create.vue')));
-app.component('color-picker-input', defineAsyncComponent(() => import('./components/kanban/ColorPickerInput.vue')));
+//app.component('color-picker-input', defineAsyncComponent(() => import('./components/kanban/ColorPickerInput.vue'))); // not used anymore ->
 
 app.component('searchbar', defineAsyncComponent(() => import('./components/uiElements/Searchbar.vue')));
 //app.component('set-achievements-modal', defineAsyncComponent(() => import('./components/plan/SetAchievementsModal.vue')));

@@ -1,10 +1,14 @@
 <template>
-    <div>
+    <div class="form__input">
         <v-swatches
             :swatch-size="swatchSize"
             :trigger-style="triggerStyle"
             :popover-to="popoverTo"
             v-model="content"
+
+            show-fallback
+            fallback-input-type="color"
+
             @input="handleInput"
             :max-height="height"
         ></v-swatches>

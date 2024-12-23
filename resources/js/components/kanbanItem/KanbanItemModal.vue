@@ -67,9 +67,14 @@
                             :trigger-style="{}"
                             popover-to="right"
                             v-model="this.form.color"
+                            show-fallback
+                            fallback-input-type="color"
+
                             @input="(id) => {
-                                this.form.color = id;
-                            }"
+                                    if(id.isInteger){
+                                      this.form.color = id;
+                                    }
+                                }"
                             :max-height="300"
                         ></v-swatches>
                     </div>
@@ -132,7 +137,7 @@
                                 type="checkbox"
                                 v-model="form.replace_links"
                             />
-                            <label 
+                            <label
                                 class="custom-control-label font-weight-light pointer"
                                 :for="'replace_links_'+ form.id"
                             >
@@ -266,7 +271,7 @@ export default {
         submit() {
             this.form.visible_from = this.form.visible_date[0];
             this.form.visible_until = this.form.visible_date[1];
-            
+
             if (this.method == 'patch') {
                 this.update();
             } else {

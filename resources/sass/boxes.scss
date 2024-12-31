@@ -374,14 +374,14 @@
 //Widgets
 //-----------
 
-/* Widget: TODO LIST */
+/* Widget: TO-DO LIST */
 
 .todo-list {
   margin: 0;
   padding: 0;
   list-style: none;
   overflow: auto;
-  // Todo list element
+  // To-do list element
   > li {
     padding: 10px;
     background: #f4f4f4;
@@ -462,7 +462,7 @@
 
 }
 
-// END TODO WIDGET
+// END TO-DO WIDGET
 
 /* Chat widget (DEPRECATED - this will be removed in the next major release. Use Direct Chat instead)*/
 .chat {

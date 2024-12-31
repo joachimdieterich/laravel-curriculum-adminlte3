@@ -365,14 +365,14 @@ html.maximized-card {
 // Widgets
 //-----------
 
-// Widget: TODO LIST
+// Widget: TO-DO LIST
 .todo-list {
   list-style: none;
   margin: 0;
   overflow: auto;
   padding: 0;
 
-  // Todo list element
+  // To-do list element
   > li {
     @include border-radius(2px);
     background: $gray-100;
@@ -457,7 +457,7 @@ html.maximized-card {
   }
 }
 
-// END TODO WIDGET
+// END TO-DO WIDGET
 
 // Input in box
 .card-input {

@@ -12,7 +12,7 @@
                        role="tab"
                     >
                         <i class="fas fa-th pr-2"></i>
-                        {{ trans('global.all') }} {{ trans('global.curriculum.title') }}
+                        {{ trans('global.all') }} {{ trans('global.plan.title') }}
                     </a>
                 </li>
                 <li class="nav-item">
@@ -37,7 +37,7 @@
                        role="tab"
                     >
                         <i class="fa fa-user pr-2"></i>
-                        {{ trans('global.my') }} {{ trans('global.curriculum.title') }}
+                        {{ trans('global.my') }} {{ trans('global.plan.title') }}
                     </a>
                 </li>
                 <li class="nav-item">

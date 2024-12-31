@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\QRCodeHelper;
 use App\Curriculum;
 use App\CurriculumSubscription;
 use Illuminate\Http\Request;

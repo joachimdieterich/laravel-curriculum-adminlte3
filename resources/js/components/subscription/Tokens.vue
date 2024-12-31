@@ -80,7 +80,12 @@ export default {
     },
     methods: {
         generateShareURL(item) {
-            return window.location.origin + "/" + this.modelUrl + "s/" + item[this.modelUrl+'_id']  + "/token?sharing_token=" + item.sharing_token;
+            if(this.modelUrl == 'curriculum'){
+                return window.location.origin + "/curricula/" + item[this.modelUrl+'_id']  + "/token?sharing_token=" + item.sharing_token;
+            } else {
+                return window.location.origin + "/" + this.modelUrl + "s/" + item[this.modelUrl+'_id']  + "/token?sharing_token=" + item.sharing_token;
+            }
+
         },
         copyToClipboard(event) {
             console.log(event.target.innerText);

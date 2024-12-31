@@ -377,6 +377,8 @@ if (env('GUEST_USER') !== null) {
     Route::get('videoconferences/{videoconference}/startWithPw', 'VideoconferenceController@show');
     Route::get('kanbans/{kanban}/token', 'KanbanController@getKanbanByToken');
     Route::get('kanban/share/{token}', 'ShareTokenController@auth');
+    Route::get('curricula/{curriculum}/token', 'CurriculumController@getCurriculumByToken');
+    Route::get('curriculum/share/{token}', 'ShareTokenController@auth');
 
     Route::get('/guest', function () {
         if (Auth::user() == null) {       //if no user is authenticated authenticate guest

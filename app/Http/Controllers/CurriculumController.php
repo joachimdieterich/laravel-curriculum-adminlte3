@@ -18,6 +18,7 @@ use App\VariantDefinition;
 use Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
 class CurriculumController extends Controller
@@ -108,7 +109,6 @@ class CurriculumController extends Controller
     {
         abort_unless(Gate::allows('curriculum_access'), 403);
 
-
         switch ($request->filter)
         {
             case 'owner':            $curricula = Curriculum::where('owner_id', auth()->user()->id)->get();
@@ -189,8 +189,9 @@ class CurriculumController extends Controller
      * @param  \App\Curriculum  $curriculum
      * @return \Illuminate\Http\Response
      */
-    public function show(Curriculum $curriculum, $achievements = false)
+    public function show(Curriculum $curriculum, $achievements = false, $token = null)
     {
+
         abort_unless((Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
         LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
 
@@ -202,8 +203,17 @@ class CurriculumController extends Controller
         ])
         ->find($curriculum->id);
 
+        if ($token == null)
+        {
+            $may_edit = $curriculum->isEditable();
+        }
+        else
+        {
+            $may_edit = $curriculum->isEditable(auth()->user()->id, $token);
+        }
+
         $settings = json_encode([
-            'edit' => (auth()->user()->id === $curriculum->owner_id) ? true : false,
+            'edit' => $may_edit, //(auth()->user()->id === $curriculum->owner_id) ? true : false,
             'cross_reference_curriculum_id' => false,
         ]);
 
@@ -215,7 +225,8 @@ class CurriculumController extends Controller
                 ->with(compact('curriculum'))
                 ->with(compact('objectiveTypes'))
                 ->with(compact('levels'))
-                ->with(compact('settings'));
+                ->with(compact('settings'))
+            ;
     }
 
     /**
@@ -630,6 +641,29 @@ class CurriculumController extends Controller
         }
     }
 
+    public function getCurriculumByToken(Curriculum $curriculum, Request $request)
+    {
+        if (Auth::user() == null) {       //if no user is authenticated authenticate guest
+            LogController::set('guestLogin');
+            LogController::setStatistics();
+            Auth::loginUsingId((env('GUEST_USER')), true);
+        }
+
+        $input = $this->validateRequest();
+
+        $subscription = CurriculumSubscription::where('sharing_token',$input['sharing_token'] )->get()->first();
+        if ($subscription->due_date) {
+            $now = Carbon::now();
+            $due_date = Carbon::parse($subscription->due_date);
+            if ($due_date < $now) {
+                abort(410, 'Dieser Link ist nicht mehr gültig');
+            }
+        }
+
+        return $this->show($curriculum, false, $input['sharing_token']);
+
+    }
+
     protected function validateRequest()
     {
         return request()->validate([
@@ -652,7 +686,8 @@ class CurriculumController extends Controller
             'variants'  => 'sometimes',
             'variant_default_title'  => 'sometimes',
             'variant_default_description'  => 'sometimes',
-            'archived' => 'sometimes'
+            'archived' => 'sometimes',
+            'sharing_token' => 'sometimes'
         ]);
     }
 

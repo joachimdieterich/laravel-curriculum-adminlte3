@@ -219,7 +219,65 @@ class Curriculum extends Model
             or ($this->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id))->isNotEmpty() //user is enroled in group
             or ($this->owner_id == auth()->user()->id)            // or owner
             //or ((env('GUEST_USER') != null) ? User::find(env('GUEST_USER'))->curricula->contains('id', $this->id) : false) //or allowed via guest
-            or ((env('GUEST_USER') != null) ? User::find(env('GUEST_USER'))->currentCurriculaEnrolments()->contains('id', $this->id) : false) //or allowed via guest
+            or ((env('GUEST_USER') != null) ? User::find(env('GUEST_USER'))->curricula->contains('id', $this->id) : false) //or allowed via guest
+            or is_admin() // or admin
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function userSubscriptions()
+    {
+        return $this->hasMany(CurriculumSubscription::class)
+            ->where('subscribable_type', 'App\User');
+    }
+
+    public function groupSubscriptions()
+    {
+        return $this->hasMany(CurriculumSubscription::class)
+            ->where('subscribable_type', 'App\Group');
+    }
+
+    public function organizationSubscriptions()
+    {
+        return $this->hasMany(CurriculumSubscription::class)
+            ->where('subscribable_type', 'App\Organization');
+    }
+
+    public function isEditable($user_id = null, $token = null)
+    {
+        if ($user_id == null)
+        {
+            $user_id = auth()->user()->id;
+        }
+
+        if ($token == null){
+            $userSubscription = optional($this->userSubscriptions()
+                ->where('subscribable_id', $user_id)
+                ->first());
+            $groupSubscription = optional($this->groupSubscriptions()
+                ->whereIn('subscribable_id', auth()->user()->groups->pluck('id'))
+                ->where('editable', 1)
+                ->first());
+            $organizationSubscription = optional($this->organizationSubscriptions()
+                ->whereIn('subscribable_id', auth()->user()->organizations->pluck('id'))
+                ->where('editable', 1)
+                ->first());
+        }
+        else
+        {
+            $userSubscription = optional($this->userSubscriptions()
+                /*->where('subscribable_id', $user_id)*/ // fix 500 error on authenticated users
+                ->where('sharing_token', $token)
+                ->first());
+        }
+        if (
+            $userSubscription->editable // user enrolled
+            or $groupSubscription->editable ?? false // group enrolled
+            or $organizationSubscription->editable ?? false // organization enrolled
+            or ($this->owner_id == $user_id)            // or owner
             or is_admin() // or admin
         ) {
             return true;

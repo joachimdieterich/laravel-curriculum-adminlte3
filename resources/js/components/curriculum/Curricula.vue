@@ -215,16 +215,19 @@ export default {
     },
     data() {
         return {
+            component_id: this.$.uid,
             curricula: [],
             subscriptions: {},
             search: '',
             showConfirm: false,
-            url: (this.subscribable_id) ? '/curriculumSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id : '/curricula/list',
+            url: (this.subscribable_id) ? '/curriculumSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id='+this.subscribable_id : '/curricula/list',
             errors: {},
             currentCurriculum: {},
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true},
+                { title: 'description', data: 'description', searchable: true},
+                { title: 'medium_id', data: 'medium_id'},
             ],
             options : this.$dtOptions,
             filter: 'all',
@@ -249,7 +252,17 @@ export default {
             //window.location = "/curricula/" + curriculum.id + "/editOwner";
         },
         shareCurriculum(curriculum){
-            this.globalStore?.showModal('subscribe-modal', { 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false});
+            this.globalStore?.showModal(
+                'subscribe-modal',
+                {
+                    'modelId': curriculum.id,
+                    'modelUrl': 'curriculum' ,
+                    'shareWithUsers': true,
+                    'shareWithGroups': true,
+                    'shareWithOrganizations': true,
+                    'shareWithToken': true,
+                    'canEditCheckbox': true
+                });
         },
         setFilter(filter){
             this.filter = filter;
@@ -270,7 +283,6 @@ export default {
             this.$eventHub.on('filter', (filter) => {
                 this.dt.search(filter).draw();
             });
-
         },
         destroy() {
             if (this.subscribable){
@@ -333,12 +345,13 @@ export default {
             this.globalStore?.showModal('curriculum-modal', {});
         });
 
+        this.$eventHub.on('filter', (filter) => {
+            this.search = filter;
+        });
+
         this.$eventHub.on('owner-updated', (owner) => {
             this.globalStore?.closeModal('owner-modal');
             this.loaderEvent();
-        });
-        this.$eventHub.on('filter', (filter) => {
-            this.search = filter;
         });
     },
 

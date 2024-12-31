@@ -146,9 +146,6 @@ export default {
 
     },
     methods: {
-        editCourse(course){ //todo: Not used?
-            this.globalStore?.showModal('course-modal', course);
-        },
         loaderEvent(){
             this.dt = $('#course-datatable').DataTable();
             this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data

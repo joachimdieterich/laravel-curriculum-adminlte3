@@ -207,13 +207,13 @@ export default {
 
         this.$eventHub.on('config-added', (config) => {
             this.globalStore?.closeModal('config-modal');
-            this.configs.push(config); //todo -> use global widget to get add working
+            this.configs.push(config);
         });
 
         this.$eventHub.on('config-updated', (config) => {
             this.globalStore?.closeModal('config-modal');
             this.loaderEvent();
-            this.update(config); //todo -> use global widget to get update working
+            this.update(config);
         });
 
         this.$eventHub.on('createConfig', () => {

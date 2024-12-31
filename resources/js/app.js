@@ -310,7 +310,7 @@ app.config.globalProperties.$initTinyMCE = function(
     customToolbar1 = null,
     customToolbar2 = null,
     extended_valid_elements = null,
-    height = 50,
+    height = 200,
 ) {
 
     const defaultPlugins = [

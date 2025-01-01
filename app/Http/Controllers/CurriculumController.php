@@ -3,16 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Certificate;
-use App\Country;
 use App\Curriculum;
 use App\CurriculumSubscription;
 use App\CurriculumType;
-use App\Grade;
 use App\Medium;
 use App\Organization;
-use App\OrganizationType;
-use App\State;
-use App\Subject;
 use App\User;
 use App\VariantDefinition;
 use Gate;

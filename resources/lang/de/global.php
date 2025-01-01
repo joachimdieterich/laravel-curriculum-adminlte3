@@ -584,10 +584,10 @@ return [
         ],
     ],
     'objectiveType' => [
-        'title' => 'Typ',
-        'title_singular' => 'Typ',
-        'create' => 'Typ erstellen',
-        'edit' => 'Typ bearbeiten',
+        'title' => 'Bereichstypen',
+        'title_singular' => 'Bereichstyp',
+        'create' => 'Bereichstyp erstellen',
+        'edit' => 'Bereichstyp bearbeiten',
         'fields' => [
             'title_short' => 'Kurzbezeichnung',
         ],
@@ -1085,7 +1085,7 @@ return [
     ],
     'token' => 'Freigabelink',
     'token_copied' => 'Freigabelink wurde in die Zwischenablage gespeichert!',
-    'variantDefinitions' => [
+    'variantDefinition' => [
         'title' => 'Varianten (Definitionen)',
         'title_singular' => 'Varianten (Definitionen)',
         'create' => 'Variant Definition erstellen',

@@ -253,6 +253,11 @@ app.component('objective', defineAsyncComponent(() => import('./components/objec
 app.component('objective-box', defineAsyncComponent(() => import('./components/objectives/ObjectiveBox.vue')));
 app.component('objective-progress-subscription-modal', defineAsyncComponent(() => import('./components/objectives/ObjectiveProgressSubscriptionModal.vue')));
 
+app.component('objective-types', defineAsyncComponent(() => import('./components/objectiveType/ObjectiveTypes.vue')));
+app.component('objective-type', defineAsyncComponent(() => import('./components/objectiveType/ObjectiveType.vue')));
+app.component('objective-type-modal', defineAsyncComponent(() => import('./components/objectiveType/ObjectiveTypeModal.vue')));
+
+
 app.component('organizations', defineAsyncComponent(() => import('./components/organization/Organizations.vue')));
 app.component('organization', defineAsyncComponent(() => import('./components/organization/Organization.vue')));
 app.component('organization-modal', defineAsyncComponent(() => import('./components/organization/OrganizationModal.vue')));
@@ -301,6 +306,11 @@ app.component('roles', defineAsyncComponent(() => import('./components/role/Role
 app.component('role', defineAsyncComponent(() => import('./components/role/Role.vue')));
 app.component('user', defineAsyncComponent(() => import('./components/user/User.vue')));
 app.component('users', defineAsyncComponent(() => import('./components/user/Users.vue')));
+
+app.component('variant-definition-modal', defineAsyncComponent(() => import('./components/variantDefinition/VariantDefinitionModal.vue')));
+app.component('variant-definition', defineAsyncComponent(() => import('./components/variantDefinition/VariantDefinition.vue')));
+app.component('variant-definitions', defineAsyncComponent(() => import('./components/variantDefinition/VariantDefinitions.vue')));
+
 
 app.component('videoconference', defineAsyncComponent(() => import('./components/videoconference/Videoconference.vue')));
 app.component('videoconferences', defineAsyncComponent(() => import('./components/videoconference/Videoconferences.vue')));
@@ -479,7 +489,7 @@ app.directive('hide-if-permission', function (el, binding) {
  */
 app.directive('permission', function (el, binding, vnode) {
         let allowed = false;
-
+        console.log(binding.value.split(','));
         binding.value.split(',').forEach(function (permission){
             if(window.Laravel.permissions.indexOf(permission.trim()) !== -1) {
                 allowed = true;

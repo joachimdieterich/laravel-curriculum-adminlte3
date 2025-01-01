@@ -337,8 +337,9 @@ export default {
 
         this.$eventHub.on('curriculum-updated', (curriculum) => {
             this.globalStore?.closeModal('curriculum-modal');
+            //this.update(curriculum); //todo -> use global widget to get update working
+            console.log(curriculum);
             this.loaderEvent();
-            this.update(curriculum); //todo -> use global widget to get update working
         });
 
         this.$eventHub.on('createCurriculum', () => {

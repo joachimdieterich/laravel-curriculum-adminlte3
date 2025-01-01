@@ -15,19 +15,17 @@ if (! function_exists('getEntriesForSelect2ByModel')) {
      */
     function getEntriesForSelect2ByModel($model, $field = 'title', $oderby = 'title', $text = 'title', $id = 'id')
     {
-
         $input = request()->validate([
             'page' => 'sometimes|integer',
             'term' => 'sometimes|string|max:255|nullable',
             'selected' => 'sometimes|nullable',
         ]);
 
-
         if (request()->has('selected'))
         {
             //dump($input['selected']);
             //dump($model::whereIn($id, (array)$input['selected'])->get());
-            return response()->json($model::whereIn($id, explode(",", $input['selected']))->get()); //todo check for multiple selects
+            return response()->json($model::whereIn($id, explode(",", $input['selected']))->get());
         }
         else
         {
@@ -86,7 +84,7 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
         if (request()->has('selected'))
         {
             //dump($collection->whereIn($table . $id, (array)$input['selected'])->get());
-            return response()->json($collection->whereIn($table . $id, (array)$input['selected'])->get()); //todo check for multiple selects
+            return response()->json($collection->whereIn($table . $id, (array)$input['selected'])->get());
         }
         else
         {

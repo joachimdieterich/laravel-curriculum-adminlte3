@@ -16,36 +16,36 @@
                     :model="organization"
                     modelName= "Organization"
                     url="/organizations">
-                <template v-slot:icon>
-                    <i class="fa fa-university pt-2"></i>
-                </template>
-
-                <template
-                    v-permission="'organization_edit, organization_delete'"
-                    v-slot:dropdown>
-                    <div class="dropdown-menu dropdown-menu-right"
-                         style="z-index: 1050;"
-                         x-placement="left-start">
-                        <button
-                            v-permission="'organization_edit'"
-                            :name="'edit-organization-' + organization.id"
+                    <template v-slot:icon>
+                        <i class="fa fa-university pt-2"></i>
+                    </template>
+                    <template
+                        v-permission="'organization_edit, organization_delete'"
+                        v-slot:dropdown>
+                        <div class="dropdown-menu dropdown-menu-right"
+                             style="z-index: 1050;"
+                             x-placement="left-start">
+                            <button
+                                v-permission="'organization_edit'"
+                                :name="'edit-organization-' + organization.id"
                                 class="dropdown-item text-secondary"
                                 @click.prevent="editOrganization(organization)">
-                            <i class="fa fa-pencil-alt mr-2"></i>
-                            {{ trans('global.organization.edit') }}
-                        </button>
-                        <hr class="my-1">
-                        <button
-                            v-permission="'organization_delete'"
-                            :id="'delete-organization-' + organization.id"
-                            type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(organization)">
-                            <i class="fa fa-trash mr-2"></i>
-                            {{ trans('global.organization.delete') }}
-                        </button>
-                    </div>
-                </template>
+                                <i class="fa fa-pencil-alt mr-2"></i>
+                                {{ trans('global.organization.edit') }}
+                            </button>
+                            <hr class="my-1">
+                            <button
+                                v-permission="'organization_delete'"
+                                :id="'delete-organization-' + organization.id"
+                                type="submit"
+                                class="dropdown-item py-1 text-red"
+                                @click.prevent="confirmItemDelete(organization)">
+                                <i class="fa fa-trash mr-2"></i>
+                                {{ trans('global.organization.delete') }}
+                            </button>
+                        </div>
+                    </template>
+
             </IndexWidget>
         </div>
         <div id="organization-datatable-wrapper"

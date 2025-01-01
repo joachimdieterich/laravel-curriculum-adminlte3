@@ -46,7 +46,7 @@
                     <hr>
 
                     <strong><i class="fa fa-phone mr-1"></i>
-                        {{ trans('global.contactdetail.title_singular') }}
+                        {{ trans('global.contactDetail.title_singular') }}
                     </strong>
                     <p class="text-muted">
                         {{ trans('global.organization.fields.phone') }}: {{ this.currentOrganization.phone }}<br>

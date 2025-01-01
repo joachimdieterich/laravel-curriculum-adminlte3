@@ -119,7 +119,7 @@ class LocalMediaAdapter implements MediaInterface
         abort(403);
     }
 
-    public function thumb(Medium $medium, $size) //todo: return smaller images/files/thumbs
+    public function thumb(Medium $medium, $size)
     {
 
         /* id link */

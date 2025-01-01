@@ -36,7 +36,7 @@
                         <a class="pr-2 text-decoration-none link-muted"
                            href="{{ $plan->owner->contactdetail->path() }}">
                             <i class="fa fa-graduation-cap "></i>
-                            {{ trans('global.contactdetail.title_singular') }}: {{ $plan->owner->fullname() }}
+                            {{ trans('global.contactDetail.title_singular') }}: {{ $plan->owner->fullname() }}
                         </a>
                     </span>
                     @endif

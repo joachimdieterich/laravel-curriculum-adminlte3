@@ -31,7 +31,7 @@ class TaskSubscriptionController extends Controller
                 return ['subscriptions' => $subscriptions->with(['task'])->get()];
             }*/
         }
-        //todo -> make it subscibable?
+        //todo -> make it subscribable?
     }
 
     protected function validateRequest()

@@ -56,8 +56,8 @@ class SubjectController extends Controller
         Subject::create([
             'title' => $new_subject['title'],
             'title_short' => $new_subject['title_short'],
-            'external_id' => isset($new_subject['external_id']) ? $new_subject['external_id'] : 1,
-            'organization_type_id' => 1, // todo: is this used?
+            'external_id' => $new_subject['external_id'] ?? 1,
+            'organization_type_id' => $new_subject['title_short'] ?? 1,
 
         ]);
 
@@ -80,8 +80,8 @@ class SubjectController extends Controller
         $subject->update([
             'title' => $new_subject['title'],
             'title_short' => $new_subject['title_short'],
-            'external_id' => isset($new_subject['external_id']) ? $new_subject['external_id'] : 1,
-            'organization_type_id' => 1, // todo: is this used?
+            'external_id' => $new_subject['external_id'] ?? 1,
+            'organization_type_id' => $new_subject['title_short'] ?? 1,
         ]);
 
         return redirect()->route('subjects.index');

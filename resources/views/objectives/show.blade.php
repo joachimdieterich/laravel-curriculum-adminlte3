@@ -26,13 +26,4 @@
         :repository="{{ $repository }}"
         :objective="{{ $objective }}"
     ></objective>
-
-    {{--<terminal-objective-modal></terminal-objective-modal>
-    <enabling-objective-modal></enabling-objective-modal>
-    <content-modal></content-modal>
-    <!--<objective-medium-modal></objective-medium-modal>-->
-    <medium-modal></medium-modal>
-    <medium-create-modal></medium-create-modal>
-    <reference-objective-modal></reference-objective-modal>
-    <prerequisite-modal></prerequisite-modal>--}}
 @endsection

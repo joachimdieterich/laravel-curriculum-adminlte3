@@ -41,13 +41,10 @@ class PlanEntryController extends Controller
             'title' => $new_entry['title'],
             'description' => $new_entry['description'],
             'plan_id' => $new_entry['plan_id'],
-
             'css_icon' => $new_entry['css_icon'] ?? 'fas fa-calendar-day',
             'color' => $new_entry['color'] ?? '#2980B9',
             'order_id' => $new_entry['order_id'] ?? 0,
-
             'medium_id' => $new_entry['medium_id'] ?? null,
-
             'owner_id' => auth()->user()->id,
         ]);
         // subscribe embedded media
@@ -58,9 +55,8 @@ class PlanEntryController extends Controller
 
         // axios call?
         if (request()->wantsJson()) {
-            return ['entry' => $entry];
+            return $entry;
         }
-
     }
 
     /**
@@ -89,18 +85,14 @@ class PlanEntryController extends Controller
 
         $medium_id = is_array($update_entry['medium_id']) ? $update_entry['medium_id'][0] : $update_entry['medium_id'];
 
-
         $planEntry->update([
             'title' => $update_entry['title'] ?? $planEntry->title,
             'description' => $update_entry['description'] ?? $planEntry->description,
             'plan_id' => $planEntry->plan_id,
-
             'css_icon' => $update_entry['css_icon'] ?? $planEntry->css_icon,
             'color' => $update_entry['color'] ?? $planEntry->color,
             'order_id' => $update_entry['order_id'] ?? $planEntry->order_id,
-
             'medium_id' => $medium_id ?? $planEntry->medium_id,
-
             'owner_id' => auth()->user()->id,
         ]);
 
@@ -111,7 +103,7 @@ class PlanEntryController extends Controller
         }
         // axios call?
         if (request()->wantsJson()) {
-            return ['entry' => $planEntry];
+            return $planEntry;
         }
     }
 

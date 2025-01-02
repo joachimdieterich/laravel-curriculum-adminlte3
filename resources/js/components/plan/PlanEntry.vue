@@ -12,7 +12,7 @@
                     </div>
                 </div>
                 <div v-else>
-                    <div v-if="!editor"
+                    <div
                         :id="'plan-entry-' + entry.id"
                         :style="{ 'border-left-style': 'solid', 'border-radius': '0.25rem', 'border-color': entry.color }"
                     >
@@ -32,12 +32,12 @@
                                 class="card-tools"
                             >
                                 <i
-                                    class="fa fa-pencil-alt mr-2 pointer link-muted"
-                                    @click="openModal()"
+                                    class="fa fa-pencil-alt pointer link-muted mr-3"
+                                    @click.stop="openModal(entry)"
                                 ></i>
                                 <i
-                                    class="fas fa-trash pointer text-danger"
-                                    @click="destroy(entry)"
+                                    class="fas fa-trash pointer text-danger mr-1"
+                                    @click.stop="openConfirm()"
                                 ></i>
                             </div>
                         </div>
@@ -63,71 +63,6 @@
                         </div>
                     </div>
                 </div>
-                <div v-if="editor"
-                     class="card-body">
-                    <v-swatches
-                        :swatch-size="49"
-                        :trigger-style="{}"
-                        popover-to="right"
-                        v-model="this.form.color"
-
-                        show-fallback
-                        fallback-input-type="color"
-
-                        @input="(id) => {
-                                    if(id.isInteger){
-                                      this.form.color = id;
-                                    }
-
-                                }"
-                        :max-height="300"
-                    ></v-swatches>
-
-                    <div class="form-group">
-                        <input
-                            type="text"
-                            id="title"
-                            name="title"
-                            class="form-control"
-                            v-model.trim="form.title"
-                            :placeholder="trans('global.planEntry.fields.title')"
-                            required
-                        />
-                        <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
-                    </div>
-
-                    <div class="form-group">
-                        <Editor
-                            id="description"
-                            name="description"
-                            :placeholder="trans('global.planEntry.fields.description')"
-                            class="form-control description my-editor"
-                            :init="tinyMCE"
-                            :initial-value="form.description"
-                        ></Editor>
-                        <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
-                    </div>
-                    <div class="form-group">
-                        <font-awesome-picker
-                            :searchbox="trans('global.select_icon')"
-                            v-on:selectIcon="setIcon"
-                        ></font-awesome-picker>
-                    </div>
-
-                    <div class="form-group">
-<!--                        <MediumForm :form="form"
-                                    :id="component_id"
-                                    :medium_id="form.medium_id"
-                                    accept="image/*"/>-->
-                    </div>
-                    <button
-                        :name="'planEntrySave'"
-                        class="btn btn-primary p-2 m-2"
-                        @click="submit()"
-                    >
-                        {{ trans('global.save') }}
-                    </button>
-                </div>
             </div>
         </div>
         <Teleport to="body">
@@ -140,7 +75,7 @@
                 }"
                 @confirm="() => {
                     this.showConfirm = false;
-                    this.delete();
+                    this.delete(this.entry);
                 }"
             ></ConfirmModal>
         </Teleport>
@@ -148,14 +83,10 @@
 </template>
 
 <script>
-import Calendar from '../calendar/Calendar.vue';
-import Editor from '@tinymce/tinymce-vue';
-import Form from "form-backend-validation";
-import MediumForm from "../media/MediumForm.vue";
 import Objectives from "../objectives/Objectives.vue";
-import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker.vue";
 import Trainings from '../training/Trainings.vue';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
@@ -172,46 +103,19 @@ export default {
             default: false
         },
     },
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
-            requestUrl: '/planEntries',
-            form: new Form({
-                id: null,
-                title: '',
-                description: '',
-                plan_id: '',
-                css_icon: 'fas fa-calendar-day',
-                order_id: 0,
-                color: '#27AF60',
-                medium_id: null,
-            }),
-            editor: false,
-            errors: {},
-            owner_id: '',
             showConfirm: false,
         }
     },
     mounted() {
-        this.owner_id = this.plan.owner_id;
-
-        if (this.entry !== null) {
-            this.form.id = this.entry.id;
-            this.form.title = this.entry.title;
-            this.form.description = this.entry.description;
-            this.form.medium_id = this.entry.medium_id;
-            this.form.css_icon = this.entry.css_icon;
-            this.form.order_id = this.entry.order_id;
-
-            this.method = 'patch';
-        }
-        this.form.plan_id = this.plan.id;
-
-        this.$initTinyMCE([
-            "autolink link"
-        ]);
-
         // Set eventlistener for Media
         this.$eventHub.on('addMedia', (e) => {
             if (this.component_id == e.id) {
@@ -223,52 +127,24 @@ export default {
         });
     },
     methods: {
-        setIcon(selectedIcon) {
-            this.form.css_icon = 'fa fa-'+  selectedIcon.className;
+        openModal(entry = {}) {
+            this.globalStore.showModal('plan-entry-modal', entry);
         },
-        openModal() {
-            globalS
+        openConfirm() {
+            this.showConfirm = true;
         },
-        destroy(entry) {
-            axios.delete('/planEntries/'+entry.id)
+        delete(entry) {
+            axios.delete('/planEntries/' + entry.id)
                 .then(response => {
-                    this.$eventHub.emit("plan_entry_deleted", entry);
+                    this.$eventHub.emit("plan-entry-deleted", entry);
                 })
                 .catch(e => {
                     console.log(e);
                 });
         },
-        submit() {
-            let method = this.method.toLowerCase();
-            this.form.description = tinyMCE.get('description').getContent();
-            
-            if (method === 'patch') {
-                axios.patch(this.requestUrl + '/' + this.form.id, this.form)
-                    .then(res => { // Tell the parent component we've updated a task
-                        this.$eventHub.emit("plan_entry_updated", res.data.entry);
-                    })
-                    .catch(error => { // Handle the error returned from our request
-                        console.log(error);
-                    });
-            } else {
-                axios.post(this.requestUrl, this.form)
-                    .then(res => { // Tell the parent component we've added a new task and include it
-                        this.$eventHub.emit("plan_entry_added", res.data.entry);
-                    })
-                    .catch(error => { // Handle the error returned from our request
-                        console.log(error);
-                    });
-            }
-
-            this.editor = false;
-        },
     },
     components: {
-        Editor,
-        Calendar,
-        FontAwesomePicker,
         Objectives,
-        MediumForm,
         Trainings,
         ConfirmModal,
     },

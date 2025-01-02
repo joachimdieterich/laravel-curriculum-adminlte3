@@ -55,21 +55,15 @@ class LogbookController extends Controller
         }
         else
         {
-            $logbooks = Logbook::with('subscriptions');
-
             switch ($request->filter) {
-                case 'owner':
-                    $logbooks = $logbooks->where('owner_id', auth()->user()->id);
+                case 'owner':           $logbooks = Logbook::where('owner_id', auth()->user()->id);
                     break;
-                case 'shared_with_me':
-                    $logbooks = $this->getLogbooks(false);
+                case 'shared_with_me':  $logbooks = $this->getLogbooks(false);
                     break;
-                case 'shared_by_me':
-                    $logbooks = $logbooks->where('owner_id', auth()->user()->id)->whereHas('subscriptions');
+                case 'shared_by_me':    $logbooks = Logbook::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
                     break;
                 case 'all':
-                default:
-                    $logbooks = $this->getLogbooks();
+                default:                $logbooks = $this->getLogbooks();
                     break;
             }
         }

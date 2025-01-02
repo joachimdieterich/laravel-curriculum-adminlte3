@@ -38,6 +38,13 @@
                         required
                     />
                 </div>
+                <Switch
+                    id="global"
+                    name="global"
+                    :label="trans('global.one_file')"
+                    v-model:checked="this.form.oneFile"
+                    @update:checked="this.form.oneFile = $event"
+                ></Switch>
             </div>
             <div class="card-footer">
                  <span class="pull-right">
@@ -81,10 +88,12 @@
     import Select2 from "../forms/Select2.vue";
     import {useDatatableStore} from "../../store/datatables";
     import {useGlobalStore} from "../../store/global";
+    import Switch from "../forms/Switch.vue";
 
     export default {
         name: 'generate-certificate-modal',
         components:{
+            Switch,
             Select2
         },
         props: {},
@@ -106,6 +115,7 @@
                     'curriculum_id':'',
                     'user_ids': '',
                     'date': new Date().toLocaleDateString("de-DE",{dateStyle :"medium"}),
+                    'oneFile': false
                 }),
                 search: '',
                 download_url: null
@@ -118,7 +128,7 @@
 
                  axios.post(this.url, this.form)
                      .then(r => {
-                         this.download_url =r.data.message;
+                         this.download_url = r.data.message;
                      })
                      .catch(e => {
                          console.log(e.response);

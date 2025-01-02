@@ -31,6 +31,7 @@ class KanbanStatusController extends Controller
             'title' => $input['title'],
             'order_id' => ($order_id === NULL) ? 0 : $order_id + 1,
             'kanban_id' => $input['kanban_id'],
+            'color'   => $input['color'],
             'locked' => $input['locked'] ?? false,
             'editable' => $input['editable'] ?? true,
             'visibility' => $input['visibility'] ?? true,
@@ -67,6 +68,7 @@ class KanbanStatusController extends Controller
             'visibility' => $input['visibility'] ?? true,
             'visible_from' => $input['visible_from'],
             'visible_until' => $input['visible_until'],
+            'color'         => $input['color'],
             'owner_id' => $kanbanStatus->owner_id, //owner should not be updated
             'editors_ids' => array_merge($kanbanStatus->editors_ids, [auth()->user()->id])
         ]);
@@ -177,6 +179,7 @@ class KanbanStatusController extends Controller
             'visible_from' => 'sometimes',
             'visible_until' => 'sometimes',
             'editors_id' => 'sometimes',
+            'color' => 'sometimes',
         ]);
     }
 

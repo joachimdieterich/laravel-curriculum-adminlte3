@@ -260,6 +260,11 @@ app.component('objective', defineAsyncComponent(() => import('./components/objec
 app.component('objective-box', defineAsyncComponent(() => import('./components/objectives/ObjectiveBox.vue')));
 app.component('objective-progress-subscription-modal', defineAsyncComponent(() => import('./components/objectives/ObjectiveProgressSubscriptionModal.vue')));
 
+app.component('objective-types', defineAsyncComponent(() => import('./components/objectiveType/ObjectiveTypes.vue')));
+app.component('objective-type', defineAsyncComponent(() => import('./components/objectiveType/ObjectiveType.vue')));
+app.component('objective-type-modal', defineAsyncComponent(() => import('./components/objectiveType/ObjectiveTypeModal.vue')));
+
+
 app.component('organizations', defineAsyncComponent(() => import('./components/organization/Organizations.vue')));
 app.component('organization', defineAsyncComponent(() => import('./components/organization/Organization.vue')));
 app.component('organization-modal', defineAsyncComponent(() => import('./components/organization/OrganizationModal.vue')));
@@ -273,7 +278,7 @@ app.component('kanban', defineAsyncComponent(() => import('./components/kanban/K
 app.component('move-terminal-objective-modal', defineAsyncComponent(() => import('./components/objectives/MoveTerminalObjectiveModal.vue')));
 app.component('prerequisite-modal', defineAsyncComponent(() => import('./components/prerequisites/PrerequisiteObjectiveModal.vue')));
 //app.component('lms-modal', defineAsyncComponent(() => import('./../../app/Plugins/Lms/resources/js/components/Create.vue')));
-app.component('color-picker-input', defineAsyncComponent(() => import('./components/kanban/ColorPickerInput.vue')));
+//app.component('color-picker-input', defineAsyncComponent(() => import('./components/kanban/ColorPickerInput.vue'))); // not used anymore ->
 
 app.component('searchbar', defineAsyncComponent(() => import('./components/uiElements/Searchbar.vue')));
 //app.component('set-achievements-modal', defineAsyncComponent(() => import('./components/plan/SetAchievementsModal.vue')));
@@ -309,6 +314,11 @@ app.component('role', defineAsyncComponent(() => import('./components/role/Role.
 app.component('user', defineAsyncComponent(() => import('./components/user/User.vue')));
 app.component('users', defineAsyncComponent(() => import('./components/user/Users.vue')));
 
+app.component('variant-definition-modal', defineAsyncComponent(() => import('./components/variantDefinition/VariantDefinitionModal.vue')));
+app.component('variant-definition', defineAsyncComponent(() => import('./components/variantDefinition/VariantDefinition.vue')));
+app.component('variant-definitions', defineAsyncComponent(() => import('./components/variantDefinition/VariantDefinitions.vue')));
+
+
 app.component('videoconference', defineAsyncComponent(() => import('./components/videoconference/Videoconference.vue')));
 app.component('videoconferences', defineAsyncComponent(() => import('./components/videoconference/Videoconferences.vue')));
 
@@ -318,14 +328,15 @@ app.config.globalProperties.$initTinyMCE = function(
     customToolbar1 = null,
     customToolbar2 = null,
     extended_valid_elements = null,
-    height = 300,
+    height = 200,
 ) {
 
     const defaultPlugins = [
         "advlist autolink lists link image charmap print preview hr anchor pagebreak",
         "searchreplace wordcount visualblocks visualchars code fullscreen",
         "insertdatetime media nonbreaking save table directionality",
-        "emoticons template paste textpattern curriculummedia"
+        "emoticons template paste textpattern curriculummedia",
+        "autoresize"
     ];
 
     return {// allows adding additional attributes for specific cases
@@ -341,6 +352,7 @@ app.config.globalProperties.$initTinyMCE = function(
         toolbar1: customToolbar1 ?? "styleselect | bold underline italic | alignleft aligncenter alignright alignjustify",
         toolbar2: customToolbar2 ?? "bullist numlist outdent indent | curriculummedia mathjax link image media",
         extended_valid_elements: extended_valid_elements ?? '',
+        default_link_target:"_blank",
         relative_urls: false,
         entity_encoding: "raw",
         language: 'de',
@@ -486,7 +498,7 @@ app.directive('hide-if-permission', function (el, binding) {
  */
 app.directive('permission', function (el, binding, vnode) {
         let allowed = false;
-
+        console.log(binding.value.split(','));
         binding.value.split(',').forEach(function (permission){
             if(window.Laravel.permissions.indexOf(permission.trim()) !== -1) {
                 allowed = true;

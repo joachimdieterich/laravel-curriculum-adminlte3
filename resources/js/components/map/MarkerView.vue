@@ -35,7 +35,7 @@
         <h5 class="pt-3">{{ trans('global.marker.fields.address') }}</h5>
         <div v-dompurify-html="this.marker.address"></div>
 
-        <h5 class="pt-3">{{ trans('global.marker.fields.link') }}</h5>
+        <h5 class="pt-3">{{ trans('global.mapMarker.fields.link') }}</h5>
         <div>
             <a :href="this.marker.url"
             target="_blank">

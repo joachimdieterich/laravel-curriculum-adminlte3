@@ -593,7 +593,7 @@ export default {
             servers: {},
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link table lists"
+                    "autolink link table lists autoresize"
                 ],
                 {
                     'eventHubCallbackFunction': 'insertContent',

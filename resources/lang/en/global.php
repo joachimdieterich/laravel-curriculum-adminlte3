@@ -192,6 +192,7 @@ return [
     'superordinate_element' => 'Superordinate Elements',
     'subordinate_element_singular' => 'Subordinate Element',
     'subordinate_element' => 'Subordinate Elements',
+    'one_file' => 'Export one PDF-file',
     'roles' => 'Roles',
     'role' => [
         'title' => 'Roles',
@@ -507,6 +508,8 @@ return [
             'date_helper' => '',
             'color' => 'Color',
             'color_helper' => '',
+            'archived' => 'archived',
+            'archived_helper' => '',
             'variant_default_title' => 'Title (Standard Variant)',
             'variant_default_title_helper' => '',
             'variant_default_description' => 'Description (Standard Variant)',

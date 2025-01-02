@@ -220,9 +220,16 @@
                                 :trigger-style="{}"
                                 popover-to="right"
                                 v-model="this.form.color"
+
+                                show-fallback
+                                fallback-input-type="color"
+
                                 @input="(id) => {
-                        this.form.color = id;
-                    }"
+                                    if(id.isInteger){
+                                      this.form.color = id;
+                                    }
+
+                                }"
                                 :max-height="300"
                             ></v-swatches>
 
@@ -233,11 +240,23 @@
                                 accept="image/*"
                                 :selected="this.form.medium_id"
                                 @selectedValue="(id) => {
-                        this.form.medium_id = id;
-                    }"
+                                this.form.medium_id = id;
+                            }"
                             >
                             </MediumForm>
                         </div>
+                        <span class="custom-control custom-switch custom-switch-on-green">
+                            <input
+                                v-model="form.archived"
+                                type="checkbox"
+                                class="custom-control-input pt-1 "
+                                :id="'archived_' + form.id">
+                            <label
+                                class="custom-control-label text-muted"
+                                :for="'archived_' + form.id" >
+                                {{ trans('global.curriculum.fields.archived') }}
+                            </label>
+                        </span>
                     </div>
 
                     <div class="tab-pane "
@@ -261,7 +280,6 @@
                     </div>
                 </div>
             </div>
-
 
             <div class="card-footer">
                  <span class="pull-right">
@@ -333,10 +351,11 @@ export default {
                 'medium_id': null,
                 'owner_id': '',
                 'type_id': 4,
+                'archived': false,
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link table lists"
+                    "autolink link table lists autoresize"
                 ],
                 {
                     'eventHubCallbackFunction': 'insertContent',

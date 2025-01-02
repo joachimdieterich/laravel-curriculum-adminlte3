@@ -153,7 +153,7 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link"
+                    "autolink link autoresize"
                 ],
                 {
                     'eventHubCallbackFunction': 'insertContent',

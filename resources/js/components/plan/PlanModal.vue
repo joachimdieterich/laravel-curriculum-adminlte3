@@ -54,19 +54,22 @@
                                     {{ trans('validation.required') }}
                                 </p>
                             </div>
-
+                            
                             <div class="form-group input-group">
                                 <v-swatches
                                     :swatch-size="49"
                                     :trigger-style="{}"
                                     popover-to="right"
                                     v-model="form.color"
+                                    show-fallback
+                                    fallback-input-type="color"
                                     @input="(id) => {
-                                        this.form.color = id;
+                                        if (id.isInteger) {
+                                            this.form.color = id;
+                                        }
                                     }"
                                     :max-height="300"
                                 ></v-swatches>
-
                                 <input
                                     type="text"
                                     id="title"

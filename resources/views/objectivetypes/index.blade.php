@@ -3,19 +3,11 @@
     {{ trans('global.objectiveType.title') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item ">
-        <a href="/">
-            <i class="fa fa-home"></i>
-        </a>
-    </li>
-    <li class="breadcrumb-item active">
-        {{ trans('global.objectiveType.title') }}
-    </li>
-    <li class="breadcrumb-item ">
-        <a href="/documentation" class="text-black-50">
-            <i class="fas fa-question-circle"></i>
-        </a>
-    </li>
+    <breadcrumbs
+        :entries="{{json_encode([
+            ['active'=> true, 'title'=> trans('global.objectiveType.title')]
+        ])}}"
+    ></breadcrumbs>
 @endsection
 @section('content')
     <objective-types></objective-types>

@@ -12,6 +12,6 @@
 @endsection
 @section('content')
     <organization-type
-        :organizationType="{{ $organizationType }}"
+        :organization-type="{{ $organizationType }}"
     ></organization-type>
 @endsection

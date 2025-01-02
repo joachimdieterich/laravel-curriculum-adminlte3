@@ -101,6 +101,16 @@
                     </div>
                 </template>
 
+                <template v-if="curriculum.archived === true"
+                    v-slot:badges>
+                    <p class="text-muted small">
+                           <span class="btn btn-info btn-xs select-all pull-right mr-1"
+                                 style="position: absolute;bottom: 0;margin: 5px 40px 8px 0;width: max-content;right: 5px;">
+                            <i class="fa fa-archive" aria-hidden="true"></i> {{ trans('global.curriculum.fields.archived') }}
+                       </span>
+                    </p>
+                </template>
+
                 <template
                     v-permission="'curriculum_edit, curriculum_delete'"
                     v-slot:dropdown>
@@ -150,6 +160,7 @@
                 :columns="columns"
                 :options="options"
                 :ajax="url"
+                :search="search"
                 width="100%"
                 style="display:none; "
             ></DataTable>
@@ -204,16 +215,19 @@ export default {
     },
     data() {
         return {
+            component_id: this.$.uid,
             curricula: [],
             subscriptions: {},
             search: '',
             showConfirm: false,
-            url: (this.subscribable_id) ? '/curriculumSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id : '/curricula/list',
+            url: (this.subscribable_id) ? '/curriculumSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id='+this.subscribable_id : '/curricula/list',
             errors: {},
             currentCurriculum: {},
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true},
+                { title: 'description', data: 'description', searchable: true},
+                { title: 'medium_id', data: 'medium_id'},
             ],
             options : this.$dtOptions,
             filter: 'all',
@@ -238,7 +252,17 @@ export default {
             //window.location = "/curricula/" + curriculum.id + "/editOwner";
         },
         shareCurriculum(curriculum){
-            this.globalStore?.showModal('subscribe-modal', { 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false});
+            this.globalStore?.showModal(
+                'subscribe-modal',
+                {
+                    'modelId': curriculum.id,
+                    'modelUrl': 'curriculum' ,
+                    'shareWithUsers': true,
+                    'shareWithGroups': true,
+                    'shareWithOrganizations': true,
+                    'shareWithToken': true,
+                    'canEditCheckbox': true
+                });
         },
         setFilter(filter){
             this.filter = filter;
@@ -257,7 +281,7 @@ export default {
                 $('#curriculum-content').insertBefore('#curriculum-datatable-wrapper');
             });
             this.$eventHub.on('filter', (filter) => {
-                this.search(filter).draw();
+                this.dt.search(filter).draw();
             });
         },
         destroy() {
@@ -313,12 +337,17 @@ export default {
 
         this.$eventHub.on('curriculum-updated', (curriculum) => {
             this.globalStore?.closeModal('curriculum-modal');
+            //this.update(curriculum); //todo -> use global widget to get update working
+            console.log(curriculum);
             this.loaderEvent();
-            this.update(curriculum); //todo -> use global widget to get update working
         });
 
         this.$eventHub.on('createCurriculum', () => {
             this.globalStore?.showModal('curriculum-modal', {});
+        });
+
+        this.$eventHub.on('filter', (filter) => {
+            this.search = filter;
         });
 
         this.$eventHub.on('owner-updated', (owner) => {

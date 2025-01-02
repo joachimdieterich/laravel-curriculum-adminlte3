@@ -46,7 +46,7 @@
                     <hr>
 
                     <strong><i class="fa fa-phone mr-1"></i>
-                        {{ trans('global.contactdetail.title_singular') }}
+                        {{ trans('global.contactDetail.title_singular') }}
                     </strong>
                     <p class="text-muted">
                         {{ trans('global.organization.fields.phone') }}: {{ this.currentOrganization.phone }}<br>
@@ -87,52 +87,6 @@
                 </div>
             </div>
         </div>
-
-<!--            <div class="col-lg-8 col-sm-12">
-                <div class="card">
-                    <div class="card-header p-2">
-                        <ul class="nav nav-pills">
-                            <li class="nav-item">
-                                <a class="nav-link active show"
-                                   href="#activity"
-                                   data-toggle="tab">
-                                    Activity
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link"
-                                   href="#timeline"
-                                   data-toggle="tab">
-                                    Timeline
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link"
-                                   href="#settings"
-                                   data-toggle="tab">
-                                    Settings
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="card-body">
-                        <div class="tab-content">
-                            <div class="tab-pane active show" id="activity">
-
-                                Activity Tab
-
-                            </div>
-                            <div class="tab-pane" id="timeline">
-                                timeline
-                            </div>
-
-                            <div class="tab-pane" id="settings">
-                                Organisational Settings
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>-->
 
         <Teleport to="body">
             <OrganizationModal

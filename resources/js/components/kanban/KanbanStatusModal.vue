@@ -60,9 +60,14 @@
                             :trigger-style="{}"
                             popover-to="right"
                             v-model="this.form.color"
+                            show-fallback
+                            fallback-input-type="color"
+
                             @input="(id) => {
-                                this.form.color = id;
-                            }"
+                                    if(id.isInteger){
+                                      this.form.color = id;
+                                    }
+                                }"
                             :max-height="300"
                         ></v-swatches>
                     </div>

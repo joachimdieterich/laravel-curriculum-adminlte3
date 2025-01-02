@@ -50,7 +50,7 @@
                         {{ auth()->user()->organizations->first()->title }}
                     </span>
                     @endif
-                    @if ((auth()->user()->currentPeriods()->count() > 1) OR (auth()->user()->currentGroupEnrolments()->count() == 0))
+                    @if ((auth()->user()->currentPeriods()->count() > 1) /*OR (auth()->user()->currentGroupEnrolments()->count() == 0)*/)
                         @include ('forms.input.select',
                            ["model" => "period",
                            "field" => "current_period_id",

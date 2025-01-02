@@ -64,11 +64,24 @@
                     </div>
                 </div>
                 <div v-if="editor"
-                    class="card-body"
-                >
-                    <color-picker-input
-                        v-model="form.color"
-                    ></color-picker-input>
+                     class="card-body">
+                    <v-swatches
+                        :swatch-size="49"
+                        :trigger-style="{}"
+                        popover-to="right"
+                        v-model="this.form.color"
+
+                        show-fallback
+                        fallback-input-type="color"
+
+                        @input="(id) => {
+                                    if(id.isInteger){
+                                      this.form.color = id;
+                                    }
+
+                                }"
+                        :max-height="300"
+                    ></v-swatches>
 
                     <div class="form-group">
                         <input
@@ -84,13 +97,14 @@
                     </div>
 
                     <div class="form-group">
-                        <textarea
+                        <Editor
                             id="description"
                             name="description"
                             :placeholder="trans('global.planEntry.fields.description')"
                             class="form-control description my-editor"
-                            v-model.trim="form.description"
-                        ></textarea>
+                            :init="tinyMCE"
+                            :initial-value="form.description"
+                        ></Editor>
                         <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
                     </div>
                     <div class="form-group">
@@ -135,6 +149,7 @@
 
 <script>
 import Calendar from '../calendar/Calendar.vue';
+import Editor from '@tinymce/tinymce-vue';
 import Form from "form-backend-validation";
 import MediumForm from "../media/MediumForm.vue";
 import Objectives from "../objectives/Objectives.vue";
@@ -249,6 +264,7 @@ export default {
         },
     },
     components: {
+        Editor,
         Calendar,
         FontAwesomePicker,
         Objectives,

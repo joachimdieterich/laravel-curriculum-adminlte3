@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\KanbanSubscription;
 use App\VideoconferenceSubscription;
+use App\CurriculumSubscription;
 use App\OrganizationRoleUser;
 use App\User;
 use Carbon\Carbon;
@@ -37,6 +38,10 @@ class ShareTokenController extends Controller
             case 'kanban':
                 $subscriptionClass = new KanbanSubscription();
                 $field_model_id = 'kanban_id';
+                break;
+            case 'curriculum':
+                $subscriptionClass = new CurriculumSubscription();
+                $field_model_id = 'curriculum_id';
                 break;
 
             default:

@@ -34,34 +34,13 @@ class VariantDefinitionController extends Controller
         $variant_definition = VariantDefinition::select([
             'id',
             'title',
+            'description',
             'color',
             'css_icon',
+            'owner_id',
         ])->get();
 
-        $edit_gate = \Gate::allows('curriculum_edit');
-        $delete_gate = \Gate::allows('curriculum_delete');
-
         return DataTables::of($variant_definition)
-            ->addColumn('action', function ($variant_definition) use ($edit_gate, $delete_gate) {
-                $actions = '';
-                if ($edit_gate) {
-                    $actions .= '<a href="'.route('variantDefinitions.edit', $variant_definition->id).'" '
-                        .'id="edit-variantDefinition-'.$variant_definition->id.'" '
-                        .'class="btn">'
-                        .'<i class="fa fa-pencil-alt"></i>'
-                        .'</a>';
-                }
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                        .'class="btn text-danger" '
-                        .'onclick="destroyDataTableEntry(\'variantDefinitions\','.$variant_definition->id.')">'
-                        .'<i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
-            })
-
-            ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
     }

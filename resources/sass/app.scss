@@ -108,6 +108,10 @@ textarea {
     min-height: 150px;
 }
 
+.modal-body {
+    max-height: 80svh;
+    overflow-y: auto;
+}
 
 .select2 {
     max-width: 100%;
@@ -126,6 +130,10 @@ li:hover .vuehover,
 tr:hover .vuehover {
     display: block;
 }
+
+
+/* Vuedatepicker uses another font-family as default */
+.dp__input { font-family: "Open Sans", Arial, sans-serif !important; }
 
 .kanban-header{
     background-color: white;
@@ -158,6 +166,12 @@ tr:hover .vuehover {
 
 .overlay{
     background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.error-block {
+    color: #dc3545;
+    font-size: 0.8rem;
+    width: min-content;
 }
 
 @media only screen and (max-width: 400px) {

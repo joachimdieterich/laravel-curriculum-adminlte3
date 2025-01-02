@@ -275,6 +275,7 @@ return [
     ],
     'teacher' => 'Lehrkraft/Dozent',
     'remember_token' => 'Remember token',
+    'general' => 'Allgemein',
     'permissions' => 'Berechtigungen',
     'user_actions' => 'Benutzeraktionen',
     'time' => 'Zeit',
@@ -928,7 +929,8 @@ return [
         'create' => 'Eintrag erstellen',
         'search' => 'Eintrag suchen',
         'edit' => 'Eintrag bearbeiten',
-
+        'delete' => 'Eintrag löschen',
+        'delete_helper' => 'Soll der Eintrag sowie die zugehörigen Daten gelöscht werden?',
     ],
     'training' => [
         'title' => 'Trainings',

@@ -1,156 +1,145 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
         >
-        <div class="modal-container">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.plan.create') }}
-                    </span>
-                    <span v-if="method === 'patch'">
-                        {{ trans('global.plan.edit') }}
-                    </span>
-                </h3>
-                <div class="card-tools">
-                    <button type="button"
+            <div class="modal-container">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span v-if="method === 'post'">
+                            {{ trans('global.plan.create') }}
+                        </span>
+                        <span v-else>
+                            {{ trans('global.plan.edit') }}
+                        </span>
+                    </h3>
+                    <div class="card-tools">
+                        <button
+                            type="button"
                             class="btn btn-tool"
-                            @click="globalStore?.closeModal($options.name)">
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="modal-body p-0">
-                <div class="card mb-0">
-                    <div class="card-header border-bottom"
-                         data-card-widget="collapse"
-                    >
-                        <h5 class="card-title">
-                            Allgemein
-                        </h5>
-                    </div>
-                    <div class="card-body pb-0">
-                        <div class="form-group">
-                            <Select2
-                                id="type_id"
-                                :label="trans('global.plan.fields.type') + ' *'"
-                                model="PlanType"
-                                :selected="this.form.type_id"
-                                url="/planTypes"
-                                style="width: 100%;"
-                                :placeholder="trans('global.pleaseSelect')"
-                                :readOnly="(method == 'patch')"
-                                @selectedValue="(id) => this.form.type_id = id"
-                            ></Select2>
-                            <p v-if="errors.type_id == true"
-                               class="error-block"
-                               style="margin-top: -0.75rem;">
-                                {{ trans('validation.required') }}
-                            </p>
-                        </div>
-
-                        <div class="form-group input-group">
-                            <v-swatches
-                                :swatch-size="49"
-                                :trigger-style="{}"
-                                popover-to="right"
-                                v-model="form.color"
-                                show-fallback
-                                fallback-input-type="color"
-
-                                @input="(id) => {
-                                    if(id.isInteger){
-                                      this.form.color = id;
-                                    }
-                                }"
-                                :max-height="300"
-                            ></v-swatches>
-
-                            <input
-                                type="text"
-                                id="title"
-                                name="title"
-                                class="form-control ml-3"
-                                style="height:42px"
-                                v-model.trim="form.title"
-                                :placeholder="trans('global.title') + ' *'"
-                                required
-                            />
-                            <p v-if="errors.title == true" class="error-block">
-                                {{ trans('validation.required') }}
-                            </p>
-                        </div>
-
-                        <Editor
-                            :id="'description_' + component_id"
-                            :name="'description_' + component_id"
-                            class="form-control"
-                            :init="tinyMCE"
-                            :initial-value="form.description"
-                        />
-
-                        <div class="form-group ">
-                            <label for="begin">
-                                {{ trans('global.task.fields.begin') }}
-                            </label>
-                            <VueDatePicker
-                                v-model="form.begin"
-                                :teleport="true"
-                                locale="de"
-                                format="dd.MM.yyy HH:mm"
-                                :select-text="trans('global.ok')"
-                                :cancel-text="trans('global.close')"
-                            ></VueDatePicker>
-                            <p class="help-block"
-                               v-if="form.errors.begin"
-                               v-text="form.errors.begin[0]"></p>
-                        </div>
-
-                        <div class="form-group ">
-                            <label for="end">
-                                {{ trans('global.task.fields.end') }}
-                            </label>
-                            <VueDatePicker
-                                v-model="form.end"
-                                :teleport="true"
-                                locale="de"
-                                format="dd.MM.yyy HH:mm"
-                                :select-text="trans('global.ok')"
-                                :cancel-text="trans('global.close')"
-                            ></VueDatePicker>
-                            <p class="help-block"
-                               v-if="form.errors.end"
-                               v-text="form.errors.end[0]"></p>
-                        </div>
-
-                        <div class="form-group">
-                            <input
-                                type="text"
-                                id="duration"
-                                name="duration"
-                                class="form-control"
-                                style="height:42px"
-                                v-model.trim="form.duration"
-                                :placeholder="trans('global.plan.fields.duration')"
-                            />
-                            <p class="help-block">
-                                {{ trans('global.plan.fields.duration_helper') }}
-                            </p>
-                        </div>
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            <i class="fa fa-times"></i>
+                        </button>
                     </div>
                 </div>
 
-                <div class="card mb-0">
-                    <div class="card-header  border-bottom"
-                         data-card-widget="collapse"
-                    >
-                        <h5 class="card-title">
-                            Berechtigungen
-                        </h5>
+                <div class="modal-body p-0">
+                    <div class="card mb-0">
+                        <div
+                            class="card-header border-bottom"
+                            data-card-widget="collapse"
+                        >
+                            <h5 class="card-title">
+                                {{ trans('global.general') }}
+                            </h5>
+                        </div>
+                        <div class="card-body pb-0">
+                            <div class="form-group">
+                                <Select2
+                                    id="type_id"
+                                    :label="trans('global.plan.fields.type') + ' *'"
+                                    model="PlanType"
+                                    :selected="this.form.type_id"
+                                    url="/planTypes"
+                                    style="width: 100%;"
+                                    :placeholder="trans('global.pleaseSelect')"
+                                    :readOnly="(method == 'patch')"
+                                    @selectedValue="(id) => this.form.type_id = id"
+                                ></Select2>
+                                <p v-if="errors.type_id == true"
+                                    class="error-block"
+                                    style="margin-top: -0.75rem;"
+                                >
+                                    {{ trans('validation.required') }}
+                                </p>
+                            </div>
+                            
+                            <div class="form-group input-group">
+                                <v-swatches
+                                    :swatch-size="49"
+                                    :trigger-style="{}"
+                                    popover-to="right"
+                                    v-model="form.color"
+                                    show-fallback
+                                    fallback-input-type="color"
+                                    @input="(id) => {
+                                        if (id.isInteger) {
+                                            this.form.color = id;
+                                        }
+                                    }"
+                                    :max-height="300"
+                                ></v-swatches>
+                                <input
+                                    type="text"
+                                    id="title"
+                                    name="title"
+                                    class="form-control ml-3"
+                                    style="height:42px"
+                                    v-model.trim="form.title"
+                                    :placeholder="trans('global.title') + ' *'"
+                                    required
+                                />
+                                <span v-if="errors.title == true"
+                                    class="error-block"
+                                    style="flex-basis: 100%;"
+                                >
+                                    {{ trans('validation.required') }}
+                                </span>
+                            </div>
+
+                            <div class="form-group">
+                                <Editor
+                                    :id="'description_' + component_id"
+                                    :name="'description_' + component_id"
+                                    class="form-control"
+                                    :init="tinyMCE"
+                                    v-model="form.description"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <VueDatePicker
+                                    v-model="form.date"
+                                    :teleport="true"
+                                    locale="de-DE"
+                                    format="dd.MM.yyyy"
+                                    range
+                                    :enable-time-picker="false"
+                                    @cleared="form.date = ['', '']"
+                                    :placeholder="trans('global.selectDateRange')"
+                                    :select-text="trans('global.ok')"
+                                    :cancel-text="trans('global.close')"
+                                ></VueDatePicker>
+                            </div>
+
+                            <div class="form-group">
+                                <input
+                                    type="text"
+                                    id="duration"
+                                    name="duration"
+                                    class="form-control"
+                                    style="height:42px"
+                                    v-model.trim="form.duration"
+                                    :placeholder="trans('global.plan.fields.duration')"
+                                />
+                                <p class="help-block" style="width: 0; min-width: 100%;">
+                                    {{ trans('global.plan.fields.duration_helper') }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
+
+                    <div class="card mb-0">
+                        <div
+                            class="card-header border-bottom"
+                            data-card-widget="collapse"
+                        >
+                            <h5 class="card-title">
+                                {{ trans('global.permissions') }}
+                            </h5>
+                        </div>
+                        <div class="card-body">
                             <span class="custom-control custom-switch custom-switch-on-green">
                                 <input
                                     id="allow_copy"
@@ -158,36 +147,38 @@
                                     type="checkbox"
                                     class="custom-control-input pt-1 "
                                 />
-                                <label class="custom-control-label font-weight-light"
-                                       for="allow_copy"
+                                <label
+                                    class="custom-control-label font-weight-light"
+                                    for="allow_copy"
                                 >
                                     {{ trans('global.plan.allow_copy') }}
                                 </label>
                             </span>
+                        </div>
                     </div>
                 </div>
-            </div>
-
 
                 <div class="card-footer">
-                     <span class="pull-right">
-                         <button
-                             id="plan-cancel"
-                             type="button"
-                             class="btn btn-default"
-                             @click="globalStore?.closeModal($options.name)">
-                             {{ trans('global.cancel') }}
-                         </button>
-                         <button
-                             id="plan-save"
-                             class="btn btn-primary"
-                             @click="submit(method)" >
-                             {{ trans('global.save') }}
-                         </button>
+                    <span class="pull-right">
+                        <button
+                            id="plan-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="plan-save"
+                            class="btn btn-primary"
+                            @click="submit(method)"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
                     </span>
                 </div>
+            </div>
         </div>
-    </div>
     </Transition>
 </template>
 <script>
@@ -218,15 +209,16 @@ export default {
             method: 'post',
             url: '/plans',
             form: new Form({
-                'id': '',
-                'type_id': 4,
-                'title':  '',
-                'description':  '',
-                'begin': '',
-                'end': '',
-                'duration': '',
-                'color':'#27AF60',
-                'allow_copy': true,
+                id: '',
+                type_id: 4,
+                title:  '',
+                description:  '',
+                date: null,
+                begin: '',
+                end: '',
+                duration: '',
+                color:'#27AF60',
+                allow_copy: true,
             }),
             errors: { // required fields need to be initialised
                 type_id: false,
@@ -239,8 +231,8 @@ export default {
                     "autolink link lists table code"
                 ],
                 {
-                    'eventHubCallbackFunction': 'insertContent',
-                    'eventHubCallbackFunctionParams': this.component_id,
+                    eventHubCallbackFunction: 'insertContent',
+                    eventHubCallbackFunctionParams: this.component_id,
                 },
                 "bold underline italic | alignleft aligncenter alignright | table",
                 "bullist numlist outdent indent | mathjax link code",
@@ -253,14 +245,17 @@ export default {
             if (!this.checkRequired()) {
                 return;
             }
-            this.form.begin = this.form.date[0];
-            this.form.end = this.form.date[1];
+            // format dates as 'yyyy-mm-dd'
+            this.form.begin = this.form.date[0].toISOString().slice(0, 10);
+            this.form.end = this.form.date[1].toISOString().slice(0, 10);
 
             if (method == 'patch') {
                 this.update();
             } else {
                 this.add();
             }
+
+            this.globalStore.closeModal(this.$options.name);
         },
         add() {
             axios.post(this.url, this.form)
@@ -304,6 +299,7 @@ export default {
         },
     },
     mounted() {
+        Object.values(this.errors).forEach(value => value = false);
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
             if (state.modals[this.$options.name].show) {
@@ -311,6 +307,7 @@ export default {
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
+                    this.form.date = [new Date(this.form.begin) ?? '', new Date(this.form.end) ?? ''];
                     this.form.description = this.$decodeHTMLEntities(params.description);
 
                     if (this.form.id != '') {
@@ -321,11 +318,6 @@ export default {
                 }
             }
         });
-
-        const startDate = new Date();
-        const endDate = new Date(new Date().setDate(startDate.getDate() + 7));
-        this.form.date = [startDate, endDate];
     },
 }
 </script>
-

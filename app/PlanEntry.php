@@ -70,6 +70,21 @@ class PlanEntry extends Model
         )->where('subscribable_type', get_class($this));
     }
 
+    public function enablingObjectiveSubscriptions()
+    {
+        return $this->morphMany('App\EnablingObjectiveSubscriptions', 'subscribable');
+    }
+
+    public function terminalObjectiveSubscriptions()
+    {
+        return $this->morphMany('App\TerminalObjectiveSubscriptions', 'subscribable');
+    }
+    
+    public function trainingSubscriptions()
+    {
+        return $this->morphMany('App\TrainingSubscription', 'subscribable');
+    }
+
     public function trainings()
     {
         return $this->hasManyThrough(

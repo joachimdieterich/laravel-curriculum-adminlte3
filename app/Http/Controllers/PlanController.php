@@ -6,7 +6,12 @@ use App\Organization;
 use App\Plan;
 use App\User;
 use App\Group;
-use App\PlanType;
+use App\PlanEntry;
+use App\TerminalObjectiveSubscriptions;
+use App\EnablingObjectiveSubscriptions;
+use App\Training;
+use App\TrainingSubscription;
+use App\Exercise;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -231,6 +236,18 @@ class PlanController extends Controller
         // theoretically a user enroled in a plan can send a delete request
         abort_unless((\Gate::allows('plan_delete') and $plan->isAccessible()), 403);
 
+        // objectivesSubscriptions aren't automatically removed
+        foreach ($plan->entries as $entry) {
+            $entry->enablingObjectiveSubscriptions()->delete();
+            $entry->terminalObjectiveSubscriptions()->delete();
+            
+            // trainings need to be deleted separately
+            foreach ($entry->trainings as $training) {
+                $training->exercises()->delete();
+                (new TrainingController())->destroy($training);
+            }
+        }
+
         $plan->entries()->delete();
         $plan->subscriptions()->delete();
         //? if media-subscriptions can be added in the future, they need to be deleted too
@@ -248,6 +265,103 @@ class PlanController extends Controller
         ]);
 
         return ['entry_order' => $plan->entry_order];
+    }
+
+    public function copyPlan(Plan $plan) {
+        $ownerId = auth()->user()->id;
+        $assocOrder = [];
+
+        $planCopy = Plan::create([
+            'title' => $plan->title . '_' . date('Y.m.d_H:i:s'),
+            'description' => $plan->description,
+            'color' => $plan->color,
+            'begin' => $plan->begin,
+            'end' => $plan->end,
+            'duration' => $plan->duration,
+            'type_id' => $plan->type_id,
+            // 'medium_id' => $plan->medium_id,
+            'allow_copy' => $plan->allow_copy,
+            'entry_order' => null, // entry_order needs to be set after creating new PlanEntries
+            'owner_id' => $ownerId,
+        ]);
+
+        foreach ($plan->entries as $entry) {
+            $entryCopy = PlanEntry::Create([
+                'title' => $entry->title,
+                'description' => $entry->description,
+                'css_icon' => $entry->css_icon,
+                'color' => $entry->color,
+                'medium_id' => $entry->medium_id,
+                'order_id' => $entry->order_id,
+                'plan_id' => $planCopy->id,
+                'owner_id' => $ownerId,
+            ]);
+            // associative array, where old entry-id shows the copied entry-id
+            $assocOrder[$entry->id] = $entryCopy->id;
+
+            foreach ($entry->enablingObjectiveSubscriptions as $enabling) {
+                EnablingObjectiveSubscriptions::Create([
+                    'enabling_objective_id' => $enabling->enabling_objective_id,
+                    'subscribable_type' => 'App\PlanEntry',
+                    'subscribable_id' => $entryCopy->id,
+                    'sharing_level_id' => $enabling->sharing_level_id,
+                    'visibility' => $enabling->visibility,
+                    'owner_id' => $ownerId,
+                ]);
+            }
+
+            foreach ($entry->terminalObjectiveSubscriptions as $terminal) {
+                TerminalObjectiveSubscriptions::Create([
+                    'terminal_objective_id' => $terminal->terminal_objective_id,
+                    'subscribable_type' => 'App\PlanEntry',
+                    'subscribable_id' => $entryCopy->id,
+                    'sharing_level_id' => $terminal->sharing_level_id,
+                    'visibility' => $terminal->visibility,
+                    'owner_id' => $ownerId,
+                ]);
+            }
+
+            foreach ($entry->trainings as $training) {
+                $newTraining = Training::Create([
+                    'title' => $training->title,
+                    'description' => $training->description,
+                    'begin' => $training->begin,
+                    'end' => $training->end,
+                    'owner_id' => $ownerId,
+                ]);
+
+                TrainingSubscription::Create([
+                    'training_id' => $newTraining->id,
+                    'subscribable_type' => 'App\PlanEntry',
+                    'subscribable_id' => $entryCopy->id,
+                    'order_id' => 0,
+                    'editable' => 1,
+                    'owner_id' => $ownerId,
+                ]);
+
+                foreach ($training->exercises as $exercise) {
+                    Exercise::Create([
+                        'training_id' => $newTraining->id,
+                        'title' => $exercise->title,
+                        'description' => $exercise->description,
+                        'recommended_iterations' => $exercise->recommended_iterations,
+                        'owner_id' => $ownerId,
+                    ]);
+                }
+            }
+        }
+
+        if ($plan->entry_order != null) {
+            // set new entry_order based of associative array
+            $newEntryOrder = array_map(function($entry_id) use (&$assocOrder) {
+                return $assocOrder[$entry_id];
+            }, $plan->entry_order);
+        }
+
+        $planCopy->entry_order = $newEntryOrder ?? null;
+        $planCopy->save();
+
+        return redirect('/plans');
     }
 
     protected function validateRequest()

@@ -76,6 +76,7 @@ class GroupsController extends Controller
 
         $group = Group::firstOrCreate([
             'title' => $new_group['title'],
+            'common_name' => $new_group['common_name'] ?? null,
             'grade_id' => format_select_input($new_group['grade_id']),
             'period_id' => format_select_input($new_group['period_id']),
             'organization_id' => format_select_input($new_group['organization_id']),
@@ -116,6 +117,7 @@ class GroupsController extends Controller
 
         $group->update([
             'title' => $request['title'],
+            'common_name' => $request['common_name'] ?? $group->common_name,
             'grade_id' => format_select_input($request['grade_id']),
             'period_id' => format_select_input($request['period_id']),
             'organization_id' => format_select_input($request['organization_id']),
@@ -291,7 +293,6 @@ class GroupsController extends Controller
 
             return response()->json($results);
         }
-
     }
 
     protected function validateRequest()
@@ -301,6 +302,7 @@ class GroupsController extends Controller
             'grade_id'          => 'sometimes',
             'period_id'         => 'sometimes',
             'organization_id'   => 'sometimes',
+            'common_name'       => 'sometimes',
         ]);
     }
 

@@ -40,6 +40,13 @@ app.use(VueDOMPurifyHTML, {
             USE_PROFILES: { html: false },
         },
     },
+    hooks: {
+        afterSanitizeAttributes: (currentNode) => {
+            if ('rel' in currentNode && currentNode.rel == 'noopener') {
+                currentNode.setAttribute('target', '_blank');
+            }
+        }   
+    }
 });
 import { useGlobalStore} from "./store/global";
 import { createPinia } from "pinia";
@@ -316,7 +323,8 @@ app.component('videoconference', defineAsyncComponent(() => import('./components
 app.component('videoconferences', defineAsyncComponent(() => import('./components/videoconference/Videoconferences.vue')));
 
 app.config.globalProperties.$initTinyMCE = function(
-    tinyMcePlugins, attr = null,
+    tinyMcePlugins,
+    attr = null,
     customToolbar1 = null,
     customToolbar2 = null,
     extended_valid_elements = null,
@@ -337,6 +345,7 @@ app.config.globalProperties.$initTinyMCE = function(
         path_absolute : "/",
         selector: "textarea.my-editor",
         branding: false,
+        placeholder: this.trans('global.description'),
         plugins: tinyMcePlugins ?? defaultPlugins,
         external_plugins: { mathjax: '/node_modules/@dimakorotkov/tinymce-mathjax/plugin.min.js' },
         menubar: "edit format",

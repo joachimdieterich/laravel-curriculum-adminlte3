@@ -1,35 +1,51 @@
-<template >
-    <div class="row ">
+<template>
+    <div class="row">
         <div class="col-12 pt-2">
             <div class="card">
                 <div v-if="create">
-                    <div class="card-header pointer"
-                         @click="edit()">
+                    <div 
+                        class="card-header pointer"
+                        @click="openModal()"
+                    >
                         <i class="fas fa-add pr-1"></i>
                         {{ trans('global.planEntry.create') }}
                     </div>
                 </div>
                 <div v-else>
-                    <div :id="'plan-entry-' + entry.id"
-                         v-if="!editor"
-                         :style="{ 'border-left-style': 'solid', 'border-radius': '0.25rem', 'border-color': entry.color }">
-                        <div class="card-header collapsed" data-toggle="collapse" :data-target="'#plan-entry-' + entry.id + ' > .card-body'" aria-expanded="false">
-                            <i class="mr-1"
-                            :class="entry.css_icon"></i>
+                    <div v-if="!editor"
+                        :id="'plan-entry-' + entry.id"
+                        :style="{ 'border-left-style': 'solid', 'border-radius': '0.25rem', 'border-color': entry.color }"
+                    >
+                        <div
+                            class="card-header collapsed"
+                            data-toggle="collapse"
+                            :data-target="'#plan-entry-' + entry.id + ' > .card-body'"
+                            aria-expanded="false"
+                        >
+                            <i
+                                class="mr-1"
+                                :class="entry.css_icon"
+                            ></i>
                             {{ entry.title }}
                             <i class="fa fa-angle-up"></i>
                             <div v-if="$userId == plan.owner_id"
-                                class="card-tools">
-                                <i class="fa fa-pencil-alt mr-2 pointer link-muted"
-                                   @click="edit()"></i>
-                                <i class="fas fa-trash pointer text-danger"
-                                   @click="destroy(entry)"></i>
+                                class="card-tools"
+                            >
+                                <i
+                                    class="fa fa-pencil-alt mr-2 pointer link-muted"
+                                    @click="openModal()"
+                                ></i>
+                                <i
+                                    class="fas fa-trash pointer text-danger"
+                                    @click="destroy(entry)"
+                                ></i>
                             </div>
                         </div>
                         <div class="card-body py-2 collapse">
                             <img v-if="Number.isInteger(entry.medium_id)"
-                                 class="pull-right"
-                                 :src="'/media/' + entry.medium_id + '/thumb'"/>
+                                class="pull-right"
+                                :src="'/media/' + entry.medium_id + '/thumb'"
+                            />
                             <span v-dompurify-html="entry.description"></span>
 
                             <objectives
@@ -104,15 +120,30 @@
                                     :medium_id="form.medium_id"
                                     accept="image/*"/>-->
                     </div>
-                    <button :name="'planEntrySave'"
-                            class="btn btn-primary p-2 m-2"
-                            @click="submit()">
+                    <button
+                        :name="'planEntrySave'"
+                        class="btn btn-primary p-2 m-2"
+                        @click="submit()"
+                    >
                         {{ trans('global.save') }}
                     </button>
                 </div>
-
             </div>
         </div>
+        <Teleport to="body">
+            <ConfirmModal
+                :showConfirm="this.showConfirm"
+                :title="trans('global.planEntry.delete')"
+                :description="trans('global.planEntry.delete_helper')"
+                @close="() => {
+                    this.showConfirm = false;
+                }"
+                @confirm="() => {
+                    this.showConfirm = false;
+                    this.delete();
+                }"
+            ></ConfirmModal>
+        </Teleport>
     </div>
 </template>
 
@@ -123,8 +154,8 @@ import Form from "form-backend-validation";
 import MediumForm from "../media/MediumForm.vue";
 import Objectives from "../objectives/Objectives.vue";
 import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker.vue";
-
 import Trainings from '../training/Trainings.vue';
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
 
 export default {
     props: {
@@ -147,25 +178,25 @@ export default {
             method: 'post',
             requestUrl: '/planEntries',
             form: new Form({
-                'id': null,
-                'title':'',
-                'description': '',
-                'plan_id': '',
-                'css_icon': 'fas fa-calendar-day',
-                'order_id': 0,
-                'color': '#27AF60',
-                'medium_id': null,
-
+                id: null,
+                title: '',
+                description: '',
+                plan_id: '',
+                css_icon: 'fas fa-calendar-day',
+                order_id: 0,
+                color: '#27AF60',
+                medium_id: null,
             }),
             editor: false,
             errors: {},
-            owner_id: ''
+            owner_id: '',
+            showConfirm: false,
         }
     },
     mounted() {
         this.owner_id = this.plan.owner_id;
 
-        if ( this.entry !== null ) {
+        if (this.entry !== null) {
             this.form.id = this.entry.id;
             this.form.title = this.entry.title;
             this.form.description = this.entry.description;
@@ -179,13 +210,13 @@ export default {
 
         this.$initTinyMCE([
             "autolink link"
-        ] );
+        ]);
 
         // Set eventlistener for Media
         this.$eventHub.on('addMedia', (e) => {
             if (this.component_id == e.id) {
                 this.form.medium_id = e.selectedMediumId;
-                if ( Array.isArray(this.form.medium_id))  {
+                if (Array.isArray(this.form.medium_id))  {
                     this.form.medium_id = this.form.medium_id[0]; //Hack to get existing files working.
                 }
             }
@@ -195,19 +226,10 @@ export default {
         setIcon(selectedIcon) {
             this.form.css_icon = 'fa fa-'+  selectedIcon.className;
         },
-        edit() {
-            this.editor = !this.editor ;
-            if ( this.entry !== null ) {
-                this.form.color = this.entry.color;
-                this.form.css_icon = this.entry.css_icon;
-                this.form.order_id = this.plan.entries?.length ;
-            }
-
-            this.$nextTick(() => {
-                this.$initTinyMCE( );
-            });
+        openModal() {
+            globalS
         },
-        destroy(entry){
+        destroy(entry) {
             axios.delete('/planEntries/'+entry.id)
                 .then(response => {
                     this.$eventHub.emit("plan_entry_deleted", entry);
@@ -219,6 +241,7 @@ export default {
         submit() {
             let method = this.method.toLowerCase();
             this.form.description = tinyMCE.get('description').getContent();
+            
             if (method === 'patch') {
                 axios.patch(this.requestUrl + '/' + this.form.id, this.form)
                     .then(res => { // Tell the parent component we've updated a task
@@ -236,11 +259,10 @@ export default {
                         console.log(error);
                     });
             }
-            this.editor = false;
 
+            this.editor = false;
         },
     },
-
     components: {
         Editor,
         Calendar,
@@ -248,6 +270,7 @@ export default {
         Objectives,
         MediumForm,
         Trainings,
+        ConfirmModal,
     },
 }
 </script>

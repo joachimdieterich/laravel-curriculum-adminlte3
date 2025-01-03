@@ -78,21 +78,36 @@ class TerminalObjectiveSubscriptionsController extends Controller
      */
     public function store(Request $request)
     {
-        $new_subscription = $this->validateRequest();
+        $validated = $this->validateRequest();
 
-        $model = TerminalObjective::find($new_subscription['terminal_objective_id']);
-        abort_unless($model->isAccessible(), 403);
+        $new_subscriptions = [];
+        $objectives = TerminalObjective::find($validated['terminal_objective_id']);
 
-        $subscription = TerminalObjectiveSubscriptions::firstOrCreate([
-            'terminal_objective_id' => $new_subscription['terminal_objective_id'],
-            'subscribable_type' => $new_subscription['subscribable_type'],
-            'subscribable_id' => $new_subscription['subscribable_id'],
-            'sharing_level_id' => 1,
-            'visibility' => true,
-            'owner_id' => auth()->user()->id,
-        ]);
+        foreach ($objectives as $model) {
+            abort_unless($model->isAccessible(), 403);
+            array_push($new_subscriptions, [
+                'terminal_objective_id' => $model->id,
+                'subscribable_type' => $validated['subscribable_type'],
+                'subscribable_id' => $validated['subscribable_id'],
+                'sharing_level_id' => 1,
+                'visibility' => true,
+                'owner_id' => auth()->user()->id,
+                'created_at' => now(), // insertOrIgnore does not create timestamps
+                'updated_at' => now(),
+            ]);
+        }
+        // insertOrIgnore is used to prevent duplicates
+        TerminalObjectiveSubscriptions::insertOrIgnore($new_subscriptions);
+
         if (request()->wantsJson()) {
-            return $subscription;
+            // INFO: how to join models and select specific columns for each model
+            return TerminalObjective::with(['enablingObjectives' => function ($query) {
+                    // inside 'with' the 'select'-statement needs to include the foreign key, or else it'll return '0'
+                    $query->select('id', 'title', 'description', 'terminal_objective_id')
+                    ->orderBy('order_id');
+                }])
+                ->select('id', 'title', 'description', 'color')
+                ->find($validated['terminal_objective_id']);
         }
     }
 

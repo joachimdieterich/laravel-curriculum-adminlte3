@@ -67,6 +67,7 @@
                 :users="users"
             ></SetAchievementsModal>
             <SubscribeModal/>
+            <SubscribeObjectiveModal/>
         </Teleport>
         <Teleport v-if="$userId == plan.owner_id"
             to="#customTitle"
@@ -95,6 +96,7 @@ import PlanEntry from './PlanEntry.vue';
 import PlanEntryModal from "./PlanEntryModal.vue";
 import PlanModal from "./PlanModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
+import SubscribeObjectiveModal from "../objectives/SubscribeObjectiveModal.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {
@@ -229,6 +231,7 @@ export default {
         PlanEntryModal,
         SetAchievementsModal,
         SubscribeModal,
+        SubscribeObjectiveModal,
         draggable,
     },
 }

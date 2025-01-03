@@ -1,7 +1,7 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -9,19 +9,14 @@
                         {{ trans('global.referenceable_types.link') }}
                     </h3>
                     <div class="card-tools">
-                        <button v-permission="'objective_delete'"
-                                v-if="method !== 'post'"
-                                type="button"
-                                class="btn btn-tool"
-                                @click="del()">
-                            <i class="fa fa-trash text-danger"></i>
-                        </button>
-                        <button type="button" class="btn btn-tool draggable" >
+                        <button type="button" class="btn btn-tool draggable">
                             <i class="fa fa-arrows-alt"></i>
                         </button>
-                        <button type="button"
-                                class="btn btn-tool"
-                                @click="globalStore?.closeModal($options.name)">
+                        <button
+                            type="button"
+                            class="btn btn-tool"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
                             <i class="fa fa-times"></i>
                         </button>
                     </div>
@@ -36,62 +31,64 @@
                             model="curriculum"
                             option_id="id"
                             option_label="title"
-                            :selected="this.form.curriculum_id"
                             @selectedValue="(id) => {
-                            this.form.curriculum_id = id;
-                        }"
-                        >
-                        </Select2>
+                                this.form.curriculum_id = id[0];
+                            }"
+                        />
                     </div>
-                    <div v-if="this.form.curriculum_id"
-                         class="form-group ">
+                    <div v-if="form.curriculum_id"
+                        class="form-group"
+                    >
                         <Select2
                             id="terminalObjectives_id"
                             name="terminalObjectives_id"
-                            :url="'/curricula/' + this.form.curriculum_id + '/terminalObjectives'"
+                            :url="'/curricula/' + form.curriculum_id + '/terminalObjectives'"
                             model="terminalObjective"
+                            :multiple="true"
                             option_id="id"
                             option_label="title"
-                            :selected="null"
                             @selectedValue="(id) => {
-                            this.form.terminal_objective_id = id;
-                        }"
-                        >
-                        </Select2>
+                                this.form.terminal_objective_id = id;
+                            }"
+                        />
                     </div>
-                    <div v-if="this.form.terminal_objective_id"
-                         class="form-group ">
+                    <div v-if="form.terminal_objective_id.length === 1"
+                        class="form-group"
+                    >
                         <Select2
                             id="enablingObjectives_id"
                             name="enablingObjectives_id"
-                            :url="'/terminalObjectives/' + this.form.terminal_objective_id + '/enablingObjectives'"
+                            :url="'/terminalObjectives/' + form.terminal_objective_id[0] + '/enablingObjectives'"
                             model="enablingObjective"
+                            :multiple="true"
                             option_id="id"
                             option_label="title"
                             selected="null"
                             @selectedValue="(id) => {
-                            this.form.enabling_objective_id = id;
-                        }"
-                        >
-                        </Select2>
+                                this.form.enabling_objective_id = id;
+                            }"
+                        />
                     </div>
                 </div>
 
                 <div class="card-footer">
-                     <span class="pull-right">
-                         <button
-                             id="grade-cancel"
-                             type="button"
-                             class="btn btn-default"
-                             @click="globalStore?.closeModal($options.name)">
-                             {{ trans('global.cancel') }}
-                         </button>
-                         <button
-                             id="grade-save"
-                             class="btn btn-primary"
-                             @click="submit()" >
-                             {{ trans('global.save') }}
-                         </button>
+                    <span class="pull-right">
+                        <button
+                            id="grade-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="grade-save"
+                            class="btn btn-primary ml-3"
+                            :disabled="form.terminal_objective_id.length === 0"
+                            @click="submit()"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
                     </span>
                 </div>
             </div>
@@ -105,7 +102,7 @@ import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'subscribe-objective-modal',
-    components:{
+    components: {
         Select2,
     },
     props: {
@@ -125,12 +122,12 @@ export default {
             method: 'post',
             url: null,
             form: new Form({
-                'id': null,
-                'subscribable_type': null,
-                'subscribable_id': null,
-                'curriculum_id': null,
-                'terminal_objective_id': null,
-                'enabling_objective_id': null,
+                id: null,
+                subscribable_type: null,
+                subscribable_id: null,
+                curriculum_id: null,
+                terminal_objective_id: [],
+                enabling_objective_id: [],
             }),
         }
     },

@@ -1,14 +1,15 @@
 <template>
     <div class="card mb-0">
-
         <div v-for="(subscription, index) in subscriptions"
-            class="card-body border-bottom">
+            class="card-body border-bottom"
+        >
             <div v-if="typeof (subscription.enabling_objective) == 'undefined'"
-                class="row">  <!-- terminalObjective -->
+                class="row"
+            >  <!-- terminalObjective -->
                 <div class="col-12">
                     <div class="card-tools pull-right">
-                        <span v-if="is_owner()">
-                            <a @click="destroy(subscription)" >
+                        <span v-if="$userId == owner_id">
+                            <a @click="destroy(subscription)">
                                 <i class="fas fa-trash text-danger pointer"></i>
                             </a>
                         </span>
@@ -16,8 +17,8 @@
                     <ObjectiveBox
                         type="terminal"
                         :objective="subscription.terminal_objective"
-                        :settings="settings">
-                    </ObjectiveBox>
+                        :settings="settings"
+                    ></ObjectiveBox>
 
                     <div class="ml-auto">
                         <EnablingObjectives
@@ -30,19 +31,20 @@
                 </div>
             </div>
         </div>
-        <div v-if="is_owner()"
-             class="card-footer pointer"
-             @click="open()">
+        <div v-if="$userId == owner_id"
+            class="card-footer pointer"
+            @click="openModal()"
+        >
             <i class="fas fa-add pr-1"></i>
             {{ trans('global.referenceable_types.link') }}
         </div>
     </div>
-
 </template>
 
 <script>
 import ObjectiveBox from './ObjectiveBox.vue';
 import EnablingObjectives from './EnablingObjectives.vue';
+import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
@@ -54,6 +56,12 @@ export default {
         },
         referenceable_type: {},
         referenceable_id: {},
+    },
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
@@ -142,11 +150,8 @@ export default {
 
             this.subscriptions = subObj;
         },
-        is_owner() {
-            return (this.$userId == this.owner_id) ?? false
-        },
-        open() {
-            this.$modal.show('subscribe-objective-modal', {
+        openModal() {
+            this.globalStore.showModal('subscribe-objective-modal', {
                 'referenceable_type': this.referenceable_type,
                 'referenceable_id': this.referenceable_id
             });

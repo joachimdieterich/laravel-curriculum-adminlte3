@@ -53,15 +53,16 @@ class SubjectController extends Controller
         abort_unless(\Gate::allows('subject_create'), 403);
         $new_subject = $this->validateRequest();
 
-        Subject::create([
+        $subject = Subject::create([
             'title' => $new_subject['title'],
             'title_short' => $new_subject['title_short'],
             'external_id' => $new_subject['external_id'] ?? 1,
-            'organization_type_id' => $new_subject['title_short'] ?? 1,
-
+            'organization_type_id' => format_select_input($new_subject['organization_type_id']) ?? 1,
         ]);
 
-        return redirect()->route('subjects.index');
+        if (request()->wantsJson()) {
+            return $subject;
+        }
     }
 
     public function edit(Subject $subject)
@@ -81,10 +82,12 @@ class SubjectController extends Controller
             'title' => $new_subject['title'],
             'title_short' => $new_subject['title_short'],
             'external_id' => $new_subject['external_id'] ?? 1,
-            'organization_type_id' => $new_subject['title_short'] ?? 1,
+            'organization_type_id' => format_select_input($new_subject['organization_type_id']) ?? 1,
         ]);
 
-        return redirect()->route('subjects.index');
+        if (request()->wantsJson()) {
+            return $subject;
+        }
     }
 
     public function show(Subject $subject)
@@ -98,9 +101,7 @@ class SubjectController extends Controller
     {
         abort_unless(\Gate::allows('subject_delete'), 403);
 
-        $subject->delete();
-
-        return back();
+        return $subject->delete();
     }
 
     protected function validateRequest()
@@ -110,7 +111,6 @@ class SubjectController extends Controller
             'title_short' => 'sometimes|required',
             'external_id' => 'sometimes',
             'organization_type_id' => 'sometimes',
-
         ]);
     }
 }

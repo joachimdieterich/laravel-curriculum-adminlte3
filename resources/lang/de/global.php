@@ -515,6 +515,8 @@ return [
         'title_singular' => 'Fach',
         'create' => 'Fach erstellen',
         'edit' => 'Fach bearbeiten',
+        'delete' => 'Fach löschen',
+        'delete_helper' => 'Soll das Fach sowie die zugehörigen Daten gelöscht werden?',
         'fields' => [
             'title_short' => 'Titel (kurz)',
             'title_short_helper' => '',

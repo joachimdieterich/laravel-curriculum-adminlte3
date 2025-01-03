@@ -44,7 +44,7 @@
 
                     <div class="form-group ">
                         <label for="external_id">
-                            {{ trans('global.organizationType.fields.external_id') }}
+                            {{ trans('global.organizationType.fields.external_id') }}  *
                         </label>
                         <input
                             type="text" id="external_id"
@@ -52,6 +52,7 @@
                             class="form-control"
                             v-model="form.external_id"
                             placeholder="external_id"
+                            required
                             />
                         <p class="help-block"
                            v-if="form.errors.external_id"

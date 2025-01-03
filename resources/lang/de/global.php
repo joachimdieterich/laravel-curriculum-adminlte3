@@ -448,6 +448,8 @@ return [
         'title_singular' => 'Organisation-Typ',
         'create' => 'Organisation-Typ erstellen',
         'edit' => 'Organisation-Typ bearbeiten',
+        'delete' => 'Organisation-Typ löschen',
+        'delete_helper' => 'Soll der Organisation-Typ sowie die zugehörigen Daten gelöscht werden?',
         'fields' => [
             'external_id' => 'External ID',
             'external_id_helper' => '',

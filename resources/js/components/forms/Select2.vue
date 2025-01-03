@@ -184,6 +184,9 @@
                 .on("select2:unselect", function(e){
                     this.$emit("selectedValue", this.componentInstance.select2("data").map(i =>i[this.option_id]));
                 }.bind(this))
+                .on("select2:open", function(e){
+                    this.componentInstance.val(null).trigger('change'); //reset selection
+                }.bind(this));
                    // .val(this.selected).trigger('change'); //wont work for ajax -> data isn't present yet
 
                 if(typeof this.selected === 'object' || this.selected !== false){

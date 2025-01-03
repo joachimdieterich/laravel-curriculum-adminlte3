@@ -49,6 +49,7 @@
                             option_label="title"
                             @selectedValue="(id) => {
                                 this.form.terminal_objective_id = id;
+                                this.form.enabling_objective_id = [];
                             }"
                         />
                     </div>
@@ -146,40 +147,37 @@ export default {
     },
     methods: {
         submit() {
-            if (this.form.enabling_objective_id == null) {
+            if (this.form.enabling_objective_id.length === 0) {
                 this.url = '/terminalObjectiveSubscriptions';
-                this.form.terminal_objective_id.forEach( id => {
-                    axios.post(this.url, {
-                        'curriculum_id':            this.form.curriculum_id,
-                        'terminal_objective_id':    id,
-                        'enabling_objective_id':    this.form.enabling_objective_id,
-                        'subscribable_type':        this.form.subscribable_type,
-                        'subscribable_id':          this.form.subscribable_id
-                    }).then(r => {
-                        this.$eventHub.emit('subscriptions_added', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
+
+                axios.post(this.url, {
+                    'terminal_objective_id':    this.form.terminal_objective_id,
+                    'subscribable_type':        this.form.subscribable_type,
+                    'subscribable_id':          this.form.subscribable_id
+                })
+                .then(response => {
+                    console.log(response);
+                    this.$eventHub.emit('subscriptions-added', response.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
                 });
-            }
-            else
-            {
+            } else {
                 this.url = '/enablingObjectiveSubscriptions';
-                this.form.enabling_objective_id.forEach( id => {
-                     axios.post(this.url, {
+                this.form.enabling_objective_id.forEach(id => {
+                    axios.post(this.url, {
                         'curriculum_id':            this.form.curriculum_id,
                         'terminal_objective_id':    this.form.terminal_objective_id,
                         'enabling_objective_id':    id,
                         'subscribable_type':        this.form.subscribable_type,
                         'subscribable_id':          this.form.subscribable_id
                     })
-                     .then(r => {
-                         this.$eventHub.emit('subscriptions_added', r.data);
-                     })
-                     .catch(e => {
-                         console.log(e.response);
-                     });
+                    .then(r => {
+                        this.$eventHub.emit('subscriptions-added', r.data);
+                    })
+                    .catch(e => {
+                        console.log(e.response);
+                    });
                 });
             }
         },
@@ -192,7 +190,7 @@ export default {
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
-                    if (this.form.id != ''){
+                    if (this.form.id != '') {
                         this.method = 'patch';
                     } else {
                         this.method = 'post';

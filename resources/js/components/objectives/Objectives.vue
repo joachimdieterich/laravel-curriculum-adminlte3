@@ -152,8 +152,8 @@ export default {
         },
         openModal() {
             this.globalStore.showModal('subscribe-objective-modal', {
-                'referenceable_type': this.referenceable_type,
-                'referenceable_id': this.referenceable_id
+                'subscribable_type': this.referenceable_type,
+                'subscribable_id': this.referenceable_id,
             });
         },
         destroy(subscription) {
@@ -196,7 +196,7 @@ export default {
     },
     mounted() {
         this.loaderEvent();
-        this.$eventHub.on('subscriptions_added', id => {
+        this.$eventHub.on('subscriptions-added', id => {
             if (id === this.referenceable_id) this.loaderEvent();
         });
     },

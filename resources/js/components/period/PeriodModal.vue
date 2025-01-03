@@ -81,19 +81,13 @@ import '@vuepic/vue-datepicker/dist/main.css';
 import {useGlobalStore} from "../../store/global";
 
 export default {
+    name: 'period-modal',
     components: {
         Editor,
         Select2,
         VueDatePicker
     },
-    props: {
-        show: {
-            type: Boolean
-        },
-        params: {
-            type: Object
-        },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
-    },
+    props: {},
     setup() {
         const globalStore = useGlobalStore();
         return {
@@ -181,4 +175,3 @@ export default {
     },
 }
 </script>
-

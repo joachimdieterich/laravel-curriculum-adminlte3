@@ -37,7 +37,6 @@
                 <i class="fa fa-download mr-2"></i>
                 {{ trans('global.exam.download_report') }}
             </button>
-
         </div>
 
         <hr style="width: 100%; border: 1px solid lightgray !important;">

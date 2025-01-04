@@ -388,6 +388,9 @@ return [
         'title_singular' => 'Berechtigung',
         'create' => 'Berechtigung erstellen',
         'edit' => 'Berechtigung bearbeiten',
+        'delete' => 'Berechtigung löschen',
+        'delete_helper' => 'Soll die Berechtigung sowie die zugehörigen Daten gelöscht werden?',
+
     ],
     'organization_management' => 'Organisationsverwaltung',
     'organization' => [

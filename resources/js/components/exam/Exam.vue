@@ -14,6 +14,7 @@
                     width="100%"
                 ></DataTable>
             </div>
+
             <button
                 id="expelFromCurricula"
                 type="button"
@@ -24,6 +25,19 @@
                 <i class="fa fa-minus mr-2"></i>
                 {{ trans('global.exam.enrol_user') }}
             </button>
+            <button
+                v-permission="'exam_edit'"
+                v-if="this.exam.status !== 0"
+                :id="'edit-exam-' + this.exam.id"
+                type="button"
+                :name="'edit-exam-' + this.exam.id"
+                class="btn btn-primary pull-left mt-3 mr-2"
+                @click="getReport()"
+            >
+                <i class="fa fa-download mr-2"></i>
+                {{ trans('global.exam.download_report') }}
+            </button>
+
         </div>
 
         <hr style="width: 100%; border: 1px solid lightgray !important;">
@@ -268,6 +282,19 @@ export default {
                  .then(r => { location.reload(); })
                  .catch(e => { console.log(e.response); });
              }
+        },
+        getReport() {
+            axios.post('/exams/' + this.exam.exam_id + '/report', {tool: this.exam.tool}, {responseType: 'arraybuffer'})
+                .then(response => {
+                    var blob = new Blob([response.data]);
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = this.exam.test_name+'.pdf';
+                    link.click();
+                })
+                .catch(errors => {
+                    console.log(errors)
+                })
         },
     }
 }

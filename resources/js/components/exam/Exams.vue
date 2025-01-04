@@ -3,6 +3,7 @@
         <div id="exam-content"
              class="col-md-12 m-0">
             <ul v-if="subscribable"
+                v-permission="'exam_edit'"
                 class="nav nav-pills py-2" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link "
@@ -213,7 +214,6 @@ export default {
             search: '',
             showExamModal: false,
             showConfirm: false,
-            url: (this.subscribable_id) ? '/exams/list?group_id=' + this.subscribable_id +'&filter=' + this.filter : '/exams/list',
             errors: {},
             currentExam: {},
             columns: [
@@ -224,8 +224,9 @@ export default {
             ],
             options : this.$dtOptions,
             modalMode: 'edit',
-            filter: 'all',
-            dt: null
+            filter: 'student',
+            dt: null,
+            url: (this.subscribable_id) ? '/exams/list?group_id=' + this.subscribable_id +'&filter=student' : '/exams/list',
         }
     },
     mounted() {

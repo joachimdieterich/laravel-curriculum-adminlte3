@@ -172,6 +172,7 @@
 
         <Teleport to="body">
             <MapModal></MapModal>
+            <MediumPreviewModal></MediumPreviewModal>
             <MarkerModal
                 :map="this.map"
             >
@@ -218,9 +219,11 @@ import Select2 from "../forms/Select2.vue";
 import markerIconUrl from "leaflet/dist/images/marker-icon.png";
 import markerIconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
 import markerShadowUrl from "leaflet/dist/images/marker-shadow.png";
+import MediumPreviewModal from "../media/MediumPreviewModal.vue";
 
 export default {
     components: {
+        MediumPreviewModal,
         Select2,
         MapModal,
         MarkerModal,

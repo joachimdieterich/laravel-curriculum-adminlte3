@@ -418,7 +418,7 @@ export default {
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
                     if (this.form.id !== ''){
-                        this.form.description = this.$decodeHTMLEntities(this.form.body);
+                        this.form.description = this.$decodeHTMLEntities(this.$decodeHtml(this.form.description));
                         this.method = 'patch';
                     } else {
                         this.method = 'post';

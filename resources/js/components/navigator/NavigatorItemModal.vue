@@ -7,10 +7,10 @@
                 <div class="card-header">
                     <h3 class="card-title">
                     <span v-if="method === 'post'">
-                        {{ trans('global.navigator.create') }}
+                        {{ trans('global.navigator_view.create') }}
                     </span>
                         <span v-if="method === 'patch'">
-                        {{ trans('global.navigator.edit') }}
+                        {{ trans('global.navigator_view.edit') }}
                     </span>
                     </h3>
                     <div class="card-tools">
@@ -22,31 +22,44 @@
                     </div>
                 </div>
                 <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                    <ul class="nav nav-pills">
+                    <ul v-if="this.method !=  'patch'"
+                        class="nav nav-pills">
                         <!-- View -->
                         <li class="nav-item">
-                            <a class="nav-link active show"
-                               href="#tab_navigator_view"
+                            <a class="nav-link"
+                               :class="
+                               {
+                                   show: (this.form.referenceable_type ==  'App\\NavigatorView'),
+                                   active: (this.form.referenceable_type ==  'App\\NavigatorView')
+                               }"
                                @click="setCurrentTab('NavigatorView')"
-                               data-toggle="tab">
+                               >
                                 <i class="fa fa-map-signs mr-2"></i>{{ trans('global.navigator_view.title_singular') }}
                             </a>
                         </li>
                         <!-- Curriculum -->
                         <li class="nav-item">
                             <a class="nav-link"
-                               href="#tab_curriculum_view"
+                               :class="
+                               {
+                                   show: (this.form.referenceable_type ==  'App\\Curriculum'),
+                                   active: (this.form.referenceable_type ==  'App\\Curriculum')
+                               }"
                                @click="setCurrentTab('Curriculum')"
-                               data-toggle="tab">
+                            >
                                 <i class="fas fa-th mr-2"></i>{{ trans('global.curriculum.title') }}
                             </a>
                         </li>
                         <!-- Content -->
                         <li class="nav-item">
                             <a class="nav-link"
-                               href="#organization_subscription"
+                               :class="
+                               {
+                                   show: (this.form.referenceable_type ==  'App\\Content'),
+                                   active: (this.form.referenceable_type ==  'App\\Content')
+                               }"
                                @click="setCurrentTab('Content')"
-                               data-toggle="tab">
+                            >
                                 <i class="fa fa-align-justify mr-2"></i>{{ trans('global.content.title_singular') }}
                             </a>
                         </li>
@@ -58,10 +71,8 @@
                         </li>-->
                     </ul>
 
-
                     <div class="tab-content pt-2">
-                        <div v-if="this.currentTab == 'Curriculum'"
-                             class="tab-pane" id="tab_curriculum_view">
+                        <div v-if="this.form.referenceable_type == 'App\\Curriculum'">
                             <Select2
                                 id="referenceable_id"
                                 name="referenceable_id"
@@ -74,15 +85,13 @@
                             >
                             </Select2>
                         </div>
-                        <!-- User Tab -->
-                        <div v-if="this.currentTab == 'NavigatorView'"
-                             id="tab_navigator_view"
-                             class="tab-pane active show" >
-                            <div
-                                v-if="this.currentTab != 'Curriculum'"
-                                class="form-group"
-                                 :class="form.errors.title ? 'has-error' : ''"
-                            >
+
+                        <div id="tab_navigator_view">
+                            <div v-if="this.form.referenceable_type ==  'App\\NavigatorView'
+                                       || this.form.referenceable_type ==  'App\\Content'
+                                       || this.method ==  'patch'
+                                "
+                                 class="form-group">
                                 <label for="title">{{ trans('global.navigator.fields.title') }} *</label>
                                 <input
                                     type="text" id="title"
@@ -95,7 +104,11 @@
                                 <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
                             </div>
 
-                            <div class="form-group">
+                            <div v-if="this.form.referenceable_type ==  'App\\NavigatorView'
+                                       || this.form.referenceable_type ==  'App\\Content'
+                                       || this.method ==  'patch'
+                                "
+                                 class="form-group">
                                 <label for="body">{{ trans('global.navigator.fields.description') }}</label>
                                 <Editor
                                     id="description"
@@ -105,7 +118,6 @@
                                     :initial-value="form.description"
                                 />
                                 <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
-
                             </div>
                         </div>
 
@@ -129,6 +141,9 @@
                                         }
                                     ]"
                             :selected="this.form.position"
+                            @selectedValue="(id) => {
+                                this.form.position = id;
+                            }"
                         >
                         </Select2>
                         <Select2
@@ -147,6 +162,9 @@
                                         },
                                     ]"
                             :selected="this.form.css_class"
+                            @selectedValue="(id) => {
+                                this.form.css_class = id;
+                            }"
                         >
                         </Select2>
                         <Select2
@@ -165,18 +183,20 @@
                                         },
                                     ]"
                             :selected="this.form.visibility"
+                            @selectedValue="(id) => {
+                                this.form.visibility = id;
+                            }"
                         >
                         </Select2>
                     </div>
 
-                    <div v-if="this.currentTab == 'App\\Curriculum' || 'App\\NavigatorView'"
+                    <div v-if="this.form.referenceable_type == 'App\\Curriculum' || 'App\\NavigatorView'"
                          class="tab-pane" id="tab_curriculum_view">
                         <MediumForm
                             class="pull-right"
                             id='navigator_item_medium'
                             :medium_id="form.medium_id"
                             accept="image/*"
-
                             :selected="this.form.medium_id"
                             @selectedValue="(id) => {
                                     this.form.medium_id = id;
@@ -184,7 +204,6 @@
                         >
                         </MediumForm>
                     </div>
-
                 </div>
                 <div class="card-footer">
                  <span class="pull-right">
@@ -215,31 +234,27 @@ import MediumForm from "../media/MediumForm.vue";
 import {useMediumStore} from "../../store/media";
 import {useGlobalStore} from "../../store/global";
 
-
-
 export default {
     name: 'navigator-item-modal',
     components:{
         MediumForm,
-
         Select2,
         Editor
     },
     props: {
-        show: {
-            type: Boolean
-        },
         navigator: {
             type: Object
         },
-        params: {
+        view: {
             type: Object
-        },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
+        },
     },
-    setup () {
+    setup() { //use database store
         const globalStore = useGlobalStore();
+        const mediumStore = useMediumStore();
         return {
             globalStore,
+            mediumStore,
         }
     },
     data() {
@@ -247,7 +262,6 @@ export default {
             component_id: this.$.uid,
             method: 'post',
             url: '/navigatorItems',
-            currentTab: 'NavigatorView',
             form: new Form({
                 'id':'',
                 'title': '',
@@ -256,15 +270,16 @@ export default {
                 'referenceable_type': 'App\\NavigatorView',
                 'referenceable_id': '',
                 'navigator_id': '',
-                'position': '',
-                'css_class': '',
-                'visibility': '',
+                'position': 'content',
+                'css_class': 'col-12',
+                'visibility': '1',
                 'medium_id': '',
+                'view_id': null
             }),
             search: '',
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link curriculummedia"
+                    "autolink link curriculummedia autoresize"
                 ],
                 {
                     'eventHubCallbackFunction': 'insertContent',
@@ -273,32 +288,13 @@ export default {
             ),
         }
     },
-    setup () { //use database store
-        const mediumStore = useMediumStore();
-        return {
-            mediumStore,
-        }
-    },
-    watch: {
-        params: function(newVal, oldVal) {
-            this.form.reset();
-            this.method = 'post';
-            this.form.populate(newVal);
-
-            if (this.form.id != ''){
-                this.method = 'patch';
-            }
-        },
-    },
-
     methods: {
         submit(method) {
             this.form.navigator_id = this.navigator.id;
-            this.form.description = tinyMCE.get('description').getContent();
+            this.form.view_id = this.view.id;
 
-            switch (this.currentTab) {
-                case 'NavigatorView':
-                    break;
+            if (tinyMCE.get('description')) {
+                this.form.description = tinyMCE.get('description').getContent();
             }
 
             if (method === 'patch') {
@@ -310,7 +306,7 @@ export default {
         add(){
             axios.post(this.url, this.form)
                 .then(r => {
-                    this.$eventHub.emit('navigator-added', r.data);
+                    this.$eventHub.emit('navigatorItem-added', r.data);
                 })
                 .catch(e => {
                     console.log(e.response);
@@ -319,20 +315,35 @@ export default {
         update(){
             axios.patch(this.url + '/' + this.form.id, this.form)
                 .then(r => {
-                    this.$eventHub.emit('navigator-updated', r.data);
+                    this.$eventHub.emit('navigatorItem-updated', r.data);
                 })
                 .catch(e => {
                     console.log(e.response);
                 });
         },
         setCurrentTab(type){
-            console.log(type);
-            this.currentTab = type;
-            this.referenceable_type = 'App\\' + type;
-            console.log(this.referenceable_type);
+            this.form.referenceable_type = 'App\\' + type;
+            console.log(this.form.referenceable_type);
 
         },
     },
-    mounted() {},
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    if (this.form.id !== '') {
+                        this.form.description = this.$decodeHTMLEntities(this.$decodeHtml(this.form.description));
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
+                    }
+                }
+            }
+        });
+    },
 }
 </script>

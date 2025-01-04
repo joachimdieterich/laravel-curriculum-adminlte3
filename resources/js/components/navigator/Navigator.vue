@@ -2,13 +2,29 @@
     <div class="row">
         <div id="navigatorView-content"
              class="col-md-12 m-0">
-
             <div v-for="navigatorItem in navigatorItems">
                 <div v-if="navigatorItem.position == 'header'">
                     <Content
                         v-if="navigatorItem.referenceable_type == 'App\\Content'"
                         :content="navigatorItem">
                     </Content>
+                    <div v-if="navigatorItem.referenceable_type != 'App\\Content'"
+                         class="col-12" >
+                        <div class="card">
+                            <div class="card-body">
+                                {{ navigatorItem.title }}
+                                <button
+                                    v-permission="'navigator_delete'"
+                                    :id="'delete-navigatorView-' + navigatorItem.id"
+                                    type="submit"
+                                    class="dropdown-item py-1 text-red"
+                                    @click.prevent="confirmItemDelete(navigatorItem)">
+                                    <i class="fa fa-trash mr-2"></i>
+                                    {{ trans('global.navigatorItem.delete') }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -74,19 +90,44 @@
             ></DataTable>
         </div>
 
-        <div class="col-md-12 m-0"
-             v-for="navigatorItem in navigatorItems">
+        <div v-for="navigatorItem in navigatorItems">
             <div v-if="navigatorItem.position == 'footer'">
                 <Content
                     v-if="navigatorItem.referenceable_type == 'App\\Content'"
                     :content="navigatorItem">
                 </Content>
+                <div v-if="navigatorItem.referenceable_type != 'App\\Content'"
+                     class="col-12" >
+                    <div class="card">
+                        <div class="card-body">
+                            {{ navigatorItem.title }}
+                            <button
+                                v-permission="'navigator_edit'"
+                                :name="'edit-navigatorItem-' + navigatorItem.id"
+                                class="dropdown-item text-secondary"
+                                @click.prevent="editNavigatorItem(navigatorItem)">
+                                <i class="fa fa-pencil-alt mr-2"></i>
+                                {{ trans('global.navigatorView.edit') }}
+                            </button>
+                            <button
+                                v-permission="'navigator_delete'"
+                                :id="'delete-navigatorView-' + navigatorItem.id"
+                                type="submit"
+                                class="dropdown-item py-1 text-red"
+                                @click.prevent="confirmItemDelete(navigatorItem)">
+                                <i class="fa fa-trash mr-2"></i>
+                                {{ trans('global.navigatorItem.delete') }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <Teleport to="body">
             <NavigatorItemModal
                 :navigator="navigator"
+                :view="view"
             ></NavigatorItemModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
@@ -112,6 +153,7 @@ import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import Content from "../content/Content.vue";
+import {useGlobalStore} from "../../store/global.js";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -122,6 +164,12 @@ export default {
         view: {
             default: null
         },
+    },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
@@ -167,7 +215,6 @@ export default {
     },
     methods: {
         editNavigatorItem(navigatorItem){
-            this.currentNavigatorItem = navigatorItem;
             this.globalStore?.showModal('navigator-item-modal', navigatorItem);
         },
         loaderEvent(){

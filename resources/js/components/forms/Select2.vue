@@ -185,7 +185,9 @@
                     this.$emit("selectedValue", this.componentInstance.select2("data").map(i =>i[this.option_id]));
                 }.bind(this))
                 .on("select2:open", function(e){
-                    this.componentInstance.val(null).trigger('change'); //reset selection
+                    if (!this.multiple){
+                        this.componentInstance.val(null).trigger('change'); //reset selection, only if not multiple = true
+                    }
                 }.bind(this));
                    // .val(this.selected).trigger('change'); //wont work for ajax -> data isn't present yet
 

@@ -63,6 +63,18 @@
 
         <Teleport to="body">
             <OrganizationTypeModal></OrganizationTypeModal>
+            <ConfirmModal
+                :showConfirm="this.showConfirm"
+                :title="trans('global.organizationType.delete')"
+                :description="trans('global.organizationType.delete_helper')"
+                @close="() => {
+                    this.showConfirm = false;
+                }"
+                @confirm="() => {
+                    this.showConfirm = false;
+                    this.destroy();
+                }"
+            ></ConfirmModal>
         </Teleport>
     </div>
 </template>
@@ -92,6 +104,7 @@ export default {
             component_id: this.$.uid,
             organizationTypes: null,
             search: '',
+            showConfirm: false,
             url: '/organizationTypes/list',
             errors: {},
             currentOrganizationType: {},
@@ -125,6 +138,10 @@ export default {
         });
     },
     methods: {
+        confirmItemDelete(organizationType){
+            this.currentOrganizationType = organizationType;
+            this.showConfirm = true;
+        },
         editOrganizationType(organizationType){
             this.currentOrganizationType = organizationType;
             this.globalStore?.showModal('organization-type-modal', this.currentOrganizationType);

@@ -80,7 +80,7 @@
                 :key="'logbookIndex'+logbook.id"
                 :model="logbook"
                 modelName= "logbook"
-                url="/logboooks">
+                url="/logbooks">
                 <template v-slot:icon>
                     <i v-if="logbook.type_id === 1"
                        class="fas fa-globe pt-2"></i>

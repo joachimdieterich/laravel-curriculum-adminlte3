@@ -62,11 +62,7 @@
         </div>
 
         <Teleport to="body">
-            <PeriodModal
-                :show="this.showPeriodModal"
-                @close="this.showPeriodModal = false"
-                :params="currentPeriod"
-            ></PeriodModal>
+            <PeriodModal></PeriodModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.period.delete')"
@@ -90,11 +86,16 @@ import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import {useGlobalStore} from "../../store/global.js";
 DataTable.use(DataTablesCore);
 
 export default {
-    props: {
-
+    props: {},
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
@@ -123,23 +124,21 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('period-added', (period) => {
-            this.showPeriodModal = false;
+            this.globalStore?.closeModal('period-modal');
             this.periods.push(period);
         });
 
         this.$eventHub.on('period-updated', (period) => {
-            this.showPeriodModal = false;
+            this.globalStore?.closeModal('period-modal');
             this.update(period);
         });
         this.$eventHub.on('createPeriod', () => {
-            this.currentPeriod = {};
-            this.showPeriodModal = true;
+            this.globalStore?.showModal('period-modal', {});
         });
     },
     methods: {
         editPeriod(period){
-            this.currentPeriod = period;
-            this.showPeriodModal = true;
+            this.globalStore?.showModal('period-modal', period);
         },
         loaderEvent(){
             const dt = $('#period-datatable').DataTable();

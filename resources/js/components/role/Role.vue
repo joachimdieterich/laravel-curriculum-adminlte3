@@ -94,6 +94,7 @@ export default {
         this.$eventHub.on('role-updated', (role) => {
             this.currentRole = role;
             this.globalStore?.closeModal('role-modal');
+            window.location.reload(); //reloaad to get permissions
         });
     },
     methods: {

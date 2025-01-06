@@ -56,7 +56,21 @@
                        v-if="form.errors.title_short"
                        v-text="form.errors.title_short[0]"></p>
                 </div>
-
+                <div class="form-group ">
+                    <Select2
+                        id="organization_type_id"
+                        name="organization_type_id"
+                        url="/organizationTypes"
+                        model="organizationType"
+                        option_id="id"
+                        option_label="title"
+                        :selected="this.form.organization_type_id"
+                        @selectedValue="(id) => {
+                        this.form.organization_type_id = id;
+                    }"
+                    >
+                    </Select2>
+                </div>
             </div>
 
             <div class="card-footer">
@@ -83,9 +97,11 @@
 <script>
 import Form from 'form-backend-validation';
 import {useGlobalStore} from "../../store/global";
+import Select2 from "../forms/Select2.vue";
 
 export default {
     name: 'subject-modal',
+    components: {Select2},
     props: {},
     setup() { //use database store
         const globalStore = useGlobalStore();
@@ -103,6 +119,7 @@ export default {
                 'id':'',
                 'title': '',
                 'title_short': '',
+                'organization_type_id': 1,
             }),
             search: '',
         }

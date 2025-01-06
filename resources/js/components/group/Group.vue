@@ -312,6 +312,9 @@
         <Teleport to="body">
             <GroupModal></GroupModal>
         </Teleport>
+        <teleport to="#customTitle">
+            <small>{{ this.currentGroup.title }} </small>
+        </teleport>
     </div>
 </template>
 

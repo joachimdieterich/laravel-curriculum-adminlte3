@@ -45,7 +45,7 @@ app.use(VueDOMPurifyHTML, {
             if ('rel' in currentNode && currentNode.rel == 'noopener') {
                 currentNode.setAttribute('target', '_blank');
             }
-        }   
+        }
     }
 });
 import { useGlobalStore} from "./store/global";

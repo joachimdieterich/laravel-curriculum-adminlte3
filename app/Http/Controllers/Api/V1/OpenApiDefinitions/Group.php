@@ -60,6 +60,11 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *                   description="Organization Id",
 *                   type="integer"
 *               ),
+*               @OA\Property(
+*                    property="common_name",
+*                    description="Common name",
+*                    type="string"
+*                ),
 *           )
 *       )
 *   ),

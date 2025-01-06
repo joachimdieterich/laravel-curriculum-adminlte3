@@ -35,6 +35,7 @@
                         v-model="form.title"
                         placeholder="Title"
                         required
+                        :readonly="this.method == 'patch'"
                         />
                      <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
                 </div>

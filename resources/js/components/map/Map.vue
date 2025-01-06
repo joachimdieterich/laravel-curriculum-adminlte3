@@ -172,6 +172,7 @@
 
         <Teleport to="body">
             <MapModal></MapModal>
+            <MediumPreviewModal></MediumPreviewModal>
             <MarkerModal
                 :map="this.map"
             >
@@ -218,9 +219,11 @@ import Select2 from "../forms/Select2.vue";
 import markerIconUrl from "leaflet/dist/images/marker-icon.png";
 import markerIconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
 import markerShadowUrl from "leaflet/dist/images/marker-shadow.png";
+import MediumPreviewModal from "../media/MediumPreviewModal.vue";
 
 export default {
     components: {
+        MediumPreviewModal,
         Select2,
         MapModal,
         MarkerModal,
@@ -251,6 +254,7 @@ export default {
             bordersGroup: {},
             namesGroup: {},
             markers: {},
+            leafletMarkers:[],
             currentMarker:{},
             clusterGroup: {},
             form: new Form({
@@ -301,6 +305,9 @@ export default {
                 .catch(err => {
                     console.log(err);
                 });
+            console.log('Clustergroup');
+            console.log(this.clusterGroup);
+            console.log('Clustergroup');
         },
         async markerSearch(){
             $("#loading-events").show();
@@ -383,15 +390,21 @@ export default {
                 prefix: 'fa',
                 svg: true
             });
-            return L.marker([lat, lon], {
-                    'icon': svgMarker,
-                    'title': title // accessibility
-                })
+
+            let leafletMarker = L.marker([lat, lon], {
+                'icon': svgMarker,
+                'title': title // accessibility
+            })
                 .bindPopup('<b>'+ title + '</b></br>' + description +'<br/>')
                 .addTo(this.mapCanvas).on('click', function(e) {
-                    this.currentMarker = entry;
-                    this.sidebar.open(sidebar_target);
-                }.bind(this, sidebar_target));
+                this.currentMarker = entry;
+                this.sidebar.open(sidebar_target);
+            }.bind(this, sidebar_target));
+
+            console.log(leafletMarker);
+            this.leafletMarkers.push(leafletMarker);
+
+            return leafletMarker;
         },
         dateforHumans(begin, end = null) {
             if (end === begin || end === null){
@@ -433,6 +446,9 @@ export default {
                         i => i.id === this.currentMarker.id
                     );
                     this.markers.splice(index, 1);
+
+                    this.clusterGroup.clearLayers(); // clear layers, then reload
+                    this.loader();
                 })
                 .catch(err => {
                     console.log(err.response);

@@ -65,7 +65,7 @@
                     ></i>
                 </slot>
             </div>
-            <div v-if="item.owner_id == $userId"
+            <div v-if="item.owner_id == $userId || this.checkPermission('is_admin')"
                  :id="model+'Dropdown_' + item.DT_RowId"
                  class="btn btn-flat pull-right"
                  style="position:absolute; top:0; right: 0; background-color: transparent;"

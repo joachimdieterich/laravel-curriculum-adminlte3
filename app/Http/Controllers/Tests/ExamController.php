@@ -76,15 +76,12 @@ class ExamController extends Controller
 
             switch ($request['filter'])
             {
-
                 case 'student': $exams = auth()->user()->fresh()->exams->where('group_id', $group_id);
-
-        break;
-    case 'all':
-    default:        $exams = Exam::where('group_id', $group_id)
-                            ->with(['group', 'users']);
                     break;
-
+                case 'all':
+                default:        $exams = Exam::where('group_id', $group_id)
+                                        ->with(['group', 'users']);
+                    break;
             }
            // dump($exams);
             foreach($exams as $exam){

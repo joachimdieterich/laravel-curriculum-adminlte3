@@ -75,6 +75,7 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
 {
     function getEntriesForSelect2ByCollection($collection, $table = '', $field = 'title', $oderby = 'title', $text = 'title', $id = 'id' )
     {
+
         $input = request()->validate([
             'page' => 'sometimes|integer',
             'term' => 'sometimes|string|max:255|nullable',

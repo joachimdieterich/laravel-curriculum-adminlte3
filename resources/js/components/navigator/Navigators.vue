@@ -58,7 +58,7 @@
                 :ajax="url"
                 :search="search"
                 width="100%"
-                style="display:none; "
+                style="display:none;"
             ></DataTable>
         </div>
 

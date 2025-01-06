@@ -28,11 +28,6 @@ class CurriculumController extends Controller
             return $this->getEntriesForSelect2();
         }
 
-        //used by subscribeObjectiveModel
-        if (request()->wantsJson()) {
-            return ['curricula' => $this->userCurricula()]; //no gate! every user should get his enrolled curricula
-        }
-
         abort_unless(Gate::allows('curriculum_access'), 403); //check here, cause json return should work for all users
 
         return view('curricula.index');
@@ -170,6 +165,33 @@ class CurriculumController extends Controller
             'archived'              =>  $input['archived'] ?? false,
             'owner_id'              => auth()->user()->id,
         ]);
+
+        switch ($curriculum->type_id) {
+            case 2: // organization
+                CurriculumSubscription::updateOrCreate([
+                    'curriculum_id' => $curriculum->id,
+                    'subscribable_type' => 'App\Organization',
+                    'subscribable_id' => auth()->user()->current_organization_id,
+                ], [
+                    'editable' => true,
+                    'owner_id' => auth()->user()->id,
+                ]);
+            break;
+            case 3: // group
+                //Todo: if type_id == 3 there should be an option to add group_id
+            break;
+            case 4: // user
+            default:
+            CurriculumSubscription::updateOrCreate([
+                'curriculum_id' => $curriculum->id,
+                'subscribable_type' => 'App\User',
+                'subscribable_id' => auth()->user()->id,
+            ], [
+                'editable' => true,
+                'owner_id' => auth()->user()->id,
+            ]);
+            break;
+        }
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
@@ -754,22 +776,44 @@ class CurriculumController extends Controller
         }
         else if (is_schooladmin() || is_teacher())
         {
-            return getEntriesForSelect2ByCollection(
-                Curriculum::where(
-                        function($query) use ($input)
-                        {
-                            $query->whereIn('owner_id', Organization::where('id', auth()->user()->current_organization_id)
-                                ->first()->users()->pluck('id')->toArray())
-                                ->where('title', 'LIKE', '%' . $input['term'] . '%')
-                                ->where('type_id', 1);
-                        })
-                    ->orwhere(
-                        function($query) use ($input)
-                        {
-                            $query->where('title', 'LIKE', '%' . $input['term'] . '%')
-                                  ->where('type_id', 1);
-                        })
-            );
+            $curriculum = Curriculum::whereHas('subscriptions', function ($query) use ($input) {
+                $query->where(
+                    function ($query) {
+                        $query->where('subscribable_type', 'App\\Organization')
+                            ->where('subscribable_id', auth()->user()->current_organization_id);
+                    }
+                )->orWhere(
+                    function ($query) {
+                        $query->where('subscribable_type', 'App\\Group')
+                            ->whereIn('subscribable_id', auth()->user()->groups->pluck('id'));
+                    }
+                )->orWhere(
+                    function ($query) {
+                        $query->where('subscribable_type', 'App\\User')
+                            ->where('subscribable_id', auth()->user()->id);
+                    }
+                )->orWhere(
+                    function ($query) {
+                        $query->where( 'owner_id', auth()->user()->id);
+                    }
+                )->orWhere(
+                    function($query) use ($input)
+                    {
+                        $query->where('title', 'LIKE', '%' . $input['term'] . '%')
+                            ->where('type_id', 1);
+                    }
+                )->orWhere(
+                    function($query) use ($input)
+                    {
+                        $query->whereIn('owner_id', Organization::where('id', auth()->user()->current_organization_id)
+                            ->first()->users()->pluck('id')->toArray())
+                            ->where('title', 'LIKE', '%' . $input['term'] . '%')
+                            ->where('type_id', 1);
+                    }
+                );
+            });
+
+            return getEntriesForSelect2ByCollection($curriculum);
         }
         else
         {

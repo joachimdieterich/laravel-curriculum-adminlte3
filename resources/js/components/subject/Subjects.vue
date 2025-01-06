@@ -127,7 +127,7 @@ export default {
             this.globalStore?.closeModal('subject-modal');
             this.update(subject);
         });
-        this.$eventHub.on('createRole', () => {
+        this.$eventHub.on('createSubject', () => {
             this.globalStore?.showModal('subject-modal', {});
         });
     },

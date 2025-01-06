@@ -498,7 +498,6 @@ app.directive('hide-if-permission', function (el, binding) {
  */
 app.directive('permission', function (el, binding, vnode) {
         let allowed = false;
-        console.log(binding.value.split(','));
         binding.value.split(',').forEach(function (permission){
             if(window.Laravel.permissions.indexOf(permission.trim()) !== -1) {
                 allowed = true;

@@ -22,10 +22,12 @@
                 </div>
             </div>
 
-            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                <Notes :notable_type="this.form.notable_type"
-                       :notable_id="this.form.notable_id"
-                       :show_tabs="this.form.show_tabs"></Notes>
+            <div class="modal-body">
+                <Notes
+                    :notable_type="this.form.notable_type"
+                    :notable_id="this.form.notable_id"
+                    :show_tabs="this.form.show_tabs"
+                />
             </div>
 
             <div class="card-footer">

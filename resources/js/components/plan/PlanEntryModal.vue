@@ -24,7 +24,7 @@
                     </div>
                 </div>
 
-                <div class="card-body">
+                <div class="modal-body">
                     <div class="form-group input-group align-items-center">
                         <v-swatches
                             :swatch-size="49"

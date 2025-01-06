@@ -16,7 +16,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                <div class="modal-body">
                     <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                         <Select2
                             :id="'subject_' + component_id "

@@ -24,10 +24,7 @@
                     </div>
                 </div>
 
-                <div
-                    class="card-body"
-                    style="max-height: 80vh; overflow-y: auto;"
-                >
+                <div class="modal-body">
                     <div class="form-group">
                         <input
                             id="title"
@@ -69,14 +66,13 @@
                             v-model="this.form.color"
                             show-fallback
                             fallback-input-type="color"
-
                             @input="(id) => {
-                                    if(id.isInteger){
-                                      this.form.color = id;
-                                    }
-                                }"
+                                if(id.isInteger) {
+                                    this.form.color = id;
+                                }
+                            }"
                             :max-height="300"
-                        ></v-swatches>
+                        />
                     </div>
                     <!-- PERMISSIONS -->
                     <div
@@ -100,7 +96,7 @@
                             :select-text="trans('global.ok')"
                             :cancel-text="trans('global.close')"
                             :placeholder="trans('global.kanbanItem.fields.due_date')"
-                        ></VueDatePicker>
+                        />
 
                         <span class="custom-control custom-switch custom-switch-on-green">
                             <input
@@ -158,8 +154,7 @@
                                 {{ trans('global.visibility') }}
                             </label>
                         </span>
-                        <VueDatePicker
-                            v-if="form.visibility"
+                        <VueDatePicker  v-if="form.visibility"
                             id="visible_date"
                             name="visible_date"
                             class="my-2"
@@ -172,7 +167,7 @@
                             :select-text="trans('global.ok')"
                             :cancel-text="trans('global.close')"
                             :placeholder="trans('global.kanbanItem.fields.visible_from_to')"
-                        ></VueDatePicker>
+                        />
                     </div>
                 </div>
 

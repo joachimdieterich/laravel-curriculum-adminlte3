@@ -14,16 +14,19 @@
                     </span>
                     </h3>
                     <div class="card-tools">
-                        <button type="button"
-                                class="btn btn-tool"
-                                @click="globalStore?.closeModal($options.name)">
+                        <button
+                            type="button"
+                            class="btn btn-tool"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
                             <i class="fa fa-times"></i>
                         </button>
                     </div>
                 </div>
-                <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                    <div class="form-logbook "
-                         :class="form.errors.title ? 'has-error' : ''"
+                <div class="modal-body">
+                    <div
+                        class="form-logbook "
+                        :class="form.errors.title ? 'has-error' : ''"
                     >
                         <label for="title">{{ trans('global.logbook.fields.title') }} *</label>
                         <input
@@ -35,12 +38,13 @@
                             :placeholder="trans('global.title')"
                             required
                         />
-                        <p class="help-block"
-                           v-if="form.errors.title"
-                           v-text="form.errors.title[0]"></p>
+                        <p v-if="form.errors.title"
+                            class="help-block"
+                            v-text="form.errors.title[0]"
+                        ></p>
                     </div>
 
-                    <div class="form-group ">
+                    <div class="form-group">
                         <label for="description">
                             {{ trans('global.logbook.fields.description') }}
                         </label>
@@ -51,82 +55,86 @@
                             :init="tinyMCE"
                             v-model="form.description"
                         />
-                        <p class="help-block"
-                           v-if="form.errors.description"
-                           v-text="form.errors.description[0]">
-                        </p>
+                        <p v-if="form.errors.description"
+                            class="help-block"
+                            v-text="form.errors.description[0]"
+                        ></p>
                     </div>
-                </div>
-                <div class="card-header border-bottom"
-                     data-card-widget="collapse">
-                    <h5 class="card-title">
-                        Darstellung
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <v-swatches
-                            :swatch-size="49"
-                            :trigger-style="{}"
-                            popover-to="right"
-                            v-model="this.form.color"
-                            show-fallback
-                            fallback-input-type="color"
 
-                            @input="(id) => {
-                                    if(id.isInteger){
-                                      this.form.color = id;
+                    <div
+                        class="card-header border-bottom"
+                        data-card-widget="collapse"
+                    >
+                        <h5 class="card-title">
+                            Darstellung
+                        </h5>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <v-swatches
+                                :swatch-size="49"
+                                :trigger-style="{}"
+                                popover-to="right"
+                                v-model="this.form.color"
+                                show-fallback
+                                fallback-input-type="color"
+                                @input="(id) => {
+                                    if(id.isInteger) {
+                                        this.form.color = id;
                                     }
                                 }"
-                            :max-height="300"
-                        ></v-swatches>
-                        <MediumForm
-                            class="pull-right"
-                            :id="'medium_id_' + component_id"
-                            :medium_id="form.medium_id"
-                            accept="image/*"
-                            :selected="this.form.medium_id"
-                            @selectedValue="(id) => {
-                                this.form.medium_id = id;
-                            }"
-                        >
-                        </MediumForm>
-
-                        <div class="dropdown">
-                            <button
-                                class="btn btn-default"
-                                style="width: 42px; padding: 6px 0px;"
-                                type="button"
-                                data-toggle="dropdown"
-                                aria-expanded="false"
-                            >
-                                <i :class="form.css_icon + ' pt-2'"></i>
-                            </button>
-                            <font-awesome-picker
-                                class="dropdown-menu dropdown-menu-right"
-                                style="min-width: 400px;"
-                                :searchbox="trans('global.select_icon')"
-                                v-on:selectIcon="setIcon"
-                            ></font-awesome-picker>
+                                :max-height="300"
+                            />
+                            <MediumForm
+                                class="pull-right"
+                                :id="'medium_id_' + component_id"
+                                :medium_id="form.medium_id"
+                                accept="image/*"
+                                :selected="this.form.medium_id"
+                                @selectedValue="(id) => {
+                                    this.form.medium_id = id;
+                                }"
+                            />
+    
+                            <div class="dropdown">
+                                <button
+                                    class="btn btn-default"
+                                    style="width: 42px; padding: 6px 0px;"
+                                    type="button"
+                                    data-toggle="dropdown"
+                                    aria-expanded="false"
+                                >
+                                    <i :class="form.css_icon + ' pt-2'"></i>
+                                </button>
+                                <font-awesome-picker
+                                    class="dropdown-menu dropdown-menu-right"
+                                    style="min-width: 400px;"
+                                    :searchbox="trans('global.select_icon')"
+                                    v-on:selectIcon="setIcon"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="card-footer">
-                 <span class="pull-right">
-                     <button
-                         id="logbook-cancel"
-                         type="button"
-                         class="btn btn-default"
-                         @click="globalStore?.closeModal($options.name)">
-                         {{ trans('global.cancel') }}
-                     </button>
-                     <button
-                         id="logbook-save"
-                         class="btn btn-primary"
-                         @click="submit(method)" >
-                         {{ trans('global.save') }}
-                     </button>
-                </span>
+                    <span class="pull-right">
+                        <button
+                            id="logbook-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="logbook-save"
+                            class="btn btn-primary"
+                            @click="submit(method)"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
+                    </span>
                 </div>
             </div>
         </div>

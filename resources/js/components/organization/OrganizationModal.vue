@@ -21,11 +21,11 @@
                     </button>
                  </div>
             </div>
-            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                <div v-permission="'is_admin'"
-                    v-if="(!onlyAddress && !onlyLmsUrl)"
-                     class="form-group "
-                     :class="form.errors.common_name ? 'has-error' : ''"
+            <div class="modal-body">
+                <div v-if="(!onlyAddress && !onlyLmsUrl)"
+                    v-permission="'is_admin'"
+                    class="form-group "
+                    :class="form.errors.common_name ? 'has-error' : ''"
                 >
                     <label for="title">{{ trans('global.organization.fields.common_name') }}</label>
                     <input

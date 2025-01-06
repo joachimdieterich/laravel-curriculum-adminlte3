@@ -22,8 +22,8 @@
                     </div>
                 </div>
 
-                <div class="modal-body">
-                    <div class="form-group ">
+                <div class="modal-body" style="overflow: visible;">
+                    <div class="form-group">
                         <Select2
                             id="curriculum_id"
                             name="curriculum_id"
@@ -100,6 +100,7 @@
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
+import axios from 'axios';
 
 export default {
     name: 'subscribe-objective-modal',
@@ -156,7 +157,6 @@ export default {
                     'subscribable_id':          this.form.subscribable_id
                 })
                 .then(response => {
-                    console.log(response);
                     this.$eventHub.emit('subscriptions-added', response.data);
                 })
                 .catch(e => {
@@ -164,20 +164,19 @@ export default {
                 });
             } else {
                 this.url = '/enablingObjectiveSubscriptions';
-                this.form.enabling_objective_id.forEach(id => {
-                    axios.post(this.url, {
-                        'curriculum_id':            this.form.curriculum_id,
-                        'terminal_objective_id':    this.form.terminal_objective_id,
-                        'enabling_objective_id':    id,
-                        'subscribable_type':        this.form.subscribable_type,
-                        'subscribable_id':          this.form.subscribable_id
-                    })
-                    .then(r => {
-                        this.$eventHub.emit('subscriptions-added', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
+
+                axios.post(this.url, {
+                    'terminal_objective_id':    this.form.terminal_objective_id,
+                    'enabling_objective_id':    this.form.enabling_objective_id,
+                    'subscribable_type':        this.form.subscribable_type,
+                    'subscribable_id':          this.form.subscribable_id
+                })
+                .then(r => {
+                    console.log(r.data);
+                    this.$eventHub.emit('subscriptions-added', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
                 });
             }
         },

@@ -15,7 +15,7 @@
                         role="tab"
                         @click="setFilter('all')"
                     >
-                        <i class="fas fa-th pr-2"></i>
+                        <i class="fas fa-clipboard-list pr-2"></i>
                         {{ trans('global.all') }} {{ trans('global.plan.title') }}
                     </a>
                 </li>
@@ -128,7 +128,7 @@
                         <button v-if="plan.allow_copy"
                             :name="'copy-plan-'+plan.id"
                             class="dropdown-item text-secondary"
-                            @click.prevent="confirmPlanCopy(plan)"
+                            @click.prevent="confirmCopy(plan)"
                         >
                             <i class="fa fa-copy mr-2"></i>
                             {{ trans('global.plan.copy') }}
@@ -139,7 +139,7 @@
                             :id="'delete-plan-' + plan.id"
                             type="submit"
                             class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(plan)"
+                            @click.prevent="confirmDelete(plan)"
                         >
                             <span v-if="create_label_field == 'enrol'">
                                 <i class="fa fa-unlink mr-2"></i>
@@ -170,8 +170,8 @@
         </div>
 
         <Teleport to="body">
-            <SubscribePlanModal v-if="subscribable"></SubscribePlanModal>
-            <PlanModal v-if="!subscribable"></PlanModal>
+            <SubscribePlanModal/>
+            <PlanModal/>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.plan.' + delete_label_field)"
@@ -181,7 +181,7 @@
                 }"
                 @confirm="() => {
                     this.showConfirm = false;
-                    this.destroy();
+                    this.delete();
                 }"
             ></ConfirmModal>
             <ConfirmModal
@@ -213,10 +213,6 @@ DataTable.use(DataTablesCore);
 
 export default {
     props: {
-        subscribable: {
-            type: Boolean,
-            default: false
-        },
         create_label_field: {
             type: String,
             default: 'create'
@@ -259,35 +255,15 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('plan-added', (plan) => {
-            if (!this.subscribable) {
-                this.globalStore?.closeModal('plan-modal');
-            } else {
-                this.globalStore?.closeModal('subscribe-plan-modal');
-            }
-
             this.plans.push(plan);
         });
 
         this.$eventHub.on('plan-updated', (plan) => {
-            this.globalStore?.closeModal('plan-modal');
             this.update(plan);
         });
 
         this.$eventHub.on('plan-subscription-added', () => {
-            this.globalStore?.closeModal('subscribe-plan-modal');
             this.loaderEvent();
-        });
-
-        this.$eventHub.on('createPlan', () => {
-            if (!this.subscribable) {
-                this.globalStore?.showModal('plan-modal', {});
-            } else {
-                this.globalStore?.showModal('subscribe-plan-modal', {
-                    'reference': {},
-                    'subscribable_type': this.subscribable_type,
-                    'subscribable_id': this.subscribable_id,
-                });
-            }
         });
     },
     methods: {
@@ -316,18 +292,18 @@ export default {
                 this.dt.search(filter).draw();
             });
         },
-        confirmItemDelete(plan) {
+        confirmDelete(plan) {
             this.currentPlan = plan;
             this.showConfirm = true;
         },
-        confirmPlanCopy(plan) {
+        confirmCopy(plan) {
             this.currentPlan = plan;
             this.showCopy = true;
         },
         copy() {
             window.location = "/plans/" + this.currentPlan.id + "/copy";
         },
-        destroy() {
+        delete() {
             axios.delete('/plans/' + this.currentPlan.id)
                 .then(res => {
                     let index = this.plans.indexOf(this.currentPlan);
@@ -337,14 +313,9 @@ export default {
                     console.log(err.response);
                 });
         },
-        update(plan) {
-            const index = this.plans.findIndex(
-                vc => vc.id === plan.id
-            );
-
-            for (const [key, value] of Object.entries(plan)) {
-                this.plans[index][key] = value;
-            }
+        update(updatedPlan) {
+            let plan = this.plans.find(plan => plan.id === updatedPlan.id);
+            Object.assign(plan, updatedPlan);
         }
     },
     components: {

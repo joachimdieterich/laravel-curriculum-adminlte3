@@ -62,9 +62,12 @@
         </div> -->
         <Teleport to="body">
             <PlanModal/>
+            <PlanEntryModal :plan="plan"/>
             <SetAchievementsModal
                 :users="users"
             ></SetAchievementsModal>
+            <SubscribeModal/>
+            <SubscribeObjectiveModal/>
         </Teleport>
         <Teleport v-if="$userId == plan.owner_id"
             to="#customTitle"
@@ -90,7 +93,10 @@
 import draggable from "vuedraggable";
 import SetAchievementsModal from "./SetAchievementsModal.vue";
 import PlanEntry from './PlanEntry.vue';
+import PlanEntryModal from "./PlanEntryModal.vue";
 import PlanModal from "./PlanModal.vue";
+import SubscribeModal from "../subscription/SubscribeModal.vue";
+import SubscribeObjectiveModal from "../objectives/SubscribeObjectiveModal.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {
@@ -107,7 +113,7 @@ export default {
             default: null
         }
     },
-    setup () {
+    setup() {
         const globalStore = useGlobalStore();
         return {
             globalStore,
@@ -163,10 +169,11 @@ export default {
             this.entry_order.push(entry.id);
             this.updateEntryOrder();
         },
-        handleEntryUpdated(entry) {
-            // TODO
+        handleEntryUpdated(updatedEntry) {
+            let entry = this.entries.find(e => e.id === updatedEntry.id);
+            Object.assign(entry, updatedEntry);
         },
-        handleEntryDeleted(entry){
+        handleEntryDeleted(entry) {
             let index = this.entries.indexOf(entry);
             this.entries.splice(index, 1);
             this.entry_order.splice(index, 1);
@@ -195,13 +202,13 @@ export default {
             this.currentPlan = e;
         });
         // ENTRY events
-        this.$eventHub.on('plan_entry_added', (e) => {
+        this.$eventHub.on('plan-entry-added', (e) => {
             this.handleEntryAdded(e);
         });
-        this.$eventHub.on('plan_entry_updated', (e) => {
+        this.$eventHub.on('plan-entry-updated', (e) => {
             this.handleEntryUpdated(e);
         });
-        this.$eventHub.on('plan_entry_deleted', (e) => {
+        this.$eventHub.on('plan-entry-deleted', (e) => {
             this.handleEntryDeleted(e);
         });
     },
@@ -219,9 +226,12 @@ export default {
         },
     },
     components: {
-        SetAchievementsModal,
         PlanModal,
         PlanEntry,
+        PlanEntryModal,
+        SetAchievementsModal,
+        SubscribeModal,
+        SubscribeObjectiveModal,
         draggable,
     },
 }

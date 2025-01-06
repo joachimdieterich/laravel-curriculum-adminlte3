@@ -67,7 +67,6 @@
              class="col-md-12 m-0">
             <IndexWidget
                 v-permission="'logbook_create'"
-                v-if="((filter === 'all' && this.subscribable_type ===  null && this.subscribable_id ===  null) || filter  === 'owner')"
                 key="logbookCreate"
                 modelName="Logbook"
                 url="/logbooks"

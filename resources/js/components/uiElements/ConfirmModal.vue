@@ -19,7 +19,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                <div class="modal-body">
                     {{ this.description}}
                 </div>
                 <div class="card-footer">

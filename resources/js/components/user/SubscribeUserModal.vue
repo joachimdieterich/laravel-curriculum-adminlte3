@@ -21,7 +21,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                <div class="modal-body">
                     <Select2
                         id="users_subscription"
                         name="users_subscription"
@@ -33,8 +33,7 @@
                         @selectedValue="(id) => {
                             this.form.user_id = id;
                         }"
-                    >
-                    </Select2>
+                    />
                 </div>
                 <div class="card-footer">
                  <span class="pull-right">

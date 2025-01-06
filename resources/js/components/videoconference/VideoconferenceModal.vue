@@ -23,7 +23,7 @@
                 </div>
             </div>
 
-            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+            <div class="modal-body">
                 <div class="form-group">
                     <input
                         type="text"

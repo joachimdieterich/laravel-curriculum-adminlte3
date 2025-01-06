@@ -254,6 +254,10 @@ export default {
 
         this.loaderEvent();
 
+        this.$eventHub.on('createPlan', (plan) => {
+            this.globalStore.showModal('plan-modal', {});
+        });
+
         this.$eventHub.on('plan-added', (plan) => {
             this.plans.push(plan);
         });

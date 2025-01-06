@@ -135,7 +135,7 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link lists table code"
+                    "autolink link lists table code autoresize"
                 ],
                 {
                     eventHubCallbackFunction: 'insertContent',

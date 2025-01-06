@@ -256,7 +256,7 @@ export default {
                 'subscribe-modal',
                 {
                     'modelId': curriculum.id,
-                    'modelUrl': 'curriculum' ,
+                    'modelUrl': 'curriculum',
                     'shareWithUsers': true,
                     'shareWithGroups': true,
                     'shareWithOrganizations': true,

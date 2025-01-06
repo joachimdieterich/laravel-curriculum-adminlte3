@@ -38,7 +38,7 @@
                 <button
                     v-if="$userId == subscription.owner_id"
                     class="btn btn-flat py-0 pull-right"
-                        @click="unsubscribe(subscription.id)">
+                        @click="unsubscribe(subscription)">
                     <i class="fa fa-trash text-danger vuehover" ></i>
                 </button>
             </li>
@@ -67,13 +67,14 @@
             }
         },
         methods: {
-            async unsubscribe(id) { //id of external reference and value in db
+            async unsubscribe(subscription) { //id of external reference and value in db
                 try {
-                    await axios.delete('/' + this.modelUrl + 'Subscriptions/' + id  ).data;
+                    await axios.delete('/' + this.modelUrl + 'Subscriptions/' + subscription.id  ).data;
                 } catch(error) {
                     //this.errors = error.response.data.errors;
                 }
-                $("#subscription_"+id).hide();
+                this.$eventHub.emit('unsubscribe', subscription);
+                //$("#subscription_"+id).hide();
             },
             async setPermission(id, status) { //id of external reference and value in db
                 try {

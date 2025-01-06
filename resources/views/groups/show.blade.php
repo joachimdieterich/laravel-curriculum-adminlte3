@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    {{ $group->title }}
+    <title-component></title-component>
 @endsection
 @section('breadcrumb')
     <breadcrumbs

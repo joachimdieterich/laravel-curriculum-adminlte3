@@ -1,7 +1,7 @@
 @extends((Auth::user()->id == env('GUEST_USER')) ? 'layouts.contentonly' : 'layouts.master')
 
 @section('title')
-    {{ $curriculum->title }}
+    <title-component></title-component>
 @endsection
 @section('breadcrumb')
     @if (Auth::user()->id == env('GUEST_USER'))

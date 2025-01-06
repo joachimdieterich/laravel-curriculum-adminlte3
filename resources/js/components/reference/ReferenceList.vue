@@ -1,6 +1,6 @@
 <template>
     <div>
-        <span v-for="terminal_subscription in entry.terminal_objective_subscriptions">
+        <span v-for="terminal_subscription in subscriptions.terminal_objective_subscriptions">
             <objective-box
                 v-bind:key="terminal_subscription.id"
                 :objective="terminal_subscription.terminal_objective"
@@ -15,7 +15,7 @@
             </button>
         </span>
         <span class="clearfix"></span>
-        <span v-for="enabling_subscription in entry.enabling_objective_subscriptions"
+        <span v-for="enabling_subscription in subscriptions.enabling_objective_subscriptions"
         >
             <objective-box
                 :objective="enabling_subscription.enabling_objective.terminal_objective"
@@ -71,12 +71,30 @@ export default {
     },
     data() {
         return {
+            subscriptions: [],
             settings: {
                 'edit': false,
             },
         }
     },
     methods: {
+        loaderEvent() {
+            console.log('Ddd');
+            axios.get('/terminalObjectiveSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id)
+                .then(response => {
+                    this.subscriptions.terminal_objective_subscriptions = response.data.subscriptions;
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+            axios.get('/enablingObjectiveSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id)
+                .then(response => {
+                    this.subscriptions.enabling_objective_subscriptions = response.data.subscriptions;
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        },
         create(){
             this.globalStore?.showModal('subscribe-objective-modal',{
                 'subscribable_type': this.subscribable_type,
@@ -87,17 +105,23 @@ export default {
         del(type, subscription) { //id of external reference and value in db
             axios.post('/' + type + 'ObjectiveSubscriptions/destroy', subscription)
                 .then((res) => {
-
+                    this.loaderEvent();
                 })
                 .catch((error) => {
                     console.log(error);
                 });
-
         },
     },
     mounted() {
+        this.subscriptions = this.entry;
         this.$eventHub.on('subscriptions_added', (subscription) => {
-            this.globalStore?.closeModal('subscribe-objective-modall');
+            if(
+                subscription.subscribable_type  === this.subscribable_type
+                && subscription.subscribable_id === this.subscribable_id
+            ){
+                this.globalStore?.closeModal('subscribe-objective-modal');
+                this.loaderEvent();
+            }
         });
     }
 }

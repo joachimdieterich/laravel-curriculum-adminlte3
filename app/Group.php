@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  *      @OA\Property( property="grade_id", type="integer"),
  *      @OA\Property( property="period_id", type="integer"),
  *      @OA\Property( property="organization_id", type="integer"),
+ *      @OA\Property( property="common_name", type="string"),
  *      @OA\Property( property="created_at", type="string"),
  *      @OA\Property( property="updated_at", type="string")
  *   ),

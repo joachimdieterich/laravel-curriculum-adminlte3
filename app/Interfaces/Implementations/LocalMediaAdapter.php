@@ -62,7 +62,8 @@ class LocalMediaAdapter implements MediaInterface
             $uploaded = new Collection();
             $pathPrefix = '/users/'.auth()->user()->id;//.'/';
             foreach ($files as $file) {
-                $filename = time().'_'.pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME).'.'.$file->getClientOriginalExtension(); //todo: filename should be editable
+                $cleanFilename = $this->cleanFileName(time().'_'.pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+                $filename = $cleanFilename.'.'.$file->getClientOriginalExtension(); //todo: filename should be editable
 
                 if ($file->storeAs($pathPrefix.$input['path'], $filename, config('filesystems.default'))) {
                     $uploaded->push($this->onStore($file, $filename, $input));
@@ -76,6 +77,13 @@ class LocalMediaAdapter implements MediaInterface
 
             return response()->json($uploaded->all());
         }
+    }
+
+    private function cleanFileName($string) {
+        $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+        $string = preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+
+        return preg_replace('/-+/', '-', $string); // Replaces multiple hyphens with single one.
     }
 
     public function show(Medium $medium)

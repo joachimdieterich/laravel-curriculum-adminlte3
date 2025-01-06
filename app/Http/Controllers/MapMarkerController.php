@@ -117,6 +117,8 @@ class MapMarkerController extends Controller
         abort_unless((\Gate::allows('map_delete') and $mapMarker->owner_id === auth()->user()->id), 403);
 
         $mapMarker->mediaSubscriptions()->delete();
+        $mapMarker->subscriptions()->delete();
+
         $return = $mapMarker->delete();
         if (request()->wantsJson()) {
             return [ $return];

@@ -388,6 +388,9 @@ return [
         'title_singular' => 'Berechtigung',
         'create' => 'Berechtigung erstellen',
         'edit' => 'Berechtigung bearbeiten',
+        'delete' => 'Berechtigung löschen',
+        'delete_helper' => 'Soll die Berechtigung sowie die zugehörigen Daten gelöscht werden?',
+
     ],
     'organization_management' => 'Organisationsverwaltung',
     'organization' => [
@@ -448,6 +451,8 @@ return [
         'title_singular' => 'Organisation-Typ',
         'create' => 'Organisation-Typ erstellen',
         'edit' => 'Organisation-Typ bearbeiten',
+        'delete' => 'Organisation-Typ löschen',
+        'delete_helper' => 'Soll der Organisation-Typ sowie die zugehörigen Daten gelöscht werden?',
         'fields' => [
             'external_id' => 'External ID',
             'external_id_helper' => '',
@@ -513,6 +518,8 @@ return [
         'title_singular' => 'Fach',
         'create' => 'Fach erstellen',
         'edit' => 'Fach bearbeiten',
+        'delete' => 'Fach löschen',
+        'delete_helper' => 'Soll das Fach sowie die zugehörigen Daten gelöscht werden?',
         'fields' => [
             'title_short' => 'Titel (kurz)',
             'title_short_helper' => '',

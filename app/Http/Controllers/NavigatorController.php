@@ -78,10 +78,6 @@ class NavigatorController extends Controller
     {
         abort_unless(\Gate::allows('navigator_access'), 403);
         $model = 'navigator'; //strtolower(class_basename( $navigator ));
-/*
-        return view('navigators.show')
-            ->with(compact('navigator'))
-            ->with(compact('model'));*/
 
 
         $view = NavigatorView::where('navigator_id', $navigator->id)
@@ -144,6 +140,8 @@ class NavigatorController extends Controller
     public function destroy(Navigator $navigator)
     {
         abort_unless(\Gate::allows('navigator_delete'), 403);
+
+        $navigator->views()->delete(); //delete views
 
         return $navigator->delete();
     }

@@ -443,16 +443,6 @@ class CertificateController extends Controller
             ->setOption('enable-local-file-access', true)
             ->save(storage_path('app/'.$path.$filename));
         return $this->addFileToDb($filename);
-
-        // replaced
-  /*      SnappyPdf::loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'.$html)
-                ->setPaper('a4')
-                ->setOrientation($orientation)
-                ->setOption('margin-bottom', 0)
-                ->setOption('enable-local-file-access', true)
-                ->save(storage_path('app/'.$path.$filename));
-
-        return $this->addFileToDb($filename);*/
     }
 
     protected function zipper($path, $files)

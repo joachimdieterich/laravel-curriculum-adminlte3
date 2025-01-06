@@ -6,12 +6,12 @@
                 <li class="nav-item">
                     <a class="nav-link "
                        :class="filter === 'all' ? 'active' : ''"
-                       id="curriculum-filter-all"
+                       id="custom-filter-all"
                        @click="setFilter('all')"
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fas fa-th pr-2"></i>{{ trans('global.all') }} {{ trans('global.curriculum.title') }}
+                        <i class="fas fa-th pr-2"></i>{{ trans('global.all') }} {{ trans('global.videoconference.title') }}
                     </a>
                 </li>
                 <li class="nav-item">
@@ -34,7 +34,7 @@
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fa fa-user pr-2"></i>{{ trans('global.my') }} {{ trans('global.curriculum.title') }}
+                        <i class="fa fa-user pr-2"></i>{{ trans('global.my') }} {{ trans('global.videoconference.title') }}
                     </a>
                 </li>
                 <li class="nav-item">

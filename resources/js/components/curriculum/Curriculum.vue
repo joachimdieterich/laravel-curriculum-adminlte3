@@ -204,7 +204,20 @@
             <ContentModal></ContentModal>
             <CertificateModal></CertificateModal>
             <GenerateCertificateModal></GenerateCertificateModal>
+            <SubscribeModal></SubscribeModal>
         </Teleport>
+
+        <teleport to="#customTitle">
+            <small>{{ this.curriculum.title }} </small>
+            <button v-if="$userId == this.curriculum.owner_id"
+                    v-permission="'kanban_create'"
+                    class="btn btn-flat"
+                    @click="share()"
+            >
+                <i class="fa fa-share-alt text-secondary"></i>
+            </button>
+        </teleport>
+
     </div>
 </template>
 
@@ -214,7 +227,7 @@ import Media from "../media/Media.vue";
 import TerminalObjectives from '../objectives/TerminalObjectives.vue'
 import Glossars from '../glossar/Glossars.vue';
 import Contents from '../content/Contents.vue';
-
+import SubscribeModal from "../subscription/SubscribeModal.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import 'datatables.net-select-bs5';
@@ -242,7 +255,8 @@ export default {
         Glossars,
         Contents,
         DataTable,
-        Media
+        Media,
+        SubscribeModal
     },
     props: {
         curriculum: {
@@ -339,7 +353,18 @@ export default {
                     'url': '/curricula/' + this.curriculum.id + '/export',
                     'header': window.trans.global.curriculum.export
                 });
-        }
+        },
+        share() {
+            this.globalStore?.showModal('subscribe-modal', {
+                'modelId': this.curriculum.id,
+                'modelUrl': 'curriculum',
+                'shareWithUsers': true,
+                'shareWithGroups': true,
+                'shareWithOrganizations': true,
+                'shareWithToken': true,
+                'canEditCheckbox': true
+            });
+        },
         /*externalEvent: function(ids) {
             this.reloadEnablingObjectives(ids);
         },

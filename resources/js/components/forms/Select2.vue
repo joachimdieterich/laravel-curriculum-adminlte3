@@ -179,6 +179,11 @@ export default {
                 // prevent toggling the dropdown after removing an option
                 e.params.originalEvent.stopPropagation();
             }.bind(this))
+            .on("select2:open", function(e) {
+                  if (!this.multiple) {
+                      this.componentInstance.val(null).trigger('change'); //reset selection, only if not multiple = true
+                  }
+            }.bind(this));
                 // .val(this.selected).trigger('change'); //wont work for ajax -> data isn't present yet
 
             if (typeof this.selected === 'object' || this.selected !== false) {

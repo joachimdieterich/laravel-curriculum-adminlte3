@@ -19,10 +19,9 @@
         <div>{{ this.marker.author }}</div>
 
         <h5 class="pt-3">{{ trans('global.description') }}</h5>
-        <div class="pb-2"
-             v-dompurify-html="this.marker.description"></div>
+        <div class="pb-2" v-html="this.marker.description"></div>
 
-        <h5 class="pt-3">{{ trans('global.medium.title') }}</h5>
+        <h5 class="pt-3 clearfix">{{ trans('global.medium.title') }}</h5>
         <div v-if="marker.id != null"
              v-permission="'medium_access'"
              v-bind:id="'map_marker_media_'+marker.id">

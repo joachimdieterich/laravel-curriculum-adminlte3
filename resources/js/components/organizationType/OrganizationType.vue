@@ -10,13 +10,12 @@
                         </h5>
                     </div>
                     <div
-                        v-permission="'organizationType_edit'"
+                        v-permission="'organization_type_edit'"
                         class="card-tools pr-2">
                         <a  @click="editOrganizationType(organizationType)">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
                     </div>
-
                 </div>
 
                 <div class="card-body">
@@ -85,7 +84,6 @@ export default {
         editOrganizationType(organizationType){
             this.currentOrganizationType = organizationType;
             this.globalStore?.showModal('organization-type-modal', this.currentOrganizationType);
-
         },
     }
 

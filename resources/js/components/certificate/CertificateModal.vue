@@ -191,6 +191,10 @@ export default {
         submit(method) {
             this.form.body = tinyMCE.get('body').getContent();
 
+            if (this.form.body == ''){ //body can be empty for group certificates
+                this.form.body = '<p></p>';
+            }
+
             if (method === 'patch') {
                 this.update();
             } else {

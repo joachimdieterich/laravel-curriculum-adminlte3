@@ -244,7 +244,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     /* organizationtype */
     Route::get('organizationTypes/list', 'OrganizationTypesController@list')->name('organizationTypes.list');
-    Route::delete('organizationTypes/destroy', 'OrganizationTypesController@massDestroy')->name('organizationTypes.massDestroy');
+    //Route::delete('organizationTypes/destroy', 'OrganizationTypesController@massDestroy')->name('organizationTypes.massDestroy');
     Route::resource('organizationTypes', 'OrganizationTypesController');
 
     /* period */

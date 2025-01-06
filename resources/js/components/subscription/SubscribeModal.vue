@@ -314,6 +314,11 @@ export default {
                 }
             }
         });
+
+        this.$eventHub.on('unsubscribe', (subscription) => {
+            let index = this.subscribers.subscriptions.indexOf(subscription);
+            this.subscribers.subscriptions.splice(index, 1);
+        });
     },
     components: {
         subscribers,

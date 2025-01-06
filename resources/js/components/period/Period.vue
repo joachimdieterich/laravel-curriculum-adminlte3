@@ -11,7 +11,7 @@
                     </div>
                     <div
                         v-permission="'organization_edit'"
-                        class="card-tools pr-2">
+                        class="card-tools pr-2 pointer">
                         <a  @click="editPeriod()">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
@@ -37,17 +37,14 @@
         </div>
 
         <Teleport to="body">
-            <PeriodModal
-                :show="this.showPeriodModal"
-                @close="this.showPeriodModal = false"
-                :params="this.currentPeriod"
-            ></PeriodModal>
+            <PeriodModal></PeriodModal>
         </Teleport>
     </div>
 </template>
 
 <script>
 import PeriodModal from "../period/PeriodModal.vue";
+import {useGlobalStore} from "../../store/global";
 
 export default {
     name: "period",
@@ -59,6 +56,12 @@ export default {
             default: null
         },
     },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
     data() {
         return {
             componentId: this.$.uid,
@@ -69,14 +72,14 @@ export default {
     mounted() {
         this.currentPeriod = this.period;
         this.$eventHub.on('period-updated', (period) => {
+            this.globalStore?.closeModal('period-modal');
             this.currentPeriod = period;
-            this.showPeriodModal = false;
         });
 
     },
     methods: {
         editPeriod(){
-            this.showPeriodModal = true;
+            this.globalStore?.showModal('period-modal', this.currentPeriod);
         },
     }
 }

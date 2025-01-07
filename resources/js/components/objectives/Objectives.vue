@@ -72,83 +72,65 @@ export default {
                 'achievements' : true,
             },
             subscriptions: [],
-            enablingSubscriptions: [],
-            terminalSubscriptions: [],
+            enablingCall: null,
+            terminalCall: null,
             errors: {},
         }
     },
+    computed: {
+        callFinished() {
+            return this.terminalCall !== null && this.enablingCall !== null;
+        },
+    },
+    watch: {
+        // function gets only called once, after both axios-calls are finished
+        callFinished(finished) {
+            if (finished) this.checkSubscriptions();
+        },
+    },
     methods: {
-        async loaderEvent() {
+        loaderEvent() {
+            const start = new Date().getTime();
             //TODO: might need a loading indicator
             // since we need to wait for two sequentiell axios-calls, this might take a long time to load
-            await axios.get('/terminalObjectiveSubscriptions?subscribable_type=' + this.referenceable_type + '&subscribable_id=' + this.referenceable_id)
+            axios.get('/terminalObjectiveSubscriptions?subscribable_type=' + this.referenceable_type + '&subscribable_id=' + this.referenceable_id)
                 .then(response => {
-                    this.terminalSubscriptions = response.data.subscriptions;
+                    console.log('terminal', new Date().getTime() - start);
+                    this.terminalCall = response.data;
                 })
                 .catch(e => {
                     console.log(e);
                 });
-            await axios.get('/enablingObjectiveSubscriptions?subscribable_type=' + this.referenceable_type + '&subscribable_id=' + this.referenceable_id)
+            axios.get('/enablingObjectiveSubscriptions?subscribable_type=' + this.referenceable_type + '&subscribable_id=' + this.referenceable_id)
                 .then(response => {
-                    this.enablingSubscriptions = response.data.subscriptions;
+                    console.log('enabling', new Date().getTime() - start);
+                    this.enablingCall = response.data;
                 })
                 .catch(e => {
                     console.log(e);
                 });
-
-            this.checkSubscriptions();
         },
         /**
          * combine enablingObjectives into their terminalObjective
          */
         checkSubscriptions() {
-            let subObj = [];
+            let subscriptions = this.terminalCall;
+            const map = subscriptions.map(sub => sub.id)
 
-            if (this.terminalSubscriptions.length > 0) {
-                subObj = this.terminalSubscriptions;
-
-                // reverse-loop, since removing an item while counting up messes with the index
-                for (let i = this.enablingSubscriptions.length - 1; i >= 0; i--) {
-                    const subscription = this.enablingSubscriptions[i];
-                    const parent = this.terminalSubscriptions.find(
-                        terminal => terminal.terminal_objective_id === subscription.enabling_objective.terminal_objective_id
-                    );
-
-                    // if a terminalObjective is already subscribed,
-                    // enablingSubscriptions from this terminalObjective aren't needed
-                    if (parent !== undefined) {
-                        axios.post('/enablingObjectiveSubscriptions/destroy', subscription);
-                        this.enablingSubscriptions.splice(i, 1);
-                    }
-                }
-            }
-
-            const newTerminals = {};
-            this.enablingSubscriptions.forEach(sub => {
-                const terminalID = sub.enabling_objective.terminal_objective_id;
-                if (newTerminals[terminalID] === undefined) {
-                    // create a new terminal object for this ID
-                    //? might need more properties
-                    newTerminals[terminalID] =
-                    {
-                        'owner_id': sub.owner_id,
-                        'terminal_objective': sub.enabling_objective.terminal_objective,
-                        'terminal_objective_id': terminalID,
-                        'fake': true,  // needs an attribute to differentiate between an actual terminal-subscription
-                    };
-
-                    newTerminals[terminalID].terminal_objective.enabling_objectives = [sub.enabling_objective];
+            this.enablingCall.forEach(terminal => {
+                // delete the enablingSubscription, if the terminalObjective is already subscribed
+                if (map.includes(terminal.id)) {
+                    axios.post('/enablingObjectiveSubscriptions/destroy', {
+                        enabling_objective_id: terminal.enabling_objectives.map(e => e.id),
+                        subscribable_id: this.referenceable_id,
+                        subscribable_type: this.referenceable_type,
+                    });
                 } else {
-                    newTerminals[terminalID].terminal_objective.enabling_objectives.push(sub.enabling_objective);
+                    subscriptions.push(terminal);
                 }
             });
 
-            // add new terminalObjectives through their ID
-            Object.keys(newTerminals).forEach(key => {
-                subObj.push(newTerminals[key]);
-            });
-
-            this.subscriptions = subObj;
+            Object.assign(this.subscriptions, subscriptions);
         },
         openModal() {
             this.globalStore.showModal('subscribe-objective-modal', {
@@ -196,8 +178,10 @@ export default {
     },
     mounted() {
         this.loaderEvent();
-        this.$eventHub.on('subscriptions-added', id => {
-            if (id === this.referenceable_id) this.loaderEvent();
+        this.$eventHub.on('subscriptions-added', data => {
+            if (data.id === this.referenceable_id) {
+
+            }
         });
     },
     components: {

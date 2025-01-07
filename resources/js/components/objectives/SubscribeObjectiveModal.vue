@@ -157,7 +157,10 @@ export default {
                     'subscribable_id':          this.form.subscribable_id
                 })
                 .then(response => {
-                    this.$eventHub.emit('subscriptions-added', response.data);
+                    this.$eventHub.emit('subscriptions-added', {
+                        terminal_objectives: response.data,
+                        id: this.form.subscribable_id,
+                    });
                 })
                 .catch(e => {
                     console.log(e.response);
@@ -171,9 +174,11 @@ export default {
                     'subscribable_type':        this.form.subscribable_type,
                     'subscribable_id':          this.form.subscribable_id
                 })
-                .then(r => {
-                    console.log(r.data);
-                    this.$eventHub.emit('subscriptions-added', r.data);
+                .then(response => {
+                    this.$eventHub.emit('subscriptions-added', {
+                        terminal_objectives: response.data,
+                        id: this.form.subscribable_id,
+                    });
                 })
                 .catch(e => {
                     console.log(e.response);

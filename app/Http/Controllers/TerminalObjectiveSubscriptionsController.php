@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use App\TerminalObjective;
 use App\TerminalObjectiveSubscriptions;
-use App\User;
-use App\Group;
-use App\Organization;
+use App\Plan;
 use Illuminate\Http\Request;
 
 class TerminalObjectiveSubscriptionsController extends Controller
@@ -19,54 +17,35 @@ class TerminalObjectiveSubscriptionsController extends Controller
     public function index()
     {
         $input = $this->validateRequest();
-        if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
-            $modal = $input['subscribable_type']::find($input['subscribable_id']);
-            abort_unless((\Gate::allows('curriculum_show') and $modal->isAccessible()), 403);
+        if (!isset($input['subscribable_type']) or !isset($input['subscribable_id'])) return;
 
-            $user_ids = [];
+        $model = $input['subscribable_type']::find($input['subscribable_id']);
+        abort_unless((\Gate::allows('curriculum_show') and $model->isAccessible()), 403);
 
-            if ($input['subscribable_type'] == 'App\PlanEntry' and $modal->plan->isEditable()) {
-                $subscriptions = $modal->plan->subscriptions;
+        $user_ids = [];
 
-                // get every user-id through all subscriptions
-                foreach ($subscriptions as $subscription) {
-                    switch ($subscription['subscribable_type']) {
-                        case 'App\User':
-                            array_push($user_ids, User::find($subscription['subscribable_id'])->id);
-                            break;
-                        case 'App\Group':
-                            $user_ids = array_merge($user_ids, Group::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray());
-                            break;
-                        case 'App\Organization':
-                            $user_ids = array_merge($user_ids, Organization::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray());
-                            break;
-                        default:
-                            break;
-                    }
-                }
+        if ($input['subscribable_type'] == 'App\PlanEntry' and $model->plan->isEditable()) {
+            $user_ids = array_column(app(PlanController::class)->getUsers(Plan::find($model->plan->id)), 'id');
+        } else {
+            $user_ids = [auth()->user()->id];
+        }
 
-                // duplicates have to be removed, because SQL will return the same entry multiple times
-                $user_ids = array_unique($user_ids, SORT_NUMERIC);
-            } else {
-                $user_ids = [auth()->user()->id];
-            }
-
-            if (request()->wantsJson()) {
-                return [
-                    'subscriptions' =>
-                        TerminalObjectiveSubscriptions::where('subscribable_type', $input['subscribable_type'])
-                            ->where('subscribable_id', $input['subscribable_id'])
-                            ->with([
-                                'terminalObjective',
-                                // 'terminalObjective.achievements', // there's currently no implementation for this
-                                'terminalObjective.enablingObjectives',
-                                'terminalObjective.enablingObjectives.achievements' => function ($query) use ($user_ids) {
-                                    $query->whereIn('user_id', $user_ids)->with(['owner', 'user']);
-                                },
-                            ])
-                            ->get()
-                ];
-            }
+        if (request()->wantsJson()) {
+            return TerminalObjective::select('id', 'title', 'description', 'color')
+                ->join('terminal_objective_subscriptions', 'terminal_objectives.id', '=', 'terminal_objective_subscriptions.terminal_objective_id')
+                ->where('subscribable_type', $input['subscribable_type'])
+                ->where('subscribable_id', $input['subscribable_id'])
+                ->with([
+                    'enablingObjectives' => function ($query) {
+                        $query->select('id', 'title', 'description', 'terminal_objective_id')
+                            ->without(['terminalObjective', 'level'])
+                            ->orderBy('order_id')->get();
+                    },
+                    'enablingObjectives.achievements' => function ($query) use ($user_ids) {
+                        $query->whereIn('user_id', $user_ids)->with(['owner', 'user']);
+                    },
+                ])
+                ->get();
         }
     }
 
@@ -78,17 +57,18 @@ class TerminalObjectiveSubscriptionsController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $this->validateRequest();
+        $input = $this->validateRequest();
+        abort_unless($input['subscribable_type']::find($input['subscribable_id'])->isAccessible(), 403);
 
         $new_subscriptions = [];
-        $objectives = TerminalObjective::find($validated['terminal_objective_id']);
+        $objectives = TerminalObjective::find($input['terminal_objective_id']);
 
-        foreach ($objectives as $model) {
-            abort_unless($model->isAccessible(), 403);
+        foreach ($objectives as $objective) {
+            abort_unless($objective->isAccessible(), 403);
             array_push($new_subscriptions, [
-                'terminal_objective_id' => $model->id,
-                'subscribable_type' => $validated['subscribable_type'],
-                'subscribable_id' => $validated['subscribable_id'],
+                'terminal_objective_id' => $objective->id,
+                'subscribable_type' => $input['subscribable_type'],
+                'subscribable_id' => $input['subscribable_id'],
                 'sharing_level_id' => 1,
                 'visibility' => true,
                 'owner_id' => auth()->user()->id,
@@ -100,14 +80,14 @@ class TerminalObjectiveSubscriptionsController extends Controller
         TerminalObjectiveSubscriptions::insertOrIgnore($new_subscriptions);
 
         if (request()->wantsJson()) {
-            // INFO: how to join models and select specific columns for each model
-            return TerminalObjective::with(['enablingObjectives' => function ($query) {
+            return TerminalObjective::select('id', 'title', 'description', 'color')
+                ->with(['enablingObjectives' => function ($query) {
                     // inside 'with' the 'select'-statement needs to include the foreign key, or else it'll return '0'
                     $query->select('id', 'title', 'description', 'terminal_objective_id')
-                    ->orderBy('order_id');
+                        ->without(['terminalObjective', 'level'])
+                        ->orderBy('order_id');
                 }])
-                ->select('id', 'title', 'description', 'color')
-                ->find($validated['terminal_objective_id']);
+                ->find($input['terminal_objective_id']);
         }
     }
 

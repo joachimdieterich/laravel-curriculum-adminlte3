@@ -53,13 +53,13 @@
                                 :referenceable_id="entry.id"
                                 :owner_id="entry.owner_id"
                                 :editable="editable"
-                            ></objectives>
+                            />
 
                             <Trainings
                                 :plan="plan"
                                 subscribable_type="App\PlanEntry"
                                 :subscribable_id="entry.id"
-                            ></Trainings>
+                            />
                         </div>
                     </div>
                 </div>
@@ -77,11 +77,10 @@
                     this.showConfirm = false;
                     this.delete(this.entry);
                 }"
-            ></ConfirmModal>
+            />
         </Teleport>
     </div>
 </template>
-
 <script>
 import Objectives from "../objectives/Objectives.vue";
 import Trainings from '../training/Trainings.vue';
@@ -91,16 +90,16 @@ import {useGlobalStore} from "../../store/global";
 export default {
     props: {
         entry: {
-            default: null
+            default: null,
         },
         create: {
-            default: false
+            default: false,
         },
         plan: {
-            type: Object
+            type: Object,
         },
         editable: {
-            default: false
+            default: false,
         },
     },
     setup() {

@@ -42,7 +42,8 @@
 
                 <div v-if="$userId == plan.owner_id"
                     class="card-footer pointer"
-                     @click="edit()">
+                    @click="edit()"
+                >
                     <i class="fas fa-add pr-1"></i>
                     {{ trans('global.training.create') }}
                 </div>
@@ -106,7 +107,6 @@
         </div>
     </div>
 </template>
-
 <script>
 import Form from "form-backend-validation";
 import moment from "moment/moment";
@@ -150,13 +150,10 @@ export default {
     },
     mounted() {
         this.loaderEvent();
-        this.$initTinyMCE([
-            "autolink link"
-        ] );
     },
     methods: {
-        loaderEvent(){
-            axios.get('/trainingSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id)
+        loaderEvent() {
+            axios.get('/trainingSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id)
                 .then(response => {
                     this.trainings = response.data.trainings;
                 })

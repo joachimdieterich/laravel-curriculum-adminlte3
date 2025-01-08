@@ -126,21 +126,20 @@
                                 />
                             </div>
 
+                            <!-- Organization Tab -->
                             <div v-if="shareWithOrganizations"
                                 id="organization_subscription"
                                 class="tab-pane"
                             >
-                                <div class="form-group pt-2">
-                                    <Select2
-                                        id="organization_subscription_select"
-                                        name="organization_subscription_select"
-                                        url="/organizations"
-                                        model="organization"
-                                        @selectedValue="(id) => {
-                                            this.subscribe('App\\Organization', id[0])
-                                        }"
-                                    />
-                                </div>
+                                <Select2
+                                    id="organization_subscription_select"
+                                    name="organization_subscription_select"
+                                    url="/organizations"
+                                    model="organization"
+                                    @selectedValue="(id) => {
+                                        this.subscribe('App\\Organization', id[0])
+                                    }"
+                                />
                                 <subscribers v-if="subscribers.subscriptions != undefined"
                                     :modelUrl="modelUrl"
                                     :subscriptions="subscribers.subscriptions"

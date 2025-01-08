@@ -42,7 +42,7 @@ class EnablingObjectiveSubscriptionsController extends Controller
         );
 
         if (request()->wantsJson()) {
-            return TerminalObjective::select('id', 'title', 'description')
+            return TerminalObjective::select('id', 'title', 'description', 'color', 'curriculum_id')
                 ->whereIn('id', $terminal_ids)
                 ->with([
                     'enablingObjectives' => function ($query) use ($input) {
@@ -92,7 +92,7 @@ class EnablingObjectiveSubscriptionsController extends Controller
         EnablingObjectiveSubscriptions::insertOrIgnore($new_subscriptions);
 
         if (request()->wantsJson()) {
-            return TerminalObjective::select('id', 'title', 'description')
+            return TerminalObjective::select('id', 'title', 'description', 'color', 'curriculum_id')
                 ->whereIn('id', $input['terminal_objective_id'])
                 ->with(['enablingObjectives' => function ($query) use ($input) {
                     // inside 'with' the 'select'-statement needs to include the foreign key, or else it'll return '0'

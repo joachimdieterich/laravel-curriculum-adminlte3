@@ -31,7 +31,7 @@ class TerminalObjectiveSubscriptionsController extends Controller
         }
 
         if (request()->wantsJson()) {
-            return TerminalObjective::select('id', 'title', 'description', 'color')
+            return TerminalObjective::select('id', 'title', 'description', 'color', 'curriculum_id')
                 ->join('terminal_objective_subscriptions', 'terminal_objectives.id', '=', 'terminal_objective_subscriptions.terminal_objective_id')
                 ->where('subscribable_type', $input['subscribable_type'])
                 ->where('subscribable_id', $input['subscribable_id'])
@@ -80,7 +80,7 @@ class TerminalObjectiveSubscriptionsController extends Controller
         TerminalObjectiveSubscriptions::insertOrIgnore($new_subscriptions);
 
         if (request()->wantsJson()) {
-            return TerminalObjective::select('id', 'title', 'description', 'color')
+            return TerminalObjective::select('id', 'title', 'description', 'color', 'curriculum_id')
                 ->with(['enablingObjectives' => function ($query) {
                     // inside 'with' the 'select'-statement needs to include the foreign key, or else it'll return '0'
                     $query->select('id', 'title', 'description', 'terminal_objective_id')
@@ -93,15 +93,13 @@ class TerminalObjectiveSubscriptionsController extends Controller
 
     public function destroySubscription(Request $request)
     {
-        $subscription = $this->validateRequest();
+        $input = $this->validateRequest();
+        abort_unless(is_admin() or $input['subscribable_type']::find($input['subscribable_id'])->isAccessible(), 403);
 
         return TerminalObjectiveSubscriptions::where([
-            'terminal_objective_id' => $subscription['terminal_objective_id'],
-            'subscribable_type' => $subscription['subscribable_type'],
-            'subscribable_id' => $subscription['subscribable_id'],
-            'sharing_level_id' => $subscription['sharing_level_id'],
-            'visibility' => $subscription['visibility'],
-            //"owner_id"=> auth()->user()->id, //Todo: admin should be able to delete everything
+            'terminal_objective_id' => $input['terminal_objective_id'],
+            'subscribable_type' => $input['subscribable_type'],
+            'subscribable_id' => $input['subscribable_id'],
         ])->delete();
     }
 

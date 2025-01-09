@@ -7,10 +7,10 @@
                 <div class="modal-header">
                     <h3 class="card-title">
                         <span v-if="method === 'post'">
-                            {{ trans('global.trainings.create') }}
+                            {{ trans('global.training.create') }}
                         </span>
                         <span v-else>
-                            {{ trans('global.trainings.edit') }}
+                            {{ trans('global.training.edit') }}
                         </span>
                     </h3>
                     <div class="card-tools">
@@ -25,7 +25,41 @@
                 </div>
 
                 <div class="modal-body">
+                    <div class="form-group">
+                        <input
+                            type="text"
+                            id="title"
+                            name="title"
+                            class="form-control"
+                            v-model.trim="form.title"
+                            :placeholder="trans('global.training.fields.title') + ' *'"
+                            required
+                        />
+                    </div>
 
+                    <div class="form-group">
+                        <Editor
+                            :id="'description' + component_id"
+                            :name="'description' + component_id"
+                            class="form-control"
+                            :init="tinyMCE"
+                            v-model.trim="form.description"
+                        />
+                    </div>
+
+                    <div class="form-group">
+                        <VueDatePicker
+                            v-model="form.date"
+                            :teleport="true"
+                            format="dd.MM.yyy HH:mm"
+                            locale="de"
+                            range
+                            :partialRange="false"
+                            :placeholder="trans('global.selectDateRange')"
+                            :select-text="trans('global.ok')"
+                            :cancel-text="trans('global.close')"
+                        />
+                    </div>
                 </div>
 
                 <div class="modal-footer">
@@ -40,7 +74,7 @@
                         </button>
                         <button
                             id="training-save"
-                            class="btn btn-primary"
+                            class="btn btn-primary ml-3"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}
@@ -54,6 +88,7 @@
 <script>
 import Form from 'form-backend-validation';
 import {useGlobalStore} from "../../store/global";
+import Editor from '@tinymce/tinymce-vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 
@@ -78,11 +113,24 @@ export default {
                 id: '',
                 title: '',
                 description: '',
-                plan_id: this.plan.id,
                 date: null,
                 begin: '',
                 end: '',
+                plan_id: this.plan.id,
+                subscribable_id: null,
+                subscribable_type: null,
             }),
+            tinyMCE: this.$initTinyMCE(
+                [
+                    "autolink link lists table code autoresize"
+                ],
+                {
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id,
+                },
+                "bold underline italic | alignleft aligncenter alignright | table",
+                "bullist numlist outdent indent | mathjax link code",
+            ),
         }
     },
     methods: {
@@ -98,7 +146,12 @@ export default {
         add() {
             axios.post('/trainings', this.form)
                 .then(response => {
-                    this.$eventHub.emit('training-added', response.data);
+                    console.log('successfull response');
+                    
+                    this.$eventHub.emit('training-added', {
+                        training: response.data,
+                        id: this.form.subscribable_id,
+                    });
                 })
                 .catch(error => {
                     console.log(error)
@@ -107,7 +160,10 @@ export default {
         update() {
             axios.patch('/trainings/' + this.form.id, this.form)
                 .then(response => {
-                    this.$eventHub.emit('training-updated', response.data);
+                    this.$eventHub.emit('training-updated', {
+                        training: response.data,
+                        id: this.form.subscribable_id,
+                    });
                 })
                 .catch(error => {
                     console.log(error)
@@ -136,6 +192,7 @@ export default {
     },
     components: {
         VueDatePicker,
+        Editor,
     },
 }
 </script>

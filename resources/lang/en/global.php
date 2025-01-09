@@ -855,9 +855,9 @@ return [
     'training' => [
         'title' => 'Trainings',
         'title_singular' => 'Training',
-        'create' => 'Create Training',
+        'create' => 'Create training',
         'search' => 'Search training',
-        'edit' => 'Edit Training',
+        'edit' => 'Edit training',
     ],
     'exercise' => [
         'title' => 'Exercises',

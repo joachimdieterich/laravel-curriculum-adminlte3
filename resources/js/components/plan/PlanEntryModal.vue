@@ -88,7 +88,7 @@
                         </button>
                         <button
                             id="entry-save"
-                            class="btn btn-primary"
+                            class="btn btn-primary ml-3"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}

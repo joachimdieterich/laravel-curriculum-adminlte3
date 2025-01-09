@@ -96,8 +96,6 @@ class PlanEntryController extends Controller
             'owner_id' => auth()->user()->id,
         ]);
 
-        // subscribe embedded media
-        checkForEmbeddedMedia($planEntry, 'description');
         if ($medium_id != null) {
             $this->subscribeMedium($planEntry); // for medium_id
         }

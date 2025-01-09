@@ -48,7 +48,6 @@ class Training extends Model
         return $this->hasMany(Exercise::class);
     }
 
-
     public function isAccessible()
     {
         if (
@@ -61,7 +60,6 @@ class Training extends Model
             return false;
         }
     }
-
 
     protected static function booted () {
         static::deleting(function(Training $training) { // before delete() method call this

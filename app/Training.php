@@ -63,6 +63,7 @@ class Training extends Model
 
     protected static function booted () {
         static::deleting(function(Training $training) { // before delete() method call this
+            $training->exercises()->delete();
             $training->subscriptions()->delete();
         });
     }

@@ -106,4 +106,12 @@ class Plan extends Model
             $this->groupSubscriptions()->whereIn('subscribable_id', $user->groups->pluck('id'))->where('editable', 1)->first() ||
             $this->organizationSubscriptions()->whereIn('subscribable_id', $user->organizations->pluck('id'))->where('editable', 1)->first();
     }
+
+    protected static function booted() {
+        static::deleting(function(Plan $plan) { // before delete() method call this
+            $plan->subscriptions()->delete();
+            //? if media-subscriptions can be added in the future, they need to be deleted too
+            $plan->entries()->delete();
+        });
+    }
 }

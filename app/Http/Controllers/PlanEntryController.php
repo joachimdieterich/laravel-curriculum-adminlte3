@@ -118,9 +118,7 @@ class PlanEntryController extends Controller
         $planEntry->delete();
 
         if (request()->wantsJson()) {
-            return [
-                'deleted' => true,
-            ];
+            return true;
         }
     }
 

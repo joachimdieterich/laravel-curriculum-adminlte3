@@ -105,9 +105,7 @@ class TrainingController extends Controller
         $training->delete(); //subscriptions will be deleted too see booted function in Training.php
 
         if (request()->wantsJson()) {
-            return [
-                'deleted' => true,
-            ];
+            return true;
         }
     }
 

@@ -237,21 +237,6 @@ class PlanController extends Controller
             ($plan->owner->id == auth()->user()->id or is_admin())
         ), 403);
 
-        // objectivesSubscriptions aren't automatically removed
-        foreach ($plan->entries as $entry) {
-            $entry->enablingObjectiveSubscriptions()->delete();
-            $entry->terminalObjectiveSubscriptions()->delete();
-            
-            // trainings need to be deleted separately
-            foreach ($entry->trainings as $training) {
-                $training->exercises()->delete();
-                (new TrainingController())->destroy($training);
-            }
-        }
-
-        $plan->entries()->delete();
-        $plan->subscriptions()->delete();
-        //? if media-subscriptions can be added in the future, they need to be deleted too
         $plan->delete();
     }
 

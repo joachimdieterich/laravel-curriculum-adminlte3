@@ -107,7 +107,7 @@ class PlanEntry extends Model
             $entry->terminalObjectiveSubscriptions()->delete();
             $entry->enablingObjectiveSubscriptions()->delete();
             //? if media-subscriptions can be added in the future, they need to be deleted too
-            $entry->trainings()->delete();
+            $entry->trainings->each->delete();
         });
     }
 }

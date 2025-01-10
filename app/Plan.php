@@ -111,7 +111,7 @@ class Plan extends Model
         static::deleting(function(Plan $plan) { // before delete() method call this
             $plan->subscriptions()->delete();
             //? if media-subscriptions can be added in the future, they need to be deleted too
-            $plan->entries()->delete();
+            $plan->entries->each->delete();
         });
     }
 }

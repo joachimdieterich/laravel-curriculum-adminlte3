@@ -274,7 +274,7 @@ export default {
     mounted() {
         this.$eventHub.$on('reload_objective', (e) => {
             if (this.model.id == e.id) {
-                this.loader();
+                this.media.push({ medium: e.files[0] });
             }
         });
         // common_name is needed to check if externalMedia are connected from the same user

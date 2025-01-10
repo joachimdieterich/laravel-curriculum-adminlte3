@@ -168,7 +168,7 @@
                         </button>
                         <button
                             id="plan-save"
-                            class="btn btn-primary"
+                            class="btn btn-primary ml-3"
                             @click="submit(method)"
                         >
                             {{ trans('global.save') }}

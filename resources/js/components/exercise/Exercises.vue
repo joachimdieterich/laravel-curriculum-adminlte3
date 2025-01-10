@@ -1,63 +1,65 @@
 <template >
-    <div class="row ">
+    <div class="row">
         <div class="col-12 pt-2">
             <div class="card ">
-                <div class="card-header"
-                     style="display: flex;justify-content: flex-start;">
+                <div class="card-header d-flex justify-content-start">
                     <span style="width:30%;">{{ trans('global.exercise.title')}}</span>
                     <span>{{ trans('global.exercisedone.fields.iterations')}}</span>
                 </div>
 
-                <span v-if="exercises.length > 0 "
-                      v-for="(exercise,index) in exercises">
-                    <div style="clear:right;"
-                         v-if="(exercise?.title.toLowerCase().indexOf(search.toLowerCase()) !== -1) || search.length < 3"
-                         :id="exercise?.id"
-                         v-bind:value="exercise.id">
-                            <div class="card-footer "
-                                 style="display: flex;justify-content: flex-start;">
-                                <div style="width:30%;">
-                                    <span v-if="exercise.description"
-                                          @click="toggle('exercise_'+exercise.id)">
-                                        <i  v-if="toggle_id != 'exercise_' + exercise.id"
-                                            class="fa fa-caret-right pr-2"
-                                        ></i>
-                                        <i v-else
-                                           class="fa fa-caret-down pr-2"></i>
-                                    </span>
-                                    {{ exercise.title }}
-                                    <span v-if="$userId == training.owner_id">
-                                          <i class="pl-2 fa fa-pencil-alt text-secondary pointer"
-                                             @click="editExercise(exercise)"></i>
-                                    <i class="pl-2 fa fa-trash text-danger"
-                                       @click="destroy(exercise)"></i>
-                                    </span>
-                                </div>
-
-                                <exerciseDones
-                                    :exercise="exercise">
-                                </exerciseDones>
+                <span v-for="exercise in exercises">
+                    <div v-if="search.length < 3
+                            || exercise?.title.toLowerCase().indexOf(search.toLowerCase()) !== -1"
+                        :id="exercise?.id"
+                        style="clear: right;"
+                        :value="exercise.id"
+                    >
+                        <div class="card-footer d-flex justify-content-start">
+                            <div style="width: 30%;">
+                                <span v-if="exercise.description"
+                                    @click="toggle(exercise.id)"
+                                >
+                                    <i v-if="toggle_id != exercise.id"
+                                        class="fa fa-caret-right pr-2"
+                                    ></i>
+                                    <i v-else
+                                        class="fa fa-caret-down pr-2"
+                                    ></i>
+                                </span>
+                                {{ exercise.title }}
+                                <span v-if="$userId == training.owner_id">
+                                    <i class="fa fa-pencil-alt text-secondary pointer ml-2 mr-1"
+                                        @click="openModal(exercise)"
+                                    ></i>
+                                    <i class="fa fa-trash text-danger pointer ml-2"
+                                        @click="confirmItemDelete(exercise)"
+                                    ></i>
+                                </span>
                             </div>
 
-                        <div v-if="toggle_id == 'exercise_'+exercise.id"
-                             :id="'exercise_'+exercise.id"
-                             class="card-body"
-                             v-dompurify-html="exercise.description">
+                            <exerciseDones :exercise="exercise"/>
                         </div>
+
+                        <div v-if="toggle_id == exercise.id"
+                            :id="'exercise_' + exercise.id"
+                            class="card-body"
+                            v-dompurify-html="exercise.description"
+                        ></div>
                     </div>
                 </span>
 
-                <div class="card-footer" role="button"
-                     v-if="!editor &&  $userId == training.owner_id"
-                     @click="create()">
+                <div v-if="$userId == training.owner_id"
+                    class="card-footer"
+                    role="button"
+                    @click="openModal()"
+                >
                     <i class="fa fa-add"></i> {{ trans('global.exercise.create') }}
                 </div>
-
             </div>
         </div>
 
         <Teleport to="body">
-            <ExerciseModal></ExerciseModal>
+            <ExerciseModal/>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.exercise.delete')"
@@ -73,9 +75,7 @@
         </Teleport>
     </div>
 </template>
-
 <script>
-import Form from "form-backend-validation";
 import ExerciseDones from "./ExerciseDones.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import ExerciseModal from "./ExerciseModal.vue";
@@ -84,10 +84,10 @@ import {useGlobalStore} from "../../store/global.js";
 export default {
     props: {
         training: {
-            default: null
+            default: null,
         },
     },
-    setup () {
+    setup() {
         const globalStore = useGlobalStore();
         return {
             globalStore,
@@ -96,24 +96,11 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
-            requestUrl: '/exercises',
             showConfirm: false,
-            form: new Form({
-                'id': null,
-                'training_id':'',
-                'title': '',
-                'description': '',
-                'recommended_iterations': '',
-                'order_id': 0,
-            }),
             search: '',
-            editor: false,
             exercises: [],
-            currentExercise: {},
-            toggle_id:'',
-            errors: {}
-
+            currentExercise: null,
+            toggle_id: 0,
         }
     },
     mounted() {
@@ -122,13 +109,14 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('exercise-added', (exercise) => {
-            this.globalStore?.closeModal('exercise-modal');
+            exercise.dones = [];
             this.exercises.push(exercise);
         });
-
-        this.$eventHub.on('exercise-updated', (exercise) => {
-            this.globalStore?.closeModal('exercise-modal');
-            this.update(map);
+        this.$eventHub.on('exercise-updated', (updatedExercise) => {
+            Object.assign(this.exercises.find(e => e.id === updatedExercise.id), updatedExercise);
+        });
+        this.$eventHub.on('exercise_dones_added', (e) => {
+            this.loaderEvent();
         });
 
         this.$initTinyMCE(
@@ -140,102 +128,41 @@ export default {
                 'eventHubCallbackFunctionParams': this.component_id,
             }
         );
-        this.$eventHub.on('exercise_dones_added', (e) => {
-            this.loaderEvent();
-        });
     },
     methods: {
-        loaderEvent(){
+        loaderEvent() {
             axios.get('/exercises?training_id=' + this.training.id)
                 .then(response => {
-                    this.exercises = response.data.exercises;
+                    this.exercises = response.data;
                 })
                 .catch(e => {
                     console.log(e);
                 });
         },
-        create(){
-            this.globalStore?.showModal('exercise-modal', {
-                'training_id': this.training.id
-            });
-        },
-        editExercise(exercise){
+        openModal(exercise = { training_id: this.training.id }) {
             this.globalStore?.showModal('exercise-modal', exercise);
         },
-        confirmItemDelete(exercise){
+        confirmItemDelete(exercise) {
             this.currentExercise = exercise;
             this.showConfirm = true;
         },
-        destroy(exercise){
-            axios.delete('/exercises/'+exercise.id)
+        destroy() {
+            axios.delete('/exercises/' + this.currentExercise.id)
                 .then(response => {
-                    this.loaderEvent();
+                    if (response.data) this.exercises.splice(this.exercises.indexOf(this.currentExercise), 1);
                 })
                 .catch(e => {
                     console.log(e);
                 });
         },
-        submit() {
-            if (!this.validate()) return;
-
-            const method = this.method.toLowerCase();
-            this.form.description = tinyMCE.get('description'+this.component_id).getContent();
-            this.form.training_id = this.training.id;
-            this.form.order_id = this.exercises.length;
-
-            if (method === 'patch') {
-                axios.patch(this.requestUrl += '/' + this.form.id, this.form)
-                    .then(res => {
-                        this.loaderEvent();
-                    })
-                    .catch(error => { // Handle the error returned from our request
-                        console.log(error);
-                    });
-                this.method = 'post';
-            } else {
-                axios.post(this.requestUrl, this.form)
-                    .then(res => {
-                        this.loaderEvent();
-                    })
-                    .catch(error => { // Handle the error returned from our request
-                        console.log(error);
-                    });
-            }
-            this.editor = false;
-            this.form.title = '';
-            this.form.description = '';
-            this.form.recommended_iterations = '';
-            this.form.order_id = null;
-        },
-        validate() {
-            const form = this.$el.querySelector('.needs-validation');
-
-            if (!form.checkValidity()) {
-                form.classList.add('was-validated')
-                return false;
-            } else {
-                form.classList.remove('was-validated')
-                return true;
-            }
-        },
-        toggle(id){
-            if (this.toggle_id != id){
+        toggle(id) {
+            if (this.toggle_id != id) {
                 this.toggle_id = id;
             } else {
-                this.toggle_id = '';
+                this.toggle_id = 0;
             }
         },
-        update(exercise) {
-            const index = this.exercises.findIndex(
-                vc => vc.id === exercise.id
-            );
-
-            for (const [key, value] of Object.entries(exercise)) {
-                this.exercises[index][key] = value;
-            }
-        }
     },
-
     components: {
         ExerciseModal,
         ConfirmModal,

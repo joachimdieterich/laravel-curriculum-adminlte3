@@ -1,97 +1,87 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
         >
-        <div class="modal-container">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.exercise.create') }}
-                    </span>
-                    <span v-if="method === 'patch'">
-                        {{ trans('global.exercise.edit') }}
-                    </span>
-                </h3>
-                <div class="card-tools">
-                    <button type="button"
+            <div class="modal-container">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span v-if="method === 'post'">
+                            {{ trans('global.exercise.create') }}
+                        </span>
+                        <span v-if="method === 'patch'">
+                            {{ trans('global.exercise.edit') }}
+                        </span>
+                    </h3>
+                    <div class="card-tools">
+                        <button
+                            type="button"
                             class="btn btn-tool"
-                            @click="globalStore?.closeModal($options.name)">
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="modal-body">
-                <div class="form-group ">
-                    <label for="title">
-                        {{ trans('global.exercise.fields.title') }}
-                    </label>
-                    <input
-                        type="text"
-                        id="title"
-                        name="title"
-                        class="form-control"
-                        v-model="form.title"
-                        :placeholder="trans('global.exercise.fields.title')"
-                        required
-                    />
-                    <p class="help-block"
-                       v-if="form.errors.title"
-                       v-text="form.errors.title[0]"></p>
-                    <div class="invalid-feedback">
-                        {{ trans('global.invalid_form') }}
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            <i class="fa fa-times"></i>
+                        </button>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="description">
-                        {{ trans('global.exercise.fields.description') }}
-                    </label>
-                    <Editor
-                        :id="'description'+component_id"
-                        :name="'description'+component_id"
-                        :placeholder="trans('global.exercise.fields.description')"
-                        class="form-control"
-                        :init="tinyMCE"
-                        :initial-value="form.description"
-                    ></Editor>
-                </div>
-                <div class="form-group">
-                    <input
-                        type="number"
-                        min="1"
-                        id="recommended_iterations"
-                        name="recommended_iterations"
-                        class="form-control"
-                        v-model.trim="form.recommended_iterations"
-                        :placeholder="trans('global.exercise.fields.recommended_iterations')"
-                        required
-                    />
-                    <div class="invalid-feedback">
-                        {{ trans('global.invalid_form') }}
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input
+                            type="text"
+                            id="title"
+                            name="title"
+                            class="form-control"
+                            v-model="form.title"
+                            :placeholder="trans('global.exercise.fields.title') + ' *'"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <Editor
+                            :id="'description'+component_id"
+                            :name="'description'+component_id"
+                            class="form-control"
+                            :placeholder="trans('global.exercise.fields.description')"
+                            :init="tinyMCE"
+                            v-model="form.description"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="recommended_iterations">{{ trans('global.exercise.fields.recommended_iterations') }} *</label>
+                        <input
+                            type="number"
+                            min="1"
+                            id="recommended_iterations"
+                            name="recommended_iterations"
+                            class="form-control"
+                            v-model.trim="form.recommended_iterations"
+                            :placeholder="trans('global.exercise.fields.recommended_iterations_short')"
+                            required
+                        />
                     </div>
                 </div>
-            </div>
 
-            <div class="card-footer">
-                 <span class="pull-right">
-                     <button
-                         id="exercise-cancel"
-                         type="button"
-                         class="btn btn-default"
-                         @click="globalStore?.closeModal($options.name)">
-                         {{ trans('global.cancel') }}
-                     </button>
-                     <button
-                         id="exercise-save"
-                         class="btn btn-primary"
-                         @click="submit(method)" >
-                         {{ trans('global.save') }}
-                     </button>
-                </span>
+                <div class="card-footer">
+                    <span class="pull-right">
+                        <button
+                            id="exercise-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="exercise-save"
+                            class="btn btn-primary ml-3"
+                            @click="submit(method)"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
+                    </span>
+                </div>
             </div>
         </div>
-    </div>
     </Transition>
 </template>
 <script>
@@ -102,12 +92,12 @@ import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'exercise-modal',
-    components:{
-        Editor
+    components: {
+        Editor,
     },
     props: {
         map: {
-            type: Object
+            type: Object,
         }
     },
     setup() {
@@ -120,18 +110,17 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/exercises',
             form: new Form({
-                'id':'',
-                'training_id':'',
-                'title': '',
-                'description': '',
-                'recommended_iterations': '',
-                'order_id': 0,
+                id:'',
+                training_id:'',
+                title: '',
+                description: '',
+                recommended_iterations: '',
+                order_id: 0,
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link curriculummedia"
+                    "autolink link curriculummedia autoresize"
                 ],
                 {
                     'eventHubCallbackFunction': 'insertContent',
@@ -142,28 +131,27 @@ export default {
     },
     methods: {
         submit(method) {
-            if (method == 'patch') {
-                this.update();
-            } else {
+            if (method == 'post') {
                 this.add();
+            } else {
+                this.update();
             }
+
+            this.globalStore.closeModal(this.$options.name);
         },
         add() {
-            axios.post(this.url, this.form)
-                .then(r => {
-                    this.$eventHub.emit('exercise-added', r.data.exercise);
-                    this.globalStore?.closeModal(this.$options.name)
+            axios.post('/exercises', this.form)
+                .then(response => {
+                    this.$eventHub.emit('exercise-added', response.data);
                 })
                 .catch(e => {
                     console.log(e.response);
                 });
         },
         update() {
-            console.log('update');
-            axios.patch(this.url + '/' + this.form.id, this.form)
-                .then(r => {
-                    this.$eventHub.emit('exercise-updated', r.data.exercise);
-                    this.globalStore?.closeModal(this.$options.name)
+            axios.patch('/exercises/' + this.form.id, this.form)
+                .then(response => {
+                    this.$eventHub.emit('exercise-updated', response.data);
                 })
                 .catch(e => {
                     console.log(e.response);
@@ -189,4 +177,3 @@ export default {
     },
 }
 </script>
-

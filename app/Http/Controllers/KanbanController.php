@@ -6,7 +6,6 @@ use App\Kanban;
 use App\KanbanItem;
 use App\KanbanStatus;
 use App\KanbanSubscription;
-use App\Logbook;
 use App\Medium;
 use App\MediumSubscription;
 use App\Organization;

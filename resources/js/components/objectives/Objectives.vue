@@ -5,7 +5,10 @@
         >
             <div class="row">
                 <div class="col-12">
-                    <div class="card-tools pull-right">
+                    <div
+                        class="card-tools position-absolute"
+                        style="right: -10px;"    
+                    >
                         <span v-if="$userId == owner_id">
                             <a @click="destroy(terminal)">
                                 <i class="fas fa-trash text-danger pointer"></i>

@@ -130,8 +130,31 @@ Vue.prototype.checkPermission = (permission) => {
  */
 Vue.prototype.htmlToText = (html) => {
     var txt = document.createElement("textarea");
-    txt.innerHTML = html;
-    return txt.value.replace(/(&lt;|<)script.*?(&lt;|<)\/script(&gt;|>)|<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
+    txt.innerHTML = html ?? '';
+    let map =
+        {
+            '&amp;': '&',
+            '&lt;': '<',
+            '&gt;': '>',
+            '&quot;': '"',
+            '&#039;': "'",
+            '&nbsp;': " ",
+            '&szlig;': "ß",
+            '&Auml;': 'Ä',
+            '&auml;': 'ä',
+            '&Uuml;': 'Ü',
+            '&uuml;': 'ü',
+            '&Ouml;': 'Ö',
+            '&ouml;': 'ö',
+            '&copy;': '©',
+        };
+
+    txt =  txt.value.replace(/&amp;|&lt;|&gt;|&quot;|&#039;|&nbsp;|&szlig;|&Auml;|&auml;|&Uuml;|&uuml;|&Ouml;|&ouml;|&copy;/g, function(m) {return map[m];})
+        .replace(/(?:\r\n|\r|\n)/g, '<br>')
+        .replace('<br>', ' ');
+
+    return txt.replace(/(&lt;|<)script.*?(&lt;|<)\/script(&gt;|>)|<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, ' ');
+
 }
 
 /**

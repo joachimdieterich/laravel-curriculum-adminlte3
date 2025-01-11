@@ -105,9 +105,9 @@
         </div>
         <div class="card-body p-0 collapse show" :class="editor ? 'editor' : ''">
             <div v-if="(editor == false)">
-                <div
+                <div v-if="form.description"
                      class="text-muted small px-3 py-2"
-                     v-dompurify-html="form.description ?? '<p>&#8288;</p>'"
+                     v-dompurify-html="form.description"
                 ></div>
             </div>
 

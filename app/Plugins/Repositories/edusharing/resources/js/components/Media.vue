@@ -12,7 +12,7 @@
                 role="tab"
                 aria-controls="edusharing_mediathek"
                 aria-selected="true"
-                @click="setCurrentTab(1);loader();">
+                @click="setCurrentTab(1);loader(false);">
                 <i class="fa fa-globe"></i>  {{ trans('global.public_files') }}
             </li>
 <!--            <li class="btn btn-sm btn-outline-secondary m-2"
@@ -35,7 +35,7 @@
                 role="tab"
                 aria-controls="edusharing_my_files"
                 aria-selected="true"
-                @click="setCurrentTab(3);loader()">
+                @click="setCurrentTab(3);loader(false)">
                 <i class="fa fa-user"></i> {{ trans('global.my_files') }}
             </li>
         </ul>
@@ -49,7 +49,7 @@
             v-permission="'external_medium_create, is_teacher'"
             :id="'media-add'"
             class="box box-objective nav-item-box-image pointer my-1"
-            style="min-width: 200px !important; border-style: dotted !important;"
+            style="min-width: 200px !important; border-style: solid !important;"
             @click="addMedia()"
         >
             <div class="nav-item-box-image-size text-center">
@@ -66,7 +66,7 @@
         <!-- Media uploaded from Curriculum -->
         <div v-for="subscription in filteredMedia"
             class="box box-objective nav-item-box-image pointer my-1"
-            style="min-width: 200px !important; border-style: dotted !important;"
+            style="min-width: 200px !important; border-style: solid !important; overflow: auto"
         >
             <render-usage
                 class="d-flex align-items-center nav-item-box-image-size user-select-none"
@@ -76,6 +76,20 @@
                 <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
                     {{ subscription.medium.title ?? subscription.medium.name }}
                 </h1>
+            </span>
+            <span
+                v-if="subscription.medium.owner_id == $userId"
+                v-permission="'medium_delete'"
+                class="p-1 pointer_hand"
+                accesskey=""
+                style="position:absolute; top:0px; height: 30px; width:100%;">
+                    <button
+                        id="delete-navigator-item"
+                        type="submit"
+                        class="btn btn-danger btn-sm pull-right"
+                        @click.stop="unlinkMedium(subscription);">
+                        <small><i class="fa fa-unlink"></i></small>
+                    </button>
             </span>
         </div>
 
@@ -93,18 +107,6 @@
                     :style="{'background':'white url('+iconUrl(medium)+') no-repeat center', 'background-size': '24px'}"
                 ></div>
             </div>
-<!--            <span
-                v-can="'medium_delete'"
-                class="p-1 pointer_hand"
-                accesskey="" style="position:absolute; top:0px; height: 30px; width:100%;">
-                    <button
-                        id="delete-navigator-item"
-                        type="submit"
-                        class="btn btn-danger btn-sm pull-right"
-                        @click.stop="unlinkMedium(medium.node_id, medium.value);">
-                        <small><i class="fa fa-unlink"></i></small>
-                    </button>
-            </span>-->
 
             <span class="bg-white text-center p-1 overflow-auto "
                 style="position:absolute; bottom:0px; height: 150px; width:100%;"
@@ -153,6 +155,7 @@ export default {
     },
     data() {
         return {
+            component_id: this._uid,
             media: null,
             externalMedia: null,
             externalMyMedia: null,
@@ -164,11 +167,11 @@ export default {
         }
     },
     methods: {
-        async loader() {
+        async loader(reload = true) {
             $("#loading").show();
             try {
                 // only send request for media once
-                if (this.media == null) {
+                if (reload) {
                     axios.get(
                         '/mediumSubscriptions?subscribable_type=' + this.subscribable_type() + '&subscribable_id=' + this.model.id
                     ).then(response => this.media = response.data.message);
@@ -208,25 +211,23 @@ export default {
 
             $("#loading").hide();
         },
-        async unlinkMedium(id, value) { //id of external reference and value in db
-            try {
-                if (id !== value){
-                    if (confirm("Diese Medium ist Teil einer Sammlung. Soll die gesamte Sammlung entfernt werden?") == false) {
-                        return;
-                    }
+        async unlinkMedium(mediumSubscription){ //(id, value) { //id of external reference and value in db
+
+            axios.delete('/media/' + mediumSubscription.medium_id, {
+                data: {
+                    subscribable_type: mediumSubscription.subscribable_type,
+                    subscribable_id:   mediumSubscription.subscribable_id
                 }
-                await axios.post('/repositorySubscriptions/destroySubscription', {
-                            value: value,
-                            subscribable_id: this.model.id,
-                            subscribable_type: this.subscribable_type(),
-                            repository: 'edusharing'
-                        }).data;
-            } catch(error) {
-                //this.errors = error.response.data.errors;
-            }
-            $("#"+id).removeClass( "bg-green" );
-            $("#link_btn_"+id).removeClass( "invisible" );
-            $("#unlink_btn_"+id).addClass( "invisible" );
+            })
+                .then(res => {
+                    //console.log(res);
+                    this.loader();
+                })
+                .catch(err => {
+                    console.log(err.response);
+                });
+
+
         },
         subscribable_type() {
             var reference_class = 'App\\TerminalObjective';
@@ -267,13 +268,13 @@ export default {
                     'referenceable_type': this.subscribable_type(),
                     'referenceable_id': this.model.id,
                     'eventHubCallbackFunction': 'reload_objective',
-                    'eventHubCallbackFunctionParams': this.model.id,
+                    'eventHubCallbackFunctionParams': this.component_id,
                 });
         },
     },
     mounted() {
         this.$eventHub.$on('reload_objective', (e) => {
-            if (this.model.id == e.id) {
+            if (this.component_id == e.id) {
                 this.loader();
             }
         });

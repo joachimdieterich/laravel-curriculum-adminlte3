@@ -69,7 +69,7 @@ export default {
 
             if(event.data.event === 'APPLY_NODE') {
                 //console.log(data);
-                setTimeout(() => {  this.emitEvent(data); }, 2000); //
+                setTimeout(() => {  this.emitEvent(data); }, 250); //
 
                 window.removeEventListener("message", this.receiveMessage);
             }

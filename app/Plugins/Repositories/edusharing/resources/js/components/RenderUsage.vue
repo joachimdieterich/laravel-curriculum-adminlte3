@@ -1,31 +1,9 @@
 <template>
     <div class="d-flex align-items-center">
-        <div @click="enableClick && show()">
-            <img :src="'/media/'+this.medium.id+'?preview=true'" class="p-0 w-100" >
-
-
-<!--            <img v-if="previewImg"
-                 :src='previewImg' class="p-0 w-100" >
-            <img v-else
-                 :src='this.preview' class="p-0 w-100" >-->
-
-        </div>
-<!--        <div class="edusharing_caption">
-            <span v-if="this.title">
-                {{ this.title }}
-            </span>
-            <span v-else>
-                {{ this.name }}
-            </span>
-        </div>-->
-
-<!--        <div v-dompurify-html="this.detailsSnippet"
-        @click="show()"></div>-->
-<!--        <div style="width: 100%;display: block;height: 25px;">
-            <i v-if="downloadable"
-                class="edusharing_download fa fa-download text-muted pointer"
-               @click="show()"></i>
-        </div>-->
+            <img
+                @click="enableClick && show()"
+                :src="'/media/'+this.medium.id+'?preview=true'"
+                class="p-0 w-100" >
 
         <div :id="'loading_'+this.medium.id" class="overlay text-center" style="width:100% !important; height: 0px; position: absolute;">
             <i class="fa fa-spinner fa-pulse fa-fw"></i>
@@ -33,7 +11,6 @@
         </div>
     </div>
 </template>
-
 
 <script>
     export default {
@@ -51,17 +28,17 @@
 
         data() {
             return {
-                detailsSnippet: '',
+                /*detailsSnippet: '',
                 downloadUrl: '',
                 preview: '',
                 previewImg: false,
                 title: '',
                 name: '',
-                errors:  {},
+                errors:  {},*/
             }
         },
         methods: {
-            async loader() {
+           /* async loader() {
                 $("#loading_"+this.medium.id).show();
                 await axios.get('/media/' + this.medium.id)
                     .then((response) => {
@@ -74,25 +51,6 @@
                         //console.log(this.downloadUrl);
                         if (this.downloadUrl == null){
                             $("#download_medium_"+this.medium.id).hide();
-                        }
-                        $("#loading_"+this.medium.id).hide();
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        $("#loading_"+this.medium.id).hide();
-                    });
-            },
-           /* async getPreview() {
-                $("#loading_"+this.medium.id).show();
-                axios.get('/media/' + this.medium.id + '?preview=true')
-                    .then((response) => {
-                        //console.log(response.data);
-                        if(typeof response.data.url == 'undefined'){
-                            if (response.data.startsWith('data:image')){
-                                this.previewImg = response.data;
-                            }
-                        } else {
-                            this.preview = response.data.url.info.redirect_url
                         }
                         $("#loading_"+this.medium.id).hide();
                     })
@@ -116,9 +74,9 @@
         },
         mounted(){
             $("#loading_"+this.medium.id).hide();
-            this.$nextTick(() => {
-                this.loader();
-            })
+           /* this.$nextTick(() => {
+                this.loader(); //
+            })*/
 
             this.$eventHub.$on('download', (medium) => {
 

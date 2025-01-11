@@ -86,7 +86,8 @@
                         ></font-awesome-picker>
                     </div>
 
-                    <div v-if="form.id !== ''" class="form-group">
+                    <div v-if="form.id !== null"
+                         class="form-group">
                         <MediumForm :form="form"
                                     :id="component_id"
                                     :medium_id="form.medium_id"

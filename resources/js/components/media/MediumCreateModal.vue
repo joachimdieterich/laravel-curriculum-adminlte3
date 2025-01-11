@@ -232,7 +232,15 @@
                              id="external"
                              v-can="'external_medium_create'">
                             <repository-plugin-create
+                                v-if="!postProcess"
                                 :model="form"></repository-plugin-create>
+                            <div v-if="postProcess"
+                                 :id="'loading_'+this.component_id"
+                                 class="overlay text-center"
+                                 style="width:100% !important; height: 100%;">
+                                <i class="fa fa-spinner fa-pulse fa-fw"></i>
+                                <span>Fertigstellen...</span>
+                            </div>
                         </div><!-- /.tab-pane -->
 
                     </div>
@@ -274,6 +282,7 @@ const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED =
 export default {
     data() {
         return {
+            component_id: this._uid,
             method: 'post',
             requestUrl: '/mediaSubscriptions',
             tab: 'external',
@@ -325,7 +334,9 @@ export default {
             per_page: 10,
             prev_page_url: null,
             to: null,
-            total: null
+            total: null,
+
+            postProcess: false,
         }
     },
 
@@ -380,6 +391,7 @@ export default {
             this.getFiles(); // move to beforeOpen from mounted to reduce unused requests
             this.selectedFiles = [];
             this.message = ''; // == no previous upload was made, if so message == OK
+            this.postProcess = false;
             console.log(event.params);
             if (event.params.referenceable_type){
                 this.form.subscribable_type = event.params.referenceable_type;
@@ -458,8 +470,7 @@ export default {
                 $('#' + this.target).trigger("change");
             }
 
-
-            this.$modal.hide('medium-create-modal');
+            this.close();
         },
         close(){
             this.$modal.hide('medium-create-modal');
@@ -556,7 +567,7 @@ export default {
         externalAdd(form){
             //console.log(form);
             //this.form = form;
-
+            this.postProcess = true;
             axios.post('/media?repository=edusharing', form)
                 .then((response) => {
                     //console.log(response);
@@ -564,7 +575,6 @@ export default {
                 })
                 .catch((err) => {
                     console.log(err);
-                    //this.saveToForm(response.data.id);
                 });
         }
     },
@@ -587,7 +597,6 @@ export default {
 
         this.$eventHub.$on('external_add', (form) => {
             this.externalAdd(form);
-
         });
     },
     components: {

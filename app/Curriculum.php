@@ -138,6 +138,11 @@ class Curriculum extends Model
         return $this->hasOne('App\CurriculumType', 'id', 'type_id');
     }
 
+    public function organization_type()
+    {
+        return $this->hasOne('App\OrganizationType', 'id', 'organization_type_id');
+    }
+
     public function contentSubscriptions()
     {
         return $this->morphMany('App\ContentSubscription', 'subscribable')->orderBy('order_id');

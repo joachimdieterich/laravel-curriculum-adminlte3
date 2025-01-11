@@ -37,7 +37,9 @@ class CurriculaApiController extends Controller
             return response()->json(['error' => 'config (metadata_password) missing'], 420);
         }
 
-        return 'deactivated: please use /v1/curricula/metadatasets?password={password}'; //$this->generateMetadataset($curriculum);
+        //return 'deactivated: please use /v1/curricula/metadatasets?password={password}'; //$this->generateMetadataset($curriculum);
+
+        return $this->generateMetadataset($curriculum);
     }
 
     public function getAllMetadatasets(Request $request)
@@ -66,4 +68,18 @@ class CurriculaApiController extends Controller
           return response()->json(['error' => 'config (metadata_password) missing'],420);
       }*/
     }
+
+    private function generateMetadataset($curriculum){
+         return Curriculum::where('id', $curriculum->id)->with([
+            'grade',
+            'subject',
+            'organization_type',
+            'terminalObjectives',
+            'terminalObjectives.enablingObjectives'
+        ])->get();
+
+
+
+    }
+
 }

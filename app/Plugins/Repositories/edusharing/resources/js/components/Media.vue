@@ -82,7 +82,7 @@
                 v-permission="'medium_delete'"
                 class="p-1 pointer_hand"
                 accesskey=""
-                style="position:absolute; top:0px; height: 30px; width:100%;">
+                style="position:absolute; top:0; height: 30px; width:100%;">
                     <button
                         id="delete-navigator-item"
                         type="submit"
@@ -109,7 +109,7 @@
             </div>
 
             <span class="bg-white text-center p-1 overflow-auto "
-                  style="position:absolute; bottom:0px; height: 150px; width:100%;"
+                  style="position:absolute; bottom:0; height: 150px; width:100%;"
             >
                 <h6 class="events-heading pt-1 hyphens" v-dompurify-html="medium.title"></h6>
                 <p class=" text-muted small" v-dompurify-html="medium.description"></p>

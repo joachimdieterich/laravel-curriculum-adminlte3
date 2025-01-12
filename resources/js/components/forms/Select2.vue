@@ -31,13 +31,12 @@
                 :multiple="this.multiple"
                 :disabled="this.readOnly"
                 :placeholder="this.placeholder">
-                <option v-if="list"
-                        v-for="(item,index) in list"
-                        :value="item[this.option_id]"
-                        :data-icon="this.option_icon">
-                    <span>
-                        {{ item[this.option_label] }}
-                    </span>
+                <option
+                    v-if="list"
+                    v-for="(item,index) in list"
+                    :value="item[this.option_id]"
+                    :data-icon="this.option_icon">
+                    {{ item[this.option_label] }}
                 </option>
             </select>
         </div>

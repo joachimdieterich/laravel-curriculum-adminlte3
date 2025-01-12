@@ -2,6 +2,13 @@
     <div>
         <div class="btn-group"
              @click="loadModal()">
+            <span v-if="medium_id !== null && (subscribable_type == 'App\\Logbook' || subscribable_type == 'App\\Kanban')"
+                  class="d-flex align-items-center"
+            >
+                <a class="text-danger px-2" style="height: 26px;" role="button" @click.stop="removeSubscription()">
+                    <i class="fa fa-trash"></i>
+                </a>
+            </span>
             <button type="button" class="btn btn-default ">
                 <img  v-if="this.thumbnail_medium_id"
                       alt="preview"
@@ -19,17 +26,12 @@
             </a>
         </div>
         <Teleport to="body">
-            <MediumModal
-                :show="this.mediumStore.getShowMediumModal"
-                @close="this.mediumStore.setShowMediumModal(false)"
-            ></MediumModal>
-
+            <MediumModal></MediumModal>
         </Teleport>
     </div>
 </template>
 <script>
 import MediumModal from "../media/MediumModal.vue";
-import {useMediumStore} from "../../store/media";
 export default {
   name: 'MediumForm',
     components:{
@@ -43,6 +45,13 @@ export default {
       accept:{
           default: ''
       },
+      form: {},
+      subscribable_type: {
+          default: null, // null will throw 500, value needs to be set
+      },
+      subscribable_id: {
+          default: null,
+      }
   },
     data () {
         return {
@@ -50,12 +59,6 @@ export default {
             showMediumModal: false,
             thumbnail_medium_id: '',
             selectedMediumId: ''
-        }
-    },
-    setup () { //use database store
-        const mediumStore = useMediumStore();
-        return {
-            mediumStore,
         }
     },
     watch: {
@@ -79,14 +82,26 @@ export default {
     },
     methods: {
         loadModal() {
-            this.mediumStore.setMediumModalParams(
-                {
-                    'show': true,
-                    'subscribeSelected': false,
-                    'public': this.public,
-                    'callbackId': this.component_id
-                });
-        }
+            this.globalStore?.showModal('medium-modal', {
+                'subscribable_type': this.subscribable_type(),
+                'subscribable_id': this.model.id,
+                'subscribeSelected': false,
+                'public': this.public,
+                'callbackId': this.component_id
+            });
+        },
+        removeSubscription() {
+            //! temporary solution to remove media for Logbooks/Kanbans
+            this.$emit("selectedValue", null);
+            axios.post('/mediumSubscriptions/destroy', {
+                'medium_id': this.medium_id,
+                'subscribable_id': this.subscribable_id,
+                'subscribable_type': this.subscribable_type,
+                // since we don't have those values, only allow default values
+                'sharing_level_id': 1,
+                'visibility': 1,
+            });
+        },
     }
 }
 </script>

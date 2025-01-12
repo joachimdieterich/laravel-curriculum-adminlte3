@@ -91,12 +91,13 @@
         </div>
         <Teleport to="body">
             <VideoconferenceModal></VideoconferenceModal>
-            <MediumModal
+            <MediumModal></MediumModal>
+<!--            <MediumModal
                 :show="this.mediumStore.getShowMediumModal"
                 @close="() =>{
                      this.mediumStore.setShowMediumModal(false);
                 }"
-            ></MediumModal>
+            ></MediumModal>-->
             <SubscribeModal></SubscribeModal>
         </Teleport>
 
@@ -110,10 +111,8 @@ import VideoconferenceModal from "../videoconference/VideoconferenceModal.vue";
 import {useToast} from "vue-toastification";
 import Media from "../media/Media.vue";
 import MediumModal from "../media/MediumModal.vue";
-import {useMediumStore} from "../../store/media";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import {useGlobalStore} from "../../store/global";
-
 
 export default {
     props: {
@@ -130,11 +129,9 @@ export default {
     },
     setup () { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters
         const toast = useToast();
-        const mediumStore = useMediumStore();
         const globalStore = useGlobalStore();
         return {
             toast,
-            mediumStore,
             globalStore
         }
     },

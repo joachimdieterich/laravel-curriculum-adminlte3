@@ -414,10 +414,8 @@ app.config.globalProperties.$initTinyMCE = function(
                     });
                 }
             });
-
         },
     };
-
 };
 
 /**

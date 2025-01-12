@@ -10,7 +10,6 @@
                     class="link-muted text-sm px-2 pointer"
                     @click="show(subscription.medium)"
                 >
-
                     <i class="pr-2"
                        v-bind:class="[iconCss(subscription.medium.mime_type)]"
                     ></i>
@@ -108,10 +107,8 @@
 </div>
 </template>
 
-
 <script>
     import License from '../uiElements/License.vue';
-    import {useMediumStore} from "../../store/media.js";
     import {useGlobalStore} from "../../store/global";
 
     export default {
@@ -119,7 +116,9 @@
             subscription: {},
             subscribable_type: '',
             subscribable_id: '',
-            public: 0,
+            public: {
+                default: 0
+            },
             medium: {},
             format: '',
             url: {
@@ -128,10 +127,8 @@
             },
         },
         setup () { //use database store
-            const mediumStore = useMediumStore();
             const globalStore = useGlobalStore();
             return {
-                mediumStore,
                 globalStore
             }
         },
@@ -153,6 +150,7 @@
         },
         methods: {
             loader() { //todo: remove duplicate in beforMount.
+                console.log('(re)load');
                 axios.get(this.url + '?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id).then(response => {
                     this.subscriptions = response.data.message;
                 }).catch(e => {
@@ -163,9 +161,7 @@
                 this.globalStore?.showModal('medium-preview-modal', mediumObject);
             },
             addMedia() {
-                this.mediumStore.setMediumModalParams(
-                    {
-                    'show': true,
+                this.globalStore?.showModal('medium-modal', {
                     'subscribeSelected': true,
                     'subscribable_type': this.subscribable_type,
                     'subscribable_id': this.subscribable_id,
@@ -176,8 +172,8 @@
             async unlinkMedium(subscription) { //id of external reference and value in db
                 try {
                     await axios.post(this.url + '/destroy', subscription).data;
-                } catch (error) {
-                    //this.errors = error.response.data.errors;
+                } catch (e) {
+                    console.log(e)
                 }
                 $("#medium_" + this.medium.id).hide();
             },
@@ -210,7 +206,6 @@
                     alert('Artefakt hinzugefügt!');
 
                 });
-
             },
             destroy(subscription) {
                 axios.post('/media/'+subscription.medium.id+'/destroy', {
@@ -234,15 +229,6 @@
                     this.loader();
                 });
             },*/
-            loadModal() {
-                this.mediumStore.setMediumModalParams(
-                    {
-                        'show': true,
-                        'subscribeSelected': false,
-                        'public': this.public,
-                        'callbackId': this.component_id
-                    });
-            }
         },
         beforeMount() {
             if (this.subscribable_type  != ''){
@@ -251,6 +237,7 @@
         },
         mounted() {
             this.$eventHub.on('medium-added', (e) => {
+                console.log('medium-added');
                 if (this.component_id == e.id) {
                     this.loader();
                 }

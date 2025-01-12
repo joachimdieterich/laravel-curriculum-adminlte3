@@ -57,8 +57,6 @@
             <MediumModal
                 subscribable_type="App\\Logboook"
                 :subscribable_id="logbook.id"
-                :show="this.mediumStore.getShowMediumModal"
-                @close="this.mediumStore.setShowMediumModal(false)"
             ></MediumModal>
             <LogbookModal></LogbookModal>
             <LogbookEntryModal></LogbookEntryModal>
@@ -92,8 +90,6 @@ import LogbookEntry from '../logbookEntry/LogbookEntry.vue';
 import LogbookPrintOptions from "./LogbookPrintOptions.vue";
 import TaskModal from "../task/TaskModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
-
-import {useMediumStore} from "../../store/media";
 import LmsModal from "../lms/LmsModal.vue";
 import ContentModal from "../content/ContentModal.vue";
 import {useGlobalStore} from "../../store/global";
@@ -129,12 +125,10 @@ export default {
         },
     },
     setup () { //use database store
-        const mediumStore = useMediumStore();
         const globalStore = useGlobalStore();
 
         return {
             globalStore,
-            mediumStore
         }
     },
     data() {
@@ -163,7 +157,7 @@ export default {
             const index = this.entries.findIndex(
                 entry => entry.id === updated.id
             );
-            
+
             Object.assign(this.entries[index], updated);
         });
 

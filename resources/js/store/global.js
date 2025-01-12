@@ -24,6 +24,7 @@ export const useGlobalStore = defineStore('global', {
             'map-modal' : {},
             'map-marker-modal' : {},
             'metadataset-modal' : {},
+            'medium-modal' : {},
             'medium-preview-modal' : {},
             'navigator-modal' : {},
             'navigator-item-modal' : {},
@@ -46,7 +47,21 @@ export const useGlobalStore = defineStore('global', {
             'task-modal' : {},
             'user-modal' : {},
             'videoconference-modal' : {},*/
-        }
+        },
+        media: [],
+        mediumModalParams: {
+            show: false,
+            currentStatus: 0, // == STATUS_INITIAL
+            accept: '',
+            callback: 'medium-added',
+            callbackId: null,
+            public: 0,
+            repository: 'local',
+            subscribable_type: null,
+            subscribable_id: null,
+            subscribeSelected: false,
+        },
+        selectedMedia:[]
     }),
     actions: {
         setItem(key, value){
@@ -75,6 +90,33 @@ export const useGlobalStore = defineStore('global', {
         setModalParams(title, params){
             //console.log(title);
             this.modals[title].params = params;
+        },
+        addToMedia(item) {
+            let index = this.media?.findIndex(
+                i => i.media === item.media
+            );
+
+            if (index !== -1){
+                this.media[index] = item;
+            } else {
+                this.media.push(item);
+            }
+            //console.log(this.media);
+        },
+        removeFromMedia(item) {
+            let index = this.media?.findIndex(
+                i => i.media === item.media
+            );
+
+            if (index !== -1){
+                // nothing to do
+            } else {
+                this.media.splice(index, 1);
+            }
+            //console.log(this.media);
+        },
+        setSelectedMedia(selection){
+            this.selectedMedia = selection;
         }
     },
     getters: {

@@ -231,7 +231,6 @@ import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
 import Editor from '@tinymce/tinymce-vue';
 import MediumForm from "../media/MediumForm.vue";
-import {useMediumStore} from "../../store/media";
 import {useGlobalStore} from "../../store/global";
 
 export default {
@@ -251,10 +250,8 @@ export default {
     },
     setup() { //use database store
         const globalStore = useGlobalStore();
-        const mediumStore = useMediumStore();
         return {
             globalStore,
-            mediumStore,
         }
     },
     data() {

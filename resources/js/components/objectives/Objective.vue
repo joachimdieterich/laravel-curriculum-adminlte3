@@ -336,10 +336,11 @@
                 }"
             ></LmsModal>
             <SubscribeModal></SubscribeModal>
-            <MediumModal
+            <MediumModal></MediumModal>
+<!--            <MediumModal
                 :show="this.mediumStore.getShowMediumModal"
                 @close="this.mediumStore.setShowMediumModal(false)"
-            ></MediumModal>
+            ></MediumModal>-->
             <TerminalObjectiveModal></TerminalObjectiveModal>
             <EnablingObjectiveModal></EnablingObjectiveModal>
         </Teleport>
@@ -362,7 +363,6 @@ import Lms from "../lms/Lms.vue";
 import LmsModal from "../lms/LmsModal.vue";
 import References from "../reference/References.vue";
 import Quotes from "../quote/Quotes.vue";
-import {useMediumStore} from "../../store/media";
 import {useGlobalStore} from "../../store/global";
 import MediumModal from "../media/MediumModal.vue";
 import ReferenceObjectiveModal from "../reference/ReferenceObjectiveModal.vue";
@@ -395,10 +395,10 @@ export default {
     },
     setup () { //use database store
         const globalStore = useGlobalStore();
-        const mediumStore = useMediumStore();
+
+
         return {
             globalStore,
-            mediumStore,
         }
     },
     data() {

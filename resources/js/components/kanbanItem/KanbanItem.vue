@@ -209,7 +209,6 @@ import moment from 'moment';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import HtmlRenderer from "../uiElements/HtmlRenderer.vue";
 import {useGlobalStore} from "../../store/global";
-import {useMediumStore} from "../../store/media.js";
 
 export default {
     props: {
@@ -228,10 +227,8 @@ export default {
     },
     setup() { //use database store
         const globalStore = useGlobalStore();
-        const mediumStore = useMediumStore();
         return {
             globalStore,
-            mediumStore,
         }
     },
     data() {
@@ -282,15 +279,14 @@ export default {
             this.show_comments = !this.show_comments;
         },
         addMedia() {
-            this.mediumStore.setMediumModalParams(
-                {
-                    'show': true,
-                    'subscribeSelected': true,
-                    'subscribable_type': 'App\\\KanbanItem',
-                    'subscribable_id': this.item.id,
-                    'public': 0,
-                    'callbackId': this.component_id
-                });
+            this.globalStore?.showModal('medium-modal', {
+                'show': true,
+                'subscribeSelected': true,
+                'subscribable_type': 'App\\\KanbanItem',
+                'subscribable_id': this.item.id,
+                'public': 0,
+                'callbackId': this.component_id
+            });
         },
         reload() { //after media upload
             axios.get("/kanbanItems/" + this.item.id)

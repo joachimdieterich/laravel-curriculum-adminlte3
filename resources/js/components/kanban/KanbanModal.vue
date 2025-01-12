@@ -79,7 +79,10 @@
                         <MediumForm
                             class="pull-right"
                             id="medium_id"
+                            :form="form"
                             :medium_id="form.medium_id"
+                            :subscribable_type="'App\\Kanban'"
+                            :subscribable_id="form.id"
                             accept="image/*"
                             :selected="this.form.medium_id"
                             @selectedValue="(id) => {

@@ -1,12 +1,23 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
+import {viteStaticCopy} from "vite-plugin-static-copy";
 import vue from '@vitejs/plugin-vue';
 import commonjs from 'vite-plugin-commonjs';
+import mix from "laravel-mix";
+
 
 export default defineConfig({
     plugins: [
         laravel({
             input: ['resources/sass/app.scss', 'resources/js/app.js'],
+        }),
+        viteStaticCopy({ // !! only works with npm run build (not dev!)
+            targets: [
+                {
+                    src: './resources/js/plugins/curriculummedia/plugin.js',
+                    dest: './build/../../node_modules/tinymce/plugins/curriculummedia'
+                }
+            ]
         }),
         vue({
             template: {

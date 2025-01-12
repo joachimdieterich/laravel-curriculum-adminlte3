@@ -44,17 +44,9 @@
 <script>
 
 import Form from "form-backend-validation";
-
-const MeetingAgendaForm =
-    () => import('./MeetingAgendaForm.vue');
-const AgendaItemForm =
-    () => import('./AgendaItemForm.vue');
-const AgendaItem =
-    () => import('./AgendaItem.vue');
-//import MeetingAgendaForm from "./MeetingAgendaForm";
-/*
+import MeetingAgendaForm from "./MeetingAgendaForm";
 import AgendaItemForm from "./AgendaItemForm";
-import AgendaItem from "./AgendaItem";*/
+import AgendaItem from "./AgendaItem";
 
 export default {
     name: 'Agenda',

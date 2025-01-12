@@ -4,17 +4,17 @@
           v-for="speaker in this.speakers"
           class="pull-left"
           style="min-width: 300px;">
-          <avatar :key="'agenda_item_'+ item.id + '_speaker_id_' + speaker.id"
-                    css="m-2"
-
-                    data-toggle="tooltip"
-                    label=true
-                    :title="speaker.user.firstname + ' ' + speaker.user.lastname"
-                    :subtitle="speaker.title"
-                    :firstname="speaker.user.firstname"
-                    :lastname="speaker.user.lastname"
-                    medium_id="null"
-                    size="40"
+          <avatar
+            :key="'agenda_item_'+ item.id + '_speaker_id_' + speaker.id"
+            css="m-2"
+            data-toggle="tooltip"
+            label=true
+            :title="speaker.user.firstname + ' ' + speaker.user.lastname"
+            :subtitle="speaker.title"
+            :firstname="speaker.user.firstname"
+            :lastname="speaker.user.lastname"
+            medium_id="null"
+            size="40"
           ></avatar>
           <i v-if="edit"
              class="fa fa-trash text-danger"
@@ -72,12 +72,8 @@
 </template>
 <script>
 import Form from "form-backend-validation";
-const Avatar =
-    () => import('../uiElements/Avatar.vue');
-const Select2 =
-    () => import('../forms/Select2.vue');
-/*import Avatar from "../uiElements/Avatar"
-import Select2 from "../forms/Select2";*/
+import Avatar from "../uiElements/Avatar"
+import Select2 from "../forms/Select2";
 
 export default {
   name: 'Speakers',

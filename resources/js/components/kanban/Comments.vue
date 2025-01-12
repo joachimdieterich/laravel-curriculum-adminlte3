@@ -77,12 +77,8 @@
 
 <script>
 import Form from 'form-backend-validation';
-const Avatar =
-    () => import('../uiElements/Avatar.vue');
-const Reaction =
-    () => import('../reaction/Reaction.vue');
-//import Avatar from "../uiElements/Avatar"
-//import Reaction from "../reaction/Reaction";
+import Avatar from "../uiElements/Avatar.vue"
+import Reaction from "../reaction/Reaction.vue";
 
 export default {
     name: 'Comments',

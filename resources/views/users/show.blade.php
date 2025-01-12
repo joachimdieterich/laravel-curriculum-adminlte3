@@ -62,8 +62,6 @@
 </div>
 @endcan
 
-<medium-create-modal></medium-create-modal>
-
 @endsection
 
 @section('scripts')

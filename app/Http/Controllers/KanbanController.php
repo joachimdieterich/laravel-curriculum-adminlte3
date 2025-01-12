@@ -238,7 +238,7 @@ class KanbanController extends Controller
             'title' => $input['title'] ?? $kanban->title ,
             'description' => $input['description'] ?? $kanban->title,
             'color' => $input['color'] ?? $kanban->color,
-            'medium_id' => $input['medium_id'] ?? $kanban->medium_id,
+            'medium_id' => $input['medium_id'],// ?? $kanban->medium_id, -> to get medium unsubscribe working
             'commentable' => $input['commentable'],
             'auto_refresh' => $input['auto_refresh'],
             'only_edit_owned_items' => $input['only_edit_owned_items'],

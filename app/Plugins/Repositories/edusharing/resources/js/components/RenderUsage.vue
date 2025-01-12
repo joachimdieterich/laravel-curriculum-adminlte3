@@ -47,17 +47,17 @@
 
         data() {
             return {
-                detailsSnippet: '',
+             /*   detailsSnippet: '',
                 downloadUrl: '',
                 preview: '',
                 previewImg: false,
                 title: '',
                 name: '',
-                errors:  {},
+                errors:  {},*/
             }
         },
         methods: {
-            async loader() {
+          /*  async loader() {
                 $("#loading_"+this.medium.id).show();
                 await axios.get('/media/' + this.medium.id)
                     .then((response) => {
@@ -77,7 +77,7 @@
                         console.log(error);
                         $("#loading_"+this.medium.id).hide();
                     });
-            },
+            },*/
            /* async getPreview() {
                 $("#loading_"+this.medium.id).show();
                 axios.get('/media/' + this.medium.id + '?preview=true')
@@ -116,10 +116,10 @@
         },
         mounted(){
             $("#loading_"+this.medium.id).hide();
-            this.$nextTick(() => {
+          /*  this.$nextTick(() => {
                 this.loader();
             })
-
+*/
             this.$eventHub.on('download', (medium) => {
 
                 if (this.medium.id == medium.id) {

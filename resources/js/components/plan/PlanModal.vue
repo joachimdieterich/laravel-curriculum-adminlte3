@@ -54,7 +54,7 @@
                                     {{ trans('validation.required') }}
                                 </p>
                             </div>
-                            
+
                             <div class="form-group input-group">
                                 <v-swatches
                                     :swatch-size="49"
@@ -228,11 +228,11 @@ export default {
             },
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link lists table code"
+                    "autolink link lists table code autoresize"
                 ],
                 {
-                    eventHubCallbackFunction: 'insertContent',
-                    eventHubCallbackFunctionParams: this.component_id,
+                    'callback': 'insertContent',
+                    'callbackId': this.component_id
                 },
                 "bold underline italic | alignleft aligncenter alignright | table",
                 "bullist numlist outdent indent | mathjax link code",

@@ -89,7 +89,6 @@
                     <p class="help-block"
                        v-if="form.errors.moderatorOnlyMessage"
                        v-text="form.errors.moderatorOnlyMessage[0]">
-
                     </p>
                 </div>
 
@@ -596,8 +595,8 @@ export default {
                     "autolink link table lists autoresize"
                 ],
                 {
-                    'eventHubCallbackFunction': 'insertContent',
-                    'eventHubCallbackFunctionParams': this.component_id,
+                    'callback': 'insertContent',
+                    'callbackId': this.component_id
                 }
             ),
             showExtendedSettings: false,

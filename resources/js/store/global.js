@@ -92,7 +92,7 @@ export const useGlobalStore = defineStore('global', {
             this.modals[title].params = params;
         },
         addToMedia(item) {
-            let index = this.media?.findIndex(
+            let index = this.media.findIndex(
                 i => i.media === item.media
             );
 
@@ -104,7 +104,7 @@ export const useGlobalStore = defineStore('global', {
             //console.log(this.media);
         },
         removeFromMedia(item) {
-            let index = this.media?.findIndex(
+            let index = this.media.findIndex(
                 i => i.media === item.media
             );
 

@@ -65,7 +65,7 @@
                     width: 30px;
                     height: 40px;
                     background-color: #0583C9;
-                    top: 0px;
+                    top: 0;
                     font-size: 1.2em;
                     left: 10px;"
         >
@@ -75,16 +75,16 @@
         </div>
 
         <i v-if="subscription.medium.mime_type === 'pdf'" class="far fa-file-pdf text-primary text-center pt-2"
-        style="position:absolute; top: 0px; height: 150px !important; width: 100%; font-size:800%;"
+        style="position:absolute; top: 0; height: 150px !important; width: 100%; font-size:800%;"
         ></i>
         <i v-if="subscription.medium.mime_type === 'url'" class="fa fa-link text-primary text-center pt-2"
-        style="position:absolute; top: 0px; height: 150px !important; width: 100%; font-size:800%;"
+        style="position:absolute; top: 0; height: 150px !important; width: 100%; font-size:800%;"
         ></i>
         <span
             v-permission="'medium_delete'"
             class="p-1 pointer_hand"
             accesskey=""
-            style="position:absolute; top:0px; height: 30px; width:100%;"
+            style="position:absolute; top:0; height: 30px; width:100%;"
         >
             <button
                 :id="'delete-medium'+subscription.medium.id"
@@ -98,7 +98,7 @@
             </button>
         </span>
         <span class="bg-white text-center p-1 overflow-auto "
-            style="position:absolute; bottom:0px; height: 150px; width:100%;"
+            style="position:absolute; bottom:0; height: 150px; width:100%;"
         >
             <h6 class="events-heading pt-1 hyphens" v-dompurify-html="subscription.medium.title"></h6>
             <p class=" text-muted small" v-dompurify-html="subscription.medium.description"></p>
@@ -184,16 +184,12 @@
                 switch (true) {
                     case mimeType.startsWith("image"):
                         return "fa fa-file-image";
-                        break;
                     case mimeType.startsWith("video"):
                         return "fa fa-file-video";
-                        break;
                     case mimeType.startsWith("application/pdf"):
                         return "fa fa-file-pdf";
-                        break;
                     default:
                         return "fa fa-file";
-                        break;
                 }
             },
             setArtefact(medium_id) {

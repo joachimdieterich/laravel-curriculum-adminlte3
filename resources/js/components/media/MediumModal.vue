@@ -2,6 +2,7 @@
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
+             style="z-index: 10000000 !important;"
         >
             <div class="modal-container">
                 <div class="card-header">

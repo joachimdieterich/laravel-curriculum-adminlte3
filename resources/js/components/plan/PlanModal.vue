@@ -55,11 +55,12 @@
                                 </p>
                             </div>
 
-                            <div class="form-group input-group">
+                            <div class="form-group input-group align-items-center">
                                 <v-swatches
                                     :swatch-size="49"
                                     :trigger-style="{}"
                                     popover-to="right"
+                                    style="height:42px"
                                     v-model="form.color"
                                     show-fallback
                                     fallback-input-type="color"
@@ -75,7 +76,6 @@
                                     id="title"
                                     name="title"
                                     class="form-control ml-3"
-                                    style="height:42px"
                                     v-model.trim="form.title"
                                     :placeholder="trans('global.title') + ' *'"
                                     required
@@ -97,21 +97,21 @@
                                     v-model="form.description"
                                 />
                             </div>
-
-                            <div class="form-group">
+                            <!-- currently not in use -->
+                            <!-- <div class="form-group">
                                 <VueDatePicker
                                     v-model="form.date"
                                     :teleport="true"
                                     locale="de-DE"
                                     format="dd.MM.yyyy"
                                     range
+                                    :partialRange="false"
                                     :enable-time-picker="false"
-                                    @cleared="form.date = ['', '']"
                                     :placeholder="trans('global.selectDateRange')"
                                     :select-text="trans('global.ok')"
                                     :cancel-text="trans('global.close')"
                                 ></VueDatePicker>
-                            </div>
+                            </div> -->
 
                             <div class="form-group">
                                 <input
@@ -119,7 +119,6 @@
                                     id="duration"
                                     name="duration"
                                     class="form-control"
-                                    style="height:42px"
                                     v-model.trim="form.duration"
                                     :placeholder="trans('global.plan.fields.duration')"
                                 />
@@ -191,11 +190,6 @@ import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {
     name: 'plan-modal',
-    components: {
-        VueDatePicker,
-        Editor,
-        Select2,
-    },
     props: {},
     setup() {
         const globalStore = useGlobalStore();
@@ -228,11 +222,11 @@ export default {
             },
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link lists table code autoresize"
+                    "autolink link lists table code"
                 ],
                 {
-                    'callback': 'insertContent',
-                    'callbackId': this.component_id
+                    eventHubCallbackFunction: 'insertContent',
+                    eventHubCallbackFunctionParams: this.component_id,
                 },
                 "bold underline italic | alignleft aligncenter alignright | table",
                 "bullist numlist outdent indent | mathjax link code",
@@ -245,9 +239,12 @@ export default {
             if (!this.checkRequired()) {
                 return;
             }
-            // format dates as 'yyyy-mm-dd'
-            this.form.begin = this.form.date[0].toISOString().slice(0, 10);
-            this.form.end = this.form.date[1].toISOString().slice(0, 10);
+            // currently not in use
+            // if (this.form.date !== null && this.form.date[1].toString() !== 'Invalid Date') {
+            //     // format dates as 'yyyy-mm-dd'
+            //     this.form.begin = this.form.date[0].toISOString().slice(0, 10);
+            //     this.form.end = this.form.date[1].toISOString().slice(0, 10);
+            // }
 
             if (method == 'patch') {
                 this.update();
@@ -318,6 +315,11 @@ export default {
                 }
             }
         });
+    },
+    components: {
+        VueDatePicker,
+        Editor,
+        Select2,
     },
 }
 </script>

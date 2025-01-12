@@ -95,6 +95,7 @@ export default {
             })
             .then(r => {
                 this.$eventHub.emit('plan-subscription-added', r.data);
+                this.globalStore.closeModal(this.$options.name);
                 //console.log(r.data);
             })
             .catch(err => {

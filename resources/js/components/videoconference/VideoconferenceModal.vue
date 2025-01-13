@@ -179,11 +179,11 @@
                     <p class="help-block" v-if="form.errors?.endWhenNoModeratorDelayInMinutes" v-text="form.errors?.endWhenNoModeratorDelayInMinutes[0]"></p>
                 </div>
 
-                <div class="card-header border-bottom"
-                     data-card-widget="collapse">
-                    <h5 class="card-title">
-                        Darstellung
-                    </h5>
+                <div
+                    class="card-header border-bottom"
+                    data-card-widget="collapse"
+                >
+                    <h5 class="card-title">{{ trans('global.display') }}</h5>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body pb-0">

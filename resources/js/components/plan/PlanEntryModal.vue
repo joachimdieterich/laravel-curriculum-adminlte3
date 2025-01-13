@@ -48,9 +48,7 @@
                     </div>
 
                     <div class="card-header border-bottom">
-                        <h5 class="card-title">
-                            Darstellung
-                        </h5>
+                        <h5 class="card-title">{{ trans('global.display') }}</h5>
                     </div>
 
                     <div class="card-body">

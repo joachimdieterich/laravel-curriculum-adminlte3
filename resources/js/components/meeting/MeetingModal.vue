@@ -167,9 +167,7 @@
                                 class="card-header border-bottom"
                                 data-card-widget="collapse"
                             >
-                                <h5 class="card-title">
-                                    Darstellung
-                                </h5>
+                                <h5 class="card-title">{{ trans('global.display') }}</h5>
                             </div>
 
                             <div class="card-body pb-0">

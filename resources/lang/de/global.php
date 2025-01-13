@@ -276,6 +276,7 @@ return [
     'teacher' => 'Lehrkraft/Dozent',
     'remember_token' => 'Remember token',
     'general' => 'Allgemein',
+    'display' => 'Darstellung',
     'permissions' => 'Berechtigungen',
     'user_actions' => 'Benutzeraktionen',
     'time' => 'Zeit',

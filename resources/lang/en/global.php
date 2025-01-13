@@ -242,6 +242,7 @@ return [
     'teacher' => 'Teacher',
     'remember_token' => 'Remember token',
     'general' => 'General',
+    'display' => 'Display',
     'permissions' => 'Permissions',
     'user_actions' => 'User actions',
     'time' => 'Time',

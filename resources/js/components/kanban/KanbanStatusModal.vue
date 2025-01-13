@@ -25,10 +25,7 @@
                     </div>
                 </div>
 
-                <div
-                    class="card-body"
-                    style="max-height: 80vh; overflow-y: auto;"
-                >
+                <div class="modal-body">
                     <div class="form-group">
                         <input
                             type="text"
@@ -62,14 +59,13 @@
                             v-model="this.form.color"
                             show-fallback
                             fallback-input-type="color"
-
                             @input="(id) => {
-                                    if(id.isInteger){
-                                      this.form.color = id;
-                                    }
-                                }"
+                                if(id.isInteger) {
+                                    this.form.color = id;
+                                }
+                            }"
                             :max-height="300"
-                        ></v-swatches>
+                        />
                     </div>
 
                     <div

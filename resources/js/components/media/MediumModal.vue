@@ -24,7 +24,7 @@
                     </div>
                 </div>
 
-                <div class="card-body p-0" style="max-height: 80vh; overflow-y: auto;">
+                <div class="modal-body p-0">
                     <div class="d-md-flex">
                         <div class="card-pane-left p-0">
                             <ul class="nav flex-column">

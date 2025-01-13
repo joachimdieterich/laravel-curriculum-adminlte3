@@ -22,7 +22,7 @@
                 </div>
             </div>
 
-            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+            <div class="modal-body">
                 <ul v-if="method === 'post'"
                     class="nav nav-pills">
                     <!-- Create -->

@@ -855,9 +855,9 @@ return [
     'training' => [
         'title' => 'Trainings',
         'title_singular' => 'Training',
-        'create' => 'Create Training',
+        'create' => 'Create training',
         'search' => 'Search training',
-        'edit' => 'Edit Training',
+        'edit' => 'Edit training',
     ],
     'exercise' => [
         'title' => 'Exercises',
@@ -865,8 +865,11 @@ return [
         'create' => 'Create exercise',
         'search' => 'Search exercise',
         'edit' => 'Edit exerciese',
+        'delete' => 'Delete exercise',
+        'delete_helper' => 'Should this exercise be deleted?',
         'fields' => [
-            'recommended_iterations' => 'How often should this exercise be repeated?'
+            'recommended_iterations' => 'How often should this exercise be repeated? / How many minutes should be exercised?',
+            'recommended_iterations_short' => 'Repetitions / Minutes',
         ]
     ],
     'exercisedone' => [

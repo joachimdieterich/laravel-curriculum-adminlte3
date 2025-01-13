@@ -22,8 +22,8 @@
                     </div>
                 </div>
 
-                <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                    <div class="form-group ">
+                <div class="modal-body" style="overflow: visible;">
+                    <div class="form-group">
                         <Select2
                             id="curriculum_id"
                             name="curriculum_id"
@@ -100,28 +100,23 @@
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
+import axios from 'axios';
 
 export default {
     name: 'subscribe-objective-modal',
     components: {
         Select2,
     },
-    props: {
-        params: {
-            type: Object
-        },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
-    },
+    props: {},
     setup() { //use database store
         const globalStore = useGlobalStore();
         return {
-            globalStore
+            globalStore,
         }
     },
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
-            url: null,
             form: new Form({
                 id: null,
                 subscribable_type: null,
@@ -132,54 +127,26 @@ export default {
             }),
         }
     },
-    watch: {
-        params: function(newVal, oldVal) {
-            this.form.reset();
-            this.form.populate(newVal);
-            this.url = newVal.url;
-
-            if (this.form.id != null) {
-                this.method = 'patch';
-            } else {
-                this.method = 'post';
-            }
-        },
-    },
     methods: {
         submit() {
-            if (this.form.enabling_objective_id.length === 0) {
-                this.url = '/terminalObjectiveSubscriptions';
+            const type = this.form.enabling_objective_id.length === 0 ? 'terminal' : 'enabling';
 
-                axios.post(this.url, {
-                    'terminal_objective_id':    this.form.terminal_objective_id,
-                    'subscribable_type':        this.form.subscribable_type,
-                    'subscribable_id':          this.form.subscribable_id
-                })
-                .then(response => {
-                    console.log(response);
-                    this.$eventHub.emit('subscriptions-added', response.data);
-                })
-                .catch(e => {
-                    console.log(e.response);
+            axios.post('/' + type + 'ObjectiveSubscriptions', {
+                terminal_objective_id:    this.form.terminal_objective_id,
+                // will be discarded in terminal-controller
+                enabling_objective_id:    this.form.enabling_objective_id,
+                subscribable_type:        this.form.subscribable_type,
+                subscribable_id:          this.form.subscribable_id
+            })
+            .then(response => {
+                this.$eventHub.emit('subscriptions-added', {
+                    terminal_objectives: response.data[0],
+                    id: this.form.subscribable_id,
                 });
-            } else {
-                this.url = '/enablingObjectiveSubscriptions';
-                this.form.enabling_objective_id.forEach(id => {
-                    axios.post(this.url, {
-                        'curriculum_id':            this.form.curriculum_id,
-                        'terminal_objective_id':    this.form.terminal_objective_id,
-                        'enabling_objective_id':    id,
-                        'subscribable_type':        this.form.subscribable_type,
-                        'subscribable_id':          this.form.subscribable_id
-                    })
-                    .then(r => {
-                        this.$eventHub.emit('subscriptions-added', r.data);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-                });
-            }
+            })
+            .catch(e => {
+                console.log(e.response);
+            });
         },
     },
     mounted() {
@@ -190,14 +157,12 @@ export default {
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
-                    if (this.form.id != '') {
-                        this.method = 'patch';
-                    } else {
-                        this.method = 'post';
-                    }
                 }
             }
         });
     },
 }
 </script>
+<style>
+.select2-selection__rendered { white-space: normal !important; }
+</style>

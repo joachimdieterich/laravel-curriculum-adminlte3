@@ -232,25 +232,11 @@ class PlanController extends Controller
      */
     public function destroy(Plan $plan)
     {
-        //TODO: only owner/admin should be able to delete a plan
-        // theoretically a user enroled in a plan can send a delete request
-        abort_unless((\Gate::allows('plan_delete') and $plan->isAccessible()), 403);
+        abort_unless((
+            \Gate::allows('plan_delete') and
+            ($plan->owner->id == auth()->user()->id or is_admin())
+        ), 403);
 
-        // objectivesSubscriptions aren't automatically removed
-        foreach ($plan->entries as $entry) {
-            $entry->enablingObjectiveSubscriptions()->delete();
-            $entry->terminalObjectiveSubscriptions()->delete();
-            
-            // trainings need to be deleted separately
-            foreach ($entry->trainings as $training) {
-                $training->exercises()->delete();
-                (new TrainingController())->destroy($training);
-            }
-        }
-
-        $plan->entries()->delete();
-        $plan->subscriptions()->delete();
-        //? if media-subscriptions can be added in the future, they need to be deleted too
         $plan->delete();
     }
 
@@ -362,6 +348,47 @@ class PlanController extends Controller
         $planCopy->save();
 
         return redirect('/plans');
+    }
+    /**
+     * Get all users with the student-role that are enroled in a plan
+     *
+     * @param  \App\Plan $plan
+     * @return Array Array of users
+     */
+    public function getUsers(Plan $plan)
+    {
+        $users = [];
+        $subscriptions = $plan->subscriptions()->get()->toArray();
+        // get every user-id through all subscriptions
+        foreach ($subscriptions as $subscription) {
+            // edit-rights are given to teachers or higher
+            if ($subscription['editable']) continue;
+
+            switch ($subscription['subscribable_type']) {
+                case 'App\User':
+                    array_push($users, $subscription['subscribable_id']);
+                    break;
+                case 'App\Group':
+                    $ids = Group::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray();
+                    $users = array_merge($users, $ids);
+                    break;
+                case 'App\Organization':
+                    $ids = Organization::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray();
+                    $users = array_merge($users, $ids);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        $users = array_unique($users, SORT_NUMERIC); // remove duplicates
+
+        // query for the student role-id => 6
+        $users = User::select('users.id', 'users.firstname', 'users.lastname')->whereIn('users.id', $users)
+            ->join('organization_role_users', 'users.id', '=', 'organization_role_users.user_id')->where('organization_role_users.role_id', 6)
+            ->distinct()->get()->toArray();
+
+        return $users;
     }
 
     protected function validateRequest()

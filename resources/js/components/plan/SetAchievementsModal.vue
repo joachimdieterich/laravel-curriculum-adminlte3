@@ -16,7 +16,7 @@
                     </button>
                  </div>
             </div>
-            <div class="card-body overflow-auto">
+            <div class="modal-body">
                 <table class="table m-0 border-top-0"
                        style="border-top: 0"
                        v-if="this.users.length"

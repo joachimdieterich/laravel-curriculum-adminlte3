@@ -3,26 +3,28 @@
         <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
         >
-        <div class="modal-container">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.map.create') }}
-                    </span>
-                    <span v-if="method === 'patch'">
-                        {{ trans('global.map.edit') }}
-                    </span>
-                </h3>
-                <div class="card-tools">
-                    <button type="button"
+            <div class="modal-container">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span v-if="method === 'post'">
+                            {{ trans('global.map.create') }}
+                        </span>
+                        <span v-if="method === 'patch'">
+                            {{ trans('global.map.edit') }}
+                        </span>
+                    </h3>
+                    <div class="card-tools">
+                        <button
+                            type="button"
                             class="btn btn-tool"
-                            @click="globalStore?.closeModal($options.name)">
-                        <i class="fa fa-times"></i>
-                    </button>
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-                <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                <div class="modal-body">
                     <div class="input-group pb-1">
                         <v-swatches
                             :swatch-size="49"
@@ -31,14 +33,13 @@
                             v-model="this.form.color"
                             show-fallback
                             fallback-input-type="color"
-
                             @input="(id) => {
-                                    if(id.isInteger){
-                                      this.form.color = id;
-                                    }
-                                }"
+                                if(id.isInteger) {
+                                    this.form.color = id;
+                                }
+                            }"
                             :max-height="300"
-                        ></v-swatches>
+                        />
                         <input
                             type="text" id="title"
                             name="title"
@@ -75,7 +76,7 @@
                             class="form-control"
                             :init="tinyMCE"
                             :initial-value="form.description"
-                        ></Editor>
+                        />
                     </div>
                     <div class="form-group">
                         <label for="tags">
@@ -100,10 +101,9 @@
                         model="mapMarkerType"
                         :selected="this.form.type_id"
                         @selectedValue="(id) => {
-                        this.form.type_id = id;
-                    }"
-                    >
-                    </Select2>
+                            this.form.type_id = id;
+                        }"
+                    />
                     <Select2
                         id="map_marker_category"
                         name="map_marker_category"
@@ -111,10 +111,9 @@
                         model="mapMarkerCategory"
                         :selected="this.form.category_id"
                         @selectedValue="(id) => {
-                        this.form.category_id = id;
-                    }"
-                    >
-                    </Select2>
+                            this.form.category_id = id;
+                        }"
+                    />
 
                     <div class="form-group">
                         <label for="map_marker_category">
@@ -179,34 +178,38 @@
                     </div>
 
                     <div v-if="form.id"
-                         class="form-group">
+                        class="form-group"
+                    >
                         <MediumModal
                             :form="form"
                             :id="component_id"
                             :medium_id="form.medium_id"
-                            accept="image/*"/>
+                            accept="image/*"
+                        />
                     </div>
                 </div>
 
                 <div class="card-footer">
-                     <span class="pull-right">
-                         <button
-                             id="map-cancel"
-                             type="button"
-                             class="btn btn-default"
-                             @click="globalStore?.closeModal($options.name)">
-                             {{ trans('global.cancel') }}
-                         </button>
-                         <button
-                             id="map-save"
-                             class="btn btn-primary"
-                             @click="submit(method)" >
-                             {{ trans('global.save') }}
-                         </button>
+                    <span class="pull-right">
+                        <button
+                            id="map-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="map-save"
+                            class="btn btn-primary"
+                            @click="submit(method)"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
                     </span>
                 </div>
+            </div>
         </div>
-    </div>
     </Transition>
 </template>
 <script>

@@ -29,7 +29,6 @@ mix.options({
 });
 
 /* TinyMCE */
-mix.copyDirectory('resources/js/plugins/curriculummedia/plugin.js', 'public/node_modules/tinymce/plugins/curriculummedia/plugin.js');
 /*mix.copyDirectory('node_modules/tinymce/plugins', 'public/js/plugins');
 mix.copyDirectory('node_modules/tinymce/plugins', 'public/js/plugins');
 mix.copyDirectory('node_modules/tinymce/skins', 'public/js/skins');

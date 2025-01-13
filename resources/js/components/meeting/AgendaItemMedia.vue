@@ -32,9 +32,7 @@
     </div>
 </template>
 <script>
-const Medium =
-    () => import('../media/Medium.vue');
-//import Medium from "../media/Medium";
+import Medium from "../media/Medium";
 export default {
     name: 'AgendaItemMedia',
     components: {Medium},
@@ -57,12 +55,12 @@ export default {
         },
         addMedia() {
             this.$modal.show(
-                'medium-create-modal',
+                'medium-modal',
                 {
-                    'referenceable_type': 'App\\\AgendaItem',
-                    'referenceable_id': this.subscription.id,
-                    'eventHubCallbackFunction': 'reload_agenda',
-                    'eventHubCallbackFunctionParams': this.subscription.agenda_id,
+                    'subscribable_type': 'App\\\AgendaItem',
+                    'subscribable_id': this.subscription.id,
+                    'callback': 'insertContent',
+                    'callbackId': this.component_id
                 });
         },
 

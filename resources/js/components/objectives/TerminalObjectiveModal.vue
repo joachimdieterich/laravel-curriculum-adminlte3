@@ -166,10 +166,10 @@ export default {
                 ],
                 {
                     'public': 1,
-                    'referenceable_type': 'App\\\Curriculum',
-                    'referenceable_id': this.form?.curriculum_id,
-                    'eventHubCallbackFunction': 'insertContent',
-                    'eventHubCallbackFunctionParams': this.component_id
+                    'subscribeSelected': true,
+                    'subscribable_type': 'App\\\Curriculum',
+                    'subscribable_id': this.form?.curriculum_id,
+                    'callbackId': this.component_id
                 }),
         }
     },
@@ -218,6 +218,20 @@ export default {
                     this.form.populate(params);
                     this.form.title = this.$decodeHTMLEntities(this.form.title);
                     this.form.description = this.$decodeHtml(this.form.description);
+
+                    this.tinyMCE = this.$initTinyMCE(
+                    [
+                        "autolink link curriculummedia table lists autoresize"
+                    ],
+                    {
+                        'public': 1,
+                        'subscribeSelected': true,
+                        'subscribable_type': 'App\\\Curriculum',
+                        'subscribable_id': this.form?.curriculum_id,
+                        'callback': 'insertContent',
+                        'callbackId': this.component_id
+                    });
+
                     if (this.form.id !== '') {
                         this.method = 'patch';
                     } else {

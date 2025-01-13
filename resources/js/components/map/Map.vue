@@ -180,9 +180,7 @@
             <MediumModal
                 subscribable_type="App\\Map"
                 :subscribable_id="map.id"
-                :show="this.mediumStore.getShowMediumModal"
-                @close="this.mediumStore.setShowMediumModal(false)"
-            ></MediumModal>
+                ></MediumModal>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.marker.delete')"
@@ -212,7 +210,6 @@ import MarkerView from "./MarkerView.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import MediumModal from "../media/MediumModal.vue";
 import MarkerModal from "./MarkerModal.vue";
-import {useMediumStore} from "../../store/media.js";
 import {useGlobalStore} from "../../store/global";
 import MapModal from "./MapModal.vue";
 import Select2 from "../forms/Select2.vue";
@@ -237,10 +234,8 @@ export default {
         },
     },
     setup () { //use database store
-        const mediumStore = useMediumStore();
         const globalStore = useGlobalStore();
         return {
-            mediumStore,
             globalStore
         }
     },

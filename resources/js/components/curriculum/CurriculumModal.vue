@@ -358,8 +358,8 @@ export default {
                     "autolink link table lists autoresize"
                 ],
                 {
-                    'eventHubCallbackFunction': 'insertContent',
-                    'eventHubCallbackFunctionParams': this.component_id,
+                    'callback': 'insertContent',
+                    'callbackId': this.component_id
                 }
             ),
             search: '',

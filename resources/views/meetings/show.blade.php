@@ -22,6 +22,4 @@
 @endsection
 @section('content')
     <meeting :meeting="{{ $meeting }}" ref="meetings"></meeting>
-    <medium-modal></medium-modal>
-    <medium-create-modal></medium-create-modal>
 @endsection

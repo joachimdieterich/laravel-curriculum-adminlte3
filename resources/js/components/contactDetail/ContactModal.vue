@@ -146,8 +146,8 @@ export default {
                     "emoticons template paste textpattern curriculummedia autoresize"
                 ],
                 {
-                    'eventHubCallbackFunction': 'insertContent',
-                    'eventHubCallbackFunctionParams': this.component_id,
+                    'callback': 'insertContent',
+                    'callbackId': this.component_id
 
                 },
                 " | customDateButton | insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | example link image media | insertFirstname insertLastname organizationTitle organizationStreet organizationPostcode organizationCity contactDetailDate | usersProgress",

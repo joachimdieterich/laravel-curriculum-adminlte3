@@ -230,8 +230,8 @@ export default {
                     "autolink link lists table code autoresize"
                 ],
                 {
-                    'eventHubCallbackFunction': 'insertContent',
-                    'eventHubCallbackFunctionParams': this.component_id,
+                    'callback': 'insertContent',
+                    'callbackId': this.component_id
                 },
                 "bold underline italic | alignleft aligncenter alignright | table",
                 "bullist numlist outdent indent | mathjax link code",

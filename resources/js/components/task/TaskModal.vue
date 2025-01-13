@@ -156,8 +156,8 @@ export default {
                     "autolink link autoresize"
                 ],
                 {
-                    'eventHubCallbackFunction': 'insertContent',
-                    'eventHubCallbackFunctionParams': this.component_id,
+                    'callback': 'insertContent',
+                    'callbackId': this.component_id
                 }
             ),
         }

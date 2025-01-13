@@ -177,11 +177,11 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link curriculummedia"
+                    "autolink link curriculummedia autoresize"
                 ],
                 {
-                    'eventHubCallbackFunction': 'insertContent',
-                    'eventHubCallbackFunctionParams': this.component_id,
+                    'callback': 'insertContent',
+                    'callbackId': this.component_id
                 }
             ),
         }

@@ -415,9 +415,33 @@ app.config.globalProperties.$initTinyMCE = function(
                 }
             });
 
+            editor.ui.registry.addButton('curriculummedia',  {
+                text: 'Medien',
+                icon: 'image',
+                tooltip: 'Medien',
+                onAction: function () {
+                    globalStore.showModal('medium-modal', attr);
+                    app.config.globalProperties.$eventHub.on('insertContent', (event) => {
+                        console.log(event);
+                        if (attr.callbackId == event.id) {
+                            let html = '';
+                            globalStore.selectedMedia.forEach((media) => {
+                                html = html.concat(
+                                    editor.insertContent(
+                                        '<img src="/media/'+ media.id +'?preview=true" width="500">',
+                                        {format: 'raw'}
+                                    )
+                                );
+                            });
+                            app.config.globalProperties.$eventHub.off('insertContent'); //remove listender
+                            globalStore.setSelectedMedia(null); // deselect
+                            return html;
+                        }
+                    });
+                }
+            });
         },
     };
-
 };
 
 /**

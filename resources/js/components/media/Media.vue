@@ -10,7 +10,6 @@
                     class="link-muted text-sm px-2 pointer"
                     @click="show(subscription.medium)"
                 >
-
                     <i class="pr-2"
                        v-bind:class="[iconCss(subscription.medium.mime_type)]"
                     ></i>
@@ -66,7 +65,7 @@
                     width: 30px;
                     height: 40px;
                     background-color: #0583C9;
-                    top: 0px;
+                    top: 0;
                     font-size: 1.2em;
                     left: 10px;"
         >
@@ -76,16 +75,16 @@
         </div>
 
         <i v-if="subscription.medium.mime_type === 'pdf'" class="far fa-file-pdf text-primary text-center pt-2"
-        style="position:absolute; top: 0px; height: 150px !important; width: 100%; font-size:800%;"
+        style="position:absolute; top: 0; height: 150px !important; width: 100%; font-size:800%;"
         ></i>
         <i v-if="subscription.medium.mime_type === 'url'" class="fa fa-link text-primary text-center pt-2"
-        style="position:absolute; top: 0px; height: 150px !important; width: 100%; font-size:800%;"
+        style="position:absolute; top: 0; height: 150px !important; width: 100%; font-size:800%;"
         ></i>
         <span
             v-permission="'medium_delete'"
             class="p-1 pointer_hand"
             accesskey=""
-            style="position:absolute; top:0px; height: 30px; width:100%;"
+            style="position:absolute; top:0; height: 30px; width:100%;"
         >
             <button
                 :id="'delete-medium'+subscription.medium.id"
@@ -99,7 +98,7 @@
             </button>
         </span>
         <span class="bg-white text-center p-1 overflow-auto "
-            style="position:absolute; bottom:0px; height: 150px; width:100%;"
+            style="position:absolute; bottom:0; height: 150px; width:100%;"
         >
             <h6 class="events-heading pt-1 hyphens" v-dompurify-html="subscription.medium.title"></h6>
             <p class=" text-muted small" v-dompurify-html="subscription.medium.description"></p>
@@ -108,10 +107,8 @@
 </div>
 </template>
 
-
 <script>
     import License from '../uiElements/License.vue';
-    import {useMediumStore} from "../../store/media.js";
     import {useGlobalStore} from "../../store/global";
 
     export default {
@@ -119,7 +116,9 @@
             subscription: {},
             subscribable_type: '',
             subscribable_id: '',
-            public: 0,
+            public: {
+                default: 0
+            },
             medium: {},
             format: '',
             url: {
@@ -128,10 +127,8 @@
             },
         },
         setup () { //use database store
-            const mediumStore = useMediumStore();
             const globalStore = useGlobalStore();
             return {
-                mediumStore,
                 globalStore
             }
         },
@@ -153,6 +150,7 @@
         },
         methods: {
             loader() { //todo: remove duplicate in beforMount.
+                console.log('(re)load');
                 axios.get(this.url + '?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id).then(response => {
                     this.subscriptions = response.data.message;
                 }).catch(e => {
@@ -163,9 +161,7 @@
                 this.globalStore?.showModal('medium-preview-modal', mediumObject);
             },
             addMedia() {
-                this.mediumStore.setMediumModalParams(
-                    {
-                    'show': true,
+                this.globalStore?.showModal('medium-modal', {
                     'subscribeSelected': true,
                     'subscribable_type': this.subscribable_type,
                     'subscribable_id': this.subscribable_id,
@@ -176,8 +172,8 @@
             async unlinkMedium(subscription) { //id of external reference and value in db
                 try {
                     await axios.post(this.url + '/destroy', subscription).data;
-                } catch (error) {
-                    //this.errors = error.response.data.errors;
+                } catch (e) {
+                    console.log(e)
                 }
                 $("#medium_" + this.medium.id).hide();
             },
@@ -188,16 +184,12 @@
                 switch (true) {
                     case mimeType.startsWith("image"):
                         return "fa fa-file-image";
-                        break;
                     case mimeType.startsWith("video"):
                         return "fa fa-file-video";
-                        break;
                     case mimeType.startsWith("application/pdf"):
                         return "fa fa-file-pdf";
-                        break;
                     default:
                         return "fa fa-file";
-                        break;
                 }
             },
             setArtefact(medium_id) {
@@ -210,7 +202,6 @@
                     alert('Artefakt hinzugefügt!');
 
                 });
-
             },
             destroy(subscription) {
                 axios.post('/media/'+subscription.medium.id+'/destroy', {
@@ -234,15 +225,6 @@
                     this.loader();
                 });
             },*/
-            loadModal() {
-                this.mediumStore.setMediumModalParams(
-                    {
-                        'show': true,
-                        'subscribeSelected': false,
-                        'public': this.public,
-                        'callbackId': this.component_id
-                    });
-            }
         },
         beforeMount() {
             if (this.subscribable_type  != ''){
@@ -251,6 +233,7 @@
         },
         mounted() {
             this.$eventHub.on('medium-added', (e) => {
+                console.log('medium-added');
                 if (this.component_id == e.id) {
                     this.loader();
                 }

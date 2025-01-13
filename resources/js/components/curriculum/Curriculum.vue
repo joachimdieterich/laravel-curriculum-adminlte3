@@ -193,12 +193,7 @@
         </div>
 
         <Teleport to="body">
-            <MediumModal
-                :show="this.mediumStore.getShowMediumModal"
-                @close="() =>{
-                     this.mediumStore.setShowMediumModal(false);
-                }"
-            ></MediumModal>
+            <MediumModal></MediumModal>
             <MediumExportModal></MediumExportModal>
             <CurriculumModal></CurriculumModal>
             <ContentModal></ContentModal>
@@ -237,7 +232,6 @@ import GenerateCertificateModal from "../certificate/GenerateCertificateModal.vu
 import {useGlobalStore} from "../../store/global";
 import ContentModal from "../content/ContentModal.vue";
 import MediumModal from "../media/MediumModal.vue";
-import {useMediumStore} from "../../store/media.js";
 import MediumExportModal from "../media/MediumExportModal.vue";
 
 DataTable.use(DataTablesCore);
@@ -282,11 +276,9 @@ export default {
     setup () { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters
         const store = useDatatableStore();
         const globalStore = useGlobalStore();
-        const mediumStore = useMediumStore();
         return {
             store,
             globalStore,
-            mediumStore
         }
     },
     data() {

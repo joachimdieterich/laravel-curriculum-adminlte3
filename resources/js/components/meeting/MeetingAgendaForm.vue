@@ -48,7 +48,6 @@
 </template>
 <script>
 import Form from 'form-backend-validation';
-
 export default {
     name: 'MeetingAgendaForm',
     props: {
@@ -98,11 +97,11 @@ export default {
         }
         this.$initTinyMCE(
             [
-                "autolink link example"
+                "autolink link curriculummedia"
             ],
             {
-                'eventHubCallbackFunction': 'insertContent',
-                'eventHubCallbackFunctionParams': this.component_id,
+                'callback': 'insertContent',
+                'callbackId': this.component_id
             }
         );
     },

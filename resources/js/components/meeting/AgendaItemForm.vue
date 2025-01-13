@@ -84,10 +84,8 @@
 </template>
 <script>
 import Form from "form-backend-validation";
-const Select2 =
-    () => import('../forms/Select2.vue');
-const DatePicker =
-    () => import('vue3-datepicker');
+import Select2 from "../forms/Select2.vue";
+import DatePicker from "vue3-datepicker";
 
 export default {
     name: 'AgendaItemForm',
@@ -142,10 +140,10 @@ export default {
       },
         addMedia() {
             this.$modal.show(
-                'medium-create-modal',
+                'medium-modal',
                 {
-                    'eventHubCallbackFunction': 'add_media_to_agenda_item',
-                    'eventHubCallbackFunctionParams': this.form.id
+                    'callback': 'add_media_to_agenda_item',
+                    'callbackId': this.component_id
                 });
         },
         /*setSelectedValue(id){

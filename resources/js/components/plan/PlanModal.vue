@@ -54,7 +54,7 @@
                                     {{ trans('validation.required') }}
                                 </p>
                             </div>
-                            
+
                             <div class="form-group input-group align-items-center">
                                 <v-swatches
                                     :swatch-size="49"

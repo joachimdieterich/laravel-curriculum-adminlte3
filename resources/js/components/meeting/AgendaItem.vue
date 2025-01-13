@@ -84,18 +84,11 @@
     </div>
 </template>
 <script>
-const AgendaItemForm =
-    () => import('./AgendaItemForm.vue');
-const AgendaItemMedia =
-    () => import('./AgendaItemMedia.vue');
-const Speakers =
-    () => import('./Speakers.vue');
-const VideoConference =
-    () => import('./VideoConference.vue');
-/*import AgendaItemForm from "./AgendaItemForm";
+
+import AgendaItemForm from "./AgendaItemForm";
 import AgendaItemMedia from "./AgendaItemMedia";
 import Speakers from "./Speakers";
-import VideoConference from "./VideoConference";*/
+import VideoConference from "./VideoConference";
 
 export default {
     name: 'AgendaItem',

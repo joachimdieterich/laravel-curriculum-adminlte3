@@ -120,15 +120,9 @@
 </template>
 
 <script>
-const Agenda =
-    () => import('./Agenda.vue');
-const MeetingDateForm =
-    () => import('./MeetingDateForm.vue');
-const MeetingAgendaForm =
-    () => import('./MeetingAgendaForm.vue');
-/*import Agenda from "./Agenda";
+import Agenda from "./Agenda";
 import MeetingDateForm from "./MeetingDateForm";
-import MeetingAgendaForm from "./MeetingAgendaForm";*/
+import MeetingAgendaForm from "./MeetingAgendaForm";
 
 export default {
     props: {

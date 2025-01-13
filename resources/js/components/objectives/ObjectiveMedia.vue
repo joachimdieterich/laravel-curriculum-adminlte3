@@ -87,12 +87,6 @@
                 </media>
             </div>
         </div>
-        <Teleport to="body">
-            <MediumModal
-                :show="this.mediumStore.getShowMediumModal"
-                @close="this.mediumStore.setShowMediumModal(false)"
-            ></MediumModal>
-        </Teleport>
 
     </div>
 </template>
@@ -101,7 +95,6 @@
 import Media from '../media/Media.vue'
 import Repository from '../../../../app/Plugins/Repositories/resources/js/components/Media.vue'
 import MediumModal from "../media/MediumModal.vue";
-import {useMediumStore} from "../../store/media.js";
 
     export default {
         name: 'objectiveMedia',
@@ -115,12 +108,6 @@ import {useMediumStore} from "../../store/media.js";
             repository: {},
             type: {},
             model: {}
-        },
-        setup () { //use database store
-            const mediumStore = useMediumStore();
-            return {
-                mediumStore
-            }
         },
         data() {
             return {

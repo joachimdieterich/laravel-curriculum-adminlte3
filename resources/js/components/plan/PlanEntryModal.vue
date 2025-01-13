@@ -1,7 +1,7 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
+             class="modal-mask"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -59,7 +59,7 @@
                         :init="tinyMCE"
                         v-model="form.description"
                     />
-                    
+
                     <div class="form-group mt-3 mb-0" style="max-width: 490px;">
                         <font-awesome-picker
                             :searchbox="trans('global.select_icon')"
@@ -137,8 +137,8 @@ export default {
                     "autolink link lists table code autoresize"
                 ],
                 {
-                    eventHubCallbackFunction: 'insertContent',
-                    eventHubCallbackFunctionParams: this.component_id,
+                    'callback': 'insertContent',
+                    'callbackId': this.component_id
                 },
                 "bold underline italic | alignleft aligncenter alignright | table",
                 "bullist numlist outdent indent | mathjax link code",

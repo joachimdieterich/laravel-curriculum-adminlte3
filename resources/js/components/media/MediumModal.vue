@@ -1,7 +1,8 @@
 <template>
     <Transition name="modal">
-        <div v-if="this.mediumStore.mediumModalParams.show"
+        <div v-if="globalStore.modals[$options.name]?.show"
              class="modal-mask"
+             style="z-index: 10000000 !important;"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -17,8 +18,7 @@
                         <button
                             type="button"
                             class="btn btn-tool"
-                            @click="$emit('close')"
-                        >
+                            @click="globalStore?.closeModal($options.name)">
                             <i class="fa fa-times"></i>
                         </button>
                     </div>
@@ -31,11 +31,10 @@
                                 <li v-permission="'medium_access'"
                                     class="nav-link text-sm"
                                 >
-                                    <a
-                                        href="#upload"
-                                        class="link-muted"
+                                    <a  class="link-muted"
                                         data-toggle="tab"
-                                        @click="setTab('upload')"
+                                        href="#upload"
+                                        @click="setTab('upload');"
                                     >
                                         {{ trans('global.medium.upload') }}
                                     </a>
@@ -43,9 +42,8 @@
                                 <li v-permission="'medium_access'"
                                     class="nav-link text-sm"
                                 >
-                                    <a
+                                    <a  class="link-muted"
                                         href="#media"
-                                        class="link-muted"
                                         data-toggle="tab"
                                         @click="setTab('media');"
                                     >
@@ -55,7 +53,6 @@
     <!--                            <li class="nav-link text-sm"
                                     v-can="'link_create'">
                                     <a class="link-muted"
-                                    href="#link"
                                     data-toggle="tab"
                                     @click="setTab('link')">
                                         {{ trans('global.medium.link') }}
@@ -64,9 +61,8 @@
                                 <li v-permission="'external_medium_create'"
                                     class="nav-link text-sm"
                                 >
-                                    <a
+                                    <a  class="link-muted active show"
                                         href="#external"
-                                        class="link-muted active show"
                                         data-toggle="tab"
                                         @click="setTab('external')"
                                     >
@@ -79,10 +75,9 @@
 
                         <div class="p-1 flex-fill border-left">
                             <div class="tab-content p-2">
-                                <div
-                                    v-permission="'medium_create'"
+                                <div class="tab-pane"
                                     id="upload"
-                                    class="tab-pane"
+                                    v-permission="'medium_create'"
                                 >
                                     <form v-if="isInitial || isSaving"
                                         action="javascript:void(0)"
@@ -103,7 +98,7 @@
                                                 class="input-file"
                                                 multiple
                                                 :disabled="isSaving"
-                                                :accept="mediumStore.mediumModalParams.accept"
+                                                :accept="accept"
                                                 ref="file"
                                                 @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
                                                 required
@@ -132,9 +127,9 @@
                                 </div><!-- /.tab-pane -->
 
                                 <div
-                                    v-permission="'medium_create'"
-                                    id="media"
                                     class="tab-pane"
+                                    id="media"
+                                    v-permission="'medium_create'"
                                 >
                                     <div id="media_create_datatable_filter" class="dataTables_filter">
                                         <input
@@ -178,16 +173,22 @@
                                     </div>
                                 </div>--><!-- /.tab-pane -->
 
-                                <div
+                                <div class="tab-pane active show"
+                                     id="external"
                                     v-permission="'external_medium_create'"
-                                    id="external"
-                                    class="tab-pane active show"
                                 >
                                     <RepositoryPluginCreate
-                                        :model="this.mediumStore.mediumModalParams"
+                                        v-if="!postProcess"
+                                        :model="this.form"
                                     ></RepositoryPluginCreate>
+                                    <div v-if="postProcess"
+                                         :id="'loading_'+this.component_id"
+                                         class="overlay text-center"
+                                         style="width:100% !important; height: 100%;">
+                                        <i class="fa fa-spinner fa-pulse fa-fw"></i>
+                                        <span>Fertigstellen...</span>
+                                    </div>
                                 </div><!-- /.tab-pane -->
-
                             </div>
                             <!-- /.description-block -->
                         </div>
@@ -202,7 +203,7 @@
                             id="medium-cancel"
                             type="button"
                             class="btn btn-default mr-2"
-                            @click="$emit('close')"
+                            @click="globalStore?.closeModal($options.name)"
                         >
                             {{ trans('global.cancel') }}
                         </button>
@@ -221,17 +222,18 @@
 </template>
 <script>
 import Form from 'form-backend-validation';
-import {useMediumStore} from "../../store/media";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import 'datatables.net-select-bs5'
 import RepositoryPluginCreate from '../../../../app/Plugins/Repositories/edusharing/resources/js/components/Create.vue';
+import {useGlobalStore} from "../../store/global.js";
 
 DataTable.use(DataTablesCore);
 
 const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
 
 export default {
+    name: 'medium-modal',
     components: {
         RepositoryPluginCreate,
         DataTable,
@@ -245,9 +247,9 @@ export default {
         },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
     },
     setup() { //use database store
-        const mediumStore = useMediumStore();
+        const globalStore = useGlobalStore();
         return {
-            mediumStore,
+            globalStore,
         }
     },
     data() {
@@ -272,6 +274,11 @@ export default {
                 repository: 'local',
                 public: 0,
             }),
+            currentStatus: STATUS_INITIAL,
+            subscribeSelected: false,
+            accept: '',
+            callback: 'medium-added',
+            callbackId: null,
             search: '',
             message: '',
             columns: [
@@ -287,10 +294,12 @@ export default {
                 { title: 'created_at', data: 'created_at' },
             ],
             options : this.$dtOptions,
+            postProcess: false,
         }
     },
     watch: {
         params: function(newVal, oldVal) {
+            this.postProcess = false;
             this.form.reset();
             this.form.populate(newVal);
             if (this.form.id != ''){
@@ -302,16 +311,16 @@ export default {
     },
     computed: {
         isInitial() {
-            return this.mediumStore.mediumModalParams.currentStatus === STATUS_INITIAL;
+            return this.currentStatus === STATUS_INITIAL;
         },
         isSaving() {
-            return this.mediumStore.mediumModalParams.currentStatus === STATUS_SAVING;
+            return this.currentStatus === STATUS_SAVING;
         },
         isSuccess() {
-            return this.mediumStore.mediumModalParams.currentStatus === STATUS_SUCCESS;
+            return this.currentStatus === STATUS_SUCCESS;
         },
         isFailed() {
-            return this.mediumStore.mediumModalParams.currentStatus === STATUS_FAILED;
+            return this.currentStatus === STATUS_FAILED;
         }
     },
     methods: {
@@ -327,13 +336,13 @@ export default {
             this.uploadSubmit(formData);
         },
         uploadSubmit(formData) {
-            this.mediumStore.mediumModalParams.currentStatus = STATUS_SAVING;
+            this.currentStatus = STATUS_SAVING;
             this.message = '';
             formData.append('path', this.form.path);
-            formData.append('subscribable_type', this.mediumStore.mediumModalParams.subscribable_type);
-            formData.append('subscribable_id', this.mediumStore.mediumModalParams.subscribable_id);
-            formData.append('repository', this.mediumStore.mediumModalParams.repository);
-            formData.append('public', this.mediumStore.mediumModalParams.public);
+            formData.append('subscribable_type', this.form.subscribable_type);
+            formData.append('subscribable_id', this.form.subscribable_id);
+            formData.append('repository', this.form.repository);
+            formData.append('public', this.form.public);
             axios.post('/media', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -344,8 +353,8 @@ export default {
             })
                 .then((response) => {
                     setTimeout(() => {
-                        this.mediumStore.media = response.data;
-                        this.selectedFiles = this.mediumStore.media[0].id; //todo: select all files
+                        this.globalStore.media = response.data;
+                        this.selectedFiles = this.globalStore.media[0].id; //todo: select all files
                         this.message = 'OK';
                         this.form.reset();
                         this.progressBar = false;
@@ -353,10 +362,10 @@ export default {
                 });
         },
         subscribe() {
-            this.mediumStore.selectedMedia.forEach((medium) => {
+            this.globalStore.selectedMedia.forEach((medium) => {
                 axios.post('/mediumSubscriptions', {
-                    subscribable_type: this.mediumStore.mediumModalParams.subscribable_type,
-                    subscribable_id: this.mediumStore.mediumModalParams.subscribable_id,
+                    subscribable_type: this.form.subscribable_type,
+                    subscribable_id: this.form.subscribable_id,
                     medium_id: medium.id
                 }).then((response) => {
                     console.log(medium.id + 'subscribed');
@@ -364,26 +373,35 @@ export default {
             });
         },
         add() {
-            if (this.mediumStore.mediumModalParams.subscribeSelected) { //subscribe selected
+            if (this.subscribeSelected) { //subscribe selected
                 this.subscribe();
             }
+            console.log(this.callback);
             this.$eventHub.emit(
-                this.mediumStore.mediumModalParams.callback, //default callback == 'medium-added'
+                this.callback, //default callback == 'medium-added'
                 {
-                    'id': this.mediumStore.mediumModalParams.callbackId,
-                    'selectedMedia':  this.mediumStore.selectedMedia,
-                    //'selectedMediumId':  this.mediumStore.selectedMedia,
-                    //'files': this.mediumStore.selectedMedia,
+                    'id': this.callbackId,
+                    'selectedMedia':  this.globalStore.selectedMedia,
+                    //'selectedMediumId':  this.globalStore.selectedMedia,
+                    //'files': this.globalStore.selectedMedia,
                 }
             );
             this.reset();
-            this.$emit('close');
+            this.globalStore?.closeModal(this.$options.name);
         },
         reset() {
+            this.globalStore.setSelectedMedia(null);
             this.form.reset();
-            this.mediumStore.setMediumModalParams();
-            this.progressBar = false;
+
+            this.currentStatus = STATUS_INITIAL;
+            this.accept = '';
+            this.callback = 'medium-added'; //previous eventHubCallbackFunction
+            this.callbackId =  null; //previous eventHubCallbackParams
+            this.public =  0;
+            this.repository = 'local';
+            this.subscribeSelected =  false;
             this.message = '';
+            this.progressBar = false;
         },
         setTab(tab) {
             this.tab = tab;
@@ -397,19 +415,17 @@ export default {
 
                 dt.on('select', function(e, dt, type, indexes) {
                     let selection = dt.rows('.selected').data().toArray()
-                    this.mediumStore.setSelectedMedia(selection);
-
+                    this.globalStore.setSelectedMedia(selection);
                 }.bind(this));
             }
         },
         externalAdd(form) {
-            //console.log(form);
-            //this.form = form;
-
+            console.log(form);
+            this.postProcess = true;
             axios.post('/media?repository=edusharing', form)
                 .then((response) => {
                     //console.log(response);
-                    this.mediumStore.setSelectedMedia([response.data]);
+                    this.globalStore.setSelectedMedia([response.data]);
                     this.add();
                 })
                 .catch((err) => {
@@ -418,7 +434,31 @@ export default {
         }
     },
     mounted() {
-        this.mediumStore.setMediumModalParams();
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.reset();
+
+                this.postProcess = false;
+                this.subscribeSelected = params.subscribeSelected;
+                this.callback = params.callback ?? this.callback;
+                this.callbackId = params.callbackId;
+                this.accept = params.accept;
+                this.currentStatus = STATUS_INITIAL;
+
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+
+                    if (this.form.id !== '') {
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
+                    }
+                }
+            }
+        });
+
         this.$eventHub.on('external_add', (form) => {
             this.externalAdd(form);
         });

@@ -209,7 +209,7 @@ export default {
                 begin: '',
                 end: '',
                 duration: '',
-                color:'#27AF60',
+                color: '#27AF60',
                 allow_copy: true,
             }),
             errors: { // required fields need to be initialised

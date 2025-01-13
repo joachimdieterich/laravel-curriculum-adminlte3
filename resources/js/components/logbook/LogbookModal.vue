@@ -61,10 +61,7 @@
                         ></p>
                     </div>
 
-                    <div
-                        class="card-header border-bottom"
-                        data-card-widget="collapse"
-                    >
+                    <div class="card-header border-bottom">
                         <h5 class="card-title">
                             Darstellung
                         </h5>
@@ -96,7 +93,6 @@
                                     this.form.medium_id = id;
                                 }"
                             />
-    
                             <div class="dropdown">
                                 <button
                                     class="btn btn-default"
@@ -109,7 +105,7 @@
                                 </button>
                                 <font-awesome-picker
                                     class="dropdown-menu dropdown-menu-right"
-                                    style="min-width: 400px;"
+                                    style="min-width: min(385px,90vw);"
                                     :searchbox="trans('global.select_icon')"
                                     v-on:selectIcon="setIcon"
                                 />

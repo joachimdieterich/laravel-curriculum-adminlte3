@@ -87,6 +87,7 @@
                     </div>
 
                     <div v-if="form.id !== null"
+                         v-can="'is_admin'"
                          class="form-group">
                         <MediumForm :form="form"
                                     :id="component_id"

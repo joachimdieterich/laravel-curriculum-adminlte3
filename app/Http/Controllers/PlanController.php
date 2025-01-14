@@ -173,7 +173,10 @@ class PlanController extends Controller
             $users = array_unique($users, SORT_NUMERIC); // duplicates have to be removed, because SQL will return the same entry multiple times
 
             // get needed user-data through their ID
-            $users = User::select('id', 'firstname', 'lastname')->whereIn('id', $users)->get()->toArray();
+            $users = User::select('id', 'firstname', 'lastname')
+                ->whereIn('id', $users)
+                ->orderBy('firstname')
+                ->get()->toArray();
         }
 
         if (request()->wantsJson()) {

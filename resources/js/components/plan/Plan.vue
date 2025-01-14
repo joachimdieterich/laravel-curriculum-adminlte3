@@ -44,7 +44,6 @@
             </div>
 
             <div class="col-12">
-                <!--<Calendar></Calendar>-->
                 <PlanEntry v-if="$userId == plan.owner_id"
                     :plan="plan"
                     create="true"
@@ -133,7 +132,7 @@ export default {
         }
     },
     methods: {
-        loaderEvent(){
+        loaderEvent() {
             axios.get('/planEntries?plan_id=' + this.plan.id)
                 .then(response => {
                     if (this.plan.entry_order != null) {

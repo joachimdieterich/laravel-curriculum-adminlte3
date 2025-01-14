@@ -228,6 +228,7 @@ return [
     ],
     'user_management' => 'Benutzerverwaltung',
     'users' => 'Benutzer',
+    'users_selected' => 'Benutzer ausgewählt',
     'user' => [
         'title' => 'Benutzer',
         'title_singular' => 'Benutzer',

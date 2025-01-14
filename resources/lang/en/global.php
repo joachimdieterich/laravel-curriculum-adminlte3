@@ -206,6 +206,7 @@ return [
     ],
     'user_management' => 'Users',
     'users' => 'Users',
+    'users_selected' => 'Users selected',
     'user' => [
         'title' => 'Users',
         'title_singular' => 'User',

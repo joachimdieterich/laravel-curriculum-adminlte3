@@ -21,26 +21,27 @@ class AchievementController extends Controller
 
         $input = $this->validateRequest();
 
-        $user_ids = ! empty($input['user_id']) ? $input['user_id'] : auth()->user()->id;
+        $user_ids = $input['user_id'] ?? [auth()->user()->id];
 
         foreach ((array) $user_ids as $user_id) {
             abort_unless(auth()->user()->mayAccessUser(User::find($user_id)), 403);
 
             $achievement = Achievement::where('referenceable_type', '=', $input['referenceable_type'])
-                                      ->where('referenceable_id', '=', $input['referenceable_id'])
-                                      ->where('user_id', '=', $user_id)->first();
+                ->where('referenceable_id', '=', $input['referenceable_id'])
+                ->where('user_id', '=', $user_id)
+                ->first();
 
             $achievement = Achievement::updateOrCreate(
-                    [
-                        'referenceable_type' => $input['referenceable_type'],
-                        'referenceable_id'   => $input['referenceable_id'],
-                        'user_id'            => $user_id,
-                    ],
-                    [
-                        'status'             => $this->calculateStatus($user_id, $input, ($achievement === null) ? '00' : $achievement->status),
-                        'owner_id'           => auth()->user()->id,
-                    ]
-                );
+                [
+                    'referenceable_type' => $input['referenceable_type'],
+                    'referenceable_id'   => $input['referenceable_id'],
+                    'user_id'            => $user_id,
+                ],
+                [
+                    'status'             => $this->calculateStatus($user_id, $input, ($achievement === null) ? '00' : $achievement->status),
+                    'owner_id'           => auth()->user()->id,
+                ]
+            );
 
             $achievement->save();
 

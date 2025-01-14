@@ -2,7 +2,7 @@
     <!--  v-if create terminal-->
     <div v-if="type === 'createterminal'"
         class="box box-objective"
-        v-bind:style="{ 'background-color': '#fff'}"
+        :style="{ 'background-color': '#fff'}"
     >
         <h1
             class="h5 position-absolute text-center w-100"
@@ -26,7 +26,7 @@
     >
         <h1
             class="h5 position-absolute text-center w-100"
-            style="top:20px;"
+            style="top: 20px;"
         >
             {{ trans("global.enablingObjective.title_singular") }}
         </h1>
@@ -69,8 +69,7 @@
                     class="boxcontent"
                     :style="{ 'color': textcolor }"
                     v-dompurify-html="objective.title"    
-                >
-                </div>
+                ></div>
             </div>
         </div>
 
@@ -82,7 +81,6 @@
         />
     </div>
 </template>
-
 <script>
 import Header from './Header.vue';
 import Footer from './Footer.vue';
@@ -113,15 +111,15 @@ export default {
                     title: 'Edit',
                     icon: 'fa fa-pencil-alt',
                     action: 'edit',
-                    model: this.type+'Objectives',
-                    value: this.type+'-objective-modal',
+                    model: this.type + 'Objectives',
+                    value: this.type + '-objective-modal',
                 },
                 {
                     title: 'Move',
                     icon: 'fa fa-repeat',
                     action: 'move',
-                    model: this.type+'Objectives',
-                    value: 'move-'+this.type+'-objective-modal',
+                    model: this.type + 'Objectives',
+                    value: 'move-' + this.type + '-objective-modal',
                 },
                 {
                     hr: true,
@@ -130,11 +128,11 @@ export default {
                     title: 'Delete',
                     icon: 'fa fa-trash',
                     action: 'delete',
-                    model: this.type+'Objectives',
+                    model: this.type + 'Objectives',
                 }
             ],
             visibility: 100,
-            errors: {}
+            errors: {},
         }
     },
     methods: {
@@ -145,7 +143,7 @@ export default {
             this.$eventHub.emit('createEnablingObjectives', { 'objective': this.objective, 'method': 'post' });
         },
         deleteEvent() {
-            axios.delete('/'+this.type+'Objectives/'+this.objective.id)
+            axios.delete('/' + this.type + 'Objectives/' + this.objective.id)
                 .then(res => {
                     this.$eventHub.emit('objective-deleted', {'objective': this.objective, 'type': this.type});
                 })
@@ -207,7 +205,7 @@ export default {
             return "alpha(opacity=" + this.visibility + ")";
         },
         cross_reference: function() {
-            if (typeof this.settings !== "undefined"){
+            if (typeof this.settings !== "undefined") {
                 return this.settings.cross_reference_curriculum_id;
             } else {
                 return false;

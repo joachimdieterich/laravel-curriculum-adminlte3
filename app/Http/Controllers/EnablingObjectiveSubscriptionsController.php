@@ -44,20 +44,27 @@ class EnablingObjectiveSubscriptionsController extends Controller
         if (request()->wantsJson()) {
             return TerminalObjective::select('id', 'title', 'description', 'color', 'curriculum_id')
                 ->whereIn('id', $terminal_ids)
-                ->with([
-                    'enablingObjectives' => function ($query) use ($input) {
-                        $query->select('id', 'title', 'description', 'terminal_objective_id')
-                            ->without(['terminalObjective', 'level'])
-                            ->join('enabling_objective_subscriptions', 'enabling_objectives.id', '=', 'enabling_objective_subscriptions.enabling_objective_id')
-                            ->where('subscribable_type', $input['subscribable_type'])
-                            ->where('subscribable_id', $input['subscribable_id'])
-                            ->orderBy('order_id')
-                            ->get();
-                    },
-                    'enablingObjectives.achievements' => function ($query) use ($user_ids) {
-                        $query->whereIn('user_id', $user_ids)->with(['owner', 'user']);
-                    },
-                ])->get();
+                ->with(['enablingObjectives' => function($query) use ($input, $user_ids) {
+                    $query->select('id', 'title', 'description', 'terminal_objective_id')
+                        ->without(['terminalObjective', 'level'])
+                        ->join('enabling_objective_subscriptions', 'enabling_objectives.id', '=', 'enabling_objective_subscriptions.enabling_objective_id')
+                        ->where('subscribable_type', $input['subscribable_type'])
+                        ->where('subscribable_id', $input['subscribable_id'])
+                        ->with(['achievements' => function($query) use ($user_ids) {
+                            $query->whereIn('user_id', $user_ids)
+                            ->with([
+                                'owner' => function($query) {
+                                    $query->select('id', 'firstname', 'lastname');
+                                },
+                                'user' => function($query) {
+                                    $query->select('id', 'firstname', 'lastname');
+                                },
+                            ]);
+                        }])
+                        ->orderBy('order_id')
+                        ->get();
+                }])
+                ->get();
         }
     }
 

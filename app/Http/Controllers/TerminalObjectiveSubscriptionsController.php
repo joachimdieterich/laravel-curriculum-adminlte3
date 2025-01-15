@@ -35,16 +35,23 @@ class TerminalObjectiveSubscriptionsController extends Controller
                 ->join('terminal_objective_subscriptions', 'terminal_objectives.id', '=', 'terminal_objective_subscriptions.terminal_objective_id')
                 ->where('subscribable_type', $input['subscribable_type'])
                 ->where('subscribable_id', $input['subscribable_id'])
-                ->with([
-                    'enablingObjectives' => function ($query) {
-                        $query->select('id', 'title', 'description', 'terminal_objective_id')
-                            ->without(['terminalObjective', 'level'])
-                            ->orderBy('order_id')->get();
-                    },
-                    'enablingObjectives.achievements' => function ($query) use ($user_ids) {
-                        $query->whereIn('user_id', $user_ids)->with(['owner', 'user']);
-                    },
-                ])
+                ->with(['enablingObjectives' => function($query) use ($user_ids) {
+                    $query->select('id', 'title', 'description', 'terminal_objective_id')
+                        ->without(['terminalObjective', 'level'])
+                        ->with(['achievements' => function($query) use ($user_ids) {
+                            $query->whereIn('user_id', $user_ids)
+                                ->with([
+                                    'owner' => function($query) {
+                                        $query->select('id', 'firstname', 'lastname');
+                                    },
+                                    'user' => function($query) {
+                                        $query->select('id', 'firstname', 'lastname');
+                                    },
+                                ]);
+                        }])
+                        ->orderBy('order_id')
+                        ->get();
+                }])
                 ->get();
         }
     }

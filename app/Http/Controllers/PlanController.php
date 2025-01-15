@@ -150,33 +150,7 @@ class PlanController extends Controller
         $users = [];
 
         if ($editable) {
-            $subscriptions = $plan->subscriptions()->get()->toArray();
-            // get every user-id through all subscriptions
-            foreach ($subscriptions as $subscription) {
-                switch ($subscription['subscribable_type']) {
-                    case 'App\User':
-                        array_push($users, $subscription['subscribable_id']);
-                        break;
-                    case 'App\Group':
-                        $ids = Group::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray();
-                        $users = array_merge($users, $ids);
-                        break;
-                    case 'App\Organization':
-                        $ids = Organization::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray();
-                        $users = array_merge($users, $ids);
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            $users = array_unique($users, SORT_NUMERIC); // duplicates have to be removed, because SQL will return the same entry multiple times
-
-            // get needed user-data through their ID
-            $users = User::select('id', 'firstname', 'lastname')
-                ->whereIn('id', $users)
-                ->orderBy('firstname')
-                ->get()->toArray();
+            $users = $this->getUsers($plan);
         }
 
         if (request()->wantsJson()) {
@@ -387,8 +361,11 @@ class PlanController extends Controller
         $users = array_unique($users, SORT_NUMERIC); // remove duplicates
 
         // query for the student role-id => 6
-        $users = User::select('users.id', 'users.firstname', 'users.lastname')->whereIn('users.id', $users)
-            ->join('organization_role_users', 'users.id', '=', 'organization_role_users.user_id')->where('organization_role_users.role_id', 6)
+        $users = User::select('users.id', 'users.firstname', 'users.lastname')
+            ->whereIn('users.id', $users)
+            ->join('organization_role_users', 'users.id', '=', 'organization_role_users.user_id')
+            ->where('organization_role_users.role_id', 6)
+            ->orderBy('users.firstname')
             ->distinct()->get()->toArray();
 
         return $users;

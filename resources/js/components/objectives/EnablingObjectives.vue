@@ -7,6 +7,8 @@
             <ObjectiveBox
                 type="enabling"
                 :objective="objective"
+                :referenceable_id="referenceable_id"
+                :referenceable_type="referenceable_type"
                 :color="terminalobjective.color"
                 :settings="settings"
                 :editable="editable"
@@ -31,7 +33,6 @@
         </div>
     </div>
 </template>
-
 <script>
 import ObjectiveBox from './ObjectiveBox.vue';
 
@@ -39,6 +40,8 @@ export default {
     props: {
         objectives: Array,
         terminalobjective: Object,
+        referenceable_id: null,
+        referenceable_type: null,
         settings: Object,
         editable: {
             default: false,

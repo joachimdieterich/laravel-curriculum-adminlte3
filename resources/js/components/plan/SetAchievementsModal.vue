@@ -34,7 +34,7 @@
                                     @click="sortBy(1)"
                                 >
                                     {{ trans('global.firstname') }}
-                                    <i class="fa fa-sort text-gray ml-1"></i>
+                                    <i class="fa fa-sort-down ml-1"></i>
                                 </th>
                                 <th
                                     class="border-0 pointer"
@@ -66,7 +66,12 @@
                                         :objective="objective.default"
                                         :type="'enabling'"
                                         :users="selectedUsers"
-                                        :settings="{ achievements : false, edit: false, sendStatus: true }"
+                                        :settings="{
+                                            achievements : false,
+                                            edit: false,
+                                            referenceable_id: referenceable_id,
+                                            referenceable_type: referenceable_type,
+                                        }"
                                         :disabled="selectedUsers.length === 0"
                                     />
                                 </td>
@@ -94,7 +99,12 @@
                                         :objective="objective[user.id] ?? objective.default"
                                         :type="'enabling'"
                                         :users="[user.id]"
-                                        :settings="{'achievements' : false, 'edit': false}"
+                                        :settings="{
+                                            achievements : false,
+                                            edit: false,
+                                            referenceable_id: referenceable_id,
+                                            referenceable_type: referenceable_type,
+                                        }"
                                     />
                                 </td>
                             </tr>
@@ -114,7 +124,7 @@
                         <button
                             id="certificate-save"
                             class="btn btn-primary ml-3"
-                            @click="submit()"
+                            @click="globalStore?.closeModal($options.name)"
                         >
                             {{ trans('global.save') }}
                         </button>
@@ -146,16 +156,15 @@ export default {
         return {
             component_id: this.$.uid,
             objective: {},
+            referenceable_id: null,
+            referenceable_type: null,
             search: '',
             checkAll: false,
             selectedUsers: [],
-            sortByAsc: true,
+            sortByAsc: true, // on default sorts by firstname A-Z
         }
     },
     methods: {
-        submit() {
-            this.globalStore?.closeModal($options.name);
-        },
         toggleUsers() {
             this.selectedUsers = this.checkAll
                 ? this.users.map(user => user.id)
@@ -163,6 +172,8 @@ export default {
         },
         // columnNr is index-based => starting at 0
         sortBy(columnNr) {
+            this.sortByAsc = !this.sortByAsc;
+
             const table = document.querySelector('#achievements-table tbody');
             const trElems = table.querySelectorAll('tr:not(:nth-child(1))'); // first tr is the group-selection row
 
@@ -194,15 +205,22 @@ export default {
             const currentSort = this.sortByAsc ? 'fa-sort-down' : 'fa-sort-up';
             th.classList.add(currentSort);
             th.classList.remove('fa-sort', 'text-gray');
-
-            this.sortByAsc = !this.sortByAsc;
         }
+    },
+    watch: {
+        selectedUsers: function() {
+            this.checkAll = this.selectedUsers.length === this.users.length;
+        },
     },
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
             if (state.modals[this.$options.name].show) {
                 const params = state.modals[this.$options.name].params;
+
+                this.referenceable_id = params.referenceable_id;
+                this.referenceable_type = params.referenceable_type;
+
                 const eventObj = params.objective;
                 const obj = {}; // if we add attributes directly to 'this.objective' it won't work
                 obj.default = { id: eventObj.id };
@@ -216,6 +234,7 @@ export default {
                 });
 
                 Object.assign(this.objective, obj);
+                this.sortByAsc = true;
             }
         });
     },

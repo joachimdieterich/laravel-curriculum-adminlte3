@@ -194,6 +194,6 @@ export default {
         Select2,
         AchievementIndicator,
         NoteModal,
-    }
+    },
 }
 </script>

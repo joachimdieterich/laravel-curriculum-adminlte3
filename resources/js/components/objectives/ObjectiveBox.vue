@@ -91,6 +91,8 @@ export default {
         objective: {},
         objective_type_id: {},
         type: {},
+        referenceable_id: null,
+        referenceable_type: null,
         color: '#000',
         settings: {},
         editable: {
@@ -168,7 +170,11 @@ export default {
             if (this.settings?.achievements === undefined || !this.editable) {
                 location.href= '/' + this.type + 'Objectives/' + this.objective.id;
             } else {
-                this.globalStore?.showModal('set-achievements-modal', { 'objective': this.objective });
+                this.globalStore?.showModal('set-achievements-modal', {
+                    objective: this.objective,
+                    referenceable_id: this.referenceable_id,
+                    referenceable_type: this.referenceable_type,
+                });
             }
         },
 

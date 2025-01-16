@@ -40,7 +40,7 @@
                     :value="item[this.option_id]"
                     :data-icon="this.option_icon"
                 >
-                    <span>{{ item[this.option_label] }}</span>
+                    {{ item[this.option_label] }}
                 </option>
             </select>
         </div>

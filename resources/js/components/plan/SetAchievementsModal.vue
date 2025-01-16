@@ -6,7 +6,7 @@
             <div class="modal-container">
                 <div class="card-header">
                     <h3 class="card-title">
-                        {{ trans('global.plan.select_users') }}
+                        {{ trans('global.plan.estimate_students') }}
                     </h3>
                     <div class="card-tools">
                         <button

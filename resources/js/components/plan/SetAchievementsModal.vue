@@ -30,14 +30,14 @@
                                 <th class="border-0" style="width: 0px;"></th>
                                 <th
                                     id="firstname"
-                                    class="border-0 pointer"
+                                    class="border-0 pointer pr-3"
                                     @click="sortBy(1)"
                                 >
                                     {{ trans('global.firstname') }}
                                     <i class="fa fa-sort-down ml-1"></i>
                                 </th>
                                 <th
-                                    class="border-0 pointer"
+                                    class="border-0 pointer pr-3"
                                     @click="sortBy(2)"
                                 >
                                     {{ trans('global.lastname') }}
@@ -84,8 +84,8 @@
                                         v-model="selectedUsers"
                                     />
                                 </td>
-                                <td class="pr-2">{{ user.firstname }}</td>
-                                <td class="pr-2">{{ user.lastname }}</td>
+                                <td class="pr-3">{{ user.firstname }}</td>
+                                <td class="pr-3">{{ user.lastname }}</td>
                                 <!-- <td v-if="currentUser(user.id).achievements[0]">
                                     <i style="font-size:18px;"
                                         class="far fa-sticky-note text-muted pointer"
@@ -233,6 +233,8 @@ export default {
                     };
                 });
 
+                this.objective = {}; // reset value
+                // because assign doesn't override the object, it merges them
                 Object.assign(this.objective, obj);
                 this.sortByAsc = true;
             }

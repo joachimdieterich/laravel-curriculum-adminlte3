@@ -7,7 +7,7 @@ require('./bootstrap');
 require('@activix/bootstrap-datetimepicker');
 
 //vue
-import { createApp, reactive } from 'vue';
+import { createApp } from 'vue';
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -21,13 +21,13 @@ const app = createApp({});
  *
  * How to add a receiver:
  * created() {
- *     this.$eventHub.$on('reload_agenda', (params) => {
+ *     this.$eventHub.on('reload_agenda', (params) => {
  *         // do something
  *     });
  * },
  *
  * how to add a sender
- * this.$eventHub.$emit('reload_agenda', params);
+ * this.$eventHub.emit('reload_agenda', params);
  * @type {Vue}
  */
 import mitt from 'mitt';

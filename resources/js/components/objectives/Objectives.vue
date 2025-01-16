@@ -179,7 +179,7 @@ export default {
     mounted() {
         this.loaderEvent();
 
-        this.$eventHub.on('terminal_objectives-added', data => {
+        this.$eventHub.on('subscriptions-added', data => {
             if (data.id === this.referenceable_id) {
                 this.terminal_objectives.push(data.terminal_objectives);
             }

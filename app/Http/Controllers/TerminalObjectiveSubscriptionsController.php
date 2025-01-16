@@ -92,6 +92,7 @@ class TerminalObjectiveSubscriptionsController extends Controller
                     // inside 'with' the 'select'-statement needs to include the foreign key, or else it'll return '0'
                     $query->select('id', 'title', 'description', 'terminal_objective_id')
                         ->without(['terminalObjective', 'level'])
+                        ->with('achievements')
                         ->orderBy('order_id');
                 }])
                 ->find($input['terminal_objective_id']);

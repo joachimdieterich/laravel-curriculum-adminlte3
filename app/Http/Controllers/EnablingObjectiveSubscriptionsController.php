@@ -109,6 +109,7 @@ class EnablingObjectiveSubscriptionsController extends Controller
                         ->join('enabling_objective_subscriptions', 'enabling_objectives.id', '=', 'enabling_objective_subscriptions.enabling_objective_id')
                         ->where('subscribable_type', $input['subscribable_type'])
                         ->where('subscribable_id', $input['subscribable_id'])
+                        ->with('achievements')
                         ->orderBy('order_id')
                         ->get();
                 }])->get();

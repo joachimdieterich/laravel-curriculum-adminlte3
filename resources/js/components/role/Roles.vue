@@ -8,7 +8,7 @@
                 modelName="Role"
                 url="/roles"
                 :create=true
-                :createLabel="trans('global.role.create')">
+                :label="trans('global.role.create')">
             </IndexWidget>
             <IndexWidget
                 v-for="role in roles"

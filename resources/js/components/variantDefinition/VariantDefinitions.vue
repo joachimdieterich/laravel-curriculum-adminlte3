@@ -8,7 +8,7 @@
                 modelName="VariantDefinition"
                 url="/variantDefinitions"
                 :create=true
-                :createLabel="trans('global.variantDefinition.create')">
+                :label="trans('global.variantDefinition.create')">
             </IndexWidget>
             <IndexWidget
                 v-for="variantDefinition in variantDefinitions"

@@ -8,7 +8,7 @@
                     modelName="Certificate"
                     url="/certificates"
                     :create=true
-                    :createLabel="trans('global.certificate.create')">
+                    :label="trans('global.certificate.create')">
                 </IndexWidget>
                 <IndexWidget
                     v-for="certificate in certificates"

@@ -34,7 +34,7 @@
                 modelName="NavigatorItem"
                 :url="'/navigators/' + navigator.id "
                 :create=true
-                :createLabel="trans('global.NavigatorItem.create')">
+                :label="trans('global.NavigatorItem.create')">
             </IndexWidget>
             <span v-for="navigatorItem in navigatorItems">
                 <IndexWidget

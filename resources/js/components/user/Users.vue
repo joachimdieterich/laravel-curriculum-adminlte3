@@ -21,7 +21,7 @@
                     modelName="User"
                     url="/users"
                     :create=true
-                    :createLabel="trans('global.user.' + create_label_field)">
+                    :label="trans('global.user.' + create_label_field)">
                     <template v-slot:itemIcon>
                         <i v-if="create_label_field == 'enrol'"
                            class="fa fa-2x fa-link text-muted"

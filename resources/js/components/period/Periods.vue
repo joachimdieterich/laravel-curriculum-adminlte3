@@ -8,7 +8,7 @@
                 modelName="Period"
                 url="/periods"
                 :create=true
-                :createLabel="trans('global.period.create')">
+                :label="trans('global.period.create')">
             </IndexWidget>
             <IndexWidget
                 v-for="period in periods"

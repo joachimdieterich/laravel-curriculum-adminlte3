@@ -8,7 +8,7 @@
                 modelName="Role"
                 url="/subjects"
                 :create=true
-                :createLabel="trans('global.subject.create')">
+                :label="trans('global.subject.create')">
             </IndexWidget>
             <IndexWidget
                 v-for="subject in subjects"

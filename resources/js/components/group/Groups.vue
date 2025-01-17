@@ -19,7 +19,7 @@
                     modelName="Group"
                     url="/groups"
                     :create=true
-                    :createLabel="trans('global.group.create')">
+                    :label="trans('global.group.create')">
                 </IndexWidget>
                 <IndexWidget
                     v-for="group in groups"

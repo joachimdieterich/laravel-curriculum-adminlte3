@@ -8,7 +8,7 @@
                 modelName="Permission"
                 url="/permissions"
                 :create=true
-                :createLabel="trans('global.permission.create')">
+                :label="trans('global.permission.create')">
             </IndexWidget>
             <IndexWidget
                 v-for="permission in permissions"

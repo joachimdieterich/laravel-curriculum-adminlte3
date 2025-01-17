@@ -37,7 +37,7 @@
                 modelName="Exam"
                 url="/exams"
                 :create=true
-                :createLabel="trans('global.exam.' + create_label_field)">
+                :label="trans('global.exam.' + create_label_field)">
                 <template v-slot:itemIcon>
                     <i v-if="create_label_field == 'enrol'"
                        class="fa fa-2x fa-link text-muted"

@@ -8,7 +8,7 @@
                 modelName="ObjectiveType"
                 url="/objectiveTypes"
                 :create=true
-                :createLabel="trans('global.objectiveType.create')">
+                :label="trans('global.objectiveType.create')">
             </IndexWidget>
             <IndexWidget
                 v-for="objectiveType in objectiveTypes"

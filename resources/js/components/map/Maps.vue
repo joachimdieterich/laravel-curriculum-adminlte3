@@ -71,7 +71,7 @@
                 modelName="Map"
                 url="/maps"
                 :create=true
-                :createLabel="trans('global.map.create')">
+                :label="trans('global.map.create')">
             </IndexWidget>
             <IndexWidget
                 v-for="map in maps"

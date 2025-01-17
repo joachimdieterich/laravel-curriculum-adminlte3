@@ -72,7 +72,7 @@
                 modelName="Curriculum"
                 url="/curricula"
                 :create=true
-                :createLabel="trans('global.curriculum.create')">
+                :label="trans('global.curriculum.create')">
             </IndexWidget>
 
             <IndexWidget

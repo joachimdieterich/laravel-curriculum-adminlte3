@@ -8,7 +8,7 @@
                 modelName="Grade"
                 url="/grades"
                 :create=true
-                :createLabel="trans('global.grade.create')">
+                :label="trans('global.grade.create')">
             </IndexWidget>
             <IndexWidget
                 v-for="grade in grades"

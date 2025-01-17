@@ -8,7 +8,7 @@
                 modelName="Config"
                 url="/configs"
                 :create=true
-                :createLabel="trans('global.config.create')">
+                :label="trans('global.config.create')">
             </IndexWidget>
 
             <IndexWidget

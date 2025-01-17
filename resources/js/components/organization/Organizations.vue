@@ -8,7 +8,7 @@
                     modelName="Organization"
                     url="/organizations"
                     :create=true
-                    :createLabel="trans('global.organization.create')">
+                    :label="trans('global.organization.create')">
                 </IndexWidget>
                 <IndexWidget
                     v-for="organization in organizations"

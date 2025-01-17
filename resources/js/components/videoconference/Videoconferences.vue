@@ -71,7 +71,7 @@
                 modelName="Videoconference"
                 url="/videoconferences"
                 :create=true
-                :createLabel="trans('global.videoconference.create')">
+                :label="trans('global.videoconference.create')">
             </IndexWidget>
             <IndexWidget
                 v-for="videoconference in videoconferences"

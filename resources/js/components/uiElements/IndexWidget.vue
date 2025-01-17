@@ -17,7 +17,7 @@
             </div>
             <span class="text-center p-1 overflow-auto nav-item-box bg-gray-light">
                 <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                    {{ createLabel }}
+                    {{ label }}
                 </h1>
             </span>
         </a>
@@ -109,7 +109,7 @@ export default {
         urlOnly: false,
         urlTarget: '_self',
         create: false,
-        createLabel: String,
+        label: String,
         storeTitle: String, //data store
         color: {
             type: String,

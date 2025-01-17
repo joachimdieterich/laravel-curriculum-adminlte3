@@ -8,7 +8,7 @@
                 modelName="Navigator"
                 url="/navigators"
                 :create=true
-                :createLabel="trans('global.navigator.create')">
+                :label="trans('global.navigator.create')">
             </IndexWidget>
             <IndexWidget
                 v-for="navigator in navigators"

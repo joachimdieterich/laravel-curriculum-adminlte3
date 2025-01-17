@@ -8,7 +8,7 @@
                 modelName="Metadataset"
                 url="/metadatasets"
                 :create=true
-                :createLabel="trans('global.metadataset.create')">
+                :label="trans('global.metadataset.create')">
             </IndexWidget>
             <IndexWidget
                 v-for="metadataset in metadatasets"

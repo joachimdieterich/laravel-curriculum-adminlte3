@@ -186,6 +186,8 @@ return [
     'all' => 'All',
     'trash' => 'Trash',
     'update' => 'Update',
+    'expel' => 'Remove connection',
+    'expel_helper' => 'Do you want to expel the group?',
     'enrol_info' => 'Enrol/expel group to curricula',
     'objective_tab' => 'Objectives',
     'superordinate_element_singular' => 'Superordinate Element',

@@ -178,6 +178,8 @@ export default {
             } else {
                 this.add();
             }
+
+            this.globalStore.closeModal(this.$options.name);
         },
         add() {
             axios.post(this.url, this.form)

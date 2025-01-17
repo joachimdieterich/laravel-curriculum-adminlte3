@@ -104,12 +104,11 @@
                 url="/plans"
             >
                 <template v-slot:itemIcon>
-                    <i class="fa fa-2x fa-calendar-day"></i>
+                    <i class="fa fa-2x fa-clipboard-list"></i>
                 </template>
 
-                <template
+                <template v-slot:dropdown
                     v-permission="'plan_edit, plan_delete'"
-                    v-slot:dropdown
                 >
                     <div
                         class="dropdown-menu dropdown-menu-right"
@@ -181,7 +180,7 @@
                 }"
                 @confirm="() => {
                     this.showConfirm = false;
-                    this.delete();
+                    this.destroy();
                 }"
             ></ConfirmModal>
             <ConfirmModal
@@ -254,10 +253,6 @@ export default {
 
         this.loaderEvent();
 
-        this.$eventHub.on('createPlan', (plan) => {
-            this.globalStore.showModal('plan-modal', {});
-        });
-
         this.$eventHub.on('plan-added', (plan) => {
             this.plans.push(plan);
         });
@@ -268,6 +263,10 @@ export default {
 
         this.$eventHub.on('plan-subscription-added', () => {
             this.loaderEvent();
+        });
+
+        this.$eventHub.on('filter', (filter) => {
+                this.dt.search(filter).draw();
         });
     },
     methods: {
@@ -292,9 +291,6 @@ export default {
 
                 $('#plan-content').insertBefore('#plan-datatable-wrapper');
             });
-            this.$eventHub.on('filter', (filter) => {
-                this.dt.search(filter).draw();
-            });
         },
         confirmDelete(plan) {
             this.currentPlan = plan;
@@ -307,7 +303,7 @@ export default {
         copy() {
             window.location = "/plans/" + this.currentPlan.id + "/copy";
         },
-        delete() {
+        destroy() {
             axios.delete('/plans/' + this.currentPlan.id)
                 .then(res => {
                     let index = this.plans.indexOf(this.currentPlan);

@@ -59,23 +59,22 @@
 <script>
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
-import {useDatatableStore} from "../../store/datatables";
 import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'subscribe-user-modal',
     components: {
-        Select2
+        Select2,
     },
     props: {
         params: {
-            type: Object
+            type: Object,
         },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
     },
     setup() { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters
         const globalStore = useGlobalStore();
         return {
-            globalStore
+            globalStore,
         }
     },
     data() {

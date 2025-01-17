@@ -66,7 +66,10 @@ class LogbookSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return ['subscription' => Logbook::find(format_select_input($input['model_id']))->subscriptions()->with('subscribable')->get()];
+            return Logbook::find(format_select_input($input['model_id']))
+                ->subscriptions()
+                ->with(['subscribable', 'logbook'])
+                ->first();
         }
     }
 

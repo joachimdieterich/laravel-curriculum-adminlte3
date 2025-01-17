@@ -87,11 +87,20 @@
             <IndexWidget
                 v-permission="'logbook_create'"
                 key="logbookCreate"
-                modelName="Logbook"
+                modelName="logbook"
                 url="/logbooks"
-                :create=true
-                :createLabel="trans('global.logbook.create')"
-            />
+                :create=!subscribable
+                :subscribe="subscribable"
+                :subscribable_id="subscribable_id"
+                :subscribable_type="subscribable_type"
+                :label="trans('global.logbook.' + create_label_field)"
+            >
+                <template v-slot:itemIcon>
+                    <i v-if="create_label_field == 'enrol'"
+                       class="fa fa-2x fa-link text-muted"
+                    ></i>
+                </template>
+            </IndexWidget>
 
             <IndexWidget v-for="logbook in logbooks"
                 :id="logbook.id"
@@ -125,7 +134,22 @@
                 <template v-slot:dropdown
                     v-permission="'logbook_edit, logbook_delete'"
                 >
-                    <div
+                    <div v-if="subscribable"
+                        class="dropdown-menu dropdown-menu-right"
+                        style="z-index: 1050;"
+                        x-placement="left-start"
+                    >
+                        <button
+                            :id="'delete-logbook-' + logbook.id"
+                            type="submit"
+                            class="dropdown-item py-1 text-red"
+                            @click.prevent="confirmItemDelete(logbook)"
+                        >
+                            <i class="fa fa-unlink mr-2"></i>
+                            {{ trans('global.logbook.expel') }}
+                        </button>
+                    </div>
+                    <div v-else
                         class="dropdown-menu dropdown-menu-right"
                         style="z-index: 1050;"
                         x-placement="left-start"
@@ -177,11 +201,12 @@
         </div>
 
         <Teleport to="body">
-            <LogbookModal/>
+            <LogbookModal v-if="!subscribable"/>
+            <SubscribeLogbookModal v-if="subscribable"/>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
-                :title="trans('global.logbook.delete')"
-                :description="trans('global.logbook.delete_helper')"
+                :title="trans('global.logbook.' + delete_label_field)"
+                :description="trans('global.logbook.' + delete_label_field + '_helper')"
                 @close="() => {
                     this.showConfirm = false;
                 }"
@@ -239,8 +264,7 @@ export default {
             subscriptions: {},
             search: '',
             showConfirm: false,
-            url: (this.subscribable_id) ? '/logbookSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id : '/logbooks/list',
-            //url: (this.subscribable_id) ? '/logbooks/list?group_id=' + this.reference.id : '/logbooks/list', // if subscibable == true get enrolled logbooks
+            url: this.subscribable_id ? '/logbooks/list?group_id=' + this.subscribable_id : '/logbooks/list',
             errors: {},
             currentLogbook: {},
             columns: [
@@ -292,12 +316,9 @@ export default {
 
                 $('#logbook-content').insertBefore('#logbook-datatable-wrapper');
             });
-            this.$eventHub.on('filter', (filter) => {
-                this.dt.search(filter).draw();
-            });
         },
         destroy() {
-            if (this.subscribable === true) {
+            if (this.subscribable) {
                 axios.post('/logbookSubscriptions/expel', {
                     model_id : this.currentLogbook.id,
                     subscribable_type : this.subscribable_type,
@@ -306,7 +327,7 @@ export default {
                     .then(r => {
                         let index = this.logbooks.indexOf(this.currentLogbook);
                         this.logbooks.splice(index, 1);
-                        this.toast.success(r);
+                        // this.toast.success(r); // causes error
                     })
                     .catch(e => {
                         this.toast.error(e);
@@ -322,14 +343,9 @@ export default {
                     });
             }
         },
-        update(logbook) {
-            const index = this.logbooks.findIndex(
-                c => c.id === logbook.id
-            );
-
-            for (const [key, value] of Object.entries(logbook)) {
-                this.logbooks[index][key] = value;
-            }
+        update(updatedLogbook) {
+            let logbook = this.logbooks.find(logbook => logbook.id === updatedLogbook.id);
+            Object.assign(logbook, updatedLogbook);
         },
     },
     mounted() {
@@ -337,23 +353,22 @@ export default {
 
         this.loaderEvent();
 
-        this.$eventHub.on('logbook-added', (logbook) => {
-            this.logbooks.push(logbook);
-        });
+        if (this.subscribable) {
+            this.$eventHub.on('logbook-subscription-added', (logbookSubscription) => {
+                this.logbooks.push(logbookSubscription.logbook);
+            });
+        } else {
+            this.$eventHub.on('logbook-added', (logbook) => {
+                this.logbooks.push(logbook);
+            });
+        }
 
         this.$eventHub.on('logbook-updated', (logbook) => {
-            this.globalStore?.closeModal('logbook-modal');
-            this.loaderEvent();
-            this.update(logbook); //todo -> use global widget to get update working
+            this.update(logbook);
         });
 
         this.$eventHub.on('filter', (filter) => {
-            this.search = filter;
-        });
-
-        this.$eventHub.on('logbook-subscription-added', () => {
-            this.globalStore?.closeModal('subscribe-logbook-modal');
-            this.loaderEvent();
+            this.dt.search(filter).draw();
         });
     },
     components: {

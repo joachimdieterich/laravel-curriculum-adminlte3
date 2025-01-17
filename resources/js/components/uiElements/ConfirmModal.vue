@@ -1,20 +1,22 @@
 <template>
-    <Transition
-        v-if="showConfirm"
-        name="confirm">
-        <div class="modal-mask"
-        >
+    <Transition v-if="showConfirm"
+        name="confirm"
+    >
+        <div class="modal-mask">
             <div class="modal-container">
-                <div class="card-header"
-                     :class="'bg-' + this.css">
+                <div
+                    class="card-header"
+                    :class="'bg-' + this.css"
+                >
                     <h3 class="card-title">
-                        {{ this.title}}
+                        {{ this.title }}
                     </h3>
                     <div class="card-tools">
                         <button
                             type="button"
                             class="btn btn-tool"
-                            @click="$emit('close')">
+                            @click="$emit('close')"
+                        >
                             <i class="fa fa-times"></i>
                         </button>
                     </div>
@@ -23,20 +25,22 @@
                     {{ this.description}}
                 </div>
                 <div class="card-footer">
-                     <span class="pull-right">
-                         <button
-                             id="confirm-cancel"
-                             type="button"
-                             class="btn btn-default mr-2"
-                         @click="$emit('close')">
-                             {{ this.cancel_label }}
-                         </button>
-                         <button
-                             id="confirm-save"
-                             class="btn btn-primary"
-                             @click="$emit('confirm');" >
-                             {{ this.ok_label }}
-                         </button>
+                    <span class="pull-right">
+                        <button
+                            id="confirm-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="$emit('close')"
+                        >
+                            {{ this.cancel_label }}
+                        </button>
+                        <button
+                            id="confirm-save"
+                            class="btn btn-primary ml-3"
+                            @click="$emit('confirm');"
+                        >
+                            {{ this.ok_label }}
+                        </button>
                     </span>
                 </div>
             </div>
@@ -44,39 +48,38 @@
     </Transition>
 </template>
 <script>
-
-    export default {
-        name: 'confirm-modal',
-        components:{},
-        props: {
-            showConfirm:{
-                type: Boolean
-            },
-            title: {
-                type: String
-            },
-            description: {
-                type: String
-            },
-            css: {
-                type: String,
-                default: 'danger'
-            },
-            ok_label: {
-                type: String,
-                default: window.trans.global.ok
-            },
-            cancel_label: {
-                type: String,
-                default: window.trans.global.cancel
-            },
+export default {
+    name: 'confirm-modal',
+    components: {},
+    props: {
+        showConfirm: {
+            type: Boolean,
         },
-        data() {
-            return {
-                component_id: this.$.uid,
-            }
+        title: {
+            type: String,
         },
-        methods: {},
-        mounted() {},
-    }
+        description: {
+            type: String,
+        },
+        css: {
+            type: String,
+            default: 'danger',
+        },
+        ok_label: {
+            type: String,
+            default: window.trans.global.ok,
+        },
+        cancel_label: {
+            type: String,
+            default: window.trans.global.cancel,
+        },
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+        }
+    },
+    methods: {},
+    mounted() {},
+}
 </script>

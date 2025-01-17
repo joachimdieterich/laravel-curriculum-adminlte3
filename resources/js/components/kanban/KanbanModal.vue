@@ -1,9 +1,9 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
         >
-            <div class="modal-container ">
+            <div class="modal-container">
                 <div class="card-header ">
                     <h3 class="card-title">
                         <span v-if="method === 'post'">
@@ -17,13 +17,17 @@
                         <button
                             type="button"
                             class="btn btn-tool"
-                            @click="globalStore?.closeModal($options.name)">
+                            @click="globalStore?.closeModal($options.name)"
+                        >
                             <i class="fa fa-times"></i>
                         </button>
                     </div>
                 </div>
 
-                <div class="modal-body">
+                <div
+                    class="modal-body" 
+                    style="overflow-y: visible;"
+                >
                     <div class="form-group">
                         <input
                             type="text"
@@ -31,12 +35,13 @@
                             name="title"
                             class="form-control"
                             v-model.trim="form.title"
-                            :placeholder="trans('global.kanbanItem.fields.title')"
+                            :placeholder="trans('global.kanbanItem.fields.title') + ' *'"
                             required
                         />
-                        <p class="help-block"
-                        v-if="form.errors.title"
-                        v-text="form.errors.title[0]"></p>
+                        <p v-if="form.errors.title"
+                            class="help-block"
+                            v-text="form.errors.title[0]"
+                        ></p>
                     </div>
 
                     <div class="form-group">
@@ -45,11 +50,13 @@
                             name="description"
                             :placeholder="trans('global.kanbanItem.fields.description')"
                             class="form-control description "
+                            style="max-height: 35svh;"
                             v-model.trim="form.description"
                         ></textarea>
-                        <p class="help-block"
-                        v-if="form.errors.description"
-                        v-text="form.errors.description[0]"></p>
+                        <p v-if="form.errors.description"
+                            class="help-block"
+                            v-text="form.errors.description[0]"
+                        ></p>
                     </div>
 
                     <div
@@ -73,11 +80,11 @@
                                 }
                             }"
                             :max-height="300"
-                        ></v-swatches>
+                        />
 
-                        <MediumForm
-                            class="pull-right"
+                        <MediumForm v-if="form.id"
                             id="medium_id"
+                            class="pull-right"
                             :form="form"
                             :medium_id="form.medium_id"
                             :subscribable_type="'App\\Kanban'"
@@ -100,10 +107,10 @@
                     <div class="card-body pb-0">
                         <span class="custom-control custom-switch custom-switch-on-green">
                             <input
-                                v-model="form.commentable"
-                                type="checkbox"
-                                class="custom-control-input pt-1"
                                 :id="'commentable_' + form.id"
+                                class="custom-control-input pt-1"
+                                type="checkbox"
+                                v-model="form.commentable"
                             />
                             <label
                                 class="custom-control-label text-muted"
@@ -114,10 +121,10 @@
                         </span>
                         <span class="custom-control custom-switch custom-switch-on-green">
                             <input
-                                v-model="form.auto_refresh"
-                                type="checkbox"
-                                class="custom-control-input pt-1"
                                 :id="'auto_refresh_' + form.id"
+                                class="custom-control-input pt-1"
+                                type="checkbox"
+                                v-model="form.auto_refresh"
                             />
                             <label
                                 class="custom-control-label text-muted"
@@ -128,10 +135,10 @@
                         </span>
                         <span class=" custom-control custom-switch custom-switch-on-green">
                             <input
-                                v-model="form.only_edit_owned_items"
-                                type="checkbox"
-                                class="custom-control-input pt-1"
                                 :id="'only_edit_owned_items_' + form.id"
+                                class="custom-control-input pt-1"
+                                type="checkbox"
+                                v-model="form.only_edit_owned_items"
                             />
                             <label
                                 class="custom-control-label text-muted"
@@ -142,10 +149,10 @@
                         </span>
                         <span class="custom-control custom-switch custom-switch-on-green">
                             <input
-                                v-model="form.allow_copy"
-                                type="checkbox"
-                                class="custom-control-input pt-1"
                                 :id="'allow_copy_' + form.id"
+                                class="custom-control-input pt-1"
+                                type="checkbox"
+                                v-model="form.allow_copy"
                             />
                             <label
                                 class="custom-control-label text-muted"
@@ -158,20 +165,22 @@
                 </div>
 
                 <div class="card-footer">
-                     <span class="pull-right">
-                         <button
-                             id="kanban-cancel"
-                             type="button"
-                             class="btn btn-default"
-                             @click="globalStore?.closeModal($options.name)">
-                             {{ trans('global.cancel') }}
-                         </button>
-                         <button
-                             id="kanban-save"
-                             class="btn btn-primary"
-                             @click="submit(method)" >
-                             {{ trans('global.save') }}
-                         </button>
+                    <span class="pull-right">
+                        <button
+                            id="kanban-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="kanban-save"
+                            class="btn btn-primary ml-3"
+                            @click="submit(method)"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
                     </span>
                 </div>
             </div>
@@ -183,17 +192,15 @@ import Form from 'form-backend-validation';
 import MediumModal from "../media/MediumModal.vue";
 import MediumForm from "../media/MediumForm.vue";
 import axios from "axios";
-import Editor from "@tinymce/tinymce-vue";
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'kanban-modal',
     components: {
-        Editor,
         MediumModal,
         Select2,
-        MediumForm
+        MediumForm,
     },
     props: {
         params: {
@@ -212,25 +219,16 @@ export default {
             method: 'post',
             url: '/kanbans',
             form: new Form({
-                'id': '',
-                'title':  '',
-                'description':  '',
-                'color':'#27AF60',
-                'medium_id': null,
-                'commentable': true,
-                'auto_refresh': false,
-                'only_edit_owned_items': false,
-                'allow_copy': true,
+                id: '',
+                title:  '',
+                description:  '',
+                color:'#27AF60',
+                medium_id: null,
+                commentable: true,
+                auto_refresh: false,
+                only_edit_owned_items: false,
+                allow_copy: true,
             }),
-            tinyMCE: this.$initTinyMCE(
-                [
-                    "autolink link curriculummedia table lists autoresize"
-                ],
-                {
-                    'callback': 'insertContent',
-                    'callbackId': this.component_id
-                }
-            ),
         }
     },
     computed: {

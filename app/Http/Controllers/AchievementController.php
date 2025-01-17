@@ -49,7 +49,7 @@ class AchievementController extends Controller
             (new ProgressController)->calculateProgress('App\TerminalObjective', $obj->terminal_objective_id, $user_id);
         }
 
-        // LogController::set(get_class($this).'@'.__FUNCTION__, auth()->user()->role()->id, (is_array($user_ids)) ? count($user_ids) : 1);
+        LogController::set(get_class($this).'@'.__FUNCTION__, auth()->user()->role()->id, count($user_ids));
         // axios call?
         if (request()->wantsJson()) {
             return Achievement::whereIn('user_id',  $user_ids)

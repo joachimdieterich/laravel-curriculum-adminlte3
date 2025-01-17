@@ -493,14 +493,14 @@ app.config.globalProperties.$dtOptions = {
  */
 
 app.directive('can', function (el, binding) {
-    if(window.Laravel.permissions.indexOf(binding.value) == -1){
+    if (window.Laravel.permissions.indexOf(binding.value) == -1) {
         el.style.display = 'none';
     }
     return window.Laravel.permissions.indexOf(binding.value) !== -1;
 });
 
 app.directive('hide-if-permission', function (el, binding) {
-    if(window.Laravel.permissions.indexOf(binding.value) !== -1){
+    if (window.Laravel.permissions.indexOf(binding.value) !== -1) {
         el.style.display = 'none';
     }
 });

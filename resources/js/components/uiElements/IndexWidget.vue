@@ -1,7 +1,7 @@
 <template>
     <div 
         :id="item.DT_RowId"
-        v-bind:value="item.DT_RowId"
+        :value="item.DT_RowId"
         class="box box-objective nav-item-box-image pointer my-1 "
         :class="active === false ? 'not-allowed' : ''"
         style="min-width: 200px !important;"
@@ -88,7 +88,6 @@
         </a>
     </div>
 </template>
-
 <script>
 import { storeToRefs } from 'pinia';
 import { useDatatableStore } from "../../store/datatables";
@@ -101,11 +100,11 @@ export default {
         url: String,
         titleField: {
             type: String,
-            default: 'title'
+            default: 'title',
         },
         descriptionField: {
             type: String,
-            default: 'description'
+            default: 'description',
         },
         urlOnly: false,
         urlTarget: '_self',
@@ -114,15 +113,15 @@ export default {
         storeTitle: String, //data store
         color: {
             type: String,
-            default: '#27AE60'
+            default: '#27AE60',
         },
         active: {
             type: Boolean,
-            default: true
+            default: true,
         },
-        info_deactivated:  {
+        info_deactivated: {
             type: String,
-            default: 'Zugriff nicht möglich'
+            default: 'Zugriff nicht möglich',
         },
     },
     setup() { //use database store
@@ -132,7 +131,7 @@ export default {
         const toast = useToast();
         return {
             store,
-            toast
+            toast,
         }
     },
     data() {
@@ -150,13 +149,12 @@ export default {
             this.item.medium_id = this.item.medium_id ?? null; //fallback
         }
     },
-
     methods: {
         isSelected(item) {
             return (this.store.isSelected(this.storeTitle, item));
         },
         createNewItem() {
-            this.$eventHub.emit('create'+this.modelName, true);
+            this.$eventHub.emit('create' + this.modelName, true);
         },
         clickEvent(item) {
             if (this.active) {
@@ -164,7 +162,7 @@ export default {
                     this.store.addSelectItems(this.storeTitle, item);
                 } else {
                     if (this.urlOnly) {
-                        window.open( this.url /*+ '/' + item.id*/, this.urlTarget);
+                        window.open(this.url /*+ '/' + item.id*/, this.urlTarget);
                     } else {
                         window.location = this.url + '/' + (item.DT_RowId ?? item.id); // ? item.DT_RowId -> will not work for new entries
                     }
@@ -186,7 +184,7 @@ export default {
                 hideProgressBar: true,
                 closeButton: "button",
                 icon: true,
-                rtl: false
+                rtl: false,
             });
         },
     }

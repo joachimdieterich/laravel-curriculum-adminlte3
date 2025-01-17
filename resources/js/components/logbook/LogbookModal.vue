@@ -23,19 +23,21 @@
                         </button>
                     </div>
                 </div>
-                <div class="modal-body">
+                <div
+                    class="modal-body"
+                    style="overflow-y: visible;"
+                >
                     <div
-                        class="form-logbook "
+                        class="form-group"
                         :class="form.errors.title ? 'has-error' : ''"
                     >
-                        <label for="title">{{ trans('global.logbook.fields.title') }} *</label>
                         <input
                             type="text"
                             id="title"
                             name="title"
                             class="form-control"
                             v-model="form.title"
-                            :placeholder="trans('global.title')"
+                            :placeholder="trans('global.title') + ' *'"
                             required
                         />
                         <p v-if="form.errors.title"
@@ -45,16 +47,14 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="description">
-                            {{ trans('global.logbook.fields.description') }}
-                        </label>
-                        <Editor
+                        <textarea
                             id="description"
                             name="description"
                             class="form-control"
-                            :init="tinyMCE"
+                            style="max-height: 50svh;"
+                            :placeholder="trans('global.description')"
                             v-model="form.description"
-                        />
+                        ></textarea>
                         <p v-if="form.errors.description"
                             class="help-block"
                             v-text="form.errors.description[0]"
@@ -66,10 +66,11 @@
                     </div>
                     
                     <div class="card-body">
-                        <div class="d-flex justify-content-between">
+                        <div class="d-flex justify-content-between align-items-center">
                             <v-swatches
                                 :swatch-size="49"
                                 :trigger-style="{}"
+                                style="height: 42px;"
                                 popover-to="right"
                                 v-model="this.form.color"
                                 show-fallback
@@ -81,7 +82,7 @@
                                 }"
                                 :max-height="300"
                             />
-                            <MediumForm
+                            <MediumForm v-if="form.id"
                                 class="pull-right"
                                 :id="'medium_id_' + component_id"
                                 :medium_id="form.medium_id"
@@ -123,7 +124,7 @@
                         </button>
                         <button
                             id="logbook-save"
-                            class="btn btn-primary"
+                            class="btn btn-primary ml-3"
                             @click="submit(method)"
                         >
                             {{ trans('global.save') }}
@@ -138,16 +139,15 @@
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
-import Editor from "@tinymce/tinymce-vue";
 import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker.vue";
 import MediumForm from "../media/MediumForm.vue";
 
 export default {
     name: 'logbook-modal',
-    components:{
-        MediumForm, FontAwesomePicker,
-        Editor,
-        Select2
+    components: {
+        MediumForm,
+        FontAwesomePicker,
+        Select2,
     },
     props: {},
     setup() {
@@ -162,22 +162,13 @@ export default {
             method: 'post',
             url: '/logbooks',
             form: new Form({
-                'id': '',
-                'title':  '',
-                'description':  '',
-                'medium_id': null,
-                'color':'#27AF60',
-                'css_icon': 'fa fa-book',
+                id: '',
+                title:  '',
+                description:  '',
+                medium_id: null,
+                color:'#27AF60',
+                css_icon: 'fa fa-book',
             }),
-            tinyMCE: this.$initTinyMCE(
-                [
-                    "autolink link curriculummedia autoresize"
-                ],
-                {
-                    'callback': 'insertContent',
-                    'callbackId': this.component_id
-                }
-            ),
         }
     },
     methods: {
@@ -216,11 +207,10 @@ export default {
             if (state.modals[this.$options.name].show) {
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
-                if (typeof (params) !== 'undefined'){
+                if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
 
-                    this.form.description = this.htmlToText(params.description);
-                    if (this.form.id != ''){
+                    if (this.form.id != '') {
                         this.method = 'patch';
                     } else {
                         this.method = 'post';

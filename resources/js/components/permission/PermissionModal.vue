@@ -1,7 +1,8 @@
 <template>
     <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+        <div
+            v-if="globalStore.modals[$options.name]?.show"
+            class="modal-mask"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -14,46 +15,51 @@
                         </span>
                     </h3>
                     <div class="card-tools">
-                        <button type="button"
-                                class="btn btn-tool"
-                                @click="globalStore?.closeModal($options.name)">
+                        <button
+                            type="button"
+                            class="btn btn-tool"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
                             <i class="fa fa-times"></i>
                         </button>
                     </div>
                 </div>
 
                 <div class="modal-body">
-                    <div class="form-group "
+                    <div
+                        class="form-group "
                         :class="form.errors.title ? 'has-error' : ''"
-                          >
-                        <label for="title">{{ trans('global.permission.fields.title') }} *</label>
+                    >
                         <input
                             type="text" id="title"
                             name="title"
                             class="form-control"
                             v-model="form.title"
-                            placeholder="Title"
+                            :placeholder="trans('global.permission.fields.title') + ' *'"
+                            @keyup.enter="submit()"
                             required
-                            />
-                         <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                        />
+                        <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
                     </div>
                 </div>
 
                 <div class="card-footer">
-                     <span class="pull-right">
-                         <button
-                             id="permission-cancel"
-                             type="button"
-                             class="btn btn-default"
-                             @click="globalStore?.closeModal($options.name)">
-                             {{ trans('global.cancel') }}
-                         </button>
-                         <button
-                             id="permission-save"
-                             class="btn btn-primary"
-                             @click="submit(method)" >
-                             {{ trans('global.save') }}
-                         </button>
+                    <span class="pull-right">
+                        <button
+                            id="permission-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="permission-save"
+                            class="btn btn-primary ml-3"
+                            @click="submit()"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
                     </span>
                 </div>
             </div>
@@ -79,19 +85,20 @@ export default {
             method: 'post',
             url: '/permissions',
             form: new Form({
-                'id':'',
-                'title': '',
+                id: '',
+                title: '',
             }),
-            search: '',
         }
     },
     methods: {
-        submit(method) {
-            if (method == 'patch') {
+        submit() {
+            if (this.method == 'patch') {
                 this.update();
             } else {
                 this.add();
             }
+
+            this.globalStore.closeModal(this.$options.name);
         },
         add() {
             axios.post(this.url, this.form)
@@ -103,7 +110,6 @@ export default {
                 });
         },
         update() {
-            console.log('update');
             axios.patch(this.url + '/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('permission-updated', r.data);
@@ -132,4 +138,3 @@ export default {
     },
 }
 </script>
-

@@ -1,8 +1,7 @@
 <template >
     <div class="row">
         <div class="col-md-12 ">
-            <ul v-if="typeof (this.subscribable_type) == 'undefined'
-                    && typeof(this.subscribable_id) == 'undefined'"
+            <ul v-if="!subscribable"
                 class="nav nav-pills py-2"
                 role="tablist"
             >
@@ -87,9 +86,12 @@
             <IndexWidget
                 v-permission="'kanban_create'"
                 key="kanbanCreate"
-                modelName="Kanban"
+                modelName="kanban"
                 url="/kanbans"
-                :create=true
+                :create="!subscribable"
+                :subscribe="subscribable"
+                :subscribable_id="subscribable_id"
+                :subscribable_type="subscribable_type"
                 :label="trans('global.kanban.' + create_label_field)"
             >
                 <template v-slot:itemIcon>
@@ -168,7 +170,7 @@
                 :ajax="url"
                 :search="search"
                 width="100%"
-                style="display:none;"
+                style="display: none;"
             />
         </div>
 
@@ -211,6 +213,7 @@ import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useGlobalStore} from "../../store/global";
+import {useToast} from "vue-toastification";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -231,9 +234,11 @@ export default {
         subscribable_id: '',
     },
     setup() {
+        const toast = useToast();
         const globalStore = useGlobalStore();
         return {
             globalStore,
+            toast,
         }
     },
     data() {
@@ -260,13 +265,11 @@ export default {
 
         this.loaderEvent();
 
-        this.$eventHub.on('kanban-added', (kanban) => {
-            if (!this.subscribable) {
-                this.globalStore?.closeModal('kanban-modal');
-            } else {
-                this.globalStore?.closeModal('subscribe-kanban-modal');
-            }
+        this.$eventHub.on('kanban-subscription-added', (kanbanSubscription) => {
+            this.kanbans.push(kanbanSubscription.kanban);
+        });
 
+        this.$eventHub.on('kanban-added', (kanban) => {
             this.kanbans.push(kanban);
         });
 
@@ -275,21 +278,8 @@ export default {
             this.update(kanban);
         });
 
-        this.$eventHub.on('kanban-subscription-added', () => {
-            this.globalStore?.closeModal('subscribe-kanban-modal');
-            this.loaderEvent();
-        });
-
-        this.$eventHub.on('createKanban', () => {
-            if (!this.subscribable) {
-                this.globalStore?.showModal('kanban-modal', {});
-            } else {
-                this.globalStore?.showModal('subscribe-kanban-modal', {
-                    'reference': {},
-                    'subscribable_type': this.subscribable_type,
-                    'subscribable_id': this.subscribable_id,
-                });
-            }
+        this.$eventHub.on('filter', (filter) => {
+            this.dt.search(filter).draw();
         });
     },
     methods: {
@@ -313,9 +303,6 @@ export default {
                 this.kanbans = this.dt.rows({page: 'current'}).data().toArray();
                 $('#kanban-content').insertBefore('#kanban-datatable-wrapper');
             });
-            this.$eventHub.on('filter', (filter) => {
-                this.dt.search(filter).draw();
-            });
         },
         confirmItemDelete(kanban) {
             this.currentKanban = kanban;
@@ -338,9 +325,10 @@ export default {
                     .then(r => {
                         let index = this.kanbans.indexOf(this.currentKanban);
                         this.kanbans.splice(index, 1);
+                        this.toast.success(r.data);
                     })
                     .catch(e => {
-                        console.log(e);
+                        this.toast.error(trans('global.expel_error'));
                     });
             }  else {
                 axios.delete('/kanbans/' + this.currentKanban.id)

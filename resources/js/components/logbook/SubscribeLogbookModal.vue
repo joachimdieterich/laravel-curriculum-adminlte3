@@ -82,7 +82,6 @@ export default {
             }),
             subscribable_type: '',
             subscribable_id: '',
-            search: '',
         }
     },
     methods: {
@@ -90,10 +89,11 @@ export default {
             axios.post('/logbookSubscriptions', {
                 model_id: this.form.logbook_id,
                 subscribable_type: this.subscribable_type,
-                subscribable_id: this.subscribable_id
+                subscribable_id: this.subscribable_id,
             })
             .then(response => {
                 this.$eventHub.emit('logbook-subscription-added', response.data);
+                this.globalStore.closeModal(this.$options.name);
             })
             .catch(err => {
                 console.log(err.response);

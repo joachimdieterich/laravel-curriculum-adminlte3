@@ -1,8 +1,7 @@
 <template>
     <div class="row">
         <div class="col-md-12 ">
-            <ul v-if="typeof (this.subscribable_type) == 'undefined'
-                    && typeof (this.subscribable_id) == 'undefined'"
+            <ul v-if="!subscribable"
                 class="nav nav-pills py-2"
                 role="tablist"
             >
@@ -202,6 +201,7 @@
 
         <Teleport to="body">
             <LogbookModal v-if="!subscribable"/>
+            <SubscribeModal v-if="!subscribable"/>
             <SubscribeLogbookModal v-if="subscribable"/>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
@@ -215,7 +215,6 @@
                     this.destroy();
                 }"
             />
-            <SubscribeModal/>
         </Teleport>
     </div>
 </template>
@@ -327,10 +326,10 @@ export default {
                     .then(r => {
                         let index = this.logbooks.indexOf(this.currentLogbook);
                         this.logbooks.splice(index, 1);
-                        // this.toast.success(r); // causes error
+                        this.toast.success(r.data);
                     })
                     .catch(e => {
-                        this.toast.error(e);
+                        this.toast.error(trans('global.expel_error'));
                     });
             } else {
                 axios.delete('/logbooks/' + this.currentLogbook.id)

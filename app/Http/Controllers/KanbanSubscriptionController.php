@@ -77,11 +77,10 @@ class KanbanSubscriptionController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        $model = Kanban::find(format_select_input($input['model_id']));
-        abort_unless((\Gate::allows('kanban_create') and $model->isAccessible()), 403);
+        abort_unless((\Gate::allows('kanban_create') and Kanban::find(format_select_input($input['model_id']))->isAccessible()), 403);
 
         $subscribe = KanbanSubscription::updateOrCreate([
-            'kanban_id' => $model->id,
+            'kanban_id' => format_select_input($input['model_id']),
             'subscribable_type' => $input['subscribable_type'],
             'subscribable_id' => $input['subscribable_id'],
         ], [
@@ -91,14 +90,15 @@ class KanbanSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return ['subscription' => $model->subscriptions()
-                ->with('subscribable')
+            return Kanban::find(format_select_input($input['model_id']))
+                ->subscriptions()
+                ->with(['subscribable', 'kanban'])
                 ->whereHasMorph('subscribable', '*', function ($q, $type) {
                     if ($type == 'App\\User') {
                         $q->whereNot('id', env('GUEST_USER'));
                     }
-                })->get(),
-            ];
+                })
+                ->first();
 
         }
     }
@@ -168,7 +168,7 @@ class KanbanSubscriptionController extends Controller
         ;
 
         if ($subscription->delete()) {
-            return trans('global.curriculum.expel');
+            return trans('global.expel_success');
         }
     }
 

@@ -121,7 +121,6 @@ class LogbookSubscriptionController extends Controller
     {
         $input = $this->validateRequest();
         $model = Logbook::find(format_select_input($input['model_id']));
-        //dump(format_select_input($input['model_id']));
         abort_unless((\Gate::allows('logbook_create') and $model->isAccessible()), 403);
 
         $subscription = LogbookSubscription::where([
@@ -132,7 +131,7 @@ class LogbookSubscriptionController extends Controller
 
 
         if ($subscription->delete()) {
-            return trans('global.logbook.expel');
+            return trans('global.expel_success');
         }
     }
 

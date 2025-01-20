@@ -104,7 +104,7 @@
             <IndexWidget v-for="kanban in kanbans"
                 :key="'kanbanIndex'+kanban.id"
                 :model="kanban"
-                modelName= "kanban"
+                modelName="kanban"
                 url="/kanbans"
             >
                 <template v-slot:itemIcon>
@@ -146,7 +146,7 @@
                             class="dropdown-item py-1 text-red"
                             @click.prevent="confirmItemDelete(kanban)"
                         >
-                            <span v-if="create_label_field == 'enrol'">
+                            <span v-if="subscribable">
                                 <i class="fa fa-unlink mr-2"></i>
                                 {{ trans('global.kanban.expel') }}
                             </span>
@@ -248,7 +248,7 @@ export default {
             search: '',
             showConfirm: false,
             showCopy: false,
-            url: (this.subscribable_id) ? '/kanbans/list?group_id=' + this.subscribable_id : '/kanbans/list',
+            url: this.subscribable ? '/kanbans/list?group_id=' + this.subscribable_id : '/kanbans/list',
             errors: {},
             currentKanban: {},
             columns: [
@@ -285,8 +285,8 @@ export default {
     methods: {
         setFilter(filter) {
             this.filter = filter;
-            if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined') {
-                this.url = '/kanbanSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
+            if (this.subscribable) {
+                this.url = '/kanbanSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id
             } else {
                 this.url = '/kanbans/list?filter=' + this.filter
             }
@@ -322,10 +322,10 @@ export default {
                     subscribable_type : this.subscribable_type,
                     subscribable_id : this.subscribable_id,
                 })
-                    .then(r => {
+                    .then(response => {
                         let index = this.kanbans.indexOf(this.currentKanban);
                         this.kanbans.splice(index, 1);
-                        this.toast.success(r.data);
+                        this.toast.success(response.data);
                     })
                     .catch(e => {
                         this.toast.error(trans('global.expel_error'));

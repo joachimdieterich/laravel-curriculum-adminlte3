@@ -89,10 +89,36 @@ class PlanController extends Controller
         return $userCanSee->unique();
     }
 
-    public function list()
+    public function list(Request $request)
     {
         abort_unless(\Gate::allows('plan_access'), 403);
-        $plans = (auth()->user()->role()->id == 1) ? Plan::all() : $this->userPlans();
+        $plans = '';
+        if (request()->has(['group_id'])) {
+            $group_id = $request['group_id'];
+            $plans = Plan::with('subscriptions')
+                ->whereHas('subscriptions', function ($query) use ($group_id) {
+                    $query->where(
+                        function ($query) use ($group_id) {
+                            $query->where('subscribable_type', 'App\\Group')
+                                ->where('subscribable_id', $group_id);
+                        }
+                    );
+                });
+        } else {
+            switch ($request->filter)
+            {
+                case 'owner':           $plans = Plan::where('owner_id', auth()->user()->id)->get();
+                    break;
+                case 'shared_with_me':  $plans = $this->userPlans(false);
+                    break;
+                case 'shared_by_me':    $plans = Plan::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
+                    break;
+                case 'all':
+                default:                $plans = $this->userPlans();
+                    break;
+            }
+        }
+        
 
         return DataTables::of($plans)
             ->setRowId('id')

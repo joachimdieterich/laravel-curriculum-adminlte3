@@ -77,10 +77,11 @@ class KanbanSubscriptionController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        abort_unless((\Gate::allows('kanban_create') and Kanban::find(format_select_input($input['model_id']))->isAccessible()), 403);
+        $kanban = Kanban::find(format_select_input($input['model_id']));
+        abort_unless((\Gate::allows('kanban_create') and $kanban->isAccessible()), 403);
 
         $subscribe = KanbanSubscription::updateOrCreate([
-            'kanban_id' => format_select_input($input['model_id']),
+            'kanban_id' => $kanban->id,
             'subscribable_type' => $input['subscribable_type'],
             'subscribable_id' => $input['subscribable_id'],
         ], [
@@ -90,8 +91,7 @@ class KanbanSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return Kanban::find(format_select_input($input['model_id']))
-                ->subscriptions()
+            return $kanban->subscriptions()
                 ->with(['subscribable', 'kanban'])
                 ->whereHasMorph('subscribable', '*', function ($q, $type) {
                     if ($type == 'App\\User') {
@@ -157,15 +157,14 @@ class KanbanSubscriptionController extends Controller
     public function expel(Request $request)
     {
         $input = $this->validateRequest();
-        $model = Kanban::find(format_select_input($input['model_id']));
-        abort_unless((\Gate::allows('kanban_create') and $model->isAccessible()), 403);
+        $kanban = Kanban::find(format_select_input($input['model_id']));
+        abort_unless((\Gate::allows('kanban_create') and $kanban->isAccessible()), 403);
 
         $subscription = KanbanSubscription::where([
-            'kanban_id' => $model->id,
+            'kanban_id' => $kanban->id,
             'subscribable_type' => $input['subscribable_type'],
             'subscribable_id' => $input['subscribable_id'],
         ]);
-        ;
 
         if ($subscription->delete()) {
             return trans('global.expel_success');

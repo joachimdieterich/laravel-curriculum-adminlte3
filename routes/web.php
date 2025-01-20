@@ -265,7 +265,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('planTypes', 'PlanTypeController');
 
-
+    Route::post('planSubscriptions/expel', 'PlanSubscriptionController@expel');
     Route::resource('planSubscriptions', 'PlanSubscriptionController');
     Route::resource('planEntries', 'PlanEntryController');
 

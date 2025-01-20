@@ -105,7 +105,7 @@
                 :id="logbook.id"
                 :key="'logbookIndex'+logbook.id"
                 :model="logbook"
-                modelName= "logbook"
+                modelName="logbook"
                 url="/logbooks"
             >
                 <template v-slot:icon>
@@ -263,11 +263,10 @@ export default {
             subscriptions: {},
             search: '',
             showConfirm: false,
-            url: this.subscribable_id ? '/logbooks/list?group_id=' + this.subscribable_id : '/logbooks/list',
+            url: this.subscribable ? '/logbooks/list?group_id=' + this.subscribable_id : '/logbooks/list',
             errors: {},
             currentLogbook: {},
             columns: [
-                { title: 'check', data: 'check' },
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true},
                 { title: 'description', data: 'description', searchable: true},
@@ -301,7 +300,7 @@ export default {
         },
         setFilter(filter)  {
             this.filter = filter;
-            if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined')  {
+            if (this.subscribable) {
                 this.url = '/logbookSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id
             } else {
                 this.url = '/logbooks/list?filter=' + this.filter;
@@ -323,10 +322,10 @@ export default {
                     subscribable_type : this.subscribable_type,
                     subscribable_id : this.subscribable_id,
                 })
-                    .then(r => {
+                    .then(response => {
                         let index = this.logbooks.indexOf(this.currentLogbook);
                         this.logbooks.splice(index, 1);
-                        this.toast.success(r.data);
+                        this.toast.success(response.data);
                     })
                     .catch(e => {
                         this.toast.error(trans('global.expel_error'));

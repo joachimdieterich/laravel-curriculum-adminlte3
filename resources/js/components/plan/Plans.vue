@@ -1,8 +1,7 @@
 <template >
     <div class="row">
         <div class="col-md-12">
-            <ul v-if="typeof (this.subscribable_type) == 'undefined'
-                    && typeof(this.subscribable_id) == 'undefined'"
+            <ul v-if="!subscribable"
                 class="nav nav-pills py-2"
                 role="tablist"
             >
@@ -86,9 +85,12 @@
             <IndexWidget
                 v-permission="'plan_create'"
                 key="planCreate"
-                modelName="Plan"
+                modelName="plan"
                 url="/plans"
-                :create=true
+                :create=!subscribable
+                :subscribe="subscribable"
+                :subscribable_id="subscribable_id"
+                :subscribable_type="subscribable_type"
                 :label="trans('global.plan.' + create_label_field)"
             >
                 <template v-slot:itemIcon>
@@ -100,7 +102,7 @@
             <IndexWidget v-for="plan in plans"
                 :key="'planIndex'+plan.id"
                 :model="plan"
-                modelName= "plan"
+                modelName="plan"
                 url="/plans"
             >
                 <template v-slot:itemIcon>
@@ -110,7 +112,23 @@
                 <template v-slot:dropdown
                     v-permission="'plan_edit, plan_delete'"
                 >
-                    <div
+                    <div v-if="subscribable"
+                        class="dropdown-menu dropdown-menu-right"
+                        style="z-index: 1050;"
+                        x-placement="left-start"
+                    >
+                        <button
+                            v-permission="'plan_delete'"
+                            :id="'delete-plan-' + plan.id"
+                            type="submit"
+                            class="dropdown-item py-1 text-red"
+                            @click.prevent="confirmDelete(plan)"
+                        >
+                            <i class="fa fa-unlink mr-2"></i>
+                            {{ trans('global.plan.expel') }}
+                        </button>
+                    </div>
+                    <div v-else
                         class="dropdown-menu dropdown-menu-right"
                         style="z-index: 1050;"
                         x-placement="left-start"
@@ -140,14 +158,8 @@
                             class="dropdown-item py-1 text-red"
                             @click.prevent="confirmDelete(plan)"
                         >
-                            <span v-if="create_label_field == 'enrol'">
-                                <i class="fa fa-unlink mr-2"></i>
-                                {{ trans('global.plan.expel') }}
-                            </span>
-                            <span v-else>
-                                <i class="fa fa-trash mr-2"></i>
-                                {{ trans('global.plan.delete') }}
-                            </span>
+                            <i class="fa fa-trash mr-2"></i>
+                            {{ trans('global.plan.delete') }}
                         </button>
                     </div>
                 </template>
@@ -199,7 +211,6 @@
         </Teleport>
     </div>
 </template>
-
 <script>
 import SubscribePlanModal from "../plan/SubscribePlanModal.vue";
 import PlanModal from "../plan/PlanModal.vue";
@@ -208,10 +219,15 @@ import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useGlobalStore} from "../../store/global";
+import {useToast} from "vue-toastification";
 DataTable.use(DataTablesCore);
 
 export default {
     props: {
+        subscribable: {
+            type: Boolean,
+            default: false,
+        },
         create_label_field: {
             type: String,
             default: 'create'
@@ -224,9 +240,11 @@ export default {
         subscribable_id: '',
     },
     setup () {
+        const toast = useToast();
         const globalStore = useGlobalStore();
         return {
             globalStore,
+            toast,
         }
     },
     data() {
@@ -236,7 +254,7 @@ export default {
             search: '',
             showConfirm: false,
             showCopy: false,
-            url: '/plans/list',
+            url: this.subscribable ? '/plans/list?group_id=' + this.subscribable_id : '/plans/list',
             errors: {},
             currentPlan: {},
             columns: [
@@ -245,13 +263,17 @@ export default {
             ],
             options : this.$dtOptions,
             filter: 'all',
-            dt: null
+            dt: null,
         }
     },
     mounted() {
         this.$eventHub.emit('showSearchbar', true);
 
         this.loaderEvent();
+
+        this.$eventHub.on('plan-subscription-added', (planSubscription) => {
+            this.plans.push(planSubscription.plan);
+        });
 
         this.$eventHub.on('plan-added', (plan) => {
             this.plans.push(plan);
@@ -261,10 +283,6 @@ export default {
             this.update(plan);
         });
 
-        this.$eventHub.on('plan-subscription-added', () => {
-            this.loaderEvent();
-        });
-
         this.$eventHub.on('filter', (filter) => {
                 this.dt.search(filter).draw();
         });
@@ -272,8 +290,8 @@ export default {
     methods: {
         setFilter(filter) {
             this.filter = filter;
-            if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined') {
-                this.url = '/planSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id;
+            if (this.subscribable) {
+                this.url = '/planSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id;
             } else {
                 this.url = '/plans/list?filter=' + this.filter;
             }
@@ -304,14 +322,30 @@ export default {
             window.location = "/plans/" + this.currentPlan.id + "/copy";
         },
         destroy() {
-            axios.delete('/plans/' + this.currentPlan.id)
-                .then(res => {
-                    let index = this.plans.indexOf(this.currentPlan);
-                    this.plans.splice(index, 1);
+            if (this.subscribable) {
+                axios.post('/planSubscriptions/expel', {
+                    model_id : this.currentPlan.id,
+                    subscribable_type : this.subscribable_type,
+                    subscribable_id : this.subscribable_id,
                 })
-                .catch(err => {
-                    console.log(err.response);
-                });
+                    .then(response => {
+                        let index = this.plans.indexOf(this.currentPlan);
+                        this.plans.splice(index, 1);
+                        this.toast.success(response.data);
+                    })
+                    .catch(e => {
+                        this.toast.error(trans('global.expel_error'));
+                    });
+            } else {
+                axios.delete('/plans/' + this.currentPlan.id)
+                    .then(response => {
+                        let index = this.plans.indexOf(this.currentPlan);
+                        this.plans.splice(index, 1);
+                    })
+                    .catch(err => {
+                        console.log(err.response);
+                    });
+            }
         },
         update(updatedPlan) {
             let plan = this.plans.find(plan => plan.id === updatedPlan.id);

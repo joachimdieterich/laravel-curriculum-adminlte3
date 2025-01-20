@@ -908,6 +908,7 @@ return [
         'search' => 'Lern-/Arbeitsplan suchen',
         'edit' => 'Lern-/Arbeitsplan bearbeiten',
         'enrol' => 'Lern-/Arbeitsplan verknüpfen',
+        'expel_helper' => 'Gruppe aus Lern-/Arbeitsplan ausschreiben',
         'copy' => 'Lern-/Arbeitsplan kopieren',
         'copy_helper' => 'Wollen Sie den Lern-/Arbeitsplan kopieren?',
         'allow_copy' => 'Lern-/Arbeitsplan darf kopiert werden',

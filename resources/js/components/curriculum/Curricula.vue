@@ -197,7 +197,6 @@ import CurriculumModal from "./CurriculumModal.vue";
 import {useGlobalStore} from "../../store/global";
 import OwnerModal from "../user/OwnerModal.vue";
 import {useToast} from "vue-toastification";
-import {nextTick} from "vue";
 DataTable.use(DataTablesCore);
 
 export default {

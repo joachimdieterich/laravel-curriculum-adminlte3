@@ -672,7 +672,8 @@ return [
     'course' => [
         'title' => 'Courses',
         'title_singular' => 'Course',
-        'create' => 'Enrol to curriculum',
+        'enrol' => 'Enrol to curriculum',
+        'expel_helper'=> 'Disconnect group from curriculum',
     ],
     'achievement' => [
         'title' => 'Achievements',

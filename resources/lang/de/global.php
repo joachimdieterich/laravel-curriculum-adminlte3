@@ -706,8 +706,8 @@ return [
     'course' => [
         'title' => 'Kurse',
         'title_singular' => 'Kurs',
-        'create' => 'Curriculum verknüpfen',
-        'delete_helper' => 'Soll Kurseinschreibung entfernt werden?',
+        'enrol' => 'Curriculum verknüpfen',
+        'expel_helper' => 'Gruppe aus Curriculum ausschreiben',
     ],
     'achievement' => [
         'title' => 'Leistungen',

@@ -211,7 +211,7 @@
             >
                 <div
                     id="curriculum-tab"
-                    class="tab-pane show pt-2"
+                    class="tab-pane show"
                     :class="getGlobalStorage('#group_' + group.id, '#group_curriculum_' + group.id, 'active', true)"
                     role="tabpanel"
                     aria-labelledby="curriculum-nav-tab"
@@ -220,6 +220,7 @@
                         ref="Courses"
                         :group="group"
                         create_label_field="enrol"
+                        delete_label_field="expel"
                     />
                 </div>
                <div

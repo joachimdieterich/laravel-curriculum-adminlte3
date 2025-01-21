@@ -68,7 +68,6 @@ export const useGlobalStore = defineStore('global', {
             this.global[key] = value;
         },
         registerModal(title){
-            console.log('register: ' + title);
             this.modals[title] = {
                 show: false,
                 params: [],

@@ -226,6 +226,8 @@ return [
         'title_singular' => 'Rolle',
         'create' => 'Rolle erstellen',
         'edit' => 'Rolle bearbeiten',
+        'delete' => 'Rolle löschen',
+        'delete_helper' => 'Soll diese Rolle gelöscht werden?',
         'enrol' => 'Rolle zuweisen',
         'expel' => 'Rolle entziehen/ausschreiben',
         'fields' => [

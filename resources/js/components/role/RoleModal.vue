@@ -1,77 +1,80 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
         >
-        <div class="modal-container">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.role.create') }}
-                    </span>
-                    <span v-if="method === 'patch'">
-                        {{ trans('global.role.edit') }}
-                    </span>
-                </h3>
-                <div class="card-tools">
-                    <button
-                        type="button"
-                        class="btn btn-tool"
-                        @click="globalStore?.closeModal($options.name)">
-                        <i class="fa fa-times"></i>
-                    </button>
+            <div class="modal-container">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span v-if="method === 'post'">
+                            {{ trans('global.role.create') }}
+                        </span>
+                        <span v-if="method === 'patch'">
+                            {{ trans('global.role.edit') }}
+                        </span>
+                    </h3>
+                    <div class="card-tools">
+                        <button
+                            type="button"
+                            class="btn btn-tool"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="modal-body">
-                <div class="form-group "
-                    :class="form.errors.title ? 'has-error' : ''"
-                      >
-                    <label for="title">{{ trans('global.role.fields.title') }} *</label>
-                    <input
-                        type="text" id="title"
-                        name="title"
-                        class="form-control"
-                        v-model="form.title"
-                        placeholder="Title"
-                        required
-                        :readonly="this.method == 'patch'"
+                <div class="modal-body">
+                    <div
+                        class="form-group"
+                        :class="form.errors.title ? 'has-error' : ''"
+                    >
+                        <input
+                            id="title"
+                            name="title"
+                            type="text"
+                            class="form-control"
+                            v-model="form.title"
+                            :readonly="this.method == 'patch'"
+                            :placeholder="trans('global.title') + ' *'"
+                            required
                         />
-                     <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                        <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                    </div>
+                    <Select2
+                        id="permissions"
+                        name="permissions"
+                        url="/permissions"
+                        model="permission"
+                        :multiple="true"
+                        :selected="getSelected()"
+                        @selectedValue="(id) => {
+                            this.form.permissions = id;
+                        }"
+                    />
                 </div>
-                <Select2
-                    id="permissions"
-                    name="permissions"
-                    url="/permissions"
-                    model="permission"
-                    :multiple="true"
-                    :selected="getSelected()"
-                    @selectedValue="(id) => {
-                    this.form.permissions = id;
-                }"
-                >
-                </Select2>
-            </div>
 
-            <div class="card-footer">
-                 <span class="pull-right">
-                     <button
-                         id="role-cancel"
-                         type="button"
-                         class="btn btn-default"
-                         @click="globalStore?.closeModal($options.name)">
-                         {{ trans('global.cancel') }}
-                     </button>
-                     <button
-                         id="role-save"
-                         class="btn btn-primary"
-                         @click="submit(method)" >
-                         {{ trans('global.save') }}
-                     </button>
-                </span>
+                <div class="card-footer">
+                    <span class="pull-right">
+                        <button
+                            id="role-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="role-save"
+                            class="btn btn-primary ml-3"
+                            @click="submit(method)"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
+                    </span>
+                </div>
             </div>
         </div>
-    </div>
     </Transition>
 </template>
 <script>
@@ -82,17 +85,15 @@ import {useGlobalStore} from "../../store/global";
 export default {
     name: 'role-modal',
     components: {
-        Select2
+        Select2,
     },
     props: {
         params: {
-            type: Object
-        },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
-
+            type: Object,
+        },
     },
     setup() { //use database store
         const globalStore = useGlobalStore();
-
         return {
             globalStore,
         }
@@ -101,13 +102,11 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/roles',
             form: new Form({
-                'id':'',
-                'title': '',
-                'permissions': '',
+                id:'',
+                title: '',
+                permissions: '',
             }),
-            search: '',
         }
     },
     methods: {
@@ -117,9 +116,11 @@ export default {
             } else {
                 this.add();
             }
+
+            this.globalStore.closeModal(this.$options.name);
         },
         add() {
-            axios.post(this.url, this.form)
+            axios.post('/roles', this.form)
                 .then(r => {
                     this.$eventHub.emit('role-added', r.data);
                 })
@@ -128,8 +129,7 @@ export default {
                 });
         },
         update() {
-            console.log('update');
-            axios.patch(this.url + '/' + this.form.id, this.form)
+            axios.patch('/roles/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('role-updated', r.data);
                 })
@@ -164,4 +164,3 @@ export default {
     },
 }
 </script>
-

@@ -211,6 +211,8 @@ return [
         'title_singular' => 'Role',
         'create' => 'Create role',
         'edit' => 'Edit role',
+        'delete' => 'Delete role',
+        'delete_helper' => 'Should this role be deleted?',
         'enrol' => 'Assign role',
         'expel' => 'Revoke role',
         'fields' => [

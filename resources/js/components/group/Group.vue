@@ -114,7 +114,8 @@
                         <span v-if="help">{{ trans('global.plan.title') }}</span>
                     </a>
                 </li>
-                <li
+                <!-- TODO: needs fix -->
+                <!-- <li
                     v-permission="'exam_access'"
                     class="nav-item"
                     @click="setGlobalStorage('#group_' + group.id, '#group_tests_' + group.id);"
@@ -132,7 +133,7 @@
                         <i class="fa-solid fa-ranking-star"></i>
                         <span v-if="help">{{ trans('global.exam.title') }}</span>
                     </a>
-                </li>
+                </li> -->
                 <li
                     v-permission="'videoconference_access'"
                     class="nav-item"
@@ -292,7 +293,8 @@
                         create_label_field="enrol"
                     />
                 </div>
-                <div
+                <!-- TODO: needs fix -->
+                <!-- <div
                     v-permission="'exam_access'"
                     id="tests-tab"
                     class="tab-pane"
@@ -308,7 +310,7 @@
                         :subscribable="true"
                         create_label_field="enrol"
                     />
-                </div>
+                </div> -->
                 <div
                     v-permission="'videoconference_access'"
                     id="videoconference-tab"

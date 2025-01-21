@@ -1,27 +1,27 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
         >
             <div class="modal-container">
                 <div class="card-header">
                     <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.exam.create') }}
-                    </span>
-                        <span v-if="method === 'patch'">
-                        {{ trans('global.exam.edit') }}
-                    </span>
+                    <span>{{ trans('global.exam.enrol') }}</span>
                     </h3>
                     <div class="card-tools">
-                        <button type="button"
-                                class="btn btn-tool"
-                                @click="globalStore?.closeModal($options.name)">
+                        <button
+                            type="button"
+                            class="btn btn-tool"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
                             <i class="fa fa-times"></i>
                         </button>
                     </div>
                 </div>
-                <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                <div
+                    class="modal-body"
+                    style="overflow-y: visible;"
+                >
                     <Select2
                         id="exams_subscription"
                         name="exams_subscription"
@@ -32,25 +32,26 @@
                         @selectedValue="(id) => {
                             this.form.exam_id = id;
                         }"
-                    >
-                    </Select2>
+                    />
                 </div>
                 <div class="card-footer">
-                 <span class="pull-right">
-                     <button
-                         id="exam-cancel"
-                         type="button"
-                         class="btn btn-default"
-                         @click="globalStore?.closeModal($options.name)">
-                         {{ trans('global.cancel') }}
-                     </button>
-                     <button
-                         id="exam-save"
-                         class="btn btn-primary"
-                         @click="submit(method)" >
-                         {{ trans('global.save') }}
-                     </button>
-                </span>
+                    <span class="pull-right">
+                        <button
+                            id="exam-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="exam-save"
+                            class="btn btn-primary ml-3"
+                            @click="submit(method)"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
+                    </span>
                 </div>
             </div>
         </div>
@@ -64,7 +65,7 @@ import {useGlobalStore} from "../../store/global";
 export default {
     name: 'subscribe-exam-modal',
     components: {
-        Select2
+        Select2,
     },
     props: {},
     setup() {
@@ -76,16 +77,13 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
-            url: '/examSubscriptions',
             form: new Form({
-                'id': '',
-                'exam_id': '',
+                id: '',
+                exam_id: '',
             }),
             subscribable_type: '',
-            subscribable_id: '', //== group_id
-            search: '',
-            options: []
+            subscribable_id: '',
+            options: [],
         }
     },
     methods: {
@@ -125,10 +123,8 @@ export default {
             .then(response => {
                 this.options = response.data
             })
-            .catch(errors => {
-                if (errors.response.status !== 403) {
-                    this.$emit('failedNotification', Vue.prototype.trans('global.exam.error_messages.get_tests'))
-                }
+            .catch(error => {
+                console.warn(error.response);
             })
     },
 }

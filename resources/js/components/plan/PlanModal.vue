@@ -44,9 +44,9 @@
                                     url="/planTypes"
                                     style="width: 100%;"
                                     :placeholder="trans('global.pleaseSelect')"
-                                    :readOnly="(method == 'patch')"
+                                    :readOnly="true || (method == 'patch')"
                                     @selectedValue="(id) => this.form.type_id = id"
-                                ></Select2>
+                                />
                                 <p v-if="errors.type_id == true"
                                     class="error-block"
                                     style="margin-top: -0.75rem;"
@@ -89,12 +89,12 @@
                             </div>
 
                             <div class="form-group">
-                                <textarea
-                                    id="description"
-                                    name="description"
-                                    class="form-control"
+                                <Editor
+                                    :id="'description' + component_id"
+                                    :name="'description' + component_id"
+                                    :init="tinyMCE"
                                     v-model="form.description"
-                                ></textarea>
+                                />
                             </div>
                             <!-- currently not in use -->
                             <!-- <div class="form-group">
@@ -182,6 +182,7 @@
 <script>
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
+import Editor from '@tinymce/tinymce-vue';
 import {useGlobalStore} from "../../store/global";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import '@vuepic/vue-datepicker/dist/main.css';
@@ -219,6 +220,17 @@ export default {
                 end: false,
             },
             search: '',
+            tinyMCE: this.$initTinyMCE(
+                [
+                    "autolink link lists table code autoresize"
+                ],
+                {
+                    'callback': 'insertContent',
+                    'callbackId': this.component_id
+                },
+                "bold underline italic | alignleft aligncenter alignright | table",
+                "bullist numlist outdent indent | mathjax link code curriculummedia",
+            ),
         }
     },
     methods: {
@@ -306,6 +318,7 @@ export default {
     components: {
         VueDatePicker,
         Select2,
+        Editor,
     },
 }
 </script>

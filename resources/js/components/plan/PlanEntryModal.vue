@@ -83,7 +83,7 @@
                                     style="min-width: min(385px, 90vw);"
                                     :searchbox="trans('global.select_icon')"
                                     @select-icon="(icon) => this.form.css_icon = 'fa fa-' + icon.className"
-                                ></font-awesome-picker>
+                                />
                             </div>
                         </div>
                     </div>
@@ -148,7 +148,7 @@ export default {
                 title: '',
                 description: '',
                 plan_id: this.plan.id,
-                color:'#27AF60',
+                color: '#27AF60',
                 css_icon: 'fa fa-calendar-day',
                 order_id: 0,
                 medium_id: null,
@@ -162,7 +162,7 @@ export default {
                     'callbackId': this.component_id
                 },
                 "bold underline italic | alignleft aligncenter alignright | table",
-                "bullist numlist outdent indent | mathjax link code",
+                "bullist numlist outdent indent | mathjax link code curriculummedia",
             ),
         }
     },

@@ -165,7 +165,7 @@
                                                 id="media-datatable"
                                                 :columns="columns"
                                                 :options="options"
-                                                :ajax="url + '/list'"
+                                                ajax="/media/list"
                                                 :search="search"
                                                 width="100%"
                                             />
@@ -258,7 +258,7 @@ export default {
         },
         params: {
             type: Object
-        },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
+        },
     },
     setup() { //use database store
         const globalStore = useGlobalStore();
@@ -270,7 +270,6 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/media',
             tab: 'external',
             progressBar: false,
             form: new Form({
@@ -316,7 +315,7 @@ export default {
             this.postProcess = false;
             this.form.reset();
             this.form.populate(newVal);
-            if (this.form.id != ''){
+            if (this.form.id != '') {
                 this.method = 'patch';
             } else {
                 this.method = 'post';
@@ -394,8 +393,8 @@ export default {
             this.$eventHub.emit(
                 this.callback, //default callback == 'medium-added'
                 {
-                    'id': this.callbackId,
-                    'selectedMedia':  this.globalStore.selectedMedia,
+                    id: this.callbackId,
+                    selectedMedia:  this.globalStore.selectedMedia,
                     //'selectedMediumId':  this.globalStore.selectedMedia,
                     //'files': this.globalStore.selectedMedia,
                 }
@@ -438,7 +437,6 @@ export default {
             this.postProcess = true;
             axios.post('/media?repository=edusharing', form)
                 .then((response) => {
-                    //console.log(response);
                     this.globalStore.setSelectedMedia([response.data]);
                     this.add();
                 })
@@ -463,7 +461,6 @@ export default {
 
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
-
                     if (this.form.id !== '') {
                         this.method = 'patch';
                     } else {

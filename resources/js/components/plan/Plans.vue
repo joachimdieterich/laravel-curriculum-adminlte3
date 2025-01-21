@@ -181,8 +181,9 @@
         </div>
 
         <Teleport to="body">
-            <SubscribePlanModal/>
             <PlanModal/>
+            <SubscribePlanModal/>
+            <MediumModal/>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.plan.' + delete_label_field)"
@@ -194,7 +195,7 @@
                     this.showConfirm = false;
                     this.destroy();
                 }"
-            ></ConfirmModal>
+            />
             <ConfirmModal
                 :showConfirm="this.showCopy"
                 :title="trans('global.plan.copy')"
@@ -207,13 +208,14 @@
                     this.showCopy = false;
                     this.copy();
                 }"
-            ></ConfirmModal>
+            />
         </Teleport>
     </div>
 </template>
 <script>
-import SubscribePlanModal from "../plan/SubscribePlanModal.vue";
 import PlanModal from "../plan/PlanModal.vue";
+import SubscribePlanModal from "../plan/SubscribePlanModal.vue";
+import MediumModal from "../media/MediumModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
@@ -353,10 +355,11 @@ export default {
         }
     },
     components: {
+        PlanModal,
         SubscribePlanModal,
+        MediumModal,
         ConfirmModal,
         DataTable,
-        PlanModal,
         IndexWidget,
     },
 }

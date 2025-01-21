@@ -18,26 +18,15 @@ class CourseController extends Controller
         abort_unless(\Gate::allows('curriculum_show'), 403);
         $input = $this->validateRequest();
 
-        $courses= CurriculumSubscription::where('subscribable_type', "App\Group")
+        $courses = Curriculum::select('curricula.id', 'curricula.title', 'curricula.description', 'curricula.color', 'curricula.medium_id', 'curricula.type_id', 'curricula.archived')
+            ->join('curriculum_subscriptions', 'curricula.id', '=', 'curriculum_subscriptions.curriculum_id')
             ->where('subscribable_id', $input['group_id'])
-            ->with(['curriculum']);
+            ->where('subscribable_type', "App\Group")
+        ->get();
 
         return empty($courses) ? '' : DataTables::of($courses)
-            ->addColumn('title', function ($courses) {
-                return $courses->curriculum->title;
-            })
-            ->addColumn('description', function ($courses) {
-                return $courses->curriculum->description;
-            })
-            ->addColumn('medium_id', function ($courses) {
-                return $courses->curriculum->medium_id;
-            })
             ->setRowId('id')
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
             ->make(true);
-
     }
 
     public function show(Course $course)

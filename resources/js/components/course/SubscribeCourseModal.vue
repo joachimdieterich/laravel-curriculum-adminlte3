@@ -100,6 +100,7 @@ export default {
             })
             .then(r => {
                 this.$eventHub.emit('course-added', r.data);
+                this.globalStore.closeModal(this.$options.name);
             })
             .catch(e => {
                 console.log(e.response);

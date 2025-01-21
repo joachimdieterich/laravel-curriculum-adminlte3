@@ -27,13 +27,13 @@
                 url="/courses"
             >
                 <template v-slot:icon>
-                    <i v-if="course.curriculum.type_id === 1"
+                    <i v-if="course.type_id === 1"
                         class="fas fa-globe pt-2"
                     ></i>
-                    <i v-else-if="course.curriculum.type_id === 2"
+                    <i v-else-if="course.type_id === 2"
                         class="fas fa-university pt-2"
                     ></i>
-                    <i v-else-if="course.curriculum.type_id === 3"
+                    <i v-else-if="course.type_id === 3"
                         class="fa fa-users pt-2"
                     ></i>
                     <i v-else
@@ -73,7 +73,7 @@
                 id="course-datatable"
                 :columns="columns"
                 :options="options"
-                :ajax="url"
+                :ajax="'/courses/?group_id=' + group.id"
                 :search="search"
                 width="100%"
                 style="display: none;"
@@ -84,8 +84,8 @@
             <SubscribeCourseModal/>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
-                :title="trans('global.course.delete')"
-                :description="trans('global.course.delete_helper')"
+                :title="trans('global.course.expel')"
+                :description="trans('global.course.expel_helper')"
                 @close="() => {
                     this.showConfirm = false;
                 }"
@@ -130,18 +130,15 @@ export default {
             courses: null,
             search: '',
             showConfirm: false,
-            url: '/courses/?group_id=' + this.group.id,
             errors: {},
             currentCourse: {},
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
                 { title: 'description', data: 'description', searchable: true },
-                { title: 'medium_id', data: 'medium_id' },
             ],
             options : this.$dtOptions,
-            modalMode: 'edit',
-            dt: $('#course-datatable').DataTable(),
+            dt: null,
         }
     },
     mounted() {
@@ -149,15 +146,13 @@ export default {
 
         this.loaderEvent();
 
-        this.$eventHub.on('createCourse', () => {
-            this.globalStore?.showModal('course-modal', {'group_id' : this.group.id});
+        this.$eventHub.on('course-added', (courses) => {
+            Object.assign(this.courses, courses);
         });
 
-        this.$eventHub.on('course-added', (course) => {
-            this.globalStore?.closeModal('course-modal');
-            this.dt.ajax.reload();
+        this.$eventHub.on('filter', (filter) => {
+            this.dt.search(filter).draw();
         });
-
     },
     methods: {
         loaderEvent() {
@@ -166,9 +161,6 @@ export default {
                 this.courses = this.dt.rows({page: 'current'}).data().toArray();
 
                 $('#course-content').insertBefore('#course-datatable-wrapper');
-            });
-            this.$eventHub.on('filter', (filter) => {
-                this.dt.search(filter).draw();
             });
         },
         confirmItemDelete(course){
@@ -182,7 +174,7 @@ export default {
                         0: {
                             group_id : this.group.id,
                             curriculum_id: {
-                                0: this.currentCourse.curriculum.id,
+                                0: this.currentCourse.id,
                             },
                         },
                     },
@@ -196,11 +188,6 @@ export default {
                 console.log(err.response);
             });
         },
-        update(updatedCourse) {
-            let course = this.courses.find(c => c.id === updatedCourse.id);
-
-            Object.assign(course, updatedCourse);
-        }
     },
     components: {
         ConfirmModal,

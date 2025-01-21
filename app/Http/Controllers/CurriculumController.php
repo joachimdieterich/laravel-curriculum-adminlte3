@@ -416,8 +416,11 @@ class CurriculumController extends Controller
             }
         }
 
-        return CurriculumSubscription::where('subscribable_type', "App\Group")
-            ->where('subscribable_id', $enrolment['group_id'])->get();
+        return Curriculum::select('curricula.id', 'curricula.title', 'curricula.description', 'curricula.color', 'curricula.medium_id', 'curricula.type_id', 'curricula.archived')
+            ->join('curriculum_subscriptions', 'curricula.id', '=', 'curriculum_subscriptions.curriculum_id')
+            ->where('subscribable_id', request()->enrollment_list[0]['group_id'])
+            ->where('subscribable_type', "App\Group")
+            ->get();
     }
 
     private function subscribe($curriculum_id, $group_id, $model = "App\Group", $editable = false)

@@ -171,17 +171,10 @@ export default {
             this.currentLogbook = logbook;
         });
 
-        this.$eventHub.on('update-subject-badge', (updatedEntry) => {
-            this.globalStore?.closeModal('logbook-entry-subject-modal');
-            const index = this.entries.findIndex(
-                entry => entry.id === updatedEntry.entry_id
-            );
+        this.$eventHub.on('update-subject-badge', (data) => {
+            let entry = this.entries.find(e => e.id === data.entry_id);
 
-            this.entries[index].subject = {
-                id: updatedEntry.subject_id,
-                title: updatedEntry.title
-            };
-            this.entries[index].subject_id = updatedEntry.subject_id;
+            Object.assign(entry.subject, data.subject);
         });
     },
     methods: {

@@ -33,8 +33,8 @@ class LogbookEntryController extends Controller
         $input = $this->validateRequest();
 
         $logbookEntry->update([
-                'subject_id' => format_select_input($input['subject_id']),
-            ]);
+            'subject_id' => format_select_input($input['subject_id']),
+        ]);
         if (request()->wantsJson()) {
             return $logbookEntry->subject;
         }

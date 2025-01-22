@@ -350,7 +350,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('videoconferences/{videoconference}/getStatus', 'VideoconferenceController@getStatus');
     Route::get('videoconferences/{videoconference}/start', 'VideoconferenceController@start');
 
-
+    Route::post('videoconferenceSubscriptions/expel', 'VideoconferenceSubscriptionController@expel');
     Route::resource('videoconferenceSubscriptions', 'VideoconferenceSubscriptionController');
 
     /* Tests */

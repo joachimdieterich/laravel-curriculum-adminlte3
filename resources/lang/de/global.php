@@ -1135,6 +1135,8 @@ return [
         'share' => 'Zugriff verwalten/Teilen',
         'delete' => 'Löschen',
         'delete_helper' => 'Soll die Videokonferenz gelöscht werden?',
+        'enrol' => 'Videokonferenz verknüpfen',
+        'expel_helper' => 'Gruppe aus Videokonferenz ausschreiben',
         'add_presentation' => 'Präsentation hinzufügen',
         'enter_name' => 'Bitte Vor- und Nachnamen eingeben',
         'fields' => [

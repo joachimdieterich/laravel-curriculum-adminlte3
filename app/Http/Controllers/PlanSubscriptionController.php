@@ -109,7 +109,7 @@ class PlanSubscriptionController extends Controller
     public function expel(Request $request) {
         $input = $this->validateRequest();
         $plan = Plan::find(format_select_input($input['model_id']));
-        abort_unless((\Gate::allows('plan_create') and $plan->isAccessible()), 403);
+        abort_unless((\Gate::allows('plan_delete') and $plan->isAccessible()), 403);
 
         $subscription = PlanSubscription::where([
             'plan_id' => $plan->id,

@@ -1091,6 +1091,8 @@ return [
         'edit' => 'Edit videoconference ',
         'delete' => 'Delete videoconference',
         'delete_helper' => 'Should the videoconference be deleted?',
+        'enrol' => 'Enrol videoconference',
+        'expel_helper' => 'Disconnect group from videoconference',
         'add_presentation' => 'Add presentation',
         'enter_name' => 'Please enter your name',
         'fields' => [

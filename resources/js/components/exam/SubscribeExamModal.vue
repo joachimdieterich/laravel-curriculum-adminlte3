@@ -6,7 +6,7 @@
             <div class="modal-container">
                 <div class="card-header">
                     <h3 class="card-title">
-                    <span>{{ trans('global.exam.enrol') }}</span>
+                        <span>{{ trans('global.exam.enrol') }}</span>
                     </h3>
                     <div class="card-tools">
                         <button

@@ -109,8 +109,8 @@
             </div>
 
             <Teleport to="body">
-                <SubscribeUserModal v-if="subscribable"/>
                 <UserModal v-if="!subscribable"/>
+                <SubscribeUserModal v-if="subscribable"/>
                 <ConfirmModal
                     :showConfirm="this.showConfirm"
                     :title="trans('global.user.' + delete_label_field)"

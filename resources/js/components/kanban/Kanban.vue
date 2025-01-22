@@ -612,7 +612,7 @@ export default {
     }
 }
 </script>
-<style> /* not scoped since '.content-only' and 'sidebar-collapse' are outside of this component */
+<style scoped>
 .status-drag {
     transition: transform 0.5s;
     transition-property: all;
@@ -623,7 +623,6 @@ export default {
     height: calc(100vh - 205px);
     width: 100%;
 }
-.content-only .kanban_board_container { width: calc(100vw - 1rem); }
 .kanban_board_wrapper {
     position: absolute;
     height: 100%;
@@ -633,17 +632,11 @@ export default {
     overflow-y: clip;
 }
 @media (max-width: 991px) {
-    .kanban_board_container { width: calc(100vw - 30px) !important; }
-}
-@media (max-width: 767.98px) {
-    .sidebar-collapse .kanban_board_container,
-    .content-only .kanban_board_container,
-    .kanban_board_container
-    {
-        width: 100vw !important;
+    .kanban_board_container {
+        width: 100vw;
         margin-left: -1rem;
     }
 }
 .fa-angle-up { transition: 0.4s transform; }
-.collapsed .fa-angle-up { transform: rotate(-180deg); }
+.collapsed .fa-angle-up { transform: translateX(-100%) rotate(-180deg) !important; }
 </style>

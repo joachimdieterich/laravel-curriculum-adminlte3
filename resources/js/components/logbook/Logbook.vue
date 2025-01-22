@@ -147,13 +147,10 @@ export default {
         this.currentLogbook = this.logbook;
 
         this.$eventHub.on('logbook-entry-added', (entry) => {
-            this.globalStore?.closeModal('logbook-entry-modal');
             this.entries.push(entry);
         });
 
         this.$eventHub.on('logbook-entry-updated', (updated) => {
-            this.globalStore?.closeModal('logbook-entry-modal');
-
             const index = this.entries.findIndex(
                 entry => entry.id === updated.id
             );
@@ -167,14 +164,13 @@ export default {
         });
 
         this.$eventHub.on('logbook-updated', (logbook) => {
-            this.globalStore?.closeModal('logbook-modal');
-            this.currentLogbook = logbook;
+            Object.assign(this.currentLogbook, logbook);
         });
 
         this.$eventHub.on('update-subject-badge', (data) => {
             let entry = this.entries.find(e => e.id === data.entry_id);
 
-            Object.assign(entry.subject, data.subject);
+            entry.subject = data.subject;
         });
     },
     methods: {

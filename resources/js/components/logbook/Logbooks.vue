@@ -341,10 +341,6 @@ export default {
                     });
             }
         },
-        update(updatedLogbook) {
-            let logbook = this.logbooks.find(logbook => logbook.id === updatedLogbook.id);
-            Object.assign(logbook, updatedLogbook);
-        },
     },
     mounted() {
         this.$eventHub.emit('showSearchbar', true);
@@ -359,11 +355,12 @@ export default {
             this.$eventHub.on('logbook-added', (logbook) => {
                 this.logbooks.push(logbook);
             });
-        }
 
-        this.$eventHub.on('logbook-updated', (logbook) => {
-            this.update(logbook);
-        });
+            this.$eventHub.on('logbook-updated', (updatedLogbook) => {
+                let logbook = this.logbooks.find(l => l.id === updatedLogbook.id);
+                Object.assign(logbook, updatedLogbook);
+            });
+        }
 
         this.$eventHub.on('filter', (filter) => {
             this.dt.search(filter).draw();

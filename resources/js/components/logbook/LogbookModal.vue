@@ -1,7 +1,7 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -76,7 +76,7 @@
                                 show-fallback
                                 fallback-input-type="color"
                                 @input="(id) => {
-                                    if(id.isInteger) {
+                                    if (id.isInteger) {
                                         this.form.color = id;
                                     }
                                 }"
@@ -160,7 +160,6 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/logbooks',
             form: new Form({
                 id: '',
                 title:  '',
@@ -182,7 +181,7 @@ export default {
             this.globalStore.closeModal(this.$options.name);
         },
         add() {
-            axios.post(this.url, this.form)
+            axios.post('/logbooks', this.form)
                 .then(r => {
                     this.$eventHub.emit('logbook-added', r.data);
                 })
@@ -191,7 +190,7 @@ export default {
                 });
         },
         update() {
-            axios.patch(this.url + '/' + this.form.id, this.form)
+            axios.patch('/logbooks/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('logbook-updated', r.data);
                 })

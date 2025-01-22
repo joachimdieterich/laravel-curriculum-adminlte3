@@ -1,7 +1,7 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -25,17 +25,16 @@
                 </div>
                 <div class="modal-body">
                     <div
-                        class="form-logbook"
+                        class="form-group"
                         :class="form.errors.title ? 'has-error' : ''"
                     >
-                        <label for="title">{{ trans('global.logbookEntry.fields.title') }} *</label>
                         <input
                             type="text"
                             id="title"
                             name="title"
                             class="form-control"
                             v-model="form.title"
-                            :placeholder="trans('global.title')"
+                            :placeholder="trans('global.title') + ' *'"
                             required
                         />
                         <p
@@ -46,9 +45,6 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="description">
-                            {{ trans('global.logbook.logbookEntry.description') }}
-                        </label>
                         <Editor
                             id="description"
                             name="description"
@@ -70,10 +66,11 @@
                             format="dd.MM.yyyy HH:mm"
                             :teleport="true"
                             locale="de"
-                            @cleared="form.date = ['', '']"
+                            :placeholder="trans('global.selectDateRange')"
                             :select-text="trans('global.ok')"
                             :cancel-text="trans('global.close')"
-                        ></VueDatePicker>
+                            @cleared="form.date = ['', '']"
+                        />
                     </div>
                 </div>
 
@@ -89,7 +86,7 @@
                         </button>
                         <button
                             id="logbook-save"
-                            class="btn btn-primary"
+                            class="btn btn-primary ml-3"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}
@@ -116,7 +113,7 @@ export default {
         MediumForm,
         FontAwesomePicker,
         Editor,
-        Select2
+        Select2,
     },
     props: {},
     setup() {
@@ -129,7 +126,6 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/logbookEntries',
             form: new Form({
                 id: '',
                 logbook_id: '',
@@ -160,20 +156,22 @@ export default {
             } else {
                 this.add();
             }
+
+            this.globalStore.closeModal(this.$options.name);
         },
         add() {
-            axios.post(this.url, this.form)
-                .then(r => {
-                    this.$eventHub.emit('logbook-entry-added', r.data);
+            axios.post('/logbookEntries', this.form)
+                .then(response => {
+                    this.$eventHub.emit('logbook-entry-added', response.data);
                 })
                 .catch(e => {
                     console.log(e.response);
                 });
         },
         update() {
-            axios.patch(this.url + '/' + this.form.id, this.form)
-                .then(r => {
-                    this.$eventHub.emit('logbook-entry-updated', r.data);
+            axios.patch('/logbookEntries/' + this.form.id, this.form)
+                .then(response => {
+                    this.$eventHub.emit('logbook-entry-updated', response.data);
                 })
                 .catch(e => {
                     console.log(e.response);

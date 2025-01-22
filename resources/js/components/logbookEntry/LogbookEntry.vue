@@ -1,142 +1,177 @@
 <template>
-    <div :id="'#logbook_'+entry.id"
-         class="card col-12"
-         :class="{'collapsed-card' : first === false}"
-         :style="isActive">
-        <div class="user-block p-2 pointer"
-             data-card-widget="collapse"
-             :data-target="'#logbook_body_'+entry.id"
-             aria-expanded="true">
-
+    <div
+        :id="'#logbook_'+entry.id"
+        class="card col-12"
+        :class="{'collapsed-card' : first === false}"
+        :style="isActive"
+    >
+        <div
+            class="user-block p-2 pointer"
+            data-card-widget="collapse"
+            :data-target="'#logbook_body_'+entry.id"
+            aria-expanded="true"
+        >
             <span class="username ml-0">
-                <avatar class="pull-right ml-2 contacts-list-img"
-                        data-toggle="tooltip"
-                        :title="entry.owner.firstname + ' ' + entry.owner.lastname"
-                        :firstname="entry.owner.firstname"
-                        :lastname="entry.owner.lastname"
-                        :medium_id="entry.owner.medium_id"
-                        :size="40"
-                ></avatar>
-                <span class="pull-right "
-                      v-permission="'logbook_entry_edit'"
-                      v-if="this.$userId == logbook.owner_id || this.isEditable === true"
+                <avatar
+                    class="pull-right ml-2 contacts-list-img"
+                    data-toggle="tooltip"
+                    :title="entry.owner.firstname + ' ' + entry.owner.lastname"
+                    :firstname="entry.owner.firstname"
+                    :lastname="entry.owner.lastname"
+                    :medium_id="entry.owner.medium_id"
+                    :size="40"
+                />
+                <span v-if="this.$userId == logbook.owner_id || this.isEditable"
+                    v-permission="'logbook_entry_edit'"
+                    class="pull-right "
                 >
                     <button
                         type="button"
                         class="btn btn-tool pt-3"
-                        @click.stop="print()">
-                        <i class="fa fa-print "></i>
+                        @click.stop="print()"
+                    >
+                        <i class="fa fa-print"></i>
                     </button>
                     <button
                         type="button"
                         class="btn btn-tool pt-3"
-                        @click.stop="destroy()">
+                        @click.stop="destroy()"
+                    >
                         <i class="fa fa-trash text-danger"></i>
                     </button>
                     <button
-                         type="button"
-                         class="btn btn-tool pt-3"
-                         @click.stop="edit(entry)">
-                        <i class="fa fa-pencil-alt "></i>
+                        type="button"
+                        class="btn btn-tool pt-3"
+                        @click.stop="edit(entry)"
+                    >
+                        <i class="fa fa-pencil-alt"></i>
                     </button>
                 </span>
                 <span >{{ entry.title }}</span>
-                <span class="description ml-0 ">
+                <span class="description ml-0">
                     {{ timePeriod }}
                     <small
                         style="vertical-align: middle;"
                         class="badge badge-secondary"
-                        @click.stop="editSubject()">
+                        @click.stop="editSubject()"
+                    >
                         <i class="fa fa-book-open"></i>
                         {{ entry.subject?.title ?? trans("global.logbookEntry.no_subject") }}
                     </small>
                 </span>
             </span>
-
         </div>
 
-        <div class="card-body p-0"
-             :class="{'collapse' : first === false}"
-             :id="'#logbook_body_'+entry.id" >
+        <div
+            class="card-body p-0"
+            :class="{ 'collapse' : first === false }"
+            :id="'#logbook_body_' + entry.id"
+        >
             <hr class="m-1">
             <span class="clearfix"></span>
 
             <ul class="nav nav-pills">
                 <li class="nav-item small">
-                    <a class="nav-link show active"
-                       v-bind:href="'#logbook_description_'+entry.id"
-                       data-toggle="tab">
+                    <a
+                        :href="'#logbook_description_' + entry.id"
+                        class="nav-link show active"
+                        data-toggle="tab"
+                    >
                         <i class="fa fa-info pr-1"></i>
                         <span v-if="help">{{ trans('global.logbook.fields.description') }}</span>
                     </a>
                 </li>
-                <li v-permission="'content_access'"
-                    class="nav-item small">
-                    <a class="nav-link"
-                       v-bind:href="'#logbook_contents_'+entry.id"
-                       data-toggle="tab"
-                       @click="loaderEvent()">
+                <li
+                    v-permission="'content_access'"
+                    class="nav-item small"
+                >
+                    <a
+                        :href="'#logbook_contents_' + entry.id"
+                        class="nav-link"
+                        data-toggle="tab"
+                        @click="loaderEvent()"
+                    >
                         <i class="fa fa-align-justify pr-1"></i>
                         <span v-if="help">{{ trans('global.content.title') }}</span>
                     </a>
                 </li>
-                <li v-permission="'task_access'"
-                    class="nav-item small">
-                    <a class="nav-link"
-                       v-bind:href="'#logbook_tasks_'+entry.id"
-                       data-toggle="tab">
+                <li
+                    v-permission="'task_access'"
+                    class="nav-item small"
+                >
+                    <a
+                        :href="'#logbook_tasks_' + entry.id"
+                        class="nav-link"
+                        data-toggle="tab"
+                    >
                         <i class="fa fa-tasks pr-1"></i>
                         <span v-if="help">{{ trans('global.task.title') }}</span>
                     </a>
                 </li>
-                <li class="nav-item small"
-                    v-permission="'medium_access'">
-                    <a class="nav-link"
-                       v-bind:href="'#logbook_media_'+entry.id"
-                       data-toggle="tab">
+                <li
+                    v-permission="'medium_access'"
+                    class="nav-item small"
+                >
+                    <a
+                        :href="'#logbook_media_' + entry.id"
+                        class="nav-link"
+                        data-toggle="tab"
+                    >
                         <i class="fa fa-photo-video pr-1"></i>
                         <span v-if="help">{{ trans('global.medium.title') }}</span>
                     </a>
                 </li>
-                <li class="nav-item small"
-                    v-permission="'reference_access'">
-                    <a class="nav-link"
-                       v-bind:href="'#logbook_objectives_'+entry.id"
-                       data-toggle="tab">
+                <li
+                    v-permission="'reference_access'"
+                    class="nav-item small"
+                >
+                    <a
+                        :href="'#logbook_objectives_' + entry.id"
+                        class="nav-link"
+                        data-toggle="tab"
+                    >
                         <i class="fa fa-sitemap pr-1"></i>
-                        <span v-if="help">{{
-                                trans('global.terminalObjective.title')
-                            }}/{{ trans('global.enablingObjective.title') }}</span>
+                        <span v-if="help">
+                            {{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}
+                        </span>
                     </a>
                 </li>
 
-                <li v-permission="'absence_access'"
-                    v-if="displayAbsences()"
-                    class="nav-item small">
-                    <a class="nav-link"
-                       v-bind:href="'#logbook_userStatuses_'+entry.id"
-                       data-toggle="tab"
-                       @click="loaderAbsences()">
+                <li v-if="displayAbsences()"
+                    v-permission="'absence_access'"
+                    class="nav-item small"
+                >
+                    <a
+                        :href="'#logbook_userStatuses_' + entry.id"
+                        class="nav-link"
+                        data-toggle="tab"
+                        @click="loaderAbsences()"
+                    >
                         <i class="fa fa-users-slash pr-1"></i>
                         <span v-if="help">{{ trans('global.absences.title') }}</span>
                     </a>
                 </li>
 
-                <li v-permission="'lms_access'"
-                    class="nav-item">
-                    <a class="nav-link small link-muted"
-                       v-bind:href="'#lms_'+entry.id"
-                       data-toggle="tab"
-                       @click="loadLmsPlugin()">
+                <li
+                    v-permission="'lms_access'"
+                    class="nav-item"
+                >
+                    <a
+                        :href="'#lms_' + entry.id"
+                        class="nav-link small link-muted"
+                        data-toggle="tab"
+                        @click="loadLmsPlugin()"
+                    >
                         <i class="fa fa-graduation-cap pr-1"></i>
                         <span v-if="help">{{ trans('global.lms.title_singular') }}</span>
-
                     </a>
                 </li>
 
                 <li class="nav-item ml-auto pull-right">
-                    <a class="nav-link small link-muted pointer"
-                       @click="help = !help">
+                    <a
+                        class="nav-link small link-muted pointer"
+                        @click="help = !help"
+                    >
                         <i class="fa fa-question pr-1"></i>
                     </a>
                 </li>
@@ -147,76 +182,89 @@
             <div class="pb-2 px-1">
                 <div class="tab-content">
                     <!-- tab-pane -->
-                    <div class="tab-pane p-2 active"
-                         v-bind:id="'logbook_description_'+entry.id"
+                    <div
+                        :id="'logbook_description_' + entry.id"
+                        class="tab-pane p-2 active"
                     >
                         <span v-if="entry.description"
-                              v-dompurify-html="entry.description"></span>
+                            v-dompurify-html="entry.description"
+                        ></span>
                     </div>
 
                     <!-- tab-pane -->
-                    <div v-permission="'content_access'"
-                         class="tab-pane "
-                         v-bind:id="'logbook_contents_'+entry.id"
+                    <div
+                        v-permission="'content_access'"
+                        :id="'logbook_contents_' + entry.id"
+                        class="tab-pane"
                     >
                         <contents
                             class="mb-0"
                             ref="Contents"
                             subscribable_type="App\LogbookEntry"
-                            :subscribable_id="entry.id">
-                        </contents>
+                            :subscribable_id="entry.id"
+                        />
                     </div>
 
-                    <div v-permission="'task_access'"
-                         class="tab-pane"
-                         v-bind:id="'logbook_tasks_'+entry.id">
+                    <div
+                        v-permission="'task_access'"
+                        class="tab-pane"
+                        :id="'logbook_tasks_' + entry.id"
+                    >
                         <Tasks
                             class="pb-2"
                             :subscribable_id="entry.id"
-                            subscribable_type="App\LogbookEntry">
-                        </Tasks>
+                            subscribable_type="App\LogbookEntry"
+                        />
                     </div>
 
-                   <div v-permission="'medium_access'"
+                    <div
+                        v-permission="'medium_access'"
+                        :id="'logbook_media_' + entry.id"
                         class="tab-pane"
-                        v-bind:id="'logbook_media_'+entry.id">
-                       <media subscribable_type="App\LogbookEntry"
-                              :subscribable_id="entry.id"
-                              format="list">
-                       </media>
-                   </div>
+                    >
+                        <media
+                            :subscribable_id="entry.id"
+                            subscribable_type="App\LogbookEntry"
+                            format="list"
+                        />
+                    </div>
 
-                     <div class="tab-pane"
+                    <div
                         v-permission="'reference_access'"
-                        v-bind:id="'logbook_objectives_'+entry.id">
+                        class="tab-pane"
+                        :id="'logbook_objectives_' + entry.id"
+                    >
+                        <reference-list
+                            :subscribable_id="entry.id"
+                            subscribable_type="App\LogbookEntry"
+                            :entry="entry"
+                        />
+                    </div>
 
-                       <reference-list
-                           subscribable_type="App\LogbookEntry"
-                           :subscribable_id="entry.id"
-                           :entry="entry"
-                       />
-                   </div>
-
-                    <div  v-permission="'absence_access'"
-                          v-if="displayAbsences()"
-                          class="tab-pane "
-                          v-bind:id="'logbook_userStatuses_'+entry.id"  >
+                    <div v-if="displayAbsences()"
+                        v-permission="'absence_access'"
+                        :id="'logbook_userStatuses_' + entry.id"
+                        class="tab-pane"
+                    >
                         <absences
                             class="pb-2"
                             ref="Absences"
                             :subscribable_id="entry.id"
-                            :subscribable_type="model"
+                            :subscribable_type="'App\\LogbookEntry'"
                             :entry="entry"
-                            :logbook="logbook">
-                        </absences>
+                            :logbook="logbook"
+                        />
                     </div>
-                    <div v-permission="'lms_access'"
-                         class="tab-pane"
-                         v-bind:id="'lms_'+entry.id">
-                        <lms ref="LmsPlugin"
-                             :referenceable_type="model"
-                             :referenceable_id="entry.id">
-                        </lms>
+                    <div
+                        v-permission="'lms_access'"
+                        :id="'lms_' + entry.id"
+                        class="tab-pane"
+                    >
+                        <lms
+                            ref="LmsPlugin"
+                            :referenceable_id="entry.id"
+                            :referenceable_type="'App\\LogbookEntry'"
+                        />
                     </div>
                 </div>
             </div>
@@ -235,11 +283,10 @@ import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
-        'logbook': Object,
-        'entry': Object,
-        'search': '',
-        'first': false,
-        'editable': false,
+        logbook: Object,
+        entry: Object,
+        first: false,
+        editable: false,
     },
     setup() {
         const globalStore = useGlobalStore();
@@ -253,9 +300,9 @@ export default {
             media: {},
             active: true,
             timePeriod: '',
-            model: 'App\\LogbookEntry',
             help: true,
-            isEditable: this.editable
+            isEditable: this.editable,
+            search: '',
         };
     },
     methods: {
@@ -266,9 +313,8 @@ export default {
             this.globalStore?.showModal(
                 'logbook-entry-subject-modal',
                 {
-                    'id': this.entry.id,
-                    'subject_id': this.entry.subject_id,
-                    'title': this.entry.subject?.title
+                    id: this.entry.id,
+                    subject_id: this.entry.subject_id,
                 });
         },
         destroy() {
@@ -303,34 +349,34 @@ export default {
             }
         },
         isEditableForUser() {
-            const exists = this.logbook.subscriptions.findIndex(            // Is editable?
+            const exists = this.logbook.subscriptions.findIndex(
                 subscription => subscription.subscribable_type === "App\\User" && subscription.subscribable_id == this.$userId && subscription.editable === 1
             );
-            //console.log('isEditableForUser(): '+exists);
+
             return (exists !== -1);
         },
         isEditableForGroup() {
-            const exists = this.logbook.subscriptions.findIndex(            // Is editable?
+            const exists = this.logbook.subscriptions.findIndex(
                 subscription => subscription.subscribable_type === "App\\Group" && subscription.editable === 1
             );
-            //console.log('isEditableForGroup(): '+exists);
+
             return (exists !== -1);
         },
         isEditableForOrganization() {
-            const exists = this.logbook.subscriptions.findIndex(            // Is editable?
+            const exists = this.logbook.subscriptions.findIndex(
                 subscription => subscription.subscribable_type === "App\\Organization" && subscription.editable === 1
             );
-            //console.log('isEditableForOrganization(): '+exists);
+
             return (exists !== -1);
         },
         displayAbsences() {
-            const exists = this.logbook.subscriptions.findIndex(            // Only Show absences on group and course subscriptions
+            // Only Show absences on group and course subscriptions
+            const exists = this.logbook.subscriptions.findIndex(
                 subscription => subscription.subscribable_type === "App\\Course" || subscription.subscribable_type === "App\\Group"
             );
 
             return (exists !== -1);
         },
-
         loaderEvent: function () {
             this.$refs.Contents.loaderEvent();
         },
@@ -393,7 +439,7 @@ export default {
         Media,
         Contents,
         Tasks,
-        Lms
+        Lms,
     }
 }
 </script>

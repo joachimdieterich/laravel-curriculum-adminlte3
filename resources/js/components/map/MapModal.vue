@@ -1,7 +1,7 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -41,19 +41,17 @@
                             :max-height="300"
                         />
                         <input
-                            type="text" id="title"
+                            id="title"
+                            type="text"
                             name="title"
                             class="form-control ml-3"
                             v-model="form.title"
-                            placeholder="Title"
+                            :placeholder="trans('global.title') + ' *'"
                             required
                         />
                         <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
                     </div>
                     <div class="form-group">
-                        <label for="subtitle">
-                            {{ trans('global.map.fields.subtitle') }}
-                        </label>
                         <input
                             type="text"
                             id="subtitle"
@@ -66,16 +64,13 @@
                         <p class="help-block" v-if="form.errors?.subtitle" v-text="form.errors?.subtitle[0]"></p>
                     </div>
                     <div class="form-group">
-                        <label for="description">
-                            {{ trans('global.map.fields.description') }}
-                        </label>
                         <Editor
                             id="description"
                             name="description"
                             :placeholder="trans('global.map.fields.description')"
                             class="form-control"
                             :init="tinyMCE"
-                            :initial-value="form.description"
+                            v-model="form.description"
                         />
                     </div>
                     <div class="form-group">
@@ -125,7 +120,7 @@
                             name="border_url"
                             class="form-control"
                             v-model.trim="form.border_url"
-                            :placeholder="trans('global.map.fields.border_url')"
+                            :placeholder="trans('global.map.fields.border_url_helper')"
                             required
                         />
                         <p class="help-block" v-if="form.errors?.border_url" v-text="form.errors?.border_url[0]"></p>
@@ -133,7 +128,7 @@
 
                     <div class="form-group">
                         <label for="latitude">
-                            {{ trans('global.marker.fields.latitude') }}
+                            {{ trans('global.map.fields.latitude') }}
                         </label>
                         <input
                             type="text"
@@ -141,14 +136,14 @@
                             name="latitude"
                             class="form-control"
                             v-model.trim="form.latitude"
-                            :placeholder="trans('global.marker.fields.latitude')"
+                            :placeholder="trans('global.map.fields.latitude')"
                         />
                         <p class="help-block" v-if="form.errors?.latitude" v-text="form.errors?.latitude[0]"></p>
                     </div>
 
                     <div class="form-group">
                         <label for="longitude">
-                            {{ trans('global.marker.fields.longitude') }}
+                            {{ trans('global.map.fields.longitude') }}
                         </label>
                         <input
                             type="text"
@@ -156,7 +151,7 @@
                             name="longitude"
                             class="form-control"
                             v-model.trim="form.longitude"
-                            :placeholder="trans('global.marker.fields.longitude')"
+                            :placeholder="trans('global.map.fields.longitude')"
                         />
                         <p class="help-block" v-if="form.errors?.longitude" v-text="form.errors?.longitude[0]"></p>
                     </div>
@@ -201,7 +196,7 @@
                         </button>
                         <button
                             id="map-save"
-                            class="btn btn-primary"
+                            class="btn btn-primary ml-3"
                             @click="submit(method)"
                         >
                             {{ trans('global.save') }}
@@ -225,10 +220,10 @@ export default {
     components:{
         Editor,
         MediumModal,
-        Select2
+        Select2,
     },
     props: {},
-    setup() { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters
+    setup() {
         const globalStore = useGlobalStore();
         return {
             globalStore
@@ -238,31 +233,32 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/maps',
             form: new Form({
-                'id':'',
-                'title':'',
-                'subtitle':'',
-                'description': '',
-                'tags': '',
-                'type_id': 2,
-                'category_id': 2,
-                'border_url': '',
-                'latitude': 49,
-                'longitude': 8,
-                'zoom': 10,
-                'color': '#F2C511',
-                'medium_id': '',
+                id: '',
+                title: '',
+                subtitle: '',
+                description: '',
+                tags: '',
+                type_id: 2,
+                category_id: 2,
+                border_url: '',
+                latitude: 49,
+                longitude: 8,
+                zoom: 10,
+                color: '#F2C511',
+                medium_id: '',
             }),
             search: '',
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link curriculummedia autoresize"
+                    "autolink link autoresize"
                 ],
                 {
                     'callback': 'insertContent',
                     'callbackId': this.component_id
-                }
+                },
+                null,
+                ''
             ),
         }
     },
@@ -273,15 +269,16 @@ export default {
     },
     methods: {
         submit(method) {
-            this.form.description = tinyMCE.get('description').getContent();
             if (method == 'patch') {
                 this.update();
             } else {
                 this.add();
             }
+
+            this.globalStore?.closeModal(this.$options.name);
         },
         add() {
-            axios.post(this.url, this.form)
+            axios.post('/maps', this.form)
                 .then(r => {
                     this.$eventHub.emit('map-added', r.data);
                 })
@@ -290,7 +287,7 @@ export default {
                 });
         },
         update() {
-            axios.patch(this.url + '/' + this.form.id, this.form)
+            axios.patch('/maps/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('map-updated', r.data);
                 })
@@ -320,4 +317,3 @@ export default {
     },
 }
 </script>
-

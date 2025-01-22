@@ -1118,6 +1118,8 @@ return [
         'fields' => [
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
+            'border_url' => 'Border URL',
+            'border_url_helper' => '(e.g. https://nominatim.openstreetmap.org/search?polygon_geojson=1&format=geojson&polygon_threshold=0.005&country=de&state=RP)',
             'link' => 'Link',
             'link_helper' => '',
         ],

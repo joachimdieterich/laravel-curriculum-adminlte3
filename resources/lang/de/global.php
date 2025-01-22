@@ -1254,12 +1254,11 @@ return [
     'mapMarkerCategory'=> [
         'title_singular' => 'Marker-Kategorie'
     ],
-
     'global' => [
-        'title_singular'        => 'global verfügbar',
+        'title_singular' => 'global verfügbar',
     ],
     'statusdefinition' => [
-        'title_singular'        => 'Status',
+        'title_singular'  => 'Status',
     ],
     'level' => [
         'title' => 'Niveaus',

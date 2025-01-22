@@ -96,9 +96,8 @@ class MapController extends Controller
         ]);
 
         if (request()->wantsJson()) {
-            return ['map' => $map];
+            return $map;
         }
-
     }
 
     /**
@@ -148,7 +147,7 @@ class MapController extends Controller
         $map->save();
         if (request()->wantsJson())
         {
-            return ['map' => $map];
+            return $map;
         }
         else {
             return redirect(route('maps.show', ['map' => $map]));
@@ -175,7 +174,7 @@ class MapController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'id' => 'sometimes|integer',
+            'id' => 'sometimes',
             'title' => 'sometimes',
             'subtitle'=> 'sometimes',
             'description'=> 'sometimes',

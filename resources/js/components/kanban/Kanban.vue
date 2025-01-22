@@ -11,31 +11,29 @@
         />
         <div
             id="kanban_board_wrapper"
-            class="kanban_board_wrapper"
+            class="kanban_board_wrapper position-relative"
             :style="'background-color:' + kanbanColor"
         >
             <div
-                class="pointer"
+                class="position-absolute pointer"
+                style="top: 10px; left: 10px;"
                 :style="{ color: textColor }"
-                style="float: left;
-                margin-top: -25px;
-                margin-left: -20px;"
                 @click="toggleFullscreen"
             >
-                <i class="fa fa-expand"></i>
-
+                <i class="fa fa-expand position-fixed"></i>
             </div>
             <div
-                class="pointer"
+                class="position-absolute pointer"
+                style="top: 10px; right: 10px;"
                 :style="{ color: textColor }"
-                style="float: right;
-                margin-top: -25px;
-                margin-right: -20px;"
                 data-toggle="collapse"
                 data-target="#kanban_board_wrapper .card-body"
                 aria-expanded="true"
             >
-                <i class="fa fa-angle-up"></i>
+                <i
+                    class="fa fa-angle-up position-fixed"
+                    style="transform: translateX(-100%);"
+                ></i>
             </div>
 
             <!-- Columns (Statuses) -->
@@ -47,12 +45,10 @@
                 handle=".handle"
                 item-key="id"
                 :emptyInsertThreshold="500"
-                class="d-flex m-0 h-100"
+                class="d-flex m-0 pr-0 h-100"
                 style="width: max-content; gap: 16px; padding-right: 2rem"
             >
-                <template
-                    #item="{ element: status , index }"
-                >
+                <template #item="{ element: status , index }">
                     <span v-if="(status.visibility) || ($userId == status.owner_id)"
                         :key="'drag_status_' + status.id"
                         class="d-flex flex-column h-100"
@@ -92,8 +88,7 @@
                                     class="d-flex flex-column pr-3"
                                 >
                                     <span :key="'item_' + item.id">
-                                        <KanbanItem
-                                            v-if=" (item.visibility && visiblefrom_to(item.visible_from, item.visible_until) == true)
+                                        <KanbanItem v-if="(item.visibility && visiblefrom_to(item.visible_from, item.visible_until) == true)
                                                 || ($userId == item.owner_id)
                                                 || ($userId == kanban.owner_id)"
                                             :key="item.id"
@@ -131,25 +126,25 @@
         </div>
     </div>
     <Teleport to="body">
-        <MediumModal></MediumModal>
+        <MediumModal/>
 <!--        <MediumModal
             subscribable_type="App\\Kanban"
             :subscribable_id="kanban.id"
             :show="mediumStore.getShowMediumModal"
             @close="mediumStore.setShowMediumModal(false)"
         ></MediumModal>-->
-        <KanbanModal></KanbanModal>
-        <KanbanItemModal></KanbanItemModal>
-        <KanbanStatusModal :kanban="kanban"></KanbanStatusModal>
-        <SubscribeModal></SubscribeModal>
+        <KanbanModal/>
+        <KanbanItemModal/>
+        <KanbanStatusModal :kanban="kanban"/>
+        <SubscribeModal/>
     </Teleport>
-    <teleport
-        v-if="$userId == kanban.owner_id"
+    <teleport v-if="$userId == kanban.owner_id"
         to="#customTitle"
     >
         <small>{{ kanban.title }} </small>
-            <a class="btn btn-flat"
-               @click="editKanban(kanban)"
+            <a
+                class="btn btn-flat"
+                @click="editKanban(kanban)"
             >
                 <i class="fa fa-pencil-alt text-secondary"></i>
             </a>
@@ -193,13 +188,12 @@ export default {
         kanban: Object,
         editable: {
             type: Boolean,
-            default: true
+            default: true,
         },
         pusher: {
             type: Boolean,
-            default: false
+            default: false,
         },
-        search: ''
     },
     setup() {
         const globalStore = useGlobalStore();
@@ -217,7 +211,7 @@ export default {
             item: null,
             autoRefresh: false,
             refreshRate: 5000,
-            usersOnline:[],
+            usersOnline: [],
         };
     },
     methods: {
@@ -233,13 +227,13 @@ export default {
         },
         share() {
             this.globalStore?.showModal('subscribe-modal', {
-                'modelId': this.kanban.id,
-                'modelUrl': 'kanban',
-                'shareWithUsers': true,
-                'shareWithGroups': true,
-                'shareWithOrganizations': true,
-                'shareWithToken': true,
-                'canEditCheckbox': true
+                modelId: this.kanban.id,
+                modelUrl: 'kanban',
+                shareWithUsers: true,
+                shareWithGroups: true,
+                shareWithOrganizations: true,
+                shareWithToken: true,
+                canEditCheckbox: true,
             });
         },
         visiblefrom_to(visible_from, visible_until) {
@@ -275,30 +269,31 @@ export default {
         syncStatusMoved() {
             console.log('syncStatusMoved');
             this.sendChange("/kanbanStatuses/sync");
-            },
+        },
         syncItemMoved() {
-            this.sendChange("/kanbanItems/sync")
+            this.sendChange("/kanbanItems/sync");
         },
         sendChange(url) {
             const cols = this.statuses
                 .map((status) => {      //only send required data
                     return {
-                        'id': status.id,
-                        'kanban_id': status.kanban_id,
-                        'order_id': status.order_id,
-                        'items': status.items.map((item) => {
+                        id: status.id,
+                        kanban_id: status.kanban_id,
+                        order_id: status.order_id,
+                        items: status.items.map((item) => {
                             return {
-                                'id': item.id,
-                                'kanban_status_id': item.kanban_status_id,
-                                'order_id': item.order_id,
+                                id: item.id,
+                                kanban_status_id: item.kanban_status_id,
+                                order_id: item.order_id,
                             }
-                        })
+                        }),
                     }
                 });
+
             axios.put(url, {columns: cols})
                 .then(res => { // Tell the parent component we've added a new task and include it
-                    if (this.pusher === false){
-                        if (url == '/kanbanStatuses/sync'){
+                    if (this.pusher === false) {
+                        if (url == '/kanbanStatuses/sync') {
                             this.handleStatusMoved(res.data.message.statuses);
                         } else {
                             this.handleItemMoved(res.data.message);
@@ -324,14 +319,9 @@ export default {
             this.statuses.push(newStatus);
         },
         handleStatusUpdated(newStatus) {
-            // Find the index of the status where we should replace the item
-            const statusIndex = this.statuses.findIndex(
-                status => status.id === newStatus.id
-            );
+            let status = this.statuses.find(s => s.id === newStatus.id);
 
-            for (const [key, value] of Object.entries(newStatus)) {
-                this.statuses[statusIndex][key] = value;
-            }
+            Object.assign(status, newStatus);
         },
         handleStatusDeleted(status) {
             let index = this.statuses.indexOf(status);
@@ -410,14 +400,11 @@ export default {
                 status => status.id === updatedItem.kanban_status_id
             );
             // Find the index of the item where we should replace the item
-            const itemIndex = this.statuses[statusIndex].items.findIndex(
+            let item = this.statuses[statusIndex].items.find(
                 item => item.id === updatedItem.id
             );
 
-            for (const [key, value] of Object.entries(updatedItem)) {
-                // Add updated item to our column
-                this.statuses[statusIndex].items[itemIndex][key] = value;
-            }
+            Object.assign(item, updatedItem);
         },
         handleItemCommentUpdated(updatedItem) {
             // Find the index of the status where we should replace the item
@@ -582,8 +569,6 @@ export default {
         } else {
             this.autoRefresh = false;
         }
-
-        this.$eventHub.emit('showSearchbar');
     },
     computed: {
         textColor: function() {

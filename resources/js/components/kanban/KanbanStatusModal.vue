@@ -25,7 +25,10 @@
                     </div>
                 </div>
 
-                <div class="modal-body">
+                <div
+                    class="modal-body"
+                    style="overflow-y: visible;"
+                >
                     <div class="form-group">
                         <input
                             type="text"
@@ -52,13 +55,12 @@
                     <div class="card-body pb-0">
                         <v-swatches
                             :swatch-size="49"
-                            :trigger-style="{}"
                             popover-to="right"
                             v-model="this.form.color"
                             show-fallback
                             fallback-input-type="color"
                             @input="(id) => {
-                                if(id.isInteger) {
+                                if (id.isInteger) {
                                     this.form.color = id;
                                 }
                             }"
@@ -75,8 +77,7 @@
                         </h5>
                     </div>
                     <div class="card-body pb-0">
-                        <div
-                            v-if=" $userId == form.owner_id
+                        <div v-if="$userId == form.owner_id
                                 || $userId == kanban.owner_id
                                 || method === 'post'"
                             class="form-group"
@@ -139,7 +140,7 @@
                         </button>
                         <button
                             id="kanban-status-save"
-                            class="btn btn-primary"
+                            class="btn btn-primary ml-3"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}

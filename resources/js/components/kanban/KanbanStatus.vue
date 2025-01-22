@@ -1,7 +1,8 @@
 <template>
     <div class="kanban-header"
-         :style="{ backgroundColor: color }">
-        <div v-if="newStatus === true"
+        :style="{ backgroundColor: color }"
+    >
+        <div v-if="newStatus"
             id="kanbanStatusCreate"
             class="d-flex align-items-center"
         >
@@ -9,11 +10,14 @@
                 class="text-secondary btn px-1 py-0"
                 @click="edit()"
             >
-                <i class="fa fa-plus"></i> {{ trans('global.kanbanStatus.create') }}
+                <i class="fa fa-plus"></i>
+                {{ trans('global.kanbanStatus.create') }}
             </strong>
         </div>
-        <div v-else class="d-flex align-items-center"
-             :style="'color:' + $textcolor(status.color)">
+        <div v-else
+            class="d-flex align-items-center"
+            :style="'color:' + $textcolor(status.color)"
+        >
             <div v-if="($userId == kanban.owner_id)
                     || (editable && $userId == status.owner_id)
                     || (editable && status.editable && !kanban.only_edit_owned_items)"
@@ -22,8 +26,10 @@
                 data-toggle="dropdown"
                 aria-expanded="false"
             >
-                <i class="fas fa-bars"
-                   :style="'color:' + $textcolor(status.color)"></i>
+                <i
+                    class="fas fa-bars"
+                    :style="'color:' + $textcolor(status.color)"
+                ></i>
                 <div
                     class="dropdown-menu"
                     x-placement="top-start"
@@ -31,10 +37,10 @@
                     <div>
                         <button
                             name="kanbanStatusEdit"
-                            class="dropdown-item py-1"
+                            class="dropdown-item text-secondary py-1"
                             @click="edit()"
                         >
-                            <i class="fa fa-pencil-alt mr-4"></i>
+                            <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.kanbanStatus.edit') }}
                         </button>
                         <div v-if="($userId == status.owner_id) || (editable && $userId == kanban.owner_id)">
@@ -45,7 +51,7 @@
                                 class="dropdown-item py-1 text-red"
                                 @click="confirmItemDelete()"
                             >
-                                <i class="fa fa-trash mr-4"></i>
+                                <i class="fa fa-trash mr-2"></i>
                                 {{ trans('global.kanbanStatus.delete') }}
                             </button>
                         </div>

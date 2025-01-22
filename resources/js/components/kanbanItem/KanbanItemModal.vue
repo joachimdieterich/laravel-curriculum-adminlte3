@@ -224,14 +224,14 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link lists table code autoresize"
+                    "autolink link lists code curriculummedia autoresize"
                 ],
                 {
                     'callback': 'insertContent',
                     'callbackId': this.component_id
                 },
-                "bold underline italic | alignleft aligncenter alignright | table",
-                "bullist numlist outdent indent | mathjax link code",
+                "bold underline italic | alignleft aligncenter alignright alignjustify",
+                "bullist numlist outdent indent | mathjax link code curriculummedia"
             ),
         }
     },

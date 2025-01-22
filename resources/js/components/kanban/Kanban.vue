@@ -6,7 +6,7 @@
         <img v-if="kanban.medium_id !== null"
             class="kanban_board_wrapper position-absolute p-0"
             style="object-fit: cover;"
-            :src="'/media/'+ kanban.medium_id + '?model=Kanban&model_id=' + kanban.id"
+            :src="'/media/' + kanban.medium_id + '?model=Kanban&model_id=' + kanban.id"
             alt="background image"
         />
         <div
@@ -624,7 +624,6 @@ export default {
     width: 100%;
 }
 .kanban_board_wrapper {
-    position: absolute;
     height: 100%;
     width: 100%;
     padding: 2rem;

@@ -26,9 +26,7 @@
                 class="position-absolute pointer"
                 style="top: 10px; right: 10px;"
                 :style="{ color: textColor }"
-                data-toggle="collapse"
-                data-target="#kanban_board_wrapper .card-body"
-                aria-expanded="true"
+                @click="toggleCollapseAll"
             >
                 <i
                     class="fa fa-angle-up position-fixed"
@@ -224,6 +222,10 @@ export default {
             } else {
                 $('#kanban_board_container').get(0).requestFullscreen();
             }
+        },
+        toggleCollapseAll(e) {
+            const collapse = e.target.parentElement.classList.toggle('collapsed') ? 'hide' : 'show';
+            $('#kanban_board_wrapper .card-body').collapse(collapse);
         },
         share() {
             this.globalStore?.showModal('subscribe-modal', {

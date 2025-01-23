@@ -1,7 +1,8 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
+            @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -14,17 +15,23 @@
                     </span>
                     </h3>
                     <div class="card-tools">
-                        <button type="button"
-                                class="btn btn-tool"
-                                @click="globalStore?.closeModal($options.name)">
+                        <button
+                            type="button"
+                            class="btn btn-tool"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
                             <i class="fa fa-times"></i>
                         </button>
                     </div>
                 </div>
-                <div class="modal-body">
-                    <div v-permission="'is_admin'"
-                         class="form-group "
-                         :class="form.errors.common_name ? 'has-error' : ''"
+                <div
+                    class="modal-body"
+                    style="overflow-y: visible;"
+                >
+                    <div
+                        v-permission="'is_admin'"
+                        class="form-group "
+                        :class="form.errors.common_name ? 'has-error' : ''"
                     >
                         <label for="title">{{ trans('global.group.fields.common_name') }}</label>
                         <input
@@ -37,14 +44,16 @@
                         <p class="help-block" v-if="form.errors.common_name" v-text="form.errors.common_name[0]"></p>
                     </div>
 
-                    <div class="form-group "
-                         :class="form.errors.title ? 'has-error' : ''"
+                    <div
+                        class="form-group "
+                        :class="form.errors.title ? 'has-error' : ''"
                     >
                         <label for="title">
                             {{ trans('global.group.fields.title') }} *
                         </label>
                         <input
-                            type="text" id="title"
+                            id="title"
+                            type="text"
                             name="title"
                             class="form-control"
                             v-model="form.title"
@@ -61,59 +70,61 @@
                         name="grade_id"
                         url="/grades"
                         model="grade"
+                        :label="trans('global.grade.title_singular') + ' *'"
                         option_id="id"
                         option_label="title"
                         :selected="this.form.grade_id"
                         @selectedValue="(id) => {
                             this.form.grade_id = id;
                         }"
-                    >
-                    </Select2>
+                    />
 
                     <Select2
                         id="period_id"
                         name="period_id"
                         url="/periods"
                         model="period"
+                        :label="trans('global.period.title_singular') + ' *'"
                         option_id="id"
                         option_label="title"
                         :selected="this.form.period_id"
                         @selectedValue="(id) => {
                             this.form.period_id = id;
                         }"
-                    >
-                    </Select2>
+                    />
 
                     <Select2
                         id="organization_id"
                         name="organization_id"
                         url="/organizations"
                         model="organization"
+                        :label="trans('global.organization.title_singular') + ' *'"
                         option_id="id"
                         option_label="title"
                         :selected="this.form.organization_id"
                         @selectedValue="(id) => {
                             this.form.organization_id = id;
                         }"
-                    >
-                    </Select2>
+                    />
                 </div>
                 <div class="card-footer">
-                 <span class="pull-right">
-                     <button
-                         id="group-cancel"
-                         type="button"
-                         class="btn btn-default"
-                         @click="globalStore?.closeModal($options.name)">
-                         {{ trans('global.cancel') }}
-                     </button>
-                     <button
-                         id="group-save"
-                         class="btn btn-primary"
-                         @click="submit(method)" >
-                         {{ trans('global.save') }}
-                     </button>
-                </span>
+                    <span class="pull-right">
+                        <button
+                            id="group-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="group-save"
+                            class="btn btn-primary ml-3"
+                            @click="submit(method)"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
+                    </span>
                 </div>
             </div>
         </div>
@@ -127,29 +138,27 @@ import {useGlobalStore} from "../../store/global";
 export default {
     name: 'group-modal',
     components: {
-        Select2
+        Select2,
     },
     props: {},
     setup() {
         const globalStore = useGlobalStore();
         return {
-            globalStore
+            globalStore,
         }
     },
     data() {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/groups',
             form: new Form({
-                'id':'',
-                'title': '',
-                'common_name':'',
-                'grade_id': '',
-                'period_id': '',
-                'organization_id': '',
+                id:'',
+                title: '',
+                common_name:'',
+                grade_id: '',
+                period_id: '',
+                organization_id: '',
             }),
-            search: '',
         }
     },
     methods: {
@@ -159,9 +168,11 @@ export default {
             } else {
                 this.add();
             }
+
+            this.globalStore.closeModal(this.$options.name);
         },
         add() {
-            axios.post(this.url, this.form)
+            axios.post('/groups', this.form)
                 .then(r => {
                     this.$eventHub.emit('group-added', r.data);
                 })
@@ -170,7 +181,7 @@ export default {
                 });
         },
         update() {
-            axios.patch(this.url + '/' + this.form.id, this.form)
+            axios.patch('/groups/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('group-updated', r.data);
                 })

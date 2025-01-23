@@ -14,7 +14,7 @@
                     v-for="organization in organizations"
                     :key="'organizationIndex'+organization.id"
                     :model="organization"
-                    modelName= "Organization"
+                    modelName="Organization"
                     url="/organizations">
                     <template v-slot:icon>
                         <i class="fa fa-university pt-2"></i>

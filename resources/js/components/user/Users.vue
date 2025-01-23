@@ -22,7 +22,7 @@
                 <IndexWidget
                     v-permission="'user_create'"
                     key="userCreate"
-                    modelName="user"
+                    modelName="User"
                     url="/users"
                     :create="!subscribable"
                     :subscribe="subscribable"
@@ -38,7 +38,7 @@
                 <IndexWidget v-for="user in users"
                     :key="'userIndex' + user.id"
                     :model="user"
-                    modelName="user"
+                    modelName="User"
                     storeTitle="users"
                     url="/users"
                 >

@@ -19,7 +19,7 @@
                 <IndexWidget
                     v-permission="'group_create'"
                     key="groupCreate"
-                    modelName="group"
+                    modelName="Group"
                     url="/groups"
                     :create=true
                     :label="trans('global.group.create')"
@@ -27,7 +27,7 @@
                 <IndexWidget v-for="group in groups"
                     :key="'groupIndex'+group.id"
                     :model="group"
-                    modelName="group"
+                    modelName="Group"
                     storeTitle="groups"
                     url="/groups"
                 >

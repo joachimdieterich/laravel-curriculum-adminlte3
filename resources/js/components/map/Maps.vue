@@ -86,7 +86,7 @@
             <IndexWidget
                 v-permission="'map_create'"
                 key="mapCreate"
-                modelName="map"
+                modelName="Map"
                 url="/maps"
                 :create=true
                 :label="trans('global.map.create')"
@@ -94,7 +94,7 @@
             <IndexWidget v-for="map in maps"
                 :key="'mapIndex' + map.id"
                 :model="map"
-                modelName="map"
+                modelName="Map"
                 url="/maps"
             >
                 <template v-slot:icon>

@@ -14,7 +14,7 @@
                 v-for="objectiveType in objectiveTypes"
                 :key="'objectiveTypeIndex'+objectiveType.id"
                 :model="objectiveType"
-                modelName= "ObjectiveType"
+                modelName="ObjectiveType"
                 url="/objectiveTypes">
                 <template v-slot:icon>
                     <i class="fa fa-university pt-2"></i>

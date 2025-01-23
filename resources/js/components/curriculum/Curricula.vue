@@ -71,7 +71,7 @@
                     || filter  === 'owner'"
                 v-permission="'curriculum_create'"
                 key="curriculumCreate"
-                modelName="curriculum"
+                modelName="Curriculum"
                 url="/curricula"
                 :create=true
                 :label="trans('global.curriculum.create')"
@@ -81,7 +81,7 @@
                 :id="curriculum.id"
                 :key="'curriculumIndex'+curriculum.id"
                 :model="curriculum"
-                modelName= "curriculum"
+                modelName="Curriculum"
                 url="/curricula"
             >
                 <template v-slot:icon>

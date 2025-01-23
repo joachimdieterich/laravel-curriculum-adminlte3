@@ -85,7 +85,7 @@
             <IndexWidget
                 v-permission="'plan_create'"
                 key="planCreate"
-                modelName="plan"
+                modelName="Plan"
                 url="/plans"
                 :create=!subscribable
                 :subscribe="subscribable"
@@ -102,7 +102,7 @@
             <IndexWidget v-for="plan in plans"
                 :key="'planIndex'+plan.id"
                 :model="plan"
-                modelName="plan"
+                modelName="Plan"
                 url="/plans"
             >
                 <template v-slot:itemIcon>

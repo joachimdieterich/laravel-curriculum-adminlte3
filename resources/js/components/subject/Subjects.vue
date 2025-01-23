@@ -5,7 +5,7 @@
             <IndexWidget
                 v-permission="'subject_create'"
                 key="'subjectCreate'"
-                modelName="Role"
+                modelName="Subject"
                 url="/subjects"
                 :create=true
                 :label="trans('global.subject.create')">
@@ -14,7 +14,7 @@
                 v-for="subject in subjects"
                 :key="'subjectIndex'+subject.id"
                 :model="subject"
-                modelName= "subject"
+                modelName="Subject"
                 url="/subjects">
                 <template v-slot:icon>
                     <i class="fa fa-swatchbook pt-2"></i>

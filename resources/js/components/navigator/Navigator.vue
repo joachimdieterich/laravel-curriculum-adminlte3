@@ -41,7 +41,7 @@
                     v-if="navigatorItem.position == 'content'"
                     :key="'navigatorItemIndex' + navigatorItem.id"
                     :model="navigatorItem"
-                    modelName= "navigatorItem"
+                    modelName="NavigatorItem"
                     :url="navigatorItem.url"
                 >
                 <template v-slot:icon>

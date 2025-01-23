@@ -14,7 +14,7 @@
                 v-for="grade in grades"
                 :key="'gradeIndex'+grade.id"
                 :model="grade"
-                modelName= "grade"
+                modelName="Grade"
                 url="/grades">
                 <template v-slot:icon>
                     <i class="fas fa-layer-group pt-2"></i>

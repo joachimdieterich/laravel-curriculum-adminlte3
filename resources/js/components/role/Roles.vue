@@ -7,7 +7,7 @@
             <IndexWidget
                 v-permission="'role_create'"
                 key="'roleCreate'"
-                modelName="role"
+                modelName="Role"
                 url="/roles"
                 :create=true
                 :label="trans('global.role.create')"
@@ -15,7 +15,7 @@
             <IndexWidget v-for="role in roles"
                 :key="'roleIndex' + role.id"
                 :model="role"
-                modelName="role"
+                modelName="Role"
                 url="/roles"
             >
                 <template v-slot:icon>

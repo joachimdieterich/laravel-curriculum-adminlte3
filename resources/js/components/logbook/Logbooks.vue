@@ -86,7 +86,7 @@
             <IndexWidget
                 v-permission="'logbook_create'"
                 key="logbookCreate"
-                modelName="logbook"
+                modelName="Logbook"
                 url="/logbooks"
                 :create=!subscribable
                 :subscribe="subscribable"
@@ -105,7 +105,7 @@
                 :id="logbook.id"
                 :key="'logbookIndex'+logbook.id"
                 :model="logbook"
-                modelName="logbook"
+                modelName="Logbook"
                 url="/logbooks"
             >
                 <template v-slot:icon>

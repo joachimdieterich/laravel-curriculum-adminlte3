@@ -86,7 +86,7 @@
             <IndexWidget
                 v-permission="'kanban_create'"
                 key="kanbanCreate"
-                modelName="kanban"
+                modelName="Kanban"
                 url="/kanbans"
                 :create="!subscribable"
                 :subscribe="subscribable"
@@ -104,7 +104,7 @@
             <IndexWidget v-for="kanban in kanbans"
                 :key="'kanbanIndex'+kanban.id"
                 :model="kanban"
-                modelName="kanban"
+                modelName="Kanban"
                 url="/kanbans"
             >
                 <template v-slot:itemIcon>

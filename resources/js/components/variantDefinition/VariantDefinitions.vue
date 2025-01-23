@@ -14,7 +14,7 @@
                 v-for="variantDefinition in variantDefinitions"
                 :key="'variantDefinitionIndex'+variantDefinition.id"
                 :model="variantDefinition"
-                modelName= "VariantDefinition"
+                modelName="VariantDefinition"
                 url="/variantDefinitions">
                 <template v-slot:icon>
                     <i class="fa fa-university pt-2"></i>

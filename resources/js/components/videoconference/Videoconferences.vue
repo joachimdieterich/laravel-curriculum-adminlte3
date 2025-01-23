@@ -85,7 +85,7 @@
             <IndexWidget
                 v-permission="'videoconference_create'"
                 key="videoconferenceCreate"
-                modelName="videoconference"
+                modelName="Videoconference"
                 url="/videoconferences"
                 :create="!subscribable"
                 :subscribe="subscribable"
@@ -98,7 +98,7 @@
                 :model="videoconference"
                 :color="videoconference.bannerColor"
                 titleField="meetingName"
-                modelName="videoconference"
+                modelName="Videoconference"
                 url="/videoconferences"
             >
                 <template v-slot:icon>

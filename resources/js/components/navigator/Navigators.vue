@@ -14,7 +14,7 @@
                 v-for="navigator in navigators"
                 :key="'navigatorIndex'+navigator.id"
                 :model="navigator"
-                modelName= "navigator"
+                modelName="Navigator"
                 :urlOnly=true
                 :url="navigator.url">
                 <template v-slot:icon>

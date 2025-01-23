@@ -8,7 +8,7 @@
             <IndexWidget
                 v-permission="'permission_create'"
                 key="'permissionCreate'"
-                modelName="permission"
+                modelName="Permission"
                 url="/permissions"
                 :create=true
                 :label="trans('global.permission.create')"
@@ -16,7 +16,7 @@
             <IndexWidget v-for="permission in permissions"
                 :key="'permissionIndex'+permission.id"
                 :model="permission"
-                modelName= "permission"
+                modelName="Permission"
                 url="/permissions"
             >
                 <template v-slot:icon>

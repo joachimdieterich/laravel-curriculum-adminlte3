@@ -17,7 +17,7 @@
                 :key="'configIndex'+config.id"
                 :model="config"
                 titleField="key"
-                modelName= "config"
+                modelName="Config"
                 url="/configs">
                 <template v-slot:icon>
                     <i v-if="config.type_id === 1"

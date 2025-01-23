@@ -40,7 +40,7 @@
             <IndexWidget
                 v-permission="'exam_create'"
                 key="examCreate"
-                modelName="exam"
+                modelName="Exam"
                 url="/exams"
                 :create="!subscribable"
                 :subscribe="subscribable"
@@ -59,7 +59,7 @@
                 :model="exam"
                 titleField="test_name"
                 descriptionField="subject"
-                modelName= "exam"
+                modelName="Exam"
                 :url="getLoginUrl(exam)"
                 url-only="true"
                 urlTarget="_blank"

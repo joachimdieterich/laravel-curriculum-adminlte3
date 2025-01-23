@@ -14,7 +14,7 @@
                 v-for="period in periods"
                 :key="'periodIndex'+period.id"
                 :model="period"
-                modelName= "period"
+                modelName="Period"
                 url="/periods">
                 <template v-slot:icon>
                     <i class="fa fa-history pt-2"></i>

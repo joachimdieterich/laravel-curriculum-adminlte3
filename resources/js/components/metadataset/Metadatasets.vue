@@ -14,7 +14,7 @@
                 v-for="metadataset in metadatasets"
                 :key="'metadatasetIndex'+metadataset.id"
                 :model="metadataset"
-                modelName= "metadataset"
+                modelName="Metadataset"
                 titleField="version"
                 url="/metadatasets">
                 <template v-slot:icon>

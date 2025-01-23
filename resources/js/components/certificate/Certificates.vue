@@ -14,7 +14,7 @@
                     v-for="certificate in certificates"
                     :key="'certificateIndex'+certificate.id"
                     :model="certificate"
-                    modelName= "Certificate"
+                    modelName="Certificate"
                     url="/certificates">
                 <template v-slot:icon>
                     <i class="fa fa-university pt-2"></i>

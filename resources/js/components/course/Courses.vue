@@ -7,7 +7,7 @@
             <IndexWidget
                 v-permission="'group_enrolment'"
                 key="courseCreate"
-                modelName="course"
+                modelName="Course"
                 url="/courses"
                 :subscribe="true"
                 :subscribable_id="group.id"
@@ -23,7 +23,7 @@
             <IndexWidget v-for="course in courses"
                 :key="'courseIndex' + course.id"
                 :model="course"
-                modelName="course"
+                modelName="Course"
                 url="/courses"
             >
                 <template v-slot:icon>

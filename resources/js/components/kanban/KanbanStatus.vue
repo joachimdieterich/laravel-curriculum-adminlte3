@@ -85,7 +85,7 @@
                     this.showConfirm = false;
                     this.delete();
                 }"
-            ></ConfirmModal>
+            />
         </Teleport>
     </div>
 </template>

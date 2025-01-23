@@ -87,7 +87,7 @@
                 v-for="meeting in meetings"
                 :key="'meetingIndex'+meeting.id"
                 :model="meeting"
-                modelName= "meeting"
+                modelName="Meeting"
                 url="/meetings">
                 <template v-slot:icon>
                     <i class="fa fa-meeting-location-dot pt-2"></i>

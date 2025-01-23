@@ -3,7 +3,7 @@
         <div class="col-md-12 ">
             <ul v-if="typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined'"
                 class="nav nav-pills py-2" role="tablist">
-                <li class="nav-item">
+                <li class="nav-item pointer">
                     <a class="nav-link "
                        :class="filter === 'all' ? 'active' : ''"
                        id="curriculum-filter-all"
@@ -14,7 +14,7 @@
                         <i class="fas fa-th pr-2"></i>  {{ trans('global.all') }} {{ trans('global.curriculum.title') }}
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item pointer">
                     <a class="nav-link"
                        :class="filter === 'by_organization' ? 'active' : ''"
                        id="custom-filter-by-organization"
@@ -26,7 +26,7 @@
                     </a>
                 </li>
                 <li v-permission="'curriculum_create'"
-                    class="nav-item">
+                    class="nav-item pointer">
                     <a class="nav-link"
                        :class="filter === 'owner' ? 'active' : ''"
                        id="custom-filter-owner"
@@ -37,7 +37,7 @@
                         <i class="fa fa-user pr-2"></i>{{ trans('global.my') }} {{ trans('global.curriculum.title') }}
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item pointer">
                     <a class="nav-link"
                        :class="filter === 'shared_with_me' ? 'active' : ''"
                        id="custom-filter-shared-with-me"
@@ -49,7 +49,7 @@
                     </a>
                 </li>
                 <li v-permission="'curriculum_create'"
-                    class="nav-item">
+                    class="nav-item pointer">
                     <a id="custom-tabs-shared-by-me"
                        :class="filter === 'shared_by_me' ? 'active' : ''"
                        class="nav-link"

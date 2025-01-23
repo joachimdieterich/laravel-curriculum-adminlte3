@@ -5,7 +5,7 @@
                 class="nav nav-pills py-2"
                 role="tablist"
             >
-                <li class="nav-item">
+                <li class="nav-item pointer">
                     <a
                         id="curriculum-filter-all"
                         class="nav-link"
@@ -18,7 +18,7 @@
                         {{ trans('global.all') }} {{ trans('global.plan.title') }}
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item pointer">
                     <a
                         id="custom-filter-by-organization"
                         class="nav-link"
@@ -32,8 +32,8 @@
                     </a>
                 </li>
                 <li
-                    v-can="'curriculum_create'"
-                    class="nav-item"
+                    v-can="'plan_create'"
+                    class="nav-item pointer"
                 >
                     <a
                         id="custom-filter-owner"
@@ -47,7 +47,7 @@
                         {{ trans('global.my') }} {{ trans('global.plan.title') }}
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item pointer">
                     <a
                         id="custom-filter-shared-with-me"
                         class="nav-link"
@@ -61,8 +61,8 @@
                     </a>
                 </li>
                 <li
-                    v-can="'curriculum_create'"
-                    class="nav-item"
+                    v-can="'plan_create'"
+                    class="nav-item pointer"
                 >
                     <a
                         id="custom-tabs-shared-by-me"

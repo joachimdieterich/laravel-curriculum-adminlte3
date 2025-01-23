@@ -5,7 +5,7 @@
                 class="nav nav-pills py-2"
                 role="tablist"
             >
-                <li class="nav-item">
+                <li class="nav-item pointer">
                     <a
                         id="logbook-filter-all"
                         class="nav-link"
@@ -18,7 +18,7 @@
                         {{ trans('global.all') }} {{ trans('global.logbook.title') }}
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item pointer">
                     <a
                         id="custom-filter-by-organization"
                         class="nav-link"
@@ -33,7 +33,7 @@
                 </li>
                 <li
                     v-permission="'logbook_create'"
-                    class="nav-item"
+                    class="nav-item pointer"
                 >
                     <a
                         id="custom-filter-owner"
@@ -47,7 +47,7 @@
                         {{ trans('global.my') }} {{ trans('global.logbook.title') }}
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item pointer">
                     <a
                         id="custom-filter-shared-with-me"
                         class="nav-link"
@@ -62,7 +62,7 @@
                 </li>
                 <li
                     v-permission="'logbook_create'"
-                    class="nav-item"
+                    class="nav-item pointer"
                 >
                     <a
                         id="custom-tabs-shared-by-me"

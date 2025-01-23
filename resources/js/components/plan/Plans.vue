@@ -32,7 +32,7 @@
                     </a>
                 </li>
                 <li
-                    v-can="'plan_create'"
+                    v-permission="'plan_create'"
                     class="nav-item pointer"
                 >
                     <a
@@ -61,7 +61,7 @@
                     </a>
                 </li>
                 <li
-                    v-can="'plan_create'"
+                    v-permission="'plan_create'"
                     class="nav-item pointer"
                 >
                     <a

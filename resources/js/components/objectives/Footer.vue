@@ -5,7 +5,7 @@
     >
         <div class="p-0 col-12">
             <AchievementIndicator v-if="(typeof this.objective.achievements !== 'undefined')"
-                v-can="'achievement_create'"
+                v-permission="'achievement_create'"
                 :objective="objective"
                 :type="type"
                 :settings="settings"

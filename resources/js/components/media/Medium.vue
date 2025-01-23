@@ -28,7 +28,7 @@
         <i v-if="medium.mime_type === 'url'" class="fa fa-link text-primary text-center pt-2"
            style="position:absolute; top: 0px; height: 150px !important; width: 100%; font-size:800%;"></i>
         <span
-            v-can="'medium_delete'"
+            v-permission="'medium_delete'"
             class="p-1 pointer_hand"
             accesskey=""
             style="position:absolute; top:0px; height: 30px; width:100%;"

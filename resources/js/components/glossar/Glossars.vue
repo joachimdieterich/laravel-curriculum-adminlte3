@@ -13,7 +13,7 @@
                   class="pl-2">{{subscriptions[currentSlide-1].content.title}}</span>
         </h3>
         <div class="card-tools">
-            <button v-can="'glossar_delete'"
+            <button v-permission="'glossar_delete'"
                     type="button" role="button"
                     class="btn btn-tool text-danger"
                     @click.prevent="deleteGlossar()">

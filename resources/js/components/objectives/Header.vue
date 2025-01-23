@@ -2,7 +2,7 @@
     <div class="boxheader row"
          v-bind:style="{ 'color': textcolor }">
         <span class="mr-auto "
-              v-can="'curriculum_edit'"
+              v-permission="'curriculum_edit'"
               v-if="edit_settings === true">
             <span v-if="(type == 'terminal' && objective.order_id != 0)"
                   class="fa fa-arrow-up mr-1"
@@ -30,10 +30,10 @@
             </button>
         </span>
 
-        <span
-            v-can="'curriculum_edit'"
-            v-if="edit_settings === true"
-            class="ml-auto">
+        <span v-if="edit_settings"
+            v-permission="'curriculum_edit'"
+            class="ml-auto"
+        >
             <DropdownButton v-if="type == 'terminal'"
                             :menuEntries="menuEntries"
                             :objective.sync="objective"

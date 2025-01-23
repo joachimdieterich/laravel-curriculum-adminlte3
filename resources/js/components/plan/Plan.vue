@@ -4,7 +4,7 @@
             <div class="card-header">
                 <div class="card-title">{{ currentPlan.title }}</div>
                 <div v-if="$userId == plan.owner_id"
-                    v-can="'plan_edit'"
+                    v-permission="'plan_edit'"
                     class="card-tools pr-2 no-print"
                 >
                     <a onclick="window.print()" class="link-muted mr-3 px-1 pointer">

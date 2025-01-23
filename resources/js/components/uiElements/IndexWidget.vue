@@ -167,8 +167,8 @@ export default {
         },
         openModal() {
             let modal = this.subscribe
-                ? 'subscribe-' + this.modelName + '-modal'
-                : this.modelName + '-modal';
+                ? 'subscribe-' + this.modelName.toLowerCase() + '-modal'
+                : this.modelName.toLowerCase() + '-modal';
 
             this.globalStore?.showModal(modal, {
                 // only gets used in subscribe-modals

@@ -273,9 +273,10 @@ export default {
             this.kanbans.push(kanban);
         });
 
-        this.$eventHub.on('kanban-updated', (kanban) => {
-            this.globalStore?.closeModal('kanban-modal');
-            this.update(kanban);
+        this.$eventHub.on('kanban-updated', (updatedKanban) => {
+            let kanban = this.kanbans.find(k => k.id === updatedKanban.id);
+
+            Object.assign(kanban, updatedKanban);
         });
 
         this.$eventHub.on('filter', (filter) => {
@@ -341,15 +342,6 @@ export default {
                     });
             }
         },
-        update(kanban) {
-            const index = this.kanbans.findIndex(
-                vc => vc.id === kanban.id
-            );
-
-            for (const [key, value] of Object.entries(kanban)) {
-                this.kanbans[index][key] = value;
-            }
-        }
     },
     components: {
         SubscribeKanbanModal,

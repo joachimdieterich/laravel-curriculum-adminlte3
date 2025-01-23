@@ -247,7 +247,7 @@ class KanbanController extends Controller
 
         if (request()->wantsJson())
         {
-            return ['kanban' => $kanban]; // not used yed
+            return $kanban;
         }
         else
         {

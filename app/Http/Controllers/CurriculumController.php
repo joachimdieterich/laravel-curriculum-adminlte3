@@ -196,7 +196,7 @@ class CurriculumController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         if (request()->wantsJson()) {
-            return ['curriculum' => $curriculum];
+            return $curriculum;
         }
     }
 
@@ -388,7 +388,7 @@ class CurriculumController extends Controller
         ]);
 
         if (request()->wantsJson()) {
-            return ['curriculum' => $curriculum];
+            return $curriculum;
         }
         //return redirect($curriculum->path());
     }

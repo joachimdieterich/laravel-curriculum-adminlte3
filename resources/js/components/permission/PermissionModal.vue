@@ -1,8 +1,8 @@
 <template>
     <Transition name="modal">
-        <div
-            v-if="globalStore.modals[$options.name]?.show"
+        <div v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask"
+            @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -31,7 +31,8 @@
                         :class="form.errors.title ? 'has-error' : ''"
                     >
                         <input
-                            type="text" id="title"
+                            id="title"
+                            type="text"
                             name="title"
                             class="form-control"
                             v-model="form.title"

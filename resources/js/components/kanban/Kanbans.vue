@@ -168,7 +168,6 @@
                 :columns="columns"
                 :options="options"
                 :ajax="url"
-                :search="search"
                 width="100%"
                 style="display: none;"
             />
@@ -245,7 +244,6 @@ export default {
         return {
             component_id: this.$.uid,
             kanbans: null,
-            search: '',
             showConfirm: false,
             showCopy: false,
             url: this.subscribable ? '/kanbans/list?group_id=' + this.subscribable_id : '/kanbans/list',
@@ -254,6 +252,7 @@ export default {
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
+                { title: 'description', data: 'description', searchable: true },
             ],
             options : this.$dtOptions,
             filter: 'all',

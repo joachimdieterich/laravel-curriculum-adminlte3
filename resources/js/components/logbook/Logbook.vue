@@ -82,7 +82,6 @@
         </teleport>
     </div>
 </template>
-
 <script>
 import MediumModal from "../media/MediumModal.vue"
 import LogbookModal from "../logbook/LogbookModal.vue";

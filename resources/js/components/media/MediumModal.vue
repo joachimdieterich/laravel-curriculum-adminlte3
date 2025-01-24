@@ -253,14 +253,7 @@ export default {
         RepositoryPluginCreate,
         DataTable,
     },
-    props: {
-        show: {
-            type: Boolean
-        },
-        params: {
-            type: Object
-        },
-    },
+    props: {},
     setup() { //use database store
         const globalStore = useGlobalStore();
         return {
@@ -300,8 +293,8 @@ export default {
                     title: 'img',
                     data: 'id',
                     render: function(data, type, full, meta) {
-                        return '<img src="/media/'+ data +'" width="60"/>';
-                    }
+                        return '<img src="/media/' + data + '" width="60"/>';
+                    },
                 },
                 { title: 'title', data: 'title', searchable: true },
                 { title: 'size', data: 'size' },
@@ -310,18 +303,6 @@ export default {
             options : this.$dtOptions,
             postProcess: false,
         }
-    },
-    watch: {
-        params: function(newVal, oldVal) {
-            this.postProcess = false;
-            this.form.reset();
-            this.form.populate(newVal);
-            if (this.form.id != '') {
-                this.method = 'patch';
-            } else {
-                this.method = 'post';
-            }
-        },
     },
     computed: {
         isInitial() {
@@ -444,7 +425,7 @@ export default {
                 .catch((err) => {
                     console.log(err);
                 });
-        }
+        },
     },
     mounted() {
         this.globalStore.registerModal(this.$options.name);
@@ -460,13 +441,12 @@ export default {
                 this.accept = params.accept;
                 this.currentStatus = STATUS_INITIAL;
 
-                if (typeof (params) !== 'undefined') {
-                    this.form.populate(params);
-                    if (this.form.id !== '') {
-                        this.method = 'patch';
-                    } else {
-                        this.method = 'post';
-                    }
+                this.form.populate(params);
+
+                if (this.form.id !== '') {
+                    this.method = 'patch';
+                } else {
+                    this.method = 'post';
                 }
             }
         });

@@ -28,87 +28,97 @@
                     class="modal-body"
                     style="overflow-y: visible;"
                 >
-                    <div
-                        class="form-group"
-                        :class="form.errors.title ? 'has-error' : ''"
-                    >
-                        <input
-                            type="text"
-                            id="title"
-                            name="title"
-                            class="form-control"
-                            v-model="form.title"
-                            :placeholder="trans('global.title') + ' *'"
-                            required
-                        />
-                        <p v-if="form.errors.title"
-                            class="help-block"
-                            v-text="form.errors.title[0]"
-                        ></p>
-                    </div>
-
-                    <div class="form-group">
-                        <textarea
-                            id="description"
-                            name="description"
-                            class="form-control"
-                            style="max-height: 50svh;"
-                            :placeholder="trans('global.description')"
-                            v-model="form.description"
-                        ></textarea>
-                        <p v-if="form.errors.description"
-                            class="help-block"
-                            v-text="form.errors.description[0]"
-                        ></p>
-                    </div>
-
-                    <div class="card-header border-bottom">
-                        <h5 class="card-title">{{ trans('global.display') }}</h5>
-                    </div>
-                    
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <v-swatches
-                                :swatch-size="49"
-                                :trigger-style="{}"
-                                style="height: 42px;"
-                                popover-to="right"
-                                v-model="this.form.color"
-                                show-fallback
-                                fallback-input-type="color"
-                                @input="(id) => {
-                                    if (id.isInteger) {
-                                        this.form.color = id;
-                                    }
-                                }"
-                                :max-height="300"
-                            />
-                            <MediumForm v-if="form.id"
-                                class="pull-right"
-                                :id="'medium_id_' + component_id"
-                                :medium_id="form.medium_id"
-                                accept="image/*"
-                                :selected="this.form.medium_id"
-                                @selectedValue="(id) => {
-                                    this.form.medium_id = id;
-                                }"
-                            />
-                            <div class="dropdown">
-                                <button
-                                    class="btn btn-default"
-                                    style="width: 42px; padding: 6px 0px;"
-                                    type="button"
-                                    data-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
-                                    <i :class="form.css_icon + ' pt-2'"></i>
-                                </button>
-                                <font-awesome-picker
-                                    class="dropdown-menu dropdown-menu-right"
-                                    style="min-width: min(385px,90vw);"
-                                    :searchbox="trans('global.select_icon')"
-                                    v-on:selectIcon="setIcon"
+                    <div class="card">
+                        <div class="card-body pb-0">
+                            <div
+                                class="form-group"
+                                :class="form.errors.title ? 'has-error' : ''"
+                            >
+                                <input
+                                    type="text"
+                                    id="title"
+                                    name="title"
+                                    class="form-control"
+                                    v-model="form.title"
+                                    :placeholder="trans('global.title') + ' *'"
+                                    required
                                 />
+                                <p v-if="form.errors.title"
+                                    class="help-block"
+                                    v-text="form.errors.title[0]"
+                                ></p>
+                            </div>
+        
+                            <div class="form-group">
+                                <textarea
+                                    id="description"
+                                    name="description"
+                                    class="form-control"
+                                    style="max-height: 50svh;"
+                                    :placeholder="trans('global.description')"
+                                    v-model="form.description"
+                                ></textarea>
+                                <p v-if="form.errors.description"
+                                    class="help-block"
+                                    v-text="form.errors.description[0]"
+                                ></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div
+                            class="card-header border-bottom"
+                            data-card-widget="collapse"
+                        >
+                            <h5 class="card-title">{{ trans('global.display') }}</h5>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <v-swatches
+                                    :swatch-size="49"
+                                    :trigger-style="{}"
+                                    style="height: 42px;"
+                                    popover-to="right"
+                                    v-model="this.form.color"
+                                    show-fallback
+                                    fallback-input-type="color"
+                                    @input="(id) => {
+                                        if (id.isInteger) {
+                                            this.form.color = id;
+                                        }
+                                    }"
+                                    :max-height="300"
+                                />
+                                <MediumForm v-if="form.id"
+                                    class="pull-right"
+                                    :medium_id="form.medium_id"
+                                    accept="image/*"
+                                    :subscribable_id="form.id"
+                                    subscribable_type="App\\Logbook"
+                                    :selected="this.form.medium_id"
+                                    @selectedValue="(id) => {
+                                        this.form.medium_id = id;
+                                    }"
+                                />
+                                <div class="dropdown">
+                                    <button
+                                        class="btn btn-default"
+                                        style="width: 42px; padding: 6px 0px;"
+                                        type="button"
+                                        data-toggle="dropdown"
+                                        aria-expanded="false"
+                                    >
+                                        <i :class="form.css_icon + ' pt-2'"></i>
+                                    </button>
+                                    <font-awesome-picker
+                                        class="dropdown-menu dropdown-menu-right"
+                                        style="min-width: min(385px,90vw);"
+                                        :searchbox="trans('global.select_icon')"
+                                        v-on:selectIcon="setIcon"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>

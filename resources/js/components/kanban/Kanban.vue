@@ -125,12 +125,6 @@
     </div>
     <Teleport to="body">
         <MediumModal/>
-<!--        <MediumModal
-            subscribable_type="App\\Kanban"
-            :subscribable_id="kanban.id"
-            :show="mediumStore.getShowMediumModal"
-            @close="mediumStore.setShowMediumModal(false)"
-        ></MediumModal>-->
         <KanbanModal/>
         <KanbanItemModal/>
         <KanbanStatusModal :kanban="kanban"/>

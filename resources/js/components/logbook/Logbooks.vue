@@ -245,8 +245,14 @@ export default {
             type: String,
             default: 'delete',
         },
-        subscribable_type: null,
-        subscribable_id: null,
+        subscribable_type: {
+            type: String,
+            default: null,
+        },
+        subscribable_id: {
+            type: Number,
+            default: null,
+        },
     },
     setup() {
         const toast = useToast();

@@ -26,7 +26,7 @@
                     </div>
                 </div>
 
-                <div class="modal-body p-0">
+                <div class="modal-body">
                     <div class="d-md-flex">
                         <div class="card-pane-left p-0">
                             <ul class="nav flex-column">

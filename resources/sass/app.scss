@@ -111,6 +111,9 @@ textarea {
 .modal-body {
     max-height: 80svh;
     overflow-y: auto;
+    padding: 0;
+
+    > .card { margin-bottom: 0; }
 }
 
 .select2 {

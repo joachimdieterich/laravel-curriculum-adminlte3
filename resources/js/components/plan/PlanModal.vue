@@ -25,8 +25,8 @@
                     </div>
                 </div>
 
-                <div class="modal-body p-0">
-                    <div class="card mb-0">
+                <div class="modal-body">
+                    <div class="card">
                         <div
                             class="card-header border-bottom"
                             data-card-widget="collapse"
@@ -115,7 +115,7 @@
                         </div>
                     </div>
 
-                    <div class="card mb-0">
+                    <div class="card">
                         <div
                             class="card-header border-bottom"
                             data-card-widget="collapse"
@@ -153,7 +153,7 @@
                         </div>
                     </div>
 
-                    <div class="card mb-0">
+                    <div class="card">
                         <div
                             class="card-header border-bottom"
                             data-card-widget="collapse"

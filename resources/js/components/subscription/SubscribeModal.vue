@@ -5,224 +5,229 @@
             @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
-                <div class="card mb-0">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fa fa-share-alt text-secondary mr-3"></i>
-                            {{ trans('global.share') }}
-                        </h3>
-                        <div class="card-tools">
-                            <button
-                                type="button"
-                                class="btn btn-tool"
-                                data-widget="remove"
-                                @click="globalStore?.closeModal($options.name)"
-                            >
-                                <i class="fa fa-times"></i>
-                            </button>
-                        </div>
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fa fa-share-alt text-secondary mr-3"></i>
+                        {{ trans('global.share') }}
+                    </h3>
+                    <div class="card-tools">
+                        <button
+                            type="button"
+                            class="btn btn-tool"
+                            data-widget="remove"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            <i class="fa fa-times"></i>
+                        </button>
                     </div>
+                </div>
 
-                    <div class="modal-body" style="overflow-y: visible;">
-                        <ul class="nav nav-pills">
-                            <!-- User -->
-                            <li v-if="shareWithUsers"
-                                class="nav-item"
-                            >
-                                <a
-                                    class="nav-link active show"
-                                    href="#user_subscription"
-                                    data-toggle="tab"
+                <div
+                    class="modal-body"
+                    style="overflow-y: visible;"
+                >
+                    <div class="card">
+                        <div class="card-body">
+                            <ul class="nav nav-pills">
+                                <!-- User -->
+                                <li v-if="shareWithUsers"
+                                    class="nav-item"
                                 >
-                                    <i class="fa fa-user mr-2"></i>{{ trans('global.user.title') }}
-                                </a>
-                            </li>
-                            <!-- Group -->
-                            <li v-if="shareWithGroups"
-                                class="nav-item"
-                            >
-                                <a
-                                    class="nav-link"
-                                    href="#group_subscription"
-                                    data-toggle="tab"
-                                >
-                                    <i class="fa fa-users mr-2"></i>{{ trans('global.group.title') }}
-                                </a>
-                            </li>
-                            <!-- Organization -->
-                            <li v-if="shareWithOrganizations"
-                                class="nav-item"
-                            >
-                                <a
-                                    class="nav-link"
-                                    href="#organization_subscription"
-                                    data-toggle="tab"
-                                >
-                                    <i class="fa fa-university mr-2"></i>{{ trans('global.organization.title') }}
-                                </a>
-                            </li>
-                            <li v-if="shareWithToken"
-                                class="nav-item"
-                            >
-                                <a
-                                    class="nav-link"
-                                    href="#token_subscription"
-                                    data-toggle="tab"
-                                >
-                                    <i class="fa fa-key mr-2"></i>{{ trans('global.token') }}
-                                </a>
-                            </li>
-                            <!-- Global -->
-                            <!--                  <li class="nav-item" >
-                                                  <a class="nav-link" href="#global_subscription" data-toggle="tab" >
-                                                      <i class="sc-icon-dd icon-curriculum text-secondary mr-3"></i>{{ trans('global.all') }}
-                                                  </a>
-                                              </li>-->
-                        </ul>
-
-                        <div class="tab-content pt-2">
-                            <!-- User Tab -->
-                            <div v-if="shareWithUsers"
-                                id="user_subscription"
-                                class="tab-pane active show"
-                            >
-                                <Select2
-                                    id="users_subscription_select"
-                                    name="users_subscription_select"
-                                    url="/users"
-                                    model="user"
-                                    @selectedValue="(id) => {
-                                        this.subscribe('App\\User', id[0])
-                                    }"
-                                />
-                                <subscribers v-if="subscribers.subscriptions != undefined"
-                                    :modelUrl="modelUrl"
-                                    :subscriptions="subscribers.subscriptions"
-                                    :subscribing_model="'App\\User'"
-                                    :canEditLabel="canEditLabel"
-                                    :canEditCheckbox="canEditCheckbox"
-                                />
-                            </div>
-
-                            <!-- Group Tab -->
-                            <div v-if="shareWithGroups"
-                                id="group_subscription"
-                                class="tab-pane"
-                            >
-                                <Select2
-                                    id="group_subscription_select"
-                                    name="group_subscription_select"
-                                    url="/groups"
-                                    model="group"
-                                    @selectedValue="(id) => {
-                                        this.subscribe('App\\Group', id[0])
-                                    }"
-                                />
-                                <subscribers v-if="subscribers.subscriptions != undefined"
-                                    :modelUrl="modelUrl"
-                                    :subscriptions="subscribers.subscriptions"
-                                    :subscribing_model="'App\\Group'"
-                                    :canEditLabel="canEditLabel"
-                                    :canEditCheckbox="canEditCheckbox"
-                                />
-                            </div>
-
-                            <!-- Organization Tab -->
-                            <div v-if="shareWithOrganizations"
-                                id="organization_subscription"
-                                class="tab-pane"
-                            >
-                                <Select2
-                                    id="organization_subscription_select"
-                                    name="organization_subscription_select"
-                                    url="/organizations"
-                                    model="organization"
-                                    @selectedValue="(id) => {
-                                        this.subscribe('App\\Organization', id[0])
-                                    }"
-                                />
-                                <subscribers v-if="subscribers.subscriptions != undefined"
-                                    :modelUrl="modelUrl"
-                                    :subscriptions="subscribers.subscriptions"
-                                    :subscribing_model="'App\\Organization'"
-                                    :canEditLabel="canEditLabel"
-                                    :canEditCheckbox="canEditCheckbox"
-                                />
-                            </div>
-
-                            <!-- Token Tab -->
-                            <div v-if="shareWithToken"
-                                id="token_subscription"
-                                class="tab-pane"
-                            >
-                                <div class="form-group pt-2">
-                                    <input
-                                        v-model="nameToken"
-                                        class="form-control w-100 mb-2"
-                                        placeholder="Freigabetitel"
-                                    />
-                                </div>
-                                <VueDatePicker
-                                    v-model="endDateToken"
-                                    format="dd.MM.yyy HH:mm"
-                                    :teleport="true"
-                                    locale="de"
-                                    :select-text="trans('global.ok')"
-                                    :cancel-text="trans('global.close')"
-                                />
-                                <small>{{ canEditLabel }}</small>
-
-<!--                            <span v-if="canEditCheckbox"
-                                  class="pull-right custom-control custom-switch custom-switch-on-green">
-                                    <input v-model="canEditToken"
-                                           type="checkbox"
-                                           id="canEditToken"
-                                           class="custom-control-input pt-1 "
-                                           @click="changeCanEditTokenValue(canEditToken)">
-                                    <label class="custom-control-label " for="canEditToken"></label>
-                                </span>-->
-                                <div>
-                                    <button
-                                        type="button"
-                                        class="btn btn-sm btn-outline-success pull-right my-2"
-                                        :disabled="nameToken.trim() == ''"
-                                        @click="createUserToken()"
+                                    <a
+                                        class="nav-link active show"
+                                        href="#user_subscription"
+                                        data-toggle="tab"
                                     >
-                                        {{ trans('global.save') }}
-                                    </button>
-                                </div>
-
-                                <hr class="pt-1 clearfix">
-
-                                <div>
-                                    <tokens v-if="subscribers.tokens != undefined"
+                                        <i class="fa fa-user mr-2"></i>{{ trans('global.user.title') }}
+                                    </a>
+                                </li>
+                                <!-- Group -->
+                                <li v-if="shareWithGroups"
+                                    class="nav-item"
+                                >
+                                    <a
+                                        class="nav-link"
+                                        href="#group_subscription"
+                                        data-toggle="tab"
+                                    >
+                                        <i class="fa fa-users mr-2"></i>{{ trans('global.group.title') }}
+                                    </a>
+                                </li>
+                                <!-- Organization -->
+                                <li v-if="shareWithOrganizations"
+                                    class="nav-item"
+                                >
+                                    <a
+                                        class="nav-link"
+                                        href="#organization_subscription"
+                                        data-toggle="tab"
+                                    >
+                                        <i class="fa fa-university mr-2"></i>{{ trans('global.organization.title') }}
+                                    </a>
+                                </li>
+                                <li v-if="shareWithToken"
+                                    class="nav-item"
+                                >
+                                    <a
+                                        class="nav-link"
+                                        href="#token_subscription"
+                                        data-toggle="tab"
+                                    >
+                                        <i class="fa fa-key mr-2"></i>{{ trans('global.token') }}
+                                    </a>
+                                </li>
+                                <!-- Global -->
+                                <!--                  <li class="nav-item" >
+                                                        <a class="nav-link" href="#global_subscription" data-toggle="tab" >
+                                                            <i class="sc-icon-dd icon-curriculum text-secondary mr-3"></i>{{ trans('global.all') }}
+                                                        </a>
+                                                    </li>-->
+                            </ul>
+    
+                            <div class="tab-content pt-2">
+                                <!-- User Tab -->
+                                <div v-if="shareWithUsers"
+                                    id="user_subscription"
+                                    class="tab-pane active show"
+                                >
+                                    <Select2
+                                        id="users_subscription_select"
+                                        name="users_subscription_select"
+                                        url="/users"
+                                        model="user"
+                                        @selectedValue="(id) => {
+                                            this.subscribe('App\\User', id[0])
+                                        }"
+                                    />
+                                    <subscribers v-if="subscribers.subscriptions != undefined"
                                         :modelUrl="modelUrl"
+                                        :subscriptions="subscribers.subscriptions"
+                                        :subscribing_model="'App\\User'"
                                         :canEditLabel="canEditLabel"
                                         :canEditCheckbox="canEditCheckbox"
-                                        :subscriptions="subscribers.tokens"
                                     />
+                                </div>
+    
+                                <!-- Group Tab -->
+                                <div v-if="shareWithGroups"
+                                    id="group_subscription"
+                                    class="tab-pane"
+                                >
+                                    <Select2
+                                        id="group_subscription_select"
+                                        name="group_subscription_select"
+                                        url="/groups"
+                                        model="group"
+                                        @selectedValue="(id) => {
+                                            this.subscribe('App\\Group', id[0])
+                                        }"
+                                    />
+                                    <subscribers v-if="subscribers.subscriptions != undefined"
+                                        :modelUrl="modelUrl"
+                                        :subscriptions="subscribers.subscriptions"
+                                        :subscribing_model="'App\\Group'"
+                                        :canEditLabel="canEditLabel"
+                                        :canEditCheckbox="canEditCheckbox"
+                                    />
+                                </div>
+    
+                                <!-- Organization Tab -->
+                                <div v-if="shareWithOrganizations"
+                                    id="organization_subscription"
+                                    class="tab-pane"
+                                >
+                                    <Select2
+                                        id="organization_subscription_select"
+                                        name="organization_subscription_select"
+                                        url="/organizations"
+                                        model="organization"
+                                        @selectedValue="(id) => {
+                                            this.subscribe('App\\Organization', id[0])
+                                        }"
+                                    />
+                                    <subscribers v-if="subscribers.subscriptions != undefined"
+                                        :modelUrl="modelUrl"
+                                        :subscriptions="subscribers.subscriptions"
+                                        :subscribing_model="'App\\Organization'"
+                                        :canEditLabel="canEditLabel"
+                                        :canEditCheckbox="canEditCheckbox"
+                                    />
+                                </div>
+    
+                                <!-- Token Tab -->
+                                <div v-if="shareWithToken"
+                                    id="token_subscription"
+                                    class="tab-pane"
+                                >
+                                    <div class="form-group pt-2">
+                                        <input
+                                            v-model="nameToken"
+                                            class="form-control w-100 mb-2"
+                                            placeholder="Freigabetitel"
+                                        />
+                                    </div>
+                                    <VueDatePicker
+                                        v-model="endDateToken"
+                                        format="dd.MM.yyy HH:mm"
+                                        :teleport="true"
+                                        locale="de"
+                                        :select-text="trans('global.ok')"
+                                        :cancel-text="trans('global.close')"
+                                    />
+                                    <small>{{ canEditLabel }}</small>
+    
+        <!--                            <span v-if="canEditCheckbox"
+                                        class="pull-right custom-control custom-switch custom-switch-on-green">
+                                        <input v-model="canEditToken"
+                                                type="checkbox"
+                                                id="canEditToken"
+                                                class="custom-control-input pt-1 "
+                                                @click="changeCanEditTokenValue(canEditToken)">
+                                        <label class="custom-control-label " for="canEditToken"></label>
+                                    </span>-->
+                                    <div>
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-outline-success pull-right my-2"
+                                            :disabled="nameToken.trim() == ''"
+                                            @click="createUserToken()"
+                                        >
+                                            {{ trans('global.save') }}
+                                        </button>
+                                    </div>
+    
+                                    <hr class="pt-1 clearfix">
+    
+                                    <div>
+                                        <tokens v-if="subscribers.tokens != undefined"
+                                            :modelUrl="modelUrl"
+                                            :canEditLabel="canEditLabel"
+                                            :canEditCheckbox="canEditCheckbox"
+                                            :subscriptions="subscribers.tokens"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer">
-                        <span class="pull-right">
-                            <button
-                                type="button"
-                                class="btn btn-default"
-                                data-widget="remove"
-                                @click="globalStore?.closeModal($options.name)"
-                            >
-                                {{ trans('global.close') }}
-                            </button>
-                        </span>
-                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <span class="pull-right">
+                        <button
+                            type="button"
+                            class="btn btn-default"
+                            data-widget="remove"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.close') }}
+                        </button>
+                    </span>
                 </div>
             </div>
         </div>
     </Transition>
 </template>
-
 <script>
 import subscribers from "./Subscribers.vue";
 import tokens from "./Tokens.vue";
@@ -235,8 +240,8 @@ export default {
     name: 'subscribe-modal',
     props: {
         params: {
-            type: Object
-        }  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
+            type: Object,
+        }
     },
     setup() {
         const globalStore = useGlobalStore();
@@ -308,7 +313,7 @@ export default {
                 editable: this.canEditToken,
                 model_url: this.modelUrl
             }).then( () => this.loadSubscribers())
-        }
+        },
     },
     mounted() {
         this.globalStore.registerModal(this.$options.name);

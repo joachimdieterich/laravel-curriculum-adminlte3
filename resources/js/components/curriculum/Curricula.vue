@@ -1,63 +1,79 @@
 <template >
     <div class="row">
         <div class="col-md-12 ">
-            <ul v-if="typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined'"
-                class="nav nav-pills py-2" role="tablist">
+            <ul v-if="!this.subscribable_type && !this.subscribable_id"
+                class="nav nav-pills py-2"
+                role="tablist"
+            >
                 <li class="nav-item pointer">
-                    <a class="nav-link "
-                       :class="filter === 'all' ? 'active' : ''"
-                       id="curriculum-filter-all"
-                       @click="setFilter('all')"
-                       data-toggle="pill"
-                       role="tab"
+                    <a
+                        id="curriculum-filter-all"
+                        class="nav-link "
+                        :class="filter === 'all' ? 'active' : ''"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('all')"
                     >
-                        <i class="fas fa-th pr-2"></i>  {{ trans('global.all') }} {{ trans('global.curriculum.title') }}
-                    </a>
-                </li>
-                <li class="nav-item pointer">
-                    <a class="nav-link"
-                       :class="filter === 'by_organization' ? 'active' : ''"
-                       id="custom-filter-by-organization"
-                       @click="setFilter('by_organization')"
-                       data-toggle="pill"
-                       role="tab"
-                    >
-                        <i class="fas fa-university pr-2"></i>{{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
-                    </a>
-                </li>
-                <li v-permission="'curriculum_create'"
-                    class="nav-item pointer">
-                    <a class="nav-link"
-                       :class="filter === 'owner' ? 'active' : ''"
-                       id="custom-filter-owner"
-                       @click="setFilter('owner')"
-                       data-toggle="pill"
-                       role="tab"
-                    >
-                        <i class="fa fa-user pr-2"></i>{{ trans('global.my') }} {{ trans('global.curriculum.title') }}
+                        <i class="fas fa-th pr-2"></i> 
+                        {{ trans('global.all') }} {{ trans('global.curriculum.title') }}
                     </a>
                 </li>
                 <li class="nav-item pointer">
-                    <a class="nav-link"
-                       :class="filter === 'shared_with_me' ? 'active' : ''"
-                       id="custom-filter-shared-with-me"
-                       @click="setFilter('shared_with_me')"
-                       data-toggle="pill"
-                       role="tab"
+                    <a
+                        id="custom-filter-by-organization"
+                        class="nav-link"
+                        :class="filter === 'by_organization' ? 'active' : ''"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('by_organization')"
                     >
-                        <i class="fa fa-paper-plane pr-2"></i>{{ trans('global.shared_with_me') }}
+                        <i class="fas fa-university pr-2"></i>
+                        {{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
                     </a>
                 </li>
-                <li v-permission="'curriculum_create'"
-                    class="nav-item pointer">
-                    <a id="custom-tabs-shared-by-me"
-                       :class="filter === 'shared_by_me' ? 'active' : ''"
-                       class="nav-link"
-                       data-toggle="pill"
-                       role="tab"
-                       @click="setFilter('shared_by_me')"
+                <li
+                    v-permission="'curriculum_create'"
+                    class="nav-item pointer"
+                >
+                    <a
+                        id="custom-filter-owner"
+                        class="nav-link"
+                        :class="filter === 'owner' ? 'active' : ''"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('owner')"
                     >
-                        <i class="fa fa-share-nodes  pr-2"></i>{{ trans('global.shared_by_me') }}
+                        <i class="fa fa-user pr-2"></i>
+                        {{ trans('global.my') }} {{ trans('global.curriculum.title') }}
+                    </a>
+                </li>
+                <li class="nav-item pointer">
+                    <a
+                        id="custom-filter-shared-with-me"
+                        class="nav-link"
+                        :class="filter === 'shared_with_me' ? 'active' : ''"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('shared_with_me')"
+                    >
+                        <i class="fa fa-paper-plane pr-2"></i>
+                        {{ trans('global.shared_with_me') }}
+                    </a>
+                </li>
+                <li
+                    v-permission="'curriculum_create'"
+                    class="nav-item pointer"
+                >
+                    <a
+                        id="custom-tabs-shared-by-me"
+                        :class="filter === 'shared_by_me' ? 'active' : ''"
+                        class="nav-link"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('shared_by_me')"
+                    >
+                        <i class="fa fa-share-nodes  pr-2"></i>
+                        {{ trans('global.shared_by_me') }}
                     </a>
                 </li>
             </ul>
@@ -67,7 +83,7 @@
             id="curriculum-content"
             class="col-md-12 m-0"
         >
-            <IndexWidget v-if="(filter === 'all' && this.subscribable_type ===  null && this.subscribable_id ===  null)
+            <IndexWidget v-if="(filter === 'all' && !this.subscribable_type && !this.subscribable_id)
                     || filter  === 'owner'"
                 v-permission="'curriculum_create'"
                 key="curriculumCreate"
@@ -218,8 +234,14 @@ DataTable.use(DataTablesCore);
 
 export default {
     props: {
-        subscribable_type: null,
-        subscribable_id: null,
+        subscribable_type: {
+            type: String,
+            default: null,
+        },
+        subscribable_id: {
+            type: Number,
+            default: null,
+        },
     },
     setup () {
         const toast = useToast();
@@ -282,7 +304,7 @@ export default {
         },
         setFilter(filter) {
             this.filter = filter;
-            if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined') {
+            if (this.subscribable_type && this.subscribable_id) {
                 this.url = '/curriculumSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id;
             } else {
                 this.url = '/curricula/list?filter=' + this.filter;

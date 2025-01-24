@@ -26,261 +26,299 @@
                 </div>
 
                 <div class="modal-body">
-                    <ul v-if="method === 'post'"
-                        class="nav nav-pills"
+                    <div v-if="method === 'post'"
+                        class="card border-bottom"
                     >
-                        <!-- Create -->
-                        <li class="nav-item">
-                            <a
-                                href="#create_curriculum"
-                                class="nav-link active show"
-                                data-toggle="tab"
-                            >
-                                {{ trans('global.curriculum.create') }}
-                            </a>
-                        </li>
-                        <!-- Import -->
-                        <li class="nav-item">
-                            <a
-                                href="#import_curriculum"
-                                class="nav-link"
-                                data-toggle="tab"
-                            >
-                                {{ trans('global.curriculum.import') }}
-                            </a>
-                        </li>
-                    </ul>
-                    <div class="tab-content pt-2">
+                        <div class="card-body">
+                            <ul class="nav nav-pills justify-content-center">
+                                <!-- Create -->
+                                <li class="nav-item">
+                                    <a
+                                        href="#create_curriculum"
+                                        class="nav-link active show"
+                                        data-toggle="tab"
+                                    >
+                                        {{ trans('global.curriculum.create') }}
+                                    </a>
+                                </li>
+                                <!-- Import -->
+                                <li class="nav-item">
+                                    <a
+                                        href="#import_curriculum"
+                                        class="nav-link"
+                                        data-toggle="tab"
+                                    >
+                                        {{ trans('global.curriculum.import') }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="tab-content">
                         <div
                             id="create_curriculum"
                             class="tab-pane active show"
                         >
-                            <div
-                                class="form-group"
-                                :class="form.errors.title ? 'has-error' : ''"
-                            >
-                                <input
-                                    type="text"
-                                    id="title"
-                                    name="title"
-                                    class="form-control float"
-                                    v-model="form.title"
-                                    :placeholder="trans('global.title') + ' *'"
-                                    required
-                                />
-                                <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
-                            </div>
-                            <div class="form-group">
-                                <Editor
-                                    id="description"
-                                    name="description"
-                                    :placeholder="trans('global.curriculum.fields.description')"
-                                    class="form-control"
-                                    :init="tinyMCE"
-                                    v-model="form.description"
-                                />
-                            </div>
-                            <div class="form-group">
-                                <label for="author">
-                                    {{ trans('global.curriculum.fields.author') }}
-                                </label>
-                                <input
-                                    type="text"
-                                    id="author"
-                                    name="author"
-                                    class="form-control"
-                                    required
-                                    v-model.trim="form.author"
-                                />
-                                <p class="help-block" v-if="form.errors?.author" v-text="form.errors?.author[0]"></p>
-                            </div>
-                            <div class="form-group">
-                                <label for="publisher">
-                                    {{ trans('global.curriculum.fields.publisher') }}
-                                </label>
-                                <input
-                                    type="text"
-                                    id="publisher"
-                                    name="publisher"
-                                    class="form-control"
-                                    required
-                                    v-model.trim="form.publisher"
-                                />
-                                <p class="help-block" v-if="form.errors?.publisher" v-text="form.errors?.publisher[0]"></p>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="city">
-                                    {{ trans('global.curriculum.fields.city') }}
-                                </label>
-                                <input
-                                    type="text"
-                                    id="city"
-                                    name="city"
-                                    class="form-control"
-                                    required
-                                    v-model.trim="form.city"
-                                />
-                                <p class="help-block" v-if="form.errors?.city" v-text="form.errors?.city[0]"></p>
-                            </div>
-
-                            <div class="form-group pt-2">
-                                <label for="author">
-                                    {{ trans('global.curriculum.fields.date') }}
-                                </label>
-                                <VueDatePicker
-                                    v-model="form.date"
-                                    format="dd.MM.yyy HH:mm"
-                                    :teleport="true"
-                                    locale="de"
-                                    :select-text="trans('global.ok')"
-                                    :cancel-text="trans('global.close')"
-                                />
-                            </div>
-
-                            <div class="form-group">
-                                <Select2
-                                    :id="'grade_id'"
-                                    model="grade"
-                                    :label="trans('global.grade.title_singular') + ' *'"
-                                    :selected="this.form.grade_id"
-                                    url="/grades"
-                                    :placeholder="trans('global.pleaseSelect')"
-                                    @selectedValue="(id) => this.form.grade_id = id"
-                                />
-                            </div>
-
-                            <div class="form-group">
-                                <Select2
-                                    :id="'subject_id'"
-                                    model="subject"
-                                    :label="trans('global.subject.title_singular') + ' *'"
-                                    :selected="this.form.subject_id"
-                                    url="/subjects"
-                                    :placeholder="trans('global.pleaseSelect')"
-                                    @selectedValue="(id) => this.form.subject_id = id"
-                                />
-                            </div>
-                            <!-- variants -->
-                            <div class="form-group">
-                                <Select2
-                                    id="organization_type_id"
-                                    name="organization_type_id"
-                                    url="/organizationTypes"
-                                    model="organizationType"
-                                    :label="trans('global.organizationType.title_singular') + ' *'"
-                                    option_id="id"
-                                    option_label="title"
-                                    :selected="this.form.organization_type_id"
-                                    @selectedValue="(id) => {
-                                        this.form.organization_type_id = id;
-                                    }"
-                                />
-                            </div>
-                            <div class="form-group">
-                                <Select2
-                                    id="type_id"
-                                    name="type_id"
-                                    url="/curriculumTypes"
-                                    model="curriculumtype"
-                                    :label="trans('global.curriculumtype.title_singular') + ' *'"
-                                    option_id="id"
-                                    option_label="title"
-                                    :selected="this.form.type_id"
-                                    @selectedValue="(id) => {
-                                        this.form.type_id = id;
-                                    }"
-                                />
-                            </div>
-                            <Select2
-                                id="country_id"
-                                name="country_id"
-                                option_id="alpha2"
-                                option_label="lang_de"
-                                url="/countries"
-                                model="country"
-                                :label="trans('global.country.title_singular') + ' *'"
-                                :selected="this.form.country_id"
-                                @selectedValue="(id) => {
-                                    this.form.country_id = id;
-                                    this.form.state_id = '';
-                                }"
-                            />
-
-                            <Select2
-                                id="state_id"
-                                name="state_id"
-                                option_id="code"
-                                option_label="lang_de"
-                                :list="this.states"
-                                :url="'/countries/' + this.form.country_id + '/states/'"
-                                :term="this.form.country_id"
-                                model="state"
-                                :selected="this.form.state_id"
-                                @selectedValue="(id) => {
-                                    this.form.state_id = id;
-                                }"
-                            />
-                            <div class="card-body pb-0">
-                                <v-swatches
-                                    :swatch-size="49"
-                                    :trigger-style="{}"
-                                    popover-to="right"
-                                    v-model="this.form.color"
-                                    show-fallback
-                                    fallback-input-type="color"
-                                    @input="(id) => {
-                                        if (id.isInteger) {
-                                            this.form.color = id;
-                                        }
-                                    }"
-                                    :max-height="300"
-                                />
-
-                                <MediumForm
-                                    class="pull-right"
-                                    id="medium_id"
-                                    :medium_id="form.medium_id"
-                                    accept="image/*"
-                                    :selected="this.form.medium_id"
-                                    @selectedValue="(id) => {
-                                        this.form.medium_id = id;
-                                    }"
-                                />
-                            </div>
-                            <span class="custom-control custom-switch custom-switch-on-green">
-                                <input
-                                    v-model="form.archived"
-                                    type="checkbox"
-                                    class="custom-control-input pt-1"
-                                    :id="'archived_' + form.id"
-                                />
-                                <label
-                                    class="custom-control-label text-muted"
-                                    :for="'archived_' + form.id"
+                            <div class="card">
+                                <div
+                                    class="card-header border-bottom"
+                                    data-card-widget="collapse"
                                 >
-                                    {{ trans('global.curriculum.fields.archived') }}
-                                </label>
-                            </span>
+                                    <h5 class="card-title">{{ trans('global.general') }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div
+                                        class="form-group"
+                                        :class="form.errors.title ? 'has-error' : ''"
+                                    >
+                                        <input
+                                            type="text"
+                                            id="title"
+                                            name="title"
+                                            class="form-control float"
+                                            v-model="form.title"
+                                            :placeholder="trans('global.title') + ' *'"
+                                            required
+                                        />
+                                        <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                                    </div>
+                                    <div class="form-group">
+                                        <Editor
+                                            id="description"
+                                            name="description"
+                                            :placeholder="trans('global.curriculum.fields.description')"
+                                            class="form-control"
+                                            :init="tinyMCE"
+                                            v-model="form.description"
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="author">
+                                            {{ trans('global.curriculum.fields.author') }}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="author"
+                                            name="author"
+                                            class="form-control"
+                                            required
+                                            v-model.trim="form.author"
+                                        />
+                                        <p class="help-block" v-if="form.errors?.author" v-text="form.errors?.author[0]"></p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="publisher">
+                                            {{ trans('global.curriculum.fields.publisher') }}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="publisher"
+                                            name="publisher"
+                                            class="form-control"
+                                            required
+                                            v-model.trim="form.publisher"
+                                        />
+                                        <p class="help-block" v-if="form.errors?.publisher" v-text="form.errors?.publisher[0]"></p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="city">
+                                            {{ trans('global.curriculum.fields.city') }}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="city"
+                                            name="city"
+                                            class="form-control"
+                                            required
+                                            v-model.trim="form.city"
+                                        />
+                                        <p class="help-block" v-if="form.errors?.city" v-text="form.errors?.city[0]"></p>
+                                    </div>
+                                    <div class="form-group pt-2">
+                                        <label for="author">
+                                            {{ trans('global.curriculum.fields.date') }}
+                                        </label>
+                                        <VueDatePicker
+                                            v-model="form.date"
+                                            format="dd.MM.yyy HH:mm"
+                                            :teleport="true"
+                                            locale="de"
+                                            :select-text="trans('global.ok')"
+                                            :cancel-text="trans('global.close')"
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <Select2
+                                            :id="'grade_id'"
+                                            model="grade"
+                                            :label="trans('global.grade.title_singular') + ' *'"
+                                            :selected="this.form.grade_id"
+                                            url="/grades"
+                                            :placeholder="trans('global.pleaseSelect')"
+                                            @selectedValue="(id) => this.form.grade_id = id"
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <Select2
+                                            :id="'subject_id'"
+                                            model="subject"
+                                            :label="trans('global.subject.title_singular') + ' *'"
+                                            :selected="this.form.subject_id"
+                                            url="/subjects"
+                                            :placeholder="trans('global.pleaseSelect')"
+                                            @selectedValue="(id) => this.form.subject_id = id"
+                                        />
+                                    </div>
+                                    <!-- variants -->
+                                    <div class="form-group">
+                                        <Select2
+                                            id="organization_type_id"
+                                            name="organization_type_id"
+                                            url="/organizationTypes"
+                                            model="organizationType"
+                                            :label="trans('global.organizationType.title_singular') + ' *'"
+                                            option_id="id"
+                                            option_label="title"
+                                            :selected="this.form.organization_type_id"
+                                            @selectedValue="(id) => {
+                                                this.form.organization_type_id = id;
+                                            }"
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <Select2
+                                            id="type_id"
+                                            name="type_id"
+                                            url="/curriculumTypes"
+                                            model="curriculumtype"
+                                            :label="trans('global.curriculumtype.title_singular') + ' *'"
+                                            option_id="id"
+                                            option_label="title"
+                                            :selected="this.form.type_id"
+                                            @selectedValue="(id) => {
+                                                this.form.type_id = id;
+                                            }"
+                                        />
+                                    </div>
+                                    <Select2
+                                        id="country_id"
+                                        name="country_id"
+                                        option_id="alpha2"
+                                        option_label="lang_de"
+                                        url="/countries"
+                                        model="country"
+                                        :label="trans('global.country.title_singular') + ' *'"
+                                        :selected="this.form.country_id"
+                                        @selectedValue="(id) => {
+                                            this.form.country_id = id;
+                                            this.form.state_id = '';
+                                        }"
+                                    />
+                                    <Select2
+                                        id="state_id"
+                                        name="state_id"
+                                        css="mb-0"
+                                        option_id="code"
+                                        option_label="lang_de"
+                                        :list="this.states"
+                                        :url="'/countries/' + this.form.country_id + '/states/'"
+                                        :term="this.form.country_id"
+                                        model="state"
+                                        :selected="this.form.state_id"
+                                        @selectedValue="(id) => {
+                                            this.form.state_id = id;
+                                        }"
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div
+                                    class="card-header border-bottom"
+                                    data-card-widget="collapse"
+                                >
+                                    <h5 class="card-title">{{ trans('global.display') }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <v-swatches
+                                            :swatch-size="49"
+                                            style="height: 42px;"
+                                            popover-to="right"
+                                            v-model="this.form.color"
+                                            show-fallback
+                                            fallback-input-type="color"
+                                            @input="(id) => {
+                                                if (id.isInteger) {
+                                                    this.form.color = id;
+                                                }
+                                            }"
+                                            :max-height="300"
+                                        />
+        
+                                        <MediumForm v-if="form.id"
+                                            class="pull-right"
+                                            id="medium_id"
+                                            :medium_id="form.medium_id"
+                                            accept="image/*"
+                                            :selected="this.form.medium_id"
+                                            @selectedValue="(id) => {
+                                                this.form.medium_id = id;
+                                            }"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div
+                                    class="card-header border-bottom"
+                                    data-card-widget="collapse"
+                                >
+                                    <h5 class="card-title">{{ trans('global.settings') }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <span class="custom-control custom-switch custom-switch-on-green">
+                                        <input
+                                            v-model="form.archived"
+                                            type="checkbox"
+                                            class="custom-control-input pt-1"
+                                            :id="'archived_' + form.id"
+                                        />
+                                        <label
+                                            class="custom-control-label text-muted"
+                                            :for="'archived_' + form.id"
+                                        >
+                                            {{ trans('global.curriculum.fields.archived') }}
+                                        </label>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
 
                         <div
                             id="import_curriculum"
                             class="tab-pane"
                         >
-                            <div class="form-group row">
-                                <label for="imports" class="col-md-4 col-form-label text-md-right">
-                                    {{ trans('global.file') }}
-                                </label>
-                                <div class="col-md-6 pt-6">
-                                    <input
-                                        id="imports"
-                                        type="file"
-                                        name="imports[]"
-                                        @change="onChange($event)"
-                                        class="form-control"
-                                        multiple
-                                    />
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <label for="imports" class="mr-3 mb-0">
+                                            {{ trans('global.file') }}
+                                        </label>
+                                        <div>
+                                            <input
+                                                id="imports"
+                                                type="file"
+                                                name="imports[]"
+                                                style="height: 44px;"
+                                                class="form-control"
+                                                multiple
+                                                @chansge="onChange($event)"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

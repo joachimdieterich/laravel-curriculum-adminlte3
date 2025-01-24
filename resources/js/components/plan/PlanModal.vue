@@ -31,9 +31,7 @@
                             class="card-header border-bottom"
                             data-card-widget="collapse"
                         >
-                            <h5 class="card-title">
-                                {{ trans('global.general') }}
-                            </h5>
+                            <h5 class="card-title">{{ trans('global.general') }}</h5>
                         </div>
                         <div class="card-body pb-0">
                             <div class="form-group">

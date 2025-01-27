@@ -121,12 +121,12 @@
                             <h5 class="card-title">{{ trans('global.display') }}</h5>
                         </div>
                         <div class="card-body">
-                            <div class="d-flex align-items-center">
+                            <div class="d-flex justify-content-between align-items-center">
                                 <v-swatches
                                     :swatch-size="49"
                                     :trigger-style="{}"
-                                    popover-to="right"
                                     style="height: 42px"
+                                    popover-to="right"
                                     v-model="form.color"
                                     show-fallback
                                     fallback-input-type="color"

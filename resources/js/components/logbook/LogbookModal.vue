@@ -7,12 +7,12 @@
             <div class="modal-container">
                 <div class="card-header">
                     <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.logbook.create') }}
-                    </span>
+                        <span v-if="method === 'post'">
+                            {{ trans('global.logbook.create') }}
+                        </span>
                         <span v-if="method === 'patch'">
-                        {{ trans('global.logbook.edit') }}
-                    </span>
+                            {{ trans('global.logbook.edit') }}
+                        </span>
                     </h3>
                     <div class="card-tools">
                         <button
@@ -24,6 +24,7 @@
                         </button>
                     </div>
                 </div>
+
                 <div
                     class="modal-body"
                     style="overflow-y: visible;"
@@ -123,6 +124,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="card-footer">
                     <span class="pull-right">
                         <button

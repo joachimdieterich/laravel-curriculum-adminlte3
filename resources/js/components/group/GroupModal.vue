@@ -7,12 +7,12 @@
             <div class="modal-container">
                 <div class="card-header">
                     <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.group.create') }}
-                    </span>
+                        <span v-if="method === 'post'">
+                            {{ trans('global.group.create') }}
+                        </span>
                         <span v-if="method === 'patch'">
-                        {{ trans('global.group.edit') }}
-                    </span>
+                            {{ trans('global.group.edit') }}
+                        </span>
                     </h3>
                     <div class="card-tools">
                         <button
@@ -24,89 +24,94 @@
                         </button>
                     </div>
                 </div>
+
                 <div
                     class="modal-body"
                     style="overflow-y: visible;"
                 >
-                    <div
-                        v-permission="'is_admin'"
-                        class="form-group "
-                        :class="form.errors.common_name ? 'has-error' : ''"
-                    >
-                        <label for="title">{{ trans('global.group.fields.common_name') }}</label>
-                        <input
-                            type="text" id="common_name"
-                            name="common_name"
-                            class="form-control"
-                            v-model="form.common_name"
-                            readonly
-                        />
-                        <p class="help-block" v-if="form.errors.common_name" v-text="form.errors.common_name[0]"></p>
+                    <div class="card">
+                        <div class="card-body">
+                            <div
+                                v-permission="'is_admin'"
+                                class="form-group "
+                                :class="form.errors.common_name ? 'has-error' : ''"
+                            >
+                                <label for="title">{{ trans('global.group.fields.common_name') }}</label>
+                                <input
+                                    type="text" id="common_name"
+                                    name="common_name"
+                                    class="form-control"
+                                    v-model="form.common_name"
+                                    readonly
+                                />
+                                <p class="help-block" v-if="form.errors.common_name" v-text="form.errors.common_name[0]"></p>
+                            </div>
+        
+                            <div
+                                class="form-group"
+                                :class="form.errors.title ? 'has-error' : ''"
+                            >
+                                <label for="title">{{ trans('global.group.fields.title') }} *</label>
+                                <input
+                                    id="title"
+                                    type="text"
+                                    name="title"
+                                    class="form-control"
+                                    v-model="form.title"
+                                    placeholder="Title"
+                                    required
+                                />
+                                <p class="help-block"
+                                    v-if="form.errors.title"
+                                    v-text="form.errors.title[0]"
+                                ></p>
+                            </div>
+        
+                            <Select2
+                                id="grade_id"
+                                name="grade_id"
+                                url="/grades"
+                                model="grade"
+                                :label="trans('global.grade.title_singular') + ' *'"
+                                option_id="id"
+                                option_label="title"
+                                :selected="this.form.grade_id"
+                                @selectedValue="(id) => {
+                                    this.form.grade_id = id;
+                                }"
+                            />
+        
+                            <Select2
+                                id="period_id"
+                                name="period_id"
+                                url="/periods"
+                                model="period"
+                                :label="trans('global.period.title_singular') + ' *'"
+                                option_id="id"
+                                option_label="title"
+                                :selected="this.form.period_id"
+                                @selectedValue="(id) => {
+                                    this.form.period_id = id;
+                                }"
+                            />
+        
+                            <Select2
+                                id="organization_id"
+                                name="organization_id"
+                                url="/organizations"
+                                model="organization"
+                                :label="trans('global.organization.title_singular') + ' *'"
+                                option_id="id"
+                                option_label="title"
+                                :selected="this.form.organization_id"
+                                @selectedValue="(id) => {
+                                    this.form.organization_id = id;
+                                }"
+                            />
+                        </div>
                     </div>
-
-                    <div
-                        class="form-group "
-                        :class="form.errors.title ? 'has-error' : ''"
-                    >
-                        <label for="title">
-                            {{ trans('global.group.fields.title') }} *
-                        </label>
-                        <input
-                            id="title"
-                            type="text"
-                            name="title"
-                            class="form-control"
-                            v-model="form.title"
-                            placeholder="Title"
-                            required
-                        />
-                        <p class="help-block"
-                           v-if="form.errors.title"
-                           v-text="form.errors.title[0]"></p>
-                    </div>
-
-                    <Select2
-                        id="grade_id"
-                        name="grade_id"
-                        url="/grades"
-                        model="grade"
-                        :label="trans('global.grade.title_singular') + ' *'"
-                        option_id="id"
-                        option_label="title"
-                        :selected="this.form.grade_id"
-                        @selectedValue="(id) => {
-                            this.form.grade_id = id;
-                        }"
-                    />
-
-                    <Select2
-                        id="period_id"
-                        name="period_id"
-                        url="/periods"
-                        model="period"
-                        :label="trans('global.period.title_singular') + ' *'"
-                        option_id="id"
-                        option_label="title"
-                        :selected="this.form.period_id"
-                        @selectedValue="(id) => {
-                            this.form.period_id = id;
-                        }"
-                    />
-
-                    <Select2
-                        id="organization_id"
-                        name="organization_id"
-                        url="/organizations"
-                        model="organization"
-                        :label="trans('global.organization.title_singular') + ' *'"
-                        option_id="id"
-                        option_label="title"
-                        :selected="this.form.organization_id"
-                        @selectedValue="(id) => {
-                            this.form.organization_id = id;
-                        }"
-                    />
                 </div>
+
                 <div class="card-footer">
                     <span class="pull-right">
                         <button

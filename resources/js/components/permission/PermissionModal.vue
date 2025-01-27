@@ -26,21 +26,25 @@
                 </div>
 
                 <div class="modal-body">
-                    <div
-                        class="form-group "
-                        :class="form.errors.title ? 'has-error' : ''"
-                    >
-                        <input
-                            id="title"
-                            type="text"
-                            name="title"
-                            class="form-control"
-                            v-model="form.title"
-                            :placeholder="trans('global.permission.fields.title') + ' *'"
-                            @keyup.enter="submit()"
-                            required
-                        />
-                        <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                    <div class="card">
+                        <div class="card-body">
+                            <div
+                                class="form-group m-0"
+                                :class="form.errors.title ? 'has-error' : ''"
+                            >
+                                <input
+                                    id="title"
+                                    type="text"
+                                    name="title"
+                                    class="form-control"
+                                    v-model="form.title"
+                                    :placeholder="trans('global.permission.fields.title') + ' *'"
+                                    @keyup.enter="submit()"
+                                    required
+                                />
+                                <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

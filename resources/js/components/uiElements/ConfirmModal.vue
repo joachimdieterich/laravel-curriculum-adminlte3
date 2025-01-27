@@ -8,9 +8,7 @@
                     class="card-header"
                     :class="'bg-' + this.css"
                 >
-                    <h3 class="card-title">
-                        {{ this.title }}
-                    </h3>
+                    <h3 class="card-title">{{ this.title }}</h3>
                     <div class="card-tools">
                         <button
                             type="button"
@@ -22,7 +20,9 @@
                     </div>
                 </div>
                 <div class="modal-body">
-                    {{ this.description}}
+                    <div class="card">
+                        <div class="card-body">{{ this.description }}</div>
+                    </div>
                 </div>
                 <div class="card-footer">
                     <span class="pull-right">

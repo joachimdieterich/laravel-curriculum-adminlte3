@@ -29,139 +29,149 @@
                     class="modal-body" 
                     style="overflow-y: visible;"
                 >
-                    <div class="form-group">
-                        <input
-                            type="text"
-                            id="title"
-                            name="title"
-                            class="form-control"
-                            v-model.trim="form.title"
-                            :placeholder="trans('global.kanbanItem.fields.title') + ' *'"
-                            required
-                        />
-                        <p v-if="form.errors.title"
-                            class="help-block"
-                            v-text="form.errors.title[0]"
-                        ></p>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <input
+                                    type="text"
+                                    id="title"
+                                    name="title"
+                                    class="form-control"
+                                    v-model.trim="form.title"
+                                    :placeholder="trans('global.kanbanItem.fields.title') + ' *'"
+                                    required
+                                />
+                                <p v-if="form.errors.title"
+                                    class="help-block"
+                                    v-text="form.errors.title[0]"
+                                ></p>
+                            </div>
+        
+                            <div class="form-group">
+                                <textarea
+                                    id="description"
+                                    name="description"
+                                    :placeholder="trans('global.kanbanItem.fields.description')"
+                                    class="form-control description "
+                                    style="max-height: 35svh;"
+                                    v-model.trim="form.description"
+                                ></textarea>
+                                <p v-if="form.errors.description"
+                                    class="help-block"
+                                    v-text="form.errors.description[0]"
+                                ></p>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <textarea
-                            id="description"
-                            name="description"
-                            :placeholder="trans('global.kanbanItem.fields.description')"
-                            class="form-control description "
-                            style="max-height: 35svh;"
-                            v-model.trim="form.description"
-                        ></textarea>
-                        <p v-if="form.errors.description"
-                            class="help-block"
-                            v-text="form.errors.description[0]"
-                        ></p>
+                    <div class="card">
+                        <div
+                            class="card-header border-bottom"
+                            data-card-widget="collapse"
+                        >
+                            <h5 class="card-title">{{ trans('global.display') }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <v-swatches
+                                    :swatch-size="49"
+                                    :trigger-style="{}"
+                                    style="height: 42px;"
+                                    popover-to="right"
+                                    v-model="this.form.color"
+                                    show-fallback
+                                    fallback-input-type="color"
+                                    @input="(id) => {
+                                        if(id.isInteger) {
+                                            this.form.color = id;
+                                        }
+                                    }"
+                                    :max-height="300"
+                                />
+        
+                                <MediumForm v-if="form.id"
+                                    id="medium_id"
+                                    class="pull-right"
+                                    :form="form"
+                                    :medium_id="form.medium_id"
+                                    :subscribable_type="'App\\Kanban'"
+                                    :subscribable_id="form.id"
+                                    accept="image/*"
+                                    :selected="this.form.medium_id"
+                                    @selectedValue="(id) => {
+                                        this.form.medium_id = id;
+                                    }"
+                                />
+                            </div>
+                        </div>
                     </div>
 
-                    <div
-                        class="card-header border-bottom"
-                        data-card-widget="collapse"
-                    >
-                        <h5 class="card-title">{{ trans('global.display') }}</h5>
-                    </div>
-
-                    <div class="card-body pb-0">
-                        <v-swatches
-                            :swatch-size="49"
-                            :trigger-style="{}"
-                            popover-to="right"
-                            v-model="this.form.color"
-                            show-fallback
-                            fallback-input-type="color"
-                            @input="(id) => {
-                                if(id.isInteger) {
-                                    this.form.color = id;
-                                }
-                            }"
-                            :max-height="300"
-                        />
-
-                        <MediumForm v-if="form.id"
-                            id="medium_id"
-                            class="pull-right"
-                            :form="form"
-                            :medium_id="form.medium_id"
-                            :subscribable_type="'App\\Kanban'"
-                            :subscribable_id="form.id"
-                            accept="image/*"
-                            :selected="this.form.medium_id"
-                            @selectedValue="(id) => {
-                                this.form.medium_id = id;
-                            }"
-                        />
-                    </div>
-
-                    <div
-                        class="card-header border-bottom"
-                        data-card-widget="collapse"
-                    >
-                        <h5 class="card-title">{{ trans('global.permissions') }}</h5>
-                    </div>
-
-                    <div class="card-body pb-0">
-                        <span class="custom-control custom-switch custom-switch-on-green">
-                            <input
-                                :id="'commentable_' + form.id"
-                                class="custom-control-input pt-1"
-                                type="checkbox"
-                                v-model="form.commentable"
-                            />
-                            <label
-                                class="custom-control-label text-muted"
-                                :for="'commentable_' + form.id"
-                            >
-                                {{ trans('global.commentable') }}
-                            </label>
-                        </span>
-                        <span class="custom-control custom-switch custom-switch-on-green">
-                            <input
-                                :id="'auto_refresh_' + form.id"
-                                class="custom-control-input pt-1"
-                                type="checkbox"
-                                v-model="form.auto_refresh"
-                            />
-                            <label
-                                class="custom-control-label text-muted"
-                                :for="'auto_refresh_' + form.id"
-                            >
-                                {{ trans('global.auto_refresh') }}
-                            </label>
-                        </span>
-                        <span class=" custom-control custom-switch custom-switch-on-green">
-                            <input
-                                :id="'only_edit_owned_items_' + form.id"
-                                class="custom-control-input pt-1"
-                                type="checkbox"
-                                v-model="form.only_edit_owned_items"
-                            />
-                            <label
-                                class="custom-control-label text-muted"
-                                :for="'only_edit_owned_items_' + form.id"
-                            >
-                                {{ trans('global.kanban.only_edit_owned_items') }}
-                            </label>
-                        </span>
-                        <span class="custom-control custom-switch custom-switch-on-green">
-                            <input
-                                :id="'allow_copy_' + form.id"
-                                class="custom-control-input pt-1"
-                                type="checkbox"
-                                v-model="form.allow_copy"
-                            />
-                            <label
-                                class="custom-control-label text-muted"
-                                :for="'allow_copy_' + form.id"
-                            >
-                                {{ trans('global.kanban.allow_copy') }}
-                            </label>
-                        </span>
+                    <div class="card">
+                        <div
+                            class="card-header border-bottom"
+                            data-card-widget="collapse"
+                        >
+                            <h5 class="card-title">{{ trans('global.permissions') }}</h5>
+                        </div>
+    
+                        <div class="card-body">
+                            <span class="custom-control custom-switch custom-switch-on-green">
+                                <input
+                                    :id="'commentable_' + form.id"
+                                    class="custom-control-input pt-1"
+                                    type="checkbox"
+                                    v-model="form.commentable"
+                                />
+                                <label
+                                    class="custom-control-label text-muted"
+                                    :for="'commentable_' + form.id"
+                                >
+                                    {{ trans('global.commentable') }}
+                                </label>
+                            </span>
+                            <span class="custom-control custom-switch custom-switch-on-green">
+                                <input
+                                    :id="'auto_refresh_' + form.id"
+                                    class="custom-control-input pt-1"
+                                    type="checkbox"
+                                    v-model="form.auto_refresh"
+                                />
+                                <label
+                                    class="custom-control-label text-muted"
+                                    :for="'auto_refresh_' + form.id"
+                                >
+                                    {{ trans('global.auto_refresh') }}
+                                </label>
+                            </span>
+                            <span class=" custom-control custom-switch custom-switch-on-green">
+                                <input
+                                    :id="'only_edit_owned_items_' + form.id"
+                                    class="custom-control-input pt-1"
+                                    type="checkbox"
+                                    v-model="form.only_edit_owned_items"
+                                />
+                                <label
+                                    class="custom-control-label text-muted"
+                                    :for="'only_edit_owned_items_' + form.id"
+                                >
+                                    {{ trans('global.kanban.only_edit_owned_items') }}
+                                </label>
+                            </span>
+                            <span class="custom-control custom-switch custom-switch-on-green">
+                                <input
+                                    :id="'allow_copy_' + form.id"
+                                    class="custom-control-input pt-1"
+                                    type="checkbox"
+                                    v-model="form.allow_copy"
+                                />
+                                <label
+                                    class="custom-control-label text-muted"
+                                    :for="'allow_copy_' + form.id"
+                                >
+                                    {{ trans('global.kanban.allow_copy') }}
+                                </label>
+                            </span>
+                        </div>
                     </div>
                 </div>
 

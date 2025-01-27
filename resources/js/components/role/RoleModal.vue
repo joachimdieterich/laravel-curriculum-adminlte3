@@ -25,34 +25,40 @@
                     </div>
                 </div>
 
-                <div class="modal-body">
-                    <div
-                        class="form-group"
-                        :class="form.errors.title ? 'has-error' : ''"
-                    >
-                        <input
-                            id="title"
-                            name="title"
-                            type="text"
-                            class="form-control"
-                            v-model="form.title"
-                            :readonly="this.method == 'patch'"
-                            :placeholder="trans('global.title') + ' *'"
-                            required
-                        />
-                        <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                <div
+                    class="modal-body"
+                >
+                    <div class="card">
+                        <div class="card-body">
+                            <div
+                                class="form-group"
+                                :class="form.errors.title ? 'has-error' : ''"
+                            >
+                                <input
+                                    id="title"
+                                    name="title"
+                                    type="text"
+                                    class="form-control"
+                                    v-model="form.title"
+                                    :readonly="this.method == 'patch'"
+                                    :placeholder="trans('global.title') + ' *'"
+                                    required
+                                />
+                                <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                            </div>
+                            <Select2
+                                id="permissions"
+                                name="permissions"
+                                url="/permissions"
+                                model="permission"
+                                :multiple="true"
+                                :selected="getSelected()"
+                                @selectedValue="(id) => {
+                                    this.form.permissions = id;
+                                }"
+                            />
+                        </div>
                     </div>
-                    <Select2
-                        id="permissions"
-                        name="permissions"
-                        url="/permissions"
-                        model="permission"
-                        :multiple="true"
-                        :selected="getSelected()"
-                        @selectedValue="(id) => {
-                            this.form.permissions = id;
-                        }"
-                    />
                 </div>
 
                 <div class="card-footer">

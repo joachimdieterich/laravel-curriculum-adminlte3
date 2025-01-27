@@ -23,98 +23,105 @@
                     </div>
                 </div>
 
-                <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                    <div class="form-group "
-                        :class="form.errors.title ? 'has-error' : ''"
-                          >
-                        <label for="title">
-                            {{ trans('global.grade.fields.title') }} *
-                        </label>
-                        <input
-                            type="text" id="title"
-                            name="title"
-                            class="form-control"
-                            v-model="form.title"
-                            placeholder="Title"
-                            required
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-body">
+                            <div
+                                class="form-group"
+                                :class="form.errors.title ? 'has-error' : ''"
+                            >
+                                <label for="title">{{ trans('global.grade.fields.title') }} *</label>
+                                <input
+                                    id="title"
+                                    type="text"
+                                    name="title"
+                                    class="form-control"
+                                    v-model="form.title"
+                                    placeholder="Title"
+                                    required
+                                />
+                                <p class="help-block"
+                                    v-if="form.errors.title"
+                                    v-text="form.errors.title[0]"
+                                ></p>
+                            </div>
+        
+                            <div
+                                class="form-group"
+                                :class="form.errors.external_begin ? 'has-error' : ''"
+                            >
+                                <label for="external_begin">{{ trans('global.grade.fields.external_begin') }} *</label>
+                                <input
+                                    id="external_begin"
+                                    type="text"
+                                    name="external_begin"
+                                    class="form-control"
+                                    v-model="form.external_begin"
+                                    placeholder="external_begin"
+                                    required
+                                />
+                                <p class="help-block"
+                                   v-if="form.errors.external_begin"
+                                   v-text="form.errors.external_begin[0]"
+                                ></p>
+                            </div>
+        
+                            <div
+                                class="form-group"
+                                :class="form.errors.external_end ? 'has-error' : ''"
+                            >
+                                <label for="external_end">{{ trans('global.grade.fields.external_end') }} *</label>
+                                <input
+                                    id="external_end"
+                                    type="text"
+                                    name="external_end"
+                                    class="form-control"
+                                    v-model="form.external_end"
+                                    placeholder="external_end"
+                                    required
+                                />
+                                <p class="help-block"
+                                   v-if="form.errors.external_end"
+                                   v-text="form.errors.external_end[0]"
+                                ></p>
+                            </div>
+        
+                            <Select2
+                                id="organization_type_id"
+                                name="organization_type_id"
+                                url="/organizationTypes"
+                                model="organizationType"
+                                option_id="id"
+                                option_label="title"
+                                :selected="this.form.organization_type_id"
+                                @selectedValue="(id) => {
+                                    this.form.organization_type_id = id;
+                                }"
                             />
-                         <p class="help-block"
-                            v-if="form.errors.title"
-                            v-text="form.errors.title[0]"></p>
+                        </div>
                     </div>
-
-                    <div class="form-group "
-                         :class="form.errors.external_begin ? 'has-error' : ''"
-                    >
-                        <label for="external_begin">
-                            {{ trans('global.grade.fields.external_begin') }} *
-                        </label>
-                        <input
-                            type="text" id="external_begin"
-                            name="external_begin"
-                            class="form-control"
-                            v-model="form.external_begin"
-                            placeholder="external_begin"
-                            required
-                        />
-                        <p class="help-block"
-                           v-if="form.errors.external_begin"
-                           v-text="form.errors.external_begin[0]"></p>
-                    </div>
-
-                    <div class="form-group "
-                         :class="form.errors.external_end ? 'has-error' : ''"
-                    >
-                        <label for="external_end">
-                            {{ trans('global.grade.fields.external_end') }} *
-                        </label>
-                        <input
-                            type="text" id="external_end"
-                            name="external_end"
-                            class="form-control"
-                            v-model="form.external_end"
-                            placeholder="external_end"
-                            required
-                        />
-                        <p class="help-block"
-                           v-if="form.errors.external_end"
-                           v-text="form.errors.external_end[0]"></p>
-                    </div>
-
-                    <Select2
-                        id="organization_type_id"
-                        name="organization_type_id"
-                        url="/organizationTypes"
-                        model="organizationType"
-                        option_id="id"
-                        option_label="title"
-                        :selected="this.form.organization_type_id"
-                        @selectedValue="(id) => {
-                        this.form.organization_type_id = id;
-                    }"
-                    >
-                    </Select2>
                 </div>
 
                 <div class="card-footer">
-                     <span class="pull-right">
-                         <button
-                             id="grade-cancel"
-                             type="button"
-                             class="btn btn-default"
-                             @click="globalStore?.closeModal($options.name)">
-                             {{ trans('global.cancel') }}
-                         </button>
-                         <button
-                             id="grade-save"
-                             class="btn btn-primary"
-                             @click="submit(method)" >
-                             {{ trans('global.save') }}
-                         </button>
+                    <span class="pull-right">
+                        <button
+                            id="grade-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)">
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="grade-save"
+                            class="btn btn-primary ml-3"
+                            @click="submit(method)"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
                     </span>
                 </div>
+            </div>
         </div>
-    </div>
     </Transition>
 </template>
 <script>
@@ -124,7 +131,7 @@ import Select2 from "../forms/Select2.vue";
 
 export default {
     name: 'grade-modal',
-    components:{
+    components: {
         Select2,
     },
     props: {},
@@ -138,26 +145,24 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/grades',
             form: new Form({
-                'id':'',
-                'title': '',
-                'external_begin': null,
-                'external_end': null,
-                'organization_type_id': 1
+                id:'',
+                title: '',
+                external_begin: null,
+                external_end: null,
+                organization_type_id: 1,
             }),
             countries: [],
             states: [],
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link curriculummedia autoresize"
+                    "autolink link curriculummedia autoresize",
                 ],
                 {
                     'callback': 'insertContent',
-                    'callbackId': this.component_id
+                    'callbackId': this.component_id,
                 }
             ),
-            search: '',
         }
     },
     methods: {
@@ -170,9 +175,11 @@ export default {
             } else {
                 this.add();
             }
+
+            this.globalStore.closeModal(this.$options.name);
         },
         add() {
-            axios.post(this.url, this.form)
+            axios.post('/grades', this.form)
                 .then(r => {
                     this.$eventHub.emit('grade-added', r.data);
                 })
@@ -181,7 +188,7 @@ export default {
                 });
         },
         update() {
-            axios.patch(this.url + '/' + this.form.id, this.form)
+            axios.patch('/grades/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('grade-updated', r.data);
                 })
@@ -214,4 +221,3 @@ export default {
     },
 }
 </script>
-

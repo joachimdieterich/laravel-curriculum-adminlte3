@@ -578,7 +578,7 @@
                         <button
                             id="videoconference-save"
                             class="btn btn-primary ml-3"
-                            @click="submit(method)"
+                            @click="submit()"
                         >
                             {{ trans('global.save') }}
                         </button>
@@ -719,7 +719,7 @@ export default {
         },
     },
     methods: {
-        submit(method) {
+        submit() {
             if (this.showExtendedSettings) {
                 this.form.welcomeMessage = tinyMCE.get('welcomeMessage').getContent();
                 this.form.moderatorOnlyMessage = tinyMCE.get('moderatorOnlyMessage').getContent();
@@ -730,7 +730,7 @@ export default {
             } else {
                 this.form.guestPolicy = 'ALWAYS_ACCEPT';
             }
-            if (method === 'patch') {
+            if (this.method === 'patch') {
                 this.update();
             } else {
                 this.add();

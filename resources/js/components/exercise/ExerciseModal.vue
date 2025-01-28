@@ -75,7 +75,7 @@
                         <button
                             id="exercise-save"
                             class="btn btn-primary ml-3"
-                            @click="submit(method)"
+                            @click="submit()"
                         >
                             {{ trans('global.save') }}
                         </button>
@@ -131,8 +131,8 @@ export default {
         }
     },
     methods: {
-        submit(method) {
-            if (method == 'post') {
+        submit() {
+            if (this.method == 'post') {
                 this.add();
             } else {
                 this.update();

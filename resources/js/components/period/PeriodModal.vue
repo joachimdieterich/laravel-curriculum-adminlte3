@@ -72,7 +72,7 @@
                         <button
                             id="organization-save"
                             class="btn btn-primary ml-3"
-                            @click="submit(method)"
+                            @click="submit()"
                         >
                             {{ trans('global.save') }}
                         </button>
@@ -114,11 +114,11 @@ export default {
         }
     },
     methods: {
-        submit(method) {
+        submit() {
             this.form.begin = this.form.date[0];
             this.form.end = this.form.date[1];
 
-            if (method == 'patch') {
+            if (this.method == 'patch') {
                 this.update();
             } else {
                 this.add();

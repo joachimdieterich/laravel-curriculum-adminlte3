@@ -190,7 +190,7 @@
                         <button
                             id="plan-save"
                             class="btn btn-primary ml-3"
-                            @click="submit(method)"
+                            @click="submit()"
                         >
                             {{ trans('global.save') }}
                         </button>
@@ -257,7 +257,7 @@ export default {
         }
     },
     methods: {
-        submit(method) {
+        submit() {
             if (!this.checkRequired()) {
                 return;
             }
@@ -268,7 +268,7 @@ export default {
             //     this.form.end = this.form.date[1].toISOString().slice(0, 10);
             // }
 
-            if (method == 'patch') {
+            if (this.method == 'patch') {
                 this.update();
             } else {
                 this.add();

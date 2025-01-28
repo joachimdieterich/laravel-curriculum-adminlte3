@@ -188,7 +188,7 @@
                         <button
                             id="kanban-save"
                             class="btn btn-primary ml-3"
-                            @click="submit(method)"
+                            @click="submit()"
                         >
                             {{ trans('global.save') }}
                         </button>
@@ -248,8 +248,8 @@ export default {
         }
     },
     methods: {
-        submit(method) {
-            if (method == 'patch') {
+        submit() {
+            if (this.method == 'patch') {
                 this.update();
             } else {
                 this.add();

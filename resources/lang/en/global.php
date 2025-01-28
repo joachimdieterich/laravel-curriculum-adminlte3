@@ -496,6 +496,8 @@ return [
         'title_singular' => 'Period',
         'create' => 'Create period',
         'edit' => 'Edit period',
+        'delete' => 'Delete period',
+        'delete_helper' => 'Should this period and all its corresponding data be deleted?',
         'fields' => [
             'begin_helper' => '',
             'end_helper' => '',

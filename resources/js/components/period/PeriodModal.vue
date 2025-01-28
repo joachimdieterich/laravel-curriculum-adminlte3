@@ -1,82 +1,89 @@
 <template>
     <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
+        <div
+            v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask"
             @click.self="globalStore.closeModal($options.name)"
         >
-        <div class="modal-container">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.organizationType.create') }}
-                    </span>
-                    <span v-if="method === 'patch'">
-                        {{ trans('global.organizationType.edit') }}
-                    </span>
-                </h3>
-                <div class="card-tools">
-                    <button type="button"
+            <div class="modal-container">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span v-if="method === 'post'">
+                            {{ trans('global.period.create') }}
+                        </span>
+                        <span v-if="method === 'patch'">
+                            {{ trans('global.period.edit') }}
+                        </span>
+                    </h3>
+                    <div class="card-tools">
+                        <button
+                            type="button"
                             class="btn btn-tool"
-                            @click="globalStore?.closeModal($options.name)">
-                        <i class="fa fa-times"></i>
-                    </button>
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-body">
+                            <div
+                                class="form-group"
+                                :class="form.errors.title ? 'has-error' : ''"
+                            >
+                                <input
+                                    id="title"
+                                    type="text"
+                                    name="title"
+                                    class="form-control"
+                                    v-model="form.title"
+                                    :placeholder="trans('global.organizationType.fields.title') + ' *'"
+                                    required
+                                    />
+                                <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                            </div>
+        
+                            <VueDatePicker
+                                v-model="form.date"
+                                :range="{ partialRange: false }"
+                                format="dd.MM.yyy HH:mm"
+                                :teleport="true"
+                                locale="de"
+                                :placeholder="trans('global.selectDateRange') + ' *'"
+                                :select-text="trans('global.ok')"
+                                :cancel-text="trans('global.close')"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <span class="pull-right">
+                        <button
+                            id="organization-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="organization-save"
+                            class="btn btn-primary ml-3"
+                            @click="submit(method)"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
+                    </span>
                 </div>
             </div>
-
-                <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                    <div class="form-group "
-                        :class="form.errors.title ? 'has-error' : ''"
-                          >
-                        <label for="title">{{ trans('global.organizationType.fields.title') }} *</label>
-                        <input
-                            type="text" id="title"
-                            name="title"
-                            class="form-control"
-                            v-model="form.title"
-                            placeholder="Title"
-                            required
-                            />
-                         <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
-                    </div>
-
-                    <div class="form-group ">
-                        <VueDatePicker
-                            v-model="form.date"
-                            :range="{ partialRange: false }"
-                            format="dd.MM.yyy HH:mm"
-                            :teleport="true"
-                            locale="de"
-                            :select-text="trans('global.ok')"
-                            :cancel-text="trans('global.close')"
-                        ></VueDatePicker>
-                    </div>
-
-                </div>
-                <div class="card-footer">
-                     <span class="pull-right">
-                         <button
-                             id="organization-cancel"
-                             type="button"
-                             class="btn btn-default"
-                             @click="globalStore?.closeModal($options.name)">
-                             {{ trans('global.cancel') }}
-                         </button>
-                         <button
-                             id="organization-save"
-                             class="btn btn-primary"
-                             @click="submit(method)" >
-                             {{ trans('global.save') }}
-                         </button>
-                    </span>
-                </div>
         </div>
-    </div>
     </Transition>
 </template>
 <script>
 import Form from 'form-backend-validation';
-import Editor from '@tinymce/tinymce-vue';
-import Select2 from "../forms/Select2.vue";
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import {useGlobalStore} from "../../store/global";
@@ -84,9 +91,7 @@ import {useGlobalStore} from "../../store/global";
 export default {
     name: 'period-modal',
     components: {
-        Editor,
-        Select2,
-        VueDatePicker
+        VueDatePicker,
     },
     props: {},
     setup() {
@@ -99,26 +104,13 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/periods',
             form: new Form({
-                'id':'',
-                'title': '',
-                'date': null,
-                'begin': new Date(),
-                'end': null,
+                id:'',
+                title: '',
+                date: null,
+                begin: new Date(),
+                end: null,
             }),
-            countries: [],
-            states: [],
-            tinyMCE: this.$initTinyMCE(
-                [
-                    "autolink link curriculummedia autoresize"
-                ],
-                {
-                    'callback': 'insertContent',
-                    'callbackId': this.component_id
-                }
-            ),
-            search: '',
         }
     },
     methods: {
@@ -131,9 +123,11 @@ export default {
             } else {
                 this.add();
             }
+
+            this.globalStore.closeModal(this.$options.name);
         },
         add() {
-            axios.post(this.url, this.form)
+            axios.post('/periods', this.form)
                 .then(r => {
                     this.$eventHub.emit('period-added', r.data);
                 })
@@ -142,8 +136,7 @@ export default {
                 });
         },
         update() {
-            console.log('update');
-            axios.patch(this.url + '/' + this.form.id, this.form)
+            axios.patch('/periods/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('period-updated', r.data);
                 })

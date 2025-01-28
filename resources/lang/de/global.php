@@ -520,6 +520,7 @@ return [
         'title_singular' => 'Lernzeitraum',
         'create' => 'Lernzeitraum erstellen',
         'edit' => 'Lernzeitraum bearbeiten',
+        'delete' => 'Lernzeitraum löschen',
         'delete_helper' => 'Soll der Lernzeitraum sowie die zugehörigen Daten gelöscht werden?',
         'fields' => [
             'begin_helper' => '',

@@ -96,7 +96,7 @@
             >
                 <template v-slot:itemIcon>
                     <i v-if="create_label_field == 'enrol'"
-                       class="fa fa-2x fa-link text-muted"
+                        class="fa fa-2x fa-link text-muted"
                     ></i>
                 </template>
             </IndexWidget>

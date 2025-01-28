@@ -461,11 +461,11 @@ return [
     ],
     'organizationType' => [
         'title' => 'Organisations-Typen',
-        'title_singular' => 'Organisation-Typ',
-        'create' => 'Organisation-Typ erstellen',
-        'edit' => 'Organisation-Typ bearbeiten',
-        'delete' => 'Organisation-Typ löschen',
-        'delete_helper' => 'Soll der Organisation-Typ sowie die zugehörigen Daten gelöscht werden?',
+        'title_singular' => 'Organisations-Typ',
+        'create' => 'Organisations-Typ erstellen',
+        'edit' => 'Organisations-Typ bearbeiten',
+        'delete' => 'Organisations-Typ löschen',
+        'delete_helper' => 'Soll der Organisations-Typ sowie die zugehörigen Daten gelöscht werden?',
         'fields' => [
             'external_id' => 'External ID',
             'external_id_helper' => '',

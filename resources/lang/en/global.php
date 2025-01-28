@@ -440,8 +440,10 @@ return [
     'organizationType' => [
         'title' => 'Organization types',
         'title_singular' => 'Organization type',
-        'create' => 'Create Organisation type',
-        'edit' => 'Edit Organisation type',
+        'create' => 'Create organisation type',
+        'edit' => 'Edit organisation type',
+        'delete' => 'Delete organisation type',
+        'delete_helper' => 'Should this organisation type and all its corresponding data be deleted?',
         'fields' => [
             'external_id' => 'External ID',
             'external_id_helper' => '',

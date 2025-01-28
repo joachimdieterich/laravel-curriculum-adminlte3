@@ -345,7 +345,7 @@ app.config.globalProperties.$initTinyMCE = function(
         path_absolute : "/",
         selector: "textarea.my-editor",
         branding: false,
-        placeholder: this.trans('global.description'),
+        placeholder: attr?.placeholder ?? this.trans('global.description'),
         plugins: tinyMcePlugins ?? defaultPlugins,
         external_plugins: { mathjax: '/node_modules/@dimakorotkov/tinymce-mathjax/plugin.min.js' },
         menubar: "edit format",

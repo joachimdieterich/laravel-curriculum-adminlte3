@@ -1,8 +1,10 @@
 <template>
     <div>
-        <ul class="nav nav-pills bg-gray-light"
+        <ul
             id="terminalObjectivesTopNav"
-            style="position:sticky; top:56px; z-index: 100">
+            class="nav nav-pills bg-gray-light position-sticky"
+            style="top: 56px; z-index: 100"
+        >
 <!--            <draggable
                 class="nav nav-pills"
                 v-can="'curriculum_edit'"
@@ -15,49 +17,55 @@
                     #item="{ element: typetab , index }">-->
                     <li v-for="typetab in typetabs"
                         v-permission="'curriculum_edit'"
-                        class="nav-item pl-0 pr-2 pb-2 pt-2">
-                        <a class="nav-link " :href="'#tab_' + typetab"
-                           :class="(activetab == typetab) ? 'active' : ''"
-                           @click="setActiveTab(typetab)"
-                           data-toggle="tab">
+                        class="nav-item pl-0 pr-2 pb-2 pt-2"
+                    >
+                        <a
+                            :href="'#tab_' + typetab"
+                            class="nav-link"
+                            :class="(activetab == typetab) ? 'active' : ''"
+                            data-toggle="tab"
+                            @click="setActiveTab(typetab)"
+                        >
                             {{ getTypeTitle(typetab)[0]['title'] }}
                         </a>
                     </li>
 <!--                </template>
-            </draggable>-->
-            <li v-hide-if-permission="'curriculum_edit'"
-                v-for="typetab in typetabs"
-                class="nav-item pl-0 pr-2 pb-2 pt-2">
-                <a class="nav-link " :href="'#tab_' + typetab"
-                   :class="(activetab == typetab) ? 'active' : ''"
-                   @click="setActiveTab(typetab)"
-                   data-toggle="tab">
+                </draggable>-->
+            <li v-for="typetab in typetabs"
+                v-hide-if-permission="'curriculum_edit'"
+                class="nav-item pl-0 pr-2 pb-2 pt-2"
+            >
+                <a
+                    :href="'#tab_' + typetab"
+                    class="nav-link"
+                    :class="(activetab == typetab) ? 'active' : ''"
+                    data-toggle="tab"
+                    @click="setActiveTab(typetab)"
+                >
                     {{ getTypeTitle(typetab)[0]['title'] }}
                 </a>
             </li>
-
-            <li class="form-group pt-2 ml-auto">
-                <select
-                    name="currentCurriculaEnrolmentSelector"
+            <!-- Querverweise -->
+            <!-- <li class="form-group pt-2 ml-auto">
+                <Select2
                     id="currentCurriculaEnrolmentSelector"
-                    class="form-control select2 "
-                    style="width:100%;"
-                    >
-                    <option
-                        v-for="(item,index) in currentCurriculaEnrolments"
-                        :value="item.id">
-                        {{ item.title }}
-                    </option>
-                </select>
-            </li>
+                    name="currentCurriculaEnrolmentSelector"
+                    :list="currentCurriculaEnrolments"
+                />
+            </li> -->
         </ul>
         <hr class="mt-0">
         <div v-for="typetab in typetabs"
-             class="tab-content">
-            <div class="tab-pane" :id="'tab_' + typetab"
-                 :class="(activetab == typetab) ? 'active show' : ''">
-                 <div v-for="objective in filterTerminalObjectives(typetab)"
-                      :id="'terminalObjective_' + objective.id" >
+            class="tab-content"
+        >
+            <div
+                :id="'tab_' + typetab"
+                class="tab-pane"
+                :class="(activetab == typetab) ? 'active show' : ''"
+            >
+                <div v-for="objective in filterTerminalObjectives(typetab)"
+                    :id="'terminalObjective_' + objective.id"
+                >
                     <div class="row">
                         <div class="col-12 terminal-row">
                             <ObjectiveBox
@@ -67,21 +75,19 @@
                                 :max_id="max_ids[activetab]"
                                 @createTerminalObjective="(createObjective) => {
                                     this.createTerminalObjective(createObjective);
-                                }
-                                "
+                                }"
                                 @update="(objective) => {
                                     this.currentTerminalObjective = objective;
                                     this.globalStore?.closeModal('terminal-objective-modal');
                                 }"
-                            >
-                            </ObjectiveBox>
+                            />
 
                             <div class="ml-auto">
                                 <EnablingObjectives
                                     :terminalobjective="objective"
                                     :objectives="objective.enabling_objectives"
-                                    :settings="settings">
-                                </EnablingObjectives>
+                                    :settings="settings"
+                                />
                             </div>
                         </div>
                     </div>
@@ -89,40 +95,45 @@
             </div><!-- /.tab-pane -->
         </div> <!-- /.tab-content -->
 
-        <div class="row"
-             v-permission="'curriculum_edit'"
-             v-if="settings.edit === true">
-            <div id="createTerminalRow" class="col-12">
-            <ObjectiveBox
-                type="createterminal"
-                :objective="{'curriculum_id': curriculum.id}"
-                :objective_type_id="activetab"
-                :settings="settings"
-                :max_id="max_ids[activetab]"
-              ></ObjectiveBox>
+        <div v-if="settings.edit"
+            v-permission="'curriculum_edit'"
+            class="row"
+        >
+            <div
+                id="createTerminalRow"
+                class="col-12"
+            >
+                <ObjectiveBox
+                    type="createterminal"
+                    :objective="{ curriculum_id: curriculum.id }"
+                    :objective_type_id="activetab"
+                    :settings="settings"
+                    :max_id="max_ids[activetab]"
+                />
             </div>
         </div>
+
         <Teleport to="body">
-            <TerminalObjectiveModal></TerminalObjectiveModal>
-            <EnablingObjectiveModal></EnablingObjectiveModal>
+            <TerminalObjectiveModal/>
+            <EnablingObjectiveModal/>
         </Teleport>
     </div>
 </template>
-
 <script>
 import ObjectiveBox from './ObjectiveBox.vue';
 import EnablingObjectives from './EnablingObjectives.vue';
 import TerminalObjectiveModal from "./TerminalObjectiveModal.vue";
 import EnablingObjectiveModal from "./EnablingObjectiveModal.vue";
+import Select2 from '../forms/Select2.vue';
 import draggable from "vuedraggable";
 import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
-        'curriculum': Object,
-        'objectivetypes': Array,
+        curriculum: Object,
+        objectivetypes: Array,
     },
-    setup () {
+    setup() {
         const globalStore = useGlobalStore();
         return {
             globalStore,
@@ -131,7 +142,7 @@ export default {
     data() {
         return {
             settings: {
-                'last': null,
+                last: null,
             },
             max_ids: {},
             typetabs: {},
@@ -140,8 +151,7 @@ export default {
             currentTerminalObjective: null,
             currentEnablingObjective: null,
             errors: {},
-
-            terminal_objectives: Object,
+            terminal_objectives: {},
         }
     },
     methods: {
@@ -149,32 +159,32 @@ export default {
             let filteredTerminalObjectives = this.terminal_objectives;
             filteredTerminalObjectives = filteredTerminalObjectives.filter(
                 t => t.objective_type_id === typetab
-                );
+            );
             this.max_ids[typetab] = filteredTerminalObjectives[filteredTerminalObjectives.length-1].id;
             return filteredTerminalObjectives;
         },
-        getTypeTitle(id){
+        getTypeTitle(id) {
             return this.objectivetypes.filter(
                 t => t.id === id
             );
         },
-        setActiveTab(typetab){
+        setActiveTab(typetab) {
             this.activetab = typetab;
         },
-        loadObjectives(objective_type_id = 0){
+        loadObjectives(objective_type_id = 0) {
             axios.get('/curricula/' + this.curriculum.id + '/objectives' )
                 .then(response => {
-                    this.terminal_objectives = response.data.curriculum.terminal_objectives;
+                    this.terminal_objectives = response.data.terminal_objectives;
 
-                    if (this.terminal_objectives.length !== 0){
+                    if (this.terminal_objectives.length !== 0) {
                         this.settings.last = this.terminal_objectives[this.terminal_objectives.length-1].id;
-                        this.typetabs = [ ... new Set(this.terminal_objectives.map(t => t.objective_type_id))];
-                        if (!!this.curriculum.objective_type_order){
-                            if (this.curriculum.objective_type_order.length ===  this.typetabs.length){
+                        this.typetabs = [...new Set(this.terminal_objectives.map(t => t.objective_type_id))];
+                        if (this.curriculum.objective_type_order) {
+                            if (this.curriculum.objective_type_order.length ===  this.typetabs.length) {
                                 this.typetabs = this.curriculum.objective_type_order;
                             }
                         }
-                        if (objective_type_id === 0){
+                        if (objective_type_id === 0) {
                             this.activetab = this.typetabs[0];
                         }
                     }
@@ -193,9 +203,8 @@ export default {
                 console.log(e);
             }
         },
-
-        checkCrossReferenceInLocalStorage(){
-            if (localStorage.getItem( 'currentCurriculaEnrolmentSelectorValue' ) !== null){
+        checkCrossReferenceInLocalStorage() {
+            if (localStorage.getItem( 'currentCurriculaEnrolmentSelectorValue' ) !== null) {
                 $("#currentCurriculaEnrolmentSelector").val(localStorage.getItem( 'currentCurriculaEnrolmentSelectorValue' )).trigger('change');
                 this.$parent.setCrossReferenceCurriculumId($("#currentCurriculaEnrolmentSelector").val());
             } else {
@@ -204,7 +213,7 @@ export default {
         },
         handleTypeMoved() {
             // Send the entire list of statuses to the server
-            axios.put("/curricula/"+this.curriculum.id+"/syncObjectiveTypesOrder", {objective_type_order: this.typetabs})
+            axios.put("/curricula/" + this.curriculum.id + "/syncObjectiveTypesOrder", { objective_type_order: this.typetabs })
                 .catch(err => {
                     console.log(err.response);
                     alert(err.response.statusText);
@@ -224,11 +233,11 @@ export default {
                         value: null,
                         placeholder: "Querverweise",
                         allowClear: true
-                    }).on('select2:select', function () {
+                    }).on('select2:select', function() {
                         localStorage.setItem( 'currentCurriculaEnrolmentSelectorValue', $("#currentCurriculaEnrolmentSelector").val() );
                         this.$parent.setCrossReferenceCurriculumId($("#currentCurriculaEnrolmentSelector").val());
                     }.bind(this))
-                    .on('select2:clear', function () {
+                    .on('select2:clear', function() {
                         this.$parent.setCrossReferenceCurriculumId(false);
                         localStorage.removeItem( 'currentCurriculaEnrolmentSelectorValue');
                     }.bind(this));
@@ -241,14 +250,6 @@ export default {
 
         //eventlistener
         //terminal Objectives
-        this.$eventHub.on('createTerminalObjectives', (createTerminalObjective) => {
-            //console.log(createTerminalObjective);
-            this.currentTerminalObjective = {
-                'curriculum_id': this.curriculum.id,
-                'objective_type_id': createTerminalObjective.objective_type_id
-            };
-            this.globalStore?.showModal('terminal-objective-modal', this.currentTerminalObjective);
-        });
         this.$eventHub.on('terminalObjective-added', function(newTerminalObjective) {
             console.log(newTerminalObjective);
             this.globalStore?.closeModal('terminal-objective-modal');
@@ -264,15 +265,6 @@ export default {
         });
 
         //enabling Objectives
-        this.$eventHub.on('createEnablingObjectives', (createEnablingObjective) => {
-            console.log(createEnablingObjective.objective);
-            this.currentEnablingObjective = {
-                'curriculum_id': this.curriculum.id,
-                'terminal_objective_id': createEnablingObjective.objective.terminal_objective_id
-            };
-            this.globalStore?.showModal('enabling-objective-modal', this.currentEnablingObjective);
-
-        });
         this.$eventHub.on('enablingObjective-added', function(newEnablingObjective) {
             this.globalStore?.closeModal('enabling-objective-modal');
             this.loadObjectives(this.activetab);
@@ -290,15 +282,14 @@ export default {
             this.activetab = (deletedObjective.type === 'terminal') ? deletedObjective.objective.objective_type_id : deletedObjective.objective.terminal_objective.objective_type_id;
             this.loadObjectives(this.activetab);
         }.bind(this));
-
     },
-
     components: {
         TerminalObjectiveModal,
         EnablingObjectiveModal,
         ObjectiveBox,
         EnablingObjectives,
-        draggable
-    }
+        Select2,
+        draggable,
+    },
 }
 </script>

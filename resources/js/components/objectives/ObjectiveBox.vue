@@ -1,7 +1,7 @@
 <template >
     <!--  v-if create terminal-->
     <div v-if="type === 'createterminal'"
-        class="box box-objective"
+        class="box box-objective pointer"
         :style="{ 'background-color': '#fff'}"
     >
         <h1
@@ -13,7 +13,7 @@
 
         <div
             style="text-align: center; padding: 25px; font-size: 100px;"
-            @click.prevent="createTerminalObjective()"
+            @click.prevent="openTerminalModal()"
         >
             +
         </div>
@@ -21,7 +21,7 @@
 
     <!--  v-else-if create enabling-->
     <div v-else-if="type === 'createenabling'"
-        class="box box-objective"
+        class="box box-objective pointer"
         :style="{ 'background-color': backgroundcolor }"
     >
         <h1
@@ -33,7 +33,7 @@
 
         <div
             style="text-align: center; padding: 25px; font-size: 100px;"
-            @click.prevent="createEnablingObjective()"
+            @click.prevent="openEnablingModal()"
         >
             +
         </div>
@@ -88,17 +88,41 @@ import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
-        objective: {},
-        objective_type_id: {},
-        type: {},
-        referenceable_id: null,
-        referenceable_type: null,
-        color: '#000',
-        settings: {},
+        objective: {
+            type: Object,
+            default: {},
+        },
+        objective_type_id: {
+            type: Number,
+            default: null,
+        },
+        type: {
+            type: String,
+            default: null,
+        },
+        referenceable_id: {
+            type: Number,
+            default: null,
+        },
+        referenceable_type: {
+            type: String,
+            default: null,
+        },
+        color: {
+            type: String,
+            default: '#000',
+        },
+        settings: {
+            type: Object,
+            default: {},
+        },
         editable: {
+            type: Boolean,
             default: false,
         },
-        max_id: Number,
+        max_id: {
+            type: Number,
+        },
     },
     setup() {
         const globalStore = useGlobalStore();
@@ -138,11 +162,17 @@ export default {
         }
     },
     methods: {
-        createTerminalObjective() {
-            this.$eventHub.emit('createTerminalObjectives', { 'objective': this.objective, 'method': 'post' , 'objective_type_id': this.objective_type_id});
+        openTerminalModal() { 
+            this.globalStore?.showModal('terminal-objective-modal', {
+                curriculum_id: this.objective.curriculum_id,
+                objective_type_id: this.objective_type_id,
+            });
         },
-        createEnablingObjective() {
-            this.$eventHub.emit('createEnablingObjectives', { 'objective': this.objective, 'method': 'post' });
+        openEnablingModal() {
+            this.globalStore?.showModal('enabling-objective-modal', {
+                curriculum_id: this.objective.curriculum_id,
+                terminal_objective_id: this.objective.terminal_objective_id,
+            });
         },
         deleteEvent() {
             axios.delete('/' + this.type + 'Objectives/' + this.objective.id)

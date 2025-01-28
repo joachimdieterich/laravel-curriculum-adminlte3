@@ -133,35 +133,35 @@
     <teleport v-if="$userId == kanban.owner_id"
         to="#customTitle"
     >
-        <small>{{ kanban.title }} </small>
-            <a
-                class="btn btn-flat"
-                @click="editKanban(kanban)"
-            >
-                <i class="fa fa-pencil-alt text-secondary"></i>
-            </a>
+        <small>{{ kanban.title }}</small>
+        <a
+            class="btn btn-flat"
+            @click="editKanban(kanban)"
+        >
+            <i class="fa fa-pencil-alt text-secondary"></i>
+        </a>
 
-            <button v-if="$userId == kanban.owner_id"
-                v-permission="'kanban_create'"
-                class="btn btn-flat"
-                @click="share()"
-            >
-                <i class="fa fa-share-alt text-secondary"></i>
-            </button>
+        <button v-if="$userId == kanban.owner_id"
+            v-permission="'kanban_create'"
+            class="btn btn-flat"
+            @click="share()"
+        >
+            <i class="fa fa-share-alt text-secondary"></i>
+        </button>
 
-            <a
-                :href="'/export_csv/' + kanban.id"
-                class="btn p-0"
-            >
-                <i class="fa fa-file-csv text-secondary"></i>
-            </a>
+        <a
+            :href="'/export_csv/' + kanban.id"
+            class="btn p-0"
+        >
+            <i class="fa fa-file-csv text-secondary"></i>
+        </a>
 
-            <a
-                :href="'/export_pdf/' + kanban.id"
-                class="btn p-0"
-            >
-                <i class="fa fa-file-pdf text-secondary"></i>
-            </a>
+        <a
+            :href="'/export_pdf/' + kanban.id"
+            class="btn p-0"
+        >
+            <i class="fa fa-file-pdf text-secondary"></i>
+        </a>
     </teleport>
 </template>
 <script>

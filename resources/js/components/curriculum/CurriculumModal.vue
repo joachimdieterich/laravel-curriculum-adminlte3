@@ -221,7 +221,6 @@
                                         css="mb-0"
                                         option_id="code"
                                         option_label="lang_de"
-                                        :list="this.states"
                                         :url="'/countries/' + this.form.country_id + '/states/'"
                                         :term="this.form.country_id"
                                         model="state"

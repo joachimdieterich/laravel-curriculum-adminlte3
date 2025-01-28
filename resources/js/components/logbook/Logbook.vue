@@ -1,10 +1,14 @@
 <template>
     <div class="row">
-        <div v-permission="'logbook_entry_create'"
-             class="col-md-12 pl-3 pt-0 pb-2">
-            <button id="add-logbook-entry"
-                    class="btn btn-success"
-                    @click.prevent="add()">
+        <div
+            v-permission="'logbook_entry_create'"
+            class="col-md-12 pl-3 pt-0 pb-2"
+        >
+            <button
+                id="add-logbook-entry"
+                class="btn btn-success"
+                @click.prevent="add()"
+            >
                 {{ trans('global.logbookEntry.create') }}
             </button>
             <button
@@ -24,23 +28,23 @@
             </button>-->
         </div>
 
-        <div class="col-md-12"
-             v-if="showPrintOptions">
+        <div v-if="showPrintOptions"
+            class="col-md-12"
+        >
             <LogbookPrintOptions
                 :logbook="logbook"
-                :period="period">
-            </LogbookPrintOptions>
+                :period="period"
+            />
         </div>
 
         <div class="col-md-12">
-            <LogbookEntry
-                v-for="(entry, index) in entries"
+            <LogbookEntry v-for="(entry, index) in entries"
                 v-bind:key="entry.id"
                 :first="index === 0"
                 :entry="entry"
                 :search="search"
                 :logbook="logbook"
-            ></LogbookEntry>
+            />
         </div>
         <!-- /.col -->
 <!--
@@ -48,28 +52,28 @@
         <lms-modal></lms-modal>
 -->
         <Teleport to="body">
-            <AbsenceModal></AbsenceModal>
-            <ContentModal></ContentModal>
-            <TaskModal></TaskModal>
-            <MediumPreviewModal></MediumPreviewModal>
-            <subscribe-objective-modal></subscribe-objective-modal>
-            <lms-modal></lms-modal>
+            <AbsenceModal/>
+            <ContentModal/>
+            <TaskModal/>
+            <MediumPreviewModal/>
+            <subscribe-objective-modal/>
+            <lms-modal/>
             <MediumModal
                 subscribable_type="App\\Logboook"
                 :subscribable_id="logbook.id"
-            ></MediumModal>
-            <LogbookModal></LogbookModal>
-            <LogbookEntryModal></LogbookEntryModal>
-            <LogbookEntrySubjectModal></LogbookEntrySubjectModal>
-            <SubscribeModal></SubscribeModal>
+            />
+            <LogbookModal/>
+            <LogbookEntryModal/>
+            <LogbookEntrySubjectModal/>
+            <SubscribeModal/>
         </Teleport>
-        <teleport
-            v-if="$userId == logbook.owner_id"
+        <teleport v-if="$userId == logbook.owner_id"
             to="#customTitle"
         >
             <small>{{ logbook.title }}</small>
-            <a class="btn btn-flat"
-               @click="editLogbook(logbook)"
+            <a
+                class="btn btn-flat"
+                @click="editLogbook(logbook)"
             >
                 <i class="fa fa-pencil-alt text-secondary"></i>
             </a>
@@ -100,7 +104,7 @@ import LogbookEntrySubjectModal from "../logbookEntry/LogbookEntrySubjectModal.v
 
 export default {
     name: "Logbook",
-    components:{
+    components: {
         LogbookEntrySubjectModal,
         LogbookEntryModal,
         AbsenceModal,
@@ -113,7 +117,7 @@ export default {
         LogbookEntry,
         MediumModal,
         SubscribeModal,
-        TaskModal
+        TaskModal,
     },
     props: {
         logbook: {

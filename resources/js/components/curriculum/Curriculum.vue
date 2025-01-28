@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="this.course"
+        <div v-if="course"
             v-permission="'achievement_access'"
         >
             <div
@@ -11,7 +11,7 @@
                     id="curriculum-user-datatable"
                     :columns="columns"
                     :options="options"
-                    :ajax="'/courses/list?course_id=' + this.course?.id"
+                    :ajax="'/courses/list?course_id=' + course.id"
                     :search="search"
                     width="100%"
                 />
@@ -91,7 +91,7 @@
                             {{ trans('global.glossar.title_singular') }}
                         </a>
                         <a v-else
-                            v-peermission="'glossar_create'"
+                            v-permission="'glossar_create'"
                             id="glossar-nav-tab"
                             class="nav-link link-muted"
                             :href="'/glossar/create?subscribable_type=App\\Curriculum&subscribable_id=' + curriculum.id"
@@ -181,18 +181,6 @@
                             <i class="fas fa-cloud-download-alt"></i>
                         </a>
                     </li>
-                    <li v-if="$userId == curriculum.owner_id"
-                        v-permission="'curriculum_edit'"
-                        class="nav-item"
-                    >
-                        <a
-                            id="edit-curriculum-nav-tab"
-                            class="nav-link link-muted"
-                            @click="edit()"
-                        >
-                            <i class="fa fa-pencil-alt"></i>
-                        </a>
-                    </li>
                 </ul>
 
                 <div
@@ -243,7 +231,7 @@
                         role="tab"
                         aria-labelledby="glossar-nav-tab"
                     >
-                        <glossars :glossar="curriculum.glossar"></glossars>
+                        <glossars :glossar="curriculum.glossar"/>
                     </div>
                     <div
                         id="description-tab"
@@ -253,7 +241,7 @@
                     >
                         <div
                             class="card p-3"
-                            v-dompurify-html="curriculum.description"
+                            v-dompurify-html="currentCurriculum.description"
                         ></div>
                     </div>
                 </div>
@@ -271,9 +259,16 @@
         </Teleport>
 
         <teleport to="#customTitle">
-            <small>{{ this.curriculum.title }}</small>
-            <button v-if="$userId == this.curriculum.owner_id"
-                v-permission="'kanban_create'"
+            <small>{{ currentCurriculum.title }}</small>
+            <a
+                class="btn btn-flat"
+                @click="edit()"
+            >
+                <i class="fa fa-pencil-alt text-secondary"></i>
+            </a>
+
+            <button v-if="$userId == curriculum.owner_id"
+                v-permission="'curriculum_edit'"
                 class="btn btn-flat"
                 @click="share()"
             >
@@ -302,7 +297,7 @@ import MediumExportModal from "../media/MediumExportModal.vue";
 DataTable.use(DataTablesCore);
 
 export default {
-    name: "curriculum",
+    name: "Curriculum",
     components: {
         MediumExportModal,
         MediumModal,
@@ -319,10 +314,10 @@ export default {
     },
     props: {
         curriculum: {
-            default: null,
+            type: Object,
         },
         course: {
-            default: null,
+            type: Object,
         },
        /* usersCurricula: {
             default: null
@@ -337,7 +332,7 @@ export default {
             type: Object,
         },
     },
-    setup() { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters
+    setup() {
         const store = useDatatableStore();
         const globalStore = useGlobalStore();
         return {
@@ -375,9 +370,8 @@ export default {
             this.$refs.terminalObjectives.externalEvent(this.store.getSelectedIds('curriculum-user-datatable'));
         }.bind(this));
 
-        this.$eventHub.on('curriculum-updated', (curriculum) => {
-            this.currentCurriculum = curriculum;
-            this.globalStore?.closeModal('curriculum-modal');
+        this.$eventHub.on('curriculum-updated', (updatedCurriculum) => {
+            Object.assign(this.currentCurriculum, updatedCurriculum);
         });
     },
     methods: {

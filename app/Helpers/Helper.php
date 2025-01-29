@@ -95,24 +95,28 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
 
             $term = $input['term'];
 
-            $count = Count($collection->where(  // count all enties FIRST with filter to get pagination working
-                function ($query) use ($field, $term) {
-                    foreach ((array)$field as $f) {
-                        $query->orWhere($f, 'LIKE', '%' . $term . '%');
-                    }
-                })
-            );
+            $allEntries = $collection->filter(function($obj) use ($field, $term) {
+                foreach ((array)$field as $f) {
+                    // if any match is true, return the entry
+                    if (str_contains($obj[$f], $term)) return true;
+                }
+                return false;
+            });
 
-            $entries = $collection->where(
-                function ($query) use ($field, $term) {
-                    foreach ((array)$field as $f) {
-                        $query->orWhere($f, 'LIKE', '%' . $term . '%');
-                    }
-                })
-                ->sortBy($orderby)
+            $count = Count($allEntries);
+
+            $entries = $allEntries
+                ->sortBy($orderby,SORT_NATURAL)
                 ->skip($offset)
                 ->take($resultCount)
-                ->select([$table . $id, DB::raw($text . ' as text')]);
+                ->select([$table . $id, $text])
+                ->map(function($entry) use ($table, $id, $text) {
+                    return [
+                        'id' => $entry[$table.$id],
+                        'text' => $entry[$text],
+                    ];
+                })
+                ->values();
 
             $endCount = $offset + $resultCount;
             $morePages = $count > $endCount;

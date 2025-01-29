@@ -106,7 +106,7 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
             $count = Count($allEntries);
 
             $entries = $allEntries
-                ->sortBy($orderby,SORT_NATURAL)
+                ->sortBy($orderby, SORT_NATURAL)
                 ->skip($offset)
                 ->take($resultCount)
                 ->select([$table . $id, $text])

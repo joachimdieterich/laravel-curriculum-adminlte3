@@ -9,11 +9,11 @@ if (! function_exists('getEntriesForSelect2ByModel')) {
      * helper function to paginate on select2 fields
      * @param $model
      * @param string|array $field one or multiple fields to search term
-     * @param string $oderby
+     * @param string $orderby
      * @param string $text
      * @return \Illuminate\Http\JsonResponse
      */
-    function getEntriesForSelect2ByModel($model, $field = 'title', $oderby = 'title', $text = 'title', $id = 'id')
+    function getEntriesForSelect2ByModel($model, $field = 'title', $orderby = 'title', $text = 'title', $id = 'id')
     {
         $input = request()->validate([
             'page' => 'sometimes|integer',
@@ -50,7 +50,7 @@ if (! function_exists('getEntriesForSelect2ByModel')) {
                         $query->orWhere($f, 'LIKE', '%' . $term . '%');
                     }
                 })
-                ->orderBy($oderby)
+                ->orderBy($orderby)
                 ->skip($offset)
                 ->take($resultCount)
                 ->get([DB::raw( $id . ' as id,' . $text . ' as text')]); //match given $text and $id to get proper values
@@ -73,9 +73,8 @@ if (! function_exists('getEntriesForSelect2ByModel')) {
 }
 if (! function_exists('getEntriesForSelect2ByCollection'))
 {
-    function getEntriesForSelect2ByCollection($collection, $table = '', $field = 'title', $oderby = 'title', $text = 'title', $id = 'id' )
+    function getEntriesForSelect2ByCollection($collection, $table = '', $field = 'title', $orderby = 'title', $text = 'title', $id = 'id' )
     {
-
         $input = request()->validate([
             'page' => 'sometimes|integer',
             'term' => 'sometimes|string|max:255|nullable',
@@ -102,7 +101,7 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
                         $query->orWhere($f, 'LIKE', '%' . $term . '%');
                     }
                 })
-                ->get());
+            );
 
             $entries = $collection->where(
                 function ($query) use ($field, $term) {
@@ -110,11 +109,10 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
                         $query->orWhere($f, 'LIKE', '%' . $term . '%');
                     }
                 })
-                ->orderBy($oderby)
+                ->sortBy($orderby)
                 ->skip($offset)
                 ->take($resultCount)
-                ->select([$table . $id, DB::raw($text . ' as text')])
-                ->get();
+                ->select([$table . $id, DB::raw($text . ' as text')]);
 
             $endCount = $offset + $resultCount;
             $morePages = $count > $endCount;

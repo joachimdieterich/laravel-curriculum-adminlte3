@@ -436,7 +436,7 @@ class CurriculumController extends Controller
     public function references()
     {
         if (request()->wantsJson()) {
-            return ['message' => auth()->user()->currentCurriculaEnrolments()];
+            return getEntriesForSelect2ByCollection(auth()->user()->currentCurriculaEnrolments());
         }
     }
 

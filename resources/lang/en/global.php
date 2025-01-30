@@ -746,6 +746,8 @@ return [
         'title_singular' => 'Log',
         'create' => 'Create logbook entry',
         'edit' => 'Edit logbook entry',
+        'delete' => 'Delete logbook entry',
+        'delete_helper' => 'Should this logbook entry and all its corresponding data be deleted?',
         'subject' => 'Choose subject',
         'no_subject' => 'No subject selected',
         'addition' => 'Make addition to logbook entry',

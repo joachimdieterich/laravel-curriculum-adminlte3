@@ -7,7 +7,7 @@
             <button
                 id="add-logbook-entry"
                 class="btn btn-success"
-                @click.prevent="add()"
+                @click.prevent="openEntryModal()"
             >
                 {{ trans('global.logbookEntry.create') }}
             </button>
@@ -121,15 +121,14 @@ export default {
     },
     props: {
         logbook: {
-            default: null
+            default: null,
         },
         period: {
-            default: null
+            default: null,
         },
     },
-    setup () { //use database store
+    setup() {
         const globalStore = useGlobalStore();
-
         return {
             globalStore,
         }
@@ -149,14 +148,13 @@ export default {
 
         this.currentLogbook = this.logbook;
 
+        // entry events
         this.$eventHub.on('logbook-entry-added', (entry) => {
             this.entries.push(entry);
         });
 
         this.$eventHub.on('logbook-entry-updated', (updated) => {
-            const index = this.entries.findIndex(
-                entry => entry.id === updated.id
-            );
+            const index = this.entries.findIndex(entry => entry.id === updated.id);
 
             Object.assign(this.entries[index], updated);
         });
@@ -166,22 +164,22 @@ export default {
             this.entries.splice(index, 1);
         });
 
-        this.$eventHub.on('logbook-updated', (logbook) => {
-            Object.assign(this.currentLogbook, logbook);
-        });
-
         this.$eventHub.on('update-subject-badge', (data) => {
             let entry = this.entries.find(e => e.id === data.entry_id);
 
             entry.subject = data.subject;
         });
+
+        // logbook events
+        this.$eventHub.on('logbook-updated', (logbook) => {
+            Object.assign(this.currentLogbook, logbook);
+        });
     },
     methods: {
-        add() {
-            this.globalStore?.showModal('logbook-entry-modal',
-                {
-                    'logbook_id': this.logbook.id
-                });
+        openEntryModal() {
+            this.globalStore?.showModal('logbook-entry-modal',{
+                logbook_id: this.logbook.id,
+            });
         },
         editLogbook(logbook) {
             this.globalStore?.showModal('logbook-modal', logbook);
@@ -190,17 +188,16 @@ export default {
             this.showPrintOptions = !this.showPrintOptions;
         },
         share() {
-            this.globalStore?.showModal('subscribe-modal',
-                {
-                    'modelId': this.logbook.id,
-                    'modelUrl': 'logbook',
-                    'shareWithUsers': true,
-                    'shareWithGroups': true,
-                    'shareWithOrganizations': true,
-                    'shareWithToken': true,
-                    'canEditCheckbox': true,
-                });
+            this.globalStore?.showModal('subscribe-modal',{
+                modelId: this.logbook.id,
+                modelUrl: 'logbook',
+                shareWithUsers: true,
+                shareWithGroups: true,
+                shareWithOrganizations: true,
+                shareWithToken: true,
+                canEditCheckbox: true,
+            });
         },
-    }
+    },
 }
 </script>

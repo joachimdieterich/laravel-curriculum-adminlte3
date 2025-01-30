@@ -35,7 +35,7 @@
                     <button
                         type="button"
                         class="btn btn-tool pt-3"
-                        @click.stop="destroy()"
+                        @click.stop="confirmItemDelete()"
                     >
                         <i class="fa fa-trash text-danger"></i>
                     </button>
@@ -269,9 +269,24 @@
                 </div>
             </div>
         </div>
+        <Teleport to="body">
+            <ConfirmModal
+                :showConfirm="this.showConfirm"
+                :title="trans('global.logbookEntry.delete')"
+                :description="trans('global.logbookEntry.delete_helper')"
+                @close="() => {
+                    this.showConfirm = false;
+                }"
+                @confirm="() => {
+                    this.showConfirm = false;
+                    this.destroy(this.entry);
+                }"
+            />
+        </Teleport>
     </div>
 </template>
 <script>
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import Absences from '../absence/Absences.vue';
 import Contents from '../content/Contents.vue';
 import Tasks from '../task/Tasks.vue';
@@ -302,6 +317,7 @@ export default {
             timePeriod: '',
             help: true,
             isEditable: this.editable,
+            showConfirm: false,
             search: '',
         };
     },
@@ -316,6 +332,9 @@ export default {
                     id: this.entry.id,
                     subject_id: this.entry.subject_id,
                 });
+        },
+        confirmItemDelete() {
+            this.showConfirm = true;
         },
         destroy() {
             axios.delete('/logbookEntries/' + this.entry.id)
@@ -433,6 +452,7 @@ export default {
         'entry.end': function() { this.postDate(); },
     },
     components: {
+        ConfirmModal,
         ReferenceList,
         Absences,
         Avatar,

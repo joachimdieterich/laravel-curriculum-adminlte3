@@ -779,6 +779,8 @@ return [
         'title_singular' => 'Logbucheintrag',
         'create' => 'Logbucheintrag erstellen',
         'edit' => 'Logbucheintrag bearbeiten',
+        'delete' => 'Logbucheintrag löschen',
+        'delete_helper' => 'Soll der Logbucheintrag sowie die zugehörigen Daten gelöscht werden?',
         'subject' => 'Fach auswählen',
         'no_subject' => 'Kein Fach ausgewählt',
         'addition' => 'Logbucheintrag ergänzen',

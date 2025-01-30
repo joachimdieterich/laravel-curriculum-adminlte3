@@ -19,21 +19,26 @@
                         </button>
                     </div>
                 </div>
+
                 <div
                     class="modal-body"
                     style="overflow-y: visible;"
                 >
-                    <Select2
-                        :id="'subject_' + component_id "
-                        :name="'subject_' + component_id "
-                        option_id="id"
-                        url="/subjects"
-                        model="subject"
-                        :selected="this.form.subject_id"
-                        @selectedValue="(id) => {
-                            this.form.subject_id = id;
-                        }"
-                    />
+                    <div class="card">
+                        <div class="card-body">
+                            <Select2
+                                :id="'subject_' + component_id "
+                                :name="'subject_' + component_id "
+                                option_id="id"
+                                url="/subjects"
+                                model="subject"
+                                :selected="this.form.subject_id"
+                                @selectedValue="(id) => {
+                                    this.form.subject_id = id;
+                                }"
+                            />
+                        </div>
+                    </div>
                 </div>
 
                 <div class="card-footer">
@@ -114,4 +119,3 @@ export default {
     },
 }
 </script>
-=

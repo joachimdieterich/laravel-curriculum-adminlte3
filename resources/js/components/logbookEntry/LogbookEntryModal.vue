@@ -7,12 +7,12 @@
             <div class="modal-container">
                 <div class="card-header">
                     <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.logbookEntry.create') }}
-                    </span>
-                        <span v-if="method === 'patch'">
-                        {{ trans('global.logbookEntry.edit') }}
-                    </span>
+                        <span v-if="method === 'post'">
+                            {{ trans('global.logbookEntry.create') }}
+                        </span>
+                            <span v-if="method === 'patch'">
+                            {{ trans('global.logbookEntry.edit') }}
+                        </span>
                     </h3>
                     <div class="card-tools">
                         <button
@@ -24,54 +24,58 @@
                         </button>
                     </div>
                 </div>
-                <div class="modal-body">
-                    <div
-                        class="form-group"
-                        :class="form.errors.title ? 'has-error' : ''"
-                    >
-                        <input
-                            type="text"
-                            id="title"
-                            name="title"
-                            class="form-control"
-                            v-model="form.title"
-                            :placeholder="trans('global.title') + ' *'"
-                            required
-                        />
-                        <p
-                            v-if="form.errors.title"
-                            class="help-block"
-                            v-text="form.errors.title[0]"
-                        ></p>
-                    </div>
 
-                    <div class="form-group">
-                        <Editor
-                            id="description"
-                            name="description"
-                            class="form-control"
-                            :init="tinyMCE"
-                            v-model="form.description"
-                        />
-                        <p class="help-block"
-                           v-if="form.errors.description"
-                           v-text="form.errors.description[0]"
-                        ></p>
-                    </div>
-                    <div class="form-group">
-                        <VueDatePicker
-                            id="date"
-                            name="date"
-                            v-model="form.date"
-                            :range="{ partialRange: false }"
-                            format="dd.MM.yyyy HH:mm"
-                            :teleport="true"
-                            locale="de"
-                            :placeholder="trans('global.selectDateRange')"
-                            :select-text="trans('global.ok')"
-                            :cancel-text="trans('global.close')"
-                            @cleared="form.date = ['', '']"
-                        />
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-body">
+                            <div
+                                class="form-group"
+                                :class="form.errors.title ? 'has-error' : ''"
+                            >
+                                <input
+                                    type="text"
+                                    id="title"
+                                    name="title"
+                                    class="form-control"
+                                    v-model="form.title"
+                                    :placeholder="trans('global.title') + ' *'"
+                                    required
+                                />
+                                <p
+                                    v-if="form.errors.title"
+                                    class="help-block"
+                                    v-text="form.errors.title[0]"
+                                ></p>
+                            </div>
+        
+                            <div class="form-group">
+                                <Editor
+                                    id="description"
+                                    name="description"
+                                    class="form-control"
+                                    :init="tinyMCE"
+                                    v-model="form.description"
+                                />
+                                <p class="help-block"
+                                   v-if="form.errors.description"
+                                   v-text="form.errors.description[0]"
+                                ></p>
+                            </div>
+
+                            <VueDatePicker
+                                id="date"
+                                name="date"
+                                v-model="form.date"
+                                :range="{ partialRange: false }"
+                                format="dd.MM.yyyy HH:mm"
+                                :teleport="true"
+                                locale="de"
+                                :placeholder="trans('global.selectDateRange')"
+                                :select-text="trans('global.ok')"
+                                :cancel-text="trans('global.close')"
+                                @cleared="form.date = ['', '']"
+                            />
+                        </div>
                     </div>
                 </div>
 

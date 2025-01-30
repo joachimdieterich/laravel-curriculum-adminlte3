@@ -259,8 +259,8 @@
                         <button
                             v-if="this.activetab == 'create_meeting'"
                             id="meeting-save"
-                            class="btn btn-primary"
-                            @click="submit(method)"
+                            class="btn btn-primary ml-3"
+                            @click="submit()"
                         >
                             {{ trans('global.save') }}
                         </button>
@@ -328,12 +328,14 @@ export default {
         }
     },
     methods: {
-        submit(method) {
-            if (method == 'patch') {
+        submit() {
+            if (this.method == 'patch') {
                 this.update();
             } else {
                 this.add();
             }
+
+            this.globalStore.closeModal(this.$options.name);
         },
         add() {
             axios.post(this.url, this.form)
@@ -345,7 +347,6 @@ export default {
                 });
         },
         update() {
-            console.log('update');
             axios.patch(this.url + '/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('meeting-updated', r.data);

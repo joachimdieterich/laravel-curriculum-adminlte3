@@ -1,7 +1,8 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
+            @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -200,12 +201,12 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link curriculummedia table lists"
+                    "autolink link curriculummedia table lists autoresize"
                 ],
                 {
                     public: 1,
                     subscribeSelected: true,
-                    subscribable_type: 'App\\\Curriculum',
+                    subscribable_type: 'App\\Curriculum',
                     subscribable_id: this.form?.curriculum_id,
                     callbackId: this.component_id,
                 }),

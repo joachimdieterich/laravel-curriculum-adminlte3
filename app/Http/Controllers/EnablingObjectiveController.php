@@ -43,7 +43,7 @@ class EnablingObjectiveController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         if (request()->wantsJson()) {
-            return $enablingObjective;
+            return EnablingObjective::with('achievements')->without('terminalObjective')->find($enablingObjective->id);
         }
     }
 
@@ -85,17 +85,16 @@ class EnablingObjectiveController extends Controller
         abort_unless($enablingObjective->isAccessible(), 403);
 
         $input = $this->validateRequest();
-
-        //first get existing data to later adjust order_id
-        $old_objective = EnablingObjective::find($input['id']);
-
+        
         if ($request->has('order_id')) {
             if (request()->wantsJson()) {
-                return ['message' => $this->toggleOrderId($old_objective,$input['order_id'])];
+                //first get existing data to adjust order_id
+                $old_objective = EnablingObjective::find($input['id']);
+                return $this->toggleOrderId($old_objective, $input['order_id']);
             }
         }
         if (request()->wantsJson()) {
-            return ['message' => $enablingObjective->update([
+            $enablingObjective->update([
                 'title'                 => $input['title'],
                 'description'           => $input['description'],
                 'time_approach'         => $input['time_approach'],
@@ -103,7 +102,8 @@ class EnablingObjectiveController extends Controller
                 'terminal_objective_id' => $input['terminal_objective_id'],
                 'level_id'              => format_select_input($input['level_id']),
                 'visibility'            => $input['visibility']
-            ])];
+            ]);
+            return $enablingObjective->without(['terminalObjective', 'curriculum', 'owner'])->find($enablingObjective->id);
         }
     }
 

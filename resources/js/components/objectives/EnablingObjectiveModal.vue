@@ -1,111 +1,139 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
+            @click.self="globalStore.closeModal($options.name)"
         >
-        <div class="modal-container">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.enablingObjective.create') }}
-                    </span>
-                    <span v-if="method === 'patch'">
-                        {{ trans('global.enablingObjective.edit') }}
-                    </span>
-                </h3>
-                <div class="card-tools">
-                    <button type="button"
+            <div class="modal-container">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span v-if="method === 'post'">
+                            {{ trans('global.enablingObjective.create') }}
+                        </span>
+                        <span v-if="method === 'patch'">
+                            {{ trans('global.enablingObjective.edit') }}
+                        </span>
+                    </h3>
+                    <div class="card-tools">
+                        <button
+                            type="button"
                             class="btn btn-tool"
-                            @click="globalStore?.closeModal($options.name)">
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                <div class="form-group">
-                    <label for="description">
-                        {{ trans('global.enablingObjective.fields.title') }}
-                    </label>
-                    <Editor
-                        id="title"
-                        name="title"
-                        :placeholder="trans('global.enablingObjective.fields.title')"
-                        class="form-control"
-                        :init="tinyMCE"
-                        :initial-value="form.title"
-                    ></Editor>
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="description">
-                        {{ trans('global.map.fields.description') }}
-                    </label>
-                    <Editor
-                        id="description"
-                        name="description"
-                        :placeholder="trans('global.enablingObjective.fields.description')"
-                        class="form-control"
-                        :init="tinyMCE"
-                        :initial-value="form.description"
-                    ></Editor>
+                <div class="modal-body">
+                    <div class="card">
+                        <div
+                            class="card-header"
+                            data-card-widget="collapse"
+                        >
+                            <div class="card-title">{{ trans('global.general') }}</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="description">
+                                    {{ trans('global.title') }} *
+                                </label>
+                                <Editor
+                                    id="title"
+                                    name="title"
+                                    class="form-control"
+                                    :init="tinyMCE"
+                                    v-model="form.title"
+                                />
+                            </div>
+        
+                            <div class="form-group">
+                                <label for="description">
+                                    {{ trans('global.map.fields.description') }}
+                                </label>
+                                <Editor
+                                    id="description"
+                                    name="description"
+                                    class="form-control"
+                                    :init="tinyMCE"
+                                    v-model="form.description"
+                                />
+                            </div>
+        
+                            <Select2
+                                id="level_id"
+                                name="level_id"
+                                url="/levels"
+                                model="level"
+                                :selected="this.form.level_id"
+                                @selectedValue="(id) => {
+                                    this.form.level_id = id[0];
+                                }"
+                            />
+        
+                            <div>
+                                <label for="time_approach">{{ trans('global.enablingObjective.fields.time_approach') }}</label>
+                                <input
+                                    id="time_approach"
+                                    type="text"
+                                    name="title"
+                                    class="form-control"
+                                    v-model="form.time_approach"
+                                />
+                                <p class="help-block" v-if="form.errors.time_approach" v-text="form.errors.time_approach[0]"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div
+                            class="card-header"
+                            data-card-widget="collapse"
+                        >
+                            <div class="card-title">{{ trans('global.display') }}</div>
+                        </div>
+                        <div class="card-body">
+                            <div>
+                                <span class="custom-control custom-switch custom-switch-on-green">
+                                    <input
+                                        :id="'visibility_' + form.id"
+                                        type="checkbox"
+                                        class="custom-control-input pt-1 pointer"
+                                        v-model="form.visibility"
+                                    />
+                                    <label
+                                        class="custom-control-label text-muted pointer"
+                                        :for="'visibility_' + form.id"
+                                    >
+                                        {{ trans('global.visibility') }}
+                                    </label>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <Select2
-                    id="level_id"
-                    name="level_id"
-                    url="/levels"
-                    model="level"
-                    :selected="this.form.level_id"
-                    @selectedValue="(id) => {
-                        this.form.level_id = id;
-                    }"
-                >
-                </Select2>
-
-                <div class="form-group ">
-                    <label for="time_approach">{{ trans('global.enablingObjective.fields.time_approach') }}</label>
-                    <input
-                        type="text" id="time_approach"
-                        name="title"
-                        class="form-control"
-                        v-model="form.time_approach"
-                    />
-                    <p class="help-block" v-if="form.errors.time_approach" v-text="form.errors.time_approach[0]"></p>
-                </div>
-                <div class="form-group ">
-                    <span class="custom-control custom-switch custom-switch-on-green">
-                        <input  v-model="form.visibility"
-                                type="checkbox"
-                                class="custom-control-input pt-1 "
-                                :id="'visibility_' + form.id">
-                        <label class="custom-control-label text-muted"
-                               :for="'visibility_' + form.id" >
-                            {{ trans('global.visibility') }}
-                        </label>
+                <div class="card-footer">
+                    <span class="pull-right">
+                        <button
+                            id="enablingObjective-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="enablingObjective-save"
+                            class="btn btn-primary ml-3"
+                            @click="submit(method)"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
                     </span>
                 </div>
-            </div>
-
-            <div class="card-footer">
-                 <span class="pull-right">
-                     <button
-                         id="enablingObjective-cancel"
-                         type="button"
-                         class="btn btn-default"
-                         @click="globalStore?.closeModal($options.name)">
-                         {{ trans('global.cancel') }}
-                     </button>
-                     <button
-                         id="enablingObjective-save"
-                         class="btn btn-primary"
-                         @click="submit(method)" >
-                         {{ trans('global.save') }}
-                     </button>
-                </span>
             </div>
         </div>
-    </div>
     </Transition>
 </template>
 <script>
@@ -134,27 +162,26 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/enablingObjectives',
             form: new Form({
-                'id': '',
-                'title': '',
-                'description': '',
-                'time_approach': '',
-                'curriculum_id': '',
-                'terminal_objective_id': '',
-                'level_id': null,
-                'visibility': true,
+                id: '',
+                title: '',
+                description: '',
+                time_approach: '',
+                curriculum_id: '',
+                terminal_objective_id: '',
+                level_id: null,
+                visibility: true,
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link curriculummedia table lists"
+                    "autolink link curriculummedia table lists autoresize"
                 ],
                 {
-                    'public': 1,
-                    'referenceable_type': 'App\\\Curriculum',
-                    'referenceable_id': this.form?.curriculum_id,
-                    'eventHubCallbackFunction': 'insertContent',
-                    'eventHubCallbackFunctionParams': this.component_id
+                    public: 1,
+                    referenceable_type: 'App\\Curriculum',
+                    referenceable_id: this.form?.curriculum_id,
+                    eventHubCallbackFunction: 'insertContent',
+                    eventHubCallbackFunctionParams: this.component_id,
                 }
             ),
         }
@@ -166,31 +193,30 @@ export default {
     },
     methods: {
         submit(method) {
-            this.form.title = tinyMCE.get('title').getContent();
-            this.form.description = tinyMCE.get('description').getContent();
             if (method == 'patch') {
                 this.update();
             } else {
                 this.add();
             }
+
+            this.globalStore.closeModal(this.$options.name);
         },
         add() {
-            axios.post(this.url, this.form)
+            axios.post('/enablingObjectives', this.form)
                 .then(r => {
-                    this.$eventHub.emit('enablingObjective-added', r.data);
+                    this.$eventHub.emit('enabling-objective-added', r.data);
                 })
                 .catch(e => {
-                    console.log(e.response);
+                    console.log(e);
                 });
         },
         update() {
-            console.log('update');
-            axios.patch(this.url + '/' + this.form.id, this.form)
+            axios.patch('/enablingObjectives/' + this.form.id, this.form)
                 .then(r => {
-                    this.$eventHub.emit('enablingObjective-updated', r.data);
+                    this.$eventHub.emit('enabling-objective-updated', r.data);
                 })
                 .catch(e => {
-                    console.log(e.response);
+                    console.log(e);
                 });
         },
     },
@@ -205,19 +231,6 @@ export default {
                     this.form.title = this.$decodeHTMLEntities(this.form.title);
                     this.form.description = this.$decodeHtml(this.form.description);
 
-                    this.tinyMCE = this.$initTinyMCE(
-                        [
-                            "autolink link curriculummedia table lists autoresize"
-                        ],
-                        {
-                            'public': 1,
-                            'subscribeSelected': true,
-                            'subscribable_type': 'App\\\Curriculum',
-                            'subscribable_id': this.form?.curriculum_id,
-                            'callback': 'insertContent',
-                            'callbackId': this.component_id
-                        });
-
                     if (this.form.id !== '') {
                         this.method = 'patch';
                     } else {
@@ -229,4 +242,3 @@ export default {
     },
 }
 </script>
-

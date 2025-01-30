@@ -3,6 +3,7 @@
     <div v-if="type === 'createterminal'"
         class="box box-objective user-select-none pointer"
         :style="{ 'background-color': '#fff'}"
+        @click.prevent="openTerminalModal()"
     >
         <h1
             class="h5 position-absolute text-center w-100"
@@ -10,19 +11,14 @@
         >
             {{ trans("global.terminalObjective.title_singular") }}
         </h1>
-
-        <div
-            style="text-align: center; padding: 25px; font-size: 100px;"
-            @click.prevent="openTerminalModal()"
-        >
-            +
-        </div>
+        <div style="text-align: center; padding: 25px; font-size: 100px;">+</div>
     </div>
 
     <!--  v-else-if create enabling-->
     <div v-else-if="type === 'createenabling'"
         class="box box-objective user-select-none pointer"
         :style="{ 'background-color': backgroundcolor }"
+        @click.prevent="openEnablingModal()"
     >
         <h1
             class="h5 position-absolute text-center w-100"
@@ -31,12 +27,7 @@
             {{ trans("global.enablingObjective.title_singular") }}
         </h1>
 
-        <div
-            style="text-align: center; padding: 25px; font-size: 100px;"
-            @click.prevent="openEnablingModal()"
-        >
-            +
-        </div>
+        <div style="text-align: center; padding: 25px; font-size: 100px;">+</div>
     </div>
 
     <!--  v-else-if render existing objective-->

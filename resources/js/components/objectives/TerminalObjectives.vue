@@ -224,11 +224,25 @@ export default {
 
         //enabling Objectives
         this.$eventHub.on('enabling-objective-added', (enabling) => {
-            // 
+            let terminal;
+            for (const arr of Object.values(this.type_objectives)) {
+                terminal = arr.find(terminal => terminal.id === enabling.terminal_objective_id);
+                if (terminal) break;
+            }
+
+            terminal.enabling_objectives.push(enabling);
         });
 
-        this.$eventHub.on('enabling-bjective-updated', () => {
-            // 
+        this.$eventHub.on('enabling-objective-updated', (updatedEnabling) => {
+            let terminal;
+            for (const arr of Object.values(this.type_objectives)) {
+                terminal = arr.find(terminal => terminal.id === updatedEnabling.terminal_objective_id);
+                if (terminal) break;
+            }
+
+            let enabling = terminal.enabling_objectives.find(e => e.id === updatedEnabling.id);
+
+            Object.assign(enabling, updatedEnabling);
         });
 
         this.$eventHub.on('objective-deleted', (deletedObjective) => {

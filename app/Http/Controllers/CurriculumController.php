@@ -35,7 +35,7 @@ class CurriculumController extends Controller
 
     public function getTerminalObjectives(Curriculum $curriculum){
         if (request()->wantsJson()) {
-            return getEntriesForSelect2ByCollection($curriculum->terminalObjectives());
+            return getEntriesForSelect2ByCollection($curriculum->terminalObjectives);
         }
     }
 

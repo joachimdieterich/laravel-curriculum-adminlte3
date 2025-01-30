@@ -160,8 +160,15 @@ class TerminalObjective extends Model
 
     public static function booted() {
         static::deleting(function(TerminalObjective $terminal) { // before delete() method call this
+            $terminal->achievements()->delete();
             $terminal->subscriptions()->delete();
             $terminal->mediaSubscriptions()->delete();
+            $terminal->progresses()->delete();
+            $terminal->quoteSubscriptions()->delete();
+            $terminal->referenceSubscriptions()->delete();
+            $terminal->repositorySubscriptions()->delete();
+            $terminal->predecessors()->delete();
+            $terminal->successors()->delete();
             $terminal->enablingObjectives->each->delete();
         });
     }

@@ -126,51 +126,9 @@ class EnablingObjectiveController extends Controller
         foreach ($enablingObjective->contents as $content) {
             (new ContentController)->destroy($content, 'App\EnablingObjective', $enablingObjective->id); // delete or unsubscribe if content is still subscribed elsewhere
         }
-        // delete achievements
-        $enablingObjective->achievements()
-                ->where('referenceable_type', '=', 'App\EnablingObjective')
-                ->where('referenceable_id', '=', $enablingObjective->id)
-                ->delete();
-
-        // delete subscriptions
-        $enablingObjective->subscriptions()
-                ->where('enabling_objective_id', '=', $enablingObjective->id)
-                ->delete();
 
         // delete mediaSubscriptions
         $media = $enablingObjective->media;
-        $enablingObjective->mediaSubscriptions()
-                ->where('subscribable_type', '=', 'App\EnablingObjective')
-                ->where('subscribable_id', '=', $enablingObjective->id)
-                ->delete();
-
-        // delete quoteSubscriptions/Quotes
-        $enablingObjective->quoteSubscriptions()
-                ->where('quotable_type', '=', 'App\EnablingObjective')
-                ->where('quotable_id', '=', $enablingObjective->id)
-                ->delete();
-
-        // delete referenceSubscriptions
-        $enablingObjective->referenceSubscriptions()
-                ->where('referenceable_type', '=', 'App\EnablingObjective')
-                ->where('referenceable_id', '=', $enablingObjective->id)
-                ->delete();
-
-        // delete repositorySubscriptions
-        $enablingObjective->repositorySubscriptions()
-                ->where('subscribable_type', '=', 'App\EnablingObjective')
-                ->where('subscribable_id', '=', $enablingObjective->id)
-                ->delete();
-        // delete prerequisites entries (predecessors)
-        $enablingObjective->predecessors()
-            ->where('successor_type', '=', 'App\EnablingObjective')
-            ->where('successor_id', '=', $enablingObjective->id)
-            ->delete();
-        // delete prerequisites entries (successors)
-        $enablingObjective->successors()
-            ->where('predecessor_type', '=', 'App\EnablingObjective')
-            ->where('predecessor_id', '=', $enablingObjective->id)
-            ->delete();
 
         //delete objective
         $return = $enablingObjective->delete();
@@ -184,7 +142,7 @@ class EnablingObjectiveController extends Controller
         }
 
         if (request()->wantsJson()) {
-            return ['message' => $return];
+            return $return;
         }
         //return $return;
     }

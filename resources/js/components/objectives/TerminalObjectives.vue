@@ -203,7 +203,7 @@ export default {
         this.typetabs = this.objectivetypes.map(type => type.id);
         this.loaderEvent();
 
-        //terminal Objectives
+        // terminal objectives
         this.$eventHub.on('terminal-objective-added', (terminal) => {
             const type = terminal.type;
             if (!this.type_objectives[type.id]) {
@@ -222,7 +222,7 @@ export default {
             Object.assign(terminal, updatedTerminal);
         });
 
-        //enabling Objectives
+        // enabling objectives
         this.$eventHub.on('enabling-objective-added', (enabling) => {
             let terminal;
             for (const arr of Object.values(this.type_objectives)) {
@@ -246,8 +246,19 @@ export default {
         });
 
         this.$eventHub.on('objective-deleted', (deletedObjective) => {
-            this.activetab = (deletedObjective.type === 'terminal') ? deletedObjective.objective.objective_type_id : deletedObjective.objective.terminal_objective.objective_type_id;
-            // 
+            if (deletedObjective.terminal_objective_id === undefined) { // terminal
+                let index = this.type_objectives[deletedObjective.objective_type_id].findIndex(t => t.id === deletedObjective.id);
+                this.type_objectives[deletedObjective.objective_type_id].splice(index, 1);
+            } else { // enabling
+                let terminal;
+                for (const arr of Object.values(this.type_objectives)) {
+                    terminal = arr.find(t => t.id === deletedObjective.terminal_objective_id);
+                    if (terminal) break;
+                }
+
+                let index = terminal.enabling_objectives.findIndex(e => e.id === deletedObjective.id);
+                terminal.enabling_objectives.splice(index, 1);
+            }
         });
     },
     components: {

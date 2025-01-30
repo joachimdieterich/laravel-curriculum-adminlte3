@@ -49,7 +49,7 @@
                 </button>
                 <button v-else-if="entry.action === 'delete'"
                     class="dropdown-item text-danger"
-                    @click="emitDeleteEvent()"
+                    @click="emitDeleteEvent(entry)"
                 >
                     <i
                         class="mr-4"
@@ -108,8 +108,14 @@ export default {
         moveObjective(entry) {
             this.$modal.show(entry.value, {'objective': this.objective, 'method': 'PATCH' });
         },
-        emitDeleteEvent() {
-            this.$parent.$emit('eventDelete', this.objective)
+        emitDeleteEvent(entry) {
+            axios.delete('/' + entry.model + '/' + this.objective.id)
+                .then(res => {
+                    this.$eventHub.emit('objective-deleted', this.objective);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
         },
         action(entry) {
             this.$modal.show(entry.value);

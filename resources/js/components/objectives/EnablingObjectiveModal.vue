@@ -90,7 +90,7 @@
                             class="card-header"
                             data-card-widget="collapse"
                         >
-                            <div class="card-title">{{ trans('global.display') }}</div>
+                            <div class="card-title">{{ trans('global.permissions') }}</div>
                         </div>
                         <div class="card-body">
                             <div>

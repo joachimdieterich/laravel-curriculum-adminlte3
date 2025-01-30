@@ -44,7 +44,6 @@
             :settings="settings"
             :max_id="max_id"
             :textcolor="textcolor"
-            @eventDelete="deleteEvent"
             @eventSort="sortEvent"
         />
 
@@ -165,15 +164,6 @@ export default {
                 terminal_objective_id: this.objective.terminal_objective_id,
             });
         },
-        deleteEvent() {
-            axios.delete('/' + this.type + 'Objectives/' + this.objective.id)
-                .then(res => {
-                    this.$eventHub.emit('objective-deleted', {'objective': this.objective, 'type': this.type});
-                })
-                .catch(err => {
-                    console.log(err.response);
-                });
-        },
         async sortEvent(amount) {
             let objective = {
                 'id': this.objective.id,
@@ -270,7 +260,6 @@ export default {
         })
     },
     beforeDestroy: function() {
-        this.$root.$off('eventDelete');
         this.$root.$off('eventSort');
     },
     components: {

@@ -264,17 +264,22 @@ class CurriculumController extends Controller
 
     public function getObjectives(Curriculum $curriculum)
     {
-        $curriculum = Curriculum::with([
-            'terminalObjectives',
-            'terminalObjectives.enablingObjectives',
-            'terminalObjectives.enablingObjectives.achievements' => function ($query) {
-                $query->where('user_id', auth()->user()->id);
-            },
-        ])
-        ->find($curriculum->id);
+        $terminal = \App\TerminalObjective::select( 'id', 'title', 'description', 'color', 'time_approach', 'objective_type_id', 'order_id', 'uuid', 'visibility')
+            ->where('curriculum_id', $curriculum->id)
+            ->with([
+                'enablingObjectives' => function($query) {
+                    $query->select('id', 'terminal_objective_id', 'title', 'description', 'order_id', 'time_approach', 'uuid', 'visibility')
+                        ->without('terminalObjective')
+                        ->with(['achievements' => function($query) {
+                            $query->select('id', 'status')
+                                ->where('user_id', auth()->user()->id);
+                        }]);
+                },
+            ])
+            ->get();
 
         if (request()->wantsJson()) {
-            return $curriculum;
+            return $terminal;
         }
     }
 

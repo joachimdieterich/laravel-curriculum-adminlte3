@@ -367,7 +367,8 @@ export default {
         dt.on('select', function(e, dt, type, indexes) {
             let selection = dt.rows('.selected').data().toArray()
             this.store.setSelectedIds('curriculum-user-datatable', selection);
-            this.$refs.terminalObjectives.externalEvent(this.store.getSelectedIds('curriculum-user-datatable'));
+            // TODO: needs rework
+            // this.$refs.terminalObjectives.externalEvent(this.store.getSelectedIds('curriculum-user-datatable'));
         }.bind(this));
 
         this.$eventHub.on('curriculum-updated', (updatedCurriculum) => {
@@ -410,16 +411,6 @@ export default {
                 canEditCheckbox: true,
             });
         },
-        /*externalEvent: function(ids) {
-            this.reloadEnablingObjectives(ids);
-        },
-        async reloadEnablingObjectives(ids) {
-            try {
-                this.cur = (await axios.post('/curricula/'+this.curriculum.id+'/achievements', {'user_ids' : ids})).data.curriculum;
-            } catch(error) {
-                this.errors = error.response.data.errors;
-            }
-        },*/
     }
 }
 </script>

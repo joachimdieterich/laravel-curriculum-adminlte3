@@ -50,7 +50,7 @@
                 class="tab-pane"
                 :class="(activetab == typetab) ? 'active show' : ''"
             >
-                <div v-for="objective in filterTerminalObjectives(typetab)"
+                <div v-for="objective in type_objectives[typetab]"
                     :id="'terminalObjective_' + objective.id"
                 >
                     <div class="row">
@@ -132,67 +132,63 @@ export default {
     },
     data() {
         return {
-            settings: {
-                last: null,
-            },
+            settings: {},
             max_ids: {},
             typetabs: [],
             activetab: null,
             currentCurriculaEnrolments: null,
             currentTerminalObjective: null,
             currentEnablingObjective: null,
-            terminal_objectives: {},
+            type_objectives: {},
         }
     },
     methods: {
-        filterTerminalObjectives(typetab) {
-            let filteredTerminalObjectives = this.terminal_objectives;
-            filteredTerminalObjectives = filteredTerminalObjectives.filter(
-                t => t.objective_type_id === typetab
-            );
-            this.max_ids[typetab] = filteredTerminalObjectives[filteredTerminalObjectives.length-1].id;
-            return filteredTerminalObjectives;
-        },
         getTypeTitle(id) {
-            return this.objectivetypes.filter(
-                t => t.id === id
-            );
+            return this.objectivetypes.filter(type => type.id === id);
         },
         setActiveTab(typetab) {
             this.activetab = typetab;
         },
-        loadObjectives(objective_type_id = 0) {
+        loaderEvent(objective_type_id = 0) {
             axios.get('/curricula/' + this.curriculum.id + '/objectives')
                 .then(response => {
-                    this.terminal_objectives = response.data.terminal_objectives;
+                    let terminal = {};
+                    this.typetabs.forEach(type => terminal[type] = []);
 
-                    if (this.terminal_objectives.length !== 0) {
-                        this.settings.last = this.terminal_objectives[this.terminal_objectives.length-1].id;
-                        this.typetabs = [...new Set(this.terminal_objectives.map(t => t.objective_type_id))];
-                        if (this.curriculum.objective_type_order) {
-                            if (this.curriculum.objective_type_order.length ===  this.typetabs.length) {
-                                this.typetabs = this.curriculum.objective_type_order;
-                            }
+                    response.data.forEach(t => {
+                        terminal[t.objective_type_id].push(t);
+                    });
+
+                    this.typetabs.forEach(type => this.max_ids[type] = terminal[type][terminal[type].length - 1].id);
+
+                    Object.assign(this.type_objectives, terminal);
+
+                    if (this.type_objectives.length === 0) return;
+
+                    if (this.curriculum.objective_type_order) {
+                        if (this.curriculum.objective_type_order.length ===  this.typetabs.length) {
+                            this.typetabs = this.curriculum.objective_type_order;
                         }
-                        if (objective_type_id === 0) {
-                            this.activetab = this.typetabs[0];
-                        }
+                    }
+                    if (objective_type_id === 0) {
+                        this.activetab = this.typetabs[0];
                     }
                 })
                 .catch(e => {
                     console.log(e);
                 });
         },
-        externalEvent: function(ids) {
-            this.reloadEnablingObjectives(ids);
-        },
-        async reloadEnablingObjectives(ids) {
-            try {
-                this.terminal_objectives = (await axios.post('/curricula/'+this.curriculum.id+'/achievements', {'user_ids' : ids})).data.curriculum.terminal_objectives;
-            } catch(e) {
-                console.log(e);
-            }
-        },
+        // TODO: needs rework
+        // externalEvent: function(ids) {
+        //     this.reloadEnablingObjectives(ids);
+        // },
+        // async reloadEnablingObjectives(ids) {
+        //     try {
+        //         this.type_objectives = (await axios.post('/curricula/' + this.curriculum.id + '/achievements', { 'user_ids' : ids })).data.curriculum.terminal_objectives;
+        //     } catch(e) {
+        //         console.log(e);
+        //     }
+        // },
         handleTypeMoved() {
             // Send the entire list of statuses to the server
             axios.put("/curricula/" + this.curriculum.id + "/syncObjectiveTypesOrder", { objective_type_order: this.typetabs })
@@ -204,39 +200,41 @@ export default {
     },
     mounted() {
         this.settings = this.$attrs.settings;
-        this.loadObjectives();
+        this.typetabs = this.objectivetypes.map(type => type.id);
+        this.loaderEvent();
 
         //terminal Objectives
-        this.$eventHub.on('terminal-objective-added', function(newTerminalObjective) {
-            this.loadObjectives(this.activetab);
-        }.bind(this));
+        this.$eventHub.on('terminal-objective-added', (terminal) => {
+            const type = terminal.type;
+            if (!this.type_objectives[type.id]) {
+                this.objectivetypes.push(type);
+                this.typetabs.push(type.id);
+                this.type_objectives[type.id] = [];
+            }
 
-        this.$eventHub.on('editTerminalObjectives', (objective) => {
-            this.globalStore?.showModal('terminal-objective-modal', objective);
+            this.max_ids[type.id] = terminal.id;
+            this.type_objectives[type.id].push(terminal);
         });
 
-        this.$eventHub.on('terminal-objective-updated', () => {
-            this.loadObjectives(this.activetab);
+        this.$eventHub.on('terminal-objective-updated', (updatedTerminal) => {
+            let terminal = this.type_objectives[updatedTerminal.objective_type_id].find(t => t.id === updatedTerminal.id);
+
+            Object.assign(terminal, updatedTerminal);
         });
 
         //enabling Objectives
-        this.$eventHub.on('enablingObjective-added', function(newEnablingObjective) {
-            this.globalStore?.closeModal('enabling-objective-modal');
-            this.loadObjectives(this.activetab);
-        }.bind(this));
-        this.$eventHub.on('editEnablingObjectives', (objective) => {
-            this.globalStore?.showModal('enabling-objective-modal', objective);
-        });
-        this.$eventHub.on('enablingObjective-updated', () => {
-            this.globalStore?.closeModal('enabling-objective-modal');
-            this.loadObjectives(this.activetab);
+        this.$eventHub.on('enabling-objective-added', (enabling) => {
+            // 
         });
 
-        this.$eventHub.on('objective-deleted', function(deletedObjective) {
-            console.log(deletedObjective);
+        this.$eventHub.on('enabling-bjective-updated', () => {
+            // 
+        });
+
+        this.$eventHub.on('objective-deleted', (deletedObjective) => {
             this.activetab = (deletedObjective.type === 'terminal') ? deletedObjective.objective.objective_type_id : deletedObjective.objective.terminal_objective.objective_type_id;
-            this.loadObjectives(this.activetab);
-        }.bind(this));
+            // 
+        });
     },
     components: {
         TerminalObjectiveModal,

@@ -65,9 +65,9 @@
                                 url="/objectiveTypes"
                                 model="objectiveType"
                                 :label="trans('global.objectiveType.title_singular') + ' *'"
-                                :selected="this.form.objective_type_id"
+                                :selected="form.objective_type_id"
                                 @selectedValue="(id) => {
-                                    this.form.objective_type_id = id;
+                                    this.form.objective_type_id = id[0];
                                 }"
                             />
 
@@ -232,7 +232,7 @@ export default {
                     this.$eventHub.emit('terminal-objective-added', r.data);
                 })
                 .catch(e => {
-                    console.log(e.response);
+                    console.log(e);
                 });
         },
         update() {

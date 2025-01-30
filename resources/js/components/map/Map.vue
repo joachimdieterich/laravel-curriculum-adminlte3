@@ -1,7 +1,9 @@
 <template>
     <div id="outermap">
-        <div id="sidebar"
-             class="sidebar">
+        <div
+            id="sidebar"
+            class="sidebar"
+        >
             <!-- navigation tabs -->
             <div class="sidebar-tabs">
                 <ul role="tablist">
@@ -54,8 +56,8 @@
                                 {{ marker.title }}
                             </a>
                             <div class="tools">
-                                <i class="fa fa-pencil-alt" @click="edit(marker)"></i>
-                                <i class="text-danger fa fa-trash ml-2" @click="confirmItemDelete(marker)"></i>
+                                <i class="fa fa-pencil-alt text-secondary" @click="edit(marker)"></i>
+                                <i class="fa fa-trash text-danger ml-2" @click="confirmItemDelete(marker)"></i>
                             </div>
                         </li>
                     </ul>

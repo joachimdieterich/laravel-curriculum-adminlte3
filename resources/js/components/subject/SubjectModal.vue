@@ -71,6 +71,7 @@
                                 name="organization_type_id"
                                 url="/organizationTypes"
                                 model="organizationType"
+                                css="mb-0"
                                 :label="trans('global.organizationType.title_singular') + ' *'"
                                 option_id="id"
                                 option_label="title"

@@ -100,6 +100,7 @@
                                 name="organization_id"
                                 url="/organizations"
                                 model="organization"
+                                css="mb-0"
                                 :label="trans('global.organization.title_singular') + ' *'"
                                 option_id="id"
                                 option_label="title"

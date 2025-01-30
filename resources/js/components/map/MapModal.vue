@@ -28,10 +28,10 @@
                 <div class="modal-body">
                     <div class="card">
                         <div class="card-body">
-                            <div class="input-group pb-1">
+                            <div class="form-group d-flex align-items-center">
                                 <v-swatches
                                     :swatch-size="49"
-                                    :trigger-style="{}"
+                                    style="height: 42px;"
                                     popover-to="right"
                                     v-model="this.form.color"
                                     show-fallback

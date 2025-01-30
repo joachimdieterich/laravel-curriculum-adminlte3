@@ -203,6 +203,7 @@
                                 name="status_definition_id"
                                 url="/statusdefinitions"
                                 model="status"
+                                css="mb-0"
                                 option_id="status_definition_id"
                                 option_label="lang_de"
                                 :selected="this.form.status_id"

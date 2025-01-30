@@ -48,7 +48,7 @@
                                     v-text="form.errors.title[0]"
                                 ></p>
                             </div>
-    
+
                             <div class="form-group">
                                 <input
                                     id="external_id"
@@ -64,7 +64,7 @@
                                     v-text="form.errors.external_id[0]"
                                 ></p>
                             </div>
-    
+
                             <Select2
                                 id="country_id"
                                 name="country_id"
@@ -79,12 +79,13 @@
                                     this.form.state_id = '';
                                 }"
                             />
-    
+
                             <Select2
                                 id="state_id"
                                 name="state_id"
                                 option_id="code"
                                 option_label="lang_de"
+                                css="mb-0"
                                 :url="'/countries/' + this.form.country_id + '/states/'"
                                 model="state"
                                 :term="this.form.country_id"
@@ -92,7 +93,7 @@
                             />
                         </div>
                     </div>
-                    </div>
+                </div>
 
                 <div class="card-footer">
                     <span class="pull-right">

@@ -157,4 +157,12 @@ class TerminalObjective extends Model
     {
         return $this->curriculum->isAccessible();
     }
+
+    public static function booted() {
+        static::deleting(function(TerminalObjective $terminal) { // before delete() method call this
+            $terminal->subscriptions()->delete();
+            $terminal->mediaSubscriptions()->delete();
+            $terminal->enablingObjectives->each->delete();
+        });
+    }
 }

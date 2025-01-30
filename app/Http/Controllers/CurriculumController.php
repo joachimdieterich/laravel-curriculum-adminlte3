@@ -481,49 +481,13 @@ class CurriculumController extends Controller
         //todo: delete media attached to content, descriptions...
         abort_unless(Gate::allows('curriculum_delete'), 403);
 
-        // detach groups
-        CurriculumSubscription::where([
-            'curriculum_id' => $curriculum,
-            'subscribable_type' => "App\Group",
-        ])->delete();
-        //$curriculum->groups()->detach();
-
-        // delete certificates
-        foreach ($curriculum->certificates as $certificate) {
-            (new CertificateController)->destroy($certificate);
-        }
-
-        foreach ($curriculum->enablingObjectives as $ena) {
-            (new EnablingObjectiveController)->destroy($ena);
-        }
-
-        foreach ($curriculum->terminalObjectives as $ter) {
-            (new TerminalObjectiveController)->destroy($ter);
-        }
-
-        //  delete glossar
-        $curriculum->glossar()->delete();
-
         // delete mediaSubscriptions -> media will not be deleted
         $media = $curriculum->media;
-
-        $curriculum->mediaSubscriptions()
-                ->where('subscribable_type', '=', 'App\Curriculum')
-                ->where('subscribable_id', '=', $curriculum->id)
-                ->delete();
-
-        // delete navigator_items
-        $curriculum->navigator_item()
-                ->where('referenceable_type', '=', 'App\Curriculum')
-                ->where('referenceable_id', '=', $curriculum->id)
-                ->delete();
 
         // delete contents
         foreach ($curriculum->contents as $content) {
             (new ContentController)->destroy($content, 'App\Curriculum', $curriculum->id); // delete or unsubscribe if content is still subscribed elsewhere
         }
-
-        $curriculum->subscriptions()->delete();
 
         $return = $curriculum->delete();
 
@@ -534,9 +498,8 @@ class CurriculumController extends Controller
 
         //todo check/delete unrelated references(in references table)
         if (request()->wantsJson()) {
-            return ['message' => $return];
+            return $return;
         }
-        //   return back();
     }
 
     public function resetOrderIds(Curriculum $curriculum)

@@ -160,4 +160,13 @@ class EnablingObjective extends Model
     {
         return $this->curriculum->isAccessible();
     }
+
+    public static function booted() {
+        static::deleting(function(EnablingObjective $enabling) { // before delete() method call this
+            $enabling->subscriptions()->delete();
+            $enabling->referenceSubscriptions()->delete();
+            $enabling->contentSubscriptions()->delete();
+            $enabling->achievements->each->delete();
+        });
+    }
 }

@@ -285,4 +285,15 @@ class Curriculum extends Model
             return false;
         }
     }
+
+    public static function booted() {
+        static::deleting(function(Curriculum $curriculum) { // before delete() method call this
+            $curriculum->subscriptions()->delete();
+            $curriculum->certificates()->delete();
+            $curriculum->glossar()->delete();
+            $curriculum->terminalObjectives->each->delete();
+            $curriculum->mediaSubscriptions()->delete();
+            $curriculum->navigator_item()->delete();
+        });
+    }
 }

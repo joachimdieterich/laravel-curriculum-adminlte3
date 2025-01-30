@@ -5,18 +5,16 @@
             class="nav nav-pills bg-gray-light position-sticky"
             style="top: 56px; z-index: 100"
         >
-<!--            <draggable
+           <draggable
                 class="nav nav-pills"
-                v-can="'curriculum_edit'"
                 v-model="typetabs"
-                v-bind="columnDragOptions"
+                :disabled="curriculum.owner_id != $userId"
+                item-key="id"
+                @start="drag=true"
                 @end="handleTypeMoved"
-                :move="isLocked"
-                itemKey="id">
-                <template
-                    #item="{ element: typetab , index }">-->
-                    <li v-for="typetab in typetabs"
-                        v-permission="'curriculum_edit'"
+            >
+                <template #item="{ element: typetab }">
+                    <li
                         class="nav-item pl-0 pr-2 pb-2 pt-2"
                     >
                         <a
@@ -29,30 +27,19 @@
                             {{ getTypeTitle(typetab)[0]['title'] }}
                         </a>
                     </li>
-<!--                </template>
-                </draggable>-->
-            <li v-for="typetab in typetabs"
-                v-hide-if-permission="'curriculum_edit'"
-                class="nav-item pl-0 pr-2 pb-2 pt-2"
-            >
-                <a
-                    :href="'#tab_' + typetab"
-                    class="nav-link"
-                    :class="(activetab == typetab) ? 'active' : ''"
-                    data-toggle="tab"
-                    @click="setActiveTab(typetab)"
-                >
-                    {{ getTypeTitle(typetab)[0]['title'] }}
-                </a>
-            </li>
-            <!-- Querverweise -->
-            <!-- <li class="form-group pt-2 ml-auto">
+               </template>
+            </draggable>
+            <li class="form-group py-2 mb-0 ml-auto">
                 <Select2
-                    id="currentCurriculaEnrolmentSelector"
-                    name="currentCurriculaEnrolmentSelector"
-                    :list="currentCurriculaEnrolments"
+                    id="references"
+                    name="references"
+                    css="mb-0"
+                    url="/curricula/references"
+                    model="curriculum"
+                    :showLabel="false"
+                    :placeholder="trans('global.curricula_cross_references')"
                 />
-            </li> -->
+            </li>
         </ul>
         <hr class="mt-0">
         <div v-for="typetab in typetabs"
@@ -130,8 +117,12 @@ import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
-        curriculum: Object,
-        objectivetypes: Array,
+        curriculum: {
+            type: Object,
+        },
+        objectivetypes: {
+            type: Array,
+        },
     },
     setup() {
         const globalStore = useGlobalStore();
@@ -145,12 +136,11 @@ export default {
                 last: null,
             },
             max_ids: {},
-            typetabs: {},
+            typetabs: [],
             activetab: null,
             currentCurriculaEnrolments: null,
             currentTerminalObjective: null,
             currentEnablingObjective: null,
-            errors: {},
             terminal_objectives: {},
         }
     },
@@ -172,7 +162,7 @@ export default {
             this.activetab = typetab;
         },
         loadObjectives(objective_type_id = 0) {
-            axios.get('/curricula/' + this.curriculum.id + '/objectives' )
+            axios.get('/curricula/' + this.curriculum.id + '/objectives')
                 .then(response => {
                     this.terminal_objectives = response.data.terminal_objectives;
 
@@ -203,14 +193,6 @@ export default {
                 console.log(e);
             }
         },
-        checkCrossReferenceInLocalStorage() {
-            if (localStorage.getItem( 'currentCurriculaEnrolmentSelectorValue' ) !== null) {
-                $("#currentCurriculaEnrolmentSelector").val(localStorage.getItem( 'currentCurriculaEnrolmentSelectorValue' )).trigger('change');
-                this.$parent.setCrossReferenceCurriculumId($("#currentCurriculaEnrolmentSelector").val());
-            } else {
-                $("#currentCurriculaEnrolmentSelector").val(null).trigger('change');
-            }
-        },
         handleTypeMoved() {
             // Send the entire list of statuses to the server
             axios.put("/curricula/" + this.curriculum.id + "/syncObjectiveTypesOrder", { objective_type_order: this.typetabs })
@@ -224,43 +206,16 @@ export default {
         this.settings = this.$attrs.settings;
         this.loadObjectives();
 
-        //load users curricula for cross reference selector
-        axios.get('/curricula/references')
-            .then(response => {
-                this.currentCurriculaEnrolments = response.data.message;
-                this.$nextTick(() => {
-                    $("#currentCurriculaEnrolmentSelector").select2({
-                        value: null,
-                        placeholder: "Querverweise",
-                        allowClear: true
-                    }).on('select2:select', function() {
-                        localStorage.setItem( 'currentCurriculaEnrolmentSelectorValue', $("#currentCurriculaEnrolmentSelector").val() );
-                        this.$parent.setCrossReferenceCurriculumId($("#currentCurriculaEnrolmentSelector").val());
-                    }.bind(this))
-                    .on('select2:clear', function() {
-                        this.$parent.setCrossReferenceCurriculumId(false);
-                        localStorage.removeItem( 'currentCurriculaEnrolmentSelectorValue');
-                    }.bind(this));
-                    this.checkCrossReferenceInLocalStorage(); // load value from localStorage
-                })
-            })
-            .catch(e => {
-                this.errors = e.data.errors;
-            });
-
-        //eventlistener
         //terminal Objectives
-        this.$eventHub.on('terminalObjective-added', function(newTerminalObjective) {
-            console.log(newTerminalObjective);
-            this.globalStore?.closeModal('terminal-objective-modal');
-            //this.activetab = newTerminalObjective.objective_type_id;
+        this.$eventHub.on('terminal-objective-added', function(newTerminalObjective) {
             this.loadObjectives(this.activetab);
         }.bind(this));
+
         this.$eventHub.on('editTerminalObjectives', (objective) => {
             this.globalStore?.showModal('terminal-objective-modal', objective);
         });
-        this.$eventHub.on('terminalObjective-updated', () => {
-            this.globalStore?.closeModal('terminal-objective-modal');
+
+        this.$eventHub.on('terminal-objective-updated', () => {
             this.loadObjectives(this.activetab);
         });
 

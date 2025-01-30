@@ -1,7 +1,7 @@
 <template >
     <!--  v-if create terminal-->
     <div v-if="type === 'createterminal'"
-        class="box box-objective pointer"
+        class="box box-objective user-select-none pointer"
         :style="{ 'background-color': '#fff'}"
     >
         <h1
@@ -21,7 +21,7 @@
 
     <!--  v-else-if create enabling-->
     <div v-else-if="type === 'createenabling'"
-        class="box box-objective pointer"
+        class="box box-objective user-select-none pointer"
         :style="{ 'background-color': backgroundcolor }"
     >
         <h1

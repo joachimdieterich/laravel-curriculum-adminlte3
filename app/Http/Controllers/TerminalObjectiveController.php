@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 class TerminalObjectiveController extends Controller
 {
 
-    public function getEnablingObjectives(TerminalObjective $terminalObjective){
+    public function getEnablingObjectives(TerminalObjective $terminalObjective) {
         if (request()->wantsJson()) {
             return getEntriesForSelect2ByCollection($terminalObjective->enablingObjectives, '', 'title', 'order_id');
         }

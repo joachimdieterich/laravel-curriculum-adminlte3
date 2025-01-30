@@ -212,7 +212,12 @@ class CurriculumController extends Controller
         abort_unless((Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
         LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
 
-        $objectiveTypes = \App\ObjectiveType::all();
+        $objectiveTypes = \App\ObjectiveType::select('objective_types.id', 'objective_types.title', 'objective_types.uuid')
+            ->join('terminal_objectives', 'objective_types.id', '=', 'terminal_objectives.objective_type_id')
+            ->join('curricula', 'curricula.id', '=', 'terminal_objectives.curriculum_id')
+            ->where('curricula.id', $curriculum->id)
+            ->distinct()
+            ->get();
         $levels = \App\Level::all();
 
         $curriculum = Curriculum::with([

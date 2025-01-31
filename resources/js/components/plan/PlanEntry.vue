@@ -48,7 +48,7 @@
                             />
                             <span v-dompurify-html="entry.description ?? ''"></span>
 
-                            <objectives
+                            <Objectives
                                 referenceable_type="App\PlanEntry"
                                 :referenceable_id="entry.id"
                                 :owner_id="entry.owner_id"

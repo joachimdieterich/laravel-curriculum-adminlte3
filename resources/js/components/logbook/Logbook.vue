@@ -56,7 +56,8 @@
             <ContentModal/>
             <TaskModal/>
             <MediumPreviewModal/>
-            <subscribe-objective-modal/>
+            <SubscribeObjectiveModal/>
+            <!-- <SetAchievementsModal/> -->
             <lms-modal/>
             <MediumModal
                 subscribable_type="App\\Logboook"
@@ -98,6 +99,7 @@ import ContentModal from "../content/ContentModal.vue";
 import {useGlobalStore} from "../../store/global";
 import MediumPreviewModal from "../media/MediumPreviewModal.vue";
 import SubscribeObjectiveModal from "../objectives/SubscribeObjectiveModal.vue";
+// import SetAchievementsModal from "../plan/SetAchievementsModal.vue";
 import AbsenceModal from "../absence/AbsenceModal.vue";
 import LogbookEntryModal from "../logbookEntry/LogbookEntryModal.vue";
 import LogbookEntrySubjectModal from "../logbookEntry/LogbookEntrySubjectModal.vue";
@@ -109,6 +111,7 @@ export default {
         LogbookEntryModal,
         AbsenceModal,
         SubscribeObjectiveModal,
+        // SetAchievementsModal,
         MediumPreviewModal,
         ContentModal,
         LmsModal,

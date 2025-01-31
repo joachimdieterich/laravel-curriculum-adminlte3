@@ -6,7 +6,6 @@ use App\Kanban;
 use App\KanbanItem;
 use App\KanbanStatus;
 use App\KanbanSubscription;
-use App\Logbook;
 use App\Medium;
 use App\MediumSubscription;
 use App\Organization;
@@ -416,6 +415,8 @@ class KanbanController extends Controller
 
     public function copyKanban(Kanban $kanban, Request $request)
     {
+        abort_unless(\Gate::allows('kanban_create') and $kanban->allow_copy, 403);
+
         $kanbanCopy = Kanban::create([
             'title' => $kanban->title . '_' . date('Y.m.d_H:i:s'),
             'description' => $kanban->description,

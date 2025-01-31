@@ -63,11 +63,12 @@
         <Teleport to="body">
             <PlanModal/>
             <PlanEntryModal :plan="plan"/>
+            <SubscribeObjectiveModal/>
+            <TrainingModal :plan="plan"/>
             <SetAchievementsModal
                 :users="users"
             ></SetAchievementsModal>
             <SubscribeModal/>
-            <SubscribeObjectiveModal/>
         </Teleport>
         <Teleport v-if="$userId == plan.owner_id"
             to="#customTitle"
@@ -91,12 +92,13 @@
 
 <script>
 import draggable from "vuedraggable";
-import SetAchievementsModal from "./SetAchievementsModal.vue";
+import PlanModal from "./PlanModal.vue";
 import PlanEntry from './PlanEntry.vue';
 import PlanEntryModal from "./PlanEntryModal.vue";
-import PlanModal from "./PlanModal.vue";
-import SubscribeModal from "../subscription/SubscribeModal.vue";
 import SubscribeObjectiveModal from "../objectives/SubscribeObjectiveModal.vue";
+import TrainingModal from "../training/TrainingModal.vue";
+import SetAchievementsModal from "./SetAchievementsModal.vue";
+import SubscribeModal from "../subscription/SubscribeModal.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {
@@ -229,9 +231,10 @@ export default {
         PlanModal,
         PlanEntry,
         PlanEntryModal,
+        SubscribeObjectiveModal,
+        TrainingModal,
         SetAchievementsModal,
         SubscribeModal,
-        SubscribeObjectiveModal,
         draggable,
     },
 }

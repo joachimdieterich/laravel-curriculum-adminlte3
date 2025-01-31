@@ -101,5 +101,13 @@ class PlanEntry extends Model
     {
         return $this->plan->isAccessible();
     }
-
+    
+    protected static function booted() {
+        static::deleting(function(PlanEntry $entry) { // before delete() method call this
+            $entry->terminalObjectiveSubscriptions()->delete();
+            $entry->enablingObjectiveSubscriptions()->delete();
+            //? if media-subscriptions can be added in the future, they need to be deleted too
+            $entry->trainings->each->delete();
+        });
+    }
 }

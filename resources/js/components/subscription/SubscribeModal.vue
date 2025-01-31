@@ -1,61 +1,73 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
         >
             <div class="modal-container">
-                <div class="card"
-                     style="margin-bottom: 0px !important">
+                <div class="card mb-0">
                     <div class="card-header">
                         <h3 class="card-title">
                             <i class="fa fa-share-alt text-secondary mr-3"></i>
                             {{ trans('global.share') }}
                         </h3>
-
                         <div class="card-tools">
-                            <button type="button"
-                                    class="btn btn-tool"
-                                    data-widget="remove"
-                                    @click="globalStore?.closeModal($options.name)">
+                            <button
+                                type="button"
+                                class="btn btn-tool"
+                                data-widget="remove"
+                                @click="globalStore?.closeModal($options.name)"
+                            >
                                 <i class="fa fa-times"></i>
                             </button>
                         </div>
                     </div>
 
-                    <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                    <div class="modal-body" style="overflow-y: visible;">
                         <ul class="nav nav-pills">
                             <!-- User -->
                             <li v-if="shareWithUsers"
-                                class="nav-item">
-                                <a class="nav-link active show"
-                                   href="#user_subscription"
-                                   data-toggle="tab">
+                                class="nav-item"
+                            >
+                                <a
+                                    class="nav-link active show"
+                                    href="#user_subscription"
+                                    data-toggle="tab"
+                                >
                                     <i class="fa fa-user mr-2"></i>{{ trans('global.user.title') }}
                                 </a>
                             </li>
                             <!-- Group -->
                             <li v-if="shareWithGroups"
-                                class="nav-item">
-                                <a class="nav-link"
-                                   href="#group_subscription"
-                                   data-toggle="tab">
+                                class="nav-item"
+                            >
+                                <a
+                                    class="nav-link"
+                                    href="#group_subscription"
+                                    data-toggle="tab"
+                                >
                                     <i class="fa fa-users mr-2"></i>{{ trans('global.group.title') }}
                                 </a>
                             </li>
                             <!-- Organization -->
                             <li v-if="shareWithOrganizations"
-                                class="nav-item">
-                                <a class="nav-link"
-                                   href="#organization_subscription"
-                                   data-toggle="tab">
+                                class="nav-item"
+                            >
+                                <a
+                                    class="nav-link"
+                                    href="#organization_subscription"
+                                    data-toggle="tab"
+                                >
                                     <i class="fa fa-university mr-2"></i>{{ trans('global.organization.title') }}
                                 </a>
                             </li>
                             <li v-if="shareWithToken"
-                                class="nav-item">
-                                <a class="nav-link"
-                                   href="#token_subscription"
-                                   data-toggle="tab">
+                                class="nav-item"
+                            >
+                                <a
+                                    class="nav-link"
+                                    href="#token_subscription"
+                                    data-toggle="tab"
+                                >
                                     <i class="fa fa-key mr-2"></i>{{ trans('global.token') }}
                                 </a>
                             </li>
@@ -70,8 +82,9 @@
                         <div class="tab-content pt-2">
                             <!-- User Tab -->
                             <div v-if="shareWithUsers"
-                                 class="tab-pane active show"
-                                 id="user_subscription">
+                                id="user_subscription"
+                                class="tab-pane active show"
+                            >
                                 <Select2
                                     id="users_subscription_select"
                                     name="users_subscription_select"
@@ -80,21 +93,21 @@
                                     @selectedValue="(id) => {
                                         this.subscribe('App\\User', id[0])
                                     }"
-                                ></Select2>
-                                <subscribers
-                                    v-if="subscribers.subscriptions != undefined"
+                                />
+                                <subscribers v-if="subscribers.subscriptions != undefined"
                                     :modelUrl="modelUrl"
                                     :subscriptions="subscribers.subscriptions"
                                     :subscribing_model="'App\\User'"
                                     :canEditLabel="canEditLabel"
                                     :canEditCheckbox="canEditCheckbox"
-                                ></subscribers>
+                                />
                             </div>
 
                             <!-- Group Tab -->
                             <div v-if="shareWithGroups"
-                                 class="tab-pane"
-                                 id="group_subscription">
+                                id="group_subscription"
+                                class="tab-pane"
+                            >
                                 <Select2
                                     id="group_subscription_select"
                                     name="group_subscription_select"
@@ -103,48 +116,50 @@
                                     @selectedValue="(id) => {
                                         this.subscribe('App\\Group', id[0])
                                     }"
-                                ></Select2>
-                                <subscribers
-                                    v-if="subscribers.subscriptions != undefined"
+                                />
+                                <subscribers v-if="subscribers.subscriptions != undefined"
                                     :modelUrl="modelUrl"
                                     :subscriptions="subscribers.subscriptions"
                                     :subscribing_model="'App\\Group'"
                                     :canEditLabel="canEditLabel"
                                     :canEditCheckbox="canEditCheckbox"
-                                ></subscribers>
+                                />
                             </div>
 
+                            <!-- Organization Tab -->
                             <div v-if="shareWithOrganizations"
-                                 class="tab-pane"
-                                 id="organization_subscription">
-                                <div class="form-group pt-2">
-                                    <Select2
-                                        id="organization_subscription_select"
-                                        name="organization_subscription_select"
-                                        url="/organizations"
-                                        model="organization"
-                                        @selectedValue="(id) => {
+                                id="organization_subscription"
+                                class="tab-pane"
+                            >
+                                <Select2
+                                    id="organization_subscription_select"
+                                    name="organization_subscription_select"
+                                    url="/organizations"
+                                    model="organization"
+                                    @selectedValue="(id) => {
                                         this.subscribe('App\\Organization', id[0])
                                     }"
-                                    ></Select2>
-                                </div>
-                                <subscribers
-                                    v-if="subscribers.subscriptions != undefined"
+                                />
+                                <subscribers v-if="subscribers.subscriptions != undefined"
                                     :modelUrl="modelUrl"
                                     :subscriptions="subscribers.subscriptions"
                                     :subscribing_model="'App\\Organization'"
                                     :canEditLabel="canEditLabel"
                                     :canEditCheckbox="canEditCheckbox"
-                                ></subscribers>
+                                />
                             </div>
 
                             <!-- Token Tab -->
                             <div v-if="shareWithToken"
-                                 class="tab-pane" id="token_subscription">
-
+                                id="token_subscription"
+                                class="tab-pane"
+                            >
                                 <div class="form-group pt-2">
-                                    <input v-model="nameToken" class="form-control mb-2" style="width: 100%;"
-                                           placeholder="Freigabetitel">
+                                    <input
+                                        v-model="nameToken"
+                                        class="form-control w-100 mb-2"
+                                        placeholder="Freigabetitel"
+                                    />
                                 </div>
                                 <VueDatePicker
                                     v-model="endDateToken"
@@ -153,9 +168,8 @@
                                     locale="de"
                                     :select-text="trans('global.ok')"
                                     :cancel-text="trans('global.close')"
-                                ></VueDatePicker>
+                                />
                                 <small>{{ canEditLabel }}</small>
-
 
 <!--                            <span v-if="canEditCheckbox"
                                   class="pull-right custom-control custom-switch custom-switch-on-green">
@@ -167,8 +181,12 @@
                                     <label class="custom-control-label " for="canEditToken"></label>
                                 </span>-->
                                 <div>
-                                    <button type="button" @click="createUserToken()" :disabled="nameToken.trim() == ''"
-                                            class="btn btn-sm btn-outline-success pull-right my-2">
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-outline-success pull-right my-2"
+                                        :disabled="nameToken.trim() == ''"
+                                        @click="createUserToken()"
+                                    >
                                         {{ trans('global.save') }}
                                     </button>
                                 </div>
@@ -176,8 +194,7 @@
                                 <hr class="pt-1 clearfix">
 
                                 <div>
-                                    <tokens
-                                        v-if="subscribers.tokens != undefined"
+                                    <tokens v-if="subscribers.tokens != undefined"
                                         :modelUrl="modelUrl"
                                         :canEditLabel="canEditLabel"
                                         :canEditCheckbox="canEditCheckbox"
@@ -185,7 +202,6 @@
                                     />
                                 </div>
                             </div>
-
                         </div>
                     </div>
                     <div class="card-footer">
@@ -202,7 +218,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </Transition>
 </template>
@@ -270,9 +285,9 @@ export default {
         },
         subscribe(subscribable_type, subscribable_id) {
             axios.post('/' + this.modelUrl + 'Subscriptions', {
-                'model_id':  this.modelId,
-                'subscribable_type': subscribable_type,
-                'subscribable_id': subscribable_id
+                model_id:  this.modelId,
+                subscribable_type: subscribable_type,
+                subscribable_id: subscribable_id
             })
             .then(res => {
                 this.subscribers.subscriptions = res.data.subscription;
@@ -286,11 +301,11 @@ export default {
         },
         createUserToken() {
             axios.post('/tokens', {
-                'model_id': this.modelId,
-                'title': this.nameToken,
-                'date': this.endDateToken,
-                'editable': this.canEditToken,
-                'model_url': this.modelUrl
+                model_id: this.modelId,
+                title: this.nameToken,
+                date: this.endDateToken,
+                editable: this.canEditToken,
+                model_url: this.modelUrl
             }).then( () => this.loadSubscribers())
         }
     },
@@ -324,7 +339,7 @@ export default {
         subscribers,
         tokens,
         VueDatePicker,
-        Select2
+        Select2,
     }
 }
 </script>

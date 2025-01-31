@@ -27,33 +27,30 @@ class TrainingController extends Controller
     public function store(Request $request)
     {
         abort_unless(\Gate::allows('plan_create'), 403);
-        $new_training = $this->validateRequest();
+        $input = $this->validateRequest();
 
-        $entry = Training::create([
-            'title' => $new_training['title'],
-            'description' => $new_training['description'],
-
-            'begin' => $new_training['begin'],
-            'end' => $new_training['end'],
-
+        $training = Training::create([
+            'title' => $input['title'],
+            'description' => $input['description'],
+            'begin' => $input['begin'],
+            'end' => $input['end'],
             'owner_id' => auth()->user()->id,
         ]);
 
-        $subscription = TrainingSubscription::create([
-            'training_id' => $entry->id,
-            'subscribable_type' => $new_training['subscribable_type'],
-            'subscribable_id' => $new_training['subscribable_id'],
-            'order_id' => $new_training['order_id'] ?? 0,
+        TrainingSubscription::create([
+            'training_id' => $training->id,
+            'subscribable_type' => $input['subscribable_type'],
+            'subscribable_id' => $input['subscribable_id'],
+            'order_id' => $input['order_id'] ?? 0,
             'editable' => 1, //needed?
             'owner_id' => auth()->user()->id,
         ]);
 
         // subscribe embedded media
-        checkForEmbeddedMedia($entry, 'description');
-
+        checkForEmbeddedMedia($training, 'description');
 
         if (request()->wantsJson()) {
-            return ['entry' => $entry];
+            return $training;
         }
     }
 
@@ -80,13 +77,13 @@ class TrainingController extends Controller
     public function update(Request $request, Training $training)
     {
         abort_unless((\Gate::allows('plan_edit') and $training->isAccessible()), 403);
-        $clean_data = $this->validateRequest();
+        $input = $this->validateRequest();
 
         $training->update([
-            'title'       => $clean_data['title'] ?? $training->title,
-            'description' => $clean_data['description'] ?? $training->description,
-            'begin'       => $clean_data['begin'] ?? $training->begin,
-            'end'         => $clean_data['end'] ?? $training->end,
+            'title'       => $input['title'] ?? $training->title,
+            'description' => $input['description'] ?? $training->description,
+            'begin'       => $input['begin'],
+            'end'         => $input['end'],
         ]);
 
         // subscribe embedded media
@@ -108,9 +105,7 @@ class TrainingController extends Controller
         $training->delete(); //subscriptions will be deleted too see booted function in Training.php
 
         if (request()->wantsJson()) {
-            return [
-                'deleted' => true,
-            ];
+            return true;
         }
     }
 

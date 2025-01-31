@@ -71,7 +71,8 @@
                 modelName="Kanban"
                 url="/kanbans"
                 :create=true
-                :createLabel="trans('global.kanban.' + create_label_field)">
+                :createLabel="trans('global.kanban.' + create_label_field)"
+            >
                 <template v-slot:itemIcon>
                     <i v-if="create_label_field == 'enrol'"
                        class="fa fa-2x fa-link text-muted"

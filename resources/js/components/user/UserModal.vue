@@ -21,9 +21,10 @@
                         </button>
                     </div>
                 </div>
-                <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                    <div class="form-user "
-                         :class="form.errors.username ? 'has-error' : ''"
+                <div class="modal-body">
+                    <div
+                        class="form-user "
+                        :class="form.errors.username ? 'has-error' : ''"
                     >
                         <label for="username">{{ trans('global.user.fields.username') }} *</label>
                         <input

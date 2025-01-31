@@ -89,13 +89,12 @@
                             </div>
 
                             <div class="form-group">
-                                <Editor
-                                    :id="'description_' + component_id"
-                                    :name="'description_' + component_id"
+                                <textarea
+                                    id="description"
+                                    name="description"
                                     class="form-control"
-                                    :init="tinyMCE"
                                     v-model="form.description"
-                                />
+                                ></textarea>
                             </div>
                             <!-- currently not in use -->
                             <!-- <div class="form-group">
@@ -169,7 +168,7 @@
                         </button>
                         <button
                             id="plan-save"
-                            class="btn btn-primary"
+                            class="btn btn-primary ml-3"
                             @click="submit(method)"
                         >
                             {{ trans('global.save') }}
@@ -184,7 +183,6 @@
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
-import Editor from "@tinymce/tinymce-vue";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import '@vuepic/vue-datepicker/dist/main.css';
 
@@ -220,17 +218,6 @@ export default {
                 begin: false,
                 end: false,
             },
-            tinyMCE: this.$initTinyMCE(
-                [
-                    "autolink link lists table code autoresize"
-                ],
-                {
-                    'callback': 'insertContent',
-                    'callbackId': this.component_id
-                },
-                "bold underline italic | alignleft aligncenter alignright | table",
-                "bullist numlist outdent indent | mathjax link code",
-            ),
             search: '',
         }
     },
@@ -318,7 +305,6 @@ export default {
     },
     components: {
         VueDatePicker,
-        Editor,
         Select2,
     },
 }

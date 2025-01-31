@@ -102,7 +102,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('enablingObjectives/{enablingObjective}/achievements/{group?}', 'EnablingObjectiveController@showAchievements')->name('enablingObjectives.showAchievements');
     Route::resource('enablingObjectives', 'EnablingObjectiveController');
     /* enablingObjectiveSubscriptions */
-    Route::post('enablingObjectiveSubscriptions/destroy', 'EnablingObjectiveSubscriptionsController@destroySubscription');
+    Route::post('enablingObjectiveSubscriptions/destroy', 'EnablingObjectiveSubscriptionsController@destroy');
     Route::resource('enablingObjectiveSubscriptions', 'EnablingObjectiveSubscriptionsController');
 
     /* plugin eventmanagment */
@@ -259,6 +259,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('plans/massDestroy', 'PlanController@massDestroy')->name('plans.massDestroy');
     Route::get('plans/list', 'PlanController@list');
     Route::get('plans/{plan}/copy', 'PlanController@copyPlan');
+    Route::get('plans/{plan}/getUsers', 'PlanController@getUsers');
     Route::put('plans/{plan}/syncEntriesOrder', 'PlanController@syncEntriesOrder')->name('plans.syncEntriesOrder');
     Route::resource('plans', 'PlanController');
 

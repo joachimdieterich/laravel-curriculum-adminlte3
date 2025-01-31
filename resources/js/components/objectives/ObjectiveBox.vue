@@ -1,38 +1,49 @@
 <template >
     <!--  v-if create terminal-->
     <div v-if="type === 'createterminal'"
-         class="box box-objective"
-         v-bind:style="{ 'background-color': '#fff'}">
-        <h1 class="h5"
-            style="position:absolute; top:20px; width:100%;text-align: center;">
+        class="box box-objective"
+        v-bind:style="{ 'background-color': '#fff'}"
+    >
+        <h1
+            class="h5 position-absolute text-center w-100"
+            style="top: 20px;"
+        >
             {{ trans("global.terminalObjective.title_singular") }}
         </h1>
 
-        <div style="text-align: center; padding: 25px; font-size:100px;"
-             @click.prevent="createTerminalObjective()">
+        <div
+            style="text-align: center; padding: 25px; font-size: 100px;"
+            @click.prevent="createTerminalObjective()"
+        >
             +
         </div>
     </div>
 
     <!--  v-else-if create enabling-->
     <div v-else-if="type === 'createenabling'"
-         class="box box-objective"
-         v-bind:style="{ 'background-color': backgroundcolor  }">
-        <h1 class="h5"
-            style="position:absolute; top:20px; width:100%;text-align: center; ">
+        class="box box-objective"
+        :style="{ 'background-color': backgroundcolor }"
+    >
+        <h1
+            class="h5 position-absolute text-center w-100"
+            style="top:20px;"
+        >
             {{ trans("global.enablingObjective.title_singular") }}
         </h1>
 
-        <div style="text-align: center; padding: 25px; font-size:100px;"
-             @click.prevent="createEnablingObjective()">
+        <div
+            style="text-align: center; padding: 25px; font-size: 100px;"
+            @click.prevent="createEnablingObjective()"
+        >
             +
         </div>
     </div>
 
     <!--  v-else-if render existing objective-->
-    <div  v-bind:id="id" v-else
-         class="box box-objective"
-         v-bind:style="{ 'background-color': backgroundcolor, 'border-color': bordercolor, 'opacity': opacity, 'filter': filter }"
+    <div v-else
+        :id="id"
+        class="box box-objective"
+        :style="{ 'background-color': backgroundcolor, 'border-color': bordercolor, 'opacity': opacity, 'filter': filter }"
     >
         <!-- don't load Header if it isn't needed -->
         <Header
@@ -44,47 +55,52 @@
             :textcolor="textcolor"
             @eventDelete="deleteEvent"
             @eventSort="sortEvent"
-        ></Header>
+        />
 
-        <div class="panel-body boxwrap pointer"
-             @click.prevent="showDetails()">
-            <div class="boxscroll hide-scrollbars"
-                 v-bind:style="{'background': background, 'background-color': backgroundcolor, 'border-color': objective.color }">
-                <div class="boxcontent"
-                     v-bind:style="{ 'color': textcolor }"
-                     v-dompurify-html="objective.title">
+        <div
+            class="panel-body boxwrap pointer"
+            @click.prevent="showDetails()"
+        >
+            <div
+                class="boxscroll hide-scrollbars"
+                :style="{'background': background, 'background-color': backgroundcolor, 'border-color': objective.color }"
+            >
+                <div
+                    class="boxcontent"
+                    :style="{ 'color': textcolor }"
+                    v-dompurify-html="objective.title"    
+                >
                 </div>
             </div>
         </div>
 
-        <Footer :objective="objective"
-                :textcolor="textcolor"
-                :type="type"
-                :settings="settings">
-        </Footer>
+        <Footer
+            :objective="objective"
+            :textcolor="textcolor"
+            :type="type"
+            :settings="settings"
+        />
     </div>
 </template>
 
-
 <script>
-    import Header from './Header.vue';
-    import Footer from './Footer.vue';
-    import {useGlobalStore} from "../../store/global";
+import Header from './Header.vue';
+import Footer from './Footer.vue';
+import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
         objective: {},
         objective_type_id: {},
         type: {},
-        settings: {
-
-        },
+        color: '#000',
+        settings: {},
         editable: {
-            default: false
+            default: false,
         },
         max_id: Number,
     },
-    setup () {
+    setup() {
         const globalStore = useGlobalStore();
         return {
             globalStore,
@@ -98,14 +114,14 @@ export default {
                     icon: 'fa fa-pencil-alt',
                     action: 'edit',
                     model: this.type+'Objectives',
-                    value: this.type+'-objective-modal'
+                    value: this.type+'-objective-modal',
                 },
                 {
                     title: 'Move',
                     icon: 'fa fa-repeat',
                     action: 'move',
                     model: this.type+'Objectives',
-                    value: 'move-'+this.type+'-objective-modal'
+                    value: 'move-'+this.type+'-objective-modal',
                 },
                 {
                     hr: true,
@@ -122,30 +138,29 @@ export default {
         }
     },
     methods: {
-        createTerminalObjective(){
+        createTerminalObjective() {
             this.$eventHub.emit('createTerminalObjectives', { 'objective': this.objective, 'method': 'post' , 'objective_type_id': this.objective_type_id});
         },
-        createEnablingObjective(){
+        createEnablingObjective() {
             this.$eventHub.emit('createEnablingObjectives', { 'objective': this.objective, 'method': 'post' });
         },
-         deleteEvent(){
-             axios.delete('/'+this.type+'Objectives/'+this.objective.id)
-                 .then(res => {
-                     this.$eventHub.emit('objective-deleted', {'objective': this.objective, 'type': this.type});
-                 })
-                 .catch(err => {
-                     console.log(err.response);
-                 });
+        deleteEvent() {
+            axios.delete('/'+this.type+'Objectives/'+this.objective.id)
+                .then(res => {
+                    this.$eventHub.emit('objective-deleted', {'objective': this.objective, 'type': this.type});
+                })
+                .catch(err => {
+                    console.log(err.response);
+                });
         },
-
         async sortEvent(amount) {
             let objective = {
                 'id': this.objective.id,
-                'order_id': this.objective.order_id + parseInt(amount)
+                'order_id': this.objective.order_id + parseInt(amount),
             }
 
             try {
-                this.location = (await axios.patch('/'+this.type+'Objectives/'+this.objective.id, objective)).data.message;
+                this.location = (await axios.patch('/' + this.type + 'Objectives/' + this.objective.id, objective)).data.message;
             } catch(error) {
                 this.errors = error.response.data.errors;
             }
@@ -153,7 +168,7 @@ export default {
         },
         showDetails() {
             if (this.settings?.achievements === undefined || !this.editable) {
-                location.href= '/'+this.type+'Objectives/'+this.objective.id;
+                location.href= '/' + this.type + 'Objectives/' + this.objective.id;
             } else {
                 this.globalStore?.showModal('set-achievements-modal', { 'objective': this.objective });
             }
@@ -168,19 +183,19 @@ export default {
             return (this.type === 'terminal' ? this.objective.color : "#fff");
         },
         bordercolor: function () {
-            return (this.type === 'terminal' ? this.objective.color : this.objective.terminal_objective.color);
+            return this.objective.color ?? this.color;
         },
         textcolor: function() {
-            if (this.type === 'terminal'){
+            if (this.type === 'terminal') {
                 return this.$textcolor(this.objective.color);
             } else {
                 return "#000";
             }
         },
-        id: function (){
-            return this.type + '_' +this.objective.id;
+        id: function() {
+            return this.type + '_' + this.objective.id;
         },
-        opacity: function () {
+        opacity: function() {
             if (this.objective.visibility == false) {
                 this.visibility = 20/100;
                 return this.visibility;
@@ -188,8 +203,8 @@ export default {
                 return this.visibility/100;
             }
         },
-        filter: function () {
-            return "alpha(opacity="+this.visibility+")";
+        filter: function() {
+            return "alpha(opacity=" + this.visibility + ")";
         },
         cross_reference: function() {
             if (typeof this.settings !== "undefined"){
@@ -201,32 +216,26 @@ export default {
     },
     watch: {
         cross_reference: function() {
-            if ((this.settings.cross_reference_curriculum_id !== false) || (this.settings.cross_reference_curriculum_id === "") ){ // reset view with x button
+            if ((this.settings.cross_reference_curriculum_id !== false) || (this.settings.cross_reference_curriculum_id === "")) { // reset view with x button
                 this.visibility = 40;
 
-                if (typeof this.objective.referencing_curriculum_id !== "undefined" ){
-                    if ( this.objective.referencing_curriculum_id !== null ){
+                if (typeof this.objective.referencing_curriculum_id !== "undefined" ) {
+                    if (this.objective.referencing_curriculum_id !== null) {
                         if (this.objective.referencing_curriculum_id.includes(parseInt(this.settings.cross_reference_curriculum_id)))
                         {
                             this.visibility = 100;
                         }
                     }
                 }
-//                    if (typeof this.objective.quote_subscriptions !== "undefined"){
-//                        let check = this.objective.quote_subscriptions.find(c => c.siblings.find(s => s.quotable.curriculum_id == this.settings.cross_reference_curriculum_id))
-//                        if (typeof check !== "undefined"){
-//                              this.visibility = 100;
-//                        }
-//                    }
             } else {
                 this.visibility = 100;
             }
         }
     },
-    created: function () {
+    created: function() {
         this.$eventHub.on('deleteObjective', function(deletedObjective) {
-            if (this.objective === deletedObjective){
-                this.deleteEvent()
+            if (this.objective === deletedObjective) {
+                this.deleteEvent();
             }
         }.bind(this));
     },
@@ -234,13 +243,11 @@ export default {
         this.$nextTick(() => {
             MathJax.startup.defaultReady();
         })
-
     },
-    beforeDestroy: function () {
+    beforeDestroy: function() {
         this.$root.$off('eventDelete');
-        this.$root.$off('eventSort')
+        this.$root.$off('eventSort');
     },
-
     components: {
         Header,
         Footer,

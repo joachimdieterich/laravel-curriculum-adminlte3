@@ -952,8 +952,11 @@ return [
         'create' => 'Übung erstellen',
         'search' => 'Übung suchen',
         'edit' => 'Übung bearbeiten',
+        'delete' => 'Übung löschen',
+        'delete_helper' => 'Soll die Übung gelöscht werden?',
         'fields' => [
-            'recommended_iterations' => 'Wie oft soll die Übung wiederholt werden?'
+            'recommended_iterations' => 'Wie oft soll die Übung wiederholt werden? / Wie viel Zeit soll geübt werden?',
+            'recommended_iterations_short' => 'Wiederholungen / Minuten',
         ]
     ],
     'exercisedone' => [

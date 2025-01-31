@@ -21,7 +21,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                <div class="modal-body">
                     <div v-permission="'is_admin'"
                          class="form-group "
                          :class="form.errors.common_name ? 'has-error' : ''"

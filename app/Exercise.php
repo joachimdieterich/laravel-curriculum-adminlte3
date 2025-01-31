@@ -39,13 +39,7 @@ class Exercise extends Model
     {
         return $this->hasMany(ExerciseDone::class);
     }
-
-    protected static function booted () {
-        static::deleting(function(Exercise $exercise) { // before delete() method call this
-            $exercise->dones()->delete();
-        });
-    }
-
+    
     public function isAccessible()
     {
         if (
@@ -58,6 +52,10 @@ class Exercise extends Model
             return false;
         }
     }
-
-
+    
+    protected static function booted() {
+        static::deleting(function(Exercise $exercise) { // before delete() method call this
+            $exercise->dones()->delete();
+        });
+    }
 }

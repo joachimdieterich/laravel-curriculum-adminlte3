@@ -20,7 +20,7 @@ class TrainingSubscriptionController extends Controller
             abort_unless((\Gate::allows('plan_show') and $model->isAccessible()), 403);
 
             if (request()->wantsJson()) {
-                return ['trainings' => $model->trainings];
+                return $model->trainings;
             }
         }
     }

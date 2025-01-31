@@ -1,17 +1,17 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
         >
             <div class="modal-container">
-                <div class="card-header">
+                <div class="modal-header">
                     <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.logbookEntry.create') }}
-                    </span>
-                        <span v-if="method === 'patch'">
-                        {{ trans('global.logbookEntry.edit') }}
-                    </span>
+                        <span v-if="method === 'post'">
+                            {{ trans('global.training.create') }}
+                        </span>
+                        <span v-else>
+                            {{ trans('global.training.edit') }}
+                        </span>
                     </h3>
                     <div class="card-tools">
                         <button
@@ -23,64 +23,49 @@
                         </button>
                     </div>
                 </div>
+
                 <div class="modal-body">
-                    <div
-                        class="form-logbook"
-                        :class="form.errors.title ? 'has-error' : ''"
-                    >
-                        <label for="title">{{ trans('global.logbookEntry.fields.title') }} *</label>
+                    <div class="form-group">
                         <input
                             type="text"
                             id="title"
                             name="title"
                             class="form-control"
-                            v-model="form.title"
-                            :placeholder="trans('global.title')"
+                            v-model.trim="form.title"
+                            :placeholder="trans('global.training.fields.title') + ' *'"
                             required
                         />
-                        <p
-                            v-if="form.errors.title"
-                            class="help-block"
-                            v-text="form.errors.title[0]"
-                        ></p>
                     </div>
 
                     <div class="form-group">
-                        <label for="description">
-                            {{ trans('global.logbook.logbookEntry.description') }}
-                        </label>
                         <Editor
-                            id="description"
-                            name="description"
+                            :id="'description' + component_id"
+                            :name="'description' + component_id"
                             class="form-control"
                             :init="tinyMCE"
-                            v-model="form.description"
+                            v-model.trim="form.description"
                         />
-                        <p class="help-block"
-                           v-if="form.errors.description"
-                           v-text="form.errors.description[0]"
-                        ></p>
                     </div>
+
                     <div class="form-group">
                         <VueDatePicker
-                            id="date"
-                            name="date"
                             v-model="form.date"
-                            :range="{ partialRange: false }"
-                            format="dd.MM.yyyy HH:mm"
                             :teleport="true"
+                            format="dd.MM.yyy HH:mm"
                             locale="de"
-                            @cleared="form.date = ['', '']"
+                            range
+                            :partialRange="false"
+                            :placeholder="trans('global.selectDateRange')"
                             :select-text="trans('global.ok')"
                             :cancel-text="trans('global.close')"
-                        ></VueDatePicker>
+                        />
                     </div>
                 </div>
 
-                <div class="card-footer">
+                <div class="modal-footer">
                     <span class="pull-right">
                         <button
-                            id="logbook-cancel"
+                            id="training-cancel"
                             type="button"
                             class="btn btn-default"
                             @click="globalStore?.closeModal($options.name)"
@@ -88,8 +73,8 @@
                             {{ trans('global.cancel') }}
                         </button>
                         <button
-                            id="logbook-save"
-                            class="btn btn-primary"
+                            id="training-save"
+                            class="btn btn-primary ml-3"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}
@@ -102,23 +87,18 @@
 </template>
 <script>
 import Form from 'form-backend-validation';
-import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
-import Editor from "@tinymce/tinymce-vue";
-import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker.vue";
-import MediumForm from "../media/MediumForm.vue";
-import VueDatePicker from "@vuepic/vue-datepicker";
+import Editor from '@tinymce/tinymce-vue';
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {
-    name: 'logbook-entry-modal',
-    components: {
-        VueDatePicker,
-        MediumForm,
-        FontAwesomePicker,
-        Editor,
-        Select2
+    name: 'training-modal',
+    props: {
+        plan: {
+            type: Object,
+        }
     },
-    props: {},
     setup() {
         const globalStore = useGlobalStore();
         return {
@@ -129,58 +109,65 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/logbookEntries',
             form: new Form({
                 id: '',
-                logbook_id: '',
                 title: '',
                 description: '',
                 date: null,
                 begin: '',
                 end: '',
+                plan_id: this.plan.id,
+                subscribable_id: null,
+                subscribable_type: null,
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link curriculummedia autoresize"
+                    "autolink link lists table code autoresize"
                 ],
                 {
-                    'callback': 'insertContent',
-                    'callbackId': this.component_id
-                }
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id,
+                },
+                "bold underline italic | alignleft aligncenter alignright | table",
+                "bullist numlist outdent indent | mathjax link code",
             ),
         }
     },
     methods: {
         submit() {
-            this.form.begin = this.form.date[0];
-            this.form.end = this.form.date[1];
-
-            if (this.method === 'patch') {
-                this.update();
-            } else {
+            if (this.method == 'post') {
                 this.add();
+            } else {
+                this.update();
             }
+
+            this.globalStore.closeModal(this.$options.name);
         },
         add() {
-            axios.post(this.url, this.form)
-                .then(r => {
-                    this.$eventHub.emit('logbook-entry-added', r.data);
+            axios.post('/trainings', this.form)
+                .then(response => {
+                    console.log('successfull response');
+                    
+                    this.$eventHub.emit('training-added', {
+                        training: response.data,
+                        id: this.form.subscribable_id,
+                    });
                 })
-                .catch(e => {
-                    console.log(e.response);
+                .catch(error => {
+                    console.log(error)
                 });
         },
         update() {
-            axios.patch(this.url + '/' + this.form.id, this.form)
-                .then(r => {
-                    this.$eventHub.emit('logbook-entry-updated', r.data);
+            axios.patch('/trainings/' + this.form.id, this.form)
+                .then(response => {
+                    this.$eventHub.emit('training-updated', {
+                        training: response.data,
+                        id: this.form.subscribable_id,
+                    });
                 })
-                .catch(e => {
-                    console.log(e.response);
+                .catch(error => {
+                    console.log(error)
                 });
-        },
-        setIcon(selectedIcon) {
-            this.form.css_icon = 'fa fa-' + selectedIcon.className;
         },
     },
     mounted() {
@@ -191,9 +178,9 @@ export default {
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
-                    this.form.date = [this.form.begin ?? '', this.form.end ?? ''];
-                    this.form.description = this.htmlToText(params.description);
-                    this.form.logbook_id = params.logbook_id;
+                    this.form.date = [new Date(this.form.begin) ?? '', new Date(this.form.end) ?? ''];
+                    this.form.description = this.$decodeHTMLEntities(params.description);
+
                     if (this.form.id != '') {
                         this.method = 'patch';
                     } else {
@@ -202,6 +189,10 @@ export default {
                 }
             }
         });
+    },
+    components: {
+        VueDatePicker,
+        Editor,
     },
 }
 </script>

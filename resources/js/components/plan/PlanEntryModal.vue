@@ -24,7 +24,7 @@
                     </div>
                 </div>
 
-                <div class="card-body">
+                <div class="modal-body">
                     <div class="form-group input-group align-items-center">
                         <v-swatches
                             :swatch-size="49"
@@ -79,7 +79,7 @@
                 <div class="card-footer">
                     <span class="pull-right">
                         <button
-                            id="plan-cancel"
+                            id="entry-cancel"
                             type="button"
                             class="btn btn-default"
                             @click="globalStore?.closeModal($options.name)"
@@ -87,8 +87,8 @@
                             {{ trans('global.cancel') }}
                         </button>
                         <button
-                            id="plan-save"
-                            class="btn btn-primary"
+                            id="entry-save"
+                            class="btn btn-primary ml-3"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}
@@ -122,7 +122,6 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/planEntries',
             form: new Form({
                 id: '',
                 title: '',
@@ -180,7 +179,7 @@ export default {
             this.globalStore.closeModal(this.$options.name);
         },
         add() {
-            axios.post(this.url, this.form)
+            axios.post('/planEntries', this.form)
                 .then(response => {
                     this.$eventHub.emit('plan-entry-added', response.data);
                 })
@@ -189,7 +188,7 @@ export default {
                 });
         },
         update() {
-            axios.patch(this.url + '/' + this.form.id, this.form)
+            axios.patch('/planEntries/' + this.form.id, this.form)
                 .then(response => {
                     this.$eventHub.emit('plan-entry-updated', response.data);
                 })

@@ -1,13 +1,14 @@
 <template>
-    <div  :id="item.DT_RowId"
-         v-bind:value="item.DT_RowId"
-         class="box box-objective nav-item-box-image pointer my-1 "
-          :class="active === false ? 'not-allowed' : ''"
-         style="min-width: 200px !important;"
-         :style="'border-bottom: 5px solid ' + item.color"
+    <div 
+        :id="item.DT_RowId"
+        v-bind:value="item.DT_RowId"
+        class="box box-objective nav-item-box-image pointer my-1 "
+        :class="active === false ? 'not-allowed' : ''"
+        style="min-width: 200px !important;"
+        :style="'border-bottom: 5px solid ' + item.color"
     >
         <a v-if="this.create === true"
-           @click="createNewItem()"
+            @click="createNewItem()"
         >
             <div class="d-flex align-items-center justify-content-center nav-item-box-image-size h-50">
                 <slot name="itemIcon">
@@ -21,32 +22,36 @@
             </span>
         </a>
         <a v-else
-           class="text-decoration-none"
-           :style="'color: ' + $textcolor(item.color) + ' !important; ' + (isSelected(item) ? 'filter: brightness(80%); width:100%; height:100%; position:absolute; top:0; left:0;' : '')"
+            class="text-decoration-none"
+            :style="'color: ' + $textcolor(item.color) + ' !important; ' + (isSelected(item) ? 'filter: brightness(80%); width:100%; height:100%; position:absolute; top:0; left:0;' : '')"
         >
             <div v-if="item.medium_id"
-                 @click="clickEvent(item)"
-                 class="nav-item-box-image-size h-50"
-                 :style="{backgroundColor: item.color + ' !important'}">
-                <div class="nav-item-box-image-size h-100"
+                @click="clickEvent(item)"
+                class="nav-item-box-image-size h-50"
+                :style="{backgroundColor: item.color + ' !important'}"
+            >
+                <div
+                    class="nav-item-box-image-size h-100"
                     style="width: 100% !important;opacity: 0.7;"
-                    :style="{'background': 'url(/media/' + item.medium_id + '?model='+modelName+'&model_id=' + item.DT_RowId +') center no-repeat'}">
+                    :style="{'background': 'url(/media/' + item.medium_id + '?model='+modelName+'&model_id=' + item.DT_RowId +') center no-repeat'}"
+                >
                 </div>
             </div>
             <div v-else
-                 @click="clickEvent(item)"
-                 class="d-flex align-items-center justify-content-center nav-item-box-image-size h-50"
-                 :style="{backgroundColor: item.color + ' !important'}">
+                @click="clickEvent(item)"
+                class="d-flex align-items-center justify-content-center nav-item-box-image-size h-50"
+                :style="{backgroundColor: item.color + ' !important'}"
+            >
                 <slot name="itemIcon"/>
             </div>
             <span @click="clickEvent(item)">
                 <slot name="content">
                     <span class="bg-white text-center p-1 overflow-auto nav-item-box">
                         <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                           {{ item[this.titleField] }}
+                            {{ item[this.titleField] }}
                         </h1>
                         <p class="text-muted small">
-                           {{ htmlToText(item[this.descriptionField])}}
+                            {{ htmlToText(item[this.descriptionField])}}
                         </p>
                     </span>
                 </slot>
@@ -56,24 +61,27 @@
 
             <slot name="badges"></slot>
 
-            <div @click="clickEvent(item)"
-                 class="symbol"
-                 style="position: absolute; width: 30px; height: 40px;">
+            <div
+                class="symbol"
+                style="position: absolute; width: 30px; height: 40px;"
+                @click="clickEvent(item)"
+            >
                 <slot name="icon">
-                    <i class="fa pt-2"
+                    <i
+                        class="fa pt-2"
                         :class="item.owner_id == $userId ? 'fa-user' : 'fa-share-nodes'"
                     ></i>
                 </slot>
             </div>
             <div v-if="item.owner_id == $userId || this.checkPermission('is_admin')"
-                 :id="model+'Dropdown_' + item.DT_RowId"
-                 class="btn btn-flat pull-right"
-                 style="position:absolute; top:0; right: 0; background-color: transparent;"
-                 data-toggle="dropdown"
-                 aria-expanded="false"
+                :id="model+'Dropdown_' + item.DT_RowId"
+                class="btn btn-flat pull-right"
+                style="position:absolute; top:0; right: 0; background-color: transparent;"
+                data-toggle="dropdown"
+                aria-expanded="false"
             >
                 <i class="fa fa-ellipsis-v"
-                   :style="'color:' + $textcolor(item.color)"
+                    :style="'color:' + $textcolor(item.color)"
                 ></i>
                 <slot name="dropdown"></slot>
             </div>
@@ -117,7 +125,7 @@ export default {
             default: 'Zugriff nicht möglich'
         },
     },
-    setup () { //use database store
+    setup() { //use database store
         const store = useDatatableStore();
         const { getDatatable } = storeToRefs(store);
         const { isSelected } = storeToRefs(store);
@@ -134,7 +142,6 @@ export default {
             href: "",
         }
     },
-
     mounted() {
         if (!this.create) {
             this.item = this.model;
@@ -145,18 +152,18 @@ export default {
     },
 
     methods: {
-        isSelected(item){
+        isSelected(item) {
             return (this.store.isSelected(this.storeTitle, item));
         },
-        createNewItem(){
+        createNewItem() {
             this.$eventHub.emit('create'+this.modelName, true);
         },
-        clickEvent(item){
-            if (this.active){
-                if (this.store.getDatatable(this.storeTitle)?.select){ // selectMode
+        clickEvent(item) {
+            if (this.active) {
+                if (this.store.getDatatable(this.storeTitle)?.select) { // selectMode
                     this.store.addSelectItems(this.storeTitle, item);
                 } else {
-                    if (this.urlOnly){
+                    if (this.urlOnly) {
                         window.open( this.url /*+ '/' + item.id*/, this.urlTarget);
                     } else {
                         window.location = this.url + '/' + (item.DT_RowId ?? item.id); // ? item.DT_RowId -> will not work for new entries
@@ -186,14 +193,13 @@ export default {
 }
 </script>
 <style>
-
 .not-allowed {
     cursor: not-allowed;
     filter: opacity(50%);
-    width:100%;
-    height:100%;
-    position:absolute;
-    top:0;
-    left:0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 </style>

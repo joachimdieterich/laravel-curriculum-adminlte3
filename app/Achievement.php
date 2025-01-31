@@ -53,4 +53,10 @@ class Achievement extends Model
     {
         return $this->hasOne('App\User', 'id', 'owner_id');
     }
+
+    public static function booted() {
+        static::deleting(function(Achievement $achievement) { // before delete() method call this
+            $achievement->notes()->delete();
+        });
+    }
 }

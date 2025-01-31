@@ -11,7 +11,7 @@
                         {{ trans('global.terminalObjective.title_singular') }}
                     </span>
 
-                    <div v-can="'task_edit'" class="card-tools pr-2">
+                    <div v-permission="'task_edit'" class="card-tools pr-2">
                         <a @click.prevent="editObjective()" >
                             <i class="fa fa-pencil-alt"></i>
                         </a>
@@ -111,7 +111,7 @@
                     </a>
                 </li>
 
-                <li v-can="'achievement_access'"
+                <li v-permission="'achievement_access'"
                     v-if="this.type === 'enabling'"
                     class="nav-item"
                     @click="setGlobalStorage('#objective_view_'+objective.id, '#objective_view_achievements_'+objective.id)">
@@ -125,7 +125,7 @@
                     </a>
                 </li>
 
-                <li v-can="'prerequisite_access'"
+                <li v-permission="'prerequisite_access'"
                     class="nav-item"
                     @click="setGlobalStorage('#objective_view_'+objective.id, '#objective_view_prerequisites_'+objective.id)">
                     <a class="nav-link small link-muted"
@@ -148,7 +148,7 @@
                         <span v-if="help">{{ trans('global.eventSubscription.title_alt') }}</span>
                     </a>
                 </li>
-                <li v-can="'lms_access'"
+                <li v-permission="'lms_access'"
                     class="nav-item"
                     @click="setGlobalStorage('#objective_view_'+objective.id, '#objective_view_lms_'+objective.id)">
                     <a class="nav-link small link-muted"
@@ -267,7 +267,7 @@
                             ></Quotes>
                         </div>
             <!--                            Achievements-->
-                     <div v-can="'achievement_access'"
+                     <div v-permission="'achievement_access'"
                           class="tab-pane pt-2 box"
                           :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_achievements_'+objective.id)"
                           id="achievements">
@@ -280,24 +280,25 @@
                          </Achievements>
                      </div>
 
-                   <div class="tab-pane pt-2"
-                        :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_prerequisites_'+objective.id)"
+                    <div
+                        v-permission="'prerequisite_create, objective_edit'"
                         id="prerequisites"
-                        v-can="'prerequisite_access'">
-                       <div class="card-tools"
-                            v-can="'prerequisite_create'">
-                           <button
-                               v-can="'objective_edit'"
+                        class="tab-pane pt-2"
+                        :class="getGlobalStorage('#objective_view_' + objective.id, '#objective_view_prerequisites_' + objective.id)"
+                    >
+                        <div class="card-tools">
+                            <button
                                class="dropdown-item "
-                               @click.prevent="this.globalStore?.showModal('prerequisite-objective-modal');">
-                               <i class="fa fa-plus pull-right"></i>
-                           </button>
-                       </div>
-                       <prerequisites
-                           ref="Prerequisites"
-                           :successor_type="model"
-                           :successor_id="objective.id"/>
-                   </div>
+                               @click.prevent="this.globalStore?.showModal('prerequisite-objective-modal');"
+                            >
+                                <i class="fa fa-plus pull-right"></i>
+                            </button>
+                        </div>
+                        <prerequisites
+                            ref="Prerequisites"
+                            :successor_type="model"
+                            :successor_id="objective.id"/>
+                    </div>
 
                    <div class="tab-pane pt-2"
                         :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_events_'+objective.id)"
@@ -308,7 +309,7 @@
                             :curriculum="objective.curriculum">
                        </eventmanagement>
                    </div>
-                   <div v-can="'lms_access'"
+                   <div v-permission="'lms_access'"
                           class="tab-pane pt-0"
                           :class="getGlobalStorage('#objective_view_'+objective.id, '#objective_view_lms_'+objective.id)"
                           id="lms">

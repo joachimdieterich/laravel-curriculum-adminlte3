@@ -1,16 +1,16 @@
 <template>
     <div>
-        <table class="table m-0 border-top-0"
-            style="border-top: 0"
+        <table
             v-permission="'achievement_create_self_assessment'"
             v-hide-if-permission="'achievement_access'"
+            class="table m-0 border-top-0"
         >
-            <thead class=" border-top-0">
+            <thead class="border-top-0">
                 <tr class="border-top-0">
-                    <th class="border-top-0">{{trans('global.name')}}</th>
-                    <th class="border-top-0">{{trans('global.created_at')}}</th>
-                    <th class="border-top-0">{{trans('global.updated_at')}}</th>
-                    <th class="border-top-0">{{trans('global.teacher')}}</th>
+                    <th class="border-top-0">{{ trans('global.name') }}</th>
+                    <th class="border-top-0">{{ trans('global.created_at') }}</th>
+                    <th class="border-top-0">{{ trans('global.updated_at') }}</th>
+                    <th class="border-top-0">{{ trans('global.teacher') }}</th>
                     <th class="border-top-0">Status</th>
                 </tr>
             </thead>
@@ -33,21 +33,19 @@
                     </td>
                     <td v-else></td>
                     <td>
-                        <AchievementIndicator
-                            v-if="objective.achievements[0]"
+                        <AchievementIndicator v-if="objective.achievements[0]"
                             v-permission="'achievement_create'"
                             :objective="objective"
                             :type="type"
                             :users="[objective.achievements[0].user.id]"
-                            :settings="{'achievements' : false, 'edit': false}">
-                        </AchievementIndicator>
-                        <AchievementIndicator
-                            v-else
+                            :settings="{'achievements' : false, 'edit': false}"
+                        />
+                        <AchievementIndicator v-else
                             v-permission="'achievement_create'"
                             :objective="objective"
                             :type="type"
-                            :settings="{'achievements' : false, 'edit': false}">
-                        </AchievementIndicator>
+                            :settings="{'achievements' : false, 'edit': false}"
+                        />
                     </td>
                 </tr>
             </tbody>
@@ -68,22 +66,20 @@
                 @selectedValue="(id) => {
                     this.selectGroup(id);
                 }"
-            >
-            </Select2>
+            />
         </div>
 
-        <table class="table m-0 border-top-0"
-            style="border-top: 0"
-            v-if="this.users.length"
+        <table v-if="this.users.length"
             v-permission="'achievement_access'"
+            class="table m-0 border-top-0"
         >
-            <thead class=" border-top-0">
+            <thead class="border-top-0">
                 <tr class="border-top-0">
-                    <th class="border-top-0">{{trans('global.name')}}</th>
-                    <th class="border-top-0">{{trans('global.created_at')}}</th>
-                    <th class="border-top-0">{{trans('global.updated_at')}}</th>
-                    <th class="border-top-0">{{trans('global.teacher')}}</th>
-                    <th class="border-top-0">{{trans('global.notes')}}</th>
+                    <th class="border-top-0">{{ trans('global.name') }}</th>
+                    <th class="border-top-0">{{ trans('global.created_at') }}</th>
+                    <th class="border-top-0">{{ trans('global.updated_at') }}</th>
+                    <th class="border-top-0">{{ trans('global.teacher') }}</th>
+                    <th class="border-top-0">{{ trans('global.notes') }}</th>
                     <th class="border-top-0">Status</th>
                 </tr>
             </thead>
@@ -106,10 +102,11 @@
                         </span>
                     </td>
                     <td v-if="currentUser(user.id).achievements[0]">
-                        <i style="font-size:18px;"
-                            class="far fa-sticky-note text-muted pointer"
-                            @click.prevent="show(currentUser(user.id).achievements[0].id) ">
-                        </i>
+                        <i
+                            class="fa fa-sticky-note text-muted pointer"
+                            style="font-size: 18px;"
+                            @click.prevent="show(currentUser(user.id).achievements[0].id)"
+                        ></i>
                     </td>
                     <td v-else></td>
                     <td>
@@ -118,18 +115,17 @@
                             :objective="currentUser(user.id)"
                             :type="type"
                             :users="[user.id]"
-                            :settings="{'achievements' : false, 'edit': false}">
-                        </AchievementIndicator>
+                            :settings="{'achievements' : false, 'edit': false}"
+                        />
                     </td>
                 </tr>
             </tbody>
         </table>
         <Teleport to="body">
-            <NoteModal></NoteModal>
+            <NoteModal/>
         </Teleport>
     </div>
 </template>
-
 <script>
 import AchievementIndicator from './AchievementIndicator.vue';
 import NoteModal from "../note/NoteModal.vue";
@@ -140,10 +136,10 @@ import {useGlobalStore} from "../../store/global";
 export default {
     props: {
         objective: {},
-        type:{},
-        settings:{}
+        type: {},
+        settings: {},
     },
-    setup () {
+    setup() {
         const globalStore = useGlobalStore();
         return {
             globalStore,
@@ -160,14 +156,14 @@ export default {
         }
     },
     methods: {
-        show(user_id){
+        show(user_id) {
             this.globalStore?.showModal('note-modal', {
-                'notable_type': 'App\\Achievement',
-                'notable_id': user_id,
-                'show_tabs': false,
+                notable_type: 'App\\Achievement',
+                notable_id: user_id,
+                show_tabs: false,
             });
         },
-        loaderEvent(){
+        loaderEvent() {
             axios.get('/enablingObjectives/' + this.objective.id + '/achievements/' + this.selectedGroup)
                 .then(response => {
                     this.processResponse(response);
@@ -175,20 +171,19 @@ export default {
                 this.errors = e.response.data.errors;
             });
         },
-        currentUser(id)
-        {
+        currentUser(id) {
             let currentUsersObjective = JSON.parse(JSON.stringify(this.objectiveWithAchievement));
             const achievement = currentUsersObjective.achievements.find(e => e.user_id == id);
             currentUsersObjective.achievements = [achievement];
 
             return currentUsersObjective;
         },
-        processResponse(response){
+        processResponse(response) {
             this.objectiveWithAchievement = response.data.objective;
             this.groups = response.data.groups;
             this.users  = response.data.users;
         },
-        selectGroup(id){
+        selectGroup(id) {
             this.selectedGroup = id;
             this.loaderEvent();
         }
@@ -198,7 +193,7 @@ export default {
         GradeModal,
         Select2,
         AchievementIndicator,
-        NoteModal
-    }
+        NoteModal,
+    },
 }
 </script>

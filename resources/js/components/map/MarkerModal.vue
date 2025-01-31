@@ -2,6 +2,7 @@
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask"
+            @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -25,202 +26,204 @@
                 </div>
 
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label for="title">
-                            {{ trans('global.mapMarker.fields.title') }}
-                        </label>
-                        <input
-                            type="text" id="title"
-                            name="title"
-                            class="form-control"
-                            v-model="form.title"
-                            placeholder="Title"
-                            required
-                        />
-                        <p v-if="form.errors.title"
-                            class="help-block"
-                            v-text="form.errors.title[0]"
-                        ></p>
-                    </div>
-                    <div class="form-group">
-                        <label for="teaser_text">
-                            {{ trans('global.mapMarker.fields.teaser_text') }}
-                        </label>
-                        <input
-                            type="text"
-                            id="teaser_text"
-                            name="teaser_text"
-                            class="form-control"
-                            v-model.trim="form.teaser_text"
-                            :placeholder="trans('global.mapMarker.fields.teaser_text')"
-                            required
-                        />
-                        <p v-if="form.errors?.teaser_text"
-                            class="help-block"
-                            v-text="form.errors?.teaser_text[0]"
-                        ></p>
-                    </div>
-                    <div class="form-group">
-                        <label for="description">
-                            {{ trans('global.mapMarker.fields.description') }}
-                        </label>
-                        <Editor
-                            id="description"
-                            name="description"
-                            :placeholder="trans('global.mapMarker.fields.description')"
-                            class="form-control"
-                            :init="tinyMCE"
-                            :initial-value="form.description"
-                        />
-                    </div>
-                    <div class="form-group">
-                        <label for="author">
-                            {{ trans('global.mapMarker.fields.author') }}
-                        </label>
-                        <input
-                            type="text"
-                            id="author"
-                            name="author"
-                            class="form-control"
-                            v-model.trim="form.author"
-                            :placeholder="trans('global.mapMarker.fields.author')"
-                            required
-                        />
-                        <p v-if="form.errors?.author"
-                            class="help-block"
-                            v-text="form.errors?.author[0]"
-                        ></p>
-                    </div>
-                    <div class="form-group">
-                        <label for="tags">
-                            {{ trans('global.mapMarker.fields.tags') }}
-                        </label>
-                        <input
-                            type="text"
-                            id="tags"
-                            name="tags"
-                            class="form-control"
-                            v-model.trim="form.tags"
-                            :placeholder="trans('global.mapMarker.fields.tags')"
-                            required
-                        />
-                        <p v-if="form.errors?.tags"
-                            class="help-block"
-                            v-text="form.errors?.tags[0]"
-                        ></p>
-                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <input
+                                    id="title"
+                                    type="text"
+                                    name="title"
+                                    class="form-control"
+                                    v-model="form.title"
+                                    :placeholder="trans('global.title') + ' *'"
+                                    required
+                                />
+                                <p v-if="form.errors.title"
+                                    class="help-block"
+                                    v-text="form.errors.title[0]"
+                                ></p>
+                            </div>
 
-                    <Select2
-                        id="map_marker_type"
-                        name="map_marker_type"
-                        url="/mapMarkerTypes"
-                        model="mapMarkerType"
-                        :selected="this.form.type_id"
-                        @selectedValue="(id) => {
-                            this.form.type_id = id;
-                        }"
-                    />
-                    <Select2
-                        id="map_marker_category"
-                        name="map_marker_category"
-                        url="/mapMarkerCategories"
-                        model="mapMarkerCategory"
-                        :selected="this.form.category_id"
-                        @selectedValue="(id) => {
-                            this.form.category_id = id;
-                        }"
-                    />
+                            <div class="form-group">
+                                <input
+                                    id="teaser_text"
+                                    type="text"
+                                    name="teaser_text"
+                                    class="form-control"
+                                    v-model.trim="form.teaser_text"
+                                    :placeholder="trans('global.mapMarker.fields.teaser_text')"
+                                    required
+                                />
+                                <p v-if="form.errors?.teaser_text"
+                                    class="help-block"
+                                    v-text="form.errors?.teaser_text[0]"
+                                ></p>
+                            </div>
 
-                    <div class="form-group">
-                        <label for="latitude">
-                            {{ trans('global.mapMarker.fields.latitude') }}
-                        </label>
-                        <input
-                            type="text"
-                            id="latitude"
-                            name="latitude"
-                            class="form-control"
-                            v-model.trim="form.latitude"
-                            :placeholder="trans('global.mapMarker.fields.latitude')"
-                            required
-                        />
-                        <p v-if="form.errors?.latitude"
-                            class="help-block"
-                            v-text="form.errors?.latitude[0]"
-                        ></p>
-                    </div>
-                    <div class="form-group">
-                        <label for="longitude">
-                            {{ trans('global.mapMarker.fields.longitude') }}
-                        </label>
-                        <input
-                            type="text"
-                            id="longitude"
-                            name="longitude"
-                            class="form-control"
-                            v-model.trim="form.longitude"
-                            :placeholder="trans('global.mapMarker.fields.longitude')"
-                            required
-                        />
-                        <p v-if="form.errors?.longitude"
-                            class="help-block"
-                            v-text="form.errors?.longitude[0]"
-                        ></p>
-                    </div>
+                            <div class="form-group">
+                                <Editor
+                                    id="description"
+                                    name="description"
+                                    :placeholder="trans('global.mapMarker.fields.description')"
+                                    class="form-control"
+                                    :init="tinyMCE"
+                                    :initial-value="form.description"
+                                />
+                            </div>
 
-                    <div class="form-group">
-                        <label for="address">
-                            {{ trans('global.mapMarker.fields.address') }}
-                        </label>
-                        <input
-                            type="text"
-                            id="address"
-                            name="address"
-                            class="form-control"
-                            v-model.trim="form.address"
-                            :placeholder="trans('global.mapMarker.fields.address')"
-                            required
-                        />
-                        <p v-if="form.errors?.address"
-                            class="help-block"
-                            v-text="form.errors?.address[0]"
-                        ></p>
-                    </div>
+                            <div class="form-group">
+                                <label for="author">
+                                    {{ trans('global.mapMarker.fields.author') }}
+                                </label>
+                                <input
+                                    id="author"
+                                    type="text"
+                                    name="author"
+                                    class="form-control"
+                                    v-model.trim="form.author"
+                                    :placeholder="trans('global.mapMarker.fields.author')"
+                                    required
+                                />
+                                <p v-if="form.errors?.author"
+                                    class="help-block"
+                                    v-text="form.errors?.author[0]"
+                                ></p>
+                            </div>
 
-                    <div class="form-group">
-                        <label for="url">
-                            {{ trans('global.mapMarker.fields.url') }}
-                        </label>
-                        <input
-                            type="text"
-                            id="url"
-                            name="url"
-                            class="form-control"
-                            v-model.trim="form.url"
-                            :placeholder="trans('global.mapMarker.fields.url')"
-                        />
-                        <p v-if="form.errors?.url"
-                            class="help-block"
-                            v-text="form.errors?.url[0]"
-                        ></p>
-                    </div>
+                            <div class="form-group">
+                                <label for="tags">
+                                    {{ trans('global.mapMarker.fields.tags') }}
+                                </label>
+                                <input
+                                    id="tags"
+                                    type="text"
+                                    name="tags"
+                                    class="form-control"
+                                    v-model.trim="form.tags"
+                                    :placeholder="trans('global.mapMarker.fields.tags')"
+                                    required
+                                />
+                                <p v-if="form.errors?.tags"
+                                    class="help-block"
+                                    v-text="form.errors?.tags[0]"
+                                ></p>
+                            </div>
 
-                    <div class="form-group">
-                        <label for="url_title">
-                            {{ trans('global.mapMarker.fields.url_title') }}
-                        </label>
-                        <input
-                            type="text"
-                            id="url_title"
-                            name="url_title"
-                            class="form-control"
-                            v-model.trim="form.url_title"
-                            :placeholder="trans('global.mapMarker.fields.url_title')"
-                        />
-                        <p v-if="form.errors?.url_title"
-                            class="help-block"
-                            v-text="form.errors?.url_title[0]"
-                        ></p>
+                            <Select2
+                                id="map_marker_type"
+                                name="map_marker_type"
+                                url="/mapMarkerTypes"
+                                model="mapMarkerType"
+                                :selected="this.form.type_id"
+                                @selectedValue="(id) => {
+                                    this.form.type_id = id;
+                                }"
+                            />
+
+                            <Select2
+                                id="map_marker_category"
+                                name="map_marker_category"
+                                url="/mapMarkerCategories"
+                                model="mapMarkerCategory"
+                                :selected="this.form.category_id"
+                                @selectedValue="(id) => {
+                                    this.form.category_id = id;
+                                }"
+                            />
+
+                            <div class="form-group">
+                                <label for="latitude">
+                                    {{ trans('global.mapMarker.fields.latitude') }} *
+                                </label>
+                                <input
+                                    id="latitude"
+                                    type="text"
+                                    name="latitude"
+                                    class="form-control"
+                                    v-model.trim="form.latitude"
+                                    :placeholder="trans('global.mapMarker.fields.latitude')"
+                                    required
+                                />
+                                <p v-if="form.errors?.latitude"
+                                    class="help-block"
+                                    v-text="form.errors?.latitude[0]"
+                                ></p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="longitude">
+                                    {{ trans('global.mapMarker.fields.longitude') }} *
+                                </label>
+                                <input
+                                    id="longitude"
+                                    type="text"
+                                    name="longitude"
+                                    class="form-control"
+                                    v-model.trim="form.longitude"
+                                    :placeholder="trans('global.mapMarker.fields.longitude')"
+                                    required
+                                />
+                                <p v-if="form.errors?.longitude"
+                                    class="help-block"
+                                    v-text="form.errors?.longitude[0]"
+                                ></p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="address">
+                                    {{ trans('global.mapMarker.fields.address') }}
+                                </label>
+                                <input
+                                    id="address"
+                                    type="text"
+                                    name="address"
+                                    class="form-control"
+                                    v-model.trim="form.address"
+                                    :placeholder="trans('global.mapMarker.fields.address')"
+                                    required
+                                />
+                                <p v-if="form.errors?.address"
+                                    class="help-block"
+                                    v-text="form.errors?.address[0]"
+                                ></p>
+                            </div>
+        
+                            <div class="form-group">
+                                <label for="url">
+                                    {{ trans('global.mapMarker.fields.url') }}
+                                </label>
+                                <input
+                                    id="url"
+                                    type="text"
+                                    name="url"
+                                    class="form-control"
+                                    v-model.trim="form.url"
+                                    :placeholder="trans('global.mapMarker.fields.url')"
+                                />
+                                <p v-if="form.errors?.url"
+                                    class="help-block"
+                                    v-text="form.errors?.url[0]"
+                                ></p>
+                            </div>
+
+                            <div>
+                                <label for="url_title">
+                                    {{ trans('global.mapMarker.fields.url_title') }}
+                                </label>
+                                <input
+                                    id="url_title"
+                                    type="text"
+                                    name="url_title"
+                                    class="form-control"
+                                    v-model.trim="form.url_title"
+                                    :placeholder="trans('global.mapMarker.fields.url_title')"
+                                />
+                                <p v-if="form.errors?.url_title"
+                                    class="help-block"
+                                    v-text="form.errors?.url_title[0]"
+                                ></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -237,7 +240,7 @@
                         <button
                             id="marker-save"
                             class="btn btn-primary"
-                            @click="submit(method)"
+                            @click="submit()"
                         >
                             {{ trans('global.save') }}
                         </button>
@@ -306,8 +309,8 @@ export default {
         }
     },
     methods: {
-        submit(method) {
-            if (method == 'patch') {
+        submit() {
+            if (this.method == 'patch') {
                 this.update();
             } else {
                 this.add();

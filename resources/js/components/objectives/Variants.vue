@@ -28,7 +28,7 @@
                                 <div :class="css_form"
                                      style="height:100%">
                                     <i v-if="field !== 'description' && variant_definition.id !== 0"
-                                       v-can="'curriculum_edit'"
+                                       v-permission="'curriculum_edit'"
                                        class="fa fa-pencil-alt pointer pull-right"
                                        @click="togglEdit(variant_definition.id)"></i>
                                     <p class="text-bold" v-if="showTitle">
@@ -245,7 +245,7 @@ export default {
     },
     computed: {
         enableDraggable(){
-            return window.Laravel.permissions.indexOf('curriculum_edit') !== -1; //v-can="curriculum_edit"
+            return window.Laravel.permissions.indexOf('curriculum_edit') !== -1;
         },
         width_css() {
             if (this.field === 'description'){

@@ -179,142 +179,138 @@ import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import ContentModal from "./ContentModal.vue";
 import {useGlobalStore} from "../../store/global";
 
-    export default {
-        props: {
-            subscription: {},
-            subscribable_type: '',
-            subscribable_id: '',
-            medium: {},
-            format: ''
-        },
-        components: {
-            ContentSubscriptionModal,
-            ConfirmModal,
-            ContentModal
-        },
-        setup () {
-            const globalStore = useGlobalStore();
-            return {
-                globalStore,
-            }
-        },
-        data() {
-            return {
-                uid: null,
-                subscriptions: [],
-                errors: {},
-                currentSlide: 0,
-                currentContent: {},
-                showConfirm: false,
-                showContentSubscriptionModal: false
-            }
-        },
-        methods: {
-            setSlide(id) {
-                this.currentSlide = id;
-            },
-            prev() {
-                if (this.currentSlide === 0){
-                    this.currentSlide = this.subscriptions.length;
-                } else {
-                    this.currentSlide--;
-                }
-                $('#contentCarousel_' + this.uid).carousel(this.currentSlide);
-            },
-            next() {
-                if (this.currentSlide === this.subscriptions.length){
-                    this.currentSlide = 0;
-                } else {
-                    this.currentSlide++;
-                }
-                $('#contentCarousel_' + this.uid).carousel(this.currentSlide);
-            },
-            async sortEvent(contentSubscription,amount) {
-                let subscription = {
-                    'subscribable_type': contentSubscription.subscribable_type,
-                    'subscribable_id':   contentSubscription.subscribable_id,
-                    'content_id':        contentSubscription.content_id,
-                    'order_id':          contentSubscription.order_id + parseInt(amount)
-                }
-                //console.log(JSON.stringify(objective));
-                try {
-                    this.subscriptions = (await axios.patch('/contentSubscriptions/', subscription)).data.message;
-                } catch(error) {
-                    this.errors = error.response.data.errors;
-                }
-            },
-            async fixOrderIds() {
-                let subscription = {
-                    'subscribable_type': this.subscribable_type,
-                    'subscribable_id':   this.subscribable_id,
-                }
-
-                try {
-                    this.subscriptions = (await axios.patch('/contentSubscriptions/reset', subscription)).data.message;
-                } catch(error) {
-                    this.errors = error.response.data.errors;
-                }
-            },
-            create(){
-                this.globalStore?.showModal('content-modal',{
-                    'subscribable_type': this.subscribable_type,
-                    'subscribable_id': this.subscribable_id
-                });
-            },
-            edit(item) {
-                this.globalStore?.showModal('content-modal', {
-                    'id': item.content.id,
-                    'title': item.content.title,
-                    'content': item.content.content,
-                    'subscribable_type': item.subscribable_type,
-                    'subscribable_id': item.subscribable_id
-                });
-            },
-            deleteSubscription(contentSubscription) {
-                axios.post('/contents/'+contentSubscription.content_id+'/destroy',
-                        {
-                            'subscribable_type': contentSubscription.subscribable_type,
-                            'subscribable_id': contentSubscription.subscribable_id
-                        }
-                    )
-                    .then(res => {
-                        let index = this.subscriptions.indexOf(contentSubscription);
-                        this.subscriptions.splice(index, 1);
-                    })
-                    .catch(e => {
-                        console.log(e.response);
-                    });
-            },
-            loaderEvent() {
-                axios.get('/contentSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id)
-                    .then(response => {
-                        this.subscriptions = response.data.message;
-                    })
-                    .catch(e => {
-                        this.errors = e.data.errors;
-                    });
-            }
-        },
-        mounted() {
-            this.uid = this.$.uid;
-            this.currentSlide = 0;
-
-            this.$eventHub.on('content-added', function(newContent) {
-                this.globalStore?.closeModal('content-modal');
-                this.loaderEvent();
-            }.bind(this));
-
-            this.$eventHub.on('content-updated', function(newContent) {
-                this.globalStore?.closeModal('content-modal');
-                this.loaderEvent();
-            }.bind(this));
-
-            this.currentContent = {
-                'subscribable_type': this.subscribable_type,
-                'subscribable_id': this.subscribable_id,
-            }
-            MathJax.startup.defaultReady();
+export default {
+    props: {
+        subscription: {},
+        subscribable_type: '',
+        subscribable_id: '',
+        medium: {},
+        format: '',
+    },
+    components: {
+        ContentSubscriptionModal,
+        ConfirmModal,
+        ContentModal,
+    },
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
         }
+    },
+    data() {
+        return {
+            uid: null,
+            subscriptions: [],
+            errors: {},
+            currentSlide: 0,
+            currentContent: {},
+            showConfirm: false,
+            showContentSubscriptionModal: false,
+        }
+    },
+    methods: {
+        setSlide(id) {
+            this.currentSlide = id;
+        },
+        prev() {
+            if (this.currentSlide === 0){
+                this.currentSlide = this.subscriptions.length;
+            } else {
+                this.currentSlide--;
+            }
+            $('#contentCarousel_' + this.uid).carousel(this.currentSlide);
+        },
+        next() {
+            if (this.currentSlide === this.subscriptions.length){
+                this.currentSlide = 0;
+            } else {
+                this.currentSlide++;
+            }
+            $('#contentCarousel_' + this.uid).carousel(this.currentSlide);
+        },
+        async sortEvent(contentSubscription,amount) {
+            let subscription = {
+                'subscribable_type': contentSubscription.subscribable_type,
+                'subscribable_id':   contentSubscription.subscribable_id,
+                'content_id':        contentSubscription.content_id,
+                'order_id':          contentSubscription.order_id + parseInt(amount)
+            }
+            //console.log(JSON.stringify(objective));
+            try {
+                this.subscriptions = (await axios.patch('/contentSubscriptions/', subscription)).data.message;
+            } catch(error) {
+                this.errors = error.response.data.errors;
+            }
+        },
+        async fixOrderIds() {
+            let subscription = {
+                'subscribable_type': this.subscribable_type,
+                'subscribable_id':   this.subscribable_id,
+            }
 
-    }
+            try {
+                this.subscriptions = (await axios.patch('/contentSubscriptions/reset', subscription)).data.message;
+            } catch(error) {
+                this.errors = error.response.data.errors;
+            }
+        },
+        create() {
+            this.globalStore?.showModal('content-modal',{
+                'subscribable_type': this.subscribable_type,
+                'subscribable_id': this.subscribable_id
+            });
+        },
+        edit(item) {
+            this.globalStore?.showModal('content-modal', {
+                'id': item.content.id,
+                'title': item.content.title,
+                'content': item.content.content,
+                'subscribable_type': item.subscribable_type,
+                'subscribable_id': item.subscribable_id
+            });
+        },
+        deleteSubscription(contentSubscription) {
+            axios.post('/contents/'+contentSubscription.content_id+'/destroy',
+                    {
+                        'subscribable_type': contentSubscription.subscribable_type,
+                        'subscribable_id': contentSubscription.subscribable_id
+                    }
+                )
+                .then(res => {
+                    let index = this.subscriptions.indexOf(contentSubscription);
+                    this.subscriptions.splice(index, 1);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
+        },
+        loaderEvent() {
+            axios.get('/contentSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id)
+                .then(response => {
+                    this.subscriptions = response.data.message;
+                })
+                .catch(e => {
+                    this.errors = e.data.errors;
+                });
+        },
+    },
+    mounted() {
+        this.uid = this.$.uid;
+        this.currentSlide = 0;
+
+        this.$eventHub.on('content-added', content => {
+            if (content.subscribable_id === this.subscribable_id) this.loaderEvent();
+        });
+
+        this.$eventHub.on('content-updated', content => {
+            if (content.subscribable_id === this.subscribable_id) this.loaderEvent();
+        });
+
+        this.currentContent = {
+            'subscribable_type': this.subscribable_type,
+            'subscribable_id': this.subscribable_id,
+        }
+    },
+}
 </script>

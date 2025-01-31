@@ -1,27 +1,28 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
+            @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
                     <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.logbook.create') }}
-                    </span>
-                        <span v-if="method === 'patch'">
-                        {{ trans('global.logbook.edit') }}
-                    </span>
+                        <span>{{ trans('global.logbook.enrol') }}</span>
                     </h3>
                     <div class="card-tools">
-                        <button type="button"
-                                class="btn btn-tool"
-                                @click="globalStore?.closeModal($options.name)">
+                        <button
+                            type="button"
+                            class="btn btn-tool"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
                             <i class="fa fa-times"></i>
                         </button>
                     </div>
                 </div>
-                <div class="modal-body">
+                <div
+                    class="modal-body"
+                    style="overflow-y: visible;"
+                >
                     <Select2
                         id="logbooks_subscription"
                         name="logbooks_subscription"
@@ -31,25 +32,26 @@
                         @selectedValue="(id) => {
                             this.form.logbook_id = id;
                         }"
-                    >
-                    </Select2>
+                    />
                 </div>
                 <div class="card-footer">
-                 <span class="pull-right">
-                     <button
-                         id="logbook-cancel"
-                         type="button"
-                         class="btn btn-default"
-                         @click="globalStore?.closeModal($options.name)">
-                         {{ trans('global.cancel') }}
-                     </button>
-                     <button
-                         id="logbook-save"
-                         class="btn btn-primary"
-                         @click="submit(method)" >
-                         {{ trans('global.save') }}
-                     </button>
-                </span>
+                    <span class="pull-right">
+                        <button
+                            id="logbook-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="logbook-save"
+                            class="btn btn-primary ml-3"
+                            @click="submit()"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
+                    </span>
                 </div>
             </div>
         </div>
@@ -62,8 +64,8 @@ import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'subscribe-logbook-modal',
-    components:{
-        Select2
+    components: {
+        Select2,
     },
     props: {},
     setup() {
@@ -75,27 +77,24 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
-            url: '/logbookSubscriptions',
             form: new Form({
-                'id': '',
-                'logbook_id': '',
+                id: '',
+                logbook_id: '',
             }),
             subscribable_type: '',
             subscribable_id: '',
-            search: '',
         }
     },
     methods: {
         submit() {
-            axios.post(this.url, {
-                'model_id': this.form.logbook_id,
-                'subscribable_type': this.subscribable_type,
-                'subscribable_id': this.subscribable_id
+            axios.post('/logbookSubscriptions', {
+                model_id: this.form.logbook_id,
+                subscribable_type: this.subscribable_type,
+                subscribable_id: this.subscribable_id,
             })
-            .then(r => {
-                this.$eventHub.emit('logbook-subscription-added', r.data);
-                //console.log(r.data);
+            .then(response => {
+                this.$eventHub.emit('logbook-subscription-added', response.data);
+                this.globalStore.closeModal(this.$options.name);
             })
             .catch(err => {
                 console.log(err.response);
@@ -112,7 +111,6 @@ export default {
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
-                    this.method = 'post';
                 }
             }
         });

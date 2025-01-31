@@ -45,10 +45,13 @@
                 reaction="like"
                 url="/kanbanItemComments"
             />
-          <i v-if="($userId == comment.user.id && hover == comment.id) || ($userId == kanban_owner_id && hover == comment.id) "
-             v-can="'message_delete'"
-             class="text-danger pull-right p-1 mr-1 fa fa-trash pointer"
-             @click="deleteComment(comment.id)"></i>
+            <i v-if="($userId == comment.user.id && hover == comment.id)
+                    || ($userId == kanban_owner_id && hover == comment.id)
+                "
+                v-permission="'message_delete'"
+                class="text-danger pull-right p-1 mr-1 fa fa-trash pointer"
+                @click="deleteComment(comment.id)"
+            ></i>
             <small>{{ comment.comment }}</small>
         </div>
       </div>

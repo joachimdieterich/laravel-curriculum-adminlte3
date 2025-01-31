@@ -53,10 +53,11 @@ class LogbookSubscriptionController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        abort_unless((\Gate::allows('logbook_create') and Logbook::find(format_select_input($input['model_id']))->isAccessible()), 403);
+        $logbook = Logbook::find(format_select_input($input['model_id']));
+        abort_unless((\Gate::allows('logbook_create') and $logbook->isAccessible()), 403);
 
         $subscribe = LogbookSubscription::updateOrCreate([
-            'logbook_id' => format_select_input($input['model_id']),
+            'logbook_id' => $logbook->id,
             'subscribable_type' => $input['subscribable_type'],
             'subscribable_id' => $input['subscribable_id'],
         ], [
@@ -66,7 +67,9 @@ class LogbookSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return ['subscription' => Logbook::find(format_select_input($input['model_id']))->subscriptions()->with('subscribable')->get()];
+            return $logbook->subscriptions()
+                ->with(['subscribable', 'logbook'])
+                ->first();
         }
     }
 
@@ -117,19 +120,17 @@ class LogbookSubscriptionController extends Controller
     public function expel(Request $request)
     {
         $input = $this->validateRequest();
-        $model = Logbook::find(format_select_input($input['model_id']));
-        //dump(format_select_input($input['model_id']));
-        abort_unless((\Gate::allows('logbook_create') and $model->isAccessible()), 403);
+        $logbook = Logbook::find(format_select_input($input['model_id']));
+        abort_unless((\Gate::allows('logbook_create') and $logbook->isAccessible()), 403);
 
         $subscription = LogbookSubscription::where([
-            'logbook_id' => $model->id,
+            'logbook_id' => $logbook->id,
             'subscribable_type' => $input['subscribable_type'],
             'subscribable_id' => $input['subscribable_id'],
         ]);
 
-
         if ($subscription->delete()) {
-            return trans('global.logbook.expel');
+            return trans('global.expel_success');
         }
     }
 

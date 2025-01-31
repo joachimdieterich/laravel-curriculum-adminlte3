@@ -108,7 +108,7 @@ class SubjectController extends Controller
     {
         return request()->validate([
             'title' => 'sometimes|required',
-            'title_short' => 'sometimes|required',
+            'title_short' => 'sometimes',
             'external_id' => 'sometimes',
             'organization_type_id' => 'sometimes',
         ]);

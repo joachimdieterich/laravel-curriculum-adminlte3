@@ -49,10 +49,11 @@ class PlanSubscriptionController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        abort_unless((\Gate::allows('plan_create') and Plan::find($input['model_id'])->isAccessible()), 403);   // user owns plan_subscription
+        $plan = Plan::find(format_select_input($input['model_id']));
+        abort_unless((\Gate::allows('plan_create') and $plan->isAccessible()), 403);   // user owns plan_subscription
 
         $subscribe = PlanSubscription::updateOrCreate([
-            'plan_id' => $input['model_id'],
+            'plan_id' => $plan->id,
             'subscribable_type' => $input['subscribable_type'],
             'subscribable_id' => $input['subscribable_id'],
         ], [
@@ -62,7 +63,9 @@ class PlanSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return ['subscription' => Plan::find($input['model_id'])->subscriptions()->with('subscribable')->get()];
+            return $plan->subscriptions()
+                ->with(['subscribable', 'plan'])
+                ->first();
         }
     }
 
@@ -103,12 +106,28 @@ class PlanSubscriptionController extends Controller
         }
     }
 
+    public function expel(Request $request) {
+        $input = $this->validateRequest();
+        $plan = Plan::find(format_select_input($input['model_id']));
+        abort_unless((\Gate::allows('plan_delete') and $plan->isAccessible()), 403);
+
+        $subscription = PlanSubscription::where([
+            'plan_id' => $plan->id,
+            'subscribable_type' => $input['subscribable_type'],
+            'subscribable_id' => $input['subscribable_id'],
+        ]);
+
+        if ($subscription->delete()) {
+            return trans('global.expel_success');
+        }
+    }
+
     protected function validateRequest()
     {
         return request()->validate([
             'subscribable_type' => 'sometimes|string',
             'subscribable_id'   => 'sometimes|integer',
-            'model_id'          => 'sometimes|integer',
+            'model_id'          => 'sometimes',
             'editable'          => 'sometimes',
         ]);
     }

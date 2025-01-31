@@ -1,8 +1,9 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
-             style="z-index: 10000000 !important;"
+            class="modal-mask"
+            style="z-index: 10000000 !important;"
+            @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -18,32 +19,37 @@
                         <button
                             type="button"
                             class="btn btn-tool"
-                            @click="globalStore?.closeModal($options.name)">
+                            @click="globalStore?.closeModal($options.name)"
+                        >
                             <i class="fa fa-times"></i>
                         </button>
                     </div>
                 </div>
 
-                <div class="modal-body p-0">
+                <div class="modal-body">
                     <div class="d-md-flex">
                         <div class="card-pane-left p-0">
                             <ul class="nav flex-column">
-                                <li v-permission="'medium_access'"
+                                <li
+                                    v-permission="'medium_access'"
                                     class="nav-link text-sm"
                                 >
-                                    <a  class="link-muted"
-                                        data-toggle="tab"
+                                    <a
                                         href="#upload"
+                                        class="link-muted"
+                                        data-toggle="tab"
                                         @click="setTab('upload');"
                                     >
                                         {{ trans('global.medium.upload') }}
                                     </a>
                                 </li>
-                                <li v-permission="'medium_access'"
+                                <li
+                                    v-permission="'medium_access'"
                                     class="nav-link text-sm"
                                 >
-                                    <a  class="link-muted"
+                                    <a
                                         href="#media"
+                                        class="link-muted"
                                         data-toggle="tab"
                                         @click="setTab('media');"
                                     >
@@ -58,11 +64,13 @@
                                         {{ trans('global.medium.link') }}
                                     </a>
                                 </li>-->
-                                <li v-permission="'external_medium_create'"
+                                <li
+                                    v-permission="'external_medium_create'"
                                     class="nav-link text-sm"
                                 >
-                                    <a  class="link-muted active show"
+                                    <a
                                         href="#external"
+                                        class="link-muted active show"
                                         data-toggle="tab"
                                         @click="setTab('external')"
                                     >
@@ -74,10 +82,11 @@
                         <!-- /.left-menu -->
 
                         <div class="p-1 flex-fill border-left">
-                            <div class="tab-content p-2">
-                                <div class="tab-pane"
-                                    id="upload"
+                            <div class="tab-content">
+                                <div
                                     v-permission="'medium_create'"
+                                    id="upload"
+                                    class="tab-pane"
                                 >
                                     <form v-if="isInitial || isSaving"
                                         action="javascript:void(0)"
@@ -127,11 +136,14 @@
                                 </div><!-- /.tab-pane -->
 
                                 <div
-                                    class="tab-pane"
-                                    id="media"
                                     v-permission="'medium_create'"
+                                    id="media"
+                                    class="tab-pane"
                                 >
-                                    <div id="media_create_datatable_filter" class="dataTables_filter">
+                                    <div
+                                        id="media_create_datatable_filter"
+                                        class="dataTables_filter"
+                                    >
                                         <input
                                             id="media_search_datatable"
                                             name="media_search_datatable"
@@ -142,7 +154,10 @@
                                             aria-controls="media_create_datatable"
                                         />
                                     </div>
-                                    <div class="form-group table-responsive" style="min-height: 400px;">
+                                    <div
+                                        class="form-group table-responsive"
+                                        style="min-height: 400px;"
+                                    >
                                         <div
                                             id="media-datatable-wrapper"
                                             class="w-100 dataTablesWrapper"
@@ -151,15 +166,15 @@
                                                 id="media-datatable"
                                                 :columns="columns"
                                                 :options="options"
-                                                :ajax="url+'/list'"
+                                                ajax="/media/list"
                                                 :search="search"
                                                 width="100%"
-                                            ></DataTable>
+                                            />
                                         </div>
                                     </div>
                                 </div><!-- /.tab-pane -->
 
-    <!--                            <div class="tab-pane"
+                                <!-- <div class="tab-pane"
                                     id="link"
                                     v-can="'link_create'">
                                     <div class="form-group " >
@@ -173,18 +188,18 @@
                                     </div>
                                 </div>--><!-- /.tab-pane -->
 
-                                <div class="tab-pane active show"
-                                     id="external"
+                                <div
                                     v-permission="'external_medium_create'"
+                                    id="external"
+                                    class="tab-pane active show"
                                 >
-                                    <RepositoryPluginCreate
-                                        v-if="!postProcess"
+                                    <RepositoryPluginCreate v-if="!postProcess"
                                         :model="this.form"
-                                    ></RepositoryPluginCreate>
+                                    />
                                     <div v-if="postProcess"
-                                         :id="'loading_'+this.component_id"
-                                         class="overlay text-center"
-                                         style="width:100% !important; height: 100%;">
+                                        :id="'loading_'+this.component_id"
+                                        class="overlay text-center w-100 h-100"
+                                    >
                                         <i class="fa fa-spinner fa-pulse fa-fw"></i>
                                         <span>Fertigstellen...</span>
                                     </div>
@@ -202,14 +217,14 @@
                         <button
                             id="medium-cancel"
                             type="button"
-                            class="btn btn-default mr-2"
+                            class="btn btn-default"
                             @click="globalStore?.closeModal($options.name)"
                         >
                             {{ trans('global.cancel') }}
                         </button>
                         <button
                             id="medium-save"
-                            class="btn btn-primary"
+                            class="btn btn-primary ml-3"
                             @click="add()"
                         >
                             {{ trans('global.save') }}
@@ -238,14 +253,7 @@ export default {
         RepositoryPluginCreate,
         DataTable,
     },
-    props: {
-        show: {
-            type: Boolean
-        },
-        params: {
-            type: Object
-        },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
-    },
+    props: {},
     setup() { //use database store
         const globalStore = useGlobalStore();
         return {
@@ -256,7 +264,6 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/media',
             tab: 'external',
             progressBar: false,
             form: new Form({
@@ -286,8 +293,8 @@ export default {
                     title: 'img',
                     data: 'id',
                     render: function(data, type, full, meta) {
-                        return '<img src="/media/'+ data +'" width="60"/>';
-                    }
+                        return '<img src="/media/' + data + '" width="60"/>';
+                    },
                 },
                 { title: 'title', data: 'title', searchable: true },
                 { title: 'size', data: 'size' },
@@ -296,18 +303,6 @@ export default {
             options : this.$dtOptions,
             postProcess: false,
         }
-    },
-    watch: {
-        params: function(newVal, oldVal) {
-            this.postProcess = false;
-            this.form.reset();
-            this.form.populate(newVal);
-            if (this.form.id != ''){
-                this.method = 'patch';
-            } else {
-                this.method = 'post';
-            }
-        },
     },
     computed: {
         isInitial() {
@@ -380,8 +375,8 @@ export default {
             this.$eventHub.emit(
                 this.callback, //default callback == 'medium-added'
                 {
-                    'id': this.callbackId,
-                    'selectedMedia':  this.globalStore.selectedMedia,
+                    id: this.callbackId,
+                    selectedMedia:  this.globalStore.selectedMedia,
                     //'selectedMediumId':  this.globalStore.selectedMedia,
                     //'files': this.globalStore.selectedMedia,
                 }
@@ -424,14 +419,13 @@ export default {
             this.postProcess = true;
             axios.post('/media?repository=edusharing', form)
                 .then((response) => {
-                    //console.log(response);
                     this.globalStore.setSelectedMedia([response.data]);
                     this.add();
                 })
                 .catch((err) => {
                     console.log(err);
                 });
-        }
+        },
     },
     mounted() {
         this.globalStore.registerModal(this.$options.name);
@@ -447,14 +441,12 @@ export default {
                 this.accept = params.accept;
                 this.currentStatus = STATUS_INITIAL;
 
-                if (typeof (params) !== 'undefined') {
-                    this.form.populate(params);
+                this.form.populate(params);
 
-                    if (this.form.id !== '') {
-                        this.method = 'patch';
-                    } else {
-                        this.method = 'post';
-                    }
+                if (this.form.id !== '') {
+                    this.method = 'patch';
+                } else {
+                    this.method = 'post';
                 }
             }
         });

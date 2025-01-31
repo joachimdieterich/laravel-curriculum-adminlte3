@@ -1,14 +1,14 @@
 <template>
     <div 
         :id="item.DT_RowId"
-        v-bind:value="item.DT_RowId"
+        :value="item.DT_RowId"
         class="box box-objective nav-item-box-image pointer my-1 "
         :class="active === false ? 'not-allowed' : ''"
         style="min-width: 200px !important;"
         :style="'border-bottom: 5px solid ' + item.color"
     >
-        <a v-if="this.create === true"
-            @click="createNewItem()"
+        <a v-if="this.create || this.subscribe"
+            @click="openModal()"
         >
             <div class="d-flex align-items-center justify-content-center nav-item-box-image-size h-50">
                 <slot name="itemIcon">
@@ -17,30 +17,30 @@
             </div>
             <span class="text-center p-1 overflow-auto nav-item-box bg-gray-light">
                 <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                    {{ createLabel }}
+                    {{ label }}
                 </h1>
             </span>
         </a>
         <a v-else
             class="text-decoration-none"
-            :style="'color: ' + $textcolor(item.color) + ' !important; ' + (isSelected(item) ? 'filter: brightness(80%); width:100%; height:100%; position:absolute; top:0; left:0;' : '')"
+            :style="'color: ' + $textcolor(item.color) + ' !important; ' + (isSelected(item) ? 'filter: brightness(80%); width:100%; height:100%; position: absolute; top: 0; left: 0;' : '')"
         >
             <div v-if="item.medium_id"
-                @click="clickEvent(item)"
                 class="nav-item-box-image-size h-50"
                 :style="{backgroundColor: item.color + ' !important'}"
+                @click="clickEvent(item)"
             >
                 <div
-                    class="nav-item-box-image-size h-100"
-                    style="width: 100% !important;opacity: 0.7;"
-                    :style="{'background': 'url(/media/' + item.medium_id + '?model='+modelName+'&model_id=' + item.DT_RowId +') center no-repeat'}"
+                    class="nav-item-box-image-size h-100 w-100"
+                    style="opacity: 0.7;"
+                    :style="{'background': 'url(/media/' + item.medium_id + '?model=' + modelName + '&model_id=' + item.DT_RowId + ') center no-repeat'}"
                 >
                 </div>
             </div>
             <div v-else
-                @click="clickEvent(item)"
                 class="d-flex align-items-center justify-content-center nav-item-box-image-size h-50"
                 :style="{backgroundColor: item.color + ' !important'}"
+                @click="clickEvent(item)"
             >
                 <slot name="itemIcon"/>
             </div>
@@ -88,11 +88,11 @@
         </a>
     </div>
 </template>
-
 <script>
-import { storeToRefs } from 'pinia';
-import { useDatatableStore } from "../../store/datatables";
-import { useToast } from "vue-toastification";
+import {storeToRefs} from 'pinia';
+import {useGlobalStore} from "../../store/global";
+import {useDatatableStore} from "../../store/datatables";
+import {useToast} from "vue-toastification";
 
 export default {
     props: {
@@ -101,38 +101,49 @@ export default {
         url: String,
         titleField: {
             type: String,
-            default: 'title'
+            default: 'title',
         },
         descriptionField: {
             type: String,
-            default: 'description'
+            default: 'description',
         },
-        urlOnly: false,
-        urlTarget: '_self',
+        urlOnly: {
+            type: Boolean,
+            default: false,
+        },
+        urlTarget: {
+            type: String,
+            default: '_self',
+        },
         create: false,
-        createLabel: String,
+        subscribe: false,
+        subscribable_id: Number,
+        subscribable_type: String,
+        label: String,
         storeTitle: String, //data store
         color: {
             type: String,
-            default: '#27AE60'
+            default: '#27AE60',
         },
         active: {
             type: Boolean,
-            default: true
+            default: true,
         },
-        info_deactivated:  {
+        info_deactivated: {
             type: String,
-            default: 'Zugriff nicht möglich'
+            default: 'Zugriff nicht möglich',
         },
     },
     setup() { //use database store
         const store = useDatatableStore();
+        const globalStore = useGlobalStore();
         const { getDatatable } = storeToRefs(store);
         const { isSelected } = storeToRefs(store);
         const toast = useToast();
         return {
             store,
-            toast
+            globalStore,
+            toast,
         }
     },
     data() {
@@ -143,20 +154,27 @@ export default {
         }
     },
     mounted() {
-        if (!this.create) {
+        if (!this.create && !this.subscribe) {
             this.item = this.model;
             this.item.description = this.model.description ?? ''; //fallback
             this.item.color = this.item.color ?? this.color; //fallback
             this.item.medium_id = this.item.medium_id ?? null; //fallback
         }
     },
-
     methods: {
         isSelected(item) {
             return (this.store.isSelected(this.storeTitle, item));
         },
-        createNewItem() {
-            this.$eventHub.emit('create'+this.modelName, true);
+        openModal() {
+            let modal = this.subscribe
+                ? 'subscribe-' + this.modelName.toLowerCase() + '-modal'
+                : this.modelName.toLowerCase() + '-modal';
+
+            this.globalStore?.showModal(modal, {
+                // only gets used in subscribe-modals
+                subscribable_id: this.subscribable_id,
+                subscribable_type: this.subscribable_type,
+            });
         },
         clickEvent(item) {
             if (this.active) {
@@ -164,7 +182,7 @@ export default {
                     this.store.addSelectItems(this.storeTitle, item);
                 } else {
                     if (this.urlOnly) {
-                        window.open( this.url /*+ '/' + item.id*/, this.urlTarget);
+                        window.open(this.url /*+ '/' + item.id*/, this.urlTarget);
                     } else {
                         window.location = this.url + '/' + (item.DT_RowId ?? item.id); // ? item.DT_RowId -> will not work for new entries
                     }
@@ -186,7 +204,7 @@ export default {
                 hideProgressBar: true,
                 closeButton: "button",
                 icon: true,
-                rtl: false
+                rtl: false,
             });
         },
     }

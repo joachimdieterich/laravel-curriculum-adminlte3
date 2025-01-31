@@ -1,17 +1,18 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
+            @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
                     <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.logbook.create') }}
-                    </span>
+                        <span v-if="method === 'post'">
+                            {{ trans('global.logbook.create') }}
+                        </span>
                         <span v-if="method === 'patch'">
-                        {{ trans('global.logbook.edit') }}
-                    </span>
+                            {{ trans('global.logbook.edit') }}
+                        </span>
                     </h3>
                     <div class="card-tools">
                         <button
@@ -23,100 +24,107 @@
                         </button>
                     </div>
                 </div>
-                <div class="modal-body">
-                    <div
-                        class="form-logbook "
-                        :class="form.errors.title ? 'has-error' : ''"
-                    >
-                        <label for="title">{{ trans('global.logbook.fields.title') }} *</label>
-                        <input
-                            type="text"
-                            id="title"
-                            name="title"
-                            class="form-control"
-                            v-model="form.title"
-                            :placeholder="trans('global.title')"
-                            required
-                        />
-                        <p v-if="form.errors.title"
-                            class="help-block"
-                            v-text="form.errors.title[0]"
-                        ></p>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="description">
-                            {{ trans('global.logbook.fields.description') }}
-                        </label>
-                        <Editor
-                            id="description"
-                            name="description"
-                            class="form-control"
-                            :init="tinyMCE"
-                            v-model="form.description"
-                        />
-                        <p v-if="form.errors.description"
-                            class="help-block"
-                            v-text="form.errors.description[0]"
-                        ></p>
-                    </div>
-
-                    <div
-                        class="card-header border-bottom"
-                        data-card-widget="collapse"
-                    >
-                        <h5 class="card-title">
-                            Darstellung
-                        </h5>
-                    </div>
-                    
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <v-swatches
-                                :swatch-size="49"
-                                :trigger-style="{}"
-                                popover-to="right"
-                                v-model="this.form.color"
-                                show-fallback
-                                fallback-input-type="color"
-                                @input="(id) => {
-                                    if(id.isInteger) {
-                                        this.form.color = id;
-                                    }
-                                }"
-                                :max-height="300"
-                            />
-                            <MediumForm
-                                class="pull-right"
-                                :id="'medium_id_' + component_id"
-                                :medium_id="form.medium_id"
-                                accept="image/*"
-                                :selected="this.form.medium_id"
-                                @selectedValue="(id) => {
-                                    this.form.medium_id = id;
-                                }"
-                            />
-    
-                            <div class="dropdown">
-                                <button
-                                    class="btn btn-default"
-                                    style="width: 42px; padding: 6px 0px;"
-                                    type="button"
-                                    data-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
-                                    <i :class="form.css_icon + ' pt-2'"></i>
-                                </button>
-                                <font-awesome-picker
-                                    class="dropdown-menu dropdown-menu-right"
-                                    style="min-width: 400px;"
-                                    :searchbox="trans('global.select_icon')"
-                                    v-on:selectIcon="setIcon"
+                <div
+                    class="modal-body"
+                    style="overflow-y: visible;"
+                >
+                    <div class="card">
+                        <div class="card-body pb-0">
+                            <div
+                                class="form-group"
+                                :class="form.errors.title ? 'has-error' : ''"
+                            >
+                                <input
+                                    type="text"
+                                    id="title"
+                                    name="title"
+                                    class="form-control"
+                                    v-model="form.title"
+                                    :placeholder="trans('global.title') + ' *'"
+                                    required
                                 />
+                                <p v-if="form.errors.title"
+                                    class="help-block"
+                                    v-text="form.errors.title[0]"
+                                ></p>
+                            </div>
+        
+                            <div class="form-group">
+                                <textarea
+                                    id="description"
+                                    name="description"
+                                    class="form-control"
+                                    style="max-height: 50svh;"
+                                    :placeholder="trans('global.description')"
+                                    v-model="form.description"
+                                ></textarea>
+                                <p v-if="form.errors.description"
+                                    class="help-block"
+                                    v-text="form.errors.description[0]"
+                                ></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div
+                            class="card-header border-bottom"
+                            data-card-widget="collapse"
+                        >
+                            <h5 class="card-title">{{ trans('global.display') }}</h5>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <v-swatches
+                                    :swatch-size="49"
+                                    :trigger-style="{}"
+                                    style="height: 42px;"
+                                    popover-to="right"
+                                    v-model="this.form.color"
+                                    show-fallback
+                                    fallback-input-type="color"
+                                    @input="(id) => {
+                                        if (id.isInteger) {
+                                            this.form.color = id;
+                                        }
+                                    }"
+                                    :max-height="300"
+                                />
+                                <MediumForm v-if="form.id"
+                                    class="pull-right"
+                                    :medium_id="form.medium_id"
+                                    accept="image/*"
+                                    :subscribable_id="form.id"
+                                    subscribable_type="App\\Logbook"
+                                    :selected="this.form.medium_id"
+                                    @selectedValue="(id) => {
+                                        this.form.medium_id = id;
+                                    }"
+                                />
+                                <div class="dropdown">
+                                    <button
+                                        class="btn btn-default"
+                                        style="width: 42px; padding: 6px 0px;"
+                                        type="button"
+                                        data-toggle="dropdown"
+                                        aria-expanded="false"
+                                    >
+                                        <i :class="form.css_icon + ' pt-2'"></i>
+                                    </button>
+                                    <font-awesome-picker
+                                        class="dropdown-menu dropdown-menu-right"
+                                        style="min-width: min(385px,90vw);"
+                                        :searchbox="trans('global.select_icon')"
+                                        v-on:selectIcon="setIcon"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <div class="card-footer">
                     <span class="pull-right">
                         <button
@@ -129,8 +137,8 @@
                         </button>
                         <button
                             id="logbook-save"
-                            class="btn btn-primary"
-                            @click="submit(method)"
+                            class="btn btn-primary ml-3"
+                            @click="submit()"
                         >
                             {{ trans('global.save') }}
                         </button>
@@ -144,16 +152,15 @@
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
-import Editor from "@tinymce/tinymce-vue";
 import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker.vue";
 import MediumForm from "../media/MediumForm.vue";
 
 export default {
     name: 'logbook-modal',
-    components:{
-        MediumForm, FontAwesomePicker,
-        Editor,
-        Select2
+    components: {
+        MediumForm,
+        FontAwesomePicker,
+        Select2,
     },
     props: {},
     setup() {
@@ -166,36 +173,28 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/logbooks',
             form: new Form({
-                'id': '',
-                'title':  '',
-                'description':  '',
-                'medium_id': null,
-                'color':'#27AF60',
-                'css_icon': 'fa fa-book',
+                id: '',
+                title:  '',
+                description:  '',
+                medium_id: null,
+                color:'#27AF60',
+                css_icon: 'fa fa-book',
             }),
-            tinyMCE: this.$initTinyMCE(
-                [
-                    "autolink link curriculummedia autoresize"
-                ],
-                {
-                    'callback': 'insertContent',
-                    'callbackId': this.component_id
-                }
-            ),
         }
     },
     methods: {
-        submit(method) {
-            if (method === 'patch') {
+        submit() {
+            if (this.method === 'patch') {
                 this.update();
             } else {
                 this.add();
             }
+
+            this.globalStore.closeModal(this.$options.name);
         },
         add() {
-            axios.post(this.url, this.form)
+            axios.post('/logbooks', this.form)
                 .then(r => {
                     this.$eventHub.emit('logbook-added', r.data);
                 })
@@ -204,7 +203,7 @@ export default {
                 });
         },
         update() {
-            axios.patch(this.url + '/' + this.form.id, this.form)
+            axios.patch('/logbooks/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('logbook-updated', r.data);
                 })
@@ -222,11 +221,10 @@ export default {
             if (state.modals[this.$options.name].show) {
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
-                if (typeof (params) !== 'undefined'){
+                if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
 
-                    this.form.description = this.htmlToText(params.description);
-                    if (this.form.id != ''){
+                    if (this.form.id != '') {
                         this.method = 'patch';
                     } else {
                         this.method = 'post';

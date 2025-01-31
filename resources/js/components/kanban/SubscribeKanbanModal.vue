@@ -1,27 +1,28 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
+            @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
                     <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.kanban.create') }}
-                    </span>
-                        <span v-if="method === 'patch'">
-                        {{ trans('global.kanban.edit') }}
-                    </span>
+                        <span>{{ trans('global.kanban.enrol') }}</span>
                     </h3>
                     <div class="card-tools">
-                        <button type="button"
-                                class="btn btn-tool"
-                                @click="globalStore?.closeModal($options.name)">
+                        <button
+                            type="button"
+                            class="btn btn-tool"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
                             <i class="fa fa-times"></i>
                         </button>
                     </div>
                 </div>
-                <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                <div
+                    class="modal-body"
+                    style="overflow-y: visible;"
+                >
                     <Select2
                         id="kanbans_subscription"
                         name="kanbans_subscription"
@@ -31,25 +32,26 @@
                         @selectedValue="(id) => {
                             this.form.kanban_id = id;
                         }"
-                    >
-                    </Select2>
+                    />
                 </div>
                 <div class="card-footer">
-                 <span class="pull-right">
-                     <button
-                         id="kanban-cancel"
-                         type="button"
-                         class="btn btn-default"
-                         @click="globalStore?.closeModal($options.name)">
-                         {{ trans('global.cancel') }}
-                     </button>
-                     <button
-                         id="kanban-save"
-                         class="btn btn-primary"
-                         @click="submit(method)" >
-                         {{ trans('global.save') }}
-                     </button>
-                </span>
+                    <span class="pull-right">
+                        <button
+                            id="kanban-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="kanban-save"
+                            class="btn btn-primary ml-3"
+                            @click="submit()"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
+                    </span>
                 </div>
             </div>
         </div>
@@ -62,8 +64,8 @@ import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'subscribe-kanban-modal',
-    components:{
-        Select2
+    components: {
+        Select2,
     },
     props: {},
     setup() {
@@ -75,27 +77,24 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
-            url: '/kanbanSubscriptions',
             form: new Form({
-                'id': '',
-                'kanban_id': '',
+                id: '',
+                kanban_id: '',
             }),
             subscribable_type: '',
             subscribable_id: '',
-            search: '',
         }
     },
     methods: {
         submit() {
-            axios.post(this.url, {
-                'model_id': this.form.kanban_id,
-                'subscribable_type': this.subscribable_type,
-                'subscribable_id': this.subscribable_id
+            axios.post('/kanbanSubscriptions', {
+                model_id: this.form.kanban_id,
+                subscribable_type: this.subscribable_type,
+                subscribable_id: this.subscribable_id,
             })
-            .then(r => {
-                this.$eventHub.emit('kanban-subscription-added', r.data);
-                //console.log(r.data);
+            .then(response => {
+                this.$eventHub.emit('kanban-subscription-added', response.data);
+                this.globalStore.closeModal(this.$options.name);
             })
             .catch(err => {
                 console.log(err.response);
@@ -112,7 +111,6 @@ export default {
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
-                    this.method = 'post';
                 }
             }
         });

@@ -61,9 +61,6 @@ class GroupsController extends Controller
             ->addColumn('organization', function ($groups) {
                 return $groups->organization->title;
             })
-
-
-            ->addColumn('check', '')
             ->setRowId($group_id_field)
             ->make(true);
     }

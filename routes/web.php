@@ -265,7 +265,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('planTypes', 'PlanTypeController');
 
-
+    Route::post('planSubscriptions/expel', 'PlanSubscriptionController@expel');
     Route::resource('planSubscriptions', 'PlanSubscriptionController');
     Route::resource('planEntries', 'PlanEntryController');
 
@@ -350,7 +350,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('videoconferences/{videoconference}/getStatus', 'VideoconferenceController@getStatus');
     Route::get('videoconferences/{videoconference}/start', 'VideoconferenceController@start');
 
-
+    Route::post('videoconferenceSubscriptions/expel', 'VideoconferenceSubscriptionController@expel');
     Route::resource('videoconferenceSubscriptions', 'VideoconferenceSubscriptionController');
 
     /* Tests */

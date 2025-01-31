@@ -1,8 +1,9 @@
 <template >
     <!--  v-if create terminal-->
     <div v-if="type === 'createterminal'"
-        class="box box-objective"
-        v-bind:style="{ 'background-color': '#fff'}"
+        class="box box-objective user-select-none pointer"
+        :style="{ 'background-color': '#fff'}"
+        @click.prevent="openTerminalModal()"
     >
         <h1
             class="h5 position-absolute text-center w-100"
@@ -10,33 +11,23 @@
         >
             {{ trans("global.terminalObjective.title_singular") }}
         </h1>
-
-        <div
-            style="text-align: center; padding: 25px; font-size: 100px;"
-            @click.prevent="createTerminalObjective()"
-        >
-            +
-        </div>
+        <div style="text-align: center; padding: 25px; font-size: 100px;">+</div>
     </div>
 
     <!--  v-else-if create enabling-->
     <div v-else-if="type === 'createenabling'"
-        class="box box-objective"
+        class="box box-objective user-select-none pointer"
         :style="{ 'background-color': backgroundcolor }"
+        @click.prevent="openEnablingModal()"
     >
         <h1
             class="h5 position-absolute text-center w-100"
-            style="top:20px;"
+            style="top: 20px;"
         >
             {{ trans("global.enablingObjective.title_singular") }}
         </h1>
 
-        <div
-            style="text-align: center; padding: 25px; font-size: 100px;"
-            @click.prevent="createEnablingObjective()"
-        >
-            +
-        </div>
+        <div style="text-align: center; padding: 25px; font-size: 100px;">+</div>
     </div>
 
     <!--  v-else-if render existing objective-->
@@ -53,7 +44,6 @@
             :settings="settings"
             :max_id="max_id"
             :textcolor="textcolor"
-            @eventDelete="deleteEvent"
             @eventSort="sortEvent"
         />
 
@@ -69,8 +59,7 @@
                     class="boxcontent"
                     :style="{ 'color': textcolor }"
                     v-dompurify-html="objective.title"    
-                >
-                </div>
+                ></div>
             </div>
         </div>
 
@@ -82,7 +71,6 @@
         />
     </div>
 </template>
-
 <script>
 import Header from './Header.vue';
 import Footer from './Footer.vue';
@@ -90,15 +78,41 @@ import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
-        objective: {},
-        objective_type_id: {},
-        type: {},
-        color: '#000',
-        settings: {},
+        objective: {
+            type: Object,
+            default: {},
+        },
+        objective_type_id: {
+            type: Number,
+            default: null,
+        },
+        type: {
+            type: String,
+            default: null,
+        },
+        referenceable_id: {
+            type: Number,
+            default: null,
+        },
+        referenceable_type: {
+            type: String,
+            default: null,
+        },
+        color: {
+            type: String,
+            default: '#000',
+        },
+        settings: {
+            type: Object,
+            default: {},
+        },
         editable: {
+            type: Boolean,
             default: false,
         },
-        max_id: Number,
+        max_id: {
+            type: Number,
+        },
     },
     setup() {
         const globalStore = useGlobalStore();
@@ -113,15 +127,15 @@ export default {
                     title: 'Edit',
                     icon: 'fa fa-pencil-alt',
                     action: 'edit',
-                    model: this.type+'Objectives',
-                    value: this.type+'-objective-modal',
+                    model: this.type + 'Objectives',
+                    value: this.type + '-objective-modal',
                 },
                 {
                     title: 'Move',
                     icon: 'fa fa-repeat',
                     action: 'move',
-                    model: this.type+'Objectives',
-                    value: 'move-'+this.type+'-objective-modal',
+                    model: this.type + 'Objectives',
+                    value: 'move-' + this.type + '-objective-modal',
                 },
                 {
                     hr: true,
@@ -130,28 +144,25 @@ export default {
                     title: 'Delete',
                     icon: 'fa fa-trash',
                     action: 'delete',
-                    model: this.type+'Objectives',
+                    model: this.type + 'Objectives',
                 }
             ],
             visibility: 100,
-            errors: {}
+            errors: {},
         }
     },
     methods: {
-        createTerminalObjective() {
-            this.$eventHub.emit('createTerminalObjectives', { 'objective': this.objective, 'method': 'post' , 'objective_type_id': this.objective_type_id});
+        openTerminalModal() { 
+            this.globalStore?.showModal('terminal-objective-modal', {
+                curriculum_id: this.objective.curriculum_id,
+                objective_type_id: this.objective_type_id,
+            });
         },
-        createEnablingObjective() {
-            this.$eventHub.emit('createEnablingObjectives', { 'objective': this.objective, 'method': 'post' });
-        },
-        deleteEvent() {
-            axios.delete('/'+this.type+'Objectives/'+this.objective.id)
-                .then(res => {
-                    this.$eventHub.emit('objective-deleted', {'objective': this.objective, 'type': this.type});
-                })
-                .catch(err => {
-                    console.log(err.response);
-                });
+        openEnablingModal() {
+            this.globalStore?.showModal('enabling-objective-modal', {
+                curriculum_id: this.objective.curriculum_id,
+                terminal_objective_id: this.objective.terminal_objective_id,
+            });
         },
         async sortEvent(amount) {
             let objective = {
@@ -170,7 +181,11 @@ export default {
             if (this.settings?.achievements === undefined || !this.editable) {
                 location.href= '/' + this.type + 'Objectives/' + this.objective.id;
             } else {
-                this.globalStore?.showModal('set-achievements-modal', { 'objective': this.objective });
+                this.globalStore?.showModal('set-achievements-modal', {
+                    objective: this.objective,
+                    referenceable_id: this.referenceable_id,
+                    referenceable_type: this.referenceable_type,
+                });
             }
         },
 
@@ -207,7 +222,7 @@ export default {
             return "alpha(opacity=" + this.visibility + ")";
         },
         cross_reference: function() {
-            if (typeof this.settings !== "undefined"){
+            if (typeof this.settings !== "undefined") {
                 return this.settings.cross_reference_curriculum_id;
             } else {
                 return false;
@@ -245,7 +260,6 @@ export default {
         })
     },
     beforeDestroy: function() {
-        this.$root.$off('eventDelete');
         this.$root.$off('eventSort');
     },
     components: {

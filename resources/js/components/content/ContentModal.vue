@@ -1,76 +1,82 @@
 <template>
     <Transition name="modal" >
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask "
+            class="modal-mask"
+            @click.self="globalStore.closeModal($options.name)"
         >
-        <div class="modal-container">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.content.create') }}
-                    </span>
-                    <span v-if="method === 'patch'">
-                        {{ trans('global.content.edit') }}
-                    </span>
-                </h3>
-                <div class="card-tools">
-                    <button type="button"
+            <div class="modal-container">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span v-if="method === 'post'">
+                            {{ trans('global.content.create') }}
+                        </span>
+                        <span v-if="method === 'patch'">
+                            {{ trans('global.content.edit') }}
+                        </span>
+                    </h3>
+                    <div class="card-tools">
+                        <button
+                            type="button"
                             class="btn btn-tool"
-                            @click="globalStore?.closeModal($options.name)">
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                <div class="form-group "
-                    :class="form.errors.title ? 'has-error' : ''"
-                      >
-                    <label for="title">{{ trans('global.content.fields.title') }} *</label>
-                    <input
-                        type="text" id="title"
-                        name="title"
-                        class="form-control"
-                        v-model="form.title"
-                        :placeholder="trans('global.content.fields.title')"
-                        required
-                        />
-                     <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="content">
-                        {{ trans('global.content.fields.content') }}
-                    </label>
-                    <Editor
-                        id="content"
-                        name="content"
-                        :placeholder="trans('global.content.fields.content')"
-                        class="form-control"
-                        :init="tinyMCE"
-                        :initial-value="form.content"
-                    ></Editor>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-body">
+                            <div
+                                class="form-group"
+                                :class="form.errors.title ? 'has-error' : ''"
+                            >
+                                <input
+                                    id="title"
+                                    type="text"
+                                    name="title"
+                                    class="form-control"
+                                    v-model="form.title"
+                                    :placeholder="trans('global.title') + ' *'"
+                                    required
+                                />
+                                <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                            </div>
+        
+                            <Editor
+                                id="content"
+                                name="content"
+                                :placeholder="trans('global.content.fields.content')"
+                                class="form-control"
+                                :init="tinyMCE"
+                                v-model="form.content"
+                            />
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="card-footer">
-                 <span class="pull-right">
-                     <button
-                         id="content-cancel"
-                         type="button"
-                         class="btn btn-default mr-2"
-                         @click="globalStore?.closeModal($options.name)">
-                         {{ trans('global.cancel') }}
-                     </button>
-                     <button
-                         id="content-save"
-                         class="btn btn-primary"
-                         @click="submit(method)" >
-                         {{ trans('global.save') }}
-                     </button>
-                </span>
+
+                <div class="card-footer">
+                    <span class="pull-right">
+                        <button
+                            id="content-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="content-save"
+                            class="btn btn-primary ml-3"
+                            @click="submit()"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
+                    </span>
+                </div>
             </div>
         </div>
-    </div>
     </Transition>
 </template>
 <script>
@@ -80,13 +86,12 @@ import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'content-modal',
-    components:{
+    components: {
         Editor,
     },
     props: {},
-    setup() { //use database store
+    setup() {
         const globalStore = useGlobalStore();
-
         return {
             globalStore,
         }
@@ -95,38 +100,38 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/contents',
             form: new Form({
-                'id':'',
-                'title': '',
-                'content': '',
-                'subscribable_id': null,
-                'subscribable_type': null,
+                id: '',
+                title: '',
+                content: '',
+                subscribable_id: null,
+                subscribable_type: null,
             }),
             tinyMCE: this.$initTinyMCE(
                 [
                     "autolink link curriculummedia table lists code autoresize"
                 ],
                 {
-                    'callback': 'insertContent',
-                    'callbackId': this.component_id
+                    callback: 'insertContent',
+                    callbackId: this.component_id
                 }
             ),
-            search: '',
         }
     },
     methods: {
-        submit(method) {
-            this.form.content = tinyMCE.get('content').getContent();
-            if (method == 'patch') {
+        submit() {
+            if (this.method == 'patch') {
                 this.update();
             } else {
                 this.add();
             }
+
+            this.globalStore.closeModal(this.$options.name);
         },
         add() {
-            axios.post(this.url, this.form)
+            axios.post('/contents', this.form)
                 .then(r => {
+                    r.data.subscribable_id = this.form.subscribable_id;
                     this.$eventHub.emit('content-added', r.data);
                 })
                 .catch(e => {
@@ -134,8 +139,9 @@ export default {
                 });
         },
         update() {
-            axios.patch(this.url + '/' + this.form.id, this.form)
+            axios.patch('/contents/' + this.form.id, this.form)
                 .then(r => {
+                    r.data.subscribable_id = this.form.subscribable_id;
                     this.$eventHub.emit('content-updated', r.data);
                 })
                 .catch(e => {

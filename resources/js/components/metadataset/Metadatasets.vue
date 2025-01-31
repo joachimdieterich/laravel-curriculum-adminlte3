@@ -8,13 +8,13 @@
                 modelName="Metadataset"
                 url="/metadatasets"
                 :create=true
-                :createLabel="trans('global.metadataset.create')">
+                :label="trans('global.metadataset.create')">
             </IndexWidget>
             <IndexWidget
                 v-for="metadataset in metadatasets"
                 :key="'metadatasetIndex'+metadataset.id"
                 :model="metadataset"
-                modelName= "metadataset"
+                modelName="Metadataset"
                 titleField="version"
                 url="/metadatasets">
                 <template v-slot:icon>

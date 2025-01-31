@@ -1,36 +1,41 @@
 <template >
     <div class="row">
-        <div id="period-content"
-             class="col-md-12 m-0">
+        <div
+            id="period-content"
+            class="col-md-12 m-0"
+        >
             <IndexWidget
                 v-permission="'period_create'"
                 key="'periodCreate'"
                 modelName="Period"
                 url="/periods"
                 :create=true
-                :createLabel="trans('global.period.create')">
-            </IndexWidget>
-            <IndexWidget
-                v-for="period in periods"
-                :key="'periodIndex'+period.id"
+                :label="trans('global.period.create')"
+            />
+            <IndexWidget v-for="period in periods"
+                :key="'periodIndex' + period.id"
                 :model="period"
-                modelName= "period"
-                url="/periods">
+                modelName="Period"
+                url="/periods"
+            >
                 <template v-slot:icon>
                     <i class="fa fa-history pt-2"></i>
                 </template>
 
-                <template
+                <template v-slot:dropdown
                     v-permission="'period_edit, period_delete'"
-                    v-slot:dropdown>
-                    <div class="dropdown-menu dropdown-menu-right"
-                         style="z-index: 1050;"
-                         x-placement="left-start">
+                >
+                    <div
+                        class="dropdown-menu dropdown-menu-right"
+                        style="z-index: 1050;"
+                        x-placement="left-start"
+                    >
                         <button
                             v-permission="'period_edit'"
                             :name="'edit-period-' + period.id"
                             class="dropdown-item text-secondary"
-                            @click.prevent="editPeriod(period)">
+                            @click.prevent="editPeriod(period)"
+                        >
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.period.edit') }}
                         </button>
@@ -40,7 +45,8 @@
                             :id="'delete-period-' + period.id"
                             type="submit"
                             class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(period)">
+                            @click.prevent="confirmItemDelete(period)"
+                        >
                             <i class="fa fa-trash mr-2"></i>
                             {{ trans('global.period.delete') }}
                         </button>
@@ -48,21 +54,23 @@
                 </template>
             </IndexWidget>
         </div>
-        <div id="period-datatable-wrapper"
-             class="w-100 dataTablesWrapper">
+        <div
+            id="period-datatable-wrapper"
+            class="w-100 dataTablesWrapper"
+        >
             <DataTable
                 id="period-datatable"
                 :columns="columns"
                 :options="options"
-                :ajax="url"
+                :ajax="'/periods/list'"
                 :search="search"
                 width="100%"
-                style="display:none; "
-            ></DataTable>
+                style="display: none;"
+            />
         </div>
 
         <Teleport to="body">
-            <PeriodModal></PeriodModal>
+            <PeriodModal/>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.period.delete')"
@@ -74,12 +82,10 @@
                     this.showConfirm = false;
                     this.destroy();
                 }"
-            ></ConfirmModal>
+            />
         </Teleport>
     </div>
 </template>
-
-
 <script>
 import PeriodModal from "../period/PeriodModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
@@ -91,7 +97,7 @@ DataTable.use(DataTablesCore);
 
 export default {
     props: {},
-    setup () {
+    setup() {
         const globalStore = useGlobalStore();
         return {
             globalStore,
@@ -104,18 +110,17 @@ export default {
             search: '',
             showPeriodModal: false,
             showConfirm: false,
-            url: '/periods/list',
             errors: {},
             currentPeriod: {},
             columns: [
                 { title: 'check', data: 'check' },
                 { title: 'id', data: 'id' },
-                { title: 'title', data: 'title', searchable: true},
+                { title: 'title', data: 'title', searchable: true },
                 { title: 'begin', data: 'begin'},
-                { title: 'end', data: 'end', searchable: true},
+                { title: 'end', data: 'end', searchable: true },
             ],
             options : this.$dtOptions,
-            modalMode: 'edit'
+            dt: null,
         }
     },
     mounted() {
@@ -124,34 +129,32 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('period-added', (period) => {
-            this.globalStore?.closeModal('period-modal');
             this.periods.push(period);
         });
 
-        this.$eventHub.on('period-updated', (period) => {
-            this.globalStore?.closeModal('period-modal');
-            this.update(period);
+        this.$eventHub.on('period-updated', (updatedPeriod) => {
+            let period = this.periods.find(p => p.id === updatedPeriod.id);
+
+            Object.assign(period, updatedPeriod);
         });
-        this.$eventHub.on('createPeriod', () => {
-            this.globalStore?.showModal('period-modal', {});
+
+        this.$eventHub.on('filter', (filter) => {
+            this.dt.search(filter).draw();
         });
     },
     methods: {
-        editPeriod(period){
+        editPeriod(period) {
             this.globalStore?.showModal('period-modal', period);
         },
-        loaderEvent(){
-            const dt = $('#period-datatable').DataTable();
-            dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.periods = dt.rows({page: 'current'}).data().toArray();
+        loaderEvent() {
+            this.dt = $('#period-datatable').DataTable();
+            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
+                this.periods = this.dt.rows({page: 'current'}).data().toArray();
 
                 $('#period-content').insertBefore('#period-datatable-wrapper');
             });
-            this.$eventHub.on('filter', (filter) => {
-                dt.search(filter).draw();
-            });
         },
-        confirmItemDelete(period){
+        confirmItemDelete(period) {
             this.currentPeriod = period;
             this.showConfirm = true;
         },
@@ -165,21 +168,12 @@ export default {
                     console.log(err.response);
                 });
         },
-        update(period) {
-            const index = this.periods.findIndex(
-                vc => vc.id === period.id
-            );
-
-            for (const [key, value] of Object.entries(period)) {
-                this.periods[index][key] = value;
-            }
-        }
     },
     components: {
         ConfirmModal,
         DataTable,
         PeriodModal,
-        IndexWidget
+        IndexWidget,
     },
 }
 </script>

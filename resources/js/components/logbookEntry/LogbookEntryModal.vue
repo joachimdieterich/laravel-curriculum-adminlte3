@@ -1,17 +1,18 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
+            @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
                     <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.logbookEntry.create') }}
-                    </span>
-                        <span v-if="method === 'patch'">
-                        {{ trans('global.logbookEntry.edit') }}
-                    </span>
+                        <span v-if="method === 'post'">
+                            {{ trans('global.logbookEntry.create') }}
+                        </span>
+                            <span v-if="method === 'patch'">
+                            {{ trans('global.logbookEntry.edit') }}
+                        </span>
                     </h3>
                     <div class="card-tools">
                         <button
@@ -23,57 +24,58 @@
                         </button>
                     </div>
                 </div>
-                <div class="modal-body">
-                    <div
-                        class="form-logbook"
-                        :class="form.errors.title ? 'has-error' : ''"
-                    >
-                        <label for="title">{{ trans('global.logbookEntry.fields.title') }} *</label>
-                        <input
-                            type="text"
-                            id="title"
-                            name="title"
-                            class="form-control"
-                            v-model="form.title"
-                            :placeholder="trans('global.title')"
-                            required
-                        />
-                        <p
-                            v-if="form.errors.title"
-                            class="help-block"
-                            v-text="form.errors.title[0]"
-                        ></p>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="description">
-                            {{ trans('global.logbook.logbookEntry.description') }}
-                        </label>
-                        <Editor
-                            id="description"
-                            name="description"
-                            class="form-control"
-                            :init="tinyMCE"
-                            v-model="form.description"
-                        />
-                        <p class="help-block"
-                           v-if="form.errors.description"
-                           v-text="form.errors.description[0]"
-                        ></p>
-                    </div>
-                    <div class="form-group">
-                        <VueDatePicker
-                            id="date"
-                            name="date"
-                            v-model="form.date"
-                            :range="{ partialRange: false }"
-                            format="dd.MM.yyyy HH:mm"
-                            :teleport="true"
-                            locale="de"
-                            @cleared="form.date = ['', '']"
-                            :select-text="trans('global.ok')"
-                            :cancel-text="trans('global.close')"
-                        ></VueDatePicker>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-body">
+                            <div
+                                class="form-group"
+                                :class="form.errors.title ? 'has-error' : ''"
+                            >
+                                <input
+                                    type="text"
+                                    id="title"
+                                    name="title"
+                                    class="form-control"
+                                    v-model="form.title"
+                                    :placeholder="trans('global.title') + ' *'"
+                                    required
+                                />
+                                <p
+                                    v-if="form.errors.title"
+                                    class="help-block"
+                                    v-text="form.errors.title[0]"
+                                ></p>
+                            </div>
+        
+                            <div class="form-group">
+                                <Editor
+                                    id="description"
+                                    name="description"
+                                    class="form-control"
+                                    :init="tinyMCE"
+                                    v-model="form.description"
+                                />
+                                <p class="help-block"
+                                   v-if="form.errors.description"
+                                   v-text="form.errors.description[0]"
+                                ></p>
+                            </div>
+
+                            <VueDatePicker
+                                id="date"
+                                name="date"
+                                v-model="form.date"
+                                :range="{ partialRange: false }"
+                                format="dd.MM.yyyy HH:mm"
+                                :teleport="true"
+                                locale="de"
+                                :placeholder="trans('global.selectDateRange')"
+                                :select-text="trans('global.ok')"
+                                :cancel-text="trans('global.close')"
+                                @cleared="form.date = ['', '']"
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -89,7 +91,7 @@
                         </button>
                         <button
                             id="logbook-save"
-                            class="btn btn-primary"
+                            class="btn btn-primary ml-3"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}
@@ -116,7 +118,7 @@ export default {
         MediumForm,
         FontAwesomePicker,
         Editor,
-        Select2
+        Select2,
     },
     props: {},
     setup() {
@@ -129,7 +131,6 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/logbookEntries',
             form: new Form({
                 id: '',
                 logbook_id: '',
@@ -160,20 +161,22 @@ export default {
             } else {
                 this.add();
             }
+
+            this.globalStore.closeModal(this.$options.name);
         },
         add() {
-            axios.post(this.url, this.form)
-                .then(r => {
-                    this.$eventHub.emit('logbook-entry-added', r.data);
+            axios.post('/logbookEntries', this.form)
+                .then(response => {
+                    this.$eventHub.emit('logbook-entry-added', response.data);
                 })
                 .catch(e => {
                     console.log(e.response);
                 });
         },
         update() {
-            axios.patch(this.url + '/' + this.form.id, this.form)
-                .then(r => {
-                    this.$eventHub.emit('logbook-entry-updated', r.data);
+            axios.patch('/logbookEntries/' + this.form.id, this.form)
+                .then(response => {
+                    this.$eventHub.emit('logbook-entry-updated', response.data);
                 })
                 .catch(e => {
                     console.log(e.response);
